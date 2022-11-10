@@ -1,5 +1,5 @@
 FROM python:3.10
-ADD main.py .
+ADD wpapi/main.py .
 
 #RUN pip install --upgrade pip
 RUN pip3 install fastapi 

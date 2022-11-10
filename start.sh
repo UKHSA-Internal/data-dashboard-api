@@ -1,0 +1,1 @@
+uvicorn wpapi.main:app --reload
