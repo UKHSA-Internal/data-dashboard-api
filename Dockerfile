@@ -1,10 +1,19 @@
-FROM python:3.10
-ADD wpapi/main.py .
+FROM python:3.11
 
-#RUN pip install --upgrade pip
-RUN pip3 install fastapi 
-RUN pip3 install typing
-RUN pip3 install pydantic 
+# ADD wpapi/main.py .
+WORKDIR /app
 
-CMD [“python”,”./main.py”]
+COPY ./requirements.txt .
 
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+COPY ./wpapi .
+COPY ./start.sh .
+COPY ./start_local.sh .
+
+RUN chmod +x ./start.sh
+RUN chmod +x ./start_local.sh
+
+EXPOSE 5000
+
+ENTRYPOINT ["/app/start.sh"]

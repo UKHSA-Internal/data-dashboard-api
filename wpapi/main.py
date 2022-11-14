@@ -1,18 +1,35 @@
+import os
+
 from fastapi import FastAPI
-from typing import Union
 from pydantic import BaseModel
 from tortoise import Tortoise, run_async
+from typing import Union
 
-from wpapi import settings
-from wpapi.models import MultiPathogen
 
-app = FastAPI()
+import settings
+from models import MultiPathogen
+
 
 
 class Item(BaseModel):
     name: str
     price: float
     is_offer: Union[bool, None] = None
+
+
+# This might not be needed as it's initiated in the 'start.sh' script
+async def init(local=False):
+    # await Tortoise.init(
+    #     db_url='sqlite://db.sqlite3',
+    #     modules={'models': ['wpdb.models']}
+    # )
+    await Tortoise.init(
+        config=settings.TORTOISE_ORM_LOCAL if local else settings.TORTOISE_ORM
+    )
+    await Tortoise.generate_schemas()
+
+
+app = FastAPI()
 
 
 @app.get("/")
@@ -42,3 +59,9 @@ async def read_item():
 @app.put("/items/update/{item_id}")
 def update_item(item_id: int, item: Item):
     return {"item_name": item.name, "item_price": item.price, "item_id": item_id}
+
+
+if __name__ == "__main__":
+    from uvicorn import run
+
+    run(app, port=5100)
