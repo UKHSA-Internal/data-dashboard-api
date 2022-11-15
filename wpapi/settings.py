@@ -1,15 +1,20 @@
 import os
 
+from pathlib import Path
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 TORTOISE_ORM = {
     'connections': {
         'default': {
             'engine': 'tortoise.backends.asyncpg',
             'credentials': {
-                'host': 'localhost',
+                'host': os.getenv('POSTGRES_HOST', ''),
                 'port': '5432',
-                'user': 'postgres',
-                'password': 'mysecretpassword',  # Obviously wrong, for testing
-                'database': 'postgres',
+                'user': os.getenv('POSTGRES_USER', ''),
+                'password': os.getenv('POSTGRES_PASSWORD', ''),
+                'database': os.getenv('POSTGRES_DB', ''),
             }
         }
     },
