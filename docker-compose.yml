@@ -10,7 +10,9 @@ services:
       - 5100:5100
     environment:
       - APIENV=${APIENV:-DEV}
-    entrypoint: ./start_local.sh
+    entrypoint: /opt/start_local.sh
+    volumes:
+      - $PWD/wpapi:/app
     networks:
       - wp-net
 
