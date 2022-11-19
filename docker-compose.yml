@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  wp-api:
+    image: ${APP_NAME:-wp-api}
+    build:
+      context: .
+    restart: unless-stopped
+    ports:
+      - 5100:5100
+    environment:
+      - APIENV=${APIENV:-DEV}
+    entrypoint: /opt/start_local.sh
+    volumes:
+      - $PWD/wpapi:/app
+    networks:
+      - wp-net
+
+  wp-db:
+    container_name: wp-db
+    hostname: wp-db
+    image: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=postgres
+    ports:
+      - 5432:5432
+    networks:
+      - wp-net
+
+networks:
+  wp-net:
+    external: true
