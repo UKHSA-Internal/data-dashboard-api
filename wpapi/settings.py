@@ -40,7 +40,7 @@ def get_secret():
 def get_db_credentials():
     if APIENV == 'DEV':
         return {
-            'host': 'wp-net',
+            'host': 'wp-db',
             'port': '5432',
             'user': 'postgres',
             'password': 'mysecretpassword',

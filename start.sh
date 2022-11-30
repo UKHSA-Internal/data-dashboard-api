@@ -9,4 +9,4 @@ aerich init -t settings.TORTOISE_ORM
 # aerich migrate
 aerich upgrade
 
-uvicorn main:app
+uvicorn main:app --port 80
