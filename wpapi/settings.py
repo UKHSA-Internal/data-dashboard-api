@@ -1,4 +1,5 @@
 import boto3
+import json
 import os
 
 from botocore.exceptions import ClientError
@@ -29,8 +30,9 @@ def get_secret():
         # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         raise e
 
-    
-    return get_secret_value_response['SecretString']
+    secrets = json.loads(get_secret_value_response['SecretString'])
+
+    return secrets['rds_password']
 
 
 # It's a function (not a constant as before) so the prod related stuff
