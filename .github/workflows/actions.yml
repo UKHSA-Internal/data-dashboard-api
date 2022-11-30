@@ -2,6 +2,7 @@ name: Deploy to ECR
 
 on: push
 env:
+  APIENV: "PROD"
   AWS_REGION: "eu-west-2"
   POSTGRES_HOST: "wp-dashboard-rds-2.cao5mkmud7br.eu-west-2.rds.amazonaws.com"
   POSTGRES_USER: "wp_user"
