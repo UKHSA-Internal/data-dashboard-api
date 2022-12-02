@@ -1,4 +1,5 @@
 import csv
+import logging
 import os
 
 from fastapi import FastAPI
@@ -9,6 +10,9 @@ from typing import Union
 import settings
 from models import MultiPathogen
 
+
+print("The app object is being created")
+logging.debug("The app object is being created")
 
 class Item(BaseModel):
     name: str
@@ -28,11 +32,14 @@ async def init(local=False):
     await Tortoise.generate_schemas()
 
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 
 @app.get("/")
 async def root():
+    print("This is the root end point")
+    logging.debug("This is the root end point")
+
     return {"message":"Hello World"}
 
 
