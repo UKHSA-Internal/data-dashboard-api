@@ -1,5 +1,6 @@
 import boto3
 import json
+import logging
 import os
 
 from botocore.exceptions import ClientError
@@ -7,8 +8,6 @@ from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-APIENV = os.getenv('APIENV', 'PROD').upper()
 
 
 def get_secret():
@@ -35,34 +34,29 @@ def get_secret():
     return secrets['rds_password']
 
 
-# It's a function (not a constant as before) so the prod related stuff
-# won't be executed, for example get_secret()
 def get_db_credentials():
-    if APIENV == 'DEV':
-        return {
-            'host': 'wp-db',
-            'port': '5432',
-            'user': 'postgres',
-            'password': 'mysecretpassword',
-            'database': 'postgres',
-        }
+    password = ''
+    try:
+        password = get_secret()
+    except Exception as err:
+        logging.error("Couldn't get the password from SecretManager")
+    else:
+        logging.info("DB password set")
 
-    return {
-        'host': os.getenv('POSTGRES_HOST', ''),
-        'port': '5432',
-        'user': os.getenv('POSTGRES_USER', ''),
-        'password': (
-            os.getenv('POSTGRES_PASSWORD', '') if APIENV == 'DEV' else get_secret()
-        ),
-        'database': os.getenv('POSTGRES_DB', ''),
-    }
+    return password
 
 
 TORTOISE_ORM = {
     'connections': {
         'default': {
             'engine': 'tortoise.backends.asyncpg',
-            'credentials': get_db_credentials()
+            'credentials': {
+                'host': os.getenv('POSTGRES_HOST', ''),
+                'port': '5432',
+                'user': os.getenv('POSTGRES_USER', ''),
+                'password': os.getenv('POSTGRES_PASSWORD', '') or get_db_credentials(),
+                'database': os.getenv('POSTGRES_DB', ''),
+            }
         }
     },
     'apps': {

@@ -1,11 +1,10 @@
-import os
 import csv
+import os
 
 from fastapi import FastAPI
 from pydantic import BaseModel
 from tortoise import Tortoise, run_async
 from typing import Union
-
 
 import settings
 from models import MultiPathogen
@@ -108,4 +107,4 @@ async def test_data():
 if __name__ == "__main__":
     from uvicorn import run
 
-    run(app, port=5100)
+    run(app, port=80)
