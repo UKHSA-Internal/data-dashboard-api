@@ -3,6 +3,7 @@ import logging
 import os
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from tortoise import Tortoise, run_async
 from typing import Union
@@ -13,6 +14,7 @@ from models import MultiPathogen
 
 print("The app object is being created")
 logging.debug("The app object is being created")
+
 
 class Item(BaseModel):
     name: str
@@ -34,13 +36,26 @@ async def init(local=False):
 
 app = FastAPI(debug=True)
 
+origins = [
+    "http://wp-lb-1-289742994.eu-west-2.elb.amazonaws.com",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
 async def root():
     print("This is the root end point")
     logging.debug("This is the root end point")
 
-    return {"message":"Hello World"}
+    return {"message": "Hello World"}
 
 
 @app.get("/items/")
@@ -69,7 +84,8 @@ def update_item(item_id: int, item: Item):
 
 @app.get("/testdata/")
 async def test_data():
-    file_path = os.path.join(settings.BASE_DIR, 'tests', 'fixtures', 'multi_pathogen.csv')
+    file_path = os.path.join(settings.BASE_DIR, 'tests',
+                             'fixtures', 'multi_pathogen.csv')
 
     with open(file_path) as csvfile:
         csv_data = csv.reader(csvfile, delimiter=';')
@@ -106,7 +122,6 @@ async def test_data():
         )
 
         index += 1
-
 
     return data
 
