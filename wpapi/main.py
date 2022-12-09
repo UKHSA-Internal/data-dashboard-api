@@ -38,7 +38,7 @@ app = FastAPI(debug=True)
 
 origins = [
     "http://wp-lb-1-289742994.eu-west-2.elb.amazonaws.com",
-    "http://wp-lb-frontend-1239290931.eu-west-2.elb.amazonaws.com/",
+    "http://wp-lb-frontend-1239290931.eu-west-2.elb.amazonaws.com",
     "http://localhost:3000",
 ]
 
