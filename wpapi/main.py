@@ -48,7 +48,7 @@ app.add_middleware(
 @app.get("/items/raw/")
 async def read_items_raw():
     await Tortoise.init(
-        config=settings.TORTOISE_ORM_LOCAL,
+        config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
     saved_items = await MultiPathogen.filter(season="2022-2023").values()
@@ -65,7 +65,7 @@ async def root():
 @app.get("/items/")
 async def read_items():
     await Tortoise.init(
-        config=settings.TORTOISE_ORM_LOCAL,
+        config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
     saved_items = await MultiPathogen.filter(season="2021-2022").values()
@@ -124,7 +124,7 @@ async def influenza_trend():
 @app.post("/reset/")
 async def delete_record(record: Record):
     await Tortoise.init(
-        config=settings.TORTOISE_ORM_LOCAL,
+        config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
     saved_items = await MultiPathogen.all().delete()
@@ -134,7 +134,7 @@ async def delete_record(record: Record):
 @app.post("/items/")
 async def create_record(record: Record):
     await Tortoise.init(
-        config=settings.TORTOISE_ORM_LOCAL,
+        config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
     multipathogen = await MultiPathogen.create(
