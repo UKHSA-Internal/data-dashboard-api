@@ -15,6 +15,6 @@ COPY ./start_local.sh /opt
 RUN chmod +x /opt/start.sh
 RUN chmod +x /opt/start_local.sh
 
-EXPOSE 5000
+EXPOSE 80
 
 ENTRYPOINT ["/opt/start.sh"]
