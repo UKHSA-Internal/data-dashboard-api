@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 def get_secret():
     secret_name = "rds/postgres"
     region_name = "eu-west-2"
-    service_name='secretsmanager'
+    service_name= 'secretsmanager'
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -30,7 +30,6 @@ def get_secret():
         raise e
 
     secrets = json.loads(get_secret_value_response['SecretString'])
-
     return secrets['rds_password']
 
 

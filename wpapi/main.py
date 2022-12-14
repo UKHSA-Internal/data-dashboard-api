@@ -1,22 +1,18 @@
 import os
 import csv
 import logging
+from typing import Union
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from tortoise import Tortoise, run_async
-from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
-
-from typing import Union
+from tortoise.contrib.pydantic import pydantic_model_creator
 
 from wpapi import settings, models
 from wpapi.models import MultiPathogen
 
 Record = pydantic_model_creator(MultiPathogen)
-
-print("The app object is being created")
-logging.debug("The app object is being created")
 
 
 class Item(BaseModel):
@@ -49,16 +45,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-origins = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 @app.get("/items/raw/")
 async def read_items_raw():
     await Tortoise.init(
@@ -68,18 +54,18 @@ async def read_items_raw():
     saved_items = await MultiPathogen.filter(season="2022-2023").values()
     return saved_items
 
+
 @app.get("/")
 async def root():
     print("This is the root end point")
     logging.debug("This is the root end point")
-
     return {"message": "Hello World"}
 
 
 @app.get("/items/")
-async def read_item():
+async def read_items():
     await Tortoise.init(
-        config=settings.TORTOISE_ORM,
+        config=settings.TORTOISE_ORM_LOCAL,
         modules={'models': ['wpdb.models']}
     )
     saved_items = await MultiPathogen.filter(season="2021-2022").values()
@@ -143,7 +129,6 @@ async def delete_record(record: Record):
     )
     saved_items = await MultiPathogen.all().delete()
     return {}
-
 
 
 @app.post("/items/")
@@ -214,7 +199,6 @@ async def test_data():
         )
 
         index += 1
-
 
     return data
 
