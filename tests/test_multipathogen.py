@@ -3,14 +3,14 @@ from datetime import datetime
 from tortoise.contrib import test
 from tortoise.contrib.test import initializer, finalizer
 
-import wpdb
-from wpdb.models import MultiPathogen
+import wpapi
+from wpapi.models import MultiPathogen
 
 
 class TestModels(test.TestCase):
 
     def setUp(self) -> None:
-        initializer(modules=[wpdb.models], db_url="sqlite:///tmp/test-{}.sqlite")
+        initializer(modules=[wpapi.models], db_url="sqlite:///tmp/test-{}.sqlite")
 
     def tearDown(self) -> None:
         finalizer()
@@ -35,7 +35,6 @@ class TestModels(test.TestCase):
             influenza_a_h1n1_pdm09_n_pct=5.9,
             influenza_a_not_subtyped_n_pct=50.0,
             influenza_b_n_pct=6.1,
-
         )
         await multipathogen.save()
         saved_item = await MultiPathogen.get(season="2022-2023")

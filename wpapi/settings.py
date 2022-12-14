@@ -20,10 +20,11 @@ TORTOISE_ORM = {
     },
     'apps': {
         'winter_pressures': {
-            'models': ['models', 'aerich.models'],
+            'models': ['wpapi.models', 'aerich.models'],
             'default_connection': 'default',
         }
     },
+    'routers': None,
     'use_tz': False,
     'timezone': 'UTC'
 }
@@ -33,7 +34,7 @@ TORTOISE_ORM_LOCAL = {
         'default': {
             'engine': 'tortoise.backends.asyncpg',
             'credentials': {
-                'host': 'wp-db',
+                'host': 'localhost',
                 'port': '5432',
                 'user': 'postgres',
                 'password': 'mysecretpassword',
@@ -43,10 +44,11 @@ TORTOISE_ORM_LOCAL = {
     },
     'apps': {
         'winter_pressures': {
-            'models': ['models', 'aerich.models'],
+            'models': ['wpapi.models', 'aerich.models'],
             'default_connection': 'default',
         }
     },
+    'routers': None,
     'use_tz': False,
     'timezone': 'UTC'
 }
