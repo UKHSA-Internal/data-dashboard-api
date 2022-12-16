@@ -9,8 +9,9 @@ from pydantic import BaseModel
 from tortoise import Tortoise, run_async
 from tortoise.contrib.pydantic import pydantic_model_creator
 
-from wpapi import settings, models
-from wpapi.models import MultiPathogen
+import settings
+import models
+from models import MultiPathogen
 
 Record = pydantic_model_creator(MultiPathogen)
 
