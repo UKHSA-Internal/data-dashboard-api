@@ -10,4 +10,4 @@ echo "Starting server..."
 # aerich upgrade
 
 # echo "AERICH upgrade is done, starting the app..."
-uvicorn main:app --host 0.0.0.0 --port 80
+uvicorn wpapi.main:app --host 0.0.0.0 --port 80
