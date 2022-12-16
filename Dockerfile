@@ -7,11 +7,11 @@ COPY ./requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY ./wpapi .
+COPY ./wpapi ./opt
 COPY ./tests /tests
-COPY ./start.sh .
+COPY ./start.sh ./opt
 
-RUN chmod +x start.sh
+RUN chmod +x opt/start.sh
 
 EXPOSE 80
 
