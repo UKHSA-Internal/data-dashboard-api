@@ -231,6 +231,8 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+./idea/
+
 # Editor-based Rest Client
 .idea/httpRequests
 
