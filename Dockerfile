@@ -9,12 +9,11 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY ./wpapi .
 COPY ./tests /tests
-COPY ./start.sh /opt
-COPY ./start_local.sh /opt
+COPY ./start.sh .
 
 RUN chmod +x /opt/start.sh
 RUN chmod +x /opt/start_local.sh
 
 EXPOSE 80
 
-ENTRYPOINT ["/opt/start.sh"]
+ENTRYPOINT ["start.sh"]
