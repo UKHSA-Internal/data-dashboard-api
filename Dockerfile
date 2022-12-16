@@ -12,7 +12,6 @@ COPY ./tests /tests
 COPY ./start.sh .
 
 RUN chmod +x start.sh
-RUN chmod +x start_local.sh
 
 EXPOSE 80
 
