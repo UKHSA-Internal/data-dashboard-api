@@ -15,4 +15,4 @@ RUN chmod +x opt/start.sh
 
 EXPOSE 80
 
-ENTRYPOINT ["start.sh"]
+ENTRYPOINT ["/opt/start.sh"]
