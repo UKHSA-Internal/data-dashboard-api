@@ -11,8 +11,8 @@ COPY ./wpapi .
 COPY ./tests /tests
 COPY ./start.sh .
 
-RUN chmod +x /opt/start.sh
-RUN chmod +x /opt/start_local.sh
+RUN chmod +x start.sh
+RUN chmod +x start_local.sh
 
 EXPOSE 80
 
