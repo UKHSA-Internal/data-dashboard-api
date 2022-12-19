@@ -153,15 +153,21 @@ async def import_file():
 
 @app.post("/upload")
 def upload(file: UploadFile = File(...)):
+
     try:
         contents = file.file.read()
-        
+        lines = contents.splitlines()
+        for line in lines:
+            items = ",".split(line)
+            if items[0] != "Week":
+                logging.info(items[0])
+
     except Exception:
         return {"message": "There was an error uploading the file"}
     finally:
         file.file.close()
 
-    return {"message": f"{contents}"}
+    return {"message": f"{len(lines)-1} records processed"}
 
 
 
