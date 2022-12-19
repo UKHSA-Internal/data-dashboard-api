@@ -18,7 +18,7 @@ from wpapi import settings
 from wpapi.models import MultiPathogen
 
 Record = pydantic_model_creator(MultiPathogen)
-
+logging.basicConfig(level=logging.DEBUG)
 
 AWS_REGION = "eu-west-2"
 S3_BUCKET_NAME = "wp-incoming-dev"
@@ -222,6 +222,7 @@ async def create_record(record: Record):
         influenza_b_n_pct=record.influenza_b_n_pct
     )
     result = await multipathogen.save()
+    logging.info(result)
     return result
 
 
