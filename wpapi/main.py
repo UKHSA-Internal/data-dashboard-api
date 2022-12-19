@@ -132,7 +132,7 @@ async def delete_record(record: Record):
 
 
 @app.post("/import/")
-async def delete_record(record: Record):
+async def import_file():
     await Tortoise.init(
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
