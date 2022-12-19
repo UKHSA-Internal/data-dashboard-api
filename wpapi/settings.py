@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 def get_secret():
     secret_name = "rds/postgres"
     region_name = "eu-west-2"
-    service_name= 'secretsmanager'
+    service_name = 'secretsmanager'
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -23,7 +23,8 @@ def get_secret():
     )
 
     try:
-        get_secret_value_response = client.get_secret_value(SecretId=secret_name)
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name)
     except ClientError as e:
         # For a list of exceptions thrown, see
         # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
@@ -39,6 +40,7 @@ def get_db_credentials():
         password = get_secret()
     except Exception as err:
         logging.error("Couldn't get the password from SecretManager")
+        logging.error(err)
     else:
         logging.info("DB password set")
 
