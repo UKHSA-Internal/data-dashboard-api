@@ -152,7 +152,7 @@ async def import_file():
 
 
 @app.post("/upload")
-def upload(file: UploadFile = File(...)):
+async def upload(file: UploadFile = File(...)):
 
     #try:
     contents = file.file.read().decode('utf-8')
@@ -160,7 +160,7 @@ def upload(file: UploadFile = File(...)):
     for line in lines:
         items = ",".split(line)
         if items[0] != "Week":
-            create_new_record(items)
+            await create_new_record(items)
 
     #except Exception:
     #    return {"message": "There was an error uploading the file"}
@@ -169,7 +169,8 @@ def upload(file: UploadFile = File(...)):
 
     return {"message": f"{len(lines)-1} records processed"}
 
-def create_new_record(items: list):
+
+async def create_new_record(items: list):
     await Tortoise.init(
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
