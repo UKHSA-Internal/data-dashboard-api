@@ -58,8 +58,8 @@ TORTOISE_ORM = {
             'credentials': {
                 'host': os.getenv('POSTGRES_HOST', ''),
                 'port': '5432',
-                'user': os.getenv('POSTGRES_USER', ''),
-                'password': os.getenv('POSTGRES_PASSWORD', '') or get_db_credentials(),
+                'user': 'wp_user',
+                'password': '2397r943ht34erh'#os.getenv('POSTGRES_PASSWORD', '') or get_db_credentials(),
                 'database': os.getenv('POSTGRES_DB', ''),
             }
         }
