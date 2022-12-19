@@ -160,7 +160,7 @@ def upload(file: UploadFile = File(...)):
     for line in lines:
         items = ",".split(line)
         if items[0] != "Week":
-            logging.info(items[0])
+            create_new_record(items)
 
     #except Exception:
     #    return {"message": "There was an error uploading the file"}
@@ -169,7 +169,31 @@ def upload(file: UploadFile = File(...)):
 
     return {"message": f"{len(lines)-1} records processed"}
 
-
+def create_new_record(items: list):
+    await Tortoise.init(
+        config=settings.TORTOISE_ORM,
+        modules={'models': ['wpdb.models']}
+    )
+    multipathogen = await MultiPathogen.create(
+        week=items[0],
+        year=items[1],
+        week_key=items[2],
+        publish_date=items[3],
+        season=items[4],
+        influenza_pct=items[5],
+        rsv_pct=items[6],
+        rhinovirus_pct=items[7],
+        parainfluenza_pct=items[8],
+        hmpv_pct=items[9],
+        adenovirus_pct=items[10],
+        sars_cov_pct=items[11],
+        influenza_a_h3n2_n_pct=items[12],
+        influenza_a_h1n1_pdm09_n_pct=items[13],
+        influenza_a_not_subtyped_n_pct=items[14],
+        influenza_b_n_pct=items[15]
+    )
+    result = await multipathogen.save()
+    logging.info(result)
 
 @app.post("/items/")
 async def create_record(record: Record):
