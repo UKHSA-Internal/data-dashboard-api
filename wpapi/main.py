@@ -140,9 +140,8 @@ async def import_file():
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
-    s3_resource = boto3.resource('s3')
-    s3_object = s3_resource.Object(S3_BUCKET_NAME, FILENAME)
-    object = s3_object.get()
+    s3 = boto3.client('s3')
+    object = s3.get_object(Bucket=S3_BUCKET_NAME, Key=FILENAME)
     data = object['Body'].read().decode('utf-8')
     data_lines = data.splitlines()
     return data_lines
