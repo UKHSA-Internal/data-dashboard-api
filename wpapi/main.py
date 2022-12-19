@@ -4,6 +4,9 @@ import logging
 from typing import Union
 
 import boto3
+from botocore import UNSIGNED
+from botocore.client import Config
+from botocore.handlers import disable_signing
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -138,6 +141,8 @@ async def import_file():
         modules={'models': ['wpdb.models']}
     )
     s3_resource = boto3.resource('s3')
+    resource.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
+
     s3_object = s3_resource.Object(S3_BUCKET_NAME, FILENAME)
     object = s3_object.get()
     data = object['Body'].read().decode('utf-8')
