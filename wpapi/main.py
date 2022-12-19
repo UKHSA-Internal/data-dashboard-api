@@ -55,7 +55,7 @@ async def read_items_raw():
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
-    saved_items = await MultiPathogen.filter(season="2022-2023").values()
+    saved_items = await MultiPathogen.all().values()
     return saved_items
 
 
