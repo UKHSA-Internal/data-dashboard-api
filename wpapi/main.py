@@ -157,17 +157,21 @@ async def upload(file: UploadFile = File(...)):
     #try:
     contents = file.file.read().decode('utf-8')
     lines = contents.splitlines()
+    results = []
     for line in lines:
         items = ",".split(line)
         if items[0] != "Week" and len(items) == 16:
-            await create_new_record(items)
+            results.append(await create_new_record(items))
 
     #except Exception:
     #    return {"message": "There was an error uploading the file"}
     #finally:
     file.file.close()
 
-    return {"message": f"{len(lines)-1} records processed"}
+    return {
+        "message": f"{len(lines)-1} records processed",
+        "errors": str(results)
+    }
 
 
 async def create_new_record(items: list):
@@ -197,7 +201,7 @@ async def create_new_record(items: list):
         influenza_b_n_pct=items[15]
     )
     result = await multipathogen.save()
-    logging.info(result)
+    return result
 
 @app.post("/items/")
 async def create_record(record: Record):
