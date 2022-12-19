@@ -126,7 +126,7 @@ async def influenza_trend():
 
 
 @app.post("/reset/")
-async def delete_record(record: Record):
+async def delete_record():
     await Tortoise.init(
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
