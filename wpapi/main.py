@@ -155,7 +155,7 @@ async def import_file():
 def upload(file: UploadFile = File(...)):
 
     #try:
-    contents = file.file.read()
+    contents = file.file.read().decode('utf-8')
     lines = contents.splitlines()
     for line in lines:
         items = ",".split(line)
