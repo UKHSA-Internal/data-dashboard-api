@@ -158,8 +158,9 @@ async def upload(file: UploadFile = File(...)):
     contents = file.file.read().decode('utf-8')
     lines = contents.splitlines()
     for line in lines:
+        logging.info(line)
         items = ",".split(line)
-        if items[0] != "Week":
+        if items[0] != "Week" and len(items) == 16:
             await create_new_record(items)
 
     #except Exception:
