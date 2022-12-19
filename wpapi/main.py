@@ -141,7 +141,6 @@ async def import_file():
         modules={'models': ['wpdb.models']}
     )
     s3_resource = boto3.resource('s3')
-    s3_resource.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
     s3_object = s3_resource.Object(S3_BUCKET_NAME, FILENAME)
     object = s3_object.get()
     data = object['Body'].read().decode('utf-8')
