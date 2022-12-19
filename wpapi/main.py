@@ -9,6 +9,7 @@ from botocore.client import Config
 from botocore.handlers import disable_signing
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import File, UploadFile
 from pydantic import BaseModel
 from tortoise import Tortoise, run_async
 from tortoise.contrib.pydantic import pydantic_model_creator
@@ -148,6 +149,23 @@ async def import_file():
     #lines = csv.DictReader(data_lines)
     #for line in lines:
     #    logger.info(line)
+
+
+@app.post("/upload")
+def upload(file: UploadFile = File(...)):
+    try:
+        contents = file.file.read()
+        with open(file.filename, 'wb') as f:
+            # f.write(contents)
+            pass
+        
+    except Exception:
+        return {"message": "There was an error uploading the file"}
+    finally:
+        file.file.close()
+
+    return {"message": f"Successfully uploaded {file.filename}"}
+
 
 
 @app.post("/items/")
