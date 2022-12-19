@@ -158,7 +158,6 @@ async def upload(file: UploadFile = File(...)):
     contents = file.file.read().decode('utf-8')
     lines = contents.splitlines()
     for line in lines:
-        logging.info(line)
         items = ",".split(line)
         if items[0] != "Week" and len(items) == 16:
             await create_new_record(items)
@@ -176,11 +175,14 @@ async def create_new_record(items: list):
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
+    publish_day = items[3][0:2]
+    publish_month = items[3][3:5]
+    publish_year = items[3][6:10]
     multipathogen = await MultiPathogen.create(
         week=items[0],
         year=items[1],
         week_key=items[2],
-        publish_date=items[3],
+        publish_date=f"{publish_year}-{publish_month}-{publish_day}",
         season=items[4],
         influenza_pct=items[5],
         rsv_pct=items[6],
