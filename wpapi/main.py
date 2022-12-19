@@ -3,6 +3,7 @@ import csv
 import logging
 from typing import Union
 
+import boto3
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -15,10 +16,9 @@ from wpapi.models import MultiPathogen
 Record = pydantic_model_creator(MultiPathogen)
 
 
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
+AWS_REGION = "eu-west-2"
+S3_BUCKET_NAME = "wp-incoming-dev"
+FILENAME = "winter.csv"
 
 
 # This might not be needed as it's initiated in the 'start.sh' script
@@ -129,6 +129,23 @@ async def delete_record(record: Record):
     )
     saved_items = await MultiPathogen.all().delete()
     return {}
+
+
+@app.post("/import/")
+async def delete_record(record: Record):
+    await Tortoise.init(
+        config=settings.TORTOISE_ORM,
+        modules={'models': ['wpdb.models']}
+    )
+    s3_resource = boto3.resource('s3')
+    s3_object = s3_resource.Object(S3_BUCKET_NAME, FILENAME)
+    object = s3_object.get()
+    data = object['Body'].read().decode('utf-8')
+    data_lines = data.splitlines()
+    return data_lines
+    #lines = csv.DictReader(data_lines)
+    #for line in lines:
+    #    logger.info(line)
 
 
 @app.post("/items/")
