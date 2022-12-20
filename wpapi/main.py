@@ -72,7 +72,7 @@ async def read_items():
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
-    saved_items = await MultiPathogen.filter(season="2021-2022").values()
+    saved_items = await MultiPathogen.filter(season="2021-2022").order_by('week_key').values()
     output = {
         "week": [],
         "dates": [],
