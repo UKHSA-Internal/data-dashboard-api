@@ -192,17 +192,17 @@ async def create_new_record(items: list):
         week_key=items[2],
         publish_date=f"{publish_year}-{publish_month}-{publish_day}",
         season=items[4],
-        influenza_pct=items[5],
-        rsv_pct=items[6],
-        rhinovirus_pct=items[7],
-        parainfluenza_pct=items[8],
-        hmpv_pct=items[9],
-        adenovirus_pct=items[10],
-        sars_cov_pct=items[11],
-        influenza_a_h3n2_n_pct=items[12],
-        influenza_a_h1n1_pdm09_n_pct=items[13],
-        influenza_a_not_subtyped_n_pct=items[14],
-        influenza_b_n_pct=items[15]
+        influenza_pct=items[5] if items[5] != '' else None,
+        rsv_pct=items[6] if items[6] != '' else None,
+        rhinovirus_pct=items[7] if items[7] != '' else None,
+        parainfluenza_pct=items[8] if items[8] != '' else None,
+        hmpv_pct=items[9] if items[9] != '' else None,
+        adenovirus_pct=items[10] if items[10] != '' else None,
+        sars_cov_pct=items[11] if items[11] != '' else None,
+        influenza_a_h3n2_n_pct=items[12] if items[12] != '' else None,
+        influenza_a_h1n1_pdm09_n_pct=items[13] if items[13] != '' else None,
+        influenza_a_not_subtyped_n_pct=items[14] if items[14] != '' else None,
+        influenza_b_n_pct=items[15] if items[15] != '' else None,
     )
     result = await multipathogen.save()
     return result
