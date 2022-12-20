@@ -158,10 +158,14 @@ async def upload(file: UploadFile = File(...)):
     contents = file.file.read().decode('utf-8')
     lines = contents.splitlines()
     results = []
+    count = 0
     for line in lines:
         items = ",".split(line)
         if items[0] != "Week" and len(items) == 16:
+            count += 1
             results.append(await create_new_record(items))
+        else:
+            results.append(f"Line {count} failed: {len(items)} items, text: {line}")
 
     #except Exception:
     #    return {"message": "There was an error uploading the file"}
@@ -169,7 +173,7 @@ async def upload(file: UploadFile = File(...)):
     file.file.close()
 
     return {
-        "message": f"{len(lines)-1} records processed",
+        "message": f"{len(lines)-1} records found, {count} processed",
         "errors": str(results)
     }
 
