@@ -160,9 +160,9 @@ async def upload(file: UploadFile = File(...)):
     results = []
     count = 0
     for line in lines:
-        items = ",".split(line)
+        items = line.split(",")
+        count += 1
         if items[0] != "Week" and len(items) == 16:
-            count += 1
             results.append(await create_new_record(items))
         else:
             results.append(f"Line {count} failed: {len(items)} items, text: {line}")
