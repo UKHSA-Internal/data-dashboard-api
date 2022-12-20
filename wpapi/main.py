@@ -103,9 +103,9 @@ async def influenza_trend():
         config=settings.TORTOISE_ORM,
         modules={'models': ['wpdb.models']}
     )
-    data_2019_2020 = await MultiPathogen.filter(season="2019-2020").values()
-    data_2020_2021 = await MultiPathogen.filter(season="2020-2021").values()
-    data_2021_2022 = await MultiPathogen.filter(season="2021-2022").values()
+    data_2019_2020 = await MultiPathogen.filter(season="2019-2020").order_by('week_key').values()
+    data_2020_2021 = await MultiPathogen.filter(season="2020-2021").order_by('week_key').values()
+    data_2021_2022 = await MultiPathogen.filter(season="2021-2022").order_by('week_key').values()
     output = {
         "week": [],
         "influenza_2019_2020": [],
