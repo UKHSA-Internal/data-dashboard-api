@@ -1,19 +1,15 @@
-FROM python:3.10
+FROM python:3.8
+
+# Allows docker to cache installed dependencies between builds
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Mounts the application code to the image
+COPY . code
 WORKDIR /code
 
-ARG POSTGRES_DB
-ENV POSTGRES_DB ${POSTGRES_DB}
-ARG POSTGRES_DB
-ENV POSTGRES_DB ${POSTGRES_DB}
-ARG POSTGRES_DB
-ENV POSTGRES_DB ${POSTGRES_DB}
-ARG POSTGRES_DB
-ENV POSTGRES_DB ${POSTGRES_DB}
+EXPOSE 8000
 
-
-COPY ./requirements.txt /code/requirements.txt
-COPY ./start.sh ./code/start.sh
-RUN chmod +x ./code/start.sh
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
-COPY ./wpapi /code/wpapi
-CMD ["./code/start.sh"]
+# runs the production server
+ENTRYPOINT ["python", "apiv3/manage.py"]
+CMD ["runserver", "0.0.0.0:80"]
