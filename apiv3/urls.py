@@ -5,7 +5,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
 from apiv3.viewsets import WeeklyTimeSeriesViewSet
-from apiv3.views import FileUploadView, GraphView, ItemView
+from apiv3.views import FileUploadView, GraphView, ItemView, ChartView
 
 router = routers.DefaultRouter()
 router.register(r'weeklytimeseries', WeeklyTimeSeriesViewSet)
@@ -32,5 +32,6 @@ urlpatterns = [
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     re_path(r'^upload/(?P<filename>[^/]+)$', FileUploadView.as_view()),
+    re_path(r'^chart/(?P<topic>[^/]+)$', ChartView.as_view()),
     path('admin/', admin.site.urls),
 ]

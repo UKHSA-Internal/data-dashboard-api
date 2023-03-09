@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
 from drf_yasg import openapi
@@ -9,6 +9,38 @@ from rest_framework.views import APIView
 
 from apiv3.api_models import WeeklyTimeSeries
 from apiv3.models import TimeSeries, upload_data
+from domain.charts.data_visualization import write_chart_file_for_topic
+
+
+class ChartView(APIView):
+    def get(self, request, *args, **kwargs):
+        """
+        This endpoint can be used to generate charts conforming to the UK Gov Design System.
+        `topic` relates to the particular disease.
+
+        Currently, the available topics are:
+
+        - `COVID-19`
+
+        - `Influenza`
+
+        - `RSV`
+
+        - `Rhinovirus`
+
+        - `Parainfluenza`
+
+        - `hMPV`
+
+        - `Adenovirus`
+
+        - `Acute Respiratory Infections`
+
+        """
+        filename = write_chart_file_for_topic(topic=kwargs["topic"])
+
+        image = open(filename, 'rb')
+        return FileResponse(image)
 
 
 class FileUploadView(APIView):
