@@ -1,10 +1,36 @@
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import pagination, viewsets
 
-from apiv3.models import WeeklyTimeSeries
+from apiv3.api_models import WeeklyTimeSeries
 from apiv3.serializers import WeeklyTimeSeriesSerializer
 
 
-class WeeklyTimeSeriesViewSet(viewsets.ModelViewSet):
-    queryset = WeeklyTimeSeries.objects.all()
-    serializer_class = WeeklyTimeSeriesSerializer
+class WeeklyTimeSeriesPagination(pagination.PageNumberPagination):
+    page_size = 5
+    max_page_size = 50
 
+
+class WeeklyTimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    This endpoint can be used to retrieve data for weekly time series of a given topic.
+
+    Note that this data is updated on a weekly basis.
+    By default, the list endpoint will paginate by a page size of 5.
+
+    """
+    queryset = WeeklyTimeSeries.objects.all().order_by("start_date")
+    serializer_class = WeeklyTimeSeriesSerializer
+    pagination_class = WeeklyTimeSeriesPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
+        "theme",
+        "sub_theme",
+        "topic",
+        "geography_type",
+        "geography",
+        "metric",
+        "stratum",
+        "year",
+        "epiweek",
+        "start_date",
+    ]

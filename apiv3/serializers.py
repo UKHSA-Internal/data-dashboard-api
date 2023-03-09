@@ -1,9 +1,21 @@
-from apiv3.models import WeeklyTimeSeries
-
 from rest_framework import serializers
+
+from apiv3.api_models import WeeklyTimeSeries
 
 
 class WeeklyTimeSeriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeeklyTimeSeries
-        fields = ['parent_theme', 'child_theme', 'topic', 'geography_type', 'geography', 'metric', 'stratum', 'year', 'epiweek', 'start_date', 'metric_value']
+        fields = [
+            "theme",
+            "sub_theme",
+            "topic",
+            "geography_type",
+            "geography",
+            "metric",
+            "stratum",
+            "year",
+            "epiweek",
+            "start_date",
+            "metric_value",
+        ]
