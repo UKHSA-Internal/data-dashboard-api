@@ -21,6 +21,26 @@ def write_chart_file_for_topic(
     year: int = 2022,
     file_format: str = "svg",
 ) -> str:
+    """For a given `topic`, queries the db, creates a chart and writes the resulting file.
+
+    Args:
+        topic: The name of the topic. E.g. `Influenza`
+        metric: The metric to create the chart for.
+            Defaults to "weekly_positivity"
+        year: The year to generate the chart data for.
+            Defaults to 2022
+        file_format: Can be any of the following:
+            - 'png'
+            - 'jpg' or 'jpeg'
+            - 'webp'
+            - 'svg'
+            - 'pdf'
+            Defaults to `svg`
+
+    Returns:
+        str: The name of the file which has been written
+
+    """
     figure: plotly.graph_objects.Figure = create_chart_figure_for_topic(
         topic=topic, metric=metric, year=year
     )
