@@ -25,26 +25,26 @@ def generate_weekly_time_series(
         None
 
     """
-    all_core_weekly_time_series: QuerySet = time_series_manager.filter(
+    all_core_time_series: QuerySet = time_series_manager.filter(
         period=enums.TimePeriod.Weekly.value
     )
 
     models_to_be_saved = []
-    for core_weekly_time_series in all_core_weekly_time_series:
-        core_weekly_time_series: TimeSeries
+    for core_time_series in all_core_time_series:
+        core_time_series: TimeSeries
 
         flat_weekly_time_series = WeeklyTimeSeries(
-            theme=core_weekly_time_series.metric.topic.sub_theme.theme.name,
-            sub_theme=core_weekly_time_series.metric.topic.sub_theme.name,
-            topic=core_weekly_time_series.metric.topic.name,
-            geography=core_weekly_time_series.geography.name,
-            geography_type=core_weekly_time_series.geography.geography_type.name,
-            metric=core_weekly_time_series.metric.name,
-            stratum=core_weekly_time_series.stratum.name,
-            year=core_weekly_time_series.year,
-            epiweek=core_weekly_time_series.epiweek,
-            start_date=core_weekly_time_series.start_date,
-            metric_value=core_weekly_time_series.metric_value,
+            theme=core_time_series.metric.topic.sub_theme.theme.name,
+            sub_theme=core_time_series.metric.topic.sub_theme.name,
+            topic=core_time_series.metric.topic.name,
+            geography=core_time_series.geography.name,
+            geography_type=core_time_series.geography.geography_type.name,
+            metric=core_time_series.metric.name,
+            stratum=core_time_series.stratum.name,
+            year=core_time_series.year,
+            epiweek=core_time_series.epiweek,
+            start_date=core_time_series.start_date,
+            metric_value=core_time_series.metric_value,
         )
         models_to_be_saved.append(flat_weekly_time_series)
 
