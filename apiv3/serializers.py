@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apiv3.api_models import WeeklyTimeSeries
+from apiv3.models.api_models import WeeklyTimeSeries
 
 
 class WeeklyTimeSeriesSerializer(serializers.ModelSerializer):

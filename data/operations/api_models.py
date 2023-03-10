@@ -2,8 +2,8 @@ from django.db import models
 from django.db.models import QuerySet
 
 from apiv3 import enums
-from apiv3.api_models import WeeklyTimeSeries
-from apiv3.models import TimeSeries
+from apiv3.models.api_models import WeeklyTimeSeries
+from apiv3.models.core_models import TimeSeries
 
 DEFAULT_TIME_SERIES_MANAGER = TimeSeries.objects
 DEFAULT_WEEKLY_TIME_SERIES_MANAGER = WeeklyTimeSeries.objects

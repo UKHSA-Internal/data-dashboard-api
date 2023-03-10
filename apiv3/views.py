@@ -7,8 +7,8 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apiv3.api_models import WeeklyTimeSeries
-from apiv3.models import TimeSeries
+from apiv3.models.api_models import WeeklyTimeSeries
+from apiv3.models.core_models import TimeSeries
 from data.operations.core_models import upload_data
 from domain.charts.data_visualization import write_chart_file_for_topic
 

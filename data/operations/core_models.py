@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 
 from apiv3.enums import TimePeriod
-from apiv3.models import (
+from apiv3.models.core_models import (
     Geography,
     GeographyType,
     Metric,

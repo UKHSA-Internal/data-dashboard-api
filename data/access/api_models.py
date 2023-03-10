@@ -2,7 +2,7 @@ from typing import List, Union
 
 from django.db.models import Manager, QuerySet
 
-from apiv3.api_models import WeeklyTimeSeries
+from apiv3.models.api_models import WeeklyTimeSeries
 
 DEFAULT_WEEKLY_TIME_SERIES_MANAGER = WeeklyTimeSeries.objects
 

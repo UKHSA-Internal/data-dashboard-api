@@ -1,7 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
 
-from apiv3.api_models import WeeklyTimeSeries
+from apiv3.models.api_models import WeeklyTimeSeries
 from apiv3.serializers import WeeklyTimeSeriesSerializer
 
 
