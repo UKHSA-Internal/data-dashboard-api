@@ -38,7 +38,7 @@ class ChartView(APIView):
         - `Acute Respiratory Infections`
 
         """
-        filename = write_chart_file_for_topic(topic=kwargs["topic"])
+        filename = write_chart_file_for_topic(topic=kwargs["topic"], file_format="svg")
 
         image = open(filename, 'rb')
         return FileResponse(image)

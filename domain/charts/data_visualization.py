@@ -15,7 +15,7 @@ def create_chart_figure_for_topic(topic: str) -> plotly.graph_objects.Figure:
 
 def write_chart_file_for_topic(
     topic: str,
-    file_format: str = "png",
+    file_format: str,
 ) -> str:
     """For a given `topic`, queries the db, creates a chart and writes the resulting file.
 
@@ -27,7 +27,6 @@ def write_chart_file_for_topic(
             - 'webp'
             - 'svg'
             - 'pdf'
-            Defaults to `svg`
 
     Returns:
         str: The name of the file which has been written
