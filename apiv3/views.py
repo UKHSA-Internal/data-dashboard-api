@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apiv3.api_models import WeeklyTimeSeries
-from apiv3.models import TimeSeries, upload_data
+from apiv3.models import TimeSeries
+from data.operations import upload_data
 from domain.charts.data_visualization import write_chart_file_for_topic
 
 
