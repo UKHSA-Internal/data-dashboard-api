@@ -67,9 +67,6 @@ def generate_chart_figure(
     # Remove gridlines and apply custom background color
     remove_gridlines_args = {"visible": False}
     figure.update_layout(
-        # autosize=True,
-        # width=700,
-        # height=500,
         yaxis=remove_gridlines_args,
         xaxis=remove_gridlines_args,
         plot_bgcolor=background_color,
