@@ -61,4 +61,6 @@ class WeeklyTimeSeriesManager(models.Manager):
                     `<QuerySet [33388.0, 5.5, 29214.0, 4.7, 24036.0, 3.9>`
 
         """
-        return self.get_metric_values_for_weekly_positivity_by_topic(topic=topic)
+        return self.get_queryset().get_metric_values_for_weekly_positivity_by_topic(
+            topic=topic
+        )
