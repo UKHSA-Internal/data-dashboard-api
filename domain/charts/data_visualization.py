@@ -1,6 +1,6 @@
 import plotly.graph_objects
 
-from data.access import get_weekly_disease_incidence
+from data.access.api_models import get_weekly_disease_incidence
 from domain.charts.generation import generate_chart_figure
 
 
