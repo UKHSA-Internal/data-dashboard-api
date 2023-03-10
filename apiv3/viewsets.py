@@ -7,7 +7,7 @@ from apiv3.serializers import WeeklyTimeSeriesSerializer
 
 class WeeklyTimeSeriesPagination(pagination.PageNumberPagination):
     page_size = 5
-    max_page_size = 50
+    max_page_size = 53
 
 
 class WeeklyTimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
