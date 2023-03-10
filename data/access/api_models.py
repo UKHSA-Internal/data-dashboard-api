@@ -25,9 +25,3 @@ def get_weekly_disease_incidence(
     )
 
     return list(flattened_metric_values)
-
-
-if __name__ == "__main__":
-    incidences = get_weekly_disease_incidence(topic="Influenza", metric="weekly_positivity")
-
-    print(incidences)

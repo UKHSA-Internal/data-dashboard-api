@@ -23,7 +23,7 @@ def _normalize_na_value(text: str) -> str:
     return "0" if "NA" in text else text
 
 
-def _get_or_create_models(fields):
+def _get_or_create_models(fields: List[str]) -> None:
     theme, _ = Theme.objects.get_or_create(name=_strip(fields[0]))
     sub_theme, _ = SubTheme.objects.get_or_create(name=_strip(fields[1]), theme=theme)
     topic, _ = Topic.objects.get_or_create(
@@ -63,6 +63,5 @@ def upload_data(data: io.TextIOWrapper) -> None:
         if fields[0] != '"parent_theme"':
             try:
                 _get_or_create_models(fields=fields)
-
             except ValueError:
                 print(f"Error at line {index}")

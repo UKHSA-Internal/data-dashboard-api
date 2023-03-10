@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from apiv3.api_models import generate_weekly_time_series
+from data.operations.api_models import generate_weekly_time_series
 
 
 class Command(BaseCommand):
