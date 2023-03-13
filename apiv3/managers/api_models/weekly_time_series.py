@@ -1,3 +1,10 @@
+"""
+This file contains the custom QuerySet and Manager classes associated with the `WeeklyTimeSeries` model.
+
+Note that the application layer should only call into the `Manager` class.
+The application should not interact directly with the `QuerySet` class.
+"""
+
 from django.db import models
 
 
