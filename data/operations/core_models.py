@@ -1,3 +1,10 @@
+"""
+This file contains operation-like (write) functionality for interacting with the database layer.
+This shall only include functionality which is used to write to the database.
+
+Specifically, this file contains write database logic for the core models only.
+"""
+
 import io
 from datetime import datetime
 from typing import List

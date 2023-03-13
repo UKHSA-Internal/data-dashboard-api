@@ -1,3 +1,10 @@
+"""
+This file contains operation-like (write) functionality for interacting with the database layer.
+This shall only include functionality which is used to write to the database.
+
+Specifically, this file contains write database logic for the API models only.
+"""
+
 from django.db import models
 from django.db.models import QuerySet
 
