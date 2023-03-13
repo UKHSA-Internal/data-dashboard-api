@@ -12,6 +12,7 @@ from django.db import models
 from django.utils import timezone
 
 from apiv3.enums import TimePeriod
+from apiv3.managers.core_models.time_series import TimeSeriesManager
 
 
 class Theme(models.Model):
@@ -71,3 +72,5 @@ class TimeSeries(models.Model):
     stratum = models.ForeignKey(to=Stratum, on_delete=models.SET_NULL, null=True)
     metric = models.ForeignKey(to=Metric, on_delete=models.SET_NULL, null=True)
     geography = models.ForeignKey(to=Geography, on_delete=models.SET_NULL, null=True)
+
+    objects = TimeSeriesManager()

@@ -32,9 +32,7 @@ def generate_weekly_time_series(
         None
 
     """
-    all_core_time_series: QuerySet = time_series_manager.filter(
-        period=enums.TimePeriod.Weekly.value
-    )
+    all_core_time_series: QuerySet = time_series_manager.filter_weekly()
 
     models_to_be_saved = []
     for core_time_series in all_core_time_series:
