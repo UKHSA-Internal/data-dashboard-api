@@ -4,9 +4,9 @@ import plotly.graph_objects
 
 NUMBER = Union[int, float]
 
-BLACK = "#000000"
-GREY = "#F3F2F1"
-LIGHT_GREY = "#F8F8F8"
+BLACK: str = "#000000"
+GREY: str = "#F3F2F1"
+LIGHT_GREY: str = "#F8F8F8"
 
 
 def generate_chart_figure(
