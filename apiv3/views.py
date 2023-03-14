@@ -19,7 +19,8 @@ class FileUploadView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('file', openapi.IN_FORM, type=openapi.TYPE_FILE, description='File to be uploaded')
-        ]
+        ],
+        deprecated=True,
     )
     def put(self, request, *args, **kwargs):
         WeeklyTimeSeries.objects.all().delete()
