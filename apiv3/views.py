@@ -55,7 +55,8 @@ class FileUploadView(APIView):
                 type=openapi.TYPE_FILE,
                 description="File to be uploaded",
             )
-        ]
+        ],
+        deprecated=True,
     )
     def put(self, request, *args, **kwargs):
         TimeSeries.objects.all().delete()
