@@ -19,9 +19,13 @@ class FileUploadView(APIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('file', openapi.IN_FORM, type=openapi.TYPE_FILE, description='File to be uploaded')
-        ]
+        ],
+        deprecated=True,
     )
     def put(self, request, *args, **kwargs):
+        """
+        Note that this endpoint is **deprecated** and should only be used for demo/testing purposes.
+        """
         WeeklyTimeSeries.objects.all().delete()
         with open(kwargs['filename'], 'wb+') as destination:
             for chunk in request.FILES['file'].chunks():
