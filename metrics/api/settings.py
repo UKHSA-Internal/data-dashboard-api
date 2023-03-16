@@ -111,11 +111,13 @@ WSGI_APPLICATION = 'metrics.api.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+# Puts the db at the root level of the repo instead of within the `metrics` app
+ROOT_LEVEL_BASE_DIR = BASE_DIR.parent
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
     }
 }
 
