@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from metrics.api.models.api_models import WeeklyTimeSeries
+from metrics.data.models.api_models import WeeklyTimeSeries
 
 
 class WeeklyTimeSeriesSerializer(serializers.ModelSerializer):

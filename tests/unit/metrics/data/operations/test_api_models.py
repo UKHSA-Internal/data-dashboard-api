@@ -1,15 +1,15 @@
 from unittest import mock
 
 from metrics.api import enums
-from metrics.api.models.api_models import WeeklyTimeSeries
-from metrics.api.models.core_models import TimeSeries
+from metrics.data.models.api_models import WeeklyTimeSeries
+from metrics.data.models.core_models import TimeSeries
 from metrics.data.operations.api_models import (
     create_weekly_time_series_from_core_time_series,
     generate_weekly_time_series,
 )
 from tests.fakes.managers.time_series_manager import FakeTimeSeriesManager
 
-MODULE_PATH: str = "data.operations.api_models"
+MODULE_PATH: str = "metrics.data.operations.api_models"
 
 
 class TestGenerateWeeklyTimeSeries:

@@ -12,7 +12,7 @@ from django.db import models
 from django.utils import timezone
 
 from metrics.api.enums import TimePeriod
-from metrics.api.managers.core_models.time_series import TimeSeriesManager
+from metrics.data.managers.core_models.time_series import TimeSeriesManager
 
 
 class Theme(models.Model):

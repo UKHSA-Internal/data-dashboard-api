@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import List
 
 from metrics.api.enums import TimePeriod
-from metrics.api.models.core_models import (
+from metrics.data.models.core_models import (
     Geography,
     GeographyType,
     Metric,

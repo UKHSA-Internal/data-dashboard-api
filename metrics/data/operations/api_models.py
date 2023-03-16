@@ -8,8 +8,8 @@ Specifically, this file contains write database logic for the API models only.
 from django.db import models
 from django.db.models import QuerySet
 
-from metrics.api.models.api_models import WeeklyTimeSeries
-from metrics.api.models.core_models import TimeSeries
+from metrics.data.models.api_models import WeeklyTimeSeries
+from metrics.data.models.core_models import TimeSeries
 
 DEFAULT_TIME_SERIES_MANAGER = TimeSeries.objects
 DEFAULT_WEEKLY_TIME_SERIES_MANAGER = WeeklyTimeSeries.objects
