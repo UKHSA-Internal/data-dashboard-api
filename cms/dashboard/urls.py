@@ -1,19 +1,13 @@
 from django.conf import settings
-from django.contrib import admin
 from django.urls import include, path, re_path
 from wagtail import urls as wagtail_urls
 from wagtail.admin import urls as wagtailadmin_urls
-from wagtail.documents import urls as wagtaildocs_urls
 
-from dashboard.api import api_router
-from search import views as search_views
+from apiv3.urls import api_router
 
 urlpatterns = [
-    path("api/v2/", api_router.urls),
-    path("django-admin/", admin.site.urls),
-    path("admin/", include(wagtailadmin_urls)),
-    path("documents/", include(wagtaildocs_urls)),
-    path("search/", search_views.search, name="search"),
+    path("api/", api_router.urls),
+    path("cms-admin/", include(wagtailadmin_urls)),
     re_path(r'^', include(wagtail_urls)),
 ]
 

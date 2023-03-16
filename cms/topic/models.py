@@ -6,7 +6,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 from wagtail.search import index
 
-from common.models import AVAILABLE_RICH_TEXT_FEATURES
+from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 
 
 class TopicPage(Page):
