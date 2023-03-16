@@ -5,7 +5,6 @@ from data.operations.api_models import generate_weekly_time_series
 
 class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
-        breakpoint()
         try:
             generate_weekly_time_series()
         except Exception:
