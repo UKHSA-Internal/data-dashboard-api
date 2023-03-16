@@ -8,9 +8,10 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 from wagtail.api.v2.views import PagesAPIViewSet
 
+
 from apiv3 import settings
-from apiv3.views import FileUploadView, GraphView, ItemView
 from apiv3.viewsets import WeeklyTimeSeriesViewSet
+from apiv3.views import FileUploadView, GraphView, ItemView, ChartView
 
 router = routers.DefaultRouter()
 router.register(r"weeklytimeseries", WeeklyTimeSeriesViewSet)
@@ -56,6 +57,7 @@ urlpatterns = [
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
     re_path(r"^upload/(?P<filename>[^/]+)$", FileUploadView.as_view()),
+    re_path(r'^charts/(?P<topic>[^/]+)$', ChartView.as_view()),
     path("admin/", admin.site.urls),
     path("api/", api_router.urls),
     path("cms-admin/", include(wagtailadmin_urls)),
@@ -68,13 +70,3 @@ if settings.DEBUG:
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-urlpatterns = urlpatterns + [
-    # For anything not caught by a more specific rule above, hand over to
-    # Wagtail's page serving mechanism. This should be the last pattern in
-    # the list:
-    path("", include(wagtail_urls)),
-    # Alternatively, if you want Wagtail pages to be served from a subpath
-    # of your site, rather than the site root:
-    #    path("pages/", include(wagtail_urls)),
-]

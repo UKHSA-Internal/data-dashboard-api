@@ -1,16 +1,47 @@
-from datetime import datetime
-
-from django.http import HttpResponse, JsonResponse
+from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from apiv3.models.api_models import WeeklyTimeSeries
+from apiv3.models.core_models import TimeSeries
+from data.operations.core_models import upload_data
+from domain.charts.data_visualization import write_chart_file_for_topic
 
 
-from apiv3.models import WeeklyTimeSeries
+class ChartView(APIView):
+    def get(self, request, *args, **kwargs):
+        """
+        This endpoint can be used to generate charts conforming to the UK Gov Design System.
+        `topic` relates to the particular disease.
+
+        Currently, the available topics are:
+
+        - `COVID-19`
+
+        - `Influenza`
+
+        - `RSV`
+
+        - `Rhinovirus`
+
+        - `Parainfluenza`
+
+        - `hMPV`
+
+        - `Adenovirus`
+
+        - `Acute Respiratory Infections`
+
+        """
+        filename = write_chart_file_for_topic(topic=kwargs["topic"], file_format="svg")
+
+        image = open(filename, 'rb')
+        return FileResponse(image)
 
 
 class FileUploadView(APIView):
@@ -18,7 +49,12 @@ class FileUploadView(APIView):
 
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter('file', openapi.IN_FORM, type=openapi.TYPE_FILE, description='File to be uploaded')
+            openapi.Parameter(
+                "file",
+                openapi.IN_FORM,
+                type=openapi.TYPE_FILE,
+                description="File to be uploaded",
+            )
         ],
         deprecated=True,
     )
@@ -30,29 +66,8 @@ class FileUploadView(APIView):
         with open(kwargs['filename'], 'wb+') as destination:
             for chunk in request.FILES['file'].chunks():
                 destination.write(chunk)
-        with open(kwargs['filename'], 'r') as source:
-            line_num = 0
-            for line in source:
-                line_num += 1
-                fields = line.split(",")
-                if fields[0] != '"parent_theme"':
-                    try:
-                        new_time_series_entry = WeeklyTimeSeries(
-                            parent_theme=fields[0].strip('\"'),
-                            child_theme=fields[1].strip('\"'),
-                            topic=fields[2].strip('\"'),
-                            geography_type=fields[3].strip('\"'),
-                            geography=fields[4].strip('\"'),
-                            metric=fields[5].strip('\"'),
-                            stratum=fields[6].strip('\"'),
-                            year=fields[7],
-                            epiweek=fields[8],
-                            start_date=datetime.strptime(fields[9], '%Y-%m-%d'),
-                            metric_value=fields[10]
-                        )
-                        new_time_series_entry.save()
-                    except ValueError:
-                        print(f"Error at line {line_num}")
+        with open(kwargs["filename"], "r") as source:
+            upload_data(data=source)
         return Response(status=204)
 
 
