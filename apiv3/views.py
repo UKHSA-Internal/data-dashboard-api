@@ -56,11 +56,15 @@ class FileUploadView(APIView):
                 description="File to be uploaded",
             )
         ],
+        deprecated=True,
     )
     def put(self, request, *args, **kwargs):
-        TimeSeries.objects.all().delete()
-        with open(kwargs["filename"], "wb+") as destination:
-            for chunk in request.FILES["file"].chunks():
+        """
+        Note that this endpoint is **deprecated** and should only be used for demo/testing purposes.
+        """
+        WeeklyTimeSeries.objects.all().delete()
+        with open(kwargs['filename'], 'wb+') as destination:
+            for chunk in request.FILES['file'].chunks():
                 destination.write(chunk)
         with open(kwargs["filename"], "r") as source:
             upload_data(data=source)
