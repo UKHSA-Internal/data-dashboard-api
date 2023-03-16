@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'metrics.api',
+    'metrics.data',
     'metrics.interfaces',
     'cms.home',
     'cms.search',
