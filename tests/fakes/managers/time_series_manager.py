@@ -1,5 +1,5 @@
-from apiv3 import enums
-from apiv3.managers.core_models.time_series import TimeSeriesManager
+from metrics.api import enums
+from metrics.api.managers.core_models.time_series import TimeSeriesManager
 
 
 class FakeTimeSeriesManager(TimeSeriesManager):
