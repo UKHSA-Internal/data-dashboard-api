@@ -1,0 +1,11 @@
+{% extends "wagtailadmin/login.html" %}
+{% load static %}
+
+{% block branding_login %}UKHSA Dashboard CMS{% endblock %}
+
+
+{% block branding_logo %}
+    <div class="login-logo">
+      <img class="login-logo-img" alt="" src="{% static 'UKHSA_icon_black_no_bg.png' %}" />
+    </div>
+{% endblock %}
