@@ -25,6 +25,22 @@ then as a minimum it should be moved to a management command.
 
 ## Data model
 
+The raw data ingested by the system is already > 60k rows. 
+A significant portion of the data is redundant and replicated across rows.
+
+The data model has been designed as 2 distinct sub-systems:
+
+1. API models. This sub-system represents the flattened version of the data. No foreign keys are to be found.
+And the raw data is effectively loaded in to a single flat table. 
+As a result, one should expect to find a large amount of replicated values.
+2. Core models. This sub-system represents the normalized version of the data. 
+There are a series of foreign key relationships. Although this greatly reduced the amount of data needed to be stored.
+It does mean that querying the core models will incur penalties from joins depending on the query being performed.
+
+Note that at the point of data ingestion, the **Core models** are populated.
+Once this is done, then the API models can be updated. 
+Currently, this is achieved via the management command `generate_weekly_time_series`.
+
 ---
 
 ## Integration with the frontend
@@ -70,4 +86,28 @@ The works could be phased as follows:
 ---
 
 ## Current limitations
+
+### Outdated data file
+
+A new daily metrics data file was received on 15th March 2023. 
+
+The team cannot commit to redesigning the data model, 
+the API layer and additional querying logic to suit this new data file in time 
+for the Alpha release (end of March 2023).
+
+As such, this work will need to be completed in April 2023 to support the new data file provided.
+
+### Data ingestion
+
+Currently, the data is being ingested via the `PUT upload/` endpoint. 
+This endpoint is now deprecated and will need to be removed.
+
+An integration point will need to be agreed with the UKHSA data team so that this application can consume
+data files produced by the UKHSA ETL pipeline.
+
+Note that this file is always provided in its entirety. With years worth of data which is unchanged.
+This is most likely costing a considerable sum of money for cloud storage costs.
+
+In the future, this should be altered so that a data file is provided which only shows the most recent month 
+of data. Since data prior to this is unlikely to change.
 
