@@ -16,11 +16,27 @@ There are 4 main `wagtail` apps within the project.
 
 - `common` - this is the wagtail app which handles the non-topic pages e.g. the `About` page.
 - `home` - this is the wagtail app for the landing page.
-- `topic` - this is the wagtail app for the topic pages e.g the `COVID-19` or the `Influenza` detail pages.
+- `topic` - this is the wagtail app for the topic pages e.g. the `COVID-19` or the `Influenza` detail pages.
 
 ---
 
 ## Data model
+
+The data model is split according to the wagtail apps and accordingly the page types.
+There are currently 3 main page types:
+
+- `HomePage`
+- `CommonPage`
+- `TopicPage`
+
+For the `HomePage` and `TopicPage` there will also be a foreign key 1-to-many relationship out to 
+a corresponding related links type model:
+
+- `HomePage` (1) -> (many) `HomePageRelatedLink`
+- `TopicPage`(1) -> (many) `TopicPageRelatedLink`
+
+As a design choice, each object should have a `title` field as well as a `body` field.
+Note that the `title` field is inherited from the `wagtail` `Page` class.
 
 ---
 
@@ -30,6 +46,16 @@ The CMS operates in headless-mode, exposing the text content in the form of a RE
 The frontend application integrates with the CMS via this REST API.
 
 As such, the responsibility is entirely on the frontend to render the content passed to it by the CMS.
+
+---
+
+## Design
+
+No conversations have been had with UKHSA around the design of the CMS view.
+The colour scheme can be overriden and modified by changing the `cms/dashboard/static/css/theme.css` file.
+
+This file is currently being injected into the wagtail app by virtue of the `global_admin_css` hook.
+This hook can be found at `cms/dashboard/wagtail_hooks.py`.
 
 ---
 
