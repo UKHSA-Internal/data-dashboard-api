@@ -4,28 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='WeeklyTimeSeries',
+            name="WeeklyTimeSeries",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('parent_theme', models.CharField(max_length=30)),
-                ('child_theme', models.CharField(max_length=30)),
-                ('topic', models.CharField(max_length=30)),
-                ('geography_type', models.CharField(max_length=30)),
-                ('geography', models.CharField(max_length=30)),
-                ('metric', models.CharField(max_length=30)),
-                ('stratum', models.CharField(max_length=30)),
-                ('year', models.IntegerField()),
-                ('epiweek', models.IntegerField()),
-                ('start_date', models.DateField(max_length=30)),
-                ('metric_value', models.FloatField(max_length=30)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("parent_theme", models.CharField(max_length=30)),
+                ("child_theme", models.CharField(max_length=30)),
+                ("topic", models.CharField(max_length=30)),
+                ("geography_type", models.CharField(max_length=30)),
+                ("geography", models.CharField(max_length=30)),
+                ("metric", models.CharField(max_length=30)),
+                ("stratum", models.CharField(max_length=30)),
+                ("year", models.IntegerField()),
+                ("epiweek", models.IntegerField()),
+                ("start_date", models.DateField(max_length=30)),
+                ("metric_value", models.FloatField(max_length=30)),
             ],
         ),
     ]

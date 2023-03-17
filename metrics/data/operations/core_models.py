@@ -63,9 +63,7 @@ def _get_or_create_models(fields: List[str]) -> None:
 
 
 def upload_data(data: io.TextIOWrapper) -> None:
-
     for index, line in enumerate(data, 0):
-
         fields: List[str] = line.split(",")
         if fields[0] != '"parent_theme"':
             try:
