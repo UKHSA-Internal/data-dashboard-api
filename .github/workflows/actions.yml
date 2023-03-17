@@ -20,27 +20,22 @@ jobs:
   ###############################################################################
 
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: Create pip cache for dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies
+      - name: Set up virtual environment
         run: |
+          python -m venv .venv
+          source .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Cache virtual environment
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ hashFiles('requirements.txt') }}
+          restore-keys: venv-
 
   ###############################################################################
   # Unit tests
@@ -49,29 +44,17 @@ jobs:
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [ build ]
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: Pull in cached project dependencies
+      - name: Restore virtual environment
         uses: actions/cache@v2
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Check pip cache
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          pip install -r requirements.txt
-
+          path: .venv
+          key: venv-${{ hashFiles('requirements.txt') }}
       - name: Run unit tests
         run: |
+          source .venv/bin/activate
           python -m pytest tests/unit/ -v
 
   ###############################################################################
