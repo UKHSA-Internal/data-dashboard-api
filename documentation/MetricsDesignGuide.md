@@ -56,7 +56,7 @@ The frontend application fetches metrics via the REST API in this app.
 ## Chart generation
 
 Currently, the chart generation functionality is bespoke to this codebase.
-The chart generation code can be found at `domain/charts/generation.py`.
+The chart generation code can be found at `metrics/domain/charts/generation.py`.
 
 The [coronavirus-dashboard-pipeline-etl](https://github.com/publichealthengland/coronavirus-dashboard-pipeline-etl)
 contains a number of functions which are being used to generate charts of various types 

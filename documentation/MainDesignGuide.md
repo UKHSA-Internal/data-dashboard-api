@@ -89,5 +89,5 @@ E.g. for a test which targets a function which sits in:
 ```
 Then the corresponding unit test should reside in:
 ```
-|- tests/unit/metrics/data/operations/api_models.py::test_api_models.py
+|- tests/unit/metrics/data/operations/test_api_models.py
 ```
