@@ -65,6 +65,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
+      - name: Check pip cache
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pip install -r requirements.txt
+
       - name: Run unit tests
         run: |
           python -m pytest tests/unit/ -v
