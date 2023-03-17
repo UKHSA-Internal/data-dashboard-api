@@ -71,7 +71,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: [ build ]
+    needs: [quality-checks]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
