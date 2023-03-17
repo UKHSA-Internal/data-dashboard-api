@@ -32,16 +32,13 @@ def write_chart_file_for_topic(
         str: The name of the file which has been written
 
     """
-    figure: plotly.graph_objects.Figure = create_chart_figure_for_topic(
-        topic=topic
-    )
+    figure: plotly.graph_objects.Figure = create_chart_figure_for_topic(topic=topic)
     return write_figure(figure=figure, topic=topic, file_format=file_format)
 
 
 def write_figure(
     figure: plotly.graph_objects.Figure, topic: str, file_format: str
 ) -> str:
-
     filename = f"{topic}.{file_format}"
     figure.write_image(file=filename, format=file_format)
 

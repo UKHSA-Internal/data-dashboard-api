@@ -7,10 +7,9 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 from wagtail.api.v2.views import PagesAPIViewSet
 
-
 from metrics.api import settings
+from metrics.api.views import ChartView, FileUploadView, GraphView, ItemView
 from metrics.api.viewsets import WeeklyTimeSeriesViewSet
-from metrics.api.views import FileUploadView, GraphView, ItemView, ChartView
 
 router = routers.DefaultRouter()
 router.register(r"weeklytimeseries", WeeklyTimeSeriesViewSet)
@@ -56,7 +55,7 @@ urlpatterns = [
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
     re_path(r"^upload/(?P<filename>[^/]+)$", FileUploadView.as_view()),
-    re_path(r'^charts/(?P<topic>[^/]+)$', ChartView.as_view()),
+    re_path(r"^charts/(?P<topic>[^/]+)$", ChartView.as_view()),
     path("admin/", admin.site.urls),
     path("api/", api_router.urls),
     path("cms-admin/", include(wagtailadmin_urls)),

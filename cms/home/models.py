@@ -1,6 +1,6 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, TabbedInterface, ObjectList, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
@@ -31,7 +31,6 @@ class HomePage(Page):
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
             ObjectList(Page.promote_panels, heading="Promote"),
-
         ]
     )
 

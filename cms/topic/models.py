@@ -58,7 +58,6 @@ class TopicPage(Page):
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
             ObjectList(Page.promote_panels, heading="Promote"),
-
         ]
     )
 
