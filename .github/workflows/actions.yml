@@ -1,6 +1,7 @@
 name: Deploy to ECR
 
 on: push
+
 env:
   APIENV: "PROD"
   AWS_REGION: "eu-west-2"
@@ -8,19 +9,64 @@ env:
   POSTGRES_USER: "wp_user"
   POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
   POSTGRES_DB: "winterpressures"
+
 permissions:
   id-token: write # This is required for requesting the JWT
   contents: read # This is required for actions/checkout
+
 jobs:
-  
-  build:
-    
-    name: ECR Image Push
+
+  ###############################################################################
+  # Install dependencies & build packages
+  ###############################################################################
+
+  install:
+    name: Install
     runs-on: ubuntu-latest
 
-   
     steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
 
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+  build:
+    name: Build
+    needs: [install]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        uses: actions/setup-python@v3
+        run: pip install -r requirements.txt
+
+  ###############################################################################
+  # Unit tests
+  ###############################################################################
+
+  unit-tests:
+    name: Unit tests
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run unit tests with pytest
+        run: python -m pytest tests/unit/ -v
+
+  ###############################################################################
+  # Deploy
+  ###############################################################################
+
+  deploy:
+    
+    name: ECR Image Push
+    needs: [unit-tests]
+    runs-on: ubuntu-latest
+
+    steps:
     - name: Check out code
       uses: actions/checkout@v2
     
