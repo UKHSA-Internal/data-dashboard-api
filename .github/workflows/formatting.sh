@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# exit immediately on non-zero status
+# Exit immediately on non-zero status
 set -xe
+
+# Activate the virtual environment
+source ../../.venv/bin/activate
 
 # Run isort and black (in that order) to check that there are no changes
 isort .
