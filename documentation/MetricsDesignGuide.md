@@ -39,7 +39,11 @@ It does mean that querying the core models will incur penalties from joins depen
 
 Note that at the point of data ingestion, the **Core models** are populated.
 Once this is done, then the API models can be updated. 
-Currently, this is achieved via the management command `generate_weekly_time_series`.
+Currently, this is achieved via the management command:
+
+```
+python manage.py generate_weekly_time_series
+```
 
 ---
 
