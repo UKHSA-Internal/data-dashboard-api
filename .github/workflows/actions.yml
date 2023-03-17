@@ -15,7 +15,6 @@ permissions:
   contents: read # This is required for actions/checkout
 
 jobs:
-
   ###############################################################################
   # Install dependencies & build packages
   ###############################################################################
@@ -24,15 +23,24 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
-          cache: 'pip'
 
-      - run: python -m pip install --upgrade pip
-      - run: pip install -r requirements.txt
+      - name: Create pip cache for dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
   ###############################################################################
   # Unit tests
@@ -40,24 +48,35 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: [build]
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
-      - uses: actions/setup-python@v4
-      - uses: actions/checkout@v3
-      - name: Run unit tests with pytest
-        run: python -m pytest tests/unit/ -v
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Pull in cached project dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Run unit tests
+        run: |
+          python -m pytest tests/unit/ -v
 
   ###############################################################################
   # Deploy
   ###############################################################################
 
   deploy:
-    
     name: ECR Image Push
     needs: [unit-tests]
     runs-on: ubuntu-latest
-
     steps:
     - name: Check out code
       uses: actions/checkout@v2
