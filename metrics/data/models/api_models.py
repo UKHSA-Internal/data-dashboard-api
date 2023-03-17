@@ -34,5 +34,3 @@ class WeeklyTimeSeries(models.Model):
 
     def __str__(self):
         return f"Data for {self.start_date}, metric '{self.metric}', stratum '{self.stratum}', value: {self.metric_value}"
-
-

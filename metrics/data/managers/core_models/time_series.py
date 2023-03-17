@@ -21,9 +21,7 @@ class TimeSeriesQuerySet(models.QuerySet):
                 of the `TimeSeries` records which have a `W` as the `period` field
 
         """
-        return self.filter(period=enums.TimePeriod.Weekly.value).order_by(
-            "start_date"
-        )
+        return self.filter(period=enums.TimePeriod.Weekly.value).order_by("start_date")
 
 
 class TimeSeriesManager(models.Manager):
