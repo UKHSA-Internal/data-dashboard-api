@@ -5,6 +5,8 @@ set -xe
 # Activate the virtual environment
 source .venv/bin/activate
 
+pip list
+
 # Run isort and black (in that order) to check that there are no changes
 isort .
 black .
