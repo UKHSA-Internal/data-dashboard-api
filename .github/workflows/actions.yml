@@ -62,8 +62,6 @@ jobs:
 
       - name: Run isort & black
         run: |
-          source .venv/bin/activate
-          pip list
           source .github/workflows/formatting.sh
 
   ###############################################################################
