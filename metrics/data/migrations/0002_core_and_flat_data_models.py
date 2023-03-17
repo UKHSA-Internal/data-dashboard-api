@@ -8,7 +8,7 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("api", "0001_initial"),
+        ("data", "0001_initial"),
     ]
 
     operations = [
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="api.subtheme",
+                        to="data.subtheme",
                     ),
                 ),
             ],
@@ -172,7 +172,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="api.geography",
+                        to="data.geography",
                     ),
                 ),
                 (
@@ -180,7 +180,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="api.metric",
+                        to="data.metric",
                     ),
                 ),
                 (
@@ -188,7 +188,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,
-                        to="api.stratum",
+                        to="data.stratum",
                     ),
                 ),
             ],
@@ -199,7 +199,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                to="api.theme",
+                to="data.theme",
             ),
         ),
         migrations.AddField(
@@ -208,7 +208,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                to="api.topic",
+                to="data.topic",
             ),
         ),
         migrations.AddField(
@@ -217,7 +217,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
-                to="api.geographytype",
+                to="data.geographytype",
             ),
         ),
     ]

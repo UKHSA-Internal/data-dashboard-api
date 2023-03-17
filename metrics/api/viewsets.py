@@ -1,8 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
 
-from metrics.api.models.api_models import WeeklyTimeSeries
 from metrics.api.serializers import WeeklyTimeSeriesSerializer
+from metrics.data.models.api_models import WeeklyTimeSeries
 
 
 class WeeklyTimeSeriesPagination(pagination.PageNumberPagination):
@@ -18,6 +18,7 @@ class WeeklyTimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     By default, the list endpoint will paginate by a page size of 5.
 
     """
+
     queryset = WeeklyTimeSeries.objects.all().order_by("start_date")
     serializer_class = WeeklyTimeSeriesSerializer
     pagination_class = WeeklyTimeSeriesPagination

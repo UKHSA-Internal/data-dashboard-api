@@ -7,7 +7,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from metrics.api.models.api_models import WeeklyTimeSeries
+from metrics.data.models.api_models import WeeklyTimeSeries
 from metrics.data.operations.core_models import upload_data
 from metrics.domain.charts.data_visualization import write_chart_file_for_topic
 

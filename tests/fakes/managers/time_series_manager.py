@@ -1,5 +1,5 @@
 from metrics.api import enums
-from metrics.api.managers.core_models.time_series import TimeSeriesManager
+from metrics.data.managers.core_models.time_series import TimeSeriesManager
 
 
 class FakeTimeSeriesManager(TimeSeriesManager):

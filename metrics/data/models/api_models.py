@@ -10,7 +10,7 @@ Note that the flat models should only be populated
 """
 from django.db import models
 
-from metrics.api.managers.api_models.weekly_time_series import WeeklyTimeSeriesManager
+from metrics.data.managers.api_models.weekly_time_series import WeeklyTimeSeriesManager
 
 
 class WeeklyTimeSeries(models.Model):
