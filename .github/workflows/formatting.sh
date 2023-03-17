@@ -3,8 +3,9 @@
 set -xe
 
 # Activate the virtual environment
-ls
+ls -a
 pwd
+pip list
 source ../../.venv/bin/activate
 
 # Run isort and black (in that order) to check that there are no changes
