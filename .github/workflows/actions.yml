@@ -45,6 +45,27 @@ jobs:
           restore-keys: venv-
 
   ###############################################################################
+  # Code quality checks
+  ###############################################################################
+
+  quality-checks:
+    name: Formatting
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore virtual environment
+        uses: actions/cache@v2
+        with:
+          path: .venv
+          key: venv-${{ hashFiles('requirements.txt') }}
+
+      - name: Run isort & black
+        run: |
+          source .venv/bin/activate
+          source .github/workflows/formatting.sh
+
+  ###############################################################################
   # Unit tests
   ###############################################################################
 
