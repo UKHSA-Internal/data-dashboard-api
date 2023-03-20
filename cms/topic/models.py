@@ -64,7 +64,7 @@ class TopicPage(Page):
 
 class TopicPageRelatedLink(Orderable):
     page = ParentalKey(
-        TopicPage, on_delete=models.CASCADE, related_name="related_links"
+        TopicPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
     url = models.URLField(verbose_name="URL")
