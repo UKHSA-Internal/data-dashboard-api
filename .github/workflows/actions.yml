@@ -67,7 +67,7 @@ jobs:
 
   deploy:
     name: ECR Image Push
-    needs: [unit-tests]
+    needs: [unit-tests, quality-checks]
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
