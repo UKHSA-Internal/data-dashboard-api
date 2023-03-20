@@ -8,7 +8,7 @@ runs:
     - name: Create virtual environment
       run: |
         python -m venv venv
-        source .venv/bin/activate
+        source venv/bin/activate
       shell: bash
 
     - name: Upgrade pip
