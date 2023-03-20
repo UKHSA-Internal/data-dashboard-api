@@ -10,7 +10,7 @@ runs:
       with:
         path: |
           ~/.cache/pip
-          venv
+          .venv
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-

@@ -7,8 +7,8 @@ runs:
   steps:
     - name: Create virtual environment
       run: |
-        python -m venv venv
-        source venv/bin/activate
+        python -m venv .venv
+        source .venv/bin/activate
       shell: bash
 
     - name: Upgrade pip
