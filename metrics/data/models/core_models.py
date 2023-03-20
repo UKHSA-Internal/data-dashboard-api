@@ -14,7 +14,6 @@ from django.utils import timezone
 from metrics.api.enums import TimePeriod
 from metrics.data.managers.core_models.time_series import TimeSeriesManager
 
-
 CHAR_COLUMN_MAX_CONSTRAINT: int = 50
 
 
