@@ -12,23 +12,25 @@ from django.db import models
 
 from metrics.data.managers.api_models.weekly_time_series import WeeklyTimeSeriesManager
 
+CHAR_COLUMN_MAX_CONSTRAINT: int = 50
+
 
 class WeeklyTimeSeries(models.Model):
-    theme = models.CharField(max_length=30)
-    sub_theme = models.CharField(max_length=30)
-    topic = models.CharField(max_length=30)
+    theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    sub_theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    topic = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
-    geography_type = models.CharField(max_length=30)
-    geography = models.CharField(max_length=30)
+    geography_type = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    geography = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
-    metric = models.CharField(max_length=30)
+    metric = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
-    stratum = models.CharField(max_length=30)
+    stratum = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     year = models.IntegerField()
     epiweek = models.IntegerField()
-    start_date = models.DateField(max_length=30)
+    start_date = models.DateField()
 
-    metric_value = models.FloatField(max_length=30)
+    metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = WeeklyTimeSeriesManager()
 

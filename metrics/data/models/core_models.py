@@ -14,42 +14,44 @@ from django.utils import timezone
 from metrics.api.enums import TimePeriod
 from metrics.data.managers.core_models.time_series import TimeSeriesManager
 
+CHAR_COLUMN_MAX_CONSTRAINT: int = 50
+
 
 class Theme(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     created_dt = models.DateTimeField(default=timezone.now)
 
 
 class SubTheme(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     theme = models.ForeignKey(to=Theme, on_delete=models.SET_NULL, null=True)
     created_dt = models.DateTimeField(default=timezone.now)
 
 
 class Topic(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     sub_theme = models.ForeignKey(to=SubTheme, on_delete=models.SET_NULL, null=True)
 
 
 class GeographyType(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
 
 class Geography(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     geography_type = models.ForeignKey(
         to=GeographyType, on_delete=models.SET_NULL, null=True
     )
 
 
 class Metric(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     rounding = models.CharField(max_length=100)
     topic = models.ForeignKey(to=Topic, on_delete=models.SET_NULL, null=True)
 
 
 class Stratum(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
 
 class TimeSeries(models.Model):
