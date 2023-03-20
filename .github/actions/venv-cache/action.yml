@@ -14,3 +14,8 @@ runs:
         key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
           ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt --no-cache-dir
+      shell: bash
