@@ -24,8 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/setup-venv
-      - uses: ./.github/actions/venv-cache
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
 
   ###############################################################################
   # Code quality checks
@@ -37,11 +37,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/venv-cache
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
 
       - name: Run isort & black
         run: |
-          source .venv/bin/activate
           source .github/workflows/formatting.sh
 
   ###############################################################################
@@ -54,11 +54,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ./.github/actions/venv-cache
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
 
       - name: Run unit tests
         run: |
-          source .venv/bin/activate
           python -m pytest tests/unit/
 
   ###############################################################################
