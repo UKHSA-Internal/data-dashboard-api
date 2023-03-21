@@ -11,6 +11,7 @@ from typing import Type, List, Dict
 import pandas as pd
 from django.db import models
 
+
 from metrics.api.enums import TimePeriod
 from metrics.data.models.core_models import (
     Geography,
