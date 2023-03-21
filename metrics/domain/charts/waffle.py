@@ -187,6 +187,9 @@ def generate_chart_figure(
     Raises:
         `TooManyDataPointsWaffleChartError`: If more than
             3 data points are provided
+        `DataPointsNotInDescendingOrderError: If the given
+            `data_points` are not in descending order.
+            From largest to smallest values, left to right.
 
     """
     _validate_data_points(data_points=data_points)
