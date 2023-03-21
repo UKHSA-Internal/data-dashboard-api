@@ -16,6 +16,19 @@ def build_two_dimensional_matrix(
         This means that by default the returned matrix will be
         of size `100`.
 
+    Examples:
+        >>> build_two_dimensional_matrix(threshold=1, identifier=1, length=2, width=2)
+        array([[1., 0.], [0., 0.]])
+
+        >>> build_two_dimensional_matrix(threshold=4, identifier=1, length=3, width=3)
+        array([[1., 1., 1.], [1., 0., 0.], [0., 0., 0.]])
+
+        >>> build_two_dimensional_matrix(threshold=1, identifier=2, length=2, width=2)
+        array([[2., nan.], [nan., nan.]])
+
+        >>> build_two_dimensional_matrix(threshold=1, identifier=3, length=2, width=2)
+        array([[3., nan.], [nan., nan.]])
+
     Args:
         threshold: The nominal point of non-zero values in the matrix
         identifier: The number to assign to the non-zero values.
@@ -32,7 +45,7 @@ def build_two_dimensional_matrix(
             length = 2
             width = 2
             threshold = 2
-        >>> array([[1., 0.], [0., 0.]])
+        >>> array([[1., 1.], [0., 0.]])
 
     """
     matrix_size: int = length * width
@@ -181,7 +194,7 @@ def generate_chart_figure(
     figure = plotly.graph_objects.Figure()
 
     for index, value in enumerate(data_points, 1):
-        logical_matrix: ndarray = build_two_dimensional_matrix(
+        two_dimensional_matrix: ndarray = build_two_dimensional_matrix(
             threshold=value, identifier=index
         )
 
@@ -190,7 +203,7 @@ def generate_chart_figure(
 
         # Create the heatmap plot
         heatmap_plot = plotly.graph_objects.Heatmap(
-            z=logical_matrix,
+            z=two_dimensional_matrix,
             hoverongaps=False,
             showscale=False,
             ygap=cell_gap,
