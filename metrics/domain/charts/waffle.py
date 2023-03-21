@@ -197,27 +197,38 @@ def generate_chart_figure(
     figure = plotly.graph_objects.Figure()
 
     for index, value in enumerate(data_points, 1):
-        two_dimensional_matrix: ndarray = build_two_dimensional_matrix(
-            threshold=value, identifier=index
+        figure = _add_plot_to_figure(
+            value=value, index=index, cell_gap=cell_gap, figure=figure
         )
-
-        # Fetch the colour scale values based on the index
-        colour_scale: List[List] = build_color_scale(identifier=index)
-
-        # Create the heatmap plot
-        heatmap_plot = plotly.graph_objects.Heatmap(
-            z=two_dimensional_matrix,
-            hoverongaps=False,
-            showscale=False,
-            ygap=cell_gap,
-            xgap=cell_gap,
-            colorscale=colour_scale,
-        )
-
-        # Add the heatmap plot to the chart
-        figure.add_trace(trace=heatmap_plot)
 
     figure.update_layout(width=width, height=height, **WAFFLE_LAYOUT_ARGS)
+
+    return figure
+
+
+def _add_plot_to_figure(
+    value: int, index: int, cell_gap: int, figure: plotly.graph_objects.Figure
+) -> plotly.graph_objects.Figure:
+    # Build 2D matrix to represent the given `value`
+    two_dimensional_matrix: ndarray = build_two_dimensional_matrix(
+        threshold=value, identifier=index
+    )
+
+    # Fetch the colour scale values based on the index
+    colour_scale: List[List] = build_color_scale(identifier=index)
+
+    # Create the heatmap plot
+    heatmap_plot = plotly.graph_objects.Heatmap(
+        z=two_dimensional_matrix,
+        hoverongaps=False,
+        showscale=False,
+        ygap=cell_gap,
+        xgap=cell_gap,
+        colorscale=colour_scale,
+    )
+
+    # Add the heatmap plot to the chart
+    figure.add_trace(trace=heatmap_plot)
 
     return figure
 
