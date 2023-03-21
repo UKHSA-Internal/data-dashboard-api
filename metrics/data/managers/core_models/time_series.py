@@ -11,7 +11,7 @@ from metrics.api import enums
 
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
-    """Custom queryset which can be used by the `TimeSeriesManager`"""
+    """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
 
     def filter_weekly(self) -> models.QuerySet:
         """Filters for all `TimeSeries` records which are of `W` (weekly) period type.
