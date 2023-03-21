@@ -137,7 +137,7 @@ class TestGetRgbColour:
 class TestGenerateChartFigure:
     def test_throws_error_when_more_than_three_data_points_provided(self):
         """
-        Given more than 3 data point
+        Given more than 3 numbers in the provided `data_points`
         When `generate_chart_figure()` is called
         Then a `TooManyDataPointsError` is raised
         """
