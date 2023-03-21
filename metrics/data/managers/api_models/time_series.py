@@ -8,7 +8,7 @@ The application should not interact directly with the `QuerySet` class.
 from django.db import models
 
 
-class WeeklyTimeSeriesQuerySet(models.QuerySet):
+class APITimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `WeeklyTimeSeriesManager`"""
 
     def filter_weekly_positivity_by_topic(self, topic: str) -> models.QuerySet:
@@ -46,15 +46,15 @@ class WeeklyTimeSeriesQuerySet(models.QuerySet):
         return queryset.values_list("metric_value", flat=True)
 
 
-class WeeklyTimeSeriesManager(models.Manager):
+class APITimeSeriesManager(models.Manager):
     """Custom model manager class for the `WeeklyTimeSeries` model."""
 
-    def get_queryset(self) -> WeeklyTimeSeriesQuerySet:
-        return WeeklyTimeSeriesQuerySet(model=self.model, using=self.db)
+    def get_queryset(self) -> APITimeSeriesQuerySet:
+        return APITimeSeriesQuerySet(model=self.model, using=self.db)
 
     def get_metric_values_for_weekly_positivity_by_topic(
         self, topic: str
-    ) -> WeeklyTimeSeriesQuerySet:
+    ) -> APITimeSeriesQuerySet:
         """Filters the associated metric_values by the given `topic` for the metric `weekly_positivity`
 
         Args:

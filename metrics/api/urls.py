@@ -9,10 +9,10 @@ from wagtail.api.v2.views import PagesAPIViewSet
 
 from metrics.api import settings
 from metrics.api.views import ChartView, FileUploadView, GraphView, ItemView
-from metrics.api.viewsets import WeeklyTimeSeriesViewSet
+from metrics.api.viewsets import APITimeSeriesViewSet
 
 router = routers.DefaultRouter()
-router.register(r"weeklytimeseries", WeeklyTimeSeriesViewSet)
+router.register(r"apitimeseries", APITimeSeriesViewSet)
 
 # Create the router. "wagtailapi" is the URL namespace
 api_router = WagtailAPIRouter("wagtailapi")

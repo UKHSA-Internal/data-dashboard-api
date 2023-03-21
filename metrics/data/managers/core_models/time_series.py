@@ -10,7 +10,7 @@ from django.db import models
 from metrics.api import enums
 
 
-class TimeSeriesQuerySet(models.QuerySet):
+class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `TimeSeriesManager`"""
 
     def filter_weekly(self) -> models.QuerySet:
@@ -23,14 +23,17 @@ class TimeSeriesQuerySet(models.QuerySet):
         """
         return self.filter(period=enums.TimePeriod.Weekly.value).order_by("start_date")
 
+    def all_related(self) -> models.QuerySet:
+        return self.prefetch_related("metric", "geography", "stratum").all()
 
-class TimeSeriesManager(models.Manager):
+
+class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
 
-    def get_queryset(self) -> TimeSeriesQuerySet:
-        return TimeSeriesQuerySet(model=self.model, using=self.db)
+    def get_queryset(self) -> CoreTimeSeriesQuerySet:
+        return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
 
-    def filter_weekly(self) -> TimeSeriesQuerySet:
+    def filter_weekly(self) -> CoreTimeSeriesQuerySet:
         """Filters for all `TimeSeries` records which are of `W` (weekly) period type.
 
         Returns:
@@ -39,3 +42,6 @@ class TimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().filter_weekly()
+
+    def all_related(self) -> CoreTimeSeriesQuerySet:
+        return self.get_queryset().all_related()

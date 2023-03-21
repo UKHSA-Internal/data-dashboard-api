@@ -1,16 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
 
-from metrics.api.serializers import WeeklyTimeSeriesSerializer
-from metrics.data.models.api_models import WeeklyTimeSeries
+from metrics.api.serializers import APITimeSeriesSerializer
+from metrics.data.models.api_models import APITimeSeries
 
 
-class WeeklyTimeSeriesPagination(pagination.PageNumberPagination):
+class APITimeSeriesPagination(pagination.PageNumberPagination):
     page_size = 5
     max_page_size = 53
 
 
-class WeeklyTimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
+class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This endpoint can be used to retrieve data for weekly time series of a given topic.
 
@@ -19,9 +19,9 @@ class WeeklyTimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     """
 
-    queryset = WeeklyTimeSeries.objects.all().order_by("start_date")
-    serializer_class = WeeklyTimeSeriesSerializer
-    pagination_class = WeeklyTimeSeriesPagination
+    queryset = APITimeSeries.objects.all().order_by("dt")
+    serializer_class = APITimeSeriesSerializer
+    pagination_class = APITimeSeriesPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
         "theme",
@@ -31,7 +31,6 @@ class WeeklyTimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "geography",
         "metric",
         "stratum",
-        "year",
-        "epiweek",
-        "start_date",
+        "sex",
+        "dt",
     ]
