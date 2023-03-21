@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 import pytest
 
@@ -145,3 +147,31 @@ class TestGenerateChartFigure:
         # When / Then
         with pytest.raises(waffle.TooManyDataPointsError):
             waffle.generate_chart_figure(data_points=too_many_data_points)
+
+    @pytest.mark.parametrize(
+        "data_points",
+        [
+            [41, 78],
+            [41, 78, 90],
+            [41, 90, 78],
+        ],
+    )
+    def test_throws_error_when_data_points_are_not_in_descending_order(
+        self, data_points: List[int]
+    ):
+        """
+        Given a list of data points which are not in descending order
+        When `generate_chart_figure()` is called
+        Then a `TooManyDataPointsError` is raised
+
+        Notes:
+            The data_points must be in descending order.
+            Otherwise, the largest value would be drawn with a darker colour.
+            Which would in turn obfuscate the other plots
+        """
+        # Given
+        data_points_in_descending_order = data_points
+
+        # When / Then
+        with pytest.raises(waffle.DataPointsNotInDescendingOrderError):
+            waffle.generate_chart_figure(data_points=data_points_in_descending_order)

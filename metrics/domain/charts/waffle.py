@@ -1,12 +1,12 @@
 from typing import Dict, List, Union
 
-import numpy as np
+from numpy import ndarray, zeros, NaN
 import plotly.graph_objects
 
 
 def build_two_dimensional_matrix(
     threshold: int, identifier: int, length: int = 10, width: int = 10
-) -> np.ndarray:
+) -> ndarray:
     """Builds a 2D matrix with the `identifier` as the non-zero value.
 
     Notes:
@@ -36,10 +36,10 @@ def build_two_dimensional_matrix(
 
     """
     matrix_size: int = length * width
-    data: np.ndarray = np.zeros(shape=matrix_size)
+    data: ndarray = zeros(shape=matrix_size)
 
     if identifier > 1:
-        data[:] = np.NaN
+        data[:] = NaN
 
     data[:threshold] = identifier
     return data.reshape([width, length])
@@ -150,10 +150,6 @@ def build_color_scale(identifier: int) -> List[List]:
     raise InvalidIdentifierError()
 
 
-class TooManyDataPointsError(Exception):
-    ...
-
-
 def generate_chart_figure(
     data_points: List[int],
     cell_gap: int = 3,
@@ -180,13 +176,12 @@ def generate_chart_figure(
             3 data points are provided
 
     """
-    if len(data_points) > 3:
-        raise TooManyDataPointsError()
+    _validate_data_points(data_points=data_points)
 
     figure = plotly.graph_objects.Figure()
 
     for index, value in enumerate(data_points, 1):
-        logical_matrix: np.ndarray = build_two_dimensional_matrix(
+        logical_matrix: ndarray = build_two_dimensional_matrix(
             threshold=value, identifier=index
         )
 
@@ -209,3 +204,22 @@ def generate_chart_figure(
     figure.update_layout(width=width, height=height, **WAFFLE_LAYOUT)
 
     return figure
+
+
+class TooManyDataPointsError(Exception):
+    ...
+
+
+class DataPointsNotInDescendingOrderError(Exception):
+    ...
+
+
+def _validate_data_points(data_points):
+    if len(data_points) > 3:
+        raise TooManyDataPointsError()
+
+    # Checks that the data_points are in descending order going from largest -> smallest
+    # This check ensures that the largest value is not drawn with a darker colour
+    # Which would in turn obfuscate the other plots
+    if data_points[0] < data_points[1] or data_points[1] < data_points[2]:
+        raise DataPointsNotInDescendingOrderError()
