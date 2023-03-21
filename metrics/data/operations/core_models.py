@@ -7,13 +7,14 @@ Specifically, this file contains write database logic for the core models only.
 
 import io
 from datetime import datetime
-from typing import Type, List, Dict
+from typing import Dict, List, Type
+
 import pandas as pd
 from django.db import models
 
-
 from metrics.api.enums import TimePeriod
 from metrics.data.models.core_models import (
+    CoreTimeSeries,
     Geography,
     GeographyType,
     Metric,
@@ -21,7 +22,6 @@ from metrics.data.models.core_models import (
     SubTheme,
     Theme,
     Topic,
-    CoreTimeSeries,
 )
 
 sex_options = {
