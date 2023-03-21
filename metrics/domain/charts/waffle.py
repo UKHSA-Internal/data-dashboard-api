@@ -70,7 +70,7 @@ Y_AXIS_ARGS: Dict[str, Union[bool, int, str]] = {
 }
 
 
-WAFFLE_LAYOUT = {
+WAFFLE_LAYOUT_ARGS = {
     "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
     "showlegend": False,
     "plot_bgcolor": "rgba(231,231,231,0)",
@@ -80,7 +80,7 @@ WAFFLE_LAYOUT = {
 }
 
 
-RGB_COLOURS = {
+SUPPORTED_RGB_COLOURS = {
     "light_grey": "216,216,216,1",
     "light_green": "119,196,191,1",
     "middle_green": "0,156,145,1",
@@ -103,7 +103,7 @@ def get_rgb_colour(colour: str) -> str:
         `KeyError`: If the colour is not supported
 
     """
-    rgb_number = RGB_COLOURS[colour]
+    rgb_number = SUPPORTED_RGB_COLOURS[colour]
     return f"rgba({rgb_number})"
 
 
@@ -217,7 +217,7 @@ def generate_chart_figure(
         # Add the heatmap plot to the chart
         figure.add_trace(trace=heatmap_plot)
 
-    figure.update_layout(width=width, height=height, **WAFFLE_LAYOUT)
+    figure.update_layout(width=width, height=height, **WAFFLE_LAYOUT_ARGS)
 
     return figure
 
