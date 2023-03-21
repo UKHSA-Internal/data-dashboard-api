@@ -19,7 +19,7 @@ class TestGenerateWeeklyTimeSeries:
     ):
         """
         Given a `APITimeManager` and a `FakeTimeSeriesManager`.
-        When `generate_time_series()` is called.
+        When `generate_api_time_series()` is called.
         Then `bulk_create()` is called from the `APITimeManager` with the correct args.
 
         Patches:
