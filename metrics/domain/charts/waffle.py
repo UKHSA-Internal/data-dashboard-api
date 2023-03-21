@@ -230,12 +230,13 @@ class DataPointsNotInDescendingOrderError(Exception):
     ...
 
 
-def _validate_data_points(data_points):
+def _validate_data_points(data_points: List[int]) -> None:
     if len(data_points) > 3:
         raise TooManyDataPointsError()
 
+    data_points_in_descending_order: List[int] = sorted(data_points, reverse=True)
     # Checks that the data_points are in descending order going from largest -> smallest
     # This check ensures that the largest value is not drawn with a darker colour
     # Which would in turn obfuscate the other plots
-    if data_points[0] < data_points[1] or data_points[1] < data_points[2]:
+    if data_points != data_points_in_descending_order:
         raise DataPointsNotInDescendingOrderError()
