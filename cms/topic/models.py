@@ -50,6 +50,7 @@ class TopicPage(Page):
         APIField("prevention"),
         APIField("surveillance_and_reporting"),
         APIField("related_links"),
+        APIField("last_published_at"),
     ]
 
     # Tabs to position at the top of the view

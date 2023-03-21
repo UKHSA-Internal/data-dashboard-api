@@ -23,6 +23,7 @@ class HomePage(Page):
     api_fields = [
         APIField("body"),
         APIField("related_links"),
+        APIField("last_published_at"),
     ]
 
     # Tabs to position at the top of the view
