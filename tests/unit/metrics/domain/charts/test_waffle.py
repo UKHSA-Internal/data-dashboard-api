@@ -162,7 +162,7 @@ class TestGenerateChartFigure:
         """
         Given a list of data points which are not in descending order
         When `generate_chart_figure()` is called
-        Then a `TooManyDataPointsError` is raised
+        Then a `DataPointsNotInDescendingOrderError` is raised
 
         Notes:
             The data_points must be in descending order.
