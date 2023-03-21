@@ -1,7 +1,7 @@
 from typing import Dict, List, Union
 
-from numpy import ndarray, zeros, NaN
 import plotly.graph_objects
+from numpy import NaN, ndarray, zeros
 
 
 def build_two_dimensional_matrix(
