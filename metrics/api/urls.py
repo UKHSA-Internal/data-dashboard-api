@@ -12,7 +12,7 @@ from metrics.api.views import ChartView, FileUploadView, GraphView, ItemView
 from metrics.api.viewsets import APITimeSeriesViewSet
 
 router = routers.DefaultRouter()
-router.register(r"apitimeseries", APITimeSeriesViewSet)
+router.register(r"timeseries", APITimeSeriesViewSet)
 
 # Create the router. "wagtailapi" is the URL namespace
 api_router = WagtailAPIRouter("wagtailapi")
