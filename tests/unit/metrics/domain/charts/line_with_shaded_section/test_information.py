@@ -2,7 +2,57 @@ from typing import List
 
 import pytest
 
-from metrics.domain.charts.line_with_shaded_section import information
+from metrics.domain.charts.line_with_shaded_section import colour_scheme, information
+
+
+class TestDetermineLineAndFillColours:
+    def test_returns_green_colours_for_decreasing_cases(self):
+        """
+        Given a list of values and a param to analyse the last 3 numbers
+            which would return [5, 3, 2] i.e. average decrease
+        And a `metric_name` of "new_cases_daily"
+        When `determine_line_and_fill_colours()` is called
+        Then a pair of green colours is returned
+        """
+        # Given
+        values = [1, 2, 3, 4, 5, 3, 2]
+        number_of_values_to_analyse = 3
+        metric_name = "new_cases_daily"
+
+        # When
+        line_colour, fill_colour = information.determine_line_and_fill_colours(
+            values=values,
+            last_n_values_to_analyse=number_of_values_to_analyse,
+            metric_name=metric_name,
+        )
+
+        # Then
+        assert line_colour == colour_scheme.RGBAColours.DARK_GREEN
+        assert fill_colour == colour_scheme.RGBAColours.LIGHT_GREEN
+
+    def test_returns_red_colours_for_increasing_cases(self):
+        """
+        Given a list of values and a param to analyse the last 3 numbers
+            which would return [1, 3, 4] i.e. average increase
+        And a `metric_name` of "new_cases_daily"
+        When `determine_line_and_fill_colours()` is called
+        Then a pair of red colours is returned
+        """
+        # Given
+        values = [1, 2, 1, 3, 4]
+        number_of_values_to_analyse = 3
+        metric_name = "new_cases_daily"
+
+        # When
+        line_colour, fill_colour = information.determine_line_and_fill_colours(
+            values=values,
+            last_n_values_to_analyse=number_of_values_to_analyse,
+            metric_name=metric_name,
+        )
+
+        # Then
+        assert line_colour == colour_scheme.RGBAColours.DARK_RED
+        assert fill_colour == colour_scheme.RGBAColours.LIGHT_RED
 
 
 class TestCalculateAverageDifferenceOfSubslice:

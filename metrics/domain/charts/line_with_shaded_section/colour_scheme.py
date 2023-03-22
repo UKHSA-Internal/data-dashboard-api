@@ -33,3 +33,11 @@ COLOURS: Dict[str, Dict[str, RGBAColours]] = {
     "negative": {"line": RGBAColours.DARK_RED, "fill": RGBAColours.LIGHT_RED},
     "neutral": {"line": RGBAColours.DARK_GREY, "fill": RGBAColours.LIGHT_GREY},
 }
+
+
+def _get_line_and_fill_colours(
+    metric_is_improving: bool,
+) -> Tuple[RGBAColours, RGBAColours]:
+    if metric_is_improving:
+        return RGBAColours.DARK_GREEN, RGBAColours.LIGHT_GREEN
+    return RGBAColours.DARK_RED, RGBAColours.LIGHT_RED

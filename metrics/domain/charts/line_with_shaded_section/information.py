@@ -1,4 +1,54 @@
-from typing import List
+from typing import List, Tuple
+
+from metrics.domain.charts.line_with_shaded_section import colour_scheme
+
+
+def determine_line_and_fill_colours(
+    values: List[int], last_n_values_to_analyse: int, metric_name: str
+) -> Tuple[colour_scheme.RGBAColours, colour_scheme.RGBAColours]:
+    """Returns colours dependening on whether the average change in `last_n_values_to_analyse` is considered to begood.
+
+    For example, for cases or deaths, an average increase in the `last_n_values_to_analyse`
+    would be considered to be negative. Which would return a pair of red colours.
+    But, for vaccinations an increase in the corresponding average change
+    would be considered to be positive. Which would return a pair of green colours.
+
+    Examples:
+        >>> determine_line_and_fill_colours([5, 3, 2], 2, metric_name='new_cases_daily')
+        (colour_scheme.RGBAColours.DARK_GREEN, colour_scheme.RGBAColours.LIGHT_GREEN)
+
+        >>> is_metric_improving([1, 3, 7], 2, metric_name='new_cases_daily')
+        (colour_scheme.RGBAColours.DARK_RED, colour_scheme.RGBAColours.LIGHT_RED)
+
+    Args:
+        values: List of numbers representing the values
+        last_n_values_to_analyse: The number of items to slice off
+            from the end of `values` and perform the analysis on.
+        metric_name: The associated metric_name,
+            E.g. new_admissions_daily
+
+    Returns:
+        Tuple[colour_scheme.RGBAColours, colour_scheme.RGBAColours]:
+            A pair of colours depending on whether
+            the analysed slice is considered to be
+            a good thing or a bad thing.
+
+    Raises:
+        `ValueError`: If the metric_name is not supported.
+
+    """
+    change_in_metric_value = calculate_average_difference_of_subslice(
+        values=values, last_n_values_to_analyse=last_n_values_to_analyse
+    )
+
+    metric_is_improving = is_metric_improving(
+        change_in_metric_value=change_in_metric_value,
+        metric_name=metric_name,
+    )
+
+    return colour_scheme._get_line_and_fill_colours(
+        metric_is_improving=metric_is_improving
+    )
 
 
 def _calculate_average(values: List[int]) -> int:

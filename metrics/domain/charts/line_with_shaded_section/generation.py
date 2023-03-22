@@ -3,7 +3,7 @@ from typing import List
 
 import plotly
 
-from metrics.domain.charts.line_with_shaded_section.colour_scheme import RGBAColours
+from metrics.domain.charts.line_with_shaded_section import colour_scheme, information
 
 X_AXIS_ARGS = {
     "showgrid": False,
@@ -16,7 +16,7 @@ X_AXIS_ARGS = {
     "tickfont": {
         "family": '"GDS Transport", Arial, sans-serif',
         "size": 20,
-        "color": RGBAColours.DARK_BLUE_GREY.stringified,
+        "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
     },
 }
 
@@ -26,8 +26,8 @@ Y_AXIS_ARGS = {
 }
 
 TIMESERIES_LAYOUT_ARGS = {
-    "paper_bgcolor": RGBAColours.WHITE.stringified,
-    "plot_bgcolor": RGBAColours.WHITE.stringified,
+    "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
+    "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
     "margin": {
         "l": 0,
         "r": 0,
@@ -45,8 +45,8 @@ TIMESERIES_LAYOUT_ARGS = {
 def create_line_chart(
     dates: List[datetime.datetime],
     values: List[int],
-    highlighted_section_fill_colour: RGBAColours,
-    highlighted_section_line_colour: RGBAColours,
+    highlighted_section_fill_colour: colour_scheme.RGBAColours,
+    highlighted_section_line_colour: colour_scheme.RGBAColours,
     rolling_period_slice: int,
     line_shape: str,
 ) -> str:
@@ -57,7 +57,7 @@ def create_line_chart(
         plotly.graph_objects.Scatter(
             x=dates[: preceding_data_points_count + 1],
             y=values[: preceding_data_points_count + 1],
-            line={"width": 2, "color": RGBAColours.DARK_GREY.stringified},
+            line={"width": 2, "color": colour_scheme.RGBAColours.DARK_GREY.stringified},
             line_shape="spline",
         ),
     )
@@ -86,14 +86,21 @@ def create_line_chart(
 def generate_chart_figure(
     dates: List[datetime.datetime],
     values: List[int],
+    metric_name: str,
     rolling_period_slice: int = 7,
     line_shape: str = "spline",
 ) -> str:
+    line_colour, fill_colour = information.determine_line_and_fill_colours(
+        values=values,
+        metric_name=metric_name,
+        last_n_values_to_analyse=rolling_period_slice,
+    )
+
     return create_line_chart(
         dates=dates,
         values=values,
         rolling_period_slice=rolling_period_slice,
         line_shape=line_shape,
-        highlighted_section_fill_colour=RGBAColours.LIGHT_GREEN.stringified,
-        highlighted_section_line_colour=RGBAColours.DARK_GREEN.stringified,
+        highlighted_section_line_colour=line_colour,
+        highlighted_section_fill_colour=fill_colour,
     )
