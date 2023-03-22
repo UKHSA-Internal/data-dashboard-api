@@ -89,7 +89,6 @@ def generate_chart_figure(
     rolling_period_slice: int = 7,
     line_shape: str = "spline",
 ) -> str:
-
     return create_line_chart(
         dates=dates,
         values=values,

@@ -5,7 +5,9 @@ from metrics.domain.charts.line_with_shaded_section import colour_scheme
 
 class TestRGBAColours:
     @pytest.mark.parametrize("rgba_enum", colour_scheme.RGBAColours)
-    def test_stringified_returns_correct_string(self, rgba_enum: colour_scheme.RGBAColours):
+    def test_stringified_returns_correct_string(
+        self, rgba_enum: colour_scheme.RGBAColours
+    ):
         """
         Given any of the values of the `RGBAColours` enum
         When the `stringified` property is called
