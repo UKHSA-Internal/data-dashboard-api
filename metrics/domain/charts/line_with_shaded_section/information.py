@@ -6,10 +6,9 @@ def _calculate_average(values: List[int]) -> int:
 
 
 def calculate_average_difference_of_subslice(
-    values: List[int], values_to_slice_count: int
+    values: List[int], last_n_values_to_analyse: int
 ):
-    """Returns the average value of the last x numbers in the given `values`.
-    Where `x` is denoted by `values_to_slice_count`
+    """Returns the average value of the `last_n_values_to_analyse` in the given `values`.
 
     Examples:
         >>> calculate_average_difference_of_subslice([1, 2, 2], 2)
@@ -20,13 +19,13 @@ def calculate_average_difference_of_subslice(
 
     Args:
         values: List of numbers representing the values
-        values_to_slice_count: The number of items to slice off
+        last_n_values_to_analyse: The number of items to slice off
             from the end of `values` and perform the analysis on.
 
     Returns:
 
     """
-    rolling_period_values = values[-values_to_slice_count:]
+    rolling_period_values = values[-last_n_values_to_analyse:]
     start_value = rolling_period_values[0]
 
     average_over_rolling_period = _calculate_average(values=rolling_period_values)

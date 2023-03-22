@@ -20,7 +20,7 @@ class TestCalculateAverageDifferenceOfSubslice:
         # When
         calculated_average_metric_value_difference = (
             information.calculate_average_difference_of_subslice(
-                values=values, values_to_slice_count=number_of_values_to_analyse
+                values=values, last_n_values_to_analyse=number_of_values_to_analyse
             )
         )
 
@@ -41,7 +41,7 @@ class TestCalculateAverageDifferenceOfSubslice:
         # When
         calculated_average_metric_value_difference = (
             information.calculate_average_difference_of_subslice(
-                values=values, values_to_slice_count=number_of_values_to_analyse
+                values=values, last_n_values_to_analyse=number_of_values_to_analyse
             )
         )
 
@@ -62,7 +62,7 @@ class TestCalculateAverageDifferenceOfSubslice:
         # When
         calculated_average_metric_value_difference = (
             information.calculate_average_difference_of_subslice(
-                values=values, values_to_slice_count=number_of_values_to_analyse
+                values=values, last_n_values_to_analyse=number_of_values_to_analyse
             )
         )
 
