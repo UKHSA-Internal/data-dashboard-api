@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Tuple
+from typing import Dict, Tuple
 
 RGBA_VALUES = Tuple[int, int, int, int]
 
@@ -28,3 +28,8 @@ class RGBAColours(Enum):
         return f"rgba{self.value}"
 
 
+COLOURS: Dict[str, Dict[str, RGBAColours]] = {
+    "positive": {"line": RGBAColours.DARK_GREEN, "fill": RGBAColours.LIGHT_GREEN},
+    "negative": {"line": RGBAColours.DARK_RED, "fill": RGBAColours.LIGHT_RED},
+    "neutral": {"line": RGBAColours.DARK_GREY, "fill": RGBAColours.LIGHT_GREY},
+}
