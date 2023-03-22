@@ -5,7 +5,9 @@ def _calculate_average(values: List[int]) -> int:
     return sum(values) / len(values)
 
 
-def calculate_average_difference_of_subslice(values: List[int], values_to_slice_count: int):
+def calculate_average_difference_of_subslice(
+    values: List[int], values_to_slice_count: int
+):
     """Returns the average value of the last x numbers in the given `values`.
     Where `x` is denoted by `values_to_slice_count`
 
