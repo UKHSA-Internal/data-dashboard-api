@@ -1,6 +1,37 @@
 from typing import List
 
 
+def _calculate_average(values: List[int]) -> int:
+    return sum(values) / len(values)
+
+
+def calculate_average_difference_of_subslice(values: List[int], values_to_slice_count: int):
+    """Returns the average value of the last x numbers in the given `values`.
+    Where `x` is denoted by `values_to_slice_count`
+
+    Examples:
+        >>> calculate_average_difference_of_subslice([1, 2, 2], 2)
+        0
+
+        Where 0 is the average of the last 2 items,
+        But the average of the entire list would be 1.66
+
+    Args:
+        values: List of numbers representing the values
+        values_to_slice_count: The number of items to slice off
+            from the end of `values` and perform the analysis on.
+
+    Returns:
+
+    """
+    rolling_period_values = values[-values_to_slice_count:]
+    start_value = rolling_period_values[0]
+
+    average_over_rolling_period = _calculate_average(values=rolling_period_values)
+
+    return round(average_over_rolling_period - start_value, 2)
+
+
 def is_metric_improving(change_in_metric_value: int, metric_name: str) -> bool:
     """Checks whether a positive or negative `change_in_metric_value` should be considered a good thing.
 

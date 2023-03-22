@@ -4,6 +4,72 @@ import pytest
 
 from metrics.domain.charts.line_with_shaded_section import information
 
+
+class TestCalculateAverageDifferenceOfSubslice:
+    def test_calculates_and_returns_correct_positive_change(self):
+        """
+        Given a list of values and a param to analyse the last 3 numbers
+            which would return [6, 7, 8]
+        When `calculate_average_difference_of_subslice()` is called
+        Then the correct average of 1 is returned
+        """
+        # Given
+        values = [1, 2, 4, 1, 2, 4, 3, 4, 4, 5, 6, 7, 8]
+        number_of_values_to_analyse = 3
+
+        # When
+        calculated_average_metric_value_difference = (
+            information.calculate_average_difference_of_subslice(
+                values=values, values_to_slice_count=number_of_values_to_analyse
+            )
+        )
+
+        # Then
+        assert calculated_average_metric_value_difference == 1.00
+
+    def test_calculates_and_returns_correct_negative_change(self):
+        """
+        Given a list of values and a param to analyse the last 3 numbers
+            which would return [2, 4, 1]
+        When `calculate_average_difference_of_subslice()` is called
+        Then the correct average of 0.33 is returned
+        """
+        # Given
+        values = [1, 2, 4, 1, 2, 4, 1]
+        number_of_values_to_analyse = 3
+
+        # When
+        calculated_average_metric_value_difference = (
+            information.calculate_average_difference_of_subslice(
+                values=values, values_to_slice_count=number_of_values_to_analyse
+            )
+        )
+
+        # Then
+        assert calculated_average_metric_value_difference == 0.33
+
+    def test_calculates_and_returns_correct_neutral_change(self):
+        """
+        Given a list of values and a param to analyse the last 3 numbers
+            which would return [2, 2, 2]
+        When `calculate_average_difference_of_subslice()` is called
+        Then the correct average of 0 is returned
+        """
+        # Given
+        values = [1, 2, 4, 1, 2, 2, 2]
+        number_of_values_to_analyse = 3
+
+        # When
+        calculated_average_metric_value_difference = (
+            information.calculate_average_difference_of_subslice(
+                values=values, values_to_slice_count=number_of_values_to_analyse
+            )
+        )
+
+        # Then
+        assert calculated_average_metric_value_difference == 0.00
+
+
 CASES_METRIC_TYPES: List[str] = [
     "new_cases_7days_sum",
     "new_cases_7days_change",
