@@ -26,6 +26,8 @@ class APITimeSeries(models.Model):
     metric = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     stratum = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     sex = models.CharField(max_length=3, null=True)
+    year = models.PositiveSmallIntegerField()
+    epiweek = models.PositiveSmallIntegerField()
     dt = models.DateField()
     metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 

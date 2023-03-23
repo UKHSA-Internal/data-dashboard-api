@@ -16,6 +16,8 @@ class APITimeSeriesSerializer(serializers.ModelSerializer):
             "metric",
             "stratum",
             "sex",
+            "year",
+            "epiweek",
             "dt",
             "metric_value",
         ]

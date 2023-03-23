@@ -32,5 +32,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "metric",
         "stratum",
         "sex",
+        "year",
+        "epiweek",
         "dt",
     ]

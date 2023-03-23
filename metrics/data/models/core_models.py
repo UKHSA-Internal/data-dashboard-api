@@ -78,6 +78,10 @@ class CoreTimeSeries(models.Model):
         max_length=3,
         null=True,
     )
+
+    year = models.PositiveSmallIntegerField()
+    epiweek = models.PositiveSmallIntegerField()
+
     dt = models.DateField()
     metric_value = models.DecimalField(
         max_digits=11,
