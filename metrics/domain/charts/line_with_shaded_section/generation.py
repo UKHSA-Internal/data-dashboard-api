@@ -65,14 +65,14 @@ def create_line_chart(
             off the given `values` and show a highlighted section for.
             Note that this highlighted section will be green or red,
             depending on the average of the sliced section and
-            the `metric_name`
+            the `metric_name`.
         line_shape: The shape to assign to the line plots.
-            Defaults to "spline", a curved shape between points.
+            This can be either `linear` or `spline`.
         line_width: The weight to assign to the width of the line plots.
-            Defaults to 2
+            Defaults to 2.
     Returns:
         `Figure`: A `plotly` object which can then be
-            written to a file, or shown
+            written to a file, or shown.
 
     """
     # Calculate the index to perform the slices with
@@ -136,13 +136,14 @@ def generate_chart_figure(
             off the given `values` and show a highlighted section for.
             Note that this highlighted section will be green or red,
             depending on the average of the sliced section and
-            the `metric_name`
+            the `metric_name`.
+            Defaults to 7.
         line_shape: The shape to assign to the line plots.
             Defaults to "spline", a curved shape between points.
 
     Returns:
         `Figure`: A `plotly` object which can then be
-            written to a file, or shown
+            written to a file, or shown.
 
     Raises:
         `ValueError`: If the metric_name is not supported.
