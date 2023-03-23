@@ -74,6 +74,9 @@ def calculate_average_difference_of_subslice(
             from the end of `values` and perform the analysis on.
 
     Returns:
+        A number rounded to 2 decimal places
+        which represents the average (mean)
+        of the subliced values
 
     """
     rolling_period_values = values[-last_n_values_to_analyse:]
