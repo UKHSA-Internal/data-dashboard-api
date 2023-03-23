@@ -52,7 +52,7 @@ def determine_line_and_fill_colours(
     )
 
 
-def _calculate_average(values: List[int]) -> int:
+def _calculate_mean(values: List[int]) -> float:
     return sum(values) / len(values)
 
 
@@ -79,7 +79,7 @@ def calculate_average_difference_of_subslice(
     rolling_period_values = values[-last_n_values_to_analyse:]
     start_value = rolling_period_values[0]
 
-    average_over_rolling_period = _calculate_average(values=rolling_period_values)
+    average_over_rolling_period: float = _calculate_mean(values=rolling_period_values)
 
     return round(average_over_rolling_period - start_value, 2)
 
