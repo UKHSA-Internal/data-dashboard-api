@@ -1,3 +1,4 @@
+#!/bin/bash
 
 function set_up_django() {
     echo "Migrating tables"
