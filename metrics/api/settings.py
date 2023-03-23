@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -115,12 +117,24 @@ WSGI_APPLICATION = "metrics.api.wsgi.application"
 # Puts the db at the root level of the repo instead of within the `metrics` app
 ROOT_LEVEL_BASE_DIR = BASE_DIR.parent
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
+if config.APIENV == "DEV":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config.POSTGRES_DB,
+            "USER": config.POSTGRES_USER,
+            "PASSWORD": config.POSTGRES_PASSWORD,
+            "HOST": config.POSTGRES_HOST,
+            "PORT": config.POSTGRES_PORT,
+        }
+    }
 
 
 # Password validation
