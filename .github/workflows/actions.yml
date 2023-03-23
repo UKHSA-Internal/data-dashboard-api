@@ -5,7 +5,7 @@ on: push
 env:
   APIENV: "PROD"
   AWS_REGION: "eu-west-2"
-  POSTGRES_HOST: "wp-dashboard-rds-2.cao5mkmud7br.eu-west-2.rds.amazonaws.com"
+  POSTGRES_HOST: "wp-dashboard-dev-rds.c0obwmng7sq9.eu-west-2.rds.amazonaws.com"
   POSTGRES_USER: "wp_user"
   POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
   POSTGRES_DB: "winterpressures"
