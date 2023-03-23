@@ -204,7 +204,7 @@ DEATHS_METRIC_TYPES: List[str] = [
     "new_deaths_7days_sum",
     "new_deaths_7days_change",
     "new_deaths_7days_change_percentage",
-    "new_deaths_dailyases_rolling_rate_by_age",
+    "new_deaths_daily_cases_rolling_rate_by_age",
 ]
 
 

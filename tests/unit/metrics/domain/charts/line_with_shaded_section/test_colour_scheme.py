@@ -17,10 +17,10 @@ class TestRGBAColours:
             then "rgba(0, 0, 0, 0)" is returned
         """
         # Given
-        rgba_colour_enum = rgba_enum
+        rgba_colour_enum: colour_scheme.RGBAColours = rgba_enum
 
         # When
-        stringified_rgba_value = rgba_colour_enum.stringified
+        stringified_rgba_value: str = rgba_colour_enum.stringified
 
         # Then
         assert stringified_rgba_value == f"rgba{rgba_colour_enum.value}"
