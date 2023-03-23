@@ -10,7 +10,6 @@ WORKDIR /code
 
 EXPOSE 8000
 
-
-RUN chmod +x entrypoint.sh
 # runs the production server
-ENTRYPOINT [ "./entrypoint.sh" ]
+ENTRYPOINT ["python", "manage.py"]
+CMD ["migrate", "--noinput", "&&", "python", "manage.py", "runserver", "0.0.0.0:80"]
