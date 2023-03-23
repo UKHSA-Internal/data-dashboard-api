@@ -10,5 +10,7 @@ WORKDIR /code
 
 EXPOSE 8000
 
+
+RUN chmod +x entrypoint.sh
 # runs the production server
 ENTRYPOINT [ "./entrypoint.sh" ]
