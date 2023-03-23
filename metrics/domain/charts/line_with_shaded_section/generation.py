@@ -43,7 +43,7 @@ TIMESERIES_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
 }
 
 
-def create_line_chart(
+def create_line_chart_with_highlighted_section(
     dates: List[datetime.datetime],
     values: List[int],
     highlighted_section_fill_colour: colour_scheme.RGBAColours,
@@ -155,7 +155,7 @@ def generate_chart_figure(
         last_n_values_to_analyse=rolling_period_slice,
     )
 
-    return create_line_chart(
+    return create_line_chart_with_highlighted_section(
         dates=dates,
         values=values,
         rolling_period_slice=rolling_period_slice,
