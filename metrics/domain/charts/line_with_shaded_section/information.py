@@ -1,11 +1,12 @@
 from typing import List, Tuple
 
+from metrics.domain.charts import type_hints
 from metrics.domain.charts.line_with_shaded_section import colour_scheme
 
 
 def determine_line_and_fill_colours(
     values: List[int], last_n_values_to_analyse: int, metric_name: str
-) -> Tuple[colour_scheme.RGBAColours, colour_scheme.RGBAColours]:
+) -> type_hints.COLOUR_PAIR:
     """Returns colours dependening on whether the average change in `last_n_values_to_analyse` is considered to begood.
 
     For example, for cases or deaths, an average increase in the `last_n_values_to_analyse`
