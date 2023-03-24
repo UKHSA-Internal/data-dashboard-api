@@ -45,6 +45,7 @@ class CommonPage(Page):
         APIField("date_posted"),
         APIField("body"),
         APIField("last_published_at"),
+        APIField("related_links"),
     ]
 
     # Tabs to position at the top of the view
