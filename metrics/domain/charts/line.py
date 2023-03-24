@@ -17,7 +17,13 @@ def generate_chart_figure(
     line_shape: str = "spline",
     line_width: int = 3,
 ) -> plotly.graph_objects.Figure:
-    """Creates a `Figure` object for the given `data_points`
+    """Creates a `Figure` object for the given `data_points` as a Line graph.
+
+    Notes:
+        The size of the markers associated with each data point
+        is calculated as `line_width` * 3.
+        This is so that the markers are clearly visible against
+        the weight of the line plots.
 
     Args:
         data_points: list of floats or ints representing the points to be plotted
@@ -35,12 +41,6 @@ def generate_chart_figure(
     Returns:
         `Figure`: A `plotly` object which can then be
             written to a file, or shown
-
-    Notes:
-        The size of the markers associated with each data point
-        is calculated as `line_width` * 3.
-        This is so that the markers are clearly visible against
-        the weight of the line plots.
 
     """
     data_points_count: int = len(data_points)

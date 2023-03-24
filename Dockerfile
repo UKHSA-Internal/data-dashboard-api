@@ -10,6 +10,8 @@ WORKDIR /code
 
 EXPOSE 8000
 
-# runs the production server
-ENTRYPOINT ["python", "manage.py"]
-CMD ["runserver", "0.0.0.0:80"]
+# Adds execution permission for the entrypoint shell script
+RUN chmod +x entrypoint.sh
+
+# Runs the production server
+ENTRYPOINT ./entrypoint.sh

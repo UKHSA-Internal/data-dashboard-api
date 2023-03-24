@@ -3,14 +3,14 @@ from typing import List, Union
 import plotly.graph_objects
 
 from metrics.data.access.api_models import get_weekly_disease_incidence
-from metrics.domain.charts.generation import generate_chart_figure
+from metrics.domain.charts import line
 
 
 def create_chart_figure_for_topic(topic: str) -> plotly.graph_objects.Figure:
     weekly_disease_incidence: List[Union[int, float]] = get_weekly_disease_incidence(
         topic=topic,
     )
-    return generate_chart_figure(data_points=weekly_disease_incidence)
+    return line.generate_chart_figure(data_points=weekly_disease_incidence)
 
 
 def write_chart_file_for_topic(
