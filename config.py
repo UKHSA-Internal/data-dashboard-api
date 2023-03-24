@@ -13,6 +13,9 @@ POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)
 
+FRONTEND_API_URL = os.environ.get("FRONTEND_API_URL", "")
+FRONTEND_API_KEY = os.environ.get("FRONTEND_API_KEY", "")
+
 
 class EnvVarNotSetError(Exception):
     ...
