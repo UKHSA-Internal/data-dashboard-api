@@ -7,8 +7,10 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from metrics.data.models.api_models import WeeklyTimeSeries
-from metrics.data.operations.core_models import upload_data
+from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.operations.api_models import generate_api_time_series
+from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts.data_visualization import write_chart_file_for_topic
 
 
@@ -61,12 +63,11 @@ class FileUploadView(APIView):
         """
         Note that this endpoint is **deprecated** and should only be used for demo/testing purposes.
         """
-        WeeklyTimeSeries.objects.all().delete()
-        with open(kwargs["filename"], "wb+") as destination:
-            for chunk in request.FILES["file"].chunks():
-                destination.write(chunk)
-        with open(kwargs["filename"], "r") as source:
-            upload_data(data=source)
+        # CoreTimeSeries.objects.all().delete()
+        # APITimeSeries.objects.all().delete()
+
+        load_core_data(filename=request.FILES.get("file"))
+        generate_api_time_series()
         return Response(status=204)
 
 
@@ -75,7 +76,7 @@ class ItemView(View):
         weeklist = []
         datelist = []
         influenzalist = []
-        data = WeeklyTimeSeries.objects.filter(year=2022).order_by("start_date")
+        data = APITimeSeries.objects.filter(year=2022).order_by("dt")
         i = 0
         print(len(data))
         disease_list = {
@@ -102,7 +103,7 @@ class ItemView(View):
         for data_item in data:
             i += 1
             weeklist.append(str(data_item.year) + "-" + str(data_item.epiweek))
-            datelist.append(data_item.start_date)
+            datelist.append(data_item.dt)
             for disease in disease_list:
                 if (
                     data_item.topic == disease
@@ -117,7 +118,7 @@ class ItemView(View):
         weeklist = []
         datelist = []
         data = (
-            WeeklyTimeSeries.objects.filter(year=2022)
+            APITimeSeries.objects.filter(year=2022)
             .filter(topic="Influenza")
             .filter(metric="weekly_positivity")
         )
@@ -125,7 +126,7 @@ class ItemView(View):
         for data_item in data:
             i += 1
             weeklist.append(str(data_item.year) + "-" + str(data_item.epiweek))
-            datelist.append(data_item.start_date)
+            datelist.append(data_item.dt)
 
         diseases["week"] = weeklist
         diseases["dates"] = datelist

@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
-from metrics.data.models.api_models import WeeklyTimeSeries
+from metrics.data.models.api_models import APITimeSeries
 
 
-class WeeklyTimeSeriesSerializer(serializers.ModelSerializer):
+class APITimeSeriesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WeeklyTimeSeries
+        model = APITimeSeries
         fields = [
+            "period",
             "theme",
             "sub_theme",
             "topic",
@@ -14,8 +15,9 @@ class WeeklyTimeSeriesSerializer(serializers.ModelSerializer):
             "geography",
             "metric",
             "stratum",
+            "sex",
             "year",
             "epiweek",
-            "start_date",
+            "dt",
             "metric_value",
         ]

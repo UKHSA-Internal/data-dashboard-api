@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from metrics.data.models.core_models import TimeSeries
+from metrics.data.models.api_models import APITimeSeries
 
-admin.site.register(TimeSeries)
+admin.site.register(APITimeSeries)
