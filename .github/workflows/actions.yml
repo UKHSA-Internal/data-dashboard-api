@@ -1,6 +1,10 @@
-name: Deploy to ECR
+name: Pipeline
 
-on: push
+on:
+  push:
+  pull_request:
+    branches:
+      - "*"
 
 env:
   APIENV: "PROD"
@@ -69,6 +73,9 @@ jobs:
     name: ECR Image Push
     needs: [unit-tests, quality-checks]
     runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    # Only deploy if the changes are being pushed to the `main` branch
+
     steps:
     - name: Check out code
       uses: actions/checkout@v2
@@ -92,3 +99,4 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
