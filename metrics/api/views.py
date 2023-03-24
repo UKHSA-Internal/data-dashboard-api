@@ -57,7 +57,7 @@ class FileUploadView(APIView):
                 description="File to be uploaded",
             )
         ],
-        deprecated=False,
+        deprecated=True,
     )
     def put(self, request, *args, **kwargs):
         """
