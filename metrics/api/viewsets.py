@@ -39,7 +39,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     ]
 
 
-class DashboardViewSet(viewsets.ReadOnlyModelViewSet):
+class DashboardViewSet(viewsets.GenericViewSet):
     def get_queryset(self):
         if "topic" in self.kwargs:
             return populate_dashboard(topic=self.kwargs["topic"])
