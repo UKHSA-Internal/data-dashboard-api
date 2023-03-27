@@ -24,7 +24,7 @@ def format_val(num: str, formatting: Dict[str, Union[str, bool]]) -> str:
         return num
 
 
-def get_value_from_db(filter: Dict[str, str]) -> str:
+def get_metric_value_from_db(filter: Dict[str, str]) -> str:
     """
     Purpose: Pull back the required data from APITimeSeries model
     Arguments:  filter -> A dictionary of filters to apply to the request
@@ -48,7 +48,7 @@ def populate_dashboard(
     Purpose: Generate a dictionary of results by pulling data back from the APITimeSeries model
     Arguments:  topic -> Filter metadata dictionary to just this topic
                 metadata -> Virus metadata
-    Returns: A dictionary of things to be displayed by the front-end
+    Returns: A list of dictionaries of things to be displayed by the front-end
     """
     output_list: List = []
     if metadata.get(topic):
@@ -59,7 +59,7 @@ def populate_dashboard(
 
             data_val: str = None
             if tile.get("filter", {}).get("metric"):
-                data_val: str = get_value_from_db(filter=tile["filter"])
+                data_val: str = get_metric_value_from_db(filter=tile["filter"])
 
             if data_val:
                 result_dict["metric_value"] = format_val(

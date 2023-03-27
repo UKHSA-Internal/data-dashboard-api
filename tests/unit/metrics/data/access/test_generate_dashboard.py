@@ -101,7 +101,8 @@ class TestFormatVal(TestCase):
 
 class TestPopulateDashboard(TestCase):
     @mock.patch(
-        "metrics.data.access.generate_dashboard.get_value_from_db", return_value=123.45
+        "metrics.data.access.generate_dashboard.get_metric_value_from_db",
+        return_value=123.45,
     )
     def test_populate_dashboard_all_fine(self, mock_get_db_value):
         metadata = {
@@ -136,7 +137,7 @@ class TestPopulateDashboard(TestCase):
         self.assertEqual(actual, expected)
         mock_get_db_value.assert_called_once()
 
-    @mock.patch("metrics.data.access.generate_dashboard.get_value_from_db")
+    @mock.patch("metrics.data.access.generate_dashboard.get_metric_value_from_db")
     def test_populate_dashboard_no_filter(self, mock_get_db_value):
         metadata = {
             "coronavirus": [
@@ -153,7 +154,8 @@ class TestPopulateDashboard(TestCase):
         mock_get_db_value.assert_not_called()
 
     @mock.patch(
-        "metrics.data.access.generate_dashboard.get_value_from_db", return_value=123.45
+        "metrics.data.access.generate_dashboard.get_metric_value_from_db",
+        return_value=123.45,
     )
     def test_populate_dashboard_no_formatting(self, mock_get_db_value):
         metadata = {

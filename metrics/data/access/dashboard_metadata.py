@@ -83,7 +83,7 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Deaths",
         "secondary_container": "Last 7 days",
-        "formatting": [ApplyFormatting.IntNoDP],
+        "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
             "metric": "new_deaths_7days_change",
