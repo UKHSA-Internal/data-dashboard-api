@@ -410,6 +410,6 @@ influenza_tiles = [
 
 
 virus_metadata = {
-    "coronavirus": coronavirus_headline + coronavirus_tiles,
+    "COVID-19": coronavirus_headline + coronavirus_tiles,
     "influenza": influenza_headline + influenza_tiles,
 }
