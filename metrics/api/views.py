@@ -8,38 +8,61 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from metrics.data.models.api_models import APITimeSeries
-from metrics.data.models.core_models import CoreTimeSeries
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
-from metrics.domain.charts.data_visualization import write_chart_file_for_topic
+from metrics.domain.charts.data_visualization import (
+    ChartNotSupportedError,
+    generate_corresponding_chart,
+)
 
 
 class ChartView(APIView):
     def get(self, request, *args, **kwargs):
         """
         This endpoint can be used to generate charts conforming to the UK Gov Design System.
-        `topic` relates to the particular disease.
+        `topic` relates to the particular disease, wheareas `type` refers to the type of metric (like deaths or cases).
 
-        Currently, the available topics are:
+        Currently, the available permutations are:
+        | Topic | Type |
+        | ----- | ---- |
+        | COVID-19 | Vaccinations |
+        | Influenza | Healthcare |
 
-        - `COVID-19`
 
-        - `Influenza`
+        | Topic |
+        | ----------- |
+        | COVID-19 |
+        | Influenza |
+        | RSV |
+        | Rhinovirus |
+        | Parainfluenza |
+        | hMPV |
+        | Adenovirus |
+        | Acute Respiratory Infections |
 
-        - `RSV`
+        Whereas, the available types are:
+        | Available types |
+        | ----------- |
+        | Cases |
+        | Deaths |
+        | Healthcare |
+        | Vaccincations |
+        | Testing |
 
-        - `Rhinovirus`
+        Note that not all of the above permutations are available.
+        Where the given permutation is not available the endpoint will respond with a `HTTP 404 NOT FOUND` error
 
-        - `Parainfluenza`
-
-        - `hMPV`
-
-        - `Adenovirus`
-
-        - `Acute Respiratory Infections`
 
         """
-        filename = write_chart_file_for_topic(topic=kwargs["topic"], file_format="svg")
+        chart_type: str = kwargs["type"]
+        topic: str = kwargs["topic"]
+
+        try:
+            filename: str = generate_corresponding_chart(
+                topic=topic, chart_type=chart_type
+            )
+        except ChartNotSupportedError:
+            return Response(status=404)
 
         image = open(filename, "rb")
         return FileResponse(image)

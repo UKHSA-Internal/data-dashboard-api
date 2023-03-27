@@ -119,7 +119,7 @@ def is_metric_improving(change_in_metric_value: int, metric_name: str) -> bool:
     increasing_is_bad = (
         "cases",
         "deaths",
-        "admissions",
+        "admission",
         "covid_occupied",
         "positivity",
     )
