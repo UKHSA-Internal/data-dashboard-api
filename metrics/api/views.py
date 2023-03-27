@@ -59,9 +59,6 @@ class FileUploadView(APIView):
         """
         Note that this endpoint is **deprecated** and should only be used for demo/testing purposes.
         """
-        # CoreTimeSeries.objects.all().delete()
-        # APITimeSeries.objects.all().delete()
-
         load_core_data(filename=request.FILES.get("file"))
         generate_api_time_series()
         return Response(status=204)
