@@ -28,7 +28,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Cases",
         "secondary_container": "Last 7 days",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
+        "formatting": {
+            "absolute_number": True,
+            "number_format": ApplyFormatting.IntNoDP,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_cases_7days_change",
@@ -42,7 +45,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Cases",
         "secondary_container": "percentage_change",
-        "formatting": {"number_format": ApplyFormatting.PctOneDP, "add_brackets": True},
+        "formatting": {
+            "number_format": ApplyFormatting.PctOneDP,
+            "add_brackets": True,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_cases_7days_change_percentage",
@@ -55,14 +61,29 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Cases",
-        "secondary_container": "arrow",
+        "secondary_container": "colour",
+        "formatting": {"get_colour": True},
         "filter": {
-            # "topic": "COVID-19",
-            # "metric": null,
-            # "geography_type": null,
-            # "geography": null,
-            # "stratum": null,
-            # "sex": null,
+            "topic": "COVID-19",
+            "metric": "new_cases_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
+    {
+        "panel": "Headline",
+        "main_container": "Cases",
+        "secondary_container": "arrow",
+        "formatting": {"get_arrow": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_cases_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
         },
     },
     {
@@ -83,7 +104,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Deaths",
         "secondary_container": "Last 7 days",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
+        "formatting": {
+            "absolute_number": True,
+            "number_format": ApplyFormatting.IntNoDP,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_deaths_7days_change",
@@ -97,7 +121,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Deaths",
         "secondary_container": "percentage_change",
-        "formatting": {"number_format": ApplyFormatting.PctOneDP, "add_brackets": True},
+        "formatting": {
+            "number_format": ApplyFormatting.PctOneDP,
+            "add_brackets": True,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_deaths_7days_change_percentage",
@@ -110,15 +137,30 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Deaths",
+        "secondary_container": "colour",
+        "formatting": {"get_colour": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_deaths_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
+    {
+        "panel": "Headline",
+        "main_container": "Deaths",
         "secondary_container": "arrow",
-        # "filter": {
-        #     "topic": "COVID-19",
-        #     "metric": null,
-        #     "geography_type": null,
-        #     "geography": null,
-        #     "stratum": null,
-        #     "sex": null,
-        # },
+        "formatting": {"get_arrow": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_deaths_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
     },
     {
         "panel": "Headline",
@@ -138,7 +180,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Healthcare",
         "secondary_container": "Last 7 days",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
+        "formatting": {
+            "absolute_number": True,
+            "number_format": ApplyFormatting.IntNoDP,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_admissions_7days_change",
@@ -152,7 +197,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Healthcare",
         "secondary_container": "percentage_change",
-        "formatting": {"number_format": ApplyFormatting.PctOneDP, "add_brackets": True},
+        "formatting": {
+            "number_format": ApplyFormatting.PctOneDP,
+            "add_brackets": True,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_admissions_7days_change_percentage",
@@ -165,14 +213,29 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Healthcare",
-        "secondary_container": "arrow",
+        "secondary_container": "colour",
+        "formatting": {"get_colour": True},
         "filter": {
-            # "topic": "COVID-19",
-            # "metric": null,
-            # "geography_type": null,
-            # "geography": null,
-            # "stratum": null,
-            # "sex": null,
+            "topic": "COVID-19",
+            "metric": "new_admissions_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
+    {
+        "panel": "Headline",
+        "main_container": "Healthcare",
+        "secondary_container": "arrow",
+        "formatting": {"get_arrow": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_admissions_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
         },
     },
     {
@@ -196,7 +259,7 @@ coronavirus_headline = [
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
-            "metric": "latest_vaccination_uptake_autumn22",
+            "metric": "latest_vaccinations_uptake_autumn22",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -221,7 +284,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Testing",
         "secondary_container": "Last 7 days",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
+        "formatting": {
+            "absolute_number": True,
+            "number_format": ApplyFormatting.IntNoDP,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "positivity_7days_change",
@@ -235,7 +301,10 @@ coronavirus_headline = [
         "panel": "Headline",
         "main_container": "Testing",
         "secondary_container": "percentage_change",
-        "formatting": {"number_format": ApplyFormatting.PctOneDP, "add_brackets": True},
+        "formatting": {
+            "number_format": ApplyFormatting.PctOneDP,
+            "add_brackets": True,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "positivity_7days_change_percentage",
@@ -248,14 +317,29 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Testing",
-        "secondary_container": "arrow",
+        "secondary_container": "colour",
+        "formatting": {"get_colour": True},
         "filter": {
-            # "topic": "COVID-19",
-            # "metric": null,
-            # "geography_type": null,
-            # "geography": null,
-            # "stratum": null,
-            # "sex": null,
+            "topic": "COVID-19",
+            "metric": "positivity_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
+    {
+        "panel": "Headline",
+        "main_container": "Testing",
+        "secondary_container": "arrow",
+        "formatting": {"get_arrow": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "positivity_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
         },
     },
 ]
@@ -277,7 +361,10 @@ coronavirus_tiles = [
         "panel": "Tile",
         "main_container": "Cases",
         "secondary_container": "Last 7 days",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
+        "formatting": {
+            "absolute_number": True,
+            "number_format": ApplyFormatting.IntNoDP,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_cases_7days_sum",
@@ -305,7 +392,10 @@ coronavirus_tiles = [
         "panel": "Tile",
         "main_container": "Cases",
         "secondary_container": "percentage_change",
-        "formatting": {"number_format": ApplyFormatting.PctOneDP, "add_brackets": True},
+        "formatting": {
+            "number_format": ApplyFormatting.PctOneDP,
+            "add_brackets": True,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_cases_7days_change_percentage",
@@ -318,7 +408,30 @@ coronavirus_tiles = [
     {
         "panel": "Tile",
         "main_container": "Cases",
+        "secondary_container": "colour",
+        "formatting": {"get_colour": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_cases_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
+    {
+        "panel": "Tile",
+        "main_container": "Cases",
         "secondary_container": "arrow",
+        "formatting": {"get_arrow": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_cases_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
     },
     {
         "panel": "Tile",
@@ -335,7 +448,10 @@ coronavirus_tiles = [
         "panel": "Tile",
         "main_container": "Deaths",
         "secondary_container": "Last 7 days",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
+        "formatting": {
+            "absolute_number": True,
+            "number_format": ApplyFormatting.IntNoDP,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_deaths_7days_sum",
@@ -363,7 +479,10 @@ coronavirus_tiles = [
         "panel": "Tile",
         "main_container": "Deaths",
         "secondary_container": "percentage_change",
-        "formatting": {"number_format": ApplyFormatting.PctOneDP, "add_brackets": True},
+        "formatting": {
+            "number_format": ApplyFormatting.PctOneDP,
+            "add_brackets": True,
+        },
         "filter": {
             "topic": "COVID-19",
             "metric": "new_deaths_7days_change_percentage",
@@ -376,14 +495,29 @@ coronavirus_tiles = [
     {
         "panel": "Tile",
         "main_container": "Deaths",
-        "secondary_container": "arrow",
+        "secondary_container": "colour",
+        "formatting": {"get_colour": True},
         "filter": {
-            # "topic": "COVID-19",
-            # "metric": null,
-            # "geography_type": null,
-            # "geography": null,
-            # "stratum": null,
-            # "sex": null,
+            "topic": "COVID-19",
+            "metric": "new_deaths_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
+    {
+        "panel": "Tile",
+        "main_container": "Deaths",
+        "secondary_container": "arrow",
+        "formatting": {"get_arrow": True},
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_deaths_7days_change",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
         },
     },
 ]
@@ -396,7 +530,10 @@ influenza_tiles = [
         "panel": "Tile",
         "main_container": "Deaths",
         "secondary_container": "percentage_change",
-        "formatting": {"number_format": ApplyFormatting.PctOneDP, "add_brackets": True},
+        "formatting": {
+            "number_format": ApplyFormatting.PctOneDP,
+            "add_brackets": True,
+        },
         "filter": {
             "topic": "Influenza",
             "metric": "new_deaths_7days_change_percentage",

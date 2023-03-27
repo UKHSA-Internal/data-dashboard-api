@@ -2,22 +2,40 @@ from typing import Dict, List, Union
 
 from metrics.data.access.dashboard_metadata import virus_metadata
 from metrics.data.models.api_models import APITimeSeries
+from metrics.domain.charts.line_with_shaded_section.information import (
+    is_metric_improving,
+)
 
 
-def format_val(num: str, formatting: Dict[str, Union[str, bool]]) -> str:
+def format_val(metric: str, num: str, formatting: Dict[str, Union[str, bool]]) -> str:
     """
     Purpose: format the incoming number
-    Arguments:  num -> The number to format
+    Arguments:  metric = Which metric this is
+                num -> The number to format
                 formatting -> is a dictionary of actions to perform against num
-                              currently, only formatting and whether
-                              to add brackets or not is supported
-    Returns: The formatted number
+    Returns: The formatted number or colour or arrow direction for the metric
     """
 
     try:
-        if formatting:
-            result = str(formatting["number_format"]).format(float(num))
-            return f"({result})" if formatting.get("add_brackets", False) else result
+        for format_option, format_value in formatting.items():
+            match format_option:
+                case "absolute_number":  # Make it an absoloute number
+                    num = str(abs(float(num))) if format_value else num
+                case "number_format":  # Format the number (see ApplyFormatting enum )
+                    num = str(format_value).format(float(num))
+                case "add_brackets":  # Add brackets around it
+                    num = f"({num})" if format_value else num
+                case "get_colour":  # Get the colour
+                    if format_value:
+                        improving = is_metric_improving(
+                            change_in_metric_value=int(float(num)),
+                            metric_name=metric,
+                        )
+                        num = "green" if improving else "red"
+                case "get_arrow":  # Get the arrow direction
+                    if format_value:
+                        num = "up" if float(num) > 0 else "down"
+
         return num
 
     except:
@@ -36,7 +54,7 @@ def get_metric_value_from_db(filter: Dict[str, str]) -> str:
             APITimeSeries.objects.filter(**filter).order_by("-dt").first().metric_value
         )
 
-    except:
+    except:  # trap for typos in the filter and for no data resulting in metric_value generating an exception
         return "no_value"
 
 
@@ -57,13 +75,14 @@ def populate_dashboard(
                 k: v for k, v in tile.items() if k not in ["formatting", "filter"]
             }
 
-            data_val: str = None
-            if tile.get("filter", {}).get("metric"):
-                data_val: str = get_metric_value_from_db(filter=tile["filter"])
+            metric: str = tile.get("filter", {}).get("metric")
 
-            if data_val:
-                result_dict["metric_value"] = format_val(
-                    num=str(data_val), formatting=tile.get("formatting")
+            if metric:
+                data_val: str = get_metric_value_from_db(filter=tile["filter"])
+                result_dict["metric_value"]: str = format_val(
+                    metric=metric,
+                    num=str(data_val),
+                    formatting=tile.get("formatting"),
                 )
 
             output_list.append(result_dict)

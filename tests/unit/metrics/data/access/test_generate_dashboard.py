@@ -7,6 +7,7 @@ from metrics.data.access.generate_dashboard import format_val, populate_dashboar
 class TestFormatVal(TestCase):
     def test_format_good_int(self):
         actual: str = format_val(
+            metric="ignore",
             num="123.45",
             formatting={"number_format": ApplyFormatting.IntNoDP},
         )
@@ -14,6 +15,7 @@ class TestFormatVal(TestCase):
 
     def test_format_good_pct_with_brackets(self):
         actual: str = format_val(
+            metric="ignore",
             num="123.45678",
             formatting={
                 "number_format": ApplyFormatting.PctOneDP,
@@ -24,6 +26,7 @@ class TestFormatVal(TestCase):
 
     def test_format_good_pct(self):
         actual: str = format_val(
+            metric="ignore",
             num="123.45678",
             formatting={"number_format": ApplyFormatting.PctOneDP},
         )
@@ -31,6 +34,7 @@ class TestFormatVal(TestCase):
 
     def test_format_unknown(self):
         actual: str = format_val(
+            metric="ignore",
             num="123.45",
             formatting={"number_format": "unrecognised"},
         )
@@ -38,6 +42,7 @@ class TestFormatVal(TestCase):
 
     def test_format_good_negative_int(self):
         actual: str = format_val(
+            metric="ignore",
             num="-123.45",
             formatting={"number_format": ApplyFormatting.IntNoDP},
         )
@@ -45,6 +50,7 @@ class TestFormatVal(TestCase):
 
     def test_format_good_negative_pct_with_brackets(self):
         actual: str = format_val(
+            metric="ignore",
             num="-123.45678",
             formatting={
                 "number_format": ApplyFormatting.PctOneDP,
@@ -55,13 +61,42 @@ class TestFormatVal(TestCase):
 
     def test_format_good_negative_pct(self):
         actual: str = format_val(
+            metric="ignore",
             num="-123.45678",
             formatting={"number_format": ApplyFormatting.PctOneDP},
         )
         self.assertEqual(actual, "-123.5%")
 
+    def test_format_get_up_arrow(self):
+        actual: str = format_val(
+            metric="ignore",
+            num="123.45678",
+            formatting={"get_arrow": True},
+        )
+        self.assertEqual(actual, "up")
+
+    def test_format_get_down_arrow(self):
+        actual: str = format_val(
+            metric="ignore",
+            num="-123.45678",
+            formatting={"get_arrow": True},
+        )
+        self.assertEqual(actual, "down")
+
+    def test_make_absolute(self):
+        actual: str = format_val(
+            metric="ignore",
+            num="-123.45",
+            formatting={
+                "absolute_number": True,
+                "number_format": ApplyFormatting.IntNoDP,
+            },
+        )
+        self.assertEqual(actual, "123")
+
     def test_format_negative_unknown(self):
         actual: str = format_val(
+            metric="ignore",
             num="-123.45",
             formatting={"number_format": "unrecognised"},
         )
@@ -69,6 +104,7 @@ class TestFormatVal(TestCase):
 
     def test_format_bad_int(self):
         actual: str = format_val(
+            metric="ignore",
             num="no_value",
             formatting={"number_format": ApplyFormatting.IntNoDP},
         )
@@ -76,6 +112,7 @@ class TestFormatVal(TestCase):
 
     def test_format_bad_pct_with_brackets(self):
         actual: str = format_val(
+            metric="ignore",
             num="no_value",
             formatting={
                 "number_format": ApplyFormatting.PctOneDP,
@@ -86,6 +123,7 @@ class TestFormatVal(TestCase):
 
     def test_format_bad_pct(self):
         actual: str = format_val(
+            metric="ignore",
             num="no_value",
             formatting={"number_format": ApplyFormatting.PctOneDP},
         )
@@ -93,6 +131,7 @@ class TestFormatVal(TestCase):
 
     def test_format_bad_unknown(self):
         actual: str = format_val(
+            metric="ignore",
             num="no_value",
             formatting={"number_format": "unrecognised"},
         )
