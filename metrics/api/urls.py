@@ -18,31 +18,12 @@ router.register("api/stats", DashboardViewSet, basename="dashboard")
 # Create the router. "wagtailapi" is the URL namespace
 api_router = WagtailAPIRouter("wagtailapi")
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 
 # Add the three endpoints using the "register_endpoint" method.
 # The first parameter is the name of the endpoint (such as pages, images). This
 # is used in the URL of the endpoint
 # The second parameter is the endpoint class that handles the requests
-class DebugPageAPIViewSet(PagesAPIViewSet):
-    def get_queryset(self):
-        queryset = super().get_queryset()
-
-        forwarded_for = self.request.META.get("X_FORWARDED_FOR")
-
-        address = self.request.META.get("REMOTE_ADDR")
-
-        logger.info(
-            f"Request IP address = {address} :: forwarded for = {forwarded_for}"
-        )
-
-        return queryset
-
-
-api_router.register_endpoint("pages", DebugPageAPIViewSet)
+api_router.register_endpoint("pages", PagesAPIViewSet)
 
 
 schema_view = get_schema_view(
