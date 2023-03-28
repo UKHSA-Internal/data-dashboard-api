@@ -14,28 +14,28 @@ class ChartNotSupportedError(Exception):
     ...
 
 
-def generate_corresponding_chart(topic: str, chart_type: str) -> str:
-    chart_type = chart_type.lower()
+def generate_corresponding_chart(topic: str, category: str) -> str:
+    category = category.lower()
     topic = topic.lower()
 
     if topic.lower() == "coronavirus":
         topic = "covid-19"
 
     if topic == "covid-19":
-        if chart_type == "vaccinations":
+        if category == "vaccinations":
             return create_waffle_chart_for_covid_vaccinations()
-        if chart_type == "cases":
+        if category == "cases":
             return create_line_with_shaded_section_chart_for_covid_cases()
-        if chart_type == "deaths":
+        if category == "deaths":
             return create_line_with_shaded_section_chart_for_covid_deaths()
 
     if topic == "influenza":
-        if chart_type == "healthcare":
+        if category == "healthcare":
             return (
                 create_line_with_shaded_section_chart_for_influenza_hospitalisations()
             )
 
-        if chart_type == "testing":
+        if category == "testing":
             return create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
                 topic=topic.title(),
             )
