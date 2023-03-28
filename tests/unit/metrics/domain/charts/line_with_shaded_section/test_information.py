@@ -4,25 +4,25 @@ import pytest
 
 from metrics.domain.charts.line_with_shaded_section import colour_scheme, information
 
+INCREASING_METRIC_VALUE: int = 10
+DECREASING_METRIC_VALUE: int = -10
+
 
 class TestDetermineLineAndFillColours:
     def test_returns_green_colours_for_decreasing_cases(self):
         """
-        Given a list of values and a param to analyse the last 3 numbers
-            which would return [5, 3, 2] i.e. average decrease
+        Given a `change_in_metric_value` which is decreasing
         And a `metric_name` of "new_cases_daily"
         When `determine_line_and_fill_colours()` is called
         Then a pair of green colours is returned
         """
         # Given
-        values = [1, 2, 3, 4, 5, 3, 2]
-        number_of_values_to_analyse = 3
+        change_in_metric_value = DECREASING_METRIC_VALUE
         metric_name = "new_cases_daily"
 
         # When
         line_colour, fill_colour = information.determine_line_and_fill_colours(
-            values=values,
-            last_n_values_to_analyse=number_of_values_to_analyse,
+            change_in_metric_value=change_in_metric_value,
             metric_name=metric_name,
         )
 
@@ -32,113 +32,24 @@ class TestDetermineLineAndFillColours:
 
     def test_returns_red_colours_for_increasing_cases(self):
         """
-        Given a list of values and a param to analyse the last 3 numbers
-            which would return [1, 3, 4] i.e. average increase
+        Given a `change_in_metric_value` which is increasing
         And a `metric_name` of "new_cases_daily"
         When `determine_line_and_fill_colours()` is called
         Then a pair of red colours is returned
         """
         # Given
-        values = [1, 2, 1, 3, 4]
-        number_of_values_to_analyse = 3
+        change_in_metric_value = INCREASING_METRIC_VALUE
         metric_name = "new_cases_daily"
 
         # When
         line_colour, fill_colour = information.determine_line_and_fill_colours(
-            values=values,
-            last_n_values_to_analyse=number_of_values_to_analyse,
+            change_in_metric_value=change_in_metric_value,
             metric_name=metric_name,
         )
 
         # Then
         assert line_colour == colour_scheme.RGBAColours.DARK_RED
         assert fill_colour == colour_scheme.RGBAColours.LIGHT_RED
-
-
-class TestCalculateAverageDifferenceOfSubslice:
-    def test_returns_correct_positive_change(self):
-        """
-        Given a list of values and a param to analyse the last 3 numbers
-            which would return [6, 7, 8]
-        When `calculate_average_difference_of_subslice()` is called
-        Then the correct average of 1 is returned
-        """
-        # Given
-        values = [1, 2, 4, 1, 2, 4, 3, 4, 4, 5, 6, 7, 8]
-        number_of_values_to_analyse = 3
-
-        # When
-        calculated_average_metric_value_difference = (
-            information.calculate_average_difference_of_subslice(
-                values=values, last_n_values_to_analyse=number_of_values_to_analyse
-            )
-        )
-
-        # Then
-        assert calculated_average_metric_value_difference == 1.00
-
-    def test_returns_correct_positive_average_change(self):
-        """
-        Given a list of values and a param to analyse the last 3 numbers
-            which would return [2, 4, 1]
-        When `calculate_average_difference_of_subslice()` is called
-        Then the correct average of 0.33 is returned
-        """
-        # Given
-        values = [1, 2, 4, 1, 2, 4, 1]
-        number_of_values_to_analyse = 3
-
-        # When
-        calculated_average_metric_value_difference = (
-            information.calculate_average_difference_of_subslice(
-                values=values, last_n_values_to_analyse=number_of_values_to_analyse
-            )
-        )
-
-        # Then
-        assert calculated_average_metric_value_difference == 0.33
-
-    def test_returns_correct_neutral_change(self):
-        """
-        Given a list of values and a param to analyse the last 3 numbers
-            which would return [2, 2, 2]
-        When `calculate_average_difference_of_subslice()` is called
-        Then the correct average of 0 is returned
-        """
-        # Given
-        values = [1, 2, 4, 1, 2, 2, 2]
-        number_of_values_to_analyse = 3
-
-        # When
-        calculated_average_metric_value_difference = (
-            information.calculate_average_difference_of_subslice(
-                values=values, last_n_values_to_analyse=number_of_values_to_analyse
-            )
-        )
-
-        # Then
-        assert calculated_average_metric_value_difference == 0.00
-
-    def test_returns_correct_average_negative_change(self):
-        """
-        Given a list of values and a param to analyse the last 4 numbers
-            which would return [3, 1, 1, 3]
-        When `calculate_average_difference_of_subslice()` is called
-        Then the correct average of -1 is returned
-        """
-        # Given
-        values = [1, 2, 4, 3, 1, 1, 3]
-        number_of_values_to_analyse = 4
-
-        # When
-        calculated_average_metric_value_difference = (
-            information.calculate_average_difference_of_subslice(
-                values=values, last_n_values_to_analyse=number_of_values_to_analyse
-            )
-        )
-
-        # Then
-        assert calculated_average_metric_value_difference == -1.00
 
 
 CASES_METRIC_TYPES: List[str] = [
@@ -150,10 +61,6 @@ CASES_METRIC_TYPES: List[str] = [
     "cases_age_sex",
     "cases_rate_age_sex",
 ]
-
-
-INCREASING_METRIC_VALUE: int = 10
-DECREASING_METRIC_VALUE: int = -10
 
 
 class TestIsMetricImprovingForCasesTypeMetrics:

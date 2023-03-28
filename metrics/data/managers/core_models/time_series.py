@@ -136,7 +136,7 @@ class CoreTimeSeriesManager(models.Manager):
     def get_latest_metric_value(
         self, topic: str, metric_name: str
     ) -> Union[int, float]:
-        """Grabs by the latest record by the given `topic` and `metric`. Slices all values older than the `date_from`.
+        """Grabs by the latest record by the given `topic` and `metric`.
 
         Args:
             topic: The name of the disease being queried.

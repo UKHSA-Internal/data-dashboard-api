@@ -5,26 +5,25 @@ from metrics.domain.charts.line_with_shaded_section import colour_scheme
 
 
 def determine_line_and_fill_colours(
-    values: List[int], last_n_values_to_analyse: int, metric_name: str
+    change_in_metric_value: int, metric_name: str
 ) -> type_hints.COLOUR_PAIR:
-    """Returns colours dependening on whether the average change in `last_n_values_to_analyse` is considered to begood.
+    """Returns colours dependening on whether the `change_in_metric_value` is considered to be good.
 
-    For example, for cases or deaths, an average increase in the `last_n_values_to_analyse`
+    For example, for cases or deaths, an average increase in the `change_in_metric_value`
     would be considered to be negative. Which would return a pair of red colours.
     But, for vaccinations an increase in the corresponding average change
     would be considered to be positive. Which would return a pair of green colours.
 
     Examples:
-        >>> determine_line_and_fill_colours([5, 3, 2], 2, metric_name='new_cases_daily')
+        >>> determine_line_and_fill_colours(change_in_metric_value=-2, metric_name='new_cases_daily')
         (colour_scheme.RGBAColours.DARK_GREEN, colour_scheme.RGBAColours.LIGHT_GREEN)
 
-        >>> is_metric_improving([1, 3, 7], 2, metric_name='new_cases_daily')
+        >>> is_metric_improving(change_in_metric_value=2, metric_name='new_cases_daily')
         (colour_scheme.RGBAColours.DARK_RED, colour_scheme.RGBAColours.LIGHT_RED)
 
     Args:
-        values: List of numbers representing the values
-        last_n_values_to_analyse: The number of items to slice off
-            from the end of `values` and perform the analysis on.
+        change_in_metric_value: The change in metric value from the last 7 days
+            compared to the preceding 7 days.
         metric_name: The associated metric_name,
             E.g. new_admissions_daily
 
@@ -38,10 +37,6 @@ def determine_line_and_fill_colours(
         `ValueError`: If the metric_name is not supported.
 
     """
-    change_in_metric_value = calculate_average_difference_of_subslice(
-        values=values, last_n_values_to_analyse=last_n_values_to_analyse
-    )
-
     metric_is_improving = is_metric_improving(
         change_in_metric_value=change_in_metric_value,
         metric_name=metric_name,
@@ -54,37 +49,6 @@ def determine_line_and_fill_colours(
 
 def _calculate_mean(values: List[int]) -> float:
     return sum(values) / len(values)
-
-
-def calculate_average_difference_of_subslice(
-    values: List[int], last_n_values_to_analyse: int
-):
-    """Returns the average value of the `last_n_values_to_analyse` in the given `values`.
-
-    Examples:
-        >>> calculate_average_difference_of_subslice([1, 2, 2], 2)
-        0
-
-        Where 0 is the average of the last 2 items,
-        But the average of the entire list would be 1.66
-
-    Args:
-        values: List of numbers representing the values
-        last_n_values_to_analyse: The number of items to slice off
-            from the end of `values` and perform the analysis on.
-
-    Returns:
-        A number rounded to 2 decimal places
-        which represents the average (mean)
-        of the subliced values
-
-    """
-    rolling_period_values = values[-last_n_values_to_analyse:]
-    start_value = rolling_period_values[0]
-
-    average_over_rolling_period: float = _calculate_mean(values=rolling_period_values)
-
-    return round(average_over_rolling_period - start_value, 2)
 
 
 def is_metric_improving(change_in_metric_value: int, metric_name: str) -> bool:

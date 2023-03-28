@@ -123,6 +123,7 @@ def generate_chart_figure(
     dates: List[datetime.datetime],
     values: List[int],
     metric_name: str,
+    change_in_metric_value: int,
     rolling_period_slice: int = 7,
     line_shape: str = "spline",
 ) -> plotly.graph_objs.Figure:
@@ -133,6 +134,8 @@ def generate_chart_figure(
         values: List of numbers representing the values.
         metric_name: The associated metric_name,
             E.g. new_admissions_daily
+        change_in_metric_value: The change in metric value from the last 7 days
+            compared to the preceding 7 days.
         rolling_period_slice: The last N number of items to slice
             off the given `values` and show a highlighted section for.
             Note that this highlighted section will be green or red,
@@ -151,9 +154,8 @@ def generate_chart_figure(
 
     """
     line_colour, fill_colour = information.determine_line_and_fill_colours(
-        values=values,
+        change_in_metric_value=change_in_metric_value,
         metric_name=metric_name,
-        last_n_values_to_analyse=rolling_period_slice,
     )
 
     return create_line_chart_with_highlighted_section(
