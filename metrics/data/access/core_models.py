@@ -18,7 +18,7 @@ DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 def get_date_n_months_ago(number_of_months: int = 6) -> datetime.datetime:
     today = datetime.datetime.today()
-    n_months_ago = today - relativedelta(months=number_of_months)
+    n_months_ago: datetime.datetime = today - relativedelta(months=number_of_months)
 
     return datetime.datetime(year=n_months_ago.year, month=n_months_ago.month, day=1)
 
