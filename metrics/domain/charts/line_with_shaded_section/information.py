@@ -51,37 +51,6 @@ def _calculate_mean(values: List[int]) -> float:
     return sum(values) / len(values)
 
 
-def calculate_average_difference_of_subslice(
-    values: List[int], last_n_values_to_analyse: int
-):
-    """Returns the average value of the `last_n_values_to_analyse` in the given `values`.
-
-    Examples:
-        >>> calculate_average_difference_of_subslice([1, 2, 2], 2)
-        0
-
-        Where 0 is the average of the last 2 items,
-        But the average of the entire list would be 1.66
-
-    Args:
-        values: List of numbers representing the values
-        last_n_values_to_analyse: The number of items to slice off
-            from the end of `values` and perform the analysis on.
-
-    Returns:
-        A number rounded to 2 decimal places
-        which represents the average (mean)
-        of the subliced values
-
-    """
-    rolling_period_values = values[-last_n_values_to_analyse:]
-    start_value = rolling_period_values[0]
-
-    average_over_rolling_period: float = _calculate_mean(values=rolling_period_values)
-
-    return round(average_over_rolling_period - start_value, 2)
-
-
 def is_metric_improving(change_in_metric_value: int, metric_name: str) -> bool:
     """Checks whether a positive or negative `change_in_metric_value` should be considered a good thing.
 
