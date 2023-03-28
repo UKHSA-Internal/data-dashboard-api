@@ -35,7 +35,7 @@ class DebugPageAPIViewSet(PagesAPIViewSet):
 
         address = self.request.META.get("REMOTE_ADDR")
 
-        logger.info(f"Request IP address: {address} :: forwarded for {forwarded_for}")
+        logger.info(f"Request IP address = {address} :: forwarded for = {forwarded_for}")
 
         return queryset
 
