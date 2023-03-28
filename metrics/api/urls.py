@@ -8,11 +8,12 @@ from wagtail.api.v2.router import WagtailAPIRouter
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from metrics.api import settings
-from metrics.api.views import ChartView, FileUploadView, GraphView, ItemView
-from metrics.api.viewsets import APITimeSeriesViewSet
+from metrics.api.views import ChartView, FileUploadView
+from metrics.api.viewsets import APITimeSeriesViewSet, DashboardViewSet
 
 router = routers.DefaultRouter()
 router.register(r"timeseries", APITimeSeriesViewSet)
+router.register("api/stats", DashboardViewSet, basename="dashboard")
 
 # Create the router. "wagtailapi" is the URL namespace
 api_router = WagtailAPIRouter("wagtailapi")
@@ -22,6 +23,7 @@ api_router = WagtailAPIRouter("wagtailapi")
 # is used in the URL of the endpoint
 # The second parameter is the endpoint class that handles the requests
 api_router.register_endpoint("pages", PagesAPIViewSet)
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -38,8 +40,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("items/", ItemView.as_view()),
-    path("graph/", GraphView.as_view()),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
