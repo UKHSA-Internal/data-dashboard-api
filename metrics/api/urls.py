@@ -8,7 +8,7 @@ from wagtail.api.v2.router import WagtailAPIRouter
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from metrics.api import settings
-from metrics.api.views import ChartView, FileUploadView, GraphView, ItemView
+from metrics.api.views import ChartView, FileUploadView
 from metrics.api.viewsets import APITimeSeriesViewSet
 
 router = routers.DefaultRouter()
@@ -38,8 +38,6 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("items/", ItemView.as_view()),
-    path("graph/", GraphView.as_view()),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
