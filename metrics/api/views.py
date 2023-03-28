@@ -22,38 +22,18 @@ class ChartView(APIView):
     def get(self, request, *args, **kwargs):
         """
         This endpoint can be used to generate charts conforming to the UK Gov Design System.
-        `topic` relates to the particular disease, wheareas `type` refers to the type of metric (like deaths or cases).
+        `topic` relates to the particular disease, whereas `category` refers to the type of metric (like deaths or cases).
 
         Currently, the available permutations are:
-        | Topic | Type |
-        | ----- | ---- |
+        | Topic | Category |
+        | ----- | -------- |
         | COVID-19 | Vaccinations |
+        | COVID-19 | Cases |
+        | COVID-19 | Deaths |
         | Influenza | Healthcare |
+        | Influenza | Testing |
 
-
-        | Topic |
-        | ----------- |
-        | COVID-19 |
-        | Influenza |
-        | RSV |
-        | Rhinovirus |
-        | Parainfluenza |
-        | hMPV |
-        | Adenovirus |
-        | Acute Respiratory Infections |
-
-        Whereas, the available types are:
-        | Available types |
-        | ----------- |
-        | Cases |
-        | Deaths |
-        | Healthcare |
-        | Vaccincations |
-        | Testing |
-
-        Note that not all of the above permutations are available.
-        Where the given permutation is not available the endpoint will respond with a `HTTP 404 NOT FOUND` error
-
+        Where a given permutation is not available the endpoint will respond with a `HTTP 404 NOT FOUND` error
 
         """
         category: str = kwargs["category"]
