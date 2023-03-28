@@ -55,7 +55,7 @@ def write_figure(
 def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
     topic: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
+    file_format: str = "svg",
 ) -> str:
     metric_name = "weekly_positivity"
     dates, values = core_models.get_timeseries_metric_values_from_date(
@@ -78,7 +78,7 @@ def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
 
 def create_waffle_chart_for_covid_vaccinations(
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
+    file_format: str = "svg",
 ) -> str:
     topic = "COVID-19"
     vaccine_doses: List[int] = core_models.get_vaccination_uptake_rates(
@@ -94,7 +94,7 @@ def create_waffle_chart_for_covid_vaccinations(
 
 def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
+    file_format: str = "svg",
 ) -> str:
     topic = "Influenza"
     metric_name = "weekly_hospital_admission_rate"
@@ -119,7 +119,7 @@ def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
 
 def create_line_with_shaded_section_chart_for_covid_cases(
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
+    file_format: str = "svg",
 ) -> str:
     topic = "COVID-19"
     metric_name = "new_cases_daily"
@@ -144,7 +144,7 @@ def create_line_with_shaded_section_chart_for_covid_cases(
 
 def create_line_with_shaded_section_chart_for_covid_deaths(
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
+    file_format: str = "svg",
 ) -> str:
     topic = "COVID-19"
     metric_name = "new_deaths_daily"
