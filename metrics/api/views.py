@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
@@ -62,7 +64,7 @@ class ChartView(APIView):
                 topic=topic, chart_type=chart_type
             )
         except ChartNotSupportedError:
-            return Response(status=404)
+            return Response(status=HTTPStatus.NOT_FOUND)
 
         image = open(filename, "rb")
         return FileResponse(image)
@@ -130,7 +132,7 @@ class ItemView(View):
             for disease in disease_list:
                 if (
                     data_item.topic == disease
-                    and data_item.metric == disease_list[disease]
+                    and data_item.metric_name == disease_list[disease]
                     and data_item.stratum == strata[disease]
                 ):
                     print(
