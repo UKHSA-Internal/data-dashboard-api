@@ -2,7 +2,7 @@
 This file contains access-like (read) functionality for interacting with the database layer.
 This shall only include functionality which is used to read from the database.
 
-Specifically, this file contains read database logic for the API models only.
+Specifically, this file contains read database logic for the Core models only.
 """
 import datetime
 from typing import List, Tuple
