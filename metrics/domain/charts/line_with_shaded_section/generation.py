@@ -13,6 +13,7 @@ X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "ticks": "outside",
     "tickson": "boundaries",
     "type": "date",
+    "dtick": "M1",
     "tickformat": "%b",
     "tickfont": {
         "family": '"GDS Transport", Arial, sans-serif',

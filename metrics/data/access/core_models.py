@@ -16,9 +16,11 @@ from metrics.data.models.core_models import CoreTimeSeries
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
-def get_date_six_months_ago() -> datetime.datetime:
+def get_date_n_months_ago(number_of_months: int = 6) -> datetime.datetime:
     today = datetime.datetime.today()
-    return today - relativedelta(months=6)
+    n_months_ago: datetime.datetime = today - relativedelta(months=number_of_months)
+
+    return datetime.datetime(year=n_months_ago.year, month=n_months_ago.month, day=1)
 
 
 def unzip_values(values) -> Tuple[List, List]:
@@ -46,12 +48,12 @@ def get_timeseries_metric_values_from_date(
     topic: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
 ) -> type_hints.DATES_AND_VALUES:
-    six_months_ago: datetime.datetime = get_date_six_months_ago()
+    n_months_ago: datetime.datetime = get_date_n_months_ago()
 
     queryset = core_time_series_manager.by_topic_metric_for_dates_and_values(
         topic=topic,
         metric_name=metric_name,
-        date_from=six_months_ago,
+        date_from=n_months_ago,
     )
 
     dates, values = unzip_values(queryset)
