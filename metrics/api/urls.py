@@ -22,14 +22,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 # Add the three endpoints using the "register_endpoint" method.
 # The first parameter is the name of the endpoint (such as pages, images). This
 # is used in the URL of the endpoint
 # The second parameter is the endpoint class that handles the requests
 class DebugPageAPIViewSet(PagesAPIViewSet):
-
     def get_queryset(self):
-
         queryset = super().get_queryset()
 
         address = self.request.META.get("REMOTE_ADDR")
