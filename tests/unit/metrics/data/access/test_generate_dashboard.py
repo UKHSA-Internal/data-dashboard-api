@@ -7,7 +7,7 @@ from metrics.data.access.generate_dashboard import format_val, populate_dashboar
 class TestFormatVal(TestCase):
     def test_format_good_int(self):
         actual: str = format_val(
-            metric="ignore",
+            metric_name="ignore",
             metric_value="123.45",
             formatting={"number_format": ApplyFormatting.IntNoDP},
         )
