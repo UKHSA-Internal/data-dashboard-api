@@ -5,7 +5,7 @@ This shall only include functionality which is used to read from the database.
 Specifically, this file contains read database logic for the Core models only.
 """
 import datetime
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 from dateutil.relativedelta import relativedelta
 from django.db.models import Manager
@@ -59,3 +59,16 @@ def get_timeseries_metric_values_from_date(
     dates, values = unzip_values(queryset)
 
     return dates, values
+
+
+def get_metric_value(
+    metric_name: str,
+    topic: str,
+    core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+) -> Union[int, float]:
+    metric_value: Union[int, float] = core_time_series_manager.get_latest_metric_value(
+        topic=topic,
+        metric_name=metric_name,
+    )
+
+    return metric_value

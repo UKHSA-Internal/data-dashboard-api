@@ -70,11 +70,17 @@ def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
         core_time_series_manager=core_time_series_manager,
     )
 
+    change_in_metric_value = core_models.get_metric_value(
+        metric_name="weekly_percent_change_positivity",
+        topic=topic,
+    )
+
     figure: plotly.graph_objects.Figure = (
         line_with_shaded_section.generate_chart_figure(
             dates=dates,
             values=values,
             metric_name=metric_name,
+            change_in_metric_value=change_in_metric_value,
             rolling_period_slice=1,
         )
     )
@@ -111,11 +117,17 @@ def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
         core_time_series_manager=core_time_series_manager,
     )
 
+    change_in_metric_value = core_models.get_metric_value(
+        metric_name="weekly_hospital_admissions_rate_change_percentage",
+        topic=topic,
+    )
+
     figure: plotly.graph_objects.Figure = (
         line_with_shaded_section.generate_chart_figure(
             dates=dates,
             values=values,
             metric_name=metric_name,
+            change_in_metric_value=change_in_metric_value,
             rolling_period_slice=1,
         )
     )
@@ -136,11 +148,17 @@ def create_line_with_shaded_section_chart_for_covid_cases(
         core_time_series_manager=core_time_series_manager,
     )
 
+    change_in_metric_value = core_models.get_metric_value(
+        metric_name="new_cases_7days_change_percentage",
+        topic=topic,
+    )
+
     figure: plotly.graph_objects.Figure = (
         line_with_shaded_section.generate_chart_figure(
             dates=dates,
             values=values,
             metric_name=metric_name,
+            change_in_metric_value=change_in_metric_value,
             rolling_period_slice=7,
         )
     )
@@ -161,11 +179,17 @@ def create_line_with_shaded_section_chart_for_covid_deaths(
         core_time_series_manager=core_time_series_manager,
     )
 
+    change_in_metric_value = core_models.get_metric_value(
+        metric_name="new_deaths_7days_change_percentage",
+        topic=topic,
+    )
+
     figure: plotly.graph_objects.Figure = (
         line_with_shaded_section.generate_chart_figure(
             dates=dates,
             values=values,
             metric_name=metric_name,
+            change_in_metric_value=change_in_metric_value,
             rolling_period_slice=7,
         )
     )
