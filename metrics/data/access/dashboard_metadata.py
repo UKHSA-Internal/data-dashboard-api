@@ -169,7 +169,7 @@ coronavirus_headline = [
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
-            "metric": "new_admission_7days",
+            "metric": "new_admissions_7days",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -186,7 +186,7 @@ coronavirus_headline = [
         },
         "filter": {
             "topic": "COVID-19",
-            "metric": "new_admission_7days_change",
+            "metric": "new_admissions_7days_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -203,7 +203,7 @@ coronavirus_headline = [
         },
         "filter": {
             "topic": "COVID-19",
-            "metric": "new_admission_7days_change_percentage",
+            "metric": "new_admissions_7days_change_percentage",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -217,7 +217,7 @@ coronavirus_headline = [
         "formatting": {"get_colour": True},
         "filter": {
             "topic": "COVID-19",
-            "metric": "new_admission_7days_change",
+            "metric": "new_admissions_7days_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -231,7 +231,7 @@ coronavirus_headline = [
         "formatting": {"get_arrow": True},
         "filter": {
             "topic": "COVID-19",
-            "metric": "new_admission_7days_change",
+            "metric": "new_admissions_7days_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -245,10 +245,10 @@ coronavirus_headline = [
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
-            "metric": "latest_total_vaccinations_autumn22",
+            "metric": "latest_total_vaccinations_spring22",
             "geography_type": "Nation",
             "geography": "England",
-            "stratum": "default",
+            "stratum": "50",
             "sex": "ALL",
         },
     },
@@ -259,10 +259,10 @@ coronavirus_headline = [
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
-            "metric": "latest_vaccinations_uptake_autumn22",
+            "metric": "latest_total_vaccinations_autumn22",
             "geography_type": "Nation",
             "geography": "England",
-            "stratum": "default",
+            "stratum": "75",
             "sex": "ALL",
         },
     },
