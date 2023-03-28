@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.http import FileResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -7,35 +9,37 @@ from rest_framework.views import APIView
 
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
-from metrics.domain.charts.data_visualization import write_chart_file_for_topic
+from metrics.domain.charts.data_visualization import (
+    ChartNotSupportedError,
+    generate_corresponding_chart,
+)
 
 
 class ChartView(APIView):
     def get(self, request, *args, **kwargs):
         """
         This endpoint can be used to generate charts conforming to the UK Gov Design System.
-        `topic` relates to the particular disease.
+        `topic` relates to the particular disease, whereas `category` refers to the type of metric (like deaths or cases).
 
-        Currently, the available topics are:
+        Currently, the available permutations are:
+        | Topic | Category |
+        | ----- | -------- |
+        | COVID-19 | Vaccinations |
+        | COVID-19 | Cases |
+        | COVID-19 | Deaths |
+        | Influenza | Healthcare |
+        | Influenza | Testing |
 
-        - `COVID-19`
-
-        - `Influenza`
-
-        - `RSV`
-
-        - `Rhinovirus`
-
-        - `Parainfluenza`
-
-        - `hMPV`
-
-        - `Adenovirus`
-
-        - `Acute Respiratory Infections`
+        Where a given permutation is not available the endpoint will respond with a `HTTP 404 NOT FOUND` error
 
         """
-        filename = write_chart_file_for_topic(topic=kwargs["topic"], file_format="svg")
+        category: str = kwargs["category"]
+        topic: str = kwargs["topic"]
+
+        try:
+            filename: str = generate_corresponding_chart(topic=topic, category=category)
+        except ChartNotSupportedError:
+            return Response(status=HTTPStatus.NOT_FOUND)
 
         image = open(filename, "rb")
         return FileResponse(image)

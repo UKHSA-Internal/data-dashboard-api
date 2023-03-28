@@ -55,7 +55,7 @@ urlpatterns = [
         r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
     ),
     re_path(r"^upload/$", FileUploadView.as_view()),
-    re_path(r"^charts/(?P<topic>[^/]+)$", ChartView.as_view()),
+    re_path(r"^charts/(?P<topic>[^/]+)/(?P<category>[^/]+)$", ChartView.as_view()),
     path("admin/", admin.site.urls),
     path("api/", api_router.urls),
     path("cms-admin/", include(wagtailadmin_urls)),
