@@ -21,7 +21,7 @@ def get_date_six_months_ago() -> datetime.datetime:
     return today - relativedelta(months=6)
 
 
-def _unzip_values(values) -> Tuple[List, List]:
+def unzip_values(values) -> Tuple[List, List]:
     return zip(*values)
 
 
@@ -54,6 +54,6 @@ def get_timeseries_metric_values_from_date(
         date_from=six_months_ago,
     )
 
-    dates, values = _unzip_values(queryset)
+    dates, values = unzip_values(queryset)
 
     return dates, values
