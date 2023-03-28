@@ -1,4 +1,3 @@
-
 from http import HTTPStatus
 
 from django.http import FileResponse
@@ -7,7 +6,6 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
