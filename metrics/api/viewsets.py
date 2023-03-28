@@ -1,7 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import pagination, viewsets
+from rest_framework import pagination, response, viewsets
 
-from metrics.api.serializers import APITimeSeriesSerializer
+from metrics.api.serializers import APITimeSeriesSerializer, DashboardSerializer
+from metrics.data.access.generate_dashboard import populate_dashboard
 from metrics.data.models.api_models import APITimeSeries
 
 
@@ -36,3 +37,17 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "epiweek",
         "dt",
     ]
+
+
+class DashboardViewSet(viewsets.GenericViewSet):
+    def get_queryset(self):
+        if "topic" in self.kwargs:
+            return populate_dashboard(topic=self.kwargs["topic"])
+        return None
+
+    serializer_class = DashboardSerializer
+    lookup_field = "topic"
+
+    def retrieve(self, request, *args, **kwargs):
+        data = self.get_queryset()
+        return response.Response(data)

@@ -21,3 +21,10 @@ class APITimeSeriesSerializer(serializers.ModelSerializer):
             "dt",
             "metric_value",
         ]
+
+
+class DashboardSerializer(serializers.ModelSerializer):
+    # Meta class only needed for Swagger
+    class Meta:
+        model = APITimeSeries
+        fields = "__all__"
