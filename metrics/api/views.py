@@ -40,9 +40,7 @@ class ChartView(APIView):
         topic: str = kwargs["topic"]
 
         try:
-            filename: str = generate_corresponding_chart(
-                topic=topic, category=category
-            )
+            filename: str = generate_corresponding_chart(topic=topic, category=category)
         except ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
 
