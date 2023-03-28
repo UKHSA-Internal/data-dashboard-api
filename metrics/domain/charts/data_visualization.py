@@ -68,7 +68,7 @@ def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
         line_with_shaded_section.generate_chart_figure(
             dates=dates,
             values=values,
-            metric_name="weekly_hospital_admission_rate",
+            metric_name=metric_name,
             rolling_period_slice=1,
         )
     )
