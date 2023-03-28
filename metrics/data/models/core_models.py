@@ -92,4 +92,3 @@ class CoreTimeSeries(models.Model):
 
     def __str__(self):
         return f"Core Data for {self.dt}, metric '{self.metric.name}', value: {self.metric_value}"
-
