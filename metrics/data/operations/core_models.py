@@ -114,7 +114,7 @@ def maintain_model(
 
     # Add the new values to the model and pull back the pk for them.
     new_records: List[Dict[str, str]] = [
-        {"pk": model.create(**data).pk} | data for data in new_data
+        {**{"pk": model.create(**data).pk}, **data} for data in new_data
     ]
 
     # Turn the new records into a dataframe
