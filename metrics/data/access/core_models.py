@@ -31,7 +31,7 @@ def get_vaccination_uptake_rates(
     base_name = "latest_vaccination_uptake_"
 
     autumn_uptake: type_hints.NUMBER = core_time_series_manager.get_latest_metric_value(
-        topic=topic, metric_name=f"{base_name}autum22"
+        topic=topic, metric_name=f"{base_name}autumn22"
     )
 
     spring_uptake: type_hints.NUMBER = core_time_series_manager.get_latest_metric_value(
