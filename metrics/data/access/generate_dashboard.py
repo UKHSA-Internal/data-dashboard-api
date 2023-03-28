@@ -7,39 +7,44 @@ from metrics.domain.charts.line_with_shaded_section.information import (
 )
 
 
-def format_val(metric: str, num: str, formatting: Dict[str, Union[str, bool]]) -> str:
+def format_val(
+    metric_name: str, metric_value: str, formatting: Dict[str, Union[str, bool]]
+) -> str:
     """
     Purpose: format the incoming number
-    Arguments:  metric = Which metric this is
-                num -> The number to format
-                formatting -> is a dictionary of actions to perform against num
-    Returns: The formatted number or colour or arrow direction for the metric
+    Arguments:  metric_name = Which metric this is
+                metric_value -> The metric value to format
+                formatting -> is a dictionary of actions to perform against metric_value
+    Returns: The formatted metric_value or colour or arrow direction for the metric
     """
 
     try:
         for format_option, format_value in formatting.items():
-            match format_option:
-                case "absolute_number":  # Make it an absoloute number
-                    num = str(abs(float(num))) if format_value else num
-                case "number_format":  # Format the number (see ApplyFormatting enum )
-                    num = str(format_value).format(float(num))
-                case "add_brackets":  # Add brackets around it
-                    num = f"({num})" if format_value else num
-                case "get_colour":  # Get the colour
-                    if format_value:
-                        improving = is_metric_improving(
-                            change_in_metric_value=int(float(num)),
-                            metric_name=metric,
-                        )
-                        num = "green" if improving else "red"
-                case "get_arrow":  # Get the arrow direction
-                    if format_value:
-                        num = "up" if float(num) > 0 else "down"
+            if format_option == "absolute_number":  # Make it an absoloute number
+                metric_value = (
+                    str(abs(float(metric_value))) if format_value else metric_value
+                )
+            elif (
+                format_option == "number_format"
+            ):  # Format the number (see ApplyFormatting enum )
+                metric_value = str(format_value).format(float(metric_value))
+            elif format_option == "add_brackets":  # Add brackets around it
+                metric_value = f"({metric_value})" if format_value else metric_value
+            elif format_option == "get_colour":  # Get the colour
+                if format_value:
+                    improving = is_metric_improving(
+                        change_in_metric_value=int(float(metric_value)),
+                        metric_name=metric_name,
+                    )
+                    metric_value = "green" if improving else "red"
+            elif format_option == "get_arrow":  # Get the arrow direction
+                if format_value:
+                    metric_value = "up" if float(metric_value) > 0 else "down"
 
-        return num
+        return metric_value
 
     except:
-        return num
+        return metric_value
 
 
 def get_metric_value_from_db(filter: Dict[str, str]) -> str:
@@ -75,13 +80,13 @@ def populate_dashboard(
                 k: v for k, v in tile.items() if k not in ["formatting", "filter"]
             }
 
-            metric: str = tile.get("filter", {}).get("metric")
+            metric_name: str = tile.get("filter", {}).get("metric")
 
-            if metric:
+            if metric_name:
                 data_val: str = get_metric_value_from_db(filter=tile["filter"])
                 result_dict["metric_value"]: str = format_val(
-                    metric=metric,
-                    num=str(data_val),
+                    metric_name=metric_name,
+                    metric_value=str(data_val),
                     formatting=tile.get("formatting"),
                 )
 
