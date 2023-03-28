@@ -118,7 +118,7 @@ def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
     )
 
     change_in_metric_value = core_models.get_metric_value(
-        metric_name="weekly_hospital_admissions_rate_change_percentage",
+        metric_name="weekly_hospital_admission_rate_change_percentage",
         topic=topic,
     )
 
