@@ -17,27 +17,33 @@ class ChartNotSupportedError(Exception):
 def generate_corresponding_chart(topic: str, category: str) -> str:
     category = category.lower()
     topic = topic.lower()
+    file_format = "svg"
 
     if topic.lower() == "coronavirus":
         topic = "covid-19"
 
     if topic == "covid-19":
         if category == "vaccinations":
-            return create_waffle_chart_for_covid_vaccinations()
+            return create_waffle_chart_for_covid_vaccinations(file_format=file_format)
         if category == "cases":
-            return create_line_with_shaded_section_chart_for_covid_cases()
+            return create_line_with_shaded_section_chart_for_covid_cases(
+                file_format=file_format
+            )
         if category == "deaths":
-            return create_line_with_shaded_section_chart_for_covid_deaths()
+            return create_line_with_shaded_section_chart_for_covid_deaths(
+                file_format=file_format
+            )
 
     if topic == "influenza":
         if category == "healthcare":
-            return (
-                create_line_with_shaded_section_chart_for_influenza_hospitalisations()
+            return create_line_with_shaded_section_chart_for_influenza_hospitalisations(
+                file_format=file_format
             )
 
         if category == "testing":
             return create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
                 topic=topic.title(),
+                file_format=file_format,
             )
 
     raise ChartNotSupportedError()
@@ -54,8 +60,8 @@ def write_figure(
 
 def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
     topic: str,
+    file_format: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
 ) -> str:
     metric_name = "weekly_positivity"
     dates, values = core_models.get_timeseries_metric_values_from_date(
@@ -77,8 +83,8 @@ def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
 
 
 def create_waffle_chart_for_covid_vaccinations(
+    file_format: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
 ) -> str:
     topic = "COVID-19"
     vaccine_doses: List[int] = core_models.get_vaccination_uptake_rates(
@@ -93,8 +99,8 @@ def create_waffle_chart_for_covid_vaccinations(
 
 
 def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
+    file_format: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
 ) -> str:
     topic = "Influenza"
     metric_name = "weekly_hospital_admission_rate"
@@ -118,8 +124,8 @@ def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
 
 
 def create_line_with_shaded_section_chart_for_covid_cases(
+    file_format: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
 ) -> str:
     topic = "COVID-19"
     metric_name = "new_cases_daily"
@@ -143,8 +149,8 @@ def create_line_with_shaded_section_chart_for_covid_cases(
 
 
 def create_line_with_shaded_section_chart_for_covid_deaths(
+    file_format: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    file_format: str = "png",
 ) -> str:
     topic = "COVID-19"
     metric_name = "new_deaths_daily"
