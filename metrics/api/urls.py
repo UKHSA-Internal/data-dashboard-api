@@ -31,9 +31,11 @@ class DebugPageAPIViewSet(PagesAPIViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
 
+        forwarded_for = self.request.META.get("X_FORWARDED_FOR")
+
         address = self.request.META.get("REMOTE_ADDR")
 
-        logger.info(f"Request IP address: {address}")
+        logger.info(f"Request IP address: {address} :: forwarded for {forwarded_for}")
 
         return queryset
 
