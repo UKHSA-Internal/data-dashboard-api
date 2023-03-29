@@ -17,9 +17,9 @@ from metrics.domain.charts.data_visualization import (
 
 class ChartView(APIView):
     def get(self, request, *args, **kwargs):
-        """
-        This endpoint can be used to generate charts conforming to the UK Gov Design System.
-        `topic` relates to the particular disease, whereas `category` refers to the type of metric (like deaths or cases).
+        """This endpoint can be used to generate charts conforming to the UK Gov Specification
+
+        Where a `topic` relates to a type of disease, and `category` refers to the type of metric (like deaths or cases).
 
         Currently, the available permutations are:
         | Topic | Category |
