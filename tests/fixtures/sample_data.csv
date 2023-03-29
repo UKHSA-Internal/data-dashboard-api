@@ -1,7 +1,7 @@
 parent_theme,child_theme,topic,geography_type,geography,metric_name,stratum,sex,period,year,epiweek,date,metric_value
-infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,6_17,female,daily,2023,10,06/03/2023,174.1
-infectious_disease,respiratory,COVID-20,nation,England,admission_rate_age,0_5,all,daily,2023,10,06/03/2023,540.1
-new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,male,daily,2023,10,06/03/2023,14890
-another_new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,all,weekly,2023,10,06/03/2023,14890
-infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,65_84,all,weekly,2023,10,06/03/2023,4361
-infectious_disease,respiratory,COVID-19,nation,new_England,admission_rate_age,18_64,all,weekly,2023,10,06/03/2023,1009
+infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,6_17,female,daily,2023,10,2023-06-23,174.1
+infectious_disease,respiratory,COVID-20,nation,England,admission_rate_age,0_5,all,daily,2023,10,2023-06-23,540.1
+new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,male,daily,2023,10,2023-06-23,14890
+another_new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,all,weekly,2023,10,2023-06-23,14890
+infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,65_84,all,weekly,2023,10,2023-06-23,4361
+infectious_disease,respiratory,COVID-19,nation,new_England,admission_rate_age,18_64,all,weekly,2023,10,2023-06-23,1009
