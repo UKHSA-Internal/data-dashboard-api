@@ -58,8 +58,8 @@ In the future, this could be enforced with `import-linter`.
         |- operations/ # Write-like functionality for interacting with the db (via managers ideally).
         |- managers/ # Contains files with custom queryset and model manager classes for the models.
         |- migrations/ # Contains the associated django migrations.
-    |- domain/ # Represents the business logic layer.
-    |- interfaces/ # Represents the boundary of the system. Currently holds only management command. `api/` arguably should be here.
+    |- domain/ # Represents the business logic layer. Currently houses the charts generation module.
+    |- interfaces/ # Represents the boundary of the system. Currently holds only management commands. `api/` arguably should be here.
     
 |- tests/
     |- fakes/ # Contains fake implementations to remove additional dependencies for tests
