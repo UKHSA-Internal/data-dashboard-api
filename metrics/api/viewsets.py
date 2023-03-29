@@ -43,7 +43,7 @@ class DashboardViewSet(viewsets.GenericViewSet):
     """
     This endpoint can be used to retrieve headline statistics associated with a given topic
 
-    Where a `topic` relates to a type of disease.
+    Where there is 1 mandatory param of `topic`, which relates to a type of disease.
 
     Note that currently only the following topics are supported:
 
