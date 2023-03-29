@@ -109,7 +109,7 @@ def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
 ) -> str:
     topic = "Influenza"
-    metric_name = "weekly_hospital_admission_rate"
+    metric_name = "weekly_hospital_admissions_rate"
 
     dates, values = core_models.get_timeseries_metric_values_from_date(
         topic=topic,
@@ -118,7 +118,7 @@ def create_line_with_shaded_section_chart_for_influenza_hospitalisations(
     )
 
     change_in_metric_value = core_models.get_metric_value(
-        metric_name="weekly_hospital_admission_rate_change_percentage",
+        metric_name="weekly_hospital_admissions_rate_change_percentage",
         topic=topic,
     )
 
