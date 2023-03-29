@@ -37,13 +37,8 @@ As a result, one should expect to find a large amount of replicated values.
 There are a series of foreign key relationships. Although this greatly reduced the amount of data needed to be stored.
 It does mean that querying the core models will incur penalties from joins depending on the query being performed.
 
-Note that at the point of data ingestion, the **Core models** are populated.
-Once this is done, then the API models can be updated. 
-Currently, this is achieved via the management command:
-
-```
-python manage.py generate_weekly_time_series
-```
+Note that at the point of data ingestion,
+both the **Core models** and **API models** are populated
 
 ---
 
@@ -68,24 +63,11 @@ This includes:
 - Waffle charts
 - Bar charts
 
-To re-use the chart generation code there are a number of options:
+As of the Alpha release (March 2023), the following charts can be generated from this project:
 
-1. Move the chart generation code from the [coronavirus-dashboard-pipeline-etl chart generation module](https://github.com/publichealthengland/coronavirus-dashboard-pipeline-etl/blob/development/db_etl_homepage_graphs/grapher.py)
-to instead be its own service. 
-With this approach, we can centralise this functionality and have a single source of truth. 
-If changes are made to how charts look, then that change can be applied across the board easily. 
-Equally, if a new chart type is created, it becomes available to other systems/dashboards by default.
-
-2. Copy the code over into this repo and re-use. 
-This is likely the quickest option, but then the UKHSA would then lose the single source of truth benefit 
-that comes with option 1. Also note, that there is some engineering time required to decouple the existing code from 
-the `coronavirus-dashboard-pipeline-etl` before it can be brought over into this repo.
-
-The works could be phased as follows:
-- Use current bespoke chart generation endpoint from `winter-pressures-api`.
-- Create chart generation service
-- Point `winter-pressures-api` at new chart generation service
-- Point `coronavirus-dashboard-pipeline-etl` at new chart generation service.
+- Line graphs (with shaded region)
+- Simple line graphs 
+- Waffle charts
 
 ---
 
@@ -93,13 +75,9 @@ The works could be phased as follows:
 
 ### Outdated data file
 
-A new daily metrics data file was received on 15th March 2023. 
+A new daily metrics data file was received on 29th March 2023. 
 
-The team cannot commit to redesigning the data model, 
-the API layer and additional querying logic to suit this new data file in time 
-for the Alpha release (end of March 2023).
-
-As such, this work will need to be completed in April 2023 to support the new data file provided.
+The team will need to agree a consistent schema with the data team regarding the contents of the file.
 
 ### Data ingestion
 

@@ -29,10 +29,11 @@ There are currently 3 main page types:
 - `CommonPage`
 - `TopicPage`
 
-For the `HomePage` and `TopicPage` there will also be a foreign key 1-to-many relationship out to 
+For each type of page there will also be a foreign key 1-to-many relationship out to 
 a corresponding related links type model:
 
 - `HomePage` (1) -> (many) `HomePageRelatedLink`
+- `CommonPage`(1) -> (many) `CommonPageRelatedLink`
 - `TopicPage`(1) -> (many) `TopicPageRelatedLink`
 
 As a design choice, each object should have a `title` field as well as a `body` field.
