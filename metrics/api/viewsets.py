@@ -40,6 +40,20 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class DashboardViewSet(viewsets.GenericViewSet):
+    """
+    This endpoint can be used to retrieve headline statistics associated with a given topic
+
+    Where a `topic` relates to a type of disease.
+
+    Note that currently only the following topics are supported:
+
+    - `COVID-19`
+
+    - `Influenza`
+
+    For another `topic` value, an empty array will be returned.
+    """
+
     def get_queryset(self):
         if "topic" in self.kwargs:
             return populate_dashboard(topic=self.kwargs["topic"])
