@@ -17,7 +17,7 @@ class ChartNotSupportedError(Exception):
 def generate_corresponding_chart(topic: str, category: str) -> str:
     category = category.lower()
     topic = topic.lower()
-    file_format = "svg"
+    file_format = "png"
 
     if topic.lower() == "coronavirus":
         topic = "covid-19"
