@@ -123,7 +123,12 @@ def populate_dashboard(
                         else:
                             result_dict["metric_value"]: str = str(cell_value)
                 else:
-                    result_dict["metric_value"] = "no_value"
+                    if tile.get("fields", False):
+                        result_dict["secondary_container"] = result_dict[
+                            "secondary_container"
+                        ].replace("{}", "no_value")
+                    else:
+                        result_dict["metric_value"] = "no_value"
 
             output_list.append(result_dict)
 
