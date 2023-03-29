@@ -30,7 +30,7 @@ def unzip_values(values) -> Tuple[List, List]:
 def get_vaccination_uptake_rates(
     topic: str, core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER
 ) -> List[int]:
-    base_name = "latest_vaccination_uptake_"
+    base_name = "latest_vaccinations_uptake_"
 
     autumn_uptake: type_hints.NUMBER = core_time_series_manager.get_latest_metric_value(
         topic=topic, metric_name=f"{base_name}autumn22"

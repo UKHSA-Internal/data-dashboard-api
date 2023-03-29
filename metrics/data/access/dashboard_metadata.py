@@ -254,7 +254,7 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Vaccinations",
-        "secondary_container": "Summer Booster",
+        "secondary_container": "Autumn Booster",
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
@@ -531,7 +531,7 @@ influenza_headline = [
         },
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_latest",
+            "metric": "weekly_hospital_admissions_rate_latest",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -548,7 +548,7 @@ influenza_headline = [
         },
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change",
+            "metric": "weekly_hospital_admissions_rate_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -565,7 +565,7 @@ influenza_headline = [
         },
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change_percentage",
+            "metric": "weekly_hospital_admissions_rate_change_percentage",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -579,7 +579,7 @@ influenza_headline = [
         "formatting": {"get_colour": True},
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change",
+            "metric": "weekly_hospital_admissions_rate_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -593,7 +593,7 @@ influenza_headline = [
         "formatting": {"get_arrow": True},
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change",
+            "metric": "weekly_hospital_admissions_rate_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -702,7 +702,7 @@ influenza_tiles = [
         },
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_latest",
+            "metric": "weekly_hospital_admissions_rate_latest",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -716,7 +716,7 @@ influenza_tiles = [
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change",
+            "metric": "weekly_hospital_admissions_rate_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -733,7 +733,7 @@ influenza_tiles = [
         },
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change_percentage",
+            "metric": "weekly_hospital_admissions_rate_change_percentage",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -747,7 +747,7 @@ influenza_tiles = [
         "formatting": {"get_colour": True},
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change",
+            "metric": "weekly_hospital_admissions_rate_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -761,7 +761,7 @@ influenza_tiles = [
         "formatting": {"get_arrow": True},
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate_change",
+            "metric": "weekly_hospital_admissions_rate_change",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
