@@ -13,7 +13,7 @@ class APITimeSeriesPagination(pagination.PageNumberPagination):
 
 class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    This endpoint can be used to retrieve data for weekly time series of a given topic.
+    This endpoint can be used to retrieve data for time series of a given topic/metric/date combination.
 
     Note that this data is updated on a weekly basis.
     By default, the list endpoint will paginate by a page size of 5.
@@ -51,7 +51,7 @@ class DashboardViewSet(viewsets.GenericViewSet):
 
     - `Influenza`
 
-    For another `topic` value, an empty array will be returned.
+    For any another `topic` value which is not listed above, an empty array will be returned.
     """
 
     def get_queryset(self):
