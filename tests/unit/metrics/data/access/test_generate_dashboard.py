@@ -4,7 +4,7 @@ from metrics.data.access.dashboard_metadata import ApplyFormatting
 from metrics.data.access.generate_dashboard import format_cell, populate_dashboard
 
 
-class TestFormatVal(TestCase):
+class TestFormatCell(TestCase):
     def test_format_good_int(self):
         actual: str = format_cell(
             metric_name="ignore",

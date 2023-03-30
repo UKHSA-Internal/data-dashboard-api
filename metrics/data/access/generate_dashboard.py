@@ -58,7 +58,7 @@ def format_cell(
         return metric_value
 
 
-def get_value_from_db(fields: List[str], filter: Dict[str, str]) -> Dict[str, str]:
+def get_value_from_db(fields: List[str], filters: Dict[str, str]) -> Dict[str, str]:
     """
     Purpose: Pull back the required data from APITimeSeries model
     Arguments:  fields -> The fields that you want pulled back
@@ -68,13 +68,13 @@ def get_value_from_db(fields: List[str], filter: Dict[str, str]) -> Dict[str, st
 
     try:
         return (
-            APITimeSeries.objects.filter(**filter)
+            APITimeSeries.objects.filter(**filters)
             .order_by("-dt")
             .values(*fields)
             .first()
         )
 
-    except:  # trap for typos in the filter
+    except:  # trap for typos in the filters
         return {field: "no_value" for field in fields}
 
 
@@ -104,7 +104,7 @@ def populate_dashboard(
             if metric_name:
                 cell_vals: Dict[str:str] = get_value_from_db(
                     fields=tile.get("fields", ["metric_value"]),
-                    filter=tile["filter"],
+                    filters=tile["filter"],
                 )
 
                 if cell_vals:
