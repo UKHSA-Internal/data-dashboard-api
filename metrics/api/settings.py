@@ -110,7 +110,11 @@ REST_FRAMEWORK = {
     ],
 }
 
-SPECTACULAR_SETTINGS = {"COMPONENT_SPLIT_REQUEST": True}
+SPECTACULAR_SETTINGS = {
+    "COMPONENT_SPLIT_REQUEST": True,
+    "PREPROCESSING_HOOKS": ["metrics.api.openapi.pre_processing_endpoint_filter_hook"],
+}
+
 
 WSGI_APPLICATION = "metrics.api.wsgi.application"
 
