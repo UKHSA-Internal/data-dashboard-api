@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
-    "drf_yasg",
+    "drf_spectacular",
     "metrics.api",
     "metrics.data",
     "metrics.interfaces",
@@ -104,10 +104,13 @@ TEMPLATES = [
 # }
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
-    ]
+    ],
 }
+
+SPECTACULAR_SETTINGS = {"COMPONENT_SPLIT_REQUEST": True}
 
 WSGI_APPLICATION = "metrics.api.wsgi.application"
 
