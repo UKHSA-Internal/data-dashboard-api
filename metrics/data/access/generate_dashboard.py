@@ -43,7 +43,7 @@ def format_cell(
             else:
                 if format_cell:
                     metric_state = get_metric_state(
-                        change_in_metric_value=int(float(metric_value)),
+                        change_in_metric_value=round(float(metric_value)),
                         metric_name=metric_name,
                     )
 
