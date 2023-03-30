@@ -709,7 +709,7 @@ influenza_tiles = [
         "fields": ["dt"],
         "filter": {
             "topic": "Influenza",
-            "metric": "weekly_hospital_admission_rate",
+            "metric": "weekly_hospital_admissions_rate",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
