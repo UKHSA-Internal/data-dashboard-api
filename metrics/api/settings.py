@@ -112,7 +112,7 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
-    "PREPROCESSING_HOOKS": ["metrics.api.openapi.pre_processing_endpoint_filter_hook"],
+    "PREPROCESSING_HOOKS": ["metrics.api.open_api.pre_processing_endpoint_filter_hook"],
 }
 
 
