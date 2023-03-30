@@ -3,6 +3,7 @@ from http import HTTPStatus
 from django.http import FileResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,11 +16,16 @@ from metrics.domain.charts.data_visualization import (
 )
 
 
+class ChartsQuerySerializer(serializers.Serializer):
+    file_format = serializers.ChoiceField(choices=["svg", "png", "jpg", "jpeg"], default="svg")
+
+
 class ChartView(APIView):
+    @swagger_auto_schema(query_serializer=ChartsQuerySerializer)
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
-        There are 2 mandatory parameters:
+        There are 2 mandatory URL parameters:
 
         - `topic` - relates to a type of disease
 
@@ -36,12 +42,29 @@ class ChartView(APIView):
 
         Where a given permutation is not available the endpoint will respond with a `HTTP 404 NOT FOUND` error
 
+        There is also an optional query param of `file_format`.
+        By default, this will be set to `svg`.
+        In addition to `svg` the following options are available:
+
+        - `png`
+
+        - `jpg`
+
+        - `jpeg`
+
         """
         category: str = kwargs["category"]
         topic: str = kwargs["topic"]
 
+        query_serializer = ChartsQuerySerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+
+        file_format = query_serializer.data["file_format"]
+
         try:
-            filename: str = generate_corresponding_chart(topic=topic, category=category)
+            filename: str = generate_corresponding_chart(
+                topic=topic, category=category, file_format=file_format
+            )
         except ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
 
