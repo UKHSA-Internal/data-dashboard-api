@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "rest_framework_api_key",
     "drf_yasg",
     "metrics.api",
     "metrics.data",
@@ -104,13 +105,28 @@ TEMPLATES = [
 # }
 
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
-    ]
+        "rest_framework_api_key.permissions.HasAPIKey",
+    ],
 }
 
-WSGI_APPLICATION = "metrics.api.wsgi.application"
 
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "api_key": {"type": "apiKey", "in": "header", "name": "X-Api-Key"}
+    },
+    "USE_SESSION_AUTH": True,
+}
+
+API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
+# Set the required to be `X-Api-Key`
+# instead of the default `Authorization: Api-Key <>`
+# which cannot be parsed correctly by API calls made from the swagger UI
+
+WSGI_APPLICATION = "metrics.api.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
