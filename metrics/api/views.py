@@ -1,3 +1,4 @@
+import os
 from http import HTTPStatus
 
 from django.http import FileResponse
@@ -70,8 +71,16 @@ class ChartView(APIView):
         except ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
 
+        return self._return_image(filename=filename)
+
+    @staticmethod
+    def _return_image(filename: str) -> FileResponse:
         image = open(filename, "rb")
-        return FileResponse(image)
+        response = FileResponse(image)
+
+        os.remove(filename)
+
+        return response
 
 
 class FileUploadView(APIView):
