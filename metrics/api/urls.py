@@ -42,7 +42,6 @@ urlpatterns = [
     ),
     # Redoc schema view
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
-
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/(?P<topic>[^/]+)/(?P<category>[^/]+)$", ChartView.as_view()),
     path("admin/", admin.site.urls),
