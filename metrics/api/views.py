@@ -1,7 +1,7 @@
 import os
 from http import HTTPStatus
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers
@@ -15,6 +15,14 @@ from metrics.domain.charts.data_visualization import (
     ChartNotSupportedError,
     generate_corresponding_chart,
 )
+
+
+class HealthView(APIView):
+    permission_classes = []
+
+    @staticmethod
+    def get(*args, **kwargs):
+        return HttpResponse(HTTPStatus.OK.value)
 
 
 class ChartsQuerySerializer(serializers.Serializer):
