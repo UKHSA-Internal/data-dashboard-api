@@ -349,12 +349,20 @@ coronavirus_tiles = [
         "main_container": "Cases",
         "secondary_container": "People tested positive in England",
     },
-    # pull values from db
-    # {
-    #     "panel": "Tile",
-    #     "main_container": "Cases",
-    #     "secondary_container": "Up to and including 25 February 2023",
-    # },
+    {
+        "panel": "Tile",
+        "main_container": "Cases",
+        "secondary_container": "Up to and including {}",
+        "fields": ["dt"],
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_cases_daily",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
     {
         "panel": "Tile",
         "main_container": "Cases",
@@ -436,12 +444,20 @@ coronavirus_tiles = [
         "main_container": "Deaths",
         "secondary_container": "Deaths with COVID-19 on the death Certificate in England",
     },
-    # pull values from db
-    # {
-    #     "panel": "Tile",
-    #     "main_container": "Deaths",
-    #     "secondary_container": "Up to and including 25 February 2023",
-    # },
+    {
+        "panel": "Tile",
+        "main_container": "Deaths",
+        "secondary_container": "Up to and including {}",
+        "fields": ["dt"],
+        "filter": {
+            "topic": "COVID-19",
+            "metric": "new_deaths_daily",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
     {
         "panel": "Tile",
         "main_container": "Deaths",
@@ -686,12 +702,20 @@ influenza_tiles = [
         "main_container": "Healthcare",
         "secondary_container": "Weekly hospital admission rates for Influenza",
     },
-    # pull values from db
-    # {
-    #     "panel": "Tile",
-    #     "main_container": "Healthcare",
-    #     "secondary_container": "Up to and including 25 February 2023",
-    # },
+    {
+        "panel": "Tile",
+        "main_container": "Healthcare",
+        "secondary_container": "Up to and including {}",
+        "fields": ["dt"],
+        "filter": {
+            "topic": "Influenza",
+            "metric": "weekly_hospital_admission_rate",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
     {
         "panel": "Tile",
         "main_container": "Healthcare",
@@ -773,12 +797,20 @@ influenza_tiles = [
         "main_container": "Testing",
         "secondary_container": "Weekly positivity by age",
     },
-    # pull values from db
-    # {
-    #     "panel": "Tile",
-    #     "main_container": "Testing",
-    #     "secondary_container": "Up to and including 25 February 2023",
-    # },
+    {
+        "panel": "Tile",
+        "main_container": "Testing",
+        "secondary_container": "Up to and including {}",
+        "fields": ["dt"],
+        "filter": {
+            "topic": "Influenza",
+            "metric": "weekly_positivity",
+            "geography_type": "Nation",
+            "geography": "England",
+            "stratum": "default",
+            "sex": "ALL",
+        },
+    },
     {
         "panel": "Tile",
         "main_container": "Testing",

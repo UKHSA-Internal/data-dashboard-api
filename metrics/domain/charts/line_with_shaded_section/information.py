@@ -51,6 +51,24 @@ def _calculate_mean(values: List[int]) -> float:
     return sum(values) / len(values)
 
 
+def get_metric_state(change_in_metric_value: int, metric_name: str) -> int:
+    """Returns metric state.
+    1 = positive change
+    0 = no change
+    -1 = negative change
+    """
+    if change_in_metric_value == 0:
+        return 0
+
+    return (
+        1
+        if is_metric_improving(
+            change_in_metric_value=change_in_metric_value, metric_name=metric_name
+        )
+        else -1
+    )
+
+
 def is_metric_improving(change_in_metric_value: int, metric_name: str) -> bool:
     """Checks whether a positive or negative `change_in_metric_value` should be considered a good thing.
 
