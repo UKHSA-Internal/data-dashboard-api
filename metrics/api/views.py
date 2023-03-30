@@ -17,7 +17,9 @@ from metrics.domain.charts.data_visualization import (
 
 
 class ChartsQuerySerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(choices=["svg", "png", "jpg", "jpeg"], default="svg")
+    file_format = serializers.ChoiceField(
+        choices=["svg", "png", "jpg", "jpeg"], default="svg"
+    )
 
 
 class ChartView(APIView):
