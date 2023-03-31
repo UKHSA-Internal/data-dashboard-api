@@ -24,7 +24,6 @@ def pre_processing_endpoint_filter_hook(
     filtered_endpoints = []
 
     for path, path_regex, method, callback in endpoints:
-
         path_is_ignored: bool = _check_for_substring_match(
             string_to_check=path, substrings=PATHS_TO_HIDE_FROM_SWAGGER
         )
