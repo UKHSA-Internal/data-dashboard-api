@@ -69,7 +69,7 @@ class TestFormatCell(TestCase):
 
     def test_format_get_up_arrow(self):
         actual: str = format_cell(
-            metric_name="admission",
+            metric_name="ignored",
             metric_value="123.45678",
             formatting={"get_arrow": True},
         )
@@ -77,7 +77,7 @@ class TestFormatCell(TestCase):
 
     def test_format_get_down_arrow(self):
         actual: str = format_cell(
-            metric_name="admission",
+            metric_name="ignored",
             metric_value="-123.45678",
             formatting={"get_arrow": True},
         )
@@ -85,7 +85,7 @@ class TestFormatCell(TestCase):
 
     def test_format_get_neutral_arrow(self):
         actual: str = format_cell(
-            metric_name="deaths",
+            metric_name="ignored",
             metric_value="0",
             formatting={"get_arrow": True},
         )
