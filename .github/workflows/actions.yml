@@ -67,6 +67,23 @@ jobs:
           python -m pytest tests/unit/
 
   ###############################################################################
+  # Integration tests
+  ###############################################################################
+
+  integration-tests:
+    name: Integration tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
+
+      - name: Run Integration tests
+        run: |
+          python -m pytest tests/integration/
+
+  ###############################################################################
   # Deploy
   ###############################################################################
 

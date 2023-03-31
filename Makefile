@@ -25,6 +25,15 @@ formatting:
 unit-tests:
 	${BIN}python -m pytest tests/unit -v
 
+# Run all integration tests
+integration-tests:
+	${BIN}python -m pytest tests/integration -v
+
+# Run all tests regardless of type
+all-tests:
+	${BIN}python -m pytest tests/unit -v
+	${BIN}python -m pytest tests/integration -v
+
 # Start the application
 run-server:
 	${BIN}python manage.py migrate
