@@ -1,7 +1,25 @@
 from unittest import TestCase, mock
 
 from metrics.data.access.dashboard_metadata import ApplyFormatting
-from metrics.data.access.generate_dashboard import format_cell, populate_dashboard
+from metrics.data.access.generate_dashboard import (
+    format_cell,
+    get_arrow_direction,
+    populate_dashboard,
+)
+
+
+class TestArrowDirection(TestCase):
+    def test_change_increasing(self):
+        actual: int = get_arrow_direction(metric_value=100)
+        self.assertEqual(actual, 1)
+
+    def test_change_decreasing(self):
+        actual: int = get_arrow_direction(metric_value=-100)
+        self.assertEqual(actual, -1)
+
+    def test_change_not_changing(self):
+        actual: int = get_arrow_direction(metric_value=0)
+        self.assertEqual(actual, 0)
 
 
 class TestFormatCell(TestCase):
