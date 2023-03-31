@@ -1,7 +1,7 @@
 import os
 from http import HTTPStatus
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser
@@ -14,6 +14,14 @@ from metrics.domain.charts.data_visualization import (
     ChartNotSupportedError,
     generate_corresponding_chart,
 )
+
+
+class HealthView(APIView):
+    permission_classes = []
+
+    @staticmethod
+    def get(*args, **kwargs):
+        return HttpResponse(HTTPStatus.OK.value)
 
 
 class ChartsQuerySerializer(serializers.Serializer):
