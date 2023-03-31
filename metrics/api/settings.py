@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
-    # "drf_yasg",
     "rest_framework_api_key",
     "metrics.api",
     "metrics.data",
