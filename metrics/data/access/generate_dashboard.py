@@ -13,9 +13,16 @@ class Colour(Enum):
 
 
 class ArrowDirection(Enum):
-    up = -1
+    down = -1
     neutral = 0
-    down = 1
+    up = 1
+
+
+def get_arrow_direction(metric_value: int) -> int:
+    if metric_value == 0:
+        return 0
+
+    return 1 if metric_value > 0 else -1
 
 
 def format_cell(
@@ -42,15 +49,18 @@ def format_cell(
                 metric_value = f"({metric_value})" if format_cell else metric_value
             else:
                 if format_cell:
-                    metric_state = get_metric_state(
-                        change_in_metric_value=round(float(metric_value)),
-                        metric_name=metric_name,
-                    )
-
                     if format_option == "get_colour":  # Get the colour
+                        metric_state = get_metric_state(
+                            change_in_metric_value=round(float(metric_value)),
+                            metric_name=metric_name,
+                        )
                         metric_value = Colour(metric_state).name
+
                     elif format_option == "get_arrow":  # Get the arrow direction
-                        metric_value = ArrowDirection(metric_state).name
+                        metric_direction = get_arrow_direction(
+                            metric_value=round(float(metric_value))
+                        )
+                        metric_value = ArrowDirection(metric_direction).name
 
         return metric_value
 
