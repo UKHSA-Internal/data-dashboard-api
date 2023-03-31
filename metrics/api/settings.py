@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
+    "rest_framework_api_key",
     "metrics.api",
     "metrics.data",
     "metrics.interfaces",
@@ -105,8 +106,11 @@ TEMPLATES = [
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "metrics.api.authentication.TokenHeaderAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+        "metrics.api.authentication.HasApiKeyHeader",
     ],
 }
 
@@ -116,8 +120,10 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-WSGI_APPLICATION = "metrics.api.wsgi.application"
+API_KEY_CUSTOM_HEADER = "HTTP_AUTHORIZATION"
 
+
+WSGI_APPLICATION = "metrics.api.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
