@@ -124,11 +124,11 @@ def test_plot_with_three_points():
     """
     # Given
     larger_plot_threshold_value = 86
-    middle_plot_theshold_value = 41
+    middle_plot_threshold_value = 41
     smaller_plot_threshold_value = 23
     data_points: List[int] = [
         larger_plot_threshold_value,
-        middle_plot_theshold_value,
+        middle_plot_threshold_value,
         smaller_plot_threshold_value,
     ]
 
@@ -158,11 +158,11 @@ def test_plot_with_three_points():
     middle_plot_flattened_matrix = middle_plot_z_array.flatten()
 
     # Check that the identifier is used for the first 23 items in the array
-    for threshold_value in middle_plot_flattened_matrix[:middle_plot_theshold_value]:
+    for threshold_value in middle_plot_flattened_matrix[:middle_plot_threshold_value]:
         assert threshold_value == 2.0
 
     # Check that the nan placeholder value is used for the remaining 77 items in the array
-    for nan_value in middle_plot_flattened_matrix[middle_plot_theshold_value:]:
+    for nan_value in middle_plot_flattened_matrix[middle_plot_threshold_value:]:
         np.isnan(nan_value)
 
     # ---Smaller plot checks---
