@@ -26,7 +26,7 @@ class TestLineCharts:
         assert len(figure.data) == 1
 
         # ---Main background checks---
-        main_layout = figure.layout
+        main_layout: plotly.graph_objects.Layout = figure.layout
         # Check that the main background colour is a plain white
         assert (
             main_layout.plot_bgcolor == colour_scheme.RGBAColours.LIGHT_GREY.stringified
