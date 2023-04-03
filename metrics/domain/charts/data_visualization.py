@@ -70,7 +70,7 @@ def write_figure(
     Convert a figure to a static image and write to a file in the desired image format
 
     Args:
-        figure: The figure object of a dictioanry representing a figure
+        figure: The figure object or a dictioanry representing a figure
         topic: The required topic (eg. COVID-19)
         file_format: The required file format (eg svg, jpeg)
 
