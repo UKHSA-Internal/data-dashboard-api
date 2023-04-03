@@ -16,19 +16,23 @@ from metrics.data.models.core_models import CoreTimeSeries
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
-def get_date_n_months_ago(number_of_months: int = 6) -> datetime.datetime:
+def get_date_n_months_ago_from_timestamp(
+    datetime_stamp: datetime.datetime, number_of_months: int = 6
+) -> datetime.datetime:
     """
     Get the 1st day of the month x months in the past
 
     Args:
+        datetime_stamp: The datetime stamp to calculate from.
         number_of_months: the number of months to go back. Default 6
 
     Returns:
         A datetime of the fist day of the month x months ago
     """
 
-    today = datetime.datetime.today()
-    n_months_ago: datetime.datetime = today - relativedelta(months=number_of_months)
+    n_months_ago: datetime.datetime = datetime_stamp - relativedelta(
+        months=number_of_months
+    )
 
     return datetime.datetime(year=n_months_ago.year, month=n_months_ago.month, day=1)
 
@@ -90,8 +94,10 @@ def get_timeseries_metric_values_from_date(
     Returns:
         The timeseries seperated into two lists. Dates in one, values in the other
     """
-
-    n_months_ago: datetime.datetime = get_date_n_months_ago()
+    today = datetime.datetime.today()
+    n_months_ago: datetime.datetime = get_date_n_months_ago_from_timestamp(
+        datetime_stamp=today
+    )
 
     queryset = core_time_series_manager.by_topic_metric_for_dates_and_values(
         topic=topic,

@@ -1,4 +1,64 @@
-from metrics.data.access.core_models import unzip_values
+import datetime
+
+import pytest
+
+from metrics.data.access.core_models import (
+    get_date_n_months_ago_from_timestamp,
+    unzip_values,
+)
+
+
+class TestGetDateNMonthsAgoFromTimestamp:
+    def test_for_timestamp_of_january(self):
+        """
+        Given a datetime stamp of January, and an arg to get the date 1 month ago
+        When `get_date_n_months_ago_from_timestamp()` is called
+        Then the 1st December of the previous year (1 month ago) is returned
+        """
+        # Given
+        datetime_stamp = datetime.datetime(year=2023, month=1, day=15)
+        number_of_months_ago = 1
+
+        # When
+        n_months_ago: datetime.datetime = get_date_n_months_ago_from_timestamp(
+            datetime_stamp=datetime_stamp,
+            number_of_months=number_of_months_ago,
+        )
+
+        # Then
+        expected_month: int = 12
+        expected_year: int = datetime_stamp.year - 1
+        # The given timestamp is in Jan, so December of the previous should be returned
+        assert n_months_ago.month == expected_month
+        assert n_months_ago.day == 1
+        assert n_months_ago.year == expected_year
+
+    @pytest.mark.parametrize(
+        "timestamp_month_number", [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    )
+    def test_for_timestamps_within_the_same_year(self, timestamp_month_number: int):
+        """
+        Given a datetime stamp of within a particular year, and an arg to get the date 1 month ago
+        When `get_date_n_months_ago_from_timestamp()` is called
+        Then the 1st of the previous month is returned
+        """
+        # Given
+        datetime_stamp = datetime.datetime(
+            year=2023, month=timestamp_month_number, day=15
+        )
+        number_of_months_ago = 1
+
+        # When
+        n_months_ago: datetime.datetime = get_date_n_months_ago_from_timestamp(
+            datetime_stamp=datetime_stamp,
+            number_of_months=number_of_months_ago,
+        )
+
+        # Then
+        expected_month: int = datetime_stamp.month - 1
+        assert n_months_ago.month == expected_month
+        assert n_months_ago.day == 1
+        assert n_months_ago.year == datetime_stamp.year
 
 
 def test_unzip_values():
