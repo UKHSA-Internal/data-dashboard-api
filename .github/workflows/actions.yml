@@ -67,12 +67,29 @@ jobs:
           python -m pytest tests/unit/
 
   ###############################################################################
+  # Integration tests
+  ###############################################################################
+
+  integration-tests:
+    name: Integration tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
+
+      - name: Run Integration tests
+        run: |
+          python -m pytest tests/integration/
+
+  ###############################################################################
   # Deploy
   ###############################################################################
 
   deploy:
     name: ECR Image Push
-    needs: [unit-tests, quality-checks]
+    needs: [quality-checks, unit-tests, integration-tests]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch

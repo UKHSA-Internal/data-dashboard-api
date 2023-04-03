@@ -1,30 +1,31 @@
-from typing import List
+from enum import Enum
+from typing import List, Tuple
 
-SUPPORTED_RGB_COLOURS = {
-    "light_grey": "216,216,216,1",
-    "light_green": "119,196,191,1",
-    "middle_green": "0,156,145,1",
-    "dark_green": "0,65,61,1",
-}
+RGBA_VALUES = Tuple[int, int, int, int]
 
 
-def get_rgb_colour(colour: str) -> str:
-    """Gets the RGBA colour representation as required by `plotly`
+class RGBAColours(Enum):
+    # Used for the background paper colour
+    WHITE: RGBA_VALUES = 255, 255, 255, 0
 
-    Args:
-        colour: A human-readable colour.
-            >>> 'dark_green'
+    # Used for the background plot colour
+    LIGHT_GREY: RGBA_VALUES = 231, 231, 231, 0
 
-    Returns:
-        str: The RGBA representation.
-            >>> 'rgba(0,65,61,1)'
+    # Used for the neutral cells which do not have a threshold value
+    GREY: RGBA_VALUES = 216, 216, 216, 1
 
-    Raises:
-        `KeyError`: If the colour is not supported
+    # Used for the 1st value
+    LIGHT_GREEN: RGBA_VALUES = 119, 196, 191, 1
 
-    """
-    rgb_number = SUPPORTED_RGB_COLOURS[colour]
-    return f"rgba({rgb_number})"
+    # Used for the 2nd value
+    MIDDLE_GREEN: RGBA_VALUES = 0, 156, 145, 1
+
+    # Used for the 3rd value
+    DARK_GREEN: RGBA_VALUES = 0, 65, 65, 1
+
+    @property
+    def stringified(self) -> str:
+        return f"rgba{self.value}"
 
 
 class InvalidIdentifierError(Exception):
@@ -52,10 +53,10 @@ def build_color_scale(identifier: int) -> List[List]:
             either 1, 2 or 3 is provided.
 
     """
-    background_rgb_colour: str = get_rgb_colour(colour="light_grey")
+    background_rgb_colour: str = RGBAColours.GREY.stringified
 
     if identifier == 3:
-        darkest_plot_rgb_colour: str = get_rgb_colour(colour="dark_green")
+        darkest_plot_rgb_colour: str = RGBAColours.DARK_GREEN.stringified
         return [
             [0, background_rgb_colour],
             [0.5, darkest_plot_rgb_colour],
@@ -64,7 +65,7 @@ def build_color_scale(identifier: int) -> List[List]:
         ]
 
     if identifier == 2:
-        middle_plot_rgb_colour: str = get_rgb_colour(colour="middle_green")
+        middle_plot_rgb_colour: str = RGBAColours.MIDDLE_GREEN.stringified
         return [
             [0, background_rgb_colour],
             [0.5, middle_plot_rgb_colour],
@@ -72,7 +73,7 @@ def build_color_scale(identifier: int) -> List[List]:
             [1, middle_plot_rgb_colour],
         ]
     if identifier == 1:
-        lightest_plot_rgb_colour: str = get_rgb_colour(colour="light_green")
+        lightest_plot_rgb_colour: str = RGBAColours.LIGHT_GREEN.stringified
         return [
             [0, background_rgb_colour],
             [0.5, background_rgb_colour],

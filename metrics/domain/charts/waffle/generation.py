@@ -20,8 +20,8 @@ Y_AXIS_ARGS: Dict[str, Union[bool, int, str]] = {
 WAFFLE_LAYOUT_ARGS = {
     "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
     "showlegend": False,
-    "plot_bgcolor": "rgba(231,231,231,0)",
-    "paper_bgcolor": "rgba(255,255,255,0)",
+    "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
+    "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
     "xaxis": X_AXIS_ARGS,
     "yaxis": Y_AXIS_ARGS,
 }
