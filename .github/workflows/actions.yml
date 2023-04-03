@@ -48,7 +48,7 @@ jobs:
         with:
           inputs: requirements.txt
 
-      - name: Run Bandit and pip audit
+      - name: Run Bandit
         run: |
           bandit -r .
 
