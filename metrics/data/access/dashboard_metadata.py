@@ -1,14 +1,43 @@
+"""
+Metadata for the Dashboard.
+
+** This implementation is only a temporary solution intended for the Alpha release **
+
+The plan is that this data will be maintained within the CMS.
+This will eliminate the need for a backend code release to change what is displayed
+  on the Dashboard
+"""
+
 from enum import Enum
 
+from metrics.data.access.generate_dashboard import ApplyFormatting
 
-class ApplyFormatting(str, Enum):
-    IntNoDP = "{0:,.0f}"
-    PctOneDP = "{0:,.1f}%"
+"""
+Metadata Format:
 
-    def __str__(self) -> str:
-        return self.value
+    One dictionary per panel element
 
+    panel: Headline or Tile
+        Describes where it is to be displayed on the dashboard.
+            Headline is the full width panel.
+            Tile is one of the tiles
 
+    main_container: Various
+        Which main container on the particular panel this data should be loaded into
+
+    secondary_container: Various
+        Which sub-container on this particulaer panel this data should be loaded into
+
+    formatting: See format_cell function in generate_dashboard
+
+    filter: The filters to use when pulling back data from the APITimeSeries Model
+        So, "metric": "new_cases_7days_sum" will pull back 
+          data for the new_cases_7days_sum metric.
+        The filters are on an AND basis as opposed to an OR basis
+
+    fields: The fields to pull back from the APITimeSeries Model
+
+"""
 coronavirus_headline = [
     {
         "panel": "Headline",
@@ -889,7 +918,7 @@ influenza_tiles = [
     },
 ]
 
-
+# Pull each virus type into one
 virus_metadata = {
     "COVID-19": coronavirus_headline + coronavirus_tiles,
     "Influenza": influenza_headline + influenza_tiles,

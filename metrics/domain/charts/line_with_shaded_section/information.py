@@ -51,7 +51,7 @@ def _calculate_mean(values: List[int]) -> float:
     return sum(values) / len(values)
 
 
-def get_metric_state(change_in_metric_value: int, metric_name: str) -> int:
+def get_metric_state(change_in_metric_value: float, metric_name: str) -> int:
     """Returns metric state.
     1 = positive change
     0 = no change
@@ -69,7 +69,7 @@ def get_metric_state(change_in_metric_value: int, metric_name: str) -> int:
     )
 
 
-def is_metric_improving(change_in_metric_value: int, metric_name: str) -> bool:
+def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool:
     """Checks whether a positive or negative `change_in_metric_value` should be considered a good thing.
 
     For example, for cases or deaths, an increase in metric value

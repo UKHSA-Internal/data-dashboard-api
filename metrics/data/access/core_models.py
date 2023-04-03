@@ -17,6 +17,16 @@ DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
 def get_date_n_months_ago(number_of_months: int = 6) -> datetime.datetime:
+    """
+    Get the 1st day of the month x months in the past
+
+    Args:
+        number_of_months: the number of months to go back. Default 6
+
+    Returns:
+        A datetime of the fist day of the month x months ago
+    """
+
     today = datetime.datetime.today()
     n_months_ago: datetime.datetime = today - relativedelta(months=number_of_months)
 
@@ -24,12 +34,33 @@ def get_date_n_months_ago(number_of_months: int = 6) -> datetime.datetime:
 
 
 def unzip_values(values) -> Tuple[List, List]:
+    """
+    Take a list and unzip it
+
+    Args:
+        The list of things to unzip
+
+    Returns:
+        An unzipped version of the input
+    """
+
     return zip(*values)
 
 
 def get_vaccination_uptake_rates(
     topic: str, core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER
 ) -> List[int]:
+    """
+    Fetch the vaccine uptake rates for autumn and spring 2022
+
+    Args:
+        topic: The topic (eg. COVID-19) we want the vaccine uptake for
+        core_time_series_manager: The timeseries manager. Default is the CoreTimeSeries manager
+
+    Returns:
+        The two rates as a list.
+    """
+
     base_name = "latest_vaccinations_uptake_"
 
     autumn_uptake: type_hints.NUMBER = core_time_series_manager.get_latest_metric_value(
@@ -48,6 +79,18 @@ def get_timeseries_metric_values_from_date(
     topic: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
 ) -> type_hints.DATES_AND_VALUES:
+    """
+    Fetch the timeseries for the given topic & metric
+
+    Args:
+        metric_name: The required metric (eg. new_admissions_7days)
+        topic: The required topic (eg. COVID-19)
+        core_time_series_manager: The timeseries manager. Default is the CoreTimeSeries manager
+
+    Returns:
+        The timeseries seperated into two lists. Dates in one, values in the other
+    """
+
     n_months_ago: datetime.datetime = get_date_n_months_ago()
 
     queryset = core_time_series_manager.by_topic_metric_for_dates_and_values(
@@ -66,6 +109,18 @@ def get_metric_value(
     topic: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
 ) -> Union[int, float]:
+    """
+    Fetch the latest metric value
+
+    Args:
+        metric_name: The required metric (eg. new_admissions_7days)
+        topic: The required topic (eg. COVID-19)
+        core_time_series_manager: The timeseries manager. Default is the CoreTimeSeries manager
+
+    Returns:
+        The latest value for the given metric and topic
+    """
+
     metric_value: Union[int, float] = core_time_series_manager.get_latest_metric_value(
         topic=topic,
         metric_name=metric_name,
