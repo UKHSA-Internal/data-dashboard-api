@@ -109,7 +109,7 @@ jobs:
 
   deploy:
     name: ECR Image Push
-    needs: [quality-checks, unit-tests, integration-tests]
+    needs: [quality-checks, unit-tests, integration-tests, vulnerabilities]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch
