@@ -22,7 +22,7 @@ class TestAPITimeSeriesSerializer:
         serializer = APITimeSeriesSerializer(instance=fake_api_time_series)
 
         # Then
-        serialized_dt = serializer.data["dt"]
+        serialized_dt: str = serializer.data["dt"]
         expected_dt_value = str(fake_api_time_series.dt)
         # Instead of a datetime object, the string representation is expected to be returned by the serializer
         # i.e. '2023-03-08` instead of `datetime.date(year=2023, month=3, day=8)`
