@@ -41,9 +41,11 @@ jobs:
     needs: [build]    
     runs-on: ubuntu-latest  
     steps:
+      - uses: pypa/gh-action-pip-audit@v1.0.6
+      
+      - name: Run Bandit and pip audit
         run: |
           bandit -r .
-      - uses: pypa/gh-action-pip-audit@v1.0.6
 
   ###############################################################################
   # Code quality checks
