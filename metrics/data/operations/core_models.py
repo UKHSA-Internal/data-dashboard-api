@@ -176,7 +176,7 @@ def load_core_data(
 
 
     Returns:
-        Nothing
+        None
     """
     incoming_df = check_file(filename=filename)
 
