@@ -33,6 +33,26 @@ jobs:
       - uses: ./.github/actions/install-cache
 
   ###############################################################################
+  # Check environment for known vulnerabilities (pip audit & bandit)
+  ###############################################################################
+
+  vulnerabilities:
+    name: Vulnerabilities
+    needs: [build]    
+    runs-on: ubuntu-latest  
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache    
+      - uses: pypa/gh-action-pip-audit@v1.0.6
+        with:
+          inputs: requirements.txt
+
+      - name: Run Bandit
+        run: |
+          bandit -r .
+
+  ###############################################################################
   # Code quality checks
   ###############################################################################
 
@@ -89,7 +109,7 @@ jobs:
 
   deploy:
     name: ECR Image Push
-    needs: [quality-checks, unit-tests, integration-tests]
+    needs: [quality-checks, unit-tests, integration-tests, vulnerabilities]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch
