@@ -4,11 +4,11 @@ from http import HTTPStatus
 from django.http import FileResponse, HttpResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from metrics.api.serializers import ChartsQuerySerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts.data_visualization import (
@@ -23,12 +23,6 @@ class HealthView(APIView):
     @staticmethod
     def get(*args, **kwargs):
         return HttpResponse(HTTPStatus.OK.value)
-
-
-class ChartsQuerySerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(
-        choices=["svg", "png", "jpg", "jpeg"], default="svg"
-    )
 
 
 class ChartView(APIView):
