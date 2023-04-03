@@ -33,6 +33,19 @@ jobs:
       - uses: ./.github/actions/install-cache
 
   ###############################################################################
+  # Check environment for known vulnerabilities (pip audit & bandit)
+  ###############################################################################
+
+  vulnerabilities:
+    name: Vulnerabilities
+    needs: [build]    
+    runs-on: ubuntu-latest  
+    steps:
+        run: |
+          bandit -r .
+      - uses: pypa/gh-action-pip-audit@v1.0.6
+
+  ###############################################################################
   # Code quality checks
   ###############################################################################
 

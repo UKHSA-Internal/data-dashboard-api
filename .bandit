@@ -1,0 +1,6 @@
+# Command line arguments for bandit
+
+[bandit]
+#B101 = assert being used
+#B105 = possible password
+skips: B101,B105
