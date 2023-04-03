@@ -2,8 +2,8 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers import APITimeSeriesSerializer, ChartsQuerySerializer
-from tests.fakes.models.fake_api_time_series import FakeAPITimeSeries
-from tests.fakes.models.fake_api_time_series_factory import FakeAPITimeSeriesFactory
+from tests.fakes.models.api_time_series import FakeAPITimeSeries
+from tests.fakes.models.api_time_series_factory import FakeAPITimeSeriesFactory
 
 
 class TestAPITimeSeriesSerializer:
