@@ -15,19 +15,6 @@ from metrics.data.models.api_models import APITimeSeries
 from metrics.domain.charts.line_with_shaded_section.information import get_metric_state
 
 
-class ApplyFormatting(str, Enum):
-    """The formatting to apply to the metric value
-
-    Is basically just the specification to pass to the Python format function
-    """
-
-    IntNoDP = "{0:,.0f}"
-    PctOneDP = "{0:,.1f}%"
-
-    def __str__(self) -> str:
-        return self.value
-
-
 class Colour(Enum):
     """The colour that the front-end should paint the box.
         The colour indicates whether the metric is improving or worsening
@@ -89,7 +76,7 @@ def format_cell(
            Supported formatting actions are:
             "absolute_number": Boolean. Display number as an absolute one
             "add_brackets": Boolean. Add brackets around the metric
-            "number_format": See ApplyFormatting class above.
+            "number_format": See ApplyFormatting class in dashboard_metadata.
                             eg. display as an integer or to 1dp etc
             "get_colour": Boolean. Return the appropriate colour
                             Uses Colour enum and get_metric_state

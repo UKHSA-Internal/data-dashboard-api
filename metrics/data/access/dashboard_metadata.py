@@ -10,7 +10,19 @@ This will eliminate the need for a backend code release to change what is displa
 
 from enum import Enum
 
-from metrics.data.access.generate_dashboard import ApplyFormatting
+
+class ApplyFormatting(str, Enum):
+    """The formatting to apply to the metric value
+
+    Is basically just the specification to pass to the Python format function
+    """
+
+    IntNoDP = "{0:,.0f}"
+    PctOneDP = "{0:,.1f}%"
+
+    def __str__(self) -> str:
+        return self.value
+
 
 """
 Metadata Format:
