@@ -24,7 +24,7 @@ def generate_corresponding_chart(topic: str, category: str, file_format: str) ->
         file_format: The required file format (eg svg, jpeg)
 
     Returns:
-        The requested chart
+        The filename of the requested chart
 
     Raises:
         ChartNotSupportedError if there is no chart for the requested topic and category
