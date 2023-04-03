@@ -12,6 +12,7 @@ coreschema==0.0.4
 distlib==0.3.6
 Django==4.1.7
 django-cors-headers==3.13.0
+django-factory-boy==1.0.0
 django-filter==22.1
 django-modelcluster==6.0
 django-permissionedforms==0.1
@@ -23,6 +24,8 @@ draftjs-exporter==2.1.7
 drf-yasg==1.21.5
 et-xmlfile==1.1.0
 exceptiongroup==1.1.1
+factory-boy==3.2.1
+Faker==18.3.2
 filelock==3.8.0
 html5lib==1.1
 identify==2.5.6
