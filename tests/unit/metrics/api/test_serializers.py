@@ -54,15 +54,15 @@ class TestAPITimeSeriesSerializer:
 
 
 class TestChartsQuerySerializer:
-    @pytest.mark.parametrize("file_format", ["svg", "png", "jpg", "jpeg"])
-    def test_valid_file_format(self, file_format: str):
+    @pytest.mark.parametrize("valid_file_format", ["svg", "png", "jpg", "jpeg"])
+    def test_valid_file_format(self, valid_file_format: str):
         """
         Given a valid file format passed to a `ChartsQuerySerializer` object
         When `is_valid()` is called from the serializer
         Then True is returned
         """
         # Given
-        data = {"file_format": file_format}
+        data = {"file_format": valid_file_format}
         serializer = ChartsQuerySerializer(data=data)
 
         # When
