@@ -5,6 +5,8 @@ This shall only include functionality which is used to write to the database.
 Specifically, this file contains write database logic for the API models only.
 """
 
+import logging
+
 from django.db import models
 from django.db.models import QuerySet
 
@@ -13,6 +15,9 @@ from metrics.data.models.core_models import CoreTimeSeries
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_API_TIME_SERIES_MANAGER = APITimeSeries.objects
+
+
+logger = logging.getLogger(__name__)
 
 
 def generate_api_time_series(

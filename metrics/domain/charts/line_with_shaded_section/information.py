@@ -1,7 +1,10 @@
+import logging
 from typing import List, Tuple
 
 from metrics.domain.charts import type_hints
 from metrics.domain.charts.line_with_shaded_section import colour_scheme
+
+logger = logging.getLogger(__name__)
 
 
 def determine_line_and_fill_colours(

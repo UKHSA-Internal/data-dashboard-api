@@ -5,6 +5,7 @@ This shall only include functionality which is used to read from the database.
 Specifically, this file contains read database logic for the Core models only.
 """
 import datetime
+import logging
 from typing import List, Tuple, Union
 
 from dateutil.relativedelta import relativedelta
@@ -14,6 +15,9 @@ from metrics.data import type_hints
 from metrics.data.models.core_models import CoreTimeSeries
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_date_n_months_ago_from_timestamp(

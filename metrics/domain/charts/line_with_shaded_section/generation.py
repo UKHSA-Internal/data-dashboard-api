@@ -1,10 +1,14 @@
 import datetime
+import logging
 from typing import List
 
 import plotly
 
 from metrics.domain.charts import type_hints
 from metrics.domain.charts.line_with_shaded_section import colour_scheme, information
+
+logger = logging.getLogger(__name__)
+
 
 X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showgrid": False,

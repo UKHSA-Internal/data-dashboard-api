@@ -1,7 +1,11 @@
+import logging
 from enum import Enum
 from typing import Tuple
 
 RGBA_VALUES = Tuple[int, int, int, int]
+
+
+logger = logging.getLogger(__name__)
 
 
 class RGBAColours(Enum):

@@ -58,6 +58,17 @@ When developing locally, the app will point to a local database:
 
 ## Development flows
 
+
+### Checking for code vulnerabilities
+
+You can check for known vulnerabilities in the codebase with the following command:
+```bash
+make audit
+```
+---
+
+
+
 ### Running tests
 
 The tests are split by type, `unit` and `integration`.

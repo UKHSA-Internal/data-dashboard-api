@@ -8,6 +8,7 @@ NOTE: This code is only for the Alpha. Once we have a data pipeline this code wi
 """
 
 import io
+import logging
 from datetime import datetime
 from typing import Dict, List, Type
 
@@ -25,6 +26,9 @@ from metrics.data.models.core_models import (
     Theme,
     Topic,
 )
+
+logger = logging.getLogger(__name__)
+
 
 sex_options = {
     "male": "M",

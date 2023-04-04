@@ -1,5 +1,8 @@
+import logging
 from enum import Enum
 from typing import List, Tuple
+
+logger = logging.getLogger(__name__)
 
 RGBA_VALUES = Tuple[int, int, int, int]
 

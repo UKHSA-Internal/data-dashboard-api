@@ -34,6 +34,11 @@ all-tests:
 	make unit-tests
 	make integration-tests
 
+# Run pip-audit and bandit to check for vulnerabilities
+audit:
+	pip-audit -r requirements.txt
+	bandit -r .
+
 # Start the application
 run-server:
 	${BIN}python manage.py migrate

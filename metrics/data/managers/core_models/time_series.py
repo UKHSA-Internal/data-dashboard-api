@@ -5,11 +5,14 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 import datetime
+import logging
 from typing import Union
 
 from django.db import models
 
 from metrics.api import enums
+
+logger = logging.getLogger(__name__)
 
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
