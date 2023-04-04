@@ -55,6 +55,7 @@ class DashboardViewSet(viewsets.GenericViewSet):
 
     For any another `topic` value which is not listed above, an empty array will be returned.
     """
+
     permission_classes = [HasAPIKey]
 
     def get_queryset(self):

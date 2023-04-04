@@ -28,6 +28,7 @@ class HealthView(APIView):
 
 class ChartView(APIView):
     permission_classes = [HasAPIKey]
+
     @swagger_auto_schema(query_serializer=ChartsQuerySerializer)
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
