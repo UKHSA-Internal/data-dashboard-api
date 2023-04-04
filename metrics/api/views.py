@@ -7,6 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer
 from metrics.data.operations.api_models import generate_api_time_series
@@ -26,6 +27,8 @@ class HealthView(APIView):
 
 
 class ChartView(APIView):
+    permission_classes = [HasAPIKey]
+
     @swagger_auto_schema(query_serializer=ChartsQuerySerializer)
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
@@ -87,6 +90,7 @@ class ChartView(APIView):
 
 class FileUploadView(APIView):
     parser_classes = [MultiPartParser]
+    permission_classes = [HasAPIKey]
 
     @swagger_auto_schema(
         manual_parameters=[
