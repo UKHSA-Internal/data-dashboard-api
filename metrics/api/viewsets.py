@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, response, viewsets
+from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import APITimeSeriesSerializer, DashboardSerializer
 from metrics.data.access.generate_dashboard import populate_dashboard
@@ -37,6 +38,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "epiweek",
         "dt",
     ]
+    permission_classes = [HasAPIKey]
 
 
 class DashboardViewSet(viewsets.GenericViewSet):
@@ -53,6 +55,7 @@ class DashboardViewSet(viewsets.GenericViewSet):
 
     For any another `topic` value which is not listed above, an empty array will be returned.
     """
+    permission_classes = [HasAPIKey]
 
     def get_queryset(self):
         if "topic" in self.kwargs:
