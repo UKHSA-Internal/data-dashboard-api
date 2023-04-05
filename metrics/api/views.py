@@ -12,7 +12,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from metrics.api.serializers import ChartsQuerySerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
-from metrics.domain.charts.data_visualization import (
+from metrics.domain.data_visualization import (
     ChartNotSupportedError,
     generate_corresponding_chart,
 )
