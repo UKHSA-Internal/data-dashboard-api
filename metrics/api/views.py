@@ -9,12 +9,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.api.serializers import ChartsQuerySerializer
+from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts.data_visualization import (
     ChartNotSupportedError,
-    generate_corresponding_chart,
+    generate_corresponding_chart, generate_chart,
 )
 
 
@@ -110,3 +110,37 @@ class FileUploadView(APIView):
         load_core_data(filename=request.FILES.get("file"))
         generate_api_time_series()
         return Response(status=204)
+
+
+
+
+class ChartsView(APIView):
+    @swagger_auto_schema(
+        query_serializer=ChartsRequestSerializer)
+    def get(self, request, *args, **kwargs):
+        """
+
+        """
+
+        query_serializer = ChartsRequestSerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+
+        topic = query_serializer.data["topic"]
+        metric = query_serializer.data["metric"]
+        chart_type = query_serializer.data["chart_type"]
+
+        try:
+            filename: str = generate_chart(topic=topic, metric=metric, chart_type=chart_type)
+        except ChartNotSupportedError:
+            return Response(status=HTTPStatus.NOT_FOUND)
+
+        return self._return_image(filename=filename)
+
+    @staticmethod
+    def _return_image(filename: str) -> FileResponse:
+        image = open(filename, "rb")
+        response = FileResponse(image)
+
+        os.remove(filename)
+
+        return response

@@ -73,7 +73,7 @@ def generate_chart_figure(
     # Over a certain threshold, plotly will convert the scatter plot to a line plot
     # and therefore remove the markers.
     # This setting re-adds the markers to the plot
-    figure.data[0].mode = "lines+markers"
+    # figure.data[0].mode = "lines+markers"
 
     return figure
 

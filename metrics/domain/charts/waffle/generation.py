@@ -62,7 +62,7 @@ def generate_chart_figure(
 
     for index, value in enumerate(data_points, 1):
         figure = _add_plot_to_figure(
-            value=value, index=index, cell_gap=cell_gap, figure=figure
+            value=int(value), index=index, cell_gap=cell_gap, figure=figure
         )
 
     figure.update_layout(width=width, height=height, **WAFFLE_LAYOUT_ARGS)

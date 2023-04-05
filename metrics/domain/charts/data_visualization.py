@@ -6,6 +6,7 @@ from django.db.models import Manager
 from metrics.data.access import core_models
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line_with_shaded_section, waffle
+from metrics.domain.charts.access import ChartsInterface
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -62,6 +63,16 @@ def generate_corresponding_chart(topic: str, category: str, file_format: str) ->
 
     raise ChartNotSupportedError()
 
+
+def generate_chart(
+    topic,
+    metric,
+    chart_type,
+):
+    library = ChartsInterface(topic=topic, metric=metric, chart_type=chart_type)
+    figure = library.generate_chart_figure()
+
+    return write_figure(figure=figure, topic=f"{topic}.{metric}", file_format="png")
 
 def write_figure(
     figure: plotly.graph_objects.Figure, topic: str, file_format: str
