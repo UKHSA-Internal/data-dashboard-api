@@ -1,6 +1,5 @@
 from unittest import mock
 
-from metrics.api import enums
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.data.operations.api_models import (

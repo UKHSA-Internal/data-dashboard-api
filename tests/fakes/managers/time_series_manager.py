@@ -1,4 +1,4 @@
-from metrics.api import enums
+from metrics.data import enums
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
 
