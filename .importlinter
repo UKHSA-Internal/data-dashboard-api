@@ -1,0 +1,52 @@
+[importlinter]
+root_packages =
+    cms
+    metrics
+    tests
+include_external_packages=True
+
+[importlinter:contract:Modular monolith]
+name=Metrics and CMS do not depend on each other, except the connection of URLs.
+type=independence
+modules=
+    metrics
+    cms
+ignore_imports=
+    metrics.api.urls -> cms.dashboard.viewsets
+
+[importlinter:contract:Metrics architectural layers]
+name = Metrics package enforces clear architectural layers within itself
+type = layers
+layers=
+    metrics.api
+    metrics.domain
+    metrics.data
+ignore_imports=
+    metrics.data.access.generate_dashboard -> metrics.domain.charts.line_with_shaded_section.information
+
+[importlinter:contract:Metrics data access | operations slices]
+name = Metrics data access and operations slices are independent of each other
+type=independence
+modules=
+    metrics.data.operations
+    metrics.data.access
+
+[importlinter:contract:Metrics isolated charts library]
+name = Metrics charts library does not depend on the rest of the codebase
+type = forbidden
+source_modules=
+    metrics.domain.charts
+forbidden_modules=
+    metrics.api
+    metrics.data
+    metrics.interfaces
+    cms
+
+[importlinter:contract:Source code | test code]
+name = Source code does not depend on test code
+type = forbidden
+source_modules=
+    metrics
+    cms
+forbidden_modules=
+    tests
