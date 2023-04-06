@@ -116,8 +116,13 @@ class FileUploadView(APIView):
 class ChartsView(APIView):
     @swagger_auto_schema(query_serializer=ChartsRequestSerializer)
     def get(self, request, *args, **kwargs):
-        """ """
+        """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
+        Note that the `date_from` param must be in the format `YYYY-MM-DD`.
+
+        E.g. for the 1st of October 2022, the `date_from` value would be `2022-10-01`
+
+        """
         query_serializer = ChartsRequestSerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
