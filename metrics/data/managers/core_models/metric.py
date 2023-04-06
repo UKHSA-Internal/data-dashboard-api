@@ -20,5 +20,5 @@ class MetricManager(models.Manager):
     def get_queryset(self) -> MetricQuerySet:
         return MetricQuerySet(model=self.model, using=self.db)
 
-    def get_all_names(self):
+    def get_all_names(self) -> MetricQuerySet:
         return self.get_queryset().get_all_names()
