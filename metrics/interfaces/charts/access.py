@@ -37,10 +37,10 @@ class ChartsInterface:
         self.core_time_series_manager = core_time_series_manager
 
     def generate_chart_figure(self):
-        if self.chart_type == "waffle":
+        if self.chart_type == ChartTypes.waffle.value:
             return self.generate_waffle_chart()
 
-        if self.chart_type == "simple_line_graph":
+        if self.chart_type == ChartTypes.simple_line_graph.value:
             return self.generate_simple_line_chart()
 
         return self.generate_line_with_shaded_section_chart()
