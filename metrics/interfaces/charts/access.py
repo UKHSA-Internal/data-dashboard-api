@@ -1,6 +1,5 @@
 import datetime
 from enum import Enum
-from typing import Dict
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -10,13 +9,6 @@ from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line, line_with_shaded_section, waffle
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
-
-
-CHART_BUILDERS: Dict[str, callable] = {
-    "simple_line_graph": line.generate_chart_figure,
-    "waffle": waffle.generate_chart_figure,
-    "line_with_shaded_section": line_with_shaded_section.generate_chart_figure,
-}
 
 
 class ChartTypes(Enum):
@@ -42,7 +34,6 @@ class ChartsInterface:
         self.metric = metric
         self.chart_type = chart_type.lower()
         self.date_from = date_from
-
         self.core_time_series_manager = core_time_series_manager
 
     def generate_chart_figure(self):
