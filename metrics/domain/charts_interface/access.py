@@ -4,7 +4,6 @@ from typing import Callable, Dict
 from django.db.models import Manager
 
 from metrics.data.access.core_models import (
-    get_date_n_months_ago_from_timestamp,
     unzip_values,
 )
 from metrics.data.models.core_models import CoreTimeSeries
@@ -25,12 +24,14 @@ class ChartsInterface:
         self,
         topic: str,
         metric: str,
-            chart_type: str,
+        chart_type: str,
+        date_from: datetime.datetime,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.topic = topic
         self.metric = metric
         self.chart_type = chart_type
+        self.date_from = date_from
 
         self.core_time_series_manager = core_time_series_manager
 
@@ -54,7 +55,9 @@ class ChartsInterface:
                 figure = chart_builder(values)
             else:
                 rolling_period_slice = 1 if "weekly" in self.metric else 7
-                figure = chart_builder(dates, values, self.metric, 10, rolling_period_slice)
+                figure = chart_builder(
+                    dates, values, self.metric, 10, rolling_period_slice
+                )
 
         return figure
 
@@ -64,22 +67,11 @@ class ChartsInterface:
             metric_name=self.metric,
         )
 
-    def get_time_series_metric_values(self, date_from: datetime.datetime = None):
-
-        if date_from is None:
-            today = datetime.datetime.today()
-            date_from = get_date_n_months_ago_from_timestamp(datetime_stamp=today)
+    def get_time_series_metric_values(self):
 
         return self.core_time_series_manager.by_topic_metric_for_dates_and_values(
             topic=self.topic,
             metric_name=self.metric,
-            date_from=date_from,
+            date_from=self.date_from,
         )
 
-    ### Validation logic to be extracted from this class
-
-    def is_metric_a_series(self):
-        core_time_series_for_metric_count: int = CoreTimeSeries.objects.filter(
-            metric__name=self.metric
-        ).count()
-        return core_time_series_for_metric_count == 1

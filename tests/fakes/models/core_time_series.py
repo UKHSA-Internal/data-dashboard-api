@@ -1,8 +1,8 @@
-from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.core_models import CoreTimeSeries
 from tests.fakes.models.fake_model_meta import FakeMeta
 
 
-class FakeCoreTimeSeries(APITimeSeries):
+class FakeCoreTimeSeries(CoreTimeSeries):
     """
     A fake version of the Django model `CoreTimeSeries`
     which has had its dependencies altered so that it does not interact with the database

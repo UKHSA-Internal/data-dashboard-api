@@ -128,9 +128,10 @@ class ChartsView(APIView):
         topic = query_serializer.data["topic"]
         metric = query_serializer.data["metric"]
         chart_type = query_serializer.data["chart_type"]
+        date_from = query_serializer.data["date_from"]
 
         try:
-            filename: str = generate_chart(topic=topic, metric=metric, chart_type=chart_type)
+            filename: str = generate_chart(topic=topic, metric=metric, chart_type=chart_type, date_from=date_from)
         except ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
 

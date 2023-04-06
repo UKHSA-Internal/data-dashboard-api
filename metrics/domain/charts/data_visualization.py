@@ -6,7 +6,7 @@ from django.db.models import Manager
 from metrics.data.access import core_models
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line_with_shaded_section, waffle
-from metrics.domain.charts.access import ChartsInterface
+from metrics.domain.charts_interface.access import ChartsInterface
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -68,8 +68,9 @@ def generate_chart(
     topic,
     metric,
     chart_type,
+    date_from,
 ):
-    library = ChartsInterface(topic=topic, metric=metric, chart_type=chart_type)
+    library = ChartsInterface(topic=topic, metric=metric, chart_type=chart_type, date_from=date_from)
     figure = library.generate_chart_figure()
 
     return write_figure(figure=figure, topic=f"{topic}.{metric}", file_format="png")
