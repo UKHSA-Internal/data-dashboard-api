@@ -88,8 +88,8 @@ class ChartsInterface:
     def calculate_change_in_metric_value(
         self, values
     ) -> Union[int, float]:
-        rolling_period_slice = self._get_rolling_period_slice()
-        preceding_slice = rolling_period_slice * 2
+        rolling_period_slice: int = self._get_rolling_period_slice()
+        preceding_slice: int = rolling_period_slice * 2
 
         values = values[-preceding_slice:]
 
