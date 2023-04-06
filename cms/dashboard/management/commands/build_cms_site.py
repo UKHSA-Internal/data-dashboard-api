@@ -1,3 +1,9 @@
+"""
+Utility to build out the basic CMS pages so we don't have to do so manually.
+Only intended for use during development
+"""
+
+
 import re
 import logging
 
