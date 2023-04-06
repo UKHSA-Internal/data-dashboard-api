@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import Metric, Topic
-from metrics.domain.charts_interface import access
+from metrics.domain.charts_interface.access import ChartTypes
 
 
 class APITimeSeriesSerializer(serializers.ModelSerializer):
@@ -42,10 +42,10 @@ class ChartsRequestSerializer(serializers.Serializer):
     topic = serializers.ChoiceField(
         choices=Topic.objects.all().values_list("name", flat=True), default="COVID-19"
     )
-    metric = serializers.ChoiceField(Metric.objects.all().values_list("name", flat=True), required=True)
-    chart_type = serializers.ChoiceField(
-        choices=list(access.CHART_BUILDERS.keys()), required=True
+    metric = serializers.ChoiceField(
+        choices=Metric.objects.get_all_names(), required=True
     )
+    chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
     date_from = serializers.DateField(required=True)
 
     def __init__(self, *args, **kwargs):
