@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 import plotly.graph_objects
@@ -65,11 +66,12 @@ def generate_corresponding_chart(topic: str, category: str, file_format: str) ->
 
 
 def generate_chart(
-    topic,
-    metric,
-    chart_type,
+    topic: str,
+    metric: str,
+    chart_type: str,
     date_from,
 ):
+    date_from = datetime.datetime.strptime(date_from, "%Y-%m-%d")
     library = ChartsInterface(topic=topic, metric=metric, chart_type=chart_type, date_from=date_from)
     figure = library.generate_chart_figure()
 
