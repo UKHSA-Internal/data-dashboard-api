@@ -82,7 +82,7 @@ class Command(BaseCommand):
         home_page = HomePage(title=title, slug=slug)
 
         # Add this new home page onto the root
-        root_page = Page.objects.filter(pk=1).get()
+        root_page = Page.get_first_root_node()
         root_page.add_child(instance=home_page)
         root_page.save_revision().publish()
 
