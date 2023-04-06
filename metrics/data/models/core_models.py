@@ -14,6 +14,7 @@ from django.utils import timezone
 from metrics.api.enums import TimePeriod
 from metrics.data.managers.core_models.metric import MetricManager
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
+from metrics.data.managers.core_models.topic import TopicManager
 
 CHAR_COLUMN_MAX_CONSTRAINT: int = 50
 
@@ -32,6 +33,8 @@ class SubTheme(models.Model):
 class Topic(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     sub_theme = models.ForeignKey(to=SubTheme, on_delete=models.SET_NULL, null=True)
+
+    objects = TopicManager()
 
 
 class GeographyType(models.Model):
