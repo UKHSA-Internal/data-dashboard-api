@@ -14,7 +14,7 @@ DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
 class ChartTypes(Enum):
-    simple_line_graph = "simple_line_graph"
+    simple_line = "simple_line"
     waffle = "waffle"
     line_with_shaded_section = "line_with_shaded_section"
 
@@ -48,7 +48,7 @@ class ChartsInterface:
         if self.chart_type == ChartTypes.waffle.value:
             return self.generate_waffle_chart()
 
-        if self.chart_type == ChartTypes.simple_line_graph.value:
+        if self.chart_type == ChartTypes.simple_line.value:
             return self.generate_simple_line_chart()
 
         return self.generate_line_with_shaded_section_chart()
@@ -127,5 +127,4 @@ class ChartsInterface:
         values = values[-preceding_slice:]
 
         return calculations.change_between_each_half(values=values)
-
 

@@ -14,6 +14,7 @@ from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts import data_visualization_superseded
 from metrics.domain.charts import data_visualization
+from metrics.interfaces.charts import validation
 
 
 class HealthView(APIView):
@@ -134,6 +135,8 @@ class ChartsView(APIView):
             )
         except data_visualization_superseded.ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
+        except validation.ChartTypeDoesNotSupportMetricError as error:
+            return Response(status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)})
 
         return self._return_image(filename=filename)
 

@@ -187,3 +187,10 @@ class CoreTimeSeriesManager(models.Manager):
             metric_name=metric_name,
             date_from=date_from,
         )
+
+    def get_count(self, topic: str, metric_name: str, date_from: datetime.datetime) -> int:
+        return self.by_topic_metric_for_dates_and_values(
+            topic=topic,
+            metric_name=metric_name,
+            date_from=date_from
+        ).count()

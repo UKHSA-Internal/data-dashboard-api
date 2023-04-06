@@ -4,6 +4,7 @@ import plotly.graph_objects
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.interfaces.charts.access import ChartsInterface
+from metrics.interfaces.charts.validation import ChartsRequestValidator
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -15,6 +16,11 @@ def generate_chart(
     date_from,
 ):
     date_from = datetime.datetime.strptime(date_from, "%Y-%m-%d")
+    charts_request_validator = ChartsRequestValidator(
+        topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+    )
+    charts_request_validator.validate()
+
     library = ChartsInterface(
         topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
     )
