@@ -1,11 +1,11 @@
 import datetime
-from typing import Callable, Dict
+from enum import Enum
+from typing import Dict
 
+import plotly.graph_objects
 from django.db.models import Manager
 
-from metrics.data.access.core_models import (
-    unzip_values,
-)
+from metrics.data.access.core_models import unzip_values
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line, line_with_shaded_section, waffle
 
@@ -19,6 +19,16 @@ CHART_BUILDERS: Dict[str, callable] = {
 }
 
 
+class ChartTypes(Enum):
+    simple_line_graph = "simple_line_graph"
+    waffle = "waffle"
+    line_with_shaded_section = "line_with_shaded_section"
+
+    @classmethod
+    def choices(cls):
+        return tuple((chart_type.value, chart_type.value) for chart_type in cls)
+
+
 class ChartsInterface:
     def __init__(
         self,
@@ -30,36 +40,45 @@ class ChartsInterface:
     ):
         self.topic = topic
         self.metric = metric
-        self.chart_type = chart_type
+        self.chart_type = chart_type.lower()
         self.date_from = date_from
 
         self.core_time_series_manager = core_time_series_manager
 
-    def get_chart_builder(self) -> Callable:
-        return CHART_BUILDERS[self.chart_type.lower()]
-
     def generate_chart_figure(self):
-        chart_builder = self.get_chart_builder()
-
         if self.chart_type == "waffle":
-            values = self.get_latest_metric_value()
-            figure = chart_builder([values])
+            return self.generate_waffle_chart()
 
-        else:
+        if self.chart_type == "simple_line_graph":
+            return self.generate_simple_line_chart()
 
-            timeseries_queryset = self.get_time_series_metric_values()
+        return self.generate_line_with_shaded_section_chart()
 
-            dates, values = unzip_values(timeseries_queryset)
+    def generate_waffle_chart(self) -> plotly.graph_objects.Figure:
+        values = self.core_time_series_manager.get_latest_metric_value()
+        return waffle.generate_chart_figure(values)
 
-            if self.chart_type == "simple_line_graph":
-                figure = chart_builder(values)
-            else:
-                rolling_period_slice = 1 if "weekly" in self.metric else 7
-                figure = chart_builder(
-                    dates, values, self.metric, 10, rolling_period_slice
-                )
+    def generate_simple_line_chart(self) -> plotly.graph_objects.Figure:
+        timeseries_queryset = (
+            self.core_time_series_manager.by_topic_metric_for_dates_and_values()
+        )
+        _, values = unzip_values(timeseries_queryset)
+        return line.generate_chart_figure(values)
 
-        return figure
+    def generate_line_with_shaded_section_chart(self):
+        timeseries_queryset = (
+            self.core_time_series_manager.get_time_series_metric_values()
+        )
+        dates, values = unzip_values(timeseries_queryset)
+
+        rolling_period_slice = 1 if "weekly" in self.metric else 7
+        return line_with_shaded_section.generate_chart_figure(
+            dates=dates,
+            values=values,
+            metric_name=self.metric,
+            change_in_metric_value=10,
+            rolling_period_slice=rolling_period_slice,
+        )
 
     def get_latest_metric_value(self):
         return self.core_time_series_manager.get_latest_metric_value(
@@ -74,4 +93,3 @@ class ChartsInterface:
             metric_name=self.metric,
             date_from=self.date_from,
         )
-
