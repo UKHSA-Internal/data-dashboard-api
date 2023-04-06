@@ -52,21 +52,32 @@ class TestSplitListInHalf:
         assert second_half == [8, 9, 10, 11, 12, 13, 14]
 
 
-class TestChangeOverEachHalf:
-    def test_change_over_each_half(self):
+class TestChangeBetweenEachHalf:
+    @pytest.mark.parametrize(
+        "values, expected_difference",
+        (
+            ([1, 2, 3, 5], 5),
+            ([2, 3], 1),
+            ([0.1, 0.3, 0.4, 0.5], 0.5),
+            ([-1, 2, 3, -2, 1], 1),
+        ),
+    )
+    def test_calculates_difference_correctly(
+        self, values: List[int], expected_difference: int
+    ):
         """
         Given a list of values
         When `change_over_each_half()` is called
         Then the correct calculated change in value between each half is returned
         """
         # Given
-        values = [1, 2, 3, 5]
+        values = values
 
         # When
-        calculated_change = calculations.change_over_each_half(values=values)
+        calculated_change = calculations.change_between_each_half(values=values)
 
         # Then
-        assert calculated_change == 1
+        assert calculated_change == expected_difference
 
 
 class TestGetRollingPeriodSliceForEachHalf:

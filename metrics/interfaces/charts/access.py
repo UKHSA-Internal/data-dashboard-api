@@ -90,6 +90,6 @@ class ChartsInterface:
 
         values = values[-preceding_slice:]
 
-        return calculations.change_over_each_half(values=values)
+        return calculations.change_between_each_half(values=values)
 
 
