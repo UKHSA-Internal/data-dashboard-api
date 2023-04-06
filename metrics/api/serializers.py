@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import Metric, Topic
-from metrics.domain.charts_interface.access import ChartTypes
+from metrics.interfaces.charts.access import ChartTypes
 
 
 class APITimeSeriesSerializer(serializers.ModelSerializer):

@@ -71,25 +71,10 @@ class ChartsInterface:
         )
         dates, values = unzip_values(timeseries_queryset)
 
-        rolling_period_slice = 1 if "weekly" in self.metric else 7
         return line_with_shaded_section.generate_chart_figure(
             dates=dates,
             values=values,
             metric_name=self.metric,
             change_in_metric_value=10,
-            rolling_period_slice=rolling_period_slice,
-        )
-
-    def get_latest_metric_value(self):
-        return self.core_time_series_manager.get_latest_metric_value(
-            topic=self.topic,
-            metric_name=self.metric,
-        )
-
-    def get_time_series_metric_values(self):
-
-        return self.core_time_series_manager.by_topic_metric_for_dates_and_values(
-            topic=self.topic,
-            metric_name=self.metric,
-            date_from=self.date_from,
+            rolling_period_slice=1 if "weekly" in self.metric else 7,
         )
