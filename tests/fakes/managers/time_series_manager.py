@@ -22,5 +22,10 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
     def all_related(self):
         return [x for x in self.time_series]
 
-    def by_topic_metric_for_dates_and_values(self, topic: str, metric_name: str, date_from: datetime.datetime):
-        return [(time_series.dt, time_series.metric_value) for time_series in self.time_series]
+    def by_topic_metric_for_dates_and_values(
+        self, topic: str, metric_name: str, date_from: datetime.datetime
+    ):
+        return [
+            (time_series.dt, time_series.metric_value)
+            for time_series in self.time_series
+        ]

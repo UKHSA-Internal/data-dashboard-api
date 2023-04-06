@@ -14,7 +14,8 @@ from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts.data_visualization import (
     ChartNotSupportedError,
-    generate_corresponding_chart, generate_chart,
+    generate_chart,
+    generate_corresponding_chart,
 )
 
 
@@ -112,15 +113,10 @@ class FileUploadView(APIView):
         return Response(status=204)
 
 
-
-
 class ChartsView(APIView):
-    @swagger_auto_schema(
-        query_serializer=ChartsRequestSerializer)
+    @swagger_auto_schema(query_serializer=ChartsRequestSerializer)
     def get(self, request, *args, **kwargs):
-        """
-
-        """
+        """ """
 
         query_serializer = ChartsRequestSerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
@@ -131,7 +127,9 @@ class ChartsView(APIView):
         date_from = query_serializer.data["date_from"]
 
         try:
-            filename: str = generate_chart(topic=topic, metric=metric, chart_type=chart_type, date_from=date_from)
+            filename: str = generate_chart(
+                topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+            )
         except ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
 

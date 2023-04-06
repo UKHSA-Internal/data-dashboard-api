@@ -20,7 +20,6 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
 
         for month_number in range(4, 10, 1):
             for day_number in (3, 16, 28):
-
                 metric_value = random.choice(range(100, 20100, 100))
 
                 new_time_series = cls.build(

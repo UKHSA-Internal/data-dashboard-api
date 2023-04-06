@@ -72,10 +72,13 @@ def generate_chart(
     date_from,
 ):
     date_from = datetime.datetime.strptime(date_from, "%Y-%m-%d")
-    library = ChartsInterface(topic=topic, metric=metric, chart_type=chart_type, date_from=date_from)
+    library = ChartsInterface(
+        topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+    )
     figure = library.generate_chart_figure()
 
     return write_figure(figure=figure, topic=f"{topic}.{metric}", file_format="png")
+
 
 def write_figure(
     figure: plotly.graph_objects.Figure, topic: str, file_format: str
