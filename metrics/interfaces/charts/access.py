@@ -1,5 +1,6 @@
 import datetime
 from enum import Enum
+from typing import Union
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -7,6 +8,7 @@ from django.db.models import Manager
 from metrics.data.access.core_models import unzip_values
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line, line_with_shaded_section, waffle
+from metrics.interfaces.charts import calculations
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -55,15 +57,10 @@ class ChartsInterface:
         return line.generate_chart_figure(values)
 
     def generate_line_with_shaded_section_chart(self):
-        timeseries_queryset = self.get_timeseries()
-        dates, values = unzip_values(values=timeseries_queryset)
+        params = self.param_builder_for_line_with_shaded_section()
 
         return line_with_shaded_section.generate_chart_figure(
-            dates=dates,
-            values=values,
-            metric_name=self.metric,
-            change_in_metric_value=10,
-            rolling_period_slice=1 if "weekly" in self.metric else 7,
+            **params,
         )
 
     def get_timeseries(self):
@@ -72,3 +69,30 @@ class ChartsInterface:
             metric_name=self.metric,
             date_from=self.date_from,
         )
+
+    def param_builder_for_line_with_shaded_section(self):
+        timeseries_queryset = self.get_timeseries()
+        dates, values = unzip_values(values=timeseries_queryset)
+
+        return {
+            "dates": dates,
+            "values": values,
+            "metric_name": self.metric,
+            "change_in_metric_value": self.calculate_change_in_metric_value(values=values),
+            "rolling_period_slice": self._get_rolling_period_slice(),
+        }
+
+    def _get_rolling_period_slice(self) -> int:
+        return 1 if "weekly" in self.metric else 7
+
+    def calculate_change_in_metric_value(
+        self, values
+    ) -> Union[int, float]:
+        rolling_period_slice = self._get_rolling_period_slice()
+        preceding_slice = rolling_period_slice * 2
+
+        values = values[-preceding_slice:]
+
+        return calculations.change_over_each_half(values=values)
+
+
