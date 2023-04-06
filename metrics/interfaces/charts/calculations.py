@@ -13,3 +13,7 @@ def change_over_each_half(values: list) -> Union[int, float]:
 def split_list_in_half(values: list) -> Tuple[list, list]:
     half = len(values) // 2
     return values[:half], values[half:]
+
+
+def get_rolling_period_slice_for_metric(metric_name: str) -> int:
+    return 1 if "weekly" in metric_name else 7

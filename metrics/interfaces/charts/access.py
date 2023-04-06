@@ -79,16 +79,13 @@ class ChartsInterface:
             "values": values,
             "metric_name": self.metric,
             "change_in_metric_value": self.calculate_change_in_metric_value(values=values),
-            "rolling_period_slice": self._get_rolling_period_slice(),
+            "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(metric_name=self.metric),
         }
-
-    def _get_rolling_period_slice(self) -> int:
-        return 1 if "weekly" in self.metric else 7
 
     def calculate_change_in_metric_value(
         self, values
     ) -> Union[int, float]:
-        rolling_period_slice: int = self._get_rolling_period_slice()
+        rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(metric_name=self.metric)
         preceding_slice: int = rolling_period_slice * 2
 
         values = values[-preceding_slice:]
