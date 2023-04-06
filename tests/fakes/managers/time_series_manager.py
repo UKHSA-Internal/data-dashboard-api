@@ -4,7 +4,7 @@ from metrics.api import enums
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
 
-class FakeTimeSeriesManager(CoreTimeSeriesManager):
+class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
     """
     A fake version of the `CoreTimeSeriesManager` which allows the methods and properties
     to be overriden to allow the database to be abstracted away.
