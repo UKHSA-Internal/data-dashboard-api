@@ -50,17 +50,13 @@ class ChartsInterface:
         return waffle.generate_chart_figure(values)
 
     def generate_simple_line_chart(self) -> plotly.graph_objects.Figure:
-        timeseries_queryset = (
-            self.core_time_series_manager.by_topic_metric_for_dates_and_values()
-        )
-        _, values = unzip_values(timeseries_queryset)
+        timeseries_queryset = self.get_timeseries()
+        _, values = unzip_values(values=timeseries_queryset)
         return line.generate_chart_figure(values)
 
     def generate_line_with_shaded_section_chart(self):
-        timeseries_queryset = (
-            self.core_time_series_manager.get_time_series_metric_values()
-        )
-        dates, values = unzip_values(timeseries_queryset)
+        timeseries_queryset = self.get_timeseries()
+        dates, values = unzip_values(values=timeseries_queryset)
 
         return line_with_shaded_section.generate_chart_figure(
             dates=dates,
@@ -68,4 +64,11 @@ class ChartsInterface:
             metric_name=self.metric,
             change_in_metric_value=10,
             rolling_period_slice=1 if "weekly" in self.metric else 7,
+        )
+
+    def get_timeseries(self):
+        return self.core_time_series_manager.by_topic_metric_for_dates_and_values(
+            topic=self.topic,
+            metric_name=self.metric,
+            date_from=self.date_from,
         )
