@@ -38,7 +38,13 @@ class ChartsInterface:
         self.date_from = date_from
         self.core_time_series_manager = core_time_series_manager
 
-    def generate_chart_figure(self):
+    def generate_chart_figure(self) -> plotly.graph_objects.Figure:
+        """Creates the chart figure dictated the instance variable of `chart_type`
+
+        Returns:
+            A plotly `Figure` object for the created chart
+
+        """
         if self.chart_type == ChartTypes.waffle.value:
             return self.generate_waffle_chart()
 
@@ -48,15 +54,33 @@ class ChartsInterface:
         return self.generate_line_with_shaded_section_chart()
 
     def generate_waffle_chart(self) -> plotly.graph_objects.Figure:
+        """Creates a waffle chart figure for the `metric` instance variable
+
+        Returns:
+            A plotly `Figure` object for the created waffle chart
+
+        """
         values = self.core_time_series_manager.get_latest_metric_value()
         return waffle.generate_chart_figure(values)
 
     def generate_simple_line_chart(self) -> plotly.graph_objects.Figure:
+        """Creates a simple line chart figure for the `metric` instance variable
+
+        Returns:
+            A plotly `Figure` object for the created simple line chart
+
+        """
         timeseries_queryset = self.get_timeseries()
         _, values = unzip_values(values=timeseries_queryset)
         return line.generate_chart_figure(values)
 
-    def generate_line_with_shaded_section_chart(self):
+    def generate_line_with_shaded_section_chart(self) -> plotly.graph_objects.Figure:
+        """Creates a line chart with shaded section figure for the `metric` instance variable
+
+        Returns:
+            A plotly `Figure` object for the created line chart with shaded section
+
+        """
         params = self.param_builder_for_line_with_shaded_section()
 
         return line_with_shaded_section.generate_chart_figure(
@@ -64,6 +88,18 @@ class ChartsInterface:
         )
 
     def get_timeseries(self):
+        """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
+
+        Returns:
+            QuerySet: An ordered queryset from oldest -> newest
+                of the (dt, metric_value) numbers:
+                Examples:
+                    `<CoreTimeSeriesQuerySet [
+                        (datetime.date(2022, 10, 10), Decimal('0.8')),
+                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                    ]>`
+
+        """
         return self.core_time_series_manager.by_topic_metric_for_dates_and_values(
             topic=self.topic,
             metric_name=self.metric,
