@@ -4,10 +4,10 @@ from unittest import mock
 import pytest
 
 from metrics.interfaces.charts import validation
+from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
+from tests.fakes.factories.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
-from tests.fakes.models.core_time_series_factory import FakeCoreTimeSeriesFactory
-from tests.fakes.models.metric_factory import FakeMetricFactory
 
 
 class TestValidate:

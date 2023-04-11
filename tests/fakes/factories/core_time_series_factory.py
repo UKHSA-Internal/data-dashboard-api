@@ -4,9 +4,9 @@ from typing import List
 
 import factory
 
-from .core_time_series import FakeCoreTimeSeries
-from .metric import FakeMetric
-from .topic import FakeTopic
+from tests.fakes.models.core_time_series import FakeCoreTimeSeries
+from tests.fakes.models.metric import FakeMetric
+from tests.fakes.models.topic import FakeTopic
 
 
 class FakeCoreTimeSeriesFactory(factory.Factory):

@@ -10,11 +10,11 @@ from metrics.api.serializers import (
     ChartsRequestSerializer,
 )
 from metrics.interfaces.charts.access import ChartTypes
+from tests.fakes.factories.api_time_series_factory import FakeAPITimeSeriesFactory
+from tests.fakes.factories.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 from tests.fakes.models.api_time_series import FakeAPITimeSeries
-from tests.fakes.models.api_time_series_factory import FakeAPITimeSeriesFactory
-from tests.fakes.models.metric_factory import FakeMetricFactory
 
 
 class TestAPITimeSeriesSerializer:
