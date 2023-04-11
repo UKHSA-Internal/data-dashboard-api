@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 
 from metrics.interfaces.charts import validation
+from metrics.interfaces.charts.access import ChartTypes
 from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
 from tests.fakes.factories.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -65,6 +66,29 @@ class TestValidateSeriesChartTypeWorksWithMetric:
             chart_type=chart_type,
             date_from=mock.Mock(),
             core_time_series_manager=mocked_core_time_series_manager,
+        )
+
+        # When
+        validated = validator._validate_series_type_chart_works_with_metric()
+
+        # Then
+        assert validated is None
+
+    def test_passes_naively_if_non_series_chart_type_provided(self):
+        """
+        Given a metric of `new_cases_daily` and a request for a `waffle` type chart
+        When `_validate_series_type_chart_works_with_metric()` is called from an instance of `ChartsRequestValidator`
+        Then None is returned
+        """
+        # Given
+        metric = "new_cases_daily"
+        chart_type = ChartTypes.waffle.value
+
+        validator = validation.ChartsRequestValidator(
+            topic=mock.Mock(),
+            metric=metric,
+            chart_type=chart_type,
+            date_from=mock.Mock(),
         )
 
         # When
@@ -272,3 +296,53 @@ class TestDoesMetricHaveMultipleRecords:
 
         # Then
         assert not metric_has_multiple_records
+
+
+class TestIsChartSeriesType:
+    def test_waffle_chart_returns_false(self):
+        """
+        Given a chart type of `waffle`
+        When `is_chart_series_type()` is called from an instance of `ChartsRequestValidator`
+        Then False is returned
+        """
+        # Given
+        chart_type = ChartTypes.waffle.value
+
+        validator = validation.ChartsRequestValidator(
+            topic=mock.Mock(),
+            metric=mock.Mock(),
+            chart_type=chart_type,
+            date_from=mock.Mock(),
+        )
+
+        # When
+        chart_is_series_type: bool = validator.is_chart_series_type()
+
+        # Then
+        assert not chart_is_series_type
+
+    @pytest.mark.parametrize(
+        "chart_type",
+        [ChartTypes.simple_line.value, ChartTypes.line_with_shaded_section.value],
+    )
+    def test_line_charts_returns_true(self, chart_type: str):
+        """
+        Given a line/timeseries chart type
+        When `is_chart_series_type()` is called from an instance of `ChartsRequestValidator`
+        Then True is returned
+        """
+        # Given
+        time_series_chart_type: str = chart_type
+
+        validator = validation.ChartsRequestValidator(
+            topic=mock.Mock(),
+            metric=mock.Mock(),
+            chart_type=time_series_chart_type,
+            date_from=mock.Mock(),
+        )
+
+        # When
+        chart_is_series_type: bool = validator.is_chart_series_type()
+
+        # Then
+        assert chart_is_series_type

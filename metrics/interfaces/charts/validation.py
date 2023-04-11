@@ -3,6 +3,7 @@ import datetime
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries, Metric
+from metrics.interfaces.charts.access import ChartTypes
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_METRIC_MANAGER = Metric.objects
@@ -34,10 +35,42 @@ class ChartsRequestValidator:
         self.metric_manager = metric_manager
 
     def validate(self) -> None:
+        """Validates the request against the contents of the db
+
+        Returns:
+            None
+
+        Raises:
+            `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
+                compatible for the required `chart_type`.
+                E.g. A cumulative headline type number like `positivity_7days_latest`
+                would not be viable for a line type (timeseries) chart.
+
+            `MetricDoesNotSupportTopicError`: If the `metric` is not
+                compatible for the required `topic`.
+                E.g. `new_cases_daily` is currently only available
+                for the topic of `COVID-19`
+        """
         self._validate_series_type_chart_works_with_metric()
         self._validate_metric_is_available_for_topic()
 
+    def is_chart_series_type(self) -> bool:
+        """Checks if the instance variable `chart_type` is of a timeseries type.
+
+        Returns:
+            bool: True if the `chart_type` can be used for timeseries data.
+                False otherwise
+
+        """
+        if self.chart_type == ChartTypes.waffle.value:
+            return False
+        return True
+
     def _validate_series_type_chart_works_with_metric(self) -> None:
+        requested_chart_is_series_type = self.is_chart_series_type()
+        if not requested_chart_is_series_type:
+            return
+
         metric_is_series_chart_compatible: bool = (
             self.does_metric_have_multiple_records()
         )
