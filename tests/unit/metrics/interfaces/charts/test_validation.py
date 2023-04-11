@@ -56,7 +56,7 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         """
         # Given
         metric = "new_cases_daily"
-        chart_type = "simple_line"
+        chart_type = ChartTypes.simple_line.value
         mocked_core_time_series_manager = mock.Mock()
         mocked_core_time_series_manager.get_count.return_value = 10
 
