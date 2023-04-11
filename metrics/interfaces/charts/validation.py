@@ -96,14 +96,14 @@ class ChartsRequestValidator:
         return count > 1
 
     def _validate_metric_is_available_for_topic(self) -> None:
-        metric_is_topic_compatible: bool = self.does_metric_have_related_topic()
+        metric_is_topic_compatible: bool = self.is_metric_available_for_topic()
 
         if not metric_is_topic_compatible:
             raise MetricDoesNotSupportTopicError(
                 f"`{self.topic}` does not have a corresponding metric of `{self.metric}`"
             )
 
-    def does_metric_have_related_topic(self) -> bool:
+    def is_metric_available_for_topic(self) -> bool:
         """Checks the db if there are any `Metric` records for the `metric` and `topic`.
 
         Returns:
