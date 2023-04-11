@@ -15,3 +15,13 @@ class FakeMetricManager(MetricManager):
 
     def get_all_names(self) -> List[str]:
         return [metric.name for metric in self.metrics]
+
+    def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
+        filtered_by_topic = [
+            metric
+            for metric in self.metrics
+            if metric.name == metric_name
+            if metric.topic.name == topic_name
+        ]
+
+        return bool(filtered_by_topic)

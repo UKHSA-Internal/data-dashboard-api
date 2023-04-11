@@ -4,8 +4,10 @@ from unittest import mock
 import pytest
 
 from metrics.interfaces.charts import validation
+from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.fakes.models.core_time_series_factory import FakeCoreTimeSeriesFactory
+from tests.fakes.models.metric_factory import FakeMetricFactory
 
 
 class TestValidateSeriesChartTypeWorksWithMetric:
@@ -35,7 +37,7 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         # Then
         assert validated is None
 
-    def test_can_raise_error_for_invalidate_combination(self):
+    def test_can_raise_error_for_invalid_combination(self):
         """
         Given a metric of `covid_occupied_beds_latest` and a request for a `simple_line` type chart
         When `_validate_series_type_chart_works_with_metric()` is called from an instance of `ChartsRequestValidator`
@@ -63,6 +65,72 @@ class TestValidateSeriesChartTypeWorksWithMetric:
             validation.ChartTypeDoesNotSupportMetricError, match=expected_error_message
         ):
             validator._validate_series_type_chart_works_with_metric()
+
+
+class TestValidateMetricIsAvailableForTopic:
+    def test_can_validate_successfully(self):
+        """
+        Given a metric of `covid_occupied_beds_latest` and a topic of `COVID-19` which is valid
+        When `_validate_metric_is_available_for_topic()` is called from an instance of `ChartsRequestValidator`
+        Then None is returned
+        """
+        # Given
+        metric_name = "covid_occupied_beds_latest"
+        valid_topic_name = "COVID-19"
+
+        metrics = [
+            FakeMetricFactory.build_example_metric(
+                metric_name=metric_name, topic_name=valid_topic_name
+            )
+        ] * 3
+        fake_metric_manager = FakeMetricManager(metrics=metrics)
+
+        validator = validation.ChartsRequestValidator(
+            topic=valid_topic_name,
+            metric=metric_name,
+            chart_type=mock.Mock(),
+            date_from=mock.Mock(),
+            metric_manager=fake_metric_manager,
+        )
+
+        # When
+        validated = validator._validate_metric_is_available_for_topic()
+
+        # Then
+        assert validated is None
+
+    def test_can_raise_error_for_invalid_combination(self):
+        """
+        Given a metric of `covid_occupied_beds_latest` and a topic of `Influenza` which is invalid
+        When `_validate_metric_is_available_for_topic()` is called from an instance of `ChartsRequestValidator`
+        Then a `MetricDoesNotSupportTopicError` is raised
+        """
+        # Given
+        metric_name = "covid_occupied_beds_latest"
+        topic_name = "COVID-19"
+        invalid_topic_name = "Influenza"
+
+        metrics = [
+            FakeMetricFactory.build_example_metric(
+                metric_name=metric_name, topic_name=topic_name
+            )
+        ] * 3
+        fake_metric_manager = FakeMetricManager(metrics=metrics)
+
+        validator = validation.ChartsRequestValidator(
+            topic=invalid_topic_name,
+            metric=metric_name,
+            chart_type=mock.Mock(),
+            date_from=mock.Mock(),
+            metric_manager=fake_metric_manager,
+        )
+
+        # When / Then
+        expected_error_message = f"`{invalid_topic_name}` does not have a corresponding metric of `{metric_name}`"
+        with pytest.raises(
+            validation.MetricDoesNotSupportTopicError, match=expected_error_message
+        ):
+            validator._validate_metric_is_available_for_topic()
 
 
 class TestDoesMetricHaveMultipleRecords:
