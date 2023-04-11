@@ -114,17 +114,20 @@ class ChartsInterface:
             "dates": dates,
             "values": values,
             "metric_name": self.metric,
-            "change_in_metric_value": self.calculate_change_in_metric_value(values=values),
-            "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(metric_name=self.metric),
+            "change_in_metric_value": self.calculate_change_in_metric_value(
+                values=values
+            ),
+            "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(
+                metric_name=self.metric
+            ),
         }
 
-    def calculate_change_in_metric_value(
-        self, values
-    ) -> Union[int, float]:
-        rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(metric_name=self.metric)
+    def calculate_change_in_metric_value(self, values) -> Union[int, float]:
+        rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(
+            metric_name=self.metric
+        )
         preceding_slice: int = rolling_period_slice * 2
 
         values = values[-preceding_slice:]
 
         return calculations.change_between_each_half(values=values)
-

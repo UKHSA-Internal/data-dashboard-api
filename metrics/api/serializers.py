@@ -40,12 +40,8 @@ class ChartsQuerySerializer(serializers.Serializer):
 
 
 class ChartsRequestSerializer(serializers.Serializer):
-    topic = serializers.ChoiceField(
-        choices=[], required=True
-    )
-    metric = serializers.ChoiceField(
-        choices=[], required=True
-    )
+    topic = serializers.ChoiceField(choices=[], required=True)
+    metric = serializers.ChoiceField(choices=[], required=True)
     chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
     date_from = serializers.DateField(required=True)
 

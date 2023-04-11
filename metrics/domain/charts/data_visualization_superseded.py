@@ -63,6 +63,7 @@ def generate_corresponding_chart(topic: str, category: str, file_format: str) ->
 
     raise ChartNotSupportedError()
 
+
 def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(
     topic: str,
     file_format: str,
