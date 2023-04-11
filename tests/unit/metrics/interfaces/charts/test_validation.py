@@ -10,6 +10,42 @@ from tests.fakes.models.core_time_series_factory import FakeCoreTimeSeriesFactor
 from tests.fakes.models.metric_factory import FakeMetricFactory
 
 
+class TestValidate:
+    @mock.patch.object(
+        validation.ChartsRequestValidator, "_validate_metric_is_available_for_topic"
+    )
+    @mock.patch.object(
+        validation.ChartsRequestValidator,
+        "_validate_series_type_chart_works_with_metric",
+    )
+    def test_delegates_to_correct_validators(
+        self,
+        spy_validate_series_type_chart_works_with_metric: mock.MagicMock,
+        spy_validate_metric_is_available_for_topic: mock.MagicMock,
+    ):
+        """
+        Given an instance of the `ChartsRequestValidator`
+        When `validate()` is called
+        Then the correct sub validate methods are called and delegated to
+        """
+        # Given
+        validator = validation.ChartsRequestValidator(
+            topic=mock.Mock(),
+            metric=mock.Mock(),
+            chart_type=mock.Mock(),
+            date_from=mock.Mock(),
+            core_time_series_manager=mock.Mock(),
+            metric_manager=mock.Mock(),
+        )
+
+        # When
+        validator.validate()
+
+        # Then
+        spy_validate_series_type_chart_works_with_metric.assert_called_once()
+        spy_validate_metric_is_available_for_topic.assert_called_once()
+
+
 class TestValidateSeriesChartTypeWorksWithMetric:
     def test_can_validate_successfully(self):
         """

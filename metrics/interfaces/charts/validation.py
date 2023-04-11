@@ -35,6 +35,7 @@ class ChartsRequestValidator:
 
     def validate(self) -> None:
         self._validate_series_type_chart_works_with_metric()
+        self._validate_metric_is_available_for_topic()
 
     def _validate_series_type_chart_works_with_metric(self) -> None:
         metric_is_series_chart_compatible: bool = (
