@@ -80,6 +80,14 @@ class ChartsRequestValidator:
             )
 
     def does_metric_have_multiple_records(self) -> bool:
+        """Checks the db if there are multiple associated `CoreTimeSeries` records.
+
+        Returns:
+            bool: True if there is more than 1 `CoreTimeSeries` record
+                which match the criteria.
+                False otherwise.
+
+        """
         count: int = self.core_time_series_manager.get_count(
             topic=self.topic,
             metric_name=self.metric,
@@ -96,6 +104,14 @@ class ChartsRequestValidator:
             )
 
     def does_metric_have_related_topic(self) -> bool:
+        """Checks the db if there are any `Metric` records for the `metric` and `topic`.
+
+        Returns:
+            bool: True if there are any `Metric` records
+                which match the criteria.
+                False otherwise.
+
+        """
         return self.metric_manager.is_metric_available_for_topic(
             metric_name=self.metric,
             topic_name=self.topic,
