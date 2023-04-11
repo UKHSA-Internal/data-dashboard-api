@@ -19,6 +19,7 @@ def generate_chart_figure(
     background_color: str = colour_scheme.RGBAColours.LIGHT_GREY.stringified,
     line_shape: str = "spline",
     line_width: int = 3,
+    enforce_markers: bool = False,
 ) -> plotly.graph_objects.Figure:
     """Creates a `Figure` object for the given `data_points` as a Line graph.
 
@@ -40,6 +41,10 @@ def generate_chart_figure(
             Defaults to "spline", a curved shape between points.
         line_width: The weight to assign to the width of the line plots.
             Defaults to 3.
+        enforce_markers: Switch to enforce markers onto to the line plot.
+            Over a certain threshold, `plotly` will remove the markers.
+            This setting re-adds the markers to the plot in spite of the threshold.
+            Defaults to False.
 
     Returns:
         `Figure`: A `plotly` object which can then be
@@ -70,10 +75,8 @@ def generate_chart_figure(
     layout_args["plot_bgcolor"] = background_color
     figure.update_layout(**layout_args)
 
-    # Over a certain threshold, plotly will convert the scatter plot to a line plot
-    # and therefore remove the markers.
-    # This setting re-adds the markers to the plot
-    figure.data[0].mode = "lines+markers"
+    if enforce_markers:
+        figure.data[0].mode = "lines+markers"
 
     return figure
 
