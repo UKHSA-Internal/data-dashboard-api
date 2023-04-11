@@ -29,3 +29,15 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             (time_series.dt, time_series.metric_value)
             for time_series in self.time_series
         ]
+
+    def get_count(
+        self, topic: str, metric_name: str, date_from: datetime.datetime
+    ) -> int:
+        filtered_for_metric_topic_and_date = [
+            x
+            for x in self.time_series
+            if x.metric.topic.name == topic
+            if x.metric.name == metric_name
+            if x.dt >= date_from
+        ]
+        return len(filtered_for_metric_topic_and_date)
