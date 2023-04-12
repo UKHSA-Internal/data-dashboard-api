@@ -8,7 +8,7 @@ import glob
 import logging
 import re
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict
 
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
@@ -21,7 +21,7 @@ from metrics.api.settings import WAGTAIL_SITE_NAME
 logger = logging.getLogger(__name__)
 
 
-FILE_PATH = "cms/dashboard/pages_to_add/"
+FILE_PATH = "cms/dashboard/templates/cms_starting_pages/"
 
 
 def load_html_files() -> Dict[str, str]:
