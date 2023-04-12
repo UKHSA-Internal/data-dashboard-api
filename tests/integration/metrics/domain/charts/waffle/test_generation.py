@@ -19,7 +19,7 @@ class TestWaffleCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            data_points=points
+            values=points
         )
 
         # Then
@@ -53,7 +53,7 @@ class TestWaffleCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            data_points=points
+            values=points
         )
 
         # Then
@@ -82,7 +82,7 @@ class TestWaffleCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            data_points=points
+            values=points
         )
 
         # Then
@@ -136,7 +136,7 @@ class TestWaffleCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            data_points=data_points
+            values=data_points
         )
 
         # ---Larger plot checks---
