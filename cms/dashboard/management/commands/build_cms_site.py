@@ -4,22 +4,19 @@ Only intended for use during development
 """
 
 
-import re
-import logging
-
-from django.core.management.base import BaseCommand
-from typing import List, Dict
-
-from metrics.api.settings import WAGTAIL_SITE_NAME
-
-from wagtail.models import Site, Page
-from cms.home.models import HomePage
-from cms.common.models import CommonPage
-from datetime import datetime
-
-from typing import List, Dict
-from bs4 import BeautifulSoup
 import glob
+import logging
+import re
+from datetime import datetime
+from typing import Dict, List
+
+from bs4 import BeautifulSoup
+from django.core.management.base import BaseCommand
+from wagtail.models import Page, Site
+
+from cms.common.models import CommonPage
+from cms.home.models import HomePage
+from metrics.api.settings import WAGTAIL_SITE_NAME
 
 logger = logging.getLogger(__name__)
 
