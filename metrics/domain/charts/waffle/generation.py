@@ -28,7 +28,7 @@ WAFFLE_LAYOUT_ARGS = {
 
 
 def generate_chart_figure(
-    data_points: List[int],
+    values: List[int],
     cell_gap: int = 3,
     width: int = 400,
     height: int = 400,
@@ -36,7 +36,7 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `data_points` as a Waffle chart.
 
     Args:
-        data_points: List of integers representing the points to be plotted
+        values: List of integers representing the points to be plotted
         cell_gap: The width to allow between each displayed cell.
             Defaults to 3.
         width: The width in pixels to assign to the figure.
@@ -56,13 +56,13 @@ def generate_chart_figure(
             From largest to smallest values, left to right.
 
     """
-    validation._check_data_points(data_points=data_points)
+    validation._check_data_points(data_points=values)
 
     figure = plotly.graph_objects.Figure()
 
-    for index, value in enumerate(data_points, 1):
+    for index, value in enumerate(values, 1):
         figure = _add_plot_to_figure(
-            value=value, index=index, cell_gap=cell_gap, figure=figure
+            value=int(value), index=index, cell_gap=cell_gap, figure=figure
         )
 
     figure.update_layout(width=width, height=height, **WAFFLE_LAYOUT_ARGS)

@@ -45,8 +45,8 @@ TIMESERIES_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
 
 
 def create_line_chart_with_shaded_section(
-    dates: List[datetime.datetime],
     values: List[int],
+    dates: List[datetime.datetime],
     shaded_section_fill_colour: colour_scheme.RGBAColours,
     shaded_section_line_colour: colour_scheme.RGBAColours,
     rolling_period_slice: int,
@@ -56,8 +56,8 @@ def create_line_chart_with_shaded_section(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
-        dates: List of datetime objects for each of the values.
         values: List of numbers representing the values.
+        dates: List of datetime objects for each of the values.
         shaded_section_fill_colour: The colour to use
             for the fill of the shaded/highlighted section.
         shaded_section_line_colour: The colour to use
@@ -156,8 +156,8 @@ def _create_shaded_section_plot(
 
 
 def generate_chart_figure(
-    dates: List[datetime.datetime],
     values: List[int],
+    dates: List[datetime.datetime],
     metric_name: str,
     change_in_metric_value: int,
     rolling_period_slice: int = 7,
@@ -166,8 +166,8 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
-        dates: List of datetime objects for each of the values.
         values: List of numbers representing the values.
+        dates: List of datetime objects for each of the values.
         metric_name: The associated metric_name,
             E.g. new_admissions_daily
         change_in_metric_value: The change in metric value from the last 7 days
@@ -195,8 +195,8 @@ def generate_chart_figure(
     )
 
     return create_line_chart_with_shaded_section(
-        dates=dates,
         values=values,
+        dates=dates,
         rolling_period_slice=rolling_period_slice,
         line_shape=line_shape,
         shaded_section_line_colour=line_colour,
