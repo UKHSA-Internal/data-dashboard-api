@@ -1,4 +1,3 @@
-import logging
 import os
 from http import HTTPStatus
 
@@ -16,8 +15,6 @@ from metrics.domain.charts.data_visualization import (
     ChartNotSupportedError,
     generate_corresponding_chart,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class HealthView(APIView):

@@ -1,9 +1,5 @@
-import logging
-
 from numpy import NaN
 from numpy.core.multiarray import ndarray, zeros
-
-logger = logging.getLogger(__name__)
 
 
 def build_two_dimensional_matrix(

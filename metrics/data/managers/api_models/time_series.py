@@ -5,11 +5,8 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
-import logging
 
 from django.db import models
-
-logger = logging.getLogger(__name__)
 
 
 class APITimeSeriesQuerySet(models.QuerySet):

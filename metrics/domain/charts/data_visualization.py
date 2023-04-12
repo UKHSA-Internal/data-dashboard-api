@@ -1,4 +1,3 @@
-import logging
 from typing import List
 
 import plotly.graph_objects
@@ -7,9 +6,6 @@ from django.db.models import Manager
 from metrics.data.access import core_models
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line_with_shaded_section, waffle
-
-logger = logging.getLogger(__name__)
-
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 

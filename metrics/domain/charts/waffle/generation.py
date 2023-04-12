@@ -1,13 +1,9 @@
-import logging
 from typing import Dict, List, Union
 
 import plotly.graph_objects
 from numpy.core.multiarray import ndarray
 
 from metrics.domain.charts.waffle import colour_scheme, pre_processing, validation
-
-logger = logging.getLogger(__name__)
-
 
 X_AXIS_ARGS: Dict[str, bool] = {
     "showgrid": False,

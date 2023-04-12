@@ -1,12 +1,8 @@
-import logging
 from typing import List, Union
 
 import plotly.graph_objects
 
 from metrics.domain.charts.line import colour_scheme
-
-logger = logging.getLogger(__name__)
-
 
 AXIS_ARGS = {"visible": False}
 
