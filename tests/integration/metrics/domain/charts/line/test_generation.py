@@ -4,7 +4,7 @@ import plotly.graph_objects
 
 from metrics.domain.charts.line import colour_scheme, generation
 
-DATA_POINTS: List[int] = [1, 2, 3, 2, 2, 3, 4, 5, 5, 3, 2, 1]
+VALUES: List[int] = [1, 2, 3, 2, 2, 3, 4, 5, 5, 3, 2, 1]
 
 
 class TestLineCharts:
@@ -15,11 +15,11 @@ class TestLineCharts:
         Then the figure is drawn with the expected parameters for the main background and the X & Y axis
         """
         # Given
-        data_points = DATA_POINTS
+        values = VALUES
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            values=data_points,
+            values=values,
         )
 
         # Then
@@ -46,11 +46,11 @@ class TestLineCharts:
         Then the figure is drawn with the expected parameters for the main line
         """
         # Given
-        data_points = DATA_POINTS
+        values = VALUES
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            values=data_points,
+            values=values,
         )
 
         # Then
@@ -78,11 +78,11 @@ class TestLineCharts:
         And the `mode` of the line plot is set to `lines+markers`
         """
         # Given
-        data_points = DATA_POINTS
+        values = VALUES
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            data_points=data_points,
+            values=values,
             enforce_markers=True,
         )
 
