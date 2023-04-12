@@ -43,10 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - uses: ./.github/actions/install-cache    
-#      - uses: pypa/gh-action-pip-audit@v1.0.6
-#        with:
-#          inputs: requirements.txt
+      - uses: ./.github/actions/install-cache
 
       - name: Run Bandit
         run: |
