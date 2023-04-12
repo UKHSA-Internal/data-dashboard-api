@@ -45,6 +45,4 @@ class TestGenerateChartFigure:
 
         # When / Then
         with pytest.raises(validation.DataPointsNotInDescendingOrderError):
-            generation.generate_chart_figure(
-                values=data_points_in_descending_order
-            )
+            generation.generate_chart_figure(values=data_points_in_descending_order)
