@@ -21,6 +21,10 @@ formatting:
 	${BIN}python -m isort .
 	${BIN}python -m black .
 
+# Check architectural constraints
+architecture:
+	${BIN}python -m lint-imports
+
 # Run all unit tests
 unit-tests:
 	${BIN}python -m pytest tests/unit -v
