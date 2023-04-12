@@ -282,7 +282,7 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Vaccinations",
-        "secondary_container": "Autumn Campaign",
+        "secondary_container": "Autumn Booster",
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
