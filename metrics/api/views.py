@@ -10,6 +10,9 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer
+from metrics.data.access.core_models import (
+    get_month_end_timeseries_metric_values_from_date,
+)
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts.data_visualization import (
@@ -110,3 +113,27 @@ class FileUploadView(APIView):
         load_core_data(filename=request.FILES.get("file"))
         generate_api_time_series()
         return Response(status=204)
+
+
+class TabularDataView(APIView):
+    permission_classes = [HasAPIKey]
+
+    def get(self, request, *args, **kwargs):
+        """This endpoint can be used to generate a summary of the chart data but in tabular format
+
+        There are 2 mandatory URL parameters:
+
+        - `topic` - relates to a type of disease (eg COVID-19, Influenza)
+
+        - `metric` - refers to the type of metric (eg, new_cases_daily, cases_age_sex)
+
+        """
+
+        topic: str = kwargs["topic"]
+        metric_name: str = kwargs["metric"]
+
+        result = get_month_end_timeseries_metric_values_from_date(
+            metric_name=metric_name, topic=topic
+        )
+
+        return Response(result)

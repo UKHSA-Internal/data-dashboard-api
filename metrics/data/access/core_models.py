@@ -5,10 +5,10 @@ This shall only include functionality which is used to read from the database.
 Specifically, this file contains read database logic for the Core models only.
 """
 import datetime
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 from dateutil.relativedelta import relativedelta
-from django.db.models import Manager
+from django.db.models import Manager, QuerySet
 
 from metrics.data import type_hints
 from metrics.data.models.core_models import CoreTimeSeries
@@ -78,6 +78,36 @@ def get_vaccination_uptake_rates(
     return [int(spring_uptake), int(autumn_uptake)]
 
 
+def get_timeseries_metric_values_from_specific_date(
+    metric_name: str,
+    topic: str,
+    core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+) -> QuerySet:
+    """
+    Fetch the timeseries for the given topic & metric
+
+    Args:
+        metric_name: The required metric (eg. new_admissions_7days)
+        topic: The required topic (eg. COVID-19)
+        core_time_series_manager: The timeseries manager. Default is the CoreTimeSeries manager
+
+    Returns:
+        A QuerySet of dates and metric_values for the given topic and metric_name
+    """
+    today = datetime.datetime.today()
+    n_months_ago: datetime.datetime = get_date_n_months_ago_from_timestamp(
+        datetime_stamp=today
+    )
+
+    queryset = core_time_series_manager.by_topic_metric_for_dates_and_values(
+        topic=topic,
+        metric_name=metric_name,
+        date_from=n_months_ago,
+    )
+
+    return queryset
+
+
 def get_timeseries_metric_values_from_date(
     metric_name: str,
     topic: str,
@@ -94,20 +124,58 @@ def get_timeseries_metric_values_from_date(
     Returns:
         The timeseries seperated into two lists. Dates in one, values in the other
     """
-    today = datetime.datetime.today()
-    n_months_ago: datetime.datetime = get_date_n_months_ago_from_timestamp(
-        datetime_stamp=today
-    )
 
-    queryset = core_time_series_manager.by_topic_metric_for_dates_and_values(
+    queryset = get_timeseries_metric_values_from_specific_date(
         topic=topic,
         metric_name=metric_name,
-        date_from=n_months_ago,
+        core_time_series_manager=core_time_series_manager,
     )
 
     dates, values = unzip_values(queryset)
 
     return dates, values
+
+
+def get_month_end_timeseries_metric_values_from_date(
+    metric_name: str,
+    topic: str,
+    core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+) -> Dict[str, str]:
+    """
+    Fetch the month-end timeseries values for the given topic & metric
+
+    Args:
+        metric_name: The required metric (eg. new_cases_daily)
+        topic: The required topic (eg. COVID-19)
+        core_time_series_manager: The timeseries manager. Default is the CoreTimeSeries manager
+
+    Returns:
+        A dictionary of date:metric_value pairs
+    """
+
+    queryset = get_timeseries_metric_values_from_specific_date(
+        topic=topic,
+        metric_name=metric_name,
+        core_time_series_manager=core_time_series_manager,
+    )
+
+    months: QuerySet = queryset.dates("dt", kind="month")
+
+    monthly_data = dict()
+    for month in months:
+        dt, metric_value = (
+            queryset.filter(
+                dt__year=month.year,
+                dt__month=month.month,
+            )
+            .order_by("dt")
+            .last()
+        )
+
+        date_str: str = datetime.date.strftime(dt, "%B %Y")
+        monthly_data[date_str] = str(metric_value)
+
+    return monthly_data
 
 
 def get_metric_value(
