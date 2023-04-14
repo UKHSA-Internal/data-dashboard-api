@@ -7,11 +7,12 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
+from cms.dynamic_content import ALLOWABLE_BODY_CONTENT_BLOCKS
 
 
 class TopicPage(Page):
     date_posted = models.DateField()
-    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
+    body = ALLOWABLE_BODY_CONTENT_BLOCKS
 
     # TopicPage Bespoke content fields
     symptoms = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
