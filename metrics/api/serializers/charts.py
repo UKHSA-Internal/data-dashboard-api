@@ -1,36 +1,8 @@
 from django.db.models import Manager
 from rest_framework import serializers
 
-from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import Metric, Topic
 from metrics.interfaces.charts.access import ChartTypes
-
-
-class APITimeSeriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = APITimeSeries
-        fields = [
-            "period",
-            "theme",
-            "sub_theme",
-            "topic",
-            "geography_type",
-            "geography",
-            "metric",
-            "stratum",
-            "sex",
-            "year",
-            "epiweek",
-            "dt",
-            "metric_value",
-        ]
-
-
-class DashboardSerializer(serializers.ModelSerializer):
-    # Meta class only needed for Swagger
-    class Meta:
-        model = APITimeSeries
-        fields = "__all__"
 
 
 class ChartsQuerySerializer(serializers.Serializer):
@@ -39,11 +11,17 @@ class ChartsQuerySerializer(serializers.Serializer):
     )
 
 
+DATE_FROM_FIELD_HELP_TEXT: str = """
+The date from which to begin analysing data from. 
+If nothing is provided, a default of **1 year ago from the current date** will be applied.
+"""
+
+
 class ChartsRequestSerializer(serializers.Serializer):
     topic = serializers.ChoiceField(choices=[], required=True)
     metric = serializers.ChoiceField(choices=[], required=True)
     chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
-    date_from = serializers.DateField(required=True)
+    date_from = serializers.DateField(help_text=DATE_FROM_FIELD_HELP_TEXT)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
