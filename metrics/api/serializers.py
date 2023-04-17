@@ -28,3 +28,9 @@ class DashboardSerializer(serializers.ModelSerializer):
     class Meta:
         model = APITimeSeries
         fields = "__all__"
+
+
+class ChartsQuerySerializer(serializers.Serializer):
+    file_format = serializers.ChoiceField(
+        choices=["svg", "png", "jpg", "jpeg"], default="svg"
+    )

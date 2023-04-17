@@ -13,7 +13,7 @@ LAYOUT_ARGS = {
 
 
 def generate_chart_figure(
-    data_points: List[Union[int, float]],
+    values: List[Union[int, float]],
     line_color: str = colour_scheme.RGBAColours.BLACK.stringified,
     area_fill_color: str = colour_scheme.RGBAColours.DARK_GREY.stringified,
     background_color: str = colour_scheme.RGBAColours.LIGHT_GREY.stringified,
@@ -29,7 +29,7 @@ def generate_chart_figure(
         the weight of the line plots.
 
     Args:
-        data_points: list of floats or ints representing the points to be plotted
+        values: list of floats or ints representing the points to be plotted
         line_color: The color to assign to the line.
             Defaults to 0, 0, 0, 1, black.
         area_fill_color: The color to assign to the shaded area under the line plot.
@@ -46,14 +46,14 @@ def generate_chart_figure(
             written to a file, or shown
 
     """
-    data_points_count: int = len(data_points)
+    data_points_count: int = len(values)
     x_points: List[int] = [index for index in range(data_points_count)]
 
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot object
     line_plot = _create_line_plot(
-        data_points=data_points,
+        data_points=values,
         x_points=x_points,
         area_fill_colour=area_fill_color,
         line_colour=line_color,

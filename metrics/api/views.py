@@ -7,7 +7,9 @@ from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_api_key.permissions import HasAPIKey
 
+from metrics.api.serializers import ChartsQuerySerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts.data_visualization import (
@@ -24,13 +26,9 @@ class HealthView(APIView):
         return HttpResponse(HTTPStatus.OK.value)
 
 
-class ChartsQuerySerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(
-        choices=["svg", "png", "jpg", "jpeg"], default="svg"
-    )
-
-
 class ChartView(APIView):
+    permission_classes = [HasAPIKey]
+
     @extend_schema(parameters=[ChartsQuerySerializer])
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
@@ -85,6 +83,7 @@ class ChartView(APIView):
 
 class FileUploadView(APIView):
     parser_classes = [MultiPartParser]
+    permission_classes = [HasAPIKey]
 
     @extend_schema(
         operation_id="upload_file",

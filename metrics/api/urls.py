@@ -8,8 +8,8 @@ from drf_spectacular.views import (
 from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
-from wagtail.api.v2.views import PagesAPIViewSet
 
+from cms.dashboard.viewsets import CMSPagesAPIViewSet
 from metrics.api import settings
 from metrics.api.views import ChartView, FileUploadView, HealthView
 from metrics.api.viewsets import APITimeSeriesViewSet, DashboardViewSet
@@ -26,7 +26,7 @@ api_router = WagtailAPIRouter("wagtailapi")
 # The first parameter is the name of the endpoint (such as pages, images). This
 # is used in the URL of the endpoint
 # The second parameter is the endpoint class that handles the requests
-api_router.register_endpoint("pages", PagesAPIViewSet)
+api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 
 
 urlpatterns = [
