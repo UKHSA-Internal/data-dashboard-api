@@ -100,9 +100,6 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "metrics.api.authentication.TokenHeaderAuthentication",
     ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "metrics.api.authentication.HasApiKeyHeader",
-    ],
 }
 
 SPECTACULAR_SETTINGS = {
