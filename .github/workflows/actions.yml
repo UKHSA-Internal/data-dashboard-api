@@ -71,7 +71,7 @@ jobs:
  ###############################################################################
 
   architecture-checks:
-    name: Architectural constraints checks
+    name: Architecture checks
     needs: [build]
     runs-on: ubuntu-latest
     steps:
