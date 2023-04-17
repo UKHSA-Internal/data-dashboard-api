@@ -26,7 +26,6 @@ djangorestframework==3.14.0
 djangorestframework-api-key==2.3.0
 draftjs-exporter==2.1.7
 drf-spectacular==0.26.1
-drf-yasg==1.21.5
 et-xmlfile==1.1.0
 exceptiongroup==1.1.1
 factory-boy==3.2.1
