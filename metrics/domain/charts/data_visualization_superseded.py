@@ -127,7 +127,7 @@ def create_waffle_chart_for_covid_vaccinations(
     )
 
     figure: plotly.graph_objects.Figure = waffle.generate_chart_figure(
-        data_points=vaccine_doses
+        values=vaccine_doses
     )
 
     return write_figure(figure=figure, topic=topic, file_format=file_format)

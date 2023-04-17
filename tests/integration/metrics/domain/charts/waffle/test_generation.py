@@ -128,7 +128,7 @@ class TestWaffleCharts:
         larger_plot_threshold_value = 86
         middle_plot_threshold_value = 41
         smaller_plot_threshold_value = 23
-        data_points: List[int] = [
+        values: List[int] = [
             larger_plot_threshold_value,
             middle_plot_threshold_value,
             smaller_plot_threshold_value,
@@ -136,7 +136,7 @@ class TestWaffleCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            values=data_points
+            values=values
         )
 
         # ---Larger plot checks---
