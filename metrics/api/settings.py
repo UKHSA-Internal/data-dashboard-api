@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "rest_framework",
+    "drf_spectacular",
     "rest_framework_api_key",
-    "drf_yasg",
     "metrics.api",
     "metrics.data",
     "metrics.interfaces",
@@ -94,32 +94,23 @@ TEMPLATES = [
     },
 ]
 
-# REST_FRAMEWORK = {
-#     # Use Django's standard `django.contrib.auth` permissions,
-#     # or allow read-only access for unauthenticated users.
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-#     ]
-# }
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
+        "metrics.api.authentication.TokenHeaderAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "metrics.api.authentication.HasApiKeyHeader",
     ],
 }
 
-
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "api_key": {"type": "apiKey", "in": "header", "name": "X-Api-Key"}
-    },
-    "USE_SESSION_AUTH": True,
+SPECTACULAR_SETTINGS = {
+    "COMPONENT_SPLIT_REQUEST": True,
+    "PREPROCESSING_HOOKS": ["metrics.api.open_api.pre_processing_endpoint_filter_hook"],
 }
 
-API_KEY_CUSTOM_HEADER = "HTTP_X_API_KEY"
-# Set the required to be `X-Api-Key`
-# instead of the default `Authorization: Api-Key <>`
-# which cannot be parsed correctly by API calls made from the swagger UI
+API_KEY_CUSTOM_HEADER = "HTTP_AUTHORIZATION"
 
 WSGI_APPLICATION = "metrics.api.wsgi.application"
 
@@ -200,10 +191,6 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-
-# STATICFILES_DIRS = [
-#     os.path.join(PROJECT_DIR, "static"),
-# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
