@@ -12,7 +12,7 @@ from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializ
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.domain.charts import data_visualization_superseded
-from metrics.interfaces.charts import validation, access
+from metrics.interfaces.charts import access, validation
 
 
 class HealthView(APIView):
