@@ -19,8 +19,9 @@ def generate_chart_figure(
     background_color: str = colour_scheme.RGBAColours.LIGHT_GREY.stringified,
     line_shape: str = "spline",
     line_width: int = 3,
+    enforce_markers: bool = False,
 ) -> plotly.graph_objects.Figure:
-    """Creates a `Figure` object for the given `data_points` as a Line graph.
+    """Creates a `Figure` object for the given `values` as a Line graph.
 
     Notes:
         The size of the markers associated with each data point
@@ -40,20 +41,24 @@ def generate_chart_figure(
             Defaults to "spline", a curved shape between points.
         line_width: The weight to assign to the width of the line plots.
             Defaults to 3.
+        enforce_markers: Switch to enforce markers onto to the line plot.
+            Over a certain threshold, `plotly` will remove the markers.
+            This setting re-adds the markers to the plot in spite of the threshold.
+            Defaults to False.
 
     Returns:
         `Figure`: A `plotly` object which can then be
             written to a file, or shown
 
     """
-    data_points_count: int = len(values)
-    x_points: List[int] = [index for index in range(data_points_count)]
+    values_count: int = len(values)
+    x_points: List[int] = [index for index in range(values_count)]
 
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot object
     line_plot = _create_line_plot(
-        data_points=values,
+        values=values,
         x_points=x_points,
         area_fill_colour=area_fill_color,
         line_colour=line_color,
@@ -70,16 +75,14 @@ def generate_chart_figure(
     layout_args["plot_bgcolor"] = background_color
     figure.update_layout(**layout_args)
 
-    # Over a certain threshold, plotly will convert the scatter plot to a line plot
-    # and therefore remove the markers.
-    # This setting re-adds the markers to the plot
-    figure.data[0].mode = "lines+markers"
+    if enforce_markers:
+        figure.data[0].mode = "lines+markers"
 
     return figure
 
 
 def _create_line_plot(
-    data_points: List[int],
+    values: List[int],
     x_points: List[int],
     area_fill_colour: str,
     line_colour: str,
@@ -88,7 +91,7 @@ def _create_line_plot(
 ) -> plotly.graph_objects.Scatter:
     return plotly.graph_objects.Scatter(
         x=x_points,
-        y=data_points,
+        y=values,
         fill="tozeroy",
         fillcolor=area_fill_colour,
         line_shape=line_shape,

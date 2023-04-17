@@ -1,9 +1,6 @@
-import pytest
-from rest_framework.exceptions import ValidationError
-
-from metrics.api.serializers import APITimeSeriesSerializer, ChartsQuerySerializer
+from metrics.api.serializers import APITimeSeriesSerializer
+from tests.fakes.factories.api_time_series_factory import FakeAPITimeSeriesFactory
 from tests.fakes.models.api_time_series import FakeAPITimeSeries
-from tests.fakes.models.api_time_series_factory import FakeAPITimeSeriesFactory
 
 
 class TestAPITimeSeriesSerializer:
@@ -51,36 +48,3 @@ class TestAPITimeSeriesSerializer:
         for serialized_field_name, serialized_field_value in serialized_data.items():
             value_on_model = getattr(fake_api_time_series, serialized_field_name)
             assert serialized_field_value == value_on_model
-
-
-class TestChartsQuerySerializer:
-    @pytest.mark.parametrize("valid_file_format", ["svg", "png", "jpg", "jpeg"])
-    def test_valid_file_format(self, valid_file_format: str):
-        """
-        Given a valid file format passed to a `ChartsQuerySerializer` object
-        When `is_valid()` is called from the serializer
-        Then True is returned
-        """
-        # Given
-        data = {"file_format": valid_file_format}
-        serializer = ChartsQuerySerializer(data=data)
-
-        # When
-        is_serializer_valid: bool = serializer.is_valid()
-
-        # Then
-        assert is_serializer_valid
-
-    def test_invalid_file_format(self):
-        """
-        Given an invalid file format passed to a `ChartsQuerySerializer` object
-        When `is_valid(raise_exception=True)` is called from the serializer
-        Then a `ValidationError` is raised
-        """
-        # Given
-        data = {"file_format": "invalid.file.format"}
-        serializer = ChartsQuerySerializer(data=data)
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            serializer.is_valid(raise_exception=True)

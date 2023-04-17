@@ -187,3 +187,16 @@ class CoreTimeSeriesManager(models.Manager):
             metric_name=metric_name,
             date_from=date_from,
         )
+
+    def get_count(
+        self, topic: str, metric_name: str, date_from: datetime.datetime
+    ) -> int:
+        """Gets the number of records which match the given `topic` and `metric_name`, newer than `date_from`
+
+        Returns:
+            int: The count of the number of `CoreTimeSeries` records which match the criteria
+
+        """
+        return self.by_topic_metric_for_dates_and_values(
+            topic=topic, metric_name=metric_name, date_from=date_from
+        ).count()
