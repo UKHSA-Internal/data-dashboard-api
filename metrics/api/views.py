@@ -11,8 +11,8 @@ from rest_framework_api_key.permissions import HasAPIKey
 from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
-from metrics.domain.charts import data_visualization, data_visualization_superseded
-from metrics.interfaces.charts import validation
+from metrics.domain.charts import data_visualization_superseded
+from metrics.interfaces.charts import access, validation
 
 
 class HealthView(APIView):
@@ -117,10 +117,10 @@ class ChartsView(APIView):
         topic = query_serializer.data["topic"]
         metric = query_serializer.data["metric"]
         chart_type = query_serializer.data["chart_type"]
-        date_from = query_serializer.data["date_from"]
+        date_from = query_serializer.data.get("date_from")
 
         try:
-            filename: str = data_visualization.generate_chart(
+            filename: str = access.generate_chart(
                 topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
             )
         except data_visualization_superseded.ChartNotSupportedError:

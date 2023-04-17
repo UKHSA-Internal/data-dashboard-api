@@ -1,14 +1,17 @@
 import datetime
 from enum import Enum
-from typing import Union
+from typing import Optional, Union
 
 import plotly.graph_objects
 from django.db.models import Manager
 
-from metrics.data.access.core_models import unzip_values
+from metrics.data.access.core_models import (
+    get_date_n_months_ago_from_timestamp,
+    unzip_values,
+)
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line, line_with_shaded_section, waffle
-from metrics.interfaces.charts import calculations
+from metrics.interfaces.charts import calculations, validation
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -131,3 +134,64 @@ class ChartsInterface:
         values = values[-preceding_slice:]
 
         return calculations.change_between_each_half(values=values)
+
+
+def make_datetime_from_string(date_from: Optional[str]) -> datetime.datetime:
+    """Parses the `date_from` string into a datetime object. Defaults to 1 year ago from the current date.
+
+    Args:
+        date_from: A datestring in the format `%Y-%m-%d`
+
+    Returns:
+        `datetime` object representing the `date_from` string
+            or a default of 1 year ago from the current date.
+
+    """
+    try:
+        return datetime.datetime.strptime(date_from, "%Y-%m-%d")
+    except (TypeError, ValueError):
+        one_year = 12
+        return get_date_n_months_ago_from_timestamp(
+            datetime_stamp=datetime.date.today(), number_of_months=one_year
+        )
+
+
+def generate_chart(
+    topic: str,
+    metric: str,
+    chart_type: str,
+    date_from,
+):
+    date_from = make_datetime_from_string(date_from=date_from)
+    charts_request_validator = validation.ChartsRequestValidator(
+        topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+    )
+    charts_request_validator.validate()
+
+    library = ChartsInterface(
+        topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+    )
+    figure = library.generate_chart_figure()
+
+    return write_figure(figure=figure, topic=f"{topic}.{metric}", file_format="png")
+
+
+def write_figure(
+    figure: plotly.graph_objects.Figure, topic: str, file_format: str
+) -> str:
+    """
+    Convert a figure to a static image and write to a file in the desired image format
+
+    Args:
+        figure: The figure object or a dictioanry representing a figure
+        topic: The required topic (eg. COVID-19)
+        file_format: The required file format (eg svg, jpeg)
+
+    Returns:
+        The filename of the image
+    """
+
+    filename = f"{topic}.{file_format}"
+    figure.write_image(file=filename, format=file_format)
+
+    return filename
