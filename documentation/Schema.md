@@ -207,7 +207,6 @@ The `params` section in the __basic__ type are to be used as the paramaters for 
                  "geography": "England",
                  "stratum": "default",
                  "sex": "ALL",
-
 ```
 So, the API call to retrieve this headline information would be `/api/headlines/v2/?topic=COVID-19&metric=new_cases_7days_sum&geography_type=.....` etc
 
@@ -319,7 +318,7 @@ This section is used to construct elements in the chart card which are similar t
 So, in this example (Figure 4) there are two __type__ elements:
 
 1. __basic__ In this example it is __Last 7 days__  (see the *body* tags)
-2. __trend__ In this example there is not text to be displayed (see the empty *body* tag)
+2. __trend__ In this example there is no text to be displayed (see the empty *body* tag)
 
 The `params` section in the __basic__ type are to be used as the paramaters for the calls to the `/api/headlines/v2/` endpoint
 
@@ -349,7 +348,7 @@ So, the API call to retrieve this trend information would be `/api/trends/v2/?to
 
 - `/api/charts/v2/`
 
-This endpoint is used to retrieve a chart for a given topic metric, chart type and date.
+This endpoint is used to retrieve a chart for a given set of parameters.
 
 The parameters can be found in the `chart` section in the output from the call to the `/api/pages/v2/` endpoint. See [__Figure 2__](#figure-2) and [__Figure 4__](#figure-4) above.
 
