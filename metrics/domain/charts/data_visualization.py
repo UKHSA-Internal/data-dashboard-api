@@ -1,9 +1,7 @@
-import datetime
-
 import plotly.graph_objects
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.interfaces.charts.access import ChartsInterface
+from metrics.interfaces.charts.access import ChartsInterface, make_datetime_from_string
 from metrics.interfaces.charts.validation import ChartsRequestValidator
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
@@ -15,7 +13,7 @@ def generate_chart(
     chart_type: str,
     date_from,
 ):
-    date_from = datetime.datetime.strptime(date_from, "%Y-%m-%d")
+    date_from = make_datetime_from_string(date_from=date_from)
     charts_request_validator = ChartsRequestValidator(
         topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
     )

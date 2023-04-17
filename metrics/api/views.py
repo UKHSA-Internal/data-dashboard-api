@@ -126,7 +126,7 @@ class ChartsView(APIView):
         topic = query_serializer.data["topic"]
         metric = query_serializer.data["metric"]
         chart_type = query_serializer.data["chart_type"]
-        date_from = query_serializer.data["date_from"]
+        date_from = query_serializer.data.get("date_from")
 
         try:
             filename: str = data_visualization.generate_chart(
