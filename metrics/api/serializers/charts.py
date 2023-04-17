@@ -6,11 +6,11 @@ from rest_framework import serializers
 from metrics.data.models.core_models import Metric, Topic
 from metrics.interfaces.charts.access import ChartTypes
 
+FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
+
 
 class ChartsQuerySerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(
-        choices=["svg", "png", "jpg", "jpeg"], default="svg"
-    )
+    file_format = serializers.ChoiceField(choices=FILE_FORMAT_CHOICES, default="svg")
 
 
 DATE_FROM_FIELD_HELP_TEXT: str = """
