@@ -100,6 +100,6 @@ To pass the API key to all requests made by swagger you will need to do the foll
 
 ## Detailed documentation
 
-For more detailed technical documentation please refer to the `documentation/` folder at the 
+For more detailed technical documentation please refer to the `docs/` folder at the 
 root level of the project. 
 Here you can find design information on the project structure, architecture and the current data model.
