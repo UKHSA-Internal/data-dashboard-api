@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db.models import Manager
 from rest_framework import serializers
 
@@ -21,7 +23,9 @@ class ChartsRequestSerializer(serializers.Serializer):
     topic = serializers.ChoiceField(choices=[], required=True)
     metric = serializers.ChoiceField(choices=[], required=True)
     chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
-    date_from = serializers.DateField(help_text=DATE_FROM_FIELD_HELP_TEXT)
+    date_from = serializers.DateField(
+        help_text=DATE_FROM_FIELD_HELP_TEXT, required=False
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
