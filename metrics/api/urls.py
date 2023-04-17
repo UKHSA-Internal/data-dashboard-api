@@ -1,8 +1,11 @@
 from django.contrib import admin
 from django.urls import include, path, re_path
-from drf_yasg import openapi
-from drf_yasg.views import get_schema_view
-from rest_framework import permissions, routers
+from drf_spectacular.views import (
+    SpectacularJSONAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
+from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
@@ -26,35 +29,19 @@ api_router = WagtailAPIRouter("wagtailapi")
 api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 
 
-schema_view = get_schema_view(
-    openapi.Info(
-        title="Snippets API",
-        default_version="v1",
-        description="Test description",
-        terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="contact@snippets.local"),
-        license=openapi.License(name="BSD License"),
-    ),
-    public=True,
-    permission_classes=[permissions.AllowAny],
-)
-
 urlpatterns = [
     path("", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    re_path(
-        r"^swagger(?P<format>\.json|\.yaml)$",
-        schema_view.without_ui(cache_timeout=0),
-        name="schema-json",
+    # JSON schema view
+    path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),
+    # Swagger docs UI schema view:
+    path(
+        "api/swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
     ),
-    re_path(
-        r"^swagger/$",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
-    re_path(
-        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
-    ),
+    # Redoc schema view
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/(?P<topic>[^/]+)/(?P<category>[^/]+)$", ChartView.as_view()),
     re_path(r"^charts-dynamic/", ChartsView.as_view()),

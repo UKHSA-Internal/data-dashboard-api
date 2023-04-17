@@ -2,8 +2,7 @@ import os
 from http import HTTPStatus
 
 from django.http import FileResponse, HttpResponse
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -27,7 +26,7 @@ class HealthView(APIView):
 class ChartView(APIView):
     permission_classes = [HasAPIKey]
 
-    @swagger_auto_schema(query_serializer=ChartsQuerySerializer)
+    @extend_schema(parameters=[ChartsQuerySerializer])
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
@@ -50,13 +49,6 @@ class ChartView(APIView):
 
         There is also an optional query param of `file_format`.
         By default, this will be set to `svg`.
-        In addition to `svg` the following options are available:
-
-        - `png`
-
-        - `jpg`
-
-        - `jpeg`
 
         """
         category: str = kwargs["category"]
@@ -90,15 +82,14 @@ class FileUploadView(APIView):
     parser_classes = [MultiPartParser]
     permission_classes = [HasAPIKey]
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                "file",
-                openapi.IN_FORM,
-                type=openapi.TYPE_FILE,
-                description="File to be uploaded",
-            )
-        ],
+    @extend_schema(
+        operation_id="upload_file",
+        request={
+            "multipart/form-data": {
+                "type": "object",
+                "properties": {"file": {"type": "string", "format": "binary"}},
+            }
+        },
         deprecated=True,
     )
     def put(self, request, *args, **kwargs):
