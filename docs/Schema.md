@@ -379,12 +379,12 @@ This endpoint is used to retrieve "Trend" information as discussed above
 Design yet to be discussed
 
 
-### `/api/swagger/`
+- `/api/swagger/`
 
-### REST API Documentation. Alternative to Redocly (see below)
+REST API Documentation. Alternative to Redocly (see below)
 
 --- 
-### `/api/redoc/`
+- `/api/redoc/`
 
 REST API Documentation. Alternative to Swagger (see above)
 
