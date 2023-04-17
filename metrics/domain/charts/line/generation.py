@@ -21,7 +21,7 @@ def generate_chart_figure(
     line_width: int = 3,
     enforce_markers: bool = False,
 ) -> plotly.graph_objects.Figure:
-    """Creates a `Figure` object for the given `data_points` as a Line graph.
+    """Creates a `Figure` object for the given `values` as a Line graph.
 
     Notes:
         The size of the markers associated with each data point
@@ -51,14 +51,14 @@ def generate_chart_figure(
             written to a file, or shown
 
     """
-    data_points_count: int = len(values)
-    x_points: List[int] = [index for index in range(data_points_count)]
+    values_count: int = len(values)
+    x_points: List[int] = [index for index in range(values_count)]
 
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot object
     line_plot = _create_line_plot(
-        data_points=values,
+        values=values,
         x_points=x_points,
         area_fill_colour=area_fill_color,
         line_colour=line_color,
@@ -82,7 +82,7 @@ def generate_chart_figure(
 
 
 def _create_line_plot(
-    data_points: List[int],
+    values: List[int],
     x_points: List[int],
     area_fill_colour: str,
     line_colour: str,
@@ -91,7 +91,7 @@ def _create_line_plot(
 ) -> plotly.graph_objects.Scatter:
     return plotly.graph_objects.Scatter(
         x=x_points,
-        y=data_points,
+        y=values,
         fill="tozeroy",
         fillcolor=area_fill_colour,
         line_shape=line_shape,
