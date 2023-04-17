@@ -2,6 +2,7 @@ from typing import List, Tuple
 
 from metrics.domain.charts import type_hints
 from metrics.domain.charts.line_with_shaded_section import colour_scheme
+from metrics.domain.utils import _check_for_substring_match
 
 
 def determine_line_and_fill_colours(
@@ -118,7 +119,3 @@ def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool
         return change_in_metric_value > 0
 
     raise ValueError(f"{metric_name} is not supported")
-
-
-def _check_for_substring_match(string_to_check: str, substrings: List[str]) -> bool:
-    return any((sub_string in string_to_check for sub_string in substrings))
