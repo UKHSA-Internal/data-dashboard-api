@@ -45,14 +45,14 @@ The following endpoints are for admin/internal use only
 The following endpoints are used to construct a page similar to this:
 
 ![Figure 1](SamplePage.jpg)
-*__Figure 1__*
+#### Figure 1
 
 --- 
 <br />
 
 - `/api/pages/v2/{topic/id}`
 
-This endpoint retrieves from the CMS the page content for the chosen topic/id. It includes all the associated information to enable the user to construct api requests for the rest of the items on the page. For example, the parameters needed for the requests to the metrics and graphs endpointsare in this response.
+This endpoint retrieves from the CMS the page content for the chosen topic/id. It includes all the associated information to enable the user to construct api requests for the rest of the items on the page. For example, the parameters needed for the requests to the metrics and graphs endpoints are in this response.
 
 Example Response:
 
@@ -148,12 +148,11 @@ Example Response:
 ]
 
 ```
-*__Figure 2__*
-
+#### Figure 2
+---
 <br />
 
-## As can be seen in Figure 2 above there are several sections in the response:
-
+### As can be seen in [Figure 2](#figure-2) above there are several sections in the response:
 <br />
 
 ### The `headline_column` section
@@ -190,9 +189,10 @@ Example Response:
         ],
     },``
 ```
-*__Figure 3__*
+#### Figure 3
+---
 
-The `headline_column` section is used to construct elements in the __Headline__ Panel as shown in Figure 1 above.
+The `headline_column` section is used to construct elements in the __Headline__ Panel as shown in [__Figure 1__](#figure-1) above.
 
 In this example (Figure 3) there are two __type__ elements:
 
@@ -276,9 +276,9 @@ So, the API call to retrieve this trend information would be `/api/trends/v2/?to
                 },
             },
 ```
-*__Figure 4__*
-
-This section is used to construct elements in each __Chart Card__ Panel as shown in Figure 1 above.
+#### Figure 4
+---
+This section is used to construct elements in each __Chart Card__ Panel as shown in [Figure 1](#figure-1) above.
 
 In this example (Figure 4) there are three important elements:
 
@@ -351,13 +351,13 @@ So, the API call to retrieve this trend information would be `/api/trends/v2/?to
 
 This endpoint is used to retrieve a chart for a given topic metric, chart type and date.
 
-The parameters can be found in the `chart` section in the output from the call to the `/api/pages/v2/` endpoint. See __Figure 2__ and __Figure 4__ above.
+The parameters can be found in the `chart` section in the output from the call to the `/api/pages/v2/` endpoint. See [__Figure 2__](#figure-2) and [__Figure 4__](#figure-4) above.
 
 - `/api/tabular/v2/`
 
-As discussed above, this endpoint is used to retrieve summary chart data in tabular format for a given set of parameters. This information will be displayed when the user clicks on the "*View data in a tabular format*" link. See __Figure 1__
+As discussed above, this endpoint is used to retrieve summary chart data in tabular format for a given set of parameters. This information will be displayed when the user clicks on the "*View data in a tabular format*" link. See [__Figure 1__](#figure-1)
 
-The parameters for the query can be found in the `tabular` section in the output from the call to the `/api/pages/v2/` endpoint. See __Figure 2__ and __Figure 4__ above.
+The parameters for the query can be found in the `tabular` section in the output from the call to the `/api/pages/v2/` endpoint. See [__Figure 2__](#figure-2) and [__Figure 4__](#figure-4) above.
 
 
 - `/api/headlines/v2/`
