@@ -4,7 +4,7 @@ import plotly.graph_objects
 
 from metrics.domain.charts.line import colour_scheme, generation
 
-DATA_POINTS: List[int] = [1, 2, 3, 2, 2, 3, 4, 5, 5, 3, 2, 1]
+VALUES: List[int] = [1, 2, 3, 2, 2, 3, 4, 5, 5, 3, 2, 1]
 
 
 class TestLineCharts:
@@ -15,11 +15,11 @@ class TestLineCharts:
         Then the figure is drawn with the expected parameters for the main background and the X & Y axis
         """
         # Given
-        data_points = DATA_POINTS
+        values = VALUES
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            values=data_points,
+            values=values,
         )
 
         # Then
@@ -46,11 +46,11 @@ class TestLineCharts:
         Then the figure is drawn with the expected parameters for the main line
         """
         # Given
-        data_points = DATA_POINTS
+        values = VALUES
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            values=data_points,
+            values=values,
         )
 
         # Then
@@ -63,8 +63,29 @@ class TestLineCharts:
         main_line: plotly.graph_objects.scatter.Line = main_line_plot.line
         assert main_line.color == colour_scheme.RGBAColours.BLACK.stringified
         assert main_line.shape == "spline"
+        assert main_line_plot.mode is None
 
         # The fill colour under the plot should be a dark grey
         assert (
             main_line_plot.fillcolor == colour_scheme.RGBAColours.DARK_GREY.stringified
         )
+
+    def test_main_line_plot_can_be_enforced_with_markers(self):
+        """
+        Given a list of values and a requirement to enforce markers on the plot
+        When `generate_chart_figure()` is called from the `line` module
+        Then the figure is drawn with the expected parameters for the main line
+        And the `mode` of the line plot is set to `lines+markers`
+        """
+        # Given
+        values = VALUES
+
+        # When
+        figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            values=values,
+            enforce_markers=True,
+        )
+
+        # Then
+        main_line_plot: plotly.graph_objects.Scatter = figure.data[0]
+        assert main_line_plot.mode == "lines+markers"

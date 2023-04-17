@@ -33,7 +33,7 @@ def generate_chart_figure(
     width: int = 400,
     height: int = 400,
 ) -> plotly.graph_objects.Figure:
-    """Creates a `Figure` object for the given `data_points` as a Waffle chart.
+    """Creates a `Figure` object for the given `values` as a Waffle chart.
 
     Args:
         values: List of integers representing the points to be plotted
@@ -52,11 +52,11 @@ def generate_chart_figure(
         `TooManyDataPointsWaffleChartError`: If more than
             3 data points are provided
         `DataPointsNotInDescendingOrderError: If the given
-            `data_points` are not in descending order.
+            `values` are not in descending order.
             From largest to smallest values, left to right.
 
     """
-    validation._check_data_points(data_points=values)
+    validation._check_values(values=values)
 
     figure = plotly.graph_objects.Figure()
 
