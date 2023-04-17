@@ -11,8 +11,7 @@ from metrics.data.access.core_models import (
 )
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line, line_with_shaded_section, waffle
-from metrics.interfaces.charts import calculations
-from metrics.interfaces.charts.validation import ChartsRequestValidator
+from metrics.interfaces.charts import calculations, validation
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -164,7 +163,7 @@ def generate_chart(
     date_from,
 ):
     date_from = make_datetime_from_string(date_from=date_from)
-    charts_request_validator = ChartsRequestValidator(
+    charts_request_validator = validation.ChartsRequestValidator(
         topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
     )
     charts_request_validator.validate()
