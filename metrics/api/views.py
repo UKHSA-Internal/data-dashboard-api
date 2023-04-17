@@ -3,7 +3,6 @@ from http import HTTPStatus
 
 from django.http import FileResponse, HttpResponse
 from drf_spectacular.utils import extend_schema
-from rest_framework import serializers
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
