@@ -3,6 +3,8 @@ This file contains operation-like (write) functionality for interacting with the
 This shall only include functionality which is used to write to the database.
 
 Specifically, this file contains write database logic for the core models only.
+
+NOTE: This code is only for the Alpha. Once we have a data pipeline this code will cease to exist
 """
 
 import io
@@ -40,6 +42,18 @@ DEFAULT_CORE_TIME_SERIES_MANAGER = DEFAULT_CORE_TIME_SERIES_MODEL.objects
 
 
 def check_file(filename: str) -> pd.DataFrame:
+    """
+    Perform basic checks on the file. eg. does it have the required columns
+
+    Args:
+        filename: The name of the file
+
+    Returns:
+        The file loaded as a Pandas Dataframe
+
+    Raises:
+        Exception if the file is missing, empty or does not have the required columns
+    """
     incoming_df = pd.read_csv(filename)
     incoming_df.columns = incoming_df.columns.str.lower()
 
@@ -74,10 +88,10 @@ def maintain_model(
     All rows in the source file will get changed from the supplied cell
     value (eg infectious_disease) to the pk for that value. eg 1
 
-    Arguments:
-        incoming_df = This is the entire source file in a DataFrame
-        fields = Dictionary of the model field names and the names of the relevant columns in the source file
-        model = The model we want to maintain
+    Args:
+        incoming_df: This is the entire source file in a DataFrame
+        fields: Dictionary of the model field names and the names of the relevant columns in the source file
+        model: The model we want to maintain
 
     Returns:
         incoming_df with the relevant column changed to the primary keys for that model
@@ -152,6 +166,18 @@ def load_core_data(
     core_time_series_manager: models.Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     core_time_series_model: Type[models.Model] = DEFAULT_CORE_TIME_SERIES_MODEL,
 ) -> None:
+    """
+    Load the Core file and maintain the underlying models
+
+    Args:
+        filename: The filename of the file we want to load
+        core_time_series_manager: The Core Timeseries manager
+        core_time_series_model: The model for the Core Timeseries
+
+
+    Returns:
+        None
+    """
     incoming_df = check_file(filename=filename)
 
     df: pd.DataFrame = maintain_model(

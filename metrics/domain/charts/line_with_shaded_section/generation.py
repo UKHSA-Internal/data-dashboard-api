@@ -44,11 +44,11 @@ TIMESERIES_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
 }
 
 
-def create_line_chart_with_highlighted_section(
-    dates: List[datetime.datetime],
+def create_line_chart_with_shaded_section(
     values: List[int],
-    highlighted_section_fill_colour: colour_scheme.RGBAColours,
-    highlighted_section_line_colour: colour_scheme.RGBAColours,
+    dates: List[datetime.datetime],
+    shaded_section_fill_colour: colour_scheme.RGBAColours,
+    shaded_section_line_colour: colour_scheme.RGBAColours,
     rolling_period_slice: int,
     line_shape: str,
     line_width: int = 2,
@@ -56,12 +56,12 @@ def create_line_chart_with_highlighted_section(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
-        dates: List of datetime objects for each of the values.
         values: List of numbers representing the values.
-        highlighted_section_fill_colour: The colour to use
-            for the fill of the highlighted section.
-        highlighted_section_line_colour: The colour to use
-            for the line of the highlighted section.
+        dates: List of datetime objects for each of the values.
+        shaded_section_fill_colour: The colour to use
+            for the fill of the shaded/highlighted section.
+        shaded_section_line_colour: The colour to use
+            for the line of the shaded/highlighted section.
         rolling_period_slice: The last N number of items to slice
             off the given `values` and show a highlighted section for.
             Note that this highlighted section will be green or red,
@@ -82,7 +82,46 @@ def create_line_chart_with_highlighted_section(
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot for the preceding points as a simple neutral grey line
-    line_plot = plotly.graph_objects.Scatter(
+    line_plot: plotly.graph_objects.Scatter = _create_main_line_plot(
+        dates=dates,
+        values=values,
+        preceding_data_points_count=preceding_data_points_count,
+        line_width=line_width,
+        line_shape=line_shape,
+    )
+
+    # Add line plot to the figure
+    figure.add_trace(trace=line_plot)
+
+    # Create the shaded section for the last `n` points
+    # Where `n` is denoted by `rolling_period_slice`
+    shaded_section_plot: plotly.graph_objects.Scatter = _create_shaded_section_plot(
+        dates=dates,
+        values=values,
+        preceding_data_points_count=preceding_data_points_count,
+        line_width=line_width,
+        line_shape=line_shape,
+        shaded_section_line_colour=shaded_section_line_colour.stringified,
+        shaded_section_fill_colour=shaded_section_fill_colour.stringified,
+    )
+
+    # Add the highlighted section plot to the figure
+    figure.add_trace(trace=shaded_section_plot)
+
+    # Apply the typical stylings for timeseries charts
+    figure.update_layout(**TIMESERIES_LAYOUT_ARGS)
+
+    return figure
+
+
+def _create_main_line_plot(
+    dates: List[datetime.datetime],
+    values: List[int],
+    preceding_data_points_count: int,
+    line_width: int,
+    line_shape: str,
+):
+    return plotly.graph_objects.Scatter(
         x=dates[: preceding_data_points_count + 1],
         y=values[: preceding_data_points_count + 1],
         line={
@@ -92,12 +131,17 @@ def create_line_chart_with_highlighted_section(
         line_shape=line_shape,
     )
 
-    # Add line plot to the figure
-    figure.add_trace(trace=line_plot)
 
-    # Create the highlighted section for the last `n` points
-    # Where `n` is denoted by `rolling_period_slice`
-    highlighted_section_plot = plotly.graph_objects.Scatter(
+def _create_shaded_section_plot(
+    dates: List[datetime.datetime],
+    values: List[int],
+    preceding_data_points_count: int,
+    line_width: int,
+    line_shape: str,
+    shaded_section_line_colour: str,
+    shaded_section_fill_colour: str,
+):
+    return plotly.graph_objects.Scatter(
         x=dates[preceding_data_points_count:],
         y=values[preceding_data_points_count:],
         line={"width": line_width},
@@ -105,23 +149,15 @@ def create_line_chart_with_highlighted_section(
         fill="tozeroy",
         hoveron="points",
         opacity=0.5,
-        line_color=highlighted_section_line_colour.stringified,
-        fillcolor=highlighted_section_fill_colour.stringified,
+        line_color=shaded_section_line_colour,
+        fillcolor=shaded_section_fill_colour,
         line_shape=line_shape,
     )
 
-    # Add the highlighted section plot to the figure
-    figure.add_trace(trace=highlighted_section_plot)
-
-    # Apply the typical stylings for timeseries charts
-    figure.update_layout(**TIMESERIES_LAYOUT_ARGS)
-
-    return figure
-
 
 def generate_chart_figure(
-    dates: List[datetime.datetime],
     values: List[int],
+    dates: List[datetime.datetime],
     metric_name: str,
     change_in_metric_value: int,
     rolling_period_slice: int = 7,
@@ -130,8 +166,8 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
-        dates: List of datetime objects for each of the values.
         values: List of numbers representing the values.
+        dates: List of datetime objects for each of the values.
         metric_name: The associated metric_name,
             E.g. new_admissions_daily
         change_in_metric_value: The change in metric value from the last 7 days
@@ -158,11 +194,11 @@ def generate_chart_figure(
         metric_name=metric_name,
     )
 
-    return create_line_chart_with_highlighted_section(
-        dates=dates,
+    return create_line_chart_with_shaded_section(
         values=values,
+        dates=dates,
         rolling_period_slice=rolling_period_slice,
         line_shape=line_shape,
-        highlighted_section_line_colour=line_colour,
-        highlighted_section_fill_colour=fill_colour,
+        shaded_section_line_colour=line_colour,
+        shaded_section_fill_colour=fill_colour,
     )

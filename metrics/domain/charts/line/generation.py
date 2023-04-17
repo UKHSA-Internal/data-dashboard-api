@@ -2,18 +2,21 @@ from typing import List, Union
 
 import plotly.graph_objects
 
-NUMBER = Union[int, float]
+from metrics.domain.charts.line import colour_scheme
 
-BLACK: str = "#000000"
-GREY: str = "#F3F2F1"
-LIGHT_GREY: str = "#F8F8F8"
+AXIS_ARGS = {"visible": False}
+
+LAYOUT_ARGS = {
+    "xaxis": AXIS_ARGS,
+    "yaxis": AXIS_ARGS,
+}
 
 
 def generate_chart_figure(
-    data_points: List[NUMBER],
-    line_color: str = BLACK,
-    area_fill_color: str = GREY,
-    background_color: str = LIGHT_GREY,
+    values: List[Union[int, float]],
+    line_color: str = colour_scheme.RGBAColours.BLACK.stringified,
+    area_fill_color: str = colour_scheme.RGBAColours.DARK_GREY.stringified,
+    background_color: str = colour_scheme.RGBAColours.LIGHT_GREY.stringified,
     line_shape: str = "spline",
     line_width: int = 3,
 ) -> plotly.graph_objects.Figure:
@@ -26,13 +29,13 @@ def generate_chart_figure(
         the weight of the line plots.
 
     Args:
-        data_points: list of floats or ints representing the points to be plotted
+        values: list of floats or ints representing the points to be plotted
         line_color: The color to assign to the line.
-            Defaults to #000000, black.
+            Defaults to 0, 0, 0, 1, black.
         area_fill_color: The color to assign to the shaded area under the line plot.
-            Defaults to #F3F2F1, a darker shade of grey
+            Defaults to 243, 242, 241, 1, a darker shade of grey
         background_color: The color to assign to the background of the plot.
-            Defaults to #F8F8F8, a lighter shade of grey
+            Defaults to 248, 248, 248, 1, a lighter shade of grey
         line_shape: The shape to assign to the line plots.
             Defaults to "spline", a curved shape between points.
         line_width: The weight to assign to the width of the line plots.
@@ -43,20 +46,19 @@ def generate_chart_figure(
             written to a file, or shown
 
     """
-    data_points_count: int = len(data_points)
+    data_points_count: int = len(values)
     x_points: List[int] = [index for index in range(data_points_count)]
 
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot object
-    line_plot = plotly.graph_objects.Scatter(
-        x=x_points,
-        y=data_points,
-        fill="tozeroy",
-        fillcolor=area_fill_color,
+    line_plot = _create_line_plot(
+        data_points=values,
+        x_points=x_points,
+        area_fill_colour=area_fill_color,
+        line_colour=line_color,
         line_shape=line_shape,
-        line={"color": line_color, "width": line_width},
-        marker={"symbol": "circle", "size": line_width * 3},
+        line_width=line_width,
     )
 
     # Add line plot to the figure
@@ -64,13 +66,9 @@ def generate_chart_figure(
         trace=line_plot,
     )
 
-    # Remove gridlines and apply custom background color
-    remove_gridlines_args = {"visible": False}
-    figure.update_layout(
-        yaxis=remove_gridlines_args,
-        xaxis=remove_gridlines_args,
-        plot_bgcolor=background_color,
-    )
+    layout_args = LAYOUT_ARGS
+    layout_args["plot_bgcolor"] = background_color
+    figure.update_layout(**layout_args)
 
     # Over a certain threshold, plotly will convert the scatter plot to a line plot
     # and therefore remove the markers.
@@ -78,3 +76,22 @@ def generate_chart_figure(
     figure.data[0].mode = "lines+markers"
 
     return figure
+
+
+def _create_line_plot(
+    data_points: List[int],
+    x_points: List[int],
+    area_fill_colour: str,
+    line_colour: str,
+    line_shape: str,
+    line_width: int,
+) -> plotly.graph_objects.Scatter:
+    return plotly.graph_objects.Scatter(
+        x=x_points,
+        y=data_points,
+        fill="tozeroy",
+        fillcolor=area_fill_colour,
+        line_shape=line_shape,
+        line={"color": line_colour, "width": line_width},
+        marker={"symbol": "circle", "size": line_width * 3},
+    )

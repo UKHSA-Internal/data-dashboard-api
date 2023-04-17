@@ -17,7 +17,7 @@ class TestGenerateChartFigure:
 
         # When / Then
         with pytest.raises(validation.TooManyDataPointsError):
-            generation.generate_chart_figure(data_points=too_many_data_points)
+            generation.generate_chart_figure(values=too_many_data_points)
 
     @pytest.mark.parametrize(
         "data_points",
@@ -45,6 +45,4 @@ class TestGenerateChartFigure:
 
         # When / Then
         with pytest.raises(validation.DataPointsNotInDescendingOrderError):
-            generation.generate_chart_figure(
-                data_points=data_points_in_descending_order
-            )
+            generation.generate_chart_figure(values=data_points_in_descending_order)
