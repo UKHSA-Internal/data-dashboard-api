@@ -12,7 +12,9 @@ from django.db import models
 from django.utils import timezone
 
 from metrics.api.enums import TimePeriod
+from metrics.data.managers.core_models.metric import MetricManager
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
+from metrics.data.managers.core_models.topic import TopicManager
 
 CHAR_COLUMN_MAX_CONSTRAINT: int = 50
 
@@ -32,6 +34,8 @@ class Topic(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     sub_theme = models.ForeignKey(to=SubTheme, on_delete=models.SET_NULL, null=True)
 
+    objects = TopicManager()
+
 
 class GeographyType(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -48,6 +52,8 @@ class Metric(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     rounding = models.CharField(max_length=100)
     topic = models.ForeignKey(to=Topic, on_delete=models.SET_NULL, null=True)
+
+    objects = MetricManager()
 
 
 class Stratum(models.Model):

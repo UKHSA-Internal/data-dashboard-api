@@ -58,8 +58,6 @@ INSTALLED_APPS = [
     "wagtail.sites",
     "wagtail.users",
     "wagtail.snippets",
-    "wagtail.documents",
-    "wagtail.images",
     "wagtail.search",
     "wagtail.admin",
     "wagtail",
@@ -101,9 +99,6 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "metrics.api.authentication.TokenHeaderAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "metrics.api.authentication.HasApiKeyHeader",
     ],
 }
 

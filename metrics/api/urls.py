@@ -11,7 +11,7 @@ from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSPagesAPIViewSet
 from metrics.api import settings
-from metrics.api.views import ChartView, FileUploadView, HealthView
+from metrics.api.views import ChartsView, ChartView, FileUploadView, HealthView
 from metrics.api.viewsets import APITimeSeriesViewSet, DashboardViewSet
 
 router = routers.DefaultRouter()
@@ -44,6 +44,7 @@ urlpatterns = [
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/(?P<topic>[^/]+)/(?P<category>[^/]+)$", ChartView.as_view()),
+    re_path(r"^charts/v2/", ChartsView.as_view()),
     path("health/", HealthView.as_view()),
     path("admin/", admin.site.urls),
     path("api/", api_router.urls),
