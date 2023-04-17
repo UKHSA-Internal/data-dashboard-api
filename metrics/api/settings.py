@@ -99,6 +99,9 @@ TEMPLATES = [
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "metrics.api.authentication.TokenHeaderAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
         "metrics.api.authentication.HasApiKeyHeader",
     ],
@@ -191,10 +194,6 @@ STATIC_URL = "/static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-
-# STATICFILES_DIRS = [
-#     os.path.join(PROJECT_DIR, "static"),
-# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
