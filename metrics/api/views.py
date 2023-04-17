@@ -102,7 +102,7 @@ class FileUploadView(APIView):
 
 
 class ChartsView(APIView):
-    @swagger_auto_schema(query_serializer=ChartsRequestSerializer)
+    @extend_schema(parameters=[ChartsRequestSerializer])
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
