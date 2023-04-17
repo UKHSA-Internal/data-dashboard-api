@@ -45,7 +45,7 @@ The following endpoints are for admin/internal use only
 The following endpoints are used to construct a page similar to this:
 
 ![Figure 1](SamplePage.jpg)
-### Figure 1
+#### Figure 1
 
 --- 
 <br />
@@ -148,7 +148,9 @@ Example Response:
 ]
 
 ```
-### Figure 2
+
+#### Figure 2
+
 ---
 <br />
 
@@ -189,7 +191,9 @@ Example Response:
         ],
     },``
 ```
-### Figure 3
+
+#### Figure 3
+
 ---
 
 The `headline_column` section is used to construct elements in the __Headline__ Panel as shown in [__Figure 1__](#figure-1) above.
@@ -275,7 +279,9 @@ So, the API call to retrieve this trend information would be `/api/trends/v2/?to
                 },
             },
 ```
-### Figure 4
+
+#### Figure 4
+
 ---
 This section is used to construct elements in each __Chart Card__ Panel as shown in [Figure 1](#figure-1) above.
 
