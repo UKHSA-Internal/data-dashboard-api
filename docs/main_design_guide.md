@@ -28,14 +28,15 @@ If in the future, a decision is made to move the CMS out and into its own codeba
 The `metrics/` app takes a layered architectural approach:
 
 ```
-|API / interfaces|
+|API|
+|Interfaces|
 |Domain|
 |Data|
 |Database|
 ```
 
 Whereby each layer can only reach down (but not upwards).
-In the future, this could be enforced with `import-linter`.
+This is enforced in this project with `import-linter`.
 
 ```
 |- cms/
@@ -59,7 +60,7 @@ In the future, this could be enforced with `import-linter`.
         |- managers/ # Contains files with custom queryset and model manager classes for the models.
         |- migrations/ # Contains the associated django migrations.
     |- domain/ # Represents the business logic layer. Currently houses the charts generation module.
-    |- interfaces/ # Represents the boundary of the system. Currently holds only management commands. `api/` arguably should be here.
+    |- interfaces/ # Represents the interaction layer of the system. E.g. the API interacts with charts logic via the `interfaces/charts` module.
     
 |- tests/
     |- fakes/ # Contains fake implementations to remove additional dependencies for tests
