@@ -5,8 +5,8 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 import datetime
-from typing import Union
 from decimal import Decimal
+from typing import Union
 
 from django.db import models
 
@@ -116,6 +116,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             metric__topic__name=topic,
             metric__name=metric_name,
         )
+
 
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
@@ -247,7 +248,6 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         model_instance = self.get_queryset().get_metric_value(
-            topic=topic,
-            metric_name=metric_name
+            topic=topic, metric_name=metric_name
         )
         return model_instance.metric_value
