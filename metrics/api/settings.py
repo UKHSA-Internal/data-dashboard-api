@@ -105,6 +105,9 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
     "PREPROCESSING_HOOKS": ["metrics.api.open_api.pre_processing_endpoint_filter_hook"],
+    "TITLE": "UKHSA Data Dashboard API Docs",
+    "DESCRIPTION": "Docs for the API which supports the UKHSA Data Dashboard.",
+    "VERSION": "v 0.1.0",
 }
 
 API_KEY_CUSTOM_HEADER = "HTTP_AUTHORIZATION"
@@ -134,6 +137,38 @@ else:
             "PORT": config.POSTGRES_PORT,
         }
     }
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(levelname)s] [ENVIRONMENT:{env}] [%(name)s - %(funcName)s] %(message)s".format(
+                env=config.APIENV
+            )
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": config.LOG_LEVEL,
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+        },
+    },
+    "loggers": {
+        "": {  # Default logger
+            "handlers": ["console"],
+            "level": config.LOG_LEVEL,
+            "propagate": True,
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": config.LOG_LEVEL,
+            "propagate": True,
+        },
+    },
+}
 
 
 # Password validation
