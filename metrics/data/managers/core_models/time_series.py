@@ -9,7 +9,7 @@ from typing import Union
 
 from django.db import models
 
-from metrics.api import enums
+from metrics.data import enums
 
 
 class CoreTimeSeriesQuerySet(models.QuerySet):

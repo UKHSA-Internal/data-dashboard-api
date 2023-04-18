@@ -86,6 +86,14 @@ You can run the standard formatting tooling over your code with the following co
 make formatting
 ```
 
+### Architectural constraints check
+
+We use the `import-linter` package to enforce architectural constraints across the codebase.
+You can check these by running the following command:
+```bash
+make architecture
+```
+
 ---
 
 ## Using the API

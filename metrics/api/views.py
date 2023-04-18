@@ -11,8 +11,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
-from metrics.domain.charts import data_visualization_superseded
-from metrics.interfaces.charts import access, validation
+from metrics.interfaces.charts import access, data_visualization_superseded, validation
 
 
 class HealthView(APIView):

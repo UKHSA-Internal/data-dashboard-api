@@ -11,7 +11,7 @@ The core models should be populated via data ingress (file uploads)
 from django.db import models
 from django.utils import timezone
 
-from metrics.api.enums import TimePeriod
+from metrics.data.enums import TimePeriod
 from metrics.data.managers.core_models.metric import MetricManager
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 from metrics.data.managers.core_models.topic import TopicManager
