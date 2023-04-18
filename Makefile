@@ -23,7 +23,7 @@ formatting:
 
 # Check architectural constraints
 architecture:
-	${BIN}python -m lint-imports
+	lint-imports
 
 # Run all unit tests
 unit-tests:
