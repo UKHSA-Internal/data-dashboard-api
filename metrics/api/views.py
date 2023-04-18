@@ -9,9 +9,14 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
+from metrics.api.serializers.stats import HeadlinesQuerySerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.interfaces.charts import access, data_visualization_superseded, validation
+from metrics.interfaces.headlines.access import (
+    BaseInvalidHeadlinesRequestError,
+    generate_headline_number,
+)
 
 
 class HealthView(APIView):
@@ -139,3 +144,28 @@ class ChartsView(APIView):
         os.remove(filename)
 
         return response
+
+
+class HeadlinesView(APIView):
+    @extend_schema(parameters=[HeadlinesQuerySerializer])
+    def get(self, request, *args, **kwargs):
+        """This endpoint can be used to retrieve headline-type numbers for a given `metric`
+
+        Note that this endpoint will only return single-headline number type data.
+        If the `metric` provided relates to timeseries type data then the request will be deemed invalid.
+
+        """
+        query_serializer = HeadlinesQuerySerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+
+        topic = query_serializer.data["topic"]
+        metric = query_serializer.data["metric"]
+
+        try:
+            headline_number: str = generate_headline_number(topic=topic, metric=metric)
+        except BaseInvalidHeadlinesRequestError as error:
+            return Response(
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+            )
+
+        return Response({"value": headline_number})
