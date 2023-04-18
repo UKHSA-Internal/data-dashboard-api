@@ -6,7 +6,7 @@ from cms.dynamic_content.blocks import ChartBlock, HeadlineNumberBlock, TrendNum
 from cms.dynamic_content.components import HeadlineNumberTypes
 
 
-class HeadlineNumberRowCard(blocks.StructBlock):
+class HeadlineNumbersRowCard(blocks.StructBlock):
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     columns = HeadlineNumberTypes(min_num=1, max_num=5)
 
@@ -14,7 +14,7 @@ class HeadlineNumberRowCard(blocks.StructBlock):
         icon = "headline_number"
 
 
-class ChartCard(blocks.StructBlock):
+class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     chart = ChartBlock()
     headline_number = HeadlineNumberBlock()
     trend_number = TrendNumberBlock()
