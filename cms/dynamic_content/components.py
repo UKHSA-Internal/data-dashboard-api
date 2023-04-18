@@ -15,8 +15,8 @@ class SingleHeadlineNumberComponent(blocks.StructBlock):
 
 class HeadlineAndTrendNumberComponent(blocks.StructBlock):
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
-    top_headline_number = HeadlineNumberBlock()
-    bottom_trend_number = TrendNumberBlock()
+    headline_number = HeadlineNumberBlock()
+    trend_block = TrendNumberBlock()
 
     class Meta:
         icon = "trend_down"
