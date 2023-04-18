@@ -32,6 +32,6 @@ class DualHeadlineNumberComponent(blocks.StructBlock):
 
 
 class HeadlineNumberTypes(blocks.StreamBlock):
-    single_headline_number = SingleHeadlineNumberComponent()
-    headline_and_trend_number = HeadlineAndTrendNumberComponent()
-    dual_headline_number = DualHeadlineNumberComponent()
+    single_headline_component = SingleHeadlineNumberComponent()
+    headline_and_trend_component = HeadlineAndTrendNumberComponent()
+    dual_headline_component = DualHeadlineNumberComponent()
