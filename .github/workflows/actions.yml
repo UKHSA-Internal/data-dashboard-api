@@ -66,6 +66,23 @@ jobs:
         run: |
           source .github/workflows/formatting.sh
 
+ ###############################################################################
+ # Architectural constraints checks
+ ###############################################################################
+
+  architecture-checks:
+    name: Architecture checks
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
+
+      - name: Run import-linter
+        run: |
+          lint-imports
+
   ###############################################################################
   # Unit tests
   ###############################################################################
@@ -106,7 +123,7 @@ jobs:
 
   deploy:
     name: ECR Image Push
-    needs: [quality-checks, unit-tests, integration-tests, vulnerabilities]
+    needs: [quality-checks, unit-tests, integration-tests, vulnerabilities, architecture-checks]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch

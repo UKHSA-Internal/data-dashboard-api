@@ -58,6 +58,17 @@ When developing locally, the app will point to a local database:
 
 ## Development flows
 
+
+### Checking for code vulnerabilities
+
+You can check for known vulnerabilities in the codebase with the following command:
+```bash
+make audit
+```
+---
+
+
+
 ### Running tests
 
 The tests are split by type, `unit` and `integration`.
@@ -73,6 +84,14 @@ make all-tests
 You can run the standard formatting tooling over your code with the following command:
 ```bash
 make formatting
+```
+
+### Architectural constraints check
+
+We use the `import-linter` package to enforce architectural constraints across the codebase.
+You can check these by running the following command:
+```bash
+make architecture
 ```
 
 ---
@@ -100,6 +119,6 @@ To pass the API key to all requests made by swagger you will need to do the foll
 
 ## Detailed documentation
 
-For more detailed technical documentation please refer to the `documentation/` folder at the 
+For more detailed technical documentation please refer to the `docs/` folder at the 
 root level of the project. 
 Here you can find design information on the project structure, architecture and the current data model.

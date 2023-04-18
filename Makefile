@@ -21,6 +21,10 @@ formatting:
 	${BIN}python -m isort .
 	${BIN}python -m black .
 
+# Check architectural constraints
+architecture:
+	lint-imports
+
 # Run all unit tests
 unit-tests:
 	${BIN}python -m pytest tests/unit -v
@@ -33,6 +37,11 @@ integration-tests:
 all-tests:
 	make unit-tests
 	make integration-tests
+
+# Run pip-audit and bandit to check for vulnerabilities
+audit:
+	pip-audit -r requirements.txt
+	bandit -r .
 
 # Start the application
 run-server:

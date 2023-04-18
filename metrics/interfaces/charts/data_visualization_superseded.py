@@ -6,6 +6,7 @@ from django.db.models import Manager
 from metrics.data.access import core_models
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import line_with_shaded_section, waffle
+from metrics.interfaces.charts.access import write_figure
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -28,8 +29,8 @@ def generate_corresponding_chart(topic: str, category: str, file_format: str) ->
 
     Raises:
         ChartNotSupportedError if there is no chart for the requested topic and category
-    """
 
+    """
     category = category.lower()
     topic = topic.lower()
 
@@ -61,27 +62,6 @@ def generate_corresponding_chart(topic: str, category: str, file_format: str) ->
             )
 
     raise ChartNotSupportedError()
-
-
-def write_figure(
-    figure: plotly.graph_objects.Figure, topic: str, file_format: str
-) -> str:
-    """
-    Convert a figure to a static image and write to a file in the desired image format
-
-    Args:
-        figure: The figure object or a dictioanry representing a figure
-        topic: The required topic (eg. COVID-19)
-        file_format: The required file format (eg svg, jpeg)
-
-    Returns:
-        The filename of the image
-    """
-
-    filename = f"{topic}.{file_format}"
-    figure.write_image(file=filename, format=file_format)
-
-    return filename
 
 
 def create_line_graph_with_shaded_section_for_weekly_positivity_by_age(

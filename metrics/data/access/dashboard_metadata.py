@@ -282,11 +282,11 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Vaccinations",
-        "secondary_container": "Spring Booster",
+        "secondary_container": "Autumn Booster",
         "formatting": {"number_format": ApplyFormatting.IntNoDP},
         "filter": {
             "topic": "COVID-19",
-            "metric": "latest_total_vaccinations_spring22",
+            "metric": "latest_total_vaccinations_autumn22",
             "geography_type": "Nation",
             "geography": "England",
             "sex": "ALL",
@@ -295,11 +295,11 @@ coronavirus_headline = [
     {
         "panel": "Headline",
         "main_container": "Vaccinations",
-        "secondary_container": "Autumn Booster",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
+        "secondary_container": "Percentage uptake (%)",
+        "formatting": {"number_format": ApplyFormatting.PctOneDP},
         "filter": {
             "topic": "COVID-19",
-            "metric": "latest_total_vaccinations_autumn22",
+            "metric": "latest_vaccinations_uptake_autumn22",
             "geography_type": "Nation",
             "geography": "England",
             "sex": "ALL",
@@ -319,68 +319,6 @@ coronavirus_headline = [
             "sex": "ALL",
         },
     },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "Last 7 days",
-        "formatting": {
-            "absolute_number": True,
-            "number_format": ApplyFormatting.IntNoDP,
-        },
-        "filter": {
-            "topic": "COVID-19",
-            "metric": "positivity_7days_change",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "percentage_change",
-        "formatting": {
-            "number_format": ApplyFormatting.PctOneDP,
-            "add_brackets": True,
-        },
-        "filter": {
-            "topic": "COVID-19",
-            "metric": "positivity_7days_change_percentage",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "colour",
-        "formatting": {"get_colour": True},
-        "filter": {
-            "topic": "COVID-19",
-            "metric": "positivity_7days_change",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "arrow",
-        "formatting": {"get_arrow": True},
-        "filter": {
-            "topic": "COVID-19",
-            "metric": "positivity_7days_change",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
 ]
 
 
@@ -388,7 +326,7 @@ coronavirus_tiles = [
     {
         "panel": "Tile",
         "main_container": "Cases",
-        "secondary_container": "People tested positive in England",
+        "secondary_container": "Positive tests reported in England",
     },
     {
         "panel": "Tile",
@@ -582,7 +520,7 @@ influenza_headline = [
     {
         "panel": "Headline",
         "main_container": "Healthcare",
-        "secondary_container": "Patients admitted",
+        "secondary_container": "Hospital admission rate (per 100,000)",
         "formatting": {
             "number_format": ApplyFormatting.IntNoDP,
         },
@@ -660,75 +598,13 @@ influenza_headline = [
     {
         "panel": "Headline",
         "main_container": "Testing",
-        "secondary_container": "Virus tests reported",
+        "secondary_container": "Virus tests positivity (%)",
         "formatting": {
             "number_format": ApplyFormatting.IntNoDP,
         },
         "filter": {
             "topic": "Influenza",
             "metric": "weekly_positivity_latest",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "Last 7 days",
-        "formatting": {
-            "absolute_number": True,
-            "number_format": ApplyFormatting.IntNoDP,
-        },
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_change_positivity",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "percentage_change",
-        "formatting": {
-            "number_format": ApplyFormatting.PctOneDP,
-            "add_brackets": True,
-        },
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_percent_change_positivity",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "colour",
-        "formatting": {"get_colour": True},
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_change_positivity",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Headline",
-        "main_container": "Testing",
-        "secondary_container": "arrow",
-        "formatting": {"get_arrow": True},
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_change_positivity",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",
@@ -836,7 +712,7 @@ influenza_tiles = [
     {
         "panel": "Tile",
         "main_container": "Testing",
-        "secondary_container": "Weekly positivity by age",
+        "secondary_container": "Weekly positivity",
     },
     {
         "panel": "Tile",
@@ -846,82 +722,6 @@ influenza_tiles = [
         "filter": {
             "topic": "Influenza",
             "metric": "weekly_positivity",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Tile",
-        "main_container": "Testing",
-        "secondary_container": "Last 7 days",
-        "formatting": {
-            "absolute_number": True,
-            "number_format": ApplyFormatting.IntNoDP,
-        },
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_positivity_latest",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Tile",
-        "main_container": "Testing",
-        "secondary_container": "change",
-        "formatting": {"number_format": ApplyFormatting.IntNoDP},
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_change_positivity",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Tile",
-        "main_container": "Testing",
-        "secondary_container": "percentage_change",
-        "formatting": {
-            "number_format": ApplyFormatting.PctOneDP,
-            "add_brackets": True,
-        },
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_percent_change_positivity",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Tile",
-        "main_container": "Testing",
-        "secondary_container": "colour",
-        "formatting": {"get_colour": True},
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_change_positivity",
-            "geography_type": "Nation",
-            "geography": "England",
-            "stratum": "default",
-            "sex": "ALL",
-        },
-    },
-    {
-        "panel": "Tile",
-        "main_container": "Testing",
-        "secondary_container": "arrow",
-        "formatting": {"get_arrow": True},
-        "filter": {
-            "topic": "Influenza",
-            "metric": "weekly_change_positivity",
             "geography_type": "Nation",
             "geography": "England",
             "stratum": "default",

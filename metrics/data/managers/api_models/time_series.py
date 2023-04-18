@@ -5,6 +5,7 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
+
 from django.db import models
 
 

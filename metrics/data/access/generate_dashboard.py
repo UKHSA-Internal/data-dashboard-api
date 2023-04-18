@@ -7,12 +7,15 @@ Main function is 'populate_dashboard' which requires a topic and optionally a me
   which the function can iterate through and to produce the desired output
 """
 
+import logging
 from enum import Enum
 from typing import Dict, List, Union
 
 from metrics.data.access.dashboard_metadata import virus_metadata
 from metrics.data.models.api_models import APITimeSeries
 from metrics.domain.charts.line_with_shaded_section.information import get_metric_state
+
+logger = logging.getLogger(__name__)
 
 
 class Colour(Enum):
@@ -85,6 +88,9 @@ def format_cell(
 
     Returns:
         The formatted metric or the colour or arrow direction
+
+    Raises:
+        Logs the exception and returns the formatted metric up to the exception point
     """
     try:
         for format_option, format_cell in formatting.items():
@@ -116,6 +122,7 @@ def format_cell(
         return metric_value
 
     except:
+        logger.exception("An exception occurred")
         return metric_value
 
 
@@ -131,8 +138,7 @@ def get_value_from_db(fields: List[str], filters: Dict[str, str]) -> Dict[str, s
         Dictionary of fieldnames & values that came back from the DB
 
     Raises:
-        Swallows all exceptions and returns no_value for now.
-        In future, exceptions will get logged at the very least
+        Logs the exception and returns "no_value"
     """
 
     try:
@@ -144,6 +150,7 @@ def get_value_from_db(fields: List[str], filters: Dict[str, str]) -> Dict[str, s
         )
 
     except:  # trap for typos in the filters
+        logger.exception("An exception occurred")
         return {field: "no_value" for field in fields}
 
 

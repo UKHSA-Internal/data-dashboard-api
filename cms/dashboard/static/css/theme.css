@@ -4,6 +4,10 @@
   --w-color-primary-200: black;
   /* Set each HSL component separately to change all hues at once. */
 
+  --color-primary-hue: 240;
+  --color-primary-saturation: 100%;
+  --color-primary-lightness: 21%;
+
   --w-color-secondary-hue: 180.5;
   --w-color-secondary-saturation: 100%;
   --w-color-secondary-lightness: 24.7%;

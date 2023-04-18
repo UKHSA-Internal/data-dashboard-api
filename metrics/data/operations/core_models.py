@@ -7,14 +7,12 @@ Specifically, this file contains write database logic for the core models only.
 NOTE: This code is only for the Alpha. Once we have a data pipeline this code will cease to exist
 """
 
-import io
-from datetime import datetime
 from typing import Dict, List, Type
 
 import pandas as pd
 from django.db import models
 
-from metrics.api.enums import TimePeriod
+from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (
     CoreTimeSeries,
     Geography,
