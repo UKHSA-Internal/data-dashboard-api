@@ -139,6 +139,38 @@ else:
     }
 
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(levelname)s] [ENVIRONMENT:{env}] [%(name)s - %(funcName)s] %(message)s".format(
+                env=config.APIENV
+            )
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": config.LOG_LEVEL,
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+        },
+    },
+    "loggers": {
+        "": {  # Default logger
+            "handlers": ["console"],
+            "level": config.LOG_LEVEL,
+            "propagate": True,
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": config.LOG_LEVEL,
+            "propagate": True,
+        },
+    },
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
