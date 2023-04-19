@@ -28,13 +28,13 @@ class HealthView(APIView):
 
 
 DEPRECATION_DATE_CHARTS_ENDPOINT = "Wed, 19 Apr 2023 23:59:59 GMT"
-DEPRECATION_MESSAGE_PREDICT_CONFIDENCE = (
+DEPRECATION_MESSAGE_CHARTS = (
     f"This endpoint has been deprecated.\n"
     f"This functionality can now be found within the `/charts/v2/` endpoint.\n"
     f"Deprecation date: {DEPRECATION_DATE_CHARTS_ENDPOINT}"
 )
 
-DEPRECATION_HEADERS_PREDICT_CONFIDENCE = {
+DEPRECATION_HEADERS_CHARTS = {
     "Deprecation": DEPRECATION_DATE_CHARTS_ENDPOINT,
 }
 
@@ -82,7 +82,7 @@ class ChartView(APIView):
         except data_visualization_superseded.ChartNotSupportedError:
             return Response(
                 status=HTTPStatus.NOT_FOUND,
-                headers=DEPRECATION_HEADERS_PREDICT_CONFIDENCE,
+                headers=DEPRECATION_HEADERS_CHARTS,
             )
 
         return self._return_image(filename=filename)
@@ -90,7 +90,7 @@ class ChartView(APIView):
     @staticmethod
     def _return_image(filename: str) -> FileResponse:
         image = open(filename, "rb")
-        response = FileResponse(image, headers=DEPRECATION_HEADERS_PREDICT_CONFIDENCE)
+        response = FileResponse(image, headers=DEPRECATION_HEADERS_CHARTS)
 
         os.remove(filename)
 
