@@ -1,0 +1,116 @@
+from decimal import Decimal
+from unittest import mock
+
+import pytest
+
+from metrics.data.models.core_models import CoreTimeSeries
+from metrics.interfaces.headlines import access
+
+
+class TestHeadlinesInterface:
+    def test_get_metric_value_calls_core_time_series_manager_with_correct_args(self):
+        """
+        Given a `CoreTimeSeriesManager`
+        When `get_metric_value()` is called from an instance of `HeadlinesInterface`
+        Then the correct method is called from `CoreTimeSeriesManager` to retrieve the metric_value
+        """
+        # Given
+        spy_core_time_series_manager = mock.Mock()
+        mocked_topic = mock.Mock()
+        mocked_metric = mock.Mock()
+        headlines_interface = access.HeadlinesInterface(
+            topic=mocked_topic,
+            metric=mocked_metric,
+            core_time_series_manager=spy_core_time_series_manager,
+        )
+
+        # When
+        metric_value: Decimal = headlines_interface.get_metric_value()
+
+        # Then
+        assert (
+            metric_value == spy_core_time_series_manager.get_metric_value.return_value
+        )
+        spy_core_time_series_manager.get_metric_value.assert_called_once_with(
+            topic=mocked_topic,
+            metric_name=mocked_metric,
+        )
+
+    def test_get_metric_value_raises_error_when_model_manager_raises_error_for_timeseries_type_data(
+        self,
+    ):
+        """
+        Given a `CoreTimeSeriesManager` which raises a `MultipleObjectsReturned` error when called
+        When `get_metric_value()` is called from an instance of `HeadlinesInterface`
+        Then the underlying error is caught and a `MetricIsTimeSeriesTypeError` is raised
+        """
+        # Given
+        spy_core_time_series_manager = mock.Mock()
+        spy_core_time_series_manager.get_metric_value.side_effect = [
+            CoreTimeSeries.MultipleObjectsReturned
+        ]
+        fake_metric_name = "COVID-19"
+
+        headlines_interface = access.HeadlinesInterface(
+            topic=mock.Mock(),
+            metric=fake_metric_name,
+            core_time_series_manager=spy_core_time_series_manager,
+        )
+
+        # When / Then
+        expected_error_message = f"`{fake_metric_name}` is a timeseries-type metric. This should be a headline-type metric"
+        with pytest.raises(
+            access.MetricIsTimeSeriesTypeError, match=expected_error_message
+        ):
+            headlines_interface.get_metric_value()
+
+    def test_get_metric_value_raises_error_when_model_manager_raises_error_for_no_data_found(
+        self,
+    ):
+        """
+        Given a `CoreTimeSeriesManager` which raises a `DoesNotExist` error when called
+        When `get_metric_value()` is called from an instance of `HeadlinesInterface`
+        Then the underlying error is caught and a `HeadlineNumberDataNotFoundError` is raised
+        """
+        # Given
+        spy_core_time_series_manager = mock.Mock()
+        spy_core_time_series_manager.get_metric_value.side_effect = [
+            CoreTimeSeries.DoesNotExist
+        ]
+
+        headlines_interface = access.HeadlinesInterface(
+            topic=mock.Mock(),
+            metric=mock.Mock(),
+            core_time_series_manager=spy_core_time_series_manager,
+        )
+
+        # When / Then
+        expected_error_message = "No data could be found for those parameters"
+        with pytest.raises(
+            access.HeadlineNumberDataNotFoundError, match=expected_error_message
+        ):
+            headlines_interface.get_metric_value()
+
+
+class TestGenerateHeadlineNumber:
+    @mock.patch.object(access.HeadlinesInterface, "get_metric_value")
+    def test_delegates_call_to_interface_to_get_metric_value(
+        self, spy_get_metric_value: mock.MagicMock
+    ):
+        """
+        Given a topic and metric
+        When `generate_headline_number()` is called
+        Then the call is delegated to `get_metric_value()` from an instance of the `HeadlinesInterface`
+        """
+        # Given
+        mocked_topic = mock.Mock()
+        mocked_metric = mock.Mock()
+
+        # When
+        metric_value = access.generate_headline_number(
+            topic=mocked_topic,
+            metric=mocked_metric,
+        )
+
+        # Then
+        assert metric_value == spy_get_metric_value.return_value
