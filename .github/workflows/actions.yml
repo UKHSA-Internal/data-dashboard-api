@@ -98,6 +98,8 @@ jobs:
 
       - name: Run unit tests
         run: |
+          
+          source entrypoint.sh
           python -m pytest tests/unit/
 
   ###############################################################################
@@ -115,6 +117,8 @@ jobs:
 
       - name: Run Integration tests
         run: |
+          
+          source entrypoint.sh
           python -m pytest tests/integration/
 
   ###############################################################################
