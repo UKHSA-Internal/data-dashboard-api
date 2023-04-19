@@ -106,6 +106,8 @@ class FileUploadView(APIView):
 
 
 class ChartsView(APIView):
+    permission_classes = [HasAPIKey]
+
     @extend_schema(parameters=[ChartsRequestSerializer])
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
@@ -147,6 +149,8 @@ class ChartsView(APIView):
 
 
 class HeadlinesView(APIView):
+    permission_classes = [HasAPIKey]
+
     @extend_schema(parameters=[HeadlinesQuerySerializer])
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric`
