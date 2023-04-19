@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     "wagtail.snippets",
     "wagtail.search",
     "wagtail.admin",
-    "wagtail.contrib.styleguide",
     "wagtail",
     "modelcluster",
     "taggit",
