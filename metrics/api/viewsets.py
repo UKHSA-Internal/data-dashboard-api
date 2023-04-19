@@ -83,4 +83,4 @@ class DashboardViewSet(viewsets.GenericViewSet):
     @extend_schema(deprecated=True)
     def retrieve(self, request, *args, **kwargs):
         data = self.get_queryset()
-        return response.Response(data)
+        return response.Response(data, headers=DEPRECATION_HEADERS_STATS)
