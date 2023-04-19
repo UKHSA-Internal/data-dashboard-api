@@ -6,14 +6,14 @@ root_packages =
 include_external_packages=True
 
 [importlinter:contract:Modular monolith]
-name=Metrics and CMS do not depend on each other, except the connection of URLs and the designated interface.
+name=Metrics and CMS do not depend on each other, except via the designated interface and connection of URLs.
 type=independence
 modules=
     metrics
     cms
 ignore_imports=
-    metrics.api.urls -> cms.dashboard.viewsets
     cms.metrics_interface.interface -> metrics.data.models.core_models
+    metrics.api.urls -> cms.dashboard.viewsets
 
 [importlinter:contract:Metrics architectural layers]
 name = Metrics package enforces clear architectural layers within itself
