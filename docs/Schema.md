@@ -364,10 +364,29 @@ As discussed above, this endpoint is used to retrieve summary chart data in tabu
 
 The parameters for the query can be found in the `tabular` section in the output from the call to the `/api/pages/v2/` endpoint. See [__Figure 2__](#figure-2) and [__Figure 4__](#figure-4) above.
 
+---
 
-- `/api/headlines/v2/`
+- `GET /api/headlines/v2/?topic={topic}&metric={metric}`
 
 This endpoint is used to retrieve "Headline" information as discussed above.
+
+The request should be made as follows:
+
+```
+GET /api/headlines/v2/?topic=COVID-19&metric=new_cases_7days_sum
+```
+
+The response from this endpoint will be as follows:
+```
+{
+    "value": "20629892"
+}
+```
+
+>Note that if the request to the `headlines/` endpoint is made for a timeseries type metric like `new_cases_daily`, 
+then an HTTP 400 BAD REQUEST would be returned
+
+---
 
 - `/api/trends/v2/`
 

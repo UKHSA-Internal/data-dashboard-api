@@ -5,6 +5,7 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 import datetime
+from decimal import Decimal
 from typing import Union
 
 from django.db import models
@@ -90,6 +91,31 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             metric__name=metric_name,
         ).values_list("metric_value", flat=True)
         return self._newest_to_oldest(queryset=queryset)
+
+    def get_metric_value(self, topic: str, metric_name: str) -> "CoreTimeSeries":
+        """Gets the record associated with the given `topic` and `metric`.
+
+        Args:
+            topic: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric_name: The name of the metric being queried.
+                E.g. `new_cases_7days_sum
+
+        Returns:
+            QuerySet: A queryset containing the single record
+                Examples:
+                    `<CoreTimeSeries: Core Data for 2023-03-04, metric 'new_cases_7days_sum', value: 24298.0>`
+
+        Raises:
+            `MultipleObjectsReturned`: If the query returned more than 1 record.
+                We expect this if the provided `metric` is for timeseries type data
+            `DoesNotExist`: If the query returned no records.
+
+        """
+        return self.get(
+            metric__topic__name=topic,
+            metric__name=metric_name,
+        )
 
 
 class CoreTimeSeriesManager(models.Manager):
@@ -200,3 +226,28 @@ class CoreTimeSeriesManager(models.Manager):
         return self.by_topic_metric_for_dates_and_values(
             topic=topic, metric_name=metric_name, date_from=date_from
         ).count()
+
+    def get_metric_value(self, topic: str, metric_name: str) -> Decimal:
+        """Gets the record associated with the given `topic` and `metric`.
+
+        Args:
+            topic: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric_name: The name of the metric being queried.
+                E.g. `new_cases_7days_sum
+
+        Returns:
+            QuerySet: A queryset containing the single record
+                Examples:
+                    `<CoreTimeSeries: Core Data for 2023-03-04, metric 'new_cases_7days_sum', value: 24298.0>`
+
+        Raises:
+            `MultipleObjectsReturned`: If the query returned more than 1 record.
+                We expect this if the provided `metric` is for timeseries type data
+            `DoesNotExist`: If the query returned no records.
+
+        """
+        model_instance = self.get_queryset().get_metric_value(
+            topic=topic, metric_name=metric_name
+        )
+        return model_instance.metric_value

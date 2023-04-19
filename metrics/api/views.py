@@ -9,9 +9,14 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
+from metrics.api.serializers.stats import HeadlinesQuerySerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.interfaces.charts import access, data_visualization_superseded, validation
+from metrics.interfaces.headlines.access import (
+    BaseInvalidHeadlinesRequestError,
+    generate_headline_number,
+)
 
 
 class HealthView(APIView):
@@ -101,6 +106,8 @@ class FileUploadView(APIView):
 
 
 class ChartsView(APIView):
+    permission_classes = [HasAPIKey]
+
     @extend_schema(parameters=[ChartsRequestSerializer])
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
@@ -139,3 +146,52 @@ class ChartsView(APIView):
         os.remove(filename)
 
         return response
+
+
+class HeadlinesView(APIView):
+    permission_classes = [HasAPIKey]
+
+    @extend_schema(parameters=[HeadlinesQuerySerializer])
+    def get(self, request, *args, **kwargs):
+        """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
+
+        Note that this endpoint will only return single-headline number type data.
+        If the `metric` provided relates to timeseries type data then the request will be deemed invalid.
+
+        ---
+
+        For example, a request for the following would be **invalid**:
+
+        - metric =`new_cases_daily`
+
+        - topic = `COVID-19`
+
+        This would be **invalid** because the `metric` of `new_cases_daily` relates to timeseries data,
+        which is not represented by a single headline-type figure.
+
+        ---
+
+        Whereas, a request for the following would be **valid**:
+
+        - metric =`new_cases_7days_sum`
+
+        - topic = `COVID-19`
+
+        This would be **valid** because the `metric` of `new_cases_7days_sum` relates to headline data,
+        which can be represented by a single headline-type figure.
+
+        """
+        query_serializer = HeadlinesQuerySerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+
+        topic = query_serializer.data["topic"]
+        metric = query_serializer.data["metric"]
+
+        try:
+            headline_number: str = generate_headline_number(topic=topic, metric=metric)
+        except BaseInvalidHeadlinesRequestError as error:
+            return Response(
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+            )
+
+        return Response({"value": headline_number})
