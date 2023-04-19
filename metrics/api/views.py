@@ -27,10 +27,23 @@ class HealthView(APIView):
         return HttpResponse(HTTPStatus.OK.value)
 
 
+DEPRECATION_DATE_CHARTS_ENDPOINT = "Wed, 19 Apr 2023 23:59:59 GMT"
+DEPRECATION_MESSAGE_CHARTS = (
+    f"This endpoint has been deprecated.\n"
+    f"This functionality can now be found within the `/charts/v2/` endpoint.\n"
+    f"Deprecation date: {DEPRECATION_DATE_CHARTS_ENDPOINT}"
+)
+
+DEPRECATION_HEADERS_CHARTS = {
+    "Deprecation": DEPRECATION_DATE_CHARTS_ENDPOINT,
+    "Message": DEPRECATION_MESSAGE_CHARTS,
+}
+
+
 class ChartView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(parameters=[ChartsQuerySerializer])
+    @extend_schema(parameters=[ChartsQuerySerializer], deprecated=True)
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
@@ -68,14 +81,17 @@ class ChartView(APIView):
                 topic=topic, category=category, file_format=file_format
             )
         except data_visualization_superseded.ChartNotSupportedError:
-            return Response(status=HTTPStatus.NOT_FOUND)
+            return Response(
+                status=HTTPStatus.NOT_FOUND,
+                headers=DEPRECATION_HEADERS_CHARTS,
+            )
 
         return self._return_image(filename=filename)
 
     @staticmethod
     def _return_image(filename: str) -> FileResponse:
         image = open(filename, "rb")
-        response = FileResponse(image)
+        response = FileResponse(image, headers=DEPRECATION_HEADERS_CHARTS)
 
         os.remove(filename)
 
