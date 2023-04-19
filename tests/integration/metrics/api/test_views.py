@@ -40,7 +40,6 @@ class TestHealthView:
         assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
 
 
-@pytest.mark.django_db
 class TestHeadlinesView:
     @staticmethod
     def _setup_core_time_series(
@@ -57,9 +56,11 @@ class TestHeadlinesView:
             dt=datetime.date(year=year, month=1, day=1),
         )
 
+    @pytest.mark.django_db
     def test_get_returns_correct_response(self):
         """
         Given the names of a `metric` and `topic`
+        And an APIClient
         When the `GET /headlines/v2/` endpoint is hit
         Then an HTTP 200 OK response is returned with the associated metric_value
         """
@@ -81,3 +82,37 @@ class TestHeadlinesView:
         # Then
         assert response.status_code == HTTPStatus.OK
         assert response.data == {"value": metric_value}
+
+    @pytest.mark.django_db
+    def test_get_returns_error_message_for_timeseries_type_metric(self):
+        """
+        Given a `topic` and a `metric` which has more than 1 record and is a timeseries type metric
+        And an APIClient
+        When the `GET /headlines/v2/` endpoint is hit
+        Then an HTTP 400 BAD REQUEST response is returned with the expected error message
+        """
+        # Given
+        incorrect_metric_name = "new_cases_daily"
+        topic_name = "COVID-19"
+        metric_value = 123
+
+        # Create multiple records to emulate time-series type data
+        for _ in range(2):
+            self._setup_core_time_series(
+                topic_name=topic_name,
+                metric_name=incorrect_metric_name,
+                metric_value=metric_value,
+            )
+
+        client = APIClient()
+
+        # When
+        response: Response = client.get(
+            path="/headlines/v2/",
+            data={"topic": topic_name, "metric": incorrect_metric_name},
+        )
+
+        # Then
+        assert response.status_code == HTTPStatus.BAD_REQUEST
+        expected_error_message = f"`{incorrect_metric_name}` is a timeseries-type metric. This should be a headline-type metric"
+        assert response.data == {"error_message": expected_error_message}
