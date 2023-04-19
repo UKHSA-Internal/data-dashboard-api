@@ -4,7 +4,7 @@ from wagtail import blocks
 from wagtail.blocks import BooleanBlock
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
-from metrics.data.models.core_models import Metric, Topic
+from cms.metrics_interface import MetricsAPIInterface
 
 
 def _build_choices(choices: List[str]) -> List[Tuple[str, str]]:
@@ -12,9 +12,11 @@ def _build_choices(choices: List[str]) -> List[Tuple[str, str]]:
 
 
 class BaseMetricsBlock(blocks.StructBlock):
+    _metrics_api_interface = MetricsAPIInterface()
+
     body = blocks.RichTextBlock(features=AVAILABLE_RICH_TEXT_FEATURES, required=False)
-    topic_names = Topic.objects.all().values_list("name", flat=True)
-    metric_names = Metric.objects.all().values_list("name", flat=True).distinct()
+    topic_names = _metrics_api_interface.get_all_topic_names()
+    metric_names = _metrics_api_interface.get_all_unique_metric_names()
 
     topic = blocks.ChoiceBlock(required=True, choices=_build_choices(topic_names))
     metric = blocks.ChoiceBlock(required=True, choices=_build_choices(metric_names))
@@ -44,14 +46,14 @@ class HeadlineNumberBlock(BaseMetricsBlock):
 
 
 class TrendNumberBlock(BaseMetricsBlock):
-    metric_names = (
-        Metric.objects.filter(name__contains="change")
-        .values_list("name", flat=True)
-        .distinct()
-    )
+    _metrics_api_interface = MetricsAPIInterface()
+
+    metric_names = _metrics_api_interface.get_all_unique_change_type_names()
     metric = blocks.ChoiceBlock(required=True, choices=_build_choices(metric_names))
 
-    percentage_metric_names = metric_names.filter(name__contains="percent")
+    percentage_metric_names = (
+        _metrics_api_interface.get_all_unique_change_percent_type_names()
+    )
     percentage_metric = blocks.ChoiceBlock(
         required=True, choices=_build_choices(percentage_metric_names)
     )
