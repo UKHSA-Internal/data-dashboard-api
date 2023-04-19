@@ -153,10 +153,32 @@ class HeadlinesView(APIView):
 
     @extend_schema(parameters=[HeadlinesQuerySerializer])
     def get(self, request, *args, **kwargs):
-        """This endpoint can be used to retrieve headline-type numbers for a given `metric`
+        """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
 
         Note that this endpoint will only return single-headline number type data.
         If the `metric` provided relates to timeseries type data then the request will be deemed invalid.
+
+        ---
+
+        For example, a request for the following would be **invalid**:
+
+        - metric =`new_cases_daily`
+
+        - topic = `COVID-19`
+
+        This would be **invalid** because the `metric` of `new_cases_daily` relates to timeseries data,
+        which is not represented by a single headline-type figure.
+
+        ---
+
+        Whereas, a request for the following would be **valid**:
+
+        - metric =`new_cases_7days_sum`
+
+        - topic = `COVID-19`
+
+        This would be **valid** because the `metric` of `new_cases_7days_sum` relates to headline data,
+        which can be represented by a single headline-type figure.
 
         """
         query_serializer = HeadlinesQuerySerializer(data=request.query_params)
