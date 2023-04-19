@@ -1,10 +1,12 @@
 import datetime
 from http import HTTPStatus
+from unittest import mock
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
+from metrics.api.views import HeadlinesView
 from metrics.data.models.core_models import CoreTimeSeries, Metric, Topic
 
 
@@ -56,8 +58,11 @@ class TestHeadlinesView:
             dt=datetime.date(year=year, month=1, day=1),
         )
 
+    @mock.patch.object(HeadlinesView, "permission_classes")
     @pytest.mark.django_db
-    def test_get_returns_correct_response(self):
+    def test_get_returns_correct_response(
+        self, stubbed_permission_classes: mock.MagicMock
+    ):
         """
         Given the names of a `metric` and `topic`
         And an APIClient
@@ -72,6 +77,9 @@ class TestHeadlinesView:
             topic_name=topic_name, metric_name=metric_name, metric_value=metric_value
         )
 
+        # Stub the `permission_classes` to avoid the need of creating an API key for this test client
+        stubbed_permission_classes.return_value = []
+
         client = APIClient()
 
         # When
@@ -83,8 +91,11 @@ class TestHeadlinesView:
         assert response.status_code == HTTPStatus.OK
         assert response.data == {"value": metric_value}
 
+    @mock.patch.object(HeadlinesView, "permission_classes")
     @pytest.mark.django_db
-    def test_get_returns_error_message_for_timeseries_type_metric(self):
+    def test_get_returns_error_message_for_timeseries_type_metric(
+        self, stubbed_permission_classes: mock.MagicMock
+    ):
         """
         Given a `topic` and a `metric` which has more than 1 record and is a timeseries type metric
         And an APIClient
@@ -95,6 +106,9 @@ class TestHeadlinesView:
         incorrect_metric_name = "new_cases_daily"
         topic_name = "COVID-19"
         metric_value = 123
+
+        # Stub the `permission_classes` to avoid the need of creating an API key for this test client
+        stubbed_permission_classes.return_value = []
 
         # Create multiple records to emulate time-series type data
         for _ in range(2):
