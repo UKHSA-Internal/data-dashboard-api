@@ -52,7 +52,9 @@ class TrendNumberBlock(BaseMetricsBlock):
     metric = blocks.ChoiceBlock(required=True, choices=_build_choices(metric_names))
 
     percentage_metric_names = metric_names.filter(name__contains="percent")
-    percentage_metric = blocks.ChoiceBlock(required=True, choices=_build_choices(percentage_metric_names))
+    percentage_metric = blocks.ChoiceBlock(
+        required=True, choices=_build_choices(percentage_metric_names)
+    )
 
     class Meta:
         icon = "arrows-up-down"
