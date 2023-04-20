@@ -13,6 +13,7 @@ modules=
     cms
 ignore_imports=
     cms.metrics_interface.interface -> metrics.data.models.core_models
+    cms.metrics_interface.interface -> metrics.interfaces.charts.access
     metrics.api.urls -> cms.dashboard.viewsets
 
 [importlinter:contract:Metrics architectural layers]
