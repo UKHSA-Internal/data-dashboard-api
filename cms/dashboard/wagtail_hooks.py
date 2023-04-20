@@ -32,11 +32,3 @@ def register_icons(icons: List[str]):
         "icons/trend_down.svg",
         "icons/text.svg",
     ]
-
-
-@hooks.register("construct_main_menu")
-def hide_images_and_documents_menu_item(request, menu_items):
-    menu_items[:] = [
-        item for item in menu_items if item.name not in ["images", "documents"]
-    ]
-    return menu_items
