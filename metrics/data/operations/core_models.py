@@ -219,7 +219,7 @@ def load_core_data(
         model=Stratum.objects,
     ).copy()
 
-    df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d")
+    df["date"] = pd.to_datetime(df["date"], format="%d/%m/%Y")
 
     df["sex"] = df["sex"].apply(lambda x: sex_options.get(x.lower(), "ALL"))
     df["period"] = df["period"].apply(lambda x: frequency.get(x.lower()))
