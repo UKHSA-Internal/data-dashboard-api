@@ -28,9 +28,7 @@ class HealthView(APIView):
 
 
 DEPRECATION_DATE_CHARTS_ENDPOINT = "Wed, 19 Apr 2023 23:59:59 GMT"
-DEPRECATION_MESSAGE_CHARTS = (
-    f"This endpoint has been deprecated. This functionality can now be found within the `/charts/v2/` endpoint. Deprecation date: {DEPRECATION_DATE_CHARTS_ENDPOINT}"
-)
+DEPRECATION_MESSAGE_CHARTS = f"This endpoint has been deprecated. This functionality can now be found within the `/charts/v2/` endpoint. Deprecation date: {DEPRECATION_DATE_CHARTS_ENDPOINT}"
 
 DEPRECATION_HEADERS_CHARTS = {
     "Deprecation": DEPRECATION_DATE_CHARTS_ENDPOINT,
