@@ -118,6 +118,64 @@ class TestGetAllUniqueMetricNames:
         assert unique_metric_names == [(x, x) for x in retrieved_unique_metric_names]
 
 
+class TestGetAllUniqueChangeTypeMetricNames:
+    @mock.patch.object(
+        interface.MetricsAPIInterface, "get_all_unique_change_type_metric_names"
+    )
+    def test_delegates_call_correctly(
+        self, mocked_get_all_unique_change_type_metric_names: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns unique metric names
+        When `get_all_unique_change_type_metric_names()` is called
+        Then the unique metric names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_unique_change_type_metric_names = ["new_cases_daily"]
+        mocked_get_all_unique_change_type_metric_names.return_value = (
+            retrieved_unique_change_type_metric_names
+        )
+
+        # When
+        unique_change_type_metric_names = (
+            interface.get_all_unique_change_type_metric_names()
+        )
+
+        # Then
+        assert unique_change_type_metric_names == [
+            (x, x) for x in retrieved_unique_change_type_metric_names
+        ]
+
+
+class TestGetAllUniqueChangePercentTypeMetricNames:
+    @mock.patch.object(
+        interface.MetricsAPIInterface, "get_all_unique_change_percent_type_metric_names"
+    )
+    def test_delegates_call_correctly(
+        self, mocked_get_all_unique_change_percent_type_metric_names: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns unique metric names
+        When `get_all_unique_change_type_metric_names()` is called
+        Then the unique metric names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_unique_change_percent_type_metric_names = ["new_cases_daily"]
+        mocked_get_all_unique_change_percent_type_metric_names.return_value = (
+            retrieved_unique_change_percent_type_metric_names
+        )
+
+        # When
+        unique_change_percent_type_metric_names = (
+            interface.get_all_unique_change_percent_type_metric_names()
+        )
+
+        # Then
+        assert unique_change_percent_type_metric_names == [
+            (x, x) for x in retrieved_unique_change_percent_type_metric_names
+        ]
+
+
 class TestGetChartTypes:
     @mock.patch.object(interface.MetricsAPIInterface, "get_chart_types")
     def test_delegates_call_correctly(self, mocked_get_chart_types: mock.MagicMock):
@@ -150,7 +208,7 @@ class TestGetAllTopicNames:
         mocked_get_all_topic_names.return_value = retrieved_topic_names
 
         # When
-        chart_types = interface.get_all_topic_names()
+        topic_names = interface.get_all_topic_names()
 
         # Then
-        assert chart_types == [(x, x) for x in retrieved_topic_names]
+        assert topic_names == [(x, x) for x in retrieved_topic_names]
