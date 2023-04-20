@@ -43,11 +43,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 DEPRECATION_DATE_STATS_ENDPOINT = "Wed, 19 Apr 2023 23:59:59 GMT"
-DEPRECATION_MESSAGE_STATS = (
-    f"This endpoint has been deprecated.\n"
-    f"This functionality can now be found within the `/headlines/v2/` and `/trends/v2/ endpoints.\n"
-    f"Deprecation date: {DEPRECATION_DATE_STATS_ENDPOINT}"
-)
+DEPRECATION_MESSAGE_STATS = f"This endpoint has been deprecated. This functionality can now be found within the `/headlines/v2/` and `/trends/v2/ endpoints. Deprecation date: {DEPRECATION_DATE_STATS_ENDPOINT}"
 
 DEPRECATION_HEADERS_STATS = {
     "Deprecation": DEPRECATION_DATE_STATS_ENDPOINT,
