@@ -45,10 +45,10 @@ class TestMetricsAPIInterface:
             == spy_metric_manager.get_all_unique_names.return_value
         )
 
-    def test_get_all_unique_change_type_names_delegates_call_correctly(self):
+    def test_get_all_unique_change_type_metric_names_delegates_call_correctly(self):
         """
         Given a `MetricManager` from the Metrics API app
-        When `get_all_unique_change_type_names()` is called from an instance of the `MetricsAPIInterface`
+        When `get_all_unique_change_type_metric_names()` is called from an instance of the `MetricsAPIInterface`
         Then the call is delegated to the correct method on the `MetricManager`
         """
         # Given
@@ -59,20 +59,22 @@ class TestMetricsAPIInterface:
         )
 
         # When
-        all_unique_change_type_names = (
-            metrics_api_interface.get_all_unique_change_type_names()
+        all_unique_change_type_metric_names = (
+            metrics_api_interface.get_all_unique_change_type_metric_names()
         )
 
         # Then
         assert (
-            all_unique_change_type_names
+            all_unique_change_type_metric_names
             == spy_metric_manager.get_all_unique_change_type_names.return_value
         )
 
-    def test_get_all_unique_change_percent_type_names_delegates_call_correctly(self):
+    def test_get_all_unique_change_percent_type_metric_names_delegates_call_correctly(
+        self,
+    ):
         """
         Given a `MetricManager` from the Metrics API app
-        When `get_all_unique_change_percent_type_names()` is called from an instance of the `MetricsAPIInterface`
+        When `get_all_unique_change_percent_type_metric_names()` is called from an instance of the `MetricsAPIInterface`
         Then the call is delegated to the correct method on the `MetricManager`
         """
         # Given
@@ -83,12 +85,12 @@ class TestMetricsAPIInterface:
         )
 
         # When
-        all_unique_change_percent_type_names = (
-            metrics_api_interface.get_all_unique_change_percent_type_names()
+        all_unique_change_percent_type_metric_names = (
+            metrics_api_interface.get_all_unique_change_percent_type_metric_names()
         )
 
         # Then
         assert (
-            all_unique_change_percent_type_names
+            all_unique_change_percent_type_metric_names
             == spy_metric_manager.get_all_unique_change_percent_type_names.return_value
         )
