@@ -8,7 +8,7 @@ from django.db import models
 
 
 class StratumQuerySet(models.QuerySet):
-    """Custom queryset which can be used by the `TopicManager`"""
+    """Custom queryset which can be used by the `StratumManager`"""
 
     def get_all_names(self) -> models.QuerySet:
         """Gets all available stratum names as a flat list queryset.
