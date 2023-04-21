@@ -7,6 +7,9 @@ from metrics.interfaces.charts.access import ChartTypes
 
 DEFAULT_TOPIC_MANAGER = core_models.Topic.objects
 DEFAULT_METRIC_MANAGER = core_models.Metric.objects
+DEFAULT_STRATUM_MANAGER = core_models.Stratum.objects
+DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
+DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
 
 
 class MetricsAPIInterface:
@@ -30,9 +33,15 @@ class MetricsAPIInterface:
         self,
         topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
+        stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
+        geography_manager: Manager = DEFAULT_GEOGRAPHY_MANAGER,
+        geography_type_manager: Manager = DEFAULT_GEOGRAPHY_TYPE_MANAGER,
     ):
         self.topic_manager = topic_manager
         self.metric_manager = metric_manager
+        self.stratum_manager = stratum_manager
+        self.geography_manager = geography_manager
+        self.geography_type_manager = geography_type_manager
 
     @staticmethod
     def get_chart_types() -> List[Tuple[str, str]]:
@@ -94,6 +103,41 @@ class MetricsAPIInterface:
 
         """
         return self.metric_manager.get_all_unique_change_percent_type_names()
+
+    def get_all_stratum_names(self) -> QuerySet:
+        """Gets all available stratum names as a flat list queryset.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual stratum names:
+                Examples:
+                    `<StratumQuerySet ['default', '0_4']>`
+
+        """
+        return self.stratum_manager.get_all_names()
+
+    def get_all_geography_names(self) -> QuerySet:
+        """Gets all unique geography names as a flat list queryset.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography names:
+                Examples:
+                    `<GeographyQuerySet ['England', 'London']>`
+        """
+        return self.geography_manager.get_all_names()
+
+    def get_all_geography_type_names(self) -> QuerySet:
+        """Gets all available geography_type names as a flat list queryset.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography_type names:
+                Examples:
+                    `<GeographyTypeQuerySet ['Nation', 'UKHSA_Region']>`
+
+        """
+        return self.geography_type_manager.get_all_names()
 
 
 LIST_OF_TWO_STRING_TUPLES = List[Tuple[str, str]]
@@ -210,4 +254,69 @@ def get_all_unique_change_percent_type_metric_names() -> LIST_OF_TWO_STRING_TUPL
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
         metrics_interface.get_all_unique_change_percent_type_metric_names()
+    )
+
+
+def get_all_stratums() -> LIST_OF_TWO_STRING_TUPLES:
+    """Callable for the `choices` on the `stratum` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Topic` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of topic names.
+        Examples:
+            [("0_4", "0_4"), ...]
+
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(metrics_interface.get_all_stratum_names())
+
+
+def get_all_geographies() -> LIST_OF_TWO_STRING_TUPLES:
+    """Callable for the `choices` on the `geography` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Topic` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of topic names.
+        Examples:
+            [("England", "England"), ...]
+
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(metrics_interface.get_all_geography_names())
+
+
+def get_all_geography_types() -> LIST_OF_TWO_STRING_TUPLES:
+    """Callable for the `choices` on the `geography_type` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Topic` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of topic names.
+        Examples:
+            [("Nation", "Nation"), ...]
+
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(
+        metrics_interface.get_all_geography_type_names()
     )
