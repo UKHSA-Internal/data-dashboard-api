@@ -31,7 +31,12 @@ class DualHeadlineNumberComponent(blocks.StructBlock):
         icon = "order"
 
 
-class HeadlineNumberTypes(blocks.StreamBlock):
+class HeadlineNumberComponentTypes(blocks.StreamBlock):
     single_headline_component = SingleHeadlineNumberComponent()
     headline_and_trend_component = HeadlineAndTrendNumberComponent()
     dual_headline_component = DualHeadlineNumberComponent()
+
+
+class HeadlineNumberBlockTypes(blocks.StreamBlock):
+    headline_number = HeadlineNumberBlock()
+    trend_number = TrendNumberBlock()
