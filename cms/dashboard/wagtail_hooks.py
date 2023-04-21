@@ -25,6 +25,7 @@ def register_icons(icons: List[str]):
 
     """
     return icons + [
+        "icons/chart_plot.svg",
         "icons/chart_card.svg",
         "icons/standalone_chart.svg",
         "icons/headline_number.svg",
