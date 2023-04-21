@@ -63,8 +63,11 @@ class ChartsInterface:
             A plotly `Figure` object for the created waffle chart
 
         """
-        values = self.core_time_series_manager.get_latest_metric_value()
-        return waffle.generate_chart_figure(values)
+        value = self.core_time_series_manager.get_latest_metric_value(
+            topic=self.topic,
+            metric_name=self.metric,
+        )
+        return waffle.generate_chart_figure([value])
 
     def generate_simple_line_chart(self) -> plotly.graph_objects.Figure:
         """Creates a simple line chart figure for the `metric` instance variable

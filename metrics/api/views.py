@@ -122,11 +122,54 @@ class ChartsView(APIView):
 
     @extend_schema(parameters=[ChartsRequestSerializer])
     def get(self, request, *args, **kwargs):
-        """This endpoint can be used to generate charts conforming to the UK Gov Specification
+        """This endpoint can be used to generate charts conforming to the UK Gov Specification.
+
+        This endpoint requires a set of parameters:
+
+        - `topic` - the name of the disease/threat e.g. `COVID-19`
+
+        - `metric` - the name of the metric e.g. `new_cases_daily
+
+        - `chart_type` - the type of chart to generate e.g. `line_with_shaded_section`
+
+        - `date_from` - the type from which to start the data slice from.
 
         Note that the `date_from` param must be in the format `YYYY-MM-DD`.
 
         E.g. for the 1st of October 2022, the `date_from` value would be `2022-10-01`
+
+        ---
+
+        # Main errors
+
+        There are certain combination of `topic / metric / chart_type` which do not make sense.
+
+        This is primarily because a set of `metric` values are not available for every `topic`.
+
+        As well as this, certain `metric` names reference data of a certain profile.
+
+        For example, we would only expect to create line graphs with timeseries data.
+        But we don't expect to _headline_ type data to be valid for line graphs.
+
+        ---
+
+        ## Incompatible timeseries type metrics with waffle charts
+
+        In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
+        For example, if a timeseries type metric like `new_cases_daily` is being asked for with a `waffle` chart.
+
+        Then an HTTP 400 BAD REQUEST is returned with the following error message:
+            `new_cases_daily` is not compatible with `waffle` chart types
+
+        ---
+
+        ## Selected metric not available for topic
+
+        In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
+        For example, if a metric like `new_cases_daily` (which is only used for `COVID-19`) is being asked for with a topic of `Influenza`.
+
+        Then an HTTP 400 BAD REQUEST is returned with the following error message:
+            `Influenza` does not have a corresponding metric of `COVID-19`
 
         """
         query_serializer = ChartsRequestSerializer(data=request.query_params)
@@ -167,10 +210,16 @@ class HeadlinesView(APIView):
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
 
+        ---
+
+        # Main errors
+
         Note that this endpoint will only return single-headline number type data.
         If the `metric` provided relates to timeseries type data then the request will be deemed invalid.
 
         ---
+
+        ### Timeseries type metrics are invalid
 
         For example, a request for the following would be **invalid**:
 
