@@ -44,6 +44,14 @@ class ChartBlock(blocks.StreamBlock):
         icon = "standalone_chart"
 
 
+class ChartCard(blocks.StructBlock):
+    body = blocks.RichTextBlock(features=AVAILABLE_RICH_TEXT_FEATURES, required=False)
+    chart = ChartBlock()
+
+    class Meta:
+        icon = "standalone_chart"
+
+
 class HeadlineNumberBlock(BaseMetricsBlock):
     body = blocks.RichTextBlock(features=AVAILABLE_RICH_TEXT_FEATURES, required=False)
 

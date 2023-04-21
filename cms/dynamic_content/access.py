@@ -5,7 +5,7 @@ from cms.dynamic_content import blocks, cards
 ALLOWABLE_BODY_CONTENT_BLOCKS = StreamField(
     [
         ("text", blocks.TextBlock()),
-        ("standalone_chart", blocks.ChartBlock()),
+        ("standalone_chart", blocks.ChartCard()),
         ("chart_with_headline_and_trend_card", cards.ChartWithHeadlineAndTrendCard()),
         ("headline_numbers_row_card", cards.HeadlineNumbersRowCard()),
     ],
