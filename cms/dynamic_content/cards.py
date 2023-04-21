@@ -15,9 +15,10 @@ class HeadlineNumbersRowCard(blocks.StructBlock):
 
 
 class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
+    body = blocks.RichTextBlock(features=AVAILABLE_RICH_TEXT_FEATURES)
     chart = ChartBlock()
-    headline_number = HeadlineNumberBlock()
-    trend_number = TrendNumberBlock()
+    headline_number = HeadlineNumberBlock(required=False)
+    trend_number = TrendNumberBlock(required=False)
 
     class Meta:
         icon = "chart_card"
