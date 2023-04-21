@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
+from metrics.api.serializers.charts import ChartsListRequestSerializer
 from metrics.api.serializers.stats import HeadlinesQuerySerializer
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
@@ -118,10 +119,10 @@ class FileUploadView(APIView):
 
 
 class ChartsView(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
-    @extend_schema(parameters=[ChartsRequestSerializer])
-    def get(self, request, *args, **kwargs):
+    @extend_schema(request=ChartsListRequestSerializer)
+    def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
         Note that the `date_from` param must be in the format `YYYY-MM-DD`.
@@ -129,17 +130,15 @@ class ChartsView(APIView):
         E.g. for the 1st of October 2022, the `date_from` value would be `2022-10-01`
 
         """
-        query_serializer = ChartsRequestSerializer(data=request.query_params)
-        query_serializer.is_valid(raise_exception=True)
+        request_serializer = ChartsListRequestSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
 
-        topic = query_serializer.data["topic"]
-        metric = query_serializer.data["metric"]
-        chart_type = query_serializer.data["chart_type"]
-        date_from = query_serializer.data.get("date_from")
+
+        model = request_serializer.to_models()[0]
 
         try:
             filename: str = access.generate_chart(
-                topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+                topic=model.topic, metric=model.metric, chart_type=model.chart_type, date_from=model.date_from
             )
         except data_visualization_superseded.ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
