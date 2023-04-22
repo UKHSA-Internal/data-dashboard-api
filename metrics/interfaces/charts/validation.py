@@ -3,7 +3,7 @@ import datetime
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries, Metric
-from metrics.interfaces.charts import access
+from metrics.domain.utils import ChartTypes
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_METRIC_MANAGER = Metric.objects
@@ -62,7 +62,7 @@ class ChartsRequestValidator:
                 False otherwise
 
         """
-        if self.chart_type == access.ChartTypes.waffle.value:
+        if self.chart_type == ChartTypes.waffle.value:
             return False
         return True
 

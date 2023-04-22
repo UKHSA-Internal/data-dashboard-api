@@ -1,7 +1,6 @@
-from typing import List, Optional
+from typing import List
 
 from django.db.models import Manager
-from pydantic import BaseModel
 from rest_framework import serializers
 
 from metrics.data.models.core_models import (
@@ -11,7 +10,8 @@ from metrics.data.models.core_models import (
     Stratum,
     Topic,
 )
-from metrics.interfaces.charts.access import ChartTypes
+from metrics.domain.models import ChartPlots, ChartsPlotParameters
+from metrics.domain.utils import ChartTypes
 
 FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
 
@@ -26,9 +26,9 @@ If nothing is provided, a default of **1 year ago from the current date** will b
 """
 
 
-class ChartsRequestSerializer(serializers.Serializer):
-    topic = serializers.CharField(required=True)
-    metric = serializers.CharField(required=True)
+class ChartPlotSerializer(serializers.Serializer):
+    topic = serializers.ChoiceField(choices=[], required=True)
+    metric = serializers.ChoiceField(choices=[], required=True)
 
     stratum = serializers.CharField(required=False)
     geography = serializers.CharField(required=False)
@@ -36,12 +36,21 @@ class ChartsRequestSerializer(serializers.Serializer):
 
     chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
     date_from = serializers.DateField(
-        help_text=DATE_FROM_FIELD_HELP_TEXT, required=False
+        help_text=DATE_FROM_FIELD_HELP_TEXT, default="2022-10-01"
     )
+
+    def to_models(self):
+        return ChartsPlotParameters(**self.data)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        try:
+            self.populate_choices()
+        except RuntimeError:
+            pass
+
+    def populate_choices(self):
         self.fields["topic"].choices = self.topic_manager.get_all_names()
         self.fields["metric"].choices = self.metric_manager.get_all_names()
 
@@ -66,22 +75,16 @@ class ChartsRequestSerializer(serializers.Serializer):
         return self.context.get("geography_type_manager", GeographyType.objects)
 
 
-class DataPlotModel(BaseModel):
-    TOPIC: str
-    METRIC: str
-    CHART_TYPE: str
-    DATE_FROM: Optional[str]
-    DATE_TO: Optional[str]
-    STRATUM: Optional[str]
-    GEOGRAPHY: Optional[str]
-    GEOGRAPHY_TYPE: Optional[str]
+class ChartPlotsListSerializer(serializers.ListSerializer):
+    child = ChartPlotSerializer()
 
 
-class ChartsListRequestSerializer(serializers.ListSerializer):
-    child = ChartsRequestSerializer()
+class ChartsSerializer(serializers.Serializer):
+    file_format = serializers.ChoiceField(choices=FILE_FORMAT_CHOICES, default="png")
+    plots = ChartPlotsListSerializer()
 
-    def to_models(self) -> DataPlotModel:
-
-        for child in self.child:
-            print(child)
-
+    def to_models(self) -> ChartPlots:
+        return ChartPlots(
+            plots=self.data["plots"],
+            file_format=self.data["file_format"],
+        )

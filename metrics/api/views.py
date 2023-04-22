@@ -8,9 +8,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
-from metrics.api.serializers.charts import ChartsListRequestSerializer
-from metrics.api.serializers.stats import HeadlinesQuerySerializer
+from metrics.api.serializers import (
+    ChartsQuerySerializer,
+    ChartsSerializer,
+    HeadlinesQuerySerializer,
+)
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 from metrics.interfaces.charts import access, data_visualization_superseded, validation
@@ -121,7 +123,7 @@ class FileUploadView(APIView):
 class ChartsView(APIView):
     permission_classes = []
 
-    @extend_schema(request=ChartsListRequestSerializer)
+    @extend_schema(request=ChartsSerializer)
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
@@ -130,15 +132,15 @@ class ChartsView(APIView):
         E.g. for the 1st of October 2022, the `date_from` value would be `2022-10-01`
 
         """
-        request_serializer = ChartsListRequestSerializer(data=request.data)
+        request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-
-        model = request_serializer.to_models()[0]
+        chart_plot_models = request_serializer.to_models()
 
         try:
             filename: str = access.generate_chart(
-                topic=model.topic, metric=model.metric, chart_type=model.chart_type, date_from=model.date_from
+                chart_plot_model=chart_plot_models.plots[0],
+                file_format=chart_plot_models.file_format,
             )
         except data_visualization_superseded.ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)

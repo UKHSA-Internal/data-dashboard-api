@@ -1,11 +1,8 @@
 import datetime
 from unittest import mock
 
-from metrics.interfaces.charts.access import (
-    ChartsInterface,
-    ChartTypes,
-    make_datetime_from_string,
-)
+from metrics.domain.utils import ChartTypes
+from metrics.interfaces.charts.access import ChartsInterface, make_datetime_from_string
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
