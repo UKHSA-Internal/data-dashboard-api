@@ -34,7 +34,7 @@ class FakeMetricManager(MetricManager):
             if "change" in metric_name
         ]
 
-    def get_all_unique_change_percent_type_names(self) -> List[str]:
+    def get_all_unique_percent_change_type_names(self) -> List[str]:
         unique_metric_change_type_metric_names = self.get_all_unique_change_type_names()
         return [
             metric_name
