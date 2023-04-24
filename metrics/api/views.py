@@ -1,5 +1,6 @@
 import os
 from http import HTTPStatus
+from typing import Dict, Union
 
 from django.http import FileResponse, HttpResponse
 from drf_spectacular.utils import extend_schema
@@ -9,13 +10,21 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
-from metrics.api.serializers.stats import HeadlinesQuerySerializer
+from metrics.api.serializers.stats import (
+    HeadlinesQuerySerializer,
+    TrendsQuerySerializer,
+)
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
+from metrics.domain.trends.state import TREND_AS_DICT
 from metrics.interfaces.charts import access, data_visualization_superseded, validation
 from metrics.interfaces.headlines.access import (
     BaseInvalidHeadlinesRequestError,
     generate_headline_number,
+)
+from metrics.interfaces.trends.access import (
+    TrendNumberDataNotFoundError,
+    generate_trend_numbers,
 )
 
 
@@ -256,3 +265,53 @@ class HeadlinesView(APIView):
             )
 
         return Response({"value": headline_number})
+
+
+class TrendsView(APIView):
+    permission_classes = [HasAPIKey]
+
+    @extend_schema(parameters=[TrendsQuerySerializer])
+    def get(self, request, *args, **kwargs):
+        """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
+
+        ---
+
+        # Main errors
+
+        Note that this endpoint will only key-value pair type data for the trend block.
+        If the provided parameters return data which does not exist then this will be invalid.
+
+        ---
+
+        ## Data could not be found
+
+        For example, a request for the following would be **invalid**:
+
+        - topic = `COVID-19`
+
+        - metric =`weekly_positivity`
+
+        - percentage_metric =`new_deaths_7days_change_percentage`
+
+        This would be **invalid** because the `metric` of `weekly_positivity` `COVID-19` will not return any data.
+
+        """
+        query_serializer = TrendsQuerySerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+
+        topic: str = query_serializer.data["topic"]
+        metric_name: str = query_serializer.data["metric"]
+        percentage_metric_name: str = query_serializer.data["percentage_metric"]
+
+        try:
+            trends_data: TREND_AS_DICT = generate_trend_numbers(
+                topic=topic,
+                metric_name=metric_name,
+                percentage_metric_name=percentage_metric_name,
+            )
+        except TrendNumberDataNotFoundError as error:
+            return Response(
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+            )
+
+        return Response(trends_data)
