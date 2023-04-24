@@ -1,3 +1,6 @@
+from decimal import Decimal
+from typing import Optional
+
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
@@ -23,11 +26,11 @@ class TrendsInterface:
         self.percentage_metric_name = percentage_metric_name
         self.core_time_series_manager = core_time_series_manager
 
-    def get_latest_metric_value(self, metric_to_lookup: str) -> float:
+    def get_latest_metric_value(self, metric_to_lookup: str) -> Decimal:
         """Gets the value for the record associated with the given `metric_to_lookup`
 
         Returns:
-            float: The associated `metric_value`
+            Decimal: The associated `metric_value`
 
         Raises:
             TrendNumberDataNotFoundError:
@@ -35,7 +38,9 @@ class TrendsInterface:
                 `topic` / `metric` / `percentage_metric`.
 
         """
-        latest_metric_value = self.core_time_series_manager.get_latest_metric_value(
+        latest_metric_value: Optional[
+            Decimal
+        ] = self.core_time_series_manager.get_latest_metric_value(
             topic=self.topic_name,
             metric_name=metric_to_lookup,
         )
@@ -60,10 +65,10 @@ class TrendsInterface:
                 `topic` / `metric` / `percentage_metric`.
 
         """
-        metric_value: float = self.get_latest_metric_value(
+        metric_value: Decimal = self.get_latest_metric_value(
             metric_to_lookup=self.metric_name
         )
-        percentage_metric_value: float = self.get_latest_metric_value(
+        percentage_metric_value: Decimal = self.get_latest_metric_value(
             metric_to_lookup=self.percentage_metric_name
         )
 
