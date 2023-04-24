@@ -24,7 +24,7 @@ class ArrowDirection(Enum):
     down = -1
 
 
-TREND_AS_DICT = Dict[str, Union[str, float]]
+TREND_AS_DICT = Dict[str, Union[str, int, float]]
 
 
 class Trend(BaseModel):
@@ -33,7 +33,7 @@ class Trend(BaseModel):
     percentage_metric_name: str
     percentage_metric_value: float
 
-    def dict(self, *args, **kwargs):
+    def dict(self, *args, **kwargs) -> TREND_AS_DICT:
         data = super().dict(*args, **kwargs)
         return self._add_arrow_direction_and_colour(data=data)
 
