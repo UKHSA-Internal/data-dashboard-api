@@ -35,15 +35,7 @@ class Trend(BaseModel):
 
     def dict(self, *args, **kwargs):
         data = super().dict(*args, **kwargs)
-
-        data = self._remove_metric_names(data=data)
         return self._add_arrow_direction_and_colour(data=data)
-
-    @staticmethod
-    def _remove_metric_names(data: TREND_AS_DICT) -> TREND_AS_DICT:
-        data.pop("metric_name")
-        data.pop("percentage_metric_name")
-        return data
 
     def _add_arrow_direction_and_colour(self, data: TREND_AS_DICT) -> TREND_AS_DICT:
         data["direction"] = self.direction

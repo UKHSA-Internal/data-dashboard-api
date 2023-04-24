@@ -31,12 +31,9 @@ class TestTrend:
         trend_data: TREND_AS_DICT = trend.dict()
 
         # Then
-        expected_trend_data = {
-            "metric_value": valid_payload["metric_value"],
-            "percentage_metric_value": valid_payload["percentage_metric_value"],
-            "direction": ArrowDirection.up.name,
-            "colour": Colour.red.name,
-        }
+        expected_trend_data = valid_payload
+        expected_trend_data["direction"] = ArrowDirection.up.name
+        expected_trend_data["colour"] = Colour.red.name
         assert trend_data == expected_trend_data
 
     @pytest.mark.parametrize(
