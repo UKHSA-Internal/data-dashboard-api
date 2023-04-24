@@ -6,7 +6,7 @@ from cms.dynamic_content.blocks import HeadlineNumberBlock, TrendNumberBlock
 
 
 class SingleHeadlineNumberComponent(blocks.StructBlock):
-    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
+    title = blocks.TextBlock(required=True)
     headline_number = HeadlineNumberBlock()
 
     class Meta:
@@ -14,7 +14,7 @@ class SingleHeadlineNumberComponent(blocks.StructBlock):
 
 
 class HeadlineAndTrendNumberComponent(blocks.StructBlock):
-    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
+    title = blocks.TextBlock(required=True)
     headline_number = HeadlineNumberBlock()
     trend_number = TrendNumberBlock()
 
@@ -23,7 +23,7 @@ class HeadlineAndTrendNumberComponent(blocks.StructBlock):
 
 
 class DualHeadlineNumberComponent(blocks.StructBlock):
-    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
+    title = blocks.TextBlock(required=True)
     top_headline_number = HeadlineNumberBlock()
     bottom_headline_number = HeadlineNumberBlock()
 

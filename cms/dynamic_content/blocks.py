@@ -45,7 +45,8 @@ class ChartBlock(blocks.StreamBlock):
 
 
 class ChartCard(blocks.StructBlock):
-    body = blocks.RichTextBlock(features=AVAILABLE_RICH_TEXT_FEATURES, required=False)
+    title = blocks.TextBlock(required=True)
+    body = blocks.TextBlock(required=False)
     chart = ChartBlock()
 
     class Meta:
@@ -53,14 +54,14 @@ class ChartCard(blocks.StructBlock):
 
 
 class HeadlineNumberBlock(BaseMetricsBlock):
-    body = blocks.RichTextBlock(features=AVAILABLE_RICH_TEXT_FEATURES, required=False)
+    body = blocks.TextBlock(required=False)
 
     class Meta:
         icon = "bold"
 
 
 class TrendNumberBlock(BaseMetricsBlock):
-    body = blocks.RichTextBlock(features=AVAILABLE_RICH_TEXT_FEATURES, required=False)
+    body = blocks.TextBlock(required=False)
     metric = blocks.ChoiceBlock(
         required=True, choices=get_all_unique_change_type_metric_names
     )
