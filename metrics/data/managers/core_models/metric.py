@@ -32,6 +32,7 @@ class MetricQuerySet(models.QuerySet):
 
     def get_all_unique_names(self) -> models.QuerySet:
         """Gets all unique metric names as a flat list queryset.
+
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
@@ -41,6 +42,7 @@ class MetricQuerySet(models.QuerySet):
 
     def get_all_unique_change_type_names(self) -> models.QuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change`
+
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
@@ -49,7 +51,8 @@ class MetricQuerySet(models.QuerySet):
         return self.get_all_unique_names().filter(name__contains="change")
 
     def get_all_unique_percent_change_type_names(self) -> models.QuerySet:
-        """Gets all unique metric names as a flat list queryset, which contain the words `change` and `percent`
+        """Gets all unique metric names as a flat list queryset, which contain the words `percent`
+
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
@@ -88,6 +91,7 @@ class MetricManager(models.Manager):
 
     def get_all_unique_names(self) -> MetricQuerySet:
         """Gets all unique metric names as a flat list queryset.
+
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
@@ -97,6 +101,7 @@ class MetricManager(models.Manager):
 
     def get_all_unique_change_type_names(self) -> MetricQuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change`
+
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
@@ -104,11 +109,12 @@ class MetricManager(models.Manager):
         """
         return self.get_queryset().get_all_unique_change_type_names()
 
-    def get_all_unique_change_percent_type_names(self) -> MetricQuerySet:
-        """Gets all unique metric names as a flat list queryset, which contain the word `change`
+    def get_all_unique_percent_change_type_names(self) -> MetricQuerySet:
+        """Gets all unique metric names as a flat list queryset, which contain the word `percent`
+
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
                     `<MetricQuerySet ['new_cases_7days_change_percentage', 'new_deaths_7days_change_percentage']>`
         """
-        return self.get_queryset().get_all_unique_change_type_names()
+        return self.get_queryset().get_all_unique_percent_change_type_names()

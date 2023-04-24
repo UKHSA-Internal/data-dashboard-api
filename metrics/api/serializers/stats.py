@@ -47,7 +47,7 @@ class TrendsQuerySerializer(serializers.Serializer):
         ].choices = self.metric_manager.get_all_unique_change_type_names()
         self.fields[
             "percentage_metric"
-        ].choices = self.metric_manager.get_all_unique_change_percent_type_names()
+        ].choices = self.metric_manager.get_all_unique_percent_change_type_names()
 
     @property
     def topic_manager(self) -> Manager:
