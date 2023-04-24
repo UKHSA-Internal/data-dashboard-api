@@ -9,15 +9,7 @@ from metrics.domain.charts.line_with_shaded_section.information import (
 
 
 class Colour(Enum):
-    """The colour that the front-end should paint the box.
-        The colour indicates whether the metric is improving or worsening
-
-    Red: Getting worse
-    Green: Improving
-    Neutral: No change
-
-    The direction (-1, 0, 1) is determined by get_metric_state
-    """
+    """The colour of the associated trend block"""
 
     green = 1
     neutral = 0
@@ -25,11 +17,7 @@ class Colour(Enum):
 
 
 class ArrowDirection(Enum):
-    """The arrow direction that the front-end should display.
-        Direction indicates whether the metric has gone up or down
-
-    The direction (-1, 0, 1) is determined by get_arrow_direction
-    """
+    """The direction of the associated trend arrow"""
 
     up = 1
     neutral = 0
