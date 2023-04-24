@@ -1,8 +1,11 @@
 from enum import Enum
+from typing import Dict, Union
 
 from pydantic.main import BaseModel
 
-from metrics.domain.charts.line_with_shaded_section.information import is_metric_improving
+from metrics.domain.charts.line_with_shaded_section.information import (
+    is_metric_improving,
+)
 
 
 class Colour(Enum):
@@ -16,9 +19,9 @@ class Colour(Enum):
     The direction (-1, 0, 1) is determined by get_metric_state
     """
 
-    red = -1
-    neutral = 0
     green = 1
+    neutral = 0
+    red = -1
 
 
 class ArrowDirection(Enum):
@@ -28,31 +31,51 @@ class ArrowDirection(Enum):
     The direction (-1, 0, 1) is determined by get_arrow_direction
     """
 
-    down = -1
-    neutral = 0
     up = 1
+    neutral = 0
+    down = -1
+
+
+TREND_AS_DICT = Dict[str, Union[str, float]]
 
 
 class Trend(BaseModel):
     metric_name: str
-    metric_value: float
+    metric_value: Union[int, float]
     percentage_metric_name: str
     percentage_metric_value: float
 
+    def dict(self, *args, **kwargs):
+        data = super().dict(*args, **kwargs)
+
+        data = self._remove_metric_names(data=data)
+        return self._add_arrow_direction_and_colour(data=data)
+
+    @staticmethod
+    def _remove_metric_names(data: TREND_AS_DICT) -> TREND_AS_DICT:
+        data.pop("metric_name")
+        data.pop("percentage_metric_name")
+        return data
+
+    def _add_arrow_direction_and_colour(self, data: TREND_AS_DICT) -> TREND_AS_DICT:
+        data["direction"] = self.direction
+        data["colour"] = self.colour
+        return data
+
     @property
-    def direction(self) -> ArrowDirection:
+    def direction(self) -> str:
         if self.metric_value > 0:
-            return ArrowDirection.up
+            return ArrowDirection.up.name
 
         if self.metric_value == 0:
-            return ArrowDirection.neutral
+            return ArrowDirection.neutral.name
 
-        return ArrowDirection.down
+        return ArrowDirection.down.name
 
     @property
-    def colour(self) -> Colour:
-        if self.metric_value:
-            return Colour.neutral
+    def colour(self) -> str:
+        if self.metric_value == 0:
+            return Colour.neutral.name
 
         metric_is_improving = is_metric_improving(
             change_in_metric_value=self.metric_value,
@@ -60,24 +83,6 @@ class Trend(BaseModel):
         )
 
         if metric_is_improving:
-            return Colour.green
+            return Colour.green.name
 
-        return Colour.red
-
-
-def get_metric_state(change_in_metric_value: float, metric_name: str) -> int:
-    """Returns metric state.
-    1 = positive change
-    0 = no change
-    -1 = negative change
-    """
-    if change_in_metric_value == 0:
-        return 0
-
-    return (
-        1
-        if is_metric_improving(
-            change_in_metric_value=change_in_metric_value, metric_name=metric_name
-        )
-        else -1
-    )
+        return Colour.red.name
