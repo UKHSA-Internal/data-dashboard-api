@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
-      - uses: ukhsa-internal/gh-action-pip-audit
+      - uses: ukhsa-internal/gh-action-pip-audit@main
         with:
           inputs: requirements.txt
 
