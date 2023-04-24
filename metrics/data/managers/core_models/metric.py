@@ -58,7 +58,7 @@ class MetricQuerySet(models.QuerySet):
                 Examples:
                     `<MetricQuerySet ['new_cases_7days_change_percentage', 'weekly_percent_change_positivity']>`
         """
-        return self.get_all_unique_names().filter(name__contains="change")
+        return self.get_all_unique_names().filter(name__contains="percent")
 
 
 class MetricManager(models.Manager):
