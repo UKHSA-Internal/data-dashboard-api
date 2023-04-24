@@ -61,3 +61,43 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
                 time_series_range.append(new_time_series)
 
         return time_series_range
+
+    @classmethod
+    def _pick_random_percentage_value(cls) -> float:
+        return random.choice(range(-100_00, 100_00, 1)) / 100
+
+    @classmethod
+    def build_example_trend_type_records(
+        cls, metric_name: str, percentage_metric_name: str
+    ) -> List[FakeCoreTimeSeries]:
+        time_series_records = []
+
+        metric: FakeMetric = cls._build_example_metric(metric_name=metric_name)
+        metric_value = random.choice(range(100, 20100, 100))
+
+        percentage_metric: FakeMetric = cls._build_example_metric(
+            metric_name=percentage_metric_name
+        )
+        percentage_metric_value: float = cls._pick_random_percentage_value()
+
+        metric_time_series = cls.build(
+            period="D",
+            sex="ALL",
+            year=2023,
+            dt=datetime.date(year=2023, month=1, day=1),
+            metric_value=metric_value,
+            metric=metric,
+        )
+        time_series_records.append(metric_time_series)
+
+        metric_time_series = cls.build(
+            period="D",
+            sex="ALL",
+            year=2023,
+            dt=datetime.date(year=2023, month=1, day=1),
+            metric_value=percentage_metric_value,
+            metric=percentage_metric,
+        )
+        time_series_records.append(metric_time_series)
+
+        return time_series_records
