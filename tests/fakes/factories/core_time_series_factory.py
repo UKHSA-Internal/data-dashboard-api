@@ -1,8 +1,8 @@
 import datetime
+import secrets
 from typing import List
 
 import factory
-import secrets
 
 from tests.fakes.models.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.metric import FakeMetric
