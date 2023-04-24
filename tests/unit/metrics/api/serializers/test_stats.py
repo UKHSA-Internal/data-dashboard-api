@@ -258,7 +258,7 @@ class TestTrendsQuerySerializer:
         """
         Given a valid payload passed to a `TrendsQuerySerializer` object
         When the serializer is initialized
-        Then the result of `get_all_unique_change_percent_type_names()` from the `MetricManager`
+        Then the result of `get_all_unique_percent_change_type_names()` from the `MetricManager`
             is used to populate the correct field choices
         """
         # Given
