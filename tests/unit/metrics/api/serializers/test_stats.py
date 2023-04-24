@@ -280,7 +280,7 @@ class TestTrendsQuerySerializer:
         # Then
         expected_metric_names: List[
             str
-        ] = metric_manager.get_all_unique_change_percent_type_names()
+        ] = metric_manager.get_all_unique_percent_change_type_names()
         assert (
             list(serializer.fields["percentage_metric"].choices)
             == expected_metric_names
