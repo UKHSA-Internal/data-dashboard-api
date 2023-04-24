@@ -1,8 +1,8 @@
 import datetime
-import random
 from typing import List
 
 import factory
+import secrets
 
 from tests.fakes.models.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.metric import FakeMetric
@@ -48,7 +48,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
 
         for month_number in range(4, 10, 1):
             for day_number in (3, 16, 28):
-                metric_value = random.choice(range(100, 20100, 100))
+                metric_value = cls._pick_random_positive_metric_value()
 
                 new_time_series = cls.build(
                     period="D",
@@ -64,7 +64,12 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
 
     @classmethod
     def _pick_random_percentage_value(cls) -> float:
-        return random.choice(range(-100_00, 100_00, 1)) / 100
+        random_integer = secrets.choice(range(-100_000, 100_000))
+        return random_integer / 100
+
+    @classmethod
+    def _pick_random_positive_metric_value(cls) -> int:
+        return secrets.randbelow(100)
 
     @classmethod
     def build_example_trend_type_records(
@@ -73,7 +78,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         time_series_records = []
 
         metric: FakeMetric = cls._build_example_metric(metric_name=metric_name)
-        metric_value = random.choice(range(100, 20100, 100))
+        metric_value: int = cls._pick_random_positive_metric_value()
 
         percentage_metric: FakeMetric = cls._build_example_metric(
             metric_name=percentage_metric_name
