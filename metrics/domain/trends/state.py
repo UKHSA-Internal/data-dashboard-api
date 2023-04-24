@@ -52,6 +52,14 @@ class Trend(BaseModel):
 
     @property
     def direction(self) -> str:
+        """Returns the direction in which the trend arrow should be pointed towards.
+
+        Returns:
+            str: The name of the direction.
+                Can be either "up", "neutral" or "down"
+                depending on the `metric_value`
+
+        """
         if self.metric_value > 0:
             return ArrowDirection.up.name
 
@@ -62,6 +70,14 @@ class Trend(BaseModel):
 
     @property
     def colour(self) -> str:
+        """Returns the colour for which the trend should be considered.
+
+        Returns:
+            str: The name of the colour.
+                Can be either "green", "neutral" or "red"
+                depending on the `metric_value`
+
+        """
         if self.metric_value == 0:
             return Colour.neutral.name
 
