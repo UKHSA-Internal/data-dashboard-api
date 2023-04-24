@@ -5,10 +5,10 @@ description: 'Read / write install cache'
 runs:
   using: 'composite'
   steps:
-    - uses: ukhsa-internal/restore-virtualenv@main
+    - uses: ukhsa-internal/restore-virtualenv@v1
       id: cache-virtualenv
 
-    - uses: ukhsa-internal/restore-pip-download-cache@main
+    - uses: ukhsa-internal/restore-pip-download-cache@v1
       if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
     - name: Install dependencies
