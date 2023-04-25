@@ -285,12 +285,23 @@ class TestTrendsView:
         metric_value = 123
         percentage_metric_name = "new_deaths_7days_change_percentage"
         percentage_metric_value = 1.3
+
+        # Create the records for the data which is expected to be returned
         self._setup_core_time_series(
             topic_name=topic_name,
             metric_name=metric_name,
             metric_value=metric_value,
             percentage_metric_name=percentage_metric_name,
             percentage_metric_value=percentage_metric_value,
+        )
+
+        # Create records for data which should be filtered out and not returned
+        self._setup_core_time_series(
+            topic_name="Influenza",
+            metric_name="weekly_positivity_change",
+            metric_value=200,
+            percentage_metric_name="weekly_percent_change_positivity",
+            percentage_metric_value=3.22,
         )
 
         # When
