@@ -4,13 +4,7 @@ from django.db.models import Manager
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
-from metrics.data.models.core_models import (
-    Geography,
-    GeographyType,
-    Metric,
-    Stratum,
-    Topic,
-)
+from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.models import ChartPlots, ChartsPlotParameters
 from metrics.domain.utils import ChartTypes
 
