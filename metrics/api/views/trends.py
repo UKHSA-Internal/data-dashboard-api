@@ -18,7 +18,7 @@ class TrendsView(APIView):
 
     @extend_schema(
         parameters=[TrendsQuerySerializer],
-        responses={HTTPStatus.OK: TrendsResponseSerializer},
+        responses={HTTPStatus.OK.value: TrendsResponseSerializer},
     )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.

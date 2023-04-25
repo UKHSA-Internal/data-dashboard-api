@@ -41,10 +41,10 @@ class TrendsQuerySerializer(serializers.Serializer):
 
 
 class TrendsResponseSerializer(serializers.Serializer):
-    metric = serializers.CharField(help_text=help_texts.TREND_METRIC_NAME_FIELD)
+    metric_name = serializers.CharField(help_text=help_texts.TREND_METRIC_NAME_FIELD)
     metric_value = serializers.FloatField(help_text=help_texts.TREND_METRIC_VALUE_FIELD)
 
-    percentage_metric = serializers.CharField(
+    percentage_metric_name = serializers.CharField(
         help_text=help_texts.TREND_PERCENTAGE_METRIC_NAME_FIELD
     )
     percentage_metric_value = serializers.FloatField(
