@@ -1,5 +1,6 @@
 import os
 from http import HTTPStatus
+from typing import Dict, Union
 
 from django.http import FileResponse, HttpResponse
 from drf_spectacular.utils import extend_schema
@@ -9,13 +10,22 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
-from metrics.api.serializers.stats import HeadlinesQuerySerializer
+from metrics.api.serializers.stats import (
+    HeadlinesQuerySerializer,
+    TrendsQuerySerializer,
+    TrendsResponseSerializer,
+)
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
+from metrics.domain.trends.state import TREND_AS_DICT
 from metrics.interfaces.charts import access, data_visualization_superseded, validation
 from metrics.interfaces.headlines.access import (
     BaseInvalidHeadlinesRequestError,
     generate_headline_number,
+)
+from metrics.interfaces.trends.access import (
+    TrendNumberDataNotFoundError,
+    generate_trend_numbers,
 )
 
 
@@ -27,10 +37,19 @@ class HealthView(APIView):
         return HttpResponse(HTTPStatus.OK.value)
 
 
+DEPRECATION_DATE_CHARTS_ENDPOINT = "Wed, 19 Apr 2023 23:59:59 GMT"
+DEPRECATION_MESSAGE_CHARTS = f"This endpoint has been deprecated. This functionality can now be found within the `/charts/v2/` endpoint. Deprecation date: {DEPRECATION_DATE_CHARTS_ENDPOINT}"
+
+DEPRECATION_HEADERS_CHARTS = {
+    "Deprecation": DEPRECATION_DATE_CHARTS_ENDPOINT,
+    "Message": DEPRECATION_MESSAGE_CHARTS,
+}
+
+
 class ChartView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(parameters=[ChartsQuerySerializer])
+    @extend_schema(parameters=[ChartsQuerySerializer], deprecated=True)
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification
 
@@ -68,14 +87,17 @@ class ChartView(APIView):
                 topic=topic, category=category, file_format=file_format
             )
         except data_visualization_superseded.ChartNotSupportedError:
-            return Response(status=HTTPStatus.NOT_FOUND)
+            return Response(
+                status=HTTPStatus.NOT_FOUND,
+                headers=DEPRECATION_HEADERS_CHARTS,
+            )
 
         return self._return_image(filename=filename)
 
     @staticmethod
     def _return_image(filename: str) -> FileResponse:
         image = open(filename, "rb")
-        response = FileResponse(image)
+        response = FileResponse(image, headers=DEPRECATION_HEADERS_CHARTS)
 
         os.remove(filename)
 
@@ -110,11 +132,54 @@ class ChartsView(APIView):
 
     @extend_schema(parameters=[ChartsRequestSerializer])
     def get(self, request, *args, **kwargs):
-        """This endpoint can be used to generate charts conforming to the UK Gov Specification
+        """This endpoint can be used to generate charts conforming to the UK Gov Specification.
+
+        This endpoint requires a set of parameters:
+
+        - `topic` - the name of the disease/threat e.g. `COVID-19`
+
+        - `metric` - the name of the metric e.g. `new_cases_daily
+
+        - `chart_type` - the type of chart to generate e.g. `line_with_shaded_section`
+
+        - `date_from` - the type from which to start the data slice from.
 
         Note that the `date_from` param must be in the format `YYYY-MM-DD`.
 
         E.g. for the 1st of October 2022, the `date_from` value would be `2022-10-01`
+
+        ---
+
+        # Main errors
+
+        There are certain combination of `topic / metric / chart_type` which do not make sense.
+
+        This is primarily because a set of `metric` values are not available for every `topic`.
+
+        As well as this, certain `metric` names reference data of a certain profile.
+
+        For example, we would only expect to create line graphs with timeseries data.
+        But we don't expect to _headline_ type data to be valid for line graphs.
+
+        ---
+
+        ## Incompatible timeseries type metrics with waffle charts
+
+        In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
+        For example, if a timeseries type metric like `new_cases_daily` is being asked for with a `waffle` chart.
+
+        Then an HTTP 400 BAD REQUEST is returned with the following error message:
+            `new_cases_daily` is not compatible with `waffle` chart types
+
+        ---
+
+        ## Selected metric not available for topic
+
+        In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
+        For example, if a metric like `new_cases_daily` (which is only used for `COVID-19`) is being asked for with a topic of `Influenza`.
+
+        Then an HTTP 400 BAD REQUEST is returned with the following error message:
+            `Influenza` does not have a corresponding metric of `COVID-19`
 
         """
         query_serializer = ChartsRequestSerializer(data=request.query_params)
@@ -155,10 +220,16 @@ class HeadlinesView(APIView):
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
 
+        ---
+
+        # Main errors
+
         Note that this endpoint will only return single-headline number type data.
         If the `metric` provided relates to timeseries type data then the request will be deemed invalid.
 
         ---
+
+        ### Timeseries type metrics are invalid
 
         For example, a request for the following would be **invalid**:
 
@@ -195,3 +266,63 @@ class HeadlinesView(APIView):
             )
 
         return Response({"value": headline_number})
+
+
+class TrendsView(APIView):
+    permission_classes = [HasAPIKey]
+
+    @extend_schema(
+        parameters=[TrendsQuerySerializer],
+        responses={HTTPStatus.OK: TrendsResponseSerializer},
+    )
+    def get(self, request, *args, **kwargs):
+        """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
+
+        The response will include data to indicate whether the change should be considered positive.
+
+        Primarily, this is because an increase in metric value requires additional context whether it should be considered positive.
+
+        For example, an increase in cases would be considered negative.
+        But an increase in vaccinations would be considered positive.
+
+        ---
+
+        # Main errors
+
+        Note that this endpoint will only key-value pair type data for the trend block.
+        If the provided parameters return data which does not exist then this will be invalid.
+
+        ---
+
+        ## Data could not be found
+
+        For example, a request for the following would be **invalid**:
+
+        - topic = `COVID-19`
+
+        - metric =`weekly_positivity`
+
+        - percentage_metric =`new_deaths_7days_change_percentage`
+
+        This would be **invalid** because the `metric` of `weekly_positivity` `COVID-19` will not return any data.
+
+        """
+        query_serializer = TrendsQuerySerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+
+        topic: str = query_serializer.data["topic"]
+        metric_name: str = query_serializer.data["metric"]
+        percentage_metric_name: str = query_serializer.data["percentage_metric"]
+
+        try:
+            trends_data: TREND_AS_DICT = generate_trend_numbers(
+                topic=topic,
+                metric_name=metric_name,
+                percentage_metric_name=percentage_metric_name,
+            )
+        except TrendNumberDataNotFoundError as error:
+            return Response(
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+            )
+
+        return Response(trends_data)

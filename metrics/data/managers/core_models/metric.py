@@ -37,7 +37,6 @@ class MetricQuerySet(models.QuerySet):
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
                     `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
-
         """
         return self.all().values_list("name", flat=True).distinct()
 
@@ -48,12 +47,11 @@ class MetricQuerySet(models.QuerySet):
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
                     `<MetricQuerySet ['new_cases_7days_change', 'new_deaths_7days_change']>`
-
         """
         return self.get_all_unique_names().filter(name__contains="change")
 
     def get_all_unique_percent_change_type_names(self) -> models.QuerySet:
-        """Gets all unique metric names as a flat list queryset, which contain the words `change` and `percent`
+        """Gets all unique metric names as a flat list queryset, which contain the word `percent`
 
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
@@ -61,7 +59,7 @@ class MetricQuerySet(models.QuerySet):
                     `<MetricQuerySet ['new_cases_7days_change_percentage', 'weekly_percent_change_positivity']>`
 
         """
-        return self.get_all_unique_names().filter(name__contains="change")
+        return self.get_all_unique_names().filter(name__contains="percent")
 
 
 class MetricManager(models.Manager):
@@ -92,7 +90,7 @@ class MetricManager(models.Manager):
             metric_name=metric_name, topic_name=topic_name
         )
 
-    def get_all_unique_names(self) -> models.QuerySet:
+    def get_all_unique_names(self) -> MetricQuerySet:
         """Gets all unique metric names as a flat list queryset.
 
         Returns:
@@ -103,7 +101,8 @@ class MetricManager(models.Manager):
         """
         return self.get_queryset().get_all_unique_names()
 
-    def get_all_unique_change_type_names(self) -> models.QuerySet:
+
+    def get_all_unique_change_type_names(self) -> MetricQuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change`
 
         Returns:
@@ -114,8 +113,9 @@ class MetricManager(models.Manager):
         """
         return self.get_queryset().get_all_unique_change_type_names()
 
-    def get_all_unique_change_percent_type_names(self) -> models.QuerySet:
-        """Gets all unique metric names as a flat list queryset, which contain the word `change`
+
+    def get_all_unique_percent_change_type_names(self) -> MetricQuerySet:
+        """Gets all unique metric names as a flat list queryset, which contain the word `percent`
 
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
@@ -123,4 +123,4 @@ class MetricManager(models.Manager):
                     `<MetricQuerySet ['new_cases_7days_change_percentage', 'new_deaths_7days_change_percentage']>`
 
         """
-        return self.get_queryset().get_all_unique_change_type_names()
+        return self.get_queryset().get_all_unique_percent_change_type_names()

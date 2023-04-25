@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, response, viewsets
 from rest_framework_api_key.permissions import HasAPIKey
 
@@ -41,6 +42,15 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [HasAPIKey]
 
 
+DEPRECATION_DATE_STATS_ENDPOINT = "Wed, 19 Apr 2023 23:59:59 GMT"
+DEPRECATION_MESSAGE_STATS = f"This endpoint has been deprecated. This functionality can now be found within the `/headlines/v2/` and `/trends/v2/ endpoints. Deprecation date: {DEPRECATION_DATE_STATS_ENDPOINT}"
+
+DEPRECATION_HEADERS_STATS = {
+    "Deprecation": DEPRECATION_DATE_STATS_ENDPOINT,
+    "Message": DEPRECATION_MESSAGE_STATS,
+}
+
+
 class DashboardViewSet(viewsets.GenericViewSet):
     """
     This endpoint can be used to retrieve headline statistics associated with a given topic
@@ -66,6 +76,7 @@ class DashboardViewSet(viewsets.GenericViewSet):
     serializer_class = DashboardSerializer
     lookup_field = "topic"
 
+    @extend_schema(deprecated=True)
     def retrieve(self, request, *args, **kwargs):
         data = self.get_queryset()
-        return response.Response(data)
+        return response.Response(data, headers=DEPRECATION_HEADERS_STATS)
