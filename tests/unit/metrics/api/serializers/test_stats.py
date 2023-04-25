@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 from metrics.api.serializers.stats import (
     HeadlinesQuerySerializer,
     TrendsQuerySerializer,
+    TrendsResponseSerializer,
 )
 from tests.fakes.factories.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -311,3 +312,29 @@ class TestTrendsQuerySerializer:
         # Then
         expected_topic_names: List[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names
+
+
+class TestTrendsResponseSerializer:
+    def test_can_validate_successfully(self):
+        """
+        Given a valid payload containing the correct associated trends fields
+        When `is_valid()` is called from an instance of the `TrendsResponseSerializer`
+        Then True is returned
+        """
+        # Given
+        payload = {
+            "metric": "new_cases_7days_change",
+            "metric_value": 10,
+            "percentage_metric": "new_cases_7days_change_percentage",
+            "percentage_metric_value": 3.2,
+            "direction": "up",
+            "colour": "red",
+        }
+
+        serializer = TrendsResponseSerializer(data=payload)
+
+        # When
+        validated: bool = serializer.is_valid()
+
+        # Then
+        assert validated

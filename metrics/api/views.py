@@ -13,6 +13,7 @@ from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializ
 from metrics.api.serializers.stats import (
     HeadlinesQuerySerializer,
     TrendsQuerySerializer,
+    TrendsResponseSerializer,
 )
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
@@ -270,7 +271,10 @@ class HeadlinesView(APIView):
 class TrendsView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(parameters=[TrendsQuerySerializer])
+    @extend_schema(
+        parameters=[TrendsQuerySerializer],
+        responses={HTTPStatus.OK: TrendsResponseSerializer},
+    )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
 
