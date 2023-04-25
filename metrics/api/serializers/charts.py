@@ -84,18 +84,6 @@ class ChartPlotSerializer(serializers.Serializer):
     def metric_manager(self) -> Manager:
         return self.context.get("metric_manager", Metric.objects)
 
-    @property
-    def stratum_manager(self) -> Manager:
-        return self.context.get("stratum_manager", Stratum.objects)
-
-    @property
-    def geography_manager(self) -> Manager:
-        return self.context.get("geography_manager", Geography.objects)
-
-    @property
-    def geography_type_manager(self) -> Manager:
-        return self.context.get("geography_type_manager", GeographyType.objects)
-
 
 class ChartPlotsListSerializer(serializers.ListSerializer):
     child = ChartPlotSerializer()
