@@ -299,9 +299,9 @@ class TestTrendsView:
         self._setup_core_time_series(
             topic_name="Influenza",
             metric_name="weekly_positivity_change",
-            metric_value=200,
+            metric_value=-100,
             percentage_metric_name="weekly_percent_change_positivity",
-            percentage_metric_value=3.22,
+            percentage_metric_value=-3.22,
         )
 
         # When
