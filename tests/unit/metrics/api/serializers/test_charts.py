@@ -5,7 +5,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers import ChartsQuerySerializer
-from metrics.api.serializers.charts import ChartPlotSerializer
+from metrics.api.serializers.charts import ChartPlotSerializer, ChartsSerializer
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -188,3 +188,44 @@ class TestChartPlotSerializer:
         # Then
         expected_topic_names: List[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names
+
+
+class TestChartsSerializer:
+    @pytest.mark.parametrize("valid_file_format", ["svg", "png", "jpg", "jpeg"])
+    def test_valid_file_format(
+        self,
+        valid_file_format: str,
+    ):
+        """
+        Given a valid file format passed to a `ChartsSerializer` object
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        valid_data_payload = {"file_format": valid_file_format, "plots": []}
+
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
+    def test_invalid_file_format(self):
+        """
+        Given an invalid file format passed to a `ChartsSerializer` object
+        When `is_valid(raise_exception=True)` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        invalid_data_payload = {
+            "file_format": "invalid.file.format",
+            "plots": [],
+        }
+
+        serializer = ChartsSerializer(data=invalid_data_payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
