@@ -195,9 +195,9 @@ class TestTrendsResponseSerializer:
         """
         # Given
         payload = {
-            "metric": "new_cases_7days_change",
+            "metric_name": "new_cases_7days_change",
             "metric_value": 10,
-            "percentage_metric": "new_cases_7days_change_percentage",
+            "percentage_metric_name": "new_cases_7days_change_percentage",
             "percentage_metric_value": 3.2,
             "direction": "up",
             "colour": "red",
