@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from metrics.data import enums
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
@@ -41,3 +42,15 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             if x.dt >= date_from
         ]
         return len(filtered_for_metric_topic_and_date)
+
+    def get_latest_metric_value(self, topic: str, metric_name: str) -> Optional[float]:
+        try:
+            core_time_series = next(
+                core_time_series
+                for core_time_series in self.time_series
+                if core_time_series.metric.topic.name == topic
+                if core_time_series.metric.name == metric_name
+            )
+        except StopIteration:
+            return None
+        return core_time_series.metric_value

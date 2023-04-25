@@ -36,7 +36,9 @@ class ChartPlotSerializer(serializers.Serializer):
 
     chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
     date_from = serializers.DateField(
-        help_text=DATE_FROM_FIELD_HELP_TEXT, required=False, default="",
+        help_text=DATE_FROM_FIELD_HELP_TEXT,
+        required=False,
+        default="",
     )
 
     def to_models(self):
