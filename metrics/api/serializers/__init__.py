@@ -1,3 +1,8 @@
-from .charts import ChartsQuerySerializer, ChartsRequestSerializer
-from .stats import DashboardSerializer
+from .charts import ChartsQuerySerializer, ChartsSerializer
+from .stats import (
+    DashboardSerializer,
+    HeadlinesQuerySerializer,
+    TrendsQuerySerializer,
+    TrendsResponseSerializer,
+)
 from .timeseries import APITimeSeriesSerializer
