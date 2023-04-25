@@ -128,7 +128,7 @@ class FileUploadView(APIView):
 
 
 class ChartsView(APIView):
-    permission_classes = []
+    permission_classes = [HasAPIKey]
 
     @extend_schema(request=ChartsSerializer)
     def post(self, request, *args, **kwargs):
