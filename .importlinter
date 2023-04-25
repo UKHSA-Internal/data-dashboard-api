@@ -42,6 +42,18 @@ forbidden_modules=
     metrics.interfaces
     cms
 
+[importlinter:contract:Metrics isolated trends library]
+name = Metrics trends library does not depend on the rest of the codebase
+type = forbidden
+source_modules=
+    metrics.domain.trends
+forbidden_modules=
+    metrics.api
+    metrics.data
+    metrics.interfaces
+    cms
+
+
 [importlinter:contract:Source code | test code]
 name = Source code does not depend on test code
 type = forbidden
