@@ -25,3 +25,19 @@ class FakeMetricManager(MetricManager):
         ]
 
         return bool(filtered_by_topic)
+
+    def get_all_unique_change_type_names(self) -> List[str]:
+        unique_metric_names = set(metric.name for metric in self.metrics)
+        return [
+            metric_name
+            for metric_name in unique_metric_names
+            if "change" in metric_name
+        ]
+
+    def get_all_unique_percent_change_type_names(self) -> List[str]:
+        unique_metric_change_type_metric_names = self.get_all_unique_change_type_names()
+        return [
+            metric_name
+            for metric_name in unique_metric_change_type_metric_names
+            if "percent" in metric_name
+        ]

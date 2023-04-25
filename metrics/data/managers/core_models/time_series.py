@@ -6,7 +6,7 @@ The application should not interact directly with the `QuerySet` class.
 """
 import datetime
 from decimal import Decimal
-from typing import Union
+from typing import Optional
 
 from django.db import models
 
@@ -161,7 +161,7 @@ class CoreTimeSeriesManager(models.Manager):
 
     def get_latest_metric_value(
         self, topic: str, metric_name: str
-    ) -> Union[int, float]:
+    ) -> Optional[Decimal]:
         """Grabs by the latest record by the given `topic` and `metric`.
 
         Args:
@@ -171,8 +171,8 @@ class CoreTimeSeriesManager(models.Manager):
                 E.g. `new_cases_daily
 
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the individual metric_value numbers only:
+            Optional[Decimal]: The individual metric_value number only.
+                Otherwise, None is returned if no record could be found
                 Examples:
                     `0.8`
 
