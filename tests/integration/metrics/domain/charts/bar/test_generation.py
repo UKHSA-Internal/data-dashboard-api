@@ -2,7 +2,6 @@ import datetime
 from typing import List
 
 import plotly.graph_objects
-import pytest
 
 from metrics.domain.charts.bar.colour_scheme import RGBAColours
 from metrics.domain.charts.bar.generation import generate_chart_figure

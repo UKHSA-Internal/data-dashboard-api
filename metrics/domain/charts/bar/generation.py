@@ -1,33 +1,11 @@
 from datetime import datetime
-from typing import Dict, List, Union
+from typing import List, Union
 
 import plotly.graph_objects
 
-from metrics.domain.charts.bar import colour_scheme
+from metrics.domain.charts.bar import colour_scheme, type_hints
 
-AXIS_ARGS = Dict[
-    str,
-    Union[
-        bool,
-        str,
-        Dict[str, Union[str, int, colour_scheme.RGBAColours]],
-    ],
-]
-
-LAYOUT_ARGS = Dict[
-    str,
-    Union[
-        colour_scheme.RGBAColours,
-        Dict[str, int],
-        bool,
-        Dict[str, Union[str, float, int]],
-        str,
-        int,
-        AXIS_ARGS,
-    ],
-]
-
-X_AXIS_ARGS: AXIS_ARGS = {
+X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showgrid": False,
     "zeroline": False,
     "showline": False,
@@ -43,12 +21,12 @@ X_AXIS_ARGS: AXIS_ARGS = {
     },
 }
 
-Y_AXIS_ARGS: AXIS_ARGS = {
+Y_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showgrid": False,
     "showticklabels": False,
 }
 
-TIMESERIES_LAYOUT_ARGS: LAYOUT_ARGS = {
+BAR_CHART_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
     "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
     "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
     "margin": {
@@ -75,7 +53,7 @@ def generate_chart_figure(
     dates: List[datetime],
     values: List[Union[int, float]],
     legend: str,
-    bar_colour=colour_scheme.RGBAColours.PLOT_1_BLUE.stringified,
+    bar_colour: str = colour_scheme.RGBAColours.PLOT_1_BLUE.stringified,
 ) -> plotly.graph_objects.Figure:
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
@@ -83,7 +61,7 @@ def generate_chart_figure(
         dates: List of datetime objects for each of the values.
         values: List of numbers representing the values.
         legend: Legend associated with the given plot
-        bar_color: The color to assign to the bar.
+        bar_colour: The colour to assign to the bar.
             Defaults to 86, 148, 202, 1, blue.
 
     Returns:
@@ -105,7 +83,7 @@ def generate_chart_figure(
     figure.add_trace(trace=bar_plot)
 
     # Apply the typical stylings for bar charts
-    figure.update_layout(**TIMESERIES_LAYOUT_ARGS)
+    figure.update_layout(**BAR_CHART_LAYOUT_ARGS)
 
     return figure
 

@@ -8,9 +8,6 @@ class RGBAColours(Enum):
     # Used for the first plot
     PLOT_1_BLUE: RGBA_VALUES = 86, 148, 202, 1
 
-    # Used for the second plot
-    PLOT_2_GREY: RGBA_VALUES = 177, 180, 182, 1
-
     # Used for the background
     WHITE: RGBA_VALUES = 0, 0, 0, 0
 
