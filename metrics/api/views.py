@@ -134,19 +134,37 @@ class ChartsView(APIView):
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
-        This endpoint requires a set of parameters for each chart plot:
+        Multiple plots can be added as an array of objects from the request body.
+        This payload takes the following set of parameters for each chart plot:
 
-        - `topic` - the name of the disease/threat e.g. `COVID-19`
+        | Parameter name   | Description                                                                | Example                  | Mandatory |
+        |------------------|----------------------------------------------------------------------------|--------------------------|-----------|
+        | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
+        | `metric`         | The name of the metric being queried for                                   | new_cases_daily          | Yes       |
+        | `chart_type`     | The type of chart to use for the individual plot                           | line_with_shaded_section | Yes       |
+        | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
+        | `stratum`        | The smallest subgroup a metric can be broken down into                     | 0_4                      | No        |
+        | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
+        | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
 
-        - `metric` - the name of the metric e.g. `new_cases_daily
+        So the full payload to this endpoint would look like the following:
 
-        - `chart_type` - the type of chart to generate e.g. `line_with_shaded_section`
-
-        - `date_from` - the type from which to start the data slice from.
-
-        Note that the `date_from` param must be in the format `YYYY-MM-DD`.
-
-        E.g. for the 1st of October 2022, the `date_from` value would be `2022-10-01`
+        ```
+            {
+              "file_format": "svg",                                 # Optional, defaults to "svg" if not provided
+              "plots": [
+                {
+                  "topic": "COVID-19",
+                  "metric": "new_cases_daily",
+                  "chart_type": "line_with_shaded_section",
+                  "stratum": "",                                    # Optional
+                  "geography": "",                                  # Optional
+                  "geography_type": "",                             # Optional
+                  "date_from": null                                 # Optional
+                }
+              ]
+            }
+        ```
 
         ---
 
