@@ -9,7 +9,7 @@ from metrics.data.access.core_models import (
     unzip_values,
 )
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.charts import line, line_with_shaded_section, waffle
+from metrics.domain.charts import bar, line, line_with_shaded_section, waffle
 from metrics.domain.models import ChartsPlotParameters
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
@@ -45,6 +45,9 @@ class ChartsInterface:
         if self.chart_type == ChartTypes.simple_line.value:
             return self.generate_simple_line_chart()
 
+        if self.chart_type == ChartTypes.bar.value:
+            return self.generate_bar_chart()
+
         return self.generate_line_with_shaded_section_chart()
 
     def generate_waffle_chart(self) -> plotly.graph_objects.Figure:
@@ -70,6 +73,17 @@ class ChartsInterface:
         timeseries_queryset = self.get_timeseries()
         _, values = unzip_values(values=timeseries_queryset)
         return line.generate_chart_figure(values)
+
+    def generate_bar_chart(self) -> plotly.graph_objects.Figure:
+        """Creates a bar chart figure for the `metric` instance variable
+
+        Returns:
+            A plotly `Figure` object for the created bar chart
+
+        """
+        timeseries_queryset = self.get_timeseries()
+        dates, values = unzip_values(values=timeseries_queryset)
+        return bar.generate_chart_figure(dates=dates, values=values, legend=self.metric)
 
     def generate_line_with_shaded_section_chart(self) -> plotly.graph_objects.Figure:
         """Creates a line chart with shaded section figure for the `metric` instance variable
