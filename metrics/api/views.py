@@ -278,6 +278,13 @@ class TrendsView(APIView):
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
 
+        The response will include data to indicate whether the change should be considered positive.
+
+        Primarily, this is because an increase in metric value requires additional context whether it should be considered positive.
+
+        For example, an increase in cases would be considered negative.
+        But an increase in vaccinations would be considered positive.
+
         ---
 
         # Main errors
