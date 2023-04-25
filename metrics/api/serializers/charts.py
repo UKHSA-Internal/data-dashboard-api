@@ -30,13 +30,13 @@ class ChartPlotSerializer(serializers.Serializer):
     topic = serializers.ChoiceField(choices=[], required=True)
     metric = serializers.ChoiceField(choices=[], required=True)
 
-    stratum = serializers.CharField(required=False)
-    geography = serializers.CharField(required=False)
-    geography_type = serializers.CharField(required=False)
+    stratum = serializers.CharField(required=False, default="")
+    geography = serializers.CharField(required=False, default="")
+    geography_type = serializers.CharField(required=False, default="")
 
     chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
     date_from = serializers.DateField(
-        help_text=DATE_FROM_FIELD_HELP_TEXT, default="2022-10-01"
+        help_text=DATE_FROM_FIELD_HELP_TEXT, required=False, default="",
     )
 
     def to_models(self):
