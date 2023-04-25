@@ -67,6 +67,10 @@ class ChartPlotSerializer(serializers.Serializer):
             self.populate_choices()
         except RuntimeError:
             pass
+        # This is needed because the serializers are loaded by django at runtime
+        # Because this is a child serializer, an `instance` must be passed
+        # to the parent serializer.
+        # Otherwise, we'd have to decorate all our unit tests with access to the db.
 
     def populate_choices(self):
         self.fields["topic"].choices = self.topic_manager.get_all_names()
