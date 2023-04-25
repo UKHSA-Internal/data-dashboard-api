@@ -95,6 +95,20 @@ def _create_bar_plot(
     legend: str,
     showlegend: bool = False,
 ) -> plotly.graph_objects.Bar:
+    """Create a Bar plot to add to the chart (via the add_trace method)
+
+    Args:
+        dates: List of datetime objects for each of the values.
+        values: List of numbers representing the values for this plot.
+        bar_colour: The colour to assign to the bars.
+        legend: Legend to display for this plot.
+        showlegend: Whether or not to display the associated legend for this plot
+            Note: showlegend in BAR_CHART_LAYOUT_ARGS constant has to be True
+            for this setting to have any effect
+    Returns:
+        `Bar`: A `plotly` bar which can then be added to the chart
+    """
+
     return plotly.graph_objects.Bar(
         x=dates,
         y=values,
