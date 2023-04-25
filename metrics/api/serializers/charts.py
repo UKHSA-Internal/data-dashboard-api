@@ -102,7 +102,11 @@ class ChartPlotsListSerializer(serializers.ListSerializer):
 
 
 class ChartsSerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(choices=FILE_FORMAT_CHOICES, default="svg")
+    file_format = serializers.ChoiceField(
+        choices=FILE_FORMAT_CHOICES,
+        help_text=help_texts.CHART_FILE_FORMAT_FIELD,
+        default="svg",
+    )
     plots = ChartPlotsListSerializer()
 
     def to_models(self) -> ChartPlots:

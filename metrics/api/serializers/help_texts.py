@@ -33,8 +33,11 @@ DIRECTION_FIELD: str = """
 The direction in which the trend is represented as. 
 This can be one of the following `up`, `neutral` or `down`.
 """
-
 COLOUR_FIELD: str = """
 The colour in which the trend is represented as. 
 This can be one of the following `green`, `neutral` or `red`.
+"""
+CHART_FILE_FORMAT_FIELD: str = """
+The file format to render the chart in. 
+This can be one of the following `svg`, `png`, `jpg` or `jpeg`.
 """
