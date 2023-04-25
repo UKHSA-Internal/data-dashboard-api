@@ -94,6 +94,33 @@ def test_generate_chart_figure_from_line_with_shaded_section_module_is_called(
     )
 
 
+@mock.patch.object(ChartsInterface, "generate_bar_chart")
+def test_generate_bar_chart_module_is_called(
+    spy_generate_bar_chart: mock.MagicMock,
+):
+    """
+    Given a requirement for a `generate_bar_chart` chart
+    When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
+    Then the call is delegated to the `generate_bar_chart()` method
+    """
+    # Given
+    chart_type: str = ChartTypes.bar.value
+    charts_interface = ChartsInterface(
+        chart_type=chart_type,
+        topic=mock.Mock(),
+        metric=mock.Mock(),
+        date_from=mock.Mock(),
+        core_time_series_manager=mock.Mock(),
+    )
+
+    # When
+    generated_chart_figure = charts_interface.generate_chart_figure()
+
+    # Then
+    spy_generate_bar_chart.assert_called_once()
+    assert generated_chart_figure == spy_generate_bar_chart.return_value
+
+
 def test_get_timeseries_calls_core_time_series_manager_with_correct_args():
     """
     Given a `CoreTimeSeriesManager`
