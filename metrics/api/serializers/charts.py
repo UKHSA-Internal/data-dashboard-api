@@ -3,6 +3,7 @@ from typing import List
 from django.db.models import Manager
 from rest_framework import serializers
 
+from metrics.api.serializers import help_texts
 from metrics.data.models.core_models import (
     Geography,
     GeographyType,
@@ -20,25 +21,40 @@ class ChartsQuerySerializer(serializers.Serializer):
     file_format = serializers.ChoiceField(choices=FILE_FORMAT_CHOICES, default="svg")
 
 
-DATE_FROM_FIELD_HELP_TEXT: str = """
-The date from which to begin analysing data from. 
-If nothing is provided, a default of **1 year ago from the current date** will be applied.
-"""
-
-
 class ChartPlotSerializer(serializers.Serializer):
-    topic = serializers.ChoiceField(choices=[], required=True)
-    metric = serializers.ChoiceField(choices=[], required=True)
+    topic = serializers.ChoiceField(
+        choices=[], help_text=help_texts.TOPIC_FIELD, required=True
+    )
+    metric = serializers.ChoiceField(
+        choices=[], help_text=help_texts.METRIC_FIELD, required=True
+    )
 
-    stratum = serializers.CharField(required=False, default="")
-    geography = serializers.CharField(required=False, default="")
-    geography_type = serializers.CharField(required=False, default="")
+    stratum = serializers.CharField(
+        required=False, help_text=help_texts.STRATUM_FIELD, allow_blank=True, default=""
+    )
+    geography = serializers.CharField(
+        required=False,
+        help_text=help_texts.GEOGRAPHY_FIELD,
+        allow_blank=True,
+        default="",
+    )
+    geography_type = serializers.CharField(
+        required=False,
+        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
+        allow_blank=True,
+        default="",
+    )
 
-    chart_type = serializers.ChoiceField(choices=ChartTypes.choices(), required=True)
+    chart_type = serializers.ChoiceField(
+        choices=ChartTypes.choices(),
+        help_text=help_texts.CHART_TYPE_FIELD,
+        required=True,
+    )
     date_from = serializers.DateField(
-        help_text=DATE_FROM_FIELD_HELP_TEXT,
+        help_text=help_texts.DATE_FROM_FIELD,
         required=False,
         default="",
+        allow_null=True,
     )
 
     def to_models(self):
