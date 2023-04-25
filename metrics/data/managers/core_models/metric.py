@@ -101,7 +101,6 @@ class MetricManager(models.Manager):
         """
         return self.get_queryset().get_all_unique_names()
 
-
     def get_all_unique_change_type_names(self) -> MetricQuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change`
 
@@ -112,7 +111,6 @@ class MetricManager(models.Manager):
 
         """
         return self.get_queryset().get_all_unique_change_type_names()
-
 
     def get_all_unique_percent_change_type_names(self) -> MetricQuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `percent`
