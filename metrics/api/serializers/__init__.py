@@ -1,8 +1,4 @@
 from .charts import ChartsQuerySerializer, ChartsSerializer
-from .stats import (
-    DashboardSerializer,
-    HeadlinesQuerySerializer,
-    TrendsQuerySerializer,
-    TrendsResponseSerializer,
-)
+from .headlines import DashboardSerializer, HeadlinesQuerySerializer
 from .timeseries import APITimeSeriesSerializer
+from .trends import TrendsQuerySerializer, TrendsResponseSerializer
