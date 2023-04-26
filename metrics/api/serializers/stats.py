@@ -44,6 +44,15 @@ class HeadlinesQuerySerializer(serializers.Serializer):
         return self.context.get("metric_manager", Metric.objects)
 
 
+HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT: str = """
+The associated value of the headline metric which was queried for. E.g. `new_cases_7days_change`
+"""
+
+
+class HeadlinesResponseSerializer(serializers.Serializer):
+    value = serializers.FloatField(help_text=HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT)
+
+
 TREND_METRIC_VALUE_FIELD_HELP_TEXT: str = """
 The associated value of the main change type metric which was queried for. E.g. `10`
 """

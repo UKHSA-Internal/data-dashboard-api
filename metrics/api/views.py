@@ -9,9 +9,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.api.serializers import ChartsQuerySerializer, ChartsRequestSerializer
+from metrics.api.serializers.charts import (
+    ChartsQuerySerializer,
+    ChartsRequestSerializer,
+    ChartsResponseSerializer,
+)
 from metrics.api.serializers.stats import (
     HeadlinesQuerySerializer,
+    HeadlinesResponseSerializer,
     TrendsQuerySerializer,
     TrendsResponseSerializer,
 )
@@ -130,7 +135,10 @@ class FileUploadView(APIView):
 class ChartsView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(parameters=[ChartsRequestSerializer])
+    @extend_schema(
+        parameters=[ChartsRequestSerializer],
+        responses={HTTPStatus.OK: ChartsResponseSerializer},
+    )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
@@ -216,7 +224,10 @@ class ChartsView(APIView):
 class HeadlinesView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(parameters=[HeadlinesQuerySerializer])
+    @extend_schema(
+        parameters=[HeadlinesQuerySerializer],
+        responses={HTTPStatus.OK: HeadlinesResponseSerializer},
+    )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
 

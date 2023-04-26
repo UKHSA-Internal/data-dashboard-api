@@ -1,10 +1,13 @@
 from typing import Dict, List, Tuple
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.exceptions import ValidationError
 
+from metrics.api.serializers.charts import ChartsResponseSerializer
 from metrics.api.serializers.stats import (
     HeadlinesQuerySerializer,
+    HeadlinesResponseSerializer,
     TrendsQuerySerializer,
     TrendsResponseSerializer,
 )
@@ -332,6 +335,54 @@ class TestTrendsResponseSerializer:
         }
 
         serializer = TrendsResponseSerializer(data=payload)
+
+        # When
+        validated: bool = serializer.is_valid()
+
+        # Then
+        assert validated
+
+
+class TestChartsResponseSerializer:
+    def test_can_validate_successfully(self):
+        """
+        Given a valid payload containing an image file
+        When `is_valid()` is called from an instance of the `ChartsResponseSerializer`
+        Then True is returned
+        """
+        # Given
+        chart = SimpleUploadedFile(
+            name="test_image.jpg",
+            content_type="image/png",
+            content=b"chart_image",
+        )
+
+        payload = {
+            "chart": chart,
+        }
+
+        serializer = ChartsResponseSerializer(data=payload)
+
+        # When
+        validated: bool = serializer.is_valid()
+
+        # Then
+        assert validated
+
+
+class TestHeadlinesResponseSerializer:
+    def test_can_validate_successfully(self):
+        """
+        Given a valid payload containing the correct associated headline value field
+        When `is_valid()` is called from an instance of the `HeadlinesResponseSerializer`
+        Then True is returned
+        """
+        # Given
+        payload = {
+            "value": 10,
+        }
+
+        serializer = HeadlinesResponseSerializer(data=payload)
 
         # When
         validated: bool = serializer.is_valid()

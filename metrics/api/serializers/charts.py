@@ -40,3 +40,12 @@ class ChartsRequestSerializer(serializers.Serializer):
     @property
     def metric_manager(self) -> Manager:
         return self.context.get("metric_manager", Metric.objects)
+
+
+CHARTS_RESPONSE_HELP_TEXT: str = """
+The specified chart type (E.g Waffle) in png format
+"""
+
+
+class ChartsResponseSerializer(serializers.Serializer):
+    chart = serializers.FileField(help_text=CHARTS_RESPONSE_HELP_TEXT)
