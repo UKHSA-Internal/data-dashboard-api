@@ -70,12 +70,12 @@ class TestMetricsAPIInterface:
             == spy_metric_manager.get_all_unique_change_type_names.return_value
         )
 
-    def test_get_all_unique_change_percent_type_metric_names_delegates_call_correctly(
+    def test_get_all_unique_percent_change_type_names_delegates_call_correctly(
         self,
     ):
         """
         Given a `MetricManager` from the Metrics API app
-        When `get_all_unique_change_percent_type_metric_names()` is called from an instance of the `MetricsAPIInterface`
+        When `get_all_unique_percent_change_type_names()` is called from an instance of the `MetricsAPIInterface`
         Then the call is delegated to the correct method on the `MetricManager`
         """
         # Given
@@ -86,14 +86,14 @@ class TestMetricsAPIInterface:
         )
 
         # When
-        all_unique_change_percent_type_metric_names = (
-            metrics_api_interface.get_all_unique_change_percent_type_metric_names()
+        all_unique_percent_change_type_names = (
+            metrics_api_interface.get_all_unique_percent_change_type_names()
         )
 
         # Then
         assert (
-            all_unique_change_percent_type_metric_names
-            == spy_metric_manager.get_all_unique_change_percent_type_names.return_value
+            all_unique_percent_change_type_names
+            == spy_metric_manager.get_all_unique_percent_change_type_names.return_value
         )
 
 
@@ -149,25 +149,25 @@ class TestGetAllUniqueChangeTypeMetricNames:
 
 class TestGetAllUniqueChangePercentTypeMetricNames:
     @mock.patch.object(
-        interface.MetricsAPIInterface, "get_all_unique_change_percent_type_metric_names"
+        interface.MetricsAPIInterface, "get_all_unique_percent_change_type_names"
     )
     def test_delegates_call_correctly(
-        self, mocked_get_all_unique_change_percent_type_metric_names: mock.MagicMock
+        self, mocked_get_all_unique_percent_change_type_names: mock.MagicMock
     ):
         """
         Given an instance of the `MetricsAPIInterface` which returns unique metric names
-        When `get_all_unique_change_type_metric_names()` is called
+        When `get_all_unique_percent_change_type_names()` is called
         Then the unique metric names are returned as a list of 2-item tuples
         """
         # Given
         retrieved_unique_change_percent_type_metric_names = ["new_cases_daily"]
-        mocked_get_all_unique_change_percent_type_metric_names.return_value = (
+        mocked_get_all_unique_percent_change_type_names.return_value = (
             retrieved_unique_change_percent_type_metric_names
         )
 
         # When
         unique_change_percent_type_metric_names = (
-            interface.get_all_unique_change_percent_type_metric_names()
+            interface.get_all_unique_percent_change_type_names()
         )
 
         # Then

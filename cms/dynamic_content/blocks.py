@@ -6,7 +6,7 @@ from cms.metrics_interface.interface import (
     get_all_geography_types,
     get_all_stratums,
     get_all_topic_names,
-    get_all_unique_change_percent_type_metric_names,
+    get_all_unique_percent_change_type_names,
     get_all_unique_change_type_metric_names,
     get_all_unique_metric_names,
     get_chart_types,
@@ -66,7 +66,7 @@ class TrendNumberBlock(BaseMetricsBlock):
         required=True, choices=get_all_unique_change_type_metric_names
     )
     percentage_metric = blocks.ChoiceBlock(
-        required=True, choices=get_all_unique_change_percent_type_metric_names
+        required=True, choices=get_all_unique_percent_change_type_names
     )
 
     class Meta:

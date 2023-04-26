@@ -92,7 +92,7 @@ class MetricsAPIInterface:
         """
         return self.metric_manager.get_all_unique_change_type_names()
 
-    def get_all_unique_change_percent_type_metric_names(self) -> QuerySet:
+    def get_all_unique_percent_change_type_names(self) -> QuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change` & `percent`
         Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
 
@@ -102,7 +102,7 @@ class MetricsAPIInterface:
                     `<MetricQuerySet ['new_cases_7days_change_percentage', 'new_deaths_7days_change_percentage']>`
 
         """
-        return self.metric_manager.get_all_unique_change_percent_type_names()
+        return self.metric_manager.get_all_unique_percent_change_type_names()
 
     def get_all_stratum_names(self) -> QuerySet:
         """Gets all available stratum names as a flat list queryset.
@@ -234,7 +234,7 @@ def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_TUPLES:
     )
 
 
-def get_all_unique_change_percent_type_metric_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_TUPLES:
     """Callable for the `choices` on the `percentage_metric` fields of the CMS blocks.
 
     Notes:
@@ -253,7 +253,7 @@ def get_all_unique_change_percent_type_metric_names() -> LIST_OF_TWO_STRING_TUPL
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
-        metrics_interface.get_all_unique_change_percent_type_metric_names()
+        metrics_interface.get_all_unique_percent_change_type_names()
     )
 
 
