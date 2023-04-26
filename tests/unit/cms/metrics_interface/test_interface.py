@@ -147,7 +147,7 @@ class TestGetAllUniqueChangeTypeMetricNames:
         ]
 
 
-class TestGetAllUniqueChangePercentTypeMetricNames:
+class TestGetAllUniquePercentChangeTypeMetricNames:
     @mock.patch.object(
         interface.MetricsAPIInterface, "get_all_unique_percent_change_type_names"
     )
