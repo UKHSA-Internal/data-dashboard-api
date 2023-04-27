@@ -54,5 +54,6 @@ Global Query Parameters
 Examples
 
 /timeseries/themes/infectious_disease/subthemes/respiratory/topics/covid-19/geography_types/nation/geography_names/england/metrics/new_cases_daily?year=2023
+
 /timeseries/themes/allergic_diseases/subthemes/respiratory/topics/farmers_lung/geography_types/msoa/geography_names/marple_bridge_and_mellor/metrics/deaths_daily?epiweek=2023_20
 
