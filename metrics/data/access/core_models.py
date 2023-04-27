@@ -173,7 +173,6 @@ def get_month_end_timeseries_metric_values_from_date(
             .last()
         )
 
-        date_str: str = datetime.date.strftime(dt, "%B %Y")
-        monthly_data[date_str] = str(metric_value)
+        monthly_data[str(dt)] = str(metric_value)
 
     return monthly_data
