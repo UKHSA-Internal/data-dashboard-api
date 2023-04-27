@@ -57,3 +57,12 @@ Examples
 
 /timeseries/themes/allergic_diseases/subthemes/respiratory/topics/farmers_lung/geography_types/msoa/geography_names/marple_bridge_and_mellor/metrics/deaths_daily?epiweek=2023_20
 
+Response Example
+----------------
+
+{
+  "theme": "viruses",
+  "subthemes": {
+      "respiratory viruses": "/api/timeseries/themes/infectious_diseases/subthemes/respiratory_viruses"
+      }
+}
