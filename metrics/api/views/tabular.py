@@ -7,7 +7,7 @@ from metrics.data.access.core_models import (
 )
 
 
-class TabularDataView(APIView):
+class TabularView(APIView):
     permission_classes = [HasAPIKey]
 
     def get(self, request, *args, **kwargs):
