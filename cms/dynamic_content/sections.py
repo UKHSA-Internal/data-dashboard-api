@@ -11,5 +11,5 @@ class Sections(StreamBlock):
 
 
 class SectionCard(StructBlock):
-    heading = TextBlock(help_text=help_texts.HEADING_BLOCK_HELP_TEXT)
-    content = Sections()
+    heading = TextBlock(help_text=help_texts.HEADING_BLOCK_HELP_TEXT, required=True)
+    content = Sections(help_text=help_texts.CONTENT_BLOCKS_HELP_TEXT)

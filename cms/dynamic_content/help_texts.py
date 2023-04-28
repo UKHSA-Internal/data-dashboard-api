@@ -60,6 +60,11 @@ HEADING_BLOCK_HELP_TEXT: str = """
 The text you add here will be used as the heading for this section. 
 """
 
+CONTENT_BLOCKS_HELP_TEXT: str = """
+Here you can add any number of content components for this section.
+"""
+
+
 TOPIC_FIELD_HELP_TEXT: str = "The name of the topic to pull data e.g. COVID-19."
 METRIC_FIELD_HELP_TEXT: str = """
 The name of the metric to pull data e.g. new_cases_daily.
@@ -90,4 +95,9 @@ Note that this will be shown in the hex colour #505A5F
 """
 OPTIONAL_BODY_FIELD_HELP_TEXT: str = """
 An optional body of text to accompany this block.
+"""
+
+PAGE_DESCRIPTION_FIELD_HELP_TEXT: str = """
+An optional body of text which will be rendered at the top of the page. 
+This text will be displayed after the title of the page and before any of the main content.
 """
