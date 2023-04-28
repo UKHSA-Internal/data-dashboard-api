@@ -139,7 +139,7 @@ def get_month_end_timeseries_metric_values_from_date(
     metric_name: str,
     topic: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-) -> Dict[str, str]:
+) -> List[Dict[str, str]]:
     """
     Fetch the month-end timeseries values for the given topic & metric
      Args:
@@ -162,7 +162,7 @@ def get_month_end_timeseries_metric_values_from_date(
 
     months: QuerySet = queryset.dates("dt", kind="month")
 
-    monthly_data = dict()
+    monthly_data = []
     for month in months:
         dt, metric_value = (
             queryset.filter(
@@ -173,6 +173,6 @@ def get_month_end_timeseries_metric_values_from_date(
             .last()
         )
 
-        monthly_data[str(dt)] = str(metric_value)
+        monthly_data.append({"date": str(dt), "value": str(metric_value)})
 
     return monthly_data

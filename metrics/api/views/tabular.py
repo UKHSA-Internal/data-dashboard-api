@@ -1,3 +1,4 @@
+from typing import List, Dict
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
@@ -20,7 +21,7 @@ class TabularView(APIView):
         topic: str = kwargs["topic"]
         metric_name: str = kwargs["metric"]
 
-        result = get_month_end_timeseries_metric_values_from_date(
+        result: List[Dict[str, str]] = get_month_end_timeseries_metric_values_from_date(
             metric_name=metric_name, topic=topic
         )
 
