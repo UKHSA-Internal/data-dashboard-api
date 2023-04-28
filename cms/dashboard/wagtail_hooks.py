@@ -12,6 +12,17 @@ def global_admin_css():
     )
 
 
+ADDITIONAL_CUSTOM_ICONS: List[str] = [
+    "icons/chart_plot.svg",
+    "icons/chart_card.svg",
+    "icons/standalone_chart.svg",
+    "icons/headline_number.svg",
+    "icons/number.svg",
+    "icons/trend_down.svg",
+    "icons/text.svg",
+]
+
+
 @hooks.register("register_icons")
 def register_icons(icons: List[str]):
     """Registers additional svg icons used for the custom content blocks
@@ -24,12 +35,4 @@ def register_icons(icons: List[str]):
             and additional custom svg icon filenames
 
     """
-    return icons + [
-        "icons/chart_plot.svg",
-        "icons/chart_card.svg",
-        "icons/standalone_chart.svg",
-        "icons/headline_number.svg",
-        "icons/number.svg",
-        "icons/trend_down.svg",
-        "icons/text.svg",
-    ]
+    return icons + ADDITIONAL_CUSTOM_ICONS
