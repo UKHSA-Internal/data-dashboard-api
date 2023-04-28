@@ -11,6 +11,9 @@ GEOGRAPHY_TYPE_FIELD: str = """
 The type of geographical categorisation to apply any data filtering to.
 E.g. `Nation`
 """
+HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT: str = """
+The associated value of the headline metric which was queried for. E.g. `new_cases_7days_change`
+"""
 TREND_METRIC_NAME_FIELD: str = """
 The name of the main change type metric being queried for. E.g. `new_cases_7days_change`
 """
@@ -40,4 +43,7 @@ This can be one of the following `green`, `neutral` or `red`.
 CHART_FILE_FORMAT_FIELD: str = """
 The file format to render the chart in. 
 This can be one of the following `svg`, `png`, `jpg` or `jpeg`.
+"""
+CHARTS_RESPONSE_HELP_TEXT: str = """
+The specified chart in the requested format e.g. svg
 """
