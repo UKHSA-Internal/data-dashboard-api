@@ -7,7 +7,7 @@ from wagtail.models import Orderable, Page
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_BLOCKS
+from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 
 
 class HomePage(Page):
@@ -17,7 +17,7 @@ class HomePage(Page):
         null=True,
         help_text=help_texts.PAGE_DESCRIPTION_FIELD_HELP_TEXT,
     )
-    body = ALLOWABLE_BODY_CONTENT_BLOCKS
+    body = ALLOWABLE_BODY_CONTENT
 
     content_panels = Page.content_panels + [
         FieldPanel("page_description"),

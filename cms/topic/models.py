@@ -8,7 +8,7 @@ from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_BLOCKS
+from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 
 
 class TopicPage(Page):
@@ -18,7 +18,7 @@ class TopicPage(Page):
         null=True,
         help_text=help_texts.PAGE_DESCRIPTION_FIELD_HELP_TEXT,
     )
-    body = ALLOWABLE_BODY_CONTENT_BLOCKS
+    body = ALLOWABLE_BODY_CONTENT
     date_posted = models.DateField()
 
     # TopicPage Bespoke content fields
