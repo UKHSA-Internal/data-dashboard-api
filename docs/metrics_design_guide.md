@@ -63,11 +63,12 @@ This includes:
 - Waffle charts
 - Bar charts
 
-As of the Alpha release (March 2023), the following charts can be generated from this project:
+As of April 2023, the following charts can be generated from this project:
 
 - Line graphs (with shaded region)
 - Simple line graphs 
 - Waffle charts
+- Bar charts
 
 ---
 
