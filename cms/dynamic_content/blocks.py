@@ -2,10 +2,10 @@ from wagtail import blocks
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
-from cms.metrics_interface.interface import (
-    get_all_geographies,
-    get_all_geography_types,
-    get_all_stratums,
+from cms.metrics_interface.field_choices_callables import (
+    get_all_geography_names,
+    get_all_geography_type_names,
+    get_all_stratum_names,
     get_all_topic_names,
     get_all_unique_change_type_metric_names,
     get_all_unique_metric_names,
@@ -55,9 +55,11 @@ class ChartPlot(BaseMetricsBlock):
     date_to = blocks.DateBlock(
         required=False, help_text=help_texts.DATE_TO_FIELD_HELP_TEXT
     )
-    stratum = blocks.ChoiceBlock(required=False, choices=get_all_stratums)
-    geography = blocks.ChoiceBlock(required=False, choices=get_all_geographies)
-    geography_type = blocks.ChoiceBlock(required=False, choices=get_all_geography_types)
+    stratum = blocks.ChoiceBlock(required=False, choices=get_all_stratum_names)
+    geography = blocks.ChoiceBlock(required=False, choices=get_all_geography_names)
+    geography_type = blocks.ChoiceBlock(
+        required=False, choices=get_all_geography_type_names
+    )
 
     class Meta:
         icon = "chart_plot"
