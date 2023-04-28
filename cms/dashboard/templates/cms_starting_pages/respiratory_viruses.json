@@ -169,6 +169,51 @@
                             ]
                         },
                         "id": "d8514c8c-eb79-4c53-9b39-f7eaa02c3f81"
+                    },
+                    {
+                        "type": "chart_with_headline_and_trend_card",
+                        "value": {
+                            "title": "Deaths",
+                            "body": "Deaths with COVID-19 on the death certificate in England",
+                            "chart": [
+                                {
+                                    "type": "plot",
+                                    "value": {
+                                        "topic": "COVID-19",
+                                        "metric": "new_deaths_daily",
+                                        "chart_type": "line_with_shaded_section",
+                                        "date_from": null,
+                                        "date_to": null,
+                                        "stratum": "",
+                                        "geography": "",
+                                        "geography_type": ""
+                                    },
+                                    "id": "9133f732-52a7-4df7-a2e1-6973f0e8c5d7"
+                                }
+                            ],
+                            "headline_number_columns": [
+                                {
+                                    "type": "headline_number",
+                                    "value": {
+                                        "topic": "COVID-19",
+                                        "metric": "new_deaths_7days_sum",
+                                        "body": "Last 7 days"
+                                    },
+                                    "id": "9906538f-1d5b-437b-a987-e9e2084c2f51"
+                                },
+                                {
+                                    "type": "trend_number",
+                                    "value": {
+                                        "topic": "COVID-19",
+                                        "metric": "new_deaths_7days_change",
+                                        "body": "",
+                                        "percentage_metric": "new_deaths_7days_change_percentage"
+                                    },
+                                    "id": "f7f843f8-0812-4feb-99a6-fdc081db70b9"
+                                }
+                            ]
+                        },
+                        "id": "ee8e12ea-1f13-420e-b2d8-18fa4fb15a4d"
                     }
                 ]
             },
