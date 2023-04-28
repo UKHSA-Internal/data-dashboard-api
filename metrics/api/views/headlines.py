@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import HeadlinesQuerySerializer
+from metrics.api.serializers.headlines import HeadlinesResponseSerializer
 from metrics.interfaces.headlines.access import (
     BaseInvalidHeadlinesRequestError,
     generate_headline_number,
@@ -15,7 +16,10 @@ from metrics.interfaces.headlines.access import (
 class HeadlinesView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(parameters=[HeadlinesQuerySerializer])
+    @extend_schema(
+        parameters=[HeadlinesQuerySerializer],
+        responses={HTTPStatus.OK.value: HeadlinesResponseSerializer},
+    )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
 

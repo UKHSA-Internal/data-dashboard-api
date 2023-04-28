@@ -12,19 +12,29 @@ FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
 
 
 class ChartsQuerySerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(choices=FILE_FORMAT_CHOICES, default="svg")
+    file_format = serializers.ChoiceField(
+        choices=FILE_FORMAT_CHOICES,
+        default="svg",
+    )
 
 
 class ChartPlotSerializer(serializers.Serializer):
     topic = serializers.ChoiceField(
-        choices=[], help_text=help_texts.TOPIC_FIELD, required=True
+        choices=[],
+        help_text=help_texts.TOPIC_FIELD,
+        required=True,
     )
     metric = serializers.ChoiceField(
-        choices=[], help_text=help_texts.METRIC_FIELD, required=True
+        choices=[],
+        help_text=help_texts.METRIC_FIELD,
+        required=True,
     )
 
     stratum = serializers.CharField(
-        required=False, help_text=help_texts.STRATUM_FIELD, allow_blank=True, default=""
+        required=False,
+        help_text=help_texts.STRATUM_FIELD,
+        allow_blank=True,
+        default="",
     )
     geography = serializers.CharField(
         required=False,
@@ -79,15 +89,6 @@ class ChartPlotSerializer(serializers.Serializer):
         return self.context.get("metric_manager", Metric.objects)
 
 
-CHARTS_RESPONSE_HELP_TEXT: str = """
-The specified chart type (E.g Waffle) in png format
-"""
-
-
-class ChartsResponseSerializer(serializers.Serializer):
-    chart = serializers.FileField(help_text=CHARTS_RESPONSE_HELP_TEXT)
-
-
 class ChartPlotsListSerializer(serializers.ListSerializer):
     child = ChartPlotSerializer()
 
@@ -105,3 +106,7 @@ class ChartsSerializer(serializers.Serializer):
             plots=self.data["plots"],
             file_format=self.data["file_format"],
         )
+
+
+class ChartsResponseSerializer(serializers.Serializer):
+    chart = serializers.FileField(help_text=help_texts.CHARTS_RESPONSE_HELP_TEXT)
