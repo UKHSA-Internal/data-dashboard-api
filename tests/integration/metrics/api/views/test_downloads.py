@@ -72,8 +72,8 @@ class TestDownloadsView:
         """
         Given a valid payload to request a download
         And an authenticated APIClient
-        When the `POST /downloads/v2/json` endpoint is hit
-        Then the response contains the expected output
+        When the `POST /downloads/v2` endpoint is hit
+        Then the response contains the expected output in json format
         """
         # Given
         self._setup_api_time_series(**self.api_timeseries_record)
@@ -112,8 +112,8 @@ class TestDownloadsView:
         """
         Given a valid payload to request a download
         And an authenticated APIClient
-        When the `POST /downloads/v2/csv` endpoint is hit
-        Then the response contains the expected output
+        When the `POST /downloads/v2` endpoint is hit
+        Then the response contains the expected output in csv format
         """
         # Given
         self._setup_api_time_series(**self.api_timeseries_record)
@@ -161,7 +161,7 @@ class TestDownloadsView:
         assert response.status_code != HTTPStatus.UNAUTHORIZED
         assert response.status_code == HTTPStatus.OK
 
-        # Check that the headers on the response indicate json is being returned
+        # Check that the headers on the response indicate csv is being returned
         assert response.headers["Content-Type"] == "text/csv"
 
         # Check the output itself is as expected
