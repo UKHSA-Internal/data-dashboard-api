@@ -108,10 +108,10 @@ This can be one of the following `green`, `neutral` or `red`.
 
 
 class TrendsResponseSerializer(serializers.Serializer):
-    metric = serializers.CharField(help_text=TREND_METRIC_NAME_FIELD_HELP_TEXT)
+    metric_name = serializers.CharField(help_text=TREND_METRIC_NAME_FIELD_HELP_TEXT)
     metric_value = serializers.FloatField(help_text=TREND_METRIC_VALUE_FIELD_HELP_TEXT)
 
-    percentage_metric = serializers.CharField(
+    percentage_metric_name = serializers.CharField(
         help_text=TREND_PERCENTAGE_METRIC_NAME_FIELD_HELP_TEXT
     )
     percentage_metric_value = serializers.FloatField(
