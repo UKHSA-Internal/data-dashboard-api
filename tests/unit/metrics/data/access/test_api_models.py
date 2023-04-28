@@ -1,10 +1,6 @@
-from typing import Dict, List, Union
+from typing import Dict, List
 
 from metrics.data.access.api_models import create_filters
-
-# import datetime
-
-# import pytest
 
 
 class TestCreateFilters:

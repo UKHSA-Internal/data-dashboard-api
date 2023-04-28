@@ -3,13 +3,11 @@ from typing import Dict, List
 
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema
-from rest_framework.decorators import action
 from rest_framework.renderers import CoreJSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from metrics.api.serializers import APITimeSeriesSerializer, ChartsSerializer
+from metrics.api.serializers import APITimeSeriesSerializer
 from metrics.data.access.api_models import create_filters
 from metrics.data.models.api_models import APITimeSeries
 from metrics.domain.exports.csv import write_data_to_csv
