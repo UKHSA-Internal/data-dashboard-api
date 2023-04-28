@@ -13,6 +13,7 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_BLOCKS
 class HomePage(Page):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
+        blank=True,
         null=True,
         help_text=help_texts.PAGE_DESCRIPTION_FIELD_HELP_TEXT,
     )
