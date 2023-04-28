@@ -4,8 +4,8 @@ from cms.dynamic_content import cards, help_texts
 
 
 class Sections(StreamBlock):
-    text = cards.TextCard()
-    standalone_chart = cards.ChartCard()
+    text_card = cards.TextCard()
+    chart_card = cards.ChartCard()
     chart_with_headline_and_trend_card = cards.ChartWithHeadlineAndTrendCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
 
