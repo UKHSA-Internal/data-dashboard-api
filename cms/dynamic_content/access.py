@@ -4,7 +4,7 @@ from cms.dynamic_content import sections
 
 ALLOWABLE_BODY_CONTENT_BLOCKS = StreamField(
     [
-        ("section", sections.SectionCard()),
+        ("section", sections.Section()),
     ],
     use_json_field=True,
 )

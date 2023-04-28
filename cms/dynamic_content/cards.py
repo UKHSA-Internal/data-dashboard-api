@@ -1,11 +1,22 @@
 from wagtail import blocks
 
+from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import ChartBlock
 from cms.dynamic_content.components import (
     HeadlineNumberBlockTypes,
     HeadlineNumberComponentTypes,
 )
+
+
+class TextCard(blocks.StructBlock):
+    body = blocks.RichTextBlock(
+        features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_CARD_HELP_TEXT
+    )
+
+    class Meta:
+        icon = "text"
+
 
 MINIMUM_HEADLINE_COLUMNS_COUNT: int = 1
 MAXIMUM_HEADLINE_COLUMNS_COUNT: int = 5
@@ -43,4 +54,15 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     )
 
     class Meta:
-        icon = "chart_card"
+        icon = "chart_with_headline_and_trend_card"
+
+
+class ChartCard(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD_HELP_TEXT)
+    body = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
+    )
+    chart = ChartBlock(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
+
+    class Meta:
+        icon = "standalone_chart"

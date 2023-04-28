@@ -1,15 +1,15 @@
 from wagtail.blocks import StreamBlock, StructBlock, TextBlock
 
-from cms.dynamic_content import blocks, cards, help_texts
+from cms.dynamic_content import cards, help_texts
 
 
 class Sections(StreamBlock):
-    text = blocks.TextBlock()
-    standalone_chart = blocks.ChartCard()
+    text = cards.TextCard()
+    standalone_chart = cards.ChartCard()
     chart_with_headline_and_trend_card = cards.ChartWithHeadlineAndTrendCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
 
 
-class SectionCard(StructBlock):
+class Section(StructBlock):
     heading = TextBlock(help_text=help_texts.HEADING_BLOCK_HELP_TEXT, required=True)
     content = Sections(help_text=help_texts.CONTENT_BLOCKS_HELP_TEXT)

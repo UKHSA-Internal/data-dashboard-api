@@ -48,9 +48,9 @@ This component will be displayed with a headline number type metric on the top h
 And another headline number type metric will be shown on the bottom half of the column component.
 """
 
-TEXT_BLOCK_HELP_TEXT: str = """
-This section of text will comprise this block. 
-Note that this block will span the length of the available page width.
+TEXT_CARD_HELP_TEXT: str = """
+This section of text will comprise this card. 
+Note that this card will span the length of the available page width if sufficient text content is provided.
 """
 BODY_FIELD_HELP_TEXT: str = "The section of text which will accommodate this block."
 BODY_FIELD_ABOVE_BLOCK_HELP_TEXT: str = f"""
