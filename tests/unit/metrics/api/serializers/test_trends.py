@@ -5,11 +5,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.charts import ChartsResponseSerializer
-from metrics.api.serializers.stats import (
-    HeadlinesResponseSerializer,
-    TrendsQuerySerializer,
-    TrendsResponseSerializer,
-)
+from metrics.api.serializers.stats import HeadlinesResponseSerializer
+from metrics.api.serializers.trends import TrendsQuerySerializer, TrendsResponseSerializer
 from tests.fakes.factories.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
