@@ -28,11 +28,11 @@
                 "heading": "Coronavirus",
                 "content": [
                     {
-                        "type": "text",
+                        "type": "text_card",
                         "value": {
-                            "body": "<p data-block-key=\"sj74x\">The UKHSA dashboard for data and insights on coronavirus.</p>"
+                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on Coronavirus.</p>"
                         },
-                        "id": "659d7fca-2449-4c0a-b40f-b5cd27e2be9f"
+                        "id": "6a399089-6e24-4010-a484-a12745d38872"
                     },
                     {
                         "type": "headline_numbers_row_card",
@@ -225,11 +225,11 @@
                 "heading": "Influenza",
                 "content": [
                     {
-                        "type": "text",
+                        "type": "text_card",
                         "value": {
-                            "body": "<p data-block-key=\"1mmwg\">The UKHSA dashboard for data and insights on Influenza.</p>"
+                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on Influenza.</p>"
                         },
-                        "id": "dbbafc78-be9f-4c94-8b54-fb99be093fc4"
+                        "id": "53fcc358-f10d-411d-9bd0-9acb3c4d3aae"
                     },
                     {
                         "type": "headline_numbers_row_card",
@@ -345,5 +345,5 @@
         }
     ],
     "related_links": [],
-    "last_published_at": "2023-04-28T11:03:59.670621Z"
+    "last_published_at": "2023-04-28T16:18:41.910082Z"
 }
