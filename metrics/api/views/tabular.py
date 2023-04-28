@@ -1,4 +1,5 @@
-from typing import List, Dict
+from typing import Dict, List
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
