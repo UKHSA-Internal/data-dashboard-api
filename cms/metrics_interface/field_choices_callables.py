@@ -1,3 +1,15 @@
+"""
+This file contains a series of functions which wrap instance of the `MetricsAPIInterface`.
+These callables are then passed to the CMS fields.
+
+This means that we don't need to create a new migration whenever a new record is added to that table.
+Instead, the 1-off migration is pointed at this callable.
+So Wagtail will pull the choices by invoking this function.
+
+This shall ensure that the `choices` are populated from the database.
+And allowing the CMS to provide the content creator with access to the `latest` data after the point of ingestion.
+"""
+
 from typing import List, Tuple
 
 from cms.metrics_interface import MetricsAPIInterface
