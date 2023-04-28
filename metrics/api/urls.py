@@ -14,17 +14,17 @@ from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
     ChartView,
+    DownloadsView,
     FileUploadView,
     HeadlinesView,
     HealthView,
-    TrendsView, DownloadsViewSet,
+    TrendsView,
 )
 from metrics.api.viewsets import APITimeSeriesViewSet, DashboardViewSet
 
 router = routers.DefaultRouter()
 router.register(r"timeseries", APITimeSeriesViewSet)
 router.register("api/stats", DashboardViewSet, basename="dashboard")
-router.register(r"downloads/v2", DownloadsViewSet)
 
 # Create the router. "wagtailapi" is the URL namespace
 api_router = WagtailAPIRouter("wagtailapi")
@@ -53,6 +53,7 @@ urlpatterns = [
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/(?P<topic>[^/]+)/(?P<category>[^/]+)$", ChartView.as_view()),
     re_path(r"^charts/v2/", ChartsView.as_view()),
+    re_path(r"^downloads/v2/", DownloadsView.as_view()),
     re_path(r"^headlines/v2/", HeadlinesView.as_view()),
     re_path(r"^trends/v2/", TrendsView.as_view()),
     path("health/", HealthView.as_view()),

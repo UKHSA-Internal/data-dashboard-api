@@ -1,12 +1,12 @@
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 
 def create_filters(
-    filterset_fields: List[str],
+    possible_fields: List[str],
     plots: List[Dict[str, Union[List[str], str]]],
 ) -> List[Dict[str, Union[List[str], str]]]:
     """
-    Adjust a Query Filter to cater for things like 'dates greater than' and lists of values
+    Adjust a Query Filter to cater for things like 'dates from' and for lists of values
       as well as empty queries
 
     Args:
@@ -23,11 +23,14 @@ def create_filters(
         query_filter = {}
 
         for field, filter in plot.items():
-            if filter and field in filterset_fields:
+            if filter and field in possible_fields:
+                # If filter is a list of values then
+                # adjust query parameters accordingly
                 if isinstance(filter, List):
                     query_filter[field + "__in"] = filter
                 else:
-                    # If filter is date_from then adjust query parameters accordingly
+                    # If filter is date_from then
+                    # adjust query parameters accordingly
                     if field == "date_from":
                         query_filter["dt__gte"] = filter
                     else:

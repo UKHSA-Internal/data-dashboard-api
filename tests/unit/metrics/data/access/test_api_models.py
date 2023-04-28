@@ -1,10 +1,10 @@
 from typing import Dict, List, Union
 
+from metrics.data.access.api_models import create_filters
+
 # import datetime
 
 # import pytest
-
-from metrics.data.access.api_models import create_filters
 
 
 class TestCreateFilters:
@@ -15,7 +15,7 @@ class TestCreateFilters:
         Then the expected output will be returned
         """
         # Given
-        filterset_fields = [
+        possible_fields = [
             "topic",
             "metric",
         ]
@@ -23,7 +23,7 @@ class TestCreateFilters:
 
         # When
         filter_result: List[Dict[str, str]] = create_filters(
-            filterset_fields=filterset_fields,
+            possible_fields=possible_fields,
             plots=plots,
         )
 
@@ -44,7 +44,7 @@ class TestCreateFilters:
         Then the expected output will be returned
         """
         # Given
-        filterset_fields = [
+        possible_fields = [
             "topic",
             "metric",
         ]
@@ -55,7 +55,7 @@ class TestCreateFilters:
 
         # When
         filter_result: List[Dict[str, str]] = create_filters(
-            filterset_fields=filterset_fields,
+            possible_fields=possible_fields,
             plots=plots,
         )
 
@@ -74,7 +74,7 @@ class TestCreateFilters:
         Then the expected output will be returned
         """
         # Given
-        filterset_fields = [
+        possible_fields = [
             "topic",
             "date_from",
         ]
@@ -87,7 +87,7 @@ class TestCreateFilters:
 
         # When
         filter_result: List[Dict[str, str]] = create_filters(
-            filterset_fields=filterset_fields,
+            possible_fields=possible_fields,
             plots=plots,
         )
 
@@ -105,7 +105,7 @@ class TestCreateFilters:
         Then the expected output will be returned
         """
         # Given
-        filterset_fields = [
+        possible_fields = [
             "topic",
             "metric",
         ]
@@ -118,7 +118,7 @@ class TestCreateFilters:
 
         # When
         filter_result: List[Dict[str, str]] = create_filters(
-            filterset_fields=filterset_fields, plots=plots
+            possible_fields=possible_fields, plots=plots
         )
 
         # Then
@@ -138,7 +138,7 @@ class TestCreateFilters:
         Then the expected output will be returned
         """
         # Given
-        filterset_fields = [
+        possible_fields = [
             "topic",
             "metric",
         ]
@@ -151,7 +151,7 @@ class TestCreateFilters:
 
         # When
         filter_result: List[Dict[str, str]] = create_filters(
-            filterset_fields=filterset_fields,
+            possible_fields=possible_fields,
             plots=plots,
         )
 
