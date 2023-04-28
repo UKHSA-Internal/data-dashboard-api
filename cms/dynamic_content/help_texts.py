@@ -57,8 +57,7 @@ BODY_FIELD_ABOVE_BLOCK_HELP_TEXT: str = f"""
 {BODY_FIELD_HELP_TEXT} Note that this text will be placed above the main content of the block.
 """
 HEADING_BLOCK_HELP_TEXT: str = """
-This will be used as a heading within the page. 
-Use this to separate the sections of your content.
+The text you add here will be used as the heading for this section. 
 """
 
 TOPIC_FIELD_HELP_TEXT: str = "The name of the topic to pull data e.g. COVID-19."

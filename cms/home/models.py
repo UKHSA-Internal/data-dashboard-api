@@ -5,13 +5,16 @@ from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 
-from cms.dynamic_content import ALLOWABLE_BODY_CONTENT_BLOCKS
+from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
+from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_BLOCKS
 
 
 class HomePage(Page):
+    page_description = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES, null=True)
     body = ALLOWABLE_BODY_CONTENT_BLOCKS
 
     content_panels = Page.content_panels + [
+        FieldPanel("page_description"),
         FieldPanel("body"),
     ]
 

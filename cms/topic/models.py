@@ -7,7 +7,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
-from cms.dynamic_content import ALLOWABLE_BODY_CONTENT_BLOCKS
+from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_BLOCKS
 
 
 class TopicPage(Page):

@@ -1,1 +1,0 @@
-from .access import ALLOWABLE_BODY_CONTENT_BLOCKS
