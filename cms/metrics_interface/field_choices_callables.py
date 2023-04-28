@@ -14,14 +14,14 @@ from typing import List, Tuple
 
 from cms.metrics_interface import MetricsAPIInterface
 
-LIST_OF_TWO_STRING_TUPLES = List[Tuple[str, str]]
+LIST_OF_TWO_STRING_ITEM_TUPLES = List[Tuple[str, str]]
 
 
-def _build_two_item_tuple_choices(choices: List[str]) -> LIST_OF_TWO_STRING_TUPLES:
+def _build_two_item_tuple_choices(choices: List[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return [(choice, choice) for choice in choices]
 
 
-def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `metric` fields of the CMS blocks.
 
     Notes:
@@ -44,7 +44,7 @@ def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_TUPLES:
     )
 
 
-def get_chart_types() -> LIST_OF_TWO_STRING_TUPLES:
+def get_chart_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `chart_type` fields of the CMS blocks.
 
     Notes:
@@ -64,7 +64,7 @@ def get_chart_types() -> LIST_OF_TWO_STRING_TUPLES:
     return MetricsAPIInterface.get_chart_types()
 
 
-def get_all_topic_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_topic_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `topic` fields of the CMS blocks.
 
     Notes:
@@ -85,7 +85,7 @@ def get_all_topic_names() -> LIST_OF_TWO_STRING_TUPLES:
     return _build_two_item_tuple_choices(metrics_interface.get_all_topic_names())
 
 
-def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `metric` fields of trend number CMS blocks.
 
     Notes:
@@ -108,7 +108,7 @@ def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_TUPLES:
     )
 
 
-def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `percentage_metric` fields of the CMS blocks.
 
     Notes:
@@ -131,7 +131,7 @@ def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_TUPLES:
     )
 
 
-def get_all_stratum_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_stratum_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `stratum` fields of the CMS blocks.
 
     Notes:
@@ -152,7 +152,7 @@ def get_all_stratum_names() -> LIST_OF_TWO_STRING_TUPLES:
     return _build_two_item_tuple_choices(metrics_interface.get_all_stratum_names())
 
 
-def get_all_geography_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `geography` fields of the CMS blocks.
 
     Notes:
@@ -173,7 +173,7 @@ def get_all_geography_names() -> LIST_OF_TWO_STRING_TUPLES:
     return _build_two_item_tuple_choices(metrics_interface.get_all_geography_names())
 
 
-def get_all_geography_type_names() -> LIST_OF_TWO_STRING_TUPLES:
+def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `geography_type` fields of the CMS blocks.
 
     Notes:
