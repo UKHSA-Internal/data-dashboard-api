@@ -2,20 +2,14 @@ from django.db.models import Manager
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
-from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import Metric, Topic
-
-
-class DashboardSerializer(serializers.ModelSerializer):
-    # Meta class only needed for Swagger
-    class Meta:
-        model = APITimeSeries
-        fields = "__all__"
 
 
 class HeadlinesQuerySerializer(serializers.Serializer):
     topic = serializers.ChoiceField(
-        choices=[], required=True, help_text=help_texts.TOPIC_FIELD
+        choices=[],
+        required=True,
+        help_text=help_texts.TOPIC_FIELD,
     )
     metric = serializers.ChoiceField(
         choices=[],
@@ -36,3 +30,9 @@ class HeadlinesQuerySerializer(serializers.Serializer):
     @property
     def metric_manager(self) -> Manager:
         return self.context.get("metric_manager", Metric.objects)
+
+
+class HeadlinesResponseSerializer(serializers.Serializer):
+    value = serializers.FloatField(
+        help_text=help_texts.HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT
+    )
