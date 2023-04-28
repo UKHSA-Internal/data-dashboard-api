@@ -28,8 +28,10 @@ class HeadlineNumbersRowCard(blocks.StructBlock):
 
 
 class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
-    title = blocks.TextBlock(required=True)
-    body = blocks.TextBlock(required=False)
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD_HELP_TEXT)
+    body = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
+    )
     chart = ChartBlock(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
     headline_number_columns = HeadlineNumberBlockTypes(
         required=False,
