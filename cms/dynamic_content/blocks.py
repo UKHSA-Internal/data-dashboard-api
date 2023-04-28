@@ -1,6 +1,6 @@
 from wagtail import blocks
 
-from cms.common.models import AVAILABLE_TEXT_FEATURES
+from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.metrics_interface.interface import (
     get_all_geographies,
@@ -29,7 +29,7 @@ class BaseMetricsBlock(blocks.StructBlock):
 
 class TextBlock(blocks.StructBlock):
     body = blocks.RichTextBlock(
-        features=AVAILABLE_TEXT_FEATURES, help_text=help_texts.TEXT_BLOCK_HELP_TEXT
+        features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_BLOCK_HELP_TEXT
     )
 
     class Meta:
