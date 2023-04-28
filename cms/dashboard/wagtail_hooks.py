@@ -14,7 +14,7 @@ def global_admin_css():
 
 ADDITIONAL_CUSTOM_ICONS: List[str] = [
     "icons/chart_plot.svg",
-    "icons/chart_card.svg",
+    "icons/chart_with_headline_and_trend_card.svg",
     "icons/standalone_chart.svg",
     "icons/headline_number.svg",
     "icons/number.svg",
