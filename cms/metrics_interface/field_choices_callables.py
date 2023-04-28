@@ -143,7 +143,7 @@ def get_all_stratum_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of topic names.
+        A list of 2-item tuples of stratum names.
         Examples:
             [("0_4", "0_4"), ...]
 
@@ -164,7 +164,7 @@ def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of topic names.
+        A list of 2-item tuples of geography names.
         Examples:
             [("England", "England"), ...]
 
@@ -185,7 +185,7 @@ def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         So Wagtail will pull the choices by invoking this function.
 
     Returns:
-        A list of 2-item tuples of topic names.
+        A list of 2-item tuples of geography type names.
         Examples:
             [("Nation", "Nation"), ...]
 
