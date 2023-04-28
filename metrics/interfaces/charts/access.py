@@ -1,5 +1,4 @@
 import datetime
-from enum import Enum
 from typing import Optional, Union
 
 import plotly.graph_objects
@@ -11,20 +10,11 @@ from metrics.data.access.core_models import (
 )
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import bar, line, line_with_shaded_section, waffle
+from metrics.domain.models import ChartsPlotParameters
+from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
-
-
-class ChartTypes(Enum):
-    simple_line = "simple_line"
-    waffle = "waffle"
-    line_with_shaded_section = "line_with_shaded_section"
-    bar = "bar"
-
-    @classmethod
-    def choices(cls):
-        return tuple((chart_type.value, chart_type.value) for chart_type in cls)
 
 
 class ChartsInterface:
@@ -175,23 +165,31 @@ def make_datetime_from_string(date_from: Optional[str]) -> datetime.datetime:
 
 
 def generate_chart(
-    topic: str,
-    metric: str,
-    chart_type: str,
-    date_from,
+    chart_plot_model: ChartsPlotParameters,
+    file_format: str,
 ):
-    date_from = make_datetime_from_string(date_from=date_from)
+    date_from = make_datetime_from_string(date_from=chart_plot_model.date_from)
     charts_request_validator = validation.ChartsRequestValidator(
-        topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+        topic=chart_plot_model.topic,
+        metric=chart_plot_model.metric,
+        chart_type=chart_plot_model.chart_type,
+        date_from=date_from,
     )
     charts_request_validator.validate()
 
     library = ChartsInterface(
-        topic=topic, metric=metric, chart_type=chart_type, date_from=date_from
+        topic=chart_plot_model.topic,
+        metric=chart_plot_model.metric,
+        chart_type=chart_plot_model.chart_type,
+        date_from=date_from,
     )
     figure = library.generate_chart_figure()
 
-    return write_figure(figure=figure, topic=f"{topic}.{metric}", file_format="png")
+    return write_figure(
+        figure=figure,
+        topic=f"{chart_plot_model.topic}.{chart_plot_model.metric}",
+        file_format=file_format,
+    )
 
 
 def write_figure(
