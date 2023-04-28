@@ -60,8 +60,8 @@ HEADING_BLOCK_HELP_TEXT: str = """
 The text you add here will be used as the heading for this section. 
 """
 
-CONTENT_BLOCKS_HELP_TEXT: str = """
-Here you can add any number of content components for this section.
+CONTENT_CARDS_HELP_TEXT: str = """
+Here you can add any number of content cards for this section.
 """
 
 
