@@ -1,4 +1,25 @@
 {
+    "id": 6,
+    "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/6/",
+        "html_url": null,
+        "slug": "respiratory-viruses",
+        "show_in_menus": false,
+        "seo_title": "",
+        "search_description": "",
+        "first_published_at": "2023-04-26T11:39:38.064114Z",
+        "alias_of": null,
+        "parent": {
+            "id": 2,
+            "meta": {
+                "type": "wagtailcore.Page",
+                "detail_url": "http://localhost/api/pages/2/",
+                "html_url": null
+            },
+            "title": "Welcome to your new Wagtail site!"
+        }
+    },
     "title": "Respiratory viruses",
     "body": [
         {
@@ -9,9 +30,14 @@
             "id": "cc2d5c0c-97a3-45a0-83cc-d21b1ba7e06c"
         },
         {
+            "type": "heading",
+            "value": {"body": "Coronavirus"},
+            "id": "d4deebbc-fb31-4051-baba-0b3c3b5be46c"
+        },
+        {
             "type": "text",
             "value": {
-                "body": "<h2 data-block-key=\"cl294\">Coronavirus</h2><p data-block-key=\"bf348\">The UKHSA dashboard for data and insights on coronavirus.</p>"
+                "body": "<p data-block-key=\"cl294\">The UKHSA dashboard for data and insights on coronavirus.</p>"
             },
             "id": "b1f3d7ab-3c43-492c-8dab-c65a76a7a867"
         },
@@ -197,9 +223,14 @@
             "id": "b3bebde7-538d-4ba1-a568-c28ac1c33a63"
         },
         {
+            "type": "heading",
+            "value": {"body": "Influenza"},
+            "id": "45c82cac-1f13-4730-bdfe-6e5baac48564"
+        },
+        {
             "type": "text",
             "value": {
-                "body": "<h2 data-block-key=\"aie95\">Influenza</h2><p data-block-key=\"19u5\">The UKHSA dashboard for data and insights on influenza.</p>"
+                "body": "<p data-block-key=\"aie95\">The UKHSA dashboard for data and insights on influenza.</p>"
             },
             "id": "34e6806e-eb04-49e9-8db2-0733b8203397"
         },
@@ -313,5 +344,5 @@
         }
     ],
     "related_links": [],
-    "last_published_at": "2023-04-24T09:37:35.021114Z"
+    "last_published_at": "2023-04-28T08:11:30.295417Z"
 }
