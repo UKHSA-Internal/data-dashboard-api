@@ -28,11 +28,11 @@
                 "heading": "Coronavirus",
                 "content": [
                     {
-                        "type": "text",
+                        "type": "text_card",
                         "value": {
-                            "body": "<p data-block-key=\"sj74x\">The UKHSA dashboard for data and insights on coronavirus.</p>"
+                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on Coronavirus.</p>"
                         },
-                        "id": "659d7fca-2449-4c0a-b40f-b5cd27e2be9f"
+                        "id": "6a399089-6e24-4010-a484-a12745d38872"
                     },
                     {
                         "type": "headline_numbers_row_card",
@@ -169,6 +169,51 @@
                             ]
                         },
                         "id": "d8514c8c-eb79-4c53-9b39-f7eaa02c3f81"
+                    },
+                    {
+                        "type": "chart_with_headline_and_trend_card",
+                        "value": {
+                            "title": "Deaths",
+                            "body": "Deaths with COVID-19 on the death certificate in England",
+                            "chart": [
+                                {
+                                    "type": "plot",
+                                    "value": {
+                                        "topic": "COVID-19",
+                                        "metric": "new_deaths_daily",
+                                        "chart_type": "line_with_shaded_section",
+                                        "date_from": null,
+                                        "date_to": null,
+                                        "stratum": "",
+                                        "geography": "",
+                                        "geography_type": ""
+                                    },
+                                    "id": "9133f732-52a7-4df7-a2e1-6973f0e8c5d7"
+                                }
+                            ],
+                            "headline_number_columns": [
+                                {
+                                    "type": "headline_number",
+                                    "value": {
+                                        "topic": "COVID-19",
+                                        "metric": "new_deaths_7days_sum",
+                                        "body": "Last 7 days"
+                                    },
+                                    "id": "9906538f-1d5b-437b-a987-e9e2084c2f51"
+                                },
+                                {
+                                    "type": "trend_number",
+                                    "value": {
+                                        "topic": "COVID-19",
+                                        "metric": "new_deaths_7days_change",
+                                        "body": "",
+                                        "percentage_metric": "new_deaths_7days_change_percentage"
+                                    },
+                                    "id": "f7f843f8-0812-4feb-99a6-fdc081db70b9"
+                                }
+                            ]
+                        },
+                        "id": "ee8e12ea-1f13-420e-b2d8-18fa4fb15a4d"
                     }
                 ]
             },
@@ -180,11 +225,11 @@
                 "heading": "Influenza",
                 "content": [
                     {
-                        "type": "text",
+                        "type": "text_card",
                         "value": {
-                            "body": "<p data-block-key=\"1mmwg\">The UKHSA dashboard for data and insights on Influenza.</p>"
+                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on Influenza.</p>"
                         },
-                        "id": "dbbafc78-be9f-4c94-8b54-fb99be093fc4"
+                        "id": "53fcc358-f10d-411d-9bd0-9acb3c4d3aae"
                     },
                     {
                         "type": "headline_numbers_row_card",
@@ -300,5 +345,5 @@
         }
     ],
     "related_links": [],
-    "last_published_at": "2023-04-28T11:03:59.670621Z"
+    "last_published_at": "2023-04-28T16:18:41.910082Z"
 }
