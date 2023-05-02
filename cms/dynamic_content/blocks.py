@@ -1,42 +1,61 @@
 from wagtail import blocks
 
-from cms.dynamic_content import elements, help_texts
-from cms.metrics_interface.field_choices_callables import (
-    get_all_unique_change_type_metric_names,
-    get_all_unique_percent_change_type_names,
-)
+from cms.dynamic_content import help_texts
+from cms.dynamic_content.components import HeadlineNumberComponent, TrendNumberComponent
 
 
-class ChartBlock(blocks.StreamBlock):
-    plot = elements.ChartPlotElement()
-
-    class Meta:
-        icon = "standalone_chart"
-
-
-class HeadlineNumberBlock(elements.BaseMetricsElement):
-    body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
+class SingleHeadlineNumberBlock(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD_HELP_TEXT)
+    headline_number = HeadlineNumberComponent(
+        help_text=help_texts.HEADLINE_BLOCK_FIELD_HELP_TEXT
     )
 
     class Meta:
-        icon = "bold"
+        icon = "number"
 
 
-class TrendNumberBlock(elements.BaseMetricsElement):
-    body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
+class HeadlineAndTrendNumberBlock(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD_HELP_TEXT)
+    headline_number = HeadlineNumberComponent(
+        help_text=help_texts.HEADLINE_BLOCK_FIELD_HELP_TEXT
     )
-    metric = blocks.ChoiceBlock(
-        required=True,
-        choices=get_all_unique_change_type_metric_names,
-        help_text=help_texts.TREND_METRIC_FIELD_HELP_TEXT,
-    )
-    percentage_metric = blocks.ChoiceBlock(
-        required=True,
-        choices=get_all_unique_percent_change_type_names,
-        help_text=help_texts.TREND_PERCENTAGE_METRIC_FIELD_HELP_TEXT,
+    trend_number = TrendNumberComponent(
+        help_text=help_texts.TREND_BLOCK_FIELD_HELP_TEXT
     )
 
     class Meta:
-        icon = "arrows-up-down"
+        icon = "trend_down"
+
+
+class DualHeadlineNumberBlock(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD_HELP_TEXT)
+    top_headline_number = HeadlineNumberComponent(
+        help_text=help_texts.TOP_HEADLINE_BLOCK_FIELD_HELP_TEXT
+    )
+    bottom_headline_number = HeadlineNumberComponent(
+        help_text=help_texts.BOTTOM_HEADLINE_BLOCK_FIELD_HELP_TEXT
+    )
+
+    class Meta:
+        icon = "order"
+
+
+class HeadlineNumberRowBlockTypes(blocks.StreamBlock):
+    single_headline_component = SingleHeadlineNumberBlock(
+        help_text=help_texts.SINGLE_HEADLINE_COMPONENT_HELP_TEXT
+    )
+    headline_and_trend_component = HeadlineAndTrendNumberBlock(
+        help_text=help_texts.HEADLINE_AND_TREND_COMPONENT_HELP_TEXT
+    )
+    dual_headline_component = DualHeadlineNumberBlock(
+        help_text=help_texts.DUAL_HEADLINE_COMPONENT_HELP_TEXT
+    )
+
+
+class HeadlineNumberBlockTypes(blocks.StreamBlock):
+    headline_number = HeadlineNumberComponent(
+        help_text=help_texts.HEADLINE_BLOCK_FIELD_HELP_TEXT
+    )
+    trend_number = TrendNumberComponent(
+        help_text=help_texts.TREND_BLOCK_FIELD_HELP_TEXT
+    )

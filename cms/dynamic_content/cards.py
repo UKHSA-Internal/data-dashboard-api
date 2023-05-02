@@ -2,11 +2,11 @@ from wagtail import blocks
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.blocks import ChartBlock
-from cms.dynamic_content.components import (
+from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
-    HeadlineNumberComponentTypes,
+    HeadlineNumberRowBlockTypes,
 )
+from cms.dynamic_content.components import ChartComponent
 
 
 class TextCard(blocks.StructBlock):
@@ -26,7 +26,7 @@ MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT: int = 2
 
 
 class HeadlineNumbersRowCard(blocks.StructBlock):
-    columns = HeadlineNumberComponentTypes(
+    columns = HeadlineNumberRowBlockTypes(
         min_num=MINIMUM_HEADLINE_COLUMNS_COUNT,
         max_num=MAXIMUM_HEADLINE_COLUMNS_COUNT,
         help_text=help_texts.HEADLINE_COLUMNS_FIELD_HELP_TEXT.format(
@@ -43,7 +43,7 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     body = blocks.TextBlock(
         required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
     )
-    chart = ChartBlock(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
+    chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
     headline_number_columns = HeadlineNumberBlockTypes(
         required=False,
         min_num=MINIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT,
@@ -62,7 +62,7 @@ class ChartCard(blocks.StructBlock):
     body = blocks.TextBlock(
         required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
     )
-    chart = ChartBlock(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
+    chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
 
     class Meta:
         icon = "standalone_chart"
