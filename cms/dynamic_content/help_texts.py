@@ -8,6 +8,11 @@ HEADLINE_COLUMNS_IN_CHART_CARD_HELP_TEXT: str = """
 Add up to {} headline or trend number column components within this space.
 Note that these figures will be displayed within the card, and above the chart itself.
 """
+CHART_CARD_ROW_HELP_TEXT: str = """
+Here you can add 1 or 2 columns to contain a particular chart card.
+If you add the 1 column, then the chart card will spread across the available width.
+If you add 2 columns, then the cards will be split across 2 columns within the available width.
+"""
 
 CHART_BLOCK_FIELD_HELP_TEXT: str = """
 Add the plots required for your chart. 
@@ -60,8 +65,9 @@ HEADING_BLOCK_HELP_TEXT: str = """
 The text you add here will be used as the heading for this section. 
 """
 
-CONTENT_CARDS_HELP_TEXT: str = """
-Here you can add any number of content cards for this section.
+CONTENT_ROW_CARDS_HELP_TEXT: str = """
+Here you can add any number of content row cards for this section.
+Note that these cards will be displayed across the available width.
 """
 
 

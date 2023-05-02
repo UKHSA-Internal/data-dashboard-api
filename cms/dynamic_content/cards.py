@@ -80,6 +80,7 @@ class ChartRowCard(blocks.StructBlock):
     columns = ChartRowBlockTypes(
         min_num=MINIMUM_COLUMNS_CHART_COLUMNS_COUNT,
         max_num=MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT,
+        help_text=help_texts.CHART_CARD_ROW_HELP_TEXT,
     )
 
     class Meta:
