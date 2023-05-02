@@ -66,3 +66,18 @@ class ChartCard(blocks.StructBlock):
 
     class Meta:
         icon = "standalone_chart"
+
+
+class ChartRowBlockTypes(blocks.StreamBlock):
+    chart_card = ChartCard()
+    chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
+
+
+class ChartRowCard(blocks.StructBlock):
+    columns = ChartRowBlockTypes(
+        min_num=1,
+        max_num=2,
+    )
+
+    class Meta:
+        icon = "standalone_chart"

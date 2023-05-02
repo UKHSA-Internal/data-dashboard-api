@@ -5,8 +5,7 @@ from cms.dynamic_content import cards, help_texts
 
 class ContentCards(StreamBlock):
     text_card = cards.TextCard()
-    chart_card = cards.ChartCard()
-    chart_with_headline_and_trend_card = cards.ChartWithHeadlineAndTrendCard()
+    chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
 
 
