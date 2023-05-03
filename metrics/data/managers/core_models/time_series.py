@@ -68,6 +68,75 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return self._oldest_to_newest(queryset=queryset)
 
+    @staticmethod
+    def _filter_by_geography(queryset, geography):
+        return queryset.filter(geography__name=geography)
+
+    @staticmethod
+    def _filter_by_geography_type(queryset, geography_type):
+        return queryset.filter(geography__geography_type__name=geography_type)
+
+    @staticmethod
+    def _filter_by_stratum(queryset, stratum):
+        return queryset.filter(stratum__name=stratum)
+
+    def filter_for_dates_and_values(
+        self,
+        topic: str,
+        metric_name: str,
+        date_from: datetime.date,
+        geography: Optional[str] = None,
+        geography_type: Optional[str] = None,
+        stratum: Optional[str] = None,
+    ) -> models.QuerySet:
+        """Filters by the given `topic` and `metric`. Slices all values older than the `date_from`.
+
+        Args:
+            topic: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric_name: The name of the metric being queried.
+                E.g. `new_cases_7days_sum
+            date_from: The datetime object to begin the query from.
+                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
+                would strip off any records which occurred before that date.
+            geography: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            geography_type: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+            stratum: The value of the stratum to apply additional filtering to.
+                E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+
+        Returns:
+            QuerySet: An ordered queryset from oldest -> newest
+                of the (dt, metric_value) numbers:
+                Examples:
+                    `<CoreTimeSeriesQuerySet [
+                        (datetime.date(2022, 10, 10), Decimal('0.8')),
+                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                    ]>`
+
+        """
+        queryset = self.filter(
+            metric__topic__name=topic,
+            metric__name=metric_name,
+            dt__gte=date_from,
+        )
+
+        if geography is not None:
+            queryset = self._filter_by_geography(queryset=queryset, geography=geography)
+
+        if geography_type is not None:
+            queryset = self._filter_by_geography_type(
+                queryset=queryset, geography_type=geography_type
+            )
+
+        if stratum is not None:
+            queryset = self._filter_by_stratum(queryset=queryset, stratum=stratum)
+
+        queryset = queryset.values_list("dt", "metric_value")
+
+        return self._oldest_to_newest(queryset=queryset)
+
     def by_topic_metric_ordered_from_newest_to_oldest(
         self, topic: str, metric_name: str
     ) -> models.QuerySet:
@@ -212,6 +281,51 @@ class CoreTimeSeriesManager(models.Manager):
             topic=topic,
             metric_name=metric_name,
             date_from=date_from,
+        )
+
+    def filter_for_dates_and_values(
+        self,
+        topic: str,
+        metric: str,
+        date_from: datetime.date,
+        geography: Optional[str] = None,
+        geography_type: Optional[str] = None,
+        stratum: Optional[str] = None,
+    ) -> CoreTimeSeriesQuerySet:
+        """Filters by the given `topic` and `metric`. Slices all values older than the `date_from`.
+
+        Args:
+            topic: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric: The name of the metric being queried.
+                E.g. `new_cases_7days_sum
+            date_from: The datetime object to begin the query from.
+                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
+                would strip off any records which occurred before that date.
+            geography: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            geography_type: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+            stratum: The value of the stratum to apply additional filtering to.
+                E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+
+        Returns:
+            QuerySet: An ordered queryset from oldest -> newest
+                of the (dt, metric_value) numbers:
+                Examples:
+                    `<CoreTimeSeriesQuerySet [
+                        (datetime.date(2022, 10, 10), Decimal('0.8')),
+                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                    ]>`
+
+        """
+        return self.get_queryset().filter_for_dates_and_values(
+            topic=topic,
+            metric_name=metric,
+            date_from=date_from,
+            geography=geography,
+            geography_type=geography_type,
+            stratum=stratum,
         )
 
     def get_count(

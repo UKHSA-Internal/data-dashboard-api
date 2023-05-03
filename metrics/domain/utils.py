@@ -11,6 +11,7 @@ class ChartTypes(Enum):
     waffle = "waffle"
     line_with_shaded_section = "line_with_shaded_section"
     bar = "bar"
+    line_multi_coloured = "line_multi_coloured"
 
     @classmethod
     def choices(cls):

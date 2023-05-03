@@ -161,8 +161,7 @@ class ChartsView(APIView):
 
         try:
             filename: str = access.generate_chart(
-                chart_plot_model=chart_plot_models.plots[0],
-                file_format=chart_plot_models.file_format,
+                chart_plots=chart_plot_models,
             )
         except data_visualization_superseded.ChartNotSupportedError:
             return Response(status=HTTPStatus.NOT_FOUND)
