@@ -4,6 +4,9 @@ from typing import List
 import plotly
 
 from metrics.domain.charts.line_multi_coloured import colour_scheme
+from metrics.domain.charts.line_multi_coloured.properties import (
+    get_label_from_plot_data,
+)
 from metrics.domain.models import ChartPlotData
 
 X_AXIS_ARGS = {
@@ -32,7 +35,7 @@ LAYOUT_ARGS = {
     "margin": {
         "l": 0,
         "r": 0,
-        "b": 4,
+        "b": 0,
         "t": 0,
     },
     "showlegend": True,
@@ -45,17 +48,14 @@ LAYOUT_ARGS = {
 
 def get_available_colour_and_line_combos():
     available_plot_colours = colour_scheme.RGBAColours.available_plot_colours()
-    available_dash_types = [
-        "solid",
-        "dot",
-        "dash",
-        "longdash",
-        "dashdot",
-        "longdashdot",
-    ] * 3
     combos = []
     for index, colour in enumerate(available_plot_colours):
-        combos.append({"colour": colour, "dash": available_dash_types[index]})
+        if index < 3:
+            dash = "solid"
+        else:
+            dash = "dot"
+
+        combos.append({"colour": colour, "dash": dash})
 
     return combos
 
@@ -84,7 +84,7 @@ def create_multi_coloured_line_chart(
     available_combos = get_available_colour_and_line_combos()
 
     for index, plot_data in enumerate(chart_plots_data):
-        stratum = plot_data.parameters.stratum
+        label = get_label_from_plot_data(plot_data=plot_data)
         dates, values = plot_data.data
         combo = available_combos[index]
         selected_colour: colour_scheme.RGBAColours = combo["colour"]
@@ -95,7 +95,7 @@ def create_multi_coloured_line_chart(
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,
-            legend=stratum,
+            legend=label,
             dash=combo["dash"],
         )
 
