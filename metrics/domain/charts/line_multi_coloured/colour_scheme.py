@@ -22,4 +22,4 @@ class RGBAColours(Enum):
 
     @classmethod
     def available_plot_colours(cls):
-        return [cls for cls in cls if cls.name.startswith("PLOT")] * 3
+        return [cls for cls in cls if cls.name.startswith("PLOT")]
