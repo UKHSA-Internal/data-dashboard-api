@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers import ChartsQuerySerializer
 from metrics.api.serializers.charts import ChartPlotSerializer, ChartsSerializer
+from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -229,3 +230,35 @@ class TestChartsSerializer:
         # When / Then
         with pytest.raises(ValidationError):
             serializer.is_valid(raise_exception=True)
+
+    def test_to_models_returns_correct_models(self):
+        """
+        Given a payload for a list of 1 chart plots
+        When `to_models()` is called from an instance of the `ChartsSerializer`
+        Then a `ChartPlots` model is returned with the correct data
+        """
+        # Given
+        chart_plots = [
+            {
+                "topic": "COVID-19",
+                "metric": "new_cases_daily",
+                "stratum": "",
+                "geography": "",
+                "geography_type": "",
+                "date_from": "",
+                "chart_type": "line_with_shaded_section",
+            }
+        ]
+        valid_data_payload = {"file_format": "svg", "plots": chart_plots}
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        serializer.is_valid()
+        models = serializer.to_models()
+
+        # Then
+        expected_chart_plots_model = ChartPlots(
+            plots=[ChartPlotParameters(**chart_plots[0])],
+            file_format=valid_data_payload["file_format"],
+        )
+        assert models == expected_chart_plots_model
