@@ -257,8 +257,9 @@ class TestChartsSerializer:
         chart_plots_serialized_models: ChartPlots = serializer.to_models()
 
         # Then
+        chart_plot_params_model = ChartPlotParameters(**chart_plots[0])
         expected_chart_plots_model = ChartPlots(
-            plots=[ChartPlotParameters(**chart_plots[0])],
+            plots=[chart_plot_params_model],
             file_format=valid_data_payload["file_format"],
         )
         assert chart_plots_serialized_models == expected_chart_plots_model
