@@ -4,9 +4,6 @@ from typing import List
 import plotly
 
 from metrics.domain.charts.line_multi_coloured import colour_scheme
-from metrics.domain.charts.line_multi_coloured.properties import (
-    get_label_from_plot_data,
-)
 from metrics.domain.models import ChartPlotData
 
 X_AXIS_ARGS = {
