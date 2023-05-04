@@ -30,6 +30,43 @@ class TestChartsView:
         return "/charts/v2/"
 
     @pytest.mark.django_db
+    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
+        self, authenticated_api_client: APIClient
+    ):
+        """
+        Given a valid payload to create a chart
+        And an authenticated APIClient
+        When the `POST /charts/v2` endpoint is hit i.e. without the trailing `/`
+        Then the response is still a valid HTTP 200 OK
+        """
+        # Given
+        path_without_trailing_forward_slash: str = self.path.strip("/")
+        metric_name = "vaccinations_percentage_uptake_spring22"
+        topic_name = "COVID-19"
+        self._setup_core_time_series(
+            metric_name=metric_name, metric_value=13, topic_name=topic_name
+        )
+        valid_payload = {
+            "file_format": "svg",
+            "plots": [
+                {
+                    "topic": topic_name,
+                    "metric": metric_name,
+                    "chart_type": "waffle",
+                }
+            ],
+        }
+
+        # When
+        response: Response = authenticated_api_client.post(
+            path=path_without_trailing_forward_slash,
+            data=valid_payload,
+            format="json",
+        )
+
+        assert response.status_code == HTTPStatus.OK
+
+    @pytest.mark.django_db
     def test_returns_correct_response(self, authenticated_api_client: APIClient):
         """
         Given a valid payload to create a chart
