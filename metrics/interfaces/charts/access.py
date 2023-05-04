@@ -179,7 +179,7 @@ class ChartsInterface:
                     ]>`
 
         """
-        plot_params: Dict[str, str] = chart_plot_parameters.to_dict()
+        plot_params: Dict[str, str] = chart_plot_parameters.to_dict_for_query()
         date_from: str = make_datetime_from_string(
             date_from=chart_plot_parameters.date_from
         )

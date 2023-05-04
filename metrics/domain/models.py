@@ -1,4 +1,4 @@
-from typing import Dict, List, Literal, Optional
+from typing import Dict, List, Literal, Optional, Tuple
 
 from pydantic.main import Any, BaseModel
 
@@ -11,12 +11,18 @@ class ChartPlotParameters(BaseModel):
     geography: Optional[str]
     geography_type: Optional[str]
     date_from: Optional[str]
+    label: Optional[str]
 
-    def to_dict(self) -> Dict[str, str]:
-        """Returns a dict representation of the model.
+    @property
+    def keys_to_omit_from_dict_representation(self) -> Tuple[str, ...]:
+        return "chart_type", "date_from", "label"
+
+    def to_dict_for_query(self) -> Dict[str, str]:
+        """Returns a dict representation of the model used for the corresponding query.
 
         Notes:
-            The `chart_type` and `date_from` are omitted.
+            A number of fields are ommitted which would not be needed
+            for a database query related to this plot.
 
         Returns:
             Dict[str, str]: A dict representation of the model.
@@ -30,7 +36,7 @@ class ChartPlotParameters(BaseModel):
             key: getattr(self, key)
             for key in self.__fields__
             if getattr(self, key)
-            if key not in ("chart_type", "date_from")
+            if key not in self.keys_to_omit_from_dict_representation
         }
 
 

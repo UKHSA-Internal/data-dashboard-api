@@ -342,6 +342,6 @@ class TestMakeDatetimeFromString:
         # The dict representation of the `ChartPlotParameters` model
         # is unpacked into the `get_timeseries` method
         mocked_get_timeseries.assert_called_once_with(
-            **fake_chart_plot_parameters.to_dict(),
+            **fake_chart_plot_parameters.to_dict_for_query(),
             date_from=expected_date_from,
         )
