@@ -39,7 +39,7 @@ class TestChartsView:
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        path_without_trailing_forward_slash: str = self.path.strip("/")
+        path_without_trailing_forward_slash: str = "/charts/v2"
         metric_name = "vaccinations_percentage_uptake_spring22"
         topic_name = "COVID-19"
         self._setup_core_time_series(
