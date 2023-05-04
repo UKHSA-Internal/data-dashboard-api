@@ -81,7 +81,6 @@ def create_multi_coloured_line_chart(
     available_combos = get_available_colour_and_line_combos()
 
     for index, plot_data in enumerate(chart_plots_data):
-        label = get_label_from_plot_data(plot_data=plot_data)
         dates, values = plot_data.data
         combo = available_combos[index]
         selected_colour: colour_scheme.RGBAColours = combo["colour"]
@@ -92,7 +91,7 @@ def create_multi_coloured_line_chart(
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,
-            legend=label,
+            legend=plot_data.parameters.label,
             dash=combo["dash"],
         )
 
