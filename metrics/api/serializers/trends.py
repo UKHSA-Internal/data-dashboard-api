@@ -7,10 +7,14 @@ from metrics.data.models.core_models import Metric, Topic
 
 class TrendsQuerySerializer(serializers.Serializer):
     topic = serializers.ChoiceField(
-        choices=[], required=True, help_text=help_texts.TOPIC_FIELD
+        choices=[],
+        required=True,
+        help_text=help_texts.TOPIC_FIELD,
     )
     metric = serializers.ChoiceField(
-        choices=[], required=True, help_text=help_texts.TREND_METRIC_NAME_FIELD
+        choices=[],
+        required=True,
+        help_text=help_texts.TREND_METRIC_NAME_FIELD,
     )
     percentage_metric = serializers.ChoiceField(
         choices=[],

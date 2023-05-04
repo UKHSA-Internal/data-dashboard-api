@@ -18,6 +18,7 @@ from metrics.api.views import (
     FileUploadView,
     HeadlinesView,
     HealthView,
+    TabularView,
     TrendsView,
 )
 from metrics.api.viewsets import APITimeSeriesViewSet, DashboardViewSet
@@ -55,6 +56,10 @@ urlpatterns = [
     re_path(r"^charts/v2/", ChartsView.as_view()),
     re_path(r"^downloads/v2/", DownloadsView.as_view()),
     re_path(r"^headlines/v2/", HeadlinesView.as_view()),
+    re_path(
+        r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
+        TabularView.as_view(),
+    ),
     re_path(r"^trends/v2/", TrendsView.as_view()),
     path("health/", HealthView.as_view()),
     path("admin/", admin.site.urls),

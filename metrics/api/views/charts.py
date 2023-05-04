@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.serializers import ChartsQuerySerializer, ChartsSerializer
+from metrics.api.serializers.charts import ChartsResponseSerializer
 from metrics.interfaces.charts import access, data_visualization_superseded, validation
 
 DEPRECATION_DATE_CHARTS_ENDPOINT = "Wed, 19 Apr 2023 23:59:59 GMT"
@@ -80,7 +81,10 @@ class ChartView(APIView):
 class ChartsView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(request=ChartsSerializer)
+    @extend_schema(
+        request=ChartsSerializer,
+        responses={HTTPStatus.OK.value: ChartsResponseSerializer},
+    )
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
