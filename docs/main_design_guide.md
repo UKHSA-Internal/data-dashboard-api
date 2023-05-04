@@ -44,6 +44,8 @@ This is enforced in this project with `import-linter`.
    |- dashboard/ # This is the *main/primary* wagtail app.
    |- home/ # The wagtail app for the landing page.
    |- topic/ # The wagtal app for the topic pages (diseases e.g. COVID-19)
+   |- dynamic_content/ # Contains the primary customised blocks and components used for dynamic content 
+   |- metrics_interface/ # Contains the funnel abstractions which links the cms <- metrics parts of the application
    ...
 
 |- metrics/
