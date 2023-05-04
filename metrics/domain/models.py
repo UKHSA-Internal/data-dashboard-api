@@ -11,6 +11,7 @@ class ChartsPlotParameters(BaseModel):
     geography: Optional[str]
     geography_type: Optional[str]
     date_from: Optional[str]
+    date_to: Optional[str]
 
 
 class ChartPlots(BaseModel):
