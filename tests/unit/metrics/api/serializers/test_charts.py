@@ -66,6 +66,40 @@ class TestChartsQuerySerializer:
 
 
 class TestChartPlotSerializer:
+    def test_valid_payload_with_optional_fields_provided(
+        self,
+        charts_plot_serializer_payload_and_model_managers,
+    ):
+        """
+        Given a valid payload containing the optional `label` field passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `date_from`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        label = "15 to 44 years old"
+        valid_data_payload["label"] = label
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+        assert serializer.validated_data["label"] == label
+
     @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
     def test_valid_chart_type(
         self,
