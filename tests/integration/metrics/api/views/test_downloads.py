@@ -13,7 +13,7 @@ from metrics.data.models.api_models import APITimeSeries
 class TestDownloadsView:
     metric = "new_deaths_7day_avg"
     stratum = "default"
-    api_timeseries_record = {
+    api_timeseries_data = {
         "period": "D",
         "theme": "infectious_disease",
         "sub_theme": "respiratory",
@@ -76,7 +76,7 @@ class TestDownloadsView:
         Then the response contains the expected output in json format
         """
         # Given
-        self._setup_api_time_series(**self.api_timeseries_record)
+        self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
             "format": "json",
             "plots": [
@@ -103,7 +103,7 @@ class TestDownloadsView:
         assert type(response.data[0]) == OrderedDict
 
         # Check the output itself is as expected
-        assert response.data[0] == self.api_timeseries_record
+        assert response.data[0] == self.api_timeseries_data
 
     @pytest.mark.django_db
     def test_csv_download_returns_correct_response(
@@ -116,7 +116,7 @@ class TestDownloadsView:
         Then the response contains the expected output in csv format
         """
         # Given
-        self._setup_api_time_series(**self.api_timeseries_record)
+        self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
             "format": "csv",
             "plots": [
@@ -135,6 +135,8 @@ class TestDownloadsView:
             "geography",
             "metric",
             "stratum",
+            "sex",
+            "year",
             "dt",
             "metric_value",
         ]
@@ -147,6 +149,8 @@ class TestDownloadsView:
                 "England",
                 "new_deaths_7day_avg",
                 "default",
+                "M",
+                "2023",
                 "2023-01-15",
                 "123.45",
             ]

@@ -1,6 +1,6 @@
 from typing import Dict, List
 
-from metrics.data.access.api_models import create_filters
+from metrics.data.access.api_models import validate_query_filters
 
 
 class TestCreateFilters:
@@ -18,7 +18,7 @@ class TestCreateFilters:
         plots = [{"topic": "COVID-19", "metric": "new_cases_daily"}]
 
         # When
-        filter_result: List[Dict[str, str]] = create_filters(
+        filter_result: List[Dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
@@ -50,7 +50,7 @@ class TestCreateFilters:
         ]
 
         # When
-        filter_result: List[Dict[str, str]] = create_filters(
+        filter_result: List[Dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
@@ -82,7 +82,7 @@ class TestCreateFilters:
         ]
 
         # When
-        filter_result: List[Dict[str, str]] = create_filters(
+        filter_result: List[Dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
@@ -113,7 +113,7 @@ class TestCreateFilters:
         ]
 
         # When
-        filter_result: List[Dict[str, str]] = create_filters(
+        filter_result: List[Dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields, plots=plots
         )
 
@@ -146,7 +146,7 @@ class TestCreateFilters:
         ]
 
         # When
-        filter_result: List[Dict[str, str]] = create_filters(
+        filter_result: List[Dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )

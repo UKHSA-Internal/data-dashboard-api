@@ -1,5 +1,8 @@
 import csv
 import io
+from typing import List
+
+from metrics.data.models.api_models import APITimeSeries
 
 COLUMNS_TO_WRITE = [
     "theme",
@@ -9,6 +12,8 @@ COLUMNS_TO_WRITE = [
     "geography",
     "metric",
     "stratum",
+    "sex",
+    "year",
     "dt",
     "metric_value",
 ]
@@ -16,7 +21,7 @@ COLUMNS_TO_WRITE = [
 
 def write_data_to_csv(
     file: io.StringIO,
-    api_time_series,
+    api_time_series: List[APITimeSeries],
 ) -> io.StringIO:
     writer = csv.writer(file)
     writer.writerow(COLUMNS_TO_WRITE)
