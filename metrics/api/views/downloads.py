@@ -38,7 +38,6 @@ class DownloadsView(APIView):
     # All the fields you can filter by
     possible_fields = filterset_fields + ["date_from"]
 
-    permission_classes = []
     renderer_classes = (CoreJSONRenderer,)
 
     def _get_queryset(self):

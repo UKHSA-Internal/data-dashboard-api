@@ -87,7 +87,7 @@ class TestWriteDataToCSV:
         # Go back to the beginning of stream
         csv_file.seek(0)
 
-        # Output should consiste of two rows, a heading and the data itself
+        # Output should consist of two rows, a heading and the data itself
         csv_header = _get_line_from_stream(csv_file)
         csv_body = _get_line_from_stream(csv_file)
 
