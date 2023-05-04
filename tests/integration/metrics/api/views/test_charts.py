@@ -1,6 +1,5 @@
 import datetime
 from http import HTTPStatus
-from unittest import mock
 
 import pytest
 from rest_framework.response import Response
