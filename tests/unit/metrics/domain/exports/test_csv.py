@@ -2,8 +2,6 @@ import datetime
 import io
 from typing import List
 
-import pytest
-
 from metrics.domain.exports.csv import write_data_to_csv
 from tests.fakes.factories.api_time_series_factory import FakeAPITimeSeriesFactory
 from tests.fakes.models.api_time_series import FakeAPITimeSeries
