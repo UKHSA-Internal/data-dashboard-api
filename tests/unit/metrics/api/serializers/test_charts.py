@@ -26,7 +26,7 @@ def charts_plot_serializer_payload_and_model_managers() -> (
         "metric": fake_metric.name,
         "chart_type": ChartTypes.line_with_shaded_section.value,
         "date_from": datetime.date(2023, 1, 1),
-        "date_to": datetime.date(2023, 5, 1)
+        "date_to": datetime.date(2023, 5, 1),
     }
 
     return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])
