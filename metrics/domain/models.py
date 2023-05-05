@@ -12,7 +12,7 @@ class ChartPlotParameters(BaseModel):
     geography_type: Optional[str]
     date_from: Optional[str]
     date_to: Optional[str]
-    label: Optional[str]
+    label: str = ""
 
     @property
     def keys_to_omit_from_dict_representation(self) -> Tuple[str, ...]:
