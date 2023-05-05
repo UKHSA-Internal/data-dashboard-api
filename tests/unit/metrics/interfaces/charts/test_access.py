@@ -7,36 +7,8 @@ from metrics.interfaces.charts.access import ChartsInterface, make_datetime_from
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
-
-@mock.patch(f"{MODULE_PATH}.waffle.generate_chart_figure")
-def test_generate_chart_figure_from_waffle_module_is_called(
-    spy_waffle_generate_chart_figure: mock.MagicMock,
-):
-    """
-    Given a requirement for a `waffle` chart
-    When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
-    Then the `generate_chart_figure()` function is called from the `waffle` module
-    """
-    # Given
-    chart_type: str = ChartTypes.waffle.value
-    mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
-    mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
-
-    charts_interface = ChartsInterface(
-        chart_plots=mocked_chart_plots,
-        core_time_series_manager=mock.Mock(),
-    )
-
-    # When
-    generated_chart_figure = charts_interface.generate_chart_figure()
-
-    # Then
-    spy_waffle_generate_chart_figure.assert_called_once()
-    assert generated_chart_figure == spy_waffle_generate_chart_figure.return_value
-
-
 @mock.patch.object(ChartsInterface, "generate_simple_line_chart")
-def test_generate_chart_figure_from_line_module_is_called(
+def test_generate_chart_figure_delegates_call_for_simple_line_chart(
     spy_generate_simple_line_chart_method: mock.MagicMock,
 ):
     """
@@ -63,8 +35,8 @@ def test_generate_chart_figure_from_line_module_is_called(
 
 
 @mock.patch.object(ChartsInterface, "generate_line_with_shaded_section_chart")
-def test_generate_chart_figure_from_line_with_shaded_section_module_is_called(
-    spy_generate_line_with_shaded_section_chart: mock.MagicMock,
+def test_generate_chart_figure_delegates_call_for_line_with_shaded_section_chart(
+    spy_generate_line_with_shaded_section_chart_method: mock.MagicMock,
 ):
     """
     Given a requirement for a `line_with_shaded_section` chart
@@ -85,16 +57,16 @@ def test_generate_chart_figure_from_line_with_shaded_section_module_is_called(
     generated_chart_figure = charts_interface.generate_chart_figure()
 
     # Then
-    spy_generate_line_with_shaded_section_chart.assert_called_once()
+    spy_generate_line_with_shaded_section_chart_method.assert_called_once()
     assert (
         generated_chart_figure
-        == spy_generate_line_with_shaded_section_chart.return_value
+        == spy_generate_line_with_shaded_section_chart_method.return_value
     )
 
 
 @mock.patch.object(ChartsInterface, "generate_bar_chart")
-def test_generate_bar_chart_module_is_called(
-    spy_generate_bar_chart: mock.MagicMock,
+def test_generate_chart_figure_delegates_call_for_waffle_chart(
+    spy_generate_bar_chart_method: mock.MagicMock,
 ):
     """
     Given a requirement for a `generate_bar_chart` chart
@@ -115,13 +87,13 @@ def test_generate_bar_chart_module_is_called(
     generated_chart_figure = charts_interface.generate_chart_figure()
 
     # Then
-    spy_generate_bar_chart.assert_called_once()
-    assert generated_chart_figure == spy_generate_bar_chart.return_value
+    spy_generate_bar_chart_method.assert_called_once()
+    assert generated_chart_figure == spy_generate_bar_chart_method.return_value
 
 
 @mock.patch.object(ChartsInterface, "generate_line_multi_coloured")
-def test_generate_chart_figure_for_line_multi_coloured_delegates_call(
-    spy_generate_line_multi_coloured: mock.MagicMock,
+def test_generate_chart_figure_delegates_call_for_line_multi_coloured(
+    spy_generate_line_multi_coloured_method: mock.MagicMock,
 ):
     """
     Given a requirement for a `line_multi_coloured` chart
@@ -142,8 +114,8 @@ def test_generate_chart_figure_for_line_multi_coloured_delegates_call(
     generated_chart_figure = charts_interface.generate_chart_figure()
 
     # Then
-    spy_generate_line_multi_coloured.assert_called_once()
-    assert generated_chart_figure == spy_generate_line_multi_coloured.return_value
+    spy_generate_line_multi_coloured_method.assert_called_once()
+    assert generated_chart_figure == spy_generate_line_multi_coloured_method.return_value
 
 
 def test_get_timeseries_calls_core_time_series_manager_with_correct_args():
