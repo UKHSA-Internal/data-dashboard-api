@@ -62,10 +62,11 @@ def create_multi_coloured_line_chart(
     line_shape: str,
     line_width: int = 2,
 ) -> plotly.graph_objs.Figure:
-    """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
+    """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
     Args:
-        chart_plots_data: List of numbers representing the values.
+        chart_plots_data: List of `ChartPlotData` models,
+            where each model represents a requested plot.
         line_shape: The shape to assign to the line plots.
             This can be either `linear` or `spline`.
         line_width: The weight to assign to the width of the line plots.
@@ -129,19 +130,17 @@ def generate_chart_figure(
     chart_plots_data: List[ChartPlotData],
     line_shape: str = "spline",
 ) -> plotly.graph_objs.Figure:
-    """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
+    """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
     Args:
-        chart_plots_data:
+        chart_plots_data: List of `ChartPlotData` models,
+            where each model represents a requested plot.
         line_shape: The shape to assign to the line plots.
-            Defaults to "spline", a curved shape between points.
+            This can be either `linear` or `spline`.
 
     Returns:
         `Figure`: A `plotly` object which can then be
             written to a file, or shown.
-
-    Raises:
-        `ValueError`: If the metric_name is not supported.
 
     """
     return create_multi_coloured_line_chart(
