@@ -60,6 +60,13 @@ class ChartPlotSerializer(serializers.Serializer):
         default="",
         allow_null=True,
     )
+    date_to = serializers.DateField(
+        help_text=help_texts.DATE_FROM_FIELD,
+        required=False,
+        default="",
+        allow_null=True,
+    )
+
     label = serializers.CharField(required=False)
 
     def to_models(self):

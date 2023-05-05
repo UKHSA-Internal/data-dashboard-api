@@ -11,11 +11,12 @@ class ChartPlotParameters(BaseModel):
     geography: Optional[str]
     geography_type: Optional[str]
     date_from: Optional[str]
+    date_to: Optional[str]
     label: Optional[str]
 
     @property
     def keys_to_omit_from_dict_representation(self) -> Tuple[str, ...]:
-        return "chart_type", "date_from", "label"
+        return "chart_type", "date_from", "date_to", "label"
 
     def to_dict_for_query(self) -> Dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.

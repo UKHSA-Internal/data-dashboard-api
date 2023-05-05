@@ -13,6 +13,6 @@ class FakeTopic(Topic):
 
     def __init__(self, **kwargs):
         """
-        Constructor takes the same arguments as a normal `CoreTimeSeries` model.
+        Constructor takes the same arguments as a normal `Topic` model.
         """
         super().__init__(**kwargs)
