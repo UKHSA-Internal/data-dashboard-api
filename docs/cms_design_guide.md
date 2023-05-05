@@ -65,8 +65,8 @@ This hook can be found at `cms/dashboard/wagtail_hooks.py`.
 ### Rich text inputs
 
 All `RichTextField` objects are restricted so that users can only add the following text types:
-- h2 headings
-- h3 headings
+- bold
+- italic
 - links
 - bullet points
 

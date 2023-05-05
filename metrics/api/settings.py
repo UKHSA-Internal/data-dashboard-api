@@ -76,6 +76,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+APPEND_SLASH = True
+
 ROOT_URLCONF = "metrics.api.urls"
 
 TEMPLATES = [

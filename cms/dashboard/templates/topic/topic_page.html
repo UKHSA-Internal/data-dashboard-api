@@ -5,26 +5,13 @@
 {% block body_class %}template-topicpage{% endblock %}
 
 {% block content %}
-    <h1>{{ page.title }}</h1>
-    <p class="meta">{{ page.date }}</p>
-
-    <div class="intro">{{ page.intro }}</div>
-
-    {{ page.body|richtext }}
-    <h2>Symptoms</h2>
-    {{ page.symptoms|richtext }}
-
-    <h2>Transmission</h2>
-    {{ page.transmission|richtext }}
-
-    <h2>Transmission</h2>
-    {{ page.treatment|richtext }}
-
-    <h2>Prevention</h2>
-    {{ page.prevention|richtext }}
-
-    <h2>Surveillance and Reporting</h2>
-    {{ page.surveillance_and_reporting|richtext }}
+    {% for block in page.body %}
+        {% if block.block_type == 'richtext' %}
+            {{ block.value|richtext }}
+        {% elif block.block_type == 'image' %}
+            <img src="{{ block.value.image.url }}" alt="{{ block.value.alt }}" />
+        {% endif %}
+    {% endfor %}
 
     <p><a href="{{ page.get_parent.url }}">Return to viruses</a></p>
 

@@ -31,6 +31,10 @@ DATE_FROM_FIELD: str = """
 The date from which to begin analysing data from. 
 If nothing is provided, a default of **1 year ago from the current date** will be applied.
 """
+DATE_TO_FIELD: str = """
+The date to which to end analysing the data to. 
+If nothing is provided, a default of **the current date** will be applied.
+"""
 CHART_TYPE_FIELD: str = """The type of chart to create this individual plot with."""
 DIRECTION_FIELD: str = """
 The direction in which the trend is represented as. 
