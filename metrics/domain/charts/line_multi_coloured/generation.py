@@ -81,13 +81,12 @@ def create_multi_coloured_line_chart(
     available_combos = get_available_colour_and_line_combos()
 
     for index, plot_data in enumerate(chart_plots_data):
-        dates, values = plot_data.data
         combo = available_combos[index]
         selected_colour: colour_scheme.RGBAColours = combo["colour"]
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
-            dates=dates,
-            values=values,
+            x_axis=plot_data.x_axis,
+            y_axis=plot_data.y_axis,
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,
@@ -105,8 +104,8 @@ def create_multi_coloured_line_chart(
 
 
 def _create_line_plot(
-    dates: List[datetime.datetime],
-    values: List[int],
+    x_axis: List[datetime.datetime],
+    y_axis: List[int],
     colour: str,
     line_width: int,
     line_shape: str,
@@ -114,8 +113,8 @@ def _create_line_plot(
     dash: str,
 ):
     return plotly.graph_objects.Scatter(
-        x=dates,
-        y=values,
+        x=x_axis,
+        y=y_axis,
         line={
             "width": line_width,
             "color": colour,

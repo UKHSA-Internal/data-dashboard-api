@@ -276,7 +276,9 @@ class TestMakeDatetimeFromString:
         mocked_dates = mock.Mock()
         mocked_values = mock.Mock()
         fake_plot_data = ChartPlotData(
-            parameters=fake_chart_plot_parameters, data=(mocked_dates, mocked_values)
+            parameters=fake_chart_plot_parameters,
+            x_axis=mocked_dates,
+            y_axis=mocked_values,
         )
 
         charts_interface = ChartsInterface(

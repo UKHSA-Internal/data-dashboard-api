@@ -48,4 +48,5 @@ class ChartPlots(BaseModel):
 
 class ChartPlotData(BaseModel):
     parameters: ChartPlotParameters
-    data: Any
+    x_axis: Any
+    y_axis: Any

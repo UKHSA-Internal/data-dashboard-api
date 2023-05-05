@@ -77,7 +77,7 @@ class ChartsInterface:
         """
         plots_data: List[ChartPlotData] = self._build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
-        return line.generate_chart_figure(plot_data.data[1])
+        return line.generate_chart_figure(plot_data.y_axis)
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot
@@ -88,10 +88,11 @@ class ChartsInterface:
         """
         plots_data: List[ChartPlotData] = self._build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
-        dates, values = plot_data.data
 
         return bar.generate_chart_figure(
-            dates=dates, values=values, legend=plot_data.parameters.metric
+            dates=plot_data.x_axis,
+            values=plot_data.y_axis,
+            legend=plot_data.parameters.metric,
         )
 
     def generate_line_multi_coloured(self) -> plotly.graph_objects.Figure:
@@ -154,7 +155,8 @@ class ChartsInterface:
             else:
                 chart_plot_data = ChartPlotData(
                     parameters=chart_plot_parameters,
-                    data=(dates, values),
+                    x_axis=dates,
+                    y_axis=values,
                 )
                 plots_data.append(chart_plot_data)
 
@@ -241,7 +243,8 @@ class ChartsInterface:
         )
 
     def param_builder_for_line_with_shaded_section(self, plot_data: ChartPlotData):
-        dates, values = plot_data.data
+        dates = plot_data.x_axis
+        values = plot_data.y_axis
         metric_name = plot_data.parameters.metric
 
         return {
@@ -334,7 +337,7 @@ def write_figure(
     Convert a figure to a static image and write to a file in the desired image format
 
     Args:
-        figure: The figure object or a dictioanry representing a figure
+        figure: The figure object or a dictionary representing a figure
         topic: The required topic (eg. COVID-19)
         file_format: The required file format (eg svg, jpeg)
 
