@@ -1,6 +1,8 @@
 from typing import Dict, List, Union
 from unittest import mock
 
+import pytest
+
 from metrics.data.access.api_models import (
     filter_is_list,
     filter_is_string,
@@ -30,37 +32,27 @@ class TestFilterIsList:
 
 
 class TestFilterIsString:
-    def test_filter_is_string_for_basic_behaviour(self):
+    sample_filters = {
+        "date_from": "dt__gte",
+        "date_to": "dt__lte",
+        "topic": "topic",
+    }
+
+    @pytest.mark.parametrize("sample_filter", list(sample_filters.keys()))
+    def test_filter_is_string_for_expected_behaviour(self, sample_filter):
         """
         Given a field name (eg. geography)
         When `filter_is_string()` is called
         Then the expected output will be returned
         """
         # Given
-        field_name = "geography"
+        field_name = sample_filter
 
         # When
         actual_result: str = filter_is_string(field_name=field_name)
 
         # Then
-        expected_result = field_name
-
-        assert actual_result == expected_result
-
-    def test_filter_is_string_handles_date_from(self):
-        """
-        Given a field name of date_from
-        When `filter_is_string()` is called
-        Then the expected output will be returned
-        """
-        # Given
-        field_name = "date_from"
-
-        # When
-        actual_result: str = filter_is_string(field_name=field_name)
-
-        # Then
-        expected_result = "dt__gte"
+        expected_result = self.sample_filters[sample_filter]
 
         assert actual_result == expected_result
 

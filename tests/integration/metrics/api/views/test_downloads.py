@@ -63,7 +63,7 @@ class TestDownloadsView:
 
     @property
     def path(self) -> str:
-        return "/downloads/v2/"
+        return "/downloads/v2"
 
     @pytest.mark.django_db
     def test_json_download_returns_correct_response(
@@ -78,7 +78,7 @@ class TestDownloadsView:
         # Given
         self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
-            "format": "json",
+            "file_format": "json",
             "plots": [
                 {
                     "metric": self.metric,
@@ -117,7 +117,7 @@ class TestDownloadsView:
         # Given
         self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
-            "format": "csv",
+            "file_format": "csv",
             "plots": [
                 {
                     "metric": self.metric,

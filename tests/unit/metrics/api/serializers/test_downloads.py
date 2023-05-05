@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers import DownloadsSerializer
+from metrics.api.serializers import DownloadsQuerySerializer
 
 
 class TestDownloadsSerializer:
@@ -13,8 +13,8 @@ class TestDownloadsSerializer:
         Then True is returned
         """
         # Given
-        data = {"format": valid_download_format}
-        serializer = DownloadsSerializer(data=data)
+        data = {"file_format": valid_download_format}
+        serializer = DownloadsQuerySerializer(data=data)
 
         # When
         is_serializer_valid: bool = serializer.is_valid()
@@ -29,8 +29,8 @@ class TestDownloadsSerializer:
         Then a `ValidationError` is raised
         """
         # Given
-        data = {"format": "invalid.download.format"}
-        serializer = DownloadsSerializer(data=data)
+        data = {"file_format": "invalid.download.format"}
+        serializer = DownloadsQuerySerializer(data=data)
 
         # When / Then
         with pytest.raises(ValidationError):

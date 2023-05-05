@@ -16,19 +16,23 @@ def filter_is_list(field_name: str) -> str:
 
 def filter_is_string(field_name: str) -> str:
     """
-    This function will change the query parameter key if it is the start of a range of dates
+    This function will change the query parameter key
+      if it needs translating (eg is a date_from)
       else it will pass the field_name back unchanged
 
     Args:
         The field name for the particular query parameter
 
     Returns:
-        The field name asis or it will return 'dt__gte'
+        The field name asis or it will return 'dt__gte' or 'dt__lte'
     """
-    if field_name == "date_from":
-        return "dt__gte"
 
-    return field_name
+    translations = {
+        "date_from": "dt__gte",
+        "date_to": "dt__lte",
+    }
+
+    return translations.get(field_name, field_name)
 
 
 def validate_filter_name(field_name: str, filter_value: Union[List[str], str]) -> str:

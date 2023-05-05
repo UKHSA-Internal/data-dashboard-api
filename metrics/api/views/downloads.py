@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
+from metrics.api.serializers import DownloadsSerializer, APITimeSeriesSerializer
 from metrics.data.access.api_models import validate_query_filters
 from metrics.data.models.api_models import APITimeSeries
 from metrics.domain.exports.csv import write_data_to_csv
@@ -18,7 +18,7 @@ from metrics.domain.exports.csv import write_data_to_csv
 class DownloadsView(APIView):
     queryset = APITimeSeries.objects.all().order_by("dt")
     serializer_class = APITimeSeriesSerializer
-    filter_backends = [DjangoFilterBackend]
+    #    filter_backends = [DjangoFilterBackend]
     filterset_fields = [
         "period",
         "theme",
@@ -31,18 +31,19 @@ class DownloadsView(APIView):
         "sex",
         "year",
         "epiweek",
-        "dt",
+        "date_from",
+        "date_to",
     ]
     permission_classes = [HasAPIKey]
 
     # All the fields you can filter by
-    possible_fields = filterset_fields + ["date_from"]
+    # possible_fields = filterset_fields + ["date_from", "date_to"]
 
-    renderer_classes = (CoreJSONRenderer,)
+    #    renderer_classes = (CoreJSONRenderer,)
 
     def _get_queryset(self):
         all_query_filters: List[Dict[str, str]] = validate_query_filters(
-            possible_fields=self.possible_fields,
+            possible_fields=self.filterset_fields,
             plots=self.request.data["plots"],
         )
 
@@ -78,8 +79,8 @@ class DownloadsView(APIView):
 
         Multiple queries can be added as an array of objects in the request body.
 
-        A `format` parameter **must** be supplied and set to either `json` or `csv`.
-        This `format` parameter applies to the whole of the output, it is not plot specific
+        A `file_format` parameter **must** be supplied and set to either `json` or `csv`.
+        This `file_format` parameter applies to the whole of the output, it is not plot specific
 
         This function will recognise the following set of payload parameters for each plot. None are mandatory:
 
@@ -92,9 +93,9 @@ class DownloadsView(APIView):
         | `geography`       | The geography constraints to apply any data filtering to                  | `London`                  |
         | `metric`          | The name of the metric being queried for                                  | `new_cases_7day_avg`      |
         | `stratum`         | The smallest subgroup a metric can be broken down into                    | `0_4`                     |
-        | `sex`             | The sex for those mwetrics that are broken down by sex                    | `M`                       |
-        | `date_from`       | The date to pull the data from                                            | `2023-01-20`              |
-        | `dt`              | The date to pull the data for                                             | `2023-01-20`              |
+        | `sex`             | The sex for those metrics that are broken down by sex                     | `M`                       |
+        | `date_from`       | The date to pull the data from                                            | `2020-01-20`              |
+        | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
 
         So the full payload to this endpoint could look like the following:
 
@@ -111,7 +112,7 @@ class DownloadsView(APIView):
                 {
                   "topic": "COVID-19",
                   "metric": ["new_cases_7day_avg", "new_deaths_7day_avg"],  #enclose in square brackets if you want to specify more than one value to filter by
-                  "dt": "2023-03-02"
+                  "date_to": "2023-03-02"
                 }
               ]
             }
@@ -121,9 +122,9 @@ class DownloadsView(APIView):
         request_serializer = DownloadsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        data_format = self.request.data.get("format")
+        file_format = self.request.data.get("file_format")
 
-        if data_format == "json":
+        if file_format == "json":
             return self._handle_json()
-        elif data_format == "csv":
+        elif file_format == "csv":
             return self._handle_csv()
