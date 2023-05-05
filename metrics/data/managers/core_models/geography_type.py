@@ -14,12 +14,13 @@ class GeographyTypeQuerySet(models.QuerySet):
         """Gets all available geography_type names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual geography_type names:
+            QuerySet: A queryset of the individual geography_type names
+                ordered in descending ordering starting from A -> Z:
                 Examples:
                     `<GeographyTypeQuerySet ['Nation', 'UKHSA_Region']>`
 
         """
-        return self.all().values_list("name", flat=True)
+        return self.all().values_list("name", flat=True).order_by("name")
 
 
 class GeographyTypeManager(models.Manager):

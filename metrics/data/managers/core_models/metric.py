@@ -14,12 +14,13 @@ class MetricQuerySet(models.QuerySet):
         """Gets all available metric names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual metric names:
+            QuerySet: A queryset of the individual metric names
+                ordered in descending ordering starting from A -> Z:
                 Examples:
                     `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
 
         """
-        return self.all().values_list("name", flat=True)
+        return self.all().values_list("name", flat=True).order_by("name")
 
     def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
         """Checks whether there are any metrics available for the given `metric_name` and `topic_name`
@@ -34,11 +35,12 @@ class MetricQuerySet(models.QuerySet):
         """Gets all unique metric names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual metric names without repetition:
+            QuerySet: A queryset of the individual metric names without repetition
+                ordered in descending ordering starting from A -> Z:
                 Examples:
                     `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
         """
-        return self.all().values_list("name", flat=True).distinct()
+        return self.all().values_list("name", flat=True).distinct().order_by("name")
 
     def get_all_unique_change_type_names(self) -> models.QuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change`
@@ -72,7 +74,8 @@ class MetricManager(models.Manager):
         """Gets all available metric names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual metric names:
+            QuerySet: A queryset of the individual metric names
+                ordered in descending ordering starting from A -> Z:
                 Examples:
                     `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
 
@@ -94,7 +97,8 @@ class MetricManager(models.Manager):
         """Gets all unique metric names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual metric names without repetition:
+            QuerySet: A queryset of the individual metric names without repetition
+                ordered in descending ordering starting from A -> Z:
                 Examples:
                     `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
 
