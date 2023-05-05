@@ -14,10 +14,10 @@ X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "tickson": "boundaries",
     "type": "date",
     "dtick": "M1",
-    "tickformat": "%b",
+    "tickformat": "%b %Y",
     "tickfont": {
         "family": '"GDS Transport", Arial, sans-serif',
-        "size": 20,
+        "size": 10,
         "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
     },
 }
