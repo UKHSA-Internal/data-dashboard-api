@@ -19,7 +19,7 @@ X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "ticks": "outside",
     "tickson": "boundaries",
     "type": "date",
-    "tickformat": "%e %b %Y",
+    "tickformat": "%b %Y",
     "tickfont": TICK_FONT,
 }
 
