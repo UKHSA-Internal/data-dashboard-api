@@ -63,7 +63,40 @@ class TestDownloadsView:
 
     @property
     def path(self) -> str:
-        return "/downloads/v2"
+        return "/downloads/v2/"
+
+    @pytest.mark.django_db
+    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
+        self, authenticated_api_client: APIClient
+    ):
+        """
+        Given a valid payload to request a download
+        And an authenticated APIClient
+        When the `POST /downloads/v2` endpoint is hit i.e. without the trailing `/`
+        Then the response is still a valid HTTP 200 OK
+        """
+        # Given
+        path_without_trailing_forward_slash: str = "/downloads/v2"
+        self._setup_api_time_series(**self.api_timeseries_data)
+        valid_payload = {
+            "file_format": "json",
+            "plots": [
+                {
+                    "metric": self.metric,
+                    "stratum": self.stratum,
+                }
+            ],
+        }
+
+        # When
+        response: Response = authenticated_api_client.post(
+            path=path_without_trailing_forward_slash,
+            data=valid_payload,
+            format="json",
+        )
+
+        # Then
+        assert response.status_code == HTTPStatus.OK
 
     @pytest.mark.django_db
     def test_json_download_returns_correct_response(
@@ -72,7 +105,7 @@ class TestDownloadsView:
         """
         Given a valid payload to request a download
         And an authenticated APIClient
-        When the `POST /downloads/v2` endpoint is hit
+        When the `POST /downloads/v2/` endpoint is hit
         Then the response contains the expected output in json format
         """
         # Given
@@ -89,7 +122,9 @@ class TestDownloadsView:
 
         # When
         response: Response = authenticated_api_client.post(
-            path=self.path, data=valid_payload, format="json"
+            path=self.path,
+            data=valid_payload,
+            format="json",
         )
 
         # Then
@@ -111,7 +146,7 @@ class TestDownloadsView:
         """
         Given a valid payload to request a download
         And an authenticated APIClient
-        When the `POST /downloads/v2` endpoint is hit
+        When the `POST /downloads/v2/` endpoint is hit
         Then the response contains the expected output in csv format
         """
         # Given
@@ -157,7 +192,9 @@ class TestDownloadsView:
 
         # When
         response: Response = authenticated_api_client.post(
-            path=self.path, data=valid_payload, format="json"
+            path=self.path,
+            data=valid_payload,
+            format="json",
         )
 
         # Then

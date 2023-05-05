@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from metrics.api.serializers import DownloadsQuerySerializer
 
 
-class TestDownloadsSerializer:
+class TestDownloadsQuerySerializer:
     @pytest.mark.parametrize("valid_download_format", ["csv", "json"])
     def test_valid_download_format(self, valid_download_format: str):
         """

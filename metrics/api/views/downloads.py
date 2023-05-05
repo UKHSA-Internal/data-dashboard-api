@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.api.serializers import DownloadsSerializer, APITimeSeriesSerializer
+from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
 from metrics.data.access.api_models import validate_query_filters
 from metrics.data.models.api_models import APITimeSeries
 from metrics.domain.exports.csv import write_data_to_csv
@@ -18,7 +18,7 @@ from metrics.domain.exports.csv import write_data_to_csv
 class DownloadsView(APIView):
     queryset = APITimeSeries.objects.all().order_by("dt")
     serializer_class = APITimeSeriesSerializer
-    #    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend]
     filterset_fields = [
         "period",
         "theme",
@@ -36,10 +36,7 @@ class DownloadsView(APIView):
     ]
     permission_classes = [HasAPIKey]
 
-    # All the fields you can filter by
-    # possible_fields = filterset_fields + ["date_from", "date_to"]
-
-    #    renderer_classes = (CoreJSONRenderer,)
+    renderer_classes = (CoreJSONRenderer,)
 
     def _get_queryset(self):
         all_query_filters: List[Dict[str, str]] = validate_query_filters(
