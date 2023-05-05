@@ -173,6 +173,6 @@ def get_month_end_timeseries_metric_values_from_date(
             .last()
         )
 
-        monthly_data.append({"date": str(dt), "value": str(metric_value)})
+        monthly_data.append({"date": str(dt), "value": metric_value})
 
     return monthly_data
