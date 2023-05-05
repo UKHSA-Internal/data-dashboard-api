@@ -54,3 +54,41 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         except StopIteration:
             return None
         return core_time_series.metric_value
+
+    def filter_for_dates_and_values(
+        self,
+        topic: str,
+        metric: str,
+        date_from: datetime.date,
+        geography: Optional[str] = None,
+        geography_type: Optional[str] = None,
+        stratum: Optional[str] = None,
+    ):
+        filtered_time_series = [
+            time_series
+            for time_series in self.time_series
+            if time_series.metric.topic.name == topic
+            if time_series.metric.name == metric
+            if time_series.dt > date_from
+        ]
+        if geography:
+            filtered_time_series = [
+                x for x in filtered_time_series if x.geography.name == geography
+            ]
+
+        if geography_type:
+            filtered_time_series = [
+                x
+                for x in filtered_time_series
+                if x.geography.geography_type.name == geography
+            ]
+
+        if stratum:
+            filtered_time_series = [
+                x for x in filtered_time_series if x.stratum.name == stratum
+            ]
+
+        return [
+            (time_series.dt, time_series.metric_value)
+            for time_series in filtered_time_series
+        ]

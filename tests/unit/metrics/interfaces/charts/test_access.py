@@ -1,14 +1,36 @@
 import datetime
+from typing import List
 from unittest import mock
 
-from metrics.domain.models import ChartPlotData, ChartPlotParameters
+import pytest
+
+from metrics.domain.models import ChartPlotData, ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
-from metrics.interfaces.charts.access import ChartsInterface, make_datetime_from_string
+from metrics.interfaces.charts.access import (
+    ChartsInterface,
+    DataNotFoundError,
+    make_datetime_from_string,
+)
+from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
+from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
+from tests.fakes.models.core_time_series import FakeCoreTimeSeries
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
 
 class TestChartsInterface:
+    @staticmethod
+    def _setup_fake_time_series_for_plot(chart_plot_parameters: ChartPlotParameters):
+        return [
+            FakeCoreTimeSeriesFactory.build_time_series(
+                dt=datetime.datetime(year=2023, month=1, day=i + 1),
+                metric_name=chart_plot_parameters.metric,
+                topic_name=chart_plot_parameters.topic,
+                stratum_name=chart_plot_parameters.stratum,
+            )
+            for i in range(10)
+        ]
+
     @mock.patch.object(ChartsInterface, "generate_simple_line_chart")
     def test_generate_chart_figure_delegates_call_for_simple_line_chart(
         self,
@@ -124,6 +146,78 @@ class TestChartsInterface:
             generated_chart_figure
             == spy_generate_line_multi_coloured_method.return_value
         )
+
+    def test_build_chart_plot_data_from_parameters(
+        self, fake_chart_plot_parameters: ChartPlotParameters
+    ):
+        """
+        Given a `ChartPlotParameters` model requesting a chart plot for existing `CoreTimeSeries`
+        When `build_chart_plot_data_from_parameters()` is called from an instance of the `ChartsInterface`
+        Then a `ChartPlotData` model is returned with the original parameters
+        And the correct data passed to the `x_axis` and `y_axis`
+        """
+        # Given
+        fake_chart_plots = ChartPlots(
+            plots=[fake_chart_plot_parameters],
+            file_format="png",
+        )
+        fake_core_time_series_for_plot: List[
+            FakeCoreTimeSeries
+        ] = self._setup_fake_time_series_for_plot(
+            chart_plot_parameters=fake_chart_plot_parameters
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            time_series=fake_core_time_series_for_plot
+        )
+
+        charts_interface = ChartsInterface(
+            chart_plots=fake_chart_plots,
+            core_time_series_manager=FakeCoreTimeSeriesManager(
+                time_series=fake_core_time_series_manager
+            ),
+        )
+
+        # When
+        chart_plot_data: ChartPlotData = (
+            charts_interface.build_chart_plot_data_from_parameters(
+                chart_plot_parameters=fake_chart_plot_parameters
+            )
+        )
+
+        # Then
+        assert chart_plot_data.parameters == fake_chart_plot_parameters
+        assert chart_plot_data.x_axis == tuple(
+            x.dt for x in fake_core_time_series_for_plot
+        )
+        assert chart_plot_data.y_axis == tuple(
+            x.metric_value for x in fake_core_time_series_for_plot
+        )
+
+    def test_build_chart_plot_data_from_parameters_raises_error_when_no_data_found(
+        self, fake_chart_plot_parameters: ChartPlotParameters
+    ):
+        """
+        Given a `ChartPlotParameters` model requesting a chart plot for `CoreTimeSeries` data which cannot be found
+        When `build_chart_plot_data_from_parameters()` is called from an instance of the `ChartsInterface`
+        Then a `DataNotFoundError` is raised
+        """
+        # Given
+        fake_chart_plots = ChartPlots(
+            plots=[fake_chart_plot_parameters],
+            file_format="png",
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+
+        charts_interface = ChartsInterface(
+            chart_plots=fake_chart_plots,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When / Then
+        with pytest.raises(DataNotFoundError):
+            charts_interface.build_chart_plot_data_from_parameters(
+                chart_plot_parameters=fake_chart_plot_parameters
+            )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
         """

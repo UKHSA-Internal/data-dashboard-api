@@ -23,14 +23,18 @@ from metrics.interfaces.charts import calculations, validation
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
+class DataNotFoundError(ValueError):
+    ...
+
+
 class ChartsInterface:
     def __init__(
         self,
         chart_plots: ChartPlots,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
-        self.chart_plots_parameters = chart_plots
-        self.chart_type = self.chart_plots_parameters.plots[0].chart_type
+        self.chart_plots = chart_plots
+        self.chart_type = self.chart_plots.plots[0].chart_type
         self.core_time_series_manager = core_time_series_manager
 
     def generate_chart_figure(self) -> plotly.graph_objects.Figure:
@@ -61,7 +65,7 @@ class ChartsInterface:
             A plotly `Figure` object for the created waffle chart
 
         """
-        plot_parameters = self.chart_plots_parameters.plots[0]
+        plot_parameters = self.chart_plots.plots[0]
         value = self.core_time_series_manager.get_latest_metric_value(
             topic=plot_parameters.topic,
             metric_name=plot_parameters.metric,
@@ -141,26 +145,28 @@ class ChartsInterface:
                 each of the requested chart plots.
 
         """
-        plots_data = []
-        for chart_plot_parameters in self.chart_plots_parameters.plots:
-            chart_plot_parameters: ChartPlotParameters
-            timeseries_queryset = self.get_timeseries_for_chart_plot_parameters(
-                chart_plot_parameters=chart_plot_parameters
+        return [
+            self.build_chart_plot_data_from_parameters(chart_plot_parameters)
+            for chart_plot_parameters in self.chart_plots.plots
+        ]
+
+    def build_chart_plot_data_from_parameters(
+        self, chart_plot_parameters: ChartPlotParameters
+    ):
+        timeseries_queryset = self.get_timeseries_for_chart_plot_parameters(
+            chart_plot_parameters=chart_plot_parameters
+        )
+
+        try:
+            dates, values = unzip_values(timeseries_queryset)
+        except ValueError:
+            raise DataNotFoundError
+        else:
+            return ChartPlotData(
+                parameters=chart_plot_parameters,
+                x_axis=dates,
+                y_axis=values,
             )
-
-            try:
-                dates, values = unzip_values(timeseries_queryset)
-            except ValueError:
-                continue
-            else:
-                chart_plot_data = ChartPlotData(
-                    parameters=chart_plot_parameters,
-                    x_axis=dates,
-                    y_axis=values,
-                )
-                plots_data.append(chart_plot_data)
-
-        return plots_data
 
     def get_timeseries_for_chart_plot_parameters(
         self, chart_plot_parameters: ChartPlotParameters
