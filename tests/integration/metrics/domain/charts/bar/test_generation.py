@@ -78,3 +78,23 @@ class TestBarCharts:
 
         # Legend is assigned
         assert main_bar_plot.name == legend
+
+        # ---X Axis checks---
+        x_axis = figure.layout.xaxis
+
+        assert not x_axis.showgrid
+        assert not x_axis.zeroline
+        assert not x_axis.showline
+
+        # Tick marks should be on the boundary drawn going outwards of the main frame
+        assert x_axis.ticks == "outside"
+        assert x_axis.tickson == "boundaries"
+
+        # The x-axis ticks should be formatted as shorthand Months only i.e Sep not September
+        assert x_axis.type == "date"
+        assert x_axis.tickformat == "%b %Y"
+
+        # ---Y Axis checks---
+        y_axis = figure.layout.yaxis
+        assert not y_axis.showgrid
+        assert y_axis.showticklabels
