@@ -147,6 +147,51 @@ class TestChartsInterface:
             == spy_generate_line_multi_coloured_method.return_value
         )
 
+    @mock.patch.object(ChartsInterface, "build_chart_plot_data_from_parameters")
+    def test_build_chart_plots_data_delegates_call_for_each_plot(
+        self,
+        mocked_build_chart_plot_data_from_parameters: mock.MagicMock,
+        fake_chart_plot_parameters,
+    ):
+        """
+        Given a `ChartPlots` model which contains `ChartPlotParameters` for 2 separate plots
+        When `build_chart_plots_data()` is called from an instance of the `ChartsInterface`
+        Then the calls are delegated to the `build_chart_plot_data_from_parameters()` method
+            for each individual `ChartPlotParameters` model
+        """
+        # Given
+        fake_chart_plot_parameter_second = ChartPlotParameters(
+            chart_type="line_multi_coloured", topic="COVID-19", metric="new_cases_daily"
+        )
+        fake_chart_plots = ChartPlots(
+            plots=[fake_chart_plot_parameters, fake_chart_plot_parameter_second],
+            file_format="png",
+        )
+
+        charts_interface = ChartsInterface(
+            chart_plots=fake_chart_plots, core_time_series_manager=mock.Mock()
+        )
+
+        # When
+        chart_plots_data = charts_interface.build_chart_plots_data()
+
+        # Then
+        # Check that `build_chart_plot_data_from_parameters()` method
+        # is called for each of the provided `ChartPlotParameters` models
+        expected_calls = [
+            mock.call(chart_plot_parameters=fake_chart_plot_parameters),
+            mock.call(chart_plot_parameters=fake_chart_plot_parameter_second),
+        ]
+        mocked_build_chart_plot_data_from_parameters.assert_has_calls(
+            calls=expected_calls,
+            any_order=False,
+        )
+
+        expected_chart_plots_data = [
+            mocked_build_chart_plot_data_from_parameters.return_value
+        ] * 2
+        assert chart_plots_data == expected_chart_plots_data
+
     def test_build_chart_plot_data_from_parameters(
         self, fake_chart_plot_parameters: ChartPlotParameters
     ):
@@ -172,9 +217,7 @@ class TestChartsInterface:
 
         charts_interface = ChartsInterface(
             chart_plots=fake_chart_plots,
-            core_time_series_manager=FakeCoreTimeSeriesManager(
-                time_series=fake_core_time_series_manager
-            ),
+            core_time_series_manager=fake_core_time_series_manager,
         )
 
         # When
@@ -185,7 +228,10 @@ class TestChartsInterface:
         )
 
         # Then
+        # Check that the parameters on the `ChartPlotData` model is ingested by the input `ChartPlotParameters` model
         assert chart_plot_data.parameters == fake_chart_plot_parameters
+
+        # Check the correct data is passed to the axis of the `ChartPlotData` model
         assert chart_plot_data.x_axis == tuple(
             x.dt for x in fake_core_time_series_for_plot
         )

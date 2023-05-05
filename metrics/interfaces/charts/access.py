@@ -79,7 +79,7 @@ class ChartsInterface:
             A plotly `Figure` object for the created simple line chart
 
         """
-        plots_data: List[ChartPlotData] = self._build_chart_plots_data()
+        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
         return line.generate_chart_figure(plot_data.y_axis)
 
@@ -90,7 +90,7 @@ class ChartsInterface:
             A plotly `Figure` object for the created bar chart
 
         """
-        plots_data: List[ChartPlotData] = self._build_chart_plots_data()
+        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
 
         return bar.generate_chart_figure(
@@ -109,7 +109,7 @@ class ChartsInterface:
             A plotly `Figure` object for the created multi-coloured line chart
 
         """
-        plots_data: List[ChartPlotData] = self._build_chart_plots_data()
+        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
         return line_multi_coloured.generate_chart_figure(plots_data)
 
     def generate_line_with_shaded_section_chart(self) -> plotly.graph_objects.Figure:
@@ -123,13 +123,13 @@ class ChartsInterface:
             A plotly `Figure` object for the created line chart with shaded section
 
         """
-        plots_data: List[ChartPlotData] = self._build_chart_plots_data()
+        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
         params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
-    def _build_chart_plots_data(self) -> List[ChartPlotData]:
+    def build_chart_plots_data(self) -> List[ChartPlotData]:
         """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -145,14 +145,38 @@ class ChartsInterface:
                 each of the requested chart plots.
 
         """
-        return [
-            self.build_chart_plot_data_from_parameters(chart_plot_parameters)
-            for chart_plot_parameters in self.chart_plots.plots
-        ]
+        chart_plots_data: List[ChartPlotData] = []
+        for chart_plot_parameters in self.chart_plots.plots:
+            try:
+                chart_plot_data = self.build_chart_plot_data_from_parameters(
+                    chart_plot_parameters=chart_plot_parameters
+                )
+            except DataNotFoundError:
+                continue
+
+            chart_plots_data.append(chart_plot_data)
+
+        return chart_plots_data
 
     def build_chart_plot_data_from_parameters(
         self, chart_plot_parameters: ChartPlotParameters
     ):
+        """Creates a `ChartPlotData` model which holds the params and corresponding data for the given requested plot
+
+        Notes:
+            The corresponding timeseries data is used to enrich a
+            pydantic model which also holds the corresponding params.
+            These models can then be passed into the domain libraries.
+
+        Returns:
+            List[ChartPlotData]: A list of `ChartPlotData` models for
+                each of the requested chart plots.
+
+        Raises:
+            `DataNotFoundError`: If no `CoreTimeSeries` data can be found
+                for a particular plot.
+
+        """
         timeseries_queryset = self.get_timeseries_for_chart_plot_parameters(
             chart_plot_parameters=chart_plot_parameters
         )
