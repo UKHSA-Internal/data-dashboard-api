@@ -14,12 +14,13 @@ class StratumQuerySet(models.QuerySet):
         """Gets all available stratum names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual stratum names:
+            QuerySet: A queryset of the individual stratum names
+                ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<StratumQuerySet ['default', '0_4']>`
+                    `<StratumQuerySet ['0_4', '0_5']>`
 
         """
-        return self.all().values_list("name", flat=True)
+        return self.all().values_list("name", flat=True).order_by("name")
 
 
 class StratumManager(models.Manager):
@@ -32,9 +33,10 @@ class StratumManager(models.Manager):
         """Gets all available stratum names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual stratum names:
+            QuerySet: A queryset of the individual stratum names
+                ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<StratumQuerySet ['default', '0_4']>`
+                    `<StratumQuerySet ['0_4', '0_5']>`
 
         """
         return self.get_queryset().get_all_names()

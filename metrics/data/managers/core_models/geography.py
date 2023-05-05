@@ -14,12 +14,13 @@ class GeographyQuerySet(models.QuerySet):
         """Gets all available geography names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual geography names:
+            QuerySet: A queryset of the individual geography names
+                ordered in descending ordering starting from A -> Z:
                 Examples:
                     `<GeographyQuerySet ['England', 'London']>`
 
         """
-        return self.all().values_list("name", flat=True)
+        return self.all().values_list("name", flat=True).order_by("name")
 
 
 class GeographyManager(models.Manager):
@@ -32,7 +33,8 @@ class GeographyManager(models.Manager):
         """Gets all available geography names as a flat list queryset.
 
         Returns:
-            QuerySet: A queryset of the individual geography names:
+            QuerySet: A queryset of the individual geography names
+                ordered in descending ordering starting from A -> Z:
                 Examples:
                     `<GeographyQuerySet ['England', 'London']>`
 
