@@ -19,6 +19,7 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 12, 26),
     datetime.date(2023, 1, 9),
 ]
+EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
 
 
 class TestLineMultiColouredCharts:
@@ -43,7 +44,7 @@ class TestLineMultiColouredCharts:
         """
         # Given
         dates = DATES_FROM_SEP_TO_JAN
-        values = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
+        values = EXAMPLE_VALUES
         chart_plots_data = self._setup_chart_plot_data(x_axis=dates, y_axis=values)
 
         # When
@@ -80,7 +81,7 @@ class TestLineMultiColouredCharts:
         """
         # Given
         dates = DATES_FROM_SEP_TO_JAN
-        values = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
+        values = EXAMPLE_VALUES
         first_plot_label = "0 to 4 years old"
         first_chart_plots_data = self._setup_chart_plot_data(
             x_axis=dates, y_axis=values, label=first_plot_label
