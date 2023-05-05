@@ -93,7 +93,6 @@ class TestDownloadsView:
         )
 
         # Then
-        assert response.status_code != HTTPStatus.UNAUTHORIZED
         assert response.status_code == HTTPStatus.OK
 
         # Check that the headers on the response indicate json is being returned
@@ -162,7 +161,6 @@ class TestDownloadsView:
         )
 
         # Then
-        assert response.status_code != HTTPStatus.UNAUTHORIZED
         assert response.status_code == HTTPStatus.OK
 
         # Check that the headers on the response indicate csv is being returned
@@ -175,3 +173,19 @@ class TestDownloadsView:
 
         assert csv_header == expected_csv_heading
         assert csv_output == expected_csv_content
+
+    @pytest.mark.django_db
+    def test_post_request_without_api_key_is_unauthorized(self):
+        """
+        Given an APIClient which is not authenticated
+        When the `GET /downloads/v2/` endpoint is hit
+        Then an HTTP 401 UNAUTHORIZED response is returned
+        """
+        # Given
+        client = APIClient()
+
+        # When
+        response: Response = client.post(path=self.path, data={})
+
+        # Then
+        assert response.status_code == HTTPStatus.UNAUTHORIZED
