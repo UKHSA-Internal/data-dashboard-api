@@ -7,6 +7,7 @@ from metrics.interfaces.charts.access import ChartsInterface, make_datetime_from
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
+
 @mock.patch.object(ChartsInterface, "generate_simple_line_chart")
 def test_generate_chart_figure_delegates_call_for_simple_line_chart(
     spy_generate_simple_line_chart_method: mock.MagicMock,
@@ -115,7 +116,9 @@ def test_generate_chart_figure_delegates_call_for_line_multi_coloured(
 
     # Then
     spy_generate_line_multi_coloured_method.assert_called_once()
-    assert generated_chart_figure == spy_generate_line_multi_coloured_method.return_value
+    assert (
+        generated_chart_figure == spy_generate_line_multi_coloured_method.return_value
+    )
 
 
 def test_get_timeseries_calls_core_time_series_manager_with_correct_args():
