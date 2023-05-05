@@ -50,7 +50,6 @@ class TopicPage(Page):
 
     # Sets which fields to expose on the API
     api_fields = [
-        APIField("date_posted"),
         APIField("body"),
         APIField("symptoms"),
         APIField("transmission"),
