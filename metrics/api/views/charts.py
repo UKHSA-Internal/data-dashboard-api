@@ -165,8 +165,6 @@ class ChartsView(APIView):
             filename: str = access.generate_chart(
                 chart_plots=chart_plot_models,
             )
-        except data_visualization_superseded.ChartNotSupportedError:
-            return Response(status=HTTPStatus.NOT_FOUND)
         except validation.ChartTypeDoesNotSupportMetricError as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
