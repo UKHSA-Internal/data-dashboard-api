@@ -105,21 +105,21 @@ class ChartsView(APIView):
         So the full payload to this endpoint would look like the following:
 
         ```
+        {
+          "file_format": "svg",                                 # Optional, defaults to "svg" if not provided
+          "plots": [
             {
-              "file_format": "svg",                                 # Optional, defaults to "svg" if not provided
-              "plots": [
-                {
-                  "topic": "COVID-19",
-                  "metric": "new_cases_daily",
-                  "chart_type": "line_with_shaded_section",
-                  "stratum": "",                                    # Optional
-                  "geography": "",                                  # Optional
-                  "geography_type": "",                             # Optional
-                  "date_from": null                                 # Optional
-                  "date_to": null                                   # Optional
-                }
-              ]
+              "topic": "COVID-19",
+              "metric": "new_cases_daily",
+              "chart_type": "line_with_shaded_section",
+              "stratum": "",                                    # Optional
+              "geography": "",                                  # Optional
+              "geography_type": "",                             # Optional
+              "date_from": null                                 # Optional
+              "date_to": null                                   # Optional
             }
+          ]
+        }
         ```
 
         ---
