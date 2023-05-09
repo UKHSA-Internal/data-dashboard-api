@@ -1,0 +1,134 @@
+import datetime
+from typing import List
+
+import plotly.graph_objects
+
+from metrics.domain.charts.line_multi_coloured import colour_scheme, generation
+from metrics.domain.models import ChartPlotData, ChartPlotParameters
+
+DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
+    datetime.date(2022, 9, 5),
+    datetime.date(2022, 9, 19),
+    datetime.date(2022, 10, 3),
+    datetime.date(2022, 10, 7),
+    datetime.date(2022, 10, 10),
+    datetime.date(2022, 10, 21),
+    datetime.date(2022, 11, 3),
+    datetime.date(2022, 11, 14),
+    datetime.date(2022, 12, 12),
+    datetime.date(2022, 12, 26),
+    datetime.date(2023, 1, 9),
+]
+EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
+
+
+class TestLineMultiColouredCharts:
+    @staticmethod
+    def _setup_chart_plot_data(
+        x_axis: List[datetime.date], y_axis: List[int], label: str = ""
+    ) -> ChartPlotData:
+        plot_params = ChartPlotParameters(
+            chart_type="line_multi_coloured",
+            topic="RSV",
+            metric="weekly_positivity_by_age",
+            stratum="0_4",
+            label=label,
+        )
+        return ChartPlotData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+
+    def test_main_plot_and_axis_properties(self):
+        """
+        Given a `ChartPlotData` models representing a line plot
+        When `generate_chart_figure()` is called from the `line_multi_coloured` module
+        Then the figure is drawn with the expected parameters for the main background and the X & Y axis
+        """
+        # Given
+        dates = DATES_FROM_SEP_TO_JAN
+        values = EXAMPLE_VALUES
+        chart_plots_data = self._setup_chart_plot_data(x_axis=dates, y_axis=values)
+
+        # When
+        figure = generation.generate_chart_figure(
+            chart_plots_data=[chart_plots_data],
+        )
+
+        # Then
+        # ---Main background checks---
+        main_layout = figure.layout
+        # Check that the main background colour is a plain white
+        assert main_layout.paper_bgcolor == colour_scheme.RGBAColours.WHITE.stringified
+        # Check that the main layout is showing the legend
+        assert main_layout.showlegend
+
+        # ---X Axis checks---
+        x_axis = main_layout.xaxis
+        # The `M1` dtick setting ensures x values within the same month do not show repeated months:
+        # ___Sep___Oct___Nov___  as opposed to _Sep_Sep_Oct_Oct_Oct_Nov_Nov_
+        assert x_axis.dtick == "M1"
+        # The date format is in `Month Year` e.g. `May 2023`
+        assert x_axis.tickformat == "%b %Y"
+
+        # ---Y Axis checks---
+        y_axis = main_layout.yaxis
+        assert not y_axis.showgrid
+        # figure.show()
+
+    def test_two_plots_with_provided_labels(self):
+        """
+        Given 2 `ChartPlotData` models representing 2 different line plots
+        When `generate_chart_figure()` is called from the `line_multi_coloured` module
+        Then the figure is drawn with the expected parameters for the line plots
+        """
+        # Given
+        dates = DATES_FROM_SEP_TO_JAN
+        values = EXAMPLE_VALUES
+        first_plot_label = "0 to 4 years old"
+        first_chart_plots_data = self._setup_chart_plot_data(
+            x_axis=dates, y_axis=values, label=first_plot_label
+        )
+
+        second_plot_label = "15 to 44 years old"
+        dates = DATES_FROM_SEP_TO_JAN
+        values = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
+        second_chart_plots_data = self._setup_chart_plot_data(
+            x_axis=dates, y_axis=values, label=second_plot_label
+        )
+
+        # When
+        figure = generation.generate_chart_figure(
+            chart_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        )
+
+        # Then
+        # There should be 2 plots on the figure, one for each of the line plots
+        assert len(figure.data) == 2
+
+        # ---First line plot checks---
+        first_plot: plotly.graph_objects.Scatter = figure.data[0]
+        # Check that each axis has been populated with the correct data
+        assert list(first_plot.x) == first_chart_plots_data.x_axis
+        assert list(first_plot.y) == first_chart_plots_data.y_axis
+
+        # The name of the plot should match the provided custom label
+        assert first_plot.name == first_plot_label
+
+        # Check that the first plotted line is a continuous `spline`
+        first_plot_line: plotly.graph_objects.scatter.Line = first_plot.line
+        assert first_plot_line.shape == "spline"
+        assert first_plot_line.dash == "solid"
+        assert first_plot_line.width == 2
+
+        # ---Second line plot checks---
+        second_plot: plotly.graph_objects.Scatter = figure.data[1]
+        # Check that each axis has been populated with the correct data
+        assert list(second_plot.x) == second_chart_plots_data.x_axis
+        assert list(second_plot.y) == second_chart_plots_data.y_axis
+
+        # The name of the plot should match the provided custom label
+        assert second_plot.name == second_plot_label
+
+        # Check that the second plotted line is a continuous `spline`
+        second_plot_line: plotly.graph_objects.scatter.Line = second_plot.line
+        assert second_plot_line.shape == "spline"
+        assert second_plot_line.dash == "solid"
+        assert second_plot_line.width == 2

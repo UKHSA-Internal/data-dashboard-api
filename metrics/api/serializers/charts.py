@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
 from metrics.data.models.core_models import Metric, Topic
-from metrics.domain.models import ChartPlots, ChartsPlotParameters
+from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
 FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
@@ -67,8 +67,10 @@ class ChartPlotSerializer(serializers.Serializer):
         allow_null=True,
     )
 
+    label = serializers.CharField(required=False)
+
     def to_models(self):
-        return ChartsPlotParameters(**self.data)
+        return ChartPlotParameters(**self.data)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

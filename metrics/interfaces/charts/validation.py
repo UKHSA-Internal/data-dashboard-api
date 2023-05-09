@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from django.db.models import Manager
 
@@ -17,6 +18,10 @@ class MetricDoesNotSupportTopicError(Exception):
     ...
 
 
+class DatesNotInChronologicalOrderError(Exception):
+    ...
+
+
 class ChartsRequestValidator:
     def __init__(
         self,
@@ -24,6 +29,7 @@ class ChartsRequestValidator:
         metric: str,
         chart_type: str,
         date_from: datetime.datetime,
+        date_to: Optional[datetime.datetime] = None,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
     ):
@@ -31,6 +37,7 @@ class ChartsRequestValidator:
         self.metric = metric
         self.chart_type = chart_type
         self.date_from = date_from
+        self.date_to = date_to
         self.core_time_series_manager = core_time_series_manager
         self.metric_manager = metric_manager
 
@@ -50,11 +57,20 @@ class ChartsRequestValidator:
                 compatible for the required `topic`.
                 E.g. `new_cases_daily` is currently only available
                 for the topic of `COVID-19`
+
+            `DatesNotInChronologicalOrderError`: If a provided `date_to`
+                is chronologically behind the provided `date_from`.
+                E.g. date_from = datetime.datetime(2022, 10, 2)
+                    & date_to = datetime.datetime(2021, 8, 1)
+                Note that if None is provided to `date_to`
+                then this error will not be raised.
+
         """
         self._validate_series_type_chart_works_with_metric()
         self._validate_metric_is_available_for_topic()
+        self._validate_dates()
 
-    def is_chart_series_type(self) -> bool:
+    def _is_chart_series_type(self) -> bool:
         """Checks if the instance variable `chart_type` is of a timeseries type.
 
         Returns:
@@ -67,19 +83,19 @@ class ChartsRequestValidator:
         return True
 
     def _validate_series_type_chart_works_with_metric(self) -> None:
-        requested_chart_is_series_type = self.is_chart_series_type()
+        requested_chart_is_series_type = self._is_chart_series_type()
         if not requested_chart_is_series_type:
             return
 
         metric_is_series_chart_compatible: bool = (
-            self.does_metric_have_multiple_records()
+            self._does_metric_have_multiple_records()
         )
         if not metric_is_series_chart_compatible:
             raise ChartTypeDoesNotSupportMetricError(
                 f"`{self.metric}` is not compatible with `{self.chart_type}` chart types"
             )
 
-    def does_metric_have_multiple_records(self) -> bool:
+    def _does_metric_have_multiple_records(self) -> bool:
         """Checks the db if there are multiple associated `CoreTimeSeries` records.
 
         Returns:
@@ -96,14 +112,14 @@ class ChartsRequestValidator:
         return count > 1
 
     def _validate_metric_is_available_for_topic(self) -> None:
-        metric_is_topic_compatible: bool = self.is_metric_available_for_topic()
+        metric_is_topic_compatible: bool = self._is_metric_available_for_topic()
 
         if not metric_is_topic_compatible:
             raise MetricDoesNotSupportTopicError(
                 f"`{self.topic}` does not have a corresponding metric of `{self.metric}`"
             )
 
-    def is_metric_available_for_topic(self) -> bool:
+    def _is_metric_available_for_topic(self) -> bool:
         """Checks the db if there are any `Metric` records for the `metric` and `topic`.
 
         Returns:
@@ -116,3 +132,47 @@ class ChartsRequestValidator:
             metric_name=self.metric,
             topic_name=self.topic,
         )
+
+    def _are_dates_in_chronological_order(self) -> bool:
+        """Checks if the `date_to` stamp is chronologically ahead of `date_from`
+
+        Returns:
+            bool: True if the date stamps are in the
+                expected chronological order
+                False otherwise.
+
+        Raises:
+            `TypeError`: If an invalid type is provided for either stamp
+            i.e. if None is provided as `date_to`
+
+        """
+        return self.date_to > self.date_from
+
+    def _validate_dates(self) -> None:
+        """Checks if the `date_to` stamp is chronologically ahead of `date_from`
+
+        Notes:
+            If `None` is provided to either 1 or both
+            of the date stamps, then this will return early
+            and no further validation will be performed.
+            This is to handle cases when the caller has
+            specified a `date_from` but not a `date_to`.
+            In that scenario, `date_to` is implicitly
+            expect to be considered as the current date.
+
+        Raises:
+            `DatesNotInChronologicalOrderError`: If the date stamps
+                are not in the correct expected chronological order
+
+        """
+        try:
+            dates_in_chronological_order: bool = (
+                self._are_dates_in_chronological_order()
+            )
+        except TypeError:
+            return
+
+        if not dates_in_chronological_order:
+            raise DatesNotInChronologicalOrderError()
+
+        return None
