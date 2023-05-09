@@ -41,6 +41,7 @@ class ChartPlotElement(BaseMetricsElement):
     geography_type = blocks.ChoiceBlock(
         required=False, choices=get_all_geography_type_names
     )
+    label = blocks.TextBlock(required=False, help_text=help_texts.LABEL_FIELD)
 
     class Meta:
         icon = "chart_plot"
