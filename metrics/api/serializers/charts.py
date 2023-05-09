@@ -67,7 +67,12 @@ class ChartPlotSerializer(serializers.Serializer):
         allow_null=True,
     )
 
-    label = serializers.CharField(required=False)
+    label = serializers.CharField(
+        required=False,
+        default="",
+        allow_blank=True,
+        help_text=help_texts.LABEL_FIELD,
+    )
 
     def to_models(self):
         return ChartPlotParameters(**self.data)

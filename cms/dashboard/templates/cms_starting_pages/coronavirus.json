@@ -21,6 +21,7 @@
         }
     },
     "title": "Coronavirus",
+    "page_description": "<p data-block-key=\"sud2w\">Data and insights from the UKHSA on Coronavirus. <a href=\"https://www.gov.uk/government/organisations/uk-health-security-agency\">See the simple summary for England (opens in a new tab).</a></p>",
     "body": [
         {
             "type": "section",
@@ -47,7 +48,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "7d8ee647-1e12-4ea5-8051-dacda36d7dc0"
                                             }
@@ -79,7 +81,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "691a30aa-2446-4462-8ac1-ebada957baf9"
                                             },
@@ -93,7 +96,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "978f0155-b57e-48ba-96da-d79aa3c72a9d"
                                             }
@@ -134,7 +138,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "9999386d-261c-4ad8-9cbb-2b7a69c70f90"
                                             }
@@ -175,7 +180,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "d6517ed4-2b64-4aac-ad83-831e086b4cab"
                                             }
@@ -199,7 +205,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "94b90d9c-de53-4848-8c1b-a0d9850c4c55"
                                             }
@@ -240,7 +247,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "49ad7b15-651c-455f-b261-3fd2b53b4ad0"
                                             }
@@ -264,7 +272,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "e5830390-1928-4097-9894-b8c5621cfab7"
                                             }
@@ -305,7 +314,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "c41bb963-ab1a-4a93-a2f0-fa421b3609a7"
                                             }
@@ -329,7 +339,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "08f53934-870e-46d4-9d11-51e31b414c11"
                                             }
@@ -361,7 +372,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "b83e67d5-0234-40e4-8c3e-cb7a1efb8549"
                                             }
@@ -385,7 +397,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "b7293a99-3068-416f-85a4-696e0cf9c402"
                                             }
