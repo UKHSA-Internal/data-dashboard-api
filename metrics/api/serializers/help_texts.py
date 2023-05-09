@@ -11,6 +11,10 @@ GEOGRAPHY_TYPE_FIELD: str = """
 The type of geographical categorisation to apply any data filtering to.
 E.g. `Nation`
 """
+LABEL_FIELD: str = """
+The label to assign on the legend for this individual plot.
+E.g. `15 to 44 years old`
+"""
 HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT: str = """
 The associated value of the headline metric which was queried for. E.g. `new_cases_7days_change`
 """
