@@ -31,17 +31,29 @@ class ChartPlotElement(BaseMetricsElement):
         help_text=help_texts.CHART_TYPE_FIELD_HELP_TEXT,
     )
     date_from = blocks.DateBlock(
-        required=False, help_text=help_texts.DATE_FROM_FIELD_HELP_TEXT
+        required=False,
+        help_text=help_texts.DATE_FROM_FIELD_HELP_TEXT,
     )
     date_to = blocks.DateBlock(
-        required=False, help_text=help_texts.DATE_TO_FIELD_HELP_TEXT
+        required=False,
+        help_text=help_texts.DATE_TO_FIELD_HELP_TEXT,
     )
-    stratum = blocks.ChoiceBlock(required=False, choices=get_all_stratum_names)
-    geography = blocks.ChoiceBlock(required=False, choices=get_all_geography_names)
+    stratum = blocks.ChoiceBlock(
+        required=False,
+        choices=get_all_stratum_names,
+    )
+    geography = blocks.ChoiceBlock(
+        required=False,
+        choices=get_all_geography_names,
+    )
     geography_type = blocks.ChoiceBlock(
-        required=False, choices=get_all_geography_type_names
+        required=False,
+        choices=get_all_geography_type_names,
     )
-    label = blocks.TextBlock(required=False, help_text=help_texts.LABEL_FIELD)
+    label = blocks.TextBlock(
+        required=False,
+        help_text=help_texts.LABEL_FIELD,
+    )
 
     class Meta:
         icon = "chart_plot"
