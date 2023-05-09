@@ -337,7 +337,7 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity_latest",
+                                                    "metric": "weekly_positivity",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
