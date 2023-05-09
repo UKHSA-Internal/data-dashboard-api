@@ -146,7 +146,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "b0ead98b-4102-48f6-b94e-ff7bcffe1dc4"
                                             }
@@ -191,7 +192,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "d3b521d8-a6bb-4960-9db9-864c3d362976"
                                             }
@@ -298,7 +300,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "c7340640-85c6-4b2e-b3b3-2695576f0355"
                                             }
@@ -343,7 +346,8 @@
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
-                                                    "geography_type": ""
+                                                    "geography_type": "",
+                                                    "label": null
                                                 },
                                                 "id": "f1a643ba-ff7e-4118-a0a8-366288468cb0"
                                             }
@@ -362,5 +366,5 @@
         }
     ],
     "related_links": [],
-    "last_published_at": "2023-05-02T11:49:06.927124Z"
+    "last_published_at": "2023-05-04T13:41:55.130831Z"
 }
