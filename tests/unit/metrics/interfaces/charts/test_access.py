@@ -10,7 +10,10 @@ from metrics.interfaces.charts.access import (
     ChartsInterface,
     DataNotFoundError,
     make_datetime_from_string,
+    validate_chart_plot_parameters,
+    validate_each_requested_chart_plot,
 )
+from metrics.interfaces.charts.validation import ChartsRequestValidator
 from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.fakes.models.core_time_series import FakeCoreTimeSeries
@@ -464,3 +467,60 @@ class TestMakeDatetimeFromString:
             number_of_months=12,
         )
         assert parsed_date_from == spy_get_date_n_months_ago_from_timestamp.return_value
+
+
+class TestValidateEachRequestedChartPlot:
+    @mock.patch(f"{MODULE_PATH}.validate_chart_plot_parameters")
+    def test_delegates_call_for_each_chart_plot(
+        self,
+        spy_validate_chart_plot_parameters: mock.MagicMock,
+        fake_chart_plot_parameters: ChartPlotParameters,
+        fake_chart_plot_parameters_covid_cases: ChartPlotParameters,
+    ):
+        """
+        Given a `ChartsPlots` model requesting plots
+            of multiple `ChartPlotParameters` models
+        When `validate_each_requested_chart_plot()` is called
+        Then the call is delegated to `validate_chart_plot_parameters()`
+            for each `ChartPlotParameters` models
+        """
+        # Given
+        fake_requested_chart_plots = [
+            fake_chart_plot_parameters,
+            fake_chart_plot_parameters_covid_cases,
+        ]
+        fake_chart_plots = ChartPlots(
+            file_format="svg", plots=fake_requested_chart_plots
+        )
+
+        # When
+        validate_each_requested_chart_plot(chart_plots=fake_chart_plots)
+
+        # Then
+        expected_calls = [
+            mock.call(chart_plot_parameters=requested_chart_plot)
+            for requested_chart_plot in fake_requested_chart_plots
+        ]
+        spy_validate_chart_plot_parameters.assert_has_calls(calls=expected_calls)
+
+
+class TestValidateChartPlotParameters:
+    @mock.patch.object(ChartsRequestValidator, "validate")
+    def test_delegates_call_to_validate_method_on_charts_request_validator_class(
+        self,
+        spy_validate_method: mock.MagicMock,
+        fake_chart_plot_parameters: ChartPlotParameters,
+    ):
+        """
+        Given a `ChartPlotParameters` model
+        When `_validate_chart_plot_parameters()` is called
+        Then the call is delegated to the `validate()` from an instance of the `ChartsRequestValidator`
+        """
+        # Given
+        chart_plot_parameters = fake_chart_plot_parameters
+
+        # When
+        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_parameters)
+
+        # Then
+        spy_validate_method.assert_called_once()

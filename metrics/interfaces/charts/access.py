@@ -334,7 +334,7 @@ def generate_chart(chart_plots: ChartPlots) -> str:
         The filename of the created image
 
     """
-    _validate_each_requested_chart_plot(chart_plots=chart_plots)
+    validate_each_requested_chart_plot(chart_plots=chart_plots)
 
     library = ChartsInterface(chart_plots=chart_plots)
     figure = library.generate_chart_figure()
@@ -346,18 +346,34 @@ def generate_chart(chart_plots: ChartPlots) -> str:
     )
 
 
-def _validate_each_requested_chart_plot(chart_plots: ChartPlots) -> None:
-    for chart_plot_params in chart_plots.plots:
-        chart_plot_params: ChartPlotParameters
+def validate_each_requested_chart_plot(chart_plots: ChartPlots) -> None:
+    """Validates the request chart plots against the contents of the db
 
-        date_from = make_datetime_from_string(date_from=chart_plot_params.date_from)
-        charts_request_validator = validation.ChartsRequestValidator(
-            topic=chart_plot_params.topic,
-            metric=chart_plot_params.metric,
-            chart_type=chart_plot_params.chart_type,
-            date_from=date_from,
-        )
-        charts_request_validator.validate()
+    Raises:
+        `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
+            compatible for the required `chart_type`.
+            E.g. A cumulative headline type number like `positivity_7days_latest`
+            would not be viable for a line type (timeseries) chart.
+
+        `MetricDoesNotSupportTopicError`: If the `metric` is not
+            compatible for the required `topic`.
+            E.g. `new_cases_daily` is currently only available
+            for the topic of `COVID-19`
+
+    """
+    for chart_plot_params in chart_plots.plots:
+        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_params)
+
+
+def validate_chart_plot_parameters(chart_plot_parameters: ChartPlotParameters):
+    date_from = make_datetime_from_string(date_from=chart_plot_parameters.date_from)
+    charts_request_validator = validation.ChartsRequestValidator(
+        topic=chart_plot_parameters.topic,
+        metric=chart_plot_parameters.metric,
+        chart_type=chart_plot_parameters.chart_type,
+        date_from=date_from,
+    )
+    charts_request_validator.validate()
 
 
 def write_figure(
