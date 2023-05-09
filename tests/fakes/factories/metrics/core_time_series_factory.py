@@ -4,12 +4,12 @@ from typing import List
 
 import factory
 
-from tests.fakes.factories.metric_factory import FakeMetricFactory
-from tests.fakes.factories.stratum_factory import FakeStratumFactory
-from tests.fakes.models.core_time_series import FakeCoreTimeSeries
-from tests.fakes.models.metric import FakeMetric
-from tests.fakes.models.stratum import FakeStratum
-from tests.fakes.models.topic import FakeTopic
+from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
+from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
+from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
+from tests.fakes.models.metrics.metric import FakeMetric
+from tests.fakes.models.metrics.stratum import FakeStratum
+from tests.fakes.models.metrics.topic import FakeTopic
 
 
 class FakeCoreTimeSeriesFactory(factory.Factory):

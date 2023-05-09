@@ -1,7 +1,7 @@
 import factory
 
-from tests.fakes.models.metric import FakeMetric
-from tests.fakes.models.topic import FakeTopic
+from tests.fakes.models.metrics.metric import FakeMetric
+from tests.fakes.models.metrics.topic import FakeTopic
 
 
 class FakeMetricFactory(factory.Factory):

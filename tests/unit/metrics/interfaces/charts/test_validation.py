@@ -6,8 +6,10 @@ import pytest
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import validation
 from metrics.interfaces.charts.validation import DatesNotInChronologicalOrderError
-from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
-from tests.fakes.factories.metric_factory import FakeMetricFactory
+from tests.fakes.factories.metrics.core_time_series_factory import (
+    FakeCoreTimeSeriesFactory,
+)
+from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 

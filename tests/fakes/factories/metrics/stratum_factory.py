@@ -1,6 +1,6 @@
 import factory
 
-from tests.fakes.models.stratum import FakeStratum
+from tests.fakes.models.metrics.stratum import FakeStratum
 
 
 class FakeStratumFactory(factory.Factory):

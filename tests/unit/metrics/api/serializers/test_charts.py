@@ -8,7 +8,7 @@ from metrics.api.serializers import ChartsQuerySerializer
 from metrics.api.serializers.charts import ChartPlotSerializer, ChartsSerializer
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
-from tests.fakes.factories.metric_factory import FakeMetricFactory
+from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
