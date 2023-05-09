@@ -151,7 +151,8 @@ class TestChartsInterface:
     def test_build_chart_plots_data_delegates_call_for_each_plot(
         self,
         mocked_build_chart_plot_data_from_parameters: mock.MagicMock,
-        fake_chart_plot_parameters,
+        fake_chart_plot_parameters: ChartPlotParameters,
+        fake_chart_plot_parameters_covid_cases: ChartPlotParameters,
     ):
         """
         Given a `ChartPlots` model which contains `ChartPlotParameters` for 2 separate plots
@@ -160,11 +161,8 @@ class TestChartsInterface:
             for each individual `ChartPlotParameters` model
         """
         # Given
-        fake_chart_plot_parameter_second = ChartPlotParameters(
-            chart_type="line_multi_coloured", topic="COVID-19", metric="new_cases_daily"
-        )
         fake_chart_plots = ChartPlots(
-            plots=[fake_chart_plot_parameters, fake_chart_plot_parameter_second],
+            plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
         )
 
@@ -180,7 +178,7 @@ class TestChartsInterface:
         # is called for each of the provided `ChartPlotParameters` models
         expected_calls = [
             mock.call(chart_plot_parameters=fake_chart_plot_parameters),
-            mock.call(chart_plot_parameters=fake_chart_plot_parameter_second),
+            mock.call(chart_plot_parameters=fake_chart_plot_parameters_covid_cases),
         ]
         mocked_build_chart_plot_data_from_parameters.assert_has_calls(
             calls=expected_calls,
