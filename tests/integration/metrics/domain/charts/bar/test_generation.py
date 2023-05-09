@@ -90,6 +90,10 @@ class TestBarCharts:
         assert x_axis.ticks == "outside"
         assert x_axis.tickson == "boundaries"
 
+        # The `M1` dtick setting ensures x values within the same month do not show repeated months:
+        # ___Sep___Oct___Nov___  as opposed to _Sep_Sep_Oct_Oct_Oct_Nov_Nov_
+        assert x_axis.dtick == "M1"
+
         # The x-axis ticks should be formatted as shorthand Months only i.e Sep not September
         assert x_axis.type == "date"
         assert x_axis.tickformat == "%b %Y"
