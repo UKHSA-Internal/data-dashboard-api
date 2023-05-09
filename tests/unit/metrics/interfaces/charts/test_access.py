@@ -9,6 +9,7 @@ from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
     DataNotFoundError,
+    generate_chart,
     make_datetime_from_string,
     validate_chart_plot_parameters,
     validate_each_requested_chart_plot,
@@ -467,6 +468,61 @@ class TestMakeDatetimeFromString:
             number_of_months=12,
         )
         assert parsed_date_from == spy_get_date_n_months_ago_from_timestamp.return_value
+
+
+class TestGenerateChart:
+    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_delegates_call_for_validation(
+        self,
+        spy_validate_each_requested_chart_plot: mock.MagicMock,
+        spy_generate_chart_figure: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `ChartPlots` model
+        When `generate_chart()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `generate_chart_figure` is called from an instance of the `ChartsInterface`
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        generate_chart(chart_plots=mocked_chart_plots)
+
+        # Then
+        spy_validate_each_requested_chart_plot.assert_called_once_with(
+            chart_plots=mocked_chart_plots
+        )
+        spy_generate_chart_figure.assert_called_once_with()
+
+    @mock.patch(f"{MODULE_PATH}.write_figure")
+    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_delegates_call_for_writing_the_chart_figure_to_file(
+        self,
+        mocked_validate_each_requested_chart_plot: mock.MagicMock,
+        spy_generate_chart_figure: mock.MagicMock,
+        spy_write_figure: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `ChartPlots` model
+        When `generate_chart()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `generate_chart_figure` is called from an instance of the `ChartsInterface`
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        generate_chart(chart_plots=mocked_chart_plots)
+
+        # Then
+        spy_write_figure.assert_called_once_with(
+            figure=spy_generate_chart_figure.return_value,
+            topic="-",
+            file_format=mocked_chart_plots.file_format,
+        )
 
 
 class TestValidateEachRequestedChartPlot:
