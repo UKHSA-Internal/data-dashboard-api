@@ -17,7 +17,7 @@ from metrics.interfaces.charts.access import (
 from metrics.interfaces.charts.validation import ChartsRequestValidator
 from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
-from tests.fakes.models.core_time_series import FakeCoreTimeSeries
+from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
