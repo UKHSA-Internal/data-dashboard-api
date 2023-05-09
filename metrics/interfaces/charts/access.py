@@ -366,6 +366,20 @@ def validate_each_requested_chart_plot(chart_plots: ChartPlots) -> None:
 
 
 def validate_chart_plot_parameters(chart_plot_parameters: ChartPlotParameters):
+    """Validates the individual given `chart_plot_parameters` against the contents of the db
+
+    Raises:
+        `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
+            compatible for the required `chart_type`.
+            E.g. A cumulative headline type number like `positivity_7days_latest`
+            would not be viable for a line type (timeseries) chart.
+
+        `MetricDoesNotSupportTopicError`: If the `metric` is not
+            compatible for the required `topic`.
+            E.g. `new_cases_daily` is currently only available
+            for the topic of `COVID-19`
+
+    """
     date_from = make_datetime_from_string(date_from=chart_plot_parameters.date_from)
     charts_request_validator = validation.ChartsRequestValidator(
         topic=chart_plot_parameters.topic,
