@@ -1,5 +1,5 @@
 from metrics.api.serializers import APITimeSeriesSerializer
-from tests.fakes.factories.api_time_series_factory import FakeAPITimeSeriesFactory
+from tests.fakes.factories.metrics.api_time_series_factory import FakeAPITimeSeriesFactory
 from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
 
 

@@ -15,7 +15,7 @@ from metrics.interfaces.charts.access import (
     validate_each_requested_chart_plot,
 )
 from metrics.interfaces.charts.validation import ChartsRequestValidator
-from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
+from tests.fakes.factories.metrics.core_time_series_factory import FakeCoreTimeSeriesFactory
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 
