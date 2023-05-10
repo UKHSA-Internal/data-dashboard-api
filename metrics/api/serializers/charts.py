@@ -6,6 +6,7 @@ from rest_framework import serializers
 from metrics.api.serializers import help_texts
 from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
@@ -79,6 +80,12 @@ class ChartPlotSerializer(serializers.Serializer):
         required=False,
         allow_blank=True,
         choices=RGBAColours.choices(),
+    )
+
+    line_type = serializers.ChoiceField(
+        required=False,
+        allow_blank=True,
+        choices=ChartLineTypes.choices(),
     )
 
     def to_models(self):
