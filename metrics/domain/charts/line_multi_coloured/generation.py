@@ -40,7 +40,7 @@ LAYOUT_ARGS = {
     "autosize": False,
     "xaxis": X_AXIS_ARGS,
     "yaxis": Y_AXIS_ARGS,
-    "legend": {"orientation": "h", "x": 0, "y": 1},
+    "legend": {"orientation": "v", "x": 0},
 }
 
 
