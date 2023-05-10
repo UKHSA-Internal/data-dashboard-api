@@ -102,28 +102,8 @@ class ChartsView(APIView):
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
-
-
-        So the full payload to this endpoint would look like the following:
-
-        ```
-        {
-          "file_format": "svg",                                 # Optional, defaults to "svg" if not provided
-          "plots": [
-            {
-              "topic": "COVID-19",
-              "metric": "new_cases_daily",
-              "chart_type": "line_with_shaded_section",
-              "stratum": "",                                    # Optional
-              "geography": "",                                  # Optional
-              "geography_type": "",                             # Optional
-              "date_from": null                                 # Optional
-              "date_to": null                                   # Optional
-              "label": ""                                       # Optional
-            }
-          ]
-        }
-        ```
+        | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
+        | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
 
         ---
 
