@@ -10,15 +10,6 @@ from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
-FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
-
-
-class ChartsQuerySerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(
-        choices=FILE_FORMAT_CHOICES,
-        default="svg",
-    )
-
 
 class ChartPlotSerializer(serializers.Serializer):
     topic = serializers.ChoiceField(
@@ -118,6 +109,9 @@ class ChartPlotSerializer(serializers.Serializer):
 
 class ChartPlotsListSerializer(serializers.ListSerializer):
     child = ChartPlotSerializer()
+
+
+FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
 
 
 class ChartsSerializer(serializers.Serializer):
