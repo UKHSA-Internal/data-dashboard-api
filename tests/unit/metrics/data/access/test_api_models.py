@@ -59,7 +59,9 @@ class TestFilterIsString:
 
 class TestValidateFilterName:
     @mock.patch("metrics.data.access.api_models.filter_is_list")
-    def test_validate_filter_name_calls_list_function(self, mock_validate_filter_name):
+    def test_validate_filter_name_calls_list_function(
+        self, spy_filter_is_list: mock.MagicMock
+    ):
         """
         Given a field name and filter value
         When `validate_filter_name()` is called and the filter value is a list of values
@@ -75,12 +77,12 @@ class TestValidateFilterName:
         )
 
         # Then
-        mock_validate_filter_name.assert_called_once()
-        assert actual_result == mock_validate_filter_name.return_value
+        spy_filter_is_list.assert_called_once()
+        assert actual_result == spy_filter_is_list.return_value
 
     @mock.patch("metrics.data.access.api_models.filter_is_string")
     def test_validate_filter_name_calls_string_function(
-        self, mock_validate_filter_name
+        self, spy_filter_is_string: mock.MagicMock
     ):
         """
         Given a field name and filter value
@@ -97,8 +99,8 @@ class TestValidateFilterName:
         )
 
         # Then
-        mock_validate_filter_name.assert_called_once()
-        assert actual_result == mock_validate_filter_name.return_value
+        spy_filter_is_string.assert_called_once()
+        assert actual_result == spy_filter_is_string.return_value
 
 
 class TestValidatePlotFilter:
