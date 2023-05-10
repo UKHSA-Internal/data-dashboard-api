@@ -14,6 +14,8 @@ modules=
 ignore_imports=
     cms.metrics_interface.interface -> metrics.data.models.core_models
     cms.metrics_interface.interface -> metrics.interfaces.charts.access
+    cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.properties
+    cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.colour_scheme
     metrics.api.urls -> cms.dashboard.viewsets
 
 [importlinter:contract:Metrics architectural layers]
