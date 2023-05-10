@@ -7,7 +7,9 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_stratum_names,
     get_all_topic_names,
     get_all_unique_metric_names,
+    get_chart_line_types,
     get_chart_types,
+    get_colours,
 )
 
 
@@ -53,6 +55,16 @@ class ChartPlotElement(BaseMetricsElement):
     label = blocks.TextBlock(
         required=False,
         help_text=help_texts.LABEL_FIELD,
+    )
+    line_colour = blocks.ChoiceBlock(
+        required=False,
+        choices=get_colours,
+        help_text=help_texts.LINE_COLOUR_FIELD,
+    )
+    line_type = blocks.ChoiceBlock(
+        required=False,
+        choices=get_chart_line_types,
+        help_text=help_texts.LINE_TYPE_FIELD,
     )
 
     class Meta:
