@@ -35,3 +35,10 @@ class RGBAColours(Enum):
     @classmethod
     def choices(cls):
         return tuple((chart_type.name, chart_type.name) for chart_type in cls)
+
+    @classmethod
+    def get_colour(cls, colour: str) -> "RGBAColours":
+        try:
+            return cls[colour]
+        except KeyError:
+            return cls.BLACK
