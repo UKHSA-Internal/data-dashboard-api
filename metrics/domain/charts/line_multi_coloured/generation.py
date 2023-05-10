@@ -95,7 +95,6 @@ def _create_line_plot(
     line_width: int,
     line_shape: str,
     legend: str,
-    dash: str,
 ):
     return plotly.graph_objects.Scatter(
         x=x_axis,
@@ -103,7 +102,7 @@ def _create_line_plot(
         line={
             "width": line_width,
             "color": colour,
-            "dash": dash,
+            "dash": "solid",
         },
         line_shape=line_shape,
         name=legend,
