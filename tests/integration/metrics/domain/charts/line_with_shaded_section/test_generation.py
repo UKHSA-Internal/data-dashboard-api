@@ -56,7 +56,7 @@ class TestLineWithShadedSectionCharts:
 
         # The x-axis ticks should be formatted as shorthand Months only i.e Sep not September
         assert x_axis.type == "date"
-        assert x_axis.tickformat == "%b"
+        assert x_axis.tickformat == "%b %Y"
 
         # ---Y Axis checks---
         y_axis = main_layout.yaxis

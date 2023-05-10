@@ -96,31 +96,14 @@ class ChartsView(APIView):
         | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
         | `metric`         | The name of the metric being queried for                                   | new_cases_daily          | Yes       |
         | `chart_type`     | The type of chart to use for the individual plot                           | line_with_shaded_section | Yes       |
-        | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
-        | `date_from`      | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `stratum`        | The smallest subgroup a metric can be broken down into                     | 0_4                      | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
-
-        So the full payload to this endpoint would look like the following:
-
-        ```
-            {
-              "file_format": "svg",                                 # Optional, defaults to "svg" if not provided
-              "plots": [
-                {
-                  "topic": "COVID-19",
-                  "metric": "new_cases_daily",
-                  "chart_type": "line_with_shaded_section",
-                  "stratum": "",                                    # Optional
-                  "geography": "",                                  # Optional
-                  "geography_type": "",                             # Optional
-                  "date_from": null                                 # Optional
-                  "date_to": null                                   # Optional
-                }
-              ]
-            }
-        ```
+        | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
+        | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
+        | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
+        | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
+        | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
 
         ---
 
@@ -163,11 +146,8 @@ class ChartsView(APIView):
 
         try:
             filename: str = access.generate_chart(
-                chart_plot_model=chart_plot_models.plots[0],
-                file_format=chart_plot_models.file_format,
+                chart_plots=chart_plot_models,
             )
-        except data_visualization_superseded.ChartNotSupportedError:
-            return Response(status=HTTPStatus.NOT_FOUND)
         except validation.ChartTypeDoesNotSupportMetricError as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}

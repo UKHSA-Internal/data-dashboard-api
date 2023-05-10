@@ -4,9 +4,12 @@ from typing import List
 
 import factory
 
-from tests.fakes.models.core_time_series import FakeCoreTimeSeries
-from tests.fakes.models.metric import FakeMetric
-from tests.fakes.models.topic import FakeTopic
+from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
+from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
+from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
+from tests.fakes.models.metrics.metric import FakeMetric
+from tests.fakes.models.metrics.stratum import FakeStratum
+from tests.fakes.models.metrics.topic import FakeTopic
 
 
 class FakeCoreTimeSeriesFactory(factory.Factory):
@@ -26,11 +29,22 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
 
     @classmethod
     def build_time_series(
-        cls, dt: datetime.date, metric_name: str, topic_name: str
+        cls,
+        dt: datetime.date,
+        metric_name: str,
+        topic_name: str,
+        stratum_name: str = "",
     ) -> FakeCoreTimeSeries:
-        metric: FakeMetric = cls._build_example_metric(
+        metric: FakeMetric = FakeMetricFactory.build_example_metric(
             metric_name=metric_name, topic_name=topic_name
         )
+        if stratum_name:
+            stratum: FakeStratum = FakeStratumFactory.build_example(
+                stratum_name=stratum_name,
+            )
+        else:
+            stratum = None
+
         return cls.build(
             period="D",
             sex="ALL",
@@ -38,6 +52,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             metric_value=1,
             metric=metric,
             dt=dt,
+            stratum=stratum,
         )
 
     @classmethod

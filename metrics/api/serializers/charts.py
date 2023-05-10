@@ -5,7 +5,9 @@ from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
 from metrics.data.models.core_models import Metric, Topic
-from metrics.domain.models import ChartPlots, ChartsPlotParameters
+from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
+from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
 FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
@@ -67,8 +69,27 @@ class ChartPlotSerializer(serializers.Serializer):
         allow_null=True,
     )
 
+    label = serializers.CharField(
+        required=False,
+        default="",
+        allow_blank=True,
+        help_text=help_texts.LABEL_FIELD,
+    )
+
+    line_colour = serializers.ChoiceField(
+        required=False,
+        allow_blank=True,
+        choices=RGBAColours.choices(),
+    )
+
+    line_type = serializers.ChoiceField(
+        required=False,
+        allow_blank=True,
+        choices=ChartLineTypes.choices(),
+    )
+
     def to_models(self):
-        return ChartsPlotParameters(**self.data)
+        return ChartPlotParameters(**self.data)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

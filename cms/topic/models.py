@@ -40,6 +40,7 @@ class TopicPage(Page):
     # Editor panels configuration
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
+        FieldPanel("page_description"),
         FieldPanel("body"),
         FieldPanel("symptoms"),
         FieldPanel("transmission"),
@@ -50,7 +51,7 @@ class TopicPage(Page):
 
     # Sets which fields to expose on the API
     api_fields = [
-        APIField("date_posted"),
+        APIField("page_description"),
         APIField("body"),
         APIField("symptoms"),
         APIField("transmission"),

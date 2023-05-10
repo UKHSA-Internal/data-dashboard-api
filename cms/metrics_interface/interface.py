@@ -3,6 +3,8 @@ from typing import List, Tuple
 from django.db.models import Manager, QuerySet
 
 from metrics.data.models import core_models
+from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.interfaces.charts.access import ChartTypes
 
 DEFAULT_TOPIC_MANAGER = core_models.Topic.objects
@@ -65,6 +67,32 @@ class MetricsAPIInterface:
 
         """
         return ChartTypes.choices()
+
+    @staticmethod
+    def get_chart_line_types() -> List[Tuple[str, str]]:
+        """Gets all available chart line types choices as a list of 2-item tuples.
+        Note this is achieved by delegating the call to the `ChartLineTypes` enum from the Metrics API
+
+        Returns:
+            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            Examples:
+                [("SOLID", "SOLID"), ...]
+
+        """
+        return ChartLineTypes.choices()
+
+    @staticmethod
+    def get_colours() -> List[Tuple[str, str]]:
+        """Gets all available colour choices as a list of 2-item tuples.
+        Note this is achieved by delegating the call to the `RGBAColours` enum from the Metrics API
+
+        Returns:
+            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            Examples:
+                [("BLUE", "BLUE"), ...]
+
+        """
+        return RGBAColours.choices()
 
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.

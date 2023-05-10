@@ -4,7 +4,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.headlines import HeadlinesQuerySerializer
-from tests.fakes.factories.metric_factory import FakeMetricFactory
+from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 

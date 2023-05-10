@@ -2,7 +2,7 @@ import datetime
 
 import factory
 
-from tests.fakes.models.api_time_series import FakeAPITimeSeries
+from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
 
 
 class FakeAPITimeSeriesFactory(factory.Factory):

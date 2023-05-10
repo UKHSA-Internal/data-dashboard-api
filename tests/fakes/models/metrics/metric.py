@@ -1,6 +1,5 @@
 from metrics.data.models.core_models import Metric
-
-from .fake_model_meta import FakeMeta
+from tests.fakes.models.fake_model_meta import FakeMeta
 
 
 class FakeMetric(Metric):

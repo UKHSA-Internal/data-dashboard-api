@@ -5,7 +5,9 @@ import pytest
 from metrics.domain.trends.state import Trend
 from metrics.interfaces.trends import access
 from metrics.interfaces.trends.access import TrendsInterface
-from tests.fakes.factories.core_time_series_factory import FakeCoreTimeSeriesFactory
+from tests.fakes.factories.metrics.core_time_series_factory import (
+    FakeCoreTimeSeriesFactory,
+)
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 
 

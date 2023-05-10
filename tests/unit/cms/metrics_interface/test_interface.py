@@ -1,6 +1,8 @@
 from unittest import mock
 
 from cms.metrics_interface import interface
+from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.interfaces.charts.access import ChartTypes
 
 
@@ -19,6 +21,36 @@ class TestMetricsAPIInterface:
 
         # Then
         assert all_chart_types == ChartTypes.choices()
+
+    def test_get_chart_line_types_delegates_call_correctly(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_chart_line_types()` is called from that object
+        Then the call is delegated to the correct method on the `ChartLineTypes` enum
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        all_chart_types = metrics_api_interface.get_chart_line_types()
+
+        # Then
+        assert all_chart_types == ChartLineTypes.choices()
+
+    def test_get_colours_delegates_call_correctly(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_colours()` is called from that object
+        Then the call is delegated to the correct method on the `RGBAColours` enum
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        all_chart_types = metrics_api_interface.get_colours()
+
+        # Then
+        assert all_chart_types == RGBAColours.choices()
 
     def test_get_all_topic_names_delegates_call_correctly(self):
         """

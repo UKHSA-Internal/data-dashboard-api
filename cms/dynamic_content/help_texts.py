@@ -94,6 +94,24 @@ DATE_TO_FIELD_HELP_TEXT: str = """
 The date to which to end the supporting chart data. 
 Note that if nothing is provided, a default of the current date will be applied.
 """
+LABEL_FIELD: str = """
+The label to assign on the legend for this individual plot.
+E.g. `15 to 44 years old`
+"""
+LINE_COLOUR_FIELD: str = """
+The colour to apply to this individual line plot. The colours conform to the GDS specification.
+Currently, only the `line_multi_coloured` chart type supports different line colours.
+For all other chart types, this field will be ignored.
+Note that if nothing is provided, a default of "BLACK" will be applied.
+E.g. `GREEN`
+"""
+LINE_TYPE_FIELD: str = """
+The line type to apply to this individual line plot.
+Currently, only the `line_multi_coloured` chart type supports different line types.
+For all other chart types, this field will be ignored.
+Note that if nothing is provided, a default of "SOLID" will be applied.
+E.g. `DASH`
+"""
 
 TITLE_FIELD_HELP_TEXT: str = """
 The title to display for this component. 
