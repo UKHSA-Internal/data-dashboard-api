@@ -28,6 +28,7 @@ class TestLineMultiColouredCharts:
         x_axis: List[datetime.date],
         y_axis: List[int],
         label: str = "",
+        line_type: str = "",
         line_colour: str = "",
     ) -> ChartPlotData:
         plot_params = ChartPlotParameters(
@@ -36,6 +37,7 @@ class TestLineMultiColouredCharts:
             metric="weekly_positivity_by_age",
             stratum="0_4",
             label=label,
+            line_type=line_type,
             line_colour=line_colour,
         )
         return ChartPlotData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
@@ -86,23 +88,27 @@ class TestLineMultiColouredCharts:
         # Given
         dates = DATES_FROM_SEP_TO_JAN
         values = EXAMPLE_VALUES
+        first_plot_line_type = "DASH"
         first_plot_label = "0 to 4 years old"
         first_plot_colour = "RED"
         first_chart_plots_data = self._setup_chart_plot_data(
             x_axis=dates,
             y_axis=values,
             label=first_plot_label,
+            line_type=first_plot_line_type,
             line_colour=first_plot_colour,
         )
 
-        second_plot_label = "15 to 44 years old"
         dates = DATES_FROM_SEP_TO_JAN
+        second_plot_line_type = "SOLID"
+        second_plot_label = "15 to 44 years old"
         values = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
         second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
             x_axis=dates,
             y_axis=values,
             label=second_plot_label,
+            line_type=second_plot_line_type,
             line_colour=second_plot_colour,
         )
 
@@ -127,8 +133,11 @@ class TestLineMultiColouredCharts:
         # Check that the first plotted line is a continuous `spline`
         first_plot_line: plotly.graph_objects.scatter.Line = first_plot.line
         assert first_plot_line.shape == "spline"
-        assert first_plot_line.dash == "solid"
         assert first_plot_line.width == 2
+
+        # Check that the first plotted line has the line type set correctly
+        # Note: plotly expects this parameter lower-cased
+        assert first_plot_line.dash == first_plot_line_type.lower()
 
         # Check that the first plotted line has been set with the correct colour
         expected_rgba_for_first_plot = colour_scheme.RGBAColours[first_plot_colour]
@@ -146,8 +155,11 @@ class TestLineMultiColouredCharts:
         # Check that the second plotted line is a continuous `spline`
         second_plot_line: plotly.graph_objects.scatter.Line = second_plot.line
         assert second_plot_line.shape == "spline"
-        assert second_plot_line.dash == "solid"
         assert second_plot_line.width == 2
+
+        # Check that the first plotted line has the line type set correctly
+        # Note: plotly expects this parameter lower-cased
+        assert second_plot_line.dash == second_plot_line_type.lower()
 
         # Check that the second plotted line has been set with the correct colour
         expected_rgba_for_second_plot = colour_scheme.RGBAColours[second_plot_colour]
