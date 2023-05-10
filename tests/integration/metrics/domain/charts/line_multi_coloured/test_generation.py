@@ -25,7 +25,10 @@ EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
 class TestLineMultiColouredCharts:
     @staticmethod
     def _setup_chart_plot_data(
-        x_axis: List[datetime.date], y_axis: List[int], label: str = "", line_colour: str = "",
+        x_axis: List[datetime.date],
+        y_axis: List[int],
+        label: str = "",
+        line_colour: str = "",
     ) -> ChartPlotData:
         plot_params = ChartPlotParameters(
             chart_type="line_multi_coloured",
@@ -86,7 +89,10 @@ class TestLineMultiColouredCharts:
         first_plot_label = "0 to 4 years old"
         first_plot_colour = "RED"
         first_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates, y_axis=values, label=first_plot_label, line_colour=first_plot_colour
+            x_axis=dates,
+            y_axis=values,
+            label=first_plot_label,
+            line_colour=first_plot_colour,
         )
 
         second_plot_label = "15 to 44 years old"
@@ -94,7 +100,10 @@ class TestLineMultiColouredCharts:
         values = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
         second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates, y_axis=values, label=second_plot_label, line_colour=second_plot_colour
+            x_axis=dates,
+            y_axis=values,
+            label=second_plot_label,
+            line_colour=second_plot_colour,
         )
 
         # When
