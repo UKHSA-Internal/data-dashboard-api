@@ -92,7 +92,6 @@ def create_multi_coloured_line_chart(
             line_width=line_width,
             line_shape=line_shape,
             legend=plot_data.parameters.label,
-            dash=combo["dash"],
         )
 
         # Add line plot to the figure
