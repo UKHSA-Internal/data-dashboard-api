@@ -14,15 +14,18 @@ class TestChartPlotParameters:
         # Given
         geography = "London"
         geography_type = "Nation"
+
         date_from = "2022-10-01"
         label = "0 to 4 years old"
         line_colour = "BLUE"
+        line_type = "dash"
 
         fake_chart_plot_parameters.geography = geography
         fake_chart_plot_parameters.geography_type = geography_type
         fake_chart_plot_parameters.date_from = date_from
         fake_chart_plot_parameters.label = label
         fake_chart_plot_parameters.line_colour = line_colour
+        fake_chart_plot_parameters.line_type = line_type
 
         # When
         dict_used_for_query: Dict[
@@ -37,5 +40,5 @@ class TestChartPlotParameters:
             "geography": fake_chart_plot_parameters.geography,
             "geography_type": fake_chart_plot_parameters.geography_type,
         }
-        # `chart_type`, `label`, `line_colour`, `date_to` and `date_from` are omitted
+        # `chart_type`, `label`, `line_colour`, `line_type`, `date_to` and `date_from` are omitted
         assert dict_used_for_query == expected_dict_used_for_query
