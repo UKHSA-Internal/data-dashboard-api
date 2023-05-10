@@ -119,7 +119,7 @@ class DownloadsView(APIView):
         request_serializer = DownloadsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        file_format = self.request.data.get("file_format")
+        file_format = request_serializer.data["file_format"]
 
         if file_format == "json":
             return self._handle_json()

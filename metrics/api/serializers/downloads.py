@@ -53,7 +53,7 @@ class DownloadPlotSerializer(serializers.Serializer):
         allow_null=True,
     )
     date_to = serializers.DateField(
-        help_text=help_texts.DATE_FROM_FIELD,
+        help_text=help_texts.DATE_TO_FIELD,
         required=False,
         default="",
         allow_null=True,
