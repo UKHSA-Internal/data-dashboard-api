@@ -93,27 +93,6 @@ class DownloadsView(APIView):
         | `sex`             | The sex for those metrics that are broken down by sex                     | `M`                       |
         | `date_from`       | The date to pull the data from                                            | `2020-01-20`              |
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
-
-        So the full payload to this endpoint could look like the following:
-
-        ```
-            {
-             "format": "json",
-             "plots": [
-                {
-                  "topic": "COVID-19",
-                  "metric": "new_cases_daily",
-                  "chart_type": "bar",              #any unrecognised parameters will be ignored
-                  "date_from": "2020-03-02"
-                },
-                {
-                  "topic": "COVID-19",
-                  "metric": ["new_cases_7day_avg", "new_deaths_7day_avg"],  #enclose in square brackets if you want to specify more than one value to filter by
-                  "date_to": "2023-03-02"
-                }
-              ]
-            }
-        ```
         """
 
         request_serializer = DownloadsSerializer(data=request.data)
