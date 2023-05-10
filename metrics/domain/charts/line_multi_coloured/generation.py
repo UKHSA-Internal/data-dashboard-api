@@ -17,7 +17,7 @@ X_AXIS_ARGS = {
     "tickformat": "%b %Y",
     "tickfont": {
         "family": '"GDS Transport", Arial, sans-serif',
-        "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+        "color": colour_scheme.RGBAColours.BLACK.stringified,
     },
 }
 
@@ -40,21 +40,8 @@ LAYOUT_ARGS = {
     "autosize": False,
     "xaxis": X_AXIS_ARGS,
     "yaxis": Y_AXIS_ARGS,
+    "legend": {"orientation": "h", "x": 0, "y": 1},
 }
-
-
-def get_available_colour_and_line_combos():
-    available_plot_colours = colour_scheme.RGBAColours.available_plot_colours()
-    combos = []
-    for index, colour in enumerate(available_plot_colours):
-        if index < 3:
-            dash = "solid"
-        else:
-            dash = "dot"
-
-        combos.append({"colour": colour, "dash": dash})
-
-    return combos
 
 
 def create_multi_coloured_line_chart(
@@ -78,12 +65,10 @@ def create_multi_coloured_line_chart(
     """
     figure = plotly.graph_objects.Figure()
 
-    # Create the line plot for the preceding points as a simple neutral grey line
-    available_combos = get_available_colour_and_line_combos()
-
     for index, plot_data in enumerate(chart_plots_data):
-        combo = available_combos[index]
-        selected_colour: colour_scheme.RGBAColours = combo["colour"]
+        selected_colour = colour_scheme.RGBAColours.get_colour(
+            colour=plot_data.parameters.line_colour
+        )
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
             x_axis=plot_data.x_axis,
@@ -92,7 +77,6 @@ def create_multi_coloured_line_chart(
             line_width=line_width,
             line_shape=line_shape,
             legend=plot_data.parameters.label,
-            dash=combo["dash"],
         )
 
         # Add line plot to the figure
@@ -111,7 +95,6 @@ def _create_line_plot(
     line_width: int,
     line_shape: str,
     legend: str,
-    dash: str,
 ):
     return plotly.graph_objects.Scatter(
         x=x_axis,
@@ -119,7 +102,7 @@ def _create_line_plot(
         line={
             "width": line_width,
             "color": colour,
-            "dash": dash,
+            "dash": "solid",
         },
         line_shape=line_shape,
         name=legend,

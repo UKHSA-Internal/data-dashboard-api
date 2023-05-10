@@ -13,10 +13,11 @@ class ChartPlotParameters(BaseModel):
     date_from: Optional[str]
     date_to: Optional[str]
     label: str = ""
+    line_colour: str = ""
 
     @property
     def keys_to_omit_from_dict_representation(self) -> Tuple[str, ...]:
-        return "chart_type", "date_from", "date_to", "label"
+        return "chart_type", "date_from", "date_to", "label", "line_colour"
 
     def to_dict_for_query(self) -> Dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.

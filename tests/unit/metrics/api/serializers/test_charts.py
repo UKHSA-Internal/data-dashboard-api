@@ -6,6 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers import ChartsQuerySerializer
 from metrics.api.serializers.charts import ChartPlotSerializer, ChartsSerializer
+from metrics.domain.charts.line_multi_coloured import colour_scheme
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -67,12 +68,13 @@ class TestChartsQuerySerializer:
 
 
 class TestChartPlotSerializer:
-    def test_valid_payload_with_optional_fields_provided(
+    def test_valid_payload_with_optional_label_field_provided(
         self,
         charts_plot_serializer_payload_and_model_managers,
     ):
         """
-        Given a valid payload containing the optional `label` field passed to a `ChartPlotSerializer` object
+        Given a valid payload containing the optional `label` field
+            passed to a `ChartPlotSerializer` object
         And valid values for the `topic` `metric` and `date_from`
         When `is_valid()` is called from the serializer
         Then True is returned
@@ -100,6 +102,43 @@ class TestChartPlotSerializer:
         # Then
         assert is_serializer_valid
         assert serializer.validated_data["label"] == label
+
+    @pytest.mark.parametrize("valid_colour_choice", colour_scheme.RGBAColours.choices())
+    def test_valid_payload_with_optional_line_colour_field_provided(
+        self,
+        valid_colour_choice: Tuple[str, str],
+        charts_plot_serializer_payload_and_model_managers,
+    ):
+        """
+        Given a valid payload containing the optional `line_colour` field
+            passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `date_from`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        line_colour: str = valid_colour_choice[0]
+        valid_data_payload["line_colour"] = line_colour
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+        assert serializer.validated_data["line_colour"] == line_colour
 
     @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
     def test_valid_chart_type(

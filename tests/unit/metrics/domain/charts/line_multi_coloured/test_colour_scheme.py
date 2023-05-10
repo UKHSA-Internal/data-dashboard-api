@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import pytest
 
@@ -27,16 +27,40 @@ class TestRGBAColours:
         # Then
         assert stringified_rgba_value == f"rgba{rgba_colour_enum.value}"
 
-    def test_available_plot_colours_returns_correct_enums(self):
+    @pytest.mark.parametrize("rgba_enum", colour_scheme.RGBAColours)
+    def test_get_colour(self, rgba_enum: colour_scheme.RGBAColours):
         """
-        Given the `RGBAColours` enum class
-        When `available_plot_colours()` is called from the class
-        Then a list of enums is returned which all start with "PLOT"
+        Given a valid colour string e.g. "RED"
+        When `get_colour()` is called from the `RGBAColours` class
+        Then the correct enum is returned
         """
-        # Given / When
-        plot_colour_enums: List[
-            colour_scheme.RGBAColours
-        ] = colour_scheme.RGBAColours.available_plot_colours()
+        # Given
+        colour: str = rgba_enum.name
 
         # When
-        assert all(enum.name.startswith("PLOT") for enum in plot_colour_enums)
+        retrieved_colour: colour_scheme.RGBAColours = (
+            colour_scheme.RGBAColours.get_colour(colour=colour)
+        )
+
+        # Then
+        assert type(retrieved_colour) is colour_scheme.RGBAColours
+        assert retrieved_colour.name == colour
+
+    @pytest.mark.parametrize(
+        "invalid_colour", [(None, "null", "", "NON-EXISTENT-COLOUR", "CORAL")]
+    )
+    def test_get_colour_defaults_to_black(self, invalid_colour: Optional[str]):
+        """
+        Given an invalid colour which is not available as a GDS-conforming colour
+        When `get_colour()` is called from the `RGBAColours` class
+        Then the `BLACK` enum is defaulted to and returned
+        """
+        # Given
+        colour: str = invalid_colour
+
+        # When
+        retrieved_colour = colour_scheme.RGBAColours.get_colour(colour=colour)
+
+        # Then
+        assert type(retrieved_colour) is colour_scheme.RGBAColours
+        assert retrieved_colour == colour_scheme.RGBAColours.BLACK
