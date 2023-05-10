@@ -44,20 +44,6 @@ LAYOUT_ARGS = {
 }
 
 
-def get_available_colour_and_line_combos():
-    available_plot_colours = colour_scheme.RGBAColours.available_plot_colours()
-    combos = []
-    for index, colour in enumerate(available_plot_colours):
-        if index < 3:
-            dash = "solid"
-        else:
-            dash = "dot"
-
-        combos.append({"colour": colour, "dash": dash})
-
-    return combos
-
-
 def create_multi_coloured_line_chart(
     chart_plots_data: List[ChartPlotData],
     line_shape: str,
@@ -79,12 +65,10 @@ def create_multi_coloured_line_chart(
     """
     figure = plotly.graph_objects.Figure()
 
-    # Create the line plot for the preceding points as a simple neutral grey line
-    available_combos = get_available_colour_and_line_combos()
-
     for index, plot_data in enumerate(chart_plots_data):
-        combo = available_combos[index]
-        selected_colour: colour_scheme.RGBAColours = combo["colour"]
+        selected_colour = colour_scheme.RGBAColours.get_colour(
+            colour=plot_data.parameters.line_colour
+        )
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
             x_axis=plot_data.x_axis,
