@@ -140,7 +140,9 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["line_colour"] == line_colour
 
-    @pytest.mark.parametrize("valid_line_type_choice", properties.ChartLineTypes.choices())
+    @pytest.mark.parametrize(
+        "valid_line_type_choice", properties.ChartLineTypes.choices()
+    )
     def test_valid_payload_with_optional_line_type_field_provided(
         self,
         valid_line_type_choice: Tuple[str, str],
