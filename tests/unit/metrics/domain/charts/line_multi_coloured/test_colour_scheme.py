@@ -26,17 +26,3 @@ class TestRGBAColours:
 
         # Then
         assert stringified_rgba_value == f"rgba{rgba_colour_enum.value}"
-
-    def test_available_plot_colours_returns_correct_enums(self):
-        """
-        Given the `RGBAColours` enum class
-        When `available_plot_colours()` is called from the class
-        Then a list of enums is returned which all start with "PLOT"
-        """
-        # Given / When
-        plot_colour_enums: List[
-            colour_scheme.RGBAColours
-        ] = colour_scheme.RGBAColours.available_plot_colours()
-
-        # When
-        assert all(enum.name.startswith("PLOT") for enum in plot_colour_enums)

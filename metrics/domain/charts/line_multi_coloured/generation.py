@@ -17,7 +17,7 @@ X_AXIS_ARGS = {
     "tickformat": "%b %Y",
     "tickfont": {
         "family": '"GDS Transport", Arial, sans-serif',
-        "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+        "color": colour_scheme.RGBAColours.BLACK.stringified,
     },
 }
 
