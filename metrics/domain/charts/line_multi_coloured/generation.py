@@ -3,7 +3,7 @@ from typing import List
 
 import plotly
 
-from metrics.domain.charts.line_multi_coloured import colour_scheme
+from metrics.domain.charts.line_multi_coloured import colour_scheme, properties
 from metrics.domain.models import ChartPlotData
 
 X_AXIS_ARGS = {
@@ -69,6 +69,9 @@ def create_multi_coloured_line_chart(
         selected_colour = colour_scheme.RGBAColours.get_colour(
             colour=plot_data.parameters.line_colour
         )
+        selected_line_type = properties.ChartLineTypes.get_chart_line_type(
+            line_type=plot_data.parameters.line_type
+        )
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
             x_axis=plot_data.x_axis,
@@ -77,6 +80,7 @@ def create_multi_coloured_line_chart(
             line_width=line_width,
             line_shape=line_shape,
             legend=plot_data.parameters.label,
+            dash=selected_line_type.value,
         )
 
         # Add line plot to the figure
@@ -95,6 +99,7 @@ def _create_line_plot(
     line_width: int,
     line_shape: str,
     legend: str,
+    dash: str,
 ):
     return plotly.graph_objects.Scatter(
         x=x_axis,
@@ -102,7 +107,7 @@ def _create_line_plot(
         line={
             "width": line_width,
             "color": colour,
-            "dash": "solid",
+            "dash": dash,
         },
         line_shape=line_shape,
         name=legend,
