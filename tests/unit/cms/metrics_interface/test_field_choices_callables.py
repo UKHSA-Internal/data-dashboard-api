@@ -1,6 +1,8 @@
 from unittest import mock
 
 from cms.metrics_interface import field_choices_callables, interface
+from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.interfaces.charts.access import ChartTypes
 
 
@@ -100,6 +102,46 @@ class TestGetChartTypes:
 
         # Then
         assert chart_types == retrieved_chart_types
+
+
+class TestGetChartLineTypes:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_chart_line_types")
+    def test_delegates_call_correctly(
+        self, mocked_get_chart_line_types: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns chart line types
+        When `get_chart_line_types()` is called
+        Then the chart types are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_chart_line_types = ChartLineTypes.choices()
+        mocked_get_chart_line_types.return_value = retrieved_chart_line_types
+
+        # When
+        chart_line_types = field_choices_callables.get_chart_line_types()
+
+        # Then
+        assert chart_line_types == retrieved_chart_line_types
+
+
+class TestGetColours:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_colours")
+    def test_delegates_call_correctly(self, mocked_get_colours: mock.MagicMock):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns available RGBA colours
+        When `get_colours()` is called
+        Then the colours are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_colours = RGBAColours.choices()
+        mocked_get_colours.return_value = retrieved_colours
+
+        # When
+        colours = field_choices_callables.get_colours()
+
+        # Then
+        assert colours == retrieved_colours
 
 
 class TestGetAllTopicNames:
