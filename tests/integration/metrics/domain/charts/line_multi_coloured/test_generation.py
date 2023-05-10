@@ -25,7 +25,7 @@ EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
 class TestLineMultiColouredCharts:
     @staticmethod
     def _setup_chart_plot_data(
-        x_axis: List[datetime.date], y_axis: List[int], label: str = ""
+        x_axis: List[datetime.date], y_axis: List[int], label: str = "", line_colour: str = "",
     ) -> ChartPlotData:
         plot_params = ChartPlotParameters(
             chart_type="line_multi_coloured",
@@ -33,6 +33,7 @@ class TestLineMultiColouredCharts:
             metric="weekly_positivity_by_age",
             stratum="0_4",
             label=label,
+            line_colour=line_colour,
         )
         return ChartPlotData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
 
@@ -73,7 +74,7 @@ class TestLineMultiColouredCharts:
         assert not y_axis.showgrid
         # figure.show()
 
-    def test_two_plots_with_provided_labels(self):
+    def test_two_plots_with_provided_labels_and_colours(self):
         """
         Given 2 `ChartPlotData` models representing 2 different line plots
         When `generate_chart_figure()` is called from the `line_multi_coloured` module
@@ -83,15 +84,17 @@ class TestLineMultiColouredCharts:
         dates = DATES_FROM_SEP_TO_JAN
         values = EXAMPLE_VALUES
         first_plot_label = "0 to 4 years old"
+        first_plot_colour = "RED"
         first_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates, y_axis=values, label=first_plot_label
+            x_axis=dates, y_axis=values, label=first_plot_label, line_colour=first_plot_colour
         )
 
         second_plot_label = "15 to 44 years old"
         dates = DATES_FROM_SEP_TO_JAN
         values = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
+        second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates, y_axis=values, label=second_plot_label
+            x_axis=dates, y_axis=values, label=second_plot_label, line_colour=second_plot_colour
         )
 
         # When
@@ -118,6 +121,10 @@ class TestLineMultiColouredCharts:
         assert first_plot_line.dash == "solid"
         assert first_plot_line.width == 2
 
+        # Check that the first plotted line has been set with the correct colour
+        expected_rgba_for_first_plot = colour_scheme.RGBAColours[first_plot_colour]
+        assert first_plot_line.color == expected_rgba_for_first_plot.stringified
+
         # ---Second line plot checks---
         second_plot: plotly.graph_objects.Scatter = figure.data[1]
         # Check that each axis has been populated with the correct data
@@ -132,3 +139,7 @@ class TestLineMultiColouredCharts:
         assert second_plot_line.shape == "spline"
         assert second_plot_line.dash == "solid"
         assert second_plot_line.width == 2
+
+        # Check that the second plotted line has been set with the correct colour
+        expected_rgba_for_second_plot = colour_scheme.RGBAColours[second_plot_colour]
+        assert second_plot_line.color == expected_rgba_for_second_plot.stringified
