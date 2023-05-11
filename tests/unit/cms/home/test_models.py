@@ -309,13 +309,18 @@ class TestTemplateHomePage:
 
         chart_with_headline_and_trend_card_value = chart_card_columns[0].value
         assert chart_with_headline_and_trend_card_value["title"] == "Cases"
-        assert chart_with_headline_and_trend_card_value["body"] == "Positive tests reported in England"
+        assert (
+            chart_with_headline_and_trend_card_value["body"]
+            == "Positive tests reported in England"
+        )
 
         chart = chart_with_headline_and_trend_card_value["chart"]
         chart_plot_value = chart[0].value
         assert chart_plot_value["topic"] == self.covid_19
         assert chart_plot_value["metric"] == "new_cases_daily"
-        assert chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
+        assert (
+            chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
+        )
 
     def test_coronavirus_section_chart_card_headline_and_trend_number(self):
         """
@@ -337,15 +342,22 @@ class TestTemplateHomePage:
         chart_card_columns = covid_content_section[2].value["columns"]
         chart_with_headline_and_trend_card_value = chart_card_columns[0].value
 
-        headline_number_columns = chart_with_headline_and_trend_card_value["headline_number_columns"]
+        headline_number_columns = chart_with_headline_and_trend_card_value[
+            "headline_number_columns"
+        ]
 
         headline_number_block_value = headline_number_columns[0].value
         assert headline_number_block_value["topic"] == self.covid_19
         assert headline_number_block_value["metric"] == "new_cases_7days_sum"
-        assert headline_number_block_value["body"] == self.expected_trend_number_block_body
+        assert (
+            headline_number_block_value["body"] == self.expected_trend_number_block_body
+        )
 
         trend_number_block_value = headline_number_columns[1].value
         assert trend_number_block_value["topic"] == self.covid_19
         assert trend_number_block_value["metric"] == "new_cases_7days_change"
-        assert trend_number_block_value["percentage_metric"] == "new_cases_7days_change_percentage"
+        assert (
+            trend_number_block_value["percentage_metric"]
+            == "new_cases_7days_change_percentage"
+        )
         assert trend_number_block_value["body"] == ""
