@@ -75,7 +75,7 @@ class TestChartPlotSerializer:
         """
         Given a valid payload containing the optional `label` field
             passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """
@@ -112,7 +112,7 @@ class TestChartPlotSerializer:
         """
         Given a valid payload containing the optional `line_colour` field
             passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """
@@ -151,7 +151,7 @@ class TestChartPlotSerializer:
         """
         Given a valid payload containing the optional `line_type` field
             passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """
@@ -187,7 +187,7 @@ class TestChartPlotSerializer:
     ):
         """
         Given a valid chart type passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """
