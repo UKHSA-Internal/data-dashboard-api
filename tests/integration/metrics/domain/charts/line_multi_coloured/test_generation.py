@@ -20,6 +20,8 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2023, 1, 9),
 ]
 EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
+HEIGHT = 300
+WIDTH = 400
 
 
 class TestLineMultiColouredCharts:
@@ -55,6 +57,8 @@ class TestLineMultiColouredCharts:
 
         # When
         figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             chart_plots_data=[chart_plots_data],
         )
 
@@ -65,6 +69,10 @@ class TestLineMultiColouredCharts:
         assert main_layout.paper_bgcolor == colour_scheme.RGBAColours.WHITE.stringified
         # Check that the main layout is showing the legend
         assert main_layout.showlegend
+
+        # Check the chart sizes are as per the specified parameters
+        assert main_layout.height == HEIGHT
+        assert main_layout.width == WIDTH
 
         # ---X Axis checks---
         x_axis = main_layout.xaxis
@@ -114,6 +122,8 @@ class TestLineMultiColouredCharts:
 
         # When
         figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             chart_plots_data=[first_chart_plots_data, second_chart_plots_data],
         )
 
