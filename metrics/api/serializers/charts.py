@@ -106,7 +106,7 @@ class ChartPlotSerializer(serializers.Serializer):
 
         try:
             self.populate_choices()
-        except RuntimeError:
+        except Exception:
             pass
         # This is needed because the serializers are loaded by django at runtime
         # Because this is a child serializer, an `instance` must be passed
