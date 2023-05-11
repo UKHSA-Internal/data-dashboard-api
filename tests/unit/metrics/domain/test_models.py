@@ -1,9 +1,69 @@
-from typing import Dict
+from typing import Dict, Optional
+
+import pytest
 
 from metrics.domain.models import ChartPlotParameters
 
 
 class TestChartPlotParameters:
+    mandatory_parameters = {
+        "chart_type": "bar",
+        "topic": "COVID-19",
+        "metric": "new_cases_daily",
+    }
+    optional_field_names = [
+        "stratum",
+        "geography",
+        "geography_type",
+        "date_from",
+        "date_to",
+        "label",
+        "line_colour",
+        "line_type",
+    ]
+
+    def test_validates_successfully_when_optional_parameters_are_none(self):
+        """
+        Given a set of mandatory parameters and None for each optional field
+        When an instance of the `ChartPlotParameters` model is created
+        Then a `ValidationError` is not raised
+        """
+        # Given
+        optional_parameters_as_none = {
+            field_name: None for field_name in self.optional_field_names
+        }
+
+        # When / Then
+        ChartPlotParameters(**self.mandatory_parameters, **optional_parameters_as_none)
+
+    def test_validates_successfully_when_optional_parameters_are_empty_strings(self):
+        """
+        Given a set of mandatory parameters and an empty string for each optional field
+        When an instance of the `ChartPlotParameters` model is created
+        Then a `ValidationError` is not raised
+        """
+        # Given
+        optional_parameters_as_empty_strings = {
+            field_name: "" for field_name in self.optional_field_names
+        }
+
+        # When / Then
+        ChartPlotParameters(
+            **self.mandatory_parameters, **optional_parameters_as_empty_strings
+        )
+
+    def test_validates_successfully_when_optional_parameters_not_provided(self):
+        """
+        Given a set of mandatory parameters and no optional fields provided
+        When an instance of the `ChartPlotParameters` model is created
+        Then a `ValidationError` is not raised
+        """
+        # Given
+        optional_parameters = {}
+
+        # When / Then
+        ChartPlotParameters(**self.mandatory_parameters, **optional_parameters)
+
     def test_to_dict_for_query(self, fake_chart_plot_parameters: ChartPlotParameters):
         """
         Given a payload containing optional fields which do not relate
