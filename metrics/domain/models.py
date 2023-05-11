@@ -46,6 +46,8 @@ class ChartPlotParameters(BaseModel):
 class ChartPlots(BaseModel):
     plots: List[ChartPlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
+    chart_width: int
+    chart_height: int
 
 
 class ChartPlotData(BaseModel):
