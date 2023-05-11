@@ -4,6 +4,7 @@ from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
 
+from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 
 
@@ -154,12 +155,13 @@ class TestTemplateHomePage:
         headline_number_row_columns = headline_numbers_row_card.value["columns"]
         assert len(headline_number_row_columns) == 5
 
-    def test_coronavirus_section_headline_number_row_first_column(self):
+    def test_coronavirus_section_headline_number_row_dual_headline_column(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
-        Then the 1st column component in the headline numbers row card
-            in the coronavirus section is being set correctly
+        Then the 1st column component which is a headline and trend component
+            in the headline numbers row card within the coronavirus section
+            is being set correctly
         """
         # Given
         template_home_page = FakeHomePageFactory.build_home_page_from_template()
@@ -172,18 +174,20 @@ class TestTemplateHomePage:
         covid_content_section = covid_section.value["content"]
         headline_number_row_columns = covid_content_section[1].value["columns"]
 
-        first_column_value = headline_number_row_columns[0].value
+        first_column_component = headline_number_row_columns[0].value
         # Check that the title of the component is correct
-        assert first_column_value["title"] == "Cases"
+        assert first_column_component["title"] == "Cases"
 
+        # This is a headline and trend number component
+        # So we expect 1 headline number block and 1 trend number block
         # Check that the headline_number block has the correct params
-        first_column_headline_block = first_column_value["headline_number"]
+        first_column_headline_block = first_column_component["headline_number"]
         assert first_column_headline_block["topic"] == self.covid_19
         assert first_column_headline_block["metric"] == "new_cases_7days_sum"
         assert first_column_headline_block["body"] == "Weekly"
 
         # Check that the trend_number block has the correct params
-        first_column_trend_block = first_column_value["trend_number"]
+        first_column_trend_block = first_column_component["trend_number"]
         assert first_column_trend_block["topic"] == self.covid_19
         assert first_column_trend_block["metric"] == "new_cases_7days_change"
         assert (
@@ -192,89 +196,13 @@ class TestTemplateHomePage:
         )
         assert first_column_trend_block["body"] == self.expected_trend_number_block_body
 
-    def test_coronavirus_section_headline_number_row_second_column(self):
-        """
-        Given a `HomePage` created with a template for the `respiratory-viruses` page
-        When the `body` is taken from the page
-        Then the 2nd column component in the headline numbers row card
-            in the coronavirus section is being set correctly
-        """
-        # Given
-        template_home_page = FakeHomePageFactory.build_home_page_from_template()
-
-        # When
-        body = template_home_page.body
-
-        # Then
-        covid_section, _ = body
-        covid_content_section = covid_section.value["content"]
-        headline_number_row_columns = covid_content_section[1].value["columns"]
-
-        second_column_value = headline_number_row_columns[1].value
-
-        assert second_column_value["title"] == "Deaths"
-
-        # Check that the headline_number block has the correct params
-        second_column_headline_block = second_column_value["headline_number"]
-        assert second_column_headline_block["topic"] == self.covid_19
-        assert second_column_headline_block["metric"] == "new_deaths_7days_sum"
-        assert second_column_headline_block["body"] == "Weekly"
-
-        # Check that the trend_number block has the correct params
-        second_column_trend_block = second_column_value["trend_number"]
-        assert second_column_trend_block["topic"] == self.covid_19
-        assert second_column_trend_block["metric"] == "new_deaths_7days_change"
-        assert (
-            second_column_trend_block["percentage_metric"]
-            == "new_deaths_7days_change_percentage"
-        )
-        assert (
-            second_column_trend_block["body"] == self.expected_trend_number_block_body
-        )
-
-    def test_coronavirus_section_headline_number_row_third_column(self):
-        """
-        Given a `HomePage` created with a template for the `respiratory-viruses` page
-        When the `body` is taken from the page
-        Then the 3rd column component in the headline numbers row card
-            in the coronavirus section is being set correctly
-        """
-        # Given
-        example_home_page = FakeHomePageFactory.build_home_page_from_template()
-
-        # When
-        body = example_home_page.body
-
-        # Then
-        covid_section, _ = body
-        covid_content_section = covid_section.value["content"]
-        headline_number_row_columns = covid_content_section[1].value["columns"]
-
-        third_column_value = headline_number_row_columns[2].value
-        assert third_column_value["title"] == "Healthcare"
-
-        # Check that the headline_number block has the correct params
-        third_column_headline_block = third_column_value["headline_number"]
-        assert third_column_headline_block["topic"] == self.covid_19
-        assert third_column_headline_block["metric"] == "new_admissions_7days"
-        assert third_column_headline_block["body"] == "Patients admitted"
-
-        # Check that the trend_number block has the correct params
-        third_column_trend_block = third_column_value["trend_number"]
-        assert third_column_trend_block["topic"] == self.covid_19
-        assert third_column_trend_block["metric"] == "new_admissions_7days_change"
-        assert (
-            third_column_trend_block["percentage_metric"]
-            == "new_admissions_7days_change_percentage"
-        )
-        assert third_column_trend_block["body"] == self.expected_trend_number_block_body
-
     def test_coronavirus_section_headline_number_row_fourth_column(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
-        Then the 4th column component in the headline numbers row card
-            in the coronavirus section is being set correctly
+        Then the 4th column component which is a dual headline component
+            in the headline numbers row card within the coronavirus section
+            is being set correctly
         """
         # Given
         example_home_page = FakeHomePageFactory.build_home_page_from_template()
@@ -287,13 +215,13 @@ class TestTemplateHomePage:
         covid_content_section = covid_section.value["content"]
         headline_number_row_columns = covid_content_section[1].value["columns"]
 
-        fourth_column_value = headline_number_row_columns[3].value
-        assert fourth_column_value["title"] == "Vaccines"
+        fourth_column_component = headline_number_row_columns[3].value
+        assert fourth_column_component["title"] == "Vaccines"
 
-        # Note that this is a dual headline number component
+        # This is a dual headline number component
         # So we expect 2 headline number blocks
         # Check that the top headline_number block has the correct params
-        fourth_column_headline_block = fourth_column_value["top_headline_number"]
+        fourth_column_headline_block = fourth_column_component["top_headline_number"]
         assert fourth_column_headline_block["topic"] == self.covid_19
         assert (
             fourth_column_headline_block["metric"]
@@ -302,7 +230,7 @@ class TestTemplateHomePage:
         assert fourth_column_headline_block["body"] == "Autumn booster"
 
         # Check that the bottom headline_number block has the correct params
-        fourth_column_trend_block = fourth_column_value["bottom_headline_number"]
+        fourth_column_trend_block = fourth_column_component["bottom_headline_number"]
         assert fourth_column_trend_block["topic"] == self.covid_19
         assert (
             fourth_column_trend_block["metric"] == "latest_vaccinations_uptake_autumn22"
@@ -313,8 +241,9 @@ class TestTemplateHomePage:
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
-        Then the 5th and last column component in the headline numbers row card
-            in the coronavirus section is being set correctly
+        Then the 5th column component which is a single headline component
+            in the headline numbers row card within the coronavirus section
+            is being set correctly
         """
         # Given
         example_home_page = FakeHomePageFactory.build_home_page_from_template()
@@ -358,3 +287,65 @@ class TestTemplateHomePage:
         chart_card_columns = chart_row_card.value["columns"]
 
         assert len(chart_card_columns) == 2
+
+    def test_coronavirus_section_chart_card_plot(self):
+        """
+        Given a `HomePage` created with a template for the `respiratory-viruses` page
+        When the `body` is taken from the page
+        Then the chart plot for the chart card with headline and trend number
+            in the charts row card within the coronavirus section
+            is being set correctly
+        """
+        # Given
+        template_home_page = FakeHomePageFactory.build_home_page_from_template()
+
+        # When
+        body = template_home_page.body
+
+        # Then
+        covid_section, _ = body
+        covid_content_section = covid_section.value["content"]
+        chart_card_columns = covid_content_section[2].value["columns"]
+
+        chart_with_headline_and_trend_card_value = chart_card_columns[0].value
+        assert chart_with_headline_and_trend_card_value["title"] == "Cases"
+        assert chart_with_headline_and_trend_card_value["body"] == "Positive tests reported in England"
+
+        chart = chart_with_headline_and_trend_card_value["chart"]
+        chart_plot_value = chart[0].value
+        assert chart_plot_value["topic"] == self.covid_19
+        assert chart_plot_value["metric"] == "new_cases_daily"
+        assert chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
+
+    def test_coronavirus_section_chart_card_headline_and_trend_number(self):
+        """
+        Given a `HomePage` created with a template for the `respiratory-viruses` page
+        When the `body` is taken from the page
+        Then the headline and trend number blocks for the chart card with headline and trend number
+            in the charts row card within the coronavirus section
+            is being set correctly
+        """
+        # Given
+        template_home_page = FakeHomePageFactory.build_home_page_from_template()
+
+        # When
+        body = template_home_page.body
+
+        # Then
+        covid_section, _ = body
+        covid_content_section = covid_section.value["content"]
+        chart_card_columns = covid_content_section[2].value["columns"]
+        chart_with_headline_and_trend_card_value = chart_card_columns[0].value
+
+        headline_number_columns = chart_with_headline_and_trend_card_value["headline_number_columns"]
+
+        headline_number_block_value = headline_number_columns[0].value
+        assert headline_number_block_value["topic"] == self.covid_19
+        assert headline_number_block_value["metric"] == "new_cases_7days_sum"
+        assert headline_number_block_value["body"] == self.expected_trend_number_block_body
+
+        trend_number_block_value = headline_number_columns[1].value
+        assert trend_number_block_value["topic"] == self.covid_19
+        assert trend_number_block_value["metric"] == "new_cases_7days_change"
+        assert trend_number_block_value["percentage_metric"] == "new_cases_7days_change_percentage"
+        assert trend_number_block_value["body"] == ""
