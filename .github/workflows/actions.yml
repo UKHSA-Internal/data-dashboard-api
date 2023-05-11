@@ -7,8 +7,8 @@ on:
       - "*"
 
 env:
-  APIENV: "DEV"
-  # Setting to "PROD" in the CI/CD job would connect to the remote prod db, hence using a local sqlite db with "DEV"
+  APIENV: "LOCAL"
+  # With `LOCAL` set, a local sqlite db will be used
   AWS_REGION: "eu-west-2"
   POSTGRES_HOST: "wp-dashboard-dev-rds.c0obwmng7sq9.eu-west-2.rds.amazonaws.com"
   POSTGRES_USER: "wp_user"

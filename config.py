@@ -13,11 +13,3 @@ POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
-
-
-class EnvVarNotSetError(Exception):
-    ...
-
-
-if APIENV not in ("DEV", "PROD"):
-    raise EnvVarNotSetError("APIENV environment variable should be set to DEV or PROD")
