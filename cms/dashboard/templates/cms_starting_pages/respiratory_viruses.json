@@ -8,7 +8,7 @@
         "show_in_menus": false,
         "seo_title": "",
         "search_description": "",
-        "first_published_at": "2023-04-26T11:39:38.064114Z",
+        "first_published_at": "2023-04-26T12:39:38.064114+01:00",
         "alias_of": null,
         "parent": {
             "id": 2,
@@ -410,5 +410,5 @@
             "body": "<p data-block-key=\"cc1q7\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-09T10:49:41.936602Z"
+    "last_published_at": "2023-05-10T15:18:06.939535+01:00"
 }
