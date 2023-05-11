@@ -14,6 +14,8 @@ DATES: List[datetime.datetime] = [
     datetime.date(2023, 1, 9),
 ]
 VALUES: List[int] = [1, 2, 3, 4, 5, 6]
+HEIGHT = 300
+WIDTH = 400
 
 
 class TestBarCharts:
@@ -29,6 +31,8 @@ class TestBarCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             dates=dates,
             values=values,
             legend="Plot 1",
@@ -40,6 +44,11 @@ class TestBarCharts:
         # Check that the main background colour is a plain white and legend is being shown
         assert main_layout.plot_bgcolor == RGBAColours.WHITE.stringified
         assert main_layout.paper_bgcolor == RGBAColours.WHITE.stringified
+
+        # Check the chart sizes are as per the specified parameters
+        assert main_layout.height == HEIGHT
+        assert main_layout.width == WIDTH
+
         assert main_layout.showlegend
 
     def test_main_bar_plot(self):
@@ -55,6 +64,8 @@ class TestBarCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             dates=dates,
             values=values,
             legend=legend,
