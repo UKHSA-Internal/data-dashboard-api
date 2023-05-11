@@ -362,7 +362,12 @@ class TestChartsSerializer:
                 "chart_type": "line_with_shaded_section",
             }
         ]
-        valid_data_payload = {"file_format": "svg", "plots": chart_plots}
+        valid_data_payload = {
+            "file_format": "svg",
+            "chart_height": 300,
+            "chart_width": 400,
+            "plots": chart_plots,
+        }
         serializer = ChartsSerializer(data=valid_data_payload)
 
         # When
@@ -374,5 +379,7 @@ class TestChartsSerializer:
         expected_chart_plots_model = ChartPlots(
             plots=[chart_plot_params_model],
             file_format=valid_data_payload["file_format"],
+            chart_height=valid_data_payload["chart_height"],
+            chart_width=valid_data_payload["chart_width"],
         )
         assert chart_plots_serialized_models == expected_chart_plots_model

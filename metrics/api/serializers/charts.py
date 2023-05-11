@@ -11,6 +11,8 @@ from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
 FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
+DEFAULT_CHART_HEIGHT = 220
+DEFAULT_CHART_WIDTH = 435
 
 
 class ChartsQuerySerializer(serializers.Serializer):
@@ -126,12 +128,23 @@ class ChartsSerializer(serializers.Serializer):
         help_text=help_texts.CHART_FILE_FORMAT_FIELD,
         default="svg",
     )
+    chart_height = serializers.IntegerField(
+        help_text=help_texts.CHART_HEIGHT,
+        default=DEFAULT_CHART_HEIGHT,
+    )
+    chart_width = serializers.IntegerField(
+        help_text=help_texts.CHART_WIDTH,
+        default=DEFAULT_CHART_WIDTH,
+    )
+
     plots = ChartPlotsListSerializer()
 
     def to_models(self) -> ChartPlots:
         return ChartPlots(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
+            chart_height=self.data["chart_height"],
+            chart_width=self.data["chart_width"],
         )
 
 
