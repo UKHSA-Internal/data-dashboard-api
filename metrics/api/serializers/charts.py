@@ -1,6 +1,7 @@
 from typing import List
 
 from django.db.models import Manager
+from django.db.utils import ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
@@ -106,7 +107,7 @@ class ChartPlotSerializer(serializers.Serializer):
 
         try:
             self.populate_choices()
-        except RuntimeError:
+        except (RuntimeError, ProgrammingError):
             pass
         # This is needed because the serializers are loaded by django at runtime
         # Because this is a child serializer, an `instance` must be passed
