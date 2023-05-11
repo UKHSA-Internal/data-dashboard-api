@@ -13,6 +13,8 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2023, 1, 9),
 ]
 WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC: str = "weekly_hospital_admissions_rate"
+HEIGHT = 300
+WIDTH = 400
 
 
 class TestLineWithShadedSectionCharts:
@@ -28,6 +30,8 @@ class TestLineWithShadedSectionCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             dates=dates,
             values=values,
             rolling_period_slice=1,
@@ -41,6 +45,10 @@ class TestLineWithShadedSectionCharts:
         # Check that the main background colour is a plain white
         assert main_layout.paper_bgcolor == colour_scheme.RGBAColours.WHITE.stringified
         assert not main_layout.showlegend
+
+        # Check the chart sizes are as per the specified parameters
+        assert main_layout.height == HEIGHT
+        assert main_layout.width == WIDTH
 
         # ---X Axis checks---
         x_axis = main_layout.xaxis
@@ -78,6 +86,8 @@ class TestLineWithShadedSectionCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             dates=dates,
             values=values,
             rolling_period_slice=rolling_period_slice,
@@ -147,6 +157,8 @@ class TestLineWithShadedSectionCharts:
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             dates=dates,
             values=values,
             rolling_period_slice=rolling_period_slice,

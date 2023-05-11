@@ -36,7 +36,6 @@ TIMESERIES_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
         "t": 0,
     },
     "showlegend": False,
-    "height": 350,
     "autosize": False,
     "xaxis": X_AXIS_ARGS,
     "yaxis": Y_AXIS_ARGS,
@@ -44,6 +43,8 @@ TIMESERIES_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
 
 
 def create_line_chart_with_shaded_section(
+    chart_height: int,
+    chart_width: int,
     values: List[int],
     dates: List[datetime.datetime],
     shaded_section_fill_colour: colour_scheme.RGBAColours,
@@ -107,6 +108,13 @@ def create_line_chart_with_shaded_section(
     # Add the highlighted section plot to the figure
     figure.add_trace(trace=shaded_section_plot)
 
+    # Set the height and width of the chart itself
+    figure.update_layout(
+        {
+            "height": chart_height,
+            "width": chart_width,
+        }
+    )
     # Apply the typical stylings for timeseries charts
     figure.update_layout(**TIMESERIES_LAYOUT_ARGS)
 
@@ -155,6 +163,8 @@ def _create_shaded_section_plot(
 
 
 def generate_chart_figure(
+    chart_height: int,
+    chart_width: int,
     values: List[int],
     dates: List[datetime.datetime],
     metric_name: str,
@@ -194,6 +204,8 @@ def generate_chart_figure(
     )
 
     return create_line_chart_with_shaded_section(
+        chart_height=chart_height,
+        chart_width=chart_width,
         values=values,
         dates=dates,
         rolling_period_slice=rolling_period_slice,
