@@ -168,7 +168,7 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_deaths_7days_change",
+                                                    "metric": "new_cases_7days_change",
                                                     "body": "",
                                                     "percentage_metric": "new_cases_7days_change_percentage"
                                                 },
