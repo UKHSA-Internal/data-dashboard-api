@@ -16,9 +16,13 @@ class TestLineCharts:
         """
         # Given
         values = VALUES
+        HEIGHT = 300
+        WIDTH = 400
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             values=values,
         )
 
@@ -47,9 +51,13 @@ class TestLineCharts:
         """
         # Given
         values = VALUES
+        HEIGHT = 300
+        WIDTH = 400
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             values=values,
         )
 
@@ -79,9 +87,13 @@ class TestLineCharts:
         """
         # Given
         values = VALUES
+        HEIGHT = 300
+        WIDTH = 400
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
             values=values,
             enforce_markers=True,
         )

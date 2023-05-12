@@ -11,6 +11,9 @@ from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
+DEFAULT_CHART_HEIGHT = 220
+DEFAULT_CHART_WIDTH = 435
+
 
 class ChartPlotSerializer(serializers.Serializer):
     # Required fields
@@ -131,12 +134,25 @@ class ChartsSerializer(serializers.Serializer):
         help_text=help_texts.CHART_FILE_FORMAT_FIELD,
         default="svg",
     )
+    chart_height = serializers.IntegerField(
+        help_text=help_texts.CHART_HEIGHT,
+        default=DEFAULT_CHART_HEIGHT,
+        allow_null=True,
+    )
+    chart_width = serializers.IntegerField(
+        help_text=help_texts.CHART_WIDTH,
+        default=DEFAULT_CHART_WIDTH,
+        allow_null=True,
+    )
+
     plots = ChartPlotsListSerializer()
 
     def to_models(self) -> ChartPlots:
         return ChartPlots(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
+            chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
+            chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
         )
 
 

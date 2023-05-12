@@ -79,9 +79,16 @@ class ChartsInterface:
             A plotly `Figure` object for the created simple line chart
 
         """
+        chart_height = self.chart_plots.chart_height
+        chart_width = self.chart_plots.chart_width
+
         plots_data: List[ChartPlotData] = self.build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
-        return line.generate_chart_figure(plot_data.y_axis)
+        return line.generate_chart_figure(
+            chart_height=chart_height,
+            chart_width=chart_width,
+            values=plot_data.y_axis,
+        )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot
@@ -90,10 +97,14 @@ class ChartsInterface:
             A plotly `Figure` object for the created bar chart
 
         """
+        chart_height = self.chart_plots.chart_height
+        chart_width = self.chart_plots.chart_width
         plots_data: List[ChartPlotData] = self.build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
 
         return bar.generate_chart_figure(
+            chart_height=chart_height,
+            chart_width=chart_width,
             dates=plot_data.x_axis,
             values=plot_data.y_axis,
             legend=plot_data.parameters.metric,
@@ -109,8 +120,15 @@ class ChartsInterface:
             A plotly `Figure` object for the created multi-coloured line chart
 
         """
+        chart_height = self.chart_plots.chart_height
+        chart_width = self.chart_plots.chart_width
         plots_data: List[ChartPlotData] = self.build_chart_plots_data()
-        return line_multi_coloured.generate_chart_figure(plots_data)
+
+        return line_multi_coloured.generate_chart_figure(
+            chart_height=chart_height,
+            chart_width=chart_width,
+            chart_plots_data=plots_data,
+        )
 
     def generate_line_with_shaded_section_chart(self) -> plotly.graph_objects.Figure:
         """Creates a line chart with shaded section figure for the requested chart plot
@@ -273,11 +291,15 @@ class ChartsInterface:
         )
 
     def param_builder_for_line_with_shaded_section(self, plot_data: ChartPlotData):
+        chart_height = self.chart_plots.chart_height
+        chart_width = self.chart_plots.chart_width
         dates = plot_data.x_axis
         values = plot_data.y_axis
         metric_name = plot_data.parameters.metric
 
         return {
+            "chart_height": chart_height,
+            "chart_width": chart_width,
             "dates": dates,
             "values": values,
             "metric_name": metric_name,

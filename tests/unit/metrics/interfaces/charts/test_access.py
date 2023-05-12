@@ -170,6 +170,8 @@ class TestChartsInterface:
         fake_chart_plots = ChartPlots(
             plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
+            chart_width=123,
+            chart_height=456,
         )
 
         charts_interface = ChartsInterface(
@@ -209,6 +211,8 @@ class TestChartsInterface:
         fake_chart_plots = ChartPlots(
             plots=[fake_chart_plot_parameters],
             file_format="png",
+            chart_width=123,
+            chart_height=456,
         )
         fake_core_time_series_for_plot: List[
             FakeCoreTimeSeries
@@ -255,6 +259,8 @@ class TestChartsInterface:
         fake_chart_plots = ChartPlots(
             plots=[fake_chart_plot_parameters],
             file_format="png",
+            chart_width=123,
+            chart_height=456,
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
 
@@ -327,6 +333,8 @@ class TestChartsInterface:
         Then the returned dict contains the expected key-value pairs
         """
         # Given
+        width = 123
+        height = 456
         mocked_dates = mock.Mock()
         mocked_values = mock.Mock()
         fake_plot_data = ChartPlotData(
@@ -335,8 +343,15 @@ class TestChartsInterface:
             y_axis=mocked_values,
         )
 
+        fake_chart_plots = ChartPlots(
+            plots=[fake_chart_plot_parameters],
+            file_format="svg",
+            chart_width=width,
+            chart_height=height,
+        )
+
         charts_interface = ChartsInterface(
-            chart_plots=mock.MagicMock(),
+            chart_plots=fake_chart_plots,
             core_time_series_manager=mock.Mock(),
         )
 
@@ -350,6 +365,8 @@ class TestChartsInterface:
         # When
         metric: str = fake_plot_data.parameters.metric
         expected_constructed_params = {
+            "chart_width": width,
+            "chart_height": height,
             "dates": mocked_dates,
             "values": mocked_values,
             "metric_name": metric,
@@ -548,7 +565,10 @@ class TestValidateEachRequestedChartPlot:
             fake_chart_plot_parameters_covid_cases,
         ]
         fake_chart_plots = ChartPlots(
-            file_format="svg", plots=fake_requested_chart_plots
+            file_format="svg",
+            plots=fake_requested_chart_plots,
+            chart_width=123,
+            chart_height=456,
         )
 
         # When

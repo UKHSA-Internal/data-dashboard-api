@@ -45,7 +45,6 @@ BAR_CHART_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
         "y": -0.15,
         "x": 0,
     },
-    "height": 350,
     "autosize": False,
     "xaxis": X_AXIS_ARGS,
     "yaxis": Y_AXIS_ARGS,
@@ -53,6 +52,8 @@ BAR_CHART_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
 
 
 def generate_chart_figure(
+    chart_height: int,
+    chart_width: int,
     dates: List[datetime],
     values: List[Union[int, float]],
     legend: str,
@@ -61,6 +62,8 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
     Args:
+        chart_height: The chart height in pixels
+        chart_width: The chart width in pixels
         dates: List of datetime objects for each of the values.
         values: List of numbers representing the values.
         legend: Legend associated with the given plot
@@ -84,6 +87,14 @@ def generate_chart_figure(
 
     # Add plot to graph
     figure.add_trace(trace=bar_plot)
+
+    # Set the height and width of the chart itself
+    figure.update_layout(
+        {
+            "height": chart_height,
+            "width": chart_width,
+        }
+    )
 
     # Apply the typical stylings for bar charts
     figure.update_layout(**BAR_CHART_LAYOUT_ARGS)

@@ -4,7 +4,12 @@ from typing import Dict, List, Tuple, Union
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers.charts import ChartPlotSerializer, ChartsSerializer
+from metrics.api.serializers.charts import (
+    DEFAULT_CHART_HEIGHT,
+    DEFAULT_CHART_WIDTH,
+    ChartPlotSerializer,
+    ChartsSerializer,
+)
 from metrics.domain.charts.line_multi_coloured import colour_scheme, properties
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
@@ -427,6 +432,104 @@ class TestChartsSerializer:
         with pytest.raises(ValidationError):
             serializer.is_valid(raise_exception=True)
 
+    def test_chart_width_and_height_are_returned_correctly(self):
+        """
+        Given the user supplies chart width and height parameters to pass to a `ChartsSerializer` object
+        When `is_valid()` is called from the serializer
+        Then the supplied values are used
+        """
+        # Given
+        fake_chart_width = 100
+        fake_chart_height = 200
+        valid_data_payload = {
+            "file_format": "svg",
+            "plots": [],
+            "chart_width": fake_chart_width,
+            "chart_height": fake_chart_height,
+        }
+
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+        serializer_data = serializer.data
+
+        # Then
+        assert is_serializer_valid
+        assert serializer_data["chart_width"] == fake_chart_width
+        assert serializer_data["chart_height"] == fake_chart_height
+
+    def test_width_and_height_are_not_supplied(self):
+        """
+        Given the user does not supply a width and/or height parameter
+          to pass to a `ChartsSerializer` object
+        When `is_valid()` is called from the serializer
+        Then the default values for them are used
+        """
+        # Given
+        valid_data_payload = {
+            "file_format": "svg",
+            "plots": [],
+        }
+
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+        serializer_data = serializer.data
+
+        # Then
+        assert is_serializer_valid
+        assert serializer_data["chart_width"] == DEFAULT_CHART_WIDTH
+        assert serializer_data["chart_height"] == DEFAULT_CHART_HEIGHT
+
+    @pytest.mark.parametrize("chart_parameter", ["chart_width", "chart_height"])
+    def test_width_or_height_are_invalid_format(self, chart_parameter: str):
+        """
+        Given the user supplies an invalid width and/or height parameter
+          to pass to a `ChartsSerializer` object
+        When `is_valid()` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        bad_data_payload = {
+            "file_format": "svg",
+            "plots": [],
+            chart_parameter: "bad_value",
+        }
+
+        serializer = ChartsSerializer(data=bad_data_payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_width_and_height_are_none_into_model(self):
+        """
+        Given the user supplies a None value for the width and/or height parameter
+          to pass to a `ChartsSerializer` object
+        When `to_models()` is called from an instance of the `ChartsSerializer`
+        Then the default values for them are used
+        """
+        # Given
+        valid_data_payload = {
+            "file_format": "svg",
+            "chart_width": None,
+            "chart_height": None,
+            "plots": [],
+        }
+
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+        serialized_model_data: ChartPlots = serializer.to_models()
+
+        # Then
+        assert is_serializer_valid
+        assert serialized_model_data.chart_width == DEFAULT_CHART_WIDTH
+        assert serialized_model_data.chart_height == DEFAULT_CHART_HEIGHT
+
     def test_to_models_returns_correct_models(self):
         """
         Given a payload for a list of 1 chart plots
@@ -445,7 +548,12 @@ class TestChartsSerializer:
                 "chart_type": "line_with_shaded_section",
             }
         ]
-        valid_data_payload = {"file_format": "svg", "plots": chart_plots}
+        valid_data_payload = {
+            "file_format": "svg",
+            "chart_height": 300,
+            "chart_width": 400,
+            "plots": chart_plots,
+        }
         serializer = ChartsSerializer(data=valid_data_payload)
 
         # When
@@ -457,5 +565,7 @@ class TestChartsSerializer:
         expected_chart_plots_model = ChartPlots(
             plots=[chart_plot_params_model],
             file_format=valid_data_payload["file_format"],
+            chart_height=valid_data_payload["chart_height"],
+            chart_width=valid_data_payload["chart_width"],
         )
         assert chart_plots_serialized_models == expected_chart_plots_model

@@ -59,3 +59,9 @@ This can be either `json` or `csv`
 CHARTS_RESPONSE_HELP_TEXT: str = """
 The specified chart in the requested format e.g. svg
 """
+CHART_WIDTH: str = """
+The width in pixels that you want to chart to be (default = 435 pixels)
+"""
+CHART_HEIGHT: str = """
+The height in pixels that you want to chart to be (default = 220 pixels)
+"""
