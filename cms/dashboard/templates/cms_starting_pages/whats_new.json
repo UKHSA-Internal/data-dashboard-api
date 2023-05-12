@@ -1,0 +1,64 @@
+{
+    "id": 134,
+    "meta": {
+        "type": "common.CommonPage",
+        "detail_url": "http://localhost/api/pages/134/",
+        "html_url": null,
+        "slug": "what-s-new",
+        "show_in_menus": false,
+        "seo_title": "",
+        "search_description": "",
+        "first_published_at": "2023-05-12T14:51:37.489405+01:00",
+        "alias_of": null,
+        "parent": {
+            "id": 127,
+            "meta": {
+                "type": "home.HomePage",
+                "detail_url": "http://localhost/api/pages/127/",
+                "html_url": null
+            },
+            "title": "Respiratory viruses"
+        }
+    },
+    "title": "What's New",
+    "date_posted": "2023-05-12",
+    "body": "<h2 data-block-key=\"z8uie\">March 2023</h2><h4 data-block-key=\"94s66\">2 March 2023 (v5)</h4><p data-block-key=\"58o2q\">The primary navigation items have been updated to focus on viruses included in the dashboard in the place of metrics. The primary navigation items now include ‘Home’ ‘Coronavirus’, ‘Influenza’ and ‘Other respiratory viruses’. </p><h4 data-block-key=\"67tct\">1 March 2023 (v5)</h4><p data-block-key=\"50b5c\">The name of the ‘Interactive maps’ page has been updated to ‘Maps’.</p><p data-block-key=\"a1i7i\"></p><h2 data-block-key=\"bipvm\">February 2023</h2><h4 data-block-key=\"b2l6r\">22 February 2023 (v4)</h4><p data-block-key=\"amg32\">The ‘About’ page has been updated to describe respiratory virus data displayed on the dashboard.</p><h4 data-block-key=\"7bc4f\">17 February 2023 (v4)</h4><p data-block-key=\"du7uj\">A secondary navigation menu has been added which includes additional links about the dashboard data.</p><h4 data-block-key=\"681kk\">16 February 2023 (v4)</h4><p data-block-key=\"bfoej\">The primary navigation menu items have now been updated to include a dropdown menu which lists individual respiratory viruses.</p>",
+    "last_published_at": "2023-05-12T16:22:06.141697+01:00",
+    "related_links": [
+        {
+            "id": 21,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
+            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
+            "body": "<p data-block-key=\"y3631\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
+        },
+        {
+            "id": 22,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
+            "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
+            "body": "<p data-block-key=\"y3631\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
+        },
+        {
+            "id": 23,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
+            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
+            "body": "<p data-block-key=\"y3631\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
+        },
+        {
+            "id": 24,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "Hepatitis (liver inflammation) cases in children – latest updates",
+            "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
+            "body": "<p data-block-key=\"y3631\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
+        },
+        {
+            "id": 25,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "Human parainfluenza viruses: guidance and data",
+            "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
+            "body": "<p data-block-key=\"y3631\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
+        }
+    ]
+}

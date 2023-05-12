@@ -212,4 +212,5 @@ class Command(BaseCommand):
             name="other_respiratory_viruses", parent_page=respiratory_viruses_page
         )
         _build_common_page(name="about", parent_page=respiratory_viruses_page)
+        _build_common_page(name="whats_new", parent_page=respiratory_viruses_page)
         build_miscellaneous_pages(home_page=respiratory_viruses_page)
