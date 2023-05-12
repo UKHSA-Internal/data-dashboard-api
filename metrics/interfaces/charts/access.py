@@ -79,9 +79,16 @@ class ChartsInterface:
             A plotly `Figure` object for the created simple line chart
 
         """
+        chart_height = self.chart_plots.chart_height
+        chart_width = self.chart_plots.chart_width
+
         plots_data: List[ChartPlotData] = self.build_chart_plots_data()
         plot_data: ChartPlotData = plots_data[0]
-        return line.generate_chart_figure(plot_data.y_axis)
+        return line.generate_chart_figure(
+            chart_height=chart_height,
+            chart_width=chart_width,
+            values=plot_data.y_axis,
+        )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot

@@ -13,6 +13,8 @@ LAYOUT_ARGS = {
 
 
 def generate_chart_figure(
+    chart_height: int,
+    chart_width: int,
     values: List[Union[int, float]],
     line_color: str = colour_scheme.RGBAColours.BLACK.stringified,
     area_fill_color: str = colour_scheme.RGBAColours.DARK_GREY.stringified,
@@ -30,6 +32,8 @@ def generate_chart_figure(
         the weight of the line plots.
 
     Args:
+        chart_height: The chart height in pixels
+        chart_width: The chart width in pixels
         values: list of floats or ints representing the points to be plotted
         line_color: The color to assign to the line.
             Defaults to 0, 0, 0, 1, black.
@@ -72,8 +76,13 @@ def generate_chart_figure(
     )
 
     layout_args = LAYOUT_ARGS
-    layout_args["plot_bgcolor"] = background_color
-    figure.update_layout(**layout_args)
+
+    additional_chart_options = {
+        "plot_bgcolor": background_color,
+        "height": chart_height,
+        "width": chart_width,
+    }
+    figure.update_layout(**layout_args, **additional_chart_options)
 
     if enforce_markers:
         figure.data[0].mode = "lines+markers"
