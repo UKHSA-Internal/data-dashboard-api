@@ -62,6 +62,8 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
     Args:
+        chart_height: The chart height in pixels
+        chart_width: The chart width in pixels
         dates: List of datetime objects for each of the values.
         values: List of numbers representing the values.
         legend: Legend associated with the given plot

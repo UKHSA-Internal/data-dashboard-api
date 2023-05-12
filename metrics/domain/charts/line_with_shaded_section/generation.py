@@ -56,6 +56,8 @@ def create_line_chart_with_shaded_section(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
+        chart_height: The chart height in pixels
+        chart_width: The chart width in pixels
         values: List of numbers representing the values.
         dates: List of datetime objects for each of the values.
         shaded_section_fill_colour: The colour to use
@@ -175,6 +177,8 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
+        chart_height: The chart height in pixels
+        chart_width: The chart width in pixels
         values: List of numbers representing the values.
         dates: List of datetime objects for each of the values.
         metric_name: The associated metric_name,

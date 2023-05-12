@@ -137,14 +137,14 @@ class ChartsView(APIView):
 
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
             `Influenza` does not have a corresponding metric of `COVID-19`
+        ---
+        # Changing the size of the graph
 
-        ## Changing the size of the graph
+        If you are not happy with the default width and/or height of the graph you can override the values by setting one or both of them:
 
-        If you are not happy with the width and/or height of the graph you can override the values by setting one or both of them:
+        `chart_height`
 
-        `chart_height` (the default height is 220)
-
-        `chart_width` (the default width is 435)
+        `chart_width`
         """
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)

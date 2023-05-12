@@ -53,6 +53,8 @@ def create_multi_coloured_line_chart(
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
     Args:
+        chart_height: The chart height in pixels
+        chart_width: The chart width in pixels
         chart_plots_data: List of `ChartPlotData` models,
             where each model represents a requested plot.
         line_shape: The shape to assign to the line plots.
@@ -66,7 +68,7 @@ def create_multi_coloured_line_chart(
     """
     figure = plotly.graph_objects.Figure()
 
-    for _, plot_data in enumerate(chart_plots_data):
+    for plot_data in chart_plots_data:
         selected_colour = colour_scheme.RGBAColours.get_colour(
             colour=plot_data.parameters.line_colour
         )
@@ -132,6 +134,8 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
     Args:
+        chart_height: The chart height in pixels
+        chart_width: The chart width in pixels
         chart_plots_data: List of `ChartPlotData` models,
             where each model represents a requested plot.
         line_shape: The shape to assign to the line plots.
