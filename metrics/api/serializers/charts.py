@@ -11,7 +11,6 @@ from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
-
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 435
 

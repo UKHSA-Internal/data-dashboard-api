@@ -4,7 +4,6 @@ from typing import Dict, List, Tuple, Union
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers import ChartsQuerySerializer
 from metrics.api.serializers.charts import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
