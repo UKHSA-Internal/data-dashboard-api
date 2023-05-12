@@ -139,17 +139,34 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "new_deaths_daily",
-                                                    "chart_type": "bar",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "label": "New deaths daily",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "9999386d-261c-4ad8-9cbb-2b7a69c70f90"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "new_deaths_7day_avg",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "7 day rolling average",
+                                                    "line_colour": "RED",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "ba7abe60-02f7-4220-ba64-25e64156f076"
                                             }
                                         ]
                                     },
