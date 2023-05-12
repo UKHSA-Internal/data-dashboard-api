@@ -6,7 +6,7 @@ import plotly.graph_objects
 from metrics.domain.charts.bar import colour_scheme, type_hints
 
 TICK_FONT = type_hints.AXIS_ARGS = {
-    "family": '"GDS Transport", Arial, sans-serif',
+    "family": "Arial",
     "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
 }
 

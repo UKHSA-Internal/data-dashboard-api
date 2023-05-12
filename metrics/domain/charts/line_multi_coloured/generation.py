@@ -16,7 +16,7 @@ X_AXIS_ARGS = {
     "dtick": "M1",
     "tickformat": "%b %Y",
     "tickfont": {
-        "family": '"GDS Transport", Arial, sans-serif',
+        "family": "Arial",
         "color": colour_scheme.RGBAColours.BLACK.stringified,
     },
 }
