@@ -14,6 +14,7 @@ from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
     ChartView,
+    DownloadsView,
     FileUploadView,
     HeadlinesView,
     HealthView,
@@ -53,6 +54,7 @@ urlpatterns = [
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/(?P<topic>[^/]+)/(?P<category>[^/]+)$", ChartView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
+    re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(
         r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",

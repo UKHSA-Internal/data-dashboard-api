@@ -30,3 +30,17 @@ class FakeAPITimeSeriesFactory(factory.Factory):
             dt=datetime.date(year=2023, month=3, day=8),
             metric_value=2364,
         )
+
+    @classmethod
+    # Sample model with some fields missing
+    def build_example_api_time_series_fields_missing(cls) -> FakeAPITimeSeries:
+        return cls.build(
+            period="D",
+            theme="infectious_disease",
+            sub_theme="respiratory",
+            topic="COVID-19",
+            metric="new_cases_daily",
+            stratum="default",
+            dt=datetime.date(year=2023, month=3, day=8),
+            metric_value=2364,
+        )
