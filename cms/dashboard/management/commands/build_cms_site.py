@@ -193,8 +193,6 @@ class Command(BaseCommand):
         wagtail_root_page.add_child(instance=root_page)
         wagtail_root_page.save_revision().publish()
 
-        # We need to pull the appropriate hostname from somewhere
-        # hostname for uat currently ='http://wp-lb-api-1448457284.eu-west-2.elb.amazonaws.com/'
         Site.objects.create(
             hostname="localhost",
             port="80",
