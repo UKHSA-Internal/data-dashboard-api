@@ -96,134 +96,45 @@ class TestBuildCMSSite:
             assert related_link["body"] == related_links_from_template[index]["body"]
 
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_coronavirus_page(
+    @pytest.mark.parametrize("slug", ["coronavirus", "influenza", "other-respiratory-viruses"])
+    def test_command_builds_site_with_correct_topic_pages(
         self,
         authenticated_api_client: APIClient,
+        slug: str,
     ):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
-        And the ID of the `coronavirus` page
+        And the ID of the topic page
         When a GET request is made to `/api/pages/{}` detail endpoint
         Then the response contains the expected data
         """
         # Given
         call_command("build_cms_site")
-        coronavirus_page = TopicPage.objects.get(slug="coronavirus")
+        topic_page = TopicPage.objects.get(slug=slug)
 
         # When
         response = authenticated_api_client.get(
-            path=f"/api/pages/{coronavirus_page.id}/"
+            path=f"/api/pages/{topic_page.id}/"
         )
 
         # Then
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        coronavirus_page_response_template = open_example_page_response("coronavirus")
-        assert response_data["title"] == coronavirus_page_response_template["title"]
+        page_name = slug.replace("-", "_")
+        topic_page_response_template = open_example_page_response(page_name)
+        assert response_data["title"] == topic_page_response_template["title"]
         assert (
             response_data["page_description"]
-            == coronavirus_page_response_template["page_description"]
+            == topic_page_response_template["page_description"]
         )
-        assert response_data["body"] == coronavirus_page_response_template["body"]
+        assert response_data["body"] == topic_page_response_template["body"]
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
         assert len(related_links_from_response) == 5
 
-        related_links_from_template = coronavirus_page_response_template[
-            "related_links"
-        ]
-
-        for index, related_link in enumerate(related_links_from_response):
-            assert related_link["title"] == related_links_from_template[index]["title"]
-            assert related_link["url"] == related_links_from_template[index]["url"]
-            assert related_link["body"] == related_links_from_template[index]["body"]
-
-    @pytest.mark.django_db
-    def test_command_builds_site_with_correct_influenza_page(
-        self,
-        authenticated_api_client: APIClient,
-    ):
-        """
-        Given a CMS site which has been created via the `build_cms_site` management command
-        And the ID of the `influenza` page
-        When a GET request is made to `/api/pages/{}` detail endpoint
-        Then the response contains the expected data
-        """
-        # Given
-        call_command("build_cms_site")
-        influenza_page = TopicPage.objects.get(slug="influenza")
-
-        # When
-        response = authenticated_api_client.get(path=f"/api/pages/{influenza_page.id}/")
-
-        # Then
-        response_data = response.data
-
-        # Compare the response from the endpoint to the template used to build the page
-        influenza_page_response_template = open_example_page_response("influenza")
-        assert response_data["title"] == influenza_page_response_template["title"]
-        assert (
-            response_data["page_description"]
-            == influenza_page_response_template["page_description"]
-        )
-        assert response_data["body"] == influenza_page_response_template["body"]
-
-        # Check that the related links have been populated correctly
-        related_links_from_response = response_data["related_links"]
-        assert len(related_links_from_response) == 5
-
-        related_links_from_template = influenza_page_response_template["related_links"]
-
-        for index, related_link in enumerate(related_links_from_response):
-            assert related_link["title"] == related_links_from_template[index]["title"]
-            assert related_link["url"] == related_links_from_template[index]["url"]
-            assert related_link["body"] == related_links_from_template[index]["body"]
-
-    @pytest.mark.django_db
-    def test_command_builds_site_with_correct_other_respiratory_viruses_page(
-        self,
-        authenticated_api_client: APIClient,
-    ):
-        """
-        Given a CMS site which has been created via the `build_cms_site` management command
-        And the ID of the `other_respiratory_viruses` page
-        When a GET request is made to `/api/pages/{}` detail endpoint
-        Then the response contains the expected data
-        """
-        # Given
-        call_command("build_cms_site")
-        other_respiratory_viruses_page = TopicPage.objects.get(
-            slug="other-respiratory-viruses"
-        )
-
-        # When
-        response = authenticated_api_client.get(
-            path=f"/api/pages/{other_respiratory_viruses_page.id}/"
-        )
-
-        # Then
-        response_data = response.data
-
-        # Compare the response from the endpoint to the template used to build the page
-        other_respiratory_viruses_page_template = open_example_page_response(
-            "other_respiratory_viruses"
-        )
-        assert (
-            response_data["title"] == other_respiratory_viruses_page_template["title"]
-        )
-        assert (
-            response_data["page_description"]
-            == other_respiratory_viruses_page_template["page_description"]
-        )
-        assert response_data["body"] == other_respiratory_viruses_page_template["body"]
-
-        # Check that the related links have been populated correctly
-        related_links_from_response = response_data["related_links"]
-        assert len(related_links_from_response) == 5
-
-        related_links_from_template = other_respiratory_viruses_page_template[
+        related_links_from_template = topic_page_response_template[
             "related_links"
         ]
 
