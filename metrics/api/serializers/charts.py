@@ -1,6 +1,7 @@
 from typing import List
 
 from django.db.models import Manager
+from django.db.utils import ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
@@ -10,84 +11,87 @@ from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import ChartPlotParameters, ChartPlots
 from metrics.domain.utils import ChartTypes
 
-FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
+
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 435
 
 
-class ChartsQuerySerializer(serializers.Serializer):
-    file_format = serializers.ChoiceField(
-        choices=FILE_FORMAT_CHOICES,
-        default="svg",
-    )
-
-
 class ChartPlotSerializer(serializers.Serializer):
+    # Required fields
     topic = serializers.ChoiceField(
-        choices=[],
         help_text=help_texts.TOPIC_FIELD,
+        choices=[],
         required=True,
     )
     metric = serializers.ChoiceField(
-        choices=[],
         help_text=help_texts.METRIC_FIELD,
+        choices=[],
+        required=True,
+    )
+    chart_type = serializers.ChoiceField(
+        help_text=help_texts.CHART_TYPE_FIELD,
+        choices=ChartTypes.choices(),
         required=True,
     )
 
+    # Optional fields
     stratum = serializers.CharField(
-        required=False,
         help_text=help_texts.STRATUM_FIELD,
+        required=False,
         allow_blank=True,
+        allow_null=True,
         default="",
     )
     geography = serializers.CharField(
-        required=False,
         help_text=help_texts.GEOGRAPHY_FIELD,
+        required=False,
         allow_blank=True,
+        allow_null=True,
         default="",
     )
     geography_type = serializers.CharField(
-        required=False,
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
+        required=False,
         allow_blank=True,
+        allow_null=True,
         default="",
     )
 
-    chart_type = serializers.ChoiceField(
-        choices=ChartTypes.choices(),
-        help_text=help_texts.CHART_TYPE_FIELD,
-        required=True,
-    )
     date_from = serializers.DateField(
         help_text=help_texts.DATE_FROM_FIELD,
         required=False,
-        default="",
         allow_null=True,
+        default="",
     )
     date_to = serializers.DateField(
         help_text=help_texts.DATE_FROM_FIELD,
         required=False,
-        default="",
         allow_null=True,
+        default="",
     )
 
     label = serializers.CharField(
-        required=False,
-        default="",
-        allow_blank=True,
         help_text=help_texts.LABEL_FIELD,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
     )
 
     line_colour = serializers.ChoiceField(
+        choices=RGBAColours.choices(),
         required=False,
         allow_blank=True,
-        choices=RGBAColours.choices(),
+        allow_null=True,
+        default="",
     )
 
     line_type = serializers.ChoiceField(
+        choices=ChartLineTypes.choices(),
         required=False,
         allow_blank=True,
-        choices=ChartLineTypes.choices(),
+        allow_null=True,
+        default="",
     )
 
     def to_models(self):
@@ -98,7 +102,7 @@ class ChartPlotSerializer(serializers.Serializer):
 
         try:
             self.populate_choices()
-        except RuntimeError:
+        except (RuntimeError, ProgrammingError):
             pass
         # This is needed because the serializers are loaded by django at runtime
         # Because this is a child serializer, an `instance` must be passed
@@ -120,6 +124,9 @@ class ChartPlotSerializer(serializers.Serializer):
 
 class ChartPlotsListSerializer(serializers.ListSerializer):
     child = ChartPlotSerializer()
+
+
+FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
 
 
 class ChartsSerializer(serializers.Serializer):

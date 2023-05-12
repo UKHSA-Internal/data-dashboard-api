@@ -14,9 +14,9 @@ Note that to use the `Makefile` you will need
 
 There are a number of steps to take before getting the environment setup locally.
 
-1. Ensure you have the `APIENV` environment variable set to `"DEV"`. 
+1. Ensure you have the `APIENV` environment variable set to `"LOCAL"`. 
 ```bash
-export APIENV=DEV
+export APIENV=LOCAL
 ```
 To do this, you should include this line in an `.env` file at the root level of the project.
 

@@ -8,11 +8,17 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 from wagtail.search import index
 
+HEADING_2: str = "h2"
+HEADING_3: str = "h3"
+HEADING_4: str = "h4"
 BOLD: str = "bold"
 BULLET_POINTS: str = "ul"
 LINKS: str = "link"
 
 AVAILABLE_RICH_TEXT_FEATURES: List[str] = [
+    HEADING_2,
+    HEADING_3,
+    HEADING_4,
     BOLD,
     BULLET_POINTS,
     LINKS,

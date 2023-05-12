@@ -13,18 +13,17 @@ from cms.dashboard.viewsets import CMSPagesAPIViewSet
 from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
-    ChartView,
+    DownloadsView,
     FileUploadView,
     HeadlinesView,
     HealthView,
     TabularView,
     TrendsView,
 )
-from metrics.api.viewsets import APITimeSeriesViewSet, DashboardViewSet
+from metrics.api.viewsets import APITimeSeriesViewSet
 
 router = routers.DefaultRouter()
 router.register(r"timeseries", APITimeSeriesViewSet)
-router.register("api/stats", DashboardViewSet, basename="dashboard")
 
 # Create the router. "wagtailapi" is the URL namespace
 api_router = WagtailAPIRouter("wagtailapi")
@@ -51,8 +50,8 @@ urlpatterns = [
     # Redoc schema view
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     re_path(r"^upload/$", FileUploadView.as_view()),
-    re_path(r"^charts/(?P<topic>[^/]+)/(?P<category>[^/]+)$", ChartView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
+    re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(
         r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
