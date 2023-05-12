@@ -396,14 +396,14 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "People aged 75 and over who have received autumn booster vaccinations, by vaccination date",
-                                        "body": "The number of people aged 75 and over who have received an autumn booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, are incomplete. Data are shown by date of vaccination.",
+                                        "title": "People aged 75 and over who have received spring booster vaccinations, by vaccination date",
+                                        "body": "The number of people aged 75 and over who have received a spring booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, are incomplete. Data are shown by date of vaccination.",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_vaccinations_autumn22",
+                                                    "metric": "new_vaccinations_spring22",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
