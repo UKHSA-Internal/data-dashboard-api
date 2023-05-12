@@ -191,16 +191,22 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
-        other_respiratory_viruses_page = TopicPage.objects.get(slug="other-respiratory-viruses")
+        other_respiratory_viruses_page = TopicPage.objects.get(
+            slug="other-respiratory-viruses"
+        )
 
         # When
-        response = authenticated_api_client.get(path=f"/api/pages/{other_respiratory_viruses_page.id}/")
+        response = authenticated_api_client.get(
+            path=f"/api/pages/{other_respiratory_viruses_page.id}/"
+        )
 
         # Then
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        other_respiratory_viruses_page = open_example_page_response("other_respiratory_viruses")
+        other_respiratory_viruses_page = open_example_page_response(
+            "other_respiratory_viruses"
+        )
         assert response_data["title"] == other_respiratory_viruses_page["title"]
         assert (
             response_data["page_description"]

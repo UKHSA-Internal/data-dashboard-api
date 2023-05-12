@@ -125,7 +125,9 @@ class TestTemplateOtherRespiratoryVirusesPage:
         plot_0_4_years_value = chart[0].value
         assert plot_0_4_years_value["topic"] == self.adenovirus
         assert plot_0_4_years_value["metric"] == self.weekly_positivity_by_age
-        assert plot_0_4_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        assert (
+            plot_0_4_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        )
         assert plot_0_4_years_value["stratum"] == "0_4"
         assert plot_0_4_years_value["label"] == "0 to 4 years"
         assert plot_0_4_years_value["line_colour"] == RGBAColours.ORANGE.name
@@ -151,7 +153,9 @@ class TestTemplateOtherRespiratoryVirusesPage:
         plot_5_14_years_value = chart[1].value
         assert plot_5_14_years_value["topic"] == self.adenovirus
         assert plot_5_14_years_value["metric"] == self.weekly_positivity_by_age
-        assert plot_5_14_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        assert (
+            plot_5_14_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        )
         assert plot_5_14_years_value["stratum"] == "5_14"
         assert plot_5_14_years_value["label"] == "5 to 14 years"
         assert plot_5_14_years_value["line_colour"] == RGBAColours.ORANGE.name
@@ -177,7 +181,9 @@ class TestTemplateOtherRespiratoryVirusesPage:
         plot_15_44_years_value = chart[2].value
         assert plot_15_44_years_value["topic"] == self.adenovirus
         assert plot_15_44_years_value["metric"] == self.weekly_positivity_by_age
-        assert plot_15_44_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        assert (
+            plot_15_44_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        )
         assert plot_15_44_years_value["stratum"] == "15_44"
         assert plot_15_44_years_value["label"] == "15 to 44 years"
         assert plot_15_44_years_value["line_colour"] == RGBAColours.GREEN.name
@@ -203,7 +209,9 @@ class TestTemplateOtherRespiratoryVirusesPage:
         plot_45_64_years_value = chart[3].value
         assert plot_45_64_years_value["topic"] == self.adenovirus
         assert plot_45_64_years_value["metric"] == self.weekly_positivity_by_age
-        assert plot_45_64_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        assert (
+            plot_45_64_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        )
         assert plot_45_64_years_value["stratum"] == "45_64"
         assert plot_45_64_years_value["label"] == "45 to 64 years"
         assert plot_45_64_years_value["line_colour"] == RGBAColours.PURPLE.name
@@ -229,7 +237,10 @@ class TestTemplateOtherRespiratoryVirusesPage:
         plot_65_plus_years_value = chart[4].value
         assert plot_65_plus_years_value["topic"] == self.adenovirus
         assert plot_65_plus_years_value["metric"] == self.weekly_positivity_by_age
-        assert plot_65_plus_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
+        assert (
+            plot_65_plus_years_value["chart_type"]
+            == ChartTypes.line_multi_coloured.value
+        )
         assert plot_65_plus_years_value["stratum"] == "65+"
         assert plot_65_plus_years_value["label"] == "65 years and over"
         assert plot_65_plus_years_value["line_colour"] == RGBAColours.DARK_BLUE.name
