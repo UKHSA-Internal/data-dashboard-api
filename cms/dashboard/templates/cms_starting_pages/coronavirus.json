@@ -423,25 +423,76 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Autumn booster vaccination uptake (75+), by vaccination date",
-                                        "body": "The percentage of people aged 75 and over who have received an autumn booster COVID-19 vaccination. The denominator is the number of people aged 75 and over on the National Immunisation Management Service (NIMS) database.",
+                                        "title": "Spring booster vaccination uptake (75+), by vaccination date",
+                                        "body": "The percentage of people aged 75 and over who have received a spring booster COVID-19 vaccination. The denominator is the number of people aged 75 and over on the National Immunisation Management Service (NIMS) database.",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "positivity_PCR_rolling_sum",
-                                                    "chart_type": "line_with_shaded_section",
+                                                    "metric": "vaccinations_percentage_uptake_spring22",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "75_79",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "label": "75 to 79 years",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "b7293a99-3068-416f-85a4-696e0cf9c402"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_spring22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "80_84",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "80 to 84 years",
+                                                    "line_colour": "GREEN",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "6702853c-f150-4096-9ddd-7d6fb4ccfdde"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_spring22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "85_89",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "85 to 89 years",
+                                                    "line_colour": "PURPLE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "f27a7a40-069a-4ff3-8b20-c3aa5ef44401"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_spring22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "90+",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "90 years and above",
+                                                    "line_colour": "RED",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "1f11e3c6-edd8-4387-bfb9-2cea588affdc"
                                             }
                                         ]
                                     },
