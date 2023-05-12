@@ -1,0 +1,64 @@
+{
+    "id": 152,
+    "meta": {
+        "type": "common.CommonPage",
+        "detail_url": "http://localhost/api/pages/152/",
+        "html_url": null,
+        "slug": "how-to-use-this-data",
+        "show_in_menus": false,
+        "seo_title": "",
+        "search_description": "",
+        "first_published_at": "2023-05-12T16:51:07.555450+01:00",
+        "alias_of": null,
+        "parent": {
+            "id": 145,
+            "meta": {
+                "type": "home.HomePage",
+                "detail_url": "http://localhost/api/pages/145/",
+                "html_url": null
+            },
+            "title": "Respiratory viruses"
+        }
+    },
+    "title": "How to use this data",
+    "date_posted": "2023-05-12",
+    "body": "<p data-block-key=\"4elgr\">-</p>",
+    "last_published_at": "2023-05-12T16:53:51.464146+01:00",
+    "related_links": [
+        {
+            "id": 56,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
+            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
+            "body": "<p data-block-key=\"7kn7z\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
+        },
+        {
+            "id": 57,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
+            "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
+            "body": "<p data-block-key=\"7kn7z\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
+        },
+        {
+            "id": 58,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
+            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
+            "body": "<p data-block-key=\"7kn7z\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
+        },
+        {
+            "id": 59,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "Hepatitis (liver inflammation) cases in children – latest updates",
+            "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
+            "body": "<p data-block-key=\"7kn7z\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
+        },
+        {
+            "id": 60,
+            "meta": {"type": "common.CommonPageRelatedLink"},
+            "title": "Human parainfluenza viruses: guidance and data",
+            "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
+            "body": "<p data-block-key=\"7kn7z\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
+        }
+    ]
+}
