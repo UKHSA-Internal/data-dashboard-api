@@ -83,7 +83,7 @@ class TestTemplateHomePage:
     def covid_19(self) -> str:
         return "COVID-19"
 
-    def test_stream_blocks_in_body_are_correct_order(self):
+    def test_sections_in_body_are_correct_order(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -155,7 +155,7 @@ class TestTemplateHomePage:
         headline_number_row_columns = headline_numbers_row_card.value["columns"]
         assert len(headline_number_row_columns) == 5
 
-    def test_coronavirus_section_headline_number_row_dual_headline_column(self):
+    def test_coronavirus_section_headline_number_row_headline_and_trend_column(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -196,7 +196,7 @@ class TestTemplateHomePage:
         )
         assert first_column_trend_block["body"] == self.expected_trend_number_block_body
 
-    def test_coronavirus_section_headline_number_row_fourth_column(self):
+    def test_coronavirus_section_headline_number_row_dual_headline_column(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -237,7 +237,7 @@ class TestTemplateHomePage:
         )
         assert fourth_column_trend_block["body"] == "Percentage uptake (%)"
 
-    def test_coronavirus_section_headline_number_row_fifth_column(self):
+    def test_coronavirus_section_headline_number_row_single_headline_column(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
