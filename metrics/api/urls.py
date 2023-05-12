@@ -20,11 +20,10 @@ from metrics.api.views import (
     TabularView,
     TrendsView,
 )
-from metrics.api.viewsets import APITimeSeriesViewSet, DashboardViewSet
+from metrics.api.viewsets import APITimeSeriesViewSet
 
 router = routers.DefaultRouter()
 router.register(r"timeseries", APITimeSeriesViewSet)
-router.register("api/stats", DashboardViewSet, basename="dashboard")
 
 # Create the router. "wagtailapi" is the URL namespace
 api_router = WagtailAPIRouter("wagtailapi")
