@@ -3,7 +3,6 @@ Utility to build out the basic CMS pages so we don't have to do so manually.
 Only intended for use during development
 """
 
-
 import glob
 import json
 import logging
@@ -15,13 +14,12 @@ from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
 
-from cms.common.models import CommonPage
+from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR, WAGTAIL_SITE_NAME
 
 logger = logging.getLogger(__name__)
-
 
 FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"
 
@@ -139,6 +137,26 @@ def _build_topic_page(name: str, parent_page: Page) -> TopicPage:
     return page
 
 
+def _build_common_page(name: str, parent_page: Page) -> TopicPage:
+    data = open_example_page_response(page_name=name)
+
+    page = CommonPage(
+        body=data["body"],
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        date_posted=data["meta"]["first_published_at"].split("T")[0],
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _build_related_links(
+        related_link_class=CommonPageRelatedLink,
+        response_data=data,
+        page=page,
+    )
+
+    return page
+
+
 def build_miscellaneous_pages(home_page: HomePage) -> None:
     # now add all the other pages
     pages_to_load = load_html_files()
@@ -193,4 +211,5 @@ class Command(BaseCommand):
         _build_topic_page(
             name="other_respiratory_viruses", parent_page=respiratory_viruses_page
         )
+        _build_common_page(name="about", parent_page=respiratory_viruses_page)
         build_miscellaneous_pages(home_page=respiratory_viruses_page)
