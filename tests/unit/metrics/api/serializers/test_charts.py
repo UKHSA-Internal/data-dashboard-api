@@ -349,9 +349,7 @@ class TestChartsSerializer:
         with pytest.raises(ValidationError):
             serializer.is_valid(raise_exception=True)
 
-    def test_chart_width_and_height_are_returned_correctly(
-        self,
-    ):
+    def test_chart_width_and_height_are_returned_correctly(self):
         """
         Given the user supplies chart width and height parameters to pass to a `ChartsSerializer` object
         When `is_valid()` is called from the serializer
@@ -378,9 +376,7 @@ class TestChartsSerializer:
         assert serializer_data["chart_width"] == fake_chart_width
         assert serializer_data["chart_height"] == fake_chart_height
 
-    def test_width_and_height_are_not_supplied(
-        self,
-    ):
+    def test_width_and_height_are_not_supplied(self):
         """
         Given the user does not supply a width and/or height parameter
           to pass to a `ChartsSerializer` object
@@ -404,29 +400,6 @@ class TestChartsSerializer:
         assert serializer_data["chart_width"] == DEFAULT_CHART_WIDTH
         assert serializer_data["chart_height"] == DEFAULT_CHART_HEIGHT
 
-    def test_width_and_height_are_none(
-        self,
-    ):
-        """
-        Given the user supplies a None value for the width and/or height parameter
-          to pass to a `ChartsSerializer` object
-        When `is_valid()` is called from the serializer
-        Then a `ValidationError` is raised
-        """
-        # Given
-        valid_data_payload = {
-            "file_format": "svg",
-            "chart_width": None,
-            "chart_height": None,
-            "plots": [],
-        }
-
-        serializer = ChartsSerializer(data=valid_data_payload)
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            serializer.is_valid(raise_exception=True)
-
     @pytest.mark.parametrize("chart_parameter", ["chart_width", "chart_height"])
     def test_width_or_height_are_invalid_format(self, chart_parameter: str):
         """
@@ -447,6 +420,32 @@ class TestChartsSerializer:
         # When / Then
         with pytest.raises(ValidationError):
             serializer.is_valid(raise_exception=True)
+
+    def test_width_and_height_are_none_into_model(self):
+        """
+        Given the user supplies a None value for the width and/or height parameter
+          to pass to a `ChartsSerializer` object
+        When `to_models()` is called from an instance of the `ChartsSerializer`
+        Then the default values for them are used
+        """
+        # Given
+        valid_data_payload = {
+            "file_format": "svg",
+            "chart_width": None,
+            "chart_height": None,
+            "plots": [],
+        }
+
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+        serialized_model_data: ChartPlots = serializer.to_models()
+
+        # Then
+        assert is_serializer_valid
+        assert serialized_model_data.chart_width == DEFAULT_CHART_WIDTH
+        assert serialized_model_data.chart_height == DEFAULT_CHART_HEIGHT
 
     def test_to_models_returns_correct_models(self):
         """

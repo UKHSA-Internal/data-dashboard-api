@@ -131,10 +131,12 @@ class ChartsSerializer(serializers.Serializer):
     chart_height = serializers.IntegerField(
         help_text=help_texts.CHART_HEIGHT,
         default=DEFAULT_CHART_HEIGHT,
+        allow_null=True,
     )
     chart_width = serializers.IntegerField(
         help_text=help_texts.CHART_WIDTH,
         default=DEFAULT_CHART_WIDTH,
+        allow_null=True,
     )
 
     plots = ChartPlotsListSerializer()
@@ -143,8 +145,8 @@ class ChartsSerializer(serializers.Serializer):
         return ChartPlots(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
-            chart_height=self.data["chart_height"],
-            chart_width=self.data["chart_width"],
+            chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
+            chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
         )
 
 
