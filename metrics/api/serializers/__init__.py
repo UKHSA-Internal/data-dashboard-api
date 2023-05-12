@@ -1,4 +1,4 @@
-from .charts import ChartsQuerySerializer, ChartsSerializer
+from .charts import ChartsSerializer
 from .downloads import DownloadsQuerySerializer, DownloadsSerializer
 from .headlines import HeadlinesQuerySerializer
 from .timeseries import APITimeSeriesSerializer
