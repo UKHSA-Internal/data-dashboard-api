@@ -193,8 +193,6 @@ class Command(BaseCommand):
         wagtail_root_page.add_child(instance=root_page)
         wagtail_root_page.save_revision().publish()
 
-        # We need to pull the appropriate hostname from somewhere
-        # hostname for uat currently ='http://wp-lb-api-1448457284.eu-west-2.elb.amazonaws.com/'
         Site.objects.create(
             hostname="localhost",
             port="80",
@@ -212,4 +210,9 @@ class Command(BaseCommand):
             name="other_respiratory_viruses", parent_page=respiratory_viruses_page
         )
         _build_common_page(name="about", parent_page=respiratory_viruses_page)
+        _build_common_page(name="maps", parent_page=respiratory_viruses_page)
+        _build_common_page(
+            name="how_to_use_this_data", parent_page=respiratory_viruses_page
+        )
+        _build_common_page(name="whats_new", parent_page=respiratory_viruses_page)
         build_miscellaneous_pages(home_page=respiratory_viruses_page)
