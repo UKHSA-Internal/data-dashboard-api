@@ -1,20 +1,20 @@
 {
-    "id": 9,
+    "id": 111,
     "meta": {
         "type": "topic.TopicPage",
-        "detail_url": "http://localhost/api/pages/9/",
+        "detail_url": "http://localhost/api/pages/111/",
         "html_url": null,
         "slug": "influenza",
         "show_in_menus": false,
         "seo_title": "",
         "search_description": "",
-        "first_published_at": "2023-05-10T11:45:50.555823+01:00",
+        "first_published_at": "2023-05-12T08:39:57.212415+01:00",
         "alias_of": null,
         "parent": {
-            "id": 6,
+            "id": 109,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/6/",
+                "detail_url": "http://localhost/api/pages/109/",
                 "html_url": null
             },
             "title": "Respiratory viruses"
@@ -69,18 +69,86 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "covid_occupied_beds",
-                                                    "chart_type": "line_with_shaded_section",
+                                                    "metric": "weekly_hospital_admissions_rate_by_age",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "0_4",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "label": "0 to 4 years",
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "7f4c5f99-4e16-44cc-96c6-73db1f3589b9"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "weekly_hospital_admissions_rate_by_age",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "5_14",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "5 to 14 years",
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "7487614e-daf5-4efe-9d57-accf227bd46c"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "weekly_hospital_admissions_rate_by_age",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "15_44",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "15 to 44 years",
+                                                    "line_colour": "GREEN",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "639445db-948b-4590-930f-ce37a58c132c"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "weekly_hospital_admissions_rate_by_age",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "45_54",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "45 to 54 years",
+                                                    "line_colour": "GREEN",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "996aab0e-cdf6-4569-8d49-4379e0de920f"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "weekly_hospital_admissions_rate_by_age",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "55_64",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "55 to 64 years",
+                                                    "line_colour": "PURPLE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "7b8a91cb-4c22-43d9-969c-c9e660bb206b"
                                             }
                                         ]
                                     },
@@ -303,40 +371,40 @@
     "surveillance_and_reporting": "<p data-block-key=\"m4q2b\">Text here</p>",
     "related_links": [
         {
-            "id": 6,
+            "id": 71,
             "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
             "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"chb3o\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 7,
+            "id": 72,
             "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
             "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
             "body": "<p data-block-key=\"chb3o\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
         },
         {
-            "id": 8,
+            "id": 73,
             "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
             "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
             "body": "<p data-block-key=\"chb3o\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {
-            "id": 9,
+            "id": 74,
             "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "Hepatitis (liver inflammation) cases in children – latest updates",
             "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
             "body": "<p data-block-key=\"chb3o\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
         },
         {
-            "id": 10,
+            "id": 75,
             "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "Human parainfluenza viruses: guidance and data",
             "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-10T15:18:02.602108+01:00"
+    "last_published_at": "2023-05-12T13:37:56.578059+01:00"
 }
