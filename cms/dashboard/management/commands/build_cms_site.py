@@ -190,4 +190,5 @@ class Command(BaseCommand):
         )
         _build_topic_page(name="coronavirus", parent_page=respiratory_viruses_page)
         _build_topic_page(name="influenza", parent_page=respiratory_viruses_page)
+        _build_topic_page(name="other_respiratory_viruses", parent_page=respiratory_viruses_page)
         build_miscellaneous_pages(home_page=respiratory_viruses_page)

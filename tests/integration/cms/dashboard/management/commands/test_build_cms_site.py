@@ -177,3 +177,44 @@ class TestBuildCMSSite:
             assert related_link["title"] == related_links_from_template[index]["title"]
             assert related_link["url"] == related_links_from_template[index]["url"]
             assert related_link["body"] == related_links_from_template[index]["body"]
+
+    @pytest.mark.django_db
+    def test_command_builds_site_with_correct_other_respiratory_viruses_page(
+        self,
+        authenticated_api_client: APIClient,
+    ):
+        """
+        Given a CMS site which has been created via the `build_cms_site` management command
+        And the ID of the `other_respiratory_viruses` page
+        When a GET request is made to `/api/pages/{}` detail endpoint
+        Then the response contains the expected data
+        """
+        # Given
+        call_command("build_cms_site")
+        other_respiratory_viruses_page = TopicPage.objects.get(slug="other-respiratory-viruses")
+
+        # When
+        response = authenticated_api_client.get(path=f"/api/pages/{other_respiratory_viruses_page.id}/")
+
+        # Then
+        response_data = response.data
+
+        # Compare the response from the endpoint to the template used to build the page
+        other_respiratory_viruses_page = open_example_page_response("other_respiratory_viruses")
+        assert response_data["title"] == other_respiratory_viruses_page["title"]
+        assert (
+            response_data["page_description"]
+            == other_respiratory_viruses_page["page_description"]
+        )
+        assert response_data["body"] == other_respiratory_viruses_page["body"]
+
+        # Check that the related links have been populated correctly
+        related_links_from_response = response_data["related_links"]
+        assert len(related_links_from_response) == 5
+
+        related_links_from_template = other_respiratory_viruses_page["related_links"]
+
+        for index, related_link in enumerate(related_links_from_response):
+            assert related_link["title"] == related_links_from_template[index]["title"]
+            assert related_link["url"] == related_links_from_template[index]["url"]
+            assert related_link["body"] == related_links_from_template[index]["body"]
