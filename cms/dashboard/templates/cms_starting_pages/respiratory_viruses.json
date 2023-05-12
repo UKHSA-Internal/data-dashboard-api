@@ -8,7 +8,7 @@
         "show_in_menus": false,
         "seo_title": "",
         "search_description": "",
-        "first_published_at": "2023-04-26T11:39:38.064114Z",
+        "first_published_at": "2023-04-26T12:39:38.064114+01:00",
         "alias_of": null,
         "parent": {
             "id": 2,
@@ -96,7 +96,7 @@
                                 {
                                     "type": "dual_headline_component",
                                     "value": {
-                                        "title": "Testing",
+                                        "title": "Vaccines",
                                         "top_headline_number": {
                                             "topic": "COVID-19",
                                             "metric": "latest_total_vaccinations_autumn22",
@@ -147,7 +147,9 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": null
+                                                    "label": "",
+                                                    "line_colour": null,
+                                                    "line_type": null
                                                 },
                                                 "id": "b0ead98b-4102-48f6-b94e-ff7bcffe1dc4"
                                             }
@@ -166,7 +168,7 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_deaths_7days_change",
+                                                    "metric": "new_cases_7days_change",
                                                     "body": "",
                                                     "percentage_metric": "new_cases_7days_change_percentage"
                                                 },
@@ -193,7 +195,9 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": null
+                                                    "label": "",
+                                                    "line_colour": null,
+                                                    "line_type": null
                                                 },
                                                 "id": "d3b521d8-a6bb-4960-9db9-864c3d362976"
                                             }
@@ -301,7 +305,9 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": null
+                                                    "label": "",
+                                                    "line_colour": null,
+                                                    "line_type": null
                                                 },
                                                 "id": "c7340640-85c6-4b2e-b3b3-2695576f0355"
                                             }
@@ -347,7 +353,9 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": null
+                                                    "label": "",
+                                                    "line_colour": null,
+                                                    "line_type": null
                                                 },
                                                 "id": "f1a643ba-ff7e-4118-a0a8-366288468cb0"
                                             }
@@ -365,6 +373,42 @@
             "id": "4c03dd17-a62b-4102-a938-557c60d38d9a"
         }
     ],
-    "related_links": [],
-    "last_published_at": "2023-05-04T13:41:55.130831Z"
+    "related_links": [
+        {
+            "id": 1,
+            "meta": {"type": "home.HomePageRelatedLink"},
+            "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
+            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
+            "body": "<p data-block-key=\"cc1q7\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
+        },
+        {
+            "id": 2,
+            "meta": {"type": "home.HomePageRelatedLink"},
+            "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
+            "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
+            "body": "<p data-block-key=\"cc1q7\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
+        },
+        {
+            "id": 3,
+            "meta": {"type": "home.HomePageRelatedLink"},
+            "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
+            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
+            "body": "<p data-block-key=\"cc1q7\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
+        },
+        {
+            "id": 4,
+            "meta": {"type": "home.HomePageRelatedLink"},
+            "title": "Hepatitis (liver inflammation) cases in children – latest updates",
+            "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
+            "body": "<p data-block-key=\"cc1q7\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
+        },
+        {
+            "id": 5,
+            "meta": {"type": "home.HomePageRelatedLink"},
+            "title": "Human parainfluenza viruses: guidance and data",
+            "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
+            "body": "<p data-block-key=\"cc1q7\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
+        }
+    ],
+    "last_published_at": "2023-05-10T15:18:06.939535+01:00"
 }

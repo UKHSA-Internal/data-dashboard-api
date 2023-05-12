@@ -26,14 +26,131 @@ def charts_plot_serializer_payload_and_model_managers() -> (
         "topic": fake_topic.name,
         "metric": fake_metric.name,
         "chart_type": ChartTypes.line_with_shaded_section.value,
-        "date_from": datetime.date(2023, 1, 1),
-        "date_to": datetime.date(2023, 5, 1),
     }
 
     return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])
 
 
 class TestChartPlotSerializer:
+    optional_field_names = [
+        "stratum",
+        "geography",
+        "geography_type",
+        "label",
+        "line_colour",
+        "line_type",
+    ]
+
+    def test_validates_successfully_when_optional_parameters_are_none(
+        self, charts_plot_serializer_payload_and_model_managers
+    ):
+        """
+        Given a valid payload containing None for every optional field
+            passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `chart_type`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        optional_parameters_as_empty_strings = {
+            field_name: None for field_name in self.optional_field_names
+        }
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        valid_data_payload_with_optional_params = {
+            **valid_data_payload,
+            **optional_parameters_as_empty_strings,
+        }
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload_with_optional_params,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
+    def test_validates_successfully_when_optional_parameters_are_empty_strings(
+        self, charts_plot_serializer_payload_and_model_managers
+    ):
+        """
+        Given a valid payload containing empty strings for every optional field
+            passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `chart_type`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        optional_parameters_as_empty_strings = {
+            field_name: "" for field_name in self.optional_field_names
+        }
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        valid_data_payload_with_optional_params = {
+            **valid_data_payload,
+            **optional_parameters_as_empty_strings,
+        }
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload_with_optional_params,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
+    def test_validates_successfully_when_optional_parameters_not_provided(
+        self, charts_plot_serializer_payload_and_model_managers
+    ):
+        """
+        Given a valid payload containing no optional fields
+            passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `chart_type`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+
+        for optional_param in self.optional_field_names:
+            assert optional_param not in valid_data_payload
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
     def test_valid_payload_with_optional_label_field_provided(
         self,
         charts_plot_serializer_payload_and_model_managers,
@@ -41,7 +158,7 @@ class TestChartPlotSerializer:
         """
         Given a valid payload containing the optional `label` field
             passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """
@@ -78,7 +195,7 @@ class TestChartPlotSerializer:
         """
         Given a valid payload containing the optional `line_colour` field
             passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """
@@ -117,7 +234,7 @@ class TestChartPlotSerializer:
         """
         Given a valid payload containing the optional `line_type` field
             passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """
@@ -153,7 +270,7 @@ class TestChartPlotSerializer:
     ):
         """
         Given a valid chart type passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `date_from`
+        And valid values for the `topic` `metric` and `chart_type`
         When `is_valid()` is called from the serializer
         Then True is returned
         """

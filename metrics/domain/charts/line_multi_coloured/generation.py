@@ -16,7 +16,7 @@ X_AXIS_ARGS = {
     "dtick": "M1",
     "tickformat": "%b %Y",
     "tickfont": {
-        "family": '"GDS Transport", Arial, sans-serif',
+        "family": "Arial",
         "color": colour_scheme.RGBAColours.BLACK.stringified,
     },
 }
@@ -40,7 +40,7 @@ LAYOUT_ARGS = {
     "autosize": False,
     "xaxis": X_AXIS_ARGS,
     "yaxis": Y_AXIS_ARGS,
-    "legend": {"orientation": "h", "x": 0, "y": 1},
+    "legend": {"orientation": "v", "x": 0},
 }
 
 

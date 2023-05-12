@@ -121,7 +121,7 @@ WSGI_APPLICATION = "metrics.api.wsgi.application"
 # Puts the db at the root level of the repo instead of within the `metrics` app
 ROOT_LEVEL_BASE_DIR = BASE_DIR.parent
 
-if config.APIENV == "DEV":
+if config.APIENV == "LOCAL":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -197,7 +197,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/London"
 
 USE_I18N = True
 
