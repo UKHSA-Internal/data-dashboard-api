@@ -96,7 +96,9 @@ class TestBuildCMSSite:
             assert related_link["body"] == related_links_from_template[index]["body"]
 
     @pytest.mark.django_db
-    @pytest.mark.parametrize("slug", ["coronavirus", "influenza", "other-respiratory-viruses"])
+    @pytest.mark.parametrize(
+        "slug", ["coronavirus", "influenza", "other-respiratory-viruses"]
+    )
     def test_command_builds_site_with_correct_topic_pages(
         self,
         authenticated_api_client: APIClient,
@@ -113,9 +115,7 @@ class TestBuildCMSSite:
         topic_page = TopicPage.objects.get(slug=slug)
 
         # When
-        response = authenticated_api_client.get(
-            path=f"/api/pages/{topic_page.id}/"
-        )
+        response = authenticated_api_client.get(path=f"/api/pages/{topic_page.id}/")
 
         # Then
         response_data = response.data
@@ -134,9 +134,7 @@ class TestBuildCMSSite:
         related_links_from_response = response_data["related_links"]
         assert len(related_links_from_response) == 5
 
-        related_links_from_template = topic_page_response_template[
-            "related_links"
-        ]
+        related_links_from_template = topic_page_response_template["related_links"]
 
         for index, related_link in enumerate(related_links_from_response):
             assert related_link["title"] == related_links_from_template[index]["title"]
