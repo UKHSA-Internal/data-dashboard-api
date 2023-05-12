@@ -369,15 +369,15 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "vaccinations_percentage_uptake_autumn22",
-                                                    "chart_type": "line_with_shaded_section",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "75_79",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "label": "75 to 79",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "08f53934-870e-46d4-9d11-51e31b414c11"
                                             }
