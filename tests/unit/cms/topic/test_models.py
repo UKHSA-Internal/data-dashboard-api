@@ -96,7 +96,7 @@ class TestTemplateOtherRespiratoryVirusesPage:
 
     @staticmethod
     def _retrieve_nested_chart_block(body):
-        testing_section = body[0]
+        testing_section = body[1]
         chart_row_card = testing_section.value["content"][0]
         chart_row_card_value = chart_row_card.value
 
