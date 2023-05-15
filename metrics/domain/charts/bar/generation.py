@@ -126,7 +126,10 @@ def _create_bar_plot(
     return plotly.graph_objects.Bar(
         x=dates,
         y=values,
-        marker_color=bar_colour,
+        marker={
+            "color": bar_colour,
+            "line": {"color": bar_colour, "width": 1},
+        },
         name=legend,
         showlegend=showlegend,
     )

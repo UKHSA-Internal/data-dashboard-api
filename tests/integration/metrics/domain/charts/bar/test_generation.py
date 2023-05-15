@@ -86,6 +86,8 @@ class TestBarCharts:
 
         # Bars should be Blue
         assert main_bar_plot.marker.color == RGBAColours.PLOT_1_BLUE.stringified
+        assert main_bar_plot.marker.line.color == RGBAColours.PLOT_1_BLUE.stringified
+        assert main_bar_plot.marker.line.width == 1
 
         # Legend is assigned
         assert main_bar_plot.name == legend
