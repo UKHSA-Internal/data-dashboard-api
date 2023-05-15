@@ -8,7 +8,7 @@
         "show_in_menus": false,
         "seo_title": "",
         "search_description": "",
-        "first_published_at": "2023-05-12T16:58:42.269125+01:00",
+        "first_published_at": "2023-05-15T17:23:02.306556+01:00",
         "alias_of": null,
         "parent": {
             "id": 6,
@@ -77,16 +77,16 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_cases_by_age",
-                                                    "chart_type": "line_with_shaded_section",
+                                                    "metric": "new_cases_rolling_rate",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "label": "Rate of cases per 100,000 population in 7-day period",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "691a30aa-2446-4462-8ac1-ebada957baf9"
                                             },
@@ -246,6 +246,41 @@
                             ]
                         },
                         "id": "28b9df28-8af2-4083-a2ba-5e71de574baf"
+                    },
+                    {
+                        "type": "chart_row_card",
+                        "value": {
+                            "columns": [
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "Patients in mechanical ventilation beds",
+                                        "body": "Daily count of COVID-19 patients in mechanical ventilation beds, and 7-day rolling average. Data are not updated every day.",
+                                        "chart": [
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "covid_occupied_MV_beds",
+                                                    "chart_type": "bar",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "",
+                                                    "line_colour": "",
+                                                    "line_type": ""
+                                                },
+                                                "id": "63319237-a839-4fb3-a1fd-a1d22b73a808"
+                                            }
+                                        ]
+                                    },
+                                    "id": "f826e4de-5954-43fa-928f-931dfce650ea"
+                                }
+                            ]
+                        },
+                        "id": "4424a010-0823-4ae1-a67d-a21ea4f1dd00"
                     }
                 ]
             },
@@ -298,7 +333,7 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "positivity_PCR_rolling_sum",
-                                                    "chart_type": "line_with_shaded_section",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
@@ -685,5 +720,5 @@
             "body": "<p data-block-key=\"fah3z\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-15T17:12:24.375748+01:00"
+    "last_published_at": "2023-05-15T17:34:15.297710+01:00"
 }
