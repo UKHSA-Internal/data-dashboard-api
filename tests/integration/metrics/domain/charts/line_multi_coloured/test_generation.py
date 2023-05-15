@@ -70,6 +70,14 @@ class TestLineMultiColouredCharts:
         # Check that the main layout is showing the legend
         assert main_layout.showlegend
 
+        # ---Legend checks---
+        # Check that the legend is placed in the centre and above the figure
+        assert main_layout.legend.orientation == "h"
+        assert main_layout.legend.xanchor == "center"
+        assert main_layout.legend.yanchor == "bottom"
+        assert main_layout.legend.y == 1.0
+        assert main_layout.legend.x == 0.5
+
         # Check the chart sizes are as per the specified parameters
         assert main_layout.height == HEIGHT
         assert main_layout.width == WIDTH
@@ -85,7 +93,6 @@ class TestLineMultiColouredCharts:
         # ---Y Axis checks---
         y_axis = main_layout.yaxis
         assert not y_axis.showgrid
-        # figure.show()
 
     def test_two_plots_with_provided_labels_and_colours(self):
         """
