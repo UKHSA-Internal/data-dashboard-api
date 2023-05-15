@@ -8,7 +8,7 @@
         "show_in_menus": false,
         "seo_title": "",
         "search_description": "",
-        "first_published_at": "2023-05-04T15:46:21.555672+01:00",
+        "first_published_at": "2023-05-12T16:58:42.269125+01:00",
         "alias_of": null,
         "parent": {
             "id": 6,
@@ -50,8 +50,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "7d8ee647-1e12-4ea5-8051-dacda36d7dc0"
                                             }
@@ -85,8 +85,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "691a30aa-2446-4462-8ac1-ebada957baf9"
                                             },
@@ -102,8 +102,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "978f0155-b57e-48ba-96da-d79aa3c72a9d"
                                             }
@@ -207,8 +207,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "d6517ed4-2b64-4aac-ad83-831e086b4cab"
                                             }
@@ -234,8 +234,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "94b90d9c-de53-4848-8c1b-a0d9850c4c55"
                                             }
@@ -278,8 +278,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "49ad7b15-651c-455f-b261-3fd2b53b4ad0"
                                             }
@@ -305,8 +305,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "e5830390-1928-4097-9894-b8c5621cfab7"
                                             }
@@ -349,8 +349,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "c41bb963-ab1a-4a93-a2f0-fa421b3609a7"
                                             }
@@ -372,14 +372,150 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "75_79",
+                                                    "stratum": "50_54",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "75 to 79",
-                                                    "line_colour": "BLUE",
+                                                    "label": "50 to 54 years",
+                                                    "line_colour": "GREEN",
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "08f53934-870e-46d4-9d11-51e31b414c11"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "55_59",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "55 to 59 years",
+                                                    "line_colour": "GREEN",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "af3d5181-84eb-4fd0-9cc9-f40e01c4b8df"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "60_64",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "60 to 64 years",
+                                                    "line_colour": "PURPLE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "f36a94b4-948e-4e25-8ee2-129b789d2724"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "65_69",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "65 to 69 years",
+                                                    "line_colour": "PURPLE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "5674822f-6dec-4388-aa6c-2e5366c560ee"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "70_74",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "70 to 74 years",
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "6d033690-25e8-4bdd-bac2-6fe1b714f016"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "75_79",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "75 to 79 years",
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "da3c0cb9-bd67-426c-a4da-ea6bf692d072"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "80_84",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "80 to 84 years",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "8455d4bf-b105-4062-8751-a9d8ce8290c4"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "85_89",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "85 to 89 years",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "3e0dbfc9-d580-451c-af02-e25cdd827bf2"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "vaccinations_percentage_uptake_autumn22",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "90+",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "90 years and over",
+                                                    "line_colour": "RED",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "760e6dd2-2434-47e4-a31b-be0810b655fa"
                                             }
                                         ]
                                     },
@@ -411,8 +547,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "b83e67d5-0234-40e4-8c3e-cb7a1efb8549"
                                             }
@@ -438,7 +574,7 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "75 to 79 years",
-                                                    "line_colour": "BLUE",
+                                                    "line_colour": "GREEN",
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "b7293a99-3068-416f-85a4-696e0cf9c402"
@@ -455,7 +591,7 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "80 to 84 years",
-                                                    "line_colour": "GREEN",
+                                                    "line_colour": "BLUE",
                                                     "line_type": "DASH"
                                                 },
                                                 "id": "6702853c-f150-4096-9ddd-7d6fb4ccfdde"
@@ -549,5 +685,5 @@
             "body": "<p data-block-key=\"fah3z\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-10T15:16:55.724552+01:00"
+    "last_published_at": "2023-05-15T17:12:24.375748+01:00"
 }
