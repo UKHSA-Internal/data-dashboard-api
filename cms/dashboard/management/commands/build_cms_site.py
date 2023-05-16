@@ -24,35 +24,6 @@ logger = logging.getLogger(__name__)
 FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"
 
 
-def load_html_files() -> Dict[str, str]:
-    """
-    Import all the html files required for the CMS site
-
-    Args:
-        None
-
-    Returns:
-        A dictionary of the imported pages. {Page Title : Page Body}
-
-    Raises:
-        If a page does not have a title tag then log this fact and move onto the next one
-    """
-    pages_to_add = glob.glob(FILE_PATH + "*.html")
-
-    result = dict()
-    for page in pages_to_add:
-        with open(page, "r", encoding="utf-8") as f:
-            html_page = f.read()
-            parsed_html = BeautifulSoup(html_page, "html5lib")
-            if parsed_html.title:
-                result[parsed_html.title.text] = parsed_html.body
-            else:
-                logger.warning(
-                    f"CMS Page {page} has no title tag. Page loading skipped"
-                )
-    return result
-
-
 def make_slug(page_title: str) -> str:
     """
     Make a CMS Slug from the page title
@@ -157,22 +128,6 @@ def _build_common_page(name: str, parent_page: Page) -> TopicPage:
     return page
 
 
-def build_miscellaneous_pages(home_page: HomePage) -> None:
-    # now add all the other pages
-    pages_to_load = load_html_files()
-
-    for page_title, page_body in pages_to_load.items():
-        slug = make_slug(page_title=page_title)
-
-        page = CommonPage(
-            title=page_title,
-            slug=slug,
-            date_posted=datetime.now(),
-            body=page_body,
-        )
-        _add_page_to_parent(page=page, parent_page=home_page)
-
-
 class Command(BaseCommand):
     def handle(self, *args, **options):
         """
@@ -215,4 +170,3 @@ class Command(BaseCommand):
             name="how_to_use_this_data", parent_page=respiratory_viruses_page
         )
         _build_common_page(name="whats_new", parent_page=respiratory_viruses_page)
-        build_miscellaneous_pages(home_page=respiratory_viruses_page)
