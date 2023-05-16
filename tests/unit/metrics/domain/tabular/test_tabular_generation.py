@@ -29,6 +29,21 @@ class TestCombinePlots:
         )
         return ChartPlotData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
 
+    dates = [
+        datetime.date(2022, 9, 5),
+        datetime.date(2022, 9, 19),
+    ]
+
+    plot_line_type = "DASH"
+    plot_label = "0 to 4 years old"
+    values_plot = [10, 22]
+    plot_colour = "RED"
+
+    second_plot_line_type = "SOLID"
+    second_plot_label = "15 to 44 years old"
+    second_values_plot = [20, 45]
+    second_plot_colour = "BLUE"
+
     def test_single_plot(self):
         """
         Given 1 `ChartPlotData` model representing a line plot
@@ -36,21 +51,12 @@ class TestCombinePlots:
         Then the correct response is generated
         """
         # Given
-        dates = [
-            datetime.date(2022, 9, 5),
-            datetime.date(2022, 9, 19),
-        ]
-
-        plot_line_type = "DASH"
-        plot_label = "0 to 4 years old"
-        values_plot = [10, 22]
-        plot_colour = "RED"
         chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates,
-            y_axis=values_plot,
-            label=plot_label,
-            line_type=plot_line_type,
-            line_colour=plot_colour,
+            x_axis=self.dates,
+            y_axis=self.values_plot,
+            label=self.plot_label,
+            line_type=self.plot_line_type,
+            line_colour=self.plot_colour,
         )
 
         expected_combined_plots = {
@@ -66,7 +72,7 @@ class TestCombinePlots:
         # Then
         # Check plot labels are as expected
         assert len(plot_labels) == 1
-        assert plot_labels == [plot_label]
+        assert plot_labels == [self.plot_label]
 
         # Check combined plot output is as expected
         assert combined_plots == expected_combined_plots
@@ -78,33 +84,20 @@ class TestCombinePlots:
         Then the correct response is generated
         """
         # Given
-        dates = [
-            datetime.date(2022, 9, 5),
-            datetime.date(2022, 9, 19),
-        ]
-
-        first_plot_line_type = "DASH"
-        first_plot_label = "0 to 4 years old"
-        values_plot1 = [10, 22]
-        first_plot_colour = "RED"
         first_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates,
-            y_axis=values_plot1,
-            label=first_plot_label,
-            line_type=first_plot_line_type,
-            line_colour=first_plot_colour,
+            x_axis=self.dates,
+            y_axis=self.values_plot,
+            label=self.plot_label,
+            line_type=self.plot_line_type,
+            line_colour=self.plot_colour,
         )
 
-        second_plot_line_type = "SOLID"
-        second_plot_label = "15 to 44 years old"
-        values_plot2 = [20, 45]
-        second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates,
-            y_axis=values_plot2,
-            label=second_plot_label,
-            line_type=second_plot_line_type,
-            line_colour=second_plot_colour,
+            x_axis=self.dates,
+            y_axis=self.second_values_plot,
+            label=self.second_plot_label,
+            line_type=self.second_plot_line_type,
+            line_colour=self.second_plot_colour,
         )
 
         expected_combined_plots = {
@@ -120,8 +113,8 @@ class TestCombinePlots:
         # Then
         # Check plot labels are as expected
         assert len(plot_labels) == 2
-        assert plot_labels[0] == first_plot_label
-        assert plot_labels[1] == second_plot_label
+        assert plot_labels[0] == self.plot_label
+        assert plot_labels[1] == self.second_plot_label
 
         # Check combined plot output is as expected
         assert combined_plots == expected_combined_plots
@@ -133,29 +126,18 @@ class TestCombinePlots:
         Then labels are automatically assigned
         """
         # Given
-        dates = [
-            datetime.date(2022, 9, 5),
-            datetime.date(2022, 9, 19),
-        ]
-
-        first_plot_line_type = "DASH"
-        values_plot1 = [10, 22]
-        first_plot_colour = "RED"
         first_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates,
-            y_axis=values_plot1,
-            line_type=first_plot_line_type,
-            line_colour=first_plot_colour,
+            x_axis=self.dates,
+            y_axis=self.values_plot,
+            line_type=self.plot_line_type,
+            line_colour=self.plot_colour,
         )
 
-        second_plot_line_type = "SOLID"
-        values_plot2 = [20, 45]
-        second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates,
-            y_axis=values_plot2,
-            line_type=second_plot_line_type,
-            line_colour=second_plot_colour,
+            x_axis=self.dates,
+            y_axis=self.second_values_plot,
+            line_type=self.second_plot_line_type,
+            line_colour=self.second_plot_colour,
         )
 
         expected_combined_plots = {
@@ -189,29 +171,22 @@ class TestCombinePlots:
             datetime.date(2022, 9, 19),
             datetime.date(2022, 9, 25),
         ]
-
-        first_plot_line_type = "DASH"
-        first_plot_label = "0 to 4 years old"
         values_plot1 = [10, 22, 26]
-        first_plot_colour = "RED"
+
         first_chart_plots_data = self._setup_chart_plot_data(
             x_axis=dates,
             y_axis=values_plot1,
-            label=first_plot_label,
-            line_type=first_plot_line_type,
-            line_colour=first_plot_colour,
+            label=self.plot_label,
+            line_type=self.plot_line_type,
+            line_colour=self.plot_colour,
         )
 
-        second_plot_line_type = "SOLID"
-        second_plot_label = "15 to 44 years old"
-        values_plot2 = [20, 45]
-        second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
             x_axis=dates,
-            y_axis=values_plot2,
-            label=second_plot_label,
-            line_type=second_plot_line_type,
-            line_colour=second_plot_colour,
+            y_axis=self.second_values_plot,
+            label=self.second_plot_label,
+            line_type=self.second_plot_line_type,
+            line_colour=self.second_plot_colour,
         )
 
         expected_combined_plots = {
@@ -228,8 +203,8 @@ class TestCombinePlots:
         # Then
         # Check plot labels are as expected
         assert len(plot_labels) == 2
-        assert plot_labels[0] == first_plot_label
-        assert plot_labels[1] == second_plot_label
+        assert plot_labels[0] == self.plot_label
+        assert plot_labels[1] == self.second_plot_label
 
         # Check combined plot output is as expected
         assert combined_plots == expected_combined_plots

@@ -28,6 +28,9 @@ class TestTabularView:
     def path(self) -> str:
         return "/tabular/v2/"
 
+    metric_name = "vaccinations_percentage_uptake_spring22"
+    topic_name = "COVID-19"
+
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
         self, authenticated_api_client: APIClient
@@ -40,17 +43,15 @@ class TestTabularView:
         """
         # Given
         path_without_trailing_forward_slash: str = "/tabular/v2"
-        metric_name = "vaccinations_percentage_uptake_spring22"
-        topic_name = "COVID-19"
         self._setup_core_time_series(
-            metric_name=metric_name, metric_value=13, topic_name=topic_name
+            metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
         valid_payload = {
             "file_format": "svg",
             "plots": [
                 {
-                    "topic": topic_name,
-                    "metric": metric_name,
+                    "topic": self.topic_name,
+                    "metric": self.metric_name,
                     "chart_type": "waffle",
                 }
             ],
@@ -74,17 +75,15 @@ class TestTabularView:
         Then the response is not an HTTP 401 UNAUTHORIZED
         """
         # Given
-        metric_name = "vaccinations_percentage_uptake_spring22"
-        topic_name = "COVID-19"
         self._setup_core_time_series(
-            metric_name=metric_name, metric_value=13, topic_name=topic_name
+            metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
         valid_payload = {
             "file_format": "svg",
             "plots": [
                 {
-                    "topic": topic_name,
-                    "metric": metric_name,
+                    "topic": self.topic_name,
+                    "metric": self.metric_name,
                     "chart_type": "waffle",
                 }
             ],
@@ -129,17 +128,15 @@ class TestTabularView:
         Then the response is of the correct format
         """
         # Given
-        metric_name = "vaccinations_percentage_uptake_spring22"
-        topic_name = "COVID-19"
         self._setup_core_time_series(
-            metric_name=metric_name, metric_value=13, topic_name=topic_name
+            metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
         valid_payload = {
             "file_format": "svg",
             "plots": [
                 {
-                    "topic": topic_name,
-                    "metric": metric_name,
+                    "topic": self.topic_name,
+                    "metric": self.metric_name,
                     "chart_type": "waffle",
                 }
             ],
@@ -166,26 +163,24 @@ class TestTabularView:
         Then the response is of the correct format
         """
         # Given
-        metric_name = "vaccinations_percentage_uptake_spring22"
-        topic_name = "COVID-19"
         self._setup_core_time_series(
-            metric_name=metric_name, metric_value=123, topic_name=topic_name
+            metric_name=self.metric_name, metric_value=123, topic_name=self.topic_name
         )
         # Add another
         self._setup_core_time_series(
-            metric_name=metric_name, metric_value=123, topic_name=topic_name
+            metric_name=self.metric_name, metric_value=123, topic_name=self.topic_name
         )
         valid_payload = {
             "file_format": "svg",
             "plots": [
                 {
-                    "topic": topic_name,
-                    "metric": metric_name,
+                    "topic": self.topic_name,
+                    "metric": self.metric_name,
                     "chart_type": "waffle",
                 },
                 {
-                    "topic": topic_name,
-                    "metric": metric_name,
+                    "topic": self.topic_name,
+                    "metric": self.metric_name,
                     "chart_type": "waffle",
                     "label": "plot_label",
                 },
