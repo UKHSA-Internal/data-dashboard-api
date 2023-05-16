@@ -10,7 +10,7 @@ from metrics.data.models.core_models import CoreTimeSeries, Metric, Topic
 
 class TestTabularView:
     @staticmethod
-    def _setup_core_time_series(
+    def _setup_time_series(
         topic_name: str, metric_name: str, metric_value: float
     ) -> CoreTimeSeries:
         topic = Topic.objects.create(name=topic_name)
@@ -43,7 +43,7 @@ class TestTabularView:
         """
         # Given
         path_without_trailing_forward_slash: str = "/tabular/v2"
-        self._setup_core_time_series(
+        self._setup_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
         valid_payload = {
@@ -75,7 +75,7 @@ class TestTabularView:
         Then the response is not an HTTP 401 UNAUTHORIZED
         """
         # Given
-        self._setup_core_time_series(
+        self._setup_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
         valid_payload = {
@@ -128,7 +128,7 @@ class TestTabularView:
         Then the response is of the correct format
         """
         # Given
-        self._setup_core_time_series(
+        self._setup_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
         valid_payload = {
@@ -163,11 +163,11 @@ class TestTabularView:
         Then the response is of the correct format
         """
         # Given
-        self._setup_core_time_series(
+        self._setup_time_series(
             metric_name=self.metric_name, metric_value=123, topic_name=self.topic_name
         )
         # Add another
-        self._setup_core_time_series(
+        self._setup_time_series(
             metric_name=self.metric_name, metric_value=123, topic_name=self.topic_name
         )
         valid_payload = {

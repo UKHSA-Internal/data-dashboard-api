@@ -9,7 +9,7 @@ DATES_FROM_SEP_TO_OCT: List[datetime.datetime] = [
     datetime.date(2022, 9, 19),
     datetime.date(2022, 10, 3),
 ]
-EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
+EXAMPLE_VALUES: List[int] = [10, 22, 8]
 
 
 class TestTabularInterface:
@@ -88,7 +88,7 @@ class TestTabularInterface:
         dates = DATES_FROM_SEP_TO_OCT
         second_plot_line_type = "SOLID"
         second_plot_label = "15 to 44 years old"
-        values_plot2 = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
+        values_plot2 = [20, 45, 62]
         second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
             x_axis=dates,
