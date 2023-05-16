@@ -15,7 +15,7 @@ from metrics.interfaces.charts.validation import ChartTypeDoesNotSupportMetricEr
 from metrics.interfaces.tabular import access
 
 
-class TabularView_v1(APIView):
+class OldTabularView(APIView):
     permission_classes = [HasAPIKey]
 
     @extend_schema(deprecated=True)

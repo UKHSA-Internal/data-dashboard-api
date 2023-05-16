@@ -8,6 +8,10 @@ from metrics.domain.tabular.generation import (
     generate_single_plot_output,
 )
 
+ZERO_TO_FOUR_STRATUM = "0 to 4 years old"
+FIFTEEN_TO_FORTYFOUR = "15 to 44 years old"
+TEST_PLOT = "Test Plot"
+
 
 class TestCombinePlots:
     @staticmethod
@@ -35,12 +39,12 @@ class TestCombinePlots:
     ]
 
     plot_line_type = "DASH"
-    plot_label = "0 to 4 years old"
+    plot_label = ZERO_TO_FOUR_STRATUM
     values_plot = [10, 22]
     plot_colour = "RED"
 
     second_plot_line_type = "SOLID"
-    second_plot_label = "15 to 44 years old"
+    second_plot_label = FIFTEEN_TO_FORTYFOUR
     second_values_plot = [20, 45]
     second_plot_colour = "BLUE"
 
@@ -60,8 +64,8 @@ class TestCombinePlots:
         )
 
         expected_combined_plots = {
-            "2022-09-05": {"0 to 4 years old": "10"},
-            "2022-09-19": {"0 to 4 years old": "22"},
+            "2022-09-05": {ZERO_TO_FOUR_STRATUM: "10"},
+            "2022-09-19": {ZERO_TO_FOUR_STRATUM: "22"},
         }
 
         # When
@@ -101,8 +105,8 @@ class TestCombinePlots:
         )
 
         expected_combined_plots = {
-            "2022-09-05": {"0 to 4 years old": "10", "15 to 44 years old": "20"},
-            "2022-09-19": {"0 to 4 years old": "22", "15 to 44 years old": "45"},
+            "2022-09-05": {ZERO_TO_FOUR_STRATUM: "10", FIFTEEN_TO_FORTYFOUR: "20"},
+            "2022-09-19": {ZERO_TO_FOUR_STRATUM: "22", FIFTEEN_TO_FORTYFOUR: "45"},
         }
 
         # When
@@ -190,9 +194,9 @@ class TestCombinePlots:
         )
 
         expected_combined_plots = {
-            "2022-09-05": {"0 to 4 years old": "10", "15 to 44 years old": "20"},
-            "2022-09-19": {"0 to 4 years old": "22", "15 to 44 years old": "45"},
-            "2022-09-25": {"0 to 4 years old": "26"},
+            "2022-09-05": {ZERO_TO_FOUR_STRATUM: "10", FIFTEEN_TO_FORTYFOUR: "20"},
+            "2022-09-19": {ZERO_TO_FOUR_STRATUM: "22", FIFTEEN_TO_FORTYFOUR: "45"},
+            "2022-09-25": {ZERO_TO_FOUR_STRATUM: "26"},
         }
 
         # When
@@ -275,13 +279,13 @@ class TestGenerateSinglePlotOutput:
         """
         # Given
         plot_data = {
-            "2022-09-05": {"Test Plot": "10"},
-            "2022-09-19": {"Test Plot": "22"},
+            "2022-09-05": {TEST_PLOT: "10"},
+            "2022-09-19": {TEST_PLOT: "22"},
         }
 
         expected_output = [
-            {"date": "2022-09-05", "Test Plot": "10"},
-            {"date": "2022-09-19", "Test Plot": "22"},
+            {"date": "2022-09-05", TEST_PLOT: "10"},
+            {"date": "2022-09-19", TEST_PLOT: "22"},
         ]
 
         # When
