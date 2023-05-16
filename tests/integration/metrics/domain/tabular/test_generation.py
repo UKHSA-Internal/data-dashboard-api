@@ -4,18 +4,10 @@ from typing import List
 from metrics.domain.models import ChartPlotData, ChartPlotParameters
 from metrics.domain.tabular.generation import create_plots_in_tabular_format
 
-DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
+DATES_FROM_SEP_TO_OCT: List[datetime.datetime] = [
     datetime.date(2022, 9, 5),
     datetime.date(2022, 9, 19),
     datetime.date(2022, 10, 3),
-    datetime.date(2022, 10, 7),
-    datetime.date(2022, 10, 10),
-    datetime.date(2022, 10, 21),
-    datetime.date(2022, 11, 3),
-    datetime.date(2022, 11, 14),
-    datetime.date(2022, 12, 12),
-    datetime.date(2022, 12, 26),
-    datetime.date(2023, 1, 9),
 ]
 EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
 
@@ -47,11 +39,11 @@ class TestTabularInterface:
         Then the correct response is generated
         """
         # Given
-        dates = DATES_FROM_SEP_TO_JAN
+        dates = DATES_FROM_SEP_TO_OCT
         values = EXAMPLE_VALUES
         chart_plots_data = self._setup_chart_plot_data(x_axis=dates, y_axis=values)
         expected_x_axis_values = [
-            dt.strftime("%Y-%m-%d") for dt in DATES_FROM_SEP_TO_JAN
+            dt.strftime("%Y-%m-%d") for dt in DATES_FROM_SEP_TO_OCT
         ]
         expected_y_axis_values = [str(val) for val in EXAMPLE_VALUES]
 
@@ -62,7 +54,7 @@ class TestTabularInterface:
 
         # Then
         # Check basic length of output
-        assert len(DATES_FROM_SEP_TO_JAN) == len(actual_output)
+        assert len(DATES_FROM_SEP_TO_OCT) == len(actual_output)
         assert len(EXAMPLE_VALUES) == len(actual_output)
 
         # Check the x axis values match
@@ -80,7 +72,7 @@ class TestTabularInterface:
         Then the correct response is generated
         """
         # Given
-        dates = DATES_FROM_SEP_TO_JAN
+        dates = DATES_FROM_SEP_TO_OCT
         values_plot1 = EXAMPLE_VALUES
         first_plot_line_type = "DASH"
         first_plot_label = "0 to 4 years old"
@@ -93,7 +85,7 @@ class TestTabularInterface:
             line_colour=first_plot_colour,
         )
 
-        dates = DATES_FROM_SEP_TO_JAN
+        dates = DATES_FROM_SEP_TO_OCT
         second_plot_line_type = "SOLID"
         second_plot_label = "15 to 44 years old"
         values_plot2 = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
@@ -106,7 +98,7 @@ class TestTabularInterface:
             line_colour=second_plot_colour,
         )
         expected_x_axis_values = [
-            dt.strftime("%Y-%m-%d") for dt in DATES_FROM_SEP_TO_JAN
+            dt.strftime("%Y-%m-%d") for dt in DATES_FROM_SEP_TO_OCT
         ]
 
         # When
@@ -116,7 +108,7 @@ class TestTabularInterface:
 
         # Then
         # Check basic length of output
-        assert len(DATES_FROM_SEP_TO_JAN) == len(actual_output)
+        assert len(DATES_FROM_SEP_TO_OCT) == len(actual_output)
 
         # Check the number of plots is as expected.
         # Examine just the fist and last elements
