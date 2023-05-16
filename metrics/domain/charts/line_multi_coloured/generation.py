@@ -35,7 +35,6 @@ LAYOUT_ARGS = {
         "b": 0,
         "t": 0,
     },
-    "showlegend": True,
     "autosize": False,
     "xaxis": X_AXIS_ARGS,
     "yaxis": Y_AXIS_ARGS,
@@ -95,16 +94,19 @@ def create_multi_coloured_line_chart(
         # Add line plot to the figure
         figure.add_trace(trace=line_plot)
 
+    # Apply the typical stylings for timeseries charts
+    figure.update_layout(**LAYOUT_ARGS)
+
     # Set the height and width of the chart itself
     figure.update_layout(
         {
             "height": chart_height,
             "width": chart_width,
+            "showlegend": properties.is_legend_required(
+                chart_plots_data=chart_plots_data
+            ),
         }
     )
-
-    # Apply the typical stylings for timeseries charts
-    figure.update_layout(**LAYOUT_ARGS)
 
     return figure
 
