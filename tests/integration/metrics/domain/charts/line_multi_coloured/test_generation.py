@@ -53,7 +53,9 @@ class TestLineMultiColouredCharts:
         # Given
         dates = DATES_FROM_SEP_TO_JAN
         values = EXAMPLE_VALUES
-        chart_plots_data = self._setup_chart_plot_data(x_axis=dates, y_axis=values)
+        chart_plots_data = self._setup_chart_plot_data(
+            x_axis=dates, y_axis=values, label="some_label"
+        )
 
         # When
         figure = generation.generate_chart_figure(
