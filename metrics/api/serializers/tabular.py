@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from metrics.api.serializers.charts import ChartPlotsListSerializer
+
 from metrics.api.serializers import help_texts
+from metrics.api.serializers.charts import ChartPlotsListSerializer
 
 
 class TabularSerializer(serializers.Serializer):
