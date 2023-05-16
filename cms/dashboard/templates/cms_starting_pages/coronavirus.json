@@ -89,23 +89,6 @@
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "691a30aa-2446-4462-8ac1-ebada957baf9"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "cases_rate_age_sex",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
-                                                },
-                                                "id": "978f0155-b57e-48ba-96da-d79aa3c72a9d"
                                             }
                                         ]
                                     },
