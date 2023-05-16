@@ -323,8 +323,8 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "e5830390-1928-4097-9894-b8c5621cfab7"
                                             }
