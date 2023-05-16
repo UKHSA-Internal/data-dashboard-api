@@ -191,7 +191,7 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
-        whats_new_page = CommonPage.objects.get(slug="what-s-new")
+        whats_new_page = CommonPage.objects.get(slug="whats-new")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{whats_new_page.id}/")

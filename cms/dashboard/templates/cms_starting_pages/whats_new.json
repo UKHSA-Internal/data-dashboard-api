@@ -4,7 +4,7 @@
         "type": "common.CommonPage",
         "detail_url": "http://localhost/api/pages/134/",
         "html_url": null,
-        "slug": "what-s-new",
+        "slug": "whats-new",
         "show_in_menus": false,
         "seo_title": "",
         "search_description": "",
