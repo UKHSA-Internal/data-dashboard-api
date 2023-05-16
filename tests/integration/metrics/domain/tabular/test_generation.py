@@ -73,7 +73,7 @@ class TestTabularInterface:
         actual_y_axis_values = [col["Plot1"] for col in actual_output]
         assert expected_y_axis_values == actual_y_axis_values
 
-    def test_two_plots_with_provided_labels_and_colours(self):
+    def test_two_plots_with_provided_labels(self):
         """
         Given 2 `ChartPlotData` models representing 2 different line plots
         When `generate_plots_for_table()` is called from the `tabular` module
