@@ -20,6 +20,7 @@ from metrics.api.views import (
     TabularView,
     TrendsView,
 )
+
 router = routers.DefaultRouter()
 
 # Create the router. "wagtailapi" is the URL namespace
