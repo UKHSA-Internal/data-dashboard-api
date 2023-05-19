@@ -9,19 +9,20 @@ from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import ChartPlotParameters, ChartPlots
-from metrics.domain.utils import ChartTypes, GraphAxisFields
+from metrics.domain.utils import ChartTypes
+from metrics.interfaces.charts.access import ChartAxisFields
 
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 435
 
 
 def get_axis_field_name(field: str) -> str:
-    return str(getattr(GraphAxisFields, field, field))
+    return str(getattr(ChartAxisFields, field, field))
 
 
-DEFAULT_X_AXIS = GraphAxisFields.date.value
-DEFAULT_Y_AXIS = GraphAxisFields.metric.value
-GRAPH_AXIS_CHOICES: List[str] = [field.name for field in GraphAxisFields]
+DEFAULT_X_AXIS = ChartAxisFields.date.value
+DEFAULT_Y_AXIS = ChartAxisFields.metric.value
+GRAPH_AXIS_CHOICES: List[str] = [field.name for field in ChartAxisFields]
 
 
 class ChartPlotSerializer(serializers.Serializer):
