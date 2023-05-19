@@ -9,6 +9,7 @@ from metrics.api.serializers.charts import (
     DEFAULT_CHART_WIDTH,
     ChartPlotSerializer,
     ChartsSerializer,
+    get_axis_field_name,
 )
 from metrics.domain.charts.line_multi_coloured import colour_scheme, properties
 from metrics.domain.models import ChartPlotParameters, ChartPlots
@@ -18,6 +19,31 @@ from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
 DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
+
+
+class TestAxisFieldName:
+    sample_mappings = {
+        "stratum": "stratum__name",
+        "date": "dt",
+        "metric": "metric_value",
+        "geography": "geography__geography_type__name",
+        "no_translation": "no_translation",
+    }
+
+    @pytest.mark.parametrize("field_name", list(sample_mappings.keys()))
+    def test_get_axis_field_name(self, field_name):
+        """
+        Given a field name (eg. geography)
+        When `get_axis_field_name()` is called
+        Then the expected output will be returned
+        """
+        # Given/When
+        actual_result: str = get_axis_field_name(field=field_name)
+
+        # Then
+        expected_result = self.sample_mappings[field_name]
+
+        assert actual_result == expected_result
 
 
 @pytest.fixture
@@ -532,7 +558,7 @@ class TestChartsSerializer:
 
     def test_to_models_returns_correct_models(self):
         """
-        Given a payload for a list of 1 chart plots
+        Given a payload for a list of 1 chart plot
         When `to_models()` is called from an instance of the `ChartsSerializer`
         Then a `ChartPlots` model is returned with the correct data
         """
@@ -553,6 +579,8 @@ class TestChartsSerializer:
             "chart_height": 300,
             "chart_width": 400,
             "plots": chart_plots,
+            "x_axis": "dt",
+            "y_axis": "metric_value",
         }
         serializer = ChartsSerializer(data=valid_data_payload)
 
@@ -567,5 +595,7 @@ class TestChartsSerializer:
             file_format=valid_data_payload["file_format"],
             chart_height=valid_data_payload["chart_height"],
             chart_width=valid_data_payload["chart_width"],
+            x_axis=valid_data_payload["x_axis"],
+            y_axis=valid_data_payload["y_axis"],
         )
         assert chart_plots_serialized_models == expected_chart_plots_model

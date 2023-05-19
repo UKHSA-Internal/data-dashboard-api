@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 from django.db.models import Manager
 from django.db.utils import ProgrammingError
@@ -9,10 +9,19 @@ from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import ChartPlotParameters, ChartPlots
-from metrics.domain.utils import ChartTypes
+from metrics.domain.utils import ChartTypes, GraphAxisFields
 
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 435
+
+
+def get_axis_field_name(field: str) -> str:
+    return str(getattr(GraphAxisFields, field, field))
+
+
+DEFAULT_X_AXIS = GraphAxisFields.date.value
+DEFAULT_Y_AXIS = GraphAxisFields.metric.value
+GRAPH_AXIS_CHOICES: List[str] = [field.name for field in GraphAxisFields]
 
 
 class ChartPlotSerializer(serializers.Serializer):
@@ -144,6 +153,22 @@ class ChartsSerializer(serializers.Serializer):
         default=DEFAULT_CHART_WIDTH,
         allow_null=True,
     )
+    x_axis = serializers.ChoiceField(
+        choices=GRAPH_AXIS_CHOICES,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.GRAPH_X_AXIS,
+        default=DEFAULT_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=GRAPH_AXIS_CHOICES,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.GRAPH_Y_AXIS,
+        default=DEFAULT_Y_AXIS,
+    )
 
     plots = ChartPlotsListSerializer()
 
@@ -153,6 +178,8 @@ class ChartsSerializer(serializers.Serializer):
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
+            x_axis=get_axis_field_name(self.data["x_axis"] or DEFAULT_X_AXIS),
+            y_axis=get_axis_field_name(self.data["y_axis"] or DEFAULT_Y_AXIS),
         )
 
 
