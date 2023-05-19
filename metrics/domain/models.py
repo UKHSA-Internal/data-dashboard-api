@@ -48,9 +48,11 @@ class ChartPlots(BaseModel):
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
     chart_height: int
+    x_axis: str
+    y_axis: str
 
 
 class ChartPlotData(BaseModel):
     parameters: ChartPlotParameters
-    x_axis: Any
-    y_axis: Any
+    x_axis_values: Any
+    y_axis_values: Any

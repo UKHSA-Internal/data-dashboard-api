@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, StrEnum
 from typing import List
 
 
@@ -20,3 +20,14 @@ class ChartTypes(Enum):
     @classmethod
     def values(cls):
         return [chart_type.value for chart_type in cls]
+
+
+class GraphAxisFields(StrEnum):
+    stratum = "stratum__name"
+    date = "dt"
+    metric = "metric_value"
+    geography = "geography__geography_type__name"
+
+    @classmethod
+    def choices(cls):
+        return tuple((field_name.name, field_name.name) for field_name in cls)
