@@ -1,5 +1,5 @@
-from datetime import datetime
-from typing import List, Union
+from datetime import date
+from typing import Any, List
 
 import plotly.graph_objects
 
@@ -10,6 +10,20 @@ TICK_FONT = type_hints.AXIS_ARGS = {
     "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
 }
 
+X_AXIS_TEXT_TYPE = {
+    "xaxis": {
+        "type": "-",
+    }
+}
+
+X_AXIS_DATE_TYPE = {
+    "xaxis": {
+        "type": "date",
+        "dtick": "M1",
+        "tickformat": "%b %Y",
+    }
+}
+
 
 X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showgrid": False,
@@ -17,9 +31,6 @@ X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showline": False,
     "ticks": "outside",
     "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
     "tickfont": TICK_FONT,
 }
 
@@ -54,14 +65,16 @@ BAR_CHART_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    dates: List[datetime],
-    values: List[Union[int, float]],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     legend: str,
     bar_colour: str = colour_scheme.RGBAColours.PLOT_1_BLUE.stringified,
 ) -> plotly.graph_objects.Figure:
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
     Args:
+        x_axis_values: The values for the x-axis
+        y_axis_values: The values for the y-axis
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
         dates: List of datetime objects for each of the values.
@@ -79,8 +92,8 @@ def generate_chart_figure(
 
     # Create Bar plot
     bar_plot: plotly.graph_objects.Bar = _create_bar_plot(
-        dates=dates,
-        values=values,
+        x_axis_values=x_axis_values,
+        y_axis_values=y_axis_values,
         bar_colour=bar_colour,
         legend=legend,
     )
@@ -96,6 +109,12 @@ def generate_chart_figure(
         }
     )
 
+    # Set x axis tick type depending on what sort of data we are showing
+    if type(x_axis_values[0]) is date:
+        figure.update_layout(**X_AXIS_DATE_TYPE)
+    else:
+        figure.update_layout(**X_AXIS_TEXT_TYPE)
+
     # Apply the typical stylings for bar charts
     figure.update_layout(**BAR_CHART_LAYOUT_ARGS)
 
@@ -103,8 +122,8 @@ def generate_chart_figure(
 
 
 def _create_bar_plot(
-    dates: List[datetime],
-    values: List[Union[int, float]],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     bar_colour: str,
     legend: str,
     showlegend: bool = False,
@@ -112,6 +131,8 @@ def _create_bar_plot(
     """Create a Bar plot to add to the chart (via the add_trace method)
 
     Args:
+        x_axis_values: The values for the x-axis
+        y_axis_values: The values for the y-axis
         dates: List of datetime objects for each of the values.
         values: List of numbers representing the values for this plot.
         bar_colour: The colour to assign to the bars.
@@ -124,8 +145,8 @@ def _create_bar_plot(
     """
 
     return plotly.graph_objects.Bar(
-        x=dates,
-        y=values,
+        x=x_axis_values,
+        y=y_axis_values,
         marker={
             "color": bar_colour,
             "line": {"color": bar_colour, "width": 1},
