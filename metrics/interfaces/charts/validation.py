@@ -25,6 +25,8 @@ class DatesNotInChronologicalOrderError(Exception):
 class ChartsRequestValidator:
     def __init__(
         self,
+        x_axis: str,
+        y_axis: str,
         topic: str,
         metric: str,
         chart_type: str,
@@ -33,6 +35,8 @@ class ChartsRequestValidator:
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
     ):
+        self.x_axis = x_axis
+        self.y_axis = y_axis
         self.topic = topic
         self.metric = metric
         self.chart_type = chart_type
@@ -105,6 +109,8 @@ class ChartsRequestValidator:
 
         """
         count: int = self.core_time_series_manager.get_count(
+            x_axis=self.x_axis,
+            y_axis=self.y_axis,
             topic=self.topic,
             metric_name=self.metric,
             date_from=self.date_from,
