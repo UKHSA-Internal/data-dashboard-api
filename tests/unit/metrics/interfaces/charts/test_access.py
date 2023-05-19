@@ -172,6 +172,8 @@ class TestChartsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         charts_interface = ChartsInterface(
@@ -213,6 +215,8 @@ class TestChartsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
         fake_core_time_series_for_plot: List[
             FakeCoreTimeSeries
@@ -240,10 +244,10 @@ class TestChartsInterface:
         assert chart_plot_data.parameters == fake_chart_plot_parameters
 
         # Check the correct data is passed to the axis of the `ChartPlotData` model
-        assert chart_plot_data.x_axis == tuple(
+        assert chart_plot_data.x_axis_values == tuple(
             x.dt for x in fake_core_time_series_for_plot
         )
-        assert chart_plot_data.y_axis == tuple(
+        assert chart_plot_data.y_axis_values == tuple(
             x.metric_value for x in fake_core_time_series_for_plot
         )
 
@@ -261,6 +265,8 @@ class TestChartsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
 
@@ -289,9 +295,10 @@ class TestChartsInterface:
         mocked_geography = mock.Mock()
         mocked_geography_type = mock.Mock()
         mocked_stratum = mock.Mock()
+        mocked_chart_plots = mock.MagicMock()
 
         charts_interface = ChartsInterface(
-            chart_plots=mock.MagicMock(),
+            chart_plots=mocked_chart_plots,
             core_time_series_manager=spy_core_time_series_manager,
         )
 
@@ -311,6 +318,8 @@ class TestChartsInterface:
             == spy_core_time_series_manager.filter_for_dates_and_values.return_value
         )
         spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
+            x_axis=mocked_chart_plots.x_axis,
+            y_axis=mocked_chart_plots.y_axis,
             topic=mocked_topic,
             metric=mocked_metric,
             date_from=mocked_date_from,
@@ -339,8 +348,8 @@ class TestChartsInterface:
         mocked_values = mock.Mock()
         fake_plot_data = ChartPlotData(
             parameters=fake_chart_plot_parameters,
-            x_axis=mocked_dates,
-            y_axis=mocked_values,
+            x_axis_values=mocked_dates,
+            y_axis_values=mocked_values,
         )
 
         fake_chart_plots = ChartPlots(
@@ -348,6 +357,8 @@ class TestChartsInterface:
             file_format="svg",
             chart_width=width,
             chart_height=height,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         charts_interface = ChartsInterface(
@@ -367,8 +378,8 @@ class TestChartsInterface:
         expected_constructed_params = {
             "chart_width": width,
             "chart_height": height,
-            "dates": mocked_dates,
-            "values": mocked_values,
+            "x_axis_values": mocked_dates,
+            "y_axis_values": mocked_values,
             "metric_name": metric,
             "change_in_metric_value": mocked_calculate_change_in_metric_value.return_value,
             "rolling_period_slice": mocked_get_rolling_period_slice_for_metric.return_value,
@@ -376,7 +387,7 @@ class TestChartsInterface:
         assert params_for_line_graph == expected_constructed_params
 
         mocked_calculate_change_in_metric_value.assert_called_once_with(
-            values=mocked_values,
+            y_axis_values=mocked_values,
             metric_name=metric,
         )
         mocked_get_rolling_period_slice_for_metric.assert_called_once_with(
@@ -569,6 +580,8 @@ class TestValidateEachRequestedChartPlot:
             plots=fake_requested_chart_plots,
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         # When
@@ -576,7 +589,11 @@ class TestValidateEachRequestedChartPlot:
 
         # Then
         expected_calls = [
-            mock.call(chart_plot_parameters=requested_chart_plot)
+            mock.call(
+                x_axis="dt",
+                y_axis="metric_value",
+                chart_plot_parameters=requested_chart_plot,
+            )
             for requested_chart_plot in fake_requested_chart_plots
         ]
         spy_validate_chart_plot_parameters.assert_has_calls(calls=expected_calls)
@@ -598,7 +615,11 @@ class TestValidateChartPlotParameters:
         chart_plot_parameters = fake_chart_plot_parameters
 
         # When
-        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_parameters)
+        validate_chart_plot_parameters(
+            x_axis="dt",
+            y_axis="metric_value",
+            chart_plot_parameters=chart_plot_parameters,
+        )
 
         # Then
         spy_validate_method.assert_called_once()

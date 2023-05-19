@@ -87,7 +87,7 @@ class ChartsInterface:
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            values=plot_data.y_axis,
+            y_axis_values=plot_data.y_axis_values,
         )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
@@ -105,8 +105,8 @@ class ChartsInterface:
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            dates=plot_data.x_axis,
-            values=plot_data.y_axis,
+            x_axis_values=plot_data.x_axis_values,
+            y_axis_values=plot_data.y_axis_values,
             legend=plot_data.parameters.metric,
         )
 
@@ -200,14 +200,14 @@ class ChartsInterface:
         )
 
         try:
-            dates, values = unzip_values(timeseries_queryset)
+            x_axis_values, y_axis_values = unzip_values(timeseries_queryset)
         except ValueError:
             raise DataNotFoundError
         else:
             return ChartPlotData(
                 parameters=chart_plot_parameters,
-                x_axis=dates,
-                y_axis=values,
+                x_axis_values=x_axis_values,
+                y_axis_values=y_axis_values,
             )
 
     def get_timeseries_for_chart_plot_parameters(
@@ -282,6 +282,8 @@ class ChartsInterface:
 
         """
         return self.core_time_series_manager.filter_for_dates_and_values(
+            x_axis=self.chart_plots.x_axis,
+            y_axis=self.chart_plots.y_axis,
             topic=topic,
             metric=metric,
             date_from=date_from,
@@ -293,18 +295,18 @@ class ChartsInterface:
     def param_builder_for_line_with_shaded_section(self, plot_data: ChartPlotData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        dates = plot_data.x_axis
-        values = plot_data.y_axis
+        x_axis_values = plot_data.x_axis_values
+        y_axis_values = plot_data.y_axis_values
         metric_name = plot_data.parameters.metric
 
         return {
             "chart_height": chart_height,
             "chart_width": chart_width,
-            "dates": dates,
-            "values": values,
+            "x_axis_values": x_axis_values,
+            "y_axis_values": y_axis_values,
             "metric_name": metric_name,
             "change_in_metric_value": self.calculate_change_in_metric_value(
-                values=values,
+                y_axis_values=y_axis_values,
                 metric_name=metric_name,
             ),
             "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(
@@ -384,10 +386,18 @@ def validate_each_requested_chart_plot(chart_plots: ChartPlots) -> None:
 
     """
     for chart_plot_params in chart_plots.plots:
-        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_params)
+        validate_chart_plot_parameters(
+            x_axis=chart_plots.x_axis,
+            y_axis=chart_plots.y_axis,
+            chart_plot_parameters=chart_plot_params,
+        )
 
 
-def validate_chart_plot_parameters(chart_plot_parameters: ChartPlotParameters):
+def validate_chart_plot_parameters(
+    x_axis: str,
+    y_axis: str,
+    chart_plot_parameters: ChartPlotParameters,
+):
     """Validates the individual given `chart_plot_parameters` against the contents of the db
 
     Raises:
@@ -404,6 +414,8 @@ def validate_chart_plot_parameters(chart_plot_parameters: ChartPlotParameters):
     """
     date_from = make_datetime_from_string(date_from=chart_plot_parameters.date_from)
     charts_request_validator = validation.ChartsRequestValidator(
+        x_axis=x_axis,
+        y_axis=y_axis,
         topic=chart_plot_parameters.topic,
         metric=chart_plot_parameters.metric,
         chart_type=chart_plot_parameters.chart_type,
