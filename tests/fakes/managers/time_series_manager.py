@@ -23,16 +23,19 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
     def all_related(self):
         return [x for x in self.time_series]
 
-    def by_topic_metric_for_dates_and_values(
-        self, topic: str, metric_name: str, date_from: datetime.datetime
-    ):
+    def by_topic_metric_for_dates_and_values(self):
         return [
             (time_series.dt, time_series.metric_value)
             for time_series in self.time_series
         ]
 
     def get_count(
-        self, topic: str, metric_name: str, date_from: datetime.datetime
+        self,
+        x_axis: str,
+        y_axis: str,
+        topic: str,
+        metric_name: str,
+        date_from: datetime.datetime,
     ) -> int:
         filtered_for_metric_topic_and_date = [
             x
@@ -57,6 +60,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def filter_for_dates_and_values(
         self,
+        x_axis: str,
+        y_axis: str,
         topic: str,
         metric: str,
         date_from: datetime.date,
