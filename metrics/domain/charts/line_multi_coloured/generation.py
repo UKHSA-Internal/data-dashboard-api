@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import Any, List
 
 import plotly
 
@@ -12,14 +12,26 @@ X_AXIS_ARGS = {
     "showline": False,
     "ticks": "outside",
     "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
     "tickfont": {
         "family": "Arial",
         "color": colour_scheme.RGBAColours.BLACK.stringified,
     },
 }
+
+X_AXIS_TEXT_TYPE = {
+    "xaxis": {
+        "type": "-",
+    }
+}
+
+X_AXIS_DATE_TYPE = {
+    "xaxis": {
+        "type": "date",
+        "dtick": "M1",
+        "tickformat": "%b %Y",
+    }
+}
+
 
 Y_AXIS_ARGS = {
     "showgrid": False,
@@ -82,14 +94,20 @@ def create_multi_coloured_line_chart(
         )
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
-            x_axis=plot_data.x_axis,
-            y_axis=plot_data.y_axis,
+            x_axis_values=plot_data.x_axis_values,
+            y_axis_values=plot_data.y_axis_values,
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,
             legend=plot_data.parameters.label,
             dash=selected_line_type.value,
         )
+
+        # Set x axis tick type depending on what sort of data we are showing
+        if type(plot_data.x_axis_values[0]) == datetime.date:
+            figure.update_layout(**X_AXIS_DATE_TYPE)
+        else:
+            figure.update_layout(**X_AXIS_TEXT_TYPE)
 
         # Add line plot to the figure
         figure.add_trace(trace=line_plot)
@@ -112,8 +130,8 @@ def create_multi_coloured_line_chart(
 
 
 def _create_line_plot(
-    x_axis: List[datetime.datetime],
-    y_axis: List[int],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     colour: str,
     line_width: int,
     line_shape: str,
@@ -121,8 +139,8 @@ def _create_line_plot(
     dash: str,
 ):
     return plotly.graph_objects.Scatter(
-        x=x_axis,
-        y=y_axis,
+        x=x_axis_values,
+        y=y_axis_values,
         line={
             "width": line_width,
             "color": colour,
