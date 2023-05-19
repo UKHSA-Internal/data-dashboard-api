@@ -7,6 +7,7 @@ from cms.dynamic_content.blocks import (
     HeadlineNumberRowBlockTypes,
 )
 from cms.dynamic_content.components import ChartComponent
+from cms.metrics_interface.field_choices_callables import get_possible_axis_choices
 
 
 class TextCard(blocks.StructBlock):
@@ -46,6 +47,17 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     body = blocks.TextBlock(
         required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
     )
+    x_axis = blocks.ChoiceBlock(
+        required=False,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.X_AXIS_HELP_TEXT,
+    )
+    y_axis = blocks.ChoiceBlock(
+        required=False,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.Y_AXIS_HELP_TEXT,
+    )
+
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
     headline_number_columns = HeadlineNumberBlockTypes(
         required=False,
@@ -65,6 +77,17 @@ class ChartCard(blocks.StructBlock):
     body = blocks.TextBlock(
         required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
     )
+    x_axis = blocks.ChoiceBlock(
+        required=False,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.X_AXIS_HELP_TEXT,
+    )
+    y_axis = blocks.ChoiceBlock(
+        required=False,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.Y_AXIS_HELP_TEXT,
+    )
+
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD_HELP_TEXT)
 
     class Meta:
