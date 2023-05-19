@@ -1,10 +1,25 @@
 import datetime
-from typing import List
+from typing import Any, List
 
 import plotly
 
 from metrics.domain.charts import type_hints
 from metrics.domain.charts.line_with_shaded_section import colour_scheme, information
+
+X_AXIS_TEXT_TYPE = {
+    "xaxis": {
+        "type": "-",
+    }
+}
+
+X_AXIS_DATE_TYPE = {
+    "xaxis": {
+        "type": "date",
+        "dtick": "M1",
+        "tickformat": "%b %Y",
+    }
+}
+
 
 X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showgrid": False,
@@ -12,9 +27,6 @@ X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showline": False,
     "ticks": "outside",
     "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
     "tickfont": {
         "family": "Arial",
         "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
@@ -45,8 +57,8 @@ TIMESERIES_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
 def create_line_chart_with_shaded_section(
     chart_height: int,
     chart_width: int,
-    values: List[int],
-    dates: List[datetime.datetime],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     shaded_section_fill_colour: colour_scheme.RGBAColours,
     shaded_section_line_colour: colour_scheme.RGBAColours,
     rolling_period_slice: int,
@@ -58,8 +70,8 @@ def create_line_chart_with_shaded_section(
     Args:
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
-        values: List of numbers representing the values.
-        dates: List of datetime objects for each of the values.
+        x_axis_values: The values for the x-axis
+        y_axis_values: The values for the y-axis
         shaded_section_fill_colour: The colour to use
             for the fill of the shaded/highlighted section.
         shaded_section_line_colour: The colour to use
@@ -79,14 +91,14 @@ def create_line_chart_with_shaded_section(
 
     """
     # Calculate the index to perform the slices with
-    preceding_data_points_count = len(values) - (rolling_period_slice + 1)
+    preceding_data_points_count = len(y_axis_values) - (rolling_period_slice + 1)
 
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot for the preceding points as a simple neutral grey line
     line_plot: plotly.graph_objects.Scatter = _create_main_line_plot(
-        dates=dates,
-        values=values,
+        x_axis_values=x_axis_values,
+        y_axis_values=y_axis_values,
         preceding_data_points_count=preceding_data_points_count,
         line_width=line_width,
         line_shape=line_shape,
@@ -98,8 +110,8 @@ def create_line_chart_with_shaded_section(
     # Create the shaded section for the last `n` points
     # Where `n` is denoted by `rolling_period_slice`
     shaded_section_plot: plotly.graph_objects.Scatter = _create_shaded_section_plot(
-        dates=dates,
-        values=values,
+        x_axis_values=x_axis_values,
+        y_axis_values=y_axis_values,
         preceding_data_points_count=preceding_data_points_count,
         line_width=line_width,
         line_shape=line_shape,
@@ -117,6 +129,13 @@ def create_line_chart_with_shaded_section(
             "width": chart_width,
         }
     )
+
+    # Set x axis tick type depending on what sort of data we are showing
+    if type(x_axis_values[0]) is datetime.date:
+        figure.update_layout(**X_AXIS_DATE_TYPE)
+    else:
+        figure.update_layout(**X_AXIS_TEXT_TYPE)
+
     # Apply the typical stylings for timeseries charts
     figure.update_layout(**TIMESERIES_LAYOUT_ARGS)
 
@@ -124,15 +143,15 @@ def create_line_chart_with_shaded_section(
 
 
 def _create_main_line_plot(
-    dates: List[datetime.datetime],
-    values: List[int],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     preceding_data_points_count: int,
     line_width: int,
     line_shape: str,
 ):
     return plotly.graph_objects.Scatter(
-        x=dates[: preceding_data_points_count + 1],
-        y=values[: preceding_data_points_count + 1],
+        x=x_axis_values[: preceding_data_points_count + 1],
+        y=y_axis_values[: preceding_data_points_count + 1],
         line={
             "width": line_width,
             "color": colour_scheme.RGBAColours.DARK_GREY.stringified,
@@ -142,8 +161,8 @@ def _create_main_line_plot(
 
 
 def _create_shaded_section_plot(
-    dates: List[datetime.datetime],
-    values: List[int],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     preceding_data_points_count: int,
     line_width: int,
     line_shape: str,
@@ -151,8 +170,8 @@ def _create_shaded_section_plot(
     shaded_section_fill_colour: str,
 ):
     return plotly.graph_objects.Scatter(
-        x=dates[preceding_data_points_count:],
-        y=values[preceding_data_points_count:],
+        x=x_axis_values[preceding_data_points_count:],
+        y=y_axis_values[preceding_data_points_count:],
         line={"width": line_width},
         mode="lines",
         fill="tozeroy",
@@ -167,8 +186,8 @@ def _create_shaded_section_plot(
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    values: List[int],
-    dates: List[datetime.datetime],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     metric_name: str,
     change_in_metric_value: int,
     rolling_period_slice: int = 7,
@@ -181,6 +200,8 @@ def generate_chart_figure(
         chart_width: The chart width in pixels
         values: List of numbers representing the values.
         dates: List of datetime objects for each of the values.
+        x_axis_valuwes: The values for the x-axis
+        y_axis_values: The values for the y-axis
         metric_name: The associated metric_name,
             E.g. new_admissions_daily
         change_in_metric_value: The change in metric value from the last 7 days
@@ -210,8 +231,8 @@ def generate_chart_figure(
     return create_line_chart_with_shaded_section(
         chart_height=chart_height,
         chart_width=chart_width,
-        values=values,
-        dates=dates,
+        x_axis_values=x_axis_values,
+        y_axis_values=y_axis_values,
         rolling_period_slice=rolling_period_slice,
         line_shape=line_shape,
         shaded_section_line_colour=line_colour,
