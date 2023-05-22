@@ -65,6 +65,7 @@ urlpatterns = [
     path("cms-admin/", include(wagtailadmin_urls)),
 ]
 
+urlpatterns += public_api_urlpatterns
 
 if settings.DEBUG:
     from django.conf.urls.static import static
