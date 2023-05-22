@@ -81,7 +81,7 @@ class TestPublicAPINestedLinkViews:
         assert response_data[0]["sub_themes"] == expected_sub_themes_link
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_sub_theme_view(self, client: APIClient):
+    def test_returns_correct_response_for_sub_theme_list_view(self, client: APIClient):
         """
         Given a valid request
         When the `GET /api/public/timeseries/themes/{theme}/sub_themes` endpoint is hit
