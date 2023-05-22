@@ -36,7 +36,7 @@ modules=
 #----------------------------------------- Public API contracts -------------------------------------------
 
 [importlinter:contract:Public API only depends on the APITimeSeries model]
-name = The Public API only depends on the `APITimeSeries` model from the rest of the codebase
+name = The Public API only depends on the `APITimeSeries` model & corresponding components from the rest of the codebase
 type = forbidden
 source_modules=
     metrics.public_api
@@ -47,8 +47,9 @@ forbidden_modules=
     metrics.interfaces
     cms
 ignore_imports=
-    metrics.public_api.views -> metrics.data.managers.api_models.time_series
     metrics.public_api.views -> metrics.data.models.api_models
+    metrics.public_api.serializers.api_time_series_request_serializer -> metrics.data.models.api_models
+    metrics.public_api.serializers.api_time_series_request_serializer -> metrics.data.managers.api_models.time_series
 
 [importlinter:contract:Public API is only used for wiring of URLs]
 name = The Public API module is only imported for the wiring of URLs
