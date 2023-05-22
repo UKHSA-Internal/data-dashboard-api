@@ -1,9 +1,11 @@
 import datetime
-import pytest
-from metrics.data.models.api_models import APITimeSeries
-from rest_framework.test import APIClient
-from rest_framework.response import Response
 from http import HTTPStatus
+
+import pytest
+from rest_framework.response import Response
+from rest_framework.test import APIClient
+
+from metrics.data.models.api_models import APITimeSeries
 
 
 class TestThemeListView:

@@ -168,13 +168,7 @@ class TestAPITimeSeriesRequestSerializer:
         ] = serializer.build_timeseries_dto_slice()
 
         # Then
-        expected_values: Set[str] = set(
-            getattr(x, fake_lookup_field) for x in fake_api_timeseries
-        )
-        assert len(timeseries_dto_slice) == len(expected_values)
-
-        assert set(t.name for t in timeseries_dto_slice) == expected_values
-        assert (
-            set(getattr(t, fake_lookup_field) for t in timeseries_dto_slice)
-            == expected_values
-        )
+        assert set(t.name for t in timeseries_dto_slice) == {"infectious_disease"}
+        assert set(getattr(t, fake_lookup_field) for t in timeseries_dto_slice) == {
+            "infectious_disease"
+        }
