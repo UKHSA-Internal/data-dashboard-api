@@ -1,5 +1,6 @@
 from typing import List
 
+from django.views.decorators.http import require_http_methods
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -67,6 +68,7 @@ class ThemeDetailView(BaseNestedAPITimeSeriesView):
 
 
 @api_view(["GET"])
+@require_http_methods(["GET"])
 def public_api_root(request, format=None):
     data = {
         "links": {
