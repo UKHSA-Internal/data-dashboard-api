@@ -12,7 +12,7 @@ class TestThemeListSerializer:
     @mock.patch.object(
         HyperlinkedIdentityField, "get_url", return_value="fake_url_for_theme"
     )
-    def test_get_timeseries_dto_slice_returns_list_of_dto_objects_for_theme_lookup(
+    def test_can_serialize_successfully(
         self,
         spy_get_url: mock.MagicMock,
     ):
