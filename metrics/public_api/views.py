@@ -5,6 +5,7 @@ from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.data.models.api_models import APITimeSeries
 from metrics.public_api.serializers.api_time_series_request_serializer import (
@@ -53,6 +54,7 @@ class ThemeListView(BaseNestedAPITimeSeriesView):
     A `theme` is the largest topical subgroup e.g. **infectious_disease**.
     """
 
+    permission_classes = [HasAPIKey]
     lookup_field = "theme"
     serializer_class = ThemeListSerializer
 
@@ -65,6 +67,7 @@ class ThemeDetailView(BaseNestedAPITimeSeriesView):
     In this case, the next step in the data hierarchy is **sub_themes**.
     """
 
+    permission_classes = [HasAPIKey]
     lookup_field = "theme"
     serializer_class = ThemeDetailSerializer
 
@@ -78,6 +81,7 @@ class SubThemeListView(BaseNestedAPITimeSeriesView):
     A `sub_theme` is a topical subgroup  e.g. **respiratory**
     """
 
+    permission_classes = [HasAPIKey]
     lookup_field = "sub_theme"
     serializer_class = SubThemeListSerializer
 
@@ -90,6 +94,7 @@ class SubThemeDetailView(BaseNestedAPITimeSeriesView):
     In this case, the next step in the data hierarchy is **topics**.
     """
 
+    permission_classes = [HasAPIKey]
     lookup_field = "sub_theme"
     serializer_class = SubThemeDetailSerializer
 
