@@ -30,7 +30,7 @@ class TestPublicAPINestedLinkViews:
         )
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_theme_view(self, client: APIClient):
+    def test_returns_correct_response_for_theme_list_view(self, client: APIClient):
         """
         Given a valid request
         When the `GET /api/public/timeseries/themes/` endpoint is hit
