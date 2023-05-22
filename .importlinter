@@ -33,6 +33,21 @@ modules=
     metrics.data.operations
     metrics.data.access
 
+[importlinter:contract:Public API is isolated]
+name = The Public API only interacts with the APITimeSeries model from the codebase
+type = forbidden
+source_modules=
+    metrics.public_api
+forbidden_modules=
+    metrics.api
+    metrics.data
+    metrics.domain
+    metrics.interfaces
+    cms
+ignore_imports=
+    metrics.public_api.views -> metrics.data.managers.api_models.time_series
+    metrics.public_api.views -> metrics.data.models.api_models
+
 [importlinter:contract:Metrics isolated charts library]
 name = Metrics charts library does not depend on the rest of the codebase
 type = forbidden
