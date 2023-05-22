@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, List
 from unittest import mock
 
 import pytest
