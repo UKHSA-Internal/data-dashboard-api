@@ -44,3 +44,21 @@ class FakeAPITimeSeriesFactory(factory.Factory):
             dt=datetime.date(year=2023, month=3, day=8),
             metric_value=2364,
         )
+
+    @classmethod
+    def build_example_sickle_cell_disease_series(cls) -> FakeAPITimeSeries:
+        return cls.build(
+            period="D",
+            theme="genetic_disease",
+            sub_theme="red_blood_cells",
+            topic="Sickle Cell Disease",
+            geography_type="Nation",
+            geography="England",
+            metric="new_cases_daily",
+            stratum="default",
+            sex="ALL",
+            year=2023,
+            epiweek=10,
+            dt=datetime.date(year=2023, month=3, day=8),
+            metric_value=123,
+        )
