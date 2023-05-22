@@ -177,15 +177,12 @@ class TestAPITimeSeriesRequestSerializer:
         assert serialized_api_timeseries_dto.name == "infectious_disease"
         assert serialized_api_timeseries_dto.theme == "infectious_disease"
 
-        for blank_key in [
-            "information",
-            "sub_theme",
-            "topic",
-            "geography_type",
-            "geography",
-            "metric",
-        ]:
-            assert not getattr(serialized_api_timeseries_dto, blank_key)
+        assert not serialized_api_timeseries_dto.information
+        assert not serialized_api_timeseries_dto.sub_theme
+        assert not serialized_api_timeseries_dto.topic
+        assert not serialized_api_timeseries_dto.geography_type
+        assert not serialized_api_timeseries_dto.geography
+        assert not serialized_api_timeseries_dto.metric
 
     def test_get_timeseries_dto_slice_returns_list_of_dto_objects_for_sub_theme_lookup(
         self,
@@ -224,11 +221,8 @@ class TestAPITimeSeriesRequestSerializer:
         assert serialized_api_timeseries_dto.theme == "infectious_disease"
         assert serialized_api_timeseries_dto.sub_theme == "respiratory"
 
-        for blank_key in [
-            "information",
-            "topic",
-            "geography_type",
-            "geography",
-            "metric",
-        ]:
-            assert not getattr(serialized_api_timeseries_dto, blank_key)
+        assert not serialized_api_timeseries_dto.information
+        assert not serialized_api_timeseries_dto.topic
+        assert not serialized_api_timeseries_dto.geography_type
+        assert not serialized_api_timeseries_dto.geography
+        assert not serialized_api_timeseries_dto.metric
