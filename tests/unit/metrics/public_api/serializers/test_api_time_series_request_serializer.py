@@ -13,9 +13,22 @@ from tests.fakes.factories.metrics.api_time_series_factory import (
     FakeAPITimeSeriesFactory,
 )
 from tests.fakes.managers.api_time_series_manager import FakeAPITimeSeriesManager
+from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
 
 
 class TestAPITimeSeriesRequestSerializer:
+    @staticmethod
+    def _setup_fake_api_time_series() -> List[FakeAPITimeSeries]:
+        # Multiple `APITimeSeries` objects with 2 distinct `theme` values
+        fake_api_timeseries = [
+            # distinct theme value - `infectious_disease`
+            FakeAPITimeSeriesFactory.build_example_covid_time_series(),
+            FakeAPITimeSeriesFactory.build_example_covid_time_series(),
+            # distinct theme value - `genetic_disease`
+            FakeAPITimeSeriesFactory.build_example_sickle_cell_disease_series(),
+        ]
+        return fake_api_timeseries
+
     def test_lookup_field_gets_field_from_context(self):
         """
         Given a context dict which contains a `lookup_field` key-value pair
@@ -142,16 +155,8 @@ class TestAPITimeSeriesRequestSerializer:
         fake_lookup_field = "theme"
         mocked_request = mock.Mock(parser_context={"kwargs": fake_request_kwargs})
 
-        # Multiple `APITimeSeries` objects with 2 distinct `theme` values
-        fake_api_timeseries = [
-            # distinct theme value - `infectious_disease`
-            FakeAPITimeSeriesFactory.build_example_covid_time_series(),
-            FakeAPITimeSeriesFactory.build_example_covid_time_series(),
-            # distinct theme value - `genetic_disease`
-            FakeAPITimeSeriesFactory.build_example_sickle_cell_disease_series(),
-        ]
         fake_api_timeseries_manager = FakeAPITimeSeriesManager(
-            time_series=fake_api_timeseries
+            time_series=self._setup_fake_api_time_series()
         )
 
         serializer = APITimeSeriesRequestSerializer(
@@ -168,10 +173,19 @@ class TestAPITimeSeriesRequestSerializer:
         ] = serializer.build_timeseries_dto_slice()
 
         # Then
-        assert set(t.name for t in timeseries_dto_slice) == {"infectious_disease"}
-        assert set(getattr(t, fake_lookup_field) for t in timeseries_dto_slice) == {
-            "infectious_disease"
-        }
+        serialized_api_timeseries_dto = timeseries_dto_slice[0]
+        assert serialized_api_timeseries_dto.name == "infectious_disease"
+        assert serialized_api_timeseries_dto.theme == "infectious_disease"
+
+        for blank_key in [
+            "information",
+            "sub_theme",
+            "topic",
+            "geography_type",
+            "geography",
+            "metric",
+        ]:
+            assert not getattr(serialized_api_timeseries_dto, blank_key)
 
     def test_get_timeseries_dto_slice_returns_list_of_dto_objects_for_sub_theme_lookup(
         self,
@@ -187,16 +201,8 @@ class TestAPITimeSeriesRequestSerializer:
         fake_lookup_field = "sub_theme"
         mocked_request = mock.Mock(parser_context={"kwargs": fake_request_kwargs})
 
-        # Multiple `APITimeSeries` objects with 2 distinct `theme` values
-        fake_api_timeseries = [
-            # theme value - `infectious_disease` & sub_theme value - `respiratory`
-            FakeAPITimeSeriesFactory.build_example_covid_time_series(),
-            FakeAPITimeSeriesFactory.build_example_covid_time_series(),
-            # distinct theme value - `genetic_disease`
-            FakeAPITimeSeriesFactory.build_example_sickle_cell_disease_series(),
-        ]
         fake_api_timeseries_manager = FakeAPITimeSeriesManager(
-            time_series=fake_api_timeseries
+            time_series=self._setup_fake_api_time_series()
         )
 
         serializer = APITimeSeriesRequestSerializer(
@@ -213,9 +219,16 @@ class TestAPITimeSeriesRequestSerializer:
         ] = serializer.build_timeseries_dto_slice()
 
         # Then
-        assert set(t.name for t in timeseries_dto_slice) == {"respiratory"}
-        assert set(getattr(t, fake_lookup_field) for t in timeseries_dto_slice) == {
-            "respiratory"
-        }
-        # Check that the preceding requested values have been met
-        assert set(t.theme for t in timeseries_dto_slice) == {requested_theme_value}
+        serialized_api_timeseries_dto = timeseries_dto_slice[0]
+        assert serialized_api_timeseries_dto.name == "respiratory"
+        assert serialized_api_timeseries_dto.theme == "infectious_disease"
+        assert serialized_api_timeseries_dto.sub_theme == "respiratory"
+
+        for blank_key in [
+            "information",
+            "topic",
+            "geography_type",
+            "geography",
+            "metric",
+        ]:
+            assert not getattr(serialized_api_timeseries_dto, blank_key)
