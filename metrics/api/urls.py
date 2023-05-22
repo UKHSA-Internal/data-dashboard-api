@@ -21,6 +21,7 @@ from metrics.api.views import (
     TablesView,
     TrendsView,
 )
+from metrics.public_api.urls import urlpatterns as public_api_urlpatterns
 
 router = routers.DefaultRouter()
 
@@ -63,6 +64,8 @@ urlpatterns = [
     path("api/", api_router.urls),
     path("cms-admin/", include(wagtailadmin_urls)),
 ]
+
+urlpatterns += public_api_urlpatterns
 
 if settings.DEBUG:
     from django.conf.urls.static import static
