@@ -74,7 +74,9 @@ class TestChangeBetweenEachHalf:
         values_to_calculate = values
 
         # When
-        calculated_change = calculations.change_between_each_half(values=values_to_calculate)
+        calculated_change = calculations.change_between_each_half(
+            values=values_to_calculate
+        )
 
         # Then
         assert calculated_change == expected_difference
