@@ -19,7 +19,7 @@ class TestThemeListSerializer:
         """
         Given a request which contains kwargs from the URL parameters
         And an `APITimeSeriesDTO`
-        When the DTO is passed to an instance of the `APITimeSeriesRequestSerializer`
+        When the DTO is passed to an instance of the `ThemeListSerializer`
         Then the serialized data uses the correct field from the `APITimeSeriesDTO`
         And creates a link in conjunction with `theme-detail` view and the `theme` value of the `APITimeSeriesDTO`
         """
