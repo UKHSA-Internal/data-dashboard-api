@@ -30,7 +30,9 @@ class TestPublicAPINestedLinkViews:
         )
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_theme_list_view(self, client: APIClient):
+    def test_returns_correct_response_for_theme_list_view(
+        self, authenticated_api_client: APIClient
+    ):
         """
         Given a valid request
         When the `GET /api/public/timeseries/themes/` endpoint is hit
@@ -42,7 +44,7 @@ class TestPublicAPINestedLinkViews:
         self._setup_api_time_series(theme=theme_value)
 
         # When
-        response: Response = client.get(path=self.path, format="json")
+        response: Response = authenticated_api_client.get(path=self.path, format="json")
 
         # Then
         assert response.status_code == HTTPStatus.OK
@@ -54,7 +56,9 @@ class TestPublicAPINestedLinkViews:
         assert response_data[0]["link"] == expected_theme_link
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_theme_detail_view(self, client: APIClient):
+    def test_returns_correct_response_for_theme_detail_view(
+        self, authenticated_api_client: APIClient
+    ):
         """
         Given a valid request
         When the `GET /api/public/timeseries/themes/{theme}` endpoint is hit
@@ -67,7 +71,7 @@ class TestPublicAPINestedLinkViews:
         self._setup_api_time_series(theme=theme_value)
 
         # When
-        response: Response = client.get(path=path, format="json")
+        response: Response = authenticated_api_client.get(path=path, format="json")
 
         # Then
         assert response.status_code == HTTPStatus.OK
@@ -81,7 +85,9 @@ class TestPublicAPINestedLinkViews:
         assert response_data[0]["sub_themes"] == expected_sub_themes_link
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_sub_theme_list_view(self, client: APIClient):
+    def test_returns_correct_response_for_sub_theme_list_view(
+        self, authenticated_api_client: APIClient
+    ):
         """
         Given a valid request
         When the `GET /api/public/timeseries/themes/{theme}/sub_themes` endpoint is hit
@@ -95,7 +101,7 @@ class TestPublicAPINestedLinkViews:
         path = f"{self.path}{theme_value}/sub_themes/"
 
         # When
-        response: Response = client.get(path=path, format="json")
+        response: Response = authenticated_api_client.get(path=path, format="json")
 
         # Then
         assert response.status_code == HTTPStatus.OK
