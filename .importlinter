@@ -33,6 +33,40 @@ modules=
     metrics.data.operations
     metrics.data.access
 
+#----------------------------------------- Public API contracts -------------------------------------------
+
+[importlinter:contract:Public API only depends on the APITimeSeries model]
+name = The Public API only depends on the `APITimeSeries` model & corresponding components from the rest of the codebase
+type = forbidden
+source_modules=
+    metrics.public_api
+forbidden_modules=
+    metrics.api
+    metrics.data
+    metrics.domain
+    metrics.interfaces
+    cms
+ignore_imports=
+    metrics.public_api.views -> metrics.data.models.api_models
+    metrics.public_api.serializers.api_time_series_request_serializer -> metrics.data.models.api_models
+    metrics.public_api.serializers.api_time_series_request_serializer -> metrics.data.managers.api_models.time_series
+
+[importlinter:contract:Public API is only used for wiring of URLs]
+name = The Public API module is only imported for the wiring of URLs
+type = forbidden
+source_modules=
+    metrics.api
+    metrics.data
+    metrics.domain
+    metrics.interfaces
+    cms
+forbidden_modules=
+    metrics.public_api
+ignore_imports=
+    metrics.api.urls -> metrics.public_api.urls
+
+#------------------------------------- Metrics Domain library contracts -------------------------------------
+
 [importlinter:contract:Metrics isolated charts library]
 name = Metrics charts library does not depend on the rest of the codebase
 type = forbidden
@@ -54,6 +88,8 @@ forbidden_modules=
     metrics.data
     metrics.interfaces
     cms
+
+#------------------------------------- Source/Test code contracts -------------------------------------------
 
 [importlinter:contract:Source code | test code]
 name = Source code does not depend on test code
