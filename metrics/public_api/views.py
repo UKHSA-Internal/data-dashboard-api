@@ -1,6 +1,7 @@
 from typing import List
 
 from django.views.decorators.http import require_http_methods
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -19,6 +20,8 @@ from metrics.public_api.serializers.linked_serializers import (
     ThemeListSerializer,
 )
 
+PUBLIC_API_TAG = "public-api"
+
 
 class BaseNestedAPITimeSeriesView(generics.GenericAPIView):
     queryset = APITimeSeries.objects.all()
@@ -35,6 +38,7 @@ class BaseNestedAPITimeSeriesView(generics.GenericAPIView):
         serializer_context = {"request": request, "lookup_field": self.lookup_field}
         return APITimeSeriesRequestSerializer(context=serializer_context)
 
+    @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request, *args, **kwargs) -> Response:
         serializer: APITimeSeriesRequestSerializer = self._build_request_serializer(
             request=request
@@ -99,6 +103,7 @@ class SubThemeDetailView(BaseNestedAPITimeSeriesView):
     serializer_class = SubThemeDetailSerializer
 
 
+@extend_schema(tags=[PUBLIC_API_TAG])
 @api_view(["GET"])
 @require_http_methods(["GET"])
 def public_api_root(request, format=None):
