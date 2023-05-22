@@ -71,10 +71,12 @@ class TestChangeBetweenEachHalf:
         Then the correct calculated change in value between each half is returned
         """
         # Given
-        values = values
+        values_to_calculate = values
 
         # When
-        calculated_change = calculations.change_between_each_half(values=values)
+        calculated_change = calculations.change_between_each_half(
+            values=values_to_calculate
+        )
 
         # Then
         assert calculated_change == expected_difference

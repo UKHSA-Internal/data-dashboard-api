@@ -12,6 +12,8 @@ from metrics.public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesRequestSerializer,
 )
 from metrics.public_api.serializers.linked_serializers import (
+    SubThemeDetailSerializer,
+    SubThemeListSerializer,
     ThemeDetailSerializer,
     ThemeListSerializer,
 )
@@ -65,6 +67,31 @@ class ThemeDetailView(BaseNestedAPITimeSeriesView):
 
     lookup_field = "theme"
     serializer_class = ThemeDetailSerializer
+
+
+class SubThemeListView(BaseNestedAPITimeSeriesView):
+    """
+    This endpoint returns a list of all available sub_themes and hyperlinks to their corresponding detail view.
+
+    The `sub_theme` field is positioned 1 step below `theme`.
+
+    A `sub_theme` is a topical subgroup  e.g. **respiratory**
+    """
+
+    lookup_field = "sub_theme"
+    serializer_class = SubThemeListSerializer
+
+
+class SubThemeDetailView(BaseNestedAPITimeSeriesView):
+    """
+    This endpoint returns information about this specific `sub_theme`
+    and a hyperlink to the next step in the data hierarchy.
+
+    In this case, the next step in the data hierarchy is **topics**.
+    """
+
+    lookup_field = "sub_theme"
+    serializer_class = SubThemeDetailSerializer
 
 
 @api_view(["GET"])
