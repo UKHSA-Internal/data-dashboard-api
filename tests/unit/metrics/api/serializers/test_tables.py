@@ -5,7 +5,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.tables import TablePlotSerializer, TablesSerializer
-from metrics.domain.models import TablePlotParameters, TablePlots
+from metrics.domain.models import PlotParameters, PlotsCollection
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
@@ -286,20 +286,27 @@ class TestTablesSerializer:
                 "geography": "",
                 "geography_type": "",
                 "date_from": "",
+                "chart_type": "",
             }
         ]
         valid_data_payload = {
+            "file_format": "svg",
+            "chart_height": 220,
+            "chart_width": 435,
             "plots": table_plots,
         }
         serializer = TablesSerializer(data=valid_data_payload)
 
         # When
         serializer.is_valid()
-        table_plots_serialized_models: TablePlots = serializer.to_models()
+        table_plots_serialized_models: PlotsCollection = serializer.to_models()
 
         # Then
-        table_plot_params_model = TablePlotParameters(**table_plots[0])
-        expected_table_plots_model = TablePlots(
+        table_plot_params_model = PlotParameters(**table_plots[0])
+        expected_table_plots_model = PlotsCollection(
             plots=[table_plot_params_model],
+            file_format=valid_data_payload["file_format"],
+            chart_width=valid_data_payload["chart_width"],
+            chart_height=valid_data_payload["chart_height"],
         )
         assert table_plots_serialized_models == expected_table_plots_model

@@ -10,7 +10,7 @@ from metrics.api.serializers.tables import TablesResponseSerializer, TablesSeria
 from metrics.data.access.core_models import (
     get_month_end_timeseries_metric_values_from_date,
 )
-from metrics.interfaces.tables import access, validation
+from metrics.interfaces.charts import access, validation
 
 
 class OldTabularView(APIView):
