@@ -211,17 +211,17 @@ class TestMakeDatetimeFromString:
         assert parsed_date_from.day == int(day)
 
     @mock.patch(f"{MODULE_PATH}.get_date_n_months_ago_from_timestamp")
-    def test_delegates_call_to_get_default_of_one_year_if_none_provided(
+    def test_delegates_call_to_get_default_of_one_year_if_empty_string_provided(
         self,
         spy_get_date_n_months_ago_from_timestamp: mock.MagicMock,
     ):
         """
-        Given an input `date_from` of None
+        Given an input `date_from` of an empty string
         When `make_datetime_from_string()` is called
         Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
         """
         # Given
-        date_from = None
+        date_from = ""
 
         # When
         parsed_date_from = make_datetime_from_string(date_from=date_from)
@@ -234,17 +234,17 @@ class TestMakeDatetimeFromString:
         assert parsed_date_from == spy_get_date_n_months_ago_from_timestamp.return_value
 
     @mock.patch(f"{MODULE_PATH}.get_date_n_months_ago_from_timestamp")
-    def test_delegates_call_to_get_default_of_one_year_if_empty_string_provided(
+    def test_delegates_call_to_get_default_of_one_year_if_none_provided(
         self,
         spy_get_date_n_months_ago_from_timestamp: mock.MagicMock,
     ):
         """
-        Given an input `date_from` of an empty string
+        Given an input `date_from` of None
         When `make_datetime_from_string()` is called
         Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
         """
         # Given
-        date_from = ""
+        date_from = None
 
         # When
         parsed_date_from = make_datetime_from_string(date_from=date_from)

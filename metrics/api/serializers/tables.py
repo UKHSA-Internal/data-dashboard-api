@@ -8,57 +8,55 @@ from metrics.domain.models import TablePlots
 
 
 class TablePlotSerializer(serializers.Serializer):
-    # Required fields
     topic = serializers.ChoiceField(
-        help_text=help_texts.TOPIC_FIELD,
         choices=[],
         required=True,
+        help_text=help_texts.TOPIC_FIELD,
     )
     metric = serializers.ChoiceField(
-        help_text=help_texts.METRIC_FIELD,
         choices=[],
         required=True,
+        help_text=help_texts.METRIC_FIELD,
     )
-    # Optional fields
     stratum = serializers.CharField(
-        help_text=help_texts.STRATUM_FIELD,
         required=False,
         allow_blank=True,
         allow_null=True,
         default="",
+        help_text=help_texts.STRATUM_FIELD,
     )
     geography = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_FIELD,
         required=False,
         allow_blank=True,
         allow_null=True,
         default="",
+        help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
         required=False,
         allow_blank=True,
         allow_null=True,
         default="",
+        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     date_from = serializers.DateField(
-        help_text=help_texts.DATE_FROM_FIELD,
         required=False,
         allow_null=True,
         default="",
+        help_text=help_texts.DATE_FROM_FIELD,
     )
     date_to = serializers.DateField(
-        help_text=help_texts.DATE_FROM_FIELD,
         required=False,
         allow_null=True,
         default="",
+        help_text=help_texts.DATE_FROM_FIELD,
     )
     label = serializers.CharField(
-        help_text=help_texts.LABEL_FIELD,
         required=False,
         allow_blank=True,
         allow_null=True,
         default="",
+        help_text=help_texts.LABEL_FIELD,
     )
 
     def __init__(self, *args, **kwargs):

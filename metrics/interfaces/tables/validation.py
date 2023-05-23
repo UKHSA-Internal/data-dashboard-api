@@ -57,6 +57,28 @@ class TablesRequestValidator:
         self._validate_metric_is_available_for_topic()
         self._validate_dates()
 
+    def _is_metric_available_for_topic(self) -> bool:
+        """Checks the db if there are any `Metric` records for the `metric` and `topic`.
+
+        Returns:
+            bool: True if there are any `Metric` records
+                which match the criteria.
+                False otherwise.
+
+        """
+        return self.metric_manager.is_metric_available_for_topic(
+            metric_name=self.metric,
+            topic_name=self.topic,
+        )
+
+    def _validate_metric_is_available_for_topic(self) -> None:
+        metric_is_topic_compatible: bool = self._is_metric_available_for_topic()
+
+        if not metric_is_topic_compatible:
+            raise MetricDoesNotSupportTopicError(
+                f"`{self.topic}` does not have a corresponding metric of `{self.metric}`"
+            )
+
     def _does_metric_have_multiple_records(self) -> bool:
         """Checks the db if there are multiple associated `CoreTimeSeries` records.
 
@@ -72,43 +94,6 @@ class TablesRequestValidator:
             date_from=self.date_from,
         )
         return count > 1
-
-    def _validate_metric_is_available_for_topic(self) -> None:
-        metric_is_topic_compatible: bool = self._is_metric_available_for_topic()
-
-        if not metric_is_topic_compatible:
-            raise MetricDoesNotSupportTopicError(
-                f"`{self.topic}` does not have a corresponding metric of `{self.metric}`"
-            )
-
-    def _is_metric_available_for_topic(self) -> bool:
-        """Checks the db if there are any `Metric` records for the `metric` and `topic`.
-
-        Returns:
-            bool: True if there are any `Metric` records
-                which match the criteria.
-                False otherwise.
-
-        """
-        return self.metric_manager.is_metric_available_for_topic(
-            metric_name=self.metric,
-            topic_name=self.topic,
-        )
-
-    def _are_dates_in_chronological_order(self) -> bool:
-        """Checks if the `date_to` stamp is chronologically ahead of `date_from`
-
-        Returns:
-            bool: True if the date stamps are in the
-                expected chronological order
-                False otherwise.
-
-        Raises:
-            `TypeError`: If an invalid type is provided for either stamp
-            i.e. if None is provided as `date_to`
-
-        """
-        return self.date_to > self.date_from
 
     def _validate_dates(self) -> None:
         """Checks if the `date_to` stamp is chronologically ahead of `date_from`
@@ -138,3 +123,18 @@ class TablesRequestValidator:
             raise DatesNotInChronologicalOrderError()
 
         return None
+
+    def _are_dates_in_chronological_order(self) -> bool:
+        """Checks if the `date_to` stamp is chronologically ahead of `date_from`
+
+        Returns:
+            bool: True if the date stamps are in the
+                expected chronological order
+                False otherwise.
+
+        Raises:
+            `TypeError`: If an invalid type is provided for either stamp
+            i.e. if None is provided as `date_to`
+
+        """
+        return self.date_to > self.date_from
