@@ -62,7 +62,9 @@ class HeadlinesView(APIView):
         metric = query_serializer.data["metric"]
 
         try:
-            headline_number: str = generate_headline_number(topic=topic, metric=metric)
+            headline_number: str = generate_headline_number(
+                topic_name=topic, metric_name=metric
+            )
         except BaseInvalidHeadlinesRequestError as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}

@@ -391,6 +391,46 @@ class TestChartPlotSerializer:
         expected_topic_names: List[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names
 
+    def test_to_models_returns_chart_plot_parameters_model(
+        self,
+        charts_plot_serializer_payload_and_model_managers,
+    ):
+        """
+        Given a valid payload passed to a `ChartPlotSerializer` object
+        When `to_models()` is called from the serializer
+        Then a `ChartPlotParameters` model is returned with the correct fields
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        valid_data_payload["stratum"] = "0_4"
+        valid_data_payload["geography"] = "England"
+        valid_data_payload["geography_type"] = "Nation"
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        serializer.is_valid(raise_exception=True)
+        chart_plot_parameters: ChartPlotParameters = serializer.to_models()
+
+        # Then
+        assert chart_plot_parameters.topic == valid_data_payload["topic"]
+        assert chart_plot_parameters.metric == valid_data_payload["metric"]
+        assert chart_plot_parameters.stratum == valid_data_payload["stratum"]
+        assert chart_plot_parameters.geography == valid_data_payload["geography"]
+        assert (
+            chart_plot_parameters.geography_type == valid_data_payload["geography_type"]
+        )
+
 
 class TestChartsSerializer:
     @pytest.mark.parametrize("valid_file_format", ["svg", "png", "jpg", "jpeg"])

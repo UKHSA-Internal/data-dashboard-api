@@ -94,11 +94,41 @@ class TestChartPlotParameters:
 
         # Then
         expected_dict_used_for_query = {
-            "topic": fake_chart_plot_parameters.topic,
-            "metric": fake_chart_plot_parameters.metric,
-            "stratum": fake_chart_plot_parameters.stratum,
-            "geography": fake_chart_plot_parameters.geography,
-            "geography_type": fake_chart_plot_parameters.geography_type,
+            "topic_name": fake_chart_plot_parameters.topic_name,
+            "metric_name": fake_chart_plot_parameters.metric_name,
+            "stratum_name": fake_chart_plot_parameters.stratum_name,
+            "geography_name": fake_chart_plot_parameters.geography_name,
+            "geography_type_name": fake_chart_plot_parameters.geography_type_name,
         }
         # `chart_type`, `label`, `line_colour`, `line_type`, `date_to` and `date_from` are omitted
         assert dict_used_for_query == expected_dict_used_for_query
+
+    def test_properties_return_correct_field_values(self):
+        """
+        Given a `ChartPlotParameters` instance
+        When the `_name` properties are called for
+            `topic`, `metric`, `geography`, `geography_type` & `stratum`
+        Then the correct values are returned
+        """
+        # Given
+        topic_name = "COVID-19"
+        metric_name = "new_cases_daily"
+        geography_name = "London"
+        geography_type_name = "Nation"
+        stratum_name = "0_4"
+
+        # When
+        chart_plot_parameters = ChartPlotParameters(
+            topic=topic_name,
+            metric=metric_name,
+            geography=geography_name,
+            geography_type=geography_type_name,
+            stratum=stratum_name,
+            chart_type="bar",
+        )
+
+        # Then
+        assert chart_plot_parameters.topic_name == topic_name
+        assert chart_plot_parameters.metric_name == metric_name
+        assert chart_plot_parameters.geography_name == geography_name
+        assert chart_plot_parameters.geography_type_name == geography_type_name

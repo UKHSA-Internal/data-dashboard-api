@@ -30,9 +30,9 @@ class TestChartsInterface:
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
                 dt=datetime.datetime(year=2023, month=1, day=i + 1),
-                metric_name=chart_plot_parameters.metric,
-                topic_name=chart_plot_parameters.topic,
-                stratum_name=chart_plot_parameters.stratum,
+                metric_name=chart_plot_parameters.metric_name,
+                topic_name=chart_plot_parameters.topic_name,
+                stratum_name=chart_plot_parameters.stratum_name,
             )
             for i in range(10)
         ]
@@ -297,12 +297,12 @@ class TestChartsInterface:
 
         # When
         timeseries = charts_interface.get_timeseries(
-            topic=mocked_topic,
-            metric=mocked_metric,
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
             date_from=mocked_date_from,
-            geography=mocked_geography,
-            geography_type=mocked_geography_type,
-            stratum=mocked_stratum,
+            geography_name=mocked_geography,
+            geography_type_name=mocked_geography_type,
+            stratum_name=mocked_stratum,
         )
 
         # Then
@@ -311,12 +311,12 @@ class TestChartsInterface:
             == spy_core_time_series_manager.filter_for_dates_and_values.return_value
         )
         spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
-            topic=mocked_topic,
-            metric=mocked_metric,
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
             date_from=mocked_date_from,
-            geography=mocked_geography,
-            geography_type=mocked_geography_type,
-            stratum=mocked_stratum,
+            geography_name=mocked_geography,
+            geography_type_name=mocked_geography_type,
+            stratum_name=mocked_stratum,
         )
 
     @mock.patch(f"{MODULE_PATH}.calculations.get_rolling_period_slice_for_metric")
@@ -363,7 +363,7 @@ class TestChartsInterface:
         )
 
         # When
-        metric: str = fake_plot_data.parameters.metric
+        metric: str = fake_plot_data.parameters.metric_name
         expected_constructed_params = {
             "chart_width": width,
             "chart_height": height,

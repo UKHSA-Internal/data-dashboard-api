@@ -67,8 +67,8 @@ class ChartsInterface:
         """
         plot_parameters = self.chart_plots.plots[0]
         value = self.core_time_series_manager.get_latest_metric_value(
-            topic=plot_parameters.topic,
-            metric_name=plot_parameters.metric,
+            topic_name=plot_parameters.topic_name,
+            metric_name=plot_parameters.metric_name,
         )
         return waffle.generate_chart_figure([value])
 
@@ -107,7 +107,7 @@ class ChartsInterface:
             chart_width=chart_width,
             dates=plot_data.x_axis,
             values=plot_data.y_axis,
-            legend=plot_data.parameters.metric,
+            legend=plot_data.parameters.metric_name,
         )
 
     def generate_line_multi_coloured(self) -> plotly.graph_objects.Figure:
@@ -241,12 +241,12 @@ class ChartsInterface:
 
     def get_timeseries(
         self,
-        topic: str,
-        metric: str,
+        topic_name: str,
+        metric_name: str,
         date_from: datetime.date,
-        geography: Optional[str] = None,
-        geography_type: Optional[str] = None,
-        stratum: Optional[str] = None,
+        geography_name: Optional[str] = None,
+        geography_type_name: Optional[str] = None,
+        stratum_name: Optional[str] = None,
     ):
         """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
 
@@ -257,18 +257,18 @@ class ChartsInterface:
              - `stratum`
 
         Args:
-            topic: The name of the disease being queried.
+            topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric: The name of the metric being queried.
+            metric_name: The name of the metric being queried.
                 E.g. `new_cases_7days_sum
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
-            geography: The name of the geography to apply additional filtering to.
+            geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type: The name of the type of geography to apply additional filtering.
+            geography_type_name: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
-            stratum: The value of the stratum to apply additional filtering to.
+            stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
 
         Returns:
@@ -282,12 +282,12 @@ class ChartsInterface:
 
         """
         return self.core_time_series_manager.filter_for_dates_and_values(
-            topic=topic,
-            metric=metric,
+            topic_name=topic_name,
+            metric_name=metric_name,
             date_from=date_from,
-            geography=geography,
-            geography_type=geography_type,
-            stratum=stratum,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
         )
 
     def param_builder_for_line_with_shaded_section(self, plot_data: ChartPlotData):
@@ -295,7 +295,7 @@ class ChartsInterface:
         chart_width = self.chart_plots.chart_width
         dates = plot_data.x_axis
         values = plot_data.y_axis
-        metric_name = plot_data.parameters.metric
+        metric_name = plot_data.parameters.metric_name
 
         return {
             "chart_height": chart_height,
@@ -404,8 +404,8 @@ def validate_chart_plot_parameters(chart_plot_parameters: ChartPlotParameters):
     """
     date_from = make_datetime_from_string(date_from=chart_plot_parameters.date_from)
     charts_request_validator = validation.ChartsRequestValidator(
-        topic=chart_plot_parameters.topic,
-        metric=chart_plot_parameters.metric,
+        topic_name=chart_plot_parameters.topic_name,
+        metric_name=chart_plot_parameters.metric_name,
         chart_type=chart_plot_parameters.chart_type,
         date_from=date_from,
     )

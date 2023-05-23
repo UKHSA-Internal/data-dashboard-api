@@ -36,8 +36,8 @@ class TestValidate:
         """
         # Given
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=mock.Mock(),
             date_from=mock.Mock(),
             core_time_series_manager=mock.Mock(),
@@ -67,8 +67,8 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         mocked_core_time_series_manager.get_count.return_value = 10
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=metric,
+            topic_name=mock.Mock(),
+            metric_name=metric,
             chart_type=chart_type,
             date_from=mock.Mock(),
             core_time_series_manager=mocked_core_time_series_manager,
@@ -91,8 +91,8 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         chart_type = ChartTypes.waffle.value
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=metric,
+            topic_name=mock.Mock(),
+            metric_name=metric,
             chart_type=chart_type,
             date_from=mock.Mock(),
         )
@@ -116,8 +116,8 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         mocked_core_time_series_manager.get_count.return_value = 1
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=metric,
+            topic_name=mock.Mock(),
+            metric_name=metric,
             chart_type=chart_type,
             date_from=mock.Mock(),
             core_time_series_manager=mocked_core_time_series_manager,
@@ -152,8 +152,8 @@ class TestValidateMetricIsAvailableForTopic:
         fake_metric_manager = FakeMetricManager(metrics=metrics)
 
         validator = validation.ChartsRequestValidator(
-            topic=valid_topic_name,
-            metric=metric_name,
+            topic_name=valid_topic_name,
+            metric_name=metric_name,
             chart_type=mock.Mock(),
             date_from=mock.Mock(),
             metric_manager=fake_metric_manager,
@@ -184,8 +184,8 @@ class TestValidateMetricIsAvailableForTopic:
         fake_metric_manager = FakeMetricManager(metrics=metrics)
 
         validator = validation.ChartsRequestValidator(
-            topic=invalid_topic_name,
-            metric=metric_name,
+            topic_name=invalid_topic_name,
+            metric_name=metric_name,
             chart_type=mock.Mock(),
             date_from=mock.Mock(),
             metric_manager=fake_metric_manager,
@@ -217,8 +217,8 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         validator = validation.ChartsRequestValidator(
-            topic=topic_name,
-            metric=metric_name,
+            topic_name=topic_name,
+            metric_name=metric_name,
             chart_type=mock.Mock(),
             date_from=date_from,
             core_time_series_manager=fake_core_time_series_manager,
@@ -256,8 +256,8 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         validator = validation.ChartsRequestValidator(
-            topic=topic_name,
-            metric=metric_name,
+            topic_name=topic_name,
+            metric_name=metric_name,
             chart_type=mock.Mock(),
             date_from=date_from,
             core_time_series_manager=fake_core_time_series_manager,
@@ -288,8 +288,8 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         validator = validation.ChartsRequestValidator(
-            topic=topic_name,
-            metric=metric_name,
+            topic_name=topic_name,
+            metric_name=metric_name,
             chart_type=mock.Mock(),
             date_from=date_from,
             core_time_series_manager=fake_core_time_series_manager,
@@ -315,8 +315,8 @@ class TestIsChartSeriesType:
         chart_type = ChartTypes.waffle.value
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=chart_type,
             date_from=mock.Mock(),
         )
@@ -341,8 +341,8 @@ class TestIsChartSeriesType:
         time_series_chart_type: str = chart_type
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=time_series_chart_type,
             date_from=mock.Mock(),
         )
@@ -367,8 +367,8 @@ class TestAreDatesInChronologicalOrder:
         date_to = datetime.datetime(year=2023, month=2, day=3)
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=mock.Mock(),
             date_from=date_from,
             date_to=date_to,
@@ -394,8 +394,8 @@ class TestAreDatesInChronologicalOrder:
         date_to = datetime.datetime(year=2021, month=1, day=1)
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=mock.Mock(),
             date_from=date_from,
             date_to=date_to,
@@ -428,8 +428,8 @@ class TestValidateDates:
         date_to = datetime.datetime(year=2023, month=12, day=2)
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=mock.Mock(),
             date_from=date_from,
             date_to=date_to,
@@ -454,8 +454,8 @@ class TestValidateDates:
         date_to = None
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=mock.Mock(),
             date_from=date_from,
             date_to=date_to,
@@ -479,8 +479,8 @@ class TestValidateDates:
         date_to = datetime.datetime(year=2021, month=7, day=1)
 
         validator = validation.ChartsRequestValidator(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             chart_type=mock.Mock(),
             date_from=date_from,
             date_to=date_to,

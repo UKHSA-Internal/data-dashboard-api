@@ -25,16 +25,16 @@ class DatesNotInChronologicalOrderError(Exception):
 class ChartsRequestValidator:
     def __init__(
         self,
-        topic: str,
-        metric: str,
+        topic_name: str,
+        metric_name: str,
         chart_type: str,
         date_from: datetime.datetime,
         date_to: Optional[datetime.datetime] = None,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
     ):
-        self.topic = topic
-        self.metric = metric
+        self.topic_name = topic_name
+        self.metric_name = metric_name
         self.chart_type = chart_type
         self.date_from = date_from
         self.date_to = date_to
@@ -92,7 +92,7 @@ class ChartsRequestValidator:
         )
         if not metric_is_series_chart_compatible:
             raise ChartTypeDoesNotSupportMetricError(
-                f"`{self.metric}` is not compatible with `{self.chart_type}` chart types"
+                f"`{self.metric_name}` is not compatible with `{self.chart_type}` chart types"
             )
 
     def _does_metric_have_multiple_records(self) -> bool:
@@ -105,8 +105,8 @@ class ChartsRequestValidator:
 
         """
         count: int = self.core_time_series_manager.get_count(
-            topic=self.topic,
-            metric_name=self.metric,
+            topic_name=self.topic_name,
+            metric_name=self.metric_name,
             date_from=self.date_from,
         )
         return count > 1
@@ -116,7 +116,7 @@ class ChartsRequestValidator:
 
         if not metric_is_topic_compatible:
             raise MetricDoesNotSupportTopicError(
-                f"`{self.topic}` does not have a corresponding metric of `{self.metric}`"
+                f"`{self.topic_name}` does not have a corresponding metric of `{self.metric_name}`"
             )
 
     def _is_metric_available_for_topic(self) -> bool:
@@ -129,8 +129,8 @@ class ChartsRequestValidator:
 
         """
         return self.metric_manager.is_metric_available_for_topic(
-            metric_name=self.metric,
-            topic_name=self.topic,
+            metric_name=self.metric_name,
+            topic_name=self.topic_name,
         )
 
     def _are_dates_in_chronological_order(self) -> bool:
