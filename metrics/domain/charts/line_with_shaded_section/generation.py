@@ -182,7 +182,7 @@ def generate_chart_figure(
         values: List of numbers representing the values.
         dates: List of datetime objects for each of the values.
         metric_name: The associated metric_name,
-            E.g. new_admissions_daily
+            E.g. `new_admissions_daily`
         change_in_metric_value: The change in metric value from the last 7 days
             compared to the preceding 7 days.
         rolling_period_slice: The last N number of items to slice

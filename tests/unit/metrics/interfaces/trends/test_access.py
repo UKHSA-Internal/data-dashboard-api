@@ -32,11 +32,11 @@ class TestTrendsInterface:
         )
 
         # When
-        value = interface.get_latest_metric_value(metric_to_lookup=metric_name)
+        value = interface.get_latest_metric_value(metric_name=metric_name)
 
         # Then
         spy_core_time_series_manager.get_latest_metric_value.assert_called_once_with(
-            topic=topic_name, metric_name=metric_name
+            topic_name=topic_name, metric_name=metric_name
         )
         assert (
             value == spy_core_time_series_manager.get_latest_metric_value.return_value
