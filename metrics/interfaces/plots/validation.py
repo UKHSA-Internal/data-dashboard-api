@@ -163,3 +163,18 @@ class PlotValidation:
             raise DatesNotInChronologicalOrderError()
 
         return None
+
+    def _are_dates_in_chronological_order(self) -> bool:
+        """Checks if the `date_to` stamp is chronologically ahead of `date_from`
+
+        Returns:
+            bool: True if the date stamps are in the
+                expected chronological order
+                False otherwise.
+
+        Raises:
+            `TypeError`: If an invalid type is provided for either stamp
+            i.e. if None is provided as `date_to`
+
+        """
+        return self.date_to > self.date_from
