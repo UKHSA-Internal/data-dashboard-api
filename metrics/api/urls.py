@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.views.static import serve
 from drf_spectacular.views import (
     SpectacularJSONAPIView,
     SpectacularRedocView,
@@ -35,6 +36,10 @@ api_router = WagtailAPIRouter("wagtailapi")
 # The second parameter is the endpoint class that handles the requests
 api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 
+static_urlpatterns = [
+    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+]
+
 
 urlpatterns = [
     path("", include(router.urls)),
@@ -49,6 +54,7 @@ urlpatterns = [
     ),
     # Redoc schema view
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    # Main API
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
     re_path(r"^downloads/v2", DownloadsView.as_view()),
@@ -60,9 +66,13 @@ urlpatterns = [
     re_path(r"^tables/v2", TablesView.as_view()),
     re_path(r"^trends/v2", TrendsView.as_view()),
     path("health/", HealthView.as_view()),
+    # Django admin
     path("admin/", admin.site.urls),
+    # CMS endpoints
     path("api/", api_router.urls),
     path("cms-admin/", include(wagtailadmin_urls)),
+    # Static files
+    path("", include(static_urlpatterns)),
 ]
 
 urlpatterns += public_api_urlpatterns
