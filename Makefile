@@ -46,4 +46,5 @@ audit:
 # Start the application
 run-server:
 	${BIN}python manage.py migrate
+	${BIN}python manage.py collectstatic
 	${BIN}python manage.py runserver localhost:${PORT}
