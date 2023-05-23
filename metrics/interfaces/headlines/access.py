@@ -8,12 +8,12 @@ DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 class HeadlinesInterface:
     def __init__(
         self,
-        topic: str,
-        metric: str,
+        topic_name: str,
+        metric_name: str,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
-        self.topic = topic
-        self.metric = metric
+        self.topic_name = topic_name
+        self.metric_name = metric_name
         self.core_time_series_manager = core_time_series_manager
 
     def get_metric_value(self) -> float:
@@ -30,12 +30,12 @@ class HeadlinesInterface:
         """
         try:
             return self.core_time_series_manager.get_metric_value(
-                topic=self.topic,
-                metric_name=self.metric,
+                topic_name=self.topic_name,
+                metric_name=self.metric_name,
             )
         except CoreTimeSeries.MultipleObjectsReturned:
             raise MetricIsTimeSeriesTypeError(
-                f"`{self.metric}` is a timeseries-type metric. This should be a headline-type metric"
+                f"`{self.metric_name}` is a timeseries-type metric. This should be a headline-type metric"
             )
         except CoreTimeSeries.DoesNotExist:
             raise HeadlineNumberDataNotFoundError(
@@ -55,14 +55,14 @@ class HeadlineNumberDataNotFoundError(BaseInvalidHeadlinesRequestError):
     ...
 
 
-def generate_headline_number(topic: str, metric: str):
+def generate_headline_number(topic_name: str, metric_name: str) -> float:
     """Gets the headline number metric_value for the associated time series record.
 
     Args:
-        topic: The name of the disease being queried.
+        topic_name: The name of the disease being queried.
             E.g. `COVID-19`
-        metric: The name of the metric being queried.
-            E.g. `new_cases_7days_sum
+        metric_name: The name of the metric being queried.
+            E.g. `new_cases_7days_sum`
 
     Returns:
         float: The associated `metric_value`
@@ -73,7 +73,7 @@ def generate_headline_number(topic: str, metric: str):
         `HeadlineNumberDataNotFoundError`: If the query returned no records.
 
     """
-    interface = HeadlinesInterface(topic=topic, metric=metric)
+    interface = HeadlinesInterface(topic_name=topic_name, metric_name=metric_name)
 
     metric_value = interface.get_metric_value()
 

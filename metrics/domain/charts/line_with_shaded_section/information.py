@@ -67,7 +67,7 @@ def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool
         `change_in_metric_value`: The change in metric value,
             as a number. E.g. -10
         `metric_name`: The associated metric_name,
-            E.g. new_admissions_daily
+            E.g. `new_admissions_daily`
 
     Returns:
         bool: True if the change in value is to be considered

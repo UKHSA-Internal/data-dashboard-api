@@ -19,8 +19,8 @@ class TestHeadlinesInterface:
         mocked_topic = mock.Mock()
         mocked_metric = mock.Mock()
         headlines_interface = access.HeadlinesInterface(
-            topic=mocked_topic,
-            metric=mocked_metric,
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
             core_time_series_manager=spy_core_time_series_manager,
         )
 
@@ -32,7 +32,7 @@ class TestHeadlinesInterface:
             metric_value == spy_core_time_series_manager.get_metric_value.return_value
         )
         spy_core_time_series_manager.get_metric_value.assert_called_once_with(
-            topic=mocked_topic,
+            topic_name=mocked_topic,
             metric_name=mocked_metric,
         )
 
@@ -52,8 +52,8 @@ class TestHeadlinesInterface:
         fake_metric_name = "COVID-19"
 
         headlines_interface = access.HeadlinesInterface(
-            topic=mock.Mock(),
-            metric=fake_metric_name,
+            topic_name=mock.Mock(),
+            metric_name=fake_metric_name,
             core_time_series_manager=spy_core_time_series_manager,
         )
 
@@ -79,8 +79,8 @@ class TestHeadlinesInterface:
         ]
 
         headlines_interface = access.HeadlinesInterface(
-            topic=mock.Mock(),
-            metric=mock.Mock(),
+            topic_name=mock.Mock(),
+            metric_name=mock.Mock(),
             core_time_series_manager=spy_core_time_series_manager,
         )
 
@@ -108,8 +108,8 @@ class TestGenerateHeadlineNumber:
 
         # When
         metric_value = access.generate_headline_number(
-            topic=mocked_topic,
-            metric=mocked_metric,
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
         )
 
         # Then

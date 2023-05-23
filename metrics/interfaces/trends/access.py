@@ -26,7 +26,7 @@ class TrendsInterface:
         self.percentage_metric_name = percentage_metric_name
         self.core_time_series_manager = core_time_series_manager
 
-    def get_latest_metric_value(self, metric_to_lookup: str) -> Decimal:
+    def get_latest_metric_value(self, metric_name: str) -> Decimal:
         """Gets the value for the record associated with the given `metric_to_lookup`
 
         Returns:
@@ -41,13 +41,13 @@ class TrendsInterface:
         latest_metric_value: Optional[
             Decimal
         ] = self.core_time_series_manager.get_latest_metric_value(
-            topic=self.topic_name,
-            metric_name=metric_to_lookup,
+            topic_name=self.topic_name,
+            metric_name=metric_name,
         )
 
         if latest_metric_value is None:
             raise TrendNumberDataNotFoundError(
-                f"Data for `{self.topic_name}` and `{metric_to_lookup}` could not be found."
+                f"Data for `{self.topic_name}` and `{metric_name}` could not be found."
             )
 
         return latest_metric_value
@@ -66,10 +66,10 @@ class TrendsInterface:
 
         """
         metric_value: Decimal = self.get_latest_metric_value(
-            metric_to_lookup=self.metric_name
+            metric_name=self.metric_name
         )
         percentage_metric_value: Decimal = self.get_latest_metric_value(
-            metric_to_lookup=self.percentage_metric_name
+            metric_name=self.percentage_metric_name
         )
 
         return Trend(
