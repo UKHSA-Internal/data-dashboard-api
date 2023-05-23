@@ -18,7 +18,7 @@ from metrics.api.views import (
     HeadlinesView,
     HealthView,
     OldTabularView,
-    TabularView,
+    TablesView,
     TrendsView,
 )
 from metrics.api.viewsets import APITimeSeriesViewSet
@@ -58,7 +58,7 @@ urlpatterns = [
         r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
         OldTabularView.as_view(),
     ),
-    re_path(r"^tabular/v2", TabularView.as_view()),
+    re_path(r"^tables/v2", TablesView.as_view()),
     re_path(r"^trends/v2", TrendsView.as_view()),
     path("health/", HealthView.as_view()),
     path("admin/", admin.site.urls),
