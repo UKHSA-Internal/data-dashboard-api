@@ -8,7 +8,7 @@ from metrics.api.serializers import help_texts
 from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.domain.models import PlotParameters, Plots
+from metrics.domain.models import PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 
 DEFAULT_CHART_HEIGHT = 220
@@ -147,8 +147,8 @@ class ChartsSerializer(serializers.Serializer):
 
     plots = ChartPlotsListSerializer()
 
-    def to_models(self) -> Plots:
-        return Plots(
+    def to_models(self) -> PlotsCollection:
+        return PlotsCollection(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,

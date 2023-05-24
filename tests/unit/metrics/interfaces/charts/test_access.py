@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.domain.models import PlotsData, PlotParameters, Plots
+from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
@@ -167,7 +167,7 @@ class TestChartsInterface:
             for each individual `ChartPlotParameters` model
         """
         # Given
-        fake_chart_plots = Plots(
+        fake_chart_plots = PlotsCollection(
             plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
             chart_width=123,
@@ -208,7 +208,7 @@ class TestChartsInterface:
         And the correct data passed to the `x_axis` and `y_axis`
         """
         # Given
-        fake_chart_plots = Plots(
+        fake_chart_plots = PlotsCollection(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -256,7 +256,7 @@ class TestChartsInterface:
         Then a `DataNotFoundError` is raised
         """
         # Given
-        fake_chart_plots = Plots(
+        fake_chart_plots = PlotsCollection(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -343,7 +343,7 @@ class TestChartsInterface:
             y_axis=mocked_values,
         )
 
-        fake_chart_plots = Plots(
+        fake_chart_plots = PlotsCollection(
             plots=[fake_chart_plot_parameters],
             file_format="svg",
             chart_width=width,
@@ -564,7 +564,7 @@ class TestValidateEachRequestedChartPlot:
             fake_chart_plot_parameters,
             fake_chart_plot_parameters_covid_cases,
         ]
-        fake_chart_plots = Plots(
+        fake_chart_plots = PlotsCollection(
             file_format="svg",
             plots=fake_requested_chart_plots,
             chart_width=123,
