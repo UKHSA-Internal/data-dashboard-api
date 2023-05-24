@@ -184,7 +184,7 @@ class TablesInterface:
         )
 
 
-def generate_tabular_output(table_plots: TablePlots) -> str:
+def generate_tabular_output(table_plots: TablePlots) -> List[Dict[str, str]]:
     """Validates and creates tabular output based off the parameters provided within the `table_plots` model
 
     Args:
