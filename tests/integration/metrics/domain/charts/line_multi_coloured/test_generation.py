@@ -4,7 +4,7 @@ from typing import List
 import plotly.graph_objects
 
 from metrics.domain.charts.line_multi_coloured import colour_scheme, generation
-from metrics.domain.models import ChartPlotData, ChartPlotParameters
+from metrics.domain.models import PlotParameters, PlotsData
 
 DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -32,8 +32,8 @@ class TestLineMultiColouredCharts:
         label: str = "",
         line_type: str = "",
         line_colour: str = "",
-    ) -> ChartPlotData:
-        plot_params = ChartPlotParameters(
+    ) -> PlotsData:
+        plot_params = PlotParameters(
             chart_type="line_multi_coloured",
             topic="RSV",
             metric="weekly_positivity_by_age",
@@ -42,7 +42,7 @@ class TestLineMultiColouredCharts:
             line_type=line_type,
             line_colour=line_colour,
         )
-        return ChartPlotData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
 
     def test_main_plot_and_axis_properties(self):
         """

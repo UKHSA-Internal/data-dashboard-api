@@ -3,7 +3,7 @@ from typing import Dict, List, Literal, Optional, Tuple
 from pydantic.main import Any, BaseModel
 
 
-class ChartPlotParameters(BaseModel):
+class PlotParameters(BaseModel):
     chart_type: str
     topic: str
     metric: str
@@ -57,17 +57,18 @@ class ChartPlotParameters(BaseModel):
             "stratum_name": self.stratum_name,
             "geography_name": self.geography_name,
             "geography_type_name": self.geography_type_name,
+            "date_from": self.date_from,
         }
 
 
-class ChartPlots(BaseModel):
-    plots: List[ChartPlotParameters]
+class PlotsCollection(BaseModel):
+    plots: List[PlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
     chart_height: int
 
 
-class ChartPlotData(BaseModel):
-    parameters: ChartPlotParameters
+class PlotsData(BaseModel):
+    parameters: PlotParameters
     x_axis: Any
     y_axis: Any
