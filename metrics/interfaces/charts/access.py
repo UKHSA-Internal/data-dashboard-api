@@ -230,6 +230,7 @@ class ChartsInterface:
 
         """
         plot_params: Dict[str, str] = chart_plot_parameters.to_dict_for_query()
+        plot_params["date_from"] = make_datetime_from_string(date_from=chart_plot_parameters.date_from)
         return self.get_timeseries(**plot_params)
 
     def get_timeseries(
