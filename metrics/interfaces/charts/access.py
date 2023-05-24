@@ -230,7 +230,9 @@ class ChartsInterface:
 
         """
         plot_params: Dict[str, str] = chart_plot_parameters.to_dict_for_query()
-        plot_params["date_from"] = make_datetime_from_string(date_from=chart_plot_parameters.date_from)
+        plot_params["date_from"] = make_date_from_string(
+            date_from=chart_plot_parameters.date_from
+        )
         return self.get_timeseries(**plot_params)
 
     def get_timeseries(
@@ -318,15 +320,15 @@ class ChartsInterface:
         return calculations.change_between_each_half(values=values)
 
 
-def make_datetime_from_string(date_from: Optional[str]) -> datetime.datetime:
-    """Parses the `date_from` string into a datetime object. Defaults to 1 year ago from the current date.
+def make_date_from_string(date_from: Optional[str]) -> datetime.date:
+    """Parses the `date_from` string into a date object. Defaults to 1 year ago from the current date.
 
     Args:
         date_from: A string representing the date in the format `%Y-%m-%d`
             E.g. "2022-10-01"
 
     Returns:
-        `datetime` object representing the `date_from` string
+        `date` object representing the `date_from` string
             or a default of 1 year ago from the current date.
 
     """
@@ -396,7 +398,7 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
             for the topic of `COVID-19`
 
     """
-    date_from = make_datetime_from_string(date_from=chart_plot_parameters.date_from)
+    date_from = make_date_from_string(date_from=chart_plot_parameters.date_from)
     charts_request_validator = validation.ChartsRequestValidator(
         topic_name=chart_plot_parameters.topic_name,
         metric_name=chart_plot_parameters.metric_name,

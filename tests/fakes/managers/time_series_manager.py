@@ -122,4 +122,7 @@ def _convert_string_to_date(date_string: str) -> datetime.date:
     if type(date_string) is str:
         return datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
 
+    if type(date_string) is datetime.datetime:
+        return date_string.date()
+
     return date_string

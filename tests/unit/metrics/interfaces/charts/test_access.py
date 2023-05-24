@@ -10,7 +10,7 @@ from metrics.interfaces.charts.access import (
     ChartsInterface,
     DataNotFoundError,
     generate_chart,
-    make_datetime_from_string,
+    make_date_from_string,
     validate_chart_plot_parameters,
     validate_each_requested_chart_plot,
 )
@@ -395,8 +395,8 @@ class TestChartsInterface:
         Then the call is delegated to the `get_timeseries()` method with the correct args
         """
         # Given
-        date_from: str = "2023-01-01"
-        fake_chart_plot_parameters.date_from = date_from
+        date_from = datetime.datetime(year=2023, month=1, day=1)
+        fake_chart_plot_parameters.date_from = "2023-01-01"
 
         charts_interface = ChartsInterface(
             chart_plots=mock.MagicMock(), core_time_series_manager=mock.Mock()
@@ -413,9 +413,9 @@ class TestChartsInterface:
 
         # The dict representation of the `ChartPlotParameters` model
         # is unpacked into the `get_timeseries` method
-        mocked_get_timeseries.assert_called_once_with(
-            **fake_chart_plot_parameters.to_dict_for_query(),
-        )
+        params = fake_chart_plot_parameters.to_dict_for_query()
+        params["date_from"] = date_from
+        mocked_get_timeseries.assert_called_once_with(**params)
 
 
 class TestMakeDatetimeFromString:
@@ -432,10 +432,9 @@ class TestMakeDatetimeFromString:
         date_from = f"{year}-{month}-{day}"
 
         # When
-        parsed_date_from = make_datetime_from_string(date_from=date_from)
+        parsed_date_from = make_date_from_string(date_from=date_from)
 
         # Then
-        assert type(parsed_date_from) == datetime.datetime
         assert parsed_date_from.year == int(year)
         assert parsed_date_from.month == int(month)
         assert parsed_date_from.day == int(day)
@@ -454,7 +453,7 @@ class TestMakeDatetimeFromString:
         date_from = None
 
         # When
-        parsed_date_from = make_datetime_from_string(date_from=date_from)
+        parsed_date_from = make_date_from_string(date_from=date_from)
 
         # Then
         spy_get_date_n_months_ago_from_timestamp.assert_called_once_with(
@@ -477,7 +476,7 @@ class TestMakeDatetimeFromString:
         date_from = ""
 
         # When
-        parsed_date_from = make_datetime_from_string(date_from=date_from)
+        parsed_date_from = make_date_from_string(date_from=date_from)
 
         # Then
         spy_get_date_n_months_ago_from_timestamp.assert_called_once_with(
