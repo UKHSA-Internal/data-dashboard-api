@@ -62,8 +62,8 @@ class TestPlotsInterface:
         plots_data = data_slice_interface.build_plots_data()
 
         # Then
-        # Check that `build_chart_plot_data_from_parameters()` method
-        # is called for each of the provided `ChartPlotParameters` models
+        # Check that `build_plot_data_from_parameters()` method
+        # is called for each of the provided `PlotParameters` models
         expected_calls = [
             mock.call(plot_parameters=fake_chart_plot_parameters),
             mock.call(plot_parameters=fake_chart_plot_parameters_covid_cases),
@@ -73,22 +73,20 @@ class TestPlotsInterface:
             any_order=False,
         )
 
-        expected_plots_data = [
-            spy_build_plot_data_from_parameters.return_value
-        ] * 2
+        expected_plots_data = [spy_build_plot_data_from_parameters.return_value] * 2
         assert plots_data == expected_plots_data
 
     def test_build_plot_data_from_parameters(
         self, fake_chart_plot_parameters: PlotParameters
     ):
         """
-        Given a `ChartPlotParameters` model requesting a chart plot for existing `CoreTimeSeries`
-        When `build_chart_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
-        Then a `ChartPlotData` model is returned with the original parameters
+        Given a `PlotParameters` model requesting a plot for existing `CoreTimeSeries`
+        When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
+        Then a `PlotData` model is returned with the original parameters
         And the correct data passed to the `x_axis` and `y_axis`
         """
         # Given
-        fake_chart_plots = PlotsCollection(
+        fake_plots_collection = PlotsCollection(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -104,25 +102,21 @@ class TestPlotsInterface:
         )
 
         plots_interface = PlotsInterface(
-            plots_collection=fake_chart_plots,
+            plots_collection=fake_plots_collection,
             core_time_series_manager=fake_core_time_series_manager,
         )
 
         # When
-        plot_data: PlotsData = (
-            plots_interface.build_plot_data_from_parameters(
-                plot_parameters=fake_chart_plot_parameters
-            )
+        plot_data: PlotsData = plots_interface.build_plot_data_from_parameters(
+            plot_parameters=fake_chart_plot_parameters
         )
 
         # Then
         # Check that the parameters on the `PlotData` model is ingested by the input `PlotParameters` model
         assert plot_data.parameters == fake_chart_plot_parameters
 
-        # Check the correct data is passed to the axis of the `ChartPlotData` model
-        assert plot_data.x_axis == tuple(
-            x.dt for x in fake_core_time_series_for_plot
-        )
+        # Check the correct data is passed to the axis of the `PlotData` model
+        assert plot_data.x_axis == tuple(x.dt for x in fake_core_time_series_for_plot)
         assert plot_data.y_axis == tuple(
             x.metric_value for x in fake_core_time_series_for_plot
         )
@@ -228,7 +222,7 @@ class TestPlotsInterface:
         assert timeseries == mocked_get_timeseries.return_value
 
         expected_date_from = make_datetime_from_string(date_from=date_from)
-        # The dict representation of the `ChartPlotParameters` model
+        # The dict representation of the `PlotParameters` model
         # is unpacked into the `get_timeseries` method
         mocked_get_timeseries.assert_called_once_with(
             **fake_chart_plot_parameters.to_dict_for_query(),
