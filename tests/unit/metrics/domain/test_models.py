@@ -2,7 +2,7 @@ from typing import Dict, Optional
 
 import pytest
 
-from metrics.domain.models import ChartPlotParameters
+from metrics.domain.models import PlotParameters
 
 
 class TestChartPlotParameters:
@@ -34,7 +34,7 @@ class TestChartPlotParameters:
         }
 
         # When / Then
-        ChartPlotParameters(**self.mandatory_parameters, **optional_parameters_as_none)
+        PlotParameters(**self.mandatory_parameters, **optional_parameters_as_none)
 
     def test_validates_successfully_when_optional_parameters_are_empty_strings(self):
         """
@@ -48,7 +48,7 @@ class TestChartPlotParameters:
         }
 
         # When / Then
-        ChartPlotParameters(
+        PlotParameters(
             **self.mandatory_parameters, **optional_parameters_as_empty_strings
         )
 
@@ -62,9 +62,9 @@ class TestChartPlotParameters:
         optional_parameters = {}
 
         # When / Then
-        ChartPlotParameters(**self.mandatory_parameters, **optional_parameters)
+        PlotParameters(**self.mandatory_parameters, **optional_parameters)
 
-    def test_to_dict_for_query(self, fake_chart_plot_parameters: ChartPlotParameters):
+    def test_to_dict_for_query(self, fake_chart_plot_parameters: PlotParameters):
         """
         Given a payload containing optional fields which do not relate
             directly to the corresponding query filters
@@ -118,7 +118,7 @@ class TestChartPlotParameters:
         stratum_name = "0_4"
 
         # When
-        chart_plot_parameters = ChartPlotParameters(
+        chart_plot_parameters = PlotParameters(
             topic=topic_name,
             metric=metric_name,
             geography=geography_name,

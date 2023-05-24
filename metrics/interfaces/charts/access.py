@@ -16,7 +16,7 @@ from metrics.domain.charts import (
     line_with_shaded_section,
     waffle,
 )
-from metrics.domain.models import ChartPlotData, ChartPlotParameters, ChartPlots
+from metrics.domain.models import PlotsData, PlotParameters, Plots
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 
@@ -30,7 +30,7 @@ class DataNotFoundError(ValueError):
 class ChartsInterface:
     def __init__(
         self,
-        chart_plots: ChartPlots,
+        chart_plots: Plots,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.chart_plots = chart_plots
@@ -82,8 +82,8 @@ class ChartsInterface:
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
 
-        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
-        plot_data: ChartPlotData = plots_data[0]
+        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plot_data: PlotsData = plots_data[0]
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
@@ -99,8 +99,8 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
-        plot_data: ChartPlotData = plots_data[0]
+        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plot_data: PlotsData = plots_data[0]
 
         return bar.generate_chart_figure(
             chart_height=chart_height,
@@ -122,7 +122,7 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
+        plots_data: List[PlotsData] = self.build_chart_plots_data()
 
         return line_multi_coloured.generate_chart_figure(
             chart_height=chart_height,
@@ -141,13 +141,13 @@ class ChartsInterface:
             A plotly `Figure` object for the created line chart with shaded section
 
         """
-        plots_data: List[ChartPlotData] = self.build_chart_plots_data()
-        plot_data: ChartPlotData = plots_data[0]
+        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plot_data: PlotsData = plots_data[0]
         params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
-    def build_chart_plots_data(self) -> List[ChartPlotData]:
+    def build_chart_plots_data(self) -> List[PlotsData]:
         """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -159,11 +159,11 @@ class ChartsInterface:
             that chart plot is skipped and an enriched model is not provided.
 
         Returns:
-            List[ChartPlotData]: A list of `ChartPlotData` models for
+            List[PlotsData]: A list of `ChartPlotData` models for
                 each of the requested chart plots.
 
         """
-        chart_plots_data: List[ChartPlotData] = []
+        chart_plots_data: List[PlotsData] = []
         for chart_plot_parameters in self.chart_plots.plots:
             try:
                 chart_plot_data = self.build_chart_plot_data_from_parameters(
@@ -177,7 +177,7 @@ class ChartsInterface:
         return chart_plots_data
 
     def build_chart_plot_data_from_parameters(
-        self, chart_plot_parameters: ChartPlotParameters
+        self, chart_plot_parameters: PlotParameters
     ):
         """Creates a `ChartPlotData` model which holds the params and corresponding data for the given requested plot
 
@@ -187,7 +187,7 @@ class ChartsInterface:
             These models can then be passed into the domain libraries.
 
         Returns:
-            List[ChartPlotData]: A list of `ChartPlotData` models for
+            List[PlotsData]: A list of `ChartPlotData` models for
                 each of the requested chart plots.
 
         Raises:
@@ -204,14 +204,14 @@ class ChartsInterface:
         except ValueError:
             raise DataNotFoundError
         else:
-            return ChartPlotData(
+            return PlotsData(
                 parameters=chart_plot_parameters,
                 x_axis=dates,
                 y_axis=values,
             )
 
     def get_timeseries_for_chart_plot_parameters(
-        self, chart_plot_parameters: ChartPlotParameters
+        self, chart_plot_parameters: PlotParameters
     ):
         """Returns the timeseries records for the requested plot as a QuerySet
 
@@ -290,7 +290,7 @@ class ChartsInterface:
             stratum_name=stratum_name,
         )
 
-    def param_builder_for_line_with_shaded_section(self, plot_data: ChartPlotData):
+    def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
         dates = plot_data.x_axis
@@ -345,7 +345,7 @@ def make_datetime_from_string(date_from: Optional[str]) -> datetime.datetime:
         )
 
 
-def generate_chart(chart_plots: ChartPlots) -> str:
+def generate_chart(chart_plots: Plots) -> str:
     """Validates and creates a chart figure based of the parameters provided within the `chart_plots` model
 
     Args:
@@ -368,7 +368,7 @@ def generate_chart(chart_plots: ChartPlots) -> str:
     )
 
 
-def validate_each_requested_chart_plot(chart_plots: ChartPlots) -> None:
+def validate_each_requested_chart_plot(chart_plots: Plots) -> None:
     """Validates the request chart plots against the contents of the db
 
     Raises:
@@ -387,7 +387,7 @@ def validate_each_requested_chart_plot(chart_plots: ChartPlots) -> None:
         validate_chart_plot_parameters(chart_plot_parameters=chart_plot_params)
 
 
-def validate_chart_plot_parameters(chart_plot_parameters: ChartPlotParameters):
+def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
     """Validates the individual given `chart_plot_parameters` against the contents of the db
 
     Raises:

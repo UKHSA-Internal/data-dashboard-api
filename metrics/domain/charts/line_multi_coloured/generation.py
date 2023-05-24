@@ -4,7 +4,7 @@ from typing import List
 import plotly
 
 from metrics.domain.charts.line_multi_coloured import colour_scheme, properties
-from metrics.domain.models import ChartPlotData
+from metrics.domain.models import PlotsData
 
 X_AXIS_ARGS = {
     "showgrid": False,
@@ -51,7 +51,7 @@ LAYOUT_ARGS = {
 def create_multi_coloured_line_chart(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[ChartPlotData],
+    chart_plots_data: List[PlotsData],
     line_shape: str,
     line_width: int = 2,
 ) -> plotly.graph_objs.Figure:
@@ -136,7 +136,7 @@ def _create_line_plot(
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[ChartPlotData],
+    chart_plots_data: List[PlotsData],
     line_shape: str = "spline",
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
