@@ -21,7 +21,9 @@ MODULE_PATH = "metrics.interfaces.plots.access"
 
 class TestPlotsInterface:
     @staticmethod
-    def _setup_fake_time_series_for_plot(plot_parameters: PlotParameters):
+    def _setup_fake_time_series_for_plot(
+        plot_parameters: PlotParameters,
+    ) -> List[FakeCoreTimeSeries]:
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
                 dt=datetime.date(year=2023, month=2, day=i + 1),
