@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.domain.models import ChartPlotData, ChartPlotParameters, ChartPlots
+from metrics.domain.models import PlotsData, PlotParameters, Plots
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
@@ -26,7 +26,7 @@ MODULE_PATH = "metrics.interfaces.charts.access"
 
 class TestChartsInterface:
     @staticmethod
-    def _setup_fake_time_series_for_plot(chart_plot_parameters: ChartPlotParameters):
+    def _setup_fake_time_series_for_plot(chart_plot_parameters: PlotParameters):
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
                 dt=datetime.datetime(year=2023, month=1, day=i + 1),
@@ -157,8 +157,8 @@ class TestChartsInterface:
     def test_build_chart_plots_data_delegates_call_for_each_plot(
         self,
         mocked_build_chart_plot_data_from_parameters: mock.MagicMock,
-        fake_chart_plot_parameters: ChartPlotParameters,
-        fake_chart_plot_parameters_covid_cases: ChartPlotParameters,
+        fake_chart_plot_parameters: PlotParameters,
+        fake_chart_plot_parameters_covid_cases: PlotParameters,
     ):
         """
         Given a `ChartPlots` model which contains `ChartPlotParameters` for 2 separate plots
@@ -167,7 +167,7 @@ class TestChartsInterface:
             for each individual `ChartPlotParameters` model
         """
         # Given
-        fake_chart_plots = ChartPlots(
+        fake_chart_plots = Plots(
             plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
             chart_width=123,
@@ -199,7 +199,7 @@ class TestChartsInterface:
         assert chart_plots_data == expected_chart_plots_data
 
     def test_build_chart_plot_data_from_parameters(
-        self, fake_chart_plot_parameters: ChartPlotParameters
+        self, fake_chart_plot_parameters: PlotParameters
     ):
         """
         Given a `ChartPlotParameters` model requesting a chart plot for existing `CoreTimeSeries`
@@ -208,7 +208,7 @@ class TestChartsInterface:
         And the correct data passed to the `x_axis` and `y_axis`
         """
         # Given
-        fake_chart_plots = ChartPlots(
+        fake_chart_plots = Plots(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -229,7 +229,7 @@ class TestChartsInterface:
         )
 
         # When
-        chart_plot_data: ChartPlotData = (
+        chart_plot_data: PlotsData = (
             charts_interface.build_chart_plot_data_from_parameters(
                 chart_plot_parameters=fake_chart_plot_parameters
             )
@@ -248,7 +248,7 @@ class TestChartsInterface:
         )
 
     def test_build_chart_plot_data_from_parameters_raises_error_when_no_data_found(
-        self, fake_chart_plot_parameters: ChartPlotParameters
+        self, fake_chart_plot_parameters: PlotParameters
     ):
         """
         Given a `ChartPlotParameters` model requesting a chart plot for `CoreTimeSeries` data which cannot be found
@@ -256,7 +256,7 @@ class TestChartsInterface:
         Then a `DataNotFoundError` is raised
         """
         # Given
-        fake_chart_plots = ChartPlots(
+        fake_chart_plots = Plots(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -325,7 +325,7 @@ class TestChartsInterface:
         self,
         mocked_calculate_change_in_metric_value: mock.MagicMock,
         mocked_get_rolling_period_slice_for_metric: mock.MagicMock,
-        fake_chart_plot_parameters: ChartPlotParameters,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `ChartPlotData` model representing the requested plot and its corresponding data
@@ -337,13 +337,13 @@ class TestChartsInterface:
         height = 456
         mocked_dates = mock.Mock()
         mocked_values = mock.Mock()
-        fake_plot_data = ChartPlotData(
+        fake_plot_data = PlotsData(
             parameters=fake_chart_plot_parameters,
             x_axis=mocked_dates,
             y_axis=mocked_values,
         )
 
-        fake_chart_plots = ChartPlots(
+        fake_chart_plots = Plots(
             plots=[fake_chart_plot_parameters],
             file_format="svg",
             chart_width=width,
@@ -387,7 +387,7 @@ class TestChartsInterface:
     def test_get_timeseries_for_chart_plot_parameters_delegates_call_with_correct_args(
         self,
         mocked_get_timeseries: mock.MagicMock,
-        fake_chart_plot_parameters: ChartPlotParameters,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `ChartPlotParameters` model with a defined `date_from`
@@ -549,8 +549,8 @@ class TestValidateEachRequestedChartPlot:
     def test_delegates_call_for_each_chart_plot(
         self,
         spy_validate_chart_plot_parameters: mock.MagicMock,
-        fake_chart_plot_parameters: ChartPlotParameters,
-        fake_chart_plot_parameters_covid_cases: ChartPlotParameters,
+        fake_chart_plot_parameters: PlotParameters,
+        fake_chart_plot_parameters_covid_cases: PlotParameters,
     ):
         """
         Given a `ChartsPlots` model requesting plots
@@ -564,7 +564,7 @@ class TestValidateEachRequestedChartPlot:
             fake_chart_plot_parameters,
             fake_chart_plot_parameters_covid_cases,
         ]
-        fake_chart_plots = ChartPlots(
+        fake_chart_plots = Plots(
             file_format="svg",
             plots=fake_requested_chart_plots,
             chart_width=123,
@@ -587,7 +587,7 @@ class TestValidateChartPlotParameters:
     def test_delegates_call_to_validate_method_on_charts_request_validator_class(
         self,
         spy_validate_method: mock.MagicMock,
-        fake_chart_plot_parameters: ChartPlotParameters,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `ChartPlotParameters` model
