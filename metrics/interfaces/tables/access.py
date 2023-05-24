@@ -82,8 +82,8 @@ class TablesInterface:
 
         try:
             x_axis_values, y_axis_values = unzip_values(timeseries_queryset)
-        except ValueError:
-            raise DataNotFoundError
+        except ValueError as error:
+            raise DataNotFoundError from error
         else:
             return TabularPlotData(
                 parameters=table_plot_parameters,
@@ -122,34 +122,34 @@ class TablesInterface:
 
     def get_timeseries(
         self,
-        topic: str,
-        metric: str,
+        topic_name: str,
+        metric_name: str,
         date_from: datetime.date,
-        geography: Optional[str] = None,
-        geography_type: Optional[str] = None,
-        stratum: Optional[str] = None,
+        geography_name: Optional[str] = None,
+        geography_type_name: Optional[str] = None,
+        stratum_name: Optional[str] = None,
     ):
-        """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
+        """Gets the time series for the `metric_name` and `topic_name` from the `date_from` stamp.
 
         Notes:
             Additional filtering is available via the following optional params:
-             - `geography`
-             - `geography_type`
-             - `stratum`
+             - `geography_name`
+             - `geography_type_name`
+             - `stratum_name`
 
         Args:
-            topic: The name of the disease being queried.
+            topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric: The name of the metric being queried.
+            metric_name: The name of the metric being queried.
                 E.g. `new_cases_7days_sum
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
-            geography: The name of the geography to apply additional filtering to.
+            geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type: The name of the type of geography to apply additional filtering.
+            geography_type_name: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
-            stratum: The value of the stratum to apply additional filtering to.
+            stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
 
         Returns:
@@ -163,12 +163,12 @@ class TablesInterface:
 
         """
         return self.core_time_series_manager.filter_for_dates_and_values(
-            topic=topic,
-            metric=metric,
+            topic_name=topic_name,
+            metric_name=metric_name,
             date_from=date_from,
-            geography=geography,
-            geography_type=geography_type,
-            stratum=stratum,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
         )
 
     def generate_plots_for_table(self) -> List[Dict[str, str]]:
@@ -195,7 +195,7 @@ def generate_tabular_output(table_plots: TablePlots) -> List[Dict[str, str]]:
         The requested plots in tabular format
 
     Raises:
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
+        `MetricDoesNotSupportTopicError`: If the `metric_name` is not
             compatible for the required `topic`.
             E.g. `new_cases_daily` is currently only available
             for the topic of `COVID-19`
@@ -212,7 +212,7 @@ def validate_each_requested_table_plot(table_plots: TablePlots) -> None:
     """Validates the request table plots against the contents of the db
 
     Raises:
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
+        `MetricDoesNotSupportTopicError`: If the `metric_name` is not
             compatible for the required `topic`.
             E.g. `new_cases_daily` is currently only available
             for the topic of `COVID-19`
@@ -226,12 +226,12 @@ def validate_table_plot_parameters(table_plot_parameters: TablePlotParameters):
     """Validates the individual given `chart_plot_parameters` against the contents of the db
 
     Raises:
-        `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
+        `ChartTypeDoesNotSupportMetricError`: If the `metric_name` is not
             compatible for the required `chart_type`.
             E.g. A cumulative headline type number like `positivity_7days_latest`
             would not be viable for a line type (timeseries) chart.
 
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
+        `MetricDoesNotSupportTopicError`: If the `metric_name` is not
             compatible for the required `topic`.
             E.g. `new_cases_daily` is currently only available
             for the topic of `COVID-19`
@@ -239,8 +239,8 @@ def validate_table_plot_parameters(table_plot_parameters: TablePlotParameters):
     """
     date_from = make_datetime_from_string(date_from=table_plot_parameters.date_from)
     tables_request_validator = validation.TablesRequestValidator(
-        topic=table_plot_parameters.topic,
-        metric=table_plot_parameters.metric,
+        topic_name=table_plot_parameters.topic_name,
+        metric_name=table_plot_parameters.metric_name,
         date_from=date_from,
     )
     tables_request_validator.validate()

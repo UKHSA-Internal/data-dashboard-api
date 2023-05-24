@@ -263,7 +263,7 @@ class TestCreatePlotsInTabularFormat:
     def test_two_plots_with_provided_labels(self):
         """
         Given 2 `ChartPlotData` models representing 2 different line plots
-        When `generate_plots_for_table()` is called from the `tabular` module
+        When `generate_plots_for_table()` is called from the `tables` module
         Then the correct response is generated
         """
         # Given
