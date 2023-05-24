@@ -57,6 +57,7 @@ class PlotParameters(BaseModel):
             "stratum_name": self.stratum_name,
             "geography_name": self.geography_name,
             "geography_type_name": self.geography_type_name,
+            "date_from": self.date_from,
         }
 
 

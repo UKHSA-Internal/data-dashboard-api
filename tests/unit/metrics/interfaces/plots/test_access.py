@@ -24,7 +24,7 @@ class TestPlotsInterface:
     def _setup_fake_time_series_for_plot(plot_parameters: PlotParameters):
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
-                dt=datetime.datetime(year=2023, month=1, day=i + 1),
+                dt=datetime.date(year=2023, month=2, day=i + 1),
                 metric_name=plot_parameters.metric_name,
                 topic_name=plot_parameters.topic_name,
                 stratum_name=plot_parameters.stratum_name,
@@ -221,12 +221,10 @@ class TestPlotsInterface:
         # The return value is delegated to the `get_timeseries` method
         assert timeseries == mocked_get_timeseries.return_value
 
-        expected_date_from = make_datetime_from_string(date_from=date_from)
         # The dict representation of the `PlotParameters` model
         # is unpacked into the `get_timeseries` method
         mocked_get_timeseries.assert_called_once_with(
             **fake_chart_plot_parameters.to_dict_for_query(),
-            date_from=expected_date_from,
         )
 
 

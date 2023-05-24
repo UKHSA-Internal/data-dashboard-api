@@ -10,6 +10,7 @@ def fake_chart_plot_parameters() -> PlotParameters:
         topic="RSV",
         metric="weekly_positivity_by_age",
         stratum="0_4",
+        date_from="2023-01-01",
     )
 
 
