@@ -16,7 +16,7 @@ from metrics.domain.charts import (
     line_with_shaded_section,
     waffle,
 )
-from metrics.domain.models import PlotsData, PlotParameters, Plots
+from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 
@@ -30,7 +30,7 @@ class DataNotFoundError(ValueError):
 class ChartsInterface:
     def __init__(
         self,
-        chart_plots: Plots,
+        chart_plots: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.chart_plots = chart_plots
@@ -345,7 +345,7 @@ def make_datetime_from_string(date_from: Optional[str]) -> datetime.datetime:
         )
 
 
-def generate_chart(chart_plots: Plots) -> str:
+def generate_chart(chart_plots: PlotsCollection) -> str:
     """Validates and creates a chart figure based of the parameters provided within the `chart_plots` model
 
     Args:
@@ -368,7 +368,7 @@ def generate_chart(chart_plots: Plots) -> str:
     )
 
 
-def validate_each_requested_chart_plot(chart_plots: Plots) -> None:
+def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
     """Validates the request chart plots against the contents of the db
 
     Raises:

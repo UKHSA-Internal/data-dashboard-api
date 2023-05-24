@@ -60,7 +60,7 @@ class PlotParameters(BaseModel):
         }
 
 
-class Plots(BaseModel):
+class PlotsCollection(BaseModel):
     plots: List[PlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
