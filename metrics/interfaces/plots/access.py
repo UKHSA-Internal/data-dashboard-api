@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from django.db.models import Manager
 
@@ -44,18 +44,13 @@ class PlotsInterface:
 
         """
         plot_params: Dict[str, str] = plot_parameters.to_dict_for_query()
-        date_from: str = make_datetime_from_string(date_from=plot_parameters.date_from)
-
-        return self.get_timeseries(
-            **plot_params,
-            date_from=date_from,
-        )
+        return self.get_timeseries(**plot_params)
 
     def get_timeseries(
         self,
         topic_name: str,
         metric_name: str,
-        date_from: datetime.date,
+        date_from: Union[datetime.date, str],
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
@@ -73,8 +68,8 @@ class PlotsInterface:
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
                 E.g. `new_cases_7days_sum`
-            date_from: The datetime object to begin the query from.
-                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
+            date_from: The datetime object or string to begin the query from.
+                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0) or "2023-03-27"
                 would strip off any records which occurred before that date.
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
@@ -102,7 +97,9 @@ class PlotsInterface:
             stratum_name=stratum_name,
         )
 
-    def build_plot_data_from_parameters(self, plot_parameters: PlotParameters) -> PlotsData:
+    def build_plot_data_from_parameters(
+        self, plot_parameters: PlotParameters
+    ) -> PlotsData:
         """Creates a `PlotData` model which holds the params and corresponding data for the given requested plot
 
         Notes:
