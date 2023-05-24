@@ -123,17 +123,17 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             dt__gte=date_from,
         )
 
-        if geography_name is not None:
+        if geography_name:
             queryset = self._filter_by_geography(
                 queryset=queryset, geography_name=geography_name
             )
 
-        if geography_type_name is not None:
+        if geography_type_name:
             queryset = self._filter_by_geography_type(
                 queryset=queryset, geography_type_name=geography_type_name
             )
 
-        if stratum_name is not None:
+        if stratum_name:
             queryset = self._filter_by_stratum(
                 queryset=queryset, stratum_name=stratum_name
             )
