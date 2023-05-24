@@ -99,8 +99,9 @@ class TestChartPlotParameters:
             "stratum_name": fake_chart_plot_parameters.stratum_name,
             "geography_name": fake_chart_plot_parameters.geography_name,
             "geography_type_name": fake_chart_plot_parameters.geography_type_name,
+            "date_from": fake_chart_plot_parameters.date_from,
         }
-        # `chart_type`, `label`, `line_colour`, `line_type`, `date_to` and `date_from` are omitted
+        # `chart_type`, `label`, `line_colour`, `line_type` and `date_to` and are omitted
         assert dict_used_for_query == expected_dict_used_for_query
 
     def test_properties_return_correct_field_values(self):
