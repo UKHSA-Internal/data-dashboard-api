@@ -153,7 +153,7 @@ class PlotsInterface:
         plots_data: List[PlotsData] = []
         for plot_parameters in self.plots_collection.plots:
             try:
-                plot_data = self.build_plot_data_from_parameters(
+                plot_data: PlotsData = self.build_plot_data_from_parameters(
                     plot_parameters=plot_parameters
                 )
             except DataNotFoundError:
