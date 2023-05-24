@@ -102,7 +102,7 @@ class PlotsInterface:
             stratum_name=stratum_name,
         )
 
-    def build_plot_data_from_parameters(self, plot_parameters: PlotParameters):
+    def build_plot_data_from_parameters(self, plot_parameters: PlotParameters) -> PlotsData:
         """Creates a `PlotData` model which holds the params and corresponding data for the given requested plot
 
         Notes:
@@ -111,8 +111,8 @@ class PlotsInterface:
             These models can then be passed into the domain libraries.
 
         Returns:
-            List[PlotsData]: A list of `PlotData` models for
-                each of the requested plots.
+            PlotsData: An individual `PlotData` models f
+                or the requested `plot_parameters`.
 
         Raises:
             `DataNotFoundError`: If no `CoreTimeSeries` data can be found
