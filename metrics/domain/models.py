@@ -99,7 +99,7 @@ def get_date_n_months_ago_from_timestamp(
         number_of_months: the number of months to go back. Default 6
 
     Returns:
-        A datetime of the fist day of the month x months ago
+        A `date` object of the fist day of the month x months ago
     """
 
     n_months_ago: datetime.datetime = datetime_stamp - relativedelta(

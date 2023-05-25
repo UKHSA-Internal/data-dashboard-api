@@ -13,6 +13,7 @@ from metrics.interfaces.charts.validation import ChartsRequestValidator
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
+from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
@@ -89,13 +90,40 @@ class TestChartsInterface:
             == spy_generate_line_with_shaded_section_chart_method.return_value
         )
 
-    @mock.patch.object(ChartsInterface, "generate_bar_chart")
+    @mock.patch.object(ChartsInterface, "generate_waffle_chart")
     def test_generate_chart_figure_delegates_call_for_waffle_chart(
         self,
         spy_generate_bar_chart_method: mock.MagicMock,
     ):
         """
-        Given a requirement for a `generate_bar_chart` chart
+        Given a requirement for a `waffle` chart
+        When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
+        Then the call is delegated to the `generate_waffle_chart()` method
+        """
+        # Given
+        chart_type: str = ChartTypes.waffle.value
+        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
+        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
+
+        charts_interface = ChartsInterface(
+            chart_plots=mocked_chart_plots,
+            core_time_series_manager=mock.Mock(),
+        )
+
+        # When
+        generated_chart_figure = charts_interface.generate_chart_figure()
+
+        # Then
+        spy_generate_bar_chart_method.assert_called_once()
+        assert generated_chart_figure == spy_generate_bar_chart_method.return_value
+
+    @mock.patch.object(ChartsInterface, "generate_bar_chart")
+    def test_generate_chart_figure_delegates_call_for_bar(
+        self,
+        spy_generate_bar_chart: mock.MagicMock,
+    ):
+        """
+        Given a requirement for a `bar` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_bar_chart()` method
         """
@@ -113,18 +141,18 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_bar_chart_method.assert_called_once()
-        assert generated_chart_figure == spy_generate_bar_chart_method.return_value
+        spy_generate_bar_chart.assert_called_once()
+        assert generated_chart_figure == spy_generate_bar_chart.return_value
 
-    @mock.patch.object(ChartsInterface, "generate_line_multi_coloured")
+    @mock.patch.object(ChartsInterface, "generate_line_multi_coloured_chart")
     def test_generate_chart_figure_delegates_call_for_line_multi_coloured(
         self,
-        spy_generate_line_multi_coloured_method: mock.MagicMock,
+        spy_generate_line_multi_coloured_chart_method: mock.MagicMock,
     ):
         """
         Given a requirement for a `line_multi_coloured` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
-        Then the call is delegated to the `generate_chart_figure()` method
+        Then the call is delegated to the `generate_line_multi_coloured_chart()` method
         """
         # Given
         chart_type: str = ChartTypes.line_multi_coloured.value
@@ -140,10 +168,57 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_line_multi_coloured_method.assert_called_once()
+        spy_generate_line_multi_coloured_chart_method.assert_called_once()
         assert (
             generated_chart_figure
-            == spy_generate_line_multi_coloured_method.return_value
+            == spy_generate_line_multi_coloured_chart_method.return_value
+        )
+
+    @mock.patch(f"{MODULE_PATH}.line_multi_coloured.generate_chart_figure")
+    def test_generate_line_multi_coloured_chart(
+        self,
+        spy_line_multi_coloured_generate_chart_figure: mock.MagicMock,
+        valid_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a valid `PlotParameters` for a `line_multi_coloured` chart
+        When `generate_line_multi_coloured_chart()` is called from an instance of the `ChartsInterface`
+        Then the call is delegated to the `generate_chart_figure()`
+            from the `line_multi_coloured` module with the correct args
+        """
+        # Given
+        fake_core_time_series_collection = self._setup_fake_time_series_for_plot(
+            chart_plot_parameters=valid_plot_parameters
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            fake_core_time_series_collection
+        )
+        plots_collection = PlotsCollection(
+            plots=[valid_plot_parameters],
+            file_format="svg",
+            chart_width=123,
+            chart_height=456,
+        )
+
+        charts_interface = ChartsInterface(
+            chart_plots=plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When
+        line_multi_coloured_chart = (
+            charts_interface.generate_line_multi_coloured_chart()
+        )
+
+        # Then
+        spy_line_multi_coloured_generate_chart_figure.assert_called_once_with(
+            chart_height=plots_collection.chart_height,
+            chart_width=plots_collection.chart_width,
+            chart_plots_data=charts_interface.build_chart_plots_data(),
+        )
+        assert (
+            line_multi_coloured_chart
+            == spy_line_multi_coloured_generate_chart_figure.return_value
         )
 
     def test_build_chart_plots_data_delegates_to_plots_interface(
