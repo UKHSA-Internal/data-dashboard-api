@@ -3,10 +3,7 @@ from typing import Dict, List, Optional, Union
 
 from django.db.models import Manager
 
-from metrics.data.access.core_models import (
-    get_date_n_months_ago_from_timestamp,
-    unzip_values,
-)
+from metrics.data.access.core_models import unzip_values
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 
@@ -159,24 +156,3 @@ class PlotsInterface:
             plots_data.append(plot_data)
 
         return plots_data
-
-
-def make_datetime_from_string(date_from: Optional[str]) -> datetime.datetime:
-    """Parses the `date_from` string into a datetime object. Defaults to 1 year ago from the current date.
-
-    Args:
-        date_from: A string representing the date in the format `%Y-%m-%d`
-            E.g. "2022-10-01"
-
-    Returns:
-        `datetime` object representing the `date_from` string
-            or a default of 1 year ago from the current date.
-
-    """
-    try:
-        return datetime.datetime.strptime(date_from, "%Y-%m-%d")
-    except (TypeError, ValueError):
-        one_year = 12
-        return get_date_n_months_ago_from_timestamp(
-            datetime_stamp=datetime.date.today(), number_of_months=one_year
-        )

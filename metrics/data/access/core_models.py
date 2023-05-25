@@ -5,36 +5,14 @@ This shall only include functionality which is used to read from the database.
 Specifically, this file contains read database logic for the Core models only.
 """
 import datetime
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Tuple
 
-from dateutil.relativedelta import relativedelta
 from django.db.models import Manager, QuerySet
 
-from metrics.data import type_hints
 from metrics.data.models.core_models import CoreTimeSeries
+from metrics.domain.models import get_date_n_months_ago_from_timestamp
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
-
-
-def get_date_n_months_ago_from_timestamp(
-    datetime_stamp: datetime.datetime, number_of_months: int = 6
-) -> datetime.datetime:
-    """
-    Get the 1st day of the month x months in the past
-
-    Args:
-        datetime_stamp: The datetime stamp to calculate from.
-        number_of_months: the number of months to go back. Default 6
-
-    Returns:
-        A datetime of the fist day of the month x months ago
-    """
-
-    n_months_ago: datetime.datetime = datetime_stamp - relativedelta(
-        months=number_of_months
-    )
-
-    return datetime.datetime(year=n_months_ago.year, month=n_months_ago.month, day=1)
 
 
 def unzip_values(values) -> Tuple[List, List]:
@@ -66,7 +44,7 @@ def get_month_end_timeseries_metric_values_from_date(
          A dictionary of date:metric_value pairs
     """
     today = datetime.datetime.today()
-    n_months_ago: datetime.datetime = get_date_n_months_ago_from_timestamp(
+    n_months_ago: datetime.date = get_date_n_months_ago_from_timestamp(
         datetime_stamp=today
     )
 

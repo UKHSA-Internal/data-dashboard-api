@@ -6,7 +6,6 @@ from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
     generate_chart,
-    make_date_from_string,
     validate_chart_plot_parameters,
     validate_each_requested_chart_plot,
 )
@@ -264,75 +263,10 @@ class TestChartsInterface:
         # Then
         created_plots_interface = charts_interface.plots_interface
         assert created_plots_interface.plots_collection == mocked_plots_collection
-        assert created_plots_interface.core_time_series_manager == mocked_core_time_series_manager
-
-
-class TestMakeDatetimeFromString:
-    def test_returns_correct_value(self):
-        """
-        Given a valid date string in the format `%Y-%m-%d`
-        When `make_datetime_from_string()` is called
-        Then a `datetime.datetime` object is returned for the given date
-        """
-        # Given
-        year = "2023"
-        month = "01"
-        day = "01"
-        date_from = f"{year}-{month}-{day}"
-
-        # When
-        parsed_date_from = make_date_from_string(date_from=date_from)
-
-        # Then
-        assert parsed_date_from.year == int(year)
-        assert parsed_date_from.month == int(month)
-        assert parsed_date_from.day == int(day)
-
-    @mock.patch(f"{MODULE_PATH}.get_date_n_months_ago_from_timestamp")
-    def test_delegates_call_to_get_default_of_one_year_if_none_provided(
-        self,
-        spy_get_date_n_months_ago_from_timestamp: mock.MagicMock,
-    ):
-        """
-        Given an input `date_from` of None
-        When `make_datetime_from_string()` is called
-        Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
-        """
-        # Given
-        date_from = None
-
-        # When
-        parsed_date_from = make_date_from_string(date_from=date_from)
-
-        # Then
-        spy_get_date_n_months_ago_from_timestamp.assert_called_once_with(
-            datetime_stamp=datetime.date.today(),
-            number_of_months=12,
+        assert (
+            created_plots_interface.core_time_series_manager
+            == mocked_core_time_series_manager
         )
-        assert parsed_date_from == spy_get_date_n_months_ago_from_timestamp.return_value
-
-    @mock.patch(f"{MODULE_PATH}.get_date_n_months_ago_from_timestamp")
-    def test_delegates_call_to_get_default_of_one_year_if_empty_string_provided(
-        self,
-        spy_get_date_n_months_ago_from_timestamp: mock.MagicMock,
-    ):
-        """
-        Given an input `date_from` of an empty string
-        When `make_datetime_from_string()` is called
-        Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
-        """
-        # Given
-        date_from = ""
-
-        # When
-        parsed_date_from = make_date_from_string(date_from=date_from)
-
-        # Then
-        spy_get_date_n_months_ago_from_timestamp.assert_called_once_with(
-            datetime_stamp=datetime.date.today(),
-            number_of_months=12,
-        )
-        assert parsed_date_from == spy_get_date_n_months_ago_from_timestamp.return_value
 
 
 class TestGenerateChart:

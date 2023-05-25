@@ -1,10 +1,8 @@
-import datetime
 from typing import List, Optional, Union
 
 import plotly.graph_objects
 from django.db.models import Manager
 
-from metrics.data.access.core_models import get_date_n_months_ago_from_timestamp
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import (
     bar,
@@ -199,27 +197,6 @@ class ChartsInterface:
         return calculations.change_between_each_half(values=values)
 
 
-def make_date_from_string(date_from: Optional[str]) -> datetime.date:
-    """Parses the `date_from` string into a date object. Defaults to 1 year ago from the current date.
-
-    Args:
-        date_from: A string representing the date in the format `%Y-%m-%d`
-            E.g. "2022-10-01"
-
-    Returns:
-        `date` object representing the `date_from` string
-            or a default of 1 year ago from the current date.
-
-    """
-    try:
-        return datetime.datetime.strptime(date_from, "%Y-%m-%d")
-    except (TypeError, ValueError):
-        one_year = 12
-        return get_date_n_months_ago_from_timestamp(
-            datetime_stamp=datetime.date.today(), number_of_months=one_year
-        )
-
-
 def generate_chart(chart_plots: PlotsCollection) -> str:
     """Validates and creates a chart figure based of the parameters provided within the `chart_plots` model
 
@@ -277,12 +254,11 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
             for the topic of `COVID-19`
 
     """
-    date_from = make_date_from_string(date_from=chart_plot_parameters.date_from)
     charts_request_validator = validation.ChartsRequestValidator(
         topic_name=chart_plot_parameters.topic_name,
         metric_name=chart_plot_parameters.metric_name,
         chart_type=chart_plot_parameters.chart_type,
-        date_from=date_from,
+        date_from=chart_plot_parameters.date_from_value,
     )
     charts_request_validator.validate()
 
