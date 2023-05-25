@@ -23,8 +23,8 @@ class TabularView(APIView):
 
         """
         plot_parameters = PlotParameters(
-            topic_name=kwargs["topic"],
-            metric_name=kwargs["metric"],
+            topic=kwargs["topic"],
+            metric=kwargs["metric"],
             chart_type="tabular",
         )
 
