@@ -13,7 +13,7 @@ from metrics.domain.models import (
 MODULE_PATH: str = "metrics.domain.models"
 
 
-class TestChartPlotParameters:
+class TestPlotParameters:
     mandatory_parameters = {
         "chart_type": "bar",
         "topic": "COVID-19",
@@ -33,7 +33,7 @@ class TestChartPlotParameters:
     def test_validates_successfully_when_optional_parameters_are_none(self):
         """
         Given a set of mandatory parameters and None for each optional field
-        When an instance of the `ChartPlotParameters` model is created
+        When an instance of the `PlotParameters` model is created
         Then a `ValidationError` is not raised
         """
         # Given
@@ -47,7 +47,7 @@ class TestChartPlotParameters:
     def test_validates_successfully_when_optional_parameters_are_empty_strings(self):
         """
         Given a set of mandatory parameters and an empty string for each optional field
-        When an instance of the `ChartPlotParameters` model is created
+        When an instance of the `PlotParameters` model is created
         Then a `ValidationError` is not raised
         """
         # Given
@@ -63,7 +63,7 @@ class TestChartPlotParameters:
     def test_validates_successfully_when_optional_parameters_not_provided(self):
         """
         Given a set of mandatory parameters and no optional fields provided
-        When an instance of the `ChartPlotParameters` model is created
+        When an instance of the `PlotParameters` model is created
         Then a `ValidationError` is not raised
         """
         # Given
@@ -76,7 +76,7 @@ class TestChartPlotParameters:
         """
         Given a payload containing optional fields which do not relate
             directly to the corresponding query filters
-        When `to_dict_for_query()` is called from an instance of the `ChartPlotParameters` model
+        When `to_dict_for_query()` is called from an instance of the `PlotParameters` model
         Then the returned dict contains the expected key-value pairs only
         """
         # Given
@@ -114,7 +114,7 @@ class TestChartPlotParameters:
 
     def test_properties_return_correct_field_values(self):
         """
-        Given a `ChartPlotParameters` instance
+        Given a `PlotParameters` instance
         When the `_name` properties are called for
             `topic`, `metric`, `geography`, `geography_type` & `stratum`
         Then the correct values are returned
@@ -195,7 +195,8 @@ class TestMakeDatetimeFromString:
         """
         Given an input `date_from` of None
         When `make_datetime_from_string()` is called
-        Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
+        Then `get_date_n_months_ago_from_timestamp()` is called
+            to make a datestamp of 1 year prior to the current date
         """
         # Given
         date_from = None
@@ -218,7 +219,8 @@ class TestMakeDatetimeFromString:
         """
         Given an input `date_from` of an empty string
         When `make_datetime_from_string()` is called
-        Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
+        Then `get_date_n_months_ago_from_timestamp()` is called
+            to make a datestamp of 1 year prior to the current date
         """
         # Given
         date_from = ""
