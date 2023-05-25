@@ -24,6 +24,13 @@ class TablePlotSerializer(serializers.Serializer):
         required=True,
         help_text=help_texts.METRIC_FIELD,
     )
+    chart_type = serializers.ChoiceField(
+        help_text=help_texts.CHART_TYPE_FIELD,
+        choices=ChartTypes.choices(),
+        required=False,
+        default="svg",
+    )
+
     stratum = serializers.CharField(
         required=False,
         allow_blank=True,

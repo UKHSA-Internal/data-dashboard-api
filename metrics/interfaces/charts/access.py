@@ -378,10 +378,10 @@ def generate_chart(chart_plots: PlotsCollection) -> str:
 
 
 def generate_tabular_output(chart_plots: PlotsCollection) -> List[Dict[str, str]]:
-    """Validates and creates tabular output based off the parameters provided within the `table_plots` model
+    """Validates and creates tabular output based off the parameters provided within the `PlotsCollection` model
 
     Args:
-        table_plots: The requested table plots parameters
+        PlotsCollection: The requested table plots parameters
             encapsulated as a model
 
     Returns:

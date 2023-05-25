@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Dict, List, Tuple
 
-from metrics.domain.models import TabularPlotData
+from metrics.domain.models import PlotsData
 
 
 def create_plots_in_tabular_format(
-    tabular_plots_data: List[TabularPlotData],
+    tabular_plots_data: List[PlotsData],
 ) -> List[Dict[str, str]]:
     """Creates the tabular output for the given plots
 
@@ -31,7 +31,7 @@ def create_plots_in_tabular_format(
 
 
 def combine_list_of_plots(
-    tabular_plots_data: List[TabularPlotData],
+    tabular_plots_data: List[PlotsData],
 ) -> Tuple[List[str], Dict[str, Dict[str, str]]]:
     """Combines individual plots into a dictionary of dictionaries
 
@@ -50,7 +50,7 @@ def combine_list_of_plots(
         plot_label: str = plot.parameters.label or "Plot" + str(plot_num)
         plot_labels.append(plot_label)
 
-        temp_dict = dict(zip(plot.x_axis_values, plot.y_axis_values))
+        temp_dict = dict(zip(plot.x_axis, plot.y_axis))
         for k, v in temp_dict.items():
             combined_plots[str(k)].update({plot_label: str(v)})
 

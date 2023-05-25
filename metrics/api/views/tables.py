@@ -88,7 +88,7 @@ class TablesView(APIView):
         try:
             tabular_data_response: List[
                 Dict[str, str]
-            ] = access.generate_tabular_output(table_plots=table_plot_models)
+            ] = access.generate_tabular_output(chart_plots=table_plot_models)
 
         except validation.MetricDoesNotSupportTopicError as error:
             return Response(

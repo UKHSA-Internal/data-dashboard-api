@@ -53,6 +53,8 @@ class TestTablesView:
                     "topic": self.topic_name,
                     "metric": self.metric_name,
                     "chart_type": "waffle",
+                    "chart_height": 220,
+                    "chart_width": 435,
                 }
             ],
         }
@@ -85,6 +87,8 @@ class TestTablesView:
                     "topic": self.topic_name,
                     "metric": self.metric_name,
                     "chart_type": "waffle",
+                    "chart_height": 220,
+                    "chart_width": 435,
                 }
             ],
         }
@@ -140,6 +144,8 @@ class TestTablesView:
                     "topic": self.topic_name,
                     "metric": self.metric_name,
                     "chart_type": "waffle",
+                    "chart_height": 220,
+                    "chart_width": 435,
                 }
             ],
         }

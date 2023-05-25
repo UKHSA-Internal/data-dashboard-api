@@ -1,7 +1,7 @@
 import datetime
 from typing import List
 
-from metrics.domain.models import TablePlotParameters, TabularPlotData
+from metrics.domain.models import PlotParameters, PlotsData
 from metrics.domain.tables.generation import (
     combine_list_of_plots,
     create_plots_in_tabular_format,
@@ -22,20 +22,21 @@ PLOT_2_LABEL = "15 to 44 years old"
 
 
 def _create_plot_data(
-    x_axis_values: List[datetime.date],
-    y_axis_values: List[int],
+    x_axis: List[datetime.date],
+    y_axis: List[int],
     label: str = "",
-) -> TabularPlotData:
-    plot_params = TablePlotParameters(
+) -> PlotsData:
+    plot_params = PlotParameters(
+        chart_type="",
         topic="RSV",
         metric="weekly_positivity_by_age",
         stratum="0_4",
         label=label,
     )
-    return TabularPlotData(
+    return PlotsData(
         parameters=plot_params,
-        x_axis_values=x_axis_values,
-        y_axis_values=y_axis_values,
+        x_axis=x_axis,
+        y_axis=y_axis,
     )
 
 
@@ -48,14 +49,14 @@ class TestCombinePlots:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_1_VALUES,
+            x_axis=X_AXIS_VALUES,
+            y_axis=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
         )
 
         second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
+            x_axis=X_AXIS_VALUES,
+            y_axis=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
         )
 
@@ -86,12 +87,12 @@ class TestCombinePlots:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_1_VALUES,
+            x_axis=X_AXIS_VALUES,
+            y_axis=Y_AXIS_1_VALUES,
         )
         second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
+            x_axis=X_AXIS_VALUES,
+            y_axis=Y_AXIS_2_VALUES,
         )
         expected_combined_plots = {
             "2022-09-05": {"Plot1": "10", "Plot2": "20"},
@@ -120,19 +121,19 @@ class TestCombinePlots:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis_values=[
+            x_axis=[
                 datetime.date(2022, 9, 5),
                 datetime.date(2022, 9, 6),
                 datetime.date(2022, 9, 19),
                 datetime.date(2022, 9, 25),
             ],
-            y_axis_values=[10, 66, 22, 26],
+            y_axis=[10, 66, 22, 26],
             label=PLOT_1_LABEL,
         )
 
         second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
+            x_axis=X_AXIS_VALUES,
+            y_axis=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
         )
 
@@ -268,14 +269,14 @@ class TestCreatePlotsInTabularFormat:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_1_VALUES,
+            x_axis=X_AXIS_VALUES,
+            y_axis=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
         )
 
         second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
+            x_axis=X_AXIS_VALUES,
+            y_axis=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
         )
 
