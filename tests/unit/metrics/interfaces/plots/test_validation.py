@@ -317,6 +317,35 @@ class TestDoesMetricHaveMultipleRecords:
         # Then
         assert not metric_has_multiple_records
 
+    def test_is_called_with_the_correct_args(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given a valid `PlotParameters` model
+        And the `CoreTimeSeriesManager`
+        When `_does_metric_have_multiple_records()` is called from an instance of `PlotValidation`
+        Then the call is delegated to the `CoreTimeSeriesManager`
+            with args from the `PlotParameters` model
+        """
+        # Given
+        spy_core_time_series_manager = mock.Mock()
+        spy_core_time_series_manager.get_count.return_value = 1
+
+        plot_validation = validation.PlotValidation(
+            plot_parameters=valid_plot_parameters,
+            core_time_series_manager=spy_core_time_series_manager,
+        )
+
+        # When
+        plot_validation._does_metric_have_multiple_records()
+
+        # Then
+        spy_core_time_series_manager.get_count.assert_called_once_with(
+            topic_name=valid_plot_parameters.topic_name,
+            metric_name=valid_plot_parameters.metric_name,
+            date_from=valid_plot_parameters.date_from_value,
+        )
+
 
 class TestIsChartSeriesType:
     def test_waffle_chart_returns_false(self):
