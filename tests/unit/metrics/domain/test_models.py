@@ -142,6 +142,29 @@ class TestChartPlotParameters:
         assert chart_plot_parameters.geography_name == geography_name
         assert chart_plot_parameters.geography_type_name == geography_type_name
 
+    @mock.patch(f"{MODULE_PATH}.make_date_from_string")
+    def test_date_from_value_property_delegates_call(
+        self,
+        spy_make_date_from_string: mock.MagicMock,
+        valid_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a valid `PlotParameters` model
+        When the `date_from_value` property is called
+        Then the call is delegated to the `make_date_from_string()` function
+        """
+        # Given
+        plot_parameters = valid_plot_parameters
+
+        # When
+        date_from_stamp = plot_parameters.date_from_value
+
+        # Then
+        spy_make_date_from_string.assert_called_once_with(
+            date_from=plot_parameters.date_from
+        )
+        assert date_from_stamp == spy_make_date_from_string.return_value
+
 
 class TestMakeDatetimeFromString:
     def test_returns_correct_value(self):
