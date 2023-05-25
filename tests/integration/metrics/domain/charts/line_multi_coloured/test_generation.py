@@ -92,8 +92,6 @@ class TestLineMultiColouredCharts:
         # The date format is in `Month Year` e.g. `May 2023`
         assert x_axis.tickformat == "%b %Y"
 
-        assert x_axis.automargin
-
         # ---Y Axis checks---
         y_axis = main_layout.yaxis
         assert not y_axis.showgrid

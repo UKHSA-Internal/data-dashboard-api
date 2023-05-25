@@ -17,7 +17,6 @@ X_AXIS_ARGS: type_hints.AXIS_ARGS = {
     "showline": False,
     "ticks": "outside",
     "tickson": "boundaries",
-    "automargin": True,
     "type": "date",
     "dtick": "M1",
     "tickformat": "%b %Y",
@@ -33,6 +32,12 @@ Y_AXIS_ARGS: type_hints.AXIS_ARGS = {
 BAR_CHART_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
     "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
     "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
+    "margin": {
+        "l": 10,
+        "r": 0,
+        "b": 0,
+        "t": 0,
+    },
     "showlegend": True,
     "barmode": "group",
     "legend": {
