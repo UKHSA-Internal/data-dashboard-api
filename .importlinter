@@ -25,9 +25,6 @@ layers=
     metrics.api
     metrics.domain
     metrics.data
-ignore_imports=
-     metrics.data.access.core_models -> metrics.domain.models
-     # remove this once the deprecated `tabular` endpoint has been removed
 
 [importlinter:contract:Metrics data access | operations slices]
 name = Metrics data access and operations slices are independent of each other
