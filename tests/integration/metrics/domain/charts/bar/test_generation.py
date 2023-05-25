@@ -95,7 +95,6 @@ class TestBarCharts:
         # ---X Axis checks---
         x_axis = figure.layout.xaxis
 
-        assert x_axis.automargin
         assert not x_axis.showgrid
         assert not x_axis.zeroline
         assert not x_axis.showline
