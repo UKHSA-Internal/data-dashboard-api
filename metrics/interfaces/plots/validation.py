@@ -94,7 +94,7 @@ class PlotValidation:
         count: int = self.core_time_series_manager.get_count(
             topic_name=self.plot_parameters.topic_name,
             metric_name=self.plot_parameters.metric_name,
-            date_from=self.plot_parameters.date_from,
+            date_from=self.plot_parameters.date_from_value,
         )
         return count > 1
 
