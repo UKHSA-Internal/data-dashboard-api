@@ -244,6 +244,28 @@ class TestChartsInterface:
             metric_name=metric
         )
 
+    def test_plots_interface_is_created_with_correct_args_by_default(self):
+        """
+        Given a `PlotsCollection` and a `CoreTimeSeriesManager`
+        When an instance of the `ChartsInterface` is created
+            without explicitly providing a `PlotsInterface`
+        Then an instance of the `PlotsInterface` is created with the correct args
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        mocked_core_time_series_manager = mock.Mock()
+
+        # When
+        charts_interface = ChartsInterface(
+            chart_plots=mocked_plots_collection,
+            core_time_series_manager=mocked_core_time_series_manager,
+        )
+
+        # Then
+        created_plots_interface = charts_interface.plots_interface
+        assert created_plots_interface.plots_collection == mocked_plots_collection
+        assert created_plots_interface.core_time_series_manager == mocked_core_time_series_manager
+
 
 class TestMakeDatetimeFromString:
     def test_returns_correct_value(self):
