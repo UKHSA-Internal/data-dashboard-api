@@ -2,14 +2,9 @@ from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries, Metric
 from metrics.domain.models import PlotParameters
-from metrics.domain.utils import ChartTypes
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_METRIC_MANAGER = Metric.objects
-
-
-class ChartTypeDoesNotSupportMetricError(Exception):
-    ...
 
 
 class MetricDoesNotSupportTopicError(Exception):
@@ -35,11 +30,6 @@ class PlotValidation:
         """Validates the request against the contents of the db
 
         Raises:
-            `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
-                compatible for the required `chart_type`.
-                E.g. A cumulative headline type number like `positivity_7days_latest`
-                would not be viable for a line type (timeseries) chart.
-
             `MetricDoesNotSupportTopicError`: If the `metric` is not
                 compatible for the required `topic`.
                 E.g. `new_cases_daily` is currently only available
@@ -53,34 +43,8 @@ class PlotValidation:
                 then this error will not be raised.
 
         """
-        self._validate_series_type_chart_works_with_metric()
         self._validate_metric_is_available_for_topic()
         self._validate_dates()
-
-    def _is_chart_series_type(self) -> bool:
-        """Checks if the instance variable `chart_type` is of a timeseries type.
-
-        Returns:
-            bool: True if the `chart_type` can be used for timeseries data.
-                False otherwise
-
-        """
-        if self.plot_parameters.chart_type == ChartTypes.waffle.value:
-            return False
-        return True
-
-    def _validate_series_type_chart_works_with_metric(self) -> None:
-        requested_chart_is_series_type = self._is_chart_series_type()
-        if not requested_chart_is_series_type:
-            return
-
-        metric_is_series_chart_compatible: bool = (
-            self._does_metric_have_multiple_records()
-        )
-        if not metric_is_series_chart_compatible:
-            raise ChartTypeDoesNotSupportMetricError(
-                f"`{self.plot_parameters.metric_name}` is not compatible with `{self.plot_parameters.chart_type}` chart types"
-            )
 
     def _does_metric_have_multiple_records(self) -> bool:
         """Checks the db if there are multiple associated `CoreTimeSeries` records.

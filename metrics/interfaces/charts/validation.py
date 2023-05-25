@@ -15,14 +15,6 @@ class ChartTypeDoesNotSupportMetricError(Exception):
     ...
 
 
-class MetricDoesNotSupportTopicError(Exception):
-    ...
-
-
-class DatesNotInChronologicalOrderError(Exception):
-    ...
-
-
 class ChartsRequestValidator:
     def __init__(
         self,
@@ -67,8 +59,7 @@ class ChartsRequestValidator:
         self._validate_series_type_chart_works_with_metric()
 
         # Common validations delegated to the `PlotValidation` object
-        self.plot_validation._validate_metric_is_available_for_topic()
-        self.plot_validation._validate_dates()
+        self.plot_validation.validate()
 
     def _is_chart_series_type(self) -> bool:
         """Checks if the instance variable `chart_type` is of a timeseries type.
