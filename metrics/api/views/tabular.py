@@ -21,11 +21,11 @@ class TabularView(APIView):
         - `metric` - refers to the type of metric (eg, new_cases_daily, cases_age_sex)
 
         """
-        topic: str = kwargs["topic"]
+        topic_name: str = kwargs["topic"]
         metric_name: str = kwargs["metric"]
 
         result: List[Dict[str, str]] = get_month_end_timeseries_metric_values_from_date(
-            metric_name=metric_name, topic=topic
+            metric_name=metric_name, topic_name=topic_name
         )
 
         return Response(result)
