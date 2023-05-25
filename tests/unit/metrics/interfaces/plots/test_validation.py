@@ -16,16 +16,6 @@ from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 EXPECTED_DATE_FORMAT: str = "%Y-%m-%d"
 
 
-@pytest.fixture
-def valid_plot_parameters() -> PlotParameters:
-    return PlotParameters(
-        metric="new_cases_daily",
-        topic="COVID-19",
-        chart_type=ChartTypes.simple_line.value,
-        date_from="2022-01-01",
-    )
-
-
 class TestValidate:
     @mock.patch.object(validation.PlotValidation, "_validate_dates")
     @mock.patch.object(
@@ -407,7 +397,9 @@ class TestAreDatesInChronologicalOrder:
         # Then
         assert is_date_stamps_in_chronological_order
 
-    def test_raises_error_when_date_to_is_before_date_from(self):
+    def test_raises_error_when_date_to_is_before_date_from(
+        self, valid_plot_parameters: PlotParameters
+    ):
         """
         Given a `date_from` and `date_to` which are not in chronological order
         When `_are_dates_in_chronological_order()` is called
@@ -461,7 +453,9 @@ class TestValidateDates:
         assert validated is None
         spy_are_dates_in_chronological_order.assert_called_once()
 
-    def test_chronological_order_validated_if_no_date_to_is_provided(self):
+    def test_chronological_order_validated_if_no_date_to_is_provided(
+        self, valid_plot_parameters: PlotParameters
+    ):
         """
         Given a valid `date_from` and None provided as `date_to`
         When `_validate_dates()` is called

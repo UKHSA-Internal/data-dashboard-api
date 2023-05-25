@@ -255,10 +255,7 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
 
     """
     charts_request_validator = validation.ChartsRequestValidator(
-        topic_name=chart_plot_parameters.topic_name,
-        metric_name=chart_plot_parameters.metric_name,
-        chart_type=chart_plot_parameters.chart_type,
-        date_from=chart_plot_parameters.date_from_value,
+        plot_parameters=chart_plot_parameters
     )
     charts_request_validator.validate()
 
