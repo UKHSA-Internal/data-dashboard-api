@@ -32,9 +32,11 @@ class TestValidate:
         validator.validate()
 
         # Then
+        # Charts-specific delegated validation
         spy_validate_series_type_chart_works_with_metric.assert_called_once()
-        spy_plot_validation._validate_metric_is_available_for_topic.assert_called_once()
-        spy_plot_validation._validate_dates.assert_called_once()
+
+        # General plot delegated validation
+        spy_plot_validation.validate.assert_called_once()
 
 
 class TestValidateSeriesChartTypeWorksWithMetric:

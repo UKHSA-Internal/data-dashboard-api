@@ -21,13 +21,8 @@ class TestValidate:
     @mock.patch.object(
         validation.PlotValidation, "_validate_metric_is_available_for_topic"
     )
-    @mock.patch.object(
-        validation.PlotValidation,
-        "_validate_series_type_chart_works_with_metric",
-    )
     def test_delegates_to_correct_validators(
         self,
-        spy_validate_series_type_chart_works_with_metric: mock.MagicMock,
         spy_validate_metric_is_available_for_topic: mock.MagicMock,
         spy_validate_dates: mock.MagicMock,
     ):
@@ -47,86 +42,8 @@ class TestValidate:
         validator.validate()
 
         # Then
-        spy_validate_series_type_chart_works_with_metric.assert_called_once()
         spy_validate_metric_is_available_for_topic.assert_called_once()
         spy_validate_dates.assert_called_once()
-
-
-class TestValidateSeriesChartTypeWorksWithMetric:
-    def test_can_validate_successfully(self, valid_plot_parameters: PlotParameters):
-        """
-        Given a valid `PlotParameters` model
-        When `_validate_series_type_chart_works_with_metric()` is called from an instance of `PlotValidation`
-        Then None is returned
-        """
-        # Given
-        mocked_core_time_series_manager = mock.Mock()
-        mocked_core_time_series_manager.get_count.return_value = 10
-
-        validator = validation.PlotValidation(
-            plot_parameters=valid_plot_parameters,
-            core_time_series_manager=mocked_core_time_series_manager,
-        )
-
-        # When
-        validated = validator._validate_series_type_chart_works_with_metric()
-
-        # Then
-        assert validated is None
-
-    def test_passes_naively_if_non_series_chart_type_provided(
-        self, valid_plot_parameters: PlotParameters
-    ):
-        """
-        Given a valid `PlotParameters` model and a request for a `waffle` type chart
-        When `_validate_series_type_chart_works_with_metric()` is called from an instance of `PlotValidation`
-        Then None is returned
-        """
-        # Given
-        valid_plot_parameters.chart_type = ChartTypes.waffle.value
-
-        validator = validation.PlotValidation(
-            plot_parameters=valid_plot_parameters,
-        )
-
-        # When
-        validated = validator._validate_series_type_chart_works_with_metric()
-
-        # Then
-        assert validated is None
-
-    def test_can_raise_error_for_invalid_combination(
-        self, valid_plot_parameters: PlotParameters
-    ):
-        """
-        Given an otherwise valid `PlotParameters` model which has a metric of `covid_occupied_beds_latest`
-        And a request for a `simple_line` type chart
-        When `_validate_series_type_chart_works_with_metric()` is called from an instance of `PlotValidation`
-        Then a `ChartTypeDoesNotSupportMetricError` is raised
-        """
-        # Given
-        plot_parameters: PlotParameters = valid_plot_parameters
-        metric = "covid_occupied_beds_latest"
-        chart_type = ChartTypes.simple_line.value
-        plot_parameters.metric = metric
-        plot_parameters.chart_type = chart_type
-
-        mocked_core_time_series_manager = mock.Mock()
-        mocked_core_time_series_manager.get_count.return_value = 1
-
-        validator = validation.PlotValidation(
-            plot_parameters=plot_parameters,
-            core_time_series_manager=mocked_core_time_series_manager,
-        )
-
-        # When / Then
-        expected_error_message = (
-            f"`{metric}` is not compatible with `{chart_type}` chart types"
-        )
-        with pytest.raises(
-            validation.ChartTypeDoesNotSupportMetricError, match=expected_error_message
-        ):
-            validator._validate_series_type_chart_works_with_metric()
 
 
 class TestValidateMetricIsAvailableForTopic:
@@ -345,58 +262,6 @@ class TestDoesMetricHaveMultipleRecords:
             metric_name=valid_plot_parameters.metric_name,
             date_from=valid_plot_parameters.date_from_value,
         )
-
-
-class TestIsChartSeriesType:
-    def test_waffle_chart_returns_false(self):
-        """
-        Given a chart type of `waffle`
-        When `is_chart_series_type()` is called from an instance of `PlotValidation`
-        Then False is returned
-        """
-        # Given
-        chart_type = ChartTypes.waffle.value
-        plot_parameters = PlotParameters(
-            metric="covid_occupied_beds_latest",
-            topic="COVID-19",
-            chart_type=chart_type,
-            date_from="2023-01-01",
-        )
-
-        validator = validation.PlotValidation(plot_parameters=plot_parameters)
-
-        # When
-        chart_is_series_type: bool = validator._is_chart_series_type()
-
-        # Then
-        assert not chart_is_series_type
-
-    @pytest.mark.parametrize(
-        "chart_type",
-        [ChartTypes.simple_line.value, ChartTypes.line_with_shaded_section.value],
-    )
-    def test_line_charts_returns_true(self, chart_type: str):
-        """
-        Given a line/timeseries chart type
-        When `is_chart_series_type()` is called from an instance of `PlotValidation`
-        Then True is returned
-        """
-        # Given
-        time_series_chart_type: str = chart_type
-        plot_parameters = PlotParameters(
-            metric="covid_occupied_beds_latest",
-            topic="COVID-19",
-            chart_type=time_series_chart_type,
-            date_from="2023-01-01",
-        )
-
-        validator = validation.PlotValidation(plot_parameters=plot_parameters)
-
-        # When
-        chart_is_series_type: bool = validator._is_chart_series_type()
-
-        # Then
-        assert chart_is_series_type
 
 
 class TestAreDatesInChronologicalOrder:
