@@ -1,5 +1,7 @@
-from typing import Dict, List, Literal, Optional, Tuple
+import datetime
+from typing import Dict, List, Literal, Optional
 
+from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
 
@@ -36,6 +38,18 @@ class PlotParameters(BaseModel):
     def stratum_name(self) -> Optional[str]:
         return self.stratum
 
+    @property
+    def date_from_value(self) -> datetime.date:
+        """Parses the `date_from` into a date object.
+        Defaults to 1 year ago from the current date.
+
+        Returns:
+            `date` object representing the `date_from` string
+                or a default of 1 year ago from the current date.
+
+        """
+        return make_date_from_string(date_from=self.date_from)
+
     def to_dict_for_query(self) -> Dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.
 
@@ -52,12 +66,12 @@ class PlotParameters(BaseModel):
 
         """
         return {
-            "metric_name": self.metric_name,
-            "topic_name": self.topic_name,
-            "stratum_name": self.stratum_name,
-            "geography_name": self.geography_name,
-            "geography_type_name": self.geography_type_name,
-            "date_from": self.date_from,
+            "metric_name": self.metric_name or "",
+            "topic_name": self.topic_name or "",
+            "stratum_name": self.stratum_name or "",
+            "geography_name": self.geography_name or "",
+            "geography_type_name": self.geography_type_name or "",
+            "date_from": self.date_from_value,
         }
 
 
@@ -72,3 +86,47 @@ class PlotsData(BaseModel):
     parameters: PlotParameters
     x_axis: Any
     y_axis: Any
+
+
+def get_date_n_months_ago_from_timestamp(
+    datetime_stamp: datetime.datetime, number_of_months: int = 6
+) -> datetime.date:
+    """
+    Get the 1st day of the month x months in the past
+
+    Args:
+        datetime_stamp: The datetime stamp to calculate from.
+        number_of_months: the number of months to go back. Default 6
+
+    Returns:
+        A datetime of the fist day of the month x months ago
+    """
+
+    n_months_ago: datetime.datetime = datetime_stamp - relativedelta(
+        months=number_of_months
+    )
+
+    return datetime.datetime(
+        year=n_months_ago.year, month=n_months_ago.month, day=1
+    ).date()
+
+
+def make_date_from_string(date_from: Optional[str]) -> datetime.date:
+    """Parses the `date_from` string into a date object. Defaults to 1 year ago from the current date.
+
+    Args:
+        date_from: A string representing the date in the format `%Y-%m-%d`
+            E.g. "2022-10-01"
+
+    Returns:
+        `date` object representing the `date_from` string
+            or a default of 1 year ago from the current date.
+
+    """
+    try:
+        return datetime.datetime.strptime(date_from, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        one_year = 12
+        return get_date_n_months_ago_from_timestamp(
+            datetime_stamp=datetime.date.today(), number_of_months=one_year
+        )

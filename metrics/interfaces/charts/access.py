@@ -1,13 +1,8 @@
-import datetime
-from typing import Dict, List, Optional, Union
+from typing import List, Optional, Union
 
 import plotly.graph_objects
 from django.db.models import Manager
 
-from metrics.data.access.core_models import (
-    get_date_n_months_ago_from_timestamp,
-    unzip_values,
-)
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import (
     bar,
@@ -19,12 +14,9 @@ from metrics.domain.charts import (
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
+from metrics.interfaces.plots.access import PlotsInterface
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
-
-
-class DataNotFoundError(ValueError):
-    ...
 
 
 class ChartsInterface:
@@ -32,10 +24,16 @@ class ChartsInterface:
         self,
         chart_plots: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        plots_interface: Optional[PlotsInterface] = None,
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
         self.core_time_series_manager = core_time_series_manager
+
+        self.plots_interface = plots_interface or PlotsInterface(
+            plots_collection=self.chart_plots,
+            core_time_series_manager=core_time_series_manager,
+        )
 
     def generate_chart_figure(self) -> plotly.graph_objects.Figure:
         """Creates the chart figure dictated the instance variable of `chart_type`
@@ -163,128 +161,7 @@ class ChartsInterface:
                 each of the requested chart plots.
 
         """
-        chart_plots_data: List[PlotsData] = []
-        for chart_plot_parameters in self.chart_plots.plots:
-            try:
-                chart_plot_data = self.build_chart_plot_data_from_parameters(
-                    chart_plot_parameters=chart_plot_parameters
-                )
-            except DataNotFoundError:
-                continue
-
-            chart_plots_data.append(chart_plot_data)
-
-        return chart_plots_data
-
-    def build_chart_plot_data_from_parameters(
-        self, chart_plot_parameters: PlotParameters
-    ):
-        """Creates a `ChartPlotData` model which holds the params and corresponding data for the given requested plot
-
-        Notes:
-            The corresponding timeseries data is used to enrich a
-            pydantic model which also holds the corresponding params.
-            These models can then be passed into the domain libraries.
-
-        Returns:
-            List[PlotsData]: A list of `ChartPlotData` models for
-                each of the requested chart plots.
-
-        Raises:
-            `DataNotFoundError`: If no `CoreTimeSeries` data can be found
-                for a particular plot.
-
-        """
-        timeseries_queryset = self.get_timeseries_for_chart_plot_parameters(
-            chart_plot_parameters=chart_plot_parameters
-        )
-
-        try:
-            dates, values = unzip_values(timeseries_queryset)
-        except ValueError:
-            raise DataNotFoundError
-        else:
-            return PlotsData(
-                parameters=chart_plot_parameters,
-                x_axis=dates,
-                y_axis=values,
-            )
-
-    def get_timeseries_for_chart_plot_parameters(
-        self, chart_plot_parameters: PlotParameters
-    ):
-        """Returns the timeseries records for the requested plot as a QuerySet
-
-        Notes:
-            If no `date_from` was provided within the `chart_plot_parameters`,
-            then a default of 1 year from the current date will be used.
-
-        Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers.
-                Examples:
-                    `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('0.8')),
-                        (datetime.date(2022, 10, 17), Decimal('0.9'))
-                    ]>`
-
-        """
-        plot_params: Dict[str, str] = chart_plot_parameters.to_dict_for_query()
-        plot_params["date_from"] = make_date_from_string(
-            date_from=chart_plot_parameters.date_from
-        )
-        return self.get_timeseries(**plot_params)
-
-    def get_timeseries(
-        self,
-        topic_name: str,
-        metric_name: str,
-        date_from: datetime.date,
-        geography_name: Optional[str] = None,
-        geography_type_name: Optional[str] = None,
-        stratum_name: Optional[str] = None,
-    ):
-        """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
-
-        Notes:
-            Additional filtering is available via the following optional params:
-             - `geography`
-             - `geography_type`
-             - `stratum`
-
-        Args:
-            topic_name: The name of the disease being queried.
-                E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
-                E.g. `new_cases_7days_sum
-            date_from: The datetime object to begin the query from.
-                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
-                would strip off any records which occurred before that date.
-            geography_name: The name of the geography to apply additional filtering to.
-                E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
-                E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
-                E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
-
-        Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers:
-                Examples:
-                    `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('0.8')),
-                        (datetime.date(2022, 10, 17), Decimal('0.9'))
-                    ]>`
-
-        """
-        return self.core_time_series_manager.filter_for_dates_and_values(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            date_from=date_from,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
-        )
+        return self.plots_interface.build_plots_data()
 
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
         chart_height = self.chart_plots.chart_height
@@ -318,27 +195,6 @@ class ChartsInterface:
         values = values[-preceding_slice:]
 
         return calculations.change_between_each_half(values=values)
-
-
-def make_date_from_string(date_from: Optional[str]) -> datetime.date:
-    """Parses the `date_from` string into a date object. Defaults to 1 year ago from the current date.
-
-    Args:
-        date_from: A string representing the date in the format `%Y-%m-%d`
-            E.g. "2022-10-01"
-
-    Returns:
-        `date` object representing the `date_from` string
-            or a default of 1 year ago from the current date.
-
-    """
-    try:
-        return datetime.datetime.strptime(date_from, "%Y-%m-%d")
-    except (TypeError, ValueError):
-        one_year = 12
-        return get_date_n_months_ago_from_timestamp(
-            datetime_stamp=datetime.date.today(), number_of_months=one_year
-        )
 
 
 def generate_chart(chart_plots: PlotsCollection) -> str:
@@ -398,12 +254,11 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
             for the topic of `COVID-19`
 
     """
-    date_from = make_date_from_string(date_from=chart_plot_parameters.date_from)
     charts_request_validator = validation.ChartsRequestValidator(
         topic_name=chart_plot_parameters.topic_name,
         metric_name=chart_plot_parameters.metric_name,
         chart_type=chart_plot_parameters.chart_type,
-        date_from=date_from,
+        date_from=chart_plot_parameters.date_from_value,
     )
     charts_request_validator.validate()
 

@@ -1,16 +1,11 @@
 import datetime
-from typing import List
 from unittest import mock
-
-import pytest
 
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
-    DataNotFoundError,
     generate_chart,
-    make_date_from_string,
     validate_chart_plot_parameters,
     validate_each_requested_chart_plot,
 )
@@ -18,8 +13,6 @@ from metrics.interfaces.charts.validation import ChartsRequestValidator
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
-from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
-from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
@@ -153,20 +146,19 @@ class TestChartsInterface:
             == spy_generate_line_multi_coloured_method.return_value
         )
 
-    @mock.patch.object(ChartsInterface, "build_chart_plot_data_from_parameters")
-    def test_build_chart_plots_data_delegates_call_for_each_plot(
+    def test_build_chart_plots_data_delegates_to_plots_interface(
         self,
-        mocked_build_chart_plot_data_from_parameters: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
         fake_chart_plot_parameters_covid_cases: PlotParameters,
     ):
         """
-        Given a `ChartPlots` model which contains `ChartPlotParameters` for 2 separate plots
+        Given a `PlotsCollection` model which contains `PlotParameters` for 2 separate plots
         When `build_chart_plots_data()` is called from an instance of the `ChartsInterface`
-        Then the calls are delegated to the `build_chart_plot_data_from_parameters()` method
-            for each individual `ChartPlotParameters` model
+        Then the calls are delegated to the `build_plots_data()` method on the `PlotsInterface`
+            for each individual `PlotParameters` model
         """
         # Given
+        spy_plots_interface = mock.Mock()
         fake_chart_plots = PlotsCollection(
             plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
@@ -175,149 +167,17 @@ class TestChartsInterface:
         )
 
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_plots, core_time_series_manager=mock.Mock()
-        )
-
-        # When
-        chart_plots_data = charts_interface.build_chart_plots_data()
-
-        # Then
-        # Check that `build_chart_plot_data_from_parameters()` method
-        # is called for each of the provided `ChartPlotParameters` models
-        expected_calls = [
-            mock.call(chart_plot_parameters=fake_chart_plot_parameters),
-            mock.call(chart_plot_parameters=fake_chart_plot_parameters_covid_cases),
-        ]
-        mocked_build_chart_plot_data_from_parameters.assert_has_calls(
-            calls=expected_calls,
-            any_order=False,
-        )
-
-        expected_chart_plots_data = [
-            mocked_build_chart_plot_data_from_parameters.return_value
-        ] * 2
-        assert chart_plots_data == expected_chart_plots_data
-
-    def test_build_chart_plot_data_from_parameters(
-        self, fake_chart_plot_parameters: PlotParameters
-    ):
-        """
-        Given a `ChartPlotParameters` model requesting a chart plot for existing `CoreTimeSeries`
-        When `build_chart_plot_data_from_parameters()` is called from an instance of the `ChartsInterface`
-        Then a `ChartPlotData` model is returned with the original parameters
-        And the correct data passed to the `x_axis` and `y_axis`
-        """
-        # Given
-        fake_chart_plots = PlotsCollection(
-            plots=[fake_chart_plot_parameters],
-            file_format="png",
-            chart_width=123,
-            chart_height=456,
-        )
-        fake_core_time_series_for_plot: List[
-            FakeCoreTimeSeries
-        ] = self._setup_fake_time_series_for_plot(
-            chart_plot_parameters=fake_chart_plot_parameters
-        )
-        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
-            time_series=fake_core_time_series_for_plot
-        )
-
-        charts_interface = ChartsInterface(
             chart_plots=fake_chart_plots,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_time_series_manager=mock.Mock(),
+            plots_interface=spy_plots_interface,
         )
 
         # When
-        chart_plot_data: PlotsData = (
-            charts_interface.build_chart_plot_data_from_parameters(
-                chart_plot_parameters=fake_chart_plot_parameters
-            )
-        )
+        plots_data = charts_interface.build_chart_plots_data()
 
         # Then
-        # Check that the parameters on the `ChartPlotData` model is ingested by the input `ChartPlotParameters` model
-        assert chart_plot_data.parameters == fake_chart_plot_parameters
-
-        # Check the correct data is passed to the axis of the `ChartPlotData` model
-        assert chart_plot_data.x_axis == tuple(
-            x.dt for x in fake_core_time_series_for_plot
-        )
-        assert chart_plot_data.y_axis == tuple(
-            x.metric_value for x in fake_core_time_series_for_plot
-        )
-
-    def test_build_chart_plot_data_from_parameters_raises_error_when_no_data_found(
-        self, fake_chart_plot_parameters: PlotParameters
-    ):
-        """
-        Given a `ChartPlotParameters` model requesting a chart plot for `CoreTimeSeries` data which cannot be found
-        When `build_chart_plot_data_from_parameters()` is called from an instance of the `ChartsInterface`
-        Then a `DataNotFoundError` is raised
-        """
-        # Given
-        fake_chart_plots = PlotsCollection(
-            plots=[fake_chart_plot_parameters],
-            file_format="png",
-            chart_width=123,
-            chart_height=456,
-        )
-        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
-
-        charts_interface = ChartsInterface(
-            chart_plots=fake_chart_plots,
-            core_time_series_manager=fake_core_time_series_manager,
-        )
-
-        # When / Then
-        with pytest.raises(DataNotFoundError):
-            charts_interface.build_chart_plot_data_from_parameters(
-                chart_plot_parameters=fake_chart_plot_parameters
-            )
-
-    def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
-        """
-        Given a `CoreTimeSeriesManager`
-        When `get_timeseries()` is called from an instance of `ChartsInterface`
-        Then the correct method is called from `CoreTimeSeriesManager` to retrieve the timeseries
-        """
-        # Given
-        spy_core_time_series_manager = mock.Mock()
-        mocked_topic = mock.Mock()
-        mocked_metric = mock.Mock()
-        mocked_date_from = mock.Mock()
-        mocked_geography = mock.Mock()
-        mocked_geography_type = mock.Mock()
-        mocked_stratum = mock.Mock()
-
-        charts_interface = ChartsInterface(
-            chart_plots=mock.MagicMock(),
-            core_time_series_manager=spy_core_time_series_manager,
-        )
-
-        # When
-        timeseries = charts_interface.get_timeseries(
-            topic_name=mocked_topic,
-            metric_name=mocked_metric,
-            date_from=mocked_date_from,
-            geography_name=mocked_geography,
-            geography_type_name=mocked_geography_type,
-            stratum_name=mocked_stratum,
-        )
-
-        # Then
-        assert (
-            timeseries
-            == spy_core_time_series_manager.filter_for_dates_and_values.return_value
-        )
-        spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
-            topic_name=mocked_topic,
-            metric_name=mocked_metric,
-            date_from=mocked_date_from,
-            geography_name=mocked_geography,
-            geography_type_name=mocked_geography_type,
-            stratum_name=mocked_stratum,
-        )
+        spy_plots_interface.build_plots_data.assert_called_once()
+        assert plots_data == spy_plots_interface.build_plots_data.return_value
 
     @mock.patch(f"{MODULE_PATH}.calculations.get_rolling_period_slice_for_metric")
     @mock.patch.object(ChartsInterface, "calculate_change_in_metric_value")
@@ -383,107 +243,30 @@ class TestChartsInterface:
             metric_name=metric
         )
 
-    @mock.patch.object(ChartsInterface, "get_timeseries")
-    def test_get_timeseries_for_chart_plot_parameters_delegates_call_with_correct_args(
-        self,
-        mocked_get_timeseries: mock.MagicMock,
-        fake_chart_plot_parameters: PlotParameters,
-    ):
+    def test_plots_interface_is_created_with_correct_args_by_default(self):
         """
-        Given a `ChartPlotParameters` model with a defined `date_from`
-        When `get_timeseries_for_chart_plot_parameters()` is called from an instance of the `ChartsInterface`
-        Then the call is delegated to the `get_timeseries()` method with the correct args
+        Given a `PlotsCollection` and a `CoreTimeSeriesManager`
+        When an instance of the `ChartsInterface` is created
+            without explicitly providing a `PlotsInterface`
+        Then an instance of the `PlotsInterface` is created with the correct args
         """
         # Given
-        date_from = datetime.datetime(year=2023, month=1, day=1)
-        fake_chart_plot_parameters.date_from = "2023-01-01"
+        mocked_plots_collection = mock.MagicMock()
+        mocked_core_time_series_manager = mock.Mock()
 
+        # When
         charts_interface = ChartsInterface(
-            chart_plots=mock.MagicMock(), core_time_series_manager=mock.Mock()
-        )
-
-        # When
-        timeseries = charts_interface.get_timeseries_for_chart_plot_parameters(
-            chart_plot_parameters=fake_chart_plot_parameters
+            chart_plots=mocked_plots_collection,
+            core_time_series_manager=mocked_core_time_series_manager,
         )
 
         # Then
-        # The return value is delegated to the `get_timeseries` method
-        assert timeseries == mocked_get_timeseries.return_value
-
-        # The dict representation of the `ChartPlotParameters` model
-        # is unpacked into the `get_timeseries` method
-        params = fake_chart_plot_parameters.to_dict_for_query()
-        params["date_from"] = date_from
-        mocked_get_timeseries.assert_called_once_with(**params)
-
-
-class TestMakeDatetimeFromString:
-    def test_returns_correct_value(self):
-        """
-        Given a valid date string in the format `%Y-%m-%d`
-        When `make_datetime_from_string()` is called
-        Then a `datetime.datetime` object is returned for the given date
-        """
-        # Given
-        year = "2023"
-        month = "01"
-        day = "01"
-        date_from = f"{year}-{month}-{day}"
-
-        # When
-        parsed_date_from = make_date_from_string(date_from=date_from)
-
-        # Then
-        assert parsed_date_from.year == int(year)
-        assert parsed_date_from.month == int(month)
-        assert parsed_date_from.day == int(day)
-
-    @mock.patch(f"{MODULE_PATH}.get_date_n_months_ago_from_timestamp")
-    def test_delegates_call_to_get_default_of_one_year_if_none_provided(
-        self,
-        spy_get_date_n_months_ago_from_timestamp: mock.MagicMock,
-    ):
-        """
-        Given an input `date_from` of None
-        When `make_datetime_from_string()` is called
-        Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
-        """
-        # Given
-        date_from = None
-
-        # When
-        parsed_date_from = make_date_from_string(date_from=date_from)
-
-        # Then
-        spy_get_date_n_months_ago_from_timestamp.assert_called_once_with(
-            datetime_stamp=datetime.date.today(),
-            number_of_months=12,
+        created_plots_interface = charts_interface.plots_interface
+        assert created_plots_interface.plots_collection == mocked_plots_collection
+        assert (
+            created_plots_interface.core_time_series_manager
+            == mocked_core_time_series_manager
         )
-        assert parsed_date_from == spy_get_date_n_months_ago_from_timestamp.return_value
-
-    @mock.patch(f"{MODULE_PATH}.get_date_n_months_ago_from_timestamp")
-    def test_delegates_call_to_get_default_of_one_year_if_empty_string_provided(
-        self,
-        spy_get_date_n_months_ago_from_timestamp: mock.MagicMock,
-    ):
-        """
-        Given an input `date_from` of an empty string
-        When `make_datetime_from_string()` is called
-        Then `get_date_n_months_ago_from_timestamp()` is called to make a datestamp of 1 year prior to the current date
-        """
-        # Given
-        date_from = ""
-
-        # When
-        parsed_date_from = make_date_from_string(date_from=date_from)
-
-        # Then
-        spy_get_date_n_months_ago_from_timestamp.assert_called_once_with(
-            datetime_stamp=datetime.date.today(),
-            number_of_months=12,
-        )
-        assert parsed_date_from == spy_get_date_n_months_ago_from_timestamp.return_value
 
 
 class TestGenerateChart:

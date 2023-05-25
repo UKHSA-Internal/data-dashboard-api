@@ -7,6 +7,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 from metrics.data.access.core_models import (
     get_month_end_timeseries_metric_values_from_date,
 )
+from metrics.domain.models import PlotParameters
 
 
 class TabularView(APIView):
@@ -21,11 +22,14 @@ class TabularView(APIView):
         - `metric` - refers to the type of metric (eg, new_cases_daily, cases_age_sex)
 
         """
-        topic_name: str = kwargs["topic"]
-        metric_name: str = kwargs["metric"]
+        plot_parameters = PlotParameters(
+            topic=kwargs["topic"],
+            metric=kwargs["metric"],
+            chart_type="tabular",
+        )
 
         result: List[Dict[str, str]] = get_month_end_timeseries_metric_values_from_date(
-            metric_name=metric_name, topic_name=topic_name
+            plot_parameters=plot_parameters,
         )
 
         return Response(result)
