@@ -52,7 +52,7 @@ class ChartsInterface:
             return self.generate_bar_chart()
 
         if self.chart_type == ChartTypes.line_multi_coloured.value:
-            return self.generate_line_multi_coloured()
+            return self.generate_line_multi_coloured_chart()
 
         return self.generate_line_with_shaded_section_chart()
 
@@ -108,7 +108,7 @@ class ChartsInterface:
             legend=plot_data.parameters.metric_name,
         )
 
-    def generate_line_multi_coloured(self) -> plotly.graph_objects.Figure:
+    def generate_line_multi_coloured_chart(self) -> plotly.graph_objects.Figure:
         """Creates a multiple line colour-differentiated chart figure for the requested chart plots
 
         Notes
