@@ -13,6 +13,7 @@ from metrics.interfaces.charts.validation import ChartsRequestValidator
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
+from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
@@ -171,6 +172,53 @@ class TestChartsInterface:
         assert (
             generated_chart_figure
             == spy_generate_line_multi_coloured_chart_method.return_value
+        )
+
+    @mock.patch(f"{MODULE_PATH}.line_multi_coloured.generate_chart_figure")
+    def test_generate_line_multi_coloured_chart(
+        self,
+        spy_line_multi_coloured_generate_chart_figure: mock.MagicMock,
+        valid_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a valid `PlotParameters` for a `line_multi_coloured` chart
+        When `generate_line_multi_coloured_chart()` is called from an instance of the `ChartsInterface`
+        Then the call is delegated to the `generate_chart_figure()`
+            from the `line_multi_coloured` module with the correct args
+        """
+        # Given
+        fake_core_time_series_collection = self._setup_fake_time_series_for_plot(
+            chart_plot_parameters=valid_plot_parameters
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            fake_core_time_series_collection
+        )
+        plots_collection = PlotsCollection(
+            plots=[valid_plot_parameters],
+            file_format="svg",
+            chart_width=123,
+            chart_height=456,
+        )
+
+        charts_interface = ChartsInterface(
+            chart_plots=plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When
+        line_multi_coloured_chart = (
+            charts_interface.generate_line_multi_coloured_chart()
+        )
+
+        # Then
+        spy_line_multi_coloured_generate_chart_figure.assert_called_once_with(
+            chart_height=plots_collection.chart_height,
+            chart_width=plots_collection.chart_width,
+            chart_plots_data=charts_interface.build_chart_plots_data(),
+        )
+        assert (
+            line_multi_coloured_chart
+            == spy_line_multi_coloured_generate_chart_figure.return_value
         )
 
     def test_build_chart_plots_data_delegates_to_plots_interface(
