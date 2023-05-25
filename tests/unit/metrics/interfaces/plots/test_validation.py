@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 
+from metrics.data.managers.core_models.metric import MetricManager
 from metrics.domain.models import PlotParameters
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.plots import validation
@@ -44,82 +45,6 @@ class TestValidate:
         # Then
         spy_validate_metric_is_available_for_topic.assert_called_once()
         spy_validate_dates.assert_called_once()
-
-
-class TestValidateMetricIsAvailableForTopic:
-    def test_can_validate_successfully(self, valid_plot_parameters: PlotParameters):
-        """
-        Given an otherwise valid `PlotParameters` model which has a metric of `covid_occupied_beds_latest`
-        And a topic of `COVID-19` which is valid
-        When `_validate_metric_is_available_for_topic()` is called from an instance of `PlotValidation`
-        Then None is returned
-        """
-        # Given
-        plot_parameters = valid_plot_parameters
-        metric_name = "covid_occupied_beds_latest"
-        valid_topic_name = "COVID-19"
-        plot_parameters.metric = metric_name
-        plot_parameters.topic = valid_topic_name
-
-        metrics = [
-            FakeMetricFactory.build_example_metric(
-                metric_name=metric_name, topic_name=valid_topic_name
-            )
-        ] * 3
-        fake_metric_manager = FakeMetricManager(metrics=metrics)
-
-        validator = validation.PlotValidation(
-            plot_parameters=plot_parameters,
-            metric_manager=fake_metric_manager,
-        )
-
-        # When
-        validated = validator._validate_metric_is_available_for_topic()
-
-        # Then
-        assert validated is None
-
-    def test_can_raise_error_for_invalid_combination(
-        self, valid_plot_parameters: PlotParameters
-    ):
-        """
-        Given an otherwise valid `PlotParameters` model which has a metric of `covid_occupied_beds_latest`
-        And a topic of `Influenza` which is invalid
-        When `_validate_metric_is_available_for_topic()` is called from an instance of `PlotValidation`
-        Then a `MetricDoesNotSupportTopicError` is raised
-        """
-        # Given
-        plot_parameters = valid_plot_parameters
-        metric_name = "covid_occupied_beds_latest"
-        invalid_topic_name = "Influenza"
-        plot_parameters.metric = metric_name
-        plot_parameters.topic = invalid_topic_name
-
-        plot_parameters = PlotParameters(
-            metric=metric_name,
-            topic=invalid_topic_name,
-            chart_type=ChartTypes.simple_line.value,
-            date_from="2023-01-01",
-        )
-
-        metrics = [
-            FakeMetricFactory.build_example_metric(
-                metric_name=metric_name, topic_name="COVID-19"
-            )
-        ] * 3
-        fake_metric_manager = FakeMetricManager(metrics=metrics)
-
-        validator = validation.PlotValidation(
-            plot_parameters=plot_parameters,
-            metric_manager=fake_metric_manager,
-        )
-
-        # When / Then
-        expected_error_message = f"`{invalid_topic_name}` does not have a corresponding metric of `{metric_name}`"
-        with pytest.raises(
-            validation.MetricDoesNotSupportTopicError, match=expected_error_message
-        ):
-            validator._validate_metric_is_available_for_topic()
 
 
 class TestDoesMetricHaveMultipleRecords:
@@ -261,6 +186,114 @@ class TestDoesMetricHaveMultipleRecords:
             topic_name=valid_plot_parameters.topic_name,
             metric_name=valid_plot_parameters.metric_name,
             date_from=valid_plot_parameters.date_from_value,
+        )
+
+
+class TestValidateMetricIsAvailableForTopic:
+    def test_can_validate_successfully(self, valid_plot_parameters: PlotParameters):
+        """
+        Given an otherwise valid `PlotParameters` model which has a metric of `covid_occupied_beds_latest`
+        And a topic of `COVID-19` which is valid
+        When `_validate_metric_is_available_for_topic()` is called from an instance of `PlotValidation`
+        Then None is returned
+        """
+        # Given
+        plot_parameters = valid_plot_parameters
+        metric_name = "covid_occupied_beds_latest"
+        valid_topic_name = "COVID-19"
+        plot_parameters.metric = metric_name
+        plot_parameters.topic = valid_topic_name
+
+        metrics = [
+            FakeMetricFactory.build_example_metric(
+                metric_name=metric_name, topic_name=valid_topic_name
+            )
+        ] * 3
+        fake_metric_manager = FakeMetricManager(metrics=metrics)
+
+        validator = validation.PlotValidation(
+            plot_parameters=plot_parameters,
+            metric_manager=fake_metric_manager,
+        )
+
+        # When
+        validated = validator._validate_metric_is_available_for_topic()
+
+        # Then
+        assert validated is None
+
+    def test_can_raise_error_for_invalid_combination(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given an otherwise valid `PlotParameters` model which has a metric of `covid_occupied_beds_latest`
+        And a topic of `Influenza` which is invalid
+        When `_validate_metric_is_available_for_topic()` is called from an instance of `PlotValidation`
+        Then a `MetricDoesNotSupportTopicError` is raised
+        """
+        # Given
+        plot_parameters = valid_plot_parameters
+        metric_name = "covid_occupied_beds_latest"
+        invalid_topic_name = "Influenza"
+        plot_parameters.metric = metric_name
+        plot_parameters.topic = invalid_topic_name
+
+        plot_parameters = PlotParameters(
+            metric=metric_name,
+            topic=invalid_topic_name,
+            chart_type=ChartTypes.simple_line.value,
+            date_from="2023-01-01",
+        )
+
+        metrics = [
+            FakeMetricFactory.build_example_metric(
+                metric_name=metric_name, topic_name="COVID-19"
+            )
+        ] * 3
+        fake_metric_manager = FakeMetricManager(metrics=metrics)
+
+        validator = validation.PlotValidation(
+            plot_parameters=plot_parameters,
+            metric_manager=fake_metric_manager,
+        )
+
+        # When / Then
+        expected_error_message = f"`{invalid_topic_name}` does not have a corresponding metric of `{metric_name}`"
+        with pytest.raises(
+            validation.MetricDoesNotSupportTopicError, match=expected_error_message
+        ):
+            validator._validate_metric_is_available_for_topic()
+
+
+class TestIsMetricAvailableForTopic:
+    def test_delegates_call_to_metric_manager(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given a valid `PlotParameters` model
+        And a `MetricManager` object
+        When `_is_metric_available_for_topic()` is called from an instance of `PlotValidation`
+        Then the call is delegated to the is_metric_available_for_topic()` method
+            on the `MetricManager`
+        """
+        # Given
+        spy_metric_manager = mock.Mock(spec=MetricManager)
+        plot_validation = validation.PlotValidation(
+            plot_parameters=valid_plot_parameters,
+            metric_manager=spy_metric_manager,
+        )
+
+        # When
+        metric_is_available_for_topic = plot_validation._is_metric_available_for_topic()
+
+        # Then
+        spy_metric_manager.is_metric_available_for_topic.assert_called_once_with(
+            metric_name=valid_plot_parameters.metric,
+            topic_name=valid_plot_parameters.topic,
+        )
+        assert (
+            metric_is_available_for_topic
+            == spy_metric_manager.is_metric_available_for_topic.return_value
         )
 
 
