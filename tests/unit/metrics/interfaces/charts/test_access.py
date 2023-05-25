@@ -1,8 +1,5 @@
 import datetime
-from typing import List
 from unittest import mock
-
-import pytest
 
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.domain.utils import ChartTypes
@@ -17,8 +14,6 @@ from metrics.interfaces.charts.validation import ChartsRequestValidator
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
-from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
-from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
