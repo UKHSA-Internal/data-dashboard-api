@@ -2,14 +2,9 @@ from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries, Metric
 from metrics.domain.models import PlotParameters
-from metrics.domain.utils import ChartTypes
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_METRIC_MANAGER = Metric.objects
-
-
-class ChartTypeDoesNotSupportMetricError(Exception):
-    ...
 
 
 class MetricDoesNotSupportTopicError(Exception):

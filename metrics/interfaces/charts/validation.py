@@ -15,14 +15,6 @@ class ChartTypeDoesNotSupportMetricError(Exception):
     ...
 
 
-class MetricDoesNotSupportTopicError(Exception):
-    ...
-
-
-class DatesNotInChronologicalOrderError(Exception):
-    ...
-
-
 class ChartsRequestValidator:
     def __init__(
         self,
