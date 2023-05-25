@@ -3,15 +3,9 @@
 {% load i18n %}
 {% load rest_framework %}
 
-{# Insert the UKHSA favicon #}
+
 {% block style %}
 {{ block.super }}
-<link rel="shortcut icon" type="image/png" href="/static/ukhsa_icon.png" />
-{% endblock %}
-
-{# Append the UKHSA title #}
-{% block title %}{% if name %}{{ name }} – {% endif %}UKHSA Data Dashboard API{% endblock %}
-
 {# Apply Bootstrap style sheet #}
 {% block bootstrap_theme %}
     <link rel="stylesheet"
@@ -20,6 +14,12 @@
           crossorigin="anonymous"
     >
 {% endblock %}
+{# Insert the UKHSA favicon #}
+<link rel="shortcut icon" type="image/png" href="/static/ukhsa_icon.png" />
+{% endblock %}
+
+{# Append the UKHSA title #}
+{% block title %}{% if name %}{{ name }} – {% endif %}UKHSA Data Dashboard API{% endblock %}
 
 {# Add custom stylings and branding applied to Navbar #}
 {% block navbar %}
