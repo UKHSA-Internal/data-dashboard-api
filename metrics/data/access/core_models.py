@@ -31,14 +31,14 @@ def unzip_values(values) -> Tuple[List, List]:
 
 def get_month_end_timeseries_metric_values_from_date(
     metric_name: str,
-    topic: str,
+    topic_name: str,
     core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
 ) -> List[Dict[str, str]]:
     """
     Fetch the month-end timeseries values for the given topic & metric
      Args:
          metric_name: The required metric (eg. new_cases_daily)
-         topic: The required topic (eg. COVID-19)
+         topic_name: The required topic (eg. COVID-19)
          core_time_series_manager: The timeseries manager. Default is the CoreTimeSeries manager
      Returns:
          A dictionary of date:metric_value pairs
@@ -49,7 +49,7 @@ def get_month_end_timeseries_metric_values_from_date(
     )
 
     queryset = core_time_series_manager.by_topic_metric_for_dates_and_values(
-        topic=topic,
+        topic_name=topic_name,
         metric_name=metric_name,
         date_from=n_months_ago,
     )
