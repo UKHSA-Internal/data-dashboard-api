@@ -74,6 +74,55 @@ class TestPlotsInterface:
         expected_plots_data = [spy_build_plot_data_from_parameters.return_value] * 2
         assert plots_data == expected_plots_data
 
+    def test_build_plots_data_passes_for_plot_parameters_with_no_supporting_data(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given a request for a plot with no supporting data and another which has supporting data
+        When `build_plots_data()` is called from an instance of the `PlotsInterface`
+        Then only 1 enriched `PlotData` model is returned
+            for the `PlotParameters` which requested timeseries data that existed
+        """
+        # Given
+        plot_parameters_with_no_supporting_data = PlotParameters(
+            metric="non_existent_metric",
+            topic="non_existent_topic",
+            chart_type="line",
+        )
+        plots_collection = PlotsCollection(
+            plots=[valid_plot_parameters, plot_parameters_with_no_supporting_data],
+            file_format="svg",
+            chart_width=123,
+            chart_height=456,
+        )
+        fake_core_time_series_records: List[
+            FakeCoreTimeSeries
+        ] = self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            time_series=fake_core_time_series_records
+        )
+
+        plots_interface = PlotsInterface(
+            plots_collection=plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When
+        plots_data: List[PlotsData] = plots_interface.build_plots_data()
+
+        # Then
+        # Check that only 1 enriched `PlotData` model is returned
+        assert len(plots_data) == 1
+
+        # Check that the `PlotData` model was enriched
+        # for the plot parameters which requested timeseries data that existed
+        expected_plots_data_for_valid_params = PlotsData(
+            parameters=valid_plot_parameters,
+            x_axis=tuple(x.dt for x in fake_core_time_series_records),
+            y_axis=tuple(x.metric_value for x in fake_core_time_series_records),
+        )
+        assert plots_data == [expected_plots_data_for_valid_params]
+
     def test_build_plot_data_from_parameters(
         self, fake_chart_plot_parameters: PlotParameters
     ):
