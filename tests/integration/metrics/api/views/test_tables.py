@@ -13,12 +13,12 @@ class TestTablesView:
     def _setup_time_series(
         topic_name: str, metric_name: str, metric_value: float
     ) -> CoreTimeSeries:
-        topic = Topic.objects.create(name=topic_name)
-        metric = Metric.objects.create(name=metric_name, topic=topic)
+        topic_name = Topic.objects.create(name=topic_name)
+        metric_name = Metric.objects.create(name=metric_name, topic=topic_name)
         year = 2023
         return CoreTimeSeries.objects.create(
             metric_value=metric_value,
-            metric=metric,
+            metric=metric_name,
             year=year,
             epiweek=1,
             dt=datetime.date(year=year, month=1, day=1),
