@@ -5,11 +5,12 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
-from metrics.domain.models import PlotParameters
+
 from metrics.api.serializers.tables import TablesResponseSerializer, TablesSerializer
 from metrics.data.access.core_models import (
     get_month_end_timeseries_metric_values_from_date,
 )
+from metrics.domain.models import PlotParameters
 from metrics.interfaces.charts import access, validation
 
 

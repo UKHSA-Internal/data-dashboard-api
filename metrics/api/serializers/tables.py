@@ -3,10 +3,7 @@ from django.db.utils import ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
-from metrics.api.serializers.charts import (
-    DEFAULT_CHART_HEIGHT,
-    DEFAULT_CHART_WIDTH,
-)
+from metrics.api.serializers.charts import DEFAULT_CHART_HEIGHT, DEFAULT_CHART_WIDTH
 from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.models import PlotsCollection
 from metrics.domain.utils import ChartTypes
