@@ -18,7 +18,8 @@ from metrics.api.views import (
     FileUploadView,
     HeadlinesView,
     HealthView,
-    TabularView,
+    OldTabularView,
+    TablesView,
     TrendsView,
 )
 from metrics.public_api.urls import urlpatterns as public_api_urlpatterns
@@ -60,8 +61,9 @@ urlpatterns = [
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(
         r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
-        TabularView.as_view(),
+        OldTabularView.as_view(),
     ),
+    re_path(r"^tables/v2", TablesView.as_view()),
     re_path(r"^trends/v2", TrendsView.as_view()),
     path("health/", HealthView.as_view()),
     # Django admin

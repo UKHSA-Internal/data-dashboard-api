@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -12,6 +12,7 @@ from metrics.domain.charts import (
     waffle,
 )
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.tables.generation import create_plots_in_tabular_format
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 from metrics.interfaces.plots.access import PlotsInterface
@@ -145,6 +146,18 @@ class ChartsInterface:
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
+    def generate_plots_for_table(self) -> List[Dict[str, str]]:
+        """Create a list of plots from the request
+
+        Returns:
+            The requested plots in tabular format
+        """
+        plots_data: List[PlotsData] = self.build_chart_plots_data()
+
+        return create_plots_in_tabular_format(
+            tabular_plots_data=plots_data,
+        )
+
     def build_chart_plots_data(self) -> List[PlotsData]:
         """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots
 
@@ -218,6 +231,30 @@ def generate_chart(chart_plots: PlotsCollection) -> str:
         topic="-",
         file_format=chart_plots.file_format,
     )
+
+
+def generate_tabular_output(chart_plots: PlotsCollection) -> List[Dict[str, str]]:
+    """Validates and creates tabular output based off the parameters provided within the `PlotsCollection` model
+
+    Args:
+        PlotsCollection: The requested table plots parameters
+            encapsulated as a model
+
+    Returns:
+        The requested plots in tabular format
+
+    Raises:
+        `MetricDoesNotSupportTopicError`: If the `metric` is not
+            compatible for the required `topic`.
+            E.g. `new_cases_daily` is currently only available
+            for the topic of `COVID-19`
+    """
+    validate_each_requested_chart_plot(chart_plots=chart_plots)
+
+    library = ChartsInterface(chart_plots=chart_plots)
+    tabular_output = library.generate_plots_for_table()
+
+    return tabular_output
 
 
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
