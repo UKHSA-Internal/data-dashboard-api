@@ -5,8 +5,8 @@ from django.db.models import Manager
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotsCollection, PlotsData
 from metrics.domain.tables.generation import create_plots_in_tabular_format
-from metrics.interfaces.charts.access import validate_each_requested_chart_plot
 from metrics.interfaces.plots.access import PlotsInterface
+from metrics.interfaces.tables.validation import validate_each_requested_table_plot
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -40,7 +40,7 @@ class TablesInterface:
 
 
 def generate_table(plots_collection: PlotsCollection) -> List[Dict[str, str]]:
-    """Validates and creates tabular output based off the parameters provided within the `chart_plots` model
+    """Validates and creates tabular output based off the parameters provided within the `plots_collection` model
 
     Args:
         plots_collection: The requested table plots parameters
@@ -55,8 +55,15 @@ def generate_table(plots_collection: PlotsCollection) -> List[Dict[str, str]]:
             E.g. `new_cases_daily` is currently only available
             for the topic of `COVID-19`
 
+        `DatesNotInChronologicalOrderError`: If a provided `date_to`
+            is chronologically behind the provided `date_from`.
+            E.g. date_from = datetime.datetime(2022, 10, 2)
+                & date_to = datetime.datetime(2021, 8, 1)
+            Note that if None is provided to `date_to`
+            then this error will not be raised.
+
     """
-    validate_each_requested_chart_plot(chart_plots=plots_collection)
+    validate_each_requested_table_plot(plots_collection=plots_collection)
 
     tables_interface = TablesInterface(plots_collection=plots_collection)
     return tables_interface.generate_plots_for_table()
