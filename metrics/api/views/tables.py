@@ -47,9 +47,12 @@ class TablesView(APIView):
         responses={HTTPStatus.OK.value: TablesResponseSerializer},
     )
     def post(self, request, *args, **kwargs):
-        """This endpoint can be used to generate chart data in tabular format
+        """This endpoint can be used to generate chart data in tabular format.
+
         Multiple plots can be added as an array of objects from the request body.
+
         This payload takes the following set of parameters for each plot:
+
         | Parameter name   | Description                                                                | Example                  | Mandatory |
         |------------------|----------------------------------------------------------------------------|--------------------------|-----------|
         | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
@@ -60,12 +63,16 @@ class TablesView(APIView):
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
+
         ---
+
         # Main errors
         There are certain combination of `topic / metric` which do not make sense.
         This is primarily because a set of `metric` values are not available for every `topic`.
         As well as this, certain `metric` names reference data of a certain profile.
+
         ---
+
         ## Selected metric not available for topic
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
         For example, if a metric like `new_cases_daily` (which is only used for `COVID-19`) is being asked for with a topic of `Influenza`.
