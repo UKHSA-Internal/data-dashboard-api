@@ -1,5 +1,7 @@
 import datetime
+from collections import OrderedDict
 from http import HTTPStatus
+from typing import List, Tuple
 
 import pytest
 from rest_framework.response import Response
@@ -11,11 +13,15 @@ from metrics.data.models.api_models import APITimeSeries
 class TestPublicAPINestedLinkViews:
     @property
     def path(self) -> str:
-        return "/api/public/timeseries/themes/"
+        return "/api/public/timeseries/"
 
     @property
     def test_server_base_name(self) -> str:
         return "http://testserver"
+
+    @property
+    def api_base_path(self) -> str:
+        return f"{self.test_server_base_name}{self.path}"
 
     @staticmethod
     def _setup_api_time_series(
@@ -30,84 +36,92 @@ class TestPublicAPINestedLinkViews:
         )
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_theme_list_view(
+    def test_returns_correct_links_to_subsequent_views(
         self, authenticated_api_client: APIClient
     ):
         """
-        Given a valid request
-        When the `GET /api/public/timeseries/themes/` endpoint is hit
-        Then the response is an HTTP 200 OK
-        And the response contains a list of theme names and links
+        Given a valid request and a number of matching `APITimeSeries` records
+        When the `GET /api/public/timeseries/` API is used
+        Then the response contains links which will direct the caller to the subsequent views
         """
         # Given
-        theme_value = "infectious_disease"
-        self._setup_api_time_series(theme=theme_value)
+        theme_name = "infectious_disease"
+        sub_theme_name = "respiratory"
+        topic_name = "COVID-19"
+        geography_type_name = "Nation"
+        geography_name = "England"
+        metric_name = "new_cases_daily"
 
-        # When
-        response: Response = authenticated_api_client.get(path=self.path, format="json")
-
-        # Then
-        assert response.status_code == HTTPStatus.OK
-
-        response_data = response.data
-        # Check that each object in the response contains a name and link
-        assert response_data[0]["name"] == theme_value
-        expected_theme_link = f"{self.test_server_base_name}{self.path}{theme_value}"
-        assert response_data[0]["link"] == expected_theme_link
-
-    @pytest.mark.django_db
-    def test_returns_correct_response_for_theme_detail_view(
-        self, authenticated_api_client: APIClient
-    ):
-        """
-        Given a valid request
-        When the `GET /api/public/timeseries/themes/{theme}` endpoint is hit
-        Then the response is an HTTP 200 OK
-        And the response contains a list of objects which have `information` and `sub_themes` fields
-        """
-        # Given
-        theme_value = "infectious_disease"
-        path = f"{self.path}{theme_value}"
-        self._setup_api_time_series(theme=theme_value)
-
-        # When
-        response: Response = authenticated_api_client.get(path=path, format="json")
-
-        # Then
-        assert response.status_code == HTTPStatus.OK
-
-        response_data = response.data
-        # Check that each object in the response contains a name and link
-        assert "information" in response_data[0]
-        expected_sub_themes_link = (
-            f"{self.test_server_base_name}{self.path}{theme_value}/sub_themes/"
+        self._setup_api_time_series(
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+            metric=metric_name,
         )
-        assert response_data[0]["sub_themes"] == expected_sub_themes_link
-
-    @pytest.mark.django_db
-    def test_returns_correct_response_for_sub_theme_list_view(
-        self, authenticated_api_client: APIClient
-    ):
-        """
-        Given a valid request
-        When the `GET /api/public/timeseries/themes/{theme}/sub_themes` endpoint is hit
-        Then the response is an HTTP 200 OK
-        And the response contains a list of sub_theme names and links
-        """
-        # Given
-        theme_value = "infectious_disease"
-        sub_theme_value = "respiratory"
-        self._setup_api_time_series(theme=theme_value, sub_theme=sub_theme_value)
-        path = f"{self.path}{theme_value}/sub_themes/"
 
         # When
-        response: Response = authenticated_api_client.get(path=path, format="json")
+        path = f"{self.path}themes/"
+        expected_response_fields: List[Tuple[str, str, str, str]] = [
+            (
+                "name",
+                "link",
+                theme_name,
+                f"themes/{theme_name}",
+            ),
+            (
+                "information",
+                "sub_themes",
+                "",
+                f"themes/{theme_name}/sub_themes/",
+            ),
+            (
+                "name",
+                "link",
+                sub_theme_name,
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}",
+            ),
+            (
+                "information",
+                "topics",
+                "",
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics",
+            ),
+            (
+                "name",
+                "link",
+                topic_name,
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}",
+            ),
+            (
+                "information",
+                "geography_types",
+                "",
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}",
+            ),
+        ]
 
-        # Then
-        assert response.status_code == HTTPStatus.OK
+        for (
+            metadata_field,
+            link_field,
+            expected_metadata_field_value,
+            expected_link,
+        ) in expected_response_fields:
+            response: Response = authenticated_api_client.get(path=path, format="json")
+            assert response.status_code == HTTPStatus.OK
+            response_data: OrderedDict = response.data
 
-        response_data = response.data
-        # Check that each object in the response contains a name and link
-        assert response_data[0]["name"] == sub_theme_value
-        expected_sub_theme_link = f"{self.test_server_base_name}{self.path}{theme_value}/sub_themes/{sub_theme_value}"
-        assert response_data[0]["link"] == expected_sub_theme_link
+            # Then
+            # Check that the metadata field matches up to expected value
+            # For example, the `name` of 1 of the items in the `themes` list view
+            # should be equal to the `theme_name` which in this case is `infectious_disease`.
+            metadata_field_from_response: str = response_data[0][metadata_field]
+            assert metadata_field_from_response == expected_metadata_field_value
+
+            # Check that the link field matches up to expected value
+            link_field_from_response: str = response_data[0][link_field]
+            assert link_field_from_response == f"{self.api_base_path}{expected_link}"
+
+            # Point the next request to the link field provided by the previous response
+            path = link_field_from_response
