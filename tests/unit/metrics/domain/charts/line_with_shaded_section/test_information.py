@@ -2,7 +2,8 @@ from typing import List
 
 import pytest
 
-from metrics.domain.charts.line_with_shaded_section import colour_scheme, information
+from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.line_with_shaded_section import information
 
 INCREASING_METRIC_VALUE: int = 10
 DECREASING_METRIC_VALUE: int = -10
@@ -27,8 +28,8 @@ class TestDetermineLineAndFillColours:
         )
 
         # Then
-        assert line_colour == colour_scheme.RGBAColours.DARK_GREEN
-        assert fill_colour == colour_scheme.RGBAColours.LIGHT_GREEN
+        assert line_colour == colour_scheme.RGBAColours.LS_DARK_GREEN
+        assert fill_colour == colour_scheme.RGBAColours.LS_LIGHT_GREEN
 
     def test_returns_red_colours_for_increasing_cases(self):
         """
