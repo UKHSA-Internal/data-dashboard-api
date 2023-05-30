@@ -24,5 +24,5 @@ function create_cms_content() {
 
 migrate_tables
 create_admin_user
-create_api_key
 create_cms_content
+create_api_key
