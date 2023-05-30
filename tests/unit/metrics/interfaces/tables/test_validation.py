@@ -129,7 +129,9 @@ class TestValidateTablePlotParameters:
 
         # When
         validate_table_plot_parameters(
-            x_axis="dt", y_axis="metric_value", plot_parameters=plot_parameters
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
         )
 
         # Then
