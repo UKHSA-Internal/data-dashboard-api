@@ -141,6 +141,10 @@ else:
         }
     }
 
+# Set the lifetime of a database connection to be 10 seconds
+# By default, the connection is closed at the end of every request
+CONN_MAX_AGE = 10
+
 
 LOGGING = {
     "version": 1,
