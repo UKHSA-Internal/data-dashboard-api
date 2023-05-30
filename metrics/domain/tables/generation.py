@@ -11,12 +11,13 @@ def create_plots_in_tabular_format(
     """Creates the tabular output for the given plots
 
     Args:
-        tablular_plots_data: List of `TabularPlotData` models,
+        tabular_plots_data: List of `TabularPlotData` models,
             where each model represents a requested plot.
+
     Returns:
         A list of dictionaries showing the plot data in tabular format
-    """
 
+    """
     # Merge all the plots together by date
     plot_labels, combined_plots = combine_list_of_plots(
         tabular_plots_data=tabular_plots_data
@@ -42,13 +43,14 @@ def combine_list_of_plots(
     """Combines individual plots into a dictionary of dictionaries
 
     Args:
-        chart_plots_data: List of `TabularPlotData` models,
+        tabular_plots_data: List of `TabularPlotData` models,
             where each model represents a requested plot.
+
     Returns:
         1: The list of plot labels
         2: The individual plots combined into one dictionary of dictionaries
-    """
 
+    """
     combined_plots: Dict[str, Dict[str, str]] = defaultdict(dict)
     plot_labels: List[str] = []
 
@@ -73,8 +75,10 @@ def generate_multi_plot_output(
     Args:
         plot_labels: List of Plot labels
         combined_plots: Combined list of individual plots
+
     Returns:
         A list of dictionaries showing the plots in tabular format
+
     """
     tabular_data = []
 
