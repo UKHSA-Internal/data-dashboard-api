@@ -64,8 +64,18 @@ class TestPublicAPINestedLinkViews:
         # When
         path = f"{self.path}themes/"
         expected_response_fields: List[Tuple[str, str, str, str]] = [
-            ("name", "link", theme_name, f"themes/{theme_name}"),
-            ("information", "sub_themes", "", f"themes/{theme_name}/sub_themes/"),
+            (
+                "name",
+                "link",
+                theme_name,
+                f"themes/{theme_name}",
+            ),
+            (
+                "information",
+                "sub_themes",
+                "",
+                f"themes/{theme_name}/sub_themes/",
+            ),
             (
                 "name",
                 "link",
