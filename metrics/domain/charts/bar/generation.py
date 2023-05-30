@@ -3,41 +3,9 @@ from typing import List, Union
 
 import plotly.graph_objects
 
-from metrics.domain.charts.bar import colour_scheme, type_hints
+from metrics.domain.charts import chart_settings, colour_scheme, type_hints
 
-TICK_FONT = type_hints.AXIS_ARGS = {
-    "family": "Arial",
-    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
-}
-
-
-X_AXIS_ARGS: type_hints.AXIS_ARGS = {
-    "showgrid": False,
-    "zeroline": False,
-    "showline": False,
-    "ticks": "outside",
-    "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
-    "tickfont": TICK_FONT,
-}
-
-Y_AXIS_ARGS: type_hints.AXIS_ARGS = {
-    "showgrid": False,
-    "showticklabels": True,
-    "tickfont": TICK_FONT,
-}
-
-BAR_CHART_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
-    "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-    "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-    "margin": {
-        "l": 10,
-        "r": 0,
-        "b": 0,
-        "t": 0,
-    },
+BAR_CHART_LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.CHART_SETTINGS | {
     "showlegend": True,
     "barmode": "group",
     "legend": {
@@ -45,9 +13,6 @@ BAR_CHART_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
         "y": -0.15,
         "x": 0,
     },
-    "autosize": False,
-    "xaxis": X_AXIS_ARGS,
-    "yaxis": Y_AXIS_ARGS,
 }
 
 
@@ -57,7 +22,7 @@ def generate_chart_figure(
     dates: List[datetime],
     values: List[Union[int, float]],
     legend: str,
-    bar_colour: str = colour_scheme.RGBAColours.PLOT_1_BLUE.stringified,
+    bar_colour: str = colour_scheme.RGBAColours.BAR_PLOT_1_BLUE.stringified,
 ) -> plotly.graph_objects.Figure:
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
@@ -99,6 +64,9 @@ def generate_chart_figure(
     # Apply the typical stylings for bar charts
     figure.update_layout(**BAR_CHART_LAYOUT_ARGS)
 
+    # We want to see tick labels on the Y Axis
+    figure.update_yaxes(showticklabels=True)
+
     return figure
 
 
@@ -128,7 +96,10 @@ def _create_bar_plot(
         y=values,
         marker={
             "color": bar_colour,
-            "line": {"color": bar_colour, "width": 1},
+            "line": {
+                "color": bar_colour,
+                "width": 1,
+            },
         },
         name=legend,
         showlegend=showlegend,

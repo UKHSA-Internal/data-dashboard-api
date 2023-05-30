@@ -3,7 +3,7 @@ from typing import List, Tuple
 from django.db.models import Manager, QuerySet
 
 from metrics.data.models import core_models
-from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.interfaces.charts.access import ChartTypes
 
@@ -84,7 +84,7 @@ class MetricsAPIInterface:
     @staticmethod
     def get_colours() -> List[Tuple[str, str]]:
         """Gets all available colour choices as a list of 2-item tuples.
-        Note this is achieved by delegating the call to the `RGBAColours` enum from the Metrics API
+        Note this is achieved by delegating the call to the `RGBAChartLineColours` enum from the Metrics API
 
         Returns:
             List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
@@ -92,7 +92,7 @@ class MetricsAPIInterface:
                 [("BLUE", "BLUE"), ...]
 
         """
-        return RGBAColours.choices()
+        return RGBAChartLineColours.choices()
 
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.

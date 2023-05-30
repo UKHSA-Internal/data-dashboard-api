@@ -1,7 +1,7 @@
 from unittest import mock
 
 from cms.metrics_interface import interface
-from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.interfaces.charts.access import ChartTypes
 
@@ -50,7 +50,7 @@ class TestMetricsAPIInterface:
         all_chart_types = metrics_api_interface.get_colours()
 
         # Then
-        assert all_chart_types == RGBAColours.choices()
+        assert all_chart_types == RGBAChartLineColours.choices()
 
     def test_get_all_topic_names_delegates_call_correctly(self):
         """

@@ -1,13 +1,21 @@
 from typing import List, Tuple
 
-from metrics.domain.charts import type_hints
-from metrics.domain.charts.line_with_shaded_section import colour_scheme
+from metrics.domain.charts.colour_scheme import RGBAColours
+from metrics.domain.charts.type_hints import COLOUR_PAIR
 from metrics.domain.utils import _check_for_substring_match
+
+
+def _get_line_and_fill_colours(
+    metric_is_improving: bool,
+) -> Tuple[RGBAColours, RGBAColours]:
+    if metric_is_improving:
+        return RGBAColours.LS_DARK_GREEN, RGBAColours.LS_LIGHT_GREEN
+    return RGBAColours.DARK_RED, RGBAColours.LIGHT_RED
 
 
 def determine_line_and_fill_colours(
     change_in_metric_value: int, metric_name: str
-) -> type_hints.COLOUR_PAIR:
+) -> COLOUR_PAIR:
     """Returns colours dependening on whether the `change_in_metric_value` is considered to be good.
 
     For example, for cases or deaths, an average increase in the `change_in_metric_value`
@@ -43,9 +51,7 @@ def determine_line_and_fill_colours(
         metric_name=metric_name,
     )
 
-    return colour_scheme._get_line_and_fill_colours(
-        metric_is_improving=metric_is_improving
-    )
+    return _get_line_and_fill_colours(metric_is_improving=metric_is_improving)
 
 
 def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool:

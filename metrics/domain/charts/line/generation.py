@@ -2,7 +2,7 @@ from typing import List, Union
 
 import plotly.graph_objects
 
-from metrics.domain.charts.line import colour_scheme
+from metrics.domain.charts import colour_scheme
 
 AXIS_ARGS = {"visible": False}
 
@@ -17,8 +17,8 @@ def generate_chart_figure(
     chart_width: int,
     values: List[Union[int, float]],
     line_color: str = colour_scheme.RGBAColours.BLACK.stringified,
-    area_fill_color: str = colour_scheme.RGBAColours.DARK_GREY.stringified,
-    background_color: str = colour_scheme.RGBAColours.LIGHT_GREY.stringified,
+    area_fill_color: str = colour_scheme.RGBAColours.LINE_DARK_GREY.stringified,
+    background_color: str = colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
     line_shape: str = "spline",
     line_width: int = 3,
     enforce_markers: bool = False,
