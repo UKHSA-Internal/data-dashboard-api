@@ -12,7 +12,7 @@ class TestTablesValidation:
         Then an instance of the `PlotValidation` is created with the correct args
         """
         # Given
-        mocked_plot_parameters = mock.MagicMock()
+        mocked_plot_parameters = mock.Mock()
 
         # When
         tables_validation = validation.TablesValidation(
@@ -21,7 +21,10 @@ class TestTablesValidation:
 
         # Then
         created_plot_validation = tables_validation.plot_validation
+        # The `PlotParameters` model is passed to the `PlotValidation` instance
         assert created_plot_validation.plot_parameters == mocked_plot_parameters
+
+        # The model managers are provided to the `PlotValidation`
         assert (
             created_plot_validation.core_time_series_manager
             == tables_validation.core_time_series_manager
