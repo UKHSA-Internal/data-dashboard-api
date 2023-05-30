@@ -1,6 +1,6 @@
 import pytest
 
-from metrics.domain.charts.bar import colour_scheme
+from metrics.domain.charts import colour_scheme
 
 
 class TestRGBAColours:
