@@ -174,8 +174,11 @@ class TestAPITimeSeriesRequestSerializer:
 
         # Then
         serialized_api_timeseries_dto = timeseries_dto_slice[0]
-        assert serialized_api_timeseries_dto.name == "infectious_disease"
-        assert serialized_api_timeseries_dto.theme == "infectious_disease"
+        assert (
+            serialized_api_timeseries_dto.theme
+            == serialized_api_timeseries_dto.name
+            == "infectious_disease"
+        )
 
         assert not serialized_api_timeseries_dto.information
         assert not serialized_api_timeseries_dto.sub_theme
@@ -217,12 +220,63 @@ class TestAPITimeSeriesRequestSerializer:
 
         # Then
         serialized_api_timeseries_dto = timeseries_dto_slice[0]
-        assert serialized_api_timeseries_dto.name == "respiratory"
         assert serialized_api_timeseries_dto.theme == "infectious_disease"
-        assert serialized_api_timeseries_dto.sub_theme == "respiratory"
+        assert (
+            serialized_api_timeseries_dto.sub_theme
+            == serialized_api_timeseries_dto.name
+            == "respiratory"
+        )
 
         assert not serialized_api_timeseries_dto.information
         assert not serialized_api_timeseries_dto.topic
+        assert not serialized_api_timeseries_dto.geography_type
+        assert not serialized_api_timeseries_dto.geography
+        assert not serialized_api_timeseries_dto.metric
+
+    def test_get_timeseries_dto_slice_returns_list_of_dto_objects_for_topic_lookup(
+        self,
+    ):
+        """
+        Given a request which contains kwargs from the URL parameters
+        And a `lookup_field` of `topic` also provided in the context of the serializer
+        When `get_timeseries_dto_slice()` is called from an instance of the `APITimeSeriesRequestSerializer`
+        Then a list of distinct `APITimeSeriesDTO` objects are returned with the correct fields set on them
+        """
+        fake_request_kwargs = {
+            "theme": "infectious_disease",
+            "sub_theme": "respiratory",
+        }
+        fake_lookup_field = "topic"
+        mocked_request = mock.Mock(parser_context={"kwargs": fake_request_kwargs})
+
+        fake_api_timeseries_manager = FakeAPITimeSeriesManager(
+            time_series=self._setup_fake_api_time_series()
+        )
+
+        serializer = APITimeSeriesRequestSerializer(
+            context={
+                "request": mocked_request,
+                "lookup_field": fake_lookup_field,
+                "api_time_series_manager": fake_api_timeseries_manager,
+            }
+        )
+
+        # When
+        timeseries_dto_slice: List[
+            APITimeSeriesDTO
+        ] = serializer.build_timeseries_dto_slice()
+
+        # Then
+        serialized_api_timeseries_dto = timeseries_dto_slice[0]
+        assert serialized_api_timeseries_dto.theme == "infectious_disease"
+        assert serialized_api_timeseries_dto.sub_theme == "respiratory"
+        assert (
+            serialized_api_timeseries_dto.topic
+            == serialized_api_timeseries_dto.name
+            == "COVID-19"
+        )
+
+        assert not serialized_api_timeseries_dto.information
         assert not serialized_api_timeseries_dto.geography_type
         assert not serialized_api_timeseries_dto.geography
         assert not serialized_api_timeseries_dto.metric
