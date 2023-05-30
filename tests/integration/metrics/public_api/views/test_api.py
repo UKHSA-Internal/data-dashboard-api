@@ -103,10 +103,13 @@ class TestPublicAPINestedLinkViews:
             response_data: OrderedDict = response.data
 
             # Then
-            # Check that the fields in the response match up to the expected values
+            # Check that the metadata field matches up to expected value
+            # For example, the `name` of 1 of the items in the `themes` list view
+            # should be equal to the `theme_name` which in this case is `infectious_disease`.
             metadata_field_from_response: str = response_data[0][metadata_field]
             assert metadata_field_from_response == expected_metadata_field_value
 
+            # Check that the link field matches up to expected value
             link_field_from_response: str = response_data[0][link_field]
             assert link_field_from_response == f"{self.api_base_path}{expected_link}"
 
