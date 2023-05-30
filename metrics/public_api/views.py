@@ -170,13 +170,13 @@ class PublicAPIRootView(APIView):
     The category is required in plural form, followed by the detail of associated entity.
 
     For example, `/themes/` is the plural of `theme`.
-    This would then be followed by the referring entity, `infectious_disease`
+    This would then be followed by the referring entity, **infectious_disease**
 
     ---
 
     The final step in the hierarchy is the `timeseries` endpoint.
 
-    This endpoint provides the slice of data according to the selected URL parameters.
+    Which will provide the slice of data according to the selected URL parameters.
 
     At that point, additional query parameters are provided for further granularity and filtering of the data.
 
