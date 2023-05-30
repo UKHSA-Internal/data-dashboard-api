@@ -143,7 +143,7 @@ class TestSubThemeListSerializer:
         serialized_data = serializer.data
 
         # Then
-        # The `get_url()` method is called for the `HyperlinkedIdentityField`
+        # The `get_url()` method is called for the `NestedHyperlinkedRelatedField`
         # with the correct positional arguments
         spy_get_url.assert_called_once_with(
             timeseries_dto_slice,
@@ -196,7 +196,7 @@ class TestSubThemeDetailSerializer:
         serialized_data = serializer.data
 
         # Then
-        # The `get_url()` method is called for the `HyperlinkedIdentityField`
+        # The `get_url()` method is called for the `NestedHyperlinkedRelatedField`
         # with the correct positional arguments
         spy_get_url.assert_called_once_with(
             timeseries_dto_slice,
@@ -247,7 +247,7 @@ class TestTopicListSerializer:
         serialized_data = serializer.data
 
         # Then
-        # The `get_url()` method is called for the `HyperlinkedIdentityField`
+        # The `get_url()` method is called for the `NestedHyperlinkedRelatedField`
         # with the correct positional arguments
         spy_get_url.assert_called_once_with(
             timeseries_dto_slice,
