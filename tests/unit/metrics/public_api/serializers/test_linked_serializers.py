@@ -57,7 +57,7 @@ class TestThemeListSerializer:
             # format -> None
         )
         assert serialized_data["name"] == theme_value
-        assert serialized_data["link"] == "fake_url_for_themes/"
+        assert serialized_data["link"] == spy_get_url.return_value
         assert serializer.fields["link"].lookup_field == "theme"
 
 
@@ -105,7 +105,7 @@ class TestThemeDetailSerializer:
             # format -> None
         )
         assert serialized_data["information"] == ""
-        assert serialized_data["sub_themes"] == "fake_url_for_related_sub_themes/"
+        assert serialized_data["sub_themes"] == spy_get_url.return_value
 
 
 class TestSubThemeListSerializer:
@@ -156,7 +156,7 @@ class TestSubThemeListSerializer:
             # format -> None
         )
         assert serialized_data["name"] == sub_theme_value
-        assert serialized_data["link"] == "fake_url_for_sub_theme/"
+        assert serialized_data["link"] == spy_get_url.return_value
         assert serializer.fields["link"].lookup_field == "sub_theme"
 
 
@@ -209,7 +209,7 @@ class TestSubThemeDetailSerializer:
             # format -> None
         )
         assert serialized_data["information"] == ""
-        assert serialized_data["topics"] == "fake_url_for_related_topics/"
+        assert serialized_data["topics"] == spy_get_url.return_value
 
 
 class TestTopicListSerializer:
@@ -260,5 +260,5 @@ class TestTopicListSerializer:
             # format -> None
         )
         assert serialized_data["name"] == sub_theme_value
-        assert serialized_data["link"] == "fake_url_for_topics/"
+        assert serialized_data["link"] == spy_get_url.return_value
         assert serializer.fields["link"].lookup_field == "topic"
