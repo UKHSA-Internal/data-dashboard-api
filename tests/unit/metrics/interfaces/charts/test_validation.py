@@ -7,6 +7,37 @@ from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import validation
 
 
+class TestChartsValidator:
+    def test_plots_interface_is_created_with_correct_args_by_default(self):
+        """
+        Given a `PlotParameters` model
+        When an instance of the `ChartsRequestValidator` is created
+            without explicitly providing a `PlotValidation`
+        Then an instance of the `PlotValidation` is created with the correct args
+        """
+        # Given
+        mocked_plot_parameters = mock.Mock()
+
+        # When
+        charts_validation = validation.ChartsRequestValidator(
+            plot_parameters=mocked_plot_parameters,
+        )
+
+        # Then
+        created_plot_validation = charts_validation.plot_validation
+        # The `PlotParameters` model is passed to the `PlotValidation` instance
+        assert created_plot_validation.plot_parameters == mocked_plot_parameters
+
+        # The model managers are provided to the `PlotValidation`
+        assert (
+            created_plot_validation.core_time_series_manager
+            == charts_validation.core_time_series_manager
+        )
+        assert (
+            created_plot_validation.metric_manager == charts_validation.metric_manager
+        )
+
+
 class TestValidate:
     @mock.patch.object(
         validation.ChartsRequestValidator,
