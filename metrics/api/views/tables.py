@@ -12,6 +12,7 @@ from metrics.data.access.core_models import (
 )
 from metrics.domain.models import PlotParameters
 from metrics.interfaces.charts import access, validation
+from metrics.interfaces.tables import access
 
 
 class OldTabularView(APIView):
@@ -78,16 +79,17 @@ class TablesView(APIView):
         For example, if a metric like `new_cases_daily` (which is only used for `COVID-19`) is being asked for with a topic of `Influenza`.
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
             `Influenza` does not have a corresponding metric of `COVID-19`
+
         """
         request_serializer = TablesSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        table_plot_models = request_serializer.to_models()
+        plots_collection = request_serializer.to_models()
 
         try:
-            tabular_data_response: List[
-                Dict[str, str]
-            ] = access.generate_tabular_output(chart_plots=table_plot_models)
+            tabular_data_response: List[Dict[str, str]] = access.generate_table(
+                plots_collection=plots_collection
+            )
 
         except validation.MetricDoesNotSupportTopicError as error:
             return Response(
