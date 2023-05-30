@@ -36,7 +36,9 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
     def serializer_class(self):
         raise NotImplementedError()
 
-    def _build_request_serializer(self, request: Request) -> APITimeSeriesRequestSerializer:
+    def _build_request_serializer(
+        self, request: Request
+    ) -> APITimeSeriesRequestSerializer:
         serializer_context = {"request": request, "lookup_field": self.lookup_field}
         return APITimeSeriesRequestSerializer(context=serializer_context)
 
@@ -181,6 +183,7 @@ class PublicAPIRootView(APIView):
     At that point, additional query parameters are provided for further granularity and filtering of the data.
 
     """
+
     permission_classes = [HasAPIKey]
     name = "Public API Root"
 
