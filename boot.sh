@@ -21,14 +21,8 @@ function create_cms_content() {
     python manage.py build_cms_site
 }
 
-function upload_data() {
-    echo "Uploading data"
-    python manage.py upload_data
-}
-
 
 migrate_tables
 create_admin_user
 create_api_key
 create_cms_content
-upload_data
