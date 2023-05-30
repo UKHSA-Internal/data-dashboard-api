@@ -273,7 +273,7 @@ class TestChartsInterface:
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
-        Given a `ChartPlotData` model representing the requested plot and its corresponding data
+        Given a `PlotsCollection` model representing the requested plot and its corresponding data
         When `param_builder_for_line_with_shaded_section()` is called from an instance of the `ChartsInterface`
         Then the returned dict contains the expected key-value pairs
         """
@@ -365,7 +365,7 @@ class TestGenerateChart:
         spy_generate_chart_figure: mock.MagicMock,
     ):
         """
-        Given a mock in place of a `ChartPlots` model
+        Given a mock in place of a `PlotsCollection` model
         When `generate_chart()` is called
         Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
         And `generate_chart_figure` is called from an instance of the `ChartsInterface`
@@ -392,7 +392,7 @@ class TestGenerateChart:
         spy_write_figure: mock.MagicMock,
     ):
         """
-        Given a mock in place of a `ChartPlots` model
+        Given a mock in place of a `PlotsCollection` model
         When `generate_chart()` is called
         Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
         And `generate_chart_figure` is called from an instance of the `ChartsInterface`
@@ -420,11 +420,11 @@ class TestValidateEachRequestedChartPlot:
         fake_chart_plot_parameters_covid_cases: PlotParameters,
     ):
         """
-        Given a `ChartsPlots` model requesting plots
-            of multiple `ChartPlotParameters` models
+        Given a `PlotsCollection` model requesting plots
+            of multiple `PlotParameters` models
         When `validate_each_requested_chart_plot()` is called
         Then the call is delegated to `validate_chart_plot_parameters()`
-            for each `ChartPlotParameters` models
+            for each `PlotParameters` models
         """
         # Given
         fake_requested_chart_plots = [
@@ -463,8 +463,8 @@ class TestValidateChartPlotParameters:
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
-        Given a `ChartPlotParameters` model
-        When `_validate_chart_plot_parameters()` is called
+        Given a `PlotParameters` model
+        When `validate_chart_plot_parameters()` is called
         Then the call is delegated to the `validate()` from an instance of the `ChartsRequestValidator`
         """
         # Given
