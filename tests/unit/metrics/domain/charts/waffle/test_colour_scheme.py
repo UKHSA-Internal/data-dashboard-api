@@ -2,7 +2,8 @@ from typing import List
 
 import pytest
 
-from metrics.domain.charts.waffle import colour_scheme
+from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.waffle import build_colour_scheme
 
 
 class TestRGBAColours:
@@ -39,7 +40,7 @@ class TestBuildColorScale:
         identifier = 3
 
         # When
-        colour_scale: List[List] = colour_scheme.build_color_scale(
+        colour_scale: List[List] = build_colour_scheme.build_color_scale(
             identifier=identifier
         )
 
@@ -62,7 +63,7 @@ class TestBuildColorScale:
         identifier = 2
 
         # When
-        colour_scale: List[List] = colour_scheme.build_color_scale(
+        colour_scale: List[List] = build_colour_scheme.build_color_scale(
             identifier=identifier
         )
 
@@ -85,7 +86,7 @@ class TestBuildColorScale:
         identifier = 1
 
         # When
-        colour_scale: List[List] = colour_scheme.build_color_scale(
+        colour_scale: List[List] = build_colour_scheme.build_color_scale(
             identifier=identifier
         )
 

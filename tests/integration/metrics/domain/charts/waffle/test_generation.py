@@ -3,7 +3,8 @@ from typing import List
 import numpy as np
 import plotly.graph_objects
 
-from metrics.domain.charts.waffle import colour_scheme, generation
+from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.waffle import build_colour_scheme, generation
 
 
 class TestWaffleCharts:
@@ -27,7 +28,10 @@ class TestWaffleCharts:
         main_layout: plotly.graph_objects.Layout = figure.layout
 
         # Check the correct colours have been used for the paper and plot background colours
-        assert main_layout.paper_bgcolor == colour_scheme.RGBAColours.WHITE.stringified
+        assert (
+            main_layout.paper_bgcolor
+            == colour_scheme.RGBAColours.WAFFLE_WHITE.stringified
+        )
         assert (
             main_layout.plot_bgcolor == colour_scheme.RGBAColours.LIGHT_GREY.stringified
         )
