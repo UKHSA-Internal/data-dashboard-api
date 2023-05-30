@@ -18,6 +18,7 @@ from metrics.interfaces.tables import access
 class OldTabularView(APIView):
     permission_classes = [HasAPIKey]
 
+    @extend_schema(deprecated=True)
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate a summary of the chart data but in tabular format
         There are 2 mandatory URL parameters:
