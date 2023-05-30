@@ -84,11 +84,11 @@ class TablesView(APIView):
         request_serializer = TablesSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        table_plot_models = request_serializer.to_models()
+        plots_collection = request_serializer.to_models()
 
         try:
             tabular_data_response: List[Dict[str, str]] = access.generate_table(
-                chart_plots=table_plot_models
+                plots_collection=plots_collection
             )
 
         except validation.MetricDoesNotSupportTopicError as error:
