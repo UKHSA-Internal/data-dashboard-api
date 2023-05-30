@@ -256,30 +256,6 @@ def generate_chart(chart_plots: PlotsCollection) -> str:
     )
 
 
-def generate_tabular_output(chart_plots: PlotsCollection) -> List[Dict[str, str]]:
-    """Validates and creates tabular output based off the parameters provided within the `chart_plots` model
-
-    Args:
-        chart_plots: The requested table plots parameters
-            encapsulated as a model
-
-    Returns:
-        The requested plots in tabular format
-
-    Raises:
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
-            compatible for the required `topic`.
-            E.g. `new_cases_daily` is currently only available
-            for the topic of `COVID-19`
-    """
-    validate_each_requested_chart_plot(chart_plots=chart_plots)
-
-    library = ChartsInterface(chart_plots=chart_plots)
-    tabular_output = library.generate_plots_for_table()
-
-    return tabular_output
-
-
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
     """Validates the request chart plots against the contents of the db
 

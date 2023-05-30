@@ -3,7 +3,7 @@ from typing import Dict, List
 from unittest import mock
 
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.interfaces.tables.access import TablesInterface
+from metrics.interfaces.tables.access import TablesInterface, generate_table
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -88,3 +88,60 @@ class TestTablesInterface:
             tabular_plots_data=tables_interface.plots_interface.build_plots_data()
         )
         assert table_plots == spy_create_plots_in_tabular_format.return_value
+
+
+class TestGenerateTables:
+    @mock.patch.object(TablesInterface, "generate_plots_for_table")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_delegates_call_for_validation(
+        self,
+        spy_validate_each_requested_chart_plot: mock.MagicMock,
+        mocked_generate_plots_for_table: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `ChartPlots` model
+        When `generate_table()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `generate_plots_for_table` is called from an instance of the `TablesInterface`
+
+        Patches:
+            `spy_validate_each_requested_chart_plot`: For the main assertion
+            `mocked_generate_plots_for_table`: Removal of table generation logic
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        generate_table(chart_plots=mocked_chart_plots)
+
+        # Then
+        spy_validate_each_requested_chart_plot.assert_called_once_with(
+            chart_plots=mocked_chart_plots
+        )
+
+    @mock.patch.object(TablesInterface, "generate_plots_for_table")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_delegates_call_for_producing_table(
+        self,
+        mocked_validate_each_requested_chart_plot: mock.MagicMock,
+        spy_generate_plots_for_table: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `ChartPlots` model
+        When `generate_table()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `generate_plots_for_table` is called from an instance of the `TablesInterface`
+
+        Patches:
+            `mocked_validate_each_requested_chart_plot`: Removal of validation side effects
+            `spy_generate_plots_for_table`: For the main assertions
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        table = generate_table(chart_plots=mocked_chart_plots)
+
+        # Then
+        assert table == spy_generate_plots_for_table.return_value
+        spy_generate_plots_for_table.assert_called_once()
