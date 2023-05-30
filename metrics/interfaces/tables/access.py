@@ -5,6 +5,7 @@ from django.db.models import Manager
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotsCollection, PlotsData
 from metrics.domain.tables.generation import create_plots_in_tabular_format
+from metrics.interfaces.charts.access import validate_each_requested_chart_plot
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.interfaces.tables.validation import validate_each_requested_table_plot
 
