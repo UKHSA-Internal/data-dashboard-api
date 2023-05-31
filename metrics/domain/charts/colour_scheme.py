@@ -48,9 +48,6 @@ class RGBAColours(Enum):
     # Used for the background
     WHITE: RGBA_VALUES = 0, 0, 0, 0
 
-    # Used for the neutral cells which do not have a threshold value
-    GREY: RGBA_VALUES = 216, 216, 216, 1
-
     # --------------------
     # Line chart specific
     # --------------------
@@ -83,6 +80,9 @@ class RGBAColours(Enum):
 
     # Used for the 3rd value
     DARK_GREEN: RGBA_VALUES = 0, 65, 65, 1
+
+    # Used for the neutral cells which do not have a threshold value
+    GREY: RGBA_VALUES = 216, 216, 216, 1
 
     # Used to draw the tick labels
     DARK_BLUE_GREY: RGBA_VALUES = 107, 114, 118, 1

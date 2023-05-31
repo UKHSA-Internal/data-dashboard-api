@@ -1,7 +1,5 @@
 from typing import List
 
-import pytest
-
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.waffle.colour_scheme import build_color_scale
 
