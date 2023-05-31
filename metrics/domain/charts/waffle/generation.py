@@ -4,7 +4,8 @@ import plotly.graph_objects
 from numpy.core.multiarray import ndarray
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.waffle import build_colour_scheme, pre_processing, validation
+from metrics.domain.charts.waffle import pre_processing, validation
+from metrics.domain.charts.waffle.colour_scheme import build_color_scale
 
 X_AXIS_ARGS: Dict[str, bool] = {
     "showgrid": False,
@@ -80,7 +81,7 @@ def _add_plot_to_figure(
     )
 
     # Fetch the colour scale values based on the index
-    colour_scale: List[List] = build_colour_scheme.build_color_scale(identifier=index)
+    colour_scale: List[List] = build_color_scale(identifier=index)
 
     # Create the heatmap plot
     heatmap_plot = plotly.graph_objects.Heatmap(
