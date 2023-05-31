@@ -90,7 +90,6 @@ class TablesView(APIView):
         try:
             tabular_data_response: List[Dict[str, str]] = access.generate_table(
                 plots_collection=plots_collection
-                chart_plots=table_plot_models
             )
 
         except validation.MetricDoesNotSupportTopicError as error:
