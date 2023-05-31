@@ -294,6 +294,8 @@ class TestTablesSerializer:
             "chart_height": 220,
             "chart_width": 435,
             "plots": table_plots,
+            "x_axis": "dt",
+            "y_axis": "metric_value",
         }
         serializer = TablesSerializer(data=valid_data_payload)
 
@@ -308,5 +310,7 @@ class TestTablesSerializer:
             file_format=valid_data_payload["file_format"],
             chart_width=valid_data_payload["chart_width"],
             chart_height=valid_data_payload["chart_height"],
+            x_axis="dt",
+            y_axis="metric_value",
         )
         assert table_plots_serialized_models == expected_table_plots_model

@@ -3,7 +3,14 @@ from django.db.utils import ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
-from metrics.api.serializers.charts import DEFAULT_CHART_HEIGHT, DEFAULT_CHART_WIDTH
+from metrics.api.serializers.charts import (
+    DEFAULT_CHART_HEIGHT,
+    DEFAULT_CHART_WIDTH,
+    DEFAULT_X_AXIS,
+    DEFAULT_Y_AXIS,
+    GRAPH_AXIS_CHOICES,
+    get_axis_field_name,
+)
 from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.models import PlotsCollection
 from metrics.domain.utils import ChartTypes
@@ -96,6 +103,22 @@ class TablePlotsListSerializer(serializers.ListSerializer):
 
 
 class TablesSerializer(serializers.Serializer):
+    x_axis = serializers.ChoiceField(
+        choices=GRAPH_AXIS_CHOICES,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.GRAPH_X_AXIS,
+        default=DEFAULT_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=GRAPH_AXIS_CHOICES,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.GRAPH_Y_AXIS,
+        default=DEFAULT_Y_AXIS,
+    )
     plots = TablePlotsListSerializer()
 
     def to_models(self) -> PlotsCollection:
@@ -104,6 +127,8 @@ class TablesSerializer(serializers.Serializer):
             file_format="svg",
             chart_height=DEFAULT_CHART_HEIGHT,
             chart_width=DEFAULT_CHART_WIDTH,
+            x_axis=get_axis_field_name(self.data["x_axis"] or DEFAULT_X_AXIS),
+            y_axis=get_axis_field_name(self.data["y_axis"] or DEFAULT_Y_AXIS),
         )
 
 
