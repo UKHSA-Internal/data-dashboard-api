@@ -106,6 +106,18 @@ class TestPublicAPINestedLinkViews:
                 geography_type_name,
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}",
             ),
+            (
+                "information",
+                "geographies",
+                "",
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/",
+            ),
+            (
+                "name",
+                "link",
+                geography_name,
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}",
+            ),
         ]
 
         for (

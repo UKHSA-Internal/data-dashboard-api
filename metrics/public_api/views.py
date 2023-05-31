@@ -14,6 +14,8 @@ from metrics.public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesRequestSerializer,
 )
 from metrics.public_api.serializers.linked_serializers import (
+    GeographyDetailSerializer,
+    GeographyListSerializer,
     GeographyTypeDetailSerializer,
     GeographyTypeListSerializer,
     SubThemeDetailSerializer,
@@ -163,6 +165,35 @@ class GeographyTypeDetailView(BaseNestedAPITimeSeriesView):
     permission_classes = [HasAPIKey]
     lookup_field = "geography_type"
     serializer_class = GeographyTypeDetailSerializer
+
+
+class GeographyListView(BaseNestedAPITimeSeriesView):
+    """
+    This endpoint returns a list of all available geographies and hyperlinks to their corresponding detail view.
+
+    The `geography` field is positioned 1 step below `geography_type`.
+
+    A `geography` is the value of the geography e.g. **London**
+
+    """
+
+    permission_classes = [HasAPIKey]
+    lookup_field = "geography"
+    serializer_class = GeographyListSerializer
+
+
+class GeographyDetailView(BaseNestedAPITimeSeriesView):
+    """
+    This endpoint returns information about this specific `geography`
+    and a hyperlink to the next step in the data hierarchy.
+
+    In this case, the next step in the data hierarchy is **metric**.
+
+    """
+
+    permission_classes = [HasAPIKey]
+    lookup_field = "geography"
+    serializer_class = GeographyDetailSerializer
 
 
 class PublicAPIRootView(APIView):
