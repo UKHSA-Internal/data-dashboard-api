@@ -34,7 +34,7 @@ class RGBAChartLineColours(Enum):
         return tuple((chart_type.name, chart_type.name) for chart_type in cls)
 
     @classmethod
-    def get_colour(cls, colour: str) -> "RGBAPlotColours":
+    def get_colour(cls, colour: str) -> "RGBAChartLineColours":
         try:
             return cls[colour]
         except KeyError:
@@ -47,12 +47,6 @@ class RGBAColours(Enum):
 
     # Used for the background
     WHITE: RGBA_VALUES = 0, 0, 0, 0
-
-    # Used to draw the tick labels
-    DARK_BLUE_GREY: RGBA_VALUES = 107, 114, 118, 1
-
-    # Used for the background plot colour
-    LIGHT_GREY: RGBA_VALUES = 231, 231, 231, 0
 
     # Used for the neutral cells which do not have a threshold value
     GREY: RGBA_VALUES = 216, 216, 216, 1
@@ -89,6 +83,12 @@ class RGBAColours(Enum):
 
     # Used for the 3rd value
     DARK_GREEN: RGBA_VALUES = 0, 65, 65, 1
+
+    # Used to draw the tick labels
+    DARK_BLUE_GREY: RGBA_VALUES = 107, 114, 118, 1
+
+    # Used for the background plot colour
+    LIGHT_GREY: RGBA_VALUES = 231, 231, 231, 0
 
     # ----------------------------------------
     # Line with shaded section chart specific
