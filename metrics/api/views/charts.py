@@ -79,6 +79,15 @@ class ChartsView(APIView):
         `chart_height`
 
         `chart_width`
+        ---
+        # Chosing what to display along the x and y axis
+
+        By default, dates will be displayed on the x axis and metric values on the y axis. If you want to
+        overide either/both of these values then you can do so as follows:
+
+        `x_axis` Example: `x_axis: "stratum"`
+
+        `y_axis` Example: `y_axis: "geography"`
         """
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
