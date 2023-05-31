@@ -1,6 +1,8 @@
 from django.urls import path
 
 from metrics.public_api.views import (
+    GeographyTypeDetailView,
+    GeographyTypeListView,
     PublicAPIRootView,
     SubThemeDetailView,
     SubThemeListView,
@@ -40,5 +42,15 @@ urlpatterns = [
         f"{PUBLIC_API_PREFIX}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>",
         TopicDetailView.as_view(),
         name="topic-detail",
+    ),
+    path(
+        f"{PUBLIC_API_PREFIX}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types",
+        GeographyTypeListView.as_view(),
+        name="geography_type-list",
+    ),
+    path(
+        f"{PUBLIC_API_PREFIX}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>",
+        GeographyTypeDetailView.as_view(),
+        name="geography_type-detail",
     ),
 ]

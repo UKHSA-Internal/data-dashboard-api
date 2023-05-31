@@ -98,7 +98,13 @@ class TestPublicAPINestedLinkViews:
                 "information",
                 "geography_types",
                 "",
-                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}",
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types",
+            ),
+            (
+                "name",
+                "link",
+                geography_type_name,
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}",
             ),
         ]
 
