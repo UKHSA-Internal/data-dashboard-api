@@ -4,7 +4,7 @@ import numpy as np
 import plotly.graph_objects
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.waffle import build_colour_scheme, generation
+from metrics.domain.charts.waffle import generation
 
 
 class TestWaffleCharts:
