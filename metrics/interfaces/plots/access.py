@@ -23,7 +23,12 @@ class PlotsInterface:
         self.plots_collection = plots_collection
         self.core_time_series_manager = core_time_series_manager
 
-    def get_timeseries_for_plot_parameters(self, plot_parameters: PlotParameters):
+    def get_timeseries_for_plot_parameters(
+        self,
+        x_axis: str,
+        y_axis: str,
+        plot_parameters: PlotParameters,
+    ):
         """Returns the timeseries records for the requested plot as a QuerySet
 
         Notes:
@@ -41,10 +46,16 @@ class PlotsInterface:
 
         """
         plot_params: Dict[str, str] = plot_parameters.to_dict_for_query()
-        return self.get_timeseries(**plot_params)
+        return self.get_timeseries(
+            x_axis=x_axis,
+            y_axis=y_axis,
+            **plot_params,
+        )
 
     def get_timeseries(
         self,
+        x_axis: str,
+        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: Union[datetime.date, str],
@@ -86,6 +97,8 @@ class PlotsInterface:
 
         """
         return self.core_time_series_manager.filter_for_dates_and_values(
+            x_axis=x_axis,
+            y_axis=y_axis,
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
@@ -95,7 +108,10 @@ class PlotsInterface:
         )
 
     def build_plot_data_from_parameters(
-        self, plot_parameters: PlotParameters
+        self,
+        x_axis: str,
+        y_axis: str,
+        plot_parameters: PlotParameters,
     ) -> PlotsData:
         """Creates a `PlotData` model which holds the params and corresponding data for the given requested plot
 
@@ -114,21 +130,27 @@ class PlotsInterface:
 
         """
         timeseries_queryset = self.get_timeseries_for_plot_parameters(
-            plot_parameters=plot_parameters
+            x_axis=x_axis,
+            y_axis=y_axis,
+            plot_parameters=plot_parameters,
         )
 
         try:
-            x_axis, y_axis = unzip_values(timeseries_queryset)
+            x_axis_values, y_axis_values = unzip_values(timeseries_queryset)
         except ValueError as error:
             raise DataNotFoundError from error
 
         return PlotsData(
             parameters=plot_parameters,
-            x_axis=x_axis,
-            y_axis=y_axis,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
         )
 
-    def build_plots_data(self) -> List[PlotsData]:
+    def build_plots_data(
+        self,
+        x_axis: str,
+        y_axis: str,
+    ) -> List[PlotsData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -148,7 +170,9 @@ class PlotsInterface:
         for plot_parameters in self.plots_collection.plots:
             try:
                 plot_data: PlotsData = self.build_plot_data_from_parameters(
-                    plot_parameters=plot_parameters
+                    x_axis=x_axis,
+                    y_axis=y_axis,
+                    plot_parameters=plot_parameters,
                 )
             except DataNotFoundError:
                 continue

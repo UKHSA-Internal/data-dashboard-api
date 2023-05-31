@@ -18,10 +18,14 @@ class DatesNotInChronologicalOrderError(Exception):
 class PlotValidation:
     def __init__(
         self,
+        x_axis: str,
+        y_axis: str,
         plot_parameters: PlotParameters,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
     ):
+        self.x_axis = x_axis
+        self.y_axis = y_axis
         self.plot_parameters = plot_parameters
         self.core_time_series_manager = core_time_series_manager
         self.metric_manager = metric_manager
@@ -56,7 +60,9 @@ class PlotValidation:
 
         """
         count: int = self.core_time_series_manager.get_count(
-            topic_name=self.plot_parameters.topic_name,
+            x_axis=self.x_axis,
+            y_axis=self.y_axis,
+            topic=self.plot_parameters.topic_name,
             metric_name=self.plot_parameters.metric_name,
             date_from=self.plot_parameters.date_from_value,
         )

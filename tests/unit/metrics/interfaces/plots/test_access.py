@@ -49,6 +49,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         data_slice_interface = PlotsInterface(
@@ -57,14 +59,25 @@ class TestPlotsInterface:
         )
 
         # When
-        plots_data = data_slice_interface.build_plots_data()
+        plots_data = data_slice_interface.build_plots_data(
+            x_axis=fake_plots_collection.x_axis,
+            y_axis=fake_plots_collection.y_axis,
+        )
 
         # Then
         # Check that `build_plot_data_from_parameters()` method
         # is called for each of the provided `PlotParameters` models
         expected_calls = [
-            mock.call(plot_parameters=fake_chart_plot_parameters),
-            mock.call(plot_parameters=fake_chart_plot_parameters_covid_cases),
+            mock.call(
+                x_axis=fake_plots_collection.x_axis,
+                y_axis=fake_plots_collection.y_axis,
+                plot_parameters=fake_chart_plot_parameters,
+            ),
+            mock.call(
+                x_axis=fake_plots_collection.x_axis,
+                y_axis=fake_plots_collection.y_axis,
+                plot_parameters=fake_chart_plot_parameters_covid_cases,
+            ),
         ]
         spy_build_plot_data_from_parameters.assert_has_calls(
             calls=expected_calls,
@@ -94,6 +107,8 @@ class TestPlotsInterface:
             file_format="svg",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
         fake_core_time_series_records: List[
             FakeCoreTimeSeries
@@ -108,7 +123,10 @@ class TestPlotsInterface:
         )
 
         # When
-        plots_data: List[PlotsData] = plots_interface.build_plots_data()
+        plots_data: List[PlotsData] = plots_interface.build_plots_data(
+            x_axis="dt",
+            y_axis="metric_value",
+        )
 
         # Then
         # Check that only 1 enriched `PlotData` model is returned
@@ -118,8 +136,8 @@ class TestPlotsInterface:
         # for the plot parameters which requested timeseries data that existed
         expected_plots_data_for_valid_params = PlotsData(
             parameters=valid_plot_parameters,
-            x_axis=tuple(x.dt for x in fake_core_time_series_records),
-            y_axis=tuple(x.metric_value for x in fake_core_time_series_records),
+            x_axis_values=tuple(x.dt for x in fake_core_time_series_records),
+            y_axis_values=tuple(x.metric_value for x in fake_core_time_series_records),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -138,6 +156,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
         fake_core_time_series_for_plot: List[
             FakeCoreTimeSeries
@@ -155,7 +175,9 @@ class TestPlotsInterface:
 
         # When
         plot_data: PlotsData = plots_interface.build_plot_data_from_parameters(
-            plot_parameters=fake_chart_plot_parameters
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=fake_chart_plot_parameters,
         )
 
         # Then
@@ -163,8 +185,10 @@ class TestPlotsInterface:
         assert plot_data.parameters == fake_chart_plot_parameters
 
         # Check the correct data is passed to the axis of the `PlotData` model
-        assert plot_data.x_axis == tuple(x.dt for x in fake_core_time_series_for_plot)
-        assert plot_data.y_axis == tuple(
+        assert plot_data.x_axis_values == tuple(
+            x.dt for x in fake_core_time_series_for_plot
+        )
+        assert plot_data.y_axis_values == tuple(
             x.metric_value for x in fake_core_time_series_for_plot
         )
 
@@ -182,6 +206,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
 
@@ -193,7 +219,9 @@ class TestPlotsInterface:
         # When / Then
         with pytest.raises(DataNotFoundError):
             plots_interface.build_plot_data_from_parameters(
-                plot_parameters=fake_chart_plot_parameters
+                x_axis="dt",
+                y_axis="metric_value",
+                plot_parameters=fake_chart_plot_parameters,
             )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
@@ -204,6 +232,8 @@ class TestPlotsInterface:
         """
         # Given
         spy_core_time_series_manager = mock.Mock()
+        mocked_x_axis = mock.Mock()
+        mocked_y_axis = mock.Mock()
         mocked_topic = mock.Mock()
         mocked_metric = mock.Mock()
         mocked_date_from = mock.Mock()
@@ -218,6 +248,8 @@ class TestPlotsInterface:
 
         # When
         timeseries = plots_interface.get_timeseries(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
@@ -232,6 +264,8 @@ class TestPlotsInterface:
             == spy_core_time_series_manager.filter_for_dates_and_values.return_value
         )
         spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
@@ -261,7 +295,9 @@ class TestPlotsInterface:
 
         # When
         timeseries = plots_interface.get_timeseries_for_plot_parameters(
-            plot_parameters=fake_chart_plot_parameters
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=fake_chart_plot_parameters,
         )
 
         # Then
@@ -271,5 +307,7 @@ class TestPlotsInterface:
         # The dict representation of the `PlotParameters` model
         # is unpacked into the `get_timeseries` method
         mocked_get_timeseries.assert_called_once_with(
+            x_axis="dt",
+            y_axis="metric_value",
             **fake_chart_plot_parameters.to_dict_for_query(),
         )

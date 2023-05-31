@@ -34,6 +34,8 @@ class TestValidate:
         """
         # Given
         validator = validation.PlotValidation(
+            x_axis=mock.Mock(),
+            y_axis=mock.Mock(),
             plot_parameters=mock.Mock(),
             core_time_series_manager=mock.Mock(),
             metric_manager=mock.Mock(),
@@ -71,6 +73,8 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
             core_time_series_manager=fake_core_time_series_manager,
         )
@@ -115,6 +119,8 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
             core_time_series_manager=fake_core_time_series_manager,
         )
@@ -147,6 +153,8 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
             core_time_series_manager=fake_core_time_series_manager,
         )
@@ -174,6 +182,8 @@ class TestDoesMetricHaveMultipleRecords:
         spy_core_time_series_manager.get_count.return_value = 1
 
         plot_validation = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=valid_plot_parameters,
             core_time_series_manager=spy_core_time_series_manager,
         )
@@ -183,7 +193,9 @@ class TestDoesMetricHaveMultipleRecords:
 
         # Then
         spy_core_time_series_manager.get_count.assert_called_once_with(
-            topic_name=valid_plot_parameters.topic_name,
+            x_axis="dt",
+            y_axis="metric_value",
+            topic=valid_plot_parameters.topic_name,
             metric_name=valid_plot_parameters.metric_name,
             date_from=valid_plot_parameters.date_from_value,
         )
@@ -212,6 +224,8 @@ class TestValidateMetricIsAvailableForTopic:
         fake_metric_manager = FakeMetricManager(metrics=metrics)
 
         validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
             metric_manager=fake_metric_manager,
         )
@@ -253,6 +267,8 @@ class TestValidateMetricIsAvailableForTopic:
         fake_metric_manager = FakeMetricManager(metrics=metrics)
 
         validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
             metric_manager=fake_metric_manager,
         )
@@ -279,6 +295,8 @@ class TestIsMetricAvailableForTopic:
         # Given
         spy_metric_manager = mock.Mock(spec=MetricManager)
         plot_validation = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=valid_plot_parameters,
             metric_manager=spy_metric_manager,
         )
@@ -313,6 +331,8 @@ class TestAreDatesInChronologicalOrder:
         plot_parameters.date_to = date_to.strftime(EXPECTED_DATE_FORMAT)
 
         validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
         )
 
@@ -340,7 +360,11 @@ class TestAreDatesInChronologicalOrder:
         plot_parameters.date_from = date_from.strftime(EXPECTED_DATE_FORMAT)
         plot_parameters.date_to = date_to.strftime(EXPECTED_DATE_FORMAT)
 
-        validator = validation.PlotValidation(plot_parameters=plot_parameters)
+        validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
+        )
 
         # When / Then
         date_stamps_in_chronological_order: bool = (
@@ -371,7 +395,11 @@ class TestValidateDates:
         plot_parameters.date_from = date_from.strftime(EXPECTED_DATE_FORMAT)
         plot_parameters.date_to = date_to.strftime(EXPECTED_DATE_FORMAT)
 
-        validator = validation.PlotValidation(plot_parameters=plot_parameters)
+        validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
+        )
 
         # When
         validated = validator._validate_dates()
@@ -394,7 +422,11 @@ class TestValidateDates:
         plot_parameters.date_from = "2022-01-01"
         plot_parameters.date_to = None
 
-        validator = validation.PlotValidation(plot_parameters=plot_parameters)
+        validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
+        )
 
         # When
         validated = validator._validate_dates()
@@ -420,7 +452,11 @@ class TestValidateDates:
             date_to=date_to.strftime(EXPECTED_DATE_FORMAT),
         )
 
-        validator = validation.PlotValidation(plot_parameters=plot_parameters)
+        validator = validation.PlotValidation(
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
+        )
 
         # When / Then
         with pytest.raises(validation.DatesNotInChronologicalOrderError):
