@@ -32,7 +32,10 @@ class TablesInterface:
             A list of dictionaries showing the plot data in tabular format
 
         """
-        plots_data: List[PlotsData] = self.plots_interface.build_plots_data()
+        plots_data: List[PlotsData] = self.plots_interface.build_plots_data(
+            x_axis=self.plots_collection.x_axis,
+            y_axis=self.plots_collection.y_axis,
+        )
 
         return create_plots_in_tabular_format(
             tabular_plots_data=plots_data,

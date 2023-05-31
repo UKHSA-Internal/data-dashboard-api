@@ -24,6 +24,8 @@ class TestTablesValidation:
 
         # When
         tables_validation = validation.TablesValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=mocked_plot_parameters,
         )
 
@@ -52,6 +54,8 @@ class TestValidate:
         # Given
         spy_plot_validation = mock.Mock()
         tables_validation = validation.TablesValidation(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=mock.Mock(),
             plot_validation=spy_plot_validation,
         )
@@ -89,6 +93,8 @@ class TestValidateEachRequestedChartPlot:
             plots=plots,
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         # When
@@ -96,7 +102,11 @@ class TestValidateEachRequestedChartPlot:
 
         # Then
         expected_calls = [
-            mock.call(plot_parameters=requested_plot_parameters)
+            mock.call(
+                x_axis="dt",
+                y_axis="metric_value",
+                plot_parameters=requested_plot_parameters,
+            )
             for requested_plot_parameters in plots
         ]
         spy_validate_table_plot_parameters.assert_has_calls(calls=expected_calls)
@@ -118,7 +128,9 @@ class TestValidateTablePlotParameters:
         plot_parameters = fake_chart_plot_parameters
 
         # When
-        validate_table_plot_parameters(plot_parameters=plot_parameters)
+        validate_table_plot_parameters(
+            x_axis="dt", y_axis="metric_value", plot_parameters=plot_parameters
+        )
 
         # Then
         spy_validate_method.assert_called_once()

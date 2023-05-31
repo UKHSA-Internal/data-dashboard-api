@@ -73,6 +73,8 @@ class TestTablesInterface:
             file_format="svg",
             chart_height=123,
             chart_width=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         tables_interface = TablesInterface(
@@ -85,7 +87,10 @@ class TestTablesInterface:
 
         # Then
         spy_create_plots_in_tabular_format.assert_called_once_with(
-            tabular_plots_data=tables_interface.plots_interface.build_plots_data()
+            tabular_plots_data=tables_interface.plots_interface.build_plots_data(
+                x_axis="dt",
+                y_axis="metric_value",
+            )
         )
         assert table_plots == spy_create_plots_in_tabular_format.return_value
 

@@ -13,16 +13,22 @@ DEFAULT_METRIC_MANAGER = Metric.objects
 class TablesValidation:
     def __init__(
         self,
+        x_axis: str,
+        y_axis: str,
         plot_parameters: PlotParameters,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
         plot_validation: Optional[PlotValidation] = None,
     ):
+        self.x_axis = x_axis
+        self.y_axis = y_axis
         self.plot_parameters = plot_parameters
         self.core_time_series_manager = core_time_series_manager
         self.metric_manager = metric_manager
 
         self.plot_validation = plot_validation or PlotValidation(
+            x_axis=x_axis,
+            y_axis=y_axis,
             plot_parameters=plot_parameters,
             core_time_series_manager=core_time_series_manager,
             metric_manager=metric_manager,
@@ -67,10 +73,18 @@ def validate_each_requested_table_plot(plots_collection: PlotsCollection) -> Non
 
     """
     for plot_params in plots_collection.plots:
-        validate_table_plot_parameters(plot_parameters=plot_params)
+        validate_table_plot_parameters(
+            x_axis=plots_collection.x_axis,
+            y_axis=plots_collection.y_axis,
+            plot_parameters=plot_params,
+        )
 
 
-def validate_table_plot_parameters(plot_parameters: PlotParameters) -> None:
+def validate_table_plot_parameters(
+    x_axis: str,
+    y_axis: str,
+    plot_parameters: PlotParameters,
+) -> None:
     """Validates the individual given `plot_parameters` against the contents of the db
 
     Raises:
@@ -87,5 +101,7 @@ def validate_table_plot_parameters(plot_parameters: PlotParameters) -> None:
             then this error will not be raised.
 
     """
-    tables_validation = TablesValidation(plot_parameters=plot_parameters)
+    tables_validation = TablesValidation(
+        x_axis=x_axis, y_axis=y_axis, plot_parameters=plot_parameters
+    )
     tables_validation.validate()

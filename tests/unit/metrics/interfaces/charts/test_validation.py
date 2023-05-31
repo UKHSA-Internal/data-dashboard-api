@@ -20,6 +20,8 @@ class TestChartsValidator:
 
         # When
         charts_validation = validation.ChartsRequestValidator(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=mocked_plot_parameters,
         )
 
