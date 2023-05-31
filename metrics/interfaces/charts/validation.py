@@ -18,16 +18,22 @@ class ChartTypeDoesNotSupportMetricError(Exception):
 class ChartsRequestValidator:
     def __init__(
         self,
+        x_axis: str,
+        y_axis: str,
         plot_parameters: PlotParameters,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
         plot_validation: Optional[PlotValidation] = None,
     ):
+        self.x_axis = x_axis
+        self.y_axis = y_axis
         self.plot_parameters = plot_parameters
         self.core_time_series_manager = core_time_series_manager
         self.metric_manager = metric_manager
 
         self.plot_validation = plot_validation or PlotValidation(
+            x_axis=x_axis,
+            y_axis=y_axis,
             plot_parameters=plot_parameters,
             core_time_series_manager=core_time_series_manager,
             metric_manager=metric_manager,

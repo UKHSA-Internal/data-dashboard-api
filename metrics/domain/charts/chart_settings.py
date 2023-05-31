@@ -6,15 +6,23 @@ TICK_FONT = {
 }
 
 
+X_AXIS_TEXT_TYPE = {
+    "type": "-",
+}
+
+X_AXIS_DATE_TYPE = {
+    "type": "date",
+    "dtick": "M1",
+    "tickformat": "%b %Y",
+}
+
+
 X_AXIS_SETTINGS = {
     "showgrid": False,
     "zeroline": False,
     "showline": False,
     "ticks": "outside",
     "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
     "tickfont": TICK_FONT,
 }
 

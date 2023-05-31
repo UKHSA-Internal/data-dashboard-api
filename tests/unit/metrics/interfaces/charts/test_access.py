@@ -198,6 +198,8 @@ class TestChartsInterface:
             file_format="svg",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         charts_interface = ChartsInterface(
@@ -214,7 +216,10 @@ class TestChartsInterface:
         spy_line_multi_coloured_generate_chart_figure.assert_called_once_with(
             chart_height=plots_collection.chart_height,
             chart_width=plots_collection.chart_width,
-            chart_plots_data=charts_interface.build_chart_plots_data(),
+            chart_plots_data=charts_interface.build_chart_plots_data(
+                x_axis="dt",
+                y_axis="metric_value",
+            ),
         )
         assert (
             line_multi_coloured_chart
@@ -239,6 +244,8 @@ class TestChartsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         charts_interface = ChartsInterface(
@@ -248,7 +255,10 @@ class TestChartsInterface:
         )
 
         # When
-        plots_data = charts_interface.build_chart_plots_data()
+        plots_data = charts_interface.build_chart_plots_data(
+            x_axis="dt",
+            y_axis="metric_value",
+        )
 
         # Then
         spy_plots_interface.build_plots_data.assert_called_once()
@@ -270,12 +280,12 @@ class TestChartsInterface:
         # Given
         width = 123
         height = 456
-        mocked_dates = mock.Mock()
-        mocked_values = mock.Mock()
+        mocked_x_axis_values = mock.Mock()
+        mocked_y_axis_values = mock.Mock()
         fake_plot_data = PlotsData(
             parameters=fake_chart_plot_parameters,
-            x_axis=mocked_dates,
-            y_axis=mocked_values,
+            x_axis_values=mocked_x_axis_values,
+            y_axis_values=mocked_y_axis_values,
         )
 
         fake_chart_plots = PlotsCollection(
@@ -283,6 +293,8 @@ class TestChartsInterface:
             file_format="svg",
             chart_width=width,
             chart_height=height,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         charts_interface = ChartsInterface(
@@ -302,8 +314,8 @@ class TestChartsInterface:
         expected_constructed_params = {
             "chart_width": width,
             "chart_height": height,
-            "dates": mocked_dates,
-            "values": mocked_values,
+            "x_axis_values": mocked_x_axis_values,
+            "y_axis_values": mocked_y_axis_values,
             "metric_name": metric,
             "change_in_metric_value": mocked_calculate_change_in_metric_value.return_value,
             "rolling_period_slice": mocked_get_rolling_period_slice_for_metric.return_value,
@@ -311,7 +323,7 @@ class TestChartsInterface:
         assert params_for_line_graph == expected_constructed_params
 
         mocked_calculate_change_in_metric_value.assert_called_once_with(
-            values=mocked_values,
+            values=mocked_y_axis_values,
             metric_name=metric,
         )
         mocked_get_rolling_period_slice_for_metric.assert_called_once_with(
@@ -424,6 +436,8 @@ class TestValidateEachRequestedChartPlot:
             plots=fake_requested_chart_plots,
             chart_width=123,
             chart_height=456,
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         # When
@@ -431,7 +445,11 @@ class TestValidateEachRequestedChartPlot:
 
         # Then
         expected_calls = [
-            mock.call(chart_plot_parameters=requested_chart_plot)
+            mock.call(
+                x_axis="dt",
+                y_axis="metric_value",
+                chart_plot_parameters=requested_chart_plot,
+            )
             for requested_chart_plot in fake_requested_chart_plots
         ]
         spy_validate_chart_plot_parameters.assert_has_calls(calls=expected_calls)
@@ -453,7 +471,11 @@ class TestValidateChartPlotParameters:
         chart_plot_parameters = fake_chart_plot_parameters
 
         # When
-        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_parameters)
+        validate_chart_plot_parameters(
+            x_axis="dt",
+            y_axis="metric_value",
+            chart_plot_parameters=chart_plot_parameters,
+        )
 
         # Then
         spy_validate_method.assert_called_once()

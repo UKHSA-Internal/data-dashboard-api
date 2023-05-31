@@ -24,6 +24,8 @@ class TestValidate:
         # Given
         spy_plot_validation = mock.Mock()
         validator = validation.ChartsRequestValidator(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=mock.Mock(),
             plot_validation=spy_plot_validation,
         )
@@ -58,6 +60,8 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         spy_plot_validation = mock.Mock()
 
         validator = validation.ChartsRequestValidator(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
             plot_validation=spy_plot_validation,
         )
@@ -87,7 +91,11 @@ class TestValidateSeriesChartTypeWorksWithMetric:
             chart_type=chart_type,
         )
 
-        validator = validation.ChartsRequestValidator(plot_parameters=plot_parameters)
+        validator = validation.ChartsRequestValidator(
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
+        )
         # Here we don't need to stub out the managers or the plot validation
         # because the method under test should simply use the `chart_type`
         # attribute of the `PlotParameters` object
@@ -118,6 +126,8 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         mocked_plot_validation._does_metric_have_multiple_records.return_value = False
 
         validator = validation.ChartsRequestValidator(
+            x_axis="dt",
+            y_axis="metric_value",
             plot_parameters=plot_parameters,
             plot_validation=mocked_plot_validation,
         )
@@ -143,7 +153,11 @@ class TestIsChartSeriesType:
         plot_parameters = valid_plot_parameters
         plot_parameters.chart_type = ChartTypes.waffle.value
 
-        validator = validation.ChartsRequestValidator(plot_parameters=plot_parameters)
+        validator = validation.ChartsRequestValidator(
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
+        )
 
         # When
         chart_is_series_type: bool = validator._is_chart_series_type()
@@ -167,7 +181,11 @@ class TestIsChartSeriesType:
         plot_parameters = valid_plot_parameters
         plot_parameters.chart_type = time_series_chart_type
 
-        validator = validation.ChartsRequestValidator(plot_parameters=plot_parameters)
+        validator = validation.ChartsRequestValidator(
+            x_axis="dt",
+            y_axis="metric_value",
+            plot_parameters=plot_parameters,
+        )
 
         # When
         chart_is_series_type: bool = validator._is_chart_series_type()

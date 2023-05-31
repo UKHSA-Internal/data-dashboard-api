@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Dict, List, Optional, Union
 
 import plotly.graph_objects
@@ -81,12 +82,15 @@ class ChartsInterface:
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
 
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: List[PlotsData] = self.build_chart_plots_data(
+            x_axis=self.chart_plots.x_axis,
+            y_axis=self.chart_plots.y_axis,
+        )
         plot_data: PlotsData = plots_data[0]
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            values=plot_data.y_axis,
+            y_axis_values=plot_data.y_axis_values,
         )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
@@ -98,14 +102,17 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: List[PlotsData] = self.build_chart_plots_data(
+            x_axis=self.chart_plots.x_axis,
+            y_axis=self.chart_plots.y_axis,
+        )
         plot_data: PlotsData = plots_data[0]
 
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            dates=plot_data.x_axis,
-            values=plot_data.y_axis,
+            x_axis_values=plot_data.x_axis_values,
+            y_axis_values=plot_data.y_axis_values,
             legend=plot_data.parameters.metric_name,
         )
 
@@ -121,7 +128,10 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: List[PlotsData] = self.build_chart_plots_data(
+            x_axis=self.chart_plots.x_axis,
+            y_axis=self.chart_plots.y_axis,
+        )
 
         return line_multi_coloured.generate_chart_figure(
             chart_height=chart_height,
@@ -140,7 +150,10 @@ class ChartsInterface:
             A plotly `Figure` object for the created line chart with shaded section
 
         """
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: List[PlotsData] = self.build_chart_plots_data(
+            x_axis=self.chart_plots.x_axis,
+            y_axis=self.chart_plots.y_axis,
+        )
         plot_data: PlotsData = plots_data[0]
         params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
 
@@ -152,13 +165,20 @@ class ChartsInterface:
         Returns:
             The requested plots in tabular format
         """
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: List[PlotsData] = self.build_chart_plots_data(
+            x_axis=self.chart_plots.x_axis,
+            y_axis=self.chart_plots.y_axis,
+        )
 
         return create_plots_in_tabular_format(
             tabular_plots_data=plots_data,
         )
 
-    def build_chart_plots_data(self) -> List[PlotsData]:
+    def build_chart_plots_data(
+        self,
+        x_axis: str,
+        y_axis: str,
+    ) -> List[PlotsData]:
         """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -174,23 +194,26 @@ class ChartsInterface:
                 each of the requested chart plots.
 
         """
-        return self.plots_interface.build_plots_data()
+        return self.plots_interface.build_plots_data(
+            x_axis=x_axis,
+            y_axis=y_axis,
+        )
 
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        dates = plot_data.x_axis
-        values = plot_data.y_axis
+        x_axis_values = plot_data.x_axis_values
+        y_axis_values = plot_data.y_axis_values
         metric_name = plot_data.parameters.metric_name
 
         return {
             "chart_height": chart_height,
             "chart_width": chart_width,
-            "dates": dates,
-            "values": values,
+            "x_axis_values": x_axis_values,
+            "y_axis_values": y_axis_values,
             "metric_name": metric_name,
             "change_in_metric_value": self.calculate_change_in_metric_value(
-                values=values,
+                values=y_axis_values,
                 metric_name=metric_name,
             ),
             "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(
@@ -273,10 +296,18 @@ def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
 
     """
     for chart_plot_params in chart_plots.plots:
-        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_params)
+        validate_chart_plot_parameters(
+            x_axis=chart_plots.x_axis,
+            y_axis=chart_plots.y_axis,
+            chart_plot_parameters=chart_plot_params,
+        )
 
 
-def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
+def validate_chart_plot_parameters(
+    x_axis: str,
+    y_axis: str,
+    chart_plot_parameters: PlotParameters,
+):
     """Validates the individual given `chart_plot_parameters` against the contents of the db
 
     Raises:
@@ -292,7 +323,9 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
 
     """
     charts_request_validator = validation.ChartsRequestValidator(
-        plot_parameters=chart_plot_parameters
+        x_axis=x_axis,
+        y_axis=y_axis,
+        plot_parameters=chart_plot_parameters,
     )
     charts_request_validator.validate()
 
@@ -316,3 +349,17 @@ def write_figure(
     figure.write_image(file=filename, format=file_format)
 
     return filename
+
+
+class ChartAxisFields(Enum):
+    stratum = "stratum__name"
+    date = "dt"
+    metric = "metric_value"
+    geography = "geography__geography_type__name"
+
+    @classmethod
+    def choices(cls):
+        return tuple((field_name.name, field_name.name) for field_name in cls)
+
+    def __str__(self):
+        return str(self.value)
