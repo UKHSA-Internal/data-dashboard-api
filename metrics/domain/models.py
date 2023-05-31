@@ -80,12 +80,14 @@ class PlotsCollection(BaseModel):
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
     chart_height: int
+    x_axis: str
+    y_axis: str
 
 
 class PlotsData(BaseModel):
     parameters: PlotParameters
-    x_axis: Any
-    y_axis: Any
+    x_axis_values: Any
+    y_axis_values: Any
 
 
 def get_date_n_months_ago_from_timestamp(
