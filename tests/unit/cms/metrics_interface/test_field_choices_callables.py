@@ -1,7 +1,7 @@
 from unittest import mock
 
 from cms.metrics_interface import field_choices_callables, interface
-from metrics.domain.charts.line_multi_coloured.colour_scheme import RGBAColours
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.interfaces.charts.access import ChartTypes
 
@@ -134,7 +134,7 @@ class TestGetColours:
         Then the colours are returned as a list of 2-item tuples
         """
         # Given
-        retrieved_colours = RGBAColours.choices()
+        retrieved_colours = RGBAChartLineColours.choices()
         mocked_get_colours.return_value = retrieved_colours
 
         # When

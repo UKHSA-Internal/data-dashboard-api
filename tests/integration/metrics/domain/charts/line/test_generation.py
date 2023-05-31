@@ -2,7 +2,8 @@ from typing import List
 
 import plotly.graph_objects
 
-from metrics.domain.charts.line import colour_scheme, generation
+from metrics.domain.charts.colour_scheme import RGBAColours
+from metrics.domain.charts.line import generation
 
 VALUES: List[int] = [1, 2, 3, 2, 2, 3, 4, 5, 5, 3, 2, 1]
 
@@ -32,9 +33,7 @@ class TestLineCharts:
         # ---Main background checks---
         main_layout: plotly.graph_objects.Layout = figure.layout
         # Check that the main background colour is a plain white
-        assert (
-            main_layout.plot_bgcolor == colour_scheme.RGBAColours.LIGHT_GREY.stringified
-        )
+        assert main_layout.plot_bgcolor == RGBAColours.LINE_LIGHT_GREY.stringified
         assert not main_layout.showlegend
 
         # ---X Axis checks---
@@ -69,14 +68,12 @@ class TestLineCharts:
 
         # The main line should be drawn as a black `spline` plot
         main_line: plotly.graph_objects.scatter.Line = main_line_plot.line
-        assert main_line.color == colour_scheme.RGBAColours.BLACK.stringified
+        assert main_line.color == RGBAColours.BLACK.stringified
         assert main_line.shape == "spline"
         assert main_line_plot.mode is None
 
         # The fill colour under the plot should be a dark grey
-        assert (
-            main_line_plot.fillcolor == colour_scheme.RGBAColours.DARK_GREY.stringified
-        )
+        assert main_line_plot.fillcolor == RGBAColours.LINE_DARK_GREY.stringified
 
     def test_main_line_plot_can_be_enforced_with_markers(self):
         """

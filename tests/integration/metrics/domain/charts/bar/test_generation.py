@@ -3,8 +3,8 @@ from typing import List
 
 import plotly.graph_objects
 
-from metrics.domain.charts.bar.colour_scheme import RGBAColours
 from metrics.domain.charts.bar.generation import generate_chart_figure
+from metrics.domain.charts.colour_scheme import RGBAColours
 
 DATES: List[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -85,8 +85,10 @@ class TestBarCharts:
         assert main_bar_plot.y == tuple(values)
 
         # Bars should be Blue
-        assert main_bar_plot.marker.color == RGBAColours.PLOT_1_BLUE.stringified
-        assert main_bar_plot.marker.line.color == RGBAColours.PLOT_1_BLUE.stringified
+        assert main_bar_plot.marker.color == RGBAColours.BAR_PLOT_1_BLUE.stringified
+        assert (
+            main_bar_plot.marker.line.color == RGBAColours.BAR_PLOT_1_BLUE.stringified
+        )
         assert main_bar_plot.marker.line.width == 1
 
         # Legend is assigned
