@@ -21,6 +21,26 @@ def _build_two_item_tuple_choices(choices: List[str]) -> LIST_OF_TWO_STRING_ITEM
     return [(choice, choice) for choice in choices]
 
 
+def get_possible_axis_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `chart axis` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new axis field is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of chart_types.
+        Examples:
+            [("geography", "geography"), ...]
+
+    """
+    return MetricsAPIInterface.get_chart_axis_choices()
+
+
 def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `metric` fields of the CMS blocks.
 
