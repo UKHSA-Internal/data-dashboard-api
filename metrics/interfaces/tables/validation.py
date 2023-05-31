@@ -102,6 +102,8 @@ def validate_table_plot_parameters(
 
     """
     tables_validation = TablesValidation(
-        x_axis=x_axis, y_axis=y_axis, plot_parameters=plot_parameters
+        x_axis=x_axis,
+        y_axis=y_axis,
+        plot_parameters=plot_parameters,
     )
     tables_validation.validate()
