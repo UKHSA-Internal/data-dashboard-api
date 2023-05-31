@@ -15,7 +15,7 @@ LAYOUT_ARGS = {
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    values: List[Union[int, float]],
+    y_axis_values: List[Union[int, float]],
     line_color: str = colour_scheme.RGBAColours.BLACK.stringified,
     area_fill_color: str = colour_scheme.RGBAColours.LINE_DARK_GREY.stringified,
     background_color: str = colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
@@ -55,14 +55,14 @@ def generate_chart_figure(
             written to a file, or shown
 
     """
-    values_count: int = len(values)
+    values_count: int = len(y_axis_values)
     x_points: List[int] = [index for index in range(values_count)]
 
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot object
     line_plot = _create_line_plot(
-        values=values,
+        values=y_axis_values,
         x_points=x_points,
         area_fill_colour=area_fill_color,
         line_colour=line_color,
@@ -91,7 +91,7 @@ def generate_chart_figure(
 
 
 def _create_line_plot(
-    values: List[int],
+    values: List[Union[int, float]],
     x_points: List[int],
     area_fill_colour: str,
     line_colour: str,
