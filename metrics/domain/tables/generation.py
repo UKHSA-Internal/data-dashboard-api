@@ -56,7 +56,7 @@ def combine_list_of_plots(
         plot_label: str = plot.parameters.label or "Plot" + str(plot_num)
         plot_labels.append(plot_label)
 
-        temp_dict = dict(zip(plot.x_axis, plot.y_axis))
+        temp_dict = dict(zip(plot.x_axis_values, plot.y_axis_values))
         for k, v in temp_dict.items():
             month_end = str(last_day_of_month(k))
             combined_plots[month_end].update({plot_label: str(v)})
