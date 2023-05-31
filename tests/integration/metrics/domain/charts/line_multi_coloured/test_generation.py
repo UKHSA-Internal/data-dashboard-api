@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import Any, List
 
 import plotly.graph_objects
 
@@ -28,8 +28,8 @@ WIDTH = 400
 class TestLineMultiColouredCharts:
     @staticmethod
     def _setup_chart_plot_data(
-        x_axis: List[datetime.date],
-        y_axis: List[int],
+        x_axis_values: List[Any],
+        y_axis_values: List[Any],
         label: str = "",
         line_type: str = "",
         line_colour: str = "",
@@ -43,7 +43,11 @@ class TestLineMultiColouredCharts:
             line_type=line_type,
             line_colour=line_colour,
         )
-        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+        return PlotsData(
+            parameters=plot_params,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
+        )
 
     def test_main_plot_and_axis_properties(self):
         """
@@ -52,10 +56,12 @@ class TestLineMultiColouredCharts:
         Then the figure is drawn with the expected parameters for the main background and the X & Y axis
         """
         # Given
-        dates = DATES_FROM_SEP_TO_JAN
-        values = EXAMPLE_VALUES
+        x_axis_values = DATES_FROM_SEP_TO_JAN
+        y_axis_values = EXAMPLE_VALUES
         chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates, y_axis=values, label="some_label"
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
+            label="some_label",
         )
 
         # When
@@ -97,6 +103,39 @@ class TestLineMultiColouredCharts:
         y_axis = main_layout.yaxis
         assert not y_axis.showgrid
 
+    def test_x_axis_type_is_not_date(self):
+        """
+        Given a list of x and y values where x values are NOT dates
+        When `generate_chart_figure()` is called from the `line_multi_coloured` module
+        Then the figure is drawn with the expected parameters for the x axis
+        """
+        # Given
+        x_axis_values = ["0-4", "5-8", "9-29"]
+        y_axis_values = EXAMPLE_VALUES
+        chart_plots_data = self._setup_chart_plot_data(
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
+            label="some_label",
+        )
+
+        # When
+        figure = generation.generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
+            chart_plots_data=[chart_plots_data],
+        )
+
+        # Then
+        # ---X Axis checks---
+        x_axis = figure.layout.xaxis
+
+        # The `M1` dtick setting is only valid for dates
+        assert x_axis.dtick == None
+
+        # The x-axis type and ticks should be the default
+        assert x_axis.type == "-"
+        assert x_axis.tickformat == None
+
     def test_two_plots_with_provided_labels_and_colours(self):
         """
         Given 2 `ChartPlotData` models representing 2 different line plots
@@ -104,27 +143,27 @@ class TestLineMultiColouredCharts:
         Then the figure is drawn with the expected parameters for the line plots
         """
         # Given
-        dates = DATES_FROM_SEP_TO_JAN
-        values = EXAMPLE_VALUES
+        x_axis_values = DATES_FROM_SEP_TO_JAN
+        y_axis_values = EXAMPLE_VALUES
         first_plot_line_type = "DASH"
         first_plot_label = "0 to 4 years old"
         first_plot_colour = "RED"
         first_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates,
-            y_axis=values,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
             label=first_plot_label,
             line_type=first_plot_line_type,
             line_colour=first_plot_colour,
         )
 
-        dates = DATES_FROM_SEP_TO_JAN
+        x_axis_values = DATES_FROM_SEP_TO_JAN
+        y_axis_values = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
         second_plot_line_type = "SOLID"
         second_plot_label = "15 to 44 years old"
-        values = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
         second_plot_colour = "BLUE"
         second_chart_plots_data = self._setup_chart_plot_data(
-            x_axis=dates,
-            y_axis=values,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
             label=second_plot_label,
             line_type=second_plot_line_type,
             line_colour=second_plot_colour,
@@ -144,8 +183,8 @@ class TestLineMultiColouredCharts:
         # ---First line plot checks---
         first_plot: plotly.graph_objects.Scatter = figure.data[0]
         # Check that each axis has been populated with the correct data
-        assert list(first_plot.x) == first_chart_plots_data.x_axis
-        assert list(first_plot.y) == first_chart_plots_data.y_axis
+        assert list(first_plot.x) == first_chart_plots_data.x_axis_values
+        assert list(first_plot.y) == first_chart_plots_data.y_axis_values
 
         # The name of the plot should match the provided custom label
         assert first_plot.name == first_plot_label
@@ -166,8 +205,8 @@ class TestLineMultiColouredCharts:
         # ---Second line plot checks---
         second_plot: plotly.graph_objects.Scatter = figure.data[1]
         # Check that each axis has been populated with the correct data
-        assert list(second_plot.x) == second_chart_plots_data.x_axis
-        assert list(second_plot.y) == second_chart_plots_data.y_axis
+        assert list(second_plot.x) == second_chart_plots_data.x_axis_values
+        assert list(second_plot.y) == second_chart_plots_data.y_axis_values
 
         # The name of the plot should match the provided custom label
         assert second_plot.name == second_plot_label
