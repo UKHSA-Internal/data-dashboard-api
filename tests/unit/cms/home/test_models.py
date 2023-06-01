@@ -198,7 +198,9 @@ class TestTemplateHomePage:
             == self.expected_trend_number_block_body
         )
 
-    def test_coronavirus_section_headline_number_row_headline_and_percentage_blocks(self):
+    def test_coronavirus_section_headline_number_row_headline_and_percentage_blocks(
+        self,
+    ):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -239,7 +241,9 @@ class TestTemplateHomePage:
         )
         assert fourth_column_percentage_block_value["body"] == "Percentage uptake"
 
-    def test_coronavirus_section_headline_number_row_single_headline_column_with_percentage_block(self):
+    def test_coronavirus_section_headline_number_row_single_headline_column_with_percentage_block(
+        self,
+    ):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -265,7 +269,9 @@ class TestTemplateHomePage:
         assert fifth_column_value["rows"][0].block_type == "percentage_number"
         fifth_column_percentage_block_value = fifth_column_value["rows"][0].value
         assert fifth_column_percentage_block_value["topic"] == self.covid_19
-        assert fifth_column_percentage_block_value["metric"] == "positivity_7days_latest"
+        assert (
+            fifth_column_percentage_block_value["metric"] == "positivity_7days_latest"
+        )
         assert fifth_column_percentage_block_value["body"] == "Virus tests positivity"
 
     def test_coronavirus_section_chart_row_card(self):
