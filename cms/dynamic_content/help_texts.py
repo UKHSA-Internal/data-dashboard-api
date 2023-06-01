@@ -1,5 +1,5 @@
 HEADLINE_COLUMNS_FIELD_HELP_TEXT: str = """
-Add up to {} headline or trend number column components within this row. 
+Add up to {} number column components within this row. 
 The columns are ordered from left to right, top to bottom respectively. 
 So by moving 1 column component above the other, that component will be rendered in the column left of the other. 
 """
@@ -12,6 +12,13 @@ CHART_CARD_ROW_HELP_TEXT: str = """
 Here you can add 1 or 2 columns to contain a particular chart card.
 If you add the 1 column, then the chart card will spread across the available width.
 If you add 2 columns, then the cards will be split across 2 columns within the available width.
+"""
+NUMBERS_ROW_FIELD_HELP_TEXT: str = """
+Here you can add up to {} rows within this column component.
+Each row can be used to add a number block. 
+This can be a headline number, a trend number or a percentage number.
+If you only add 1 row, then that block will be rendered on the upper half of the column.
+And the bottom row of the column will remain empty.
 """
 
 CHART_BLOCK_FIELD_HELP_TEXT: str = """

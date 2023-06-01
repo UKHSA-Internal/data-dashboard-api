@@ -2,10 +2,7 @@ from wagtail import blocks
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.blocks import (
-    HeadlineNumberBlockTypes,
-    HeadlineNumberRowBlockTypes,
-)
+from cms.dynamic_content.blocks import HeadlineNumberBlockTypes, MetricNumberBlock
 from cms.dynamic_content.components import ChartComponent
 
 
@@ -29,7 +26,7 @@ MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 2
 
 
 class HeadlineNumbersRowCard(blocks.StructBlock):
-    columns = HeadlineNumberRowBlockTypes(
+    columns = MetricNumberBlock(
         min_num=MINIMUM_HEADLINE_COLUMNS_COUNT,
         max_num=MAXIMUM_HEADLINE_COLUMNS_COUNT,
         help_text=help_texts.HEADLINE_COLUMNS_FIELD_HELP_TEXT.format(
