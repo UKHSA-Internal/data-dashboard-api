@@ -24,13 +24,12 @@ class TestChartsView:
             dt=datetime.date(year=year, month=1, day=1),
         )
 
-    @property
-    def path(self) -> str:
-        return "/charts/v2/"
-
+    @pytest.mark.parametrize("path", ["/charts/v2", "/api/charts/v2"])
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
-        self, authenticated_api_client: APIClient
+        self,
+        path: str,
+        authenticated_api_client: APIClient,
     ):
         """
         Given a valid payload to create a chart
@@ -39,7 +38,7 @@ class TestChartsView:
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        path_without_trailing_forward_slash: str = "/charts/v2"
+        path_without_trailing_forward_slash: str = path
         metric_name = "vaccinations_percentage_uptake_spring22"
         topic_name = "COVID-19"
         self._setup_core_time_series(
@@ -65,8 +64,11 @@ class TestChartsView:
 
         assert response.status_code == HTTPStatus.OK
 
+    @pytest.mark.parametrize("path", ["/charts/v2/", "/api/charts/v2/"])
     @pytest.mark.django_db
-    def test_returns_correct_response(self, authenticated_api_client: APIClient):
+    def test_returns_correct_response(
+        self, path: str, authenticated_api_client: APIClient
+    ):
         """
         Given a valid payload to create a chart
         And an authenticated APIClient
@@ -92,7 +94,7 @@ class TestChartsView:
 
         # When
         response: Response = authenticated_api_client.post(
-            path=self.path, data=valid_payload, format="json"
+            path=path, data=valid_payload, format="json"
         )
 
         # Then
@@ -102,8 +104,9 @@ class TestChartsView:
         # Check that the headers on the response indicate an `svg` image being returned
         assert response.headers["Content-Type"] == "image/svg+xml"
 
+    @pytest.mark.parametrize("path", ["/charts/v2/", "/api/charts/v2/"])
     @pytest.mark.django_db
-    def test_post_request_without_api_key_is_unauthorized(self):
+    def test_post_request_without_api_key_is_unauthorized(self, path: str):
         """
         Given an APIClient which is not authenticated
         When the `GET /charts/v2/` endpoint is hit
@@ -113,7 +116,7 @@ class TestChartsView:
         client = APIClient()
 
         # When
-        response: Response = client.post(path=self.path, data={})
+        response: Response = client.post(path=path, data={})
 
         # Then
         assert response.status_code == HTTPStatus.UNAUTHORIZED

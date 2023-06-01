@@ -1,6 +1,5 @@
 import datetime
 from http import HTTPStatus
-from unittest import mock
 
 import pytest
 from rest_framework.response import Response
@@ -42,12 +41,11 @@ class TestTrendsView:
             dt=date,
         )
 
-    @property
-    def path(self) -> str:
-        return "/trends/v2/"
-
+    @pytest.mark.parametrize("path", ["/trends/v2/", "/api/trends/v2/"])
     @pytest.mark.django_db
-    def test_get_returns_correct_response(self, authenticated_api_client: APIClient):
+    def test_get_returns_correct_response(
+        self, path: str, authenticated_api_client: APIClient
+    ):
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
         And an authenticated APIClient
@@ -81,7 +79,7 @@ class TestTrendsView:
 
         # When
         response: Response = authenticated_api_client.get(
-            path=self.path,
+            path=path,
             data={
                 "topic": topic_name,
                 "metric": metric_name,
@@ -101,9 +99,10 @@ class TestTrendsView:
         }
         assert response.data == expected_response_data
 
+    @pytest.mark.parametrize("path", ["/trends/v2/", "/api/trends/v2/"])
     @pytest.mark.django_db
     def test_get_returns_error_message_for_timeseries_type_metric(
-        self, authenticated_api_client: APIClient
+        self, path: str, authenticated_api_client: APIClient
     ):
         """
         Given the names of a `metric`, `percentage_metric` as well as an incorrect `topic`
@@ -130,7 +129,7 @@ class TestTrendsView:
 
         # When
         response: Response = authenticated_api_client.get(
-            path=self.path,
+            path=path,
             data={
                 "topic": incorrect_topic_name,
                 "metric": metric_name,
@@ -145,8 +144,9 @@ class TestTrendsView:
         )
         assert response.data == {"error_message": expected_error_message}
 
+    @pytest.mark.parametrize("path", ["/trends/v2/", "/api/trends/v2/"])
     @pytest.mark.django_db
-    def test_get_request_without_api_key_is_unauthorized(self):
+    def test_get_request_without_api_key_is_unauthorized(self, path: str):
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
         And an APIClient which is not authenticated
@@ -160,7 +160,7 @@ class TestTrendsView:
 
         # When
         response: Response = client.get(
-            path=self.path,
+            path=path,
             data={
                 "topic": topic_name,
                 "metric": metric_name,

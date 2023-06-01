@@ -31,9 +31,10 @@ class TestTablesView:
     metric_name = "vaccinations_percentage_uptake_spring22"
     topic_name = "COVID-19"
 
+    @pytest.mark.parametrize("path", ["/tables/v2", "/api/tables/v2"])
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
-        self, authenticated_api_client: APIClient
+        self, path: str, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload to create a chart
@@ -42,7 +43,7 @@ class TestTablesView:
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        path_without_trailing_forward_slash: str = "/tables/v2"
+        path_without_trailing_forward_slash: str = path
         self._setup_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
@@ -68,8 +69,11 @@ class TestTablesView:
 
         assert response.status_code == HTTPStatus.OK
 
+    @pytest.mark.parametrize("path", ["/tables/v2/", "/api/tables/v2/"])
     @pytest.mark.django_db
-    def test_returns_correct_response_type(self, authenticated_api_client: APIClient):
+    def test_returns_correct_response_type(
+        self, path: str, authenticated_api_client: APIClient
+    ):
         """
         Given a valid payload to create a chart
         And an authenticated APIClient
@@ -95,7 +99,7 @@ class TestTablesView:
 
         # When
         response: Response = authenticated_api_client.post(
-            path=self.path, data=valid_payload, format="json"
+            path=path, data=valid_payload, format="json"
         )
 
         # Then
@@ -105,8 +109,9 @@ class TestTablesView:
         # Check that the headers on the response indicate a json-type reponse is being returned
         assert response.headers["Content-Type"] == "application/json"
 
+    @pytest.mark.parametrize("path", ["/tables/v2/", "/api/tables/v2/"])
     @pytest.mark.django_db
-    def test_post_request_without_api_key_is_unauthorized(self):
+    def test_post_request_without_api_key_is_unauthorized(self, path: str):
         """
         Given an APIClient which is not authenticated
         When the `GET /tables/v2/` endpoint is hit
@@ -116,14 +121,15 @@ class TestTablesView:
         client = APIClient()
 
         # When
-        response: Response = client.post(path=self.path, data={})
+        response: Response = client.post(path=path, data={})
 
         # Then
         assert response.status_code == HTTPStatus.UNAUTHORIZED
 
+    @pytest.mark.parametrize("path", ["/tables/v2/", "/api/tables/v2/"])
     @pytest.mark.django_db
     def test_single_plot_output_is_as_expected(
-        self, authenticated_api_client: APIClient
+        self, path: str, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload to create a chart
@@ -164,15 +170,16 @@ class TestTablesView:
 
         # When
         response: Response = authenticated_api_client.post(
-            path=self.path, data=valid_payload, format="json"
+            path=path, data=valid_payload, format="json"
         )
 
         # Then
         assert response.data == expected_response
 
+    @pytest.mark.parametrize("path", ["/tables/v2/", "/api/tables/v2/"])
     @pytest.mark.django_db
     def test_multiple_plot_output_is_as_expected(
-        self, authenticated_api_client: APIClient
+        self, path: str, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload to create a chart
@@ -221,7 +228,7 @@ class TestTablesView:
 
         # When
         response: Response = authenticated_api_client.post(
-            path=self.path, data=valid_payload, format="json"
+            path=path, data=valid_payload, format="json"
         )
 
         # Then

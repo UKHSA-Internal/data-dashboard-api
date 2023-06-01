@@ -56,16 +56,16 @@ urlpatterns = [
     # Redoc schema view
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     # Main API
-    path(f"{API_PREFIX}upload/", FileUploadView.as_view()),
-    path(f"{API_PREFIX}charts/v2", ChartsView.as_view()),
-    path(f"{API_PREFIX}downloads/v2", DownloadsView.as_view()),
-    path(f"{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
-    path(
-        r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
+    re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
+    re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
+    re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
+    re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
+    re_path(
+        f"^{API_PREFIX}tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
         OldTabularView.as_view(),
     ),
-    path(f"{API_PREFIX}tables/v2", TablesView.as_view()),
-    path(f"{API_PREFIX}trends/v2", TrendsView.as_view()),
+    re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
+    re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
     path("health/", HealthView.as_view()),
     # Django admin
     path("admin/", admin.site.urls),
