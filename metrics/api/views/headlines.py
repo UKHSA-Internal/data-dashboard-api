@@ -12,6 +12,8 @@ from metrics.interfaces.headlines.access import (
     generate_headline_number,
 )
 
+HEADLINES_API_TAG = "headlines"
+
 
 class HeadlinesView(APIView):
     permission_classes = [HasAPIKey]
@@ -19,6 +21,7 @@ class HeadlinesView(APIView):
     @extend_schema(
         parameters=[HeadlinesQuerySerializer],
         responses={HTTPStatus.OK.value: HeadlinesResponseSerializer},
+        tags=[HEADLINES_API_TAG],
     )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.

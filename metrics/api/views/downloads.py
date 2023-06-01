@@ -14,6 +14,8 @@ from metrics.data.access.api_models import validate_query_filters
 from metrics.data.models.api_models import APITimeSeries
 from metrics.domain.exports.csv import write_data_to_csv
 
+DOWNLOADS_API_TAG = "downloads"
+
 
 class DownloadsView(APIView):
     queryset = APITimeSeries.objects.all().order_by("dt")
@@ -68,7 +70,7 @@ class DownloadsView(APIView):
         response = write_data_to_csv(file=response, api_time_series=queryset)
         return response
 
-    @extend_schema(request=DownloadsSerializer)
+    @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 

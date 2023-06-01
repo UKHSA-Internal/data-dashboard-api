@@ -14,11 +14,13 @@ from metrics.domain.models import PlotParameters
 from metrics.interfaces.charts import access, validation
 from metrics.interfaces.tables import access
 
+TABLES_API_TAG = "tables"
+
 
 class OldTabularView(APIView):
     permission_classes = [HasAPIKey]
 
-    @extend_schema(deprecated=True)
+    @extend_schema(deprecated=True, tags=[TABLES_API_TAG])
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to generate a summary of the chart data but in tabular format
         There are 2 mandatory URL parameters:
@@ -47,6 +49,7 @@ class TablesView(APIView):
     @extend_schema(
         request=TablesSerializer,
         responses={HTTPStatus.OK.value: TablesResponseSerializer},
+        tags=[TABLES_API_TAG],
     )
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate chart data in tabular format.

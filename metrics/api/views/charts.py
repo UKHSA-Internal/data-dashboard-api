@@ -11,6 +11,8 @@ from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import ChartsResponseSerializer
 from metrics.interfaces.charts import access, validation
 
+CHARTS_API_TAG = "charts"
+
 
 class ChartsView(APIView):
     permission_classes = [HasAPIKey]
@@ -18,6 +20,7 @@ class ChartsView(APIView):
     @extend_schema(
         request=ChartsSerializer,
         responses={HTTPStatus.OK.value: ChartsResponseSerializer},
+        tags=[CHARTS_API_TAG],
     )
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
