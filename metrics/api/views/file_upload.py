@@ -7,6 +7,8 @@ from rest_framework_api_key.permissions import HasAPIKey
 from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
 
+UPLOAD_API_TAG = ["upload"]
+
 
 class FileUploadView(APIView):
     parser_classes = [MultiPartParser]
@@ -21,6 +23,7 @@ class FileUploadView(APIView):
             }
         },
         deprecated=True,
+        tags=[UPLOAD_API_TAG],
     )
     def put(self, request, *args, **kwargs):
         """
