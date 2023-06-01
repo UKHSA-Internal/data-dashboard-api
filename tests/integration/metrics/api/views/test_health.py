@@ -1,12 +1,6 @@
-import datetime
 from http import HTTPStatus
-from unittest import mock
 
-import pytest
-from rest_framework.response import Response
 from rest_framework.test import APIClient
-
-from metrics.data.models.core_models import CoreTimeSeries, Metric, Topic
 
 
 class TestHealthView:

@@ -7,14 +7,14 @@ from rest_framework.test import APIClient
 
 
 class TestFileUploadView:
-    @property
-    def path(self) -> str:
-        return "/upload/"
-
     @pytest.mark.django_db
+    @pytest.mark.parametrize("path", ["/upload/", "/api/upload/"])
     @mock.patch("metrics.api.views.file_upload.load_core_data")
     def test_get_returns_correct_response(
-        self, mocked_load_core_data: mock.MagicMock, authenticated_api_client: APIClient
+        self,
+        mocked_load_core_data: mock.MagicMock,
+        path: str,
+        authenticated_api_client: APIClient,
     ):
         """
         Given an authenticated APIClient
@@ -27,14 +27,15 @@ class TestFileUploadView:
 
         """
         # Given / When
-        response: Response = authenticated_api_client.put(path=self.path)
+        response: Response = authenticated_api_client.put(path=path)
 
         # Then
         assert response.status_code != HTTPStatus.UNAUTHORIZED
 
+    @pytest.mark.parametrize("path", ["/upload/", "/api/upload/"])
     @pytest.mark.django_db
     def test_get_request_without_api_key_is_unauthorized(
-        self, authenticated_api_client: APIClient
+        self, path: str, authenticated_api_client: APIClient
     ):
         """
         Given an APIClient which is not authenticated
@@ -45,7 +46,7 @@ class TestFileUploadView:
         client = APIClient()
 
         # When
-        response: Response = client.put(path=self.path)
+        response: Response = client.put(path=path)
 
         # Then
         assert response.status_code == HTTPStatus.UNAUTHORIZED
