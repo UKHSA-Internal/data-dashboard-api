@@ -40,3 +40,8 @@ class TrendNumberComponent(elements.BaseMetricsElement):
 
     class Meta:
         icon = "arrows-up-down"
+
+
+class PercentageNumberComponent(HeadlineNumberComponent):
+    class Meta:
+        icon = "percentage"

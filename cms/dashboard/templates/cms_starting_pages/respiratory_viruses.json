@@ -1,20 +1,20 @@
 {
-    "id": 6,
+    "id": 243,
     "meta": {
         "type": "home.HomePage",
-        "detail_url": "http://localhost/api/pages/6/",
+        "detail_url": "http://localhost/api/pages/243/",
         "html_url": null,
         "slug": "respiratory-viruses",
         "show_in_menus": false,
         "seo_title": "",
         "search_description": "",
-        "first_published_at": "2023-04-26T12:39:38.064114+01:00",
+        "first_published_at": "2023-05-17T14:10:01.068163+01:00",
         "alias_of": null,
         "parent": {
-            "id": 2,
+            "id": 242,
             "meta": {
-                "type": "wagtailcore.Page",
-                "detail_url": "http://localhost/api/pages/2/",
+                "type": "home.HomePage",
+                "detail_url": "http://localhost/api/pages/242/",
                 "html_url": null
             },
             "title": "UKHSA Dashboard Root"
@@ -138,13 +138,13 @@
                                                 "id": "ae3344f7-5b23-4977-bea9-2e1ccd84eb50"
                                             },
                                             {
-                                                "type": "headline_number",
+                                                "type": "percentage_number",
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "latest_vaccinations_uptake_autumn22",
-                                                    "body": "Percentage uptake (%)"
+                                                    "body": "Percentage uptake"
                                                 },
-                                                "id": "65f00bd6-d027-4e9f-8b15-8c15e1992ba6"
+                                                "id": "369587e1-5a30-4152-94d6-e6b43b812d76"
                                             }
                                         ]
                                     },
@@ -156,13 +156,13 @@
                                         "title": "Testing",
                                         "rows": [
                                             {
-                                                "type": "headline_number",
+                                                "type": "percentage_number",
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "positivity_7days_latest",
-                                                    "body": "Virus tests positivity (%)"
+                                                    "body": "Virus tests positivity"
                                                 },
-                                                "id": "7d1523f9-9732-43be-8c81-094c66efed3f"
+                                                "id": "36746bcd-1dce-4e5e-81f8-60c8b9994540"
                                             }
                                         ]
                                     },
@@ -330,13 +330,13 @@
                                         "title": "Testing",
                                         "rows": [
                                             {
-                                                "type": "headline_number",
+                                                "type": "percentage_number",
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "weekly_positivity_latest",
-                                                    "body": "Virus tests positivity (%)"
+                                                    "body": "Virus tests positivity"
                                                 },
-                                                "id": "879a0bbd-83fd-4685-b674-37372356c4f6"
+                                                "id": "36ec8822-56e2-4513-ac8f-969e84f0d5e8"
                                             }
                                         ]
                                     },
@@ -437,40 +437,40 @@
     ],
     "related_links": [
         {
-            "id": 1,
+            "id": 111,
             "meta": {"type": "home.HomePageRelatedLink"},
             "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
             "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"cc1q7\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 2,
+            "id": 112,
             "meta": {"type": "home.HomePageRelatedLink"},
             "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
             "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
             "body": "<p data-block-key=\"cc1q7\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
         },
         {
-            "id": 3,
+            "id": 113,
             "meta": {"type": "home.HomePageRelatedLink"},
             "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
             "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
             "body": "<p data-block-key=\"cc1q7\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {
-            "id": 4,
+            "id": 114,
             "meta": {"type": "home.HomePageRelatedLink"},
             "title": "Hepatitis (liver inflammation) cases in children – latest updates",
             "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
             "body": "<p data-block-key=\"cc1q7\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
         },
         {
-            "id": 5,
+            "id": 115,
             "meta": {"type": "home.HomePageRelatedLink"},
             "title": "Human parainfluenza viruses: guidance and data",
             "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
             "body": "<p data-block-key=\"cc1q7\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-10T15:18:06.939535+01:00"
+    "last_published_at": "2023-06-01T11:47:58.198864+01:00"
 }

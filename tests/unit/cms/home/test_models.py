@@ -198,11 +198,11 @@ class TestTemplateHomePage:
             == self.expected_trend_number_block_body
         )
 
-    def test_coronavirus_section_headline_number_row_dual_headline_column(self):
+    def test_coronavirus_section_headline_number_row_headline_and_percentage_blocks(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
-        Then the 4th column component which is a dual headline component
+        Then the 4th column component which has headline and percentage number blocks
             in the headline numbers row card within the coronavirus section
             is being set correctly
         """
@@ -220,8 +220,7 @@ class TestTemplateHomePage:
         fourth_column_component = headline_number_row_columns[3].value
         assert fourth_column_component["title"] == "Vaccines"
 
-        # This is column component has 2 headline number blocks
-        # Check that the top headline_number block has the correct params
+        # This is column component which has a headline number block at the top
         fourth_column_headline_block_value = fourth_column_component["rows"][0].value
         assert fourth_column_headline_block_value["topic"] == self.covid_19
         assert (
@@ -230,20 +229,21 @@ class TestTemplateHomePage:
         )
         assert fourth_column_headline_block_value["body"] == "Autumn booster"
 
-        # Check that the bottom headline_number block has the correct params
-        fourth_column_trend_block_value = fourth_column_component["rows"][1].value
-        assert fourth_column_trend_block_value["topic"] == self.covid_19
+        # Check that the bottom percentage block has the correct params
+        assert fourth_column_component["rows"][1].block_type == "percentage_number"
+        fourth_column_percentage_block_value = fourth_column_component["rows"][1].value
+        assert fourth_column_percentage_block_value["topic"] == self.covid_19
         assert (
-            fourth_column_trend_block_value["metric"]
+            fourth_column_percentage_block_value["metric"]
             == "latest_vaccinations_uptake_autumn22"
         )
-        assert fourth_column_trend_block_value["body"] == "Percentage uptake (%)"
+        assert fourth_column_percentage_block_value["body"] == "Percentage uptake"
 
-    def test_coronavirus_section_headline_number_row_single_headline_column(self):
+    def test_coronavirus_section_headline_number_row_single_headline_column_with_percentage_block(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
-        Then the 5th column component which is a single headline component
+        Then the 5th column component which is a percentage block as 1 row of a column
             in the headline numbers row card within the coronavirus section
             is being set correctly
         """
@@ -258,14 +258,15 @@ class TestTemplateHomePage:
         covid_content_section = covid_section.value["content"]
         headline_number_row_columns = covid_content_section[1].value["columns"]
 
-        # Note that this column component only has the 1 headline number component
-        # Check that the headline_number block has the correct params
+        # Note that this column component only has the 1 percentage number component
+        # Check that the percentage block has the correct params
         fifth_column_value = headline_number_row_columns[4].value
         assert fifth_column_value["title"] == "Testing"
-        fifth_column_headline_block_value = fifth_column_value["rows"][0].value
-        assert fifth_column_headline_block_value["topic"] == self.covid_19
-        assert fifth_column_headline_block_value["metric"] == "positivity_7days_latest"
-        assert fifth_column_headline_block_value["body"] == "Virus tests positivity (%)"
+        assert fifth_column_value["rows"][0].block_type == "percentage_number"
+        fifth_column_percentage_block_value = fifth_column_value["rows"][0].value
+        assert fifth_column_percentage_block_value["topic"] == self.covid_19
+        assert fifth_column_percentage_block_value["metric"] == "positivity_7days_latest"
+        assert fifth_column_percentage_block_value["body"] == "Virus tests positivity"
 
     def test_coronavirus_section_chart_row_card(self):
         """

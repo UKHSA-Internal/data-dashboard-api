@@ -1,7 +1,11 @@
 from wagtail import blocks
 
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.components import HeadlineNumberComponent, TrendNumberComponent
+from cms.dynamic_content.components import (
+    HeadlineNumberComponent,
+    PercentageNumberComponent,
+    TrendNumberComponent,
+)
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
@@ -13,6 +17,9 @@ class HeadlineNumberBlockTypes(blocks.StreamBlock):
     )
     trend_number = TrendNumberComponent(
         help_text=help_texts.TREND_BLOCK_FIELD_HELP_TEXT
+    )
+    percentage_number = PercentageNumberComponent(
+        help_text=help_texts.PERCENTAGE_BLOCK_FIELD_HELP_TEXT
     )
 
     class Meta:

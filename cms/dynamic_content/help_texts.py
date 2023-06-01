@@ -39,6 +39,12 @@ as well as colouring of the block to indicate the context of the change.
 You can also optionally add a body of text to accompany that headline number.
 E.g. "Last 7 days"
 """
+PERCENTAGE_BLOCK_FIELD_HELP_TEXT: str = """
+This component will display a percentage number type metric.
+This will display the value of the metric appended with a % character.
+You can also optionally add a body of text to accompany this percentage number.
+E.g. "Virus tests positivity".
+"""
 
 TOP_HEADLINE_BLOCK_FIELD_HELP_TEXT: str = """
 This will display a key headline number type metric as the top half of this column component.
