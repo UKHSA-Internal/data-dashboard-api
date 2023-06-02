@@ -22,7 +22,7 @@ class TestCustomAPIKeyManager:
         "kwargs_for_create_key",
         [
             {"password_prefix": "12345678", "name": "fake_name"},
-            {"password_suffix": "bnmabnmahiu19290", "name": "fake_name"},
+            {"password_suffix": "12345678910123456789", "name": "fake_name"},
             {"name": "fake_name"},
         ],
     )
