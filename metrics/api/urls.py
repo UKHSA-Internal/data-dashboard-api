@@ -18,6 +18,7 @@ from metrics.api.views import (
     FileUploadView,
     HeadlinesView,
     HealthView,
+    OldChartsView,
     OldTabularView,
     TablesView,
     TrendsView,
@@ -76,7 +77,7 @@ urlpatterns = [
     path("", include(static_urlpatterns)),
     # Endpoints to be migrated away from
     re_path(r"^upload/$", FileUploadView.as_view()),
-    re_path(r"^charts/v2", ChartsView.as_view()),
+    re_path(r"^charts/v2", OldChartsView.as_view()),
     re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(
