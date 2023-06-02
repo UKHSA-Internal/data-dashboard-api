@@ -1,4 +1,4 @@
-from .charts import ChartsView
+from .charts import ChartsView, OldChartsView
 from .downloads import DownloadsView
 from .file_upload import FileUploadView
 from .headlines import HeadlinesView

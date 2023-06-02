@@ -1,10 +1,15 @@
 import datetime
+from typing import List
 from unittest import mock
 
+import plotly.graph_objects
+
+from metrics.domain.charts.line_multi_coloured import generation
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
+    determine_last_updated,
     generate_chart,
     validate_chart_plot_parameters,
     validate_each_requested_chart_plot,
@@ -457,3 +462,109 @@ class TestValidateChartPlotParameters:
 
         # Then
         spy_validate_method.assert_called_once()
+
+
+class TestLastUpdated:
+    plot_1_dates: List[datetime.date] = [
+        datetime.date(2022, 9, 5),
+        datetime.date(2022, 9, 19),
+        datetime.date(2022, 10, 3),
+        datetime.date(2022, 10, 7),
+        datetime.date(2022, 10, 21),
+        datetime.date(2022, 11, 3),
+        datetime.date(2022, 11, 14),
+        datetime.date(2022, 12, 12),
+        datetime.date(2022, 12, 26),
+        datetime.date(2023, 1, 9),
+    ]
+    plot_1_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    plot_2_dates: List[datetime.date] = [
+        datetime.date(2020, 9, 5),
+        datetime.date(2022, 9, 19),
+        datetime.date(2023, 3, 9),
+    ]
+    plot_2_values = [10, 20, 30]
+
+    @staticmethod
+    def _create_chart_plot_data(
+        x_axis: List[datetime.date],
+        y_axis: List[int],
+    ) -> PlotsData:
+        plot_params = PlotParameters(
+            chart_type="line_multi_coloured",
+            topic="RSV",
+            metric="weekly_positivity_by_age",
+        )
+        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+
+    def test_determine_last_updated_chart_has_dates(self):
+        """
+        Given a multi coloured line chart with two plots
+        and with dates along the x axis
+        When `determine_last_updated()` is called
+        Then we get back the latest date along the x axis
+        """
+
+        # Given
+
+        first_chart_plots_data = self._create_chart_plot_data(
+            x_axis=self.plot_1_dates,
+            y_axis=self.plot_1_values,
+        )
+
+        second_chart_plots_data = self._create_chart_plot_data(
+            x_axis=self.plot_2_dates,
+            y_axis=self.plot_2_values,
+        )
+
+        # When
+        figure = generation.generate_chart_figure(
+            chart_height=300,
+            chart_width=400,
+            chart_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        )
+
+        last_update_date: str = determine_last_updated(figure)
+
+        # Then
+        expected_date: str = "2023-03-09"
+
+        assert last_update_date == expected_date
+
+    def test_determine_last_updated_chart_does_not_have_dates(self):
+        """
+        Given a multi coloured line chart with two plots
+        and with something other than dates along the x axis
+        When `determine_last_updated()` is called
+        Then we get back nothing
+        """
+
+        # Given
+
+        first_chart_plots_data = self._create_chart_plot_data(
+            x_axis=self.plot_1_dates,
+            y_axis=self.plot_1_values,
+        )
+
+        second_chart_plots_data = self._create_chart_plot_data(
+            x_axis=self.plot_2_dates,
+            y_axis=self.plot_2_values,
+        )
+
+        # When
+        figure = generation.generate_chart_figure(
+            chart_height=300,
+            chart_width=400,
+            chart_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        )
+
+        # Simulate the chart has something other than dates along the x axis
+        figure.update_xaxes({"type": "-"})
+
+        last_update_date: str = determine_last_updated(figure)
+
+        # Then
+        expected_date: str = ""
+
+        assert last_update_date == expected_date

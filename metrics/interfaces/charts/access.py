@@ -1,4 +1,5 @@
-from typing import Dict, List, Optional, Union
+from datetime import datetime
+from typing import Dict, List, Optional, Tuple, Union
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -210,15 +211,15 @@ class ChartsInterface:
         return calculations.change_between_each_half(values=values)
 
 
-def generate_chart(chart_plots: PlotsCollection) -> str:
-    """Validates and creates a chart figure based of the parameters provided within the `chart_plots` model
+def generate_chart(chart_plots: PlotsCollection) -> Tuple[str, str]:
+    """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
 
     Args:
         chart_plots: The requested chart plots parameters
             encapsulated as a model
 
     Returns:
-        The filename of the created image
+        The filename of the created image and the last updated date if appropriate
 
     """
     validate_each_requested_chart_plot(chart_plots=chart_plots)
@@ -226,11 +227,42 @@ def generate_chart(chart_plots: PlotsCollection) -> str:
     library = ChartsInterface(chart_plots=chart_plots)
     figure = library.generate_chart_figure()
 
-    return write_figure(
-        figure=figure,
-        topic="-",
-        file_format=chart_plots.file_format,
+    date_updated = determine_last_updated(figure)
+
+    return (
+        write_figure(
+            figure=figure,
+            topic="-",
+            file_format=chart_plots.file_format,
+        ),
+        date_updated,
     )
+
+
+def determine_last_updated(figure: plotly.graph_objects.Figure) -> str:
+    """
+    If the chart has dates along the x-axis then extract the last dates from each plot
+      and return the latest date of all of them
+
+    Args:
+        figure: The generated plotly chart
+
+    Returns:
+        The last date in the chart
+    """
+    last_date = ""
+
+    if figure.layout.xaxis.type == "date":
+        last_dates = []
+
+        for trace in figure.data:
+            last_dates.append(max(trace.x))
+
+        # Now we have the end-dates from each of the plots return the latest one
+        # and convert datetime to a string
+        last_date = datetime.strftime(max(last_dates), "%Y-%m-%d")
+
+    return last_date
 
 
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
