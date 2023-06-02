@@ -102,5 +102,5 @@ class TestLoadCoreData(TestCase):
         )
 
         core_time_series_manager.bulk_create.assert_called_once_with(
-            [mock_model_list], ignore_conflicts=True
+            [mock_model_list], ignore_conflicts=True, batch_size=100
         )
