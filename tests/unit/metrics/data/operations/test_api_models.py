@@ -46,7 +46,8 @@ class TestGenerateWeeklyTimeSeries:
             mocked_create_api_time_series_from_core_time_series.return_value
         ] * 2
         spy_api_time_series_manager.bulk_create.assert_called_once_with(
-            objs=expected_created_api_time_series
+            objs=expected_created_api_time_series,
+            batch_size=100,
         )
 
     @mock.patch(f"{MODULE_PATH}.create_api_time_series_from_core_time_series")

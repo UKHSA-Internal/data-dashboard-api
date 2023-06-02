@@ -65,3 +65,9 @@ The width in pixels that you want to chart to be (default = 435 pixels)
 CHART_HEIGHT: str = """
 The height in pixels that you want to chart to be (default = 220 pixels)
 """
+TABLES_RESPONSE_DATE_HELP_TEXT: str = """
+The dates for the specified plots in a tabular format
+"""
+TABLES_RESPONSE_HELP_TEXT: str = """
+The specified plots in a tabular format
+"""

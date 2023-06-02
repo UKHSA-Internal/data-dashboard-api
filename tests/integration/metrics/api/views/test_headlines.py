@@ -1,6 +1,5 @@
 import datetime
 from http import HTTPStatus
-from unittest import mock
 
 import pytest
 from rest_framework.response import Response
@@ -29,8 +28,11 @@ class TestHeadlinesView:
     def path(self) -> str:
         return "/headlines/v2/"
 
+    @pytest.mark.parametrize("path", ["/headlines/v2/", "/api/headlines/v2/"])
     @pytest.mark.django_db
-    def test_get_returns_correct_response(self, authenticated_api_client: APIClient):
+    def test_get_returns_correct_response(
+        self, path: str, authenticated_api_client: APIClient
+    ):
         """
         Given the names of a `metric` and `topic`
         And an authenticated APIClient
@@ -47,16 +49,17 @@ class TestHeadlinesView:
 
         # When
         response: Response = authenticated_api_client.get(
-            path=self.path, data={"topic": topic_name, "metric": metric_name}
+            path=path, data={"topic": topic_name, "metric": metric_name}
         )
 
         # Then
         assert response.status_code == HTTPStatus.OK
         assert response.data == {"value": metric_value}
 
+    @pytest.mark.parametrize("path", ["/headlines/v2/", "/api/headlines/v2/"])
     @pytest.mark.django_db
     def test_get_returns_error_message_for_timeseries_type_metric(
-        self, authenticated_api_client: APIClient
+        self, path: str, authenticated_api_client: APIClient
     ):
         """
         Given a `topic` and a `metric` which has more than 1 record and is a timeseries type metric
@@ -79,7 +82,7 @@ class TestHeadlinesView:
 
         # When
         response: Response = authenticated_api_client.get(
-            path=self.path,
+            path=path,
             data={"topic": topic_name, "metric": incorrect_metric_name},
         )
 
@@ -88,8 +91,9 @@ class TestHeadlinesView:
         expected_error_message = f"`{incorrect_metric_name}` is a timeseries-type metric. This should be a headline-type metric"
         assert response.data == {"error_message": expected_error_message}
 
+    @pytest.mark.parametrize("path", ["/headlines/v2/", "/api/headlines/v2/"])
     @pytest.mark.django_db
-    def test_get_request_without_api_key_is_unauthorized(self):
+    def test_get_request_without_api_key_is_unauthorized(self, path: str):
         """
         Given the names of a `metric` and `topic`
         And an APIClient which is not authenticated
@@ -103,7 +107,7 @@ class TestHeadlinesView:
 
         # When
         response: Response = client.get(
-            path=self.path, data={"topic": topic_name, "metric": metric_name}
+            path=path, data={"topic": topic_name, "metric": metric_name}
         )
 
         # Then

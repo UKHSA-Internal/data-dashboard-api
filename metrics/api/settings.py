@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-c*9tu36z0@z70&x9+(phl(h@5u1epyogm!4%6j-aj+gi3a5-1y"
 
-DEBUG = True
+DEBUG = config.APIENV == "LOCAL"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -57,6 +57,8 @@ INSTALLED_APPS = [
     "wagtail.sites",
     "wagtail.users",
     "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
     "wagtail.search",
     "wagtail.admin",
     "wagtail",
@@ -138,6 +140,11 @@ else:
             "PORT": config.POSTGRES_PORT,
         }
     }
+
+# Set the lifetime of a database connection to be 1 minute
+# By default, the connection is closed at the end of every request
+CONN_MAX_AGE = 60
+CONN_HEALTH_CHECKS = True
 
 
 LOGGING = {

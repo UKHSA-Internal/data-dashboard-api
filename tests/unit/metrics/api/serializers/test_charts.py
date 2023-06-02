@@ -10,8 +10,9 @@ from metrics.api.serializers.charts import (
     ChartPlotSerializer,
     ChartsSerializer,
 )
-from metrics.domain.charts.line_multi_coloured import colour_scheme, properties
-from metrics.domain.models import ChartPlotParameters, ChartPlots
+from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.line_multi_coloured import properties
+from metrics.domain.models import PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -191,7 +192,9 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["label"] == label
 
-    @pytest.mark.parametrize("valid_colour_choice", colour_scheme.RGBAColours.choices())
+    @pytest.mark.parametrize(
+        "valid_colour_choice", colour_scheme.RGBAChartLineColours.choices()
+    )
     def test_valid_payload_with_optional_line_colour_field_provided(
         self,
         valid_colour_choice: Tuple[str, str],
@@ -420,7 +423,7 @@ class TestChartPlotSerializer:
 
         # When
         serializer.is_valid(raise_exception=True)
-        chart_plot_parameters: ChartPlotParameters = serializer.to_models()
+        chart_plot_parameters: PlotParameters = serializer.to_models()
 
         # Then
         assert chart_plot_parameters.topic == valid_data_payload["topic"]
@@ -563,7 +566,7 @@ class TestChartsSerializer:
 
         # When
         is_serializer_valid: bool = serializer.is_valid()
-        serialized_model_data: ChartPlots = serializer.to_models()
+        serialized_model_data: PlotsCollection = serializer.to_models()
 
         # Then
         assert is_serializer_valid
@@ -598,11 +601,11 @@ class TestChartsSerializer:
 
         # When
         serializer.is_valid()
-        chart_plots_serialized_models: ChartPlots = serializer.to_models()
+        chart_plots_serialized_models: PlotsCollection = serializer.to_models()
 
         # Then
-        chart_plot_params_model = ChartPlotParameters(**chart_plots[0])
-        expected_chart_plots_model = ChartPlots(
+        chart_plot_params_model = PlotParameters(**chart_plots[0])
+        expected_chart_plots_model = PlotsCollection(
             plots=[chart_plot_params_model],
             file_format=valid_data_payload["file_format"],
             chart_height=valid_data_payload["chart_height"],

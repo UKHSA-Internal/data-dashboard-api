@@ -3,43 +3,8 @@ from typing import List
 
 import plotly
 
-from metrics.domain.charts import type_hints
-from metrics.domain.charts.line_with_shaded_section import colour_scheme, information
-
-X_AXIS_ARGS: type_hints.AXIS_ARGS = {
-    "showgrid": False,
-    "zeroline": False,
-    "showline": False,
-    "ticks": "outside",
-    "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
-    "tickfont": {
-        "family": "Arial",
-        "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
-    },
-}
-
-Y_AXIS_ARGS: type_hints.AXIS_ARGS = {
-    "showgrid": False,
-    "showticklabels": False,
-}
-
-TIMESERIES_LAYOUT_ARGS: type_hints.LAYOUT_ARGS = {
-    "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-    "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-    "margin": {
-        "l": 0,
-        "r": 0,
-        "b": 4,
-        "t": 0,
-    },
-    "showlegend": False,
-    "autosize": False,
-    "xaxis": X_AXIS_ARGS,
-    "yaxis": Y_AXIS_ARGS,
-}
+from metrics.domain.charts import chart_settings, colour_scheme
+from metrics.domain.charts.line_with_shaded_section import information
 
 
 def create_line_chart_with_shaded_section(
@@ -110,15 +75,18 @@ def create_line_chart_with_shaded_section(
     # Add the highlighted section plot to the figure
     figure.add_trace(trace=shaded_section_plot)
 
+    # Apply the typical stylings for timeseries charts
+    figure.update_layout(**chart_settings.CHART_SETTINGS)
+
     # Set the height and width of the chart itself
+    # And remove the legend
     figure.update_layout(
         {
             "height": chart_height,
             "width": chart_width,
+            "showlegend": False,
         }
     )
-    # Apply the typical stylings for timeseries charts
-    figure.update_layout(**TIMESERIES_LAYOUT_ARGS)
 
     return figure
 
@@ -135,7 +103,7 @@ def _create_main_line_plot(
         y=values[: preceding_data_points_count + 1],
         line={
             "width": line_width,
-            "color": colour_scheme.RGBAColours.DARK_GREY.stringified,
+            "color": colour_scheme.RGBAColours.LS_DARK_GREY.stringified,
         },
         line_shape=line_shape,
     )

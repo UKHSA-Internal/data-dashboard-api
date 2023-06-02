@@ -3,7 +3,8 @@ from typing import List
 
 import plotly.graph_objects
 
-from metrics.domain.charts.line_with_shaded_section import colour_scheme, generation
+from metrics.domain.charts.colour_scheme import RGBAColours
+from metrics.domain.charts.line_with_shaded_section import generation
 
 DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -43,7 +44,7 @@ class TestLineWithShadedSectionCharts:
         # ---Main background checks---
         main_layout = figure.layout
         # Check that the main background colour is a plain white
-        assert main_layout.paper_bgcolor == colour_scheme.RGBAColours.WHITE.stringified
+        assert main_layout.paper_bgcolor == RGBAColours.WHITE.stringified
         assert not main_layout.showlegend
 
         # Check the chart sizes are as per the specified parameters
@@ -104,7 +105,7 @@ class TestLineWithShadedSectionCharts:
 
         # The main line should be drawn as a neutral dark grey `spline` plot
         main_line = main_line_plot.line
-        assert main_line.color == colour_scheme.RGBAColours.DARK_GREY.stringified
+        assert main_line.color == RGBAColours.LS_DARK_GREY.stringified
         assert main_line.shape == "spline"
 
         # The main line should also not include the last number of points denoted by the `rolling_period_slice` arg
@@ -119,17 +120,11 @@ class TestLineWithShadedSectionCharts:
         # ---Shaded section plot checks---
         shaded_section_plot: plotly.graph_objects.Scatter = figure.data[1]
         # The shaded section plot should be drawn as a spline plot with a line colour of dark red
-        assert (
-            shaded_section_plot.line.color
-            == colour_scheme.RGBAColours.DARK_RED.stringified
-        )
+        assert shaded_section_plot.line.color == RGBAColours.DARK_RED.stringified
         assert shaded_section_plot.line.shape == "spline"
 
         # The shaded section plot should be filled with a light red colour of 50% opacity
-        assert (
-            shaded_section_plot.fillcolor
-            == colour_scheme.RGBAColours.LIGHT_RED.stringified
-        )
+        assert shaded_section_plot.fillcolor == RGBAColours.LIGHT_RED.stringified
         assert shaded_section_plot.opacity == 0.5
 
         # The shaded section plot should only include the last number of points
@@ -175,7 +170,7 @@ class TestLineWithShadedSectionCharts:
 
         # The main line should be drawn as a neutral dark grey `spline` plot
         main_line = main_line_plot.line
-        assert main_line.color == colour_scheme.RGBAColours.DARK_GREY.stringified
+        assert main_line.color == RGBAColours.LS_DARK_GREY.stringified
         assert main_line.shape == "spline"
 
         # The main line should also not include the last number of points denoted by the `rolling_period_slice` arg
@@ -190,17 +185,11 @@ class TestLineWithShadedSectionCharts:
         # ---Shaded section plot checks---
         shaded_section_plot: plotly.graph_objects.Scatter = figure.data[1]
         # The shaded section plot should be drawn as a spline plot with a line colour of dark green
-        assert (
-            shaded_section_plot.line.color
-            == colour_scheme.RGBAColours.DARK_GREEN.stringified
-        )
+        assert shaded_section_plot.line.color == RGBAColours.LS_DARK_GREEN.stringified
         assert shaded_section_plot.line.shape == "spline"
 
         # The shaded section plot should be filled with a light green colour of 50% opacity
-        assert (
-            shaded_section_plot.fillcolor
-            == colour_scheme.RGBAColours.LIGHT_GREEN.stringified
-        )
+        assert shaded_section_plot.fillcolor == RGBAColours.LS_LIGHT_GREEN.stringified
         assert shaded_section_plot.opacity == 0.5
 
         # The shaded section plot should only include the last number of points

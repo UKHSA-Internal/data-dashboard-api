@@ -12,6 +12,8 @@ from metrics.interfaces.trends.access import (
     generate_trend_numbers,
 )
 
+TRENDS_API_TAG = "trends"
+
 
 class TrendsView(APIView):
     permission_classes = [HasAPIKey]
@@ -19,6 +21,7 @@ class TrendsView(APIView):
     @extend_schema(
         parameters=[TrendsQuerySerializer],
         responses={HTTPStatus.OK.value: TrendsResponseSerializer},
+        tags=[TRENDS_API_TAG],
     )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.

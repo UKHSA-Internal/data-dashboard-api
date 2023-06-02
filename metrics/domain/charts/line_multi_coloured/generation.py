@@ -3,41 +3,12 @@ from typing import List
 
 import plotly
 
-from metrics.domain.charts.line_multi_coloured import colour_scheme, properties
-from metrics.domain.models import ChartPlotData
+from metrics.domain.charts import chart_settings, type_hints
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
+from metrics.domain.charts.line_multi_coloured import properties
+from metrics.domain.models import PlotsData
 
-X_AXIS_ARGS = {
-    "showgrid": False,
-    "zeroline": False,
-    "showline": False,
-    "ticks": "outside",
-    "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
-    "tickfont": {
-        "family": "Arial",
-        "color": colour_scheme.RGBAColours.BLACK.stringified,
-    },
-}
-
-Y_AXIS_ARGS = {
-    "showgrid": False,
-    "showticklabels": False,
-}
-
-LAYOUT_ARGS = {
-    "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-    "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
-    "margin": {
-        "l": 0,
-        "r": 0,
-        "b": 0,
-        "t": 0,
-    },
-    "autosize": False,
-    "xaxis": X_AXIS_ARGS,
-    "yaxis": Y_AXIS_ARGS,
+LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.CHART_SETTINGS | {
     "legend": {
         "orientation": "h",
         "y": 1.0,
@@ -51,7 +22,7 @@ LAYOUT_ARGS = {
 def create_multi_coloured_line_chart(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[ChartPlotData],
+    chart_plots_data: List[PlotsData],
     line_shape: str,
     line_width: int = 2,
 ) -> plotly.graph_objs.Figure:
@@ -74,7 +45,7 @@ def create_multi_coloured_line_chart(
     figure = plotly.graph_objects.Figure()
 
     for plot_data in chart_plots_data:
-        selected_colour = colour_scheme.RGBAColours.get_colour(
+        selected_colour = RGBAChartLineColours.get_colour(
             colour=plot_data.parameters.line_colour
         )
         selected_line_type = properties.ChartLineTypes.get_chart_line_type(
@@ -136,7 +107,7 @@ def _create_line_plot(
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[ChartPlotData],
+    chart_plots_data: List[PlotsData],
     line_shape: str = "spline",
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.

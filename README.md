@@ -12,20 +12,21 @@ Note that to use the `Makefile` you will need
 
 ## Initial configuration 
 
-There are a number of steps to take before getting the environment setup locally.
+There are a number of steps to take before getting the environment setup for local development.
 
-1. Ensure you have the `APIENV` environment variable set to `"LOCAL"`. 
+1. Ensure you have the `APIENV` environment variable set to `LOCAL`. 
 ```bash
 export APIENV=LOCAL
 ```
 To do this, you should include this line in an `.env` file at the root level of the project.
+This will ensure that the Django `DEBUG` setting is set to True and the app will use a local sqlite database.
 
 2. Set up the virtual environment and install the project dependencies via:
 ```bash
 make setup-venv
 ```
 
-3. Apply the database migrations and run the server.
+3. Apply the database migrations, ensure Django collects static files and run the server.
 ```bash
 make run-server
 ```
@@ -65,8 +66,8 @@ You can check for known vulnerabilities in the codebase with the following comma
 ```bash
 make audit
 ```
----
 
+---
 
 
 ### Running tests
@@ -93,6 +94,34 @@ You can check these by running the following command:
 ```bash
 make architecture
 ```
+
+---
+
+## Remote infrastructure
+
+When developing locally, you should have the `APIENV` environment variable set to `LOCAL`.
+However, if you wish to connect to remote infrastructure, then you can do so by configuring 
+the following environment variables:
+
+- `APIENV` - The name of the environment. Must not be `LOCAL` for remote development.
+- `POSTGRES_DB` - The name of the database
+- `POSTGRES_USER` - The name of the user on the database
+- `POSTGRES_PASSWORD` - The password associated with the database
+- `POSTGRES_HOST` - The hostname of the database
+- `POSTGRES_PORT` - (Optional) The port to connect to on the database, defaults to 5432
+
+Note that with the environment variable `APIENV` set to anything other than `LOCAL`, 
+the underlying Django `DEBUG` setting will be set to False.
+
+In turn this will mean you have to run the following management command 
+for the app to collect the necessary static files:
+
+```
+python manage.py collectstatic
+```
+
+Alternatively, if you are using the `make run-server` command to start your server, 
+then this will be handled for you and you will not need to manually run `python manage.py collectstatic`.
 
 ---
 

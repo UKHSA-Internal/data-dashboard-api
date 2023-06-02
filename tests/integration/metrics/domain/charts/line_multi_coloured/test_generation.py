@@ -3,8 +3,9 @@ from typing import List
 
 import plotly.graph_objects
 
-from metrics.domain.charts.line_multi_coloured import colour_scheme, generation
-from metrics.domain.models import ChartPlotData, ChartPlotParameters
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
+from metrics.domain.charts.line_multi_coloured import generation
+from metrics.domain.models import PlotParameters, PlotsData
 
 DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -32,8 +33,8 @@ class TestLineMultiColouredCharts:
         label: str = "",
         line_type: str = "",
         line_colour: str = "",
-    ) -> ChartPlotData:
-        plot_params = ChartPlotParameters(
+    ) -> PlotsData:
+        plot_params = PlotParameters(
             chart_type="line_multi_coloured",
             topic="RSV",
             metric="weekly_positivity_by_age",
@@ -42,7 +43,7 @@ class TestLineMultiColouredCharts:
             line_type=line_type,
             line_colour=line_colour,
         )
-        return ChartPlotData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
 
     def test_main_plot_and_axis_properties(self):
         """
@@ -68,7 +69,7 @@ class TestLineMultiColouredCharts:
         # ---Main background checks---
         main_layout = figure.layout
         # Check that the main background colour is a plain white
-        assert main_layout.paper_bgcolor == colour_scheme.RGBAColours.WHITE.stringified
+        assert main_layout.paper_bgcolor == RGBAColours.WHITE.stringified
         # Check that the main layout is showing the legend
         assert main_layout.showlegend
 
@@ -159,7 +160,7 @@ class TestLineMultiColouredCharts:
         assert first_plot_line.dash == first_plot_line_type.lower()
 
         # Check that the first plotted line has been set with the correct colour
-        expected_rgba_for_first_plot = colour_scheme.RGBAColours[first_plot_colour]
+        expected_rgba_for_first_plot = RGBAChartLineColours[first_plot_colour]
         assert first_plot_line.color == expected_rgba_for_first_plot.stringified
 
         # ---Second line plot checks---
@@ -181,5 +182,5 @@ class TestLineMultiColouredCharts:
         assert second_plot_line.dash == second_plot_line_type.lower()
 
         # Check that the second plotted line has been set with the correct colour
-        expected_rgba_for_second_plot = colour_scheme.RGBAColours[second_plot_colour]
+        expected_rgba_for_second_plot = RGBAChartLineColours[second_plot_colour]
         assert second_plot_line.color == expected_rgba_for_second_plot.stringified

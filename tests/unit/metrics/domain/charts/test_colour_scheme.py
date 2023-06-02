@@ -2,24 +2,22 @@ from typing import List, Optional
 
 import pytest
 
-from metrics.domain.charts.line_multi_coloured import colour_scheme
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
 
 class TestRGBAColours:
-    @pytest.mark.parametrize("rgba_enum", colour_scheme.RGBAColours)
-    def test_stringified_returns_correct_string(
-        self, rgba_enum: colour_scheme.RGBAColours
-    ):
+    @pytest.mark.parametrize("rgba_enum", RGBAChartLineColours)
+    def test_stringified_returns_correct_string(self, rgba_enum: RGBAChartLineColours):
         """
-        Given any of the values of the `RGBAColours` enum
+        Given any of the values of the `RGBAChartLineColours` enum
         When the `stringified` property is called
         Then the correct string is returned for that enum value.
 
-        E.g. If RGBAColours.WHITE.stringified is called,
+        E.g. If RGBAChartLineColours.WHITE.stringified is called,
             then "rgba(0, 0, 0, 0)" is returned
         """
         # Given
-        rgba_colour_enum: colour_scheme.RGBAColours = rgba_enum
+        rgba_colour_enum: RGBAChartLineColours = rgba_enum
 
         # When
         stringified_rgba_value: str = rgba_colour_enum.stringified
@@ -27,8 +25,8 @@ class TestRGBAColours:
         # Then
         assert stringified_rgba_value == f"rgba{rgba_colour_enum.value}"
 
-    @pytest.mark.parametrize("rgba_enum", colour_scheme.RGBAColours)
-    def test_get_colour(self, rgba_enum: colour_scheme.RGBAColours):
+    @pytest.mark.parametrize("rgba_enum", RGBAChartLineColours)
+    def test_get_colour(self, rgba_enum: RGBAChartLineColours):
         """
         Given a valid colour string e.g. "RED"
         When `get_colour()` is called from the `RGBAColours` class
@@ -38,12 +36,12 @@ class TestRGBAColours:
         colour: str = rgba_enum.name
 
         # When
-        retrieved_colour: colour_scheme.RGBAColours = (
-            colour_scheme.RGBAColours.get_colour(colour=colour)
+        retrieved_colour: RGBAChartLineColours = RGBAChartLineColours.get_colour(
+            colour=colour
         )
 
         # Then
-        assert type(retrieved_colour) is colour_scheme.RGBAColours
+        assert type(retrieved_colour) is RGBAChartLineColours
         assert retrieved_colour.name == colour
 
     @pytest.mark.parametrize(
@@ -59,8 +57,8 @@ class TestRGBAColours:
         colour: str = invalid_colour
 
         # When
-        retrieved_colour = colour_scheme.RGBAColours.get_colour(colour=colour)
+        retrieved_colour = RGBAChartLineColours.get_colour(colour=colour)
 
         # Then
-        assert type(retrieved_colour) is colour_scheme.RGBAColours
-        assert retrieved_colour == colour_scheme.RGBAColours.BLACK
+        assert type(retrieved_colour) is RGBAChartLineColours
+        assert retrieved_colour == RGBAChartLineColours.BLACK

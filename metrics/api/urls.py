@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path, re_path
+from django.views.static import serve
 from drf_spectacular.views import (
     SpectacularJSONAPIView,
     SpectacularRedocView,
@@ -17,7 +18,8 @@ from metrics.api.views import (
     FileUploadView,
     HeadlinesView,
     HealthView,
-    TabularView,
+    OldTabularView,
+    TablesView,
     TrendsView,
 )
 from metrics.public_api.urls import urlpatterns as public_api_urlpatterns
@@ -34,6 +36,11 @@ api_router = WagtailAPIRouter("wagtailapi")
 # The second parameter is the endpoint class that handles the requests
 api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 
+static_urlpatterns = [
+    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+]
+
+API_PREFIX = "api/"
 
 urlpatterns = [
     path("", include(router.urls)),
@@ -48,19 +55,36 @@ urlpatterns = [
     ),
     # Redoc schema view
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    # Main API
+    re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
+    re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
+    re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
+    re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
+    re_path(
+        f"^{API_PREFIX}tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
+        OldTabularView.as_view(),
+    ),
+    re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
+    re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
+    path("health/", HealthView.as_view()),
+    # Django admin
+    path("admin/", admin.site.urls),
+    # CMS endpoints
+    path("api/", api_router.urls),
+    path("cms-admin/", include(wagtailadmin_urls)),
+    # Static files
+    path("", include(static_urlpatterns)),
+    # Endpoints to be migrated away from
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
     re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(
         r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
-        TabularView.as_view(),
+        OldTabularView.as_view(),
     ),
+    re_path(r"^tables/v2", TablesView.as_view()),
     re_path(r"^trends/v2", TrendsView.as_view()),
-    path("health/", HealthView.as_view()),
-    path("admin/", admin.site.urls),
-    path("api/", api_router.urls),
-    path("cms-admin/", include(wagtailadmin_urls)),
 ]
 
 urlpatterns += public_api_urlpatterns

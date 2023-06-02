@@ -1,31 +1,6 @@
-from enum import Enum
-from typing import List, Tuple
+from typing import List
 
-RGBA_VALUES = Tuple[int, int, int, int]
-
-
-class RGBAColours(Enum):
-    # Used for the background paper colour
-    WHITE: RGBA_VALUES = 255, 255, 255, 0
-
-    # Used for the background plot colour
-    LIGHT_GREY: RGBA_VALUES = 231, 231, 231, 0
-
-    # Used for the neutral cells which do not have a threshold value
-    GREY: RGBA_VALUES = 216, 216, 216, 1
-
-    # Used for the 1st value
-    LIGHT_GREEN: RGBA_VALUES = 119, 196, 191, 1
-
-    # Used for the 2nd value
-    MIDDLE_GREEN: RGBA_VALUES = 0, 156, 145, 1
-
-    # Used for the 3rd value
-    DARK_GREEN: RGBA_VALUES = 0, 65, 65, 1
-
-    @property
-    def stringified(self) -> str:
-        return f"rgba{self.value}"
+from metrics.domain.charts import colour_scheme
 
 
 class InvalidIdentifierError(Exception):
@@ -53,10 +28,10 @@ def build_color_scale(identifier: int) -> List[List]:
             either 1, 2 or 3 is provided.
 
     """
-    background_rgb_colour: str = RGBAColours.GREY.stringified
+    background_rgb_colour: str = colour_scheme.RGBAColours.GREY.stringified
 
     if identifier == 3:
-        darkest_plot_rgb_colour: str = RGBAColours.DARK_GREEN.stringified
+        darkest_plot_rgb_colour: str = colour_scheme.RGBAColours.DARK_GREEN.stringified
         return [
             [0, background_rgb_colour],
             [0.5, darkest_plot_rgb_colour],
@@ -65,7 +40,7 @@ def build_color_scale(identifier: int) -> List[List]:
         ]
 
     if identifier == 2:
-        middle_plot_rgb_colour: str = RGBAColours.MIDDLE_GREEN.stringified
+        middle_plot_rgb_colour: str = colour_scheme.RGBAColours.MIDDLE_GREEN.stringified
         return [
             [0, background_rgb_colour],
             [0.5, middle_plot_rgb_colour],
@@ -73,7 +48,9 @@ def build_color_scale(identifier: int) -> List[List]:
             [1, middle_plot_rgb_colour],
         ]
     if identifier == 1:
-        lightest_plot_rgb_colour: str = RGBAColours.LIGHT_GREEN.stringified
+        lightest_plot_rgb_colour: str = (
+            colour_scheme.RGBAColours.LIGHT_GREEN.stringified
+        )
         return [
             [0, background_rgb_colour],
             [0.5, background_rgb_colour],

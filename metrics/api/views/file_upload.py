@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.data.operations.api_models import generate_api_time_series
 from metrics.data.operations.core_models import load_core_data
+
+UPLOAD_API_TAG = ["upload"]
 
 
 class FileUploadView(APIView):
@@ -21,11 +22,11 @@ class FileUploadView(APIView):
             }
         },
         deprecated=True,
+        tags=[UPLOAD_API_TAG],
     )
     def put(self, request, *args, **kwargs):
         """
         Note that this endpoint is **deprecated** and should only be used for demo/testing purposes.
         """
         load_core_data(filename=request.FILES.get("file"))
-        generate_api_time_series()
         return Response(status=204)

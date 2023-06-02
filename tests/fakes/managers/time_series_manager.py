@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import Optional, Union
 
 from metrics.data import enums
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
@@ -34,8 +34,13 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         ]
 
     def get_count(
-        self, topic_name: str, metric_name: str, date_from: datetime.datetime
+        self,
+        topic_name: str,
+        metric_name: str,
+        date_from: Union[datetime.datetime, str],
     ) -> int:
+        date_from = _convert_string_to_date(date_string=date_from)
+
         filtered_for_metric_topic_and_date = [
             x
             for x in self.time_series
@@ -68,6 +73,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
     ):
+        date_from = _convert_string_to_date(date_string=date_from)
+
         filtered_time_series = [
             time_series
             for time_series in self.time_series
@@ -96,3 +103,26 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             (time_series.dt, time_series.metric_value)
             for time_series in filtered_time_series
         ]
+
+
+def _convert_string_to_date(date_string: str) -> datetime.date:
+    """Convenience function to convert date strings to `datetime.date` objects.
+
+    Notes:
+        The Django ORM supports dates as strings or as `datetime.date` objects.
+        This function is used to mimic that behavior.
+
+    Args:
+        date_string (str): The date string to convert.
+
+    Returns:
+        `datetime.date: The converted date as an object.
+
+    """
+    if type(date_string) is str:
+        return datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
+
+    if type(date_string) is datetime.datetime:
+        return date_string.date()
+
+    return date_string

@@ -3,14 +3,10 @@ Utility to build out the basic CMS pages so we don't have to do so manually.
 Only intended for use during development
 """
 
-import glob
 import json
 import logging
 import re
-from datetime import datetime
-from typing import Dict
 
-from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
 
