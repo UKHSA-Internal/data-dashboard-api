@@ -64,6 +64,13 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = APITimeSeriesListSerializer
     pagination_class = APITimeSeriesPagination
     filter_backends = [DjangoFilterBackend]
+    filterset_fields = [
+        "stratum",
+        "sex",
+        "year",
+        "epiweek",
+        "dt",
+    ]
 
     def get_queryset(self):
         queryset = super().get_queryset()
