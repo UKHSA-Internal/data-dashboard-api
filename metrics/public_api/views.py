@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.data.models.api_models import APITimeSeries
+from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from metrics.public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
     APITimeSeriesRequestSerializer,
@@ -31,7 +31,7 @@ PUBLIC_API_TAG = "public-api"
 
 
 class BaseNestedAPITimeSeriesView(GenericAPIView):
-    queryset = APITimeSeries.objects.all()
+    queryset = MetricsPublicAPIInterface.get_api_timeseries_model().objects.all()
 
     @property
     def lookup_field(self):

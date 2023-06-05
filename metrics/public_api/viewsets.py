@@ -1,7 +1,9 @@
 from rest_framework import viewsets
 
-from metrics.api.serializers import APITimeSeriesSerializer
-from metrics.data.models.api_models import APITimeSeries
+from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
+from metrics.public_api.serializers.timeseries_serializers import (
+    APITimeSeriesListSerializer,
+)
 
 
 class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
@@ -45,5 +47,9 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     """
 
-    queryset = APITimeSeries.objects.all().order_by("dt")
-    serializer_class = APITimeSeriesSerializer
+    queryset = (
+        MetricsPublicAPIInterface.get_api_timeseries_model()
+        .objects.all()
+        .order_by("dt")
+    )
+    serializer_class = APITimeSeriesListSerializer
