@@ -71,3 +71,9 @@ The dates for the specified plots in a tabular format
 TABLES_RESPONSE_HELP_TEXT: str = """
 The specified plots in a tabular format
 """
+GRAPH_X_AXIS: str = """
+The metric to use along the X Axis of the chart
+"""
+GRAPH_Y_AXIS: str = """
+The metric to use along the Y Axis of the chart
+"""

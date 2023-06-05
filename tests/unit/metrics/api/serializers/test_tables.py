@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple, Union
 import pytest
 from rest_framework.exceptions import ValidationError
 
+from metrics.api.serializers.charts import DEFAULT_X_AXIS, DEFAULT_Y_AXIS
 from metrics.api.serializers.tables import TablePlotSerializer, TablesSerializer
 from metrics.domain.models import PlotParameters, PlotsCollection
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -271,6 +272,76 @@ class TestTablePlotSerializer:
 
 
 class TestTablesSerializer:
+    def test_table_x_and_y_axis_are_returned_correctly(self):
+        """
+        Given the user supplies x and y axis parameters to pass to a `TablesSerializer` object
+        When `is_valid()` is called from the serializer
+        Then the supplied values are used
+        """
+        # Given
+        fake_table_x_axis = "date"
+        fake_table_y_axis = "metric"
+        valid_data_payload = {
+            "x_axis": fake_table_x_axis,
+            "y_axis": fake_table_y_axis,
+            "plots": [],
+        }
+        serializer = TablesSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+        serializer_data = serializer.data
+
+        # Then
+        assert is_serializer_valid
+        assert serializer_data["x_axis"] == fake_table_x_axis
+        assert serializer_data["y_axis"] == fake_table_y_axis
+
+    def test_x_and_y_are_not_supplied(self):
+        """
+        Given the user does not supply an x or y axis parameter
+          to pass to a `TablesSerializer` object
+        When `is_valid()` is called from the serializer
+        Then the default values for them are used
+        """
+        # Given
+        valid_data_payload = {
+            "file_format": "svg",
+            "plots": [],
+        }
+
+        serializer = TablesSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+        serializer_data = serializer.data
+
+        # Then
+        assert is_serializer_valid
+        assert serializer_data["x_axis"] == DEFAULT_X_AXIS
+        assert serializer_data["y_axis"] == DEFAULT_Y_AXIS
+
+    @pytest.mark.parametrize("table_parameter", ["x_axis", "y_axis"])
+    def test_x_or_y_are_invalid_format(self, table_parameter: str):
+        """
+        Given the user supplies an invalid x and/or y parameter
+          to pass to a `TablesSerializer` object
+        When `is_valid()` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        bad_data_payload = {
+            "file_format": "svg",
+            "plots": [],
+            table_parameter: "bad_value",
+        }
+
+        serializer = TablesSerializer(data=bad_data_payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
     def test_to_models_returns_correct_models(self):
         """
         Given a payload for a list of 1 table plots
