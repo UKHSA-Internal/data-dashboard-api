@@ -8,7 +8,7 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.data.models.api_models import APITimeSeries
+from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from metrics.public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
     APITimeSeriesRequestSerializer,
@@ -18,6 +18,7 @@ from metrics.public_api.serializers.linked_serializers import (
     GeographyListSerializer,
     GeographyTypeDetailSerializer,
     GeographyTypeListSerializer,
+    MetricListSerializer,
     SubThemeDetailSerializer,
     SubThemeListSerializer,
     ThemeDetailSerializer,
@@ -30,7 +31,7 @@ PUBLIC_API_TAG = "public-api"
 
 
 class BaseNestedAPITimeSeriesView(GenericAPIView):
-    queryset = APITimeSeries.objects.all()
+    queryset = MetricsPublicAPIInterface.get_api_timeseries_model().objects.all()
 
     @property
     def lookup_field(self):
@@ -194,6 +195,21 @@ class GeographyDetailView(BaseNestedAPITimeSeriesView):
     permission_classes = [HasAPIKey]
     lookup_field = "geography"
     serializer_class = GeographyDetailSerializer
+
+
+class MetricListView(BaseNestedAPITimeSeriesView):
+    """
+    This endpoint returns a list of all available metrics and hyperlinks to their corresponding detail view.
+
+    The `metric` field is positioned 1 step below `geography`.
+
+    A `metric` is the name of the metric being queried for e.g. **new_cases_daily**
+
+    """
+
+    permission_classes = [HasAPIKey]
+    lookup_field = "metric"
+    serializer_class = MetricListSerializer
 
 
 class PublicAPIRootView(APIView):

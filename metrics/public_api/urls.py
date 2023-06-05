@@ -5,6 +5,7 @@ from metrics.public_api.views import (
     GeographyListView,
     GeographyTypeDetailView,
     GeographyTypeListView,
+    MetricListView,
     PublicAPIRootView,
     SubThemeDetailView,
     SubThemeListView,
@@ -13,6 +14,7 @@ from metrics.public_api.views import (
     TopicDetailView,
     TopicListView,
 )
+from metrics.public_api.viewsets import APITimeSeriesViewSet
 
 PUBLIC_API_PREFIX = "api/public/timeseries/"
 
@@ -64,5 +66,15 @@ urlpatterns = [
         f"{PUBLIC_API_PREFIX}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>",
         GeographyDetailView.as_view(),
         name="geography-detail",
+    ),
+    path(
+        f"{PUBLIC_API_PREFIX}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics",
+        MetricListView.as_view(),
+        name="metric-list",
+    ),
+    path(
+        f"{PUBLIC_API_PREFIX}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics/<str:metric>",
+        APITimeSeriesViewSet.as_view({"get": "list"}),
+        name="timeseries-list",
     ),
 ]
