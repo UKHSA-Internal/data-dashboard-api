@@ -5,7 +5,7 @@ from django.db.models import Manager, QuerySet
 from metrics.data.models import core_models
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.interfaces.charts.access import ChartTypes
+from metrics.interfaces.charts.access import ChartAxisFields, ChartTypes
 
 DEFAULT_TOPIC_MANAGER = core_models.Topic.objects
 DEFAULT_METRIC_MANAGER = core_models.Metric.objects
@@ -67,6 +67,19 @@ class MetricsAPIInterface:
 
         """
         return ChartTypes.choices()
+
+    @staticmethod
+    def get_chart_axis_choices() -> List[Tuple[str, str]]:
+        """Gets all available axis choices for a chart as a list of 2-item tuples.
+        Note this is achieved by delegating the call to the `ChartAxisFields` enum from the Metrics API
+
+        Returns:
+            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            Examples:
+                [("geography", "geography"), ...]
+
+        """
+        return ChartAxisFields.choices()
 
     @staticmethod
     def get_chart_line_types() -> List[Tuple[str, str]]:
