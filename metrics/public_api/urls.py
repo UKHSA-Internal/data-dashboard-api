@@ -74,7 +74,7 @@ urlpatterns = [
     ),
     path(
         f"{PUBLIC_API_PREFIX}themes/<str:theme>/sub_themes/<str:sub_theme>/topics/<str:topic>/geography_types/<str:geography_type>/geographies/<str:geography>/metrics/<str:metric>",
-        APITimeSeriesViewSet.as_view({"get": "list"}),
+        APITimeSeriesViewSet.as_view({"get": "list"}, name=APITimeSeriesViewSet.name),
         name="timeseries-list",
     ),
 ]
