@@ -14,7 +14,7 @@ from metrics.public_api.views import (
     TopicDetailView,
     TopicListView,
 )
-from metrics.public_api.viewsets import APITimeSeriesViewSet
+from metrics.public_api.views.timeseries_viewset import APITimeSeriesViewSet
 
 PUBLIC_API_PREFIX = "api/public/timeseries/"
 
