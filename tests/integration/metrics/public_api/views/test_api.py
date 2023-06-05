@@ -99,6 +99,18 @@ class TestPublicAPINestedLinkViews:
                 geography_name,
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}",
             ),
+            (
+                "information",
+                "metrics",
+                "",
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics",
+            ),
+            (
+                "name",
+                "link",
+                metric_name,
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}",
+            ),
         ]
 
     @pytest.mark.django_db
