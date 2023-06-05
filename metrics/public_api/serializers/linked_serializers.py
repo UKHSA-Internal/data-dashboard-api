@@ -119,7 +119,7 @@ class GeographyDetailSerializer(Serializer):
     information = CharField()
     metrics = NestedHyperlinkedIdentityField(
         read_only=True,
-        view_name="geography-detail",
+        view_name="metric-list",
         lookup_field="geography",
         parent_lookup_kwargs={
             "theme": "theme",
@@ -127,5 +127,22 @@ class GeographyDetailSerializer(Serializer):
             "topic": "topic",
             "geography_type": "geography_type",
             "geography": "geography",
+        },
+    )
+
+
+class MetricListSerializer(Serializer):
+    name = CharField()
+    link = NestedHyperlinkedIdentityField(
+        read_only=True,
+        view_name="timeseries-list",
+        lookup_field="metric",
+        parent_lookup_kwargs={
+            "theme": "theme",
+            "sub_theme": "sub_theme",
+            "topic": "topic",
+            "geography_type": "geography_type",
+            "geography": "geography",
+            "metric": "metric",
         },
     )

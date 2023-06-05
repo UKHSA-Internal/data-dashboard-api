@@ -18,6 +18,7 @@ from metrics.public_api.serializers.linked_serializers import (
     GeographyListSerializer,
     GeographyTypeDetailSerializer,
     GeographyTypeListSerializer,
+    MetricListSerializer,
     SubThemeDetailSerializer,
     SubThemeListSerializer,
     ThemeDetailSerializer,
@@ -194,6 +195,21 @@ class GeographyDetailView(BaseNestedAPITimeSeriesView):
     permission_classes = [HasAPIKey]
     lookup_field = "geography"
     serializer_class = GeographyDetailSerializer
+
+
+class MetricListView(BaseNestedAPITimeSeriesView):
+    """
+    This endpoint returns a list of all available metrics and hyperlinks to their corresponding detail view.
+
+    The `metric` field is positioned 1 step below `geography`.
+
+    A `metric` is the name of the metric being queried for e.g. **new_cases_daily**
+
+    """
+
+    permission_classes = [HasAPIKey]
+    lookup_field = "metric"
+    serializer_class = MetricListSerializer
 
 
 class PublicAPIRootView(APIView):

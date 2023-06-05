@@ -7,9 +7,11 @@ from metrics.public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
 )
 from metrics.public_api.serializers.linked_serializers import (
+    GeographyDetailSerializer,
     GeographyListSerializer,
     GeographyTypeDetailSerializer,
     GeographyTypeListSerializer,
+    MetricListSerializer,
     SubThemeDetailSerializer,
     SubThemeListSerializer,
     ThemeDetailSerializer,
@@ -520,3 +522,139 @@ class TestGeographyListSerializer:
         assert serialized_data["name"] == geography_type_name
         assert serialized_data["link"] == spy_get_url.return_value
         assert serializer.fields["link"].lookup_field == "geography"
+
+
+class TestGeographyDetailSerializer:
+    @mock.patch.object(
+        NestedHyperlinkedRelatedField,
+        "get_url",
+        return_value="fake_url_for_related_metrics/",
+    )
+    def test_can_serialize_successfully(self, spy_get_url: mock.MagicMock):
+        """
+        Given a request which contains kwargs from the URL parameters
+        And an `APITimeSeriesDTO`
+        When the DTO is passed to an instance of the `GeographyDetailSerializer`
+        Then the serialized data uses the correct field from the `APITimeSeriesDTO`
+        And creates a link in conjunction with the `geography-list` view
+            as well as the `theme`, `sub_theme`, `topic`, `geography_type`
+            and `geography` values of the `APITimeSeriesDTO`
+        """
+        sub_theme_name = "respiratory"
+        theme_name = "infectious_disease"
+        topic_name = "COVID-19"
+        geography_type_name = "Nation"
+        geography_name = "England"
+
+        mocked_request = mock.MagicMock(
+            parser_context={
+                "kwargs": {
+                    "theme": theme_name,
+                    "sub_theme": sub_theme_name,
+                    "topic": topic_name,
+                    "geography_type": geography_type_name,
+                    "geography": geography_name,
+                }
+            }
+        )
+        timeseries_dto_slice = APITimeSeriesDTO(
+            name=geography_name,
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+        )
+
+        # When
+        serializer = GeographyDetailSerializer(
+            timeseries_dto_slice,
+            context={"request": mocked_request},
+        )
+        serialized_data = serializer.data
+
+        # Then
+        # The `get_url()` method is called for the `NestedHyperlinkedRelatedField`
+        # with the correct positional arguments
+        spy_get_url.assert_called_once_with(
+            timeseries_dto_slice,
+            # obj -> api_timeseries_dto instance
+            "metric-list",
+            # view -> `metric-list`
+            mocked_request,
+            # request -> `mocked_request`
+            None,
+            # format -> None
+        )
+        assert serialized_data["information"] == ""
+        assert serialized_data["metrics"] == spy_get_url.return_value
+
+
+class TestMetricListSerializer:
+    @mock.patch.object(
+        NestedHyperlinkedRelatedField,
+        "get_url",
+        return_value="fake_url_for_timeseries/",
+    )
+    def test_can_serialize_successfully(
+        self,
+        spy_get_url: mock.MagicMock,
+    ):
+        """
+        Given a request which contains kwargs from the URL parameters
+        And an `APITimeSeriesDTO`
+        When the DTO is passed to an instance of the `MetricListSerializer`
+        Then the serialized data uses the correct field from the `APITimeSeriesDTO`
+        And creates a link in conjunction with the `timeseries-list` view
+            as well as the `theme`, `sub_theme`, `topic`, `geography_type`,
+            `geography` and `metric` values of the `APITimeSeriesDTO`
+        """
+        sub_theme_name = "respiratory"
+        theme_name = "infectious_disease"
+        topic_name = "COVID-19"
+        geography_type_name = "Nation"
+        geography_name = "England"
+
+        mocked_request = mock.MagicMock(
+            parser_context={
+                "kwargs": {
+                    "theme": theme_name,
+                    "sub_theme": sub_theme_name,
+                    "topic": topic_name,
+                    "geography_type": geography_type_name,
+                    "geography": geography_name,
+                }
+            }
+        )
+        timeseries_dto_slice = APITimeSeriesDTO(
+            name=geography_name,
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+        )
+
+        # When
+        serializer = MetricListSerializer(
+            timeseries_dto_slice,
+            context={"request": mocked_request},
+        )
+        serialized_data = serializer.data
+
+        # Then
+        # The `get_url()` method is called for the `NestedHyperlinkedRelatedField`
+        # with the correct positional arguments
+        spy_get_url.assert_called_once_with(
+            timeseries_dto_slice,
+            # obj -> api_timeseries_dto instance
+            "timeseries-list",
+            # view -> `timeseries-list`
+            mocked_request,
+            # request -> `mocked_request`
+            None,
+            # format -> None
+        )
+        assert serialized_data["name"] == geography_name
+        assert serialized_data["link"] == spy_get_url.return_value
+        assert serializer.fields["link"].lookup_field == "metric"
