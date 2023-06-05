@@ -9,11 +9,11 @@ from metrics.data.managers.api_keys import CustomAPIKeyManager
 
 class TestCustomAPIKeyManager:
     @property
-    def password_prefix(self) -> str:
+    def fake_password_prefix(self) -> str:
         return "ag619m16"
 
     @property
-    def password_suffix(self) -> str:
+    def fake_password_suffix(self) -> str:
         return "16ui27iu26ui236827io26897yvbn19d"
 
     @mock.patch.object(CustomAPIKeyManager, "assign_pre_generated_key")
@@ -67,8 +67,8 @@ class TestCustomAPIKeyManager:
         # Given
         api_key_manager = CustomAPIKeyManager()
         fake_name = "fake_name_for_api_key"
-        password_prefix = self.password_prefix
-        password_suffix = self.password_suffix
+        password_prefix = self.fake_password_prefix
+        password_suffix = self.fake_password_suffix
 
         # When
         key = api_key_manager.create_key(
@@ -90,9 +90,9 @@ class TestCustomAPIKeyManager:
         )
         assert key == spy_assign_pre_generated_key.return_value
 
-    @mock.patch.object(CustomAPIKeyManager, "create_pre_generated_key")
+    @mock.patch.object(CustomAPIKeyManager, "set_pre_generated_password_on_key")
     def test_assign_pre_generated_key_initializes_model_with_correct_args(
-        self, mocked_create_pre_generated_key: mock.MagicMock
+        self, mocked_set_pre_generated_password_on_key: mock.MagicMock
     ):
         """
         Given a set of arguments
@@ -100,8 +100,9 @@ class TestCustomAPIKeyManager:
         Then the model instance is initialized with the correct args
 
         Patches:
-            `create_pre_generated_key`: To remove long-running side effects
-                of creating hashes. This takes roughly 100ms.
+            `mocked_set_pre_generated_password_on_key`: To remove
+                long-running side effects of creating hashes.
+                This takes roughly 100ms.
                 Hence, why it has been patched out of the test.
         """
         # Given
@@ -114,30 +115,27 @@ class TestCustomAPIKeyManager:
 
         # When
         key_obj, _ = api_key_manager.assign_pre_generated_key(
-            password_prefix=self.password_prefix,
-            password_suffix=self.password_suffix,
+            password_prefix=self.fake_password_prefix,
+            password_suffix=self.fake_password_suffix,
             name=name,
             id=fake_id,
         )
 
         # Then
+        # Check that `model` is called with the correct kwargs
+        # this should exclude id, and the password kwargs
         spy_model.assert_called_once_with(name=name)
         assert key_obj == spy_model.return_value
 
-    @mock.patch.object(CustomAPIKeyManager, "create_pre_generated_key")
+    @mock.patch.object(CustomAPIKeyManager, "set_pre_generated_password_on_key")
     def test_assign_pre_generated_key_saves_and_returns_model_instance_and_key(
-        self, spy_create_pre_generated_key: mock.MagicMock
+        self, spy_set_pre_generated_password_on_key: mock.MagicMock
     ):
         """
         Given a set of arguments
         When `assign_pre_generated_key()` is called from an instance of the `CustomAPIKeyManager`
         Then the model instance is saved and returned
-        And the key is also returned from the `create_pre_generated_key()` method
-
-        Patches:
-            `create_pre_generated_key`: To remove long-running side effects
-                of creating hashes. This takes roughly 100ms.
-                Hence, why it has been patched out of the test.
+        And the key is also returned from the `set_pre_generated_password_on_key()` method
         """
         # Given
         spy_model = mock.Mock()
@@ -147,24 +145,24 @@ class TestCustomAPIKeyManager:
 
         # When
         key_obj, key = api_key_manager.assign_pre_generated_key(
-            password_prefix=self.password_prefix,
-            password_suffix=self.password_suffix,
+            password_prefix=self.fake_password_prefix,
+            password_suffix=self.fake_password_suffix,
         )
 
         # Then
         expected_returned_key_obj = spy_model.return_value
         expected_returned_key_obj.save.assert_called_once()
         assert key_obj == expected_returned_key_obj
-        assert key == spy_create_pre_generated_key.return_value
+        assert key == spy_set_pre_generated_password_on_key.return_value
 
     @mock.patch.object(CustomAPIKeyManager, "key_generator")
-    def test_create_pre_generated_key_sets_prefix_on_key(
+    def test_set_pre_generated_password_on_key_sets_prefix_on_key(
         self, mocked_key_generator: mock.MagicMock
     ):
         """
         Given an 8-length password prefix and 32-length suffix
         And a mock in place of the `APIKey` object
-        When `create_pre_generated_key()` is called
+        When `set_pre_generated_password_on_key()` is called
             from an instance of the `CustomAPIKeyManager`
         Then the `prefix` is set on the key object
 
@@ -178,23 +176,23 @@ class TestCustomAPIKeyManager:
         api_key_manager = CustomAPIKeyManager()
 
         # When
-        api_key_manager.create_pre_generated_key(
+        api_key_manager.set_pre_generated_password_on_key(
             key_obj=mocked_key_obj,
-            password_prefix=self.password_prefix,
-            password_suffix=self.password_suffix,
+            password_prefix=self.fake_password_prefix,
+            password_suffix=self.fake_password_suffix,
         )
 
         # Then
-        assert mocked_key_obj.prefix == self.password_prefix
+        assert mocked_key_obj.prefix == self.fake_password_prefix
 
     @mock.patch.object(CustomAPIKeyManager, "key_generator")
-    def test_create_pre_generated_key_delegates_hashing_of_key_correctly(
+    def test_set_pre_generated_password_on_key_delegates_hashing_of_key_correctly(
         self, spy_key_generator: mock.MagicMock
     ):
         """
         Given an 8-length password prefix and 32-length suffix
         And a mock in place of the `APIKey` object
-        When `create_pre_generated_key()` is called
+        When `set_pre_generated_password_on_key()` is called
             from an instance of the `CustomAPIKeyManager`
         Then the `prefix` is set on the key object
         """
@@ -203,22 +201,24 @@ class TestCustomAPIKeyManager:
         api_key_manager = CustomAPIKeyManager()
 
         # When
-        key = api_key_manager.create_pre_generated_key(
+        key = api_key_manager.set_pre_generated_password_on_key(
             key_obj=mocked_key_obj,
-            password_prefix=self.password_prefix,
-            password_suffix=self.password_suffix,
+            password_prefix=self.fake_password_prefix,
+            password_suffix=self.fake_password_suffix,
         )
 
         # Then
         # Check that the key generator is used to hash the full plain key
         # Whereby the full plain key splits the prefix and suffix by a `.` character
-        expected_full_plain_key = f"{self.password_prefix}.{self.password_suffix}"
+        expected_full_plain_key = (
+            f"{self.fake_password_prefix}.{self.fake_password_suffix}"
+        )
         spy_key_generator.hash.assert_called_once_with(value=expected_full_plain_key)
 
         # Check that the key is the original prefix and the hashed suffix.
         # This should also be splits by a `.` character
         mocked_hashed_key = spy_key_generator.hash.return_value
-        expected_hashed_key = f"{self.password_prefix}.{mocked_hashed_key}"
+        expected_hashed_key = f"{self.fake_password_prefix}.{mocked_hashed_key}"
         # This should also be set as the `id` of the key object
         assert mocked_key_obj.id == key == expected_hashed_key
 
