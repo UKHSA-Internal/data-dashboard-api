@@ -53,8 +53,8 @@ def create_multi_coloured_line_chart(
         )
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
-            x_axis=plot_data.x_axis,
-            y_axis=plot_data.y_axis,
+            x_axis=plot_data.x_axis_values,
+            y_axis=plot_data.y_axis_values,
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,

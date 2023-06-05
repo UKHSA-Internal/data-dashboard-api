@@ -84,8 +84,8 @@ class PlotsCollection(BaseModel):
 
 class PlotsData(BaseModel):
     parameters: PlotParameters
-    x_axis: Any
-    y_axis: Any
+    x_axis_values: Any
+    y_axis_values: Any
 
 
 def get_date_n_months_ago_from_timestamp(

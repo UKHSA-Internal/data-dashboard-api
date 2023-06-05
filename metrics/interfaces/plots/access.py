@@ -118,14 +118,14 @@ class PlotsInterface:
         )
 
         try:
-            x_axis, y_axis = unzip_values(timeseries_queryset)
+            x_axis_values, y_axis_values = unzip_values(timeseries_queryset)
         except ValueError as error:
             raise DataNotFoundError from error
 
         return PlotsData(
             parameters=plot_parameters,
-            x_axis=x_axis,
-            y_axis=y_axis,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
         )
 
     def build_plots_data(self) -> List[PlotsData]:

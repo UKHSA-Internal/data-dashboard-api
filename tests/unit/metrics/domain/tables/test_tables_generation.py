@@ -35,8 +35,8 @@ def _create_plot_data(
     )
     return PlotsData(
         parameters=plot_params,
-        x_axis=x_axis,
-        y_axis=y_axis,
+        x_axis_values=x_axis,
+        y_axis_values=y_axis,
     )
 
 
