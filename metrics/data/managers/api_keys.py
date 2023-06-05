@@ -21,7 +21,7 @@ class CustomAPIKeyManager(APIKeyManager):
 
     """
 
-    def create_key(self, **kwargs: Any) -> Tuple["AbstractAPIKey", str]:
+    def create_key(self, **kwargs: Any) -> Tuple[APIKey, str]:
         """Creates an `APIKey` object and sets it up with the `password_prefix` and `password_suffix`, if given.
 
         If either `password_prefix` or `password_suffix` are not provided,
@@ -51,7 +51,7 @@ class CustomAPIKeyManager(APIKeyManager):
 
     def assign_pre_generated_key(
         self, password_prefix: str, password_suffix: str, **kwargs
-    ) -> Tuple["AbstractAPIKey", str]:
+    ) -> Tuple[APIKey, str]:
         """Creates an `APIKey` object and sets it up with the given `password_prefix` and `password_suffix`.
 
         Args:
