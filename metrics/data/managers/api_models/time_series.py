@@ -29,6 +29,57 @@ class APITimeSeriesQuerySet(models.QuerySet):
         """
         return self.filter(**kwargs).values_list(lookup_field, flat=True).distinct()
 
+    def filter_for_list_view(
+        self,
+        theme_name: str,
+        sub_theme_name: str,
+        topic_name: str,
+        geography_type_name: str,
+        geography_name: str,
+        metric_name: str,
+    ) -> "APITimeSeriesQuerySet":
+        """Filters by the given fields to provide a slice of the timeseries data as per the fields.
+
+        Args:
+            theme_name: The name of the root theme being queried for.
+                E.g. `infectious_disease`
+            sub_theme_name: The name of the child/ sub theme being queried for.
+                E.g. `respiratory`.
+                Which would filter for `respiratory` under the `theme_name` entity.
+            topic_name: The name of the disease being queried.
+                E.g. `COVID-19`
+            geography_type_name: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+            geography_name: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            metric_name: The name of the metric to filter for.
+                E.g. `new_cases_daily`.
+
+        Returns:
+            QuerySet: An ordered queryset from oldest -> newest"
+                Examples:
+                    `<APITimeSeriesQuerySet [
+                        <APITimeSeries:
+                            APITimeSeries for 2023-03-08,
+                                              metric 'new_cases_daily',
+                                              stratum 'default',
+                                              value: 2364.0
+                            >,
+                            ...
+                        ]
+                    >`
+
+        """
+
+        return self.filter(
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+            metric=metric_name,
+        )
+
 
 class APITimeSeriesManager(models.Manager):
     """Custom model manager class for the `APITimeSeries` model."""

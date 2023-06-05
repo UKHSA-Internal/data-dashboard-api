@@ -1,9 +1,18 @@
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import pagination, viewsets
 
 from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from metrics.public_api.serializers.timeseries_serializers import (
     APITimeSeriesListSerializer,
 )
+
+DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
+MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 52
+
+
+class APITimeSeriesPagination(pagination.PageNumberPagination):
+    page_size = DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE
+    max_page_size = MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE
 
 
 class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
@@ -53,3 +62,17 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         .order_by("dt")
     )
     serializer_class = APITimeSeriesListSerializer
+    pagination_class = APITimeSeriesPagination
+    filter_backends = [DjangoFilterBackend]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        return queryset.filter_for_list_view(
+            theme_name=self.kwargs["theme"],
+            sub_theme_name=self.kwargs["sub_theme"],
+            topic_name=self.kwargs["topic"],
+            geography_type_name=self.kwargs["geography_type"],
+            geography_name=self.kwargs["geography"],
+            metric_name=self.kwargs["metric"],
+        )
