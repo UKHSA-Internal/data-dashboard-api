@@ -1,7 +1,7 @@
 from typing import Any, Tuple
 
 from rest_framework_api_key.crypto import concatenate
-from rest_framework_api_key.models import APIKeyManager
+from rest_framework_api_key.models import APIKey, APIKeyManager
 
 
 class CustomAPIKeyManager(APIKeyManager):
@@ -56,9 +56,9 @@ class CustomAPIKeyManager(APIKeyManager):
 
         """
         kwargs.pop("id", None)
-        key_obj = self.model(**kwargs)
+        key_obj = APIKey(**kwargs)
 
-        key = self.set_pre_generated_password_on_key(
+        key: str = self.set_pre_generated_password_on_key(
             key_obj=key_obj,
             password_prefix=password_prefix,
             password_suffix=password_suffix,

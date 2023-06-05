@@ -32,3 +32,13 @@ def valid_plot_parameters() -> PlotParameters:
         chart_type=ChartTypes.simple_line.value,
         date_from="2022-01-01",
     )
+
+
+@pytest.fixture
+def fake_password_prefix() -> str:
+    return "ag619m16"
+
+
+@pytest.fixture
+def fake_password_suffix() -> str:
+    return "16ui27iu26ui236827io26897yvbn19d"

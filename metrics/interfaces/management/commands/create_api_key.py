@@ -2,7 +2,7 @@ import uuid
 
 from django.core.management.base import BaseCommand
 
-from metrics.data.models.api_keys import CustomAPIKey
+from metrics.data.managers.api_keys import CustomAPIKeyManager
 
 
 class Command(BaseCommand):
@@ -13,7 +13,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options) -> None:
         """Generates an `APIKey` with the given password components. If not provided, it is auto-generated."""
         kwargs = self._build_kwargs(options=options)
-        CustomAPIKey.objects.create_key(**kwargs)
+        api_key_model_manager = CustomAPIKeyManager()
+        api_key_model_manager.create_key(**kwargs)
 
     @staticmethod
     def _build_kwargs(options):
