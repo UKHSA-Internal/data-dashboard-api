@@ -58,7 +58,7 @@ class CustomAPIKeyManager(APIKeyManager):
         kwargs.pop("id", None)
         key_obj = self.model(**kwargs)
 
-        key = self.create_pre_generated_key(
+        key = self.set_pre_generated_password_on_key(
             key_obj=key_obj,
             password_prefix=password_prefix,
             password_suffix=password_suffix,
@@ -68,10 +68,10 @@ class CustomAPIKeyManager(APIKeyManager):
 
         return key_obj, key
 
-    def create_pre_generated_key(
+    def set_pre_generated_password_on_key(
         self, key_obj, password_prefix: str, password_suffix: str
     ) -> str:
-        """Create a hashed key in the format expected with the given `password_prefix` and `password_suffix`
+        """Set the hashed key in the format expected with the given `password_prefix` and `password_suffix`
 
         Args:
             `key_obj`: The created `APIKey` object which will be used to
