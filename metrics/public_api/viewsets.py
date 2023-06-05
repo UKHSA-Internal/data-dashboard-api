@@ -1,5 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
+from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from metrics.public_api.serializers.timeseries_serializers import (
@@ -55,6 +56,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     """
 
+    permission_classes = [HasAPIKey]
     name = "API Time Series Slice"
     queryset = (
         MetricsPublicAPIInterface.get_api_timeseries_model()
