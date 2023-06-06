@@ -77,9 +77,6 @@ class TablePlotSerializer(serializers.Serializer):
             self.populate_choices()
         except (RuntimeError, ProgrammingError, OperationalError):
             pass
-        # This is needed because the serializers are loaded by django at runtime
-        # Because this is a child serializer, an `instance` must be passed
-        # as a `child` to the parent serializer.
 
     def populate_choices(self):
         self.fields["topic"].choices = self.topic_manager.get_all_names()
@@ -106,9 +103,6 @@ class TablesSerializer(serializers.Serializer):
             super().__init__(*args, **kwargs)
         except OperationalError:
             pass
-        # This is needed because the serializers are loaded by django at runtime
-        # Because this is a child serializer, an `instance` must be passed
-        # to the parent list serializer.
 
     def to_models(self) -> PlotsCollection:
         return PlotsCollection(
