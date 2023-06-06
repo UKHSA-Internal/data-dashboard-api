@@ -1,5 +1,5 @@
 from django.db.models import Manager
-from django.db.utils import ProgrammingError
+from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
@@ -75,7 +75,7 @@ class TablePlotSerializer(serializers.Serializer):
 
         try:
             self.populate_choices()
-        except (RuntimeError, ProgrammingError):
+        except (RuntimeError, ProgrammingError, OperationalError):
             pass
 
     def populate_choices(self):
@@ -97,6 +97,12 @@ class TablePlotsListSerializer(serializers.ListSerializer):
 
 class TablesSerializer(serializers.Serializer):
     plots = TablePlotsListSerializer()
+
+    def __init__(self, *args, **kwargs):
+        try:
+            super().__init__(*args, **kwargs)
+        except OperationalError:
+            pass
 
     def to_models(self) -> PlotsCollection:
         return PlotsCollection(
