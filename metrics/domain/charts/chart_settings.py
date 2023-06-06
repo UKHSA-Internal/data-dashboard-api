@@ -23,9 +23,6 @@ X_AXIS_SETTINGS = {
     "showline": False,
     "ticks": "outside",
     "tickson": "boundaries",
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
     "tickfont": TICK_FONT,
 }
 
