@@ -105,8 +105,8 @@ class ChartsInterface:
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            dates=plot_data.x_axis_values,
-            values=plot_data.y_axis_values,
+            x_axis_values=plot_data.x_axis_values,
+            y_axis_values=plot_data.y_axis_values,
             legend=plot_data.parameters.metric_name,
         )
 

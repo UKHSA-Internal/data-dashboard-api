@@ -5,6 +5,17 @@ TICK_FONT = {
     "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
 }
 
+X_AXIS_TEXT_TYPE = {
+    "type": "-",
+    "dtick": None,
+    "tickformat": None,
+}
+
+X_AXIS_DATE_TYPE = {
+    "type": "date",
+    "dtick": "M1",
+    "tickformat": "%b %Y",
+}
 
 X_AXIS_SETTINGS = {
     "showgrid": False,
