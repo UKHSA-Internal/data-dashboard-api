@@ -130,10 +130,6 @@ class ChartPlotsListSerializer(serializers.ListSerializer):
         except OperationalError:
             pass
 
-    # This is needed because the serializers are loaded by django at runtime
-    # Because this is a child serializer, an `instance` must be passed
-    # as a `child` to the parent serializer.
-
 
 FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
 
