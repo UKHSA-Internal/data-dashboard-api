@@ -12,6 +12,8 @@ def fake_chart_plot_parameters() -> PlotParameters:
         metric="weekly_positivity_by_age",
         stratum="0_4",
         date_from="2023-01-01",
+        x_axis="dt",
+        y_axis="metric_value",
     )
 
 
@@ -31,4 +33,6 @@ def valid_plot_parameters() -> PlotParameters:
         topic="COVID-19",
         chart_type=ChartTypes.simple_line.value,
         date_from="2022-01-01",
+        x_axis="dt",
+        y_axis="metric_value",
     )
