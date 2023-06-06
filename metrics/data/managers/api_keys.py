@@ -1,11 +1,27 @@
 from typing import Any, Tuple
 
 from rest_framework_api_key.crypto import concatenate
-from rest_framework_api_key.models import APIKeyManager
+from rest_framework_api_key.models import APIKey, APIKeyManager
 
 
 class CustomAPIKeyManager(APIKeyManager):
-    def create_key(self, **kwargs: Any) -> Tuple["AbstractAPIKey", str]:
+    """This custom model manager for the `APIKey` provides extra logic to handle pre-generated passwords.
+
+    Note that this model manager is not initialized and set on the `objects` attribute of the `APIKey`
+    or any subclasses of the `APIKey`.
+
+    This is because the models created are still to be persisted with to the original
+    `rest_framework_api_key_apikey` table instead of a new subclassed table.
+
+    Given that the schema of the data being persisted remains the same.
+    The only thing being customized is the creation logic,
+    specifically around whether to create passwords or accept them from some input.
+
+    As such, a new table was not needed.
+
+    """
+
+    def create_key(self, **kwargs: Any) -> Tuple[APIKey, str]:
         """Creates an `APIKey` object and sets it up with the `password_prefix` and `password_suffix`, if given.
 
         If either `password_prefix` or `password_suffix` are not provided,
@@ -35,7 +51,7 @@ class CustomAPIKeyManager(APIKeyManager):
 
     def assign_pre_generated_key(
         self, password_prefix: str, password_suffix: str, **kwargs
-    ) -> Tuple["AbstractAPIKey", str]:
+    ) -> Tuple[APIKey, str]:
         """Creates an `APIKey` object and sets it up with the given `password_prefix` and `password_suffix`.
 
         Args:
@@ -56,9 +72,9 @@ class CustomAPIKeyManager(APIKeyManager):
 
         """
         kwargs.pop("id", None)
-        key_obj = self.model(**kwargs)
+        key_obj = APIKey(**kwargs)
 
-        key = self.set_pre_generated_password_on_key(
+        key: str = self.set_pre_generated_password_on_key(
             key_obj=key_obj,
             password_prefix=password_prefix,
             password_suffix=password_suffix,
