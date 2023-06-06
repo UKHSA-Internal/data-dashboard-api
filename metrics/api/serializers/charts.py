@@ -101,7 +101,7 @@ class ChartPlotSerializer(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text=help_texts.GRAPH_X_AXIS,
+        help_text=help_texts.CHART_X_AXIS,
         default=DEFAULT_X_AXIS,
     )
     y_axis = serializers.ChoiceField(
@@ -109,7 +109,7 @@ class ChartPlotSerializer(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text=help_texts.GRAPH_Y_AXIS,
+        help_text=help_texts.CHART_Y_AXIS,
         default=DEFAULT_Y_AXIS,
     )
 
