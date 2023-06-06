@@ -6,7 +6,7 @@ function migrate_tables() {
 
 
 function set_api_key() {
-    echo "Setting API key" >&2
+    echo "Setting API key"
     local password_prefix=$1
     local password_suffix=$2
     python manage.py create_api_key --password_prefix=$password_prefix --password_suffix=$password_suffix
@@ -14,25 +14,25 @@ function set_api_key() {
 
 
 function create_admin_user() {
-    echo "Creating admin user" >&2
+    echo "Creating admin user"
     local admin_password=$1
     python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('testadmin', '', '$admin_password')"
 }
 
 
 function create_core_time_series() {
-    echo "Creating core time series" >&2
+    echo "Creating core time series"
     python manage.py upload_test_data
 }
 
 
 function generate_api_time_series() {
-    echo "Generating API time series" >&2
+    echo "Generating API time series"
     python manage.py generate_api_time_series
 }
 
 function generate_cms_content() {
-    echo "Generating CMS content" >&2
+    echo "Generating CMS content"
     python manage.py build_cms_site
 }
 
