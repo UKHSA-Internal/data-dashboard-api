@@ -56,14 +56,14 @@ def generate_chart_figure(
 
     """
     values_count: int = len(y_axis_values)
-    x_points: List[int] = [index for index in range(values_count)]
+    x_axis_values: List[int] = [index for index in range(values_count)]
 
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot object
     line_plot = _create_line_plot(
-        values=y_axis_values,
-        x_points=x_points,
+        y_axis_values=y_axis_values,
+        x_axis_values=x_axis_values,
         area_fill_colour=area_fill_color,
         line_colour=line_color,
         line_shape=line_shape,
@@ -91,16 +91,16 @@ def generate_chart_figure(
 
 
 def _create_line_plot(
-    values: List[Union[int, float]],
-    x_points: List[int],
+    y_axis_values: List[Union[int, float]],
+    x_axis_values: List[int],
     area_fill_colour: str,
     line_colour: str,
     line_shape: str,
     line_width: int,
 ) -> plotly.graph_objects.Scatter:
     return plotly.graph_objects.Scatter(
-        x=x_points,
-        y=values,
+        x=x_axis_values,
+        y=y_axis_values,
         fill="tozeroy",
         fillcolor=area_fill_colour,
         line_shape=line_shape,
