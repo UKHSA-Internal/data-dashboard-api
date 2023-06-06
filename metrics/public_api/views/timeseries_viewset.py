@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 from rest_framework_api_key.permissions import HasAPIKey
 
@@ -6,6 +7,7 @@ from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInter
 from metrics.public_api.serializers.timeseries_serializers import (
     APITimeSeriesListSerializer,
 )
+from metrics.public_api.views.base import PUBLIC_API_TAG
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
 MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 52
@@ -16,6 +18,7 @@ class APITimeSeriesPagination(pagination.PageNumberPagination):
     max_page_size = MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE
 
 
+@extend_schema(tags=[PUBLIC_API_TAG])
 class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This endpoint will provide the full timeseries of a slice of data.
