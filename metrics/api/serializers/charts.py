@@ -1,7 +1,7 @@
 from typing import List
 
 from django.db.models import Manager
-from django.db.utils import ProgrammingError
+from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
@@ -101,7 +101,7 @@ class ChartPlotSerializer(serializers.Serializer):
 
         try:
             self.populate_choices()
-        except (RuntimeError, ProgrammingError):
+        except (RuntimeError, ProgrammingError, OperationalError):
             pass
         # This is needed because the serializers are loaded by django at runtime
         # Because this is a child serializer, an `instance` must be passed
@@ -123,6 +123,16 @@ class ChartPlotSerializer(serializers.Serializer):
 
 class ChartPlotsListSerializer(serializers.ListSerializer):
     child = ChartPlotSerializer()
+
+    def __init__(self, *args, **kwargs):
+        try:
+            super().__init__(*args, **kwargs)
+        except OperationalError:
+            pass
+
+    # This is needed because the serializers are loaded by django at runtime
+    # Because this is a child serializer, an `instance` must be passed
+    # as a `child` to the parent serializer.
 
 
 FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
