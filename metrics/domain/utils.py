@@ -1,6 +1,9 @@
 from enum import Enum
 from typing import List
 
+DEFAULT_CHART_HEIGHT = 220
+DEFAULT_CHART_WIDTH = 435
+
 
 def _check_for_substring_match(string_to_check: str, substrings: List[str]) -> bool:
     return any((sub_string in string_to_check for sub_string in substrings))
@@ -20,3 +23,21 @@ class ChartTypes(Enum):
     @classmethod
     def values(cls):
         return [chart_type.value for chart_type in cls]
+
+
+class ChartAxisFields(Enum):
+    stratum = "stratum__name"
+    date = "dt"
+    metric = "metric_value"
+    geography = "geography__geography_type__name"
+
+    @classmethod
+    def choices(cls):
+        return tuple((field_name.value, field_name.name) for field_name in cls)
+
+    def __str__(self):
+        return str(self.value)
+
+
+DEFAULT_X_AXIS = ChartAxisFields.date.value
+DEFAULT_Y_AXIS = ChartAxisFields.metric.value
