@@ -32,7 +32,6 @@ class TablePlotSerializer(serializers.Serializer):
         required=False,
         default="simple_line",
     )
-
     stratum = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -54,7 +53,6 @@ class TablePlotSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
-
     date_from = serializers.DateField(
         required=False,
         allow_null=True,
@@ -67,13 +65,28 @@ class TablePlotSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.DATE_FROM_FIELD,
     )
-
     label = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         default="",
         help_text=help_texts.LABEL_FIELD,
+    )
+    x_axis = serializers.ChoiceField(
+        choices=CHART_AXIS_CHOICES,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.GRAPH_X_AXIS,
+        default=DEFAULT_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=CHART_AXIS_CHOICES,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.GRAPH_Y_AXIS,
+        default=DEFAULT_Y_AXIS,
     )
 
     def __init__(self, *args, **kwargs):
@@ -102,22 +115,6 @@ class TablePlotsListSerializer(serializers.ListSerializer):
 
 
 class TablesSerializer(serializers.Serializer):
-    x_axis = serializers.ChoiceField(
-        choices=CHART_AXIS_CHOICES,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.GRAPH_X_AXIS,
-        default=DEFAULT_X_AXIS,
-    )
-    y_axis = serializers.ChoiceField(
-        choices=CHART_AXIS_CHOICES,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.GRAPH_Y_AXIS,
-        default=DEFAULT_Y_AXIS,
-    )
     plots = TablePlotsListSerializer()
 
     def to_models(self) -> PlotsCollection:

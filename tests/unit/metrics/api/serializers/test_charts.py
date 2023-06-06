@@ -72,6 +72,8 @@ class TestChartPlotSerializer:
         "label",
         "line_colour",
         "line_type",
+        "x_axis",
+        "y_axis",
     ]
 
     def test_validates_successfully_when_optional_parameters_are_none(
@@ -297,6 +299,45 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["line_type"] == line_type
 
+    def test_valid_payload_with_optional_x_and_y_fields_provided(
+        self,
+        charts_plot_serializer_payload_and_model_managers,
+    ):
+        """
+        Given a valid payload containing the optional `x_axis` and `y_axis` fields
+            passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `chart_type`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        x_axis = "date"
+        y_axis = "metric"
+
+        valid_data_payload["x_axis"] = x_axis
+        valid_data_payload["y_axis"] = y_axis
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+        assert serializer.validated_data["x_axis"] == x_axis
+        assert serializer.validated_data["y_axis"] == y_axis
+
     @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
     def test_valid_chart_type(
         self,
@@ -332,7 +373,8 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
 
     @pytest.mark.parametrize(
-        "field_to_be_serialized", ["topic", "metric", "chart_type", "date_from"]
+        "field_to_be_serialized",
+        ["topic", "metric", "chart_type", "date_from", "x_axis", "y_axis"],
     )
     def test_invalid_field_value(
         self,
@@ -599,79 +641,6 @@ class TestChartsSerializer:
         assert is_serializer_valid
         assert serialized_model_data.chart_width == DEFAULT_CHART_WIDTH
         assert serialized_model_data.chart_height == DEFAULT_CHART_HEIGHT
-
-    def test_chart_x_and_y_axis_are_returned_correctly(self):
-        """
-        Given the user supplies x and y axis parameters to pass to a `ChartsSerializer` object
-        When `is_valid()` is called from the serializer
-        Then the supplied values are used
-        """
-        # Given
-        fake_chart_x_axis = "date"
-        fake_chart_y_axis = "metric"
-        valid_data_payload = {
-            "file_format": "svg",
-            "plots": [],
-            "chart_width": 100,
-            "chart_height": 200,
-            "x_axis": fake_chart_x_axis,
-            "y_axis": fake_chart_y_axis,
-        }
-        serializer = ChartsSerializer(data=valid_data_payload)
-
-        # When
-        is_serializer_valid: bool = serializer.is_valid()
-        serializer_data = serializer.data
-
-        # Then
-        assert is_serializer_valid
-        assert serializer_data["x_axis"] == fake_chart_x_axis
-        assert serializer_data["y_axis"] == fake_chart_y_axis
-
-    def test_x_and_y_are_not_supplied(self):
-        """
-        Given the user does not supply an x or y axis parameter
-          to pass to a `ChartsSerializer` object
-        When `is_valid()` is called from the serializer
-        Then the default values for them are used
-        """
-        # Given
-        valid_data_payload = {
-            "file_format": "svg",
-            "plots": [],
-        }
-
-        serializer = ChartsSerializer(data=valid_data_payload)
-
-        # When
-        is_serializer_valid: bool = serializer.is_valid()
-        serializer_data = serializer.data
-
-        # Then
-        assert is_serializer_valid
-        assert serializer_data["x_axis"] == DEFAULT_X_AXIS
-        assert serializer_data["y_axis"] == DEFAULT_Y_AXIS
-
-    @pytest.mark.parametrize("chart_parameter", ["x_axis", "y_axis"])
-    def test_x_or_y_are_invalid_format(self, chart_parameter: str):
-        """
-        Given the user supplies an invalid x and/or y parameter
-          to pass to a `ChartsSerializer` object
-        When `is_valid()` is called from the serializer
-        Then a `ValidationError` is raised
-        """
-        # Given
-        bad_data_payload = {
-            "file_format": "svg",
-            "plots": [],
-            chart_parameter: "bad_value",
-        }
-
-        serializer = ChartsSerializer(data=bad_data_payload)
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            serializer.is_valid(raise_exception=True)
 
     def test_to_models_returns_correct_models(self):
         """
