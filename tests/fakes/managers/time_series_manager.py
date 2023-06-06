@@ -24,7 +24,10 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         return [x for x in self.time_series]
 
     def by_topic_metric_for_dates_and_values(
-        self, topic_name: str, metric_name: str, date_from: datetime.datetime
+        self,
+        topic_name: str,
+        metric_name: str,
+        date_from: datetime.datetime,
     ):
         return [
             (time_series.dt, time_series.metric_value)
@@ -35,6 +38,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def get_count(
         self,
+        x_axis: str,
+        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: Union[datetime.datetime, str],
@@ -66,6 +71,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def filter_for_dates_and_values(
         self,
+        x_axis: str,
+        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
