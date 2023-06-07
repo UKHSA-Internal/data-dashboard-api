@@ -8,15 +8,18 @@ from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotsData
 
-LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings().get_base_chart_config() | {
-    "legend": {
-        "orientation": "h",
-        "y": 1.0,
-        "x": 0.5,
-        "xanchor": "center",
-        "yanchor": "bottom",
-    },
-}
+LAYOUT_ARGS: type_hints.CHART_ARGS = (
+    chart_settings.ChartSettings().get_base_chart_config()
+    | {
+        "legend": {
+            "orientation": "h",
+            "y": 1.0,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "bottom",
+        },
+    }
+)
 
 
 def create_multi_coloured_line_chart(

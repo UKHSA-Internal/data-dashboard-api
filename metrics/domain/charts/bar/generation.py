@@ -5,15 +5,18 @@ import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme, type_hints
 
-BAR_CHART_LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings().get_base_chart_config() | {
-    "showlegend": True,
-    "barmode": "group",
-    "legend": {
-        "orientation": "h",
-        "y": -0.15,
-        "x": 0,
-    },
-}
+BAR_CHART_LAYOUT_ARGS: type_hints.CHART_ARGS = (
+    chart_settings.ChartSettings().get_base_chart_config()
+    | {
+        "showlegend": True,
+        "barmode": "group",
+        "legend": {
+            "orientation": "h",
+            "y": -0.15,
+            "x": 0,
+        },
+    }
+)
 
 
 def generate_chart_figure(
