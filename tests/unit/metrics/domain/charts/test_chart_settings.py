@@ -80,7 +80,7 @@ class TestChartSettings:
         """
         Given an instance of `ChartSettings`
         When `get_base_chart_config()` is called
-        Then the correct complete chart configuration is returned as a dict
+        Then the correct base chart configuration is returned as a dict
         """
         # Given
         chart_settings = ChartSettings()
