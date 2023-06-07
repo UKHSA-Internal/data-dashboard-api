@@ -72,24 +72,24 @@ class TestChartSettings:
 
     @mock.patch.object(ChartSettings, "get_y_axis_config")
     @mock.patch.object(ChartSettings, "get_x_axis_config")
-    def test_get_complete_chart_config(
+    def test_get_base_chart_config(
         self,
         mocked_get_x_axis_config: mock.MagicMock,
         mocked_get_y_axis_config: mock.MagicMock,
     ):
         """
         Given an instance of `ChartSettings`
-        When `get_complete_chart_config()` is called
+        When `get_base_chart_config()` is called
         Then the correct complete chart configuration is returned as a dict
         """
         # Given
         chart_settings = ChartSettings()
 
         # When
-        complete_chart_config = chart_settings.get_complete_chart_config()
+        base_chart_config = chart_settings.get_base_chart_config()
 
         # Then
-        expected_chart_config = {
+        expected_base_chart_config = {
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "margin": {
@@ -103,4 +103,4 @@ class TestChartSettings:
             "yaxis": mocked_get_y_axis_config.return_value,
         }
 
-        assert complete_chart_config == expected_chart_config
+        assert base_chart_config == expected_base_chart_config

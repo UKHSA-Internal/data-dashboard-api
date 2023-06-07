@@ -35,7 +35,7 @@ class ChartSettings:
             "tickfont": self.get_tick_font_config(),
         }
 
-    def get_complete_chart_config(self):
+    def get_base_chart_config(self):
         return {
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
