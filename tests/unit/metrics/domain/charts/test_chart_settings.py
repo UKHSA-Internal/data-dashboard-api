@@ -124,4 +124,3 @@ class TestChartSettings:
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
         }
         assert simple_line_chart_config == expected_line_chart_config
-
