@@ -49,3 +49,12 @@ class ChartSettings:
             "xaxis": self.get_x_axis_config(),
             "yaxis": self.get_y_axis_config(),
         }
+
+    @staticmethod
+    def get_simple_line_chart_config() -> Dict[str, Dict[str, bool]]:
+        set_axes_to_be_invisible = {"visible": False}
+        return {
+            "xaxis": set_axes_to_be_invisible,
+            "yaxis": set_axes_to_be_invisible,
+            "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
+        }
