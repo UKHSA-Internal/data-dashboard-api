@@ -76,7 +76,7 @@ def create_line_chart_with_shaded_section(
     figure.add_trace(trace=shaded_section_plot)
 
     # Apply the typical stylings for timeseries charts
-    figure.update_layout(**chart_settings.CHART_SETTINGS)
+    figure.update_layout(**chart_settings.ChartSettings().get_base_chart_config())
 
     # Set the height and width of the chart itself
     # And remove the legend
