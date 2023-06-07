@@ -1,5 +1,7 @@
+import json
+import urllib.parse
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Union
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -211,7 +213,7 @@ class ChartsInterface:
         return calculations.change_between_each_half(values=values)
 
 
-def generate_chart(chart_plots: PlotsCollection) -> Tuple[str, str]:
+def generate_chart(chart_plots: PlotsCollection) -> str:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
 
     Args:
@@ -219,7 +221,7 @@ def generate_chart(chart_plots: PlotsCollection) -> Tuple[str, str]:
             encapsulated as a model
 
     Returns:
-        The filename of the created image and the last updated date if appropriate
+        The filename of the created image
 
     """
     validate_each_requested_chart_plot(chart_plots=chart_plots)
@@ -227,15 +229,42 @@ def generate_chart(chart_plots: PlotsCollection) -> Tuple[str, str]:
     library = ChartsInterface(chart_plots=chart_plots)
     figure = library.generate_chart_figure()
 
-    date_updated = determine_last_updated(figure)
+    return write_figure(
+        figure=figure,
+        topic="-",
+        file_format=chart_plots.file_format,
+    )
 
-    return (
-        write_figure(
-            figure=figure,
-            topic="-",
-            file_format=chart_plots.file_format,
-        ),
-        date_updated,
+
+def generate_chart_response(chart_plots: PlotsCollection) -> str:
+    """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
+     Then encodes it, adds the last_updated_date to it and returns the result as a JSON string
+
+    Args:
+        chart_plots: The requested chart plots parameters
+            encapsulated as a model
+
+    Returns:
+        The encoded chart along with the last updated date in JSON format
+    """
+    validate_each_requested_chart_plot(chart_plots=chart_plots)
+
+    library = ChartsInterface(chart_plots=chart_plots)
+    figure = library.generate_chart_figure()
+
+    last_updated = determine_last_updated(figure)
+
+    # Encode the chart so it can be returned in JSON format
+    encoded_chart = encode_chart(
+        figure=figure,
+        chart_format=chart_plots.file_format,
+    )
+
+    return json.dumps(
+        {
+            "last_updated_at": last_updated,
+            "chart": encoded_chart,
+        }
     )
 
 
@@ -263,6 +292,25 @@ def determine_last_updated(figure: plotly.graph_objects.Figure) -> str:
         last_date = datetime.strftime(max(last_dates), "%Y-%m-%d")
 
     return last_date
+
+
+def encode_chart(
+    figure: plotly.graph_objects.Figure,
+    chart_format: str,
+) -> str:
+    """
+    URI Encode the supplied chart
+
+    Args:
+        figure: The figure object or a dictionary representing a figure
+        chart_format: The format the chart should be created in. E.g. svg
+
+    Returns:
+        An encoded string representation of the figure
+    """
+    encoded_chart: str = urllib.parse.quote_plus(figure.to_image(format=chart_format))
+
+    return encoded_chart
 
 
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:

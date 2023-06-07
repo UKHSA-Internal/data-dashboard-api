@@ -1,8 +1,7 @@
-import base64
 import os
 from http import HTTPStatus
 
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -90,7 +89,7 @@ class OldChartsView(APIView):
         chart_plot_models = request_serializer.to_models()
 
         try:
-            filename, _ = access.generate_chart(
+            filename: str = access.generate_chart(
                 chart_plots=chart_plot_models,
             )
         except validation.ChartTypeDoesNotSupportMetricError as error:
@@ -185,7 +184,7 @@ class ChartsView(APIView):
         chart_plot_models = request_serializer.to_models()
 
         try:
-            filename, date_updated = access.generate_chart(
+            resoponse: str = access.generate_chart_response(
                 chart_plots=chart_plot_models,
             )
         except validation.ChartTypeDoesNotSupportMetricError as error:
@@ -193,54 +192,7 @@ class ChartsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        return self._return_chart(
-            filename=filename,
-            date_updated=date_updated,
+        return HttpResponse(
+            resoponse,
+            content_type="text/html; charset=utf-8",
         )
-
-    @staticmethod
-    def _return_chart(
-        filename: str,
-        date_updated: str,
-    ) -> Response:
-        """
-        Return a dictionary containing the last updated value and the contents of the supplied filename encoded as base64
-
-        Args:
-            filename: The name of the file to load and encode
-            date_updated: The date the chart data goes up to
-
-        Returns:
-            A Response with the generated dictionary
-        """
-        encoded_chart = ChartsView._load_chart(filename)
-
-        response = {
-            "last_updated_at": date_updated,
-            "chart": encoded_chart,
-        }
-
-        return Response(response)
-
-    @staticmethod
-    def _load_chart(filename: str) -> bytes:
-        """
-        Load and encode the supplied filename and then delete it
-
-        Args:
-            filename: The name of the file to load and encode
-
-        Returns:
-            An encoded string representation of the file
-        """
-
-        encoded_chart = b""
-        with open(filename, "rb") as image:
-            encoded_chart = base64.b64encode(image.read())
-
-        try:
-            os.remove(filename)
-        except OSError:
-            pass
-
-        return encoded_chart

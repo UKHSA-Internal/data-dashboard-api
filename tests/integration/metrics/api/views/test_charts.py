@@ -38,9 +38,11 @@ class TestChartsView:
             dt=datetime.date(year=year, month=1, day=1),
         )
 
+    @pytest.mark.parametrize("path", ["/charts/v2", "/api/charts/v2"])
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
         self,
+        path: str,
         authenticated_api_client: APIClient,
     ):
         """
@@ -50,23 +52,24 @@ class TestChartsView:
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        path_without_trailing_forward_slash = "/charts/v2"
-
         self._setup_core_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
 
         # When
         response: Response = authenticated_api_client.post(
-            path=path_without_trailing_forward_slash,
+            path=path,
             data=self.valid_payload,
             format="json",
         )
 
         assert response.status_code == HTTPStatus.OK
 
+    @pytest.mark.parametrize("path", ["/charts/v2/", "/api/charts/v2/"])
     @pytest.mark.django_db
-    def test_returns_correct_response(self, authenticated_api_client: APIClient):
+    def test_returns_correct_response(
+        self, path: str, authenticated_api_client: APIClient
+    ):
         """
         Given a valid payload to create a chart
         And an authenticated APIClient
@@ -74,7 +77,6 @@ class TestChartsView:
         Then the response is not an HTTP 401 UNAUTHORIZED
         """
         # Given
-        path = "/charts/v2/"
         self._setup_core_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
@@ -93,15 +95,15 @@ class TestChartsView:
         # Check that the headers on the response indicate an `svg` image being returned
         assert response.headers["Content-Type"] == "image/svg+xml"
 
+    @pytest.mark.parametrize("path", ["/charts/v2/", "/api/charts/v2/"])
     @pytest.mark.django_db
-    def test_post_request_without_api_key_is_unauthorized(self):
+    def test_post_request_without_api_key_is_unauthorized(self, path: str):
         """
         Given an APIClient which is not authenticated
         When the `GET /charts/v2/` endpoint is hit
         Then an HTTP 401 UNAUTHORIZED response is returned
         """
         # Given
-        path = "/charts/v2/"
         client = APIClient()
 
         # When
@@ -110,46 +112,45 @@ class TestChartsView:
         # Then
         assert response.status_code == HTTPStatus.UNAUTHORIZED
 
+    @pytest.mark.parametrize("path", ["/charts/v3", "/api/charts/v3"])
     @pytest.mark.django_db
-    def test_hitting_new_endpoint_without_appended_forward_slash_redirects_correctly(
+    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
         self,
+        path: str,
         authenticated_api_client: APIClient,
     ):
         """
         Given a valid payload to create a chart
         And an authenticated APIClient
-        When the `POST /api/charts/v2` endpoint is hit i.e. without the trailing `/`
+        When the `POST /charts/v3` endpoint is hit i.e. without the trailing `/`
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        path_without_trailing_forward_slash = "/api/charts/v2"
-
         self._setup_core_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
 
         # When
         response: Response = authenticated_api_client.post(
-            path=path_without_trailing_forward_slash,
+            path=path,
             data=self.valid_payload,
             format="json",
         )
 
         assert response.status_code == HTTPStatus.OK
 
+    @pytest.mark.parametrize("path", ["/charts/v3/", "/api/charts/v3/"])
     @pytest.mark.django_db
-    def test_new_endpoint_returns_correct_response(
-        self, authenticated_api_client: APIClient
+    def test_returns_correct_response(
+        self, path: str, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload to create a chart
         And an authenticated APIClient
-        When the `POST /api/charts/v2/` endpoint is hit
+        When the `POST /charts/v3/` endpoint is hit
         Then the response is not an HTTP 401 UNAUTHORIZED
         """
         # Given
-        path = "/api/charts/v2/"
-
         self._setup_core_time_series(
             metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
         )
@@ -166,17 +167,17 @@ class TestChartsView:
         assert response.status_code == HTTPStatus.OK
 
         # Check that the headers on the response indicate an `svg` image being returned
-        assert response.headers["Content-Type"] == "application/json"
+        assert response.headers["Content-Type"] == "text/html; charset=utf-8"
 
+    @pytest.mark.parametrize("path", ["/charts/v3/", "/api/charts/v3/"])
     @pytest.mark.django_db
-    def test_new_post_request_without_api_key_is_unauthorized(self):
+    def test_post_request_without_api_key_is_unauthorized(self, path: str):
         """
         Given an APIClient which is not authenticated
-        When the `GET /api/charts/v2/` endpoint is hit
+        When the `GET /charts/v3/` endpoint is hit
         Then an HTTP 401 UNAUTHORIZED response is returned
         """
         # Given
-        path = "/api/charts/v2/"
         client = APIClient()
 
         # When
