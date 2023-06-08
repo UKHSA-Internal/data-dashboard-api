@@ -4,48 +4,16 @@ from typing import Dict, List, Tuple, Union
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers.charts import (
-    DEFAULT_CHART_HEIGHT,
-    DEFAULT_CHART_WIDTH,
-    DEFAULT_X_AXIS,
-    DEFAULT_Y_AXIS,
-    ChartPlotSerializer,
-    ChartsSerializer,
-    get_axis_field_name,
-)
+from metrics.api.serializers.charts import ChartPlotSerializer, ChartsSerializer
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.domain.utils import ChartTypes
+from metrics.domain.utils import DEFAULT_CHART_HEIGHT, DEFAULT_CHART_WIDTH, ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
 DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
-
-
-class TestAxisFieldName:
-    @pytest.mark.parametrize(
-        "field_name, expected_result",
-        [
-            ("stratum", "stratum__name"),
-            ("date", "dt"),
-            ("metric", "metric_value"),
-            ("geography", "geography__geography_type__name"),
-            ("no_translation", "no_translation"),
-        ],
-    )
-    def test_get_axis_field_name(self, field_name: str, expected_result: str):
-        """
-        Given a field name (eg. geography)
-        When `get_axis_field_name()` is called
-        Then the expected output will be returned
-        """
-        # Given/When
-        actual_result: str = get_axis_field_name(field=field_name)
-
-        # Then
-        assert actual_result == expected_result
 
 
 @pytest.fixture
@@ -316,8 +284,8 @@ class TestChartPlotSerializer:
             metric_manager,
             topic_manager,
         ) = charts_plot_serializer_payload_and_model_managers
-        x_axis = "date"
-        y_axis = "metric"
+        x_axis = "dt"
+        y_axis = "metric_value"
 
         valid_data_payload["x_axis"] = x_axis
         valid_data_payload["y_axis"] = y_axis

@@ -108,6 +108,8 @@ class TestPlotParameters:
             "geography_name": fake_chart_plot_parameters.geography_name,
             "geography_type_name": fake_chart_plot_parameters.geography_type_name,
             "date_from": fake_chart_plot_parameters.date_from_value,
+            "x_axis": fake_chart_plot_parameters.x_axis,
+            "y_axis": fake_chart_plot_parameters.y_axis,
         }
         # `chart_type`, `label`, `line_colour`, `line_type` and `date_to` and are omitted
         assert dict_used_for_query == expected_dict_used_for_query

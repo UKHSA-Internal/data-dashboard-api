@@ -9,20 +9,14 @@ from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.domain.utils import ChartTypes
-from metrics.interfaces.charts.access import ChartAxisFields
-
-DEFAULT_CHART_HEIGHT = 220
-DEFAULT_CHART_WIDTH = 435
-
-
-def get_axis_field_name(field: str) -> str:
-    return str(getattr(ChartAxisFields, field, field))
-
-
-DEFAULT_X_AXIS = ChartAxisFields.date.name
-DEFAULT_Y_AXIS = ChartAxisFields.metric.name
-CHART_AXIS_CHOICES: List[str] = [field.name for field in ChartAxisFields]
+from metrics.domain.utils import (
+    DEFAULT_CHART_HEIGHT,
+    DEFAULT_CHART_WIDTH,
+    DEFAULT_X_AXIS,
+    DEFAULT_Y_AXIS,
+    ChartAxisFields,
+    ChartTypes,
+)
 
 
 class ChartPlotSerializer(serializers.Serializer):
@@ -103,19 +97,19 @@ class ChartPlotSerializer(serializers.Serializer):
         default="",
     )
     x_axis = serializers.ChoiceField(
-        choices=CHART_AXIS_CHOICES,
+        choices=ChartAxisFields.choices(),
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text=help_texts.GRAPH_X_AXIS,
+        help_text=help_texts.CHART_X_AXIS,
         default=DEFAULT_X_AXIS,
     )
     y_axis = serializers.ChoiceField(
-        choices=CHART_AXIS_CHOICES,
+        choices=ChartAxisFields.choices(),
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text=help_texts.GRAPH_Y_AXIS,
+        help_text=help_texts.CHART_Y_AXIS,
         default=DEFAULT_Y_AXIS,
     )
 
