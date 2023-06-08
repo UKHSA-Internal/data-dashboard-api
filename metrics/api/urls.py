@@ -15,10 +15,10 @@ from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
     DownloadsView,
+    EncodedChartsView,
     FileUploadView,
     HeadlinesView,
     HealthView,
-    OldChartsView,
     OldTabularView,
     TablesView,
     TrendsView,
@@ -58,8 +58,8 @@ urlpatterns = [
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     # Main API
     re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
-    re_path(f"^{API_PREFIX}charts/v2", OldChartsView.as_view()),
-    re_path(f"^{API_PREFIX}charts/v3", ChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(
@@ -78,8 +78,8 @@ urlpatterns = [
     path("", include(static_urlpatterns)),
     # Endpoints to be migrated away from
     re_path(r"^upload/$", FileUploadView.as_view()),
-    re_path(r"^charts/v2", OldChartsView.as_view()),
-    re_path(r"^charts/v3", ChartsView.as_view()),
+    re_path(r"^charts/v2", ChartsView.as_view()),
+    re_path(r"^charts/v3", EncodedChartsView.as_view()),
     re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(

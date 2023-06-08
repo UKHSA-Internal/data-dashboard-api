@@ -71,3 +71,9 @@ The dates for the specified plots in a tabular format
 TABLES_RESPONSE_HELP_TEXT: str = """
 The specified plots in a tabular format
 """
+ENCODED_CHARTS_RESPONSE_HELP_TEXT: str = """
+The specified chart in the requested format e.g. svg URI encoded
+"""
+ENCODED_CHARTS_LAST_UPDATED_HELP_TEXT: str = """
+The date that the chart data goes up to
+"""
