@@ -592,15 +592,19 @@ class TestValidateChartPlotParameters:
 class TestMiscMethods:
     @staticmethod
     def _create_chart_plot_data(
-        x_axis: List[datetime.date],
-        y_axis: List[int],
+        x_axis_values: List[datetime.date],
+        y_axis_values: List[int],
     ) -> PlotsData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
             topic="RSV",
             metric="weekly_positivity_by_age",
         )
-        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+        return PlotsData(
+            parameters=plot_params,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
+        )
 
     @staticmethod
     def _create_charts_interface() -> ChartsInterface:
@@ -635,13 +639,13 @@ class TestMiscMethods:
     plot_2_values = [10, 20, 30]
 
     first_chart_plots_data = _create_chart_plot_data(
-        x_axis=plot_1_dates,
-        y_axis=plot_1_values,
+        x_axis_values=plot_1_dates,
+        y_axis_values=plot_1_values,
     )
 
     second_chart_plots_data = _create_chart_plot_data(
-        x_axis=plot_2_dates,
-        y_axis=plot_2_values,
+        x_axis_values=plot_2_dates,
+        y_axis_values=plot_2_values,
     )
 
     mock_charts_interface = _create_charts_interface()
