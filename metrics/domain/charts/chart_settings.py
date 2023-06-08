@@ -5,8 +5,17 @@ from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 
 
 class ChartSettings:
-    def __init__(self):
-        ...
+    def __init__(self, width: int, height: int):
+        self._width = width
+        self._height = height
+
+    @property
+    def width(self) -> int:
+        return self._width
+
+    @property
+    def height(self) -> int:
+        return self._height
 
     @staticmethod
     def get_tick_font_config() -> DICT_OF_STR_ONLY:
