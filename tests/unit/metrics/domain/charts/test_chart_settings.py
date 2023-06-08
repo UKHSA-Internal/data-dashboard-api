@@ -1,18 +1,28 @@
 from unittest import mock
 
+import pytest
+
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings
 
 
+@pytest.fixture()
+def fake_chart_settings() -> ChartSettings:
+    return ChartSettings(
+        width=930,
+        height=220,
+    )
+
+
 class TestChartSettings:
-    def test_get_tick_font_setting(self):
+    def test_get_tick_font_setting(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
         When `get_tick_font_config()` is called
         Then the correct tick font configuration is returned as a dict
         """
         # Given
-        chart_settings = ChartSettings()
+        chart_settings = fake_chart_settings
 
         # When
         tick_font_config = chart_settings.get_tick_font_config()
@@ -24,14 +34,14 @@ class TestChartSettings:
         }
         assert tick_font_config == expected_tick_font_config
 
-    def test_get_x_axes_setting(self):
+    def test_get_x_axes_setting(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
         When `get_x_axis_config()` is called
         Then the correct X axis configuration is returned as a dict
         """
         # Given
-        chart_settings = ChartSettings()
+        chart_settings = fake_chart_settings
 
         # When
         x_axis_config = chart_settings.get_x_axis_config()
@@ -50,14 +60,14 @@ class TestChartSettings:
         }
         assert x_axis_config == expected_x_axis_config
 
-    def test_get_y_axes_setting(self):
+    def test_get_y_axes_setting(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
         When `get_y_axis_config()` is called
         Then the correct Y axis configuration is returned as a dict
         """
         # Given
-        chart_settings = ChartSettings()
+        chart_settings = fake_chart_settings
 
         # When
         y_axis_config = chart_settings.get_y_axis_config()
@@ -76,6 +86,7 @@ class TestChartSettings:
         self,
         mocked_get_x_axis_config: mock.MagicMock,
         mocked_get_y_axis_config: mock.MagicMock,
+        fake_chart_settings: ChartSettings,
     ):
         """
         Given an instance of `ChartSettings`
@@ -83,7 +94,7 @@ class TestChartSettings:
         Then the correct base chart configuration is returned as a dict
         """
         # Given
-        chart_settings = ChartSettings()
+        chart_settings = fake_chart_settings
 
         # When
         base_chart_config = chart_settings.get_base_chart_config()
@@ -105,14 +116,14 @@ class TestChartSettings:
 
         assert base_chart_config == expected_base_chart_config
 
-    def test_get_simple_line_chart_config(self):
+    def test_get_simple_line_chart_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
         When `get_simple_line_chart_config()` is called
         Then the correct configuration for simple line charts is returned as a dict
         """
         # Given
-        chart_settings = ChartSettings()
+        chart_settings = fake_chart_settings
 
         # When
         simple_line_chart_config = chart_settings.get_simple_line_chart_config()
@@ -124,3 +135,41 @@ class TestChartSettings:
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
         }
         assert simple_line_chart_config == expected_line_chart_config
+
+    def test_chart_settings_width(self):
+        """
+        Given a `width` integer
+        When the `width` property is called from an instance of `ChartSettings`
+        Then the correct number is returned
+        """
+        # Given
+        width = 930
+        chart_settings = ChartSettings(
+            width=width,
+            height=220,
+        )
+
+        # When
+        chart_width: int = chart_settings.width
+
+        # Then
+        assert chart_width == width
+
+    def test_chart_settings_height(self):
+        """
+        Given a `width` integer
+        When the `width` property is called from an instance of `ChartSettings`
+        Then the correct number is returned
+        """
+        # Given
+        height = 220
+        chart_settings = ChartSettings(
+            width=930,
+            height=height,
+        )
+
+        # When
+        chart_height: int = chart_settings.height
+
+        # Then
+        assert chart_height == height
