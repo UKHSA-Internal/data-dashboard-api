@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Dict, List, Optional, Union
 
 import plotly.graph_objects
@@ -292,3 +293,17 @@ def write_figure(
     figure.write_image(file=filename, format=file_format)
 
     return filename
+
+
+class ChartAxisFields(Enum):
+    stratum = "stratum__name"
+    date = "dt"
+    metric = "metric_value"
+    geography = "geography__geography_type__name"
+
+    @classmethod
+    def choices(cls):
+        return tuple((field_name.name, field_name.name) for field_name in cls)
+
+    def __str__(self):
+        return str(self.value)

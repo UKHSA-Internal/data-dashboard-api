@@ -3,7 +3,7 @@ from unittest import mock
 from cms.metrics_interface import interface
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.interfaces.charts.access import ChartTypes
+from metrics.interfaces.charts.access import ChartAxisFields, ChartTypes
 
 
 class TestMetricsAPIInterface:
@@ -21,6 +21,21 @@ class TestMetricsAPIInterface:
 
         # Then
         assert all_chart_types == ChartTypes.choices()
+
+    def test_get_chart_axis_choices_delegates_call_correctly(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_chart_axis_choices()` is called from that object
+        Then the call is delegated to the correct method on the `ChartTypes` enum
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        all_chart_axes = metrics_api_interface.get_chart_axis_choices()
+
+        # Then
+        assert all_chart_axes == ChartAxisFields.choices()
 
     def test_get_chart_line_types_delegates_call_correctly(self):
         """
