@@ -71,6 +71,12 @@ The dates for the specified plots in a tabular format
 TABLES_RESPONSE_HELP_TEXT: str = """
 The specified plots in a tabular format
 """
+CHART_X_AXIS: str = """
+The metric to use along the X Axis of the chart
+"""
+CHART_Y_AXIS: str = """
+The metric to use along the Y Axis of the chart
+"""
 ENCODED_CHARTS_RESPONSE_HELP_TEXT: str = """
 The specified chart in the requested format e.g. svg URI encoded
 """

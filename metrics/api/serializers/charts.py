@@ -1,7 +1,7 @@
 from typing import List
 
 from django.db.models import Manager
-from django.db.utils import ProgrammingError
+from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
@@ -9,10 +9,14 @@ from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.domain.utils import ChartTypes
-
-DEFAULT_CHART_HEIGHT = 220
-DEFAULT_CHART_WIDTH = 435
+from metrics.domain.utils import (
+    DEFAULT_CHART_HEIGHT,
+    DEFAULT_CHART_WIDTH,
+    DEFAULT_X_AXIS,
+    DEFAULT_Y_AXIS,
+    ChartAxisFields,
+    ChartTypes,
+)
 
 
 class ChartPlotSerializer(serializers.Serializer):
@@ -92,6 +96,22 @@ class ChartPlotSerializer(serializers.Serializer):
         allow_null=True,
         default="",
     )
+    x_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_X_AXIS,
+        default=DEFAULT_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_Y_AXIS,
+        default=DEFAULT_Y_AXIS,
+    )
 
     def to_models(self):
         return PlotParameters(**self.data)
@@ -101,7 +121,7 @@ class ChartPlotSerializer(serializers.Serializer):
 
         try:
             self.populate_choices()
-        except (RuntimeError, ProgrammingError):
+        except (RuntimeError, ProgrammingError, OperationalError):
             pass
         # This is needed because the serializers are loaded by django at runtime
         # Because this is a child serializer, an `instance` must be passed
@@ -123,6 +143,12 @@ class ChartPlotSerializer(serializers.Serializer):
 
 class ChartPlotsListSerializer(serializers.ListSerializer):
     child = ChartPlotSerializer()
+
+    def __init__(self, *args, **kwargs):
+        try:
+            super().__init__(*args, **kwargs)
+        except OperationalError:
+            pass
 
 
 FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]

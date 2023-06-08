@@ -17,6 +17,8 @@ class PlotParameters(BaseModel):
     label: Optional[str] = ""
     line_colour: Optional[str] = ""
     line_type: Optional[str] = ""
+    x_axis: Optional[str] = ""
+    y_axis: Optional[str] = ""
 
     @property
     def topic_name(self) -> str:
@@ -72,6 +74,8 @@ class PlotParameters(BaseModel):
             "geography_name": self.geography_name or "",
             "geography_type_name": self.geography_type_name or "",
             "date_from": self.date_from_value,
+            "x_axis": self.x_axis or "",
+            "y_axis": self.y_axis or "",
         }
 
 
@@ -84,8 +88,8 @@ class PlotsCollection(BaseModel):
 
 class PlotsData(BaseModel):
     parameters: PlotParameters
-    x_axis: Any
-    y_axis: Any
+    x_axis_values: Any
+    y_axis_values: Any
 
 
 def get_date_n_months_ago_from_timestamp(

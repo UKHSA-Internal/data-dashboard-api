@@ -6,8 +6,8 @@
         "html_url": null,
         "slug": "influenza",
         "show_in_menus": false,
-        "seo_title": "",
-        "search_description": "",
+        "seo_title": "Influenza | UKHA data dashboard",
+        "search_description": "Detailed summary of Influenza in circulation within the UK",
         "first_published_at": "2023-05-16T14:06:43.187457+01:00",
         "alias_of": null,
         "parent": {
@@ -37,6 +37,8 @@
                                     "value": {
                                         "title": "Line chart with overlaying line comparing hospital admission rates of patients admitted to hospital with Influenza",
                                         "body": "Weekly admissions rates of patients admitted to hospital with Influenza as a weekly time series, shown as the rate per 100,000 people.",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -64,6 +66,8 @@
                                     "value": {
                                         "title": "Line chart comparing Influenza hospital admission rates by age",
                                         "body": "Age breakdown of people admitted to hospital, shown as the rate per 100,000 people.",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -218,6 +222,8 @@
                                     "value": {
                                         "title": "Line chart with overlaying line comparing ICU admission rates of patients admitted to hospital with Influenza",
                                         "body": "Weekly admissions rates of patients admitted to ICU with Influenza as a weekly time series, shown as the rate per 100,000 people.",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -245,6 +251,8 @@
                                     "value": {
                                         "title": "Line chart comparing Influenza ICU admission rates by age",
                                         "body": "Age breakdown of people admitted to ICU, shown as the rate per 100,000 people.",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -408,6 +416,8 @@
                                     "value": {
                                         "title": "Bar chart with overlaying line comparing positivity for Influenza tests",
                                         "body": "Weekly admissions rates of patients admitted to hospital with Influenza as a weekly time series, shown as the rate per 100,000 people.",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -435,6 +445,8 @@
                                     "value": {
                                         "title": "Line chart comparing weekly positivity for Influenza \r\ntests by age",
                                         "body": "Weekly time series of positivity for people testing positive for Influenza broken down by age.",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -542,35 +554,45 @@
     "related_links": [
         {
             "id": 71,
-            "meta": {"type": "topic.TopicPageRelatedLink"},
+            "meta": {
+                "type": "topic.TopicPageRelatedLink"
+            },
             "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
             "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"chb3o\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
             "id": 72,
-            "meta": {"type": "topic.TopicPageRelatedLink"},
+            "meta": {
+                "type": "topic.TopicPageRelatedLink"
+            },
             "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
             "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
             "body": "<p data-block-key=\"chb3o\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
         },
         {
             "id": 73,
-            "meta": {"type": "topic.TopicPageRelatedLink"},
+            "meta": {
+                "type": "topic.TopicPageRelatedLink"
+            },
             "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
             "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
             "body": "<p data-block-key=\"chb3o\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {
             "id": 74,
-            "meta": {"type": "topic.TopicPageRelatedLink"},
+            "meta": {
+                "type": "topic.TopicPageRelatedLink"
+            },
             "title": "Hepatitis (liver inflammation) cases in children – latest updates",
             "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
             "body": "<p data-block-key=\"chb3o\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
         },
         {
             "id": 75,
-            "meta": {"type": "topic.TopicPageRelatedLink"},
+            "meta": {
+                "type": "topic.TopicPageRelatedLink"
+            },
             "title": "Human parainfluenza viruses: guidance and data",
             "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"

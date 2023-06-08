@@ -19,6 +19,7 @@ DEFAULT_API_TIME_SERIES_MANAGER = APITimeSeries.objects
 def generate_api_time_series(
     core_time_series_manager: models.Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     api_time_series_manager: models.Manager = DEFAULT_API_TIME_SERIES_MANAGER,
+    batch_size: int = 100,
 ) -> None:
     """Queries the core `CoreTimeSeries` models and populates the flat `APITimeSeries`
 
@@ -27,6 +28,8 @@ def generate_api_time_series(
             Defaults to the native `CoreTimeSeries` manager.
         api_time_series_manager: The model Manager associated with the `APITimeSeries` model.
             Defaults to the native `APITimeSeries` manager.
+        batch_size: Controls the number of objects created
+            in a single query. Defaults to 100.
 
     Returns:
         None
@@ -41,7 +44,7 @@ def generate_api_time_series(
         )
         models_to_be_saved.append(flat_time_series)
 
-    api_time_series_manager.bulk_create(objs=models_to_be_saved)
+    api_time_series_manager.bulk_create(objs=models_to_be_saved, batch_size=batch_size)
 
 
 def create_api_time_series_from_core_time_series(

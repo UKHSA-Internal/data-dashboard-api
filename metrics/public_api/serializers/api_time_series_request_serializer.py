@@ -3,11 +3,7 @@ from typing import Dict, List
 
 from rest_framework.serializers import Serializer
 
-from metrics.data.managers.api_models.time_series import (
-    APITimeSeriesManager,
-    APITimeSeriesQuerySet,
-)
-from metrics.data.models.api_models import APITimeSeries
+from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
 
 @dataclass
@@ -36,8 +32,11 @@ class APITimeSeriesRequestSerializer(Serializer):
             raise NotImplementedError(NO_LOOKUP_FIELD_ERROR_MESSAGE) from error
 
     @property
-    def api_time_series_manager(self) -> APITimeSeriesManager:
-        return self.context.get("api_time_series_manager", APITimeSeries.objects)
+    def api_time_series_manager(self) -> "APITimeSeriesManager":
+        api_time_series_model = MetricsPublicAPIInterface.get_api_timeseries_model()
+        return self.context.get(
+            "api_time_series_manager", api_time_series_model.objects
+        )
 
     def get_kwargs_from_request(self) -> Dict[str, str]:
         """Gets the kwargs from the request passed into the context by the view object.
@@ -69,7 +68,7 @@ class APITimeSeriesRequestSerializer(Serializer):
         setattr(api_timeseries_dto, self.lookup_field, value)
         return api_timeseries_dto
 
-    def get_queryset(self) -> APITimeSeriesQuerySet:
+    def get_queryset(self) -> "APITimeSeriesQuerySet":
         """Calls out to the `APITimeSeriesManager` to get the distinct values as dictated the request kwargs.
 
         Returns:
@@ -90,5 +89,5 @@ class APITimeSeriesRequestSerializer(Serializer):
             List[APITimeSeriesDTO]: List of created data transfer objects
 
         """
-        queryset: APITimeSeriesQuerySet = self.get_queryset()
+        queryset = self.get_queryset()
         return [self.build_timeseries_dto(value) for value in queryset]

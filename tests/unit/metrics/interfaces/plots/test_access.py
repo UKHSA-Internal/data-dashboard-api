@@ -118,8 +118,8 @@ class TestPlotsInterface:
         # for the plot parameters which requested timeseries data that existed
         expected_plots_data_for_valid_params = PlotsData(
             parameters=valid_plot_parameters,
-            x_axis=tuple(x.dt for x in fake_core_time_series_records),
-            y_axis=tuple(x.metric_value for x in fake_core_time_series_records),
+            x_axis_values=tuple(x.dt for x in fake_core_time_series_records),
+            y_axis_values=tuple(x.metric_value for x in fake_core_time_series_records),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -163,8 +163,10 @@ class TestPlotsInterface:
         assert plot_data.parameters == fake_chart_plot_parameters
 
         # Check the correct data is passed to the axis of the `PlotData` model
-        assert plot_data.x_axis == tuple(x.dt for x in fake_core_time_series_for_plot)
-        assert plot_data.y_axis == tuple(
+        assert plot_data.x_axis_values == tuple(
+            x.dt for x in fake_core_time_series_for_plot
+        )
+        assert plot_data.y_axis_values == tuple(
             x.metric_value for x in fake_core_time_series_for_plot
         )
 
@@ -204,6 +206,8 @@ class TestPlotsInterface:
         """
         # Given
         spy_core_time_series_manager = mock.Mock()
+        mocked_x_axis = mock.Mock()
+        mocked_y_axis = mock.Mock()
         mocked_topic = mock.Mock()
         mocked_metric = mock.Mock()
         mocked_date_from = mock.Mock()
@@ -218,6 +222,8 @@ class TestPlotsInterface:
 
         # When
         timeseries = plots_interface.get_timeseries(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
@@ -232,6 +238,8 @@ class TestPlotsInterface:
             == spy_core_time_series_manager.filter_for_dates_and_values.return_value
         )
         spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
@@ -254,9 +262,10 @@ class TestPlotsInterface:
         # Given
         date_from: str = "2023-01-01"
         fake_chart_plot_parameters.date_from = date_from
+        fake_plots_collection = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            plots_collection=mock.MagicMock(), core_time_series_manager=mock.Mock()
+            plots_collection=fake_plots_collection, core_time_series_manager=mock.Mock()
         )
 
         # When

@@ -89,7 +89,7 @@ class ChartsInterface:
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            values=plot_data.y_axis,
+            values=plot_data.y_axis_values,
         )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
@@ -107,8 +107,8 @@ class ChartsInterface:
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            dates=plot_data.x_axis,
-            values=plot_data.y_axis,
+            dates=plot_data.x_axis_values,
+            values=plot_data.y_axis_values,
             legend=plot_data.parameters.metric_name,
         )
 
@@ -182,8 +182,8 @@ class ChartsInterface:
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        dates = plot_data.x_axis
-        values = plot_data.y_axis
+        dates = plot_data.x_axis_values
+        values = plot_data.y_axis_values
         metric_name = plot_data.parameters.metric_name
 
         return {

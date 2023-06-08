@@ -8,7 +8,9 @@ from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotsData
 
-LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.CHART_SETTINGS | {
+LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings(
+    0, 0
+).get_base_chart_config() | {
     "legend": {
         "orientation": "h",
         "y": 1.0,
@@ -53,8 +55,8 @@ def create_multi_coloured_line_chart(
         )
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
-            x_axis=plot_data.x_axis,
-            y_axis=plot_data.y_axis,
+            x_axis=plot_data.x_axis_values,
+            y_axis=plot_data.y_axis_values,
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,

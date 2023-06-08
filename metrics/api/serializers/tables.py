@@ -1,12 +1,18 @@
 from django.db.models import Manager
-from django.db.utils import ProgrammingError
+from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
-from metrics.api.serializers.charts import DEFAULT_CHART_HEIGHT, DEFAULT_CHART_WIDTH
 from metrics.data.models.core_models import Metric, Topic
 from metrics.domain.models import PlotsCollection
-from metrics.domain.utils import ChartTypes
+from metrics.domain.utils import (
+    DEFAULT_CHART_HEIGHT,
+    DEFAULT_CHART_WIDTH,
+    DEFAULT_X_AXIS,
+    DEFAULT_Y_AXIS,
+    ChartAxisFields,
+    ChartTypes,
+)
 
 
 class TablePlotSerializer(serializers.Serializer):
@@ -26,7 +32,6 @@ class TablePlotSerializer(serializers.Serializer):
         required=False,
         default="simple_line",
     )
-
     stratum = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -48,7 +53,6 @@ class TablePlotSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
-
     date_from = serializers.DateField(
         required=False,
         allow_null=True,
@@ -61,7 +65,6 @@ class TablePlotSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.DATE_FROM_FIELD,
     )
-
     label = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -69,13 +72,29 @@ class TablePlotSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.LABEL_FIELD,
     )
+    x_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_X_AXIS,
+        default=DEFAULT_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_Y_AXIS,
+        default=DEFAULT_Y_AXIS,
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         try:
             self.populate_choices()
-        except (RuntimeError, ProgrammingError):
+        except (RuntimeError, ProgrammingError, OperationalError):
             pass
 
     def populate_choices(self):
@@ -97,6 +116,12 @@ class TablePlotsListSerializer(serializers.ListSerializer):
 
 class TablesSerializer(serializers.Serializer):
     plots = TablePlotsListSerializer()
+
+    def __init__(self, *args, **kwargs):
+        try:
+            super().__init__(*args, **kwargs)
+        except OperationalError:
+            pass
 
     def to_models(self) -> PlotsCollection:
         return PlotsCollection(

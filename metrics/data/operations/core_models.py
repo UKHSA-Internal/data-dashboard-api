@@ -163,6 +163,7 @@ def load_core_data(
     filename: str,
     core_time_series_manager: models.Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     core_time_series_model: Type[models.Model] = DEFAULT_CORE_TIME_SERIES_MODEL,
+    batch_size: int = 100,
 ) -> None:
     """
     Load the Core file and maintain the underlying models
@@ -171,10 +172,12 @@ def load_core_data(
         filename: The filename of the file we want to load
         core_time_series_manager: The Core Timeseries manager
         core_time_series_model: The model for the Core Timeseries
-
+        batch_size: Controls the number of objects created
+            in a single query. Defaults to 100.
 
     Returns:
         None
+
     """
     incoming_df = check_file(filename=filename)
 
@@ -245,4 +248,8 @@ def load_core_data(
     records: Dict[str:str] = df.to_dict("records")
     model_instances: List = [core_time_series_model(**record) for record in records]
 
-    core_time_series_manager.bulk_create(model_instances, ignore_conflicts=True)
+    core_time_series_manager.bulk_create(
+        model_instances,
+        ignore_conflicts=True,
+        batch_size=batch_size,
+    )
