@@ -76,3 +76,4 @@ The metric to use along the X Axis of the chart
 """
 CHART_Y_AXIS: str = """
 The metric to use along the Y Axis of the chart
+"""
