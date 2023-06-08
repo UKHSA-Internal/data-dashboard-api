@@ -43,7 +43,11 @@ class TestLineMultiColouredCharts:
             line_type=line_type,
             line_colour=line_colour,
         )
-        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+        return PlotsData(
+            parameters=plot_params,
+            x_axis_values=x_axis,
+            y_axis_values=y_axis,
+        )
 
     def test_main_plot_and_axis_properties(self):
         """
@@ -144,8 +148,8 @@ class TestLineMultiColouredCharts:
         # ---First line plot checks---
         first_plot: plotly.graph_objects.Scatter = figure.data[0]
         # Check that each axis has been populated with the correct data
-        assert list(first_plot.x) == first_chart_plots_data.x_axis
-        assert list(first_plot.y) == first_chart_plots_data.y_axis
+        assert list(first_plot.x) == first_chart_plots_data.x_axis_values
+        assert list(first_plot.y) == first_chart_plots_data.y_axis_values
 
         # The name of the plot should match the provided custom label
         assert first_plot.name == first_plot_label
@@ -166,8 +170,8 @@ class TestLineMultiColouredCharts:
         # ---Second line plot checks---
         second_plot: plotly.graph_objects.Scatter = figure.data[1]
         # Check that each axis has been populated with the correct data
-        assert list(second_plot.x) == second_chart_plots_data.x_axis
-        assert list(second_plot.y) == second_chart_plots_data.y_axis
+        assert list(second_plot.x) == second_chart_plots_data.x_axis_values
+        assert list(second_plot.y) == second_chart_plots_data.y_axis_values
 
         # The name of the plot should match the provided custom label
         assert second_plot.name == second_plot_label

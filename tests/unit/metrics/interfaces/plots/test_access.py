@@ -118,8 +118,8 @@ class TestPlotsInterface:
         # for the plot parameters which requested timeseries data that existed
         expected_plots_data_for_valid_params = PlotsData(
             parameters=valid_plot_parameters,
-            x_axis=tuple(x.dt for x in fake_core_time_series_records),
-            y_axis=tuple(x.metric_value for x in fake_core_time_series_records),
+            x_axis_values=tuple(x.dt for x in fake_core_time_series_records),
+            y_axis_values=tuple(x.metric_value for x in fake_core_time_series_records),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -163,8 +163,10 @@ class TestPlotsInterface:
         assert plot_data.parameters == fake_chart_plot_parameters
 
         # Check the correct data is passed to the axis of the `PlotData` model
-        assert plot_data.x_axis == tuple(x.dt for x in fake_core_time_series_for_plot)
-        assert plot_data.y_axis == tuple(
+        assert plot_data.x_axis_values == tuple(
+            x.dt for x in fake_core_time_series_for_plot
+        )
+        assert plot_data.y_axis_values == tuple(
             x.metric_value for x in fake_core_time_series_for_plot
         )
 

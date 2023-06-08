@@ -274,8 +274,8 @@ class TestChartsInterface:
         mocked_values = mock.Mock()
         fake_plot_data = PlotsData(
             parameters=fake_chart_plot_parameters,
-            x_axis=mocked_dates,
-            y_axis=mocked_values,
+            x_axis_values=mocked_dates,
+            y_axis_values=mocked_values,
         )
 
         fake_chart_plots = PlotsCollection(
