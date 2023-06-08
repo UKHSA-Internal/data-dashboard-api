@@ -36,26 +36,16 @@ api_router = WagtailAPIRouter("wagtailapi")
 # The second parameter is the endpoint class that handles the requests
 api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 
-static_urlpatterns = [
-    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+cms_api_urlpatterns = [
+    # CMS pages endpoints
+    path("api/", api_router.urls),
+    # Serves the CMS admin view
+    path("cms-admin/", include(wagtailadmin_urls)),
 ]
 
 API_PREFIX = "api/"
 
-urlpatterns = [
-    path("", include(router.urls)),
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-    # JSON schema view
-    path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),
-    # Swagger docs UI schema view:
-    path(
-        "api/swagger/",
-        SpectacularSwaggerView.as_view(url_name="schema"),
-        name="swagger-ui",
-    ),
-    # Redoc schema view
-    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
-    # Main API
+metrics_api_urlpatterns = [
     re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
@@ -66,14 +56,6 @@ urlpatterns = [
     ),
     re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
-    path("health/", HealthView.as_view()),
-    # Django admin
-    path("admin/", admin.site.urls),
-    # CMS endpoints
-    path("api/", api_router.urls),
-    path("cms-admin/", include(wagtailadmin_urls)),
-    # Static files
-    path("", include(static_urlpatterns)),
     # Endpoints to be migrated away from
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
@@ -87,7 +69,47 @@ urlpatterns = [
     re_path(r"^trends/v2", TrendsView.as_view()),
 ]
 
-urlpatterns += public_api_urlpatterns
+docs_urlspatterns = [
+    path("", include(router.urls)),
+    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    # JSON schema view
+    path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),
+    # Swagger docs UI schema view:
+    path(
+        "api/swagger/",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    # Redoc schema view
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+]
+
+static_urlpatterns = [
+    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+]
+
+common_urlpatterns = [
+    # Health probe
+    path("health/", HealthView.as_view()),
+    # Static files
+    path("", include(static_urlpatterns)),
+]
+
+django_admin_urlpatterns = [
+    # Django admin
+    path("admin/", admin.site.urls),
+]
+
+urlpatterns = (
+    docs_urlspatterns
+    + static_urlpatterns
+    + common_urlpatterns
+    + django_admin_urlpatterns
+    + metrics_api_urlpatterns
+    + cms_api_urlpatterns
+    + public_api_urlpatterns
+)
+
 
 if settings.DEBUG:
     from django.conf.urls.static import static

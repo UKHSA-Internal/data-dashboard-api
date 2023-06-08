@@ -193,7 +193,7 @@ class TestTablePlotSerializer:
             passed to a `TablePlotSerializer` object
         And valid values for the `topic` and `metric`
         When `is_valid()` is called from the serializer
-        Then True is returned
+        Then the `x_axis` & `y_axis` field values are returned correctly
         """
         # Given
         (
@@ -312,24 +312,36 @@ class TestTablePlotSerializer:
 
 
 class TestTablesSerializer:
-    def test_table_x_and_y_axis_are_returned_correctly(self):
+    def test_tables_serializer_validates_correctly(self):
         """
-        Given the user supplies x and y axis parameters to pass to a `TablesSerializer` object
+        Given the user supplies an empty plot to a `TablesSerializer` object
         When `is_valid()` is called from the serializer
-        Then the supplied values are used
+        Then the serializer still validates successfully
         """
         # Given
-        fake_table_x_axis = "date"
-        fake_table_y_axis = "metric"
-        valid_data_payload = {"plots": []}
-        serializer = TablesSerializer(data=valid_data_payload)
+        valid_data_payload = {
+            "plots": [],
+        }
 
         # When
+        serializer = TablesSerializer(data=valid_data_payload)
         is_serializer_valid: bool = serializer.is_valid()
-        serializer_data = serializer.data
 
         # Then
         assert is_serializer_valid
+
+    def test_tables_serializer_does_not_validates(self):
+        """
+        Given the user supplies no payload to a `TablesSerializer` object
+        When `is_valid()` is called from the serializer
+        Then the serializer raises an exception
+        """
+        # Given
+        serializer = TablesSerializer(data={})
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
 
     def test_to_models_returns_correct_models(self):
         """

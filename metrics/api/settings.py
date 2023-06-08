@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_filters",
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
@@ -173,7 +174,7 @@ LOGGING = {
         "django": {
             "handlers": ["console"],
             "level": config.LOG_LEVEL,
-            "propagate": True,
+            "propagate": False,
         },
     },
 }
