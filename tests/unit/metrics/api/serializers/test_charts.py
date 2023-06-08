@@ -7,8 +7,11 @@ from rest_framework.exceptions import ValidationError
 from metrics.api.serializers.charts import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
+    DEFAULT_X_AXIS,
+    DEFAULT_Y_AXIS,
     ChartPlotSerializer,
     ChartsSerializer,
+    get_axis_field_name,
 )
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
@@ -19,6 +22,30 @@ from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
 DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
+
+
+class TestAxisFieldName:
+    @pytest.mark.parametrize(
+        "field_name, expected_result",
+        [
+            ("stratum", "stratum__name"),
+            ("date", "dt"),
+            ("metric", "metric_value"),
+            ("geography", "geography__geography_type__name"),
+            ("no_translation", "no_translation"),
+        ],
+    )
+    def test_get_axis_field_name(self, field_name: str, expected_result: str):
+        """
+        Given a field name (eg. geography)
+        When `get_axis_field_name()` is called
+        Then the expected output will be returned
+        """
+        # Given/When
+        actual_result: str = get_axis_field_name(field=field_name)
+
+        # Then
+        assert actual_result == expected_result
 
 
 @pytest.fixture
@@ -45,6 +72,8 @@ class TestChartPlotSerializer:
         "label",
         "line_colour",
         "line_type",
+        "x_axis",
+        "y_axis",
     ]
 
     def test_validates_successfully_when_optional_parameters_are_none(
@@ -270,6 +299,45 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["line_type"] == line_type
 
+    def test_valid_payload_with_optional_x_and_y_fields_provided(
+        self,
+        charts_plot_serializer_payload_and_model_managers,
+    ):
+        """
+        Given a valid payload containing the optional `x_axis` and `y_axis` fields
+            passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `chart_type`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        x_axis = "date"
+        y_axis = "metric"
+
+        valid_data_payload["x_axis"] = x_axis
+        valid_data_payload["y_axis"] = y_axis
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+        assert serializer.validated_data["x_axis"] == x_axis
+        assert serializer.validated_data["y_axis"] == y_axis
+
     @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
     def test_valid_chart_type(
         self,
@@ -305,7 +373,8 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
 
     @pytest.mark.parametrize(
-        "field_to_be_serialized", ["topic", "metric", "chart_type", "date_from"]
+        "field_to_be_serialized",
+        ["topic", "metric", "chart_type", "date_from", "x_axis", "y_axis"],
     )
     def test_invalid_field_value(
         self,
@@ -575,7 +644,7 @@ class TestChartsSerializer:
 
     def test_to_models_returns_correct_models(self):
         """
-        Given a payload for a list of 1 chart plots
+        Given a payload for a list of 1 chart plot
         When `to_models()` is called from an instance of the `ChartsSerializer`
         Then a `ChartPlots` model is returned with the correct data
         """
