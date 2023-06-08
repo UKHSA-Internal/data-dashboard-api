@@ -27,3 +27,6 @@ CHART_ARGS = Dict[
 ]
 
 COLOUR_PAIR = Tuple[colour_scheme.RGBAColours, colour_scheme.RGBAColours]
+
+
+DICT_OF_STR_ONLY = Dict[str, str]
