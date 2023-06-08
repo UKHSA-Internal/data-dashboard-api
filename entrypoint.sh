@@ -8,7 +8,7 @@ function set_up_django() {
     python manage.py collectstatic --noinput
 
     if [[ "$DETACHED_MODE" == "true" ]]; then
-      # Running in detached mode means the server is not started
+      echo "Running in detached mode. Server will not be started"
       return
     fi
 
