@@ -3,7 +3,7 @@ from unittest import mock
 from cms.metrics_interface import interface
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.interfaces.charts.access import ChartAxisFields, ChartTypes
+from metrics.domain.utils import ChartAxisFields, ChartTypes
 
 
 class TestMetricsAPIInterface:
