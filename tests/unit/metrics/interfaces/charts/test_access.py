@@ -3,14 +3,16 @@ from typing import List
 from unittest import mock
 
 import plotly.graph_objects
+import pytest
 
+from metrics.api.serializers.charts import FILE_FORMAT_CHOICES
 from metrics.domain.charts.line_multi_coloured import generation
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
-    determine_last_updated,
-    generate_chart,
+    generate_chart_as_file,
+    generate_encoded_chart,
     validate_chart_plot_parameters,
     validate_each_requested_chart_plot,
 )
@@ -350,16 +352,18 @@ class TestChartsInterface:
 
 
 class TestGenerateChart:
+    @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_delegates_call_for_validation(
+    def test_chart_as_file_delegates_call_for_validation(
         self,
         spy_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
+        mocked_write_figure: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
-        When `generate_chart()` is called
+        When `generate_chart_as_file()` is called
         Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
         And `generate_chart_figure` is called from an instance of the `ChartsInterface`
         """
@@ -367,7 +371,7 @@ class TestGenerateChart:
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
 
         # When
-        generate_chart(chart_plots=mocked_chart_plots)
+        generate_chart_as_file(chart_plots=mocked_chart_plots)
 
         # Then
         spy_validate_each_requested_chart_plot.assert_called_once_with(
@@ -375,10 +379,10 @@ class TestGenerateChart:
         )
         spy_generate_chart_figure.assert_called_once_with()
 
-    @mock.patch(f"{MODULE_PATH}.write_figure")
+    @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_delegates_call_for_writing_the_chart_figure_to_file(
+    def test_chart_as_file_delegates_call_for_writing_the_chart(
         self,
         mocked_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
@@ -386,7 +390,38 @@ class TestGenerateChart:
     ):
         """
         Given a mock in place of a `PlotsCollection` model
-        When `generate_chart()` is called
+        When `generate_chart_as_file()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `write_figure` is called from an instance of the `ChartsInterface`
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        generate_chart_as_file(chart_plots=mocked_chart_plots)
+
+        # Then
+        spy_write_figure.assert_called_once_with(
+            figure=spy_generate_chart_figure.return_value,
+            topic="-",
+        )
+
+    @mock.patch(f"{MODULE_PATH}.to_json")
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    @mock.patch.object(ChartsInterface, "last_updated")
+    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_encoded_chart_delegates_call_for_validation(
+        self,
+        spy_validate_each_requested_chart_plot: mock.MagicMock,
+        spy_generate_chart_figure: mock.MagicMock,
+        mock_last_updated: mock.MagicMock,
+        mock_encode_figure: mock.MagicMock,
+        mock_to_json: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `PlotsCollection` model
+        When `generate_encoded_chart()` is called
         Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
         And `generate_chart_figure` is called from an instance of the `ChartsInterface`
         """
@@ -394,13 +429,103 @@ class TestGenerateChart:
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
 
         # When
-        generate_chart(chart_plots=mocked_chart_plots)
+        generate_encoded_chart(chart_plots=mocked_chart_plots)
 
         # Then
-        spy_write_figure.assert_called_once_with(
-            figure=spy_generate_chart_figure.return_value,
-            topic="-",
-            file_format=mocked_chart_plots.file_format,
+        spy_validate_each_requested_chart_plot.assert_called_once_with(
+            chart_plots=mocked_chart_plots
+        )
+        spy_generate_chart_figure.assert_called_once_with()
+
+    @mock.patch(f"{MODULE_PATH}.to_json")
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    @mock.patch.object(ChartsInterface, "last_updated")
+    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_encoded_chart_delegates_last_updated_call(
+        self,
+        mocked_validate_each_requested_chart_plot: mock.MagicMock,
+        spy_generate_chart_figure: mock.MagicMock,
+        spy_last_updated: mock.MagicMock,
+        mock_encode_figure: mock.MagicMock,
+        mock_to_json: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `PlotsCollection` model
+        When `generate_encoded_chart()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `last_updated` is called from an instance of the `ChartsInterface`
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        generate_encoded_chart(chart_plots=mocked_chart_plots)
+
+        # Then
+        spy_last_updated.assert_called_once_with(
+            figure=spy_generate_chart_figure.return_value
+        )
+
+    @mock.patch(f"{MODULE_PATH}.to_json")
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    @mock.patch.object(ChartsInterface, "last_updated")
+    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_encoded_chart_delegates_encode_figure_call(
+        self,
+        mocked_validate_each_requested_chart_plot: mock.MagicMock,
+        spy_generate_chart_figure: mock.MagicMock,
+        mock_last_updated: mock.MagicMock,
+        spy_encode_figure: mock.MagicMock,
+        mock_to_json: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `PlotsCollection` model
+        When `generate_encoded_chart()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `encode_figure` is called from an instance of the `ChartsInterface`
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        generate_encoded_chart(chart_plots=mocked_chart_plots)
+
+        # Then
+        spy_encode_figure.assert_called_once_with(
+            figure=spy_generate_chart_figure.return_value
+        )
+
+    @mock.patch(f"{MODULE_PATH}.to_json")
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    @mock.patch.object(ChartsInterface, "last_updated")
+    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
+    def test_encoded_chart_delegates_to_json_call(
+        self,
+        mocked_validate_each_requested_chart_plot: mock.MagicMock,
+        spy_generate_chart_figure: mock.MagicMock,
+        spy_last_updated: mock.MagicMock,
+        spy_encode_figure: mock.MagicMock,
+        spy_to_json: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `PlotsCollection` model
+        When `generate_encoded_chart()` is called
+        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
+        And `to_json` is called
+        """
+        # Given
+        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+
+        # When
+        generate_encoded_chart(chart_plots=mocked_chart_plots)
+
+        # Then
+        spy_to_json.assert_called_once_with(
+            last_updated=spy_last_updated.return_value,
+            encoded_figure=spy_encode_figure.return_value,
         )
 
 
@@ -464,7 +589,30 @@ class TestValidateChartPlotParameters:
         spy_validate_method.assert_called_once()
 
 
-class TestLastUpdated:
+class TestMiscMethods:
+    @staticmethod
+    def _create_chart_plot_data(
+        x_axis: List[datetime.date],
+        y_axis: List[int],
+    ) -> PlotsData:
+        plot_params = PlotParameters(
+            chart_type="line_multi_coloured",
+            topic="RSV",
+            metric="weekly_positivity_by_age",
+        )
+        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+
+    @staticmethod
+    def _create_charts_interface() -> ChartsInterface:
+        chart_type: str = ChartTypes.line_multi_coloured.value
+        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
+        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
+
+        return ChartsInterface(
+            chart_plots=mocked_chart_plots,
+            core_time_series_manager=mock.Mock(),
+        )
+
     plot_1_dates: List[datetime.date] = [
         datetime.date(2022, 9, 5),
         datetime.date(2022, 9, 19),
@@ -486,53 +634,45 @@ class TestLastUpdated:
     ]
     plot_2_values = [10, 20, 30]
 
-    @staticmethod
-    def _create_chart_plot_data(
-        x_axis: List[datetime.date],
-        y_axis: List[int],
-    ) -> PlotsData:
-        plot_params = PlotParameters(
-            chart_type="line_multi_coloured",
-            topic="RSV",
-            metric="weekly_positivity_by_age",
-        )
-        return PlotsData(parameters=plot_params, x_axis=x_axis, y_axis=y_axis)
+    first_chart_plots_data = _create_chart_plot_data(
+        x_axis=plot_1_dates,
+        y_axis=plot_1_values,
+    )
 
-    def test_determine_last_updated_chart_has_dates(self):
+    second_chart_plots_data = _create_chart_plot_data(
+        x_axis=plot_2_dates,
+        y_axis=plot_2_values,
+    )
+
+    mock_charts_interface = _create_charts_interface()
+
+    def test_determine_last_updated_where_chart_has_dates(self):
         """
         Given a multi coloured line chart with two plots
         and with dates along the x axis
-        When `determine_last_updated()` is called
-        Then we get back the latest date along the x axis
+        When `last_updated()` is called
+        Then we get back the latest date in the chart
         """
 
         # Given
-
-        first_chart_plots_data = self._create_chart_plot_data(
-            x_axis=self.plot_1_dates,
-            y_axis=self.plot_1_values,
-        )
-
-        second_chart_plots_data = self._create_chart_plot_data(
-            x_axis=self.plot_2_dates,
-            y_axis=self.plot_2_values,
+        figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=200,
+            chart_width=200,
+            chart_plots_data=[
+                self.first_chart_plots_data,
+                self.second_chart_plots_data,
+            ],
         )
 
         # When
-        figure = generation.generate_chart_figure(
-            chart_height=300,
-            chart_width=400,
-            chart_plots_data=[first_chart_plots_data, second_chart_plots_data],
-        )
-
-        last_update_date: str = determine_last_updated(figure)
+        last_updated_date: str = self.mock_charts_interface.last_updated(figure)
 
         # Then
         expected_date: str = "2023-03-09"
 
-        assert last_update_date == expected_date
+        assert last_updated_date == expected_date
 
-    def test_determine_last_updated_chart_does_not_have_dates(self):
+    def test_determine_last_updated_where_chart_does_not_have_dates(self):
         """
         Given a multi coloured line chart with two plots
         and with something other than dates along the x axis
@@ -541,30 +681,60 @@ class TestLastUpdated:
         """
 
         # Given
-
-        first_chart_plots_data = self._create_chart_plot_data(
-            x_axis=self.plot_1_dates,
-            y_axis=self.plot_1_values,
-        )
-
-        second_chart_plots_data = self._create_chart_plot_data(
-            x_axis=self.plot_2_dates,
-            y_axis=self.plot_2_values,
-        )
-
-        # When
-        figure = generation.generate_chart_figure(
-            chart_height=300,
-            chart_width=400,
-            chart_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=200,
+            chart_width=200,
+            chart_plots_data=[
+                self.first_chart_plots_data,
+                self.second_chart_plots_data,
+            ],
         )
 
         # Simulate the chart has something other than dates along the x axis
         figure.update_xaxes({"type": "-"})
 
-        last_update_date: str = determine_last_updated(figure)
+        # When
+        last_updated_date: str = self.mock_charts_interface.last_updated(figure)
 
         # Then
         expected_date: str = ""
 
-        assert last_update_date == expected_date
+        assert last_updated_date == expected_date
+
+    @pytest.mark.parametrize("file_format", FILE_FORMAT_CHOICES)
+    def test_valid_format_passed_to_encode_figure(self, file_format: str):
+        """
+        Given the user supplies a supported file_format to pass to encode_figure
+        When the function is called then no exception is raised
+        """
+        # Given
+        plot_params = PlotParameters(
+            chart_type="line_multi_coloured",
+            topic="RSV",
+            metric="weekly_positivity_by_age",
+        )
+        chart_plots = PlotsCollection(
+            plots=[plot_params],
+            file_format=file_format,
+            chart_height=200,
+            chart_width=200,
+        )
+
+        interface = ChartsInterface(chart_plots=chart_plots)
+
+        figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
+            chart_height=200,
+            chart_width=200,
+            chart_plots_data=[
+                self.first_chart_plots_data,
+                self.second_chart_plots_data,
+            ],
+        )
+
+        try:
+            # When / Then
+            interface.encode_figure(figure)
+        except:
+            assert (
+                False
+            ), f"An invalid/unsupported file format of '{file_format}' was passed to encode_figure function"
