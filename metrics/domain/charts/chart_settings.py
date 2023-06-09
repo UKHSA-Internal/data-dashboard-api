@@ -15,6 +15,7 @@ X_AXIS_DATE_TYPE = {
     "tickformat": "%b %Y",
 }
 
+
 class ChartSettings:
     def __init__(self, width: int, height: int):
         self._width = width
