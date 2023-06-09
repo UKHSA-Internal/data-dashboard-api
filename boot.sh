@@ -51,6 +51,7 @@ function _validate_args() {
 }
 
 function run_script() {
+    echo "Running bootstrap script to populate application"
     local password_prefix=$1
     local password_suffix=$2
     local admin_password=$3
