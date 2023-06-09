@@ -13,5 +13,8 @@ EXPOSE 8000
 # Adds execution permission for the entrypoint shell script
 RUN chmod +x entrypoint.sh
 
-# Runs the production server
-ENTRYPOINT ./entrypoint.sh
+
+ENTRYPOINT ["/bin/bash"]
+
+# Runs the production server by default
+CMD ["./entrypoint.sh"]
