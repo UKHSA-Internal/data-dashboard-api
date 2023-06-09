@@ -10,6 +10,7 @@ from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
+import config
 from cms.dashboard.viewsets import CMSPagesAPIViewSet
 from metrics.api import settings
 from metrics.api.views import (
@@ -45,7 +46,7 @@ cms_api_urlpatterns = [
 
 API_PREFIX = "api/"
 
-metrics_api_urlpatterns = [
+private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
@@ -100,15 +101,26 @@ django_admin_urlpatterns = [
     path("admin/", admin.site.urls),
 ]
 
-urlpatterns = (
-    docs_urlspatterns
-    + static_urlpatterns
-    + common_urlpatterns
-    + django_admin_urlpatterns
-    + metrics_api_urlpatterns
-    + cms_api_urlpatterns
-    + public_api_urlpatterns
-)
+# Base urls required for each workload type
+urlpatterns = docs_urlspatterns + static_urlpatterns + common_urlpatterns
+
+# Workload type switch.
+# This setting controls which endpoints to expose
+if config.APP_MODE == "CMS":
+    urlpatterns += cms_api_urlpatterns
+    urlpatterns += django_admin_urlpatterns
+elif config.APP_MODE == "PUBLIC_API":
+    urlpatterns += public_api_urlpatterns
+elif config.APP_MODE == "PRIVATE_API":
+    urlpatterns += private_api_urlpatterns
+else:
+    # If the `APP_MODE` env var is not
+    # one of `CMS`, `PRIVATE_API` or `PUBLIC_API`.
+    # Then expose all the endpoint patterns.
+    urlpatterns += cms_api_urlpatterns
+    urlpatterns += django_admin_urlpatterns
+    urlpatterns += public_api_urlpatterns
+    urlpatterns += private_api_urlpatterns
 
 
 if settings.DEBUG:
