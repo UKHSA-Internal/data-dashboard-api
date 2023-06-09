@@ -15,15 +15,6 @@ X_AXIS_DATE_TYPE = {
     "tickformat": "%b %Y",
 }
 
-X_AXIS_SETTINGS = {
-    "showgrid": False,
-    "zeroline": False,
-    "showline": False,
-    "ticks": "outside",
-    "tickson": "boundaries",
-    "tickfont": TICK_FONT,
-}
-
 
 class ChartSettings:
     def __init__(self, width: int, height: int):
