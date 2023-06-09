@@ -10,39 +10,30 @@ from metrics.data.managers.api_keys import CustomAPIKeyManager
 class TestCustomAPIKeyManager:
     @mock.patch.object(CustomAPIKeyManager, "assign_pre_generated_key")
     @mock.patch.object(APIKeyManager, "create_key")
-    @pytest.mark.parametrize(
-        "kwargs_for_create_key",
-        [
-            {"password_prefix": "12345678", "name": "fake_name"},
-            {"password_suffix": "12345678910123456789", "name": "fake_name"},
-            {"name": "fake_name"},
-        ],
-    )
-    def test_create_key_falls_back_to_super_method_if_no_password_is_provided(
+    def test_create_key_falls_back_to_super_method_if_no_api_key_is_provided(
         self,
         spy_create_key_from_parent_class: mock.MagicMock,
         spy_assign_pre_generated_key: mock.MagicMock,
-        kwargs_for_create_key: Dict[str, str],
     ):
         """
-        Given a set of kwargs which do not contain both a password prefix and suffix
+        Given a set of kwargs which do not contain an `api_key`
         When `create_key()` is called from an instance of the `CustomAPIKeyManager`
         Then the call is delegated to the `super().create_key()` method
 
         Patches:
             `spy_create_key_from_parent_class`: For the main assertions.
                 To check that the `super().create_key` from further
-                up the inheritance chain is called when no password
-                components are explicitly provided.
+                up the inheritance chain is called when no `api_key`
+                is explicitly provided.
             `spy_assign_pre_generated_key`: For the main assertions.
                 To check that the `assign_pre_generated_key()` method
-                is not called when no password components are provided.
+                is not called when an api key is not provided.
         """
         # Given
         api_key_manager = CustomAPIKeyManager()
 
         # When
-        key = api_key_manager.create_key(**kwargs_for_create_key)
+        key = api_key_manager.create_key(name="fake_name")
 
         # Then
         # Check that the super `create_key` method is called and delegated to instead
@@ -55,7 +46,7 @@ class TestCustomAPIKeyManager:
 
     @mock.patch.object(CustomAPIKeyManager, "assign_pre_generated_key")
     @mock.patch.object(APIKeyManager, "create_key")
-    def test_create_key_delegates_to_assign_pre_generated_key_if_password_provided(
+    def test_create_key_delegates_to_assign_pre_generated_key_if_api_key_provided(
         self,
         spy_create_key_from_parent_class: mock.MagicMock,
         spy_assign_pre_generated_key: mock.MagicMock,
@@ -63,31 +54,27 @@ class TestCustomAPIKeyManager:
         fake_password_suffix: str,
     ):
         """
-        Given a password prefix and suffix
+        Given an `api_key`
         When `create_key()` is called from an instance of the `CustomAPIKeyManager`
         Then the call is delegated to the `assign_pre_generated_key()` method
 
         Patches:
             `spy_create_key_from_parent_class`: For the main assertions.
                 To check that the `super().create_key` from further
-                up the inheritance chain is not called when password
-                components are explicitly provided.
+                up the inheritance chain is not called when an `api_key`
+                is explicitly provided.
             `spy_assign_pre_generated_key`: For the main assertions.
                 To check that the `assign_pre_generated_key()` method
-                is called and the password components are passed into it.
+                is called and the separate password components
+                are passed into it.
         """
         # Given
         api_key_manager = CustomAPIKeyManager()
         fake_name = "fake_name_for_api_key"
-        password_prefix = fake_password_prefix
-        password_suffix = fake_password_suffix
+        api_key = f"{fake_password_prefix}.{fake_password_suffix}"
 
         # When
-        key = api_key_manager.create_key(
-            name=fake_name,
-            password_prefix=password_prefix,
-            password_suffix=password_suffix,
-        )
+        key = api_key_manager.create_key(name=fake_name, api_key=api_key)
 
         # Then
         # Check that the super `create_key` method is not called
@@ -97,8 +84,8 @@ class TestCustomAPIKeyManager:
         # And the given password prefix and suffixes are passed into it
         spy_assign_pre_generated_key.assert_called_once_with(
             name=fake_name,
-            password_prefix=password_prefix,
-            password_suffix=password_suffix,
+            password_prefix=fake_password_prefix,
+            password_suffix=fake_password_suffix,
         )
         assert key == spy_assign_pre_generated_key.return_value
 

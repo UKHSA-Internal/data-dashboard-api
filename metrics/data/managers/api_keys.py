@@ -22,10 +22,9 @@ class CustomAPIKeyManager(APIKeyManager):
     """
 
     def create_key(self, **kwargs: Any) -> Tuple[APIKey, str]:
-        """Creates an `APIKey` object and sets it up with the `password_prefix` and `password_suffix`, if given.
+        """Creates an `APIKey` object and sets it up with the `api_key`, if given.
 
-        If either `password_prefix` or `password_suffix` are not provided,
-        then the fallback `create_key` method will be used.
+        If the `api_key` is not provided, then the fallback `create_key` method will be used.
 
         Returns:
             Tuple containing:
@@ -38,12 +37,11 @@ class CustomAPIKeyManager(APIKeyManager):
 
         """
         try:
-            password_prefix = kwargs.pop("password_prefix")
-            password_suffix = kwargs.pop("password_suffix")
+            api_key: str = kwargs.pop("api_key")
         except KeyError:
-            kwargs.pop("password_suffix", None)
-            kwargs.pop("password_prefix", None)
             return super().create_key(**kwargs)
+
+        password_prefix, password_suffix = api_key.split(".")
 
         return self.assign_pre_generated_key(
             password_prefix=password_prefix, password_suffix=password_suffix, **kwargs
