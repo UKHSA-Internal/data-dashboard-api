@@ -11,22 +11,19 @@ class TestCreateAPIKey:
         fake_password_suffix: str,
     ):
         """
-        Given a `password_prefix` and a `password_suffix`
+        Given an api key which consists of a `password_prefix` and `password_suffix`
         When the `create_api_key` management command is called
         Then an `APIKey` is created with the provided password components
         """
         # Given
         password_prefix = fake_password_prefix
         password_suffix = fake_password_suffix
+        api_key = f"{password_prefix}.{password_suffix}"
 
         assert not APIKey.objects.all().exists()
 
         # When
-        call_command(
-            "create_api_key",
-            password_prefix=password_prefix,
-            password_suffix=password_suffix,
-        )
+        call_command("create_api_key", api_key=api_key)
 
         # Then
         # Check that the API key is created in the database
