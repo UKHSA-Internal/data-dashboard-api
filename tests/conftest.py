@@ -36,3 +36,13 @@ def valid_plot_parameters() -> PlotParameters:
         x_axis="dt",
         y_axis="metric_value",
     )
+
+
+@pytest.fixture
+def fake_password_prefix() -> str:
+    return "ag619m16"
+
+
+@pytest.fixture
+def fake_password_suffix() -> str:
+    return "16ui27iu26ui236827io26897yvbn19d"

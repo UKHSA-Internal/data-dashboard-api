@@ -3,6 +3,7 @@ from unittest import mock
 from cms.metrics_interface import field_choices_callables, interface
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
+from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.charts.access import ChartTypes
 
 
@@ -102,6 +103,27 @@ class TestGetChartTypes:
 
         # Then
         assert chart_types == retrieved_chart_types
+
+
+class TestGetChartAxis:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_chart_axis_choices")
+    def test_delegates_call_correctly(
+        self, mocked_get_chart_axis_choices: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns Chart Axis Fields
+        When `get_possible_axis_choices()` is called
+        Then the chart Axes are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_chart_axis_choices = ChartAxisFields.choices()
+        mocked_get_chart_axis_choices.return_value = retrieved_chart_axis_choices
+
+        # When
+        chart_axis_choices = field_choices_callables.get_possible_axis_choices()
+
+        # Then
+        assert chart_axis_choices == retrieved_chart_axis_choices
 
 
 class TestGetChartLineTypes:

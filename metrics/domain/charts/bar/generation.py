@@ -5,7 +5,9 @@ import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme, type_hints
 
-BAR_CHART_LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.CHART_SETTINGS | {
+BAR_CHART_LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings(
+    0, 0
+).get_base_chart_config() | {
     "showlegend": True,
     "barmode": "group",
     "legend": {
