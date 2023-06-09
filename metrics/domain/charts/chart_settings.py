@@ -3,6 +3,17 @@ from typing import Dict, Union
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 
+X_AXIS_TEXT_TYPE = {
+    "type": "-",
+    "dtick": None,
+    "tickformat": None,
+}
+
+X_AXIS_DATE_TYPE = {
+    "type": "date",
+    "dtick": "M1",
+    "tickformat": "%b %Y",
+}
 
 class ChartSettings:
     def __init__(self, width: int, height: int):
