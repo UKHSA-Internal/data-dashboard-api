@@ -95,6 +95,16 @@ class ChartSettings:
 
 
 def get_x_axis_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
+    """Adjust the right-hand side of the charts' x axis to give Plotly the best chance of displaying a label for every tick
+
+    Args:
+        figure: The chart figure
+
+    Returns:
+        The current minimum and the new maximum dates to use for the x axis range
+        Note: If the max_date was already the last day of the month then nothing gets changed
+    """
+
     full_figure = figure.full_figure_for_development(warn=False)
 
     min_date, max_dt = full_figure.layout.xaxis.range
