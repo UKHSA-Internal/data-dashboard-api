@@ -138,12 +138,13 @@ class TestLoadCoreDataFunction:
         Then the expected log statement is recorded
         """
         # Given
-        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+        mocked_core_time_series_manager = mock.Mock()
+        mocked_core_time_series_manager.exists.return_value = True
 
         # When
         load_core_data(
             filename=mock.Mock(),  # Stubbed
-            core_time_series_manager=fake_core_time_series_manager,
+            core_time_series_manager=mocked_core_time_series_manager,
         )
 
         # Then
