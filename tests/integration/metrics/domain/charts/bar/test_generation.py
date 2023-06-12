@@ -49,6 +49,10 @@ class TestBarCharts:
         assert main_layout.height == HEIGHT
         assert main_layout.width == WIDTH
 
+        # Check left and right margins are both 10
+        assert main_layout.margin.l == 10
+        assert main_layout.margin.r == 10
+
         assert main_layout.showlegend
 
     def test_main_bar_plot(self):
@@ -139,6 +143,10 @@ class TestBarCharts:
         )
 
         # Then
+        # Check left and right margins are both 0
+        assert figure.layout.margin.l == 0
+        assert figure.layout.margin.r == 0
+
         # ---X Axis checks---
         x_axis = figure.layout.xaxis
 
