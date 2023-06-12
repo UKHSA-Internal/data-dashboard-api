@@ -2,7 +2,6 @@ import datetime
 from typing import Any, List
 from unittest import mock
 
-
 from metrics.domain.models import PlotParameters, PlotsData
 from metrics.domain.tables.generation import TabularData
 
