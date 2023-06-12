@@ -20,7 +20,6 @@ from metrics.api.views import (
     FileUploadView,
     HeadlinesView,
     HealthView,
-    OldTabularView,
     TablesView,
     TrendsView,
 )
@@ -52,10 +51,6 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
-    re_path(
-        f"^{API_PREFIX}tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
-        OldTabularView.as_view(),
-    ),
     re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
     # Endpoints to be migrated away from
@@ -63,10 +58,6 @@ private_api_urlpatterns = [
     re_path(r"^charts/v2", ChartsView.as_view()),
     re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
-    re_path(
-        r"^tabular/(?P<topic>[^/]+)/(?P<metric>[^/]+)$",
-        OldTabularView.as_view(),
-    ),
     re_path(r"^tables/v2", TablesView.as_view()),
     re_path(r"^trends/v2", TrendsView.as_view()),
 ]
