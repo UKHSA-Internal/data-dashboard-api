@@ -4,7 +4,7 @@ This shall only include functionality which is used to write to the database.
 
 Specifically, this file contains write database logic for the API models only.
 """
-
+import logging
 
 from django.db import models
 from django.db.models import QuerySet
@@ -15,6 +15,8 @@ from metrics.data.models.core_models import CoreTimeSeries
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_API_TIME_SERIES_MANAGER = APITimeSeries.objects
 
+logger = logging.getLogger(__name__)
+
 
 def generate_api_time_series(
     core_time_series_manager: models.Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
@@ -22,6 +24,10 @@ def generate_api_time_series(
     batch_size: int = 100,
 ) -> None:
     """Queries the core `CoreTimeSeries` models and populates the flat `APITimeSeries`
+
+    Notes:
+        If there are any existing `APITimeSeries` records, then this will return early.
+        And no additional records will be added to the `APITimeSeries` table.
 
     Args:
         core_time_series_manager: The model Manager associated with the `CoreTimeSeries` model.
@@ -35,6 +41,12 @@ def generate_api_time_series(
         None
 
     """
+    if api_time_series_manager.exists():
+        logger.info(
+            "API Time Series table has existing records. Skipping duplicate record generation."
+        )
+        return
+
     all_core_time_series: QuerySet = core_time_series_manager.all_related()
 
     models_to_be_saved = []
