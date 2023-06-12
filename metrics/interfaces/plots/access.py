@@ -1,9 +1,8 @@
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from django.db.models import Manager
 
-from metrics.data.access.core_models import unzip_values
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 
@@ -164,3 +163,17 @@ class PlotsInterface:
             plots_data.append(plot_data)
 
         return plots_data
+
+
+def unzip_values(values) -> Tuple[List, List]:
+    """
+    Take a list and zip it
+
+    Args:
+        The list of things to zip
+
+    Returns:
+        A zipped version of the `values``
+
+    """
+    return zip(*values)
