@@ -3,6 +3,7 @@ from collections import defaultdict
 from typing import Dict, List, Tuple
 
 from metrics.domain.models import PlotsData
+from metrics.domain.utils import get_last_day_of_month
 
 
 def create_plots_in_tabular_format(
@@ -32,11 +33,6 @@ def create_plots_in_tabular_format(
     return tabular_format
 
 
-def last_day_of_month(dt: datetime.date) -> datetime.date:
-    next_month = dt.replace(day=28) + datetime.timedelta(days=4)
-    return next_month - datetime.timedelta(days=next_month.day)
-
-
 def combine_list_of_plots(
     tabular_plots_data: List[PlotsData],
 ) -> Tuple[List[str], Dict[str, Dict[str, str]]]:
@@ -60,7 +56,7 @@ def combine_list_of_plots(
 
         temp_dict = dict(zip(plot.x_axis_values, plot.y_axis_values))
         for k, v in temp_dict.items():
-            month_end = str(last_day_of_month(k))
+            month_end = str(get_last_day_of_month(k))
             combined_plots[month_end].update({plot_label: str(v)})
 
     return plot_labels, combined_plots

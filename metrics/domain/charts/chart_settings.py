@@ -1,7 +1,11 @@
-from typing import Dict, Union
+from datetime import datetime
+from typing import Dict, Tuple, Union
+
+import plotly
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
+from metrics.domain.utils import get_last_day_of_month
 
 X_AXIS_TEXT_TYPE = {
     "type": "-",
@@ -13,6 +17,15 @@ X_AXIS_DATE_TYPE = {
     "type": "date",
     "dtick": "M1",
     "tickformat": "%b %Y",
+}
+
+MARGINS_FOR_CHART_WITH_DATES = {
+    "margin": {
+        "l": 10,
+        "r": 10,
+        "b": 0,
+        "t": 0,
+    }
 }
 
 
@@ -79,3 +92,17 @@ class ChartSettings:
             "yaxis": set_axes_to_be_invisible,
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
         }
+
+
+def get_x_axis_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
+    full_figure = figure.full_figure_for_development(warn=False)
+
+    min_date, max_dt = full_figure.layout.xaxis.range
+
+    # Go to the last day of the month to give label the best chance of being displayed
+    max_dt = get_last_day_of_month(
+        dt=datetime.strptime(max_dt.split()[0], "%Y-%m-%d").date()
+    )
+    max_date = max_dt.strftime("%Y-%m-%d")
+
+    return min_date, max_date
