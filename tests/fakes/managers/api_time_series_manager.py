@@ -26,3 +26,6 @@ class FakeAPITimeSeriesManager(APITimeSeriesManager):
             getattr(x, lookup_field) for x in filtered_time_series
         }
         return list(lookup_values_of_timeseries)
+
+    def exists(self) -> bool:
+        return bool(self.time_series)
