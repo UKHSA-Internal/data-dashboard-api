@@ -13,7 +13,6 @@ from metrics.domain.charts import (
     waffle,
 )
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
-from metrics.domain.tables.generation import create_plots_in_tabular_format
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 from metrics.interfaces.plots.access import PlotsInterface
@@ -146,18 +145,6 @@ class ChartsInterface:
         params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
-
-    def generate_plots_for_table(self) -> List[Dict[str, str]]:
-        """Create a list of plots from the request
-
-        Returns:
-            The requested plots in tabular format
-        """
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
-
-        return create_plots_in_tabular_format(
-            tabular_plots_data=plots_data,
-        )
 
     def build_chart_plots_data(self) -> List[PlotsData]:
         """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots

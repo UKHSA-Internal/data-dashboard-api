@@ -1,96 +1,79 @@
-import datetime
 from collections import defaultdict
-from typing import Dict, List, Tuple
+from datetime import date, timedelta
+from typing import Dict, List
 
 from metrics.domain.models import PlotsData
+from metrics.domain.utils import get_axis_name
 
 
-def create_plots_in_tabular_format(
-    tabular_plots_data: List[PlotsData],
-) -> List[Dict[str, str]]:
-    """Creates the tabular output for the given plots
-
-    Args:
-        tabular_plots_data: List of `TabularPlotData` models,
-            where each model represents a requested plot.
-
-    Returns:
-        A list of dictionaries showing the plot data in tabular format
-
-    """
-    # Merge all the plots together by date
-    plot_labels, combined_plots = combine_list_of_plots(
-        tabular_plots_data=tabular_plots_data
-    )
-
-    # Create output in required format
-    tabular_format = generate_multi_plot_output(
-        plot_labels=plot_labels,
-        combined_plots=combined_plots,
-    )
-
-    return tabular_format
+def last_day_of_month(dt: date) -> date:
+    next_month = dt.replace(day=28) + timedelta(days=4)
+    return next_month - timedelta(days=next_month.day)
 
 
-def last_day_of_month(dt: datetime.date) -> datetime.date:
-    next_month = dt.replace(day=28) + datetime.timedelta(days=4)
-    return next_month - datetime.timedelta(days=next_month.day)
+class TabularData:
+    def __init__(self, plots: List[PlotsData]):
+        self.plots = plots
 
+        # The list of plot labels
+        self.plot_labels: List[str] = []
 
-def combine_list_of_plots(
-    tabular_plots_data: List[PlotsData],
-) -> Tuple[List[str], Dict[str, Dict[str, str]]]:
-    """Combines individual plots into a dictionary of dictionaries
+        # The individual plots combined into one dictionary of dictionaries
+        self.combined_plots: Dict[str, Dict[str, str]] = defaultdict(dict)
 
-    Args:
-        tabular_plots_data: List of `TabularPlotData` models,
-            where each model represents a requested plot.
+        # The headings to use in the table
+        self.column_heading: str = ""
 
-    Returns:
-        1: The list of plot labels
-        2: The individual plots combined into one dictionary of dictionaries
+    def create_plots_in_tabular_format(self) -> List[Dict[str, str]]:
+        """Creates the tabular output for the given plots
 
-    """
-    combined_plots: Dict[str, Dict[str, str]] = defaultdict(dict)
-    plot_labels: List[str] = []
+        Returns:
+            A list of dictionaries showing the plot data in a tabular format
+        """
 
-    for plot_num, plot in enumerate(tabular_plots_data, 1):
-        plot_label: str = plot.parameters.label or "Plot" + str(plot_num)
-        plot_labels.append(plot_label)
+        # Merge all the plots together by x axis
+        self.combine_list_of_plots()
 
-        temp_dict = dict(zip(plot.x_axis_values, plot.y_axis_values))
-        for k, v in temp_dict.items():
-            month_end = str(last_day_of_month(k))
-            combined_plots[month_end].update({plot_label: str(v)})
+        # Create output in required format
+        tabular_format = self.generate_multi_plot_output()
 
-    return plot_labels, combined_plots
+        return tabular_format
 
+    def combine_list_of_plots(self):
+        for plot_num, plot in enumerate(self.plots, 1):
+            plot_label: str = plot.parameters.label or "Plot" + str(plot_num)
+            self.plot_labels.append(plot_label)
 
-def generate_multi_plot_output(
-    plot_labels: List[str],
-    combined_plots: Dict[str, Dict[str, str]],
-):
-    """Creates the tabular output for the given plots
+            self.column_heading = get_axis_name(field_name=plot.parameters.x_axis)
 
-    Args:
-        plot_labels: List of Plot labels
-        combined_plots: Combined list of individual plots
+            temp_dict = dict(zip(plot.x_axis_values, plot.y_axis_values))
 
-    Returns:
-        A list of dictionaries showing the plots in tabular format
+            if type(plot.x_axis_values[0]) is date:
+                for k, v in temp_dict.items():
+                    month_end = str(last_day_of_month(k))
+                    self.combined_plots[month_end].update({plot_label: str(v)})
+            else:
+                for k, v in temp_dict.items():
+                    self.combined_plots[k].update({plot_label: str(v)})
 
-    """
-    tabular_data = []
+    def generate_multi_plot_output(self):
+        """Creates the tabular output for the given plots
 
-    for dt, plot_values in sorted(combined_plots.items()):
-        tabular_data.append(
-            {
-                "date": dt,
-                "values": [
-                    {"label": plot_label, "value": plot_values.get(plot_label)}
-                    for plot_label in plot_labels
-                ],
-            }
-        )
+        Returns:
+            A list of dictionaries showing the plots in tabular format
 
-    return tabular_data
+        """
+        tabular_data = []
+
+        for left_column, plot_values in sorted(self.combined_plots.items()):
+            tabular_data.append(
+                {
+                    self.column_heading: left_column,
+                    "values": [
+                        {"label": plot_label, "value": plot_values.get(plot_label)}
+                        for plot_label in self.plot_labels
+                    ],
+                }
+            )
+
+        return tabular_data

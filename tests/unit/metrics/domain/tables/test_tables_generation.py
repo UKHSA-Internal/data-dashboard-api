@@ -1,12 +1,12 @@
 import datetime
-from typing import List
+from typing import Any, List
+from unittest import mock
+
 
 from metrics.domain.models import PlotParameters, PlotsData
-from metrics.domain.tables.generation import (
-    combine_list_of_plots,
-    create_plots_in_tabular_format,
-    generate_multi_plot_output,
-)
+from metrics.domain.tables.generation import TabularData
+
+MODULE_PATH = "metrics.interfaces.charts.access"
 
 TEST_PLOT = "Test Plot"
 
@@ -22,9 +22,10 @@ PLOT_2_LABEL = "15 to 44 years old"
 
 
 def _create_plot_data(
-    x_axis_values: List[datetime.date],
-    y_axis_values: List[int],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     label: str = "",
+    x_axis: str = "",
 ) -> PlotsData:
     plot_params = PlotParameters(
         chart_type="",
@@ -32,6 +33,7 @@ def _create_plot_data(
         metric="weekly_positivity_by_age",
         stratum="0_4",
         label=label,
+        x_axis=x_axis,
     )
     return PlotsData(
         parameters=plot_params,
@@ -40,8 +42,39 @@ def _create_plot_data(
     )
 
 
+class TestTabularData:
+    @mock.patch.object(TabularData, "combine_list_of_plots")
+    @mock.patch.object(TabularData, "generate_multi_plot_output")
+    def test_delegates_call_for_validation(
+        self,
+        spy_generate_multi_plot_output: mock.MagicMock,
+        spy_combine_list_of_plots: mock.MagicMock,
+    ):
+        """
+        Given a mock in place of a `PlotsData` model
+        When `create_plots_in_tabular_format()` is called
+        Then a call is delegated to `combine_list_of_plots()` to combine the plots
+        and `generate_plots_for_table` is called to produce the output in the required format
+
+        Patches:
+            `spy_generate_multi_plot_output`: For the main collation
+            `spy_combine_list_of_plots`: For combining the plots
+        """
+        # Given
+        mocked_plots = mock.MagicMock()
+
+        # When
+        mock_tabular_data = TabularData(plots=mocked_plots)
+
+        mock_tabular_data.create_plots_in_tabular_format()
+
+        # Then
+        spy_combine_list_of_plots.assert_called_once()
+        spy_generate_multi_plot_output.assert_called_once()
+
+
 class TestCombinePlots:
-    def test_basic_combine_list_of_plots(self):
+    def test_basic_combine_list_of_plots_have_dates(self):
         """
         Given 2 `TabularPlotData` models representing 2 different line plots
         When `combine_list_of_plots()` is called
@@ -52,12 +85,14 @@ class TestCombinePlots:
             x_axis_values=X_AXIS_VALUES,
             y_axis_values=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
+            x_axis="date",
         )
 
         second_chart_plots_data = _create_plot_data(
             x_axis_values=X_AXIS_VALUES,
             y_axis_values=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
+            x_axis="date",
         )
 
         expected_combined_plots = {
@@ -65,18 +100,67 @@ class TestCombinePlots:
         }
 
         # When
-        plot_labels, combined_plots = combine_list_of_plots(
-            tabular_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        tabular_data = TabularData(
+            plots=[first_chart_plots_data, second_chart_plots_data]
         )
+
+        tabular_data.combine_list_of_plots()
 
         # Then
         # Check plot labels are as expected
-        assert len(plot_labels) == 2
-        assert plot_labels[0] == PLOT_1_LABEL
-        assert plot_labels[1] == PLOT_2_LABEL
+        assert tabular_data.column_heading == "date"
+        assert len(tabular_data.plot_labels) == 2
+        assert tabular_data.plot_labels[0] == PLOT_1_LABEL
+        assert tabular_data.plot_labels[1] == PLOT_2_LABEL
 
         # Check combined plot output is as expected
-        assert combined_plots == expected_combined_plots
+        assert tabular_data.combined_plots == expected_combined_plots
+
+    def test_basic_combine_list_of_plots_no_dates(self):
+        """
+        Given 2 `TabularPlotData` models representing 2 different line plots
+         where neither plot has dates
+        When `combine_list_of_plots()` is called
+        Then the correct response is generated
+        """
+        # Given
+        X_AXIS_STRATUM = ["0-4", "5-8"]
+
+        first_chart_plots_data = _create_plot_data(
+            x_axis_values=X_AXIS_STRATUM,
+            y_axis_values=Y_AXIS_1_VALUES,
+            label=PLOT_1_LABEL,
+            x_axis="stratum__name",
+        )
+
+        second_chart_plots_data = _create_plot_data(
+            x_axis_values=X_AXIS_STRATUM,
+            y_axis_values=Y_AXIS_2_VALUES,
+            label=PLOT_2_LABEL,
+            x_axis="stratum__name",
+        )
+
+        expected_combined_plots = {
+            "0-4": {PLOT_1_LABEL: "10", PLOT_2_LABEL: "20"},
+            "5-8": {PLOT_1_LABEL: "22", PLOT_2_LABEL: "45"},
+        }
+
+        # When
+        tabular_data = TabularData(
+            plots=[first_chart_plots_data, second_chart_plots_data]
+        )
+
+        tabular_data.combine_list_of_plots()
+
+        # Then
+        # Check plot labels are as expected
+        assert tabular_data.column_heading == "stratum"
+        assert len(tabular_data.plot_labels) == 2
+        assert tabular_data.plot_labels[0] == PLOT_1_LABEL
+        assert tabular_data.plot_labels[1] == PLOT_2_LABEL
+
+        # Check combined plot output is as expected
+        assert tabular_data.combined_plots == expected_combined_plots
 
     def test_combine_list_of_plots_no_labels(self):
         """
@@ -98,18 +182,19 @@ class TestCombinePlots:
         }
 
         # When
-        plot_labels, combined_plots = combine_list_of_plots(
-            tabular_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        tabular_data = TabularData(
+            plots=[first_chart_plots_data, second_chart_plots_data]
         )
+        tabular_data.combine_list_of_plots()
 
         # Then
         # Check plot labels are as expected
-        assert len(plot_labels) == 2
-        assert plot_labels[0] == "Plot1"
-        assert plot_labels[1] == "Plot2"
+        assert len(tabular_data.plot_labels) == 2
+        assert tabular_data.plot_labels[0] == "Plot1"
+        assert tabular_data.plot_labels[1] == "Plot2"
 
         # Check combined plot output is as expected
-        assert combined_plots == expected_combined_plots
+        assert tabular_data.combined_plots == expected_combined_plots
 
     def test_different_length_combine_list_of_plots(self):
         """
@@ -143,18 +228,19 @@ class TestCombinePlots:
         }
 
         # When
-        plot_labels, combined_plots = combine_list_of_plots(
-            tabular_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        tabular_data = TabularData(
+            plots=[first_chart_plots_data, second_chart_plots_data]
         )
+        tabular_data.combine_list_of_plots()
 
         # Then
         # Check plot labels are as expected
-        assert len(plot_labels) == 2
-        assert plot_labels[0] == PLOT_1_LABEL
-        assert plot_labels[1] == PLOT_2_LABEL
+        assert len(tabular_data.plot_labels) == 2
+        assert tabular_data.plot_labels[0] == PLOT_1_LABEL
+        assert tabular_data.plot_labels[1] == PLOT_2_LABEL
 
         # Check combined plot output is as expected
-        assert combined_plots == expected_combined_plots
+        assert tabular_data.combined_plots == expected_combined_plots
 
 
 class TestGenerateMultiPlotOutput:
@@ -197,9 +283,11 @@ class TestGenerateMultiPlotOutput:
         ]
 
         # When
-        actual_output = generate_multi_plot_output(
-            plot_labels=plot_labels, combined_plots=combined_plots
-        )
+        tabular_data = TabularData(plots=[])
+        tabular_data.plot_labels = plot_labels
+        tabular_data.combined_plots = combined_plots
+        tabular_data.column_heading = "date"
+        actual_output = tabular_data.generate_multi_plot_output()
 
         # Then
         assert actual_output == expected_output
@@ -250,9 +338,11 @@ class TestGenerateMultiPlotOutput:
         ]
 
         # When
-        actual_output = generate_multi_plot_output(
-            plot_labels=plot_labels, combined_plots=combined_plots
-        )
+        tabular_data = TabularData(plots=[])
+        tabular_data.plot_labels = plot_labels
+        tabular_data.combined_plots = combined_plots
+        tabular_data.column_heading = "date"
+        actual_output = tabular_data.generate_multi_plot_output()
 
         # Then
         assert actual_output == expected_output
@@ -262,7 +352,7 @@ class TestCreatePlotsInTabularFormat:
     def test_two_plots_with_provided_labels(self):
         """
         Given 2 `ChartPlotData` models representing 2 different line plots
-        When `generate_plots_for_table()` is called from the `tables` module
+        When `generate_plots_for_table()` is called from the `TabularData` module
         Then the correct response is generated
         """
         # Given
@@ -270,20 +360,23 @@ class TestCreatePlotsInTabularFormat:
             x_axis_values=X_AXIS_VALUES,
             y_axis_values=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
+            x_axis="date",
         )
 
         second_chart_plots_data = _create_plot_data(
             x_axis_values=X_AXIS_VALUES,
             y_axis_values=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
+            x_axis="date",
         )
 
         expected_x_axis_values = ["2022-09-30"]
 
         # When
-        actual_output = create_plots_in_tabular_format(
-            tabular_plots_data=[first_chart_plots_data, second_chart_plots_data],
+        tabular_data = TabularData(
+            plots=[first_chart_plots_data, second_chart_plots_data]
         )
+        actual_output = tabular_data.create_plots_in_tabular_format()
 
         # Then
         # Check the number of plots is as expected.

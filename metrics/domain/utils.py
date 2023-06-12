@@ -35,8 +35,20 @@ class ChartAxisFields(Enum):
     def choices(cls):
         return tuple((field_name.value, field_name.name) for field_name in cls)
 
+    @classmethod
+    def values(cls):
+        return tuple(field_name.value for field_name in cls)
+
     def __str__(self):
         return str(self.value)
+
+
+def get_axis_name(field_name: str):
+    return (
+        ChartAxisFields(field_name).name
+        if field_name in ChartAxisFields.values()
+        else field_name
+    )
 
 
 DEFAULT_X_AXIS = ChartAxisFields.date.value

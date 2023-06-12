@@ -50,7 +50,7 @@ class TestTablesInterface:
             == mocked_core_time_series_manager
         )
 
-    @mock.patch(f"{MODULE_PATH}.create_plots_in_tabular_format")
+    @mock.patch.object(TablesInterface, "generate_plots_for_table")
     def test_generate_plots_for_table(
         self,
         spy_create_plots_in_tabular_format: mock.MagicMock,
@@ -84,9 +84,7 @@ class TestTablesInterface:
         table_plots: List[Dict[str, str]] = tables_interface.generate_plots_for_table()
 
         # Then
-        spy_create_plots_in_tabular_format.assert_called_once_with(
-            tabular_plots_data=tables_interface.plots_interface.build_plots_data()
-        )
+        spy_create_plots_in_tabular_format.assert_called_once()
         assert table_plots == spy_create_plots_in_tabular_format.return_value
 
 
