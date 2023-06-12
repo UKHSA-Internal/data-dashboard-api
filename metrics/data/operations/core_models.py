@@ -6,7 +6,7 @@ Specifically, this file contains write database logic for the core models only.
 
 NOTE: This code is only for the Alpha. Once we have a data pipeline this code will cease to exist
 """
-
+import logging
 from typing import Dict, List, Type
 
 import pandas as pd
@@ -37,6 +37,9 @@ frequency = {
 
 DEFAULT_CORE_TIME_SERIES_MODEL = CoreTimeSeries
 DEFAULT_CORE_TIME_SERIES_MANAGER = DEFAULT_CORE_TIME_SERIES_MODEL.objects
+
+
+logger = logging.getLogger(__name__)
 
 
 def check_file(filename: str) -> pd.DataFrame:
@@ -179,6 +182,12 @@ def load_core_data(
         None
 
     """
+    if core_time_series_manager.exists():
+        logger.info(
+            "Core Time Series table has existing records. Skipping duplicate record generation."
+        )
+        return
+
     incoming_df = check_file(filename=filename)
 
     df: pd.DataFrame = maintain_model(

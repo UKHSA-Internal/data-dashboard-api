@@ -1,5 +1,6 @@
 from unittest import TestCase, mock
 
+import _pytest
 import pandas as pd
 
 from metrics.data.models.core_models import Theme
@@ -8,6 +9,7 @@ from metrics.data.operations.core_models import (
     load_core_data,
     maintain_model,
 )
+from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 
 bad_file = "tests/fixtures/bad_sample_data.csv"
 good_file = "tests/fixtures/sample_data.csv"
@@ -94,6 +96,7 @@ class TestLoadCoreData(TestCase):
         mock_model.return_value = mock_model_list
 
         core_time_series_manager = mock.Mock()
+        core_time_series_manager.exists.return_value = False
 
         load_core_data(
             filename=good_file,
@@ -104,3 +107,44 @@ class TestLoadCoreData(TestCase):
         core_time_series_manager.bulk_create.assert_called_once_with(
             [mock_model_list], ignore_conflicts=True, batch_size=100
         )
+
+
+class TestLoadCoreDataFunction:
+    def test_returns_early_when_core_time_series_has_existing_records(self):
+        """
+        Given a `CoreTimeSeriesManager` which returns True when `exists()` is called
+        When `load_core_data()` is called
+        Then the `bulk_create()` method from the `CoreTimeSeriesManager` is not called
+        """
+        # Given
+        spy_core_time_series_manager = mock.Mock()
+        spy_core_time_series_manager.exists.return_value = True
+
+        # When
+        load_core_data(
+            filename=good_file,
+            core_time_series_manager=spy_core_time_series_manager,
+        )
+
+        # Then
+        spy_core_time_series_manager.bulk_create.assert_not_called()
+
+    def test_log_statement_recorded_when_returning_early(
+        self, caplog: _pytest.logging.LogCaptureFixture
+    ):
+        """
+        Given `CoreTimeSeriesManager` which returns True when `exists()` is called
+        When `load_core_data()` is called
+        Then the expected log statement is recorded
+        """
+        # Given
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+
+        # When
+        load_core_data(
+            filename=mock.Mock(),  # Stubbed
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # Then
+        assert "Core Time Series table has existing records" in caplog.text
