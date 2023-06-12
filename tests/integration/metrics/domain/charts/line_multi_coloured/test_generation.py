@@ -79,9 +79,9 @@ class TestLineMultiColouredCharts:
         # Check that the main layout is showing the legend
         assert main_layout.showlegend
 
-        # Check left and right margins are both 10
-        assert figure.layout.margin.l == 10
-        assert figure.layout.margin.r == 10
+        # Check left and right margins are both 15
+        assert figure.layout.margin.l == 15
+        assert figure.layout.margin.r == 15
 
         # ---Legend checks---
         # Check that the legend is placed in the centre and above the figure

@@ -47,9 +47,9 @@ class TestLineWithShadedSectionCharts:
         assert main_layout.paper_bgcolor == RGBAColours.WHITE.stringified
         assert not main_layout.showlegend
 
-        # Check left and right margins are both 10
-        assert figure.layout.margin.l == 10
-        assert figure.layout.margin.r == 10
+        # Check left and right margins are both 15
+        assert figure.layout.margin.l == 15
+        assert figure.layout.margin.r == 15
 
         # Check the chart sizes are as per the specified parameters
         assert main_layout.height == HEIGHT

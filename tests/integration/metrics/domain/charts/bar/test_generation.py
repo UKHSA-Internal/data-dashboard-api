@@ -49,9 +49,9 @@ class TestBarCharts:
         assert main_layout.height == HEIGHT
         assert main_layout.width == WIDTH
 
-        # Check left and right margins are both 10
-        assert main_layout.margin.l == 10
-        assert main_layout.margin.r == 10
+        # Check left and right margins are both 15
+        assert main_layout.margin.l == 15
+        assert main_layout.margin.r == 15
 
         assert main_layout.showlegend
 

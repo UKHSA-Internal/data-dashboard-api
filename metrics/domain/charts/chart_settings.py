@@ -21,8 +21,8 @@ X_AXIS_DATE_TYPE = {
 
 MARGINS_FOR_CHART_WITH_DATES = {
     "margin": {
-        "l": 10,
-        "r": 10,
+        "l": 15,
+        "r": 15,
         "b": 0,
         "t": 0,
     }
