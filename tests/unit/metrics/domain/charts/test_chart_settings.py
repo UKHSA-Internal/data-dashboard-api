@@ -228,15 +228,3 @@ class TestChartSettings:
         }
         assert waffle_chart_config == expected_chart_config
 
-    def test_chart_settings_can_determine_x_axis_data_type(self, fake_chart_settings):
-        """
-        Given
-        When
-        Then
-        """
-        # Given
-        fake_chart_settings
-
-        # When
-
-        # Then
