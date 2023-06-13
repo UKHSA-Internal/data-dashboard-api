@@ -16,8 +16,8 @@ from cms.dashboard.viewsets import CMSPagesAPIViewSet
 from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
-    EncodedChartsView,
     DownloadsView,
+    EncodedChartsView,
     FileUploadView,
     HeadlinesView,
     HealthView,
@@ -58,6 +58,7 @@ private_api_urlpatterns = [
     # Endpoints to be migrated away from
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
+    re_path(r"^charts/v3", EncodedChartsView.as_view()),
     re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(r"^tables/v2", TablesView.as_view()),
