@@ -11,7 +11,9 @@ __pycache__/
 .importlinter
 .gitignore
 
+# Directories not needed for main image
 tests/
+docs/
 
 # IDE artifacts
 .idea/
