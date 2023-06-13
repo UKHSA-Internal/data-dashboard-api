@@ -6,6 +6,7 @@ from metrics.domain.tables.generation import (
     combine_list_of_plots,
     create_plots_in_tabular_format,
     generate_multi_plot_output,
+    get_last_day_of_month,
 )
 
 TEST_PLOT = "Test Plot"
@@ -38,6 +39,57 @@ def _create_plot_data(
         x_axis_values=x_axis,
         y_axis_values=y_axis,
     )
+
+
+class TestLastDayOfMonth:
+    def test_get_last_day_of_month(self):
+        """
+        Given a valid date
+        When `get_last_day_of_month()` is called
+        Then the last day of that month is returned
+        """
+        # Given
+        dt = datetime.date(2022, 9, 5)
+
+        expected_dt = datetime.date(2022, 9, 30)
+
+        # When
+        actual_dt = get_last_day_of_month(dt=dt)
+
+        # Then
+        assert expected_dt == actual_dt
+
+    def test_understands_leap_years(self):
+        """
+        Given a February date in a leap year
+        When `get_last_day_of_month()` is called
+        Then the last day of that month is returned
+        """
+        # Given
+        dt = datetime.date(2024, 2, 1)
+
+        expected_dt = datetime.date(2024, 2, 29)
+
+        # When
+        actual_dt = get_last_day_of_month(dt=dt)
+
+        # Then
+        assert expected_dt == actual_dt
+
+    def test_already_last_day_of_month(self):
+        """
+        Given a date that is already the last in the month
+        When `get_last_day_of_month()` is called
+        Then it returns that date
+        """
+        # Given
+        dt = expected_dt = datetime.date(2024, 12, 31)
+
+        # When
+        actual_dt = get_last_day_of_month(dt=dt)
+
+        # Then
+        assert expected_dt == actual_dt
 
 
 class TestCombinePlots:

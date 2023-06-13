@@ -32,7 +32,7 @@ def create_plots_in_tabular_format(
     return tabular_format
 
 
-def last_day_of_month(dt: datetime.date) -> datetime.date:
+def get_last_day_of_month(dt: datetime.date) -> datetime.date:
     next_month = dt.replace(day=28) + datetime.timedelta(days=4)
     return next_month - datetime.timedelta(days=next_month.day)
 
@@ -60,7 +60,7 @@ def combine_list_of_plots(
 
         temp_dict = dict(zip(plot.x_axis_values, plot.y_axis_values))
         for k, v in temp_dict.items():
-            month_end = str(last_day_of_month(k))
+            month_end = str(get_last_day_of_month(k))
             combined_plots[month_end].update({plot_label: str(v)})
 
     return plot_labels, combined_plots
