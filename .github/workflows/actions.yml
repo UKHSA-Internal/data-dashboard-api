@@ -42,7 +42,7 @@ jobs:
       - uses: ./.github/actions/install-cache
       - uses: ukhsa-internal/gh-action-pip-audit-action@v1
         with:
-          inputs: requirements.txt
+          inputs: requirements-dev.txt
 
       - name: Run Bandit
         run: |
