@@ -4,6 +4,24 @@ import pytest
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings
+from metrics.domain.models import PlotParameters, PlotsData
+
+
+@pytest.fixture
+def fake_chart_plots_data() -> PlotsData:
+    plot_params = PlotParameters(
+        chart_type="line_multi_coloured",
+        topic="COVID-19",
+        metric="new_cases_daily",
+    )
+    x_values = [1, 2, 4, 5, 5, 2, 1]
+    return PlotsData(
+        parameters=plot_params,
+        x_axis_values=[1, 2, 4, 5, 5, 2, 1],
+        y_axis_values=[
+            datetime.date(year=2023, month=1, day=i + 1) for i in range(len(x_values))
+        ],
+    )
 
 
 @pytest.fixture()
@@ -173,3 +191,50 @@ class TestChartSettings:
 
         # Then
         assert chart_height == height
+
+    def test_waffle_chart_config(self, fake_chart_plots_data: PlotsData):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_waffle_chart_config()` is called
+        Then the correct configuration for waffle charts is returned as a dict
+        """
+        # Given
+        width = height = 400
+        chart_settings = ChartSettings(
+            width=width, height=height, plots_data=fake_chart_plots_data
+        )
+
+        # When
+        waffle_chart_config = chart_settings._get_waffle_chart_config()
+
+        # Then
+        x_axis_args = {
+            "showgrid": False,
+            "ticks": None,
+            "showticklabels": False,
+        }
+        y_axis_args = {**x_axis_args, **{"scaleratio": 1, "scaleanchor": "x"}}
+        expected_chart_config = {
+            "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
+            "showlegend": False,
+            "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
+            "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
+            "xaxis": x_axis_args,
+            "yaxis": y_axis_args,
+            "width": width,
+            "height": height,
+        }
+        assert waffle_chart_config == expected_chart_config
+
+    def test_chart_settings_can_determine_x_axis_data_type(self, fake_chart_settings):
+        """
+        Given
+        When
+        Then
+        """
+        # Given
+        fake_chart_settings
+
+        # When
+
+        # Then
