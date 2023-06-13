@@ -5,9 +5,8 @@ import plotly
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
-from metrics.domain.utils import get_last_day_of_month
 from metrics.domain.models import PlotsData
-
+from metrics.domain.utils import get_last_day_of_month
 
 MARGINS_FOR_CHART_WITH_DATES = {
     "margin": {
