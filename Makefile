@@ -14,7 +14,7 @@ PORT=8000
 # Note: Requires Python 3.10 version
 setup-venv:
 	python3.10 -m venv ${VENV}
-	${BIN}pip install -r requirements.txt
+	${BIN}pip install -r requirements-dev.txt
 
 # Apply formatting tools
 formatting:
