@@ -102,7 +102,7 @@ def create_line_chart_with_shaded_section(
         figure.update_xaxes(range=[min_date, max_date])
         figure.update_layout(**chart_settings.MARGINS_FOR_CHART_WITH_DATES)
     else:
-        figure.update_xaxes(**chart_settings.X_AXIS_TEXT_TYPE)
+        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_text_type())
 
     return figure
 

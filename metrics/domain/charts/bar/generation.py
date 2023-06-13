@@ -78,7 +78,7 @@ def generate_chart_figure(
         figure.update_xaxes(range=[min_date, max_date])
         figure.update_layout(**chart_settings.MARGINS_FOR_CHART_WITH_DATES)
     else:
-        figure.update_xaxes(**chart_settings.X_AXIS_TEXT_TYPE)
+        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_text_type())
 
     # We want to see tick labels on the Y Axis
     figure.update_yaxes(showticklabels=True)

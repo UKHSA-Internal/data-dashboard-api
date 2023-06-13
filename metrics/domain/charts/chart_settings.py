@@ -8,17 +8,6 @@ from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.utils import get_last_day_of_month
 from metrics.domain.models import PlotsData
 
-X_AXIS_TEXT_TYPE = {
-    "type": "-",
-    "dtick": None,
-    "tickformat": None,
-}
-
-X_AXIS_DATE_TYPE = {
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
-}
 
 MARGINS_FOR_CHART_WITH_DATES = {
     "margin": {
@@ -114,6 +103,22 @@ class ChartSettings:
             "yaxis": y_axis_args,
             "width": self.width,
             "height": self.height,
+        }
+
+    @staticmethod
+    def _get_x_axis_date_type() -> DICT_OF_STR_ONLY:
+        return {
+            "type": "date",
+            "dtick": "M1",
+            "tickformat": "%b %Y",
+        }
+
+    @staticmethod
+    def _get_x_axis_text_type() -> DICT_OF_STR_ONLY:
+        return {
+            "type": "-",
+            "dtick": None,
+            "tickformat": None,
         }
 
 
