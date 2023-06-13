@@ -1,7 +1,6 @@
 anyascii==0.3.1
 asgiref==3.6.0
 attrs==22.2.0
-bandit==1.7.5
 beautifulsoup4==4.11.2
 black==23.1.0
 CacheControl==0.12.11
@@ -16,7 +15,6 @@ cyclonedx-python-lib==2.7.1
 distlib==0.3.6
 Django==4.1.9
 django-cors-headers==3.13.0
-django-factory-boy==1.0.0
 django-filter==22.1
 django-modelcluster==6.0
 django-permissionedforms==0.1
@@ -29,8 +27,6 @@ drf-nested-routers==0.93.4
 drf-spectacular==0.26.1
 et-xmlfile==1.1.0
 exceptiongroup==1.1.1
-factory-boy==3.2.1
-Faker==18.3.2
 filelock==3.8.0
 gitdb==4.0.10
 GitPython==3.1.31
@@ -38,11 +34,9 @@ grimp==2.3
 html5lib==1.1
 identify==2.5.6
 idna==3.4
-import-linter==1.8.0
 importlib-metadata==6.0.0
 inflection==0.5.1
 iniconfig==2.0.0
-isort==5.12.0
 itypes==1.2.0
 Jinja2==3.1.2
 jsonschema==4.17.3
@@ -67,19 +61,15 @@ pbr==5.11.1
 Pillow==9.4.0
 pip-api==0.0.30
 pip-requirements-parser==32.0.1
-pip_audit==2.5.4
 platformdirs==2.5.2
 plotly==5.13.1
 pluggy==1.0.0
-pre-commit==2.20.0
 psycopg2==2.9.5
 psycopg2-binary==2.9.5
 pydantic==1.10.7
 Pygments==2.14.0
 pyparsing==3.0.9
 pyrsistent==0.19.3
-pytest==7.2.2
-pytest-django==4.5.2
 python-dateutil==2.8.2
 python-dotenv==1.0.0
 pytz==2022.7.1
