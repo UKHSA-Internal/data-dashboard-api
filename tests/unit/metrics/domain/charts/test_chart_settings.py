@@ -1,3 +1,4 @@
+import datetime
 from unittest import mock
 
 import pytest
@@ -25,10 +26,11 @@ def fake_chart_plots_data() -> PlotsData:
 
 
 @pytest.fixture()
-def fake_chart_settings() -> ChartSettings:
+def fake_chart_settings(fake_chart_plots_data: PlotsData) -> ChartSettings:
     return ChartSettings(
         width=930,
         height=220,
+        plots_data=fake_chart_plots_data,
     )
 
 
@@ -137,14 +139,14 @@ class TestChartSettings:
     def test_get_simple_line_chart_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
-        When `get_simple_line_chart_config()` is called
+        When `_get_simple_line_chart_config()` is called
         Then the correct configuration for simple line charts is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        simple_line_chart_config = chart_settings.get_simple_line_chart_config()
+        simple_line_chart_config = chart_settings._get_simple_line_chart_config()
 
         # Then
         expected_line_chart_config = {
@@ -154,7 +156,7 @@ class TestChartSettings:
         }
         assert simple_line_chart_config == expected_line_chart_config
 
-    def test_chart_settings_width(self):
+    def test_chart_settings_width(self, fake_chart_plots_data: PlotsData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -165,6 +167,7 @@ class TestChartSettings:
         chart_settings = ChartSettings(
             width=width,
             height=220,
+            plots_data=fake_chart_plots_data,
         )
 
         # When
@@ -173,7 +176,7 @@ class TestChartSettings:
         # Then
         assert chart_width == width
 
-    def test_chart_settings_height(self):
+    def test_chart_settings_height(self, fake_chart_plots_data: PlotsData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -182,8 +185,7 @@ class TestChartSettings:
         # Given
         height = 220
         chart_settings = ChartSettings(
-            width=930,
-            height=height,
+            width=930, height=height, plots_data=fake_chart_plots_data
         )
 
         # When

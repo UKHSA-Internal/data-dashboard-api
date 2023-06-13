@@ -6,6 +6,7 @@ import plotly
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.utils import get_last_day_of_month
+from metrics.domain.models import PlotsData
 
 X_AXIS_TEXT_TYPE = {
     "type": "-",
@@ -30,9 +31,10 @@ MARGINS_FOR_CHART_WITH_DATES = {
 
 
 class ChartSettings:
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, plots_data: PlotsData):
         self._width = width
         self._height = height
+        self.plots_data = plots_data
 
     @property
     def width(self) -> int:
@@ -85,7 +87,7 @@ class ChartSettings:
         }
 
     @staticmethod
-    def get_simple_line_chart_config() -> Dict[str, Dict[str, bool]]:
+    def _get_simple_line_chart_config() -> Dict[str, Dict[str, bool]]:
         set_axes_to_be_invisible = {"visible": False}
         return {
             "xaxis": set_axes_to_be_invisible,
