@@ -1,8 +1,10 @@
-FROM python:3.11
+FROM python:3.11-slim
 
 # Allows docker to cache installed dependencies between builds
 COPY requirements-prod.txt requirements-prod.txt
-RUN pip install --no-cache-dir -r requirements-prod.txt
+RUN apt-get update \
+    && apt-get -y install libpq-dev gcc \
+    && pip install --no-cache-dir -r requirements-prod.txt
 
 # Mounts the application code to the image
 COPY . code
