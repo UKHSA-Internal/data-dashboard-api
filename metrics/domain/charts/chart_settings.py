@@ -2,24 +2,14 @@ from typing import Dict, Union
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
-
-X_AXIS_TEXT_TYPE = {
-    "type": "-",
-    "dtick": None,
-    "tickformat": None,
-}
-
-X_AXIS_DATE_TYPE = {
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
-}
+from metrics.domain.models import PlotsData
 
 
 class ChartSettings:
-    def __init__(self, width: int, height: int):
+    def __init__(self, width: int, height: int, plots_data: PlotsData):
         self._width = width
         self._height = height
+        self.plots_data = plots_data
 
     @property
     def width(self) -> int:
@@ -72,10 +62,47 @@ class ChartSettings:
         }
 
     @staticmethod
-    def get_simple_line_chart_config() -> Dict[str, Dict[str, bool]]:
+    def _get_simple_line_chart_config() -> Dict[str, Dict[str, bool]]:
         set_axes_to_be_invisible = {"visible": False}
         return {
             "xaxis": set_axes_to_be_invisible,
             "yaxis": set_axes_to_be_invisible,
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
+        }
+
+    def _get_waffle_chart_config(self):
+        x_axis_args = {
+            "showgrid": False,
+            "ticks": None,
+            "showticklabels": False,
+        }
+        y_axis_args = {
+            **x_axis_args,
+            **{"scaleratio": 1, "scaleanchor": "x"},
+        }
+        return {
+            "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
+            "showlegend": False,
+            "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
+            "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
+            "xaxis": x_axis_args,
+            "yaxis": y_axis_args,
+            "width": self.width,
+            "height": self.height,
+        }
+
+    @staticmethod
+    def _get_x_axis_date_type() -> DICT_OF_STR_ONLY:
+        return {
+            "type": "date",
+            "dtick": "M1",
+            "tickformat": "%b %Y",
+        }
+
+    @staticmethod
+    def _get_x_axis_text_type() -> DICT_OF_STR_ONLY:
+        return {
+            "type": "-",
+            "dtick": None,
+            "tickformat": None,
         }

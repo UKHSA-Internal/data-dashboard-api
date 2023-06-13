@@ -5,13 +5,6 @@ import plotly.graph_objects
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings
 
-AXIS_ARGS = {"visible": False}
-
-LAYOUT_ARGS = {
-    "xaxis": AXIS_ARGS,
-    "yaxis": AXIS_ARGS,
-}
-
 
 def generate_chart_figure(
     chart_height: int,
@@ -76,7 +69,7 @@ def generate_chart_figure(
         trace=line_plot,
     )
 
-    layout_args = ChartSettings.get_simple_line_chart_config()
+    layout_args = ChartSettings._get_simple_line_chart_config()
 
     additional_chart_options = {
         "height": chart_height,

@@ -6,7 +6,7 @@ import plotly.graph_objects
 from metrics.domain.charts import chart_settings, colour_scheme, type_hints
 
 BAR_CHART_LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings(
-    0, 0
+    0, 0, 0
 ).get_base_chart_config() | {
     "showlegend": True,
     "barmode": "group",
@@ -70,9 +70,9 @@ def generate_chart_figure(
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
-        figure.update_xaxes(**chart_settings.X_AXIS_DATE_TYPE)
+        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_date_type())
     else:
-        figure.update_xaxes(**chart_settings.X_AXIS_TEXT_TYPE)
+        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_text_type())
 
     # We want to see tick labels on the Y Axis
     figure.update_yaxes(showticklabels=True)

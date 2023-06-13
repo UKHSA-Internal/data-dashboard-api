@@ -77,8 +77,7 @@ def create_line_chart_with_shaded_section(
 
     # Apply the typical stylings for timeseries charts
     settings = chart_settings.ChartSettings(
-        width=chart_width,
-        height=chart_height,
+        width=chart_width, height=chart_height, plots_data=0
     )
 
     figure.update_layout(**settings.get_base_chart_config())
@@ -95,9 +94,9 @@ def create_line_chart_with_shaded_section(
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
-        figure.update_xaxes(**chart_settings.X_AXIS_DATE_TYPE)
+        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_date_type())
     else:
-        figure.update_xaxes(**chart_settings.X_AXIS_TEXT_TYPE)
+        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_text_type())
 
     return figure
 
