@@ -72,7 +72,7 @@ def create_multi_coloured_line_chart(
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(chart_plots_data[0].x_axis_values[0]) is date:
-        figure.update_xaxes(**chart_settings.X_AXIS_DATE_TYPE)
+        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_date_type())
 
         # Give the chart the best chance of displaying all the tick labels
         min_date, max_date = chart_settings.get_x_axis_range(figure=figure)
