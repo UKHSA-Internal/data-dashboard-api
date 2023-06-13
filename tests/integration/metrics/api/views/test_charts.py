@@ -166,8 +166,8 @@ class TestChartsView:
         assert response.status_code != HTTPStatus.UNAUTHORIZED
         assert response.status_code == HTTPStatus.OK
 
-        # Check that the headers on the response indicate an `svg` image being returned
-        assert response.headers["Content-Type"] == "text/html; charset=utf-8"
+        # Check that the headers on the response indicate a json response is being returned
+        assert response.headers["Content-Type"] == "application/json"
 
     @pytest.mark.parametrize("path", ["/charts/v3/", "/api/charts/v3/"])
     @pytest.mark.django_db

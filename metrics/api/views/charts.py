@@ -1,5 +1,6 @@
 import os
 from http import HTTPStatus
+from typing import Dict
 
 from django.http import FileResponse, HttpResponse
 from drf_spectacular.utils import extend_schema
@@ -196,15 +197,16 @@ class EncodedChartsView(APIView):
         chart_plot_models = request_serializer.to_models()
 
         try:
-            response: str = access.generate_encoded_chart(
+            response: Dict[str, str] = access.generate_encoded_chart(
                 chart_plots=chart_plot_models,
             )
+
+            serializer = EncodedChartResponseSerializer(data=response)
+            serializer.is_valid(raise_exception=True)
+
         except validation.ChartTypeDoesNotSupportMetricError as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        return HttpResponse(
-            response,
-            content_type="text/html; charset=utf-8",
-        )
+        return Response(data=serializer.data)
