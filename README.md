@@ -10,7 +10,7 @@ The REST API is served via [Django-Rest-Framework](https://www.django-rest-frame
 To unify commonly used commands, there is a `Makefile` at the root level of the project.
 Note that to use the `Makefile` you will need 
 
-## Initial configuration 
+## Initial configuration
 
 There are a number of steps to take before getting the environment setup for local development.
 
@@ -60,6 +60,19 @@ When developing locally, the app will point to a local database:
 ## Development flows
 
 
+### Project dependencies
+
+The project dependencies are seperated into usage:
+```
+requirements.txt        # <- These are the Production-only dependencies. This is ingested by the Dockerfile
+requirements-dev.txt    # <- These are the Production + Dev dependencies. Includes testing/factory libraries
+```
+
+If you followed the instructions above in [Initial configuration](#initial-configuration) and ran `make setup-venv` then you will have installed
+the complete set of dependencies, including those needed for local development.
+
+---
+
 ### Checking for code vulnerabilities
 
 You can check for known vulnerabilities in the codebase with the following command:
@@ -68,7 +81,6 @@ make audit
 ```
 
 ---
-
 
 ### Running tests
 
