@@ -1,1 +1,18 @@
+# Caches
+.pytest_cache/
+.import_linter_cache/
 __pycache__/
+
+# CI manifests
+.github/
+
+# Spec files
+.bandit
+.importlinter
+.gitignore
+
+tests/
+
+# IDE artifacts
+.idea/
+.vscode/
