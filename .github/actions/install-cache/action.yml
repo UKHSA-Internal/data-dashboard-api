@@ -7,8 +7,6 @@ runs:
   steps:
     - uses: ukhsa-internal/restore-virtualenv-action@v1
       id: cache-virtualenv
-      with:
-        requirement_files: requirements.txt
 
     - uses: ukhsa-internal/restore-pip-download-cache-action@v1
       if: steps.cache-virtualenv.outputs.cache-hit != 'true'
