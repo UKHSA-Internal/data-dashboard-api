@@ -1,4 +1,3 @@
-import json
 import urllib.parse
 from datetime import datetime
 from typing import Dict, List, Optional, Union
@@ -201,7 +200,7 @@ class ChartsInterface:
             ),
         }
 
-    def last_updated(self, figure: plotly.graph_objects.Figure) -> str:
+    def get_last_updated(self, figure: plotly.graph_objects.Figure) -> str:
         """
         If the chart has dates along the x-axis then extract the last dates from each plot
         and return the latest date of all of them
@@ -290,7 +289,7 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     return library.write_figure(figure=figure, topic="-")
 
 
-def generate_encoded_chart(chart_plots: PlotsCollection) -> str:
+def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
      Then encodes it, adds the last_updated_date to it and returns the result as a serialized JSON string
 
@@ -307,34 +306,15 @@ def generate_encoded_chart(chart_plots: PlotsCollection) -> str:
     library = ChartsInterface(chart_plots=chart_plots)
     figure = library.generate_chart_figure()
 
-    last_updated = library.last_updated(figure=figure)
+    last_updated = library.get_last_updated(figure=figure)
 
     # Encode the chart so it can be returned in JSON format
     encoded_figure = library.encode_figure(figure=figure)
 
-    return to_json(
-        last_updated=last_updated,
-        encoded_figure=encoded_figure,
-    )
-
-
-def to_json(last_updated: str, encoded_figure: str) -> str:
-    """Create a serialized JSON string
-
-    Args:
-        last_updated: string containg last updated value
-        encoded_figure: Chart figure URI encoded
-
-    Returns:
-        The values of the supplied parameters as a serialized JSON string
-    """
-
-    return json.dumps(
-        {
-            "last_updated": last_updated,
-            "chart": encoded_figure,
-        }
-    )
+    return {
+        "last_updated": last_updated,
+        "chart": encoded_figure,
+    }
 
 
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:

@@ -351,11 +351,11 @@ class TestChartsInterface:
         )
 
 
-class TestGenerateChart:
+class TestGenerateChartAsFile:
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_chart_as_file_delegates_call_for_validation(
+    def test_generate_chart_delegates_call_for_validation(
         self,
         spy_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
@@ -382,7 +382,7 @@ class TestGenerateChart:
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_chart_as_file_delegates_call_for_writing_the_chart(
+    def test_generate_chart_delegates_call_for_writing_the_chart(
         self,
         mocked_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
@@ -406,18 +406,16 @@ class TestGenerateChart:
             topic="-",
         )
 
-    @mock.patch(f"{MODULE_PATH}.to_json")
     @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "last_updated")
+    @mock.patch.object(ChartsInterface, "get_last_updated")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_encoded_chart_delegates_call_for_validation(
+    def test_generate_chart_delegates_call_for_validation(
         self,
         spy_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
-        mock_last_updated: mock.MagicMock,
+        mock_get_last_updated: mock.MagicMock,
         mock_encode_figure: mock.MagicMock,
-        mock_to_json: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
@@ -437,24 +435,22 @@ class TestGenerateChart:
         )
         spy_generate_chart_figure.assert_called_once_with()
 
-    @mock.patch(f"{MODULE_PATH}.to_json")
     @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "last_updated")
+    @mock.patch.object(ChartsInterface, "get_last_updated")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_encoded_chart_delegates_last_updated_call(
+    def test_generate_chart_delegates_get_last_updated_call(
         self,
         mocked_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
-        spy_last_updated: mock.MagicMock,
+        spy_get_last_updated: mock.MagicMock,
         mock_encode_figure: mock.MagicMock,
-        mock_to_json: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_encoded_chart()` is called
         Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `last_updated` is called from an instance of the `ChartsInterface`
+        And `get_last_updated` is called from an instance of the `ChartsInterface`
         """
         # Given
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
@@ -463,22 +459,20 @@ class TestGenerateChart:
         generate_encoded_chart(chart_plots=mocked_chart_plots)
 
         # Then
-        spy_last_updated.assert_called_once_with(
+        spy_get_last_updated.assert_called_once_with(
             figure=spy_generate_chart_figure.return_value
         )
 
-    @mock.patch(f"{MODULE_PATH}.to_json")
     @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "last_updated")
+    @mock.patch.object(ChartsInterface, "get_last_updated")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_encoded_chart_delegates_encode_figure_call(
+    def test_generate_chart_delegates_encode_figure_call(
         self,
         mocked_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
-        mock_last_updated: mock.MagicMock,
+        mock_get_last_updated: mock.MagicMock,
         spy_encode_figure: mock.MagicMock,
-        mock_to_json: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
@@ -495,37 +489,6 @@ class TestGenerateChart:
         # Then
         spy_encode_figure.assert_called_once_with(
             figure=spy_generate_chart_figure.return_value
-        )
-
-    @mock.patch(f"{MODULE_PATH}.to_json")
-    @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "last_updated")
-    @mock.patch.object(ChartsInterface, "generate_chart_figure")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_encoded_chart_delegates_to_json_call(
-        self,
-        mocked_validate_each_requested_chart_plot: mock.MagicMock,
-        spy_generate_chart_figure: mock.MagicMock,
-        spy_last_updated: mock.MagicMock,
-        spy_encode_figure: mock.MagicMock,
-        spy_to_json: mock.MagicMock,
-    ):
-        """
-        Given a mock in place of a `PlotsCollection` model
-        When `generate_encoded_chart()` is called
-        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `to_json` is called
-        """
-        # Given
-        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
-
-        # When
-        generate_encoded_chart(chart_plots=mocked_chart_plots)
-
-        # Then
-        spy_to_json.assert_called_once_with(
-            last_updated=spy_last_updated.return_value,
-            encoded_figure=spy_encode_figure.return_value,
         )
 
 
@@ -650,11 +613,11 @@ class TestMiscMethods:
 
     mock_charts_interface = _create_charts_interface()
 
-    def test_determine_last_updated_where_chart_has_dates(self):
+    def test_determine_get_last_updated_where_chart_has_dates(self):
         """
         Given a multi coloured line chart with two plots
         and with dates along the x axis
-        When `last_updated()` is called
+        When `get_last_updated()` is called
         Then we get back the latest date in the chart
         """
 
@@ -669,7 +632,7 @@ class TestMiscMethods:
         )
 
         # When
-        last_updated_date: str = self.mock_charts_interface.last_updated(figure)
+        last_updated_date: str = self.mock_charts_interface.get_last_updated(figure)
 
         # Then
         expected_date: str = "2023-03-09"
@@ -680,7 +643,7 @@ class TestMiscMethods:
         """
         Given a multi coloured line chart with two plots
         and with something other than dates along the x axis
-        When `determine_last_updated()` is called
+        When `get_last_updated()` is called
         Then we get back nothing
         """
 
@@ -698,7 +661,7 @@ class TestMiscMethods:
         figure.update_xaxes({"type": "-"})
 
         # When
-        last_updated_date: str = self.mock_charts_interface.last_updated(figure)
+        last_updated_date: str = self.mock_charts_interface.get_last_updated(figure)
 
         # Then
         expected_date: str = ""
