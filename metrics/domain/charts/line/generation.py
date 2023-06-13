@@ -5,13 +5,6 @@ import plotly.graph_objects
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings
 
-AXIS_ARGS = {"visible": False}
-
-LAYOUT_ARGS = {
-    "xaxis": AXIS_ARGS,
-    "yaxis": AXIS_ARGS,
-}
-
 
 def generate_chart_figure(
     chart_height: int,
