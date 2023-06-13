@@ -188,8 +188,9 @@ class ChartsResponseSerializer(serializers.Serializer):
 
 class EncodedChartResponseSerializer(serializers.Serializer):
     last_updated = serializers.CharField(
-        help_text=help_texts.ENCODED_CHARTS_LAST_UPDATED_HELP_TEXT
+        help_text=help_texts.ENCODED_CHARTS_LAST_UPDATED_HELP_TEXT,
+        allow_blank=True,
     )
-    chart = serializers.FileField(
+    chart = serializers.CharField(
         help_text=help_texts.ENCODED_CHARTS_RESPONSE_HELP_TEXT
     )
