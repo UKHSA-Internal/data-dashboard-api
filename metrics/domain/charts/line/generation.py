@@ -76,7 +76,7 @@ def generate_chart_figure(
         trace=line_plot,
     )
 
-    layout_args = ChartSettings.get_simple_line_chart_config()
+    layout_args = ChartSettings._get_simple_line_chart_config()
 
     additional_chart_options = {
         "height": chart_height,
