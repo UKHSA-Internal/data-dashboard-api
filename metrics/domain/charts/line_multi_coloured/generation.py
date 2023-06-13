@@ -9,7 +9,7 @@ from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotsData
 
 LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings(
-    0, 0
+    0, 0, 0
 ).get_base_chart_config() | {
     "legend": {
         "orientation": "h",

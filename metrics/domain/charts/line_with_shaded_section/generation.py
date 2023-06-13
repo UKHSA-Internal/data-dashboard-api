@@ -77,8 +77,7 @@ def create_line_chart_with_shaded_section(
 
     # Apply the typical stylings for timeseries charts
     settings = chart_settings.ChartSettings(
-        width=chart_width,
-        height=chart_height,
+        width=chart_width, height=chart_height, plots_data=0
     )
 
     figure.update_layout(**settings.get_base_chart_config())
