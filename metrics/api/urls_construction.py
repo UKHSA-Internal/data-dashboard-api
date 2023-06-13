@@ -16,6 +16,7 @@ from cms.dashboard.viewsets import CMSPagesAPIViewSet
 from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
+    EncodedChartsView,
     DownloadsView,
     FileUploadView,
     HeadlinesView,
@@ -49,6 +50,7 @@ API_PREFIX = "api/"
 private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
