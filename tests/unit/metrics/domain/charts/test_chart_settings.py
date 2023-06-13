@@ -1,16 +1,36 @@
+import datetime
 from unittest import mock
 
 import pytest
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings
+from metrics.domain.models import PlotParameters, PlotsData
+
+
+@pytest.fixture
+def fake_chart_plots_data() -> PlotsData:
+    plot_params = PlotParameters(
+        chart_type="line_multi_coloured",
+        topic="COVID-19",
+        metric="new_cases_daily",
+    )
+    x_values = [1, 2, 4, 5, 5, 2, 1]
+    return PlotsData(
+        parameters=plot_params,
+        x_axis_values=[1, 2, 4, 5, 5, 2, 1],
+        y_axis_values=[
+            datetime.date(year=2023, month=1, day=i + 1) for i in range(len(x_values))
+        ],
+    )
 
 
 @pytest.fixture()
-def fake_chart_settings() -> ChartSettings:
+def fake_chart_settings(fake_chart_plots_data: PlotsData) -> ChartSettings:
     return ChartSettings(
         width=930,
         height=220,
+        plots_data=fake_chart_plots_data,
     )
 
 
@@ -119,14 +139,14 @@ class TestChartSettings:
     def test_get_simple_line_chart_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
-        When `get_simple_line_chart_config()` is called
+        When `_get_simple_line_chart_config()` is called
         Then the correct configuration for simple line charts is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        simple_line_chart_config = chart_settings.get_simple_line_chart_config()
+        simple_line_chart_config = chart_settings._get_simple_line_chart_config()
 
         # Then
         expected_line_chart_config = {
@@ -136,7 +156,7 @@ class TestChartSettings:
         }
         assert simple_line_chart_config == expected_line_chart_config
 
-    def test_chart_settings_width(self):
+    def test_chart_settings_width(self, fake_chart_plots_data: PlotsData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -147,6 +167,7 @@ class TestChartSettings:
         chart_settings = ChartSettings(
             width=width,
             height=220,
+            plots_data=fake_chart_plots_data,
         )
 
         # When
@@ -155,7 +176,7 @@ class TestChartSettings:
         # Then
         assert chart_width == width
 
-    def test_chart_settings_height(self):
+    def test_chart_settings_height(self, fake_chart_plots_data: PlotsData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -164,8 +185,7 @@ class TestChartSettings:
         # Given
         height = 220
         chart_settings = ChartSettings(
-            width=930,
-            height=height,
+            width=930, height=height, plots_data=fake_chart_plots_data
         )
 
         # When
@@ -173,3 +193,77 @@ class TestChartSettings:
 
         # Then
         assert chart_height == height
+
+    def test_waffle_chart_config(self, fake_chart_plots_data: PlotsData):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_waffle_chart_config()` is called
+        Then the correct configuration for waffle charts is returned as a dict
+        """
+        # Given
+        width = height = 400
+        chart_settings = ChartSettings(
+            width=width, height=height, plots_data=fake_chart_plots_data
+        )
+
+        # When
+        waffle_chart_config = chart_settings._get_waffle_chart_config()
+
+        # Then
+        x_axis_args = {
+            "showgrid": False,
+            "ticks": None,
+            "showticklabels": False,
+        }
+        y_axis_args = {**x_axis_args, **{"scaleratio": 1, "scaleanchor": "x"}}
+        expected_chart_config = {
+            "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
+            "showlegend": False,
+            "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
+            "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
+            "xaxis": x_axis_args,
+            "yaxis": y_axis_args,
+            "width": width,
+            "height": height,
+        }
+        assert waffle_chart_config == expected_chart_config
+
+    def test_get_x_axis_date_type(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_x_axis_date_type()` is called
+        Then the correct configuration for the x-axis is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        x_axis_date_type = chart_settings._get_x_axis_date_type()
+
+        # Then
+        expected_axis_config = {
+            "type": "date",
+            "dtick": "M1",
+            "tickformat": "%b %Y",
+        }
+        assert x_axis_date_type == expected_axis_config
+
+    def test_get_x_axis_text_type(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_x_axis_text_type()` is called
+        Then the correct configuration for the x-axis is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        x_axis_text_type = chart_settings._get_x_axis_text_type()
+
+        # Then
+        expected_axis_config = {
+            "type": "-",
+            "dtick": None,
+            "tickformat": None,
+        }
+        assert x_axis_text_type == expected_axis_config

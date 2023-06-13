@@ -23,8 +23,8 @@ PLOT_2_LABEL = "15 to 44 years old"
 
 
 def _create_plot_data(
-    x_axis: List[datetime.date],
-    y_axis: List[int],
+    x_axis_values: List[datetime.date],
+    y_axis_values: List[int],
     label: str = "",
 ) -> PlotsData:
     plot_params = PlotParameters(
@@ -36,8 +36,8 @@ def _create_plot_data(
     )
     return PlotsData(
         parameters=plot_params,
-        x_axis_values=x_axis,
-        y_axis_values=y_axis,
+        x_axis_values=x_axis_values,
+        y_axis_values=y_axis_values,
     )
 
 
@@ -101,14 +101,14 @@ class TestCombinePlots:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis=X_AXIS_VALUES,
-            y_axis=Y_AXIS_1_VALUES,
+            x_axis_values=X_AXIS_VALUES,
+            y_axis_values=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
         )
 
         second_chart_plots_data = _create_plot_data(
-            x_axis=X_AXIS_VALUES,
-            y_axis=Y_AXIS_2_VALUES,
+            x_axis_values=X_AXIS_VALUES,
+            y_axis_values=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
         )
 
@@ -138,12 +138,12 @@ class TestCombinePlots:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis=X_AXIS_VALUES,
-            y_axis=Y_AXIS_1_VALUES,
+            x_axis_values=X_AXIS_VALUES,
+            y_axis_values=Y_AXIS_1_VALUES,
         )
         second_chart_plots_data = _create_plot_data(
-            x_axis=X_AXIS_VALUES,
-            y_axis=Y_AXIS_2_VALUES,
+            x_axis_values=X_AXIS_VALUES,
+            y_axis_values=Y_AXIS_2_VALUES,
         )
         expected_combined_plots = {
             "2022-09-30": {"Plot1": "22", "Plot2": "45"},
@@ -171,19 +171,19 @@ class TestCombinePlots:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis=[
+            x_axis_values=[
                 datetime.date(2022, 8, 5),
                 datetime.date(2022, 9, 6),
                 datetime.date(2022, 10, 19),
                 datetime.date(2022, 11, 25),
             ],
-            y_axis=[10, 66, 22, 26],
+            y_axis_values=[10, 66, 22, 26],
             label=PLOT_1_LABEL,
         )
 
         second_chart_plots_data = _create_plot_data(
-            x_axis=X_AXIS_VALUES,
-            y_axis=Y_AXIS_2_VALUES,
+            x_axis_values=X_AXIS_VALUES,
+            y_axis_values=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
         )
 
@@ -319,14 +319,14 @@ class TestCreatePlotsInTabularFormat:
         """
         # Given
         first_chart_plots_data = _create_plot_data(
-            x_axis=X_AXIS_VALUES,
-            y_axis=Y_AXIS_1_VALUES,
+            x_axis_values=X_AXIS_VALUES,
+            y_axis_values=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
         )
 
         second_chart_plots_data = _create_plot_data(
-            x_axis=X_AXIS_VALUES,
-            y_axis=Y_AXIS_2_VALUES,
+            x_axis_values=X_AXIS_VALUES,
+            y_axis_values=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
         )
 

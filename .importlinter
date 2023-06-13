@@ -16,7 +16,7 @@ ignore_imports=
     cms.metrics_interface.interface -> metrics.domain.utils
     cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.properties
     cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme
-    metrics.api.urls -> cms.dashboard.viewsets
+    metrics.api.urls_construction -> cms.dashboard.viewsets
 
 [importlinter:contract:Metrics architectural layers]
 name = Metrics package enforces clear architectural layers within itself
@@ -61,7 +61,7 @@ source_modules=
 forbidden_modules=
     metrics.public_api
 ignore_imports=
-    metrics.api.urls -> metrics.public_api.urls
+    metrics.api.urls_construction -> metrics.public_api.urls
 
 #------------------------------------- Metrics Domain library contracts -------------------------------------
 

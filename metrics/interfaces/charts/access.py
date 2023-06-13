@@ -88,7 +88,7 @@ class ChartsInterface:
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            values=plot_data.y_axis_values,
+            y_axis_values=plot_data.y_axis_values,
         )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
@@ -106,8 +106,8 @@ class ChartsInterface:
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            dates=plot_data.x_axis_values,
-            values=plot_data.y_axis_values,
+            x_axis_values=plot_data.x_axis_values,
+            y_axis_values=plot_data.y_axis_values,
             legend=plot_data.parameters.metric_name,
         )
 
@@ -181,18 +181,18 @@ class ChartsInterface:
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        dates = plot_data.x_axis_values
-        values = plot_data.y_axis_values
+        x_axis_values = plot_data.x_axis_values
+        y_axis_values = plot_data.y_axis_values
         metric_name = plot_data.parameters.metric_name
 
         return {
             "chart_height": chart_height,
             "chart_width": chart_width,
-            "dates": dates,
-            "values": values,
+            "x_axis_values": x_axis_values,
+            "y_axis_values": y_axis_values,
             "metric_name": metric_name,
             "change_in_metric_value": self.calculate_change_in_metric_value(
-                values=values,
+                values=y_axis_values,
                 metric_name=metric_name,
             ),
             "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(

@@ -5,7 +5,11 @@ from unittest import mock
 import pytest
 
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
-from metrics.interfaces.plots.access import DataNotFoundError, PlotsInterface
+from metrics.interfaces.plots.access import (
+    DataNotFoundError,
+    PlotsInterface,
+    unzip_values,
+)
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -282,3 +286,26 @@ class TestPlotsInterface:
         mocked_get_timeseries.assert_called_once_with(
             **fake_chart_plot_parameters.to_dict_for_query(),
         )
+
+
+class TestUnzipValues:
+    def test_returns_correct_zipped_values(self):
+        """
+        Given a list of 3 * 2-item tuples
+        When `unzip_values()` is called
+        Then the result is 2 tuples which contain 3 items each
+        """
+        # Given
+        values = [(1, 2), (3, 4), (5, 6)]
+
+        # When
+        unzipped_lists = unzip_values(values)
+
+        # Then
+        (
+            first_index_item_unzipped_result,
+            second_index_item_unzipped_result,
+        ) = unzipped_lists
+
+        assert first_index_item_unzipped_result == (1, 3, 5)
+        assert second_index_item_unzipped_result == (2, 4, 6)

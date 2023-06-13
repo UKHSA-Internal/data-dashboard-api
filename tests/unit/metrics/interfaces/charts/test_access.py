@@ -277,12 +277,12 @@ class TestChartsInterface:
         # Given
         width = 123
         height = 456
-        mocked_dates = mock.Mock()
-        mocked_values = mock.Mock()
+        mocked_x_axis_values = mock.Mock()
+        mocked_y_axis_values = mock.Mock()
         fake_plot_data = PlotsData(
             parameters=fake_chart_plot_parameters,
-            x_axis_values=mocked_dates,
-            y_axis_values=mocked_values,
+            x_axis_values=mocked_x_axis_values,
+            y_axis_values=mocked_y_axis_values,
         )
 
         fake_chart_plots = PlotsCollection(
@@ -309,8 +309,8 @@ class TestChartsInterface:
         expected_constructed_params = {
             "chart_width": width,
             "chart_height": height,
-            "dates": mocked_dates,
-            "values": mocked_values,
+            "x_axis_values": mocked_x_axis_values,
+            "y_axis_values": mocked_y_axis_values,
             "metric_name": metric,
             "change_in_metric_value": mocked_calculate_change_in_metric_value.return_value,
             "rolling_period_slice": mocked_get_rolling_period_slice_for_metric.return_value,
@@ -318,7 +318,7 @@ class TestChartsInterface:
         assert params_for_line_graph == expected_constructed_params
 
         mocked_calculate_change_in_metric_value.assert_called_once_with(
-            values=mocked_values,
+            values=mocked_y_axis_values,
             metric_name=metric,
         )
         mocked_get_rolling_period_slice_for_metric.assert_called_once_with(

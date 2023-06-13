@@ -4,6 +4,7 @@ import plotly.graph_objects
 from numpy.core.multiarray import ndarray
 
 from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.chart_settings import ChartSettings
 from metrics.domain.charts.waffle import pre_processing, validation
 from metrics.domain.charts.waffle.colour_scheme import build_color_scale
 
@@ -67,7 +68,9 @@ def generate_chart_figure(
             value=int(value), index=index, cell_gap=cell_gap, figure=figure
         )
 
-    figure.update_layout(width=width, height=height, **WAFFLE_LAYOUT_ARGS)
+    chart_settings = ChartSettings(width=width, height=height, plots_data=0)
+    chart_config = chart_settings._get_waffle_chart_config()
+    figure.update_layout(**chart_config)
 
     return figure
 
