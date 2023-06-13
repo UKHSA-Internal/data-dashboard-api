@@ -64,8 +64,9 @@ When developing locally, the app will point to a local database:
 
 The project dependencies are seperated into usage:
 ```
-requirements.txt        # <- These are the Production-only dependencies. This is ingested by the Dockerfile
-requirements-dev.txt    # <- These are the Production + Dev dependencies. Includes testing/factory libraries
+requirements.txt        # <- This imports the prod + dev dependencies. This includes all dependencies, regardless of usage.
+requirements-prod.txt   # <- These are the Production-only dependencies. This is ingested by the Dockerfile
+requirements-dev.txt    # <- These are the Dev dependencie-only. Includes testing/factory libraries
 ```
 
 If you followed the instructions above in [Initial configuration](#initial-configuration) and ran `make setup-venv` then you will have installed
