@@ -1,4 +1,3 @@
--r requirements.txt
 bandit==1.7.5
 django-factory-boy==1.0.0
 factory-boy==3.2.1

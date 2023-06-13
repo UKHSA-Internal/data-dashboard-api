@@ -8,13 +8,13 @@ runs:
     - uses: ukhsa-internal/restore-virtualenv-action@v1
       id: cache-virtualenv
       with:
-        requirement_files: requirements-dev.txt
+        requirement_files: requirements.txt
 
     - uses: ukhsa-internal/restore-pip-download-cache-action@v1
       if: steps.cache-virtualenv.outputs.cache-hit != 'true'
 
     - name: Install dependencies
       run: |
-        pip install -r requirements-dev.txt --no-cache-dir
+        pip install -r requirements.txt --no-cache-dir
       if: steps.cache-virtualenv.outputs.cache-hit != 'true'
       shell: bash
