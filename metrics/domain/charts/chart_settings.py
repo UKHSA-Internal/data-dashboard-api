@@ -93,6 +93,27 @@ class ChartSettings:
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
         }
 
+    def _get_waffle_chart_config(self):
+        x_axis_args = {
+            "showgrid": False,
+            "ticks": None,
+            "showticklabels": False,
+        }
+        y_axis_args = {
+            **x_axis_args,
+            **{"scaleratio": 1, "scaleanchor": "x"},
+        }
+        return {
+            "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
+            "showlegend": False,
+            "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
+            "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
+            "xaxis": x_axis_args,
+            "yaxis": y_axis_args,
+            "width": self.width,
+            "height": self.height,
+        }
+
 
 def get_x_axis_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
     """Adjust the right-hand side of the charts' x axis to give Plotly the best chance of displaying a label for every tick
