@@ -4,18 +4,6 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.models import PlotsData
 
-X_AXIS_TEXT_TYPE = {
-    "type": "-",
-    "dtick": None,
-    "tickformat": None,
-}
-
-X_AXIS_DATE_TYPE = {
-    "type": "date",
-    "dtick": "M1",
-    "tickformat": "%b %Y",
-}
-
 
 class ChartSettings:
     def __init__(self, width: int, height: int, plots_data: PlotsData):
@@ -101,4 +89,20 @@ class ChartSettings:
             "yaxis": y_axis_args,
             "width": self.width,
             "height": self.height,
+        }
+
+    @staticmethod
+    def _get_x_axis_date_type() -> DICT_OF_STR_ONLY:
+        return {
+            "type": "date",
+            "dtick": "M1",
+            "tickformat": "%b %Y",
+        }
+
+    @staticmethod
+    def _get_x_axis_text_type() -> DICT_OF_STR_ONLY:
+        return {
+            "type": "-",
+            "dtick": None,
+            "tickformat": None,
         }
