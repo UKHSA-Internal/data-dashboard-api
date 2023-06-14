@@ -33,6 +33,14 @@ def create_plots_in_tabular_format(
 
 
 def get_last_day_of_month(dt: datetime.date) -> datetime.date:
+    """Return the last day of the month for the given date
+
+    Args:
+        dt: The date we want the last day of the month for
+
+    Returns:
+        The last day of the month for the given date as a date type
+    """
     next_month = dt.replace(day=28) + datetime.timedelta(days=4)
     return next_month - datetime.timedelta(days=next_month.day)
 
