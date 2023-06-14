@@ -1,4 +1,4 @@
-FROM python:3.11-slim as base
+FROM python:3.11-slim
 
 # Install toolchain & create python virtual environment
 COPY requirements-prod.txt requirements-prod.txt
