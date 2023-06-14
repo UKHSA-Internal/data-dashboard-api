@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-# Install toolchain & create python virtual environment
+# Install toolchain needed for C libraries like psycopg2 & create python virtual environment
 COPY requirements-prod.txt requirements-prod.txt
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
