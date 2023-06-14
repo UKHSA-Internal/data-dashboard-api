@@ -24,13 +24,14 @@ COPY . code
 # Runtime stage
 FROM python:3.11-slim AS production
 
+WORKDIR /code
+
 # Copy the virtual environment & application code
 COPY --from=builder /venv /venv
 COPY --from=builder /code /code
 
 # Ensure the virtual environment is made available on the system `PATH`
 ENV PATH=/venv/bin:$PATH
-WORKDIR /code
 
 EXPOSE 8000
 
