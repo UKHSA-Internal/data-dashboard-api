@@ -16,7 +16,9 @@ class TestGetAxisName:
 
         # Given
         input_field_name: str = field_name
+
         # When
         actual_result: str = get_axis_name(field_name=input_field_name)
+
         # Then
         assert actual_result == expected_result
