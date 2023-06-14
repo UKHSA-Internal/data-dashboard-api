@@ -11,9 +11,11 @@ __pycache__/
 .importlinter
 .gitignore
 
-# Directories not needed for main image
+# Directories & files not needed for main image
 tests/
 docs/
+README.md
+
 
 # IDE artifacts
 .idea/
