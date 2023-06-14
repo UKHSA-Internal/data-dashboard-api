@@ -5,8 +5,6 @@ from unittest import mock
 from metrics.domain.models import PlotParameters, PlotsData
 from metrics.domain.tables.generation import TabularData
 
-MODULE_PATH = "metrics.interfaces.charts.access"
-
 TEST_PLOT = "Test Plot"
 
 X_AXIS_VALUES = [
@@ -53,7 +51,7 @@ class TestTabularData:
         Given a mock in place of a `PlotsData` model
         When `create_plots_in_tabular_format()` is called
         Then a call is delegated to `combine_list_of_plots()` to combine the plots
-        and `generate_plots_for_table` is called to produce the output in the required format
+        And `generate_plots_for_table` is called to produce the output in the required format
 
         Patches:
             `spy_generate_multi_plot_output`: For the main collation
@@ -65,15 +63,123 @@ class TestTabularData:
         # When
         mock_tabular_data = TabularData(plots=mocked_plots)
 
-        mock_tabular_data.create_plots_in_tabular_format()
+        plots_in_tabular_format = mock_tabular_data.create_plots_in_tabular_format()
 
         # Then
         spy_combine_list_of_plots.assert_called_once()
         spy_generate_multi_plot_output.assert_called_once()
+        assert plots_in_tabular_format == spy_generate_multi_plot_output.return_value
 
 
-class TestCombinePlots:
-    def test_basic_combine_list_of_plots_have_dates(self):
+class TestCollateDataByDate:
+    def test_basic_behaviour(self):
+        """
+        Given a plot which is by date
+        When `collate_data_by_date()` is called
+        Then the correct response is generated
+        """
+        # Given
+        first_chart_plots_data = dict(zip(X_AXIS_VALUES, Y_AXIS_1_VALUES))
+
+        expected_combined_plots = {"2022-09-30": {PLOT_1_LABEL: "22"}}
+
+        # When
+        tabular_data = TabularData(plots=[])
+
+        tabular_data.collate_data_by_date(
+            plot_data=first_chart_plots_data,
+            plot_label=PLOT_1_LABEL,
+        )
+
+        # Then
+        assert tabular_data.combined_plots == expected_combined_plots
+
+    def test_two_plots(self):
+        """
+        Given two plot which are both by date
+        When `collate_data_by_date()` is called
+        Then the correct response is generated
+        """
+        # Given
+        first_chart_plots_data = dict(zip(X_AXIS_VALUES, Y_AXIS_1_VALUES))
+        second_chart_plots_data = dict(zip(X_AXIS_VALUES, Y_AXIS_2_VALUES))
+        tabular_data = TabularData(plots=[])
+
+        # When
+        tabular_data.collate_data_by_date(
+            plot_data=first_chart_plots_data,
+            plot_label=PLOT_1_LABEL,
+        )
+        tabular_data.collate_data_by_date(
+            plot_data=second_chart_plots_data,
+            plot_label=PLOT_2_LABEL,
+        )
+        expected_combined_plots = {
+            "2022-09-30": {PLOT_1_LABEL: "22", PLOT_2_LABEL: "45"},
+        }
+
+        # Then
+        assert tabular_data.combined_plots == expected_combined_plots
+
+
+class TestCollateDataNotByDate:
+    def test_basic_behaviour(self):
+        """
+        Given a plot which is not by date
+        When `collate_data_not_by_date()` is called
+        Then the correct response is generated
+        """
+        # Given
+        first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
+
+        expected_combined_plots = {
+            "0-4": {PLOT_1_LABEL: "10"},
+            "5-8": {PLOT_1_LABEL: "22"},
+        }
+
+        # When
+        tabular_data = TabularData(plots=[])
+
+        tabular_data.collate_data_not_by_date(
+            plot_data=first_chart_plots_data,
+            plot_label=PLOT_1_LABEL,
+        )
+
+        # Then
+        assert tabular_data.combined_plots == expected_combined_plots
+
+    def test_two_plots(self):
+        """
+        Given two plot neither of which are by date
+        When `collate_data_not_by_date()` is called
+        Then the correct response is generated
+        """
+        first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
+        second_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_2_VALUES))
+
+        expected_combined_plots = {
+            "0-4": {PLOT_1_LABEL: "10", PLOT_2_LABEL: "20"},
+            "5-8": {PLOT_1_LABEL: "22", PLOT_2_LABEL: "45"},
+        }
+
+        # When
+        tabular_data = TabularData(plots=[])
+
+        tabular_data.collate_data_not_by_date(
+            plot_data=first_chart_plots_data,
+            plot_label=PLOT_1_LABEL,
+        )
+        tabular_data.collate_data_not_by_date(
+            plot_data=second_chart_plots_data,
+            plot_label=PLOT_2_LABEL,
+        )
+
+        # Then
+        assert tabular_data.combined_plots == expected_combined_plots
+
+
+class TestCombineListOfPlots:
+    def test_plots_have_dates(self):
         """
         Given 2 `TabularPlotData` models representing 2 different line plots
         When `combine_list_of_plots()` is called
@@ -115,7 +221,7 @@ class TestCombinePlots:
         # Check combined plot output is as expected
         assert tabular_data.combined_plots == expected_combined_plots
 
-    def test_basic_combine_list_of_plots_no_dates(self):
+    def test_plots_do_not_have_dates(self):
         """
         Given 2 `TabularPlotData` models representing 2 different line plots
          where neither plot has dates
@@ -161,7 +267,7 @@ class TestCombinePlots:
         # Check combined plot output is as expected
         assert tabular_data.combined_plots == expected_combined_plots
 
-    def test_combine_list_of_plots_no_labels(self):
+    def test_plots_have_no_labels(self):
         """
         Given 2 `TabularPlotData` models representing 2 different line plots without labels
         When `combine_list_of_plots()` is called
@@ -195,7 +301,7 @@ class TestCombinePlots:
         # Check combined plot output is as expected
         assert tabular_data.combined_plots == expected_combined_plots
 
-    def test_different_length_combine_list_of_plots(self):
+    def test_plots_have_different_lengths(self):
         """
         Given 2 `TabularPlotData` models representing 2 different line plots of unequal lengths
         When `combine_list_of_plots()` is called
