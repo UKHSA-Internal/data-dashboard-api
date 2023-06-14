@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-slim as base
 
 # Allows docker to cache installed dependencies between builds
 COPY requirements-prod.txt requirements-prod.txt
@@ -8,6 +8,11 @@ RUN apt-get update \
 
 # Mounts the application code to the image
 COPY . code
+WORKDIR /code
+
+FROM python:3.11-slim
+
+COPY --from=base /code /code
 WORKDIR /code
 
 EXPOSE 8000
