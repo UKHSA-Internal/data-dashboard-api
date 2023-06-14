@@ -1,22 +1,26 @@
 # Build stage
 FROM python:3.11-slim AS builder
 
-# Install toolchain needed for C libraries like psycopg2 & create python virtual environment
+# Ensure the virtual environment will be available on the `PATH` variable
+ENV PATH=/venv/bin:$PATH
+
+# Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
+
+# 1: Update the database of available packages
+# 2: Install toolchain needed for C libraries like `psycopg2`
+# 3: Create the python virtual environment
+# 4: Remove dangling files from installation of libraries
+# 5: Install project dependencies onto the virtual environment
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
     && python3 -m venv /venv \
-    && rm -rf /var/cache/apt/* /var/lib/apt/lists/*
-
-# Ensure the virtual environment is made available on the system `PATH`
-ENV PATH=/venv/bin:$PATH
+    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
+    && pip install --no-cache-dir -r requirements-prod.txt
 
 # Mounts the application code to the image
 COPY . code
 WORKDIR /code
-
-# Install project dependencies into the virtual environment
-RUN pip install --no-cache-dir -r requirements-prod.txt
 
 # Runtime stage
 FROM python:3.11-slim AS production
