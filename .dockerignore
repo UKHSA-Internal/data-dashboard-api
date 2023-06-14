@@ -1,1 +1,20 @@
+# Caches
+.pytest_cache/
+.import_linter_cache/
 __pycache__/
+
+# CI manifests
+.github/
+
+# Spec files
+.bandit
+.importlinter
+.gitignore
+
+# Directories not needed for main image
+tests/
+docs/
+
+# IDE artifacts
+.idea/
+.vscode/
