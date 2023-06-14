@@ -671,36 +671,30 @@ class TestMiscMethods:
     @pytest.mark.parametrize("file_format", FILE_FORMAT_CHOICES)
     def test_valid_format_passed_to_encode_figure(self, file_format: str):
         """
-        Given the user supplies a supported file_format to pass to encode_figure
-        When the function is called then no exception is raised
+        Given the user supplies a file_format to pass to encode_figure
+        When `encode_figure` is called then no exception is raised as long as
+        the format is supported by the Plotly `to_image` function
+        Therefore any unsupported formats added to FILE_FORMAT_CHOICES in the future
+        will be picked up by this test
         """
+
         # Given
-        plot_params = PlotParameters(
-            chart_type="line_multi_coloured",
-            topic="RSV",
-            metric="weekly_positivity_by_age",
-        )
-        chart_plots = PlotsCollection(
-            plots=[plot_params],
+        mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
+        mocked_chart_plots = mock.Mock(
             file_format=file_format,
-            chart_height=200,
-            chart_width=200,
+            plots=[mocked_chart_plot_params],
         )
 
-        interface = ChartsInterface(chart_plots=chart_plots)
-
-        figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            chart_height=200,
-            chart_width=200,
-            chart_plots_data=[
-                self.first_chart_plots_data,
-                self.second_chart_plots_data,
-            ],
+        charts_interface = ChartsInterface(
+            chart_plots=mocked_chart_plots,
+            core_time_series_manager=mock.Mock(),
         )
+
+        figure = plotly.graph_objs.Figure()
 
         try:
             # When / Then
-            interface.encode_figure(figure)
+            charts_interface.encode_figure(figure)
         except:
             assert (
                 False
