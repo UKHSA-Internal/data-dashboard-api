@@ -1,4 +1,6 @@
+###############################################################################
 # Build stage
+###############################################################################
 FROM python:3.11-slim AS builder
 
 # Ensure the virtual environment will be available on the `PATH` variable
@@ -21,7 +23,9 @@ RUN apt-get update \
 # Mounts the application code to the image
 COPY . code
 
-# Runtime stage
+###############################################################################
+# Production stage
+###############################################################################
 FROM python:3.11-slim AS production
 
 WORKDIR /code
