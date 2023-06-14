@@ -121,6 +121,38 @@ class ChartSettings:
         }
 
 
+def get_existing_chart_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
+    """Extract the x axis range from a chart figure
+
+    Args:
+        figure: The chart figure
+
+    Returns:
+        The minimum and maximum x axis date range which Plotly has calculated
+    """
+
+    full_figure = figure.full_figure_for_development(warn=False)
+
+    min_dt, max_dt = full_figure.layout.xaxis.range
+
+    return min_dt, max_dt
+
+
+def get_new_max_date(existing_dt: str) -> str:
+    """Return the last day of the month for the supplied date
+
+    Args:
+        existing_dt: The date we want the last day of the month for
+
+    Returns:
+        The last day of the month for the given date
+    """
+    new_dt: datetime.date = get_last_day_of_month(
+        dt=datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
+    )
+    return new_dt.strftime("%Y-%m-%d")
+
+
 def get_x_axis_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
     """Adjust the right-hand side of the charts' x axis to give Plotly the best chance of displaying a label for every tick
 
@@ -132,14 +164,9 @@ def get_x_axis_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
         Note: If the max_date was already the last day of the month then nothing gets changed
     """
 
-    full_figure = figure.full_figure_for_development(warn=False)
-
-    min_date, max_dt = full_figure.layout.xaxis.range
+    min_date, max_dt = get_existing_chart_range(figure)
 
     # Go to the last day of the month to give label the best chance of being displayed
-    max_dt = get_last_day_of_month(
-        dt=datetime.strptime(max_dt.split()[0], "%Y-%m-%d").date()
-    )
-    max_date = max_dt.strftime("%Y-%m-%d")
+    max_date = get_new_max_date(max_dt)
 
     return min_date, max_date
