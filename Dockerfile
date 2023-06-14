@@ -20,7 +20,6 @@ RUN apt-get update \
 
 # Mounts the application code to the image
 COPY . code
-WORKDIR /code
 
 # Runtime stage
 FROM python:3.11-slim AS production
