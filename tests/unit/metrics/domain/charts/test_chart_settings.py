@@ -248,6 +248,28 @@ class TestChartSettings:
         }
         assert x_axis_date_type == expected_axis_config
 
+    def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
+        self, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings` with a narrow `width`
+        When `_get_x_axis_date_type()` is called
+        Then the correct configuration for the x-axis is returned as a dict
+        """
+        # Given
+        chart_settings = ChartSettings(width=435, height=220, plots_data=mock.Mock())
+
+        # When
+        x_axis_date_type = chart_settings._get_x_axis_date_type()
+
+        # Then
+        expected_axis_config = {
+            "type": "date",
+            "dtick": "M1",
+            "tickformat": "%b<br>%Y",
+        }
+        assert x_axis_date_type == expected_axis_config
+
     def test_get_x_axis_text_type(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`

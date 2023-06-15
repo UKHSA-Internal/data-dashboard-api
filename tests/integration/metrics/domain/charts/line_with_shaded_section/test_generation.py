@@ -14,8 +14,8 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2023, 1, 9),
 ]
 WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC: str = "weekly_hospital_admissions_rate"
-HEIGHT = 300
-WIDTH = 400
+HEIGHT = 220
+WIDTH = 930
 
 
 class TestLineWithShadedSectionCharts:
