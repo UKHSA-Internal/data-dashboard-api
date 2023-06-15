@@ -6,15 +6,31 @@ __pycache__/
 # CI manifests
 .github/
 
-# Spec files
+# Specifications, dot files, etc
 .bandit
-.importlinter
+.dockerignore
+.env
+.env.*
+.git/
 .gitignore
+.importlinter
+pytest.ini
+Dockerfile
 
-# Directories not needed for main image
+# Directories & files not needed for main image
 tests/
 docs/
+README.md
+requirements.txt
+requirements-dev.txt
 
 # IDE artifacts
 .idea/
 .vscode/
+
+# Existing virtual environment
+venv/
+.venv/
+
+# Existing local SQLite database
+db.sqlite3
