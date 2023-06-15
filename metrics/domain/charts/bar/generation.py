@@ -76,9 +76,6 @@ def generate_chart_figure(
     else:
         figure.update_xaxes(**settings._get_x_axis_text_type())
 
-    # We want to see tick labels on the Y Axis
-    figure.update_yaxes(showticklabels=True)
-
     return figure
 
 

@@ -48,7 +48,7 @@ class ChartSettings:
     def get_y_axis_config(self) -> Dict[str, Union[bool, DICT_OF_STR_ONLY]]:
         return {
             "showgrid": False,
-            "showticklabels": False,
+            "showticklabels": True,
             "tickfont": self.get_tick_font_config(),
         }
 

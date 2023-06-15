@@ -95,7 +95,7 @@ class TestChartSettings:
         # Then
         expected_y_axis_config = {
             "showgrid": False,
-            "showticklabels": False,
+            "showticklabels": True,
             "tickfont": chart_settings.get_tick_font_config(),
         }
         assert y_axis_config == expected_y_axis_config

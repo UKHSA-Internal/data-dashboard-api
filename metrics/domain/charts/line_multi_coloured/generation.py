@@ -92,9 +92,6 @@ def create_multi_coloured_line_chart(
         }
     )
 
-    # We want to see tick labels on the Y Axis
-    figure.update_yaxes(showticklabels=True)
-
     return figure
 
 
