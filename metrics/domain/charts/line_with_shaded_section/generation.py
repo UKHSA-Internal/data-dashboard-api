@@ -79,18 +79,8 @@ def create_line_chart_with_shaded_section(
     settings = chart_settings.ChartSettings(
         width=chart_width, height=chart_height, plots_data=x_axis_values
     )
-
-    figure.update_layout(**settings.get_base_chart_config())
-
-    # Set the height and width of the chart itself
-    # And remove the legend
-    figure.update_layout(
-        {
-            "height": chart_height,
-            "width": chart_width,
-            "showlegend": False,
-        }
-    )
+    layout_args = settings.get_line_with_shaded_section_chart_config()
+    figure.update_layout(**layout_args)
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
