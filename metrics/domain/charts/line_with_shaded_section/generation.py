@@ -84,12 +84,7 @@ def create_line_chart_with_shaded_section(
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
-        figure.update_xaxes(**settings._get_x_axis_date_type())
-
-        # Give the chart the best chance of displaying all the tick labels
-        min_date, max_date = chart_settings.get_x_axis_range(figure=figure)
-
-        figure.update_xaxes(range=[min_date, max_date])
+        figure.update_xaxes(**settings._get_x_axis_date_type(figure=figure))
         figure.update_layout(**settings._get_margin_for_charts_with_dates())
     else:
         figure.update_xaxes(**settings._get_x_axis_text_type())

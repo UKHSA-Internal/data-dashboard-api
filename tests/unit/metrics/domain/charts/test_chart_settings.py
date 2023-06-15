@@ -7,6 +7,8 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings, get_new_max_date
 from metrics.domain.models import PlotParameters, PlotsData
 
+MODULE_PATH: str = "metrics.domain.charts.chart_settings"
+
 
 @pytest.fixture
 def fake_chart_plots_data() -> PlotsData:
@@ -232,45 +234,94 @@ class TestChartSettings:
         }
         assert waffle_chart_config == expected_chart_config
 
-    def test_get_x_axis_date_type(self, fake_chart_settings: ChartSettings):
+    @mock.patch(f"{MODULE_PATH}.get_x_axis_range", return_value=(1, 2))
+    def test_get_x_axis_date_type(
+        self,
+        mocked_get_x_axis_range: mock.MagicMock,
+        fake_chart_settings: ChartSettings,
+    ):
         """
         Given an instance of `ChartSettings`
         When `_get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
+
+        Patches:
+            `mocked_get_x_axis_range`: To remove the need
+                 to supply a valid plotly figure object to the test
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        x_axis_date_type = chart_settings._get_x_axis_date_type()
+        x_axis_date_type = chart_settings._get_x_axis_date_type(
+            figure=mock.Mock()  # Stubbed
+        )
 
         # Then
+        assert x_axis_date_type["type"] == "date"
+        assert x_axis_date_type["dtick"] == "M1"
+        assert x_axis_date_type["tickformat"] == "%b %Y"
+
+    @mock.patch(f"{MODULE_PATH}.get_x_axis_range")
+    def test_get_x_axis_date_type_calls_get_x_axis_range(
+        self, spy_get_x_axis_range: mock.MagicMock, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_x_axis_date_type()` is called
+        Then `get_x_axis_range()` is called correctly
+
+        Patches:
+            `spy_get_x_axis_range`: To check the `range` field is
+                built by delegating the call to `get_x_axis_range()`
+        """
+        # Given
+        chart_settings = fake_chart_settings
+        spy_get_x_axis_range.return_value = mock.Mock(), mock.Mock()
+        mocked_figure = mock.Mock()
+
+        # When
+        x_axis_date_type = chart_settings._get_x_axis_date_type(figure=mocked_figure)
+
+        # Then
+        spy_get_x_axis_range.assert_called_once_with(figure=mocked_figure)
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b %Y",
+            "range": list(spy_get_x_axis_range.return_value),
         }
         assert x_axis_date_type == expected_axis_config
 
+    @mock.patch(f"{MODULE_PATH}.get_x_axis_range", return_value=(1, 2))
     def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
-        self, fake_chart_settings: ChartSettings
+        self,
+        mocked_get_x_axis_range: mock.MagicMock,
+        fake_chart_settings: ChartSettings,
     ):
         """
         Given an instance of `ChartSettings` with a narrow `width`
         When `_get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
+
+        Patches:
+            `mocked_get_x_axis_range`: To remove the need
+                 to supply a valid plotly figure object to the test
         """
         # Given
         chart_settings = ChartSettings(width=435, height=220, plots_data=mock.Mock())
 
         # When
-        x_axis_date_type = chart_settings._get_x_axis_date_type()
+        x_axis_date_type = chart_settings._get_x_axis_date_type(
+            figure=mock.Mock()  # Stubbed
+        )
 
         # Then
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b<br>%Y",
+            "range": list(mocked_get_x_axis_range.return_value),
         }
         assert x_axis_date_type == expected_axis_config
 
@@ -388,6 +439,66 @@ class TestChartSettings:
             },
         }
         assert legend_bottom_left_config == expected_legend_bottom_left_config
+
+    def test_get_legend_top_centre_config(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_legend_top_centre_config()` is called
+        Then the correct configuration for the legend is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+
+        # Then
+        expected_legend_top_centre_config = {
+            "legend": {
+                "orientation": "h",
+                "y": 1.0,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "bottom",
+            },
+        }
+        assert legend_top_centre_config == expected_legend_top_centre_config
+
+    @mock.patch(f"{MODULE_PATH}.is_legend_required")
+    def test_get_line_multi_coloured_chart_config(
+        self, spy_is_legend_required: mock.MagicMock, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `get_line_multi_coloured_chart_config()` is called
+        Then the correct configuration for margins is returned as a dict
+
+        Patches:
+            `spy_is_legend_required`: To check if the call is delegated
+                correctly to determine if a legend is needed.
+                Which is based on whether any `labels` were requested
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        line_multi_coloured_chart_config = (
+            chart_settings.get_line_multi_coloured_chart_config()
+        )
+
+        # Then
+        spy_is_legend_required.assert_called_once_with(
+            chart_plots_data=chart_settings.plots_data
+        )
+        expected_line_multi_coloured_chart_config = {
+            **chart_settings.get_base_chart_config(),
+            **chart_settings._get_legend_top_centre_config(),
+            "showlegend": spy_is_legend_required.return_value,
+        }
+        assert (
+            line_multi_coloured_chart_config
+            == expected_line_multi_coloured_chart_config
+        )
 
 
 class TestGetNewMaxDate:
