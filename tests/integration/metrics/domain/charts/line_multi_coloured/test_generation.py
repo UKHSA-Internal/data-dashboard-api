@@ -21,8 +21,8 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2023, 1, 9),
 ]
 EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
-HEIGHT = 300
-WIDTH = 400
+HEIGHT = 220
+WIDTH = 930
 
 
 class TestLineMultiColouredCharts:
@@ -79,6 +79,10 @@ class TestLineMultiColouredCharts:
         # Check that the main layout is showing the legend
         assert main_layout.showlegend
 
+        # Check left and right margins are both 15
+        assert figure.layout.margin.l == 15
+        assert figure.layout.margin.r == 15
+
         # ---Legend checks---
         # Check that the legend is placed in the centre and above the figure
         assert main_layout.legend.orientation == "h"
@@ -126,6 +130,11 @@ class TestLineMultiColouredCharts:
         )
 
         # Then
+
+        # Check left and right margins are both 0
+        assert figure.layout.margin.l == 0
+        assert figure.layout.margin.r == 0
+
         # ---X Axis checks---
         x_axis = figure.layout.xaxis
 

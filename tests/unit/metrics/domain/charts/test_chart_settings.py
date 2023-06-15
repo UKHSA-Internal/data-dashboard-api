@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.chart_settings import ChartSettings
+from metrics.domain.charts.chart_settings import ChartSettings, get_new_max_date
 from metrics.domain.models import PlotParameters, PlotsData
 
 
@@ -248,6 +248,28 @@ class TestChartSettings:
         }
         assert x_axis_date_type == expected_axis_config
 
+    def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
+        self, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings` with a narrow `width`
+        When `_get_x_axis_date_type()` is called
+        Then the correct configuration for the x-axis is returned as a dict
+        """
+        # Given
+        chart_settings = ChartSettings(width=435, height=220, plots_data=mock.Mock())
+
+        # When
+        x_axis_date_type = chart_settings._get_x_axis_date_type()
+
+        # Then
+        expected_axis_config = {
+            "type": "date",
+            "dtick": "M1",
+            "tickformat": "%b<br>%Y",
+        }
+        assert x_axis_date_type == expected_axis_config
+
     def test_get_x_axis_text_type(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
@@ -267,3 +289,37 @@ class TestChartSettings:
             "tickformat": None,
         }
         assert x_axis_text_type == expected_axis_config
+
+
+class TestGetNewMaxDate:
+    def test_get_new_max_date(self):
+        """
+        Given a date as a string
+        When `get_new_max_date()` is called
+        Then the end of the month date is returned as a string
+        """
+        # Given
+        input_date = "2024-02-15 12:00"
+        expected_date = "2024-02-29"
+
+        # When
+        actual_date = get_new_max_date(input_date)
+
+        # Then
+        assert expected_date == actual_date
+
+    def test_date_is_already_the_last_day(self):
+        """
+        Given a date as a string that is the end of the month
+        When `get_new_max_date()` is called
+        Then the same date is returned
+        """
+        # Given
+        input_date = "2024-02-29 12:00"
+        expected_date = "2024-02-29"
+
+        # When
+        actual_date = get_new_max_date(input_date)
+
+        # Then
+        assert expected_date == actual_date

@@ -1,1 +1,36 @@
+# Caches
+.pytest_cache/
+.import_linter_cache/
 __pycache__/
+
+# CI manifests
+.github/
+
+# Specifications, dot files, etc
+.bandit
+.dockerignore
+.env
+.env.*
+.git/
+.gitignore
+.importlinter
+pytest.ini
+Dockerfile
+
+# Directories & files not needed for main image
+tests/
+docs/
+README.md
+requirements.txt
+requirements-dev.txt
+
+# IDE artifacts
+.idea/
+.vscode/
+
+# Existing virtual environment
+venv/
+.venv/
+
+# Existing local SQLite database
+db.sqlite3

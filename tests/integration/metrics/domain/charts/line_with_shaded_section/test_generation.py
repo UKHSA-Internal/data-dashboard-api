@@ -14,8 +14,8 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2023, 1, 9),
 ]
 WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC: str = "weekly_hospital_admissions_rate"
-HEIGHT = 300
-WIDTH = 400
+HEIGHT = 220
+WIDTH = 930
 
 
 class TestLineWithShadedSectionCharts:
@@ -46,6 +46,10 @@ class TestLineWithShadedSectionCharts:
         # Check that the main background colour is a plain white
         assert main_layout.paper_bgcolor == RGBAColours.WHITE.stringified
         assert not main_layout.showlegend
+
+        # Check left and right margins are both 15
+        assert figure.layout.margin.l == 15
+        assert figure.layout.margin.r == 15
 
         # Check the chart sizes are as per the specified parameters
         assert main_layout.height == HEIGHT
@@ -94,6 +98,10 @@ class TestLineWithShadedSectionCharts:
         )
 
         # Then
+        # Check left and right margins are both 0
+        assert figure.layout.margin.l == 0
+        assert figure.layout.margin.r == 0
+
         # ---X Axis checks---
         x_axis = figure.layout.xaxis
 

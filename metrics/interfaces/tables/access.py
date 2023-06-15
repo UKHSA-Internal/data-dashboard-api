@@ -4,7 +4,7 @@ from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotsCollection, PlotsData
-from metrics.domain.tables.generation import create_plots_in_tabular_format
+from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.interfaces.tables.validation import validate_each_requested_table_plot
 
@@ -32,11 +32,10 @@ class TablesInterface:
             A list of dictionaries showing the plot data in tabular format
 
         """
-        plots_data: List[PlotsData] = self.plots_interface.build_plots_data()
+        plots = self.plots_interface.build_plots_data()
+        tabular_data = TabularData(plots=plots)
 
-        return create_plots_in_tabular_format(
-            tabular_plots_data=plots_data,
-        )
+        return tabular_data.create_plots_in_tabular_format()
 
 
 def generate_table(plots_collection: PlotsCollection) -> List[Dict[str, str]]:

@@ -49,6 +49,10 @@ class TestBarCharts:
         assert main_layout.height == HEIGHT
         assert main_layout.width == WIDTH
 
+        # Check left and right margins are both 15
+        assert main_layout.margin.l == 15
+        assert main_layout.margin.r == 15
+
         assert main_layout.showlegend
 
     def test_main_bar_plot(self):
@@ -111,7 +115,8 @@ class TestBarCharts:
 
         # The x-axis ticks should be formatted as shorthand Months only i.e Sep not September
         assert x_axis.type == "date"
-        assert x_axis.tickformat == "%b %Y"
+        # The chart width is narrow, so the tick labels will use a newline to break the month and year text
+        assert x_axis.tickformat == "%b<br>%Y"
 
         # ---Y Axis checks---
         y_axis = figure.layout.yaxis
@@ -139,6 +144,10 @@ class TestBarCharts:
         )
 
         # Then
+        # Check left and right margins are both 0
+        assert figure.layout.margin.l == 0
+        assert figure.layout.margin.r == 0
+
         # ---X Axis checks---
         x_axis = figure.layout.xaxis
 
