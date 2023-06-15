@@ -38,7 +38,7 @@ def generate_chart_figure(
         y_axis_values=y_axis_values,
         bar_colour=bar_colour,
         legend=legend,
-        showlegend=bool(legend)
+        showlegend=bool(legend),
     )
 
     # Add plot to graph
