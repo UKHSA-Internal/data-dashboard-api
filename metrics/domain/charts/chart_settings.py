@@ -63,8 +63,7 @@ class ChartSettings:
             "yaxis": self.get_y_axis_config(),
         }
 
-    @staticmethod
-    def _get_simple_line_chart_config() -> Dict[str, Dict[str, bool]]:
+    def get_simple_line_chart_config(self) -> Dict[str, Dict[str, bool]]:
         set_axes_to_be_invisible = {"visible": False}
         return {
             "xaxis": set_axes_to_be_invisible,
@@ -72,7 +71,7 @@ class ChartSettings:
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
         }
 
-    def _get_waffle_chart_config(self):
+    def get_waffle_chart_config(self):
         x_axis_args = {
             "showgrid": False,
             "ticks": None,

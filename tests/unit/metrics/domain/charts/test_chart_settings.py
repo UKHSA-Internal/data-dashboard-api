@@ -139,14 +139,14 @@ class TestChartSettings:
     def test_get_simple_line_chart_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
-        When `_get_simple_line_chart_config()` is called
+        When `get_simple_line_chart_config()` is called
         Then the correct configuration for simple line charts is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        simple_line_chart_config = chart_settings._get_simple_line_chart_config()
+        simple_line_chart_config = chart_settings.get_simple_line_chart_config()
 
         # Then
         expected_line_chart_config = {
@@ -197,7 +197,7 @@ class TestChartSettings:
     def test_waffle_chart_config(self, fake_chart_plots_data: PlotsData):
         """
         Given an instance of `ChartSettings`
-        When `_get_waffle_chart_config()` is called
+        When `get_waffle_chart_config()` is called
         Then the correct configuration for waffle charts is returned as a dict
         """
         # Given
@@ -207,7 +207,7 @@ class TestChartSettings:
         )
 
         # When
-        waffle_chart_config = chart_settings._get_waffle_chart_config()
+        waffle_chart_config = chart_settings.get_waffle_chart_config()
 
         # Then
         x_axis_args = {

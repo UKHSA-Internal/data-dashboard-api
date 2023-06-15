@@ -8,27 +8,6 @@ from metrics.domain.charts.chart_settings import ChartSettings
 from metrics.domain.charts.waffle import pre_processing, validation
 from metrics.domain.charts.waffle.colour_scheme import build_color_scale
 
-X_AXIS_ARGS: Dict[str, bool] = {
-    "showgrid": False,
-    "ticks": None,
-    "showticklabels": False,
-}
-
-Y_AXIS_ARGS: Dict[str, Union[bool, int, str]] = {
-    **X_AXIS_ARGS,
-    **{"scaleratio": 1, "scaleanchor": "x"},
-}
-
-
-WAFFLE_LAYOUT_ARGS = {
-    "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
-    "showlegend": False,
-    "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
-    "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
-    "xaxis": X_AXIS_ARGS,
-    "yaxis": Y_AXIS_ARGS,
-}
-
 
 def generate_chart_figure(
     values: List[int],
@@ -69,7 +48,7 @@ def generate_chart_figure(
         )
 
     chart_settings = ChartSettings(width=width, height=height, plots_data=0)
-    chart_config = chart_settings._get_waffle_chart_config()
+    chart_config = chart_settings.get_waffle_chart_config()
     figure.update_layout(**chart_config)
 
     return figure
