@@ -1,9 +1,8 @@
-from typing import Dict, List, Union
+from typing import List
 
 import plotly.graph_objects
 from numpy.core.multiarray import ndarray
 
-from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings
 from metrics.domain.charts.waffle import pre_processing, validation
 from metrics.domain.charts.waffle.colour_scheme import build_color_scale
