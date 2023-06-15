@@ -17,12 +17,10 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
     Args:
-        x_axis_values: The values to display along the x-axis
-        y_axis_values: The values to display along the y-axis
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
-        dates: List of datetime objects for each of the values.
-        values: List of numbers representing the values.
+        x_axis_values: The values to display along the x-axis
+        y_axis_values: The values to display along the y-axis
         legend: Legend associated with the given plot
         bar_colour: The colour to assign to the bar.
             Defaults to 86, 148, 202, 1, blue.
@@ -40,6 +38,7 @@ def generate_chart_figure(
         y_axis_values=y_axis_values,
         bar_colour=bar_colour,
         legend=legend,
+        showlegend=bool(legend)
     )
 
     # Add plot to graph
