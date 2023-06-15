@@ -43,7 +43,7 @@ class TabularData:
         """
 
         for k, v in plot_data.items():
-            month_end = str(last_day_of_month(k))
+            month_end = str(get_last_day_of_month(k))
             self.combined_plots[month_end].update({plot_label: str(v)})
 
     def collate_data_not_by_date(self, plot_data: Dict[Any, Any], plot_label: str):
