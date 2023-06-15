@@ -317,6 +317,29 @@ class TestChartSettings:
 
         assert line_with_shaded_section_chart_config == expected_chart_config
 
+    def test_get_margin_for_charts_with_dates(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_margin_for_charts_with_dates()` is called
+        Then the correct configuration for margins is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        margin_config = chart_settings._get_margin_for_charts_with_dates()
+
+        # Then
+        expected_margin_config = {
+            "margin": {
+                "l": 15,
+                "r": 15,
+                "b": 0,
+                "t": 0,
+            }
+        }
+        assert margin_config == expected_margin_config
+
 
 class TestGetNewMaxDate:
     def test_get_new_max_date(self):

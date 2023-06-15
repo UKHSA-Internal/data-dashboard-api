@@ -8,15 +8,6 @@ from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.models import PlotsData
 from metrics.domain.utils import get_last_day_of_month
 
-MARGINS_FOR_CHART_WITH_DATES = {
-    "margin": {
-        "l": 15,
-        "r": 15,
-        "b": 0,
-        "t": 0,
-    }
-}
-
 
 class ChartSettings:
     narrow_chart_width = 435
@@ -128,6 +119,17 @@ class ChartSettings:
             "type": "-",
             "dtick": None,
             "tickformat": None,
+        }
+
+    @staticmethod
+    def _get_margin_for_charts_with_dates():
+        return {
+            "margin": {
+                "l": 15,
+                "r": 15,
+                "b": 0,
+                "t": 0,
+            }
         }
 
 

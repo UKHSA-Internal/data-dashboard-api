@@ -72,7 +72,7 @@ def create_multi_coloured_line_chart(
         min_date, max_date = chart_settings.get_x_axis_range(figure=figure)
 
         figure.update_xaxes(range=[min_date, max_date])
-        figure.update_layout(**chart_settings.MARGINS_FOR_CHART_WITH_DATES)
+        figure.update_layout(**settings._get_margin_for_charts_with_dates())
     else:
         figure.update_xaxes(**settings._get_x_axis_text_type())
 
