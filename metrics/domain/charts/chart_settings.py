@@ -8,15 +8,6 @@ from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.models import PlotsData
 from metrics.domain.utils import get_last_day_of_month
 
-MARGINS_FOR_CHART_WITH_DATES = {
-    "margin": {
-        "l": 15,
-        "r": 15,
-        "b": 0,
-        "t": 0,
-    }
-}
-
 
 class ChartSettings:
     narrow_chart_width = 435
@@ -57,7 +48,7 @@ class ChartSettings:
     def get_y_axis_config(self) -> Dict[str, Union[bool, DICT_OF_STR_ONLY]]:
         return {
             "showgrid": False,
-            "showticklabels": False,
+            "showticklabels": True,
             "tickfont": self.get_tick_font_config(),
         }
 
@@ -114,6 +105,11 @@ class ChartSettings:
         chart_config["showlegend"] = False
         return chart_config
 
+    def get_bar_chart_config(self):
+        chart_config = self.get_base_chart_config()
+        chart_config["barmode"] = "group"
+        return {**chart_config, **self._get_legend_bottom_left_config()}
+
     def _get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
         return {
@@ -128,6 +124,27 @@ class ChartSettings:
             "type": "-",
             "dtick": None,
             "tickformat": None,
+        }
+
+    @staticmethod
+    def _get_margin_for_charts_with_dates():
+        return {
+            "margin": {
+                "l": 15,
+                "r": 15,
+                "b": 0,
+                "t": 0,
+            }
+        }
+
+    @staticmethod
+    def _get_legend_bottom_left_config():
+        return {
+            "legend": {
+                "orientation": "h",
+                "y": -0.15,
+                "x": 0,
+            },
         }
 
 

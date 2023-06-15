@@ -53,8 +53,6 @@ class TestBarCharts:
         assert main_layout.margin.l == 15
         assert main_layout.margin.r == 15
 
-        assert main_layout.showlegend
-
     def test_main_bar_plot(self):
         """
         Given a list of dates & values
