@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Any, Dict, List, Union
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
@@ -6,6 +6,8 @@ from metrics.domain.models import PlotsData
 
 
 class ChartSettings:
+    narrow_chart_width = 435
+
     def __init__(self, width: int, height: int, plots_data: PlotsData):
         self._width = width
         self._height = height
@@ -91,12 +93,12 @@ class ChartSettings:
             "height": self.height,
         }
 
-    @staticmethod
-    def _get_x_axis_date_type() -> DICT_OF_STR_ONLY:
+    def _get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
+        tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
         return {
             "type": "date",
             "dtick": "M1",
-            "tickformat": "%b %Y",
+            "tickformat": tick_format,
         }
 
     @staticmethod
