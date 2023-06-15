@@ -21,8 +21,8 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2023, 1, 9),
 ]
 EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
-HEIGHT = 300
-WIDTH = 400
+HEIGHT = 220
+WIDTH = 930
 
 
 class TestLineMultiColouredCharts:

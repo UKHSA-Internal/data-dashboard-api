@@ -57,6 +57,10 @@ def generate_chart_figure(
     # Add plot to graph
     figure.add_trace(trace=bar_plot)
 
+    settings = chart_settings.ChartSettings(
+        width=chart_width, height=chart_height, plots_data=x_axis_values
+    )
+
     # Set the height and width of the chart itself
     figure.update_layout(
         {
@@ -70,7 +74,7 @@ def generate_chart_figure(
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
-        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_date_type())
+        figure.update_xaxes(**settings._get_x_axis_date_type())
 
         # Give the chart the best chance of displaying all the tick labels
         min_date, max_date = chart_settings.get_x_axis_range(figure=figure)
@@ -78,7 +82,7 @@ def generate_chart_figure(
         figure.update_xaxes(range=[min_date, max_date])
         figure.update_layout(**chart_settings.MARGINS_FOR_CHART_WITH_DATES)
     else:
-        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_text_type())
+        figure.update_xaxes(**settings._get_x_axis_text_type())
 
     # We want to see tick labels on the Y Axis
     figure.update_yaxes(showticklabels=True)
