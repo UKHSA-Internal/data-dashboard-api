@@ -340,6 +340,55 @@ class TestChartSettings:
         }
         assert margin_config == expected_margin_config
 
+    def test_get_bar_chart_config(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `get_bar_chart_config()` is called
+        Then the correct configuration for margins is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        bar_chart_config = chart_settings.get_bar_chart_config()
+
+        # Then
+        additional_bar_chart_specific_config = {
+            "barmode": "group",
+            "legend": {
+                "orientation": "h",
+                "y": -0.15,
+                "x": 0,
+            },
+        }
+        expected_bar_chart_config = {
+            **chart_settings.get_base_chart_config(),
+            **additional_bar_chart_specific_config,
+        }
+        assert bar_chart_config == expected_bar_chart_config
+
+    def test_get_legend_bottom_left_config(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_legend_bottom_left_config()` is called
+        Then the correct configuration for the legend is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        legend_bottom_left_config = chart_settings._get_legend_bottom_left_config()
+
+        # Then
+        expected_legend_bottom_left_config = {
+            "legend": {
+                "orientation": "h",
+                "y": -0.15,
+                "x": 0,
+            },
+        }
+        assert legend_bottom_left_config == expected_legend_bottom_left_config
+
 
 class TestGetNewMaxDate:
     def test_get_new_max_date(self):

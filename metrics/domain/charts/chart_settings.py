@@ -105,6 +105,11 @@ class ChartSettings:
         chart_config["showlegend"] = False
         return chart_config
 
+    def get_bar_chart_config(self):
+        chart_config = self.get_base_chart_config()
+        chart_config["barmode"] = "group"
+        return {**chart_config, **self._get_legend_bottom_left_config()}
+
     def _get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
         return {
@@ -130,6 +135,16 @@ class ChartSettings:
                 "b": 0,
                 "t": 0,
             }
+        }
+
+    @staticmethod
+    def _get_legend_bottom_left_config():
+        return {
+            "legend": {
+                "orientation": "h",
+                "y": -0.15,
+                "x": 0,
+            },
         }
 
 

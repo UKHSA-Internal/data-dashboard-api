@@ -48,21 +48,8 @@ def generate_chart_figure(
         width=chart_width, height=chart_height, plots_data=x_axis_values
     )
 
-    layout_args = settings.get_base_chart_config()
+    layout_args = settings.get_bar_chart_config()
     figure.update_layout(**layout_args)
-
-    # Apply the typical stylings for bar charts
-    figure.update_layout(
-        **{
-            "showlegend": True,
-            "barmode": "group",
-            "legend": {
-                "orientation": "h",
-                "y": -0.15,
-                "x": 0,
-            },
-        }
-    )
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
