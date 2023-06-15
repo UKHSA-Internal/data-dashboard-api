@@ -4,6 +4,7 @@ from typing import Dict, Tuple, Union
 import plotly
 
 from metrics.domain.charts import colour_scheme
+from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.models import PlotsData
 from metrics.domain.utils import get_last_day_of_month
@@ -110,6 +111,13 @@ class ChartSettings:
         chart_config["barmode"] = "group"
         return {**chart_config, **self._get_legend_bottom_left_config()}
 
+    def get_line_multi_coloured_chart_config(self):
+        chart_config = self.get_base_chart_config()
+        chart_config["showlegend"] = is_legend_required(
+            chart_plots_data=self.plots_data
+        )
+        return {**chart_config, **self._get_legend_top_centre_config()}
+
     def _get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
         return {
@@ -144,6 +152,18 @@ class ChartSettings:
                 "orientation": "h",
                 "y": -0.15,
                 "x": 0,
+            },
+        }
+
+    @staticmethod
+    def _get_legend_top_centre_config():
+        return {
+            "legend": {
+                "orientation": "h",
+                "y": 1.0,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "bottom",
             },
         }
 

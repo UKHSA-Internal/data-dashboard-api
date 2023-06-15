@@ -7,6 +7,8 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings, get_new_max_date
 from metrics.domain.models import PlotParameters, PlotsData
 
+MODULE_PATH: str = "metrics.domain.charts.chart_settings"
+
 
 @pytest.fixture
 def fake_chart_plots_data() -> PlotsData:
@@ -388,6 +390,66 @@ class TestChartSettings:
             },
         }
         assert legend_bottom_left_config == expected_legend_bottom_left_config
+
+    def test_get_legend_top_centre_config(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_legend_top_centre_config()` is called
+        Then the correct configuration for the legend is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+
+        # Then
+        expected_legend_top_centre_config = {
+            "legend": {
+                "orientation": "h",
+                "y": 1.0,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "bottom",
+            },
+        }
+        assert legend_top_centre_config == expected_legend_top_centre_config
+
+    @mock.patch(f"{MODULE_PATH}.is_legend_required")
+    def test_get_line_multi_coloured_chart_config(
+        self, spy_is_legend_required: mock.MagicMock, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `get_line_multi_coloured_chart_config()` is called
+        Then the correct configuration for margins is returned as a dict
+
+        Patches:
+            `spy_is_legend_required`: To check if the call is delegated
+                correctly to determine if a legend is needed.
+                Which is based on whether any `labels` were requested
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        line_multi_coloured_chart_config = (
+            chart_settings.get_line_multi_coloured_chart_config()
+        )
+
+        # Then
+        spy_is_legend_required.assert_called_once_with(
+            chart_plots_data=chart_settings.plots_data
+        )
+        expected_line_multi_coloured_chart_config = {
+            **chart_settings.get_base_chart_config(),
+            **chart_settings._get_legend_top_centre_config(),
+            "showlegend": spy_is_legend_required.return_value,
+        }
+        assert (
+            line_multi_coloured_chart_config
+            == expected_line_multi_coloured_chart_config
+        )
 
 
 class TestGetNewMaxDate:

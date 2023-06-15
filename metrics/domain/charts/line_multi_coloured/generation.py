@@ -61,7 +61,7 @@ def create_multi_coloured_line_chart(
         height=chart_height,
         plots_data=chart_plots_data,
     )
-    layout_args = settings.get_base_chart_config()
+    layout_args = settings.get_line_multi_coloured_chart_config()
     figure.update_layout(**layout_args)
 
     # Set x axis tick type depending on what sort of data we are showing
@@ -75,22 +75,6 @@ def create_multi_coloured_line_chart(
         figure.update_layout(**settings._get_margin_for_charts_with_dates())
     else:
         figure.update_xaxes(**settings._get_x_axis_text_type())
-
-    # Set the additional custom settings
-    figure.update_layout(
-        {
-            "showlegend": properties.is_legend_required(
-                chart_plots_data=chart_plots_data
-            ),
-            "legend": {
-                "orientation": "h",
-                "y": 1.0,
-                "x": 0.5,
-                "xanchor": "center",
-                "yanchor": "bottom",
-            },
-        }
-    )
 
     return figure
 
