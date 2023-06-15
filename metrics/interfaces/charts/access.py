@@ -106,7 +106,7 @@ class ChartsInterface:
             chart_width=chart_width,
             x_axis_values=plot_data.x_axis_values,
             y_axis_values=plot_data.y_axis_values,
-            legend=plot_data.parameters.metric_name,
+            legend=plot_data.parameters.label,
         )
 
     def generate_line_multi_coloured_chart(self) -> plotly.graph_objects.Figure:
