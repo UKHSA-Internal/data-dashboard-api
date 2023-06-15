@@ -298,9 +298,10 @@ class TestChartSettings:
         self, fake_chart_settings: ChartSettings
     ):
         """
-        Given
-        When
-        Then
+        Given an instance of `ChartSettings`
+        When `get_line_with_shaded_section_chart_config()` is called
+        Then the correct configuration for
+            `line_with_shaded_section` charts is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
