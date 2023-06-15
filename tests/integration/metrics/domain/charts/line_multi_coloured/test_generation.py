@@ -139,11 +139,17 @@ class TestLineMultiColouredCharts:
         x_axis = figure.layout.xaxis
 
         # The `M1` dtick setting is only valid for dates
-        assert x_axis.dtick == None
+        assert x_axis.dtick is None
 
         # The x-axis type and ticks should be the default
         assert x_axis.type == "-"
-        assert x_axis.tickformat == None
+        assert x_axis.tickformat is None
+
+        # ---Y Axis checks---
+        y_axis = figure.layout.yaxis
+
+        # Labels should be shown for y-axis ticks
+        assert y_axis.showticklabels
 
     def test_two_plots_with_provided_labels_and_colours(self):
         """

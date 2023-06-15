@@ -132,6 +132,8 @@ class TestChartSettings:
             "autosize": False,
             "xaxis": mocked_get_x_axis_config.return_value,
             "yaxis": mocked_get_y_axis_config.return_value,
+            "width": chart_settings.width,
+            "height": chart_settings.height,
         }
 
         assert base_chart_config == expected_base_chart_config
@@ -139,20 +141,22 @@ class TestChartSettings:
     def test_get_simple_line_chart_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
-        When `_get_simple_line_chart_config()` is called
+        When `get_simple_line_chart_config()` is called
         Then the correct configuration for simple line charts is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        simple_line_chart_config = chart_settings._get_simple_line_chart_config()
+        simple_line_chart_config = chart_settings.get_simple_line_chart_config()
 
         # Then
         expected_line_chart_config = {
             "xaxis": {"visible": False},
             "yaxis": {"visible": False},
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
+            "width": chart_settings.width,
+            "height": chart_settings.height,
         }
         assert simple_line_chart_config == expected_line_chart_config
 
@@ -197,7 +201,7 @@ class TestChartSettings:
     def test_waffle_chart_config(self, fake_chart_plots_data: PlotsData):
         """
         Given an instance of `ChartSettings`
-        When `_get_waffle_chart_config()` is called
+        When `get_waffle_chart_config()` is called
         Then the correct configuration for waffle charts is returned as a dict
         """
         # Given
@@ -207,7 +211,7 @@ class TestChartSettings:
         )
 
         # When
-        waffle_chart_config = chart_settings._get_waffle_chart_config()
+        waffle_chart_config = chart_settings.get_waffle_chart_config()
 
         # Then
         x_axis_args = {
@@ -289,6 +293,29 @@ class TestChartSettings:
             "tickformat": None,
         }
         assert x_axis_text_type == expected_axis_config
+
+    def test_get_line_with_shaded_section_chart_config(
+        self, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `get_line_with_shaded_section_chart_config()` is called
+        Then the correct configuration for
+            `line_with_shaded_section` charts is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        line_with_shaded_section_chart_config = (
+            chart_settings.get_line_with_shaded_section_chart_config()
+        )
+
+        # Then
+        expected_chart_config = chart_settings.get_base_chart_config()
+        expected_chart_config["showlegend"] = False
+
+        assert line_with_shaded_section_chart_config == expected_chart_config
 
 
 class TestGetNewMaxDate:

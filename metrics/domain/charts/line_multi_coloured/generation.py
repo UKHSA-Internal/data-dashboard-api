@@ -3,22 +3,10 @@ from typing import Any, List
 
 import plotly
 
-from metrics.domain.charts import chart_settings, type_hints
+from metrics.domain.charts import chart_settings
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotsData
-
-LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings(
-    0, 0, 0
-).get_base_chart_config() | {
-    "legend": {
-        "orientation": "h",
-        "y": 1.0,
-        "x": 0.5,
-        "xanchor": "center",
-        "yanchor": "bottom",
-    },
-}
 
 
 def create_multi_coloured_line_chart(
@@ -68,13 +56,13 @@ def create_multi_coloured_line_chart(
         figure.add_trace(trace=line_plot)
 
     # Apply the typical stylings for timeseries charts
-    figure.update_layout(**LAYOUT_ARGS)
-
     settings = chart_settings.ChartSettings(
         width=chart_width,
         height=chart_height,
         plots_data=chart_plots_data,
     )
+    layout_args = settings.get_base_chart_config()
+    figure.update_layout(**layout_args)
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(chart_plots_data[0].x_axis_values[0]) is date:
@@ -88,16 +76,24 @@ def create_multi_coloured_line_chart(
     else:
         figure.update_xaxes(**settings._get_x_axis_text_type())
 
-    # Set the height and width of the chart itself
+    # Set the additional custom settings
     figure.update_layout(
         {
-            "height": chart_height,
-            "width": chart_width,
             "showlegend": properties.is_legend_required(
                 chart_plots_data=chart_plots_data
             ),
+            "legend": {
+                "orientation": "h",
+                "y": 1.0,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "bottom",
+            },
         }
     )
+
+    # We want to see tick labels on the Y Axis
+    figure.update_yaxes(showticklabels=True)
 
     return figure
 

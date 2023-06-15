@@ -74,18 +74,21 @@ class ChartSettings:
             "autosize": False,
             "xaxis": self.get_x_axis_config(),
             "yaxis": self.get_y_axis_config(),
+            "height": self.height,
+            "width": self.width,
         }
 
-    @staticmethod
-    def _get_simple_line_chart_config() -> Dict[str, Dict[str, bool]]:
+    def get_simple_line_chart_config(self) -> Dict[str, Dict[str, bool]]:
         set_axes_to_be_invisible = {"visible": False}
         return {
             "xaxis": set_axes_to_be_invisible,
             "yaxis": set_axes_to_be_invisible,
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
+            "width": self.width,
+            "height": self.height,
         }
 
-    def _get_waffle_chart_config(self):
+    def get_waffle_chart_config(self):
         x_axis_args = {
             "showgrid": False,
             "ticks": None,
@@ -105,6 +108,11 @@ class ChartSettings:
             "width": self.width,
             "height": self.height,
         }
+
+    def get_line_with_shaded_section_chart_config(self):
+        chart_config = self.get_base_chart_config()
+        chart_config["showlegend"] = False
+        return chart_config
 
     def _get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"

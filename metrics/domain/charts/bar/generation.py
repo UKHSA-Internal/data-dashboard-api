@@ -3,19 +3,7 @@ from typing import Any, List
 
 import plotly.graph_objects
 
-from metrics.domain.charts import chart_settings, colour_scheme, type_hints
-
-BAR_CHART_LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.ChartSettings(
-    0, 0, 0
-).get_base_chart_config() | {
-    "showlegend": True,
-    "barmode": "group",
-    "legend": {
-        "orientation": "h",
-        "y": -0.15,
-        "x": 0,
-    },
-}
+from metrics.domain.charts import chart_settings, colour_scheme
 
 
 def generate_chart_figure(
@@ -29,12 +17,10 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
     Args:
-        x_axis_values: The values to display along the x-axis
-        y_axis_values: The values to display along the y-axis
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
-        dates: List of datetime objects for each of the values.
-        values: List of numbers representing the values.
+        x_axis_values: The values to display along the x-axis
+        y_axis_values: The values to display along the y-axis
         legend: Legend associated with the given plot
         bar_colour: The colour to assign to the bar.
             Defaults to 86, 148, 202, 1, blue.
@@ -52,6 +38,7 @@ def generate_chart_figure(
         y_axis_values=y_axis_values,
         bar_colour=bar_colour,
         legend=legend,
+        showlegend=bool(legend),
     )
 
     # Add plot to graph
@@ -61,16 +48,21 @@ def generate_chart_figure(
         width=chart_width, height=chart_height, plots_data=x_axis_values
     )
 
-    # Set the height and width of the chart itself
-    figure.update_layout(
-        {
-            "height": chart_height,
-            "width": chart_width,
-        }
-    )
+    layout_args = settings.get_base_chart_config()
+    figure.update_layout(**layout_args)
 
     # Apply the typical stylings for bar charts
-    figure.update_layout(**BAR_CHART_LAYOUT_ARGS)
+    figure.update_layout(
+        **{
+            "showlegend": True,
+            "barmode": "group",
+            "legend": {
+                "orientation": "h",
+                "y": -0.15,
+                "x": 0,
+            },
+        }
+    )
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
