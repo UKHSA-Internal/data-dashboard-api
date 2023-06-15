@@ -4,7 +4,11 @@ from typing import Dict, List, Tuple, Union
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers.charts import ChartPlotSerializer, ChartsSerializer
+from metrics.api.serializers.charts import (
+    ChartPlotSerializer,
+    ChartsSerializer,
+    EncodedChartResponseSerializer,
+)
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotParameters, PlotsCollection
@@ -649,3 +653,36 @@ class TestChartsSerializer:
             chart_width=valid_data_payload["chart_width"],
         )
         assert chart_plots_serialized_models == expected_chart_plots_model
+
+
+class TestEncodedChartResponseSerializer:
+    def test_has_payload(self):
+        """
+        Given a valid payload passed to a `EncodedChartResponseSerializer` object
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        valid_data_payload = {"last_updated": "has_value", "chart": "has_value"}
+        serializer = EncodedChartResponseSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
+    def test_invalid_payload(self):
+        """
+        Given an invalid payload passed to a `EncodedChartResponseSerializer` object
+        When `is_valid(raise_exception=True)` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        invalid_data_payload = {"last_updated": None, "chart": None}
+
+        serializer = EncodedChartResponseSerializer(data=invalid_data_payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)

@@ -77,3 +77,9 @@ The metric to use along the X Axis of the chart
 CHART_Y_AXIS: str = """
 The metric to use along the Y Axis of the chart
 """
+ENCODED_CHARTS_RESPONSE_HELP_TEXT: str = """
+The specified chart in the requested format as a URI encoded string (default format = svg)
+"""
+ENCODED_CHARTS_LAST_UPDATED_HELP_TEXT: str = """
+The date that the chart data goes up to
+"""

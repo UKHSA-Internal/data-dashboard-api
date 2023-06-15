@@ -17,6 +17,7 @@ from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
     DownloadsView,
+    EncodedChartsView,
     FileUploadView,
     HeadlinesView,
     HealthView,
@@ -49,6 +50,7 @@ API_PREFIX = "api/"
 private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
@@ -56,6 +58,7 @@ private_api_urlpatterns = [
     # Endpoints to be migrated away from
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
+    re_path(r"^charts/v3", EncodedChartsView.as_view()),
     re_path(r"^downloads/v2", DownloadsView.as_view()),
     re_path(r"^headlines/v2", HeadlinesView.as_view()),
     re_path(r"^tables/v2", TablesView.as_view()),
