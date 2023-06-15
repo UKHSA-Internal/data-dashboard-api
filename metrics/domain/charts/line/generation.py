@@ -2,8 +2,7 @@ from typing import List, Union
 
 import plotly.graph_objects
 
-from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.chart_settings import ChartSettings
+from metrics.domain.charts import chart_settings, colour_scheme
 
 
 def generate_chart_figure(
@@ -69,13 +68,11 @@ def generate_chart_figure(
         trace=line_plot,
     )
 
-    layout_args = ChartSettings._get_simple_line_chart_config()
-
-    additional_chart_options = {
-        "height": chart_height,
-        "width": chart_width,
-    }
-    figure.update_layout(**layout_args, **additional_chart_options)
+    settings = chart_settings.ChartSettings(
+        width=chart_width, height=chart_height, plots_data=x_axis_values
+    )
+    layout_args = settings.get_simple_line_chart_config()
+    figure.update_layout(**layout_args)
 
     if enforce_markers:
         figure.data[0].mode = "lines+markers"
