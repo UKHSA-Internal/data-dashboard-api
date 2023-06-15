@@ -70,11 +70,18 @@ def create_multi_coloured_line_chart(
     # Apply the typical stylings for timeseries charts
     figure.update_layout(**LAYOUT_ARGS)
 
+    settings = chart_settings.ChartSettings(
+        width=chart_width,
+        height=chart_height,
+        plots_data=chart_plots_data,
+    )
+
     # Set x axis tick type depending on what sort of data we are showing
     if type(chart_plots_data[0].x_axis_values[0]) is date:
-        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_date_type())
+        figure.update_xaxes(**settings._get_x_axis_date_type())
     else:
-        figure.update_xaxes(**chart_settings.ChartSettings._get_x_axis_text_type())
+        figure.update_xaxes(**settings._get_x_axis_text_type())
+
     # Set the height and width of the chart itself
     figure.update_layout(
         {
