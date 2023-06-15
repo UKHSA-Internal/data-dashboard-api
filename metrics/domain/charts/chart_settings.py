@@ -61,6 +61,8 @@ class ChartSettings:
             "autosize": False,
             "xaxis": self.get_x_axis_config(),
             "yaxis": self.get_y_axis_config(),
+            "height": self.height,
+            "width": self.width,
         }
 
     def get_simple_line_chart_config(self) -> Dict[str, Dict[str, bool]]:
@@ -69,6 +71,8 @@ class ChartSettings:
             "xaxis": set_axes_to_be_invisible,
             "yaxis": set_axes_to_be_invisible,
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
+            "width": self.width,
+            "height": self.height,
         }
 
     def get_waffle_chart_config(self):

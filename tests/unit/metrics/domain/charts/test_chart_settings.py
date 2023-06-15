@@ -132,6 +132,8 @@ class TestChartSettings:
             "autosize": False,
             "xaxis": mocked_get_x_axis_config.return_value,
             "yaxis": mocked_get_y_axis_config.return_value,
+            "width": chart_settings.width,
+            "height": chart_settings.height,
         }
 
         assert base_chart_config == expected_base_chart_config
@@ -153,6 +155,8 @@ class TestChartSettings:
             "xaxis": {"visible": False},
             "yaxis": {"visible": False},
             "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
+            "width": chart_settings.width,
+            "height": chart_settings.height,
         }
         assert simple_line_chart_config == expected_line_chart_config
 
