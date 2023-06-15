@@ -3,12 +3,7 @@ from datetime import date, timedelta
 from typing import Any, Dict, List
 
 from metrics.domain.models import PlotsData
-from metrics.domain.utils import get_axis_name
-
-
-def last_day_of_month(dt: date) -> date:
-    next_month = dt.replace(day=28) + timedelta(days=4)
-    return next_month - timedelta(days=next_month.day)
+from metrics.domain.utils import get_axis_name, get_last_day_of_month
 
 
 class TabularData:
@@ -48,7 +43,7 @@ class TabularData:
         """
 
         for k, v in plot_data.items():
-            month_end = str(last_day_of_month(k))
+            month_end = str(get_last_day_of_month(k))
             self.combined_plots[month_end].update({plot_label: str(v)})
 
     def collate_data_not_by_date(self, plot_data: Dict[Any, Any], plot_label: str):
