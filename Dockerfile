@@ -49,8 +49,13 @@ ENV PATH=/venv/bin:$PATH
 # This also assumes TCP.
 EXPOSE 8000
 
-# Adds execution permission for the entrypoint shell script
-RUN chmod +x entrypoint.sh
+# Reinstall system libraries required for PostgreSQL drivers
+RUN apt-get update \
+    # Update the database of available packages
+    && apt-get -y install libpq-dev \
+    # Reinstall the C library needed for `psycopg2`
+    && chmod +x entrypoint.sh
+    # Add execution permission for the entrypoint shell script
 
 # Opens a shell on the entrypoint.
 # This allowis the `entrypoint.sh` shell script or any other tooling to be ran
