@@ -234,45 +234,94 @@ class TestChartSettings:
         }
         assert waffle_chart_config == expected_chart_config
 
-    def test_get_x_axis_date_type(self, fake_chart_settings: ChartSettings):
+    @mock.patch(f"{MODULE_PATH}.get_x_axis_range", return_value=(1, 2))
+    def test_get_x_axis_date_type(
+        self,
+        mocked_get_x_axis_range: mock.MagicMock,
+        fake_chart_settings: ChartSettings,
+    ):
         """
         Given an instance of `ChartSettings`
         When `_get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
+
+        Patches:
+            `mocked_get_x_axis_range`: To remove the need
+                 to supply a valid plotly figure object to the test
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        x_axis_date_type = chart_settings._get_x_axis_date_type()
+        x_axis_date_type = chart_settings._get_x_axis_date_type(
+            figure=mock.Mock()  # Stubbed
+        )
 
         # Then
+        assert x_axis_date_type["type"] == "date"
+        assert x_axis_date_type["dtick"] == "M1"
+        assert x_axis_date_type["tickformat"] == "%b %Y"
+
+    @mock.patch(f"{MODULE_PATH}.get_x_axis_range")
+    def test_get_x_axis_date_type_calls_get_x_axis_range(
+        self, spy_get_x_axis_range: mock.MagicMock, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_x_axis_date_type()` is called
+        Then `get_x_axis_range()` is called correctly
+
+        Patches:
+            `spy_get_x_axis_range`: To check the `range` field is
+                built by delegating the call to `get_x_axis_range()`
+        """
+        # Given
+        chart_settings = fake_chart_settings
+        spy_get_x_axis_range.return_value = mock.Mock(), mock.Mock()
+        mocked_figure = mock.Mock()
+
+        # When
+        x_axis_date_type = chart_settings._get_x_axis_date_type(figure=mocked_figure)
+
+        # Then
+        spy_get_x_axis_range.assert_called_once_with(figure=mocked_figure)
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b %Y",
+            "range": list(spy_get_x_axis_range.return_value),
         }
         assert x_axis_date_type == expected_axis_config
 
+    @mock.patch(f"{MODULE_PATH}.get_x_axis_range", return_value=(1, 2))
     def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
-        self, fake_chart_settings: ChartSettings
+        self,
+        mocked_get_x_axis_range: mock.MagicMock,
+        fake_chart_settings: ChartSettings,
     ):
         """
         Given an instance of `ChartSettings` with a narrow `width`
         When `_get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
+
+        Patches:
+            `mocked_get_x_axis_range`: To remove the need
+                 to supply a valid plotly figure object to the test
         """
         # Given
         chart_settings = ChartSettings(width=435, height=220, plots_data=mock.Mock())
 
         # When
-        x_axis_date_type = chart_settings._get_x_axis_date_type()
+        x_axis_date_type = chart_settings._get_x_axis_date_type(
+            figure=mock.Mock()  # Stubbed
+        )
 
         # Then
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b<br>%Y",
+            "range": list(mocked_get_x_axis_range.return_value),
         }
         assert x_axis_date_type == expected_axis_config
 

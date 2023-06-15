@@ -118,12 +118,16 @@ class ChartSettings:
         )
         return {**chart_config, **self._get_legend_top_centre_config()}
 
-    def _get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
+    def _get_x_axis_date_type(
+        self, figure: plotly.graph_objs.Figure
+    ) -> DICT_OF_STR_ONLY:
         tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
+        min_date, max_date = get_x_axis_range(figure=figure)
         return {
             "type": "date",
             "dtick": "M1",
             "tickformat": tick_format,
+            "range": [min_date, max_date],
         }
 
     @staticmethod
