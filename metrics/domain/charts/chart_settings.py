@@ -93,6 +93,11 @@ class ChartSettings:
             "height": self.height,
         }
 
+    def get_line_with_shaded_section_chart_config(self):
+        chart_config = self.get_base_chart_config()
+        chart_config["showlegend"] = False
+        return chart_config
+
     def _get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
         return {

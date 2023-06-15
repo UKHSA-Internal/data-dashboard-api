@@ -289,3 +289,25 @@ class TestChartSettings:
             "tickformat": None,
         }
         assert x_axis_text_type == expected_axis_config
+
+    def test_get_line_with_shaded_section_chart_config(
+        self, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given
+        When
+        Then
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        line_with_shaded_section_chart_config = (
+            chart_settings.get_line_with_shaded_section_chart_config()
+        )
+
+        # Then
+        expected_chart_config = chart_settings.get_base_chart_config()
+        expected_chart_config["showlegend"] = False
+
+        assert line_with_shaded_section_chart_config == expected_chart_config
