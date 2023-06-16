@@ -387,7 +387,7 @@ class TestSortByStratum:
         When `sort_by_stratum()` is called
         Then the result is 2 tuples which contain 4 items each
         And sorted properly
-        And i dispplay format
+        And in display format
         """
         # Given
         values = [("65_84", 1), ("6_17", 2), ("85+", 3), ("18_64", 4)]
