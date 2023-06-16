@@ -174,7 +174,7 @@ class PlotsInterface:
 
 def sort_by_stratum(queryset: List[Tuple[str, str]]) -> Tuple[List, List]:
     """
-    Take a list of tuples where Stratum is the first element, sort it, pretify the stratum values and return as two separate lists
+    Take a list of tuples where Stratum is the first element, sort it, prettify the stratum values and return as two separate lists
 
     Args:
         The list of tuples inside a queryset
