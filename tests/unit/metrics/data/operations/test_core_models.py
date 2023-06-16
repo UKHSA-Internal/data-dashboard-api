@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 from unittest import mock
 
 import _pytest
@@ -15,11 +16,43 @@ from metrics.data.operations.core_models import (
 file_path = Path(__file__).parents[4]
 
 bad_file = file_path / "fixtures/bad_sample_data.csv"
-good_file = file_path / "fixtures/sample_data.csv"
-output_file = file_path / "fixtures/output_data.csv"
+good_file = file_path / "fixtures/good_sample_data.csv"
 
-mock_df = pd.read_csv(good_file)
-output_df = pd.read_csv(output_file)
+sample_data = [
+    "parent_theme,child_theme,topic,geography_type,GEOGRAPHY,metric_name,sex,period,year,epiweek,date,metric_value",
+    "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,female,daily,2023,10,2023-06-23,174.1",
+]
+
+mock_data = [
+    "parent_theme,child_theme,topic,geography_type,geography,metric_name,stratum,sex,period,year,epiweek,date,metric_value",
+    "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,6_17,female,daily,2023,10,23/06/2023,174.1",
+    "infectious_disease,respiratory,COVID-20,nation,England,admission_rate_age,0_5,all,daily,2023,10,23/06/2023,540.1",
+    "new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,male,daily,2023,10,23/06/2023,14890",
+    "another_new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,all,weekly,2023,10,23/06/2023,14890",
+    "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,65_84,all,weekly,2023,10,23/06/2023,4361",
+    "infectious_disease,respiratory,COVID-19,nation,new_England,admission_rate_age,18_64,all,weekly,2023,10,23/06/2023,1009",
+]
+
+
+def create_dataframe(records: List[str]) -> pd.DataFrame:
+    """
+    Create a sample pandas DataFrame from a list of records
+
+    Args:
+        records: The records we want to load into a DataFrame
+
+    Returns:
+        A Pandas DataFramce containing the chosen records
+    """
+
+    df = pd.DataFrame(
+        [record.split(",") for record in records[1:]],
+        columns=[*records[0].split(",")],
+    )
+    df[["year", "epiweek", "metric_value"]] = df[
+        ["year", "epiweek", "metric_value"]
+    ].apply(pd.to_numeric)
+    return df
 
 
 class TestCheckFile:
@@ -59,6 +92,7 @@ class TestCheckFile:
         """
 
         # Given
+        mock_df = create_dataframe(records=mock_data)
         filename = good_file
 
         # When
@@ -75,6 +109,8 @@ class TestMaintainModel:
         {"pk": 1, "name": "infectious_disease"}
     ]
 
+    mock_df = create_dataframe(records=mock_data)
+
     def test_no_new_new_model_values(self):
         """
         Given an input DataFrame and a list of fields
@@ -83,7 +119,7 @@ class TestMaintainModel:
         """
 
         # Given
-        input_df = mock_df[0:2]  # infectious_disease * 2
+        input_df = self.mock_df[0:2]  # infectious_disease * 2
 
         # When
         actual_df: pd.DataFrame = maintain_model(
@@ -112,7 +148,9 @@ class TestMaintainModel:
         """
 
         # Given
-        input_df = mock_df[3:5]  # infectious_disease & another_new_infectious_disease
+        input_df = self.mock_df[
+            3:5
+        ]  # infectious_disease & another_new_infectious_disease
         self.existing_model.create.return_value = mock.Mock(spec=self.manager, pk=123)
 
         # When
@@ -140,6 +178,8 @@ class TestMaintainModel:
 
 
 class TestLoadCoreData:
+    mock_df = create_dataframe(records=mock_data)
+
     @mock.patch("metrics.data.operations.core_models.maintain_model")
     def test_loader(self, mock_maintain_model):
         """
@@ -149,7 +189,7 @@ class TestLoadCoreData:
         """
 
         # Given
-        mock_maintain_model.return_value = output_df[1:2]
+        mock_maintain_model.return_value = self.mock_df[1:2]
 
         mock_model_list = [
             mock.Mock(),
