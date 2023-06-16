@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest import mock
 
 import _pytest
@@ -11,10 +12,14 @@ from metrics.data.operations.core_models import (
     maintain_model,
 )
 
-bad_file = "tests/fixtures/bad_sample_data.csv"
-good_file = "tests/fixtures/sample_data.csv"
+file_path = Path(__file__).parents[4]
+
+bad_file = file_path / "fixtures/bad_sample_data.csv"
+good_file = file_path / "fixtures/sample_data.csv"
+output_file = file_path / "fixtures/output_data.csv"
+
 mock_df = pd.read_csv(good_file)
-output_df = pd.read_csv("tests/fixtures/output_data.csv")
+output_df = pd.read_csv(output_file)
 
 
 class TestCheckFile:
@@ -168,8 +173,6 @@ class TestLoadCoreData:
             [mock_model_list], ignore_conflicts=True, batch_size=100
         )
 
-
-class TestLoadCoreDataFunction:
     def test_returns_early_when_core_time_series_has_existing_records(self):
         """
         Given a `CoreTimeSeriesManager` which returns True when `exists()` is called
