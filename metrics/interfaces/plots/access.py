@@ -125,7 +125,14 @@ class PlotsInterface:
         )
 
         try:
-            x_axis_values, y_axis_values = unzip_values(timeseries_queryset)
+            # Stratum needs special treatment because a regular sort does not yield the required result
+            if plot_parameters.x_axis == "stratum__name":
+                x_axis_values, y_axis_values = sort_by_stratum(
+                    queryset=timeseries_queryset
+                )
+
+            else:
+                x_axis_values, y_axis_values = unzip_values(values=timeseries_queryset)
         except ValueError as error:
             raise DataNotFoundError from error
 
@@ -163,6 +170,27 @@ class PlotsInterface:
             plots_data.append(plot_data)
 
         return plots_data
+
+
+def sort_by_stratum(queryset: List[Tuple[str, str]]) -> Tuple[List, List]:
+    """
+    Take a list of tuples where Stratum is the first element, sort it, pretify the stratum values and return as two separate lists
+
+    Args:
+        The list of tuples inside a queryset
+
+    Returns:
+        A properly sorted and displayable version broken into two separate lists
+    """
+    # Make a dictionary where the key is a tuple of the stratum values. So, 45_54 becomes (45, 54) etc
+    temp_dict = {tuple(map(int, x[0].replace("+", "").split("_"))): x for x in queryset}
+
+    # Now sort on the tuple and return the x and y values
+    # Change the Stratum so it looks nice. eg. 0_4 becomes 0-4
+    x_values = [temp_dict[x][0].replace("_", "-") for x in sorted(temp_dict.keys())]
+    y_values = [temp_dict[x][1] for x in sorted(temp_dict.keys())]
+
+    return x_values, y_values
 
 
 def unzip_values(values) -> Tuple[List, List]:
