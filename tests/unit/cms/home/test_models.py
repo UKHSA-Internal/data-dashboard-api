@@ -178,23 +178,25 @@ class TestTemplateHomePage:
         # Check that the title of the component is correct
         assert first_column_component["title"] == "Cases"
 
-        # This is a headline and trend number component
-        # So we expect 1 headline number block and 1 trend number block
+        # This column has a headline block and trend block
         # Check that the headline_number block has the correct params
-        first_column_headline_block = first_column_component["headline_number"]
-        assert first_column_headline_block["topic"] == self.covid_19
-        assert first_column_headline_block["metric"] == "new_cases_7days_sum"
-        assert first_column_headline_block["body"] == "Weekly"
+        first_column_headline_block_value = first_column_component["rows"][0].value
+        assert first_column_headline_block_value["topic"] == self.covid_19
+        assert first_column_headline_block_value["metric"] == "new_cases_7days_sum"
+        assert first_column_headline_block_value["body"] == "Weekly"
 
         # Check that the trend_number block has the correct params
-        first_column_trend_block = first_column_component["trend_number"]
-        assert first_column_trend_block["topic"] == self.covid_19
-        assert first_column_trend_block["metric"] == "new_cases_7days_change"
+        first_column_trend_block_value = first_column_component["rows"][1].value
+        assert first_column_trend_block_value["topic"] == self.covid_19
+        assert first_column_trend_block_value["metric"] == "new_cases_7days_change"
         assert (
-            first_column_trend_block["percentage_metric"]
+            first_column_trend_block_value["percentage_metric"]
             == "new_cases_7days_change_percentage"
         )
-        assert first_column_trend_block["body"] == self.expected_trend_number_block_body
+        assert (
+            first_column_trend_block_value["body"]
+            == self.expected_trend_number_block_body
+        )
 
     def test_coronavirus_section_headline_number_row_dual_headline_column(self):
         """
@@ -218,24 +220,24 @@ class TestTemplateHomePage:
         fourth_column_component = headline_number_row_columns[3].value
         assert fourth_column_component["title"] == "Vaccines"
 
-        # This is a dual headline number component
-        # So we expect 2 headline number blocks
+        # This is column component has 2 headline number blocks
         # Check that the top headline_number block has the correct params
-        fourth_column_headline_block = fourth_column_component["top_headline_number"]
-        assert fourth_column_headline_block["topic"] == self.covid_19
+        fourth_column_headline_block_value = fourth_column_component["rows"][0].value
+        assert fourth_column_headline_block_value["topic"] == self.covid_19
         assert (
-            fourth_column_headline_block["metric"]
+            fourth_column_headline_block_value["metric"]
             == "latest_total_vaccinations_autumn22"
         )
-        assert fourth_column_headline_block["body"] == "Autumn booster"
+        assert fourth_column_headline_block_value["body"] == "Autumn booster"
 
         # Check that the bottom headline_number block has the correct params
-        fourth_column_trend_block = fourth_column_component["bottom_headline_number"]
-        assert fourth_column_trend_block["topic"] == self.covid_19
+        fourth_column_trend_block_value = fourth_column_component["rows"][1].value
+        assert fourth_column_trend_block_value["topic"] == self.covid_19
         assert (
-            fourth_column_trend_block["metric"] == "latest_vaccinations_uptake_autumn22"
+            fourth_column_trend_block_value["metric"]
+            == "latest_vaccinations_uptake_autumn22"
         )
-        assert fourth_column_trend_block["body"] == "Percentage uptake (%)"
+        assert fourth_column_trend_block_value["body"] == "Percentage uptake (%)"
 
     def test_coronavirus_section_headline_number_row_single_headline_column(self):
         """
@@ -256,14 +258,14 @@ class TestTemplateHomePage:
         covid_content_section = covid_section.value["content"]
         headline_number_row_columns = covid_content_section[1].value["columns"]
 
-        # Note that this is a single headline number component
+        # Note that this column component only has the 1 headline number component
         # Check that the headline_number block has the correct params
         fifth_column_value = headline_number_row_columns[4].value
         assert fifth_column_value["title"] == "Testing"
-        fifth_column_headline_block = fifth_column_value["headline_number"]
-        assert fifth_column_headline_block["topic"] == self.covid_19
-        assert fifth_column_headline_block["metric"] == "positivity_7days_latest"
-        assert fifth_column_headline_block["body"] == "Virus tests positivity (%)"
+        fifth_column_headline_block_value = fifth_column_value["rows"][0].value
+        assert fifth_column_headline_block_value["topic"] == self.covid_19
+        assert fifth_column_headline_block_value["metric"] == "positivity_7days_latest"
+        assert fifth_column_headline_block_value["body"] == "Virus tests positivity (%)"
 
     def test_coronavirus_section_chart_row_card(self):
         """
