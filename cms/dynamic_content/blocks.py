@@ -40,6 +40,6 @@ class MetricNumberBlockTypes(blocks.StructBlock):
     class Meta:
         icon = "table"
 
-
+       
 class MetricNumberBlock(blocks.StreamBlock):
     column = MetricNumberBlockTypes()
