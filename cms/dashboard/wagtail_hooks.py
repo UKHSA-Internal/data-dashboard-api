@@ -20,6 +20,7 @@ ADDITIONAL_CUSTOM_ICONS: List[str] = [
     "icons/number.svg",
     "icons/trend_down.svg",
     "icons/text.svg",
+    "icons/percentage.svg",
 ]
 
 
