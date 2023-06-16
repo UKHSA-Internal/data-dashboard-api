@@ -5,7 +5,11 @@ from unittest import mock
 import pytest
 
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
-from metrics.interfaces.plots.access import DataNotFoundError, PlotsInterface
+from metrics.interfaces.plots.access import (
+    DataNotFoundError,
+    PlotsInterface,
+    unzip_values,
+)
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -118,8 +122,8 @@ class TestPlotsInterface:
         # for the plot parameters which requested timeseries data that existed
         expected_plots_data_for_valid_params = PlotsData(
             parameters=valid_plot_parameters,
-            x_axis=tuple(x.dt for x in fake_core_time_series_records),
-            y_axis=tuple(x.metric_value for x in fake_core_time_series_records),
+            x_axis_values=tuple(x.dt for x in fake_core_time_series_records),
+            y_axis_values=tuple(x.metric_value for x in fake_core_time_series_records),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -163,8 +167,10 @@ class TestPlotsInterface:
         assert plot_data.parameters == fake_chart_plot_parameters
 
         # Check the correct data is passed to the axis of the `PlotData` model
-        assert plot_data.x_axis == tuple(x.dt for x in fake_core_time_series_for_plot)
-        assert plot_data.y_axis == tuple(
+        assert plot_data.x_axis_values == tuple(
+            x.dt for x in fake_core_time_series_for_plot
+        )
+        assert plot_data.y_axis_values == tuple(
             x.metric_value for x in fake_core_time_series_for_plot
         )
 
@@ -204,6 +210,8 @@ class TestPlotsInterface:
         """
         # Given
         spy_core_time_series_manager = mock.Mock()
+        mocked_x_axis = mock.Mock()
+        mocked_y_axis = mock.Mock()
         mocked_topic = mock.Mock()
         mocked_metric = mock.Mock()
         mocked_date_from = mock.Mock()
@@ -218,6 +226,8 @@ class TestPlotsInterface:
 
         # When
         timeseries = plots_interface.get_timeseries(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
@@ -232,6 +242,8 @@ class TestPlotsInterface:
             == spy_core_time_series_manager.filter_for_dates_and_values.return_value
         )
         spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
@@ -254,9 +266,10 @@ class TestPlotsInterface:
         # Given
         date_from: str = "2023-01-01"
         fake_chart_plot_parameters.date_from = date_from
+        fake_plots_collection = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            plots_collection=mock.MagicMock(), core_time_series_manager=mock.Mock()
+            plots_collection=fake_plots_collection, core_time_series_manager=mock.Mock()
         )
 
         # When
@@ -273,3 +286,26 @@ class TestPlotsInterface:
         mocked_get_timeseries.assert_called_once_with(
             **fake_chart_plot_parameters.to_dict_for_query(),
         )
+
+
+class TestUnzipValues:
+    def test_returns_correct_zipped_values(self):
+        """
+        Given a list of 3 * 2-item tuples
+        When `unzip_values()` is called
+        Then the result is 2 tuples which contain 3 items each
+        """
+        # Given
+        values = [(1, 2), (3, 4), (5, 6)]
+
+        # When
+        unzipped_lists = unzip_values(values)
+
+        # Then
+        (
+            first_index_item_unzipped_result,
+            second_index_item_unzipped_result,
+        ) = unzipped_lists
+
+        assert first_index_item_unzipped_result == (1, 3, 5)
+        assert second_index_item_unzipped_result == (2, 4, 6)

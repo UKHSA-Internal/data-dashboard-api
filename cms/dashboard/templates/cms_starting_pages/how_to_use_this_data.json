@@ -6,8 +6,8 @@
         "html_url": null,
         "slug": "how-to-use-this-data",
         "show_in_menus": false,
-        "seo_title": "",
-        "search_description": "",
+        "seo_title": "How to use this data | UKHA data dashboard",
+        "search_description": "A guide on how to use the data provided across the UKHSA data dashboard.",
         "first_published_at": "2023-05-12T16:51:07.555450+01:00",
         "alias_of": null,
         "parent": {
@@ -42,8 +42,8 @@
         {
             "id": 58,
             "meta": {"type": "common.CommonPageRelatedLink"},
-            "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
-            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
+            "title": "National norovirus and rotavirus surveillance reports: 2022 to 2023 season",
+            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"7kn7z\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {

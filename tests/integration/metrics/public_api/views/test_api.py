@@ -27,11 +27,12 @@ class TestPublicAPINestedLinkViews:
     def _setup_api_time_series(
         **kwargs,
     ) -> APITimeSeries:
+        day = kwargs.pop("day", 1)
         return APITimeSeries.objects.create(
             metric_value=123,
             epiweek=1,
             year=2023,
-            dt=datetime.date(year=2023, month=1, day=1),
+            dt=datetime.date(year=2023, month=1, day=day),
             **kwargs,
         )
 
@@ -98,6 +99,18 @@ class TestPublicAPINestedLinkViews:
                 "link",
                 geography_name,
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}",
+            ),
+            (
+                "information",
+                "metrics",
+                "",
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics",
+            ),
+            (
+                "name",
+                "link",
+                metric_name,
+                f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}",
             ),
         ]
 
@@ -166,3 +179,164 @@ class TestPublicAPINestedLinkViews:
 
             # Point the next request to the link field provided by the previous response
             path = link_field_from_response
+
+    @pytest.mark.django_db
+    def test_returns_correct_data_at_final_view(
+        self, authenticated_api_client: APIClient
+    ):
+        """
+        Given a set of `APITimeSeries` records
+        And a list of parameters to filter for a subset of those records
+        When the final public API endpoint is hit
+        Then the response contains the correct filtered `APITimeSeries` records
+        And the response is paginated as expected
+        """
+        # Given
+        theme_name = "infectious_disease"
+        sub_theme_name = "respiratory"
+        topic_name = "COVID-19"
+        geography_type_name = "Nation"
+        geography_name = "England"
+        metric_name = "new_cases_daily"
+
+        other_topic_name = "Influenza"
+        other_metric_name = "weekly_positivity"
+
+        expected_matching_time_series_count: int = 7
+
+        # Records to be filtered for
+        for i in range(expected_matching_time_series_count):
+            self._setup_api_time_series(
+                theme=theme_name,
+                sub_theme=sub_theme_name,
+                topic=topic_name,
+                geography_type=geography_type_name,
+                geography=geography_name,
+                metric=metric_name,
+                day=i + 1,
+            )
+
+        # Records to be filtered out
+        for i in range(10):
+            self._setup_api_time_series(
+                theme=theme_name,
+                sub_theme=sub_theme_name,
+                topic=other_topic_name,
+                geography_type=geography_type_name,
+                geography=geography_name,
+                metric=other_metric_name,
+                day=i + 1,
+            )
+
+        # When
+        path = f"{self.path}themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}"
+        response: Response = authenticated_api_client.get(path=path, format="json")
+
+        # Then
+        # Check that the filtering has been applied correctly
+        # And that only the requested time series records are returned
+        response_data: OrderedDict = response.data
+        assert response_data["count"] == expected_matching_time_series_count
+
+        # Check that API returns a link to the next page of the paginated data
+        assert response_data["next"] == f"{self.test_server_base_name}{path}?page=2"
+        assert response_data["previous"] is None
+
+        # Check that by default, the page size is returned as 5
+        assert len(response_data["results"]) == 5
+
+        # Check that the results match the expected records
+        # which were to be filtered for
+        for result in response_data["results"]:
+            assert result["theme"] == theme_name
+            assert result["sub_theme"] == sub_theme_name
+            assert result["geography_type"] == geography_type_name
+            assert result["geography"] == geography_name
+            assert result["topic"] == topic_name != other_topic_name
+            assert result["metric"] == metric_name != other_metric_name
+
+    @pytest.mark.django_db
+    def test_returns_correct_data_at_final_view_with_query_parameters(
+        self, authenticated_api_client: APIClient
+    ):
+        """
+        Given a set of `APITimeSeries` records
+        And a list of parameters to filter for a subset of those records
+        And a number of query parameters
+        When the final public API endpoint is hit
+        Then the response contains the correct filtered `APITimeSeries` records
+        """
+        # Given
+        theme_name = "infectious_disease"
+        sub_theme_name = "respiratory"
+        topic_name = "COVID-19"
+        geography_type_name = "Nation"
+        geography_name = "England"
+        metric_name = "new_cases_daily"
+        stratum_name = "15_44"
+        sex = "F"
+
+        other_stratum_name = "90+"
+        other_sex = "M"
+
+        expected_matching_time_series_count: int = 2
+
+        # Records to be filtered for
+        for i in range(expected_matching_time_series_count):
+            self._setup_api_time_series(
+                theme=theme_name,
+                sub_theme=sub_theme_name,
+                topic=topic_name,
+                geography_type=geography_type_name,
+                geography=geography_name,
+                metric=metric_name,
+                day=i + 1,
+                stratum=stratum_name,
+                sex=sex,
+            )
+
+        # Records to be filtered out
+        for i in range(10):
+            self._setup_api_time_series(
+                theme=theme_name,
+                sub_theme=sub_theme_name,
+                topic=topic_name,
+                geography_type=geography_type_name,
+                geography=geography_name,
+                metric=metric_name,
+                stratum=other_stratum_name,
+                sex=other_sex,
+                day=i + 1,
+            )
+
+        # When
+        path = f"{self.path}themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}"
+        response: Response = authenticated_api_client.get(
+            path=path, format="json", data={"sex": sex, "stratum": stratum_name}
+        )
+
+        # Then
+        # Check that the filtering has been applied correctly
+        # And that only the requested time series records are returned
+        response_data: OrderedDict = response.data
+        assert response_data["count"] == expected_matching_time_series_count
+
+        # Check that API returns no paginated links
+        # as we expect a small enough set of data to fit within the 1-page response
+        assert response_data["next"] is None
+        assert response_data["previous"] is None
+
+        # Check that the results contain the records within the 1-page response
+        assert len(response_data["results"]) == expected_matching_time_series_count
+
+        # Check that the results match the expected records
+        # which were to be filtered for
+        for result in response_data["results"]:
+            assert result["theme"] == theme_name
+            assert result["sub_theme"] == sub_theme_name
+            assert result["geography_type"] == geography_type_name
+            assert result["geography"] == geography_name
+            assert result["topic"] == topic_name
+            assert result["metric"] == metric_name
+            assert result["sex"] == sex != other_sex
+            assert result["stratum"] == stratum_name != other_stratum_name

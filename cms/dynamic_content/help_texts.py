@@ -138,3 +138,13 @@ PAGE_DESCRIPTION_FIELD_HELP_TEXT: str = """
 An optional body of text which will be rendered at the top of the page. 
 This text will be displayed after the title of the page and before any of the main content.
 """
+
+X_AXIS_HELP_TEXT: str = """
+An optional choice of what to display along the X Axis of the chart.
+Dates are used by default
+"""
+
+Y_AXIS_HELP_TEXT: str = """
+An optional choice of what to display along the Y Axis of the chart.
+The metric values are used by default
+"""

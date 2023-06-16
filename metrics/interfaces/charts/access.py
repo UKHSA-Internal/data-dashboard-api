@@ -1,3 +1,5 @@
+import urllib.parse
+from datetime import datetime
 from typing import Dict, List, Optional, Union
 
 import plotly.graph_objects
@@ -12,7 +14,6 @@ from metrics.domain.charts import (
     waffle,
 )
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
-from metrics.domain.tables.generation import create_plots_in_tabular_format
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 from metrics.interfaces.plots.access import PlotsInterface
@@ -86,7 +87,7 @@ class ChartsInterface:
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            values=plot_data.y_axis,
+            y_axis_values=plot_data.y_axis_values,
         )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
@@ -104,9 +105,9 @@ class ChartsInterface:
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            dates=plot_data.x_axis,
-            values=plot_data.y_axis,
-            legend=plot_data.parameters.metric_name,
+            x_axis_values=plot_data.x_axis_values,
+            y_axis_values=plot_data.y_axis_values,
+            legend=plot_data.parameters.label,
         )
 
     def generate_line_multi_coloured_chart(self) -> plotly.graph_objects.Figure:
@@ -146,18 +147,6 @@ class ChartsInterface:
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
-    def generate_plots_for_table(self) -> List[Dict[str, str]]:
-        """Create a list of plots from the request
-
-        Returns:
-            The requested plots in tabular format
-        """
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
-
-        return create_plots_in_tabular_format(
-            tabular_plots_data=plots_data,
-        )
-
     def build_chart_plots_data(self) -> List[PlotsData]:
         """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots
 
@@ -179,24 +168,82 @@ class ChartsInterface:
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        dates = plot_data.x_axis
-        values = plot_data.y_axis
+        x_axis_values = plot_data.x_axis_values
+        y_axis_values = plot_data.y_axis_values
         metric_name = plot_data.parameters.metric_name
 
         return {
             "chart_height": chart_height,
             "chart_width": chart_width,
-            "dates": dates,
-            "values": values,
+            "x_axis_values": x_axis_values,
+            "y_axis_values": y_axis_values,
             "metric_name": metric_name,
             "change_in_metric_value": self.calculate_change_in_metric_value(
-                values=values,
+                values=y_axis_values,
                 metric_name=metric_name,
             ),
             "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(
                 metric_name=metric_name
             ),
         }
+
+    def get_last_updated(self, figure: plotly.graph_objects.Figure) -> str:
+        """
+        If the chart has dates along the x-axis then extract the last dates from each plot
+        and return the latest date of all of them
+
+        Args:
+            figure: The generated plotly chart
+
+        Returns:
+            The last date in the chart if applicable
+        """
+        last_date = ""
+
+        if figure.layout.xaxis.type == "date":
+            last_dates = []
+
+            for trace in figure.data:
+                last_dates.append(max(trace.x))
+
+            # Now we have the end-dates from each of the plots, return the latest one
+            # and convert datetime to a string
+            last_date = datetime.strftime(max(last_dates), "%Y-%m-%d")
+
+        return last_date
+
+    def encode_figure(self, figure: plotly.graph_objects.Figure) -> str:
+        """
+        URI Encode the supplied chart figure
+
+        Args:
+            figure: The figure object or a dictionary representing a figure
+
+        Returns:
+            An encoded string representation of the figure
+        """
+        encoded_chart: str = urllib.parse.quote_plus(
+            figure.to_image(format=self.chart_plots.file_format)
+        )
+
+        return encoded_chart
+
+    def write_figure(self, figure: plotly.graph_objects.Figure, topic: str) -> str:
+        """
+        Convert a figure to a static image and write to a file in the desired image format
+
+        Args:
+            figure: The figure object or a dictionary representing a figure
+            topic: The required topic (eg. COVID-19)
+
+        Returns:
+            The filename of the image
+
+        """
+        filename = f"{topic}.{self.chart_plots.file_format}"
+        figure.write_image(file=filename, format=self.chart_plots.file_format)
+
+        return filename
 
     @staticmethod
     def calculate_change_in_metric_value(values, metric_name) -> Union[int, float]:
@@ -210,8 +257,8 @@ class ChartsInterface:
         return calculations.change_between_each_half(values=values)
 
 
-def generate_chart(chart_plots: PlotsCollection) -> str:
-    """Validates and creates a chart figure based of the parameters provided within the `chart_plots` model
+def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
+    """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
 
     Args:
         chart_plots: The requested chart plots parameters
@@ -226,11 +273,35 @@ def generate_chart(chart_plots: PlotsCollection) -> str:
     library = ChartsInterface(chart_plots=chart_plots)
     figure = library.generate_chart_figure()
 
-    return write_figure(
-        figure=figure,
-        topic="-",
-        file_format=chart_plots.file_format,
-    )
+    return library.write_figure(figure=figure, topic="-")
+
+
+def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:
+    """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
+     Then encodes it, adds the last_updated_date to it and returns the result as a serialized JSON string
+
+    Args:
+        chart_plots: The requested chart plots parameters
+            encapsulated as a model
+
+    Returns:
+        The encoded chart along with the last updated date as a serialized JSON string
+    """
+
+    validate_each_requested_chart_plot(chart_plots=chart_plots)
+
+    library = ChartsInterface(chart_plots=chart_plots)
+    figure = library.generate_chart_figure()
+
+    last_updated = library.get_last_updated(figure=figure)
+
+    # Encode the chart so it can be returned in JSON format
+    encoded_figure = library.encode_figure(figure=figure)
+
+    return {
+        "last_updated": last_updated,
+        "chart": encoded_figure,
+    }
 
 
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
@@ -271,24 +342,3 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
         plot_parameters=chart_plot_parameters
     )
     charts_request_validator.validate()
-
-
-def write_figure(
-    figure: plotly.graph_objects.Figure, topic: str, file_format: str
-) -> str:
-    """
-    Convert a figure to a static image and write to a file in the desired image format
-
-    Args:
-        figure: The figure object or a dictionary representing a figure
-        topic: The required topic (eg. COVID-19)
-        file_format: The required file format (eg svg, jpeg)
-
-    Returns:
-        The filename of the image
-
-    """
-    filename = f"{topic}.{file_format}"
-    figure.write_image(file=filename, format=file_format)
-
-    return filename

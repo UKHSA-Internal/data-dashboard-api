@@ -34,15 +34,24 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         return queryset.order_by("-dt")
 
     @staticmethod
-    def _oldest_to_newest(queryset: models.QuerySet) -> models.QuerySet:
-        return queryset.order_by("dt")
+    def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
+        return queryset.order_by(field_name)
 
     def by_topic_metric_for_dates_and_values(
-        self, topic_name: str, metric_name: str, date_from: datetime.datetime
+        self,
+        x_axis: str,
+        y_axis: str,
+        topic_name: str,
+        metric_name: str,
+        date_from: datetime.datetime,
     ) -> models.QuerySet:
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
         Args:
+            x_axis: The field to display along the x-axis
+                E.g. `date` or `stratum`
+            y_axis: The field to display along the y-axis
+                E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -52,8 +61,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 would strip off any records which occurred before that date.
 
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers:
+            QuerySet: An ordered queryset from lowest -> highest
+                of the (x_axis, y_axis) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
                         (datetime.date(2022, 10, 10), Decimal('0.8')),
@@ -65,9 +74,12 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             metric__topic__name=topic_name,
             metric__name=metric_name,
             dt__gte=date_from,
-        ).values_list("dt", "metric_value")
+        ).values_list(x_axis, y_axis)
 
-        return self._oldest_to_newest(queryset=queryset)
+        return self._ascending_order(
+            queryset=queryset,
+            field_name=x_axis,
+        )
 
     @staticmethod
     def _filter_by_geography(queryset, geography_name):
@@ -83,6 +95,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
     def filter_for_dates_and_values(
         self,
+        x_axis: str,
+        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
@@ -93,6 +107,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
         Args:
+            x_axis: The field to display along the x-axis
+                E.g. `date` or `stratum`
+            y_axis: The field to display along the y-axis
+                E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -108,8 +126,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
 
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers:
+            QuerySet: An ordered queryset from lowest -> highest
+                of the (x_axis, y_axis) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
                         (datetime.date(2022, 10, 10), Decimal('0.8')),
@@ -138,9 +156,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 queryset=queryset, stratum_name=stratum_name
             )
 
-        queryset = queryset.values_list("dt", "metric_value")
-
-        return self._oldest_to_newest(queryset=queryset)
+        queryset = queryset.values_list(x_axis, y_axis)
+        return self._ascending_order(
+            queryset=queryset,
+            field_name=x_axis,
+        )
 
     def by_topic_metric_ordered_from_newest_to_oldest(
         self, topic_name: str, metric_name: str
@@ -223,7 +243,7 @@ class CoreTimeSeriesManager(models.Manager):
                 E.g. `new_cases_daily`
 
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
+            QuerySet: An ordered queryset from newest -> oldest
                 of the individual metric_value numbers only:
                 Examples:
                     `<CoreTimeSeriesQuerySet [Decimal('0.8'), Decimal('0.9')]>`
@@ -260,11 +280,20 @@ class CoreTimeSeriesManager(models.Manager):
         )
 
     def by_topic_metric_for_dates_and_values(
-        self, topic_name: str, metric_name: str, date_from: datetime.datetime
+        self,
+        x_axis: str,
+        y_axis: str,
+        topic_name: str,
+        metric_name: str,
+        date_from: datetime.datetime,
     ) -> CoreTimeSeriesQuerySet:
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
         Args:
+            x_axis: The field to display along the x-axis
+                E.g. `date` or `stratum`
+            y_axis: The field to display along the y-axis
+                E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -274,8 +303,8 @@ class CoreTimeSeriesManager(models.Manager):
                 would strip off any records which occurred before that date.
 
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers:
+            QuerySet: An ordered queryset from lowest -> highest
+                of the (x_axis, y_axis) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
                         (datetime.date(2022, 10, 10), Decimal('0.8')),
@@ -284,6 +313,8 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().by_topic_metric_for_dates_and_values(
+            x_axis=x_axis,
+            y_axis=y_axis,
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
@@ -291,6 +322,8 @@ class CoreTimeSeriesManager(models.Manager):
 
     def filter_for_dates_and_values(
         self,
+        x_axis: str,
+        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
@@ -301,6 +334,10 @@ class CoreTimeSeriesManager(models.Manager):
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
         Args:
+            x_axis: The field to display along the x-axis
+                E.g. `date` or `stratum`
+            y_axis: The field to display along the y-axis
+                E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -316,8 +353,8 @@ class CoreTimeSeriesManager(models.Manager):
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
 
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers:
+            QuerySet: An ordered queryset from lowest -> highest
+                of the (x_axis, y_axis) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
                         (datetime.date(2022, 10, 10), Decimal('0.8')),
@@ -326,6 +363,8 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().filter_for_dates_and_values(
+            x_axis=x_axis,
+            y_axis=y_axis,
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
@@ -335,11 +374,20 @@ class CoreTimeSeriesManager(models.Manager):
         )
 
     def get_count(
-        self, topic_name: str, metric_name: str, date_from: datetime.datetime
+        self,
+        x_axis: str,
+        y_axis: str,
+        topic_name: str,
+        metric_name: str,
+        date_from: datetime.datetime,
     ) -> int:
         """Gets the number of records which match the given `topic_name` and `metric_name`, newer than `date_from`
 
         Args:
+            x_axis: The field to display along the x-axis
+                E.g. `date` or `stratum`
+            y_axis: The field to display along the y-axis
+                E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -353,7 +401,11 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.by_topic_metric_for_dates_and_values(
-            topic_name=topic_name, metric_name=metric_name, date_from=date_from
+            x_axis=x_axis,
+            y_axis=y_axis,
+            topic_name=topic_name,
+            metric_name=metric_name,
+            date_from=date_from,
         ).count()
 
     def get_metric_value(self, topic_name: str, metric_name: str) -> Decimal:

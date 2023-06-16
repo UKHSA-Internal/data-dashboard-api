@@ -1,9 +1,8 @@
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from django.db.models import Manager
 
-from metrics.data.access.core_models import unzip_values
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 
@@ -45,6 +44,8 @@ class PlotsInterface:
 
     def get_timeseries(
         self,
+        x_axis: str,
+        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: Union[datetime.date, str],
@@ -61,6 +62,10 @@ class PlotsInterface:
              - `stratum_name`
 
         Args:
+            x_axis: The field to display along the x-axis
+                E.g. `date` or `stratum`
+            y_axis: The field to display along the y-axis
+                E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -86,6 +91,8 @@ class PlotsInterface:
 
         """
         return self.core_time_series_manager.filter_for_dates_and_values(
+            x_axis=x_axis,
+            y_axis=y_axis,
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
@@ -118,14 +125,14 @@ class PlotsInterface:
         )
 
         try:
-            x_axis, y_axis = unzip_values(timeseries_queryset)
+            x_axis_values, y_axis_values = unzip_values(timeseries_queryset)
         except ValueError as error:
             raise DataNotFoundError from error
 
         return PlotsData(
             parameters=plot_parameters,
-            x_axis=x_axis,
-            y_axis=y_axis,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
         )
 
     def build_plots_data(self) -> List[PlotsData]:
@@ -156,3 +163,17 @@ class PlotsInterface:
             plots_data.append(plot_data)
 
         return plots_data
+
+
+def unzip_values(values) -> Tuple[List, List]:
+    """
+    Take a list and zip it
+
+    Args:
+        The list of things to zip
+
+    Returns:
+        A zipped version of the `values``
+
+    """
+    return zip(*values)

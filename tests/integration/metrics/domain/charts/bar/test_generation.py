@@ -26,15 +26,15 @@ class TestBarCharts:
         Then the figure is drawn with the expected parameters
         """
         # Given
-        dates = DATES
-        values = VALUES
+        x_axis_values = DATES
+        y_axis_values = VALUES
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            dates=dates,
-            values=values,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
             legend="Plot 1",
         )
 
@@ -49,7 +49,9 @@ class TestBarCharts:
         assert main_layout.height == HEIGHT
         assert main_layout.width == WIDTH
 
-        assert main_layout.showlegend
+        # Check left and right margins are both 15
+        assert main_layout.margin.l == 15
+        assert main_layout.margin.r == 15
 
     def test_main_bar_plot(self):
         """
@@ -58,16 +60,16 @@ class TestBarCharts:
         Then the figure is drawn with the expected parameters for the main plot
         """
         # Given
-        dates = DATES
-        values = VALUES
+        x_axis_values = DATES
+        y_axis_values = VALUES
         legend = "Plot 1"
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            dates=dates,
-            values=values,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
             legend=legend,
         )
 
@@ -81,8 +83,8 @@ class TestBarCharts:
         assert type(main_bar_plot) == plotly.graph_objects.Bar
 
         # Check x & y values were correctly assigned
-        assert main_bar_plot.x == tuple(dates)
-        assert main_bar_plot.y == tuple(values)
+        assert main_bar_plot.x == tuple(x_axis_values)
+        assert main_bar_plot.y == tuple(y_axis_values)
 
         # Bars should be Blue
         assert main_bar_plot.marker.color == RGBAColours.BAR_PLOT_1_BLUE.stringified
@@ -111,9 +113,45 @@ class TestBarCharts:
 
         # The x-axis ticks should be formatted as shorthand Months only i.e Sep not September
         assert x_axis.type == "date"
-        assert x_axis.tickformat == "%b %Y"
+        # The chart width is narrow, so the tick labels will use a newline to break the month and year text
+        assert x_axis.tickformat == "%b<br>%Y"
 
         # ---Y Axis checks---
         y_axis = figure.layout.yaxis
         assert not y_axis.showgrid
         assert y_axis.showticklabels
+
+    def test_x_axis_type_is_not_date(self):
+        """
+        Given a list of x and y values where x values are NOT dates
+        When `generate_chart_figure()` is called from the `bar` module
+        Then the figure is drawn with the expected parameters for the x axis
+        """
+        # Given
+        x_axis_values = ["0-4", "5-8", "9-29"]
+        y_axis_values = VALUES
+        legend = "Plot 1"
+
+        # When
+        figure: plotly.graph_objects.Figure = generate_chart_figure(
+            chart_height=HEIGHT,
+            chart_width=WIDTH,
+            x_axis_values=x_axis_values,
+            y_axis_values=y_axis_values,
+            legend=legend,
+        )
+
+        # Then
+        # Check left and right margins are both 0
+        assert figure.layout.margin.l == 0
+        assert figure.layout.margin.r == 0
+
+        # ---X Axis checks---
+        x_axis = figure.layout.xaxis
+
+        # The `M1` dtick setting is only valid for dates
+        assert x_axis.dtick == None
+
+        # The x-axis type and ticks should be the default
+        assert x_axis.type == "-"
+        assert x_axis.tickformat == None

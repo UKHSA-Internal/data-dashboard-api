@@ -6,9 +6,9 @@
         "html_url": null,
         "slug": "respiratory-viruses",
         "show_in_menus": false,
-        "seo_title": "",
-        "search_description": "",
-        "first_published_at": "2023-05-17T14:10:01.068163+01:00",
+        "seo_title": "Respiratory Viruses | UKHA data dashboard",
+        "search_description": "Overall summary of the respiratory viruses in circulation within the UK",
+        "first_published_at": "2023-04-26T12:39:38.064114+01:00",
         "alias_of": null,
         "parent": {
             "id": 242,
@@ -181,6 +181,8 @@
                                     "value": {
                                         "title": "Cases",
                                         "body": "Positive tests reported in England",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -229,6 +231,8 @@
                                     "value": {
                                         "title": "Deaths",
                                         "body": "Deaths with COVID-19 on the death certificate in England",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -355,6 +359,8 @@
                                     "value": {
                                         "title": "Healthcare",
                                         "body": "Weekly hospital admission rates for Influenza",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -403,6 +409,8 @@
                                     "value": {
                                         "title": "Testing",
                                         "body": "Weekly positivity",
+                                        "x_axis": null,
+                                        "y_axis": null,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -454,7 +462,7 @@
             "id": 113,
             "meta": {"type": "home.HomePageRelatedLink"},
             "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
-            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season/national-norovirus-and-rotavirus-report-week-1-report-data-up-to-week-51-25-december-",
+            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"cc1q7\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {

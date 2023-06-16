@@ -1,22 +1,12 @@
-import datetime
-from typing import List
+from datetime import date
+from typing import Any, List
 
 import plotly
 
-from metrics.domain.charts import chart_settings, type_hints
+from metrics.domain.charts import chart_settings
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotsData
-
-LAYOUT_ARGS: type_hints.CHART_ARGS = chart_settings.CHART_SETTINGS | {
-    "legend": {
-        "orientation": "h",
-        "y": 1.0,
-        "x": 0.5,
-        "xanchor": "center",
-        "yanchor": "bottom",
-    },
-}
 
 
 def create_multi_coloured_line_chart(
@@ -53,8 +43,8 @@ def create_multi_coloured_line_chart(
         )
 
         line_plot: plotly.graph_objects.Scatter = _create_line_plot(
-            x_axis=plot_data.x_axis,
-            y_axis=plot_data.y_axis,
+            x_axis_values=plot_data.x_axis_values,
+            y_axis_values=plot_data.y_axis_values,
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,
@@ -66,25 +56,27 @@ def create_multi_coloured_line_chart(
         figure.add_trace(trace=line_plot)
 
     # Apply the typical stylings for timeseries charts
-    figure.update_layout(**LAYOUT_ARGS)
-
-    # Set the height and width of the chart itself
-    figure.update_layout(
-        {
-            "height": chart_height,
-            "width": chart_width,
-            "showlegend": properties.is_legend_required(
-                chart_plots_data=chart_plots_data
-            ),
-        }
+    settings = chart_settings.ChartSettings(
+        width=chart_width,
+        height=chart_height,
+        plots_data=chart_plots_data,
     )
+    layout_args = settings.get_line_multi_coloured_chart_config()
+    figure.update_layout(**layout_args)
+
+    # Set x axis tick type depending on what sort of data we are showing
+    if type(chart_plots_data[0].x_axis_values[0]) is date:
+        figure.update_xaxes(**settings._get_x_axis_date_type(figure=figure))
+        figure.update_layout(**settings._get_margin_for_charts_with_dates())
+    else:
+        figure.update_xaxes(**settings._get_x_axis_text_type())
 
     return figure
 
 
 def _create_line_plot(
-    x_axis: List[datetime.datetime],
-    y_axis: List[int],
+    x_axis_values: List[Any],
+    y_axis_values: List[Any],
     colour: str,
     line_width: int,
     line_shape: str,
@@ -92,8 +84,8 @@ def _create_line_plot(
     dash: str,
 ):
     return plotly.graph_objects.Scatter(
-        x=x_axis,
-        y=y_axis,
+        x=x_axis_values,
+        y=y_axis_values,
         line={
             "width": line_width,
             "color": colour,

@@ -5,15 +5,14 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.charts import (
-    DEFAULT_CHART_HEIGHT,
-    DEFAULT_CHART_WIDTH,
     ChartPlotSerializer,
     ChartsSerializer,
+    EncodedChartResponseSerializer,
 )
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.domain.utils import ChartTypes
+from metrics.domain.utils import DEFAULT_CHART_HEIGHT, DEFAULT_CHART_WIDTH, ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
@@ -45,6 +44,8 @@ class TestChartPlotSerializer:
         "label",
         "line_colour",
         "line_type",
+        "x_axis",
+        "y_axis",
     ]
 
     def test_validates_successfully_when_optional_parameters_are_none(
@@ -270,6 +271,45 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["line_type"] == line_type
 
+    def test_valid_payload_with_optional_x_and_y_fields_provided(
+        self,
+        charts_plot_serializer_payload_and_model_managers,
+    ):
+        """
+        Given a valid payload containing the optional `x_axis` and `y_axis` fields
+            passed to a `ChartPlotSerializer` object
+        And valid values for the `topic` `metric` and `chart_type`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = charts_plot_serializer_payload_and_model_managers
+        x_axis = "dt"
+        y_axis = "metric_value"
+
+        valid_data_payload["x_axis"] = x_axis
+        valid_data_payload["y_axis"] = y_axis
+
+        serializer = ChartPlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+        assert serializer.validated_data["x_axis"] == x_axis
+        assert serializer.validated_data["y_axis"] == y_axis
+
     @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
     def test_valid_chart_type(
         self,
@@ -305,7 +345,8 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
 
     @pytest.mark.parametrize(
-        "field_to_be_serialized", ["topic", "metric", "chart_type", "date_from"]
+        "field_to_be_serialized",
+        ["topic", "metric", "chart_type", "date_from", "x_axis", "y_axis"],
     )
     def test_invalid_field_value(
         self,
@@ -575,7 +616,7 @@ class TestChartsSerializer:
 
     def test_to_models_returns_correct_models(self):
         """
-        Given a payload for a list of 1 chart plots
+        Given a payload for a list of 1 chart plot
         When `to_models()` is called from an instance of the `ChartsSerializer`
         Then a `ChartPlots` model is returned with the correct data
         """
@@ -612,3 +653,36 @@ class TestChartsSerializer:
             chart_width=valid_data_payload["chart_width"],
         )
         assert chart_plots_serialized_models == expected_chart_plots_model
+
+
+class TestEncodedChartResponseSerializer:
+    def test_has_payload(self):
+        """
+        Given a valid payload passed to a `EncodedChartResponseSerializer` object
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        valid_data_payload = {"last_updated": "has_value", "chart": "has_value"}
+        serializer = EncodedChartResponseSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
+    def test_invalid_payload(self):
+        """
+        Given an invalid payload passed to a `EncodedChartResponseSerializer` object
+        When `is_valid(raise_exception=True)` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        invalid_data_payload = {"last_updated": None, "chart": None}
+
+        serializer = EncodedChartResponseSerializer(data=invalid_data_payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)

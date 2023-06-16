@@ -139,6 +139,8 @@ class TestDoesMetricHaveMultipleRecords:
             topic="non_existent_topic_name",
             chart_type=ChartTypes.simple_line.value,
             date_from="2022-01-01",
+            x_axis="dt",
+            y_axis="metric_value",
         )
 
         time_series = FakeCoreTimeSeriesFactory.build_example_covid_time_series_range()
@@ -183,6 +185,8 @@ class TestDoesMetricHaveMultipleRecords:
 
         # Then
         spy_core_time_series_manager.get_count.assert_called_once_with(
+            x_axis=valid_plot_parameters.x_axis,
+            y_axis=valid_plot_parameters.y_axis,
             topic_name=valid_plot_parameters.topic_name,
             metric_name=valid_plot_parameters.metric_name,
             date_from=valid_plot_parameters.date_from_value,

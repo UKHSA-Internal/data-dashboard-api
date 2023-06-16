@@ -16,7 +16,7 @@ class TestLineCharts:
         Then the figure is drawn with the expected parameters for the main background and the X & Y axis
         """
         # Given
-        values = VALUES
+        y_axis_values = VALUES
         HEIGHT = 300
         WIDTH = 400
 
@@ -24,7 +24,7 @@ class TestLineCharts:
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            values=values,
+            y_axis_values=y_axis_values,
         )
 
         # Then
@@ -49,7 +49,7 @@ class TestLineCharts:
         Then the figure is drawn with the expected parameters for the main line
         """
         # Given
-        values = VALUES
+        y_axis_values = VALUES
         HEIGHT = 300
         WIDTH = 400
 
@@ -57,7 +57,7 @@ class TestLineCharts:
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            values=values,
+            y_axis_values=y_axis_values,
         )
 
         # Then
@@ -83,7 +83,7 @@ class TestLineCharts:
         And the `mode` of the line plot is set to `lines+markers`
         """
         # Given
-        values = VALUES
+        y_axis_values = VALUES
         HEIGHT = 300
         WIDTH = 400
 
@@ -91,7 +91,7 @@ class TestLineCharts:
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            values=values,
+            y_axis_values=y_axis_values,
             enforce_markers=True,
         )
 
