@@ -12,7 +12,13 @@ from metrics.api.serializers.charts import (
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.domain.utils import DEFAULT_CHART_HEIGHT, DEFAULT_CHART_WIDTH, ChartTypes
+from metrics.domain.utils import (
+    DEFAULT_CHART_HEIGHT,
+    DEFAULT_CHART_WIDTH,
+    DEFAULT_X_AXIS,
+    DEFAULT_Y_AXIS,
+    ChartTypes,
+)
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
@@ -613,6 +619,45 @@ class TestChartsSerializer:
         assert is_serializer_valid
         assert serialized_model_data.chart_width == DEFAULT_CHART_WIDTH
         assert serialized_model_data.chart_height == DEFAULT_CHART_HEIGHT
+
+    def test_x_and_y_axis_are_none_into_model(
+        self, charts_plot_serializer_payload_and_model_managers
+    ):
+        """
+        Given the user supplies a None value for the x_axis and/or y_axis parameter
+          to pass to a `ChartsSerializer` object
+        When `to_models()` is called from an instance of the `ChartsSerializer`
+        Then the default values for them are used
+        """
+        # Given
+        chart_plots = [
+            {
+                "topic": "COVID-19",
+                "metric": "new_cases_daily",
+                "stratum": "",
+                "geography": "",
+                "geography_type": "",
+                "date_from": "",
+                "chart_type": "line_with_shaded_section",
+                "x_axis": None,
+                "y_axis": None,
+            }
+        ]
+        valid_data_payload = {
+            "file_format": "svg",
+            "chart_height": 300,
+            "chart_width": 400,
+            "plots": chart_plots,
+        }
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        serializer.is_valid()
+        serialized_model_data: PlotsCollection = serializer.to_models()
+
+        # Then
+        assert serialized_model_data.plots[0].x_axis == DEFAULT_X_AXIS
+        assert serialized_model_data.plots[0].y_axis == DEFAULT_Y_AXIS
 
     def test_to_models_returns_correct_models(self):
         """
