@@ -1,7 +1,10 @@
-from unittest import TestCase, mock
+from pathlib import Path
+from typing import List
+from unittest import mock
 
 import _pytest
 import pandas as pd
+import pytest
 
 from metrics.data.models.core_models import Theme
 from metrics.data.operations.core_models import (
@@ -9,59 +12,149 @@ from metrics.data.operations.core_models import (
     load_core_data,
     maintain_model,
 )
-from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 
-bad_file = "tests/fixtures/bad_sample_data.csv"
-good_file = "tests/fixtures/sample_data.csv"
-mock_df = pd.read_csv(good_file)
-output_df = pd.read_csv("tests/fixtures/output_data.csv")
+file_path = Path(__file__).parents[4]
+
+bad_file = file_path / "fixtures/bad_sample_data.csv"
+good_file = file_path / "fixtures/good_sample_data.csv"
+
+sample_data = [
+    "parent_theme,child_theme,topic,geography_type,GEOGRAPHY,metric_name,sex,period,year,epiweek,date,metric_value",
+    "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,female,daily,2023,10,2023-06-23,174.1",
+]
+
+mock_data = [
+    "parent_theme,child_theme,topic,geography_type,geography,metric_name,stratum,sex,period,year,epiweek,date,metric_value",
+    "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,6_17,female,daily,2023,10,23/06/2023,174.1",
+    "infectious_disease,respiratory,COVID-20,nation,England,admission_rate_age,0_5,all,daily,2023,10,23/06/2023,540.1",
+    "new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,male,daily,2023,10,23/06/2023,14890",
+    "another_new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,all,weekly,2023,10,23/06/2023,14890",
+    "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,65_84,all,weekly,2023,10,23/06/2023,4361",
+    "infectious_disease,respiratory,COVID-19,nation,new_England,admission_rate_age,18_64,all,weekly,2023,10,23/06/2023,1009",
+]
 
 
-class TestCheckFile(TestCase):
+def create_dataframe(records: List[str]) -> pd.DataFrame:
+    """
+    Create a sample pandas DataFrame from a list of records
+
+    Args:
+        records: The records we want to load into a DataFrame
+
+    Returns:
+        A Pandas DataFramce containing the chosen records
+    """
+
+    df = pd.DataFrame(
+        [record.split(",") for record in records[1:]],
+        columns=[*records[0].split(",")],
+    )
+    df[["year", "epiweek", "metric_value"]] = df[
+        ["year", "epiweek", "metric_value"]
+    ].apply(pd.to_numeric)
+    return df
+
+
+class TestCheckFile:
     def test_file_does_not_exist(self):
-        self.assertRaises(FileNotFoundError, check_file, "/doesnotexist")
+        """
+        Given a file which does not exist
+        When `check_file()` is called
+        Then a FileNotFoundError exception will be raised
+        """
+
+        # Given
+        filename = "non_existent_file"
+
+        # When/Then
+        with pytest.raises(FileNotFoundError):
+            check_file(filename=filename)
 
     def test_column_missing(self):
-        self.assertRaises(ValueError, check_file, filename=bad_file)
+        """
+        Given an input file which has one or more fields missing
+        When `check_file()` is called
+        Then a ValueError exception will be raised
+        """
 
-    def test_file_has_required_fields(self):
-        incoming_df = check_file(filename=good_file)
+        # Given
+        filename = bad_file
+
+        # When/Then
+        with pytest.raises(ValueError):
+            check_file(filename=filename)
+
+    def test_file_has_required_columns(self):
+        """
+        Given an input file which has the required columns
+        When `check_file()` is called
+        Then the expected DataFrame will be returned
+        """
+
+        # Given
+        mock_df = create_dataframe(records=mock_data)
+        filename = good_file
+
+        # When
+        incoming_df = check_file(filename=filename)
+
+        # Then
         pd.testing.assert_frame_equal(mock_df, incoming_df)
 
 
-class TestMaintainModels(TestCase):
+class TestMaintainModel:
     manager = Theme.objects
     existing_model = mock.Mock(spec=manager)
     existing_model.all.return_value.values.return_value = [
         {"pk": 1, "name": "infectious_disease"}
     ]
 
-    def test_no_new_new_model_values(self):
-        input_df = mock_df[0:2]  # infectious_disease * 2
+    mock_df = create_dataframe(records=mock_data)
 
-        output_df: pd.DataFrame = maintain_model(
+    def test_no_new_new_model_values(self):
+        """
+        Given an input DataFrame and a list of fields
+        When `maintain_model()` is called
+        Then the expected DataFrame will be returned
+        """
+
+        # Given
+        input_df = self.mock_df[0:2]  # infectious_disease * 2
+
+        # When
+        actual_df: pd.DataFrame = maintain_model(
             incoming_df=input_df,
             fields={"parent_theme": "name"},
             model=self.existing_model,
         )
 
+        # Then
         # Function should have merely replaced the column with pk values
-        input_df = input_df.replace(to_replace="infectious_disease", value=1)
+        expected_df = input_df.replace(to_replace="infectious_disease", value=1)
 
         pd.testing.assert_frame_equal(
-            input_df.reset_index(drop=True),
-            output_df.reset_index(drop=True),
+            expected_df.reset_index(drop=True),
+            actual_df.reset_index(drop=True),
             check_like=True,
         )
         self.existing_model.create.assert_not_called()
         self.existing_model.reset_mock()
 
     def test_model_adds_new_pks(self, mock_model=None):
-        input_df = mock_df[3:5]  # infectious_disease & another_new_infectious_disease
+        """
+        Given an input DataFrame and a list of fields
+        When `maintain_model()` is called
+        Then the expected DataFrame will be returned
+        """
 
+        # Given
+        input_df = self.mock_df[
+            3:5
+        ]  # infectious_disease & another_new_infectious_disease
         self.existing_model.create.return_value = mock.Mock(spec=self.manager, pk=123)
 
-        output_df: pd.DataFrame = maintain_model(
+        # When
+        actual_df: pd.DataFrame = maintain_model(
             incoming_df=input_df,
             fields={"parent_theme": "name"},
             model=self.existing_model,
@@ -70,23 +163,33 @@ class TestMaintainModels(TestCase):
         # This is what the function should have achieved
         # So, added a new record to the model
         # and replaced column with pk values
-        input_df = input_df.replace(to_replace="infectious_disease", value=1)
-        input_df = input_df.replace(
+        expected_df = input_df.replace(to_replace="infectious_disease", value=1)
+        expected_df = expected_df.replace(
             to_replace="another_new_infectious_disease", value=123
         )
 
+        # Then
         pd.testing.assert_frame_equal(
-            input_df.reset_index(drop=True),
-            output_df.reset_index(drop=True),
+            expected_df.reset_index(drop=True),
+            actual_df.reset_index(drop=True),
             check_like=True,
         )
         self.existing_model.reset_mock()
 
 
-class TestLoadCoreData(TestCase):
+class TestLoadCoreData:
+    mock_df = create_dataframe(records=mock_data)
+
     @mock.patch("metrics.data.operations.core_models.maintain_model")
     def test_loader(self, mock_maintain_model):
-        mock_maintain_model.return_value = output_df[1:2]
+        """
+        Given an input file
+        When `load_core_data()` is called
+        Then the bulk_create function on the core_time_series_manager is called
+        """
+
+        # Given
+        mock_maintain_model.return_value = self.mock_df[1:2]
 
         mock_model_list = [
             mock.Mock(),
@@ -98,18 +201,18 @@ class TestLoadCoreData(TestCase):
         core_time_series_manager = mock.Mock()
         core_time_series_manager.exists.return_value = False
 
+        # When
         load_core_data(
             filename=good_file,
             core_time_series_manager=core_time_series_manager,
             core_time_series_model=mock_model,
         )
 
+        # Then
         core_time_series_manager.bulk_create.assert_called_once_with(
             [mock_model_list], ignore_conflicts=True, batch_size=100
         )
 
-
-class TestLoadCoreDataFunction:
     def test_returns_early_when_core_time_series_has_existing_records(self):
         """
         Given a `CoreTimeSeriesManager` which returns True when `exists()` is called
