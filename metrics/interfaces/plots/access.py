@@ -177,8 +177,8 @@ def sort_by_stratum(queryset: QuerySet) -> Tuple[List, List]:
     Take a list of tuples where Stratum is the first element, sort it, prettify the stratum values and return as two separate lists
 
     Args:
-        queryset: A queryset containing a list of tuples where Stratum is the first value and the metric value is the other
-        E.g.: ('15_44', Decimal('0.7'))
+        queryset: A queryset containing a list of tuples where Stratum is the first value and the metric value is the second
+        E.g. ('15_44', Decimal('0.7'))
 
     Returns:
         A properly sorted and displayable version broken into two separate lists
