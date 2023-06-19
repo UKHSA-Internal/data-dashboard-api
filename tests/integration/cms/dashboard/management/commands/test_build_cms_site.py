@@ -48,7 +48,7 @@ class TestBuildCMSSite:
             "How to use this data",
             "Maps",
             "About",
-            "What's New",
+            "What's new",
         ]
         created_titles = [item["title"] for item in items]
         for expected_title in expected_titles:
