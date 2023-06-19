@@ -8,6 +8,7 @@ from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
+    sort_by_stratum,
     unzip_values,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
@@ -174,6 +175,101 @@ class TestPlotsInterface:
             x.metric_value for x in fake_core_time_series_for_plot
         )
 
+    @mock.patch.object(PlotsInterface, "get_timeseries_for_plot_parameters")
+    @mock.patch(f"{MODULE_PATH}.sort_by_stratum")
+    def test_build_plot_data_from_parameters_calls_sort_by_stratum(
+        self,
+        spy_sort_by_stratum: mock.MagicMock,
+        mocked_get_timeseries_for_plot_parameters: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a `PlotParameters` model requesting a plot for existing `CoreTimeSeries`
+        When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
+        And the x_axis is `stratum__name`
+        Then `sort_by_stratum` is called
+        """
+        # Given
+        fake_plots_collection = PlotsCollection(
+            plots=[fake_chart_plot_parameters],
+            file_format="png",
+            chart_width=123,
+            chart_height=456,
+        )
+        fake_core_time_series_for_plot: List[
+            FakeCoreTimeSeries
+        ] = self._setup_fake_time_series_for_plot(
+            plot_parameters=fake_chart_plot_parameters
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            time_series=fake_core_time_series_for_plot
+        )
+
+        plots_interface = PlotsInterface(
+            plots_collection=fake_plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+        # Change the x_axis to be `stratum__name`
+        fake_chart_plot_parameters.x_axis = "stratum__name"
+        spy_sort_by_stratum.return_value = ("x_values", "y_values")
+
+        # When
+        plots_interface.build_plot_data_from_parameters(
+            plot_parameters=fake_chart_plot_parameters
+        )
+
+        # Then
+        spy_sort_by_stratum.assert_called_once_with(
+            queryset=mocked_get_timeseries_for_plot_parameters.return_value
+        )
+
+    @mock.patch.object(PlotsInterface, "get_timeseries_for_plot_parameters")
+    @mock.patch(f"{MODULE_PATH}.unzip_values")
+    def test_build_plot_data_from_parameters_calls_unzip_values(
+        self,
+        spy_unzip_values: mock.MagicMock,
+        mocked_get_timeseries_for_plot_parameters: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a `PlotParameters` model requesting a plot for existing `CoreTimeSeries`
+        When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
+        And the x_axis is something other than `stratum__name`
+        Then `sort_by_stratum` is called
+        """
+        # Given
+        fake_plots_collection = PlotsCollection(
+            plots=[fake_chart_plot_parameters],
+            file_format="png",
+            chart_width=123,
+            chart_height=456,
+        )
+        fake_core_time_series_for_plot: List[
+            FakeCoreTimeSeries
+        ] = self._setup_fake_time_series_for_plot(
+            plot_parameters=fake_chart_plot_parameters
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            time_series=fake_core_time_series_for_plot
+        )
+
+        plots_interface = PlotsInterface(
+            plots_collection=fake_plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        spy_unzip_values.return_value = ("x_values", "y_values")
+
+        # When
+        plots_interface.build_plot_data_from_parameters(
+            plot_parameters=fake_chart_plot_parameters
+        )
+
+        # Then
+        spy_unzip_values.assert_called_once_with(
+            values=mocked_get_timeseries_for_plot_parameters.return_value
+        )
+
     def test_build_plot_data_from_parameters_raises_error_when_no_data_found(
         self, fake_chart_plot_parameters: PlotParameters
     ):
@@ -286,6 +382,26 @@ class TestPlotsInterface:
         mocked_get_timeseries.assert_called_once_with(
             **fake_chart_plot_parameters.to_dict_for_query(),
         )
+
+
+class TestSortByStratum:
+    def test_returns_correct_x_and_y_values(self):
+        """
+        Given a list of 4 * 2-item tuples
+        When `sort_by_stratum()` is called
+        Then the result is 2 tuples which contain 4 items each
+        And sorted properly
+        And in display format
+        """
+        # Given
+        values = [("65_84", 1), ("6_17", 2), ("85+", 3), ("18_64", 4)]
+
+        # When
+        first_list, second_list = sort_by_stratum(values)
+
+        # Then
+        assert first_list == ["6-17", "18-64", "65-84", "85+"]
+        assert second_list == [2, 4, 1, 3]
 
 
 class TestUnzipValues:
