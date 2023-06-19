@@ -175,10 +175,8 @@ class ChartsSerializer(serializers.Serializer):
 
     def to_models(self) -> PlotsCollection:
         for plot in self.data["plots"]:
-            if "x_axis" in plot:
-                plot["x_axis"] = plot["x_axis"] or DEFAULT_X_AXIS
-            if "y_axis" in plot:
-                plot["y_axis"] = plot["y_axis"] or DEFAULT_Y_AXIS
+            plot["x_axis"] = plot.get("x_axis") or DEFAULT_X_AXIS
+            plot["y_axis"] = plot.get("y_axis") or DEFAULT_Y_AXIS
 
         return PlotsCollection(
             plots=self.data["plots"],
