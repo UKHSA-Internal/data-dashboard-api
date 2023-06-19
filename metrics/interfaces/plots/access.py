@@ -1,7 +1,7 @@
 import datetime
 from typing import Dict, List, Optional, Tuple, Union
 
-from django.db.models import Manager
+from django.db.models import Manager, QuerySet
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
@@ -172,12 +172,13 @@ class PlotsInterface:
         return plots_data
 
 
-def sort_by_stratum(queryset: List[Tuple[str, str]]) -> Tuple[List, List]:
+def sort_by_stratum(queryset: QuerySet) -> Tuple[List, List]:
     """
     Take a list of tuples where Stratum is the first element, sort it, prettify the stratum values and return as two separate lists
 
     Args:
-        The list of tuples inside a queryset
+        queryset: A queryset containing a list of tuples where Stratum is the first value and the metric value is the other
+        E.g.: ('15_44', Decimal('0.7'))
 
     Returns:
         A properly sorted and displayable version broken into two separate lists
