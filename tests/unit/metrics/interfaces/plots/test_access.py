@@ -180,7 +180,7 @@ class TestPlotsInterface:
     def test_build_plot_data_from_parameters_calls_sort_by_stratum(
         self,
         spy_sort_by_stratum: mock.MagicMock,
-        mocked_get_timeseries: mock.MagicMock,
+        mocked_get_timeseries_for_plot_parameters: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -219,14 +219,16 @@ class TestPlotsInterface:
         )
 
         # Then
-        spy_sort_by_stratum.assert_called_once()
+        spy_sort_by_stratum.assert_called_once_with(
+            queryset=mocked_get_timeseries_for_plot_parameters.return_value
+        )
 
     @mock.patch.object(PlotsInterface, "get_timeseries_for_plot_parameters")
     @mock.patch(f"{MODULE_PATH}.unzip_values")
     def test_build_plot_data_from_parameters_calls_unzip_values(
         self,
         spy_unzip_values: mock.MagicMock,
-        mocked_get_timeseries: mock.MagicMock,
+        mocked_get_timeseries_for_plot_parameters: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -264,7 +266,9 @@ class TestPlotsInterface:
         )
 
         # Then
-        spy_unzip_values.assert_called_once()
+        spy_unzip_values.assert_called_once_with(
+            values=mocked_get_timeseries_for_plot_parameters.return_value
+        )
 
     def test_build_plot_data_from_parameters_raises_error_when_no_data_found(
         self, fake_chart_plot_parameters: PlotParameters
