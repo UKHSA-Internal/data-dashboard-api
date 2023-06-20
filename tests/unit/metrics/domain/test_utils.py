@@ -9,7 +9,8 @@ class TestGetAxisName:
 
     @pytest.mark.parametrize("field_name, expected_result", test_values)
     def test_get_axis_field_name(self, field_name: str, expected_result: str):
-        """Given a field name (eg. stratum__name)
+        """
+        Given a field name (eg. stratum__name)
         When `get_axis_field_name()` is called
         Then the expected output will be returned
         """
