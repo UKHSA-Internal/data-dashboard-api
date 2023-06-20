@@ -49,18 +49,26 @@ class ChartAxisFields(Enum):
         return str(self.value)
 
     @classmethod
+    def get_default_x_axis(cls):
+        return cls.date
+
+    @classmethod
     def get_x_axis_value(cls, name: str) -> str:
         try:
             return cls[name].value
         except KeyError:
-            return cls.date.value
+            return cls.get_default_x_axis().value
+
+    @classmethod
+    def get_default_y_axis(cls):
+        return cls.metric
 
     @classmethod
     def get_y_axis_value(cls, name: str) -> str:
         try:
             return cls[name].value
         except KeyError:
-            return cls.metric.value
+            return cls.get_default_y_axis().value
 
 
 def get_axis_name(field_name: str):
@@ -80,5 +88,5 @@ def get_axis_name(field_name: str):
     )
 
 
-DEFAULT_X_AXIS = ChartAxisFields.date.name
-DEFAULT_Y_AXIS = ChartAxisFields.metric.name
+DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
+DEFAULT_Y_AXIS = ChartAxisFields.get_default_y_axis().name
