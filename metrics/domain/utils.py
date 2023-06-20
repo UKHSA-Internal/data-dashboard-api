@@ -48,6 +48,20 @@ class ChartAxisFields(Enum):
     def __str__(self):
         return str(self.value)
 
+    @classmethod
+    def get_x_axis_value(cls, name: str) -> str:
+        try:
+            return cls[name].value
+        except KeyError:
+            return cls.date.value
+
+    @classmethod
+    def get_y_axis_value(cls, name: str) -> str:
+        try:
+            return cls[name].value
+        except KeyError:
+            return cls.metric.value
+
 
 def get_axis_name(field_name: str):
     """Convert the given field_name into the "display" version

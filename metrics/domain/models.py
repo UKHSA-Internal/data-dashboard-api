@@ -4,6 +4,8 @@ from typing import Dict, List, Literal, Optional
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
+from metrics.domain.utils import ChartAxisFields
+
 
 class PlotParameters(BaseModel):
     chart_type: str
@@ -74,8 +76,8 @@ class PlotParameters(BaseModel):
             "geography_name": self.geography_name or "",
             "geography_type_name": self.geography_type_name or "",
             "date_from": self.date_from_value,
-            "x_axis": self.x_axis or "",
-            "y_axis": self.y_axis or "",
+            "x_axis": ChartAxisFields.get_x_axis_value(name=self.x_axis),
+            "y_axis": ChartAxisFields.get_y_axis_value(name=self.y_axis),
         }
 
 
