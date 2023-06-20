@@ -97,6 +97,35 @@
                                         ]
                                     },
                                     "id": "9cc32fa3-8ae3-4a12-b68e-fec49acb5062"
+                                },
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "Case rates by age",
+                                        "body": "Rates per 100,000 people of the total number of cases since the start of the pandemic, by age.",
+                                        "x_axis": "stratum__name",
+                                        "y_axis": "metric_value",
+                                        "chart": [
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "cases_rate_age_sex",
+                                                    "chart_type": "bar",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "",
+                                                    "line_colour": "",
+                                                    "line_type": ""
+                                                },
+                                                "id": "dc28dc64-b433-49ef-858d-67cec5763b0c"
+                                            }
+                                        ]
+                                    },
+                                    "id": "ec46d184-5bb6-4327-b964-55ee106f9ec8"
                                 }
                             ]
                         },
@@ -244,6 +273,35 @@
                         "type": "chart_row_card",
                         "value": {
                             "columns": [
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "Admissions rate by age",
+                                        "body": "Age breakdown of people admitted to hospital, shown as the rate per 100,000 people, since the start of the pandemic. There are fewer people in the oldest age group so the rates show the relative impact on different age groups.",
+                                        "x_axis": "stratum__name",
+                                        "y_axis": "metric_value",
+                                        "chart": [
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "admissions_rate_age",
+                                                    "chart_type": "bar",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "",
+                                                    "geography_type": "",
+                                                    "label": "Admission rate",
+                                                    "line_colour": "",
+                                                    "line_type": ""
+                                                },
+                                                "id": "791efbf1-8880-4dfa-9f5d-526982ed1539"
+                                            }
+                                        ]
+                                    },
+                                    "id": "7421a4ce-2961-4816-aa58-34edfa1b6e35"
+                                },
                                 {
                                     "type": "chart_card",
                                     "value": {
@@ -693,49 +751,39 @@
     "related_links": [
         {
             "id": 1,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
+            "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
             "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"fah3z\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
             "id": 2,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
+            "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
             "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
             "body": "<p data-block-key=\"fah3z\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
         },
         {
             "id": 3,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
+            "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "National norovirus and rotavirus surveillance reports: 2022 to 2023 season",
             "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"fah3z\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {
             "id": 4,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
+            "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "Hepatitis (liver inflammation) cases in children – latest updates",
             "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
             "body": "<p data-block-key=\"fah3z\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
         },
         {
             "id": 5,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
+            "meta": {"type": "topic.TopicPageRelatedLink"},
             "title": "Human parainfluenza viruses: guidance and data",
             "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
             "body": "<p data-block-key=\"fah3z\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-15T17:34:15.297710+01:00"
+    "last_published_at": "2023-06-20T11:05:39.259526+01:00"
 }
