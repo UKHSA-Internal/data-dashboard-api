@@ -26,3 +26,6 @@ LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 # Workload type switch. This setting controls which endpoints to expose
 # If it is not set, then the complete set of endpoints will be used.
 APP_MODE = os.environ.get("APP_MODE")
+
+# Django `SECRET_KEY` used to provide cryptographic signing of values
+SECRET_KEY = os.environ.get("SECRET_KEY")
