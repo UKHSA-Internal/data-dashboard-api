@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
@@ -186,7 +187,7 @@ class TestPlotsInterface:
         """
         Given a `PlotParameters` model requesting a plot for existing `CoreTimeSeries`
         When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
-        And the x_axis is `stratum__name`
+        And the x_axis is `stratum`
         Then `sort_by_stratum` is called
         """
         # Given
@@ -209,8 +210,8 @@ class TestPlotsInterface:
             plots_collection=fake_plots_collection,
             core_time_series_manager=fake_core_time_series_manager,
         )
-        # Change the x_axis to be `stratum__name`
-        fake_chart_plot_parameters.x_axis = "stratum__name"
+        # Change the x_axis to be `stratum`
+        fake_chart_plot_parameters.x_axis = ChartAxisFields.stratum.name
         spy_sort_by_stratum.return_value = ("x_values", "y_values")
 
         # When

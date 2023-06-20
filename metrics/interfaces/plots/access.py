@@ -5,6 +5,7 @@ from django.db.models import Manager, QuerySet
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.utils import ChartAxisFields
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -126,7 +127,7 @@ class PlotsInterface:
 
         try:
             # Stratum needs special treatment because a regular sort does not yield the required result
-            if plot_parameters.x_axis == "stratum__name":
+            if plot_parameters.x_axis == ChartAxisFields.stratum.name:
                 x_axis_values, y_axis_values = sort_by_stratum(
                     queryset=timeseries_queryset
                 )
