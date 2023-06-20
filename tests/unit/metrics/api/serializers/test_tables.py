@@ -201,8 +201,8 @@ class TestTablePlotSerializer:
             metric_manager,
             topic_manager,
         ) = tables_plot_serializer_payload_and_model_managers
-        x_axis = "dt"
-        y_axis = "metric_value"
+        x_axis = "date"
+        y_axis = "metric"
 
         serializer = TablePlotSerializer(
             data=valid_data_payload,

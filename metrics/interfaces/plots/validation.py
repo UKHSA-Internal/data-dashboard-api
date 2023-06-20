@@ -56,8 +56,8 @@ class PlotValidation:
 
         """
         count: int = self.core_time_series_manager.get_count(
-            x_axis=self.plot_parameters.x_axis,
-            y_axis=self.plot_parameters.y_axis,
+            x_axis=self.plot_parameters.x_axis_value,
+            y_axis=self.plot_parameters.y_axis_value,
             topic_name=self.plot_parameters.topic_name,
             metric_name=self.plot_parameters.metric_name,
             date_from=self.plot_parameters.date_from_value,
