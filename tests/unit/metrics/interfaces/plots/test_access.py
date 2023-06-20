@@ -235,7 +235,7 @@ class TestPlotsInterface:
         """
         Given a `PlotParameters` model requesting a plot for existing `CoreTimeSeries`
         When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
-        And the x_axis is something other than `stratum__name`
+        And the x_axis is something other than `stratum`
         Then `sort_by_stratum` is called
         """
         # Given
