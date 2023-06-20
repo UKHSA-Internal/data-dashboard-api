@@ -27,6 +27,8 @@ class TestBlankHomePage:
             "body",
             "related_links",
             "last_published_at",
+            "seo_title",
+            "search_description",
         }
         api_field_names: Set[str] = {api_field.name for api_field in api_fields}
         assert api_field_names == expected_api_field_names
