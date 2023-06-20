@@ -34,6 +34,8 @@ class HomePage(Page):
         APIField("body"),
         APIField("related_links"),
         APIField("last_published_at"),
+        APIField("seo_title"),
+        APIField("search_description"),
     ]
 
     # Tabs to position at the top of the view
