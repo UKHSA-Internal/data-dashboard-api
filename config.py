@@ -6,6 +6,11 @@ from dotenv import load_dotenv
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
+# The environment in which this app is running in.
+# If this is set to "LOCAL" then a local sqlite db will be used
+# If this is set to any value other than "LOCAL"
+#   then the `POSTGRES` credentials below
+#   will be used to connect to a remote database
 APIENV = os.environ.get("APIENV")
 
 # Database configuration
