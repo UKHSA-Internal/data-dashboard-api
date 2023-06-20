@@ -54,6 +54,14 @@ class PlotParameters(BaseModel):
         """
         return make_date_from_string(date_from=self.date_from)
 
+    @property
+    def x_axis_value(self) -> str:
+        return ChartAxisFields.get_x_axis_value(name=self.x_axis)
+
+    @property
+    def y_axis_value(self) -> str:
+        return ChartAxisFields.get_y_axis_value(name=self.y_axis)
+
     def to_dict_for_query(self) -> Dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.
 
@@ -76,8 +84,8 @@ class PlotParameters(BaseModel):
             "geography_name": self.geography_name or "",
             "geography_type_name": self.geography_type_name or "",
             "date_from": self.date_from_value,
-            "x_axis": ChartAxisFields.get_x_axis_value(name=self.x_axis),
-            "y_axis": ChartAxisFields.get_y_axis_value(name=self.y_axis),
+            "x_axis": self.x_axis_value,
+            "y_axis": self.y_axis_value,
         }
 
 
