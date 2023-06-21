@@ -41,12 +41,15 @@ class TestChartsInterface:
     @mock.patch.object(ChartsInterface, "generate_simple_line_chart")
     def test_generate_chart_figure_delegates_call_for_simple_line_chart(
         self,
-        spy_generate_simple_line_chart_method: mock.MagicMock,
+        spy_generate_simple_line_chart: mock.MagicMock,
     ):
         """
         Given a requirement for a `simple_line_graph` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_simple_line_chart()` method
+
+        Patches:
+            `spy_generate_simple_line_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.simple_line.value
@@ -62,20 +65,21 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_simple_line_chart_method.assert_called_once()
-        assert (
-            generated_chart_figure == spy_generate_simple_line_chart_method.return_value
-        )
+        spy_generate_simple_line_chart.assert_called_once()
+        assert generated_chart_figure == spy_generate_simple_line_chart.return_value
 
     @mock.patch.object(ChartsInterface, "generate_line_with_shaded_section_chart")
     def test_generate_chart_figure_delegates_call_for_line_with_shaded_section_chart(
         self,
-        spy_generate_line_with_shaded_section_chart_method: mock.MagicMock,
+        spy_generate_line_with_shaded_section_chart: mock.MagicMock,
     ):
         """
         Given a requirement for a `line_with_shaded_section` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_line_with_shaded_section_chart()` method
+
+        Patches:
+            `spy_generate_line_with_shaded_section_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.line_with_shaded_section.value
@@ -91,21 +95,24 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_line_with_shaded_section_chart_method.assert_called_once()
+        spy_generate_line_with_shaded_section_chart.assert_called_once()
         assert (
             generated_chart_figure
-            == spy_generate_line_with_shaded_section_chart_method.return_value
+            == spy_generate_line_with_shaded_section_chart.return_value
         )
 
     @mock.patch.object(ChartsInterface, "generate_waffle_chart")
     def test_generate_chart_figure_delegates_call_for_waffle_chart(
         self,
-        spy_generate_bar_chart_method: mock.MagicMock,
+        spy_generate_waffle_chart: mock.MagicMock,
     ):
         """
         Given a requirement for a `waffle` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_waffle_chart()` method
+
+        Patches:
+            `spy_generate_waffle_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.waffle.value
@@ -121,8 +128,8 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_bar_chart_method.assert_called_once()
-        assert generated_chart_figure == spy_generate_bar_chart_method.return_value
+        spy_generate_waffle_chart.assert_called_once()
+        assert generated_chart_figure == spy_generate_waffle_chart.return_value
 
     @mock.patch.object(ChartsInterface, "generate_bar_chart")
     def test_generate_chart_figure_delegates_call_for_bar(
@@ -133,6 +140,9 @@ class TestChartsInterface:
         Given a requirement for a `bar` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_bar_chart()` method
+
+        Patches:
+            `spy_generate_bar_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.bar.value
@@ -160,6 +170,10 @@ class TestChartsInterface:
         Given a requirement for a `line_multi_coloured` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_line_multi_coloured_chart()` method
+
+        Patches:
+            `spy_generate_line_multi_coloured_chart_method`: For the
+                main assertion.
         """
         # Given
         chart_type: str = ChartTypes.line_multi_coloured.value
@@ -192,6 +206,10 @@ class TestChartsInterface:
         When `generate_line_multi_coloured_chart()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_chart_figure()`
             from the `line_multi_coloured` module with the correct args
+
+        Patches:
+            `spy_line_multi_coloured_generate_chart_figure`: For the
+                main assertion.
         """
         # Given
         fake_core_time_series_collection = self._setup_fake_time_series_for_plot(
@@ -265,14 +283,22 @@ class TestChartsInterface:
     @mock.patch.object(ChartsInterface, "calculate_change_in_metric_value")
     def test_param_builder_for_line_with_shaded_section(
         self,
-        mocked_calculate_change_in_metric_value: mock.MagicMock,
-        mocked_get_rolling_period_slice_for_metric: mock.MagicMock,
+        spy_calculate_change_in_metric_value: mock.MagicMock,
+        spy_get_rolling_period_slice_for_metric: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `PlotsCollection` model representing the requested plot and its corresponding data
         When `param_builder_for_line_with_shaded_section()` is called from an instance of the `ChartsInterface`
         Then the returned dict contains the expected key-value pairs
+
+        Patches:
+            `spy_calculate_change_in_metric_value`: For one of the
+                main assertions. To check this method is delegated
+                to for the value of the "change_in_metric_value" field
+            `spy_get_rolling_period_slice_for_metric`: For one of the
+                main assertions. To check this method is delegated
+                to for the value of the "rolling_period_slice" field
         """
         # Given
         width = 123
@@ -312,16 +338,16 @@ class TestChartsInterface:
             "x_axis_values": mocked_x_axis_values,
             "y_axis_values": mocked_y_axis_values,
             "metric_name": metric,
-            "change_in_metric_value": mocked_calculate_change_in_metric_value.return_value,
-            "rolling_period_slice": mocked_get_rolling_period_slice_for_metric.return_value,
+            "change_in_metric_value": spy_calculate_change_in_metric_value.return_value,
+            "rolling_period_slice": spy_get_rolling_period_slice_for_metric.return_value,
         }
         assert params_for_line_graph == expected_constructed_params
 
-        mocked_calculate_change_in_metric_value.assert_called_once_with(
+        spy_calculate_change_in_metric_value.assert_called_once_with(
             values=mocked_y_axis_values,
             metric_name=metric,
         )
-        mocked_get_rolling_period_slice_for_metric.assert_called_once_with(
+        spy_get_rolling_period_slice_for_metric.assert_called_once_with(
             metric_name=metric
         )
 
