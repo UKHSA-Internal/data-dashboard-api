@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import Dict, List
 from unittest import mock
 
 import plotly.graph_objects
@@ -350,6 +350,58 @@ class TestChartsInterface:
             == mocked_core_time_series_manager
         )
 
+    @mock.patch.object(ChartsInterface, "get_last_updated")
+    def test_get_encoded_chart_delegates_call_to_get_last_updated(
+        self, spy_get_last_updated: mock.MagicMock
+    ):
+        """
+        Given a mocked figure which returns
+        When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
+        Then the `last_updated` field is populated via a call to the `get_last_updated()` method
+
+        Patches:
+            `spy_get_last_updated`: For the main assertion
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        mocked_figure = mock.Mock()
+        mocked_figure.to_image.return_value = "abc"
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # When
+        encoded_chart: Dict[str, str] = charts_interface.get_encoded_chart(
+            figure=mocked_figure
+        )
+
+        # Then
+        assert encoded_chart["last_updated"] == spy_get_last_updated.return_value
+
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    def test_get_encoded_chart_delegates_call_to_encode_figure(
+        self, spy_encode_figure: mock.MagicMock
+    ):
+        """
+        Given a mocked figure
+        When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
+        Then the `chart` field is populated via a call to the `encode_figure()` method
+
+        Patches:
+            `spy_encode_figure`: For the main assertion
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        mocked_figure = mock.Mock()
+        mocked_figure.to_image.return_value = "abc"
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # When
+        encoded_chart: Dict[str, str] = charts_interface.get_encoded_chart(
+            figure=mocked_figure
+        )
+
+        # Then
+        assert encoded_chart["chart"] == spy_encode_figure.return_value
+
 
 class TestGenerateChartAsFile:
     @mock.patch.object(ChartsInterface, "write_figure")
@@ -443,32 +495,43 @@ class TestGenerateEncodedChart:
         )
         spy_generate_chart_figure.assert_called_once_with()
 
-    @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "get_last_updated")
+    @mock.patch.object(ChartsInterface, "get_encoded_chart")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_generate_chart_delegates_get_last_updated_call(
+    def test_delegates_call_to_get_encoded_chart(
         self,
         mocked_validate_each_requested_chart_plot: mock.MagicMock,
-        spy_generate_chart_figure: mock.MagicMock,
-        spy_get_last_updated: mock.MagicMock,
-        mock_encode_figure: mock.MagicMock,
+        mocked_generate_chart_figure: mock.MagicMock,
+        spy_get_encoded_chart: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_encoded_chart()` is called
-        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `get_last_updated` is called from an instance of the `ChartsInterface`
+        Then the call is delegated to `get_encoded_chart()`
+            from an instance of the `ChartsInterface`
+
+        Patches:
+            `mocked_validate_each_requested_chart_plot`: To remove
+                side effects of accessing the db
+                for validating the requested chart
+            `mocked_generate_chart_figure`: To set the returned figure
+                so that it can encoded more easily
+                and so the return value can be
+                passed to the main assertion
+            `spy_get_encoded_chart`: For the main assertion
         """
         # Given
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+        mocked_figure = mock.Mock()
+        mocked_figure.to_image.return_value = "abc"
+        mocked_generate_chart_figure.return_value = mocked_figure
 
         # When
         generate_encoded_chart(chart_plots=mocked_chart_plots)
 
         # Then
-        spy_get_last_updated.assert_called_once_with(
-            figure=spy_generate_chart_figure.return_value
+        spy_get_encoded_chart.assert_called_once_with(
+            figure=mocked_generate_chart_figure.return_value
         )
 
 
