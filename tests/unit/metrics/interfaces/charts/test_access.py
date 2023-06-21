@@ -760,4 +760,4 @@ class TestMiscMethods:
 
         # Then
         mock_scourstring.assert_called_once()
-        mock_scourstring.return_value == figure_image
+        assert mock_scourstring.return_value == figure_image
