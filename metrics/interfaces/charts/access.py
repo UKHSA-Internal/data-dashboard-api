@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Union
 
 import plotly.graph_objects
 from django.db.models import Manager
+from scour import scour
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import (
@@ -212,6 +213,25 @@ class ChartsInterface:
 
         return last_date
 
+    def create_image_and_optimize_it(self, figure: plotly.graph_objects.Figure) -> str:
+        """Convert figure to an image
+           If the required image format is `svg` then optmimize the size of it
+           else just return the image asis
+
+        Args:
+            figure: The figure object or a dictionary representing a figure
+
+        Returns:
+            A figure as an image and optimized for size if required
+        """
+        svg_image = figure.to_image(format=self.chart_plots.file_format)
+
+        return (
+            scour.scourString(in_string=svg_image)
+            if self.chart_plots.file_format == "svg"
+            else svg_image
+        )
+
     def encode_figure(self, figure: plotly.graph_objects.Figure) -> str:
         """
         URI Encode the supplied chart figure
@@ -222,9 +242,10 @@ class ChartsInterface:
         Returns:
             An encoded string representation of the figure
         """
-        encoded_chart: str = urllib.parse.quote_plus(
-            figure.to_image(format=self.chart_plots.file_format)
-        )
+
+        optimized_image = self.create_image_and_optimize_it(figure=figure)
+
+        encoded_chart: str = urllib.parse.quote_plus(optimized_image)
 
         return encoded_chart
 
@@ -240,8 +261,12 @@ class ChartsInterface:
             The filename of the image
 
         """
+        optimized_image = self.create_image_and_optimize_it(figure=figure)
+
         filename = f"{topic}.{self.chart_plots.file_format}"
-        figure.write_image(file=filename, format=self.chart_plots.file_format)
+
+        with open(filename, mode="wt") as f:
+            f.write(optimized_image)
 
         return filename
 
