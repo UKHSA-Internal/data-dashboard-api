@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import Dict, List
 from unittest import mock
 
 import plotly.graph_objects
@@ -41,12 +41,15 @@ class TestChartsInterface:
     @mock.patch.object(ChartsInterface, "generate_simple_line_chart")
     def test_generate_chart_figure_delegates_call_for_simple_line_chart(
         self,
-        spy_generate_simple_line_chart_method: mock.MagicMock,
+        spy_generate_simple_line_chart: mock.MagicMock,
     ):
         """
         Given a requirement for a `simple_line_graph` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_simple_line_chart()` method
+
+        Patches:
+            `spy_generate_simple_line_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.simple_line.value
@@ -62,20 +65,21 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_simple_line_chart_method.assert_called_once()
-        assert (
-            generated_chart_figure == spy_generate_simple_line_chart_method.return_value
-        )
+        spy_generate_simple_line_chart.assert_called_once()
+        assert generated_chart_figure == spy_generate_simple_line_chart.return_value
 
     @mock.patch.object(ChartsInterface, "generate_line_with_shaded_section_chart")
     def test_generate_chart_figure_delegates_call_for_line_with_shaded_section_chart(
         self,
-        spy_generate_line_with_shaded_section_chart_method: mock.MagicMock,
+        spy_generate_line_with_shaded_section_chart: mock.MagicMock,
     ):
         """
         Given a requirement for a `line_with_shaded_section` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_line_with_shaded_section_chart()` method
+
+        Patches:
+            `spy_generate_line_with_shaded_section_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.line_with_shaded_section.value
@@ -91,21 +95,24 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_line_with_shaded_section_chart_method.assert_called_once()
+        spy_generate_line_with_shaded_section_chart.assert_called_once()
         assert (
             generated_chart_figure
-            == spy_generate_line_with_shaded_section_chart_method.return_value
+            == spy_generate_line_with_shaded_section_chart.return_value
         )
 
     @mock.patch.object(ChartsInterface, "generate_waffle_chart")
     def test_generate_chart_figure_delegates_call_for_waffle_chart(
         self,
-        spy_generate_bar_chart_method: mock.MagicMock,
+        spy_generate_waffle_chart: mock.MagicMock,
     ):
         """
         Given a requirement for a `waffle` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_waffle_chart()` method
+
+        Patches:
+            `spy_generate_waffle_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.waffle.value
@@ -121,8 +128,8 @@ class TestChartsInterface:
         generated_chart_figure = charts_interface.generate_chart_figure()
 
         # Then
-        spy_generate_bar_chart_method.assert_called_once()
-        assert generated_chart_figure == spy_generate_bar_chart_method.return_value
+        spy_generate_waffle_chart.assert_called_once()
+        assert generated_chart_figure == spy_generate_waffle_chart.return_value
 
     @mock.patch.object(ChartsInterface, "generate_bar_chart")
     def test_generate_chart_figure_delegates_call_for_bar(
@@ -133,6 +140,9 @@ class TestChartsInterface:
         Given a requirement for a `bar` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_bar_chart()` method
+
+        Patches:
+            `spy_generate_bar_chart`: For the main assertion.
         """
         # Given
         chart_type: str = ChartTypes.bar.value
@@ -160,6 +170,10 @@ class TestChartsInterface:
         Given a requirement for a `line_multi_coloured` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_line_multi_coloured_chart()` method
+
+        Patches:
+            `spy_generate_line_multi_coloured_chart_method`: For the
+                main assertion.
         """
         # Given
         chart_type: str = ChartTypes.line_multi_coloured.value
@@ -192,6 +206,10 @@ class TestChartsInterface:
         When `generate_line_multi_coloured_chart()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_chart_figure()`
             from the `line_multi_coloured` module with the correct args
+
+        Patches:
+            `spy_line_multi_coloured_generate_chart_figure`: For the
+                main assertion.
         """
         # Given
         fake_core_time_series_collection = self._setup_fake_time_series_for_plot(
@@ -265,14 +283,22 @@ class TestChartsInterface:
     @mock.patch.object(ChartsInterface, "calculate_change_in_metric_value")
     def test_param_builder_for_line_with_shaded_section(
         self,
-        mocked_calculate_change_in_metric_value: mock.MagicMock,
-        mocked_get_rolling_period_slice_for_metric: mock.MagicMock,
+        spy_calculate_change_in_metric_value: mock.MagicMock,
+        spy_get_rolling_period_slice_for_metric: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `PlotsCollection` model representing the requested plot and its corresponding data
         When `param_builder_for_line_with_shaded_section()` is called from an instance of the `ChartsInterface`
         Then the returned dict contains the expected key-value pairs
+
+        Patches:
+            `spy_calculate_change_in_metric_value`: For one of the
+                main assertions. To check this method is delegated
+                to for the value of the "change_in_metric_value" field
+            `spy_get_rolling_period_slice_for_metric`: For one of the
+                main assertions. To check this method is delegated
+                to for the value of the "rolling_period_slice" field
         """
         # Given
         width = 123
@@ -312,16 +338,16 @@ class TestChartsInterface:
             "x_axis_values": mocked_x_axis_values,
             "y_axis_values": mocked_y_axis_values,
             "metric_name": metric,
-            "change_in_metric_value": mocked_calculate_change_in_metric_value.return_value,
-            "rolling_period_slice": mocked_get_rolling_period_slice_for_metric.return_value,
+            "change_in_metric_value": spy_calculate_change_in_metric_value.return_value,
+            "rolling_period_slice": spy_get_rolling_period_slice_for_metric.return_value,
         }
         assert params_for_line_graph == expected_constructed_params
 
-        mocked_calculate_change_in_metric_value.assert_called_once_with(
+        spy_calculate_change_in_metric_value.assert_called_once_with(
             values=mocked_y_axis_values,
             metric_name=metric,
         )
-        mocked_get_rolling_period_slice_for_metric.assert_called_once_with(
+        spy_get_rolling_period_slice_for_metric.assert_called_once_with(
             metric_name=metric
         )
 
@@ -350,12 +376,64 @@ class TestChartsInterface:
             == mocked_core_time_series_manager
         )
 
+    @mock.patch.object(ChartsInterface, "get_last_updated")
+    def test_get_encoded_chart_delegates_call_to_get_last_updated(
+        self, spy_get_last_updated: mock.MagicMock
+    ):
+        """
+        Given a mocked figure which returns
+        When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
+        Then the `last_updated` field is populated via a call to the `get_last_updated()` method
+
+        Patches:
+            `spy_get_last_updated`: For the main assertion
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        mocked_figure = mock.Mock()
+        mocked_figure.to_image.return_value = "abc"
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # When
+        encoded_chart: Dict[str, str] = charts_interface.get_encoded_chart(
+            figure=mocked_figure
+        )
+
+        # Then
+        assert encoded_chart["last_updated"] == spy_get_last_updated.return_value
+
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    def test_get_encoded_chart_delegates_call_to_encode_figure(
+        self, spy_encode_figure: mock.MagicMock
+    ):
+        """
+        Given a mocked figure
+        When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
+        Then the `chart` field is populated via a call to the `encode_figure()` method
+
+        Patches:
+            `spy_encode_figure`: For the main assertion
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        mocked_figure = mock.Mock()
+        mocked_figure.to_image.return_value = "abc"
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # When
+        encoded_chart: Dict[str, str] = charts_interface.get_encoded_chart(
+            figure=mocked_figure
+        )
+
+        # Then
+        assert encoded_chart["chart"] == spy_encode_figure.return_value
+
 
 class TestGenerateChartAsFile:
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_generate_chart_delegates_call_for_validation(
+    def test_delegates_call_for_validation(
         self,
         spy_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
@@ -382,7 +460,7 @@ class TestGenerateChartAsFile:
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_generate_chart_delegates_call_for_writing_the_chart(
+    def test_delegates_call_for_writing_the_chart(
         self,
         mocked_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
@@ -406,22 +484,30 @@ class TestGenerateChartAsFile:
             topic="-",
         )
 
-    @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "get_last_updated")
+
+class TestGenerateEncodedChart:
+    @mock.patch.object(ChartsInterface, "get_encoded_chart")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_generate_chart_delegates_call_for_validation(
+    def test_delegates_call_for_validation(
         self,
         spy_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
-        mock_get_last_updated: mock.MagicMock,
-        mock_encode_figure: mock.MagicMock,
+        mocked_get_encoded_chart: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_encoded_chart()` is called
         Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
         And `generate_chart_figure` is called from an instance of the `ChartsInterface`
+
+        Patches:
+            `spy_validate_each_requested_chart_plot`: For one of
+                the main assertions
+            `spy_generate_chart_figure`: For one of
+                the main assertions
+            `mocked_get_encoded_chart`: To remove the side effects
+                of having to encode the chart figure
         """
         # Given
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
@@ -435,60 +521,43 @@ class TestGenerateChartAsFile:
         )
         spy_generate_chart_figure.assert_called_once_with()
 
-    @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "get_last_updated")
+    @mock.patch.object(ChartsInterface, "get_encoded_chart")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
     @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_generate_chart_delegates_get_last_updated_call(
+    def test_delegates_call_to_get_encoded_chart(
         self,
         mocked_validate_each_requested_chart_plot: mock.MagicMock,
-        spy_generate_chart_figure: mock.MagicMock,
-        spy_get_last_updated: mock.MagicMock,
-        mock_encode_figure: mock.MagicMock,
+        mocked_generate_chart_figure: mock.MagicMock,
+        spy_get_encoded_chart: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_encoded_chart()` is called
-        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `get_last_updated` is called from an instance of the `ChartsInterface`
+        Then the call is delegated to `get_encoded_chart()`
+            from an instance of the `ChartsInterface`
+
+        Patches:
+            `mocked_validate_each_requested_chart_plot`: To remove
+                side effects of accessing the db
+                for validating the requested chart
+            `mocked_generate_chart_figure`: To set the returned figure
+                so that it can encoded more easily
+                and so the return value can be
+                passed to the main assertion
+            `spy_get_encoded_chart`: For the main assertion
         """
         # Given
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+        mocked_figure = mock.Mock()
+        mocked_figure.to_image.return_value = "abc"
+        mocked_generate_chart_figure.return_value = mocked_figure
 
         # When
         generate_encoded_chart(chart_plots=mocked_chart_plots)
 
         # Then
-        spy_get_last_updated.assert_called_once_with(
-            figure=spy_generate_chart_figure.return_value
-        )
-
-    @mock.patch.object(ChartsInterface, "encode_figure")
-    @mock.patch.object(ChartsInterface, "get_last_updated")
-    @mock.patch.object(ChartsInterface, "generate_chart_figure")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
-    def test_generate_chart_delegates_encode_figure_call(
-        self,
-        mocked_validate_each_requested_chart_plot: mock.MagicMock,
-        spy_generate_chart_figure: mock.MagicMock,
-        mock_get_last_updated: mock.MagicMock,
-        spy_encode_figure: mock.MagicMock,
-    ):
-        """
-        Given a mock in place of a `PlotsCollection` model
-        When `generate_encoded_chart()` is called
-        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `encode_figure` is called from an instance of the `ChartsInterface`
-        """
-        # Given
-        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
-
-        # When
-        generate_encoded_chart(chart_plots=mocked_chart_plots)
-
-        # Then
-        spy_encode_figure.assert_called_once_with(
-            figure=spy_generate_chart_figure.return_value
+        spy_get_encoded_chart.assert_called_once_with(
+            figure=mocked_generate_chart_figure.return_value
         )
 
 
@@ -506,6 +575,9 @@ class TestValidateEachRequestedChartPlot:
         When `validate_each_requested_chart_plot()` is called
         Then the call is delegated to `validate_chart_plot_parameters()`
             for each `PlotParameters` models
+
+        Patches:
+            `spy_validate_chart_plot_parameters`: For the main assertion
         """
         # Given
         fake_requested_chart_plots = [
@@ -541,6 +613,9 @@ class TestValidateChartPlotParameters:
         Given a `PlotParameters` model
         When `validate_chart_plot_parameters()` is called
         Then the call is delegated to the `validate()` from an instance of the `ChartsRequestValidator`
+
+        Patches:
+            `spy_validate_method`: For the main assertion
         """
         # Given
         chart_plot_parameters = fake_chart_plot_parameters
@@ -553,121 +628,6 @@ class TestValidateChartPlotParameters:
 
 
 class TestMiscMethods:
-    @staticmethod
-    def _create_chart_plot_data(
-        x_axis_values: List[datetime.date],
-        y_axis_values: List[int],
-    ) -> PlotsData:
-        plot_params = PlotParameters(
-            chart_type="line_multi_coloured",
-            topic="RSV",
-            metric="weekly_positivity_by_age",
-        )
-        return PlotsData(
-            parameters=plot_params,
-            x_axis_values=x_axis_values,
-            y_axis_values=y_axis_values,
-        )
-
-    @staticmethod
-    def _create_charts_interface() -> ChartsInterface:
-        chart_type: str = ChartTypes.line_multi_coloured.value
-        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
-        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
-
-        return ChartsInterface(
-            chart_plots=mocked_chart_plots,
-            core_time_series_manager=mock.Mock(),
-        )
-
-    plot_1_dates: List[datetime.date] = [
-        datetime.date(2022, 9, 5),
-        datetime.date(2022, 9, 19),
-        datetime.date(2022, 10, 3),
-        datetime.date(2022, 10, 7),
-        datetime.date(2022, 10, 21),
-        datetime.date(2022, 11, 3),
-        datetime.date(2022, 11, 14),
-        datetime.date(2022, 12, 12),
-        datetime.date(2022, 12, 26),
-        datetime.date(2023, 1, 9),
-    ]
-    plot_1_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-    plot_2_dates: List[datetime.date] = [
-        datetime.date(2020, 9, 5),
-        datetime.date(2022, 9, 19),
-        datetime.date(2023, 3, 9),
-    ]
-    plot_2_values = [10, 20, 30]
-
-    first_chart_plots_data = _create_chart_plot_data(
-        x_axis_values=plot_1_dates,
-        y_axis_values=plot_1_values,
-    )
-
-    second_chart_plots_data = _create_chart_plot_data(
-        x_axis_values=plot_2_dates,
-        y_axis_values=plot_2_values,
-    )
-
-    mock_charts_interface = _create_charts_interface()
-
-    def test_determine_get_last_updated_where_chart_has_dates(self):
-        """
-        Given a multi coloured line chart with two plots
-        and with dates along the x axis
-        When `get_last_updated()` is called
-        Then we get back the latest date in the chart
-        """
-
-        # Given
-        figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            chart_height=200,
-            chart_width=200,
-            chart_plots_data=[
-                self.first_chart_plots_data,
-                self.second_chart_plots_data,
-            ],
-        )
-
-        # When
-        last_updated_date: str = self.mock_charts_interface.get_last_updated(figure)
-
-        # Then
-        expected_date: str = "2023-03-09"
-
-        assert last_updated_date == expected_date
-
-    def test_determine_last_updated_where_chart_does_not_have_dates(self):
-        """
-        Given a multi coloured line chart with two plots
-        and with something other than dates along the x axis
-        When `get_last_updated()` is called
-        Then we get back nothing
-        """
-
-        # Given
-        figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            chart_height=200,
-            chart_width=200,
-            chart_plots_data=[
-                self.first_chart_plots_data,
-                self.second_chart_plots_data,
-            ],
-        )
-
-        # Simulate the chart has something other than dates along the x axis
-        figure.update_xaxes({"type": "-"})
-
-        # When
-        last_updated_date: str = self.mock_charts_interface.get_last_updated(figure)
-
-        # Then
-        expected_date: str = ""
-
-        assert last_updated_date == expected_date
-
     @pytest.mark.parametrize("file_format", FILE_FORMAT_CHOICES)
     def test_valid_format_passed_to_encode_figure(self, file_format: str):
         """
@@ -677,7 +637,6 @@ class TestMiscMethods:
         Therefore any unsupported formats added to FILE_FORMAT_CHOICES in the future
         will be picked up by this test
         """
-
         # Given
         mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
         mocked_chart_plots = mock.Mock(
@@ -692,10 +651,8 @@ class TestMiscMethods:
 
         figure = plotly.graph_objs.Figure()
 
-        try:
-            # When / Then
-            charts_interface.encode_figure(figure)
-        except:
-            assert (
-                False
-            ), f"An invalid/unsupported file format of '{file_format}' was passed to encode_figure function"
+        # When / Then
+        encoded_figure = charts_interface.encode_figure(figure)
+
+        # Then
+        assert type(encoded_figure) is str

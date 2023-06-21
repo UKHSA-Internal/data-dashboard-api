@@ -256,6 +256,23 @@ class ChartsInterface:
 
         return calculations.change_between_each_half(values=values)
 
+    def get_encoded_chart(self, figure: plotly.graph_objects.Figure) -> Dict[str, str]:
+        """Creates a dict containing a timestamp for the last data point + encoded string for the chart figure.
+
+        Args:
+            figure: Plotly figure or figure dictionary
+
+        Returns:
+            A dict containing:
+             "last_updated": A timestamp for the last data point
+             "chart": An encoded string representing the chart figure
+
+        """
+        return {
+            "last_updated": self.get_last_updated(figure=figure),
+            "chart": self.encode_figure(figure=figure),
+        }
+
 
 def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
@@ -270,10 +287,10 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     """
     validate_each_requested_chart_plot(chart_plots=chart_plots)
 
-    library = ChartsInterface(chart_plots=chart_plots)
-    figure = library.generate_chart_figure()
+    charts_interface = ChartsInterface(chart_plots=chart_plots)
+    figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
-    return library.write_figure(figure=figure, topic="-")
+    return charts_interface.write_figure(figure=figure, topic="-")
 
 
 def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:
@@ -285,23 +302,17 @@ def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:
             encapsulated as a model
 
     Returns:
-        The encoded chart along with the last updated date as a serialized JSON string
-    """
+        A dict containing:
+         "last_updated": A timestamp for the last data point
+         "chart": An encoded string representing the chart figure
 
+    """
     validate_each_requested_chart_plot(chart_plots=chart_plots)
 
-    library = ChartsInterface(chart_plots=chart_plots)
-    figure = library.generate_chart_figure()
+    charts_interface = ChartsInterface(chart_plots=chart_plots)
+    figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
-    last_updated = library.get_last_updated(figure=figure)
-
-    # Encode the chart so it can be returned in JSON format
-    encoded_figure = library.encode_figure(figure=figure)
-
-    return {
-        "last_updated": last_updated,
-        "chart": encoded_figure,
-    }
+    return charts_interface.get_encoded_chart(figure=figure)
 
 
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
