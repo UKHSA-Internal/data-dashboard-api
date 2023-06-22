@@ -63,7 +63,13 @@ This is enforced in this project with `import-linter`.
         |- migrations/ # Contains the associated django migrations.
     |- domain/ # Represents the business logic layer. Currently houses the charts generation module.
     |- interfaces/ # Represents the interaction layer of the system. E.g. the API interacts with charts logic via the `interfaces/charts` module.
-    |- public_api/ # This is the public facing unrestricted API, which provides programmatic access to the data.
+    
+|- public_api/ # This is the public facing unrestricted API, which provides programmatic access to the data.
+    |- __init__.py # Contains the public interface of the package. i.e. the fully constrcuted url patterns
+    |- metrics_interface/ # Holds the class which bridges the public API -> metrics app
+    |- serializers/ # All the serializers needed for the public API
+    |- views/ # All the views needed for the public API
+    |- urls.py # The constructed url patterns for the public API
     
 |- tests/
     |- fakes/ # Contains fake implementations to remove additional dependencies for tests
