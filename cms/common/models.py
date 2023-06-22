@@ -63,7 +63,7 @@ class CommonPage(Page):
     )
 
     def is_previewable(self) -> bool:
-        """Returns False, since this is a headless CMS"""
+        """Returns False. Since this is a headless CMS the preview panel is not supported"""
         return False
 
 
