@@ -47,6 +47,10 @@ class HomePage(Page):
         ]
     )
 
+    def is_previewable(self) -> bool:
+        """Returns False. Since this is a headless CMS the preview panel is not supported"""
+        return False
+
 
 class HomePageRelatedLink(Orderable):
     page = ParentalKey(

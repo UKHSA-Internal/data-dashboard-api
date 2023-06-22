@@ -49,6 +49,7 @@ class CommonPage(Page):
         APIField("last_published_at"),
         APIField("related_links"),
         APIField("seo_title"),
+        APIField("search_description"),
         APIField("related_links"),
     ]
 
@@ -60,6 +61,10 @@ class CommonPage(Page):
             ObjectList(Page.promote_panels, heading="Promote"),
         ]
     )
+
+    def is_previewable(self) -> bool:
+        """Returns False. Since this is a headless CMS the preview panel is not supported"""
+        return False
 
 
 class CommonPageRelatedLink(Orderable):
