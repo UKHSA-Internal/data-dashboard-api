@@ -73,6 +73,10 @@ class TopicPage(Page):
         ]
     )
 
+    def is_previewable(self) -> bool:
+        """Returns False, since this is a headless CMS"""
+        return False
+
 
 class TopicPageRelatedLink(Orderable):
     page = ParentalKey(
