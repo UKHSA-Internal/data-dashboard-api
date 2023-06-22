@@ -1,6 +1,6 @@
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.public_api.serializers.linked_serializers import (
+from public_api.serializers.linked_serializers import (
     GeographyDetailSerializer,
     GeographyListSerializer,
     GeographyTypeDetailSerializer,
@@ -13,7 +13,7 @@ from metrics.public_api.serializers.linked_serializers import (
     TopicDetailSerializer,
     TopicListSerializer,
 )
-from metrics.public_api.views.base import BaseNestedAPITimeSeriesView
+from public_api.views.base import BaseNestedAPITimeSeriesView
 
 
 class ThemeListView(BaseNestedAPITimeSeriesView):
