@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
 
 class APITimeSeriesListSerializer(serializers.ModelSerializer):

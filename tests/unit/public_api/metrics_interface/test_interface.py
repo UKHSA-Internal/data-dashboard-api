@@ -1,5 +1,5 @@
 from metrics.data.models.api_models import APITimeSeries
-from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
 
 class TestMetricsInterface:

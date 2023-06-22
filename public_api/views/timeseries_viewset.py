@@ -3,11 +3,9 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from metrics.public_api.serializers.timeseries_serializers import (
-    APITimeSeriesListSerializer,
-)
-from metrics.public_api.views.base import PUBLIC_API_TAG
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
+from public_api.serializers.timeseries_serializers import APITimeSeriesListSerializer
+from public_api.views.base import PUBLIC_API_TAG
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
 MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 52

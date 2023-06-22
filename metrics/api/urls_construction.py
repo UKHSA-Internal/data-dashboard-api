@@ -24,7 +24,7 @@ from metrics.api.views import (
     TablesView,
     TrendsView,
 )
-from metrics.public_api.urls import urlpatterns as public_api_urlpatterns
+from public_api import urlpatterns as public_api_urlpatterns
 
 router = routers.DefaultRouter()
 

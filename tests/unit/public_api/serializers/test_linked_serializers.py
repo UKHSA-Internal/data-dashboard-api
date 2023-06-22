@@ -3,10 +3,8 @@ from unittest import mock
 from rest_framework.serializers import HyperlinkedIdentityField
 from rest_framework_nested.serializers import NestedHyperlinkedRelatedField
 
-from metrics.public_api.serializers.api_time_series_request_serializer import (
-    APITimeSeriesDTO,
-)
-from metrics.public_api.serializers.linked_serializers import (
+from public_api.serializers.api_time_series_request_serializer import APITimeSeriesDTO
+from public_api.serializers.linked_serializers import (
     GeographyDetailSerializer,
     GeographyListSerializer,
     GeographyTypeDetailSerializer,
