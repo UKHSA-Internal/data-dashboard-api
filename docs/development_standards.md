@@ -294,7 +294,7 @@ get_metrics(geography_type=geography_type, topic=topic)
 We shall avoid the use of `assert` statements in source code.
 
 For Python processes, the application of th `assert` keyword can be easily switched off in production 
-with the [PYTHONOPTIMIZE](https://docs.python.org/3/using/cmdline.html#cmdoption) flag.
+with the [PYTHONOPTIMIZE](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONOPTIMIZE) flag.
 This is usually done for compilation optimization purposes.
 
 As such, we prefer the use of custom exceptions over `assert` statements in source code.
@@ -305,7 +305,7 @@ As such, we prefer the use of custom exceptions over `assert` statements in sour
 
 ### Docstrings
 
-We use the [Google Python docstring standard]() for source code.
+We use the [Google Python docstring standard](https://google.github.io/styleguide/pyguide.html) for source code.
 
 ### Tickets > TODO comments
 
