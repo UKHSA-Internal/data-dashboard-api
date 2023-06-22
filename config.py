@@ -1,10 +1,14 @@
+import logging
 import os
 from os.path import dirname, join
 
+import django.core.management.utils
 from dotenv import load_dotenv
 
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
+
+logger = logging.getLogger(__name__)
 
 # The environment in which this app is running in.
 # If this is set to "LOCAL" then a local sqlite db will be used
@@ -29,3 +33,10 @@ APP_MODE = os.environ.get("APP_MODE")
 
 # Django `SECRET_KEY` used to provide cryptographic signing of values
 SECRET_KEY = os.environ.get("SECRET_KEY")
+
+# If not provided then generate a new one.
+# Note that this will mean sessions and cookies will be lost between deployments,
+# if the `SECRET_KEY` is then set to another value.
+if not SECRET_KEY:
+    logger.info("No `SECRET_KEY` provided, generating random secret key instead.")
+    SECRET_KEY = django.core.management.utils.get_random_secret_key()
