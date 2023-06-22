@@ -45,18 +45,10 @@
               {% endblock %}
             </span>
 
-            {# Hide login link for public API endpoints #}
-            {% if 'public' not in request.get_full_path %}
-                <ul class="nav navbar-nav pull-right">
-                    {% block userlinks %}
-                        {% if user.is_authenticated %}
-                            {% optional_logout request user %}
-                        {% else %}
-                            {% optional_login request %}
-                        {% endif %}
-                    {% endblock %}
-                </ul>
-            {% endif %}
+            {# Hide login link #}
+            {% block userlinks %}
+            {% endblock %}
+
         </div>
     </div>
   {% endblock %}
