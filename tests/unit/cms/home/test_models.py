@@ -75,6 +75,21 @@ class TestBlankHomePage:
         }
         assert sidebar_content_panel_names == expected_sidebar_content_panel_names
 
+    def test_is_previewable_returns_false(self):
+        """
+        Given a blank `HomePage` model
+        When `is_previewable()` is called
+        Then False is returned
+        """
+        # Given
+        blank_page = FakeHomePageFactory.build_blank_page()
+
+        # When
+        page_is_previewable: bool = blank_page.is_previewable()
+
+        # Then
+        assert not page_is_previewable
+
 
 class TestTemplateHomePage:
     @property
