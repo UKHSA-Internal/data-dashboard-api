@@ -49,6 +49,7 @@ class CommonPage(Page):
         APIField("last_published_at"),
         APIField("related_links"),
         APIField("seo_title"),
+        APIField("search_description"),
         APIField("related_links"),
     ]
 
