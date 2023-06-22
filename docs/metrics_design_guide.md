@@ -63,9 +63,10 @@ This includes:
 - Waffle charts
 - Bar charts
 
-As of April 2023, the following charts can be generated from this project:
+As of June 2023, the following charts can be generated from this project:
 
 - Line graphs (with shaded region)
+- Line graphs with customizable colour and type (dash/solid)
 - Simple line graphs 
 - Waffle charts
 - Bar charts
@@ -73,12 +74,6 @@ As of April 2023, the following charts can be generated from this project:
 ---
 
 ## Current limitations
-
-### Outdated data file
-
-A new daily metrics data file was received on 29th March 2023. 
-
-The team will need to agree a consistent schema with the data team regarding the contents of the file.
 
 ### Data ingestion
 
