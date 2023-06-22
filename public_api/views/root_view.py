@@ -4,7 +4,7 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.public_api.views.base import PUBLIC_API_TAG
+from public_api.views.base import PUBLIC_API_TAG
 
 
 class PublicAPIRootView(APIView):

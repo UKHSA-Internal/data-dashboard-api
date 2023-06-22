@@ -5,8 +5,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from metrics.public_api.serializers.api_time_series_request_serializer import (
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
+from public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
     APITimeSeriesRequestSerializer,
 )
