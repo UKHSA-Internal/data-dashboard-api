@@ -79,6 +79,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
+        sex: Optional[str] = None,
     ):
         date_from = _convert_string_to_date(date_string=date_from)
 
@@ -105,6 +106,9 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             filtered_time_series = [
                 x for x in filtered_time_series if x.stratum.name == stratum_name
             ]
+
+        if sex:
+            filtered_time_series = [x for x in filtered_time_series if x.sex == sex]
 
         return [
             (time_series.dt, time_series.metric_value)

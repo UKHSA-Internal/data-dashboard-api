@@ -53,6 +53,7 @@ class PlotsInterface:
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
+        sex: Optional[str] = None,
     ):
         """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
 
@@ -61,6 +62,7 @@ class PlotsInterface:
              - `geography_name`
              - `geography_type_name`
              - `stratum_name`
+             - `sex`
 
         Args:
             x_axis: The field to display along the x-axis
@@ -80,6 +82,9 @@ class PlotsInterface:
                 E.g. `Nation`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
@@ -100,6 +105,7 @@ class PlotsInterface:
             geography_name=geography_name,
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
+            sex=sex,
         )
 
     def build_plot_data_from_parameters(
