@@ -163,7 +163,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "New deaths daily",
+                                                    "label": "Number of deaths",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
                                                 },
@@ -180,7 +180,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "7 day rolling average",
+                                                    "label": "7-day average",
                                                     "line_colour": "RED",
                                                     "line_type": "DASH"
                                                 },
@@ -442,7 +442,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
+                                                    "label": "Number of vaccinations",
                                                     "line_colour": "",
                                                     "line_type": ""
                                                 },
@@ -644,7 +644,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
+                                                    "label": "Number of vaccinations",
                                                     "line_colour": "",
                                                     "line_type": ""
                                                 },
