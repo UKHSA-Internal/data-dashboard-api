@@ -93,6 +93,9 @@ class ChartsInterface:
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot
 
+        Notes
+            This does support **multiple** plots on the same figure
+
         Returns:
             A plotly `Figure` object for the created bar chart
 
@@ -100,14 +103,11 @@ class ChartsInterface:
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
         plots_data: List[PlotsData] = self.build_chart_plots_data()
-        plot_data: PlotsData = plots_data[0]
 
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            x_axis_values=plot_data.x_axis_values,
-            y_axis_values=plot_data.y_axis_values,
-            legend=plot_data.parameters.label,
+            chart_plots_data=plots_data,
         )
 
     def generate_line_multi_coloured_chart(self) -> plotly.graph_objects.Figure:
