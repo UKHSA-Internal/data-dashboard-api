@@ -4,7 +4,6 @@ from typing import Dict, List, Tuple, Union
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers.charts import DEFAULT_X_AXIS, DEFAULT_Y_AXIS
 from metrics.api.serializers.tables import TablePlotSerializer, TablesSerializer
 from metrics.domain.models import PlotParameters, PlotsCollection
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -31,9 +30,6 @@ def tables_plot_serializer_payload_and_model_managers() -> (
 
 class TestTablePlotSerializer:
     optional_field_names = [
-        "stratum",
-        "geography",
-        "geography_type",
         "label",
         "x_axis",
         "y_axis",

@@ -2,7 +2,7 @@ from typing import List
 
 from rest_framework import serializers
 
-from metrics.api.serializers import help_texts
+from metrics.api.serializers import help_texts, plots
 
 FILE_FORMAT_CHOICES: List[str] = ["json", "csv"]
 
@@ -15,7 +15,7 @@ class DownloadsQuerySerializer(serializers.Serializer):
     )
 
 
-class DownloadPlotSerializer(serializers.Serializer):
+class DownloadPlotSerializer(plots.PlotSerializer):
     topic = serializers.CharField(
         required=False,
         help_text=help_texts.TOPIC_FIELD,
@@ -27,36 +27,6 @@ class DownloadPlotSerializer(serializers.Serializer):
         help_text=help_texts.METRIC_FIELD,
         allow_blank=True,
         default="",
-    )
-    stratum = serializers.CharField(
-        required=False,
-        help_text=help_texts.STRATUM_FIELD,
-        allow_blank=True,
-        default="",
-    )
-    geography = serializers.CharField(
-        required=False,
-        help_text=help_texts.GEOGRAPHY_FIELD,
-        allow_blank=True,
-        default="",
-    )
-    geography_type = serializers.CharField(
-        required=False,
-        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
-        allow_blank=True,
-        default="",
-    )
-    date_from = serializers.DateField(
-        help_text=help_texts.DATE_FROM_FIELD,
-        required=False,
-        default="",
-        allow_null=True,
-    )
-    date_to = serializers.DateField(
-        help_text=help_texts.DATE_TO_FIELD,
-        required=False,
-        default="",
-        allow_null=True,
     )
 
 

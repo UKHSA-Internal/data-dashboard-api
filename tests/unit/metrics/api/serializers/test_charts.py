@@ -44,9 +44,6 @@ def charts_plot_serializer_payload_and_model_managers() -> (
 
 class TestChartPlotSerializer:
     optional_field_names = [
-        "stratum",
-        "geography",
-        "geography_type",
         "label",
         "line_colour",
         "line_type",
