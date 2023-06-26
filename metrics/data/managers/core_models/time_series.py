@@ -231,7 +231,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             QuerySet: A queryset of the individual sex names
                 ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<CoreTimeSeriesQuerySet [('ALL',), ('F',), ('M',)]>`
+                    `<CoreTimeSeriesQuerySet ['ALL', 'F', 'M']>`
 
         """
         return self.values_list("sex", flat=True).distinct()
