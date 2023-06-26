@@ -14,6 +14,7 @@ class PlotParameters(BaseModel):
     stratum: Optional[str]
     geography: Optional[str]
     geography_type: Optional[str]
+    sex: Optional[str]
     date_from: Optional[str]
     date_to: Optional[str]
     label: Optional[str] = ""
@@ -83,6 +84,7 @@ class PlotParameters(BaseModel):
             "stratum_name": self.stratum_name or "",
             "geography_name": self.geography_name or "",
             "geography_type_name": self.geography_type_name or "",
+            "sex": self.sex or "",
             "date_from": self.date_from_value,
             "x_axis": self.x_axis_value,
             "y_axis": self.y_axis_value,

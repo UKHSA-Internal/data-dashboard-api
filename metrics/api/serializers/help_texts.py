@@ -11,6 +11,11 @@ GEOGRAPHY_TYPE_FIELD: str = """
 The type of geographical categorisation to apply any data filtering to.
 E.g. `Nation`
 """
+SEX_FIELD: str = """
+The gender to apply data filtering to.
+The only options available are `M`, `F` and `ALL`.
+By default, `ALL` will be applied to the underlying query.
+"""
 LABEL_FIELD: str = """
 The label to assign on the legend for this individual plot.
 E.g. `15 to 44 years old`

@@ -24,6 +24,7 @@ class TestPlotParameters:
         "stratum",
         "geography",
         "geography_type",
+        "sex",
         "date_from",
         "date_to",
         "label",
@@ -83,6 +84,7 @@ class TestPlotParameters:
         # Given
         geography = "London"
         geography_type = "Nation"
+        sex = "Female"
 
         date_from = "2022-10-01"
         label = "0 to 4 years old"
@@ -95,6 +97,7 @@ class TestPlotParameters:
         fake_chart_plot_parameters.label = label
         fake_chart_plot_parameters.line_colour = line_colour
         fake_chart_plot_parameters.line_type = line_type
+        fake_chart_plot_parameters.sex = sex
 
         # When
         dict_used_for_query: Dict[
@@ -108,6 +111,7 @@ class TestPlotParameters:
             "stratum_name": fake_chart_plot_parameters.stratum_name,
             "geography_name": fake_chart_plot_parameters.geography_name,
             "geography_type_name": fake_chart_plot_parameters.geography_type_name,
+            "sex": fake_chart_plot_parameters.sex,
             "date_from": fake_chart_plot_parameters.date_from_value,
             "x_axis": ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
             "y_axis": ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
