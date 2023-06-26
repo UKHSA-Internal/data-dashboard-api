@@ -57,8 +57,28 @@ When developing locally, the app will point to a local database:
 
 ---
 
-## Development flows
+## Application data
 
+To seed your environment with data, including CMS content and a snapshot of metrics data, 
+you can run the following command:
+
+```bash
+./boot.sh <API Key> <Admin Password>
+```
+
+Whereby, `API Key` should meet the following criteria:
+
+- Random first 8 alphanumeric characters
+- `.` character on the 9th character
+- Another random 32 alphanumeric characters
+
+```
+APIKey = <8 alphanumeric characters>.<32 alphanumeric characters>
+```
+
+---
+
+## Development flows
 
 ### Project dependencies
 
@@ -66,7 +86,7 @@ The project dependencies are seperated into usage:
 ```
 requirements.txt        # <- This imports the prod + dev dependencies. This includes all dependencies, regardless of usage.
 requirements-prod.txt   # <- These are the Production-only dependencies. This is ingested by the Dockerfile
-requirements-dev.txt    # <- These are the Dev dependencie-only. Includes testing/factory libraries
+requirements-dev.txt    # <- These are the Dev dependencies-only. Includes testing/factory libraries
 ```
 
 If you followed the instructions above in [Initial configuration](#initial-configuration) and ran `make setup-venv` then you will have installed
@@ -96,17 +116,28 @@ make all-tests
 ### Code quality checks
 
 You can run the standard formatting tooling over your code with the following command:
+
 ```bash
 make formatting
 ```
+
+Note that if you push code to the remote repository which does not conform to the styling enforced by this tooling, 
+that CI build will fail.
+
+In this case you will need to run `make formatting` and push the code changes to the remote repository.
+
+> In the future, this will be automated.
 
 ### Architectural constraints check
 
 We use the `import-linter` package to enforce architectural constraints across the codebase.
 You can check these by running the following command:
+
 ```bash
 make architecture
 ```
+
+Also note that this will also be enforced by virtue of the CI. 
 
 ---
 
@@ -163,5 +194,6 @@ To pass the API key to all requests made by swagger you will need to do the foll
 
 For more detailed technical documentation please refer to the `docs/` folder at the 
 root level of the project. 
+
 Here you can find design information on the project structure, architecture and the current data model.
 As well as more detailed standards and practices which must be adopted when developing in this codebase.

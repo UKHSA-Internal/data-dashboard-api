@@ -13,15 +13,16 @@ The purpose of this document is to provide the reader with a view of the followi
 ## System components
 
 This system comprises the following:
-- API to expose set of private and public-facing endpoints for metrics associated with disease incidence.
-- Content Management System (CMS) to serve content from on-technical users.
-- Relational database to store data associated with disease insights & text-based content for the site.
+- Private API for metrics associated with health threat incidence.
+- Public API to provide view of data associated with health threat information.
+- Content Management System (CMS) to provide the means of serving content to the dashboard.
+- Relational database to store data associated with health threat insights & text-based content for the site.
 
 ---
 
 ## Project structure
 
-This project is currently split with the metrics and CMS distinct from each other.
+This project is currently split with the metrics, CMS and public API distinct from each other.
 This structure has been designed with modularity in mind. 
 If in the future, a decision is made to move the CMS out and into its own codebase then that should be achievable.
 
@@ -37,6 +38,8 @@ The `metrics/` app takes a layered architectural approach:
 
 Whereby each layer can only reach down (but not upwards).
 This is enforced in this project with `import-linter`.
+
+The codebase itself is generally structured as follows:
 
 ```
 |- cms/
@@ -65,7 +68,7 @@ This is enforced in this project with `import-linter`.
     |- interfaces/ # Represents the interaction layer of the system. E.g. the API interacts with charts logic via the `interfaces/charts` module.
     
 |- public_api/ # This is the public facing unrestricted API, which provides programmatic access to the data.
-    |- __init__.py # Contains the public interface of the package. i.e. the fully constrcuted url patterns
+    |- __init__.py # Contains the public interface of the package. i.e. the fully constructed url patterns
     |- metrics_interface/ # Holds the class which bridges the public API -> metrics app
     |- serializers/ # All the serializers needed for the public API
     |- views/ # All the views needed for the public API

@@ -22,7 +22,7 @@ There are 4 main `wagtail` apps within the project.
 
 ## Data model
 
-The data model is split according to the wagtail apps and accordingly the page types.
+The data model is split according to the page types.
 There are currently 3 main page types:
 
 - `HomePage`
@@ -41,12 +41,31 @@ Note that the `title` field is inherited from the `wagtail` `Page` class.
 
 ---
 
+## Metrics interface
+
+Each section of this codebase is designed so that it communicates across explicitly defined boundaries.
+In other words, if code which lives in the `cms/` directory wants to import things from `metrics/`, 
+then it **must** do so via the `MetricsAPIInterface` class.
+
+Note that these boundaries are enforced by the `importlinter` tool which will cause the architectural constraints CI 
+build to break, if the rules are violated i.e. if communication occurs outside the defined boundaries.
+
+---
+
 ## Integration with the frontend
 
 The CMS operates in headless-mode, exposing the text content in the form of a REST API.
 The frontend application integrates with the CMS via this REST API.
 
-As such, the responsibility is entirely on the frontend to render the content passed to it by the CMS.
+This API is provided out of the box by wagtail. 
+This in the form of a viewset -> `cms/dashboard/viewsets.py`.
+Note that the `PagesAPIViewSet` class has been extended to place an API key in front of the CMS endpoints.
+
+This API provides the frontend with all the neccessary parameters required for subsequent calls to the private API.
+Note that it is the private API (`charts`, `headlines`, `trends`) which provides the actual page content.
+
+Consider the response returned by the CMS API to be a cookbook of recipes of content items which the content creator
+wants to be shown on each page.
 
 ---
 
@@ -87,7 +106,3 @@ As such, when the CMS user hits the `Live` button for a page, only a rudimentary
 In the future, the CMS can potentially be 
 [configured to point to the frontend URL ](https://github.com/torchbox/wagtail-headless-preview)
 and effectively ask it for a rendered view.
-
----
-
-## Current limitations

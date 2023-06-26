@@ -22,7 +22,6 @@ Please select the options that are relevant.
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] I have added unit and integration tests at the right level to prove my change is effective
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] I have added screenshots or screen grabs where appropriate to demonstrate e2e testing
+- [ ] I have added screenshots or screen grabs where appropriate
 - [ ] I have added docstrings in the correct style [(google)](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
 
