@@ -14,31 +14,35 @@ Note that to use the `Makefile` you will need
 
 There are a number of steps to take before getting the environment setup for local development.
 
-1. Ensure you have the `APIENV` environment variable set to `LOCAL`. 
+1. Ensure that you have [Python version 3.11](https://www.python.org/downloads/) installed on your system.
+
+2. Set the `APIENV` environment variable set to `LOCAL`. 
 ```bash
 export APIENV=LOCAL
 ```
 To do this, you should include this line in an `.env` file at the root level of the project.
 This will ensure that the Django `DEBUG` setting is set to True and the app will use a local sqlite database.
 
-2. Set up the virtual environment and install the project dependencies via:
+3. Set up the virtual environment and install the project dependencies via:
 ```bash
 make setup-venv
 ```
 
-3. Apply the database migrations, ensure Django collects static files and run the server.
+Note that this step requires a Python 3.11 version to be installed on your system.
+
+4. Apply the database migrations, ensure Django collects static files and run the server.
 ```bash
 make run-server
 ```
 This will run the server locally on port 8000 - http://localhost:8000/
 
-4. Create a local superuser by activating the virtual environment and following the prompts:
+5. Create a local superuser by activating the virtual environment and following the prompts:
 ```bash
 source venv/bin/activate
 ./manage.py createsuperuser
 ```
 
-5. Sign in to the admin panel at `/admin/` and add an API key. 
+6. Sign in to the admin panel at `/admin/` and add an API key. 
 **Make sure you note it down** as it won't be displayed in full again. 
 You will need this key to be able to use the API later.
 If you did not note of the generated key, you can simply create another and use that instead.
