@@ -68,9 +68,13 @@ you can run the following command:
 
 Whereby, `API Key` should meet the following criteria:
 
-- Random first 8 characters
+- Random first 8 alphanumeric characters
 - `.` character on the 9th character
-- Another random 32 characters
+- Another random 32 alphanumeric characters
+
+```
+APIKey = <8 alphanumeric characters>.<32 alphanumeric characters>
+```
 
 ---
 
