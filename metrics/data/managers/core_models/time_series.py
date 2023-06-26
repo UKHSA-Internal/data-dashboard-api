@@ -93,7 +93,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def _filter_by_stratum(queryset, stratum_name):
         return queryset.filter(stratum__name=stratum_name)
 
-    def filter_for_dates_and_values(
+    @staticmethod
+    def _filter_by_sex(queryset, sex):
+        return queryset.filter(sex=sex)
+
+    def filter_for_x_and_y_values(
         self,
         x_axis: str,
         y_axis: str,
@@ -103,13 +107,16 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
+        sex: Optional[str] = None,
     ) -> models.QuerySet:
-        """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
+        """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
         Args:
-            x_axis: The field to display along the x-axis
+            x_axis: The field to display along the x-axis.
+                In this case, this will be the first item of each 2-item object
                 E.g. `date` or `stratum`
             y_axis: The field to display along the y-axis
+                In this case, this will be the second item of each 2-item object
                 E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
@@ -124,6 +131,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 E.g. `Nation`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -152,6 +162,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             )
 
         if stratum_name:
+            queryset = self._filter_by_stratum(
+                queryset=queryset, stratum_name=stratum_name
+            )
+
+        if sex:
             queryset = self._filter_by_stratum(
                 queryset=queryset, stratum_name=stratum_name
             )
@@ -320,7 +335,7 @@ class CoreTimeSeriesManager(models.Manager):
             date_from=date_from,
         )
 
-    def filter_for_dates_and_values(
+    def filter_for_x_and_y_values(
         self,
         x_axis: str,
         y_axis: str,
@@ -330,13 +345,16 @@ class CoreTimeSeriesManager(models.Manager):
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
+        sex: Optional[str] = None,
     ) -> CoreTimeSeriesQuerySet:
-        """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
+        """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
         Args:
-            x_axis: The field to display along the x-axis
+            x_axis: The field to display along the x-axis.
+                In this case, this will be the first item of each 2-item object
                 E.g. `date` or `stratum`
             y_axis: The field to display along the y-axis
+                In this case, this will be the second item of each 2-item object
                 E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
@@ -351,6 +369,9 @@ class CoreTimeSeriesManager(models.Manager):
                 E.g. `Nation`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -362,7 +383,7 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-        return self.get_queryset().filter_for_dates_and_values(
+        return self.get_queryset().filter_for_x_and_y_values(
             x_axis=x_axis,
             y_axis=y_axis,
             topic_name=topic_name,
@@ -371,6 +392,7 @@ class CoreTimeSeriesManager(models.Manager):
             geography_name=geography_name,
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
+            sex=sex,
         )
 
     def get_count(

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from metrics.public_api.views import (
+from public_api.views import (
     GeographyDetailView,
     GeographyListView,
     GeographyTypeDetailView,
@@ -14,7 +14,7 @@ from metrics.public_api.views import (
     TopicDetailView,
     TopicListView,
 )
-from metrics.public_api.views.timeseries_viewset import APITimeSeriesViewSet
+from public_api.views.timeseries_viewset import APITimeSeriesViewSet
 
 PUBLIC_API_PREFIX = "api/public/timeseries/"
 

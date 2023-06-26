@@ -48,6 +48,9 @@ class CommonPage(Page):
         APIField("body"),
         APIField("last_published_at"),
         APIField("related_links"),
+        APIField("seo_title"),
+        APIField("search_description"),
+        APIField("related_links"),
     ]
 
     # Tabs to position at the top of the view
@@ -58,6 +61,10 @@ class CommonPage(Page):
             ObjectList(Page.promote_panels, heading="Promote"),
         ]
     )
+
+    def is_previewable(self) -> bool:
+        """Returns False. Since this is a headless CMS the preview panel is not supported"""
+        return False
 
 
 class CommonPageRelatedLink(Orderable):

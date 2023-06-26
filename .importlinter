@@ -2,6 +2,7 @@
 root_packages =
     cms
     metrics
+    public_api
     tests
 include_external_packages=True
 
@@ -39,7 +40,7 @@ modules=
 name = The Public API only depends on the `APITimeSeries` model & corresponding components via the designated interface
 type = forbidden
 source_modules=
-    metrics.public_api
+    public_api
 forbidden_modules=
     metrics.api
     metrics.data
@@ -47,7 +48,7 @@ forbidden_modules=
     metrics.interfaces
     cms
 ignore_imports=
-    metrics.public_api.metrics_interface.interface -> metrics.data.models.api_models
+    public_api.metrics_interface.interface -> metrics.data.models.api_models
 
 [importlinter:contract:Public API is only used for wiring of URLs]
 name = The Public API module is only imported for the wiring of URLs
@@ -61,7 +62,7 @@ source_modules=
 forbidden_modules=
     metrics.public_api
 ignore_imports=
-    metrics.api.urls_construction -> metrics.public_api.urls
+    metrics.api.urls_construction -> public_api
 
 #------------------------------------- Metrics Domain library contracts -------------------------------------
 

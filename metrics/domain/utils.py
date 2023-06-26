@@ -39,7 +39,7 @@ class ChartAxisFields(Enum):
 
     @classmethod
     def choices(cls):
-        return tuple((field_name.value, field_name.name) for field_name in cls)
+        return tuple((field_name.name, field_name.name) for field_name in cls)
 
     @classmethod
     def values(cls):
@@ -47,6 +47,28 @@ class ChartAxisFields(Enum):
 
     def __str__(self):
         return str(self.value)
+
+    @classmethod
+    def get_default_x_axis(cls):
+        return cls.date
+
+    @classmethod
+    def get_x_axis_value(cls, name: str) -> str:
+        try:
+            return cls[name].value
+        except KeyError:
+            return cls.get_default_x_axis().value
+
+    @classmethod
+    def get_default_y_axis(cls):
+        return cls.metric
+
+    @classmethod
+    def get_y_axis_value(cls, name: str) -> str:
+        try:
+            return cls[name].value
+        except KeyError:
+            return cls.get_default_y_axis().value
 
 
 def get_axis_name(field_name: str):
@@ -66,5 +88,5 @@ def get_axis_name(field_name: str):
     )
 
 
-DEFAULT_X_AXIS = ChartAxisFields.date.value
-DEFAULT_Y_AXIS = ChartAxisFields.metric.value
+DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
+DEFAULT_Y_AXIS = ChartAxisFields.get_default_y_axis().name

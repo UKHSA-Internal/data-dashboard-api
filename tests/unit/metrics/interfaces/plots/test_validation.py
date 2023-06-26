@@ -185,8 +185,8 @@ class TestDoesMetricHaveMultipleRecords:
 
         # Then
         spy_core_time_series_manager.get_count.assert_called_once_with(
-            x_axis=valid_plot_parameters.x_axis,
-            y_axis=valid_plot_parameters.y_axis,
+            x_axis=valid_plot_parameters.x_axis_value,
+            y_axis=valid_plot_parameters.y_axis_value,
             topic_name=valid_plot_parameters.topic_name,
             metric_name=valid_plot_parameters.metric_name,
             date_from=valid_plot_parameters.date_from_value,

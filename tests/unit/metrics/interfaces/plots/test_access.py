@@ -5,9 +5,11 @@ from unittest import mock
 import pytest
 
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
+    get_x_and_y_values,
     sort_by_stratum,
     unzip_values,
 )
@@ -176,99 +178,45 @@ class TestPlotsInterface:
         )
 
     @mock.patch.object(PlotsInterface, "get_timeseries_for_plot_parameters")
-    @mock.patch(f"{MODULE_PATH}.sort_by_stratum")
-    def test_build_plot_data_from_parameters_calls_sort_by_stratum(
+    @mock.patch(f"{MODULE_PATH}.get_x_and_y_values")
+    def test_build_plot_data_from_parameters_calls_get_x_and_y_values(
         self,
-        spy_sort_by_stratum: mock.MagicMock,
+        spy_get_x_and_y_values: mock.MagicMock,
         mocked_get_timeseries_for_plot_parameters: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
-        Given a `PlotParameters` model requesting a plot for existing `CoreTimeSeries`
-        When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
-        And the x_axis is `stratum__name`
-        Then `sort_by_stratum` is called
+        Given a set of `ChartParameters` and fake X and Y axis values
+        When `build_plot_data_from_parameters()` is called from an instance of `PlotsInterface`
+        Then the call is delegated to `get_x_and_y_values()` to fetch the values
+        And those values are set on the `x_axis` and `y_axis` on returned model
         """
         # Given
-        fake_plots_collection = PlotsCollection(
-            plots=[fake_chart_plot_parameters],
-            file_format="png",
-            chart_width=123,
-            chart_height=456,
-        )
-        fake_core_time_series_for_plot: List[
-            FakeCoreTimeSeries
-        ] = self._setup_fake_time_series_for_plot(
-            plot_parameters=fake_chart_plot_parameters
-        )
-        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
-            time_series=fake_core_time_series_for_plot
-        )
-
+        fake_x_axis_values = [1, 2, 3]
+        fake_y_axis_values = ["a", "b", "c"]
+        spy_get_x_and_y_values.return_value = fake_x_axis_values, fake_y_axis_values
         plots_interface = PlotsInterface(
-            plots_collection=fake_plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            plots_collection=mock.Mock(),
+            core_time_series_manager=mock.Mock(),
         )
-        # Change the x_axis to be `stratum__name`
-        fake_chart_plot_parameters.x_axis = "stratum__name"
-        spy_sort_by_stratum.return_value = ("x_values", "y_values")
 
         # When
-        plots_interface.build_plot_data_from_parameters(
-            plot_parameters=fake_chart_plot_parameters
+        plot_data_from_parameters: PlotsData = (
+            plots_interface.build_plot_data_from_parameters(
+                plot_parameters=fake_chart_plot_parameters
+            )
         )
 
         # Then
-        spy_sort_by_stratum.assert_called_once_with(
-            queryset=mocked_get_timeseries_for_plot_parameters.return_value
+        spy_get_x_and_y_values.assert_called_once_with(
+            plot_parameters=fake_chart_plot_parameters,
+            queryset=mocked_get_timeseries_for_plot_parameters.return_value,
         )
 
-    @mock.patch.object(PlotsInterface, "get_timeseries_for_plot_parameters")
-    @mock.patch(f"{MODULE_PATH}.unzip_values")
-    def test_build_plot_data_from_parameters_calls_unzip_values(
-        self,
-        spy_unzip_values: mock.MagicMock,
-        mocked_get_timeseries_for_plot_parameters: mock.MagicMock,
-        fake_chart_plot_parameters: PlotParameters,
-    ):
-        """
-        Given a `PlotParameters` model requesting a plot for existing `CoreTimeSeries`
-        When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
-        And the x_axis is something other than `stratum__name`
-        Then `sort_by_stratum` is called
-        """
-        # Given
-        fake_plots_collection = PlotsCollection(
-            plots=[fake_chart_plot_parameters],
-            file_format="png",
-            chart_width=123,
-            chart_height=456,
-        )
-        fake_core_time_series_for_plot: List[
-            FakeCoreTimeSeries
-        ] = self._setup_fake_time_series_for_plot(
-            plot_parameters=fake_chart_plot_parameters
-        )
-        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
-            time_series=fake_core_time_series_for_plot
-        )
-
-        plots_interface = PlotsInterface(
-            plots_collection=fake_plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
-        )
-
-        spy_unzip_values.return_value = ("x_values", "y_values")
-
-        # When
-        plots_interface.build_plot_data_from_parameters(
-            plot_parameters=fake_chart_plot_parameters
-        )
-
-        # Then
-        spy_unzip_values.assert_called_once_with(
-            values=mocked_get_timeseries_for_plot_parameters.return_value
-        )
+        # Check that the enriched `PlotsData` model has been set
+        # with the correct values via the `get_x_any_y_values` function
+        assert plot_data_from_parameters.x_axis_values == fake_x_axis_values
+        assert plot_data_from_parameters.y_axis_values == fake_y_axis_values
 
     def test_build_plot_data_from_parameters_raises_error_when_no_data_found(
         self, fake_chart_plot_parameters: PlotParameters
@@ -314,6 +262,7 @@ class TestPlotsInterface:
         mocked_geography = mock.Mock()
         mocked_geography_type = mock.Mock()
         mocked_stratum = mock.Mock()
+        mocked_sex = mock.Mock()
 
         plots_interface = PlotsInterface(
             plots_collection=mock.MagicMock(),
@@ -330,14 +279,15 @@ class TestPlotsInterface:
             geography_name=mocked_geography,
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,
+            sex=mocked_sex,
         )
 
         # Then
         assert (
             timeseries
-            == spy_core_time_series_manager.filter_for_dates_and_values.return_value
+            == spy_core_time_series_manager.filter_for_x_and_y_values.return_value
         )
-        spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
+        spy_core_time_series_manager.filter_for_x_and_y_values.assert_called_once_with(
             x_axis=mocked_x_axis,
             y_axis=mocked_y_axis,
             topic_name=mocked_topic,
@@ -346,6 +296,7 @@ class TestPlotsInterface:
             geography_name=mocked_geography,
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,
+            sex=mocked_sex,
         )
 
     @mock.patch.object(PlotsInterface, "get_timeseries")
@@ -382,6 +333,65 @@ class TestPlotsInterface:
         mocked_get_timeseries.assert_called_once_with(
             **fake_chart_plot_parameters.to_dict_for_query(),
         )
+
+
+class TestGetXAndYValues:
+    @mock.patch(f"{MODULE_PATH}.sort_by_stratum")
+    def test_can_delegate_call_to_sort_by_stratum(
+        self,
+        spy_sort_by_stratum: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a `PlotParameters` model which requests `stratum` along the X-axis
+        When `get_x_and_y_values()` is called
+        Then the call is delegated to `sort_by_stratum()`
+        """
+        # Given
+        fake_chart_plot_parameters.x_axis = ChartAxisFields.stratum.name
+        mocked_queryset = mock.Mock()
+
+        # When
+        x_and_y_values = get_x_and_y_values(
+            plot_parameters=fake_chart_plot_parameters, queryset=mocked_queryset
+        )
+
+        # Then
+        assert x_and_y_values == spy_sort_by_stratum.return_value
+        spy_sort_by_stratum.assert_called_once_with(queryset=mocked_queryset)
+
+    @pytest.mark.parametrize(
+        "x_axis",
+        [
+            ChartAxisFields.date.name,
+            ChartAxisFields.metric.name,
+            ChartAxisFields.geography.name,
+        ],
+    )
+    @mock.patch(f"{MODULE_PATH}.unzip_values")
+    def test_delegates_call_to_unzip_values(
+        self,
+        spy_unzip_values: mock.MagicMock,
+        x_axis: str,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a `PlotParameters` model which does not request `stratum` along the X-axis
+        When `get_x_and_y_values()` is called
+        Then the call is delegated to `unzip_values()`
+        """
+        # Given
+        mocked_queryset = mock.Mock()
+        fake_chart_plot_parameters.x_axis = x_axis
+
+        # When
+        x_and_y_values = get_x_and_y_values(
+            plot_parameters=fake_chart_plot_parameters, queryset=mocked_queryset
+        )
+
+        # Then
+        assert x_and_y_values == spy_unzip_values.return_value
+        spy_unzip_values.assert_called_once_with(values=mocked_queryset)
 
 
 class TestSortByStratum:

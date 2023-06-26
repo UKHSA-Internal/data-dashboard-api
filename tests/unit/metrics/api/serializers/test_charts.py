@@ -294,8 +294,8 @@ class TestChartPlotSerializer:
             metric_manager,
             topic_manager,
         ) = charts_plot_serializer_payload_and_model_managers
-        x_axis = "dt"
-        y_axis = "metric_value"
+        x_axis = "date"
+        y_axis = "metric"
 
         valid_data_payload["x_axis"] = x_axis
         valid_data_payload["y_axis"] = y_axis

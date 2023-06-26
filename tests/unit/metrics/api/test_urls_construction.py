@@ -3,7 +3,7 @@ from typing import List
 import pytest
 
 from metrics.api.urls_construction import construct_urlpatterns
-from metrics.public_api.urls import PUBLIC_API_PREFIX
+from public_api.urls import PUBLIC_API_PREFIX
 
 
 class TestConstructUrlpatterns:

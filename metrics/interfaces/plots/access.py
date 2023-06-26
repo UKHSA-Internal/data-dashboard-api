@@ -5,6 +5,7 @@ from django.db.models import Manager, QuerySet
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.utils import ChartAxisFields
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -52,6 +53,7 @@ class PlotsInterface:
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
+        sex: Optional[str] = None,
     ):
         """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
 
@@ -60,6 +62,7 @@ class PlotsInterface:
              - `geography_name`
              - `geography_type_name`
              - `stratum_name`
+             - `sex`
 
         Args:
             x_axis: The field to display along the x-axis
@@ -79,6 +82,9 @@ class PlotsInterface:
                 E.g. `Nation`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
@@ -90,7 +96,7 @@ class PlotsInterface:
                     ]>`
 
         """
-        return self.core_time_series_manager.filter_for_dates_and_values(
+        return self.core_time_series_manager.filter_for_x_and_y_values(
             x_axis=x_axis,
             y_axis=y_axis,
             topic_name=topic_name,
@@ -99,6 +105,7 @@ class PlotsInterface:
             geography_name=geography_name,
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
+            sex=sex,
         )
 
     def build_plot_data_from_parameters(
@@ -125,14 +132,9 @@ class PlotsInterface:
         )
 
         try:
-            # Stratum needs special treatment because a regular sort does not yield the required result
-            if plot_parameters.x_axis == "stratum__name":
-                x_axis_values, y_axis_values = sort_by_stratum(
-                    queryset=timeseries_queryset
-                )
-
-            else:
-                x_axis_values, y_axis_values = unzip_values(values=timeseries_queryset)
+            x_axis_values, y_axis_values = get_x_and_y_values(
+                plot_parameters=plot_parameters, queryset=timeseries_queryset
+            )
         except ValueError as error:
             raise DataNotFoundError from error
 
@@ -170,6 +172,27 @@ class PlotsInterface:
             plots_data.append(plot_data)
 
         return plots_data
+
+
+def get_x_and_y_values(
+    plot_parameters: PlotParameters, queryset: QuerySet
+) -> Tuple[List, List]:
+    """Gets the X and Y values for a given `queryset` based on the `plot_parameters`
+
+    Args:
+        plot_parameters: A `PlotParameters` model containing
+            the requested info
+        queryset:
+
+    Returns:
+
+    """
+
+    # Stratum needs special treatment because a regular sort does not yield the required result
+    if plot_parameters.x_axis == ChartAxisFields.stratum.name:
+        return sort_by_stratum(queryset=queryset)
+
+    return unzip_values(values=queryset)
 
 
 def sort_by_stratum(queryset: QuerySet) -> Tuple[List, List]:

@@ -58,10 +58,12 @@ class TestTemplateCoronavirusPage:
         Then the correct chart card is in place
         """
         # Given
-        template_home_page = FakeTopicPageFactory.build_coronavirus_page_from_template()
+        template_coronavirus_page = (
+            FakeTopicPageFactory.build_coronavirus_page_from_template()
+        )
 
         # When
-        body = template_home_page.body
+        body = template_coronavirus_page.body
 
         # Then
         cases_section = body[0]
@@ -83,6 +85,23 @@ class TestTemplateCoronavirusPage:
         assert chart_plot_value["topic"] == self.covid_19
         assert chart_plot_value["metric"] == "new_cases_daily"
         assert chart_plot_value["chart_type"] == ChartTypes.bar.value
+
+    def test_is_previewable_returns_false(self):
+        """
+        Given a `TopicPage` created with a template for the `coronavirus` page
+        When `is_previewable()` is called
+        Then False is returned
+        """
+        # Given
+        template_covid_topic_page = (
+            FakeTopicPageFactory.build_coronavirus_page_from_template()
+        )
+
+        # When
+        page_is_previewable: bool = template_covid_topic_page.is_previewable()
+
+        # Then
+        assert not page_is_previewable
 
 
 class TestTemplateOtherRespiratoryVirusesPage:

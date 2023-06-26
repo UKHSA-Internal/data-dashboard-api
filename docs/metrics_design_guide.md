@@ -1,4 +1,4 @@
-# Metrics API Rolling Design Guide
+# Metrics API Design Guide
 
 ## Introduction
 
@@ -12,14 +12,11 @@ and [Django Rest Framework](https://www.django-rest-framework.org/).
 ## Data ingestion
 
 There is currently no active/automated data ingestion mechanism.
-In the future, a drop-off point will need to be agreed with the Data team.
-E.g. an AWS s3 bucket location from which the `.csv` metrics data files can be ingested.
+As of June 2023, there is an ingestion point in the form of an AWS s3 bucket.
+Note that this has not been completely wired up yet.
 
 Currently, the `PUT upload/` endpoint is being used to load metrics data into the app.
-> This endpoint **should not be used in production** and should be removed before Beta private release.
-
-If the data ingestion cannot be integrated with in time for the Beta release, 
-then as a minimum it should be moved to a management command.
+> This endpoint **should not be used in production** and should be removed before Beta release.
 
 ---
 
@@ -30,21 +27,16 @@ A significant portion of the data is redundant and replicated across rows.
 
 The data model has been designed as 2 distinct sub-systems:
 
-1. API models. This sub-system represents the flattened version of the data. No foreign keys are to be found.
+1. API models. This sub-system represents the **flattened version of the data**. No foreign keys are to be found.
 And the raw data is effectively loaded in to a single flat table. 
 As a result, one should expect to find a large amount of replicated values.
-2. Core models. This sub-system represents the normalized version of the data. 
-There are a series of foreign key relationships. Although this greatly reduced the amount of data needed to be stored.
+2. Core models. This sub-system represents the **normalized version of the data**. 
+There are a series of foreign key relationships. 
+Although this greatly reduced the amount of data needed to be stored.
 It does mean that querying the core models will incur penalties from joins depending on the query being performed.
 
 Note that at the point of data ingestion,
 both the **Core models** and **API models** are populated
-
----
-
-## Integration with the frontend
-
-The frontend application fetches metrics via the REST API in this app.
 
 ---
 
@@ -63,9 +55,10 @@ This includes:
 - Waffle charts
 - Bar charts
 
-As of April 2023, the following charts can be generated from this project:
+As of June 2023, the following charts can be generated from this project:
 
 - Line graphs (with shaded region)
+- Line graphs with customizable colour and type (dash/solid)
 - Simple line graphs 
 - Waffle charts
 - Bar charts
@@ -74,11 +67,10 @@ As of April 2023, the following charts can be generated from this project:
 
 ## Current limitations
 
-### Outdated data file
+### Chart API
 
-A new daily metrics data file was received on 29th March 2023. 
-
-The team will need to agree a consistent schema with the data team regarding the contents of the file.
+Currently multiple plots can be applied for either bar charts or line charts.
+Multiple type of different plots cannot be applied on the same chart.
 
 ### Data ingestion
 

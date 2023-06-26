@@ -3,7 +3,7 @@ from typing import Dict, List
 
 from rest_framework.serializers import Serializer
 
-from metrics.public_api.metrics_interface.interface import MetricsPublicAPIInterface
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
 
 @dataclass

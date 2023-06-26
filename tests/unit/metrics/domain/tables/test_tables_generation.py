@@ -235,14 +235,14 @@ class TestCombineListOfPlots:
             x_axis_values=X_AXIS_STRATUM,
             y_axis_values=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
-            x_axis="stratum__name",
+            x_axis="stratum",
         )
 
         second_chart_plots_data = _create_plot_data(
             x_axis_values=X_AXIS_STRATUM,
             y_axis_values=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,
-            x_axis="stratum__name",
+            x_axis="stratum",
         )
 
         expected_combined_plots = {

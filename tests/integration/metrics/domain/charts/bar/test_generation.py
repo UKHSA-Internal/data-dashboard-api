@@ -1,41 +1,50 @@
 import datetime
-from typing import List
+from unittest import mock
 
 import plotly.graph_objects
+import pytest
 
 from metrics.domain.charts.bar.generation import generate_chart_figure
-from metrics.domain.charts.colour_scheme import RGBAColours
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 
-DATES: List[datetime.datetime] = [
-    datetime.date(2022, 9, 5),
-    datetime.date(2022, 10, 10),
-    datetime.date(2022, 11, 14),
-    datetime.date(2022, 12, 12),
-    datetime.date(2023, 1, 9),
-]
-VALUES: List[int] = [1, 2, 3, 4, 5, 6]
 HEIGHT = 300
 WIDTH = 400
 
 
+@pytest.fixture
+def mocked_plot_data() -> mock.Mock:
+    dates = [
+        datetime.date(2022, 9, 5),
+        datetime.date(2022, 10, 10),
+        datetime.date(2022, 11, 14),
+        datetime.date(2022, 12, 12),
+        datetime.date(2023, 1, 9),
+    ]
+    values = [i + 1 for i in range(len(dates))]
+
+    parameters = mock.Mock(label="Plot1")
+    return mock.Mock(
+        x_axis_values=dates,
+        y_axis_values=values,
+        parameters=parameters,
+    )
+
+
 class TestBarCharts:
-    def test_main_layout(self):
+    def test_main_layout(self, mocked_plot_data: mock.Mock):
         """
         Given a list of dates and values for data points
         When `generate_chart_figure()` is called from the `bar` module
         Then the figure is drawn with the expected parameters
         """
         # Given
-        x_axis_values = DATES
-        y_axis_values = VALUES
+        chart_plots_data = [mocked_plot_data]
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            x_axis_values=x_axis_values,
-            y_axis_values=y_axis_values,
-            legend="Plot 1",
+            chart_plots_data=chart_plots_data,
         )
 
         # Then
@@ -53,24 +62,20 @@ class TestBarCharts:
         assert main_layout.margin.l == 15
         assert main_layout.margin.r == 15
 
-    def test_main_bar_plot(self):
+    def test_main_bar_plot(self, mocked_plot_data: mock.Mock):
         """
         Given a list of dates & values
         When `generate_chart_figure()` is called from the `bar` module
         Then the figure is drawn with the expected parameters for the main plot
         """
         # Given
-        x_axis_values = DATES
-        y_axis_values = VALUES
-        legend = "Plot 1"
+        chart_plots_data = [mocked_plot_data]
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            x_axis_values=x_axis_values,
-            y_axis_values=y_axis_values,
-            legend=legend,
+            chart_plots_data=chart_plots_data,
         )
 
         # Then
@@ -83,18 +88,16 @@ class TestBarCharts:
         assert type(main_bar_plot) == plotly.graph_objects.Bar
 
         # Check x & y values were correctly assigned
-        assert main_bar_plot.x == tuple(x_axis_values)
-        assert main_bar_plot.y == tuple(y_axis_values)
+        assert main_bar_plot.x == tuple(mocked_plot_data.x_axis_values)
+        assert main_bar_plot.y == tuple(mocked_plot_data.y_axis_values)
 
         # Bars should be Blue
-        assert main_bar_plot.marker.color == RGBAColours.BAR_PLOT_1_BLUE.stringified
-        assert (
-            main_bar_plot.marker.line.color == RGBAColours.BAR_PLOT_1_BLUE.stringified
-        )
+        assert main_bar_plot.marker.color == RGBAChartLineColours.BLUE.stringified
+        assert main_bar_plot.marker.line.color == RGBAChartLineColours.BLUE.stringified
         assert main_bar_plot.marker.line.width == 1
 
         # Legend is assigned
-        assert main_bar_plot.name == legend
+        assert main_bar_plot.name == mocked_plot_data.parameters.label
 
         # ---X Axis checks---
         x_axis = figure.layout.xaxis
@@ -121,7 +124,7 @@ class TestBarCharts:
         assert not y_axis.showgrid
         assert y_axis.showticklabels
 
-    def test_x_axis_type_is_not_date(self):
+    def test_x_axis_type_is_not_date(self, mocked_plot_data: mock.Mock):
         """
         Given a list of x and y values where x values are NOT dates
         When `generate_chart_figure()` is called from the `bar` module
@@ -129,16 +132,14 @@ class TestBarCharts:
         """
         # Given
         x_axis_values = ["0-4", "5-8", "9-29"]
-        y_axis_values = VALUES
-        legend = "Plot 1"
+        mocked_plot_data.x_axis_values = x_axis_values
+        chart_plots_data = [mocked_plot_data]
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            x_axis_values=x_axis_values,
-            y_axis_values=y_axis_values,
-            legend=legend,
+            chart_plots_data=chart_plots_data,
         )
 
         # Then
@@ -150,8 +151,8 @@ class TestBarCharts:
         x_axis = figure.layout.xaxis
 
         # The `M1` dtick setting is only valid for dates
-        assert x_axis.dtick == None
+        assert x_axis.dtick is None
 
         # The x-axis type and ticks should be the default
         assert x_axis.type == "-"
-        assert x_axis.tickformat == None
+        assert x_axis.tickformat is None
