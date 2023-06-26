@@ -658,7 +658,7 @@ class TestMiscMethods:
         assert type(encoded_figure) is str
 
     @mock.patch("scour.scour.scourString")
-    def test_non_svg_is_returned_asis(self, mock_scourstring):
+    def test_non_svg_is_returned_asis(self, mocked_scourstring: mock.MagicMock):
         """
         Given a Plotly Figure
         When `create_image_and_optimize_it()` is called from an instance of the `ChartsInterface`
@@ -686,10 +686,10 @@ class TestMiscMethods:
 
         # Then
         assert figure_image == figure.to_image(format=file_format)
-        mock_scourstring.assert_not_called()
+        mocked_scourstring.assert_not_called()
 
     @mock.patch("scour.scour.scourString")
-    def test_scour_is_called(self, mock_scourstring):
+    def test_scour_is_called(self, mocked_scourstring: mock.MagicMock):
         """
         Given a Plotly Figure
         When `create_image_and_optimize_it()` is called from an instance of the `ChartsInterface`
@@ -716,5 +716,5 @@ class TestMiscMethods:
         figure_image = charts_interface.create_image_and_optimize_it(figure)
 
         # Then
-        mock_scourstring.assert_called_once()
-        assert mock_scourstring.return_value == figure_image
+        mocked_scourstring.assert_called_once()
+        assert mocked_scourstring.return_value == figure_image
