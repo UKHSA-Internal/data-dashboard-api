@@ -157,7 +157,7 @@ class MetricsAPIInterface:
 
     def get_all_stratum_names(self) -> QuerySet:
         """Gets all available stratum names as a flat list queryset.
-        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+        Note this is achieved by delegating the call to the `StratumManager` from the Metrics API
 
         Returns:
             QuerySet: A queryset of the individual stratum names:
@@ -169,7 +169,7 @@ class MetricsAPIInterface:
 
     def get_all_geography_names(self) -> QuerySet:
         """Gets all unique geography names as a flat list queryset.
-        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+        Note this is achieved by delegating the call to the `GeographyManager` from the Metrics API
 
         Returns:
             QuerySet: A queryset of the individual geography names:
@@ -180,7 +180,7 @@ class MetricsAPIInterface:
 
     def get_all_geography_type_names(self) -> QuerySet:
         """Gets all available geography_type names as a flat list queryset.
-        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+        Note this is achieved by delegating the call to the `GeographyTypeManager` from the Metrics API
 
         Returns:
             QuerySet: A queryset of the individual geography_type names:
