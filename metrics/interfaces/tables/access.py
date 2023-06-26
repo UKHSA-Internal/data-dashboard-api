@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.models import PlotsCollection, PlotsData
+from metrics.domain.models import PlotsCollection, PlotData
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.interfaces.tables.validation import validate_each_requested_table_plot

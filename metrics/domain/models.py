@@ -96,7 +96,7 @@ class PlotsCollection(BaseModel):
     chart_height: int
 
 
-class PlotsData(BaseModel):
+class PlotData(BaseModel):
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any

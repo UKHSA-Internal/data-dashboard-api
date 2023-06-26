@@ -5,20 +5,20 @@ import pytest
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings, get_new_max_date
-from metrics.domain.models import PlotParameters, PlotsData
+from metrics.domain.models import PlotParameters, PlotData
 
 MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 
 
 @pytest.fixture
-def fake_chart_plots_data() -> PlotsData:
+def fake_chart_plots_data() -> PlotData:
     plot_params = PlotParameters(
         chart_type="line_multi_coloured",
         topic="COVID-19",
         metric="new_cases_daily",
     )
     x_values = [1, 2, 4, 5, 5, 2, 1]
-    return PlotsData(
+    return PlotData(
         parameters=plot_params,
         x_axis_values=[1, 2, 4, 5, 5, 2, 1],
         y_axis_values=[
@@ -28,7 +28,7 @@ def fake_chart_plots_data() -> PlotsData:
 
 
 @pytest.fixture()
-def fake_chart_settings(fake_chart_plots_data: PlotsData) -> ChartSettings:
+def fake_chart_settings(fake_chart_plots_data: PlotData) -> ChartSettings:
     return ChartSettings(
         width=930,
         height=220,
@@ -162,7 +162,7 @@ class TestChartSettings:
         }
         assert simple_line_chart_config == expected_line_chart_config
 
-    def test_chart_settings_width(self, fake_chart_plots_data: PlotsData):
+    def test_chart_settings_width(self, fake_chart_plots_data: PlotData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -182,7 +182,7 @@ class TestChartSettings:
         # Then
         assert chart_width == width
 
-    def test_chart_settings_height(self, fake_chart_plots_data: PlotsData):
+    def test_chart_settings_height(self, fake_chart_plots_data: PlotData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -200,7 +200,7 @@ class TestChartSettings:
         # Then
         assert chart_height == height
 
-    def test_waffle_chart_config(self, fake_chart_plots_data: PlotsData):
+    def test_waffle_chart_config(self, fake_chart_plots_data: PlotData):
         """
         Given an instance of `ChartSettings`
         When `get_waffle_chart_config()` is called
