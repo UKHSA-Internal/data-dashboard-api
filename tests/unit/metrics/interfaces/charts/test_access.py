@@ -376,9 +376,12 @@ class TestChartsInterface:
             == mocked_core_time_series_manager
         )
 
+    @mock.patch.object(ChartsInterface, "create_optimized_svg", return_value="abc")
     @mock.patch.object(ChartsInterface, "get_last_updated")
     def test_get_encoded_chart_delegates_call_to_get_last_updated(
-        self, spy_get_last_updated: mock.MagicMock
+        self,
+        spy_get_last_updated: mock.MagicMock,
+        mocked_create_optimized_svg: mock.MagicMock,
     ):
         """
         Given a mocked figure which returns
@@ -387,16 +390,17 @@ class TestChartsInterface:
 
         Patches:
             `spy_get_last_updated`: For the main assertion
+            `mocked_create_optimized_svg`: To remove the side effect of
+                creating a svg and optimizing it
+
         """
         # Given
-        mocked_plots_collection = mock.MagicMock()
-        mocked_figure = mock.Mock()
-        mocked_figure.to_image.return_value = "abc"
+        mocked_plots_collection = mock.MagicMock(file_format="svg")
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
 
         # When
         encoded_chart: Dict[str, str] = charts_interface.get_encoded_chart(
-            figure=mocked_figure
+            figure=mock.Mock()
         )
 
         # Then
@@ -481,7 +485,6 @@ class TestGenerateChartAsFile:
         # Then
         spy_write_figure.assert_called_once_with(
             figure=spy_generate_chart_figure.return_value,
-            topic="-",
         )
 
 
@@ -628,19 +631,16 @@ class TestValidateChartPlotParameters:
 
 
 class TestMiscMethods:
-    @pytest.mark.parametrize("file_format", FILE_FORMAT_CHOICES)
-    def test_valid_format_passed_to_encode_figure(self, file_format: str):
+    def test_svg_passed_to_encode_figure(self):
         """
-        Given the user supplies a file_format to pass to encode_figure
+        Given the user supplies a file_format of `svg` to pass to encode_figure
         When `encode_figure` is called then no exception is raised as long as
         the format is supported by the Plotly `to_image` function
-        Therefore any unsupported formats added to FILE_FORMAT_CHOICES in the future
-        will be picked up by this test
         """
         # Given
         mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
         mocked_chart_plots = mock.Mock(
-            file_format=file_format,
+            file_format="svg",
             plots=[mocked_chart_plot_params],
         )
 
@@ -659,17 +659,21 @@ class TestMiscMethods:
                 False
             ), f"An invalid/unsupported file format of '{file_format}' was passed to encode_figure function"
 
-    @mock.patch("scour.scour.scourString")
-    def test_non_svg_is_returned_asis(self, mocked_scourstring: mock.MagicMock):
+    @pytest.mark.parametrize(
+        "file_format",
+        [
+            "png",
+            "jpg",
+            "jpeg",
+        ],
+    )
+    def test_invalid_format_passed_to_encode_figure(self, file_format: str):
         """
-        Given a Plotly Figure
-        When `create_image_and_optimize_it()` is called from an instance of the `ChartsInterface`
-        And the format is NOT svg
-        Then the Plotly Figure is returned asis and the scour function is not called
+        Given the user supplies an invalid file_format to pass to encode_figure
+        When `encode_figure` is called from an instance of the `ChartsInterface`
+        Then a ValueError is raised
         """
-
         # Given
-        file_format = "jpg"
         mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
         mocked_chart_plots = mock.Mock(
             file_format=file_format,
@@ -683,18 +687,15 @@ class TestMiscMethods:
 
         figure = plotly.graph_objs.Figure()
 
-        # When
-        figure_image = charts_interface.create_image_and_optimize_it(figure)
-
-        # Then
-        assert figure_image == figure.to_image(format=file_format)
-        mocked_scourstring.assert_not_called()
+        # When / Then
+        with pytest.raises(ValueError):
+            charts_interface.encode_figure(figure=figure)
 
     @mock.patch("scour.scour.scourString")
     def test_scour_is_called(self, mocked_scourstring: mock.MagicMock):
         """
         Given a Plotly Figure
-        When `create_image_and_optimize_it()` is called from an instance of the `ChartsInterface`
+        When `create_optimized_svg()` is called from an instance of the `ChartsInterface`
         And the format is svg
         Then `scour.scourString` from the scour library is called
         """
@@ -715,7 +716,7 @@ class TestMiscMethods:
         figure = plotly.graph_objs.Figure()
 
         # When
-        figure_image = charts_interface.create_image_and_optimize_it(figure)
+        figure_image = charts_interface.create_optimized_svg(figure=figure)
 
         # Then
         mocked_scourstring.assert_called_once()
