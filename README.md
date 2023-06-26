@@ -1,4 +1,4 @@
-# Winter Pressures API
+# UKHSA data dashboard API
 
 This is a [Django](https://www.djangoproject.com/) 
 and [Wagtail](https://docs.wagtail.org/en/stable/getting_started/index.html) project. 
