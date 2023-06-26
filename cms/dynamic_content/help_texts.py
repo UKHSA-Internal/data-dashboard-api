@@ -107,6 +107,12 @@ DATE_TO_FIELD_HELP_TEXT: str = """
 The date to which to end the supporting chart data. 
 Note that if nothing is provided, a default of the current date will be applied.
 """
+SEX_FIELD: str = """
+The gender to filter for, if any.
+The only options available are `M`, `F` and `ALL`.
+By default, no filtering will be applied to the underlying query if no selection is made.
+"""
+
 LABEL_FIELD: str = """
 The label to assign on the legend for this individual plot.
 E.g. `15 to 44 years old`
