@@ -195,3 +195,15 @@ class MetricsAPIInterface:
 
         """
         return self.geography_type_manager.get_all_names()
+
+    def get_all_sex_names(self) -> QuerySet:
+        """Gets all available sex names as a flat list queryset.
+        Note this is achieved by delegating the call to the `CoreTimeSeriesManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography_type names:
+                Examples:
+                    `<CoreTimeSeriesQuerySet ['ALL', 'F', 'M']>`
+
+        """
+        return self.core_time_series_manager.get_all_sex_names()

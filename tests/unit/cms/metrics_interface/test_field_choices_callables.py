@@ -248,3 +248,22 @@ class TestGetAllGeographyTypeNames:
 
         # Then
         assert geography_type_names == [(x, x) for x in retrieved_geography_type_names]
+
+
+class TestGetAllSexNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_sex_names")
+    def test_delegates_call_correctly(self, mocked_get_all_sex_names: mock.MagicMock):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns sex names
+        When `get_all_sex_names()` is called
+        Then the sex names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_sex_names = ["M", "F", "ALL"]
+        mocked_get_all_sex_names.return_value = retrieved_sex_names
+
+        # When
+        sex_names = field_choices_callables.get_all_sex_names()
+
+        # Then
+        assert sex_names == [(x, x) for x in retrieved_sex_names]
