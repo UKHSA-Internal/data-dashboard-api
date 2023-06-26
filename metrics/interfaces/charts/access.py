@@ -213,10 +213,8 @@ class ChartsInterface:
 
         return last_date
 
-    def create_image_and_optimize_it(self, figure: plotly.graph_objects.Figure) -> str:
-        """Convert figure to an image
-           If the required image format is `svg` then optmimize the size of it
-           else just return the image asis
+    def create_optimized_svg(self, figure: plotly.graph_objects.Figure) -> str:
+        """Convert figure to a `svg` then optimize the size of it
 
         Args:
             figure: The figure object or a dictionary representing a figure
@@ -225,12 +223,7 @@ class ChartsInterface:
             A figure as an image and optimized for size if required
         """
         svg_image = figure.to_image(format=self.chart_plots.file_format)
-
-        return (
-            scour.scourString(in_string=svg_image)
-            if self.chart_plots.file_format == "svg"
-            else svg_image
-        )
+        return scour.scourString(in_string=svg_image)
 
     def encode_figure(self, figure: plotly.graph_objects.Figure) -> str:
         """
@@ -241,32 +234,30 @@ class ChartsInterface:
 
         Returns:
             An encoded string representation of the figure
+
         """
+        if self.chart_plots.file_format != "svg":
+            raise ValueError("Invalid file format, must be `svg`")
 
-        optimized_image = self.create_image_and_optimize_it(figure=figure)
+        optimized_svg: str = self.create_optimized_svg(figure=figure)
 
-        encoded_chart: str = urllib.parse.quote_plus(optimized_image)
+        encoded_chart: str = urllib.parse.quote_plus(optimized_svg)
 
         return encoded_chart
 
-    def write_figure(self, figure: plotly.graph_objects.Figure, topic: str) -> str:
+    def write_figure(self, figure: plotly.graph_objects.Figure) -> str:
         """
         Convert a figure to a static image and write to a file in the desired image format
 
         Args:
             figure: The figure object or a dictionary representing a figure
-            topic: The required topic (eg. COVID-19)
 
         Returns:
             The filename of the image
 
         """
-        optimized_image = self.create_image_and_optimize_it(figure=figure)
-
-        filename = f"{topic}.{self.chart_plots.file_format}"
-
-        with open(filename, mode="wt") as f:
-            f.write(optimized_image)
+        filename = f"new_chart.{self.chart_plots.file_format}"
+        figure.write_image(file=filename, format=self.chart_plots.file_format)
 
         return filename
 
@@ -315,7 +306,7 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     charts_interface = ChartsInterface(chart_plots=chart_plots)
     figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
-    return charts_interface.write_figure(figure=figure, topic="-")
+    return charts_interface.write_figure(figure=figure)
 
 
 def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:

@@ -190,6 +190,14 @@ class ChartsResponseSerializer(serializers.Serializer):
     chart = serializers.FileField(help_text=help_texts.CHARTS_RESPONSE_HELP_TEXT)
 
 
+class EncodedChartsRequestSerializer(ChartsSerializer):
+    file_format = serializers.ChoiceField(
+        choices=["svg"],
+        help_text=help_texts.ENCODED_CHARTS_FILE_FORMAT_FIELD,
+        default="svg",
+    )
+
+
 class EncodedChartResponseSerializer(serializers.Serializer):
     last_updated = serializers.CharField(
         help_text=help_texts.ENCODED_CHARTS_LAST_UPDATED_HELP_TEXT,
