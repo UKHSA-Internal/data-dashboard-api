@@ -224,6 +224,18 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             metric__name=metric_name,
         )
 
+    def get_all_sex_names(self) -> models.QuerySet:
+        """Gets all available sex names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual sex names
+                ordered in descending ordering starting from A -> Z:
+                Examples:
+                    `<CoreTimeSeriesQuerySet [('ALL',), ('F',), ('M',)]>`
+
+        """
+        return self.values_list("sex", flat=True).distinct()
+
 
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
@@ -452,3 +464,15 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name=topic_name, metric_name=metric_name
         )
         return model_instance.metric_value
+
+    def get_all_sex_names(self) -> models.QuerySet:
+        """Gets all available sex names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual sex names
+                ordered in descending ordering starting from A -> Z:
+                Examples:
+                    `<CoreTimeSeriesQuerySet [('ALL',), ('F',), ('M',)]>`
+
+        """
+        return self.get_queryset().get_all_sex_names()
