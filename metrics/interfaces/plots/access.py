@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Tuple, Union
 from django.db.models import Manager, QuerySet
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.models import PlotParameters, PlotsCollection, PlotData
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartAxisFields
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects

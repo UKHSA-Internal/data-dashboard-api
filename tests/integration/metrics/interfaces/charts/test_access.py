@@ -5,7 +5,7 @@ from unittest import mock
 import plotly
 
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotParameters, PlotData
+from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import ChartsInterface
 

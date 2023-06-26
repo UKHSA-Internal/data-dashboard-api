@@ -14,7 +14,7 @@ from metrics.domain.charts import (
     line_with_shaded_section,
     waffle,
 )
-from metrics.domain.models import PlotParameters, PlotsCollection, PlotData
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 from metrics.interfaces.plots.access import PlotsInterface

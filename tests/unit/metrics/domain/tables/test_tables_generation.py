@@ -2,7 +2,7 @@ import datetime
 from typing import Any, List
 from unittest import mock
 
-from metrics.domain.models import PlotParameters, PlotData
+from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.tables.generation import TabularData
 
 TEST_PLOT = "Test Plot"

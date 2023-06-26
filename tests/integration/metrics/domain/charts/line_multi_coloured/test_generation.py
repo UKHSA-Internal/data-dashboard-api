@@ -5,7 +5,7 @@ import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotParameters, PlotData
+from metrics.domain.models import PlotData, PlotParameters
 
 DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 9, 5),

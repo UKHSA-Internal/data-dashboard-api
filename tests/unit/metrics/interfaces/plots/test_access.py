@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.domain.models import PlotParameters, PlotsCollection, PlotData
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
