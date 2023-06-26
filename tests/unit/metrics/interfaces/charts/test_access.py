@@ -650,7 +650,7 @@ class TestMiscMethods:
         )
 
         figure = plotly.graph_objs.Figure()
-        
+
         # When
         encoded_figure = charts_interface.encode_figure(figure)
 
