@@ -12,6 +12,7 @@ from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
     EncodedChartResponseSerializer,
+    EncodedChartsRequestSerializer,
 )
 from metrics.interfaces.charts import access, validation
 
@@ -126,7 +127,7 @@ class EncodedChartsView(APIView):
     permission_classes = [HasAPIKey]
 
     @extend_schema(
-        request=ChartsSerializer,
+        request=EncodedChartsRequestSerializer,
         responses={HTTPStatus.OK.value: EncodedChartResponseSerializer},
         tags=[CHARTS_API_TAG],
     )
@@ -191,7 +192,7 @@ class EncodedChartsView(APIView):
 
         `chart_width`
         """
-        request_serializer = ChartsSerializer(data=request.data)
+        request_serializer = EncodedChartsRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
         chart_plot_models = request_serializer.to_models()
