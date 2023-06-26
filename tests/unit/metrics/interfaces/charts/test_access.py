@@ -676,7 +676,7 @@ class TestMiscMethods:
         # Given
         mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
         mocked_chart_plots = mock.Mock(
-            file_format=file_format,
+            file_format="svg",
             plots=[mocked_chart_plot_params],
         )
 
