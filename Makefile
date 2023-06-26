@@ -11,9 +11,9 @@ PORT=8000
 # The port to serve the application on
 
 # Create the virtual environment & install dependencies
-# Note: Requires Python 3.10 version
+# Note: Requires Python 3.11 version
 setup-venv:
-	python3.10 -m venv ${VENV}
+	python3.11 -m venv ${VENV}
 	${BIN}pip install -r requirements.txt
 
 # Apply formatting tools
