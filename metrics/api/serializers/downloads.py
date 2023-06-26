@@ -16,6 +16,7 @@ class DownloadsQuerySerializer(serializers.Serializer):
 
 
 class DownloadPlotSerializer(plots.PlotSerializer):
+    # Override these two fields as they are merely optional for this serializer
     topic = serializers.CharField(
         required=False,
         help_text=help_texts.TOPIC_FIELD,

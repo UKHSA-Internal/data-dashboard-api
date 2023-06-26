@@ -1,30 +1,7 @@
-import datetime
-from typing import Dict, Tuple, Union
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.plots import PlotSerializer
-from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
-from tests.fakes.managers.metric_manager import FakeMetricManager
-from tests.fakes.managers.topic_manager import FakeTopicManager
-
-DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
-
-
-@pytest.fixture
-def plot_serializer_payload_and_model_managers() -> (
-    Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]
-):
-    fake_metric = FakeMetricFactory.build_example_metric()
-    fake_topic = fake_metric.topic
-
-    data: DATA_PAYLOAD_HINT = {
-        "topic": fake_topic.name,
-        "metric": fake_metric.name,
-    }
-
-    return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])
 
 
 class TestPlotSerializer:
@@ -45,7 +22,7 @@ class TestPlotSerializer:
         Then True is returned
         """
         # Given
-        optional_parameters_as_empty_strings = {
+        optional_parameters_as_none = {
             field_name: None for field_name in self.optional_field_names
         }
         (
@@ -55,7 +32,7 @@ class TestPlotSerializer:
         ) = plot_serializer_payload_and_model_managers
         valid_data_payload_with_optional_params = {
             **valid_data_payload,
-            **optional_parameters_as_empty_strings,
+            **optional_parameters_as_none,
         }
 
         serializer = PlotSerializer(
