@@ -6,7 +6,7 @@ from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.data.operations.core_models import load_core_data
 
-UPLOAD_API_TAG = ["upload"]
+UPLOAD_API_TAG = "upload"
 
 
 class FileUploadView(APIView):
