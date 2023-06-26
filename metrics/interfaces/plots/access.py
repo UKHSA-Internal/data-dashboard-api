@@ -96,7 +96,7 @@ class PlotsInterface:
                     ]>`
 
         """
-        return self.core_time_series_manager.filter_for_dates_and_values(
+        return self.core_time_series_manager.filter_for_x_and_y_values(
             x_axis=x_axis,
             y_axis=y_axis,
             topic_name=topic_name,

@@ -69,7 +69,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             return None
         return core_time_series.metric_value
 
-    def filter_for_dates_and_values(
+    def filter_for_x_and_y_values(
         self,
         x_axis: str,
         y_axis: str,

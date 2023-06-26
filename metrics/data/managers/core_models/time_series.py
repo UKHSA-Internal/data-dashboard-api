@@ -97,7 +97,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def _filter_by_sex(queryset, sex):
         return queryset.filter(sex=sex)
 
-    def filter_for_dates_and_values(
+    def filter_for_x_and_y_values(
         self,
         x_axis: str,
         y_axis: str,
@@ -109,12 +109,14 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
     ) -> models.QuerySet:
-        """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
+        """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
         Args:
-            x_axis: The field to display along the x-axis
+            x_axis: The field to display along the x-axis.
+                In this case, this will be the first item of each 2-item object
                 E.g. `date` or `stratum`
             y_axis: The field to display along the y-axis
+                In this case, this will be the second item of each 2-item object
                 E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
@@ -333,7 +335,7 @@ class CoreTimeSeriesManager(models.Manager):
             date_from=date_from,
         )
 
-    def filter_for_dates_and_values(
+    def filter_for_x_and_y_values(
         self,
         x_axis: str,
         y_axis: str,
@@ -345,12 +347,14 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
     ) -> CoreTimeSeriesQuerySet:
-        """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
+        """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
         Args:
-            x_axis: The field to display along the x-axis
+            x_axis: The field to display along the x-axis.
+                In this case, this will be the first item of each 2-item object
                 E.g. `date` or `stratum`
             y_axis: The field to display along the y-axis
+                In this case, this will be the second item of each 2-item object
                 E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
@@ -379,7 +383,7 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-        return self.get_queryset().filter_for_dates_and_values(
+        return self.get_queryset().filter_for_x_and_y_values(
             x_axis=x_axis,
             y_axis=y_axis,
             topic_name=topic_name,

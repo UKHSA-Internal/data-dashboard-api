@@ -285,9 +285,9 @@ class TestPlotsInterface:
         # Then
         assert (
             timeseries
-            == spy_core_time_series_manager.filter_for_dates_and_values.return_value
+            == spy_core_time_series_manager.filter_for_x_and_y_values.return_value
         )
-        spy_core_time_series_manager.filter_for_dates_and_values.assert_called_once_with(
+        spy_core_time_series_manager.filter_for_x_and_y_values.assert_called_once_with(
             x_axis=mocked_x_axis,
             y_axis=mocked_y_axis,
             topic_name=mocked_topic,
