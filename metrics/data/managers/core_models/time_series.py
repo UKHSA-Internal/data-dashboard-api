@@ -167,8 +167,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             )
 
         if sex:
-            queryset = self._filter_by_stratum(
-                queryset=queryset, stratum_name=stratum_name
+            queryset = self._filter_by_sex(
+                queryset=queryset, sex=sex
             )
 
         queryset = queryset.values_list(x_axis, y_axis)
