@@ -52,6 +52,10 @@ CHART_FILE_FORMAT_FIELD: str = """
 The file format to render the chart in. 
 This can be one of the following `svg`, `png`, `jpg` or `jpeg`.
 """
+ENCODED_CHARTS_FILE_FORMAT_FIELD: str = """
+The file format to render the chart in. 
+Note this currently only supports `svg`.
+"""
 FILE_DOWNLOAD_FORMAT: str = """
 The format you want the data downloaded in. 
 This can be either `json` or `csv`

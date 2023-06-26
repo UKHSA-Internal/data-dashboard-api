@@ -8,6 +8,7 @@ from metrics.api.serializers.charts import (
     ChartPlotSerializer,
     ChartsSerializer,
     EncodedChartResponseSerializer,
+    EncodedChartsRequestSerializer,
 )
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
@@ -698,6 +699,46 @@ class TestChartsSerializer:
             chart_width=valid_data_payload["chart_width"],
         )
         assert chart_plots_serialized_models == expected_chart_plots_model
+
+
+class TestEncodedChartsRequestSerializer:
+    def test_valid_file_format(
+        self,
+    ):
+        """
+        Given a valid file format of `svg` passed
+            to an `EncodedChartsRequestSerializer` object
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        valid_data_payload = {"file_format": "svg", "plots": []}
+        serializer = EncodedChartsRequestSerializer(data=valid_data_payload)
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
+    @pytest.mark.parametrize("invalid_file_format", ["png", "jpg", "jpeg"])
+    def test_invalid_file_format(self, invalid_file_format: str):
+        """
+        Given an invalid file format passed
+            to an `EncodedChartsRequestSerializer` object
+        When `is_valid(raise_exception=True)` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        invalid_data_payload = {
+            "file_format": invalid_file_format,
+            "plots": [],
+        }
+        serializer = EncodedChartsRequestSerializer(data=invalid_data_payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
 
 
 class TestEncodedChartResponseSerializer:
