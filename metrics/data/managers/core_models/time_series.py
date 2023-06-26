@@ -167,9 +167,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             )
 
         if sex:
-            queryset = self._filter_by_sex(
-                queryset=queryset, sex=sex
-            )
+            queryset = self._filter_by_sex(queryset=queryset, sex=sex)
 
         queryset = queryset.values_list(x_axis, y_axis)
         return self._ascending_order(
