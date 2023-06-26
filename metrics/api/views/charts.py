@@ -2,7 +2,7 @@ import os
 from http import HTTPStatus
 from typing import Dict
 
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
