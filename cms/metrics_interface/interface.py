@@ -39,7 +39,7 @@ class MetricsAPIInterface:
     geography_type_manager : `GeographyTypeManager`
         The model manager for the `GeographyType` model belonging to the Metrics API
         Defaults to the concrete `GeographyTypeManager` via `GeographyType.objects`
-    core_time_series_manager : `GeographyTypeManager`
+    core_time_series_manager : `CoreTimeSeriesManager`
         The model manager for the `CoreTimeSeries` model belonging to the Metrics API
         Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
 
