@@ -41,6 +41,7 @@ class ChartsView(APIView):
         | `stratum`        | The smallest subgroup a metric can be broken down into                     | 0_4                      | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
+        | `sex`            | The gender to filter for, defaults to all                                  | F                        | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
@@ -145,6 +146,7 @@ class EncodedChartsView(APIView):
         | `stratum`        | The smallest subgroup a metric can be broken down into                     | 0_4                      | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
+        | `sex`            | The gender to filter for, defaults to all                                  | F                        | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
