@@ -5,7 +5,7 @@ import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotParameters, PlotsData
+from metrics.domain.models import PlotData, PlotParameters
 
 DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -33,7 +33,7 @@ class TestLineMultiColouredCharts:
         label: str = "",
         line_type: str = "",
         line_colour: str = "",
-    ) -> PlotsData:
+    ) -> PlotData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
             topic="RSV",
@@ -43,7 +43,7 @@ class TestLineMultiColouredCharts:
             line_type=line_type,
             line_colour=line_colour,
         )
-        return PlotsData(
+        return PlotData(
             parameters=plot_params,
             x_axis_values=x_axis_values,
             y_axis_values=y_axis_values,
@@ -51,7 +51,7 @@ class TestLineMultiColouredCharts:
 
     def test_main_plot_and_axis_properties(self):
         """
-        Given a `ChartPlotData` models representing a line plot
+        Given a `PlotData` model representing a line plot
         When `generate_chart_figure()` is called from the `line_multi_coloured` module
         Then the figure is drawn with the expected parameters for the main background and the X & Y axis
         """
@@ -153,7 +153,7 @@ class TestLineMultiColouredCharts:
 
     def test_two_plots_with_provided_labels_and_colours(self):
         """
-        Given 2 `ChartPlotData` models representing 2 different line plots
+        Given 2 `PlotData` models representing 2 different line plots
         When `generate_chart_figure()` is called from the `line_multi_coloured` module
         Then the figure is drawn with the expected parameters for the line plots
         """

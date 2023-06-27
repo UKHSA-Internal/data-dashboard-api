@@ -1,19 +1,19 @@
 from datetime import datetime
-from typing import Dict, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 import plotly
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
-from metrics.domain.models import PlotsData
+from metrics.domain.models import PlotData
 from metrics.domain.utils import get_last_day_of_month
 
 
 class ChartSettings:
     narrow_chart_width = 435
 
-    def __init__(self, width: int, height: int, plots_data: PlotsData):
+    def __init__(self, width: int, height: int, plots_data: List[PlotData]):
         self._width = width
         self._height = height
         self.plots_data = plots_data
