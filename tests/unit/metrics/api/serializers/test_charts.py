@@ -26,6 +26,7 @@ class TestChartPlotSerializer:
         "stratum",
         "geography",
         "geography_type",
+        "sex",
         "label",
         "line_colour",
         "line_type",

@@ -12,6 +12,7 @@ class TestTablePlotSerializer:
         "stratum",
         "geography",
         "geography_type",
+        "sex",
         "label",
         "x_axis",
         "y_axis",
