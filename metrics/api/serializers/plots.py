@@ -40,7 +40,13 @@ class PlotSerializer(serializers.Serializer):
         allow_null=True,
         default="",
     )
-
+    sex = serializers.CharField(
+        help_text=help_texts.SEX_FIELD,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+    )
     date_from = serializers.DateField(
         help_text=help_texts.DATE_FROM_FIELD,
         required=False,

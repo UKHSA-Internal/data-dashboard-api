@@ -9,6 +9,7 @@ class TestPlotSerializer:
         "stratum",
         "geography",
         "geography_type",
+        "sex",
     ]
 
     def test_validates_successfully_when_optional_parameters_are_none(
@@ -106,6 +107,39 @@ class TestPlotSerializer:
 
         for optional_param in self.optional_field_names:
             assert optional_param not in valid_data_payload
+
+        serializer = PlotSerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+            },
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+
+    @pytest.mark.parametrize("sex", ["ALL", "M", "F"])
+    def test_validates_successfully_with_valid_sex_field(
+        self, sex: str, plot_serializer_payload_and_model_managers
+    ):
+        """
+        Given a valid payload containing a valid `sex` field value
+            passed to a `PlotSerializer` object
+        And valid values for the `topic` and `metric`
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = plot_serializer_payload_and_model_managers
+        valid_data_payload["sex"] = sex
 
         serializer = PlotSerializer(
             data=valid_data_payload,
