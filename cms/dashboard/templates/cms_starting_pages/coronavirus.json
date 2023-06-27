@@ -103,8 +103,8 @@
                                     "value": {
                                         "title": "Case rates by age",
                                         "body": "Rates per 100,000 people of the total number of cases since the start of the pandemic, by age.",
-                                        "x_axis": "stratum__name",
-                                        "y_axis": "metric_value",
+                                        "x_axis": "stratum",
+                                        "y_axis": "metric",
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -278,8 +278,8 @@
                                     "value": {
                                         "title": "Admissions rate by age",
                                         "body": "Age breakdown of people admitted to hospital, shown as the rate per 100,000 people, since the start of the pandemic. There are fewer people in the oldest age group so the rates show the relative impact on different age groups.",
-                                        "x_axis": "stratum__name",
-                                        "y_axis": "metric_value",
+                                        "x_axis": "stratum",
+                                        "y_axis": "metric",
                                         "chart": [
                                             {
                                                 "type": "plot",
