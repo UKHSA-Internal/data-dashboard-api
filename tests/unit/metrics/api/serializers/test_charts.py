@@ -1,5 +1,4 @@
-import datetime
-from typing import Dict, List, Tuple, Union
+from typing import List, Tuple
 
 import pytest
 from rest_framework.exceptions import ValidationError
@@ -20,27 +19,6 @@ from metrics.domain.utils import (
     DEFAULT_Y_AXIS,
     ChartTypes,
 )
-from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
-from tests.fakes.managers.metric_manager import FakeMetricManager
-from tests.fakes.managers.topic_manager import FakeTopicManager
-
-DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
-
-
-@pytest.fixture
-def charts_plot_serializer_payload_and_model_managers() -> (
-    Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]
-):
-    fake_metric = FakeMetricFactory.build_example_metric()
-    fake_topic = fake_metric.topic
-
-    data: DATA_PAYLOAD_HINT = {
-        "topic": fake_topic.name,
-        "metric": fake_metric.name,
-        "chart_type": ChartTypes.line_with_shaded_section.value,
-    }
-
-    return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])
 
 
 class TestChartPlotSerializer:
@@ -56,7 +34,7 @@ class TestChartPlotSerializer:
     ]
 
     def test_validates_successfully_when_optional_parameters_are_none(
-        self, charts_plot_serializer_payload_and_model_managers
+        self, plot_serializer_payload_and_model_managers
     ):
         """
         Given a valid payload containing None for every optional field
@@ -66,17 +44,17 @@ class TestChartPlotSerializer:
         Then True is returned
         """
         # Given
-        optional_parameters_as_empty_strings = {
+        optional_parameters_as_none = {
             field_name: None for field_name in self.optional_field_names
         }
         (
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         valid_data_payload_with_optional_params = {
             **valid_data_payload,
-            **optional_parameters_as_empty_strings,
+            **optional_parameters_as_none,
         }
 
         serializer = ChartPlotSerializer(
@@ -94,7 +72,7 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
 
     def test_validates_successfully_when_optional_parameters_are_empty_strings(
-        self, charts_plot_serializer_payload_and_model_managers
+        self, plot_serializer_payload_and_model_managers
     ):
         """
         Given a valid payload containing empty strings for every optional field
@@ -111,7 +89,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         valid_data_payload_with_optional_params = {
             **valid_data_payload,
             **optional_parameters_as_empty_strings,
@@ -132,7 +110,7 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
 
     def test_validates_successfully_when_optional_parameters_not_provided(
-        self, charts_plot_serializer_payload_and_model_managers
+        self, plot_serializer_payload_and_model_managers
     ):
         """
         Given a valid payload containing no optional fields
@@ -146,7 +124,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
 
         for optional_param in self.optional_field_names:
             assert optional_param not in valid_data_payload
@@ -167,7 +145,7 @@ class TestChartPlotSerializer:
 
     def test_valid_payload_with_optional_label_field_provided(
         self,
-        charts_plot_serializer_payload_and_model_managers,
+        plot_serializer_payload_and_model_managers,
     ):
         """
         Given a valid payload containing the optional `label` field
@@ -181,7 +159,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         label = "15 to 44 years old"
         valid_data_payload["label"] = label
 
@@ -206,7 +184,7 @@ class TestChartPlotSerializer:
     def test_valid_payload_with_optional_line_colour_field_provided(
         self,
         valid_colour_choice: Tuple[str, str],
-        charts_plot_serializer_payload_and_model_managers,
+        plot_serializer_payload_and_model_managers,
     ):
         """
         Given a valid payload containing the optional `line_colour` field
@@ -220,7 +198,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         line_colour: str = valid_colour_choice[0]
         valid_data_payload["line_colour"] = line_colour
 
@@ -245,7 +223,7 @@ class TestChartPlotSerializer:
     def test_valid_payload_with_optional_line_type_field_provided(
         self,
         valid_line_type_choice: Tuple[str, str],
-        charts_plot_serializer_payload_and_model_managers,
+        plot_serializer_payload_and_model_managers,
     ):
         """
         Given a valid payload containing the optional `line_type` field
@@ -259,7 +237,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         line_type: str = valid_line_type_choice[0]
         valid_data_payload["line_type"] = line_type
 
@@ -280,7 +258,7 @@ class TestChartPlotSerializer:
 
     def test_valid_payload_with_optional_x_and_y_fields_provided(
         self,
-        charts_plot_serializer_payload_and_model_managers,
+        plot_serializer_payload_and_model_managers,
     ):
         """
         Given a valid payload containing the optional `x_axis` and `y_axis` fields
@@ -294,7 +272,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         x_axis = "date"
         y_axis = "metric"
 
@@ -321,7 +299,7 @@ class TestChartPlotSerializer:
     def test_valid_chart_type(
         self,
         valid_chart_type: Tuple[str, str],
-        charts_plot_serializer_payload_and_model_managers,
+        plot_serializer_payload_and_model_managers,
     ):
         """
         Given a valid chart type passed to a `ChartPlotSerializer` object
@@ -334,7 +312,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         valid_data_payload["chart_type"] = valid_chart_type[0]
 
         serializer = ChartPlotSerializer(
@@ -358,7 +336,7 @@ class TestChartPlotSerializer:
     def test_invalid_field_value(
         self,
         field_to_be_serialized: str,
-        charts_plot_serializer_payload_and_model_managers,
+        plot_serializer_payload_and_model_managers,
     ):
         """
         Given an invalid value passed to a field on the `ChartPlotSerializer` object
@@ -371,7 +349,7 @@ class TestChartPlotSerializer:
             data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         data_payload[field_to_be_serialized] = "invalid-value"
 
         serializer = ChartPlotSerializer(
@@ -387,7 +365,7 @@ class TestChartPlotSerializer:
             serializer.is_valid(raise_exception=True)
 
     def test_metric_manager_is_used_to_build_choices_for_field(
-        self, charts_plot_serializer_payload_and_model_managers
+        self, plot_serializer_payload_and_model_managers
     ):
         """
         Given a valid payload passed to a `ChartPlotSerializer` object
@@ -399,7 +377,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
 
         # When
         serializer = ChartPlotSerializer(
@@ -415,7 +393,7 @@ class TestChartPlotSerializer:
         assert list(serializer.fields["metric"].choices) == expected_metric_names
 
     def test_topic_manager_is_used_to_build_choices_for_field(
-        self, charts_plot_serializer_payload_and_model_managers
+        self, plot_serializer_payload_and_model_managers
     ):
         """
         Given a valid payload passed to a `ChartPlotSerializer` object
@@ -427,7 +405,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
 
         # When
         serializer = ChartPlotSerializer(
@@ -444,7 +422,7 @@ class TestChartPlotSerializer:
 
     def test_to_models_returns_chart_plot_parameters_model(
         self,
-        charts_plot_serializer_payload_and_model_managers,
+        plot_serializer_payload_and_model_managers,
     ):
         """
         Given a valid payload passed to a `ChartPlotSerializer` object
@@ -456,7 +434,7 @@ class TestChartPlotSerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
-        ) = charts_plot_serializer_payload_and_model_managers
+        ) = plot_serializer_payload_and_model_managers
         valid_data_payload["stratum"] = "0_4"
         valid_data_payload["geography"] = "England"
         valid_data_payload["geography_type"] = "Nation"
@@ -622,7 +600,7 @@ class TestChartsSerializer:
         assert serialized_model_data.chart_height == DEFAULT_CHART_HEIGHT
 
     def test_x_and_y_axis_are_none_into_model(
-        self, charts_plot_serializer_payload_and_model_managers
+        self, plot_serializer_payload_and_model_managers
     ):
         """
         Given the user supplies a None value for the x_axis and/or y_axis parameter
