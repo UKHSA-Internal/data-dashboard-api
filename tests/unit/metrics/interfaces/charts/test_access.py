@@ -651,13 +651,11 @@ class TestMiscMethods:
 
         figure = plotly.graph_objs.Figure()
 
-        try:
-            # When / Then
-            charts_interface.encode_figure(figure)
-        except:
-            assert (
-                False
-            ), f"An invalid/unsupported file format of '{file_format}' was passed to encode_figure function"
+        # When
+        encoded_figure = charts_interface.encode_figure(figure=figure)
+
+        # Then
+        assert type(encoded_figure) is str
 
     @pytest.mark.parametrize(
         "file_format",
@@ -676,7 +674,7 @@ class TestMiscMethods:
         # Given
         mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
         mocked_chart_plots = mock.Mock(
-            file_format="svg",
+            file_format=file_format,
             plots=[mocked_chart_plot_params],
         )
 
