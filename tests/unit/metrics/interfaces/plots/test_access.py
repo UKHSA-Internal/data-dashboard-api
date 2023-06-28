@@ -1,5 +1,5 @@
 import datetime
-from typing import List
+from typing import List, Union
 from unittest import mock
 
 import pytest
@@ -9,6 +9,8 @@ from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
+    convert_type,
+    create_sort,
     get_x_and_y_values,
     sort_by_stratum,
     unzip_values,
@@ -394,6 +396,51 @@ class TestGetXAndYValues:
         spy_unzip_values.assert_called_once_with(values=mocked_queryset)
 
 
+class TestConvertType:
+    @pytest.mark.parametrize(
+        "mock_input, mock_output",
+        [
+            ("85", 85),
+            ("04", 4),
+            ("default", "default"),
+        ],
+    )
+    def test_basic_operation(self, mock_input: str, mock_output: Union[int, str]):
+        """
+        Given a string that may or may not contain a number
+        When `convert_type()` is called
+        Then expected result is returned
+        """
+        # Given/When
+        actual_output = convert_type(s=mock_input)
+
+        # Then
+        assert mock_output == actual_output
+
+
+class TestCreateSort:
+    @pytest.mark.parametrize(
+        "mock_input, mock_output",
+        [
+            ("0_4", (0, 4)),
+            ("20_24", (20, 24)),
+            ("65+", (65,)),
+            ("default", (999, 999, "default")),
+        ],
+    )
+    def test_basic_operation(self, mock_input: str, mock_output: Union[int, str]):
+        """
+        Given a string that may or may not contain numbers
+        When `create_sort()` is called
+        Then expected result is returned
+        """
+        # Given/When
+        actual_output = create_sort(stratum=mock_input)
+
+        # Then
+        assert mock_output == actual_output
+
+
 class TestSortByStratum:
     def test_returns_correct_x_and_y_values(self):
         """
@@ -404,14 +451,14 @@ class TestSortByStratum:
         And in display format
         """
         # Given
-        values = [("65_84", 1), ("6_17", 2), ("85+", 3), ("18_64", 4)]
+        values = [("default", 5), ("65_84", 1), ("6_17", 2), ("85+", 3), ("18_64", 4)]
 
         # When
         first_list, second_list = sort_by_stratum(values)
 
         # Then
-        assert first_list == ["6-17", "18-64", "65-84", "85+"]
-        assert second_list == [2, 4, 1, 3]
+        assert first_list == ["6-17", "18-64", "65-84", "85+", "default"]
+        assert second_list == [2, 4, 1, 3, 5]
 
 
 class TestUnzipValues:
