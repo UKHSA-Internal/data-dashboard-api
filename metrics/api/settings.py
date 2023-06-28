@@ -139,13 +139,14 @@ else:
             "PASSWORD": config.POSTGRES_PASSWORD,
             "HOST": config.POSTGRES_HOST,
             "PORT": config.POSTGRES_PORT,
+            "CONN_MAX_AGE": 60,
+            # Set the lifetime of a database connection to be 1 minute
+            # By default, the connection is closed at the end of every request
+            "CONN_HEALTH_CHECK": True,
+            # Checks the health of the db connection per request.
+            # If the probe fails, the connection is re-established without failing the request.
         }
     }
-
-# Set the lifetime of a database connection to be 1 minute
-# By default, the connection is closed at the end of every request
-CONN_MAX_AGE = 60
-CONN_HEALTH_CHECKS = True
 
 
 LOGGING = {
