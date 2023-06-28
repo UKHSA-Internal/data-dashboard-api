@@ -133,15 +133,20 @@ if config.APIENV == "LOCAL":
 else:
     DATABASES = {
         "default": {
-            "ENGINE": "django.db.backends.postgresql",
+            "ENGINE": "dj_db_conn_pool.backends.postgresql",
             "NAME": config.POSTGRES_DB,
             "USER": config.POSTGRES_USER,
             "PASSWORD": config.POSTGRES_PASSWORD,
             "HOST": config.POSTGRES_HOST,
             "PORT": config.POSTGRES_PORT,
-            "CONN_MAX_AGE": 60,
-            # Set the lifetime of a database connection to be 1 minute
-            # By default, the connection is closed at the end of every request
+            "POOL_OPTIONS": {
+                "POOL_SIZE": 10,
+                # Number of connections to be persisted at all times
+                "MAX_OVERFLOW": 10,
+                # Additional connections to be created at peak loads
+                "RECYCLE": 24 * 60 * 60
+                # Time to close and replace connections
+            },
         }
     }
 
