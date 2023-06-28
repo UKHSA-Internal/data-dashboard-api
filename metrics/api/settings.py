@@ -141,9 +141,12 @@ else:
             "PORT": config.POSTGRES_PORT,
             "POOL_OPTIONS": {
                 "POOL_SIZE": 10,
+                # Number of connections to be persisted at all times
                 "MAX_OVERFLOW": 10,
+                # Additional connections to be created at peak loads
                 "RECYCLE": 24 * 60 * 60
-            }
+                # Time to close and replace connections
+            },
         }
     }
 
