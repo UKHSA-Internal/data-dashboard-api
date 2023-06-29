@@ -47,22 +47,6 @@ class ChartPlotSerializer(plots.PlotSerializer):
         allow_null=True,
         default="",
     )
-    x_axis = serializers.ChoiceField(
-        choices=ChartAxisFields.choices(),
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.CHART_X_AXIS,
-        default=DEFAULT_X_AXIS,
-    )
-    y_axis = serializers.ChoiceField(
-        choices=ChartAxisFields.choices(),
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.CHART_Y_AXIS,
-        default=DEFAULT_Y_AXIS,
-    )
 
     def to_models(self):
         return PlotParameters(**self.data)
@@ -97,19 +81,40 @@ class ChartsSerializer(serializers.Serializer):
         default=DEFAULT_CHART_WIDTH,
         allow_null=True,
     )
+    x_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_X_AXIS,
+        default=DEFAULT_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_Y_AXIS,
+        default=DEFAULT_Y_AXIS,
+    )
 
     plots = ChartPlotsListSerializer()
 
     def to_models(self) -> PlotsCollection:
+        x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
+        y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
+
         for plot in self.data["plots"]:
-            plot["x_axis"] = plot.get("x_axis") or DEFAULT_X_AXIS
-            plot["y_axis"] = plot.get("y_axis") or DEFAULT_Y_AXIS
+            plot["x_axis"] = x_axis
+            plot["y_axis"] = y_axis
 
         return PlotsCollection(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
+            x_axis=x_axis,
+            y_axis=y_axis,
         )
 
 

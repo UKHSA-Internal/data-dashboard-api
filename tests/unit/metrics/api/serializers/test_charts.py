@@ -257,45 +257,6 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["line_type"] == line_type
 
-    def test_valid_payload_with_optional_x_and_y_fields_provided(
-        self,
-        plot_serializer_payload_and_model_managers,
-    ):
-        """
-        Given a valid payload containing the optional `x_axis` and `y_axis` fields
-            passed to a `ChartPlotSerializer` object
-        And valid values for the `topic` `metric` and `chart_type`
-        When `is_valid()` is called from the serializer
-        Then True is returned
-        """
-        # Given
-        (
-            valid_data_payload,
-            metric_manager,
-            topic_manager,
-        ) = plot_serializer_payload_and_model_managers
-        x_axis = "date"
-        y_axis = "metric"
-
-        valid_data_payload["x_axis"] = x_axis
-        valid_data_payload["y_axis"] = y_axis
-
-        serializer = ChartPlotSerializer(
-            data=valid_data_payload,
-            context={
-                "topic_manager": topic_manager,
-                "metric_manager": metric_manager,
-            },
-        )
-
-        # When
-        is_serializer_valid: bool = serializer.is_valid()
-
-        # Then
-        assert is_serializer_valid
-        assert serializer.validated_data["x_axis"] == x_axis
-        assert serializer.validated_data["y_axis"] == y_axis
-
     @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
     def test_valid_chart_type(
         self,
@@ -332,7 +293,7 @@ class TestChartPlotSerializer:
 
     @pytest.mark.parametrize(
         "field_to_be_serialized",
-        ["topic", "metric", "chart_type", "date_from", "x_axis", "y_axis"],
+        ["topic", "metric", "chart_type", "date_from"],
     )
     def test_invalid_field_value(
         self,
@@ -619,8 +580,6 @@ class TestChartsSerializer:
                 "geography_type": "",
                 "date_from": "",
                 "chart_type": "line_with_shaded_section",
-                "x_axis": None,
-                "y_axis": None,
             }
         ]
         valid_data_payload = {
@@ -628,6 +587,8 @@ class TestChartsSerializer:
             "chart_height": 300,
             "chart_width": 400,
             "plots": chart_plots,
+            "x_axis": None,
+            "y_axis": None,
         }
         serializer = ChartsSerializer(data=valid_data_payload)
 
@@ -676,6 +637,8 @@ class TestChartsSerializer:
             file_format=valid_data_payload["file_format"],
             chart_height=valid_data_payload["chart_height"],
             chart_width=valid_data_payload["chart_width"],
+            x_axis=DEFAULT_X_AXIS,
+            y_axis=DEFAULT_Y_AXIS,
         )
         assert chart_plots_serialized_models == expected_chart_plots_model
 
