@@ -73,6 +73,8 @@ class TestTablesInterface:
             file_format="svg",
             chart_height=123,
             chart_width=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         tables_interface = TablesInterface(

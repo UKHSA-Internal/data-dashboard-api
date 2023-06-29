@@ -223,6 +223,8 @@ class TestChartsInterface:
             file_format="svg",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         charts_interface = ChartsInterface(
@@ -264,6 +266,8 @@ class TestChartsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         charts_interface = ChartsInterface(
@@ -316,6 +320,8 @@ class TestChartsInterface:
             file_format="svg",
             chart_width=width,
             chart_height=height,
+            x_axis="date",
+            y_axis="metric",
         )
 
         charts_interface = ChartsInterface(
@@ -592,6 +598,8 @@ class TestValidateEachRequestedChartPlot:
             plots=fake_requested_chart_plots,
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         # When

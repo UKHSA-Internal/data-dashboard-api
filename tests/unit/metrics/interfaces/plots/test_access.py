@@ -56,6 +56,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         data_slice_interface = PlotsInterface(
@@ -101,6 +103,8 @@ class TestPlotsInterface:
             file_format="svg",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
         fake_core_time_series_records: List[
             FakeCoreTimeSeries
@@ -145,6 +149,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
         fake_core_time_series_for_plot: List[
             FakeCoreTimeSeries
@@ -232,6 +238,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
 
