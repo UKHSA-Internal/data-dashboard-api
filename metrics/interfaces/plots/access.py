@@ -131,6 +131,10 @@ class PlotsInterface:
             plot_parameters=plot_parameters
         )
 
+        # Set each plot with the selected chart-level x and y-axis choices
+        plot_parameters.x_axis = self.plots_collection.x_axis
+        plot_parameters.y_axis = self.plots_collection.y_axis
+
         try:
             x_axis_values, y_axis_values = get_x_and_y_values(
                 plot_parameters=plot_parameters, queryset=timeseries_queryset
