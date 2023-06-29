@@ -195,6 +195,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": null,
                                                     "line_type": null
@@ -245,6 +246,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": null,
                                                     "line_type": null
@@ -373,6 +375,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": null,
                                                     "line_type": null
@@ -423,6 +426,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": null,
                                                     "line_type": null
