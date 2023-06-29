@@ -163,45 +163,7 @@ class TestTablePlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["label"] == label
 
-    def test_valid_payload_with_optional_x_and_y_fields_provided(
-        self,
-        plot_serializer_payload_and_model_managers,
-    ):
-        """
-        Given a valid payload containing the optional `x_axis` & `y_axis` fields
-            passed to a `TablePlotSerializer` object
-        And valid values for the `topic` and `metric`
-        When `is_valid()` is called from the serializer
-        Then the `x_axis` & `y_axis` field values are returned correctly
-        """
-        # Given
-        (
-            valid_data_payload,
-            metric_manager,
-            topic_manager,
-        ) = plot_serializer_payload_and_model_managers
-        x_axis = "date"
-        y_axis = "metric"
-
-        serializer = TablePlotSerializer(
-            data=valid_data_payload,
-            context={
-                "topic_manager": topic_manager,
-                "metric_manager": metric_manager,
-            },
-        )
-
-        # When
-        is_serializer_valid: bool = serializer.is_valid()
-
-        # Then
-        assert is_serializer_valid
-        assert serializer.validated_data["x_axis"] == x_axis
-        assert serializer.validated_data["y_axis"] == y_axis
-
-    @pytest.mark.parametrize(
-        "field_to_be_serialized", ["topic", "metric", "date_from", "x_axis", "y_axis"]
-    )
+    @pytest.mark.parametrize("field_to_be_serialized", ["topic", "metric", "date_from"])
     def test_invalid_field_value(
         self,
         field_to_be_serialized: str,
@@ -309,6 +271,34 @@ class TestTablesSerializer:
         # Then
         assert is_serializer_valid
 
+    def test_valid_payload_with_optional_x_and_y_fields_provided(
+        self,
+        plot_serializer_payload_and_model_managers,
+    ):
+        """
+        Given a valid payload containing the optional `x_axis` & `y_axis` fields
+            passed to a `TablePlotSerializer` object
+        And valid values for the `topic` and `metric`
+        When `is_valid()` is called from the serializer
+        Then the `x_axis` & `y_axis` field values are returned correctly
+        """
+        # Given
+        x_axis = "date"
+        y_axis = "metric"
+        valid_data_payload = {"plots": [], "x_axis": x_axis, "y_axis": y_axis}
+
+        serializer = TablesSerializer(
+            data=valid_data_payload,
+        )
+
+        # When
+        is_serializer_valid: bool = serializer.is_valid()
+
+        # Then
+        assert is_serializer_valid
+        assert serializer.validated_data["x_axis"] == x_axis
+        assert serializer.validated_data["y_axis"] == y_axis
+
     def test_tables_serializer_does_not_validates(self):
         """
         Given the user supplies no payload to a `TablesSerializer` object
@@ -317,6 +307,28 @@ class TestTablesSerializer:
         """
         # Given
         serializer = TablesSerializer(data={})
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    @pytest.mark.parametrize("field_to_be_serialized", ["x_axis", "y_axis"])
+    def test_invalid_field_value(
+        self,
+        field_to_be_serialized: str,
+    ):
+        """
+        Given an invalid value passed to a field on the `TablesSerializer` object
+        And valid values given to the remaining fields
+        When `is_valid()` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        data_payload = {"plots": [], field_to_be_serialized: "invalid-value"}
+
+        serializer = TablesSerializer(
+            data=data_payload,
+        )
 
         # When / Then
         with pytest.raises(ValidationError):
@@ -345,6 +357,8 @@ class TestTablesSerializer:
             "chart_height": 220,
             "chart_width": 435,
             "plots": table_plots,
+            "x_axis": "date",
+            "y_axis": "metric",
         }
         serializer = TablesSerializer(data=valid_data_payload)
 
@@ -359,5 +373,7 @@ class TestTablesSerializer:
             file_format=valid_data_payload["file_format"],
             chart_width=valid_data_payload["chart_width"],
             chart_height=valid_data_payload["chart_height"],
+            x_axis=valid_data_payload["x_axis"],
+            y_axis=valid_data_payload["y_axis"],
         )
         assert table_plots_serialized_models == expected_table_plots_model
