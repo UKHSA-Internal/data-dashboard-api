@@ -277,8 +277,7 @@ class TestTablesSerializer:
     ):
         """
         Given a valid payload containing the optional `x_axis` & `y_axis` fields
-            passed to a `TablePlotSerializer` object
-        And valid values for the `topic` and `metric`
+            passed to a `TablesSerializer` object
         When `is_valid()` is called from the serializer
         Then the `x_axis` & `y_axis` field values are returned correctly
         """

@@ -642,6 +642,45 @@ class TestChartsSerializer:
         )
         assert chart_plots_serialized_models == expected_chart_plots_model
 
+    def test_valid_payload_with_optional_x_and_y_fields_provided(self):
+        """
+        Given a valid payload containing the optional `x_axis` & `y_axis` fields
+            passed to a `ChartsSerializer` object
+        When `is_valid()` is called from the serializer
+        Then the `x_axis` & `y_axis` field values are returned correctly
+        """
+        # Given
+        x_axis = "stratum"
+        y_axis = "metric"
+        chart_plots = [
+            {
+                "topic": "COVID-19",
+                "metric": "cases_rate_age_sex",
+                "stratum": "",
+                "geography": "",
+                "geography_type": "",
+                "date_from": "",
+                "chart_type": "bar",
+            }
+        ]
+        valid_data_payload = {
+            "file_format": "svg",
+            "chart_height": 300,
+            "chart_width": 400,
+            "plots": chart_plots,
+            "x_axis": x_axis,
+            "y_axis": y_axis,
+        }
+        serializer = ChartsSerializer(data=valid_data_payload)
+
+        # When
+        serializer.is_valid()
+        serialized_model_data: PlotsCollection = serializer.to_models()
+
+        # Then
+        assert serialized_model_data.plots[0].x_axis == x_axis
+        assert serialized_model_data.plots[0].y_axis == y_axis
+
 
 class TestEncodedChartsRequestSerializer:
     def test_valid_file_format(
