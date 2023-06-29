@@ -6,7 +6,8 @@ from metrics.data.managers.core_models.geography_type import GeographyTypeManage
 from metrics.data.managers.core_models.metric import MetricManager
 from metrics.data.managers.core_models.stratum import StratumManager
 from metrics.data.managers.core_models.topic import TopicManager
-from metrics.data.models.core_models.headline import CHAR_COLUMN_MAX_CONSTRAINT
+
+CHAR_COLUMN_MAX_CONSTRAINT: int = 50
 
 
 class Theme(models.Model):
