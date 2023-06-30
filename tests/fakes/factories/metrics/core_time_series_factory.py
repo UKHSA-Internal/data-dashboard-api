@@ -85,7 +85,9 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
     ) -> List[FakeCoreTimeSeries]:
         time_series_records = []
 
-        metric: FakeMetric = FakeMetricFactory.build_example_metric(metric_name=metric_name)
+        metric: FakeMetric = FakeMetricFactory.build_example_metric(
+            metric_name=metric_name
+        )
         metric_value: int = cls._pick_random_positive_metric_value()
 
         percentage_metric: FakeMetric = FakeMetricFactory.build_example_metric(
