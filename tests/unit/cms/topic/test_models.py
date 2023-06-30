@@ -83,7 +83,7 @@ class TestTemplateCoronavirusPage:
         # Check that the plot for the chart has been set correctly
         chart_plot_value = chart_card_value["chart"][0].value
         assert chart_plot_value["topic"] == self.covid_19
-        assert chart_plot_value["metric"] == "COVID-19_deaths_ONSByDay"
+        assert chart_plot_value["metric"] == "new_cases_daily"
         assert chart_plot_value["chart_type"] == ChartTypes.bar.value
 
     def test_is_previewable_returns_false(self):

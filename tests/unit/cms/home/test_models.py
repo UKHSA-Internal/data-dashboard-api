@@ -343,7 +343,7 @@ class TestTemplateHomePage:
         chart = chart_with_headline_and_trend_card_value["chart"]
         chart_plot_value = chart[0].value
         assert chart_plot_value["topic"] == self.covid_19
-        assert chart_plot_value["metric"] == "COVID-19_deaths_ONSByDay"
+        assert chart_plot_value["metric"] == "new_cases_daily"
         assert (
             chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
         )
