@@ -17,7 +17,7 @@ class TestHeadlinesQuerySerializer:
         cls,
     ) -> Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
         fake_metric = FakeMetricFactory.build_example_metric(
-            metric_name="new_cases_7days_sum"
+            metric_name="COVID-19_headline_ONSdeaths_7daytotals"
         )
         fake_topic = fake_metric.topic
 
@@ -87,7 +87,8 @@ class TestHeadlinesQuerySerializer:
         """
         Given a valid payload passed to a `HeadlinesQuerySerializer` object
         When the serializer is initialized
-        Then the result of `get_all_names()` from the `MetricManager` is used to populate the correct field choices
+        Then the result of `get_all_names()` from the `MetricManager`
+            is used to populate the correct field choices
         """
         # Given
         (
@@ -113,7 +114,8 @@ class TestHeadlinesQuerySerializer:
         """
         Given a valid payload passed to a `HeadlinesQuerySerializer` object
         When the serializer is initialized
-        Then the result of `get_all_names()` from the `TopicManager` is used to populate the correct field choices
+        Then the result of `get_all_names()` from the `TopicManager`
+            is used to populate the correct field choices
         """
         # Given
         (

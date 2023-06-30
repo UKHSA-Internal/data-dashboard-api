@@ -18,7 +18,7 @@ class TestPlotParameters:
     mandatory_parameters = {
         "chart_type": "bar",
         "topic": "COVID-19",
-        "metric": "new_cases_daily",
+        "metric": "COVID-19_deaths_ONSByDay",
     }
     optional_field_names = [
         "stratum",
@@ -128,7 +128,7 @@ class TestPlotParameters:
         """
         # Given
         topic_name = "COVID-19"
-        metric_name = "new_cases_daily"
+        metric_name = "COVID-19_deaths_ONSByDay"
         geography_name = "London"
         geography_type_name = "Nation"
         stratum_name = "0_4"

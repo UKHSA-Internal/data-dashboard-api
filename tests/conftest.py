@@ -16,9 +16,9 @@ DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
 def fake_chart_plot_parameters() -> PlotParameters:
     return PlotParameters(
         chart_type="line_multi_coloured",
-        topic="RSV",
-        metric="weekly_positivity_by_age",
-        stratum="0_4",
+        topic="COVID-19",
+        metric="COVID-19_testing_7daypositivity",
+        stratum="default",
         date_from="2023-01-01",
         x_axis="date",
         y_axis="metric",
@@ -30,14 +30,14 @@ def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
     return PlotParameters(
         chart_type="line_multi_coloured",
         topic="COVID-19",
-        metric="new_cases_daily",
+        metric="COVID-19_deaths_ONSByDay",
     )
 
 
 @pytest.fixture
 def valid_plot_parameters() -> PlotParameters:
     return PlotParameters(
-        metric="new_cases_daily",
+        metric="COVID-19_deaths_ONSByDay",
         topic="COVID-19",
         chart_type=ChartTypes.simple_line.value,
         date_from="2022-01-01",

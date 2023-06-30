@@ -29,7 +29,7 @@ class PublicAPIRootView(APIView):
 
     - ---------> `geography` - The name of geography associated with metric  e.g. **London**
 
-    - -----------> `metric` - The name of the metric being queried for e.g. **new_cases_daily**
+    - -----------> `metric` - The name of the metric being queried for e.g. **COVID-19_deaths_ONSByDay**
 
     - -------------> `timeseries` - The final slice of data, which will allow for further filtering via query parameters
 
@@ -38,7 +38,7 @@ class PublicAPIRootView(APIView):
     For example, items stated in bold above would produce the following full URL:
 
     ```
-    .../themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/Nation/geographies/London/metrics/new_cases_daily/
+    .../themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/Nation/geographies/London/metrics/COVID-19_deaths_ONSByDay/
     ```
 
     Note the overall structure of the URL.

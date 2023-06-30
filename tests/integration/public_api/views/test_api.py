@@ -129,7 +129,7 @@ class TestPublicAPINestedLinkViews:
         topic_name = "COVID-19"
         geography_type_name = "Nation"
         geography_name = "England"
-        metric_name = "new_cases_daily"
+        metric_name = "COVID-19_deaths_ONSByDay"
 
         self._setup_api_time_series(
             theme=theme_name,
@@ -197,10 +197,10 @@ class TestPublicAPINestedLinkViews:
         topic_name = "COVID-19"
         geography_type_name = "Nation"
         geography_name = "England"
-        metric_name = "new_cases_daily"
+        metric_name = "COVID-19_deaths_ONSByDay"
 
         other_topic_name = "Influenza"
-        other_metric_name = "weekly_positivity"
+        other_metric_name = "Influenza_testing_7daypositivity"
 
         expected_matching_time_series_count: int = 7
 
@@ -272,7 +272,7 @@ class TestPublicAPINestedLinkViews:
         topic_name = "COVID-19"
         geography_type_name = "Nation"
         geography_name = "England"
-        metric_name = "new_cases_daily"
+        metric_name = "COVID-19_deaths_ONSByDay"
         stratum_name = "15_44"
         sex = "F"
 

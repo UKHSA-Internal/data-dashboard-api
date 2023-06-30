@@ -96,6 +96,8 @@ class PlotsCollection(BaseModel):
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
     chart_height: int
+    x_axis: str
+    y_axis: str
 
 
 class PlotData(BaseModel):

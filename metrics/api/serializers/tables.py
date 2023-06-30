@@ -28,6 +28,14 @@ class TablePlotSerializer(plots.PlotSerializer):
         default="",
         help_text=help_texts.LABEL_FIELD,
     )
+
+
+class TablePlotsListSerializer(serializers.ListSerializer):
+    child = TablePlotSerializer()
+
+
+class TablesSerializer(serializers.Serializer):
+    plots = TablePlotsListSerializer()
     x_axis = serializers.ChoiceField(
         choices=ChartAxisFields.choices(),
         required=False,
@@ -45,14 +53,6 @@ class TablePlotSerializer(plots.PlotSerializer):
         default=DEFAULT_Y_AXIS,
     )
 
-
-class TablePlotsListSerializer(serializers.ListSerializer):
-    child = TablePlotSerializer()
-
-
-class TablesSerializer(serializers.Serializer):
-    plots = TablePlotsListSerializer()
-
     def __init__(self, *args, **kwargs):
         try:
             super().__init__(*args, **kwargs)
@@ -65,6 +65,8 @@ class TablesSerializer(serializers.Serializer):
             file_format="svg",
             chart_height=DEFAULT_CHART_HEIGHT,
             chart_width=DEFAULT_CHART_WIDTH,
+            x_axis=self.data.get("x_axis") or DEFAULT_X_AXIS,
+            y_axis=self.data.get("y_axis") or DEFAULT_Y_AXIS,
         )
 
 

@@ -159,7 +159,7 @@ class MetricListView(BaseNestedAPITimeSeriesView):
 
     The `metric` field is positioned 1 step below `geography`.
 
-    A `metric` is the name of the metric being queried for e.g. **new_cases_daily**
+    A `metric` is the name of the metric being queried for e.g. **COVID-19_deaths_ONSByDay**
 
     """
 

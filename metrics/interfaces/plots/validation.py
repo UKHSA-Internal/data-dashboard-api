@@ -32,7 +32,7 @@ class PlotValidation:
         Raises:
             `MetricDoesNotSupportTopicError`: If the `metric` is not
                 compatible for the required `topic`.
-                E.g. `new_cases_daily` is currently only available
+                E.g. `COVID-19_deaths_ONSByDay` is only available
                 for the topic of `COVID-19`
 
             `DatesNotInChronologicalOrderError`: If a provided `date_to`
