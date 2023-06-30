@@ -24,9 +24,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "sex",
-                    models.CharField(
-                        help_text="\nSex of patients.\n", max_length=3, null=True
-                    ),
+                    models.CharField(help_text="\nSex of patients.\n", max_length=3),
                 ),
                 (
                     "refresh_date",

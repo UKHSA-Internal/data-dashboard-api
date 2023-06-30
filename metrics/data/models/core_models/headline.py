@@ -31,7 +31,6 @@ class CoreHeadline(models.Model):
     )
     sex = models.CharField(
         max_length=3,
-        null=True,
         help_text=help_texts.SEX,
     )
 
