@@ -90,7 +90,7 @@ class TestGetRollingPeriodSliceForEachHalf:
         Then the rolling period slice of 7 is returned
         """
         # Given
-        metric_name = "new_cases_daily"
+        metric_name = "COVID-19_deaths_ONSByDay"
 
         # When
         rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(

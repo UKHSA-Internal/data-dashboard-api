@@ -31,13 +31,13 @@ class TablesView(APIView):
         | Parameter name   | Description                                                                | Example                  | Mandatory |
         |------------------|----------------------------------------------------------------------------|--------------------------|-----------|
         | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
-        | `metric`         | The name of the metric being queried for                                   | new_cases_daily          | Yes       |
-        | `stratum`        | The smallest subgroup a metric can be broken down into                     | 0_4                      | No        |
+        | `metric`         | The name of the metric being queried for                                   | COVID-19_deaths_ONSByDay | Yes       |
+        | `stratum`        | The smallest subgroup a metric can be broken down into                     | default                  | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
-        | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
+        | `label`          | The label to assign on the legend for this individual plot                 | Daily Covid deaths       | No        |
 
         ---
 
@@ -49,8 +49,11 @@ class TablesView(APIView):
         ---
 
         ## Selected metric not available for topic
+
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
-        For example, if a metric like `new_cases_daily` (which is only used for `COVID-19`) is being asked for with a topic of `Influenza`.
+        For example, if a metric like `COVID-19_deaths_ONSByDay` (which is only used for `COVID-19`)
+        is being asked for with a topic of `Influenza`.
+
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
             `Influenza` does not have a corresponding metric of `COVID-19`
 

@@ -117,7 +117,7 @@ class TestValidatePlotFilter:
         ]
         plot = {
             "topic": "COVID-19",
-            "metric": "new_cases_daily",
+            "metric": "COVID-19_deaths_ONSRollingMean",
         }
 
         # When
@@ -129,7 +129,7 @@ class TestValidatePlotFilter:
         # Then
         expected_result: Dict[str, str] = {
             "topic": "COVID-19",
-            "metric": "new_cases_daily",
+            "metric": "COVID-19_deaths_ONSRollingMean",
         }
 
         assert actual_result == expected_result
@@ -177,7 +177,10 @@ class TestValidatePlotFilter:
         ]
         plot = {
             "topic": "COVID-19",
-            "metric": ["new_cases_7day_avg", "new_cases_7day_avg"],
+            "metric": [
+                "COVID-19_deaths_ONSRollingMean",
+                "COVID-19_deaths_ONSRollingMean",
+            ],
         }
 
         # When
@@ -189,7 +192,10 @@ class TestValidatePlotFilter:
         # Then
         expected_result: Dict[str, Union[str, List[str]]] = {
             "topic": "COVID-19",
-            "metric__in": ["new_cases_7day_avg", "new_cases_7day_avg"],
+            "metric__in": [
+                "COVID-19_deaths_ONSRollingMean",
+                "COVID-19_deaths_ONSRollingMean",
+            ],
         }
 
         assert actual_result == expected_result
@@ -239,7 +245,7 @@ class TestValidateQueryFilters:
         plots = [
             {
                 "topic": "COVID-19",
-                "metric": "new_cases_daily",
+                "metric": "COVID-19_deaths_ONSByDay",
             }
         ]
 
@@ -253,7 +259,7 @@ class TestValidateQueryFilters:
         expected_result: List[Dict[str, str]] = [
             {
                 "topic": "COVID-19",
-                "metric": "new_cases_daily",
+                "metric": "COVID-19_deaths_ONSByDay",
             }
         ]
 
@@ -271,8 +277,8 @@ class TestValidateQueryFilters:
             "metric",
         ]
         plots = [
-            {"topic": "COVID-19", "metric": "new_cases_daily"},
-            {"topic": "COVID-19", "metric": "new_cases_7day_avg"},
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSByDay"},
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSRollingMean"},
         ]
 
         # When
@@ -283,8 +289,8 @@ class TestValidateQueryFilters:
 
         # Then
         expected_result: List[Dict[str, str]] = [
-            {"topic": "COVID-19", "metric": "new_cases_daily"},
-            {"topic": "COVID-19", "metric": "new_cases_7day_avg"},
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSByDay"},
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSRollingMean"},
         ]
 
         assert actual_result == expected_result
@@ -337,7 +343,10 @@ class TestValidateQueryFilters:
         plots = [
             {
                 "topic": "COVID-19",
-                "metric": ["new_cases_7day_avg", "new_cases_7day_avg"],
+                "metric": [
+                    "COVID-19_deaths_ONSRollingMean",
+                    "COVID-19_deaths_ONSRollingMean",
+                ],
             }
         ]
 
@@ -350,7 +359,10 @@ class TestValidateQueryFilters:
         expected_result = [
             {
                 "topic": "COVID-19",
-                "metric__in": ["new_cases_7day_avg", "new_cases_7day_avg"],
+                "metric__in": [
+                    "COVID-19_deaths_ONSRollingMean",
+                    "COVID-19_deaths_ONSRollingMean",
+                ],
             },
         ]
 

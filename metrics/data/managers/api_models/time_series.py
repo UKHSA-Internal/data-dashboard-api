@@ -53,7 +53,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             metric_name: The name of the metric to filter for.
-                E.g. `new_cases_daily`.
+                E.g. `COVID-19_deaths_ONSByDay`.
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest"
@@ -61,7 +61,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
                     `<APITimeSeriesQuerySet [
                         <APITimeSeries:
                             APITimeSeries for 2023-03-08,
-                                              metric 'new_cases_daily',
+                                              metric 'COVID-19_deaths_ONSByDay',
                                               stratum 'default',
                                               value: 2364.0
                             >,

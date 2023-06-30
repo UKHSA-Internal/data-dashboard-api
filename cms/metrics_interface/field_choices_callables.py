@@ -55,7 +55,7 @@ def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of unique metric names.
         Examples:
-            [("new_cases_daily", "new_cases_daily"), ...]
+            [("COVID-19_deaths_ONSByDay", "COVID-19_deaths_ONSByDay"), ...]
 
     """
     metrics_interface = MetricsAPIInterface()
@@ -159,7 +159,10 @@ def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of change type metric names.
         Examples:
-            [("new_cases_7days_change", "new_cases_7days_change"), ...]
+            [("COVID-19_headline_ONSdeaths_7daychange",
+              "COVID-19_headline_ONSdeaths_7daychange"),
+                ...
+            ]
 
     """
     metrics_interface = MetricsAPIInterface()
@@ -182,7 +185,10 @@ def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES
     Returns:
         A list of 2-item tuples of change percent type metric names.
         Examples:
-            [("new_cases_7days_change_percentage", "new_cases_7days_change_percentage"), ...]
+            [("COVID-19_headline_ONSdeaths_7daypercentchange",
+              "COVID-19_headline_ONSdeaths_7daypercentchange"),
+                ...
+            ]
 
     """
     metrics_interface = MetricsAPIInterface()
@@ -205,7 +211,7 @@ def get_all_stratum_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of stratum names.
         Examples:
-            [("0_4", "0_4"), ...]
+            [("default", "default"), ...]
 
     """
     metrics_interface = MetricsAPIInterface()

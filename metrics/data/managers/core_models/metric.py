@@ -17,7 +17,7 @@ class MetricQuerySet(models.QuerySet):
             QuerySet: A queryset of the individual metric names
                 ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_deaths_ONSByDay']>`
 
         """
         return self.all().values_list("name", flat=True).order_by("name")
@@ -38,7 +38,8 @@ class MetricQuerySet(models.QuerySet):
             QuerySet: A queryset of the individual metric names without repetition
                 ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_testing_PCRcountByDay']>`
+
         """
         return self.all().values_list("name", flat=True).distinct().order_by("name")
 
@@ -48,7 +49,7 @@ class MetricQuerySet(models.QuerySet):
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change', 'new_deaths_7days_change']>`
+                    `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daychange]>`
         """
         return self.get_all_unique_names().filter(name__contains="change")
 
@@ -58,7 +59,7 @@ class MetricQuerySet(models.QuerySet):
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change_percentage', 'weekly_percent_change_positivity']>`
+                    `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daypercentchange']>`
 
         """
         return self.get_all_unique_names().filter(name__contains="percent")
@@ -77,7 +78,7 @@ class MetricManager(models.Manager):
             QuerySet: A queryset of the individual metric names
                 ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_deaths_ONSByDay']>`
 
         """
         return self.get_queryset().get_all_names()
@@ -100,7 +101,7 @@ class MetricManager(models.Manager):
             QuerySet: A queryset of the individual metric names without repetition
                 ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_testing_PCRcountByDay']>`
 
         """
         return self.get_queryset().get_all_unique_names()
@@ -111,7 +112,7 @@ class MetricManager(models.Manager):
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change', 'new_deaths_7days_change']>`
+                    `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daychange]>`
 
         """
         return self.get_queryset().get_all_unique_change_type_names()
@@ -122,7 +123,7 @@ class MetricManager(models.Manager):
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change_percentage', 'new_deaths_7days_change_percentage']>`
+                    `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daypercentchange']>`
 
         """
         return self.get_queryset().get_all_unique_percent_change_type_names()

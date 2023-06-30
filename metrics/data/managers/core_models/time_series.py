@@ -55,7 +55,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_daily`
+                E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
@@ -184,13 +184,13 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_daily
+                E.g. `COVID-19_deaths_ONSByDay`
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
                 of the individual metric_value numbers only:
                 Examples:
-                    `<CoreTimeSeriesQuerySet [ Decimal('0.8'), Decimal('0.9')]>`
+                    `<CoreTimeSeriesQuerySet [ Decimal('2.0'), Decimal('9.0')]>`
 
         """
         queryset = self.filter(
@@ -265,13 +265,13 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_daily`
+                E.g. `COVID-19_deaths_ONSByDay`
 
         Returns:
             QuerySet: An ordered queryset from newest -> oldest
                 of the individual metric_value numbers only:
                 Examples:
-                    `<CoreTimeSeriesQuerySet [Decimal('0.8'), Decimal('0.9')]>`
+                    `<CoreTimeSeriesQuerySet [Decimal('2.0'), Decimal('9.0')]>`
 
         """
         return self.get_queryset().by_topic_metric_ordered_from_newest_to_oldest(
@@ -287,13 +287,13 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_daily`
+                E.g. `COVID-19_deaths_ONSByDay`
 
         Returns:
             Optional[Decimal]: The individual metric_value number only.
                 Otherwise, None is returned if no record could be found
                 Examples:
-                    `0.8`
+                    `2.0`
 
         """
         return (
@@ -322,7 +322,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_daily
+                E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
@@ -332,8 +332,8 @@ class CoreTimeSeriesManager(models.Manager):
                 of the (x_axis, y_axis) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('0.8')),
-                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                        (datetime.date(2022, 10, 10), Decimal('8.0')),
+                        (datetime.date(2022, 10, 17), Decimal('9.0'))
                     ]>`
 
         """
@@ -369,7 +369,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_7days_sum`
+                E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
@@ -388,8 +388,8 @@ class CoreTimeSeriesManager(models.Manager):
                 of the (x_axis, y_axis) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('0.8')),
-                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                        (datetime.date(2022, 10, 10), Decimal('8.0')),
+                        (datetime.date(2022, 10, 17), Decimal('9.0'))
                     ]>`
 
         """
@@ -423,7 +423,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_7days_sum`
+                E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
@@ -447,16 +447,21 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_7days_sum`
+                E.g. `COVID-19_headline_newtests_7daycounttotal`
 
         Returns:
             QuerySet: A queryset containing the single record
                 Examples:
-                    `<CoreTimeSeries: Core Data for 2023-03-04, metric 'new_cases_7days_sum', value: 24298.0>`
+                    `<CoreTimeSeries:
+                        Core Data for 2023-03-04,
+                        metric 'COVID-19_headline_newtests_7daycounttotal',
+                        value: 24298.0
+                    >`
 
         Raises:
             `MultipleObjectsReturned`: If the query returned more than 1 record.
                 We expect this if the provided `metric` is for timeseries type data
+
             `DoesNotExist`: If the query returned no records.
 
         """
@@ -472,7 +477,7 @@ class CoreTimeSeriesManager(models.Manager):
             QuerySet: A queryset of the individual sex names
                 ordered in descending ordering starting from A -> Z:
                 Examples:
-                    `<CoreTimeSeriesQuerySet [('ALL',), ('F',), ('M',)]>`
+                    `<CoreTimeSeriesQuerySet [('ALL'), ('F'), ('M')]>`
 
         """
         return self.get_queryset().get_all_sex_names()

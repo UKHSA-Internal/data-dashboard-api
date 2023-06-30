@@ -14,7 +14,9 @@ class HeadlinesQuerySerializer(serializers.Serializer):
     metric = serializers.ChoiceField(
         choices=[],
         required=True,
-        help_text=help_texts.METRIC_FIELD.format("new_cases_7days_sum"),
+        help_text=help_texts.METRIC_FIELD.format(
+            "COVID-19_headline_ONSdeaths_7daychange"
+        ),
     )
 
     def __init__(self, *args, **kwargs):
