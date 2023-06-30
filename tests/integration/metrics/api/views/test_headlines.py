@@ -1,29 +1,14 @@
-import datetime
 from http import HTTPStatus
+from typing import List
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from metrics.data.models.core_models import CoreTimeSeries, Metric, Topic
+from metrics.data.models.core_models import CoreTimeSeries
 
 
 class TestHeadlinesView:
-    @staticmethod
-    def _setup_core_time_series(
-        topic_name: str, metric_name: str, metric_value: float
-    ) -> CoreTimeSeries:
-        topic = Topic.objects.create(name=topic_name)
-        metric = Metric.objects.create(name=metric_name, topic=topic)
-        year = 2023
-        return CoreTimeSeries.objects.create(
-            metric_value=metric_value,
-            metric=metric,
-            year=year,
-            epiweek=1,
-            dt=datetime.date(year=year, month=1, day=1),
-        )
-
     @property
     def path(self) -> str:
         return "/headlines/v2/"
@@ -31,7 +16,10 @@ class TestHeadlinesView:
     @pytest.mark.parametrize("path", ["/headlines/v2/", "/api/headlines/v2/"])
     @pytest.mark.django_db
     def test_get_returns_correct_response(
-        self, path: str, authenticated_api_client: APIClient
+        self,
+        path: str,
+        authenticated_api_client: APIClient,
+        core_headline_example: CoreTimeSeries,
     ):
         """
         Given the names of a `metric` and `topic`
@@ -40,12 +28,8 @@ class TestHeadlinesView:
         Then an HTTP 200 OK response is returned with the associated metric_value
         """
         # Given
-        metric_name = "new_cases_7days_sum"
-        topic_name = "COVID-19"
-        metric_value = 123
-        self._setup_core_time_series(
-            topic_name=topic_name, metric_name=metric_name, metric_value=metric_value
-        )
+        topic_name: str = core_headline_example.metric.topic.name
+        metric_name: str = core_headline_example.metric.name
 
         # When
         response: Response = authenticated_api_client.get(
@@ -54,12 +38,15 @@ class TestHeadlinesView:
 
         # Then
         assert response.status_code == HTTPStatus.OK
-        assert response.data == {"value": metric_value}
+        assert response.data == {"value": core_headline_example.metric_value}
 
     @pytest.mark.parametrize("path", ["/headlines/v2/", "/api/headlines/v2/"])
     @pytest.mark.django_db
     def test_get_returns_error_message_for_timeseries_type_metric(
-        self, path: str, authenticated_api_client: APIClient
+        self,
+        path: str,
+        authenticated_api_client: APIClient,
+        core_timeseries_example: List[CoreTimeSeries],
     ):
         """
         Given a `topic` and a `metric` which has more than 1 record and is a timeseries type metric
@@ -68,27 +55,19 @@ class TestHeadlinesView:
         Then an HTTP 400 BAD REQUEST response is returned with the expected error message
         """
         # Given
-        incorrect_metric_name = "COVID-19_deaths_ONSByDay"
-        topic_name = "COVID-19"
-        metric_value = 123
-
-        # Create multiple records to emulate time-series type data
-        for _ in range(2):
-            self._setup_core_time_series(
-                topic_name=topic_name,
-                metric_name=incorrect_metric_name,
-                metric_value=metric_value,
-            )
+        core_timeseries: CoreTimeSeries = core_timeseries_example[0]
+        topic_name: str = core_timeseries.metric.topic.name
+        metric_name: str = core_timeseries.metric.name
 
         # When
         response: Response = authenticated_api_client.get(
             path=path,
-            data={"topic": topic_name, "metric": incorrect_metric_name},
+            data={"topic": topic_name, "metric": metric_name},
         )
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
-        expected_error_message = f"`{incorrect_metric_name}` is a timeseries-type metric. This should be a headline-type metric"
+        expected_error_message = f"`{metric_name}` is a timeseries-type metric. This should be a headline-type metric"
         assert response.data == {"error_message": expected_error_message}
 
     @pytest.mark.parametrize("path", ["/headlines/v2/", "/api/headlines/v2/"])
