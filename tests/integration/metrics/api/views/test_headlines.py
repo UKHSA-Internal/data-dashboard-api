@@ -80,7 +80,7 @@ class TestHeadlinesView:
         Then an HTTP 401 UNAUTHORIZED response is returned
         """
         # Given
-        metric_name = "new_cases_7days_sum"
+        metric_name = "COVID-19_headline_ONSdeaths_7daytotals"
         topic_name = "COVID-19"
         client = APIClient()
 

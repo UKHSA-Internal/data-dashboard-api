@@ -72,7 +72,7 @@ class PlotsInterface:
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_7days_sum`
+                E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object or string to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0) or "2023-03-27"
                 would strip off any records which occurred before that date.
@@ -81,7 +81,7 @@ class PlotsInterface:
             geography_type_name: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
             stratum_name: The value of the stratum to apply additional filtering to.
-                E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+                E.g. `default`, which would be used to capture all strata
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
@@ -91,8 +91,8 @@ class PlotsInterface:
                 of the (dt, metric_value) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('0.8')),
-                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                        (datetime.date(2022, 10, 10), Decimal('8.0')),
+                        (datetime.date(2022, 10, 17), Decimal('9.0'))
                     ]>`
 
         """
@@ -204,7 +204,8 @@ def sort_by_stratum(queryset: QuerySet) -> Tuple[List, List]:
     Take a list of tuples where Stratum is the first element, sort it, prettify the stratum values and return as two separate lists
 
     Args:
-        queryset: A queryset containing a list of tuples where Stratum is the first value and the metric value is the second
+        queryset: A queryset containing a list of tuples where
+        Stratum is the first value and the metric value is the second
         E.g. ('15_44', Decimal('0.7'))
 
     Returns:

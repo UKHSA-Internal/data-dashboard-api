@@ -121,7 +121,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_7days_sum`
+                E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
@@ -130,7 +130,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             geography_type_name: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
             stratum_name: The value of the stratum to apply additional filtering to.
-                E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+                E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
@@ -206,16 +206,21 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `new_cases_7days_sum`
+                E.g. `COVID-19_headline_ONSdeaths_7daytotals`
 
         Returns:
             QuerySet: A queryset containing the single record
                 Examples:
-                    `<CoreTimeSeries: Core Data for 2023-03-04, metric 'new_cases_7days_sum', value: 24298.0>`
+                    `<CoreTimeSeries:
+                        Core Data for 2023-03-04,
+                        metric 'COVID-19_headline_ONSdeaths_7daytotals',
+                        value: 24298.0
+                    >`
 
         Raises:
             `MultipleObjectsReturned`: If the query returned more than 1 record.
                 We expect this if the provided `metric` is for timeseries type data
+
             `DoesNotExist`: If the query returned no records.
 
         """
@@ -441,20 +446,20 @@ class CoreTimeSeriesManager(models.Manager):
         ).count()
 
     def get_metric_value(self, topic_name: str, metric_name: str) -> Decimal:
-        """Gets the record associated with the given `topic` and `metric`.
+        """Gets the record associated with the given `topic_name` and `metric_name`.
 
         Args:
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `COVID-19_headline_newtests_7daycounttotal`
+                E.g. `COVID-19_headline_ONSdeaths_7daytotals`
 
         Returns:
             QuerySet: A queryset containing the single record
                 Examples:
                     `<CoreTimeSeries:
                         Core Data for 2023-03-04,
-                        metric 'COVID-19_headline_newtests_7daycounttotal',
+                        metric 'COVID-19_headline_ONSdeaths_7daytotals',
                         value: 24298.0
                     >`
 
