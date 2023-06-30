@@ -1,6 +1,5 @@
 from django.db import models
 
-from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import help_texts
 from metrics.data.models.core_models.supporting import Age, Geography, Metric, Stratum
 
