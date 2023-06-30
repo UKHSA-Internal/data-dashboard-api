@@ -5,8 +5,6 @@ from unittest import mock
 import plotly.graph_objects
 import pytest
 
-from metrics.api.serializers.charts import FILE_FORMAT_CHOICES
-from metrics.domain.charts.line_multi_coloured import generation
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
