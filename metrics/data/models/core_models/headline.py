@@ -16,7 +16,7 @@ class CoreHeadline(models.Model):
         to=Geography,
         on_delete=models.SET_NULL,
         null=True,
-        help_text=help_texts.GEOGRAPHY
+        help_text=help_texts.GEOGRAPHY,
     )
     stratum = models.ForeignKey(
         to=Stratum,

@@ -1,3 +1,4 @@
+from .headline import CoreHeadline
 from .supporting import (
     Geography,
     GeographyType,
