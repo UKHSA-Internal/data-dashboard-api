@@ -203,7 +203,7 @@ class TestValidateMetricIsAvailableForTopic:
         """
         # Given
         plot_parameters = valid_plot_parameters
-        metric_name = "covid_occupied_beds_latest"
+        metric_name = "COVID-19_deaths_ONSByDay"
         valid_topic_name = "COVID-19"
         plot_parameters.metric = metric_name
         plot_parameters.topic = valid_topic_name
@@ -230,14 +230,14 @@ class TestValidateMetricIsAvailableForTopic:
         self, valid_plot_parameters: PlotParameters
     ):
         """
-        Given an otherwise valid `PlotParameters` model which has a metric of `covid_occupied_beds_latest`
+        Given an otherwise valid `PlotParameters` model which has a metric of `COVID-19_deaths_ONSByDay`
         And a topic of `Influenza` which is invalid
         When `_validate_metric_is_available_for_topic()` is called from an instance of `PlotValidation`
         Then a `MetricDoesNotSupportTopicError` is raised
         """
         # Given
         plot_parameters = valid_plot_parameters
-        metric_name = "covid_occupied_beds_latest"
+        metric_name = "COVID-19_deaths_ONSByDay"
         invalid_topic_name = "Influenza"
         plot_parameters.metric = metric_name
         plot_parameters.topic = invalid_topic_name
@@ -417,7 +417,7 @@ class TestValidateDates:
         date_from = datetime.datetime(year=2022, month=10, day=2)
         date_to = datetime.datetime(year=2021, month=7, day=1)
         plot_parameters = PlotParameters(
-            metric="covid_occupied_beds_latest",
+            metric="COVID-19_deaths_ONSByDay",
             topic="COVID-19",
             chart_type=ChartTypes.simple_line.value,
             date_from=date_from.strftime(EXPECTED_DATE_FORMAT),

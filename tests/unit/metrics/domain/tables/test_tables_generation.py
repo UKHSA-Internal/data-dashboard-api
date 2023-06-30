@@ -26,9 +26,9 @@ def _create_plot_data(
 ) -> PlotData:
     plot_params = PlotParameters(
         chart_type="",
-        topic="RSV",
-        metric="weekly_positivity_by_age",
-        stratum="0_4",
+        topic="COVID-19",
+        metric="COVID-19_deaths_ONSByDay",
+        stratum="default",
         label=label,
         x_axis=x_axis,
     )
