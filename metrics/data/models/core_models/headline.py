@@ -10,11 +10,13 @@ class CoreHeadline(models.Model):
         to=Metric,
         on_delete=models.SET_NULL,
         null=True,
+        help_text=help_texts.METRIC_HEADLINE,
     )
     geography = models.ForeignKey(
         to=Geography,
         on_delete=models.SET_NULL,
         null=True,
+        help_text=help_texts.GEOGRAPHY
     )
     stratum = models.ForeignKey(
         to=Stratum,
@@ -32,10 +34,6 @@ class CoreHeadline(models.Model):
         max_length=3,
         null=True,
         help_text=help_texts.SEX,
-    )
-    metric_frequency = models.CharField(
-        max_length=1,
-        choices=TimePeriod.choices(),
     )
 
     refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE)
