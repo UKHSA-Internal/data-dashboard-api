@@ -55,3 +55,7 @@ class Stratum(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = StratumManager()
+
+
+class Age(models.Model):
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
