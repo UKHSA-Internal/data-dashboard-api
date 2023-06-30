@@ -18,8 +18,8 @@ class TestChartsInterface:
     ) -> PlotData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
-            topic="RSV",
-            metric="weekly_positivity_by_age",
+            topic="COVID-19",
+            metric="COVID-19_deaths_ONSByDay",
         )
         return PlotData(
             parameters=plot_params,

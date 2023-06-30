@@ -36,9 +36,9 @@ class TestLineMultiColouredCharts:
     ) -> PlotData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
-            topic="RSV",
-            metric="weekly_positivity_by_age",
-            stratum="0_4",
+            topic="COVID-19",
+            metric="COVID-19_deaths_ONSByDay",
+            stratum="default",
             label=label,
             line_type=line_type,
             line_colour=line_colour,

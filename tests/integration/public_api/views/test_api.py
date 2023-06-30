@@ -200,7 +200,7 @@ class TestPublicAPINestedLinkViews:
         metric_name = "COVID-19_deaths_ONSByDay"
 
         other_topic_name = "Influenza"
-        other_metric_name = "weekly_positivity"
+        other_metric_name = "Influenza_testing_7daypositivity"
 
         expected_matching_time_series_count: int = 7
 
