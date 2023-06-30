@@ -15,7 +15,7 @@ def fake_chart_plots_data() -> PlotData:
     plot_params = PlotParameters(
         chart_type="line_multi_coloured",
         topic="COVID-19",
-        metric="new_cases_daily",
+        metric="COVID-19_deaths_ONSByDay",
     )
     x_values = [1, 2, 4, 5, 5, 2, 1]
     return PlotData(

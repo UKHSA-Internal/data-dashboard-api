@@ -132,7 +132,7 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_deaths_ONSByDay']>`
 
         """
         return self.metric_manager.get_all_unique_names()
@@ -144,7 +144,10 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change', 'new_deaths_7days_change']>`
+                    `<MetricQuerySet [
+                        'COVID-19_headline_ONSdeaths_7daychange',
+                        'COVID-19_headline_ONSdeaths_7daychange'
+                        ]>`
 
         """
         return self.metric_manager.get_all_unique_change_type_names()
@@ -156,7 +159,10 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change_percentage', 'new_deaths_7days_change_percentage']>`
+                    `<MetricQuerySet [
+                        'COVID-19_headline_ONSdeaths_7daypercentchange',
+                        'COVID-19_headline_ONSdeaths_7daypercentchange'
+                        ]>`
 
         """
         return self.metric_manager.get_all_unique_percent_change_type_names()
@@ -168,7 +174,7 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual stratum names:
                 Examples:
-                    `<StratumQuerySet ['default', '0_4']>`
+                    `<StratumQuerySet ['default']>`
 
         """
         return self.stratum_manager.get_all_names()

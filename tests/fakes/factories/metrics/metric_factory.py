@@ -14,7 +14,7 @@ class FakeMetricFactory(factory.Factory):
 
     @classmethod
     def build_example_metric(
-        cls, metric_name: str = "new_cases_daily", topic_name: str = "COVID-19"
+        cls, metric_name: str = "COVID-19_deaths_ONSByDay", topic_name: str = "COVID-19"
     ) -> FakeMetric:
         topic = FakeTopic(name=topic_name)
         return cls.build(name=metric_name, topic=topic)

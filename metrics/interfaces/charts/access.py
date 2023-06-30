@@ -342,7 +342,7 @@ def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
 
         `MetricDoesNotSupportTopicError`: If the `metric` is not
             compatible for the required `topic`.
-            E.g. `new_cases_daily` is currently only available
+            E.g. `COVID-19_deaths_ONSByDay` is only available
             for the topic of `COVID-19`
 
     """
@@ -361,7 +361,7 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
 
         `MetricDoesNotSupportTopicError`: If the `metric` is not
             compatible for the required `topic`.
-            E.g. `new_cases_daily` is currently only available
+            E.g. `COVID-19_deaths_ONSByDay` is only available
             for the topic of `COVID-19`
 
     """

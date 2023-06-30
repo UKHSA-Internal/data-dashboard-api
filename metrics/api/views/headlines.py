@@ -39,23 +39,23 @@ class HeadlinesView(APIView):
 
         For example, a request for the following would be **invalid**:
 
-        - metric =`new_cases_daily`
+        - metric =`COVID-19_deaths_ONSByDay`
 
         - topic = `COVID-19`
 
-        This would be **invalid** because the `metric` of `new_cases_daily` relates to timeseries data,
+        This would be **invalid** because the `metric` of `COVID-19_deaths_ONSByDay` relates to timeseries data,
         which is not represented by a single headline-type figure.
 
         ---
 
         Whereas, a request for the following would be **valid**:
 
-        - metric =`new_cases_7days_sum`
+        - metric =`COVID-19_headline_ONSdeaths_7daychange`
 
         - topic = `COVID-19`
 
-        This would be **valid** because the `metric` of `new_cases_7days_sum` relates to headline data,
-        which can be represented by a single headline-type figure.
+        This would be **valid** because the `metric` of `COVID-19_headline_ONSdeaths_7daychange`
+        relates to headline data, which can be represented by a single headline-type figure.
 
         """
         query_serializer = HeadlinesQuerySerializer(data=request.query_params)

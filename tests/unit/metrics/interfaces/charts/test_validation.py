@@ -73,13 +73,13 @@ class TestValidate:
 class TestValidateSeriesChartTypeWorksWithMetric:
     def test_delegates_validation_to_plot_validation(self):
         """
-        Given a metric of `new_cases_daily` and a request for a `simple_line` type chart
+        Given a metric of `COVID-19_deaths_ONSByDay` and a request for a `simple_line` type chart
         When `_validate_series_type_chart_works_with_metric()` is called from an instance of `ChartsRequestValidator`
         The call is delegated to the `PlotValidation` object
         Then None is returned
         """
         # Given
-        metric = "new_cases_daily"
+        metric = "COVID-19_deaths_ONSByDay"
         chart_type = ChartTypes.simple_line.value
         plot_parameters = PlotParameters(
             metric=metric,
@@ -105,12 +105,12 @@ class TestValidateSeriesChartTypeWorksWithMetric:
 
     def test_passes_naively_if_non_series_chart_type_provided(self):
         """
-        Given a metric of `new_cases_daily` and a request for a `waffle` type chart
+        Given a metric of `COVID-19_deaths_ONSByDay` and a request for a `waffle` type chart
         When `_validate_series_type_chart_works_with_metric()` is called from an instance of `ChartsRequestValidator`
         Then None is returned
         """
         # Given
-        metric = "new_cases_daily"
+        metric = "COVID-19_deaths_ONSByDay"
         chart_type = ChartTypes.waffle.value
         plot_parameters = PlotParameters(
             metric=metric,

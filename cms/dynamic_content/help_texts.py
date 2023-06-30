@@ -86,14 +86,15 @@ Note that these cards will be displayed across the available width.
 
 TOPIC_FIELD_HELP_TEXT: str = "The name of the topic to pull data e.g. COVID-19."
 METRIC_FIELD_HELP_TEXT: str = """
-The name of the metric to pull data e.g. new_cases_daily.
+The name of the metric to pull data for e.g. "COVID-19_deaths_ONSByDay".
 """
 TREND_METRIC_FIELD_HELP_TEXT: str = """
-The name of the trend type metric to pull data e.g. "new_cases_7days_change". 
+The name of the trend type metric to pull data e.g. "COVID-19_headline_ONSdeaths_7daychange". 
 Note that only 'change' type metrics are available for selection for this field type.
 """
 TREND_PERCENTAGE_METRIC_FIELD_HELP_TEXT: str = """
-The name of the accompanying percentage trend type metric to pull data e.g. "new_cases_7days_change_percentage". 
+The name of the accompanying percentage trend type metric to pull data 
+e.g. "COVID-19_headline_ONSdeaths_7daypercentchange". 
 Note that only 'percent' type metrics are available for selection for this field type.
 """
 CHART_TYPE_FIELD_HELP_TEXT: str = """

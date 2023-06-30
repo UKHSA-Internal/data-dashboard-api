@@ -343,7 +343,7 @@ class TestTablesSerializer:
         table_plots = [
             {
                 "topic": "COVID-19",
-                "metric": "new_cases_daily",
+                "metric": "COVID-19_deaths_ONSByDay",
                 "stratum": "",
                 "geography": "",
                 "geography_type": "",

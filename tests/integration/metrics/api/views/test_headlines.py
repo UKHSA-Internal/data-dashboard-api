@@ -68,7 +68,7 @@ class TestHeadlinesView:
         Then an HTTP 400 BAD REQUEST response is returned with the expected error message
         """
         # Given
-        incorrect_metric_name = "new_cases_daily"
+        incorrect_metric_name = "COVID-19_deaths_ONSByDay"
         topic_name = "COVID-19"
         metric_value = 123
 
