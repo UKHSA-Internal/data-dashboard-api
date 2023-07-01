@@ -50,6 +50,9 @@ class TestDraftPagesAPI:
             "title"
         ]
 
+        # Check the `title` from the `api/drafts/{id}`
+        # is the more recent unpublished value
+        # and not the older published value
         assert (
             title_field_from_drafts_endpoint
             == unpublished_title
