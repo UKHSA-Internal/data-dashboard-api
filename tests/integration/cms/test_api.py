@@ -55,19 +55,3 @@ class TestDraftPagesAPI:
             == unpublished_title
             != title_field_from_pages_endpoint
         )
-
-    @pytest.mark.django_db
-    def test_request_without_api_key_is_unauthorized(self):
-        """
-        Given an APIClient which is not authenticated
-        When the `GET /api/drafts/{id}/` endpoint is hit
-        Then an HTTP 401 UNAUTHORIZED response is returned
-        """
-        # Given
-        client = APIClient()
-
-        # When
-        response: Response = client.get(path=f"{self.path}/1/", data={})
-
-        # Then
-        assert response.status_code == HTTPStatus.UNAUTHORIZED

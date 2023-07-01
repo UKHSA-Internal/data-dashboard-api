@@ -1,3 +1,5 @@
+from rest_framework_api_key.permissions import HasAPIKey
+
 from cms.dashboard.serializers import CMSDraftPagesSerializer
 from cms.dashboard.viewsets import CMSDraftPagesViewSet
 
@@ -33,3 +35,20 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert len(urlpatterns) == 1
         assert urlpatterns[0].name == "detail"
+
+    def test_permission_classes_has_api_key(self):
+        """
+        Given an instance of the `CMSDraftPagesViewSet`
+        When `permission_classes` is called
+        Then a list of 1 item is returned
+            which is the `HasAPIKey` class
+        """
+        # Given
+        draft_pages_viewset = CMSDraftPagesViewSet()
+
+        # When
+        permission_classes = draft_pages_viewset.permission_classes
+
+        # Then
+        assert len(permission_classes) == 1
+        assert permission_classes[0] is HasAPIKey
