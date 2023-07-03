@@ -4,14 +4,14 @@ from unittest import mock
 
 import pytest
 
-from metrics.domain.models import (
+from metrics.domain.models.plots import (
     PlotParameters,
     get_date_n_months_ago_from_timestamp,
     make_date_from_string,
 )
 from metrics.domain.utils import ChartAxisFields
 
-MODULE_PATH: str = "metrics.domain.models"
+MODULE_PATH: str = "metrics.domain.models.plots"
 
 
 class TestPlotParameters:
