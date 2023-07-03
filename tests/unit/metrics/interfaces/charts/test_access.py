@@ -7,7 +7,7 @@ import pytest
 
 from metrics.api.serializers.charts import FILE_FORMAT_CHOICES
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
@@ -223,6 +223,8 @@ class TestChartsInterface:
             file_format="svg",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         charts_interface = ChartsInterface(
@@ -264,6 +266,8 @@ class TestChartsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         charts_interface = ChartsInterface(
@@ -305,7 +309,7 @@ class TestChartsInterface:
         height = 456
         mocked_x_axis_values = mock.Mock()
         mocked_y_axis_values = mock.Mock()
-        fake_plot_data = PlotsData(
+        fake_plot_data = PlotData(
             parameters=fake_chart_plot_parameters,
             x_axis_values=mocked_x_axis_values,
             y_axis_values=mocked_y_axis_values,
@@ -316,6 +320,8 @@ class TestChartsInterface:
             file_format="svg",
             chart_width=width,
             chart_height=height,
+            x_axis="date",
+            y_axis="metric",
         )
 
         charts_interface = ChartsInterface(
@@ -592,6 +598,8 @@ class TestValidateEachRequestedChartPlot:
             plots=fake_requested_chart_plots,
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         # When

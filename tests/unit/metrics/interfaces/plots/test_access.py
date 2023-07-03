@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
@@ -58,6 +58,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         data_slice_interface = PlotsInterface(
@@ -103,6 +105,8 @@ class TestPlotsInterface:
             file_format="svg",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
         fake_core_time_series_records: List[
             FakeCoreTimeSeries
@@ -117,7 +121,7 @@ class TestPlotsInterface:
         )
 
         # When
-        plots_data: List[PlotsData] = plots_interface.build_plots_data()
+        plots_data: List[PlotData] = plots_interface.build_plots_data()
 
         # Then
         # Check that only 1 enriched `PlotData` model is returned
@@ -125,7 +129,7 @@ class TestPlotsInterface:
 
         # Check that the `PlotData` model was enriched
         # for the plot parameters which requested timeseries data that existed
-        expected_plots_data_for_valid_params = PlotsData(
+        expected_plots_data_for_valid_params = PlotData(
             parameters=valid_plot_parameters,
             x_axis_values=tuple(x.dt for x in fake_core_time_series_records),
             y_axis_values=tuple(x.metric_value for x in fake_core_time_series_records),
@@ -147,6 +151,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
         fake_core_time_series_for_plot: List[
             FakeCoreTimeSeries
@@ -163,7 +169,7 @@ class TestPlotsInterface:
         )
 
         # When
-        plot_data: PlotsData = plots_interface.build_plot_data_from_parameters(
+        plot_data: PlotData = plots_interface.build_plot_data_from_parameters(
             plot_parameters=fake_chart_plot_parameters
         )
 
@@ -203,7 +209,7 @@ class TestPlotsInterface:
         )
 
         # When
-        plot_data_from_parameters: PlotsData = (
+        plot_data_from_parameters: PlotData = (
             plots_interface.build_plot_data_from_parameters(
                 plot_parameters=fake_chart_plot_parameters
             )
@@ -234,6 +240,8 @@ class TestPlotsInterface:
             file_format="png",
             chart_width=123,
             chart_height=456,
+            x_axis="date",
+            y_axis="metric",
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
 

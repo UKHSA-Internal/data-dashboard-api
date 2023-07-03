@@ -4,6 +4,7 @@ from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names,
     get_all_geography_type_names,
+    get_all_sex_names,
     get_all_stratum_names,
     get_all_topic_names,
     get_all_unique_metric_names,
@@ -51,6 +52,11 @@ class ChartPlotElement(BaseMetricsElement):
     geography_type = blocks.ChoiceBlock(
         required=False,
         choices=get_all_geography_type_names,
+    )
+    sex = blocks.ChoiceBlock(
+        help_text=help_texts.SEX_FIELD,
+        required=False,
+        choices=get_all_sex_names,
     )
     label = blocks.TextBlock(
         required=False,

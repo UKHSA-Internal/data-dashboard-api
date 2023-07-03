@@ -20,8 +20,8 @@ class TestTrendsInterface:
         """
         # Given
         topic_name = "COVID-19"
-        metric_name = "new_cases_7days_change"
-        percentage_metric_name = "new_cases_7days_change_percentage"
+        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
+        percentage_metric_name = "COVID-19_headline_ONSdeaths_7daypercentchange"
         spy_core_time_series_manager = mock.Mock()
 
         interface = TrendsInterface(
@@ -50,8 +50,8 @@ class TestTrendsInterface:
         """
         # Given
         topic_name = "COVID-19"
-        metric_name = "new_cases_7days_change"
-        percentage_metric_name = "new_cases_7days_change_percentage"
+        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
+        percentage_metric_name = "COVID-19_headline_ONSdeaths_7daypercentchange"
 
         (
             main_core_time_series,
@@ -92,7 +92,7 @@ class TestTrendsInterface:
         """
         # Given
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
-        fake_metric_name = "weekly_positivity"
+        fake_metric_name = "COVID-19_testing_7daypositivity"
         fake_topic_name = "COVID-19"
 
         headlines_interface = access.TrendsInterface(

@@ -26,7 +26,7 @@ def get_rolling_period_slice_for_metric(metric_name: str) -> int:
 
     Args:
         metric_name: The name of the metric being checked.
-            E.g. `new_cases_daily`
+            E.g. `COVID-19_deaths_ONSByDay`
 
     Returns:
         The number of points which would represent

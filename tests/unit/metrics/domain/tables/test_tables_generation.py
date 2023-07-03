@@ -2,7 +2,7 @@ import datetime
 from typing import Any, List
 from unittest import mock
 
-from metrics.domain.models import PlotParameters, PlotsData
+from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.tables.generation import TabularData
 
 TEST_PLOT = "Test Plot"
@@ -23,16 +23,16 @@ def _create_plot_data(
     y_axis_values: List[Any],
     label: str = "",
     x_axis: str = "",
-) -> PlotsData:
+) -> PlotData:
     plot_params = PlotParameters(
         chart_type="",
-        topic="RSV",
-        metric="weekly_positivity_by_age",
-        stratum="0_4",
+        topic="COVID-19",
+        metric="COVID-19_deaths_ONSByDay",
+        stratum="default",
         label=label,
         x_axis=x_axis,
     )
-    return PlotsData(
+    return PlotData(
         parameters=plot_params,
         x_axis_values=x_axis_values,
         y_axis_values=y_axis_values,
@@ -48,7 +48,7 @@ class TestTabularData:
         spy_combine_list_of_plots: mock.MagicMock,
     ):
         """
-        Given a mock in place of a `PlotsData` model
+        Given a mock in place of a `PlotData` model
         When `create_plots_in_tabular_format()` is called
         Then a call is delegated to `combine_list_of_plots()` to combine the plots
         And `generate_plots_for_table` is called to produce the output in the required format
@@ -456,7 +456,7 @@ class TestGenerateMultiPlotOutput:
 class TestCreatePlotsInTabularFormat:
     def test_two_plots_with_provided_labels(self):
         """
-        Given 2 `ChartPlotData` models representing 2 different line plots
+        Given 2 `PlotData` models representing 2 different line plots
         When `generate_plots_for_table()` is called from the `TabularData` module
         Then the correct response is generated
         """

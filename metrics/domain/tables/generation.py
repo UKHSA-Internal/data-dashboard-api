@@ -2,12 +2,12 @@ from collections import defaultdict
 from datetime import date, timedelta
 from typing import Any, Dict, List
 
-from metrics.domain.models import PlotsData
+from metrics.domain.models import PlotData
 from metrics.domain.utils import get_axis_name, get_last_day_of_month
 
 
 class TabularData:
-    def __init__(self, plots: List[PlotsData]):
+    def __init__(self, plots: List[PlotData]):
         self.plots = plots
 
         # The list of plot labels

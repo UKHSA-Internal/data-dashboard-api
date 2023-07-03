@@ -1,11 +1,9 @@
 from typing import List
 
-from django.db.models import Manager
-from django.db.utils import OperationalError, ProgrammingError
+from django.db.utils import OperationalError
 from rest_framework import serializers
 
-from metrics.api.serializers import help_texts
-from metrics.data.models.core_models import Metric, Topic
+from metrics.api.serializers import help_texts, plots
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import PlotParameters, PlotsCollection
@@ -19,65 +17,11 @@ from metrics.domain.utils import (
 )
 
 
-class ChartPlotSerializer(serializers.Serializer):
-    # Required fields
-    topic = serializers.ChoiceField(
-        help_text=help_texts.TOPIC_FIELD,
-        choices=[],
-        required=True,
-    )
-    metric = serializers.ChoiceField(
-        help_text=help_texts.METRIC_FIELD,
-        choices=[],
-        required=True,
-    )
+class ChartPlotSerializer(plots.PlotSerializer):
     chart_type = serializers.ChoiceField(
         help_text=help_texts.CHART_TYPE_FIELD,
         choices=ChartTypes.choices(),
         required=True,
-    )
-
-    # Optional fields
-    stratum = serializers.CharField(
-        help_text=help_texts.STRATUM_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-    geography = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-    geography_type = serializers.CharField(
-        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-    sex = serializers.CharField(
-        help_text=help_texts.SEX_FIELD,
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-    )
-
-    date_from = serializers.DateField(
-        help_text=help_texts.DATE_FROM_FIELD,
-        required=False,
-        allow_null=True,
-        default="",
-    )
-    date_to = serializers.DateField(
-        help_text=help_texts.DATE_FROM_FIELD,
-        required=False,
-        allow_null=True,
-        default="",
     )
 
     label = serializers.CharField(
@@ -103,49 +47,9 @@ class ChartPlotSerializer(serializers.Serializer):
         allow_null=True,
         default="",
     )
-    x_axis = serializers.ChoiceField(
-        choices=ChartAxisFields.choices(),
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.CHART_X_AXIS,
-        default=DEFAULT_X_AXIS,
-    )
-    y_axis = serializers.ChoiceField(
-        choices=ChartAxisFields.choices(),
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text=help_texts.CHART_Y_AXIS,
-        default=DEFAULT_Y_AXIS,
-    )
 
     def to_models(self):
         return PlotParameters(**self.data)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        try:
-            self.populate_choices()
-        except (RuntimeError, ProgrammingError, OperationalError):
-            pass
-        # This is needed because the serializers are loaded by django at runtime
-        # Because this is a child serializer, an `instance` must be passed
-        # to the parent serializer.
-        # Otherwise, we'd have to decorate all our unit tests with access to the db.
-
-    def populate_choices(self):
-        self.fields["topic"].choices = self.topic_manager.get_all_names()
-        self.fields["metric"].choices = self.metric_manager.get_all_names()
-
-    @property
-    def topic_manager(self) -> Manager:
-        return self.context.get("topic_manager", Topic.objects)
-
-    @property
-    def metric_manager(self) -> Manager:
-        return self.context.get("metric_manager", Metric.objects)
 
 
 class ChartPlotsListSerializer(serializers.ListSerializer):
@@ -177,19 +81,40 @@ class ChartsSerializer(serializers.Serializer):
         default=DEFAULT_CHART_WIDTH,
         allow_null=True,
     )
+    x_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_X_AXIS,
+        default=DEFAULT_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_Y_AXIS,
+        default=DEFAULT_Y_AXIS,
+    )
 
     plots = ChartPlotsListSerializer()
 
     def to_models(self) -> PlotsCollection:
+        x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
+        y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
+
         for plot in self.data["plots"]:
-            plot["x_axis"] = plot.get("x_axis") or DEFAULT_X_AXIS
-            plot["y_axis"] = plot.get("y_axis") or DEFAULT_Y_AXIS
+            plot["x_axis"] = x_axis
+            plot["y_axis"] = y_axis
 
         return PlotsCollection(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
+            x_axis=x_axis,
+            y_axis=y_axis,
         )
 
 

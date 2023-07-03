@@ -51,6 +51,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -80,6 +81,7 @@
                                                     "stratum": "0_4",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "0 to 4 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -97,6 +99,7 @@
                                                     "stratum": "5_14",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "5 to 14 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -114,6 +117,7 @@
                                                     "stratum": "15_44",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "15 to 44 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID"
@@ -131,6 +135,7 @@
                                                     "stratum": "45_54",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "45 to 54 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "DASH"
@@ -148,6 +153,7 @@
                                                     "stratum": "55_64",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "55 to 64 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID"
@@ -165,6 +171,7 @@
                                                     "stratum": "65_74",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "65 to 74 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "DASH"
@@ -182,6 +189,7 @@
                                                     "stratum": "75_84",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "75 to 84 years",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -199,6 +207,7 @@
                                                     "stratum": "85+",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "85 years and over",
                                                     "line_colour": "BLUE",
                                                     "line_type": "DASH"
@@ -236,6 +245,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -265,6 +275,7 @@
                                                     "stratum": "0_4",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "0 to 4 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -282,6 +293,7 @@
                                                     "stratum": "5_14",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "5 to 14 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -299,6 +311,7 @@
                                                     "stratum": "15_44",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "15 to 44 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID"
@@ -316,6 +329,7 @@
                                                     "stratum": "45_54",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "45 to 54 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "DASH"
@@ -333,6 +347,7 @@
                                                     "stratum": "55_64",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "55 to 64 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID"
@@ -350,6 +365,7 @@
                                                     "stratum": "65_74",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "65 to 74 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "DASH"
@@ -367,6 +383,7 @@
                                                     "stratum": "75_84",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "75 to 84 years",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -384,6 +401,7 @@
                                                     "stratum": "85+",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "85 years and over",
                                                     "line_colour": "BLUE",
                                                     "line_type": "DASH"
@@ -430,6 +448,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -459,6 +478,7 @@
                                                     "stratum": "0_4",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "0 to 4 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -476,6 +496,7 @@
                                                     "stratum": "5_14",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "5 to 14 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -493,6 +514,7 @@
                                                     "stratum": "15_44",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "15 to 44 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID"
@@ -510,6 +532,7 @@
                                                     "stratum": "45_64",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "45 to 64 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "DASH"
@@ -527,6 +550,7 @@
                                                     "stratum": "65+",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "65 years and over",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID"

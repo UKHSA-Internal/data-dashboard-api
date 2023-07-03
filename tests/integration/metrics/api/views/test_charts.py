@@ -1,42 +1,26 @@
-import datetime
 from http import HTTPStatus
+from typing import List
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from metrics.data.models.core_models import CoreTimeSeries, Metric, Topic
+from metrics.data.models.core_models import CoreTimeSeries
 
 
 class TestChartsView:
-    metric_name = "vaccinations_percentage_uptake_spring22"
-    topic_name = "COVID-19"
-
-    valid_payload = {
-        "file_format": "svg",
-        "plots": [
-            {
-                "topic": topic_name,
-                "metric": metric_name,
-                "chart_type": "waffle",
-            }
-        ],
-    }
-
     @staticmethod
-    def _setup_core_time_series(
-        topic_name: str, metric_name: str, metric_value: float
-    ) -> CoreTimeSeries:
-        topic = Topic.objects.create(name=topic_name)
-        metric = Metric.objects.create(name=metric_name, topic=topic)
-        year = 2023
-        return CoreTimeSeries.objects.create(
-            metric_value=metric_value,
-            metric=metric,
-            year=year,
-            epiweek=1,
-            dt=datetime.date(year=year, month=1, day=1),
-        )
+    def _build_valid_payload_for_existing_timeseries(core_timeseries: CoreTimeSeries):
+        return {
+            "file_format": "svg",
+            "plots": [
+                {
+                    "topic": core_timeseries.metric.topic.name,
+                    "metric": core_timeseries.metric.name,
+                    "chart_type": "waffle",
+                }
+            ],
+        }
 
     @pytest.mark.parametrize("path", ["/charts/v2", "/api/charts/v2"])
     @pytest.mark.django_db
@@ -44,6 +28,7 @@ class TestChartsView:
         self,
         path: str,
         authenticated_api_client: APIClient,
+        core_timeseries_example: List[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart
@@ -52,14 +37,14 @@ class TestChartsView:
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        self._setup_core_time_series(
-            metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
+        valid_payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
         )
 
         # When
         response: Response = authenticated_api_client.post(
             path=path,
-            data=self.valid_payload,
+            data=valid_payload,
             format="json",
         )
 
@@ -68,7 +53,10 @@ class TestChartsView:
     @pytest.mark.parametrize("path", ["/charts/v2/", "/api/charts/v2/"])
     @pytest.mark.django_db
     def test_returns_correct_response(
-        self, path: str, authenticated_api_client: APIClient
+        self,
+        path: str,
+        authenticated_api_client: APIClient,
+        core_timeseries_example: List[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart
@@ -77,14 +65,14 @@ class TestChartsView:
         Then the response is not an HTTP 401 UNAUTHORIZED
         """
         # Given
-        self._setup_core_time_series(
-            metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
+        valid_payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
         )
 
         # When
         response: Response = authenticated_api_client.post(
             path=path,
-            data=self.valid_payload,
+            data=valid_payload,
             format="json",
         )
 
@@ -118,6 +106,7 @@ class TestChartsView:
         self,
         path: str,
         authenticated_api_client: APIClient,
+        core_timeseries_example: List[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart
@@ -126,14 +115,14 @@ class TestChartsView:
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        self._setup_core_time_series(
-            metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
+        valid_payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
         )
 
         # When
         response: Response = authenticated_api_client.post(
             path=path,
-            data=self.valid_payload,
+            data=valid_payload,
             format="json",
         )
 
@@ -142,7 +131,10 @@ class TestChartsView:
     @pytest.mark.parametrize("path", ["/charts/v3/", "/api/charts/v3/"])
     @pytest.mark.django_db
     def test_returns_correct_response(
-        self, path: str, authenticated_api_client: APIClient
+        self,
+        path: str,
+        authenticated_api_client: APIClient,
+        core_timeseries_example: List[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart
@@ -151,14 +143,14 @@ class TestChartsView:
         Then the response is not an HTTP 401 UNAUTHORIZED
         """
         # Given
-        self._setup_core_time_series(
-            metric_name=self.metric_name, metric_value=13, topic_name=self.topic_name
+        valid_payload = self._build_valid_payload_for_existing_timeseries(
+            core_timeseries=core_timeseries_example[0]
         )
 
         # When
         response: Response = authenticated_api_client.post(
             path=path,
-            data=self.valid_payload,
+            data=valid_payload,
             format="json",
         )
 

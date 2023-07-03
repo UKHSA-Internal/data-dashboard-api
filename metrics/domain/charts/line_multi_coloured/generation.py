@@ -6,13 +6,13 @@ import plotly
 from metrics.domain.charts import chart_settings
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
-from metrics.domain.models import PlotsData
+from metrics.domain.models import PlotData
 
 
 def create_multi_coloured_line_chart(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[PlotsData],
+    chart_plots_data: List[PlotData],
     line_shape: str,
     line_width: int = 2,
 ) -> plotly.graph_objs.Figure:
@@ -21,7 +21,7 @@ def create_multi_coloured_line_chart(
     Args:
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
-        chart_plots_data: List of `ChartPlotData` models,
+        chart_plots_data: List of `PlotData` models,
             where each model represents a requested plot.
         line_shape: The shape to assign to the line plots.
             This can be either `linear` or `spline`.
@@ -99,7 +99,7 @@ def _create_line_plot(
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[PlotsData],
+    chart_plots_data: List[PlotData],
     line_shape: str = "spline",
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
@@ -107,7 +107,7 @@ def generate_chart_figure(
     Args:
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
-        chart_plots_data: List of `ChartPlotData` models,
+        chart_plots_data: List of `PlotData` models,
             where each model represents a requested plot.
         line_shape: The shape to assign to the line plots.
             This can be either `linear` or `spline`.

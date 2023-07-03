@@ -1,9 +1,7 @@
-from django.db.models import Manager
-from django.db.utils import OperationalError, ProgrammingError
+from django.db.utils import OperationalError
 from rest_framework import serializers
 
-from metrics.api.serializers import help_texts
-from metrics.data.models.core_models import Metric, Topic
+from metrics.api.serializers import help_texts, plots
 from metrics.domain.models import PlotsCollection
 from metrics.domain.utils import (
     DEFAULT_CHART_HEIGHT,
@@ -15,56 +13,14 @@ from metrics.domain.utils import (
 )
 
 
-class TablePlotSerializer(serializers.Serializer):
-    topic = serializers.ChoiceField(
-        choices=[],
-        required=True,
-        help_text=help_texts.TOPIC_FIELD,
-    )
-    metric = serializers.ChoiceField(
-        choices=[],
-        required=True,
-        help_text=help_texts.METRIC_FIELD,
-    )
+class TablePlotSerializer(plots.PlotSerializer):
     chart_type = serializers.ChoiceField(
         help_text=help_texts.CHART_TYPE_FIELD,
         choices=ChartTypes.choices(),
         required=False,
         default="simple_line",
     )
-    stratum = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-        help_text=help_texts.STRATUM_FIELD,
-    )
-    geography = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-        help_text=help_texts.GEOGRAPHY_FIELD,
-    )
-    geography_type = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        default="",
-        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
-    )
-    date_from = serializers.DateField(
-        required=False,
-        allow_null=True,
-        default="",
-        help_text=help_texts.DATE_FROM_FIELD,
-    )
-    date_to = serializers.DateField(
-        required=False,
-        allow_null=True,
-        default="",
-        help_text=help_texts.DATE_FROM_FIELD,
-    )
+
     label = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -72,6 +28,14 @@ class TablePlotSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.LABEL_FIELD,
     )
+
+
+class TablePlotsListSerializer(serializers.ListSerializer):
+    child = TablePlotSerializer()
+
+
+class TablesSerializer(serializers.Serializer):
+    plots = TablePlotsListSerializer()
     x_axis = serializers.ChoiceField(
         choices=ChartAxisFields.choices(),
         required=False,
@@ -90,34 +54,6 @@ class TablePlotSerializer(serializers.Serializer):
     )
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        try:
-            self.populate_choices()
-        except (RuntimeError, ProgrammingError, OperationalError):
-            pass
-
-    def populate_choices(self):
-        self.fields["topic"].choices = self.topic_manager.get_all_names()
-        self.fields["metric"].choices = self.metric_manager.get_all_names()
-
-    @property
-    def topic_manager(self) -> Manager:
-        return self.context.get("topic_manager", Topic.objects)
-
-    @property
-    def metric_manager(self) -> Manager:
-        return self.context.get("metric_manager", Metric.objects)
-
-
-class TablePlotsListSerializer(serializers.ListSerializer):
-    child = TablePlotSerializer()
-
-
-class TablesSerializer(serializers.Serializer):
-    plots = TablePlotsListSerializer()
-
-    def __init__(self, *args, **kwargs):
         try:
             super().__init__(*args, **kwargs)
         except OperationalError:
@@ -129,6 +65,8 @@ class TablesSerializer(serializers.Serializer):
             file_format="svg",
             chart_height=DEFAULT_CHART_HEIGHT,
             chart_width=DEFAULT_CHART_WIDTH,
+            x_axis=self.data.get("x_axis") or DEFAULT_X_AXIS,
+            y_axis=self.data.get("y_axis") or DEFAULT_Y_AXIS,
         )
 
 

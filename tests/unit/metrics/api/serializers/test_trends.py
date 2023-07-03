@@ -19,14 +19,12 @@ class TestTrendsQuerySerializer:
     def _setup_valid_data_payload_and_model_managers(
         cls,
     ) -> Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
-        base_metric_name = "new_tests_7days_change"
+        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
 
-        fake_metric = FakeMetricFactory.build_example_metric(
-            metric_name=base_metric_name
-        )
+        fake_metric = FakeMetricFactory.build_example_metric(metric_name=metric_name)
         fake_topic = fake_metric.topic
         fake_percentage_metric = FakeMetricFactory.build_example_metric(
-            metric_name=f"{base_metric_name}_percentage"
+            metric_name="COVID-19_headline_ONSdeaths_7daypercentchange"
         )
 
         data: cls.DATA_PAYLOAD_HINT = {
@@ -163,7 +161,8 @@ class TestTrendsQuerySerializer:
         """
         Given a valid payload passed to a `TrendsQuerySerializer` object
         When the serializer is initialized
-        Then the result of `get_all_names()` from the `TopicManager` is used to populate the correct field choices
+        Then the result of `get_all_names()` from the `TopicManager`
+            is used to populate the correct field choices
         """
         # Given
         (
@@ -195,9 +194,9 @@ class TestTrendsResponseSerializer:
         """
         # Given
         payload = {
-            "metric_name": "new_cases_7days_change",
+            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
             "metric_value": 10,
-            "percentage_metric_name": "new_cases_7days_change_percentage",
+            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
             "percentage_metric_value": 3.2,
             "direction": "up",
             "colour": "red",

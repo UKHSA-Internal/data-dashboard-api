@@ -4,22 +4,22 @@ from typing import Any, List
 import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme
-from metrics.domain.models import PlotsData
+from metrics.domain.models import PlotData
 
 
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[PlotsData],
+    chart_plots_data: List[PlotData],
 ) -> plotly.graph_objects.Figure:
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
     Args:
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
-        chart_plots_data: List of `ChartPlotData` models,
+        chart_plots_data: List of `PlotData` models,
             where each model represents a requested plot.
-            Note that each `PlotsData` model is enriched
+            Note that each `PlotData` model is enriched
             with the according x and y values along with
             requests parameters like colour and plot label.
 

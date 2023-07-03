@@ -14,7 +14,7 @@ from metrics.domain.charts import (
     line_with_shaded_section,
     waffle,
 )
-from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 from metrics.interfaces.plots.access import PlotsInterface
@@ -83,8 +83,8 @@ class ChartsInterface:
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
 
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
-        plot_data: PlotsData = plots_data[0]
+        plots_data: List[PlotData] = self.build_chart_plots_data()
+        plot_data: PlotData = plots_data[0]
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
@@ -103,7 +103,7 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: List[PlotData] = self.build_chart_plots_data()
 
         return bar.generate_chart_figure(
             chart_height=chart_height,
@@ -123,7 +123,7 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: List[PlotData] = self.build_chart_plots_data()
 
         return line_multi_coloured.generate_chart_figure(
             chart_height=chart_height,
@@ -142,14 +142,14 @@ class ChartsInterface:
             A plotly `Figure` object for the created line chart with shaded section
 
         """
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
-        plot_data: PlotsData = plots_data[0]
+        plots_data: List[PlotData] = self.build_chart_plots_data()
+        plot_data: PlotData = plots_data[0]
         params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
-    def build_chart_plots_data(self) -> List[PlotsData]:
-        """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots
+    def build_chart_plots_data(self) -> List[PlotData]:
+        """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
             The corresponding timeseries data is used to enrich a
@@ -160,13 +160,13 @@ class ChartsInterface:
             that chart plot is skipped and an enriched model is not provided.
 
         Returns:
-            List[PlotsData]: A list of `ChartPlotData` models for
+            List[PlotData]: A list of `PlotData` models for
                 each of the requested chart plots.
 
         """
         return self.plots_interface.build_plots_data()
 
-    def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
+    def param_builder_for_line_with_shaded_section(self, plot_data: PlotData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
         x_axis_values = plot_data.x_axis_values
@@ -342,7 +342,7 @@ def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
 
         `MetricDoesNotSupportTopicError`: If the `metric` is not
             compatible for the required `topic`.
-            E.g. `new_cases_daily` is currently only available
+            E.g. `COVID-19_deaths_ONSByDay` is only available
             for the topic of `COVID-19`
 
     """
@@ -361,7 +361,7 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
 
         `MetricDoesNotSupportTopicError`: If the `metric` is not
             compatible for the required `topic`.
-            E.g. `new_cases_daily` is currently only available
+            E.g. `COVID-19_deaths_ONSByDay` is only available
             for the topic of `COVID-19`
 
     """

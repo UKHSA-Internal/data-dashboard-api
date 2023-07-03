@@ -39,7 +39,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     - `geography` - The name of the geography associated with metric  e.g. **London**
 
-    - `metric` - The name of the metric being queried for e.g. **new_cases_daily**
+    - `metric` - The name of the metric being queried for e.g. **COVID-19_deaths_ONSByDay**
 
     ---
 

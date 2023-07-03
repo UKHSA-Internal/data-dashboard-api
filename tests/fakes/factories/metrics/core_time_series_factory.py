@@ -21,13 +21,6 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         model = FakeCoreTimeSeries
 
     @classmethod
-    def _build_example_metric(
-        cls, metric_name: str = "new_cases_daily", topic_name: str = "COVID-19"
-    ) -> FakeMetric:
-        topic = FakeTopic(name=topic_name)
-        return FakeMetric(name=metric_name, topic=topic)
-
-    @classmethod
     def build_time_series(
         cls,
         dt: datetime.date,
@@ -59,7 +52,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
     def build_example_covid_time_series_range(cls) -> List[FakeCoreTimeSeries]:
         time_series_range = []
 
-        metric: FakeMetric = cls._build_example_metric()
+        metric: FakeMetric = FakeMetricFactory.build_example_metric()
 
         for month_number in range(4, 10, 1):
             for day_number in (3, 16, 28):
@@ -92,10 +85,12 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
     ) -> List[FakeCoreTimeSeries]:
         time_series_records = []
 
-        metric: FakeMetric = cls._build_example_metric(metric_name=metric_name)
+        metric: FakeMetric = FakeMetricFactory.build_example_metric(
+            metric_name=metric_name
+        )
         metric_value: int = cls._pick_random_positive_metric_value()
 
-        percentage_metric: FakeMetric = cls._build_example_metric(
+        percentage_metric: FakeMetric = FakeMetricFactory.build_example_metric(
             metric_name=percentage_metric_name
         )
         percentage_metric_value: float = cls._pick_random_percentage_value()

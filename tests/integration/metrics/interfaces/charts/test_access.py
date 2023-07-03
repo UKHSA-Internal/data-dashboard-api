@@ -5,7 +5,7 @@ from unittest import mock
 import plotly
 
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotParameters, PlotsData
+from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import ChartsInterface
 
@@ -15,13 +15,13 @@ class TestChartsInterface:
     def _create_chart_plot_data(
         x_axis_values: List[datetime.date],
         y_axis_values: List[int],
-    ) -> PlotsData:
+    ) -> PlotData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
-            topic="RSV",
-            metric="weekly_positivity_by_age",
+            topic="COVID-19",
+            metric="COVID-19_deaths_ONSByDay",
         )
-        return PlotsData(
+        return PlotData(
             parameters=plot_params,
             x_axis_values=x_axis_values,
             y_axis_values=y_axis_values,

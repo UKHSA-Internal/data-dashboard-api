@@ -12,6 +12,7 @@ DEFAULT_METRIC_MANAGER = core_models.Metric.objects
 DEFAULT_STRATUM_MANAGER = core_models.Stratum.objects
 DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
 DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
+DEFAULT_CORE_TIME_SERIES_MANAGER = core_models.CoreTimeSeries.objects
 
 
 class MetricsAPIInterface:
@@ -38,6 +39,9 @@ class MetricsAPIInterface:
     geography_type_manager : `GeographyTypeManager`
         The model manager for the `GeographyType` model belonging to the Metrics API
         Defaults to the concrete `GeographyTypeManager` via `GeographyType.objects`
+    core_time_series_manager : `CoreTimeSeriesManager`
+        The model manager for the `CoreTimeSeries` model belonging to the Metrics API
+        Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
 
     """
 
@@ -48,12 +52,14 @@ class MetricsAPIInterface:
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
         geography_manager: Manager = DEFAULT_GEOGRAPHY_MANAGER,
         geography_type_manager: Manager = DEFAULT_GEOGRAPHY_TYPE_MANAGER,
+        core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.topic_manager = topic_manager
         self.metric_manager = metric_manager
         self.stratum_manager = stratum_manager
         self.geography_manager = geography_manager
         self.geography_type_manager = geography_type_manager
+        self.core_time_series_manager = core_time_series_manager
 
     @staticmethod
     def get_chart_types() -> List[Tuple[str, str]]:
@@ -126,7 +132,7 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_daily', 'new_deaths_daily']>`
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_deaths_ONSByDay']>`
 
         """
         return self.metric_manager.get_all_unique_names()
@@ -138,7 +144,10 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change', 'new_deaths_7days_change']>`
+                    `<MetricQuerySet [
+                        'COVID-19_headline_ONSdeaths_7daychange',
+                        'COVID-19_headline_ONSdeaths_7daychange'
+                        ]>`
 
         """
         return self.metric_manager.get_all_unique_change_type_names()
@@ -150,26 +159,29 @@ class MetricsAPIInterface:
         Returns:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
-                    `<MetricQuerySet ['new_cases_7days_change_percentage', 'new_deaths_7days_change_percentage']>`
+                    `<MetricQuerySet [
+                        'COVID-19_headline_ONSdeaths_7daypercentchange',
+                        'COVID-19_headline_ONSdeaths_7daypercentchange'
+                        ]>`
 
         """
         return self.metric_manager.get_all_unique_percent_change_type_names()
 
     def get_all_stratum_names(self) -> QuerySet:
         """Gets all available stratum names as a flat list queryset.
-        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+        Note this is achieved by delegating the call to the `StratumManager` from the Metrics API
 
         Returns:
             QuerySet: A queryset of the individual stratum names:
                 Examples:
-                    `<StratumQuerySet ['default', '0_4']>`
+                    `<StratumQuerySet ['default']>`
 
         """
         return self.stratum_manager.get_all_names()
 
     def get_all_geography_names(self) -> QuerySet:
         """Gets all unique geography names as a flat list queryset.
-        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+        Note this is achieved by delegating the call to the `GeographyManager` from the Metrics API
 
         Returns:
             QuerySet: A queryset of the individual geography names:
@@ -180,7 +192,7 @@ class MetricsAPIInterface:
 
     def get_all_geography_type_names(self) -> QuerySet:
         """Gets all available geography_type names as a flat list queryset.
-        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+        Note this is achieved by delegating the call to the `GeographyTypeManager` from the Metrics API
 
         Returns:
             QuerySet: A queryset of the individual geography_type names:
@@ -189,3 +201,15 @@ class MetricsAPIInterface:
 
         """
         return self.geography_type_manager.get_all_names()
+
+    def get_all_sex_names(self) -> QuerySet:
+        """Gets all available sex names as a flat list queryset.
+        Note this is achieved by delegating the call to the `CoreTimeSeriesManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual geography_type names:
+                Examples:
+                    `<CoreTimeSeriesQuerySet ['ALL', 'F', 'M']>`
+
+        """
+        return self.core_time_series_manager.get_all_sex_names()
