@@ -25,6 +25,7 @@ class TestDraftPagesAPI:
         unpublished_title = "Unpublished title"
         page = Page.objects.last()
         page.title = unpublished_title
+        # Save a draft but do not publish the change
         page.save_revision()
 
         # When
