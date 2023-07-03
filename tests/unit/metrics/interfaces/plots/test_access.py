@@ -1,5 +1,5 @@
 import datetime
-from typing import List, Union
+from typing import List, Tuple, Union
 from unittest import mock
 
 import pytest
@@ -10,7 +10,7 @@ from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
     convert_type,
-    create_sort,
+    create_sortable_stratum,
     get_x_and_y_values,
     sort_by_stratum,
     unzip_values,
@@ -426,27 +426,57 @@ class TestConvertType:
         assert mock_output == actual_output
 
 
-class TestCreateSort:
+class TestCreateSortableStratum:
     @pytest.mark.parametrize(
-        "mock_input, mock_output",
+        "input_stratum, expected_output",
         [
             ("0_4", (0, 4)),
+            ("5_9", (5, 9)),
+            ("5_14", (5, 14)),
+            ("10_14", (10, 14)),
             ("20_24", (20, 24)),
+            ("35_39", (35, 39)),
+            ("55_59", (55, 59)),
+            ("55_64", (55, 64)),
             ("65+", (65,)),
-            ("default", (999, 999, "default")),
+            ("65_69", (65, 69)),
+            ("70_74", (70, 74)),
+            ("75_84", (75, 84)),
+            ("85_89", (85, 89)),
+            ("90+", (90,)),
         ],
     )
-    def test_basic_operation(self, mock_input: str, mock_output: Union[int, str]):
+    def test_basic_operation(
+        self, input_stratum: str, expected_output: Tuple[Union[int, str]]
+    ):
         """
         Given a string that may or may not contain numbers
         When `create_sort()` is called
-        Then expected result is returned
+        Then the expected result is returned
         """
-        # Given/When
-        actual_output = create_sort(stratum=mock_input)
+        # Given
+        stratum = input_stratum
+
+        # When
+        actual_output = create_sortable_stratum(stratum=stratum)
 
         # Then
-        assert mock_output == actual_output
+        assert actual_output == expected_output
+
+    def test_return_max_value_when_text_is_given(self):
+        """
+        Given the string of "default"
+        When `create_sort()` is called
+        Then a tuple is returned with a max value of 999
+        """
+        # Given
+        default = "default"
+
+        # When
+        stratum_output = create_sortable_stratum(stratum=default)
+
+        # Then
+        assert stratum_output == (999, 999, default)
 
 
 class TestSortByStratum:
@@ -459,7 +489,13 @@ class TestSortByStratum:
         And in display format
         """
         # Given
-        values = [("default", 5), ("65_84", 1), ("6_17", 2), ("85+", 3), ("18_64", 4)]
+        values = [
+            ("65_84", 1),
+            ("6_17", 2),
+            ("85+", 3),
+            ("18_64", 4),
+            ("default", 5),
+        ]
 
         # When
         first_list, second_list = sort_by_stratum(values)

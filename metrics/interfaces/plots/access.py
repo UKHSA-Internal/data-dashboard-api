@@ -207,14 +207,15 @@ def convert_type(s: str) -> Union[int, str]:
         s: A string that may or may not be a number
 
     Returns:
-        The input as a number or the string itself (converted to lowercase so it sorts as one would expect)
+        The input as a number or the string itself.
+        This is converted to lowercase, so it sorts as one would expect
+
     """
     return int(s) if s.isdigit() else s.lower()
 
 
-def create_sort(stratum: str) -> Tuple:
-    """
-    Take a Stratum and make it sortable
+def create_sortable_stratum(stratum: str) -> Tuple[int, ...]:
+    """Take a Stratum and make it sortable
 
     Args:
         A Stratum value.
@@ -252,7 +253,7 @@ def sort_by_stratum(queryset: QuerySet) -> Tuple[List, List]:
         A properly sorted and displayable version broken into two separate lists
     """
     # Make a dictionary where the key is a tuple of the stratum values. So, 45_54 becomes (45, 54) etc
-    temp_dict = {create_sort(stratum=x[0]): x for x in queryset}
+    temp_dict = {create_sortable_stratum(stratum=x[0]): x for x in queryset}
 
     # Now sort on the tuple and return the x and y values
     # Change the Stratum so it looks nice. eg. 0_4 becomes 0-4
