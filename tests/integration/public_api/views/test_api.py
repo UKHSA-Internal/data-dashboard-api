@@ -115,9 +115,7 @@ class TestPublicAPINestedLinkViews:
         ]
 
     @pytest.mark.django_db
-    def test_returns_correct_links_to_subsequent_views(
-        self, authenticated_api_client: APIClient
-    ):
+    def test_returns_correct_links_to_subsequent_views(self, client: APIClient):
         """
         Given a valid request and a number of matching `APITimeSeries` records
         When the `GET /api/public/timeseries/` API is used
@@ -159,7 +157,7 @@ class TestPublicAPINestedLinkViews:
             expected_metadata_field_value,
             expected_link_field_value,
         ) in expected_response_fields:
-            response: Response = authenticated_api_client.get(path=path, format="json")
+            response: Response = client.get(path=path, format="json")
             assert response.status_code == HTTPStatus.OK
             response_data: OrderedDict = response.data
 
@@ -181,9 +179,7 @@ class TestPublicAPINestedLinkViews:
             path = link_field_from_response
 
     @pytest.mark.django_db
-    def test_returns_correct_data_at_final_view(
-        self, authenticated_api_client: APIClient
-    ):
+    def test_returns_correct_data_at_final_view(self, client: APIClient):
         """
         Given a set of `APITimeSeries` records
         And a list of parameters to filter for a subset of those records
@@ -230,7 +226,7 @@ class TestPublicAPINestedLinkViews:
 
         # When
         path = f"{self.path}themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}"
-        response: Response = authenticated_api_client.get(path=path, format="json")
+        response: Response = client.get(path=path, format="json")
 
         # Then
         # Check that the filtering has been applied correctly
@@ -257,7 +253,7 @@ class TestPublicAPINestedLinkViews:
 
     @pytest.mark.django_db
     def test_returns_correct_data_at_final_view_with_query_parameters(
-        self, authenticated_api_client: APIClient
+        self, client: APIClient
     ):
         """
         Given a set of `APITimeSeries` records
@@ -311,7 +307,7 @@ class TestPublicAPINestedLinkViews:
 
         # When
         path = f"{self.path}themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}"
-        response: Response = authenticated_api_client.get(
+        response: Response = client.get(
             path=path, format="json", data={"sex": sex, "stratum": stratum_name}
         )
 
