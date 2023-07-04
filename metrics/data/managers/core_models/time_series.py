@@ -10,8 +10,6 @@ from typing import Optional
 
 from django.db import models
 
-from metrics.data import enums
-
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
