@@ -7,7 +7,7 @@ MODULE_PATH: str = "metrics.api.context_processors"
 
 
 @mock.patch(f"{MODULE_PATH}.config")
-def test_frontend_url(mocked_config):
+def test_frontend_url(spy_config: mock.MagicMock):
     """
     Given a mocked request
     When `frontend_url()` is called from the
@@ -23,4 +23,4 @@ def test_frontend_url(mocked_config):
     )
 
     # Then
-    assert returned_url["frontend_url"] == mocked_config.FRONTEND_URL
+    assert returned_url["frontend_url"] == spy_config.FRONTEND_URL
