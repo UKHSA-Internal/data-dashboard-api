@@ -15,11 +15,6 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         self.time_series = time_series
         super().__init__(**kwargs)
 
-    def filter_weekly(self):
-        return [
-            x for x in self.time_series if x.period == enums.TimePeriod.Weekly.value
-        ]
-
     def all_related(self):
         return [x for x in self.time_series]
 

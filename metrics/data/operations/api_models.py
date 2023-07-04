@@ -63,7 +63,7 @@ def create_api_time_series_from_core_time_series(
     core_time_series: CoreTimeSeries,
 ) -> APITimeSeries:
     return APITimeSeries(
-        period=core_time_series.period,
+        period=core_time_series.metric_frequency,
         theme=core_time_series.metric.topic.sub_theme.theme.name,
         sub_theme=core_time_series.metric.topic.sub_theme.name,
         topic=core_time_series.metric.topic.name,
