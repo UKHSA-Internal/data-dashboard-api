@@ -67,7 +67,6 @@ private_api_urlpatterns = [
 ]
 
 docs_urlspatterns = [
-    path("", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     # JSON schema view
     path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),
