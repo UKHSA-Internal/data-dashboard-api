@@ -22,7 +22,7 @@ class TestTrendsQuerySerializer:
         metric_name = "COVID-19_headline_ONSdeaths_7daychange"
 
         fake_metric = FakeMetricFactory.build_example_metric(metric_name=metric_name)
-        fake_topic = fake_metric.topic
+        fake_topic = fake_metric.metric_group.topic
         fake_percentage_metric = FakeMetricFactory.build_example_metric(
             metric_name="COVID-19_headline_ONSdeaths_7daypercentchange"
         )

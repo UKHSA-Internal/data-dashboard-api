@@ -5,7 +5,7 @@ import pytest
 from rest_framework.test import APIClient
 from rest_framework_api_key.models import APIKey
 
-from metrics.data.models.core_models import CoreTimeSeries, Metric, Topic
+from metrics.data.models.core_models import CoreTimeSeries, Metric, MetricGroup, Topic
 
 
 @pytest.fixture
@@ -21,8 +21,11 @@ def authenticated_api_client() -> APIClient:
 @pytest.fixture
 def core_headline_example() -> CoreTimeSeries:
     topic = Topic.objects.create(name="COVID-19")
+    metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_newtests_7daycounttotal", topic=topic
+        name="COVID-19_headline_newtests_7daycounttotal",
+        metric_group=metric_group,
+        topic=topic,
     )
     year = 2023
     return CoreTimeSeries.objects.create(
@@ -37,11 +40,16 @@ def core_headline_example() -> CoreTimeSeries:
 @pytest.fixture
 def core_trend_percentage_example() -> List[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
+    metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daychange", topic=topic
+        name="COVID-19_headline_ONSdeaths_7daychange",
+        metric_group=metric_group,
+        topic=topic,
     )
     percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daypercentchange", topic=topic
+        name="COVID-19_headline_ONSdeaths_7daypercentchange",
+        metric_group=metric_group,
+        topic=topic,
     )
 
     year = 2023
@@ -66,7 +74,12 @@ def core_trend_percentage_example() -> List[CoreTimeSeries]:
 @pytest.fixture
 def core_timeseries_example() -> List[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
-    metric = Metric.objects.create(name="COVID-19_deaths_ONSByDay", topic=topic)
+    metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
+    metric = Metric.objects.create(
+        name="COVID-19_deaths_ONSByDay",
+        metric_group=metric_group,
+        topic=topic,
+    )
     year = 2023
     return [
         CoreTimeSeries.objects.create(

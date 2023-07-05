@@ -21,3 +21,8 @@ LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 # Workload type switch. This setting controls which endpoints to expose
 # If it is not set, then the complete set of endpoints will be used.
 APP_MODE = os.environ.get("APP_MODE")
+
+# URL for the frontend application.
+# Note this is only used for a link on the public API
+# to direct users back to the frontend dashboard
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "")

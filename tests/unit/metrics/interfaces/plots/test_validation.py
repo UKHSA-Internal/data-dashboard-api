@@ -57,7 +57,7 @@ class TestDoesMetricHaveMultipleRecords:
         # Given
         time_series = FakeCoreTimeSeriesFactory.build_example_covid_time_series_range()
         metric_name = time_series[0].metric.name
-        topic_name = time_series[0].metric.topic.name
+        topic_name = time_series[0].metric.metric_group.topic.name
         date_from = "2020-01-01"
         plot_parameters = PlotParameters(
             metric=metric_name,

@@ -12,7 +12,7 @@ from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
-from cms.dashboard.viewsets import CMSPagesAPIViewSet
+from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
@@ -37,6 +37,7 @@ api_router = WagtailAPIRouter("wagtailapi")
 # is used in the URL of the endpoint
 # The second parameter is the endpoint class that handles the requests
 api_router.register_endpoint("pages", CMSPagesAPIViewSet)
+api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
 
 cms_api_urlpatterns = [
     # CMS pages endpoints
@@ -66,7 +67,6 @@ private_api_urlpatterns = [
 ]
 
 docs_urlspatterns = [
-    path("", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     # JSON schema view
     path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),

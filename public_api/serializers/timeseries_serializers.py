@@ -7,7 +7,6 @@ class APITimeSeriesListSerializer(serializers.ModelSerializer):
     class Meta:
         model = MetricsPublicAPIInterface.get_api_timeseries_model()
         fields = [
-            "period",
             "theme",
             "sub_theme",
             "topic",

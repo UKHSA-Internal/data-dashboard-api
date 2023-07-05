@@ -39,7 +39,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             stratum = None
 
         return cls.build(
-            period="D",
+            metric_frequency="D",
             sex="ALL",
             year=dt.year,
             metric_value=1,
@@ -59,7 +59,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
                 metric_value = cls._pick_random_positive_metric_value()
 
                 new_time_series = cls.build(
-                    period="D",
+                    metric_frequency="D",
                     sex="ALL",
                     year=2023,
                     dt=datetime.date(year=2023, month=month_number, day=day_number),
@@ -96,7 +96,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         percentage_metric_value: float = cls._pick_random_percentage_value()
 
         metric_time_series = cls.build(
-            period="D",
+            metric_frequency="D",
             sex="ALL",
             year=2023,
             dt=datetime.date(year=2023, month=1, day=1),
@@ -106,7 +106,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         time_series_records.append(metric_time_series)
 
         metric_time_series = cls.build(
-            period="D",
+            metric_frequency="D",
             sex="ALL",
             year=2023,
             dt=datetime.date(year=2023, month=1, day=1),
