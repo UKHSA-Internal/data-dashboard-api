@@ -93,7 +93,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             filtered_time_series = [x for x in filtered_time_series if x.sex == sex]
 
         return [
-            (time_series.dt, time_series.metric_value)
+            (getattr(time_series, x_axis), getattr(time_series, y_axis))
             for time_series in filtered_time_series
         ]
 
