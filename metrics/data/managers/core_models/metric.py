@@ -30,7 +30,7 @@ class MetricQuerySet(models.QuerySet):
 
         """
         return self.filter(
-            name=metric_name, metric_group__topic__name=topic_name
+            name=metric_name, topic__name=topic_name
         ).exists()
 
     def get_all_unique_names(self) -> models.QuerySet:
