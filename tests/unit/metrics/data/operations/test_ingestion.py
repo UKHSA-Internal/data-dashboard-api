@@ -3,8 +3,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.data.operations.ingestion import Ingestion
-from metrics.domain.models.headline import HeadlineDTO
+from metrics.data.operations.ingestion import HeadlineDTO, Ingestion
 
 
 @pytest.fixture
