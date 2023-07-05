@@ -101,7 +101,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         return bool(self.time_series)
 
 
-def _convert_string_to_date(date_string: str) -> datetime.date:
+def _convert_string_to_date(date_string: Union[str, datetime.datetime]) -> datetime.date:
     """Convenience function to convert date strings to `datetime.date` objects.
 
     Notes:
