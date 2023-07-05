@@ -59,7 +59,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__topic__name=topic_name,
+            metric__metric_group__topic__name=topic_name,
             metric__name=metric_name,
             dt__gte=date_from,
         ).values_list(x_axis, y_axis)
@@ -134,7 +134,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__topic__name=topic_name,
+            metric__metric_group__topic__name=topic_name,
             metric__name=metric_name,
             dt__gte=date_from,
         )
@@ -182,7 +182,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__topic__name=topic_name,
+            metric__metric_group__topic__name=topic_name,
             metric__name=metric_name,
         ).values_list("metric_value", flat=True)
         return self._newest_to_oldest(queryset=queryset)
@@ -213,7 +213,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         return self.get(
-            metric__topic__name=topic_name,
+            metric__metric_group__topic__name=topic_name,
             metric__name=metric_name,
         )
 

@@ -28,10 +28,17 @@ class Topic(models.Model):
     objects = TopicManager()
 
 
+class MetricGroup(models.Model):
+    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    topic = models.ForeignKey(to=Topic, on_delete=models.SET_NULL, null=True)
+
+
 class Metric(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     rounding = models.CharField(max_length=100)
-    topic = models.ForeignKey(to=Topic, on_delete=models.SET_NULL, null=True)
+    metric_group = models.ForeignKey(
+        to=MetricGroup, on_delete=models.SET_NULL, null=True
+    )
 
     objects = MetricManager()
 

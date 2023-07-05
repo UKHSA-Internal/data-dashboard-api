@@ -29,7 +29,9 @@ class MetricQuerySet(models.QuerySet):
             bool: True if any `Metric` records match the criteria, False otherwise
 
         """
-        return self.filter(name=metric_name, topic__name=topic_name).exists()
+        return self.filter(
+            name=metric_name, metric_group__topic__name=topic_name
+        ).exists()
 
     def get_all_unique_names(self) -> models.QuerySet:
         """Gets all unique metric names as a flat list queryset.

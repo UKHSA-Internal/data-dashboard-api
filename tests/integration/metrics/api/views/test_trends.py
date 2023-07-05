@@ -26,7 +26,7 @@ class TestTrendsView:
         """
         # Given
         main_record, percentage_record = core_trend_percentage_example
-        topic_name = main_record.metric.topic.name
+        topic_name = main_record.metric.metric_group.topic.name
         metric_name = main_record.metric.name
         percentage_metric_name = percentage_record.metric.name
 
@@ -68,7 +68,6 @@ class TestTrendsView:
         """
         # Given
         main_record, percentage_record = core_trend_percentage_example
-        topic_name = main_record.metric.topic.name
         metric_name = main_record.metric.name
         percentage_metric_name = percentage_record.metric.name
 

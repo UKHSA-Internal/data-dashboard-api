@@ -15,7 +15,7 @@ class TestChartsView:
             "file_format": "svg",
             "plots": [
                 {
-                    "topic": core_timeseries.metric.topic.name,
+                    "topic": core_timeseries.metric.metric_group.topic.name,
                     "metric": core_timeseries.metric.name,
                     "chart_type": "waffle",
                 }

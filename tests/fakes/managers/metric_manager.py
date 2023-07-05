@@ -21,7 +21,7 @@ class FakeMetricManager(MetricManager):
             metric
             for metric in self.metrics
             if metric.name == metric_name
-            if metric.topic.name == topic_name
+            if metric.metric_group.topic.name == topic_name
         ]
 
         return bool(filtered_by_topic)

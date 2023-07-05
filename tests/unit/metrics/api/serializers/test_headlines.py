@@ -19,7 +19,7 @@ class TestHeadlinesQuerySerializer:
         fake_metric = FakeMetricFactory.build_example_metric(
             metric_name="COVID-19_headline_ONSdeaths_7daytotals"
         )
-        fake_topic = fake_metric.topic
+        fake_topic = fake_metric.metric_group.topic
 
         data: cls.DATA_PAYLOAD_HINT = {
             "topic": fake_topic.name,

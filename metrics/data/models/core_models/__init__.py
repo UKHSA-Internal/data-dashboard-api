@@ -3,6 +3,7 @@ from .supporting import (
     Geography,
     GeographyType,
     Metric,
+    MetricGroup,
     Stratum,
     SubTheme,
     Theme,
