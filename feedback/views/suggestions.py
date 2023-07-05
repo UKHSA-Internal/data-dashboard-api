@@ -15,7 +15,7 @@ class SuggestionsView(APIView):
     permission_classes = []
 
     @extend_schema(tags=[SUGGESTIONS_API_TAG], request=SuggestionsSerializer)
-    def post(self, request: Request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs) -> HttpResponse:
         serializer = SuggestionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
