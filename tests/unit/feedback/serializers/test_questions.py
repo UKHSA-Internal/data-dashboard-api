@@ -108,6 +108,6 @@ class TestSuggestionsSerializer:
         validated_data: OrderedDict[List[OrderedDict]] = serializer.validated_data
 
         # Then
-        validated_suggestions = validated_data["suggestions"]
+        validated_suggestions: List[OrderedDict] = validated_data["suggestions"]
         assert validated_suggestions[0]["question"] == question
         assert validated_suggestions[0]["answer"] == answer
