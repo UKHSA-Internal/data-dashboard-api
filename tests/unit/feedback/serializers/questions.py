@@ -1,11 +1,12 @@
-from typing import OrderedDict, List
+from typing import List, OrderedDict
 
 import pytest
 from rest_framework.exceptions import ValidationError
 
 from feedback.serializers.questions import (
     QuestionAnswerListSerializer,
-    QuestionAnswerSerializer, SuggestionsSerializer,
+    QuestionAnswerSerializer,
+    SuggestionsSerializer,
 )
 
 EXAMPLE_QUESTION = "What would you like to see on the dashboard in the future?"

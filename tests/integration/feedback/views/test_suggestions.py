@@ -1,7 +1,7 @@
 from http import HTTPStatus
-from rest_framework.test import APIClient
 
 from rest_framework.response import Response
+from rest_framework.test import APIClient
 
 
 class TestSuggestionsView:
