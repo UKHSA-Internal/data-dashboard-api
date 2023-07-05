@@ -23,7 +23,9 @@ def core_headline_example() -> CoreTimeSeries:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_newtests_7daycounttotal", metric_group=metric_group
+        name="COVID-19_headline_newtests_7daycounttotal",
+        metric_group=metric_group,
+        topic=topic,
     )
     year = 2023
     return CoreTimeSeries.objects.create(
@@ -40,10 +42,14 @@ def core_trend_percentage_example() -> List[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daychange", metric_group=metric_group
+        name="COVID-19_headline_ONSdeaths_7daychange",
+        metric_group=metric_group,
+        topic=topic,
     )
     percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daypercentchange", metric_group=metric_group
+        name="COVID-19_headline_ONSdeaths_7daypercentchange",
+        metric_group=metric_group,
+        topic=topic,
     )
 
     year = 2023
@@ -70,7 +76,9 @@ def core_timeseries_example() -> List[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_deaths_ONSByDay", metric_group=metric_group
+        name="COVID-19_deaths_ONSByDay",
+        metric_group=metric_group,
+        topic=topic,
     )
     year = 2023
     return [

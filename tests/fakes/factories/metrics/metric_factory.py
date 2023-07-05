@@ -22,4 +22,4 @@ class FakeMetricFactory(factory.Factory):
     ) -> FakeMetric:
         topic = FakeTopic(name=topic_name)
         metric_group = FakeMetricGroup(name=metric_group_name, topic=topic)
-        return cls.build(name=metric_name, metric_group=metric_group)
+        return cls.build(name=metric_name, metric_group=metric_group, topic=topic)
