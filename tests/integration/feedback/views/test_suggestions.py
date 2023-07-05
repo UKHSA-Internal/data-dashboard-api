@@ -1,11 +1,15 @@
 from http import HTTPStatus
 
+import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 
 class TestSuggestionsView:
-    def test_can_hit_endpoint(self, client: APIClient):
+    @pytest.mark.django_db
+    def test_post_request_returns_correct_response(
+        self, authenticated_api_client: APIClient
+    ):
         """
         Given a valid payload containing a question and answer suggestion
         When the `POST /api/suggestions/v1/` endpoint is hit
@@ -16,10 +20,10 @@ class TestSuggestionsView:
         valid_payload = {"suggestions": [{"question": "string", "answer": "string"}]}
 
         # When
-        response: Response = client.post(
+        response: Response = authenticated_api_client.post(
             path=path,
             data=valid_payload,
-            content_type="application/json",
+            format="json",
         )
 
         # Then
