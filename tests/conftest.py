@@ -61,7 +61,7 @@ def plot_serializer_payload_and_model_managers() -> (
     Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]
 ):
     fake_metric = FakeMetricFactory.build_example_metric()
-    fake_topic = fake_metric.topic
+    fake_topic = fake_metric.metric_group.topic
 
     data: DATA_PAYLOAD_HINT = {
         "topic": fake_topic.name,

@@ -28,7 +28,7 @@ class TestHeadlinesView:
         Then an HTTP 200 OK response is returned with the associated metric_value
         """
         # Given
-        topic_name: str = core_headline_example.metric.topic.name
+        topic_name: str = core_headline_example.metric.metric_group.topic.name
         metric_name: str = core_headline_example.metric.name
 
         # When
@@ -56,7 +56,7 @@ class TestHeadlinesView:
         """
         # Given
         core_timeseries: CoreTimeSeries = core_timeseries_example[0]
-        topic_name: str = core_timeseries.metric.topic.name
+        topic_name: str = core_timeseries.metric.metric_group.topic.name
         metric_name: str = core_timeseries.metric.name
 
         # When

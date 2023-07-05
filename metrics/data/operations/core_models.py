@@ -240,7 +240,7 @@ def load_core_data(
     df = df[df["metric_value"].notnull()]
 
     column_mapping: Dict[str, str] = {
-        "period": "period",
+        "period": "metric_frequency",
         "geography": "geography_id",
         "metric_name": "metric_id",
         "stratum": "stratum_id",
