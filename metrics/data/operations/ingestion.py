@@ -1,4 +1,4 @@
-from typing import Dict, List, Set, Tuple, Union, Type
+from typing import Dict, List, Set, Tuple, Type, Union
 
 from django.db.models import Manager
 from pydantic import BaseModel

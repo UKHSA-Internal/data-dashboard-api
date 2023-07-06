@@ -112,7 +112,15 @@ class TestIngestion:
         "fields, expected_unique_values",
         [
             (["theme"], {("infectious_disease",)}),
-            (["sub_theme", "theme"], {("respiratory", "infectious_disease",)}),
+            (
+                ["sub_theme", "theme"],
+                {
+                    (
+                        "respiratory",
+                        "infectious_disease",
+                    )
+                },
+            ),
             (["topic", "sub_theme"], {("COVID-19", "respiratory")}),
             (
                 ["metric", "metric_group", "topic"],
@@ -124,17 +132,17 @@ class TestIngestion:
             ),
             (["geography_type"], {("UKHSA Region",), ("Lower Tier Local Authority",)}),
             (
-                    ["geography", "geography_type"],
-                    {
-                        (
-                                "Yorkshire and Humber",
-                                "UKHSA Region",
-                        ),
-                        (
-                                "Babergh",
-                                "Lower Tier Local Authority",
-                        ),
-                    },
+                ["geography", "geography_type"],
+                {
+                    (
+                        "Yorkshire and Humber",
+                        "UKHSA Region",
+                    ),
+                    (
+                        "Babergh",
+                        "Lower Tier Local Authority",
+                    ),
+                },
             ),
             (["age"], {("all",)}),
             (["stratum"], {("default",)}),
@@ -211,7 +219,9 @@ class TestIngestion:
             (["stratum"], "stratum_manager"),
         ],
     )
-    def test_get_model_manager_for_fields(self, fields: List[str], expected_attribute_on_class: str):
+    def test_get_model_manager_for_fields(
+        self, fields: List[str], expected_attribute_on_class: str
+    ):
         """
         Given a list of fields
         When `get_model_manager_for_fields()` is called
