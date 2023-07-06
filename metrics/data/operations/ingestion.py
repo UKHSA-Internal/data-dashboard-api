@@ -104,7 +104,7 @@ class Ingestion:
         self.core_time_series_manager = core_time_series_manager
 
     def convert_to_models(self) -> List[HeadlineDTO]:
-        return [self.to_model(record) for record in self.data]
+        return [self.to_model(data_record=record) for record in self.data]
 
     @staticmethod
     def to_model(data_record: Dict[str, Union[str, float]]) -> HeadlineDTO:

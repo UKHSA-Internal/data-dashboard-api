@@ -59,7 +59,7 @@ class TestIngestion:
         ingestion = Ingestion(data=data)
 
         # When
-        model: HeadlineDTO = ingestion.to_model(data=headline_data)
+        model: HeadlineDTO = ingestion.to_model(data_record=headline_data)
 
         # Then
         assert model.theme == headline_data["parent_theme"]
@@ -101,8 +101,8 @@ class TestIngestion:
 
         # Then
         expected_calls = [
-            mock.call(mocked_raw_headline_one),
-            mock.call(mocked_raw_headline_two),
+            mock.call(data_record=mocked_raw_headline_one),
+            mock.call(data_record=mocked_raw_headline_two),
         ]
         spy_to_model.assert_has_calls(expected_calls, any_order=True)
 
