@@ -140,6 +140,20 @@ class Ingestion:
         return {tuple(getattr(model, key) for key in keys) for model in models}
 
     def get_model_manager_for_fields(self, keys: List[str]) -> Type[Manager]:
+        """Get the corresponding model manager for the given `keys`
+
+        Args:
+            keys: list of strings representing the keys needed.
+            i.e. ["sub_theme", "theme"] would return `SubThemeManager`
+
+        Returns:
+            A model manager related to those set of keys
+
+        Raises:
+            `ValueError` if the given `keys` cannot be matched
+            to a particular model manager
+
+        """
         match keys:
             case ["theme"]:
                 return self.theme_manager
