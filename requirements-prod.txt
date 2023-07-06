@@ -12,7 +12,7 @@ coreapi==2.3.3
 coreschema==0.0.4
 cyclonedx-python-lib==2.7.1
 distlib==0.3.6
-Django==4.1.9
+Django==4.2.3
 django-cors-headers==3.13.0
 django-db-connection-pool==1.2.4
 django-filter==22.1
@@ -96,7 +96,7 @@ typing_extensions==4.4.0
 uritemplate==4.1.1
 urllib3==1.26.15
 virtualenv==20.16.5
-wagtail==4.2.2
+wagtail==5.0.1
 webencodings==0.5.1
-Willow==1.4.1
+Willow==1.5.0
 zipp==3.13.0
