@@ -28,7 +28,7 @@ class HeadlineDTO(BaseModel):
 DEFAULT_THEME_MANAGER = core_models.Theme.objects
 DEFAULT_SUB_THEME_MANAGER = core_models.SubTheme.objects
 DEFAULT_TOPIC_MANAGER = core_models.Topic.objects
-DEFAULT_METRIC_GROUP_MANAGER = core_models.Metric.objects
+DEFAULT_METRIC_GROUP_MANAGER = core_models.MetricGroup.objects
 DEFAULT_METRIC_MANAGER = core_models.Metric.objects
 DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
 DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
