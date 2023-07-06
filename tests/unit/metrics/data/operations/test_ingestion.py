@@ -1,8 +1,10 @@
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Set, Tuple, Type, Union
 from unittest import mock
 
 import pytest
+from django.db.models.manager import Manager
 
+from metrics.data.models import core_models
 from metrics.data.operations.ingestion import HeadlineDTO, Ingestion
 
 
@@ -131,8 +133,8 @@ class TestIngestion:
                 {("COVID-19_headline_positivity_latest", "headline", "COVID-19")},
             ),
             (
-                    ["metric_group", "topic"],
-                    {("headline", "COVID-19")},
+                ["metric_group", "topic"],
+                {("headline", "COVID-19")},
             ),
             (["stratum"], {("default",)}),
             (["age"], {("all",)}),
@@ -155,7 +157,42 @@ class TestIngestion:
         ingestion = Ingestion(data=example_headline_data_json)
 
         # When
-        unique_values_for_keys: Set[Tuple[str, ...]] = ingestion.get_unique_values_for_fields(fields)
+        unique_values_for_keys: Set[
+            Tuple[str, ...]
+        ] = ingestion.get_unique_values_for_fields(fields)
 
         # Then
         assert unique_values_for_keys == expected_unique_values
+
+    @pytest.mark.parametrize(
+        "attribute_on_class, expected_model_manager",
+        [
+            ("theme_manager", core_models.Theme.objects),
+            ("sub_theme_manager", core_models.SubTheme.objects),
+            ("topic_manager", core_models.Topic.objects),
+            ("metric_group_manager", core_models.MetricGroup.objects),
+            ("metric_manager", core_models.Metric.objects),
+            ("geography_type_manager", core_models.GeographyType.objects),
+            ("geography_manager", core_models.Geography.objects),
+            ("age_manager", core_models.Age.objects),
+            ("stratum_manager", core_models.Stratum.objects),
+            ("core_time_series_manager", core_models.CoreTimeSeries.objects),
+        ],
+    )
+    def test_initializes_with_default_core_model_managers(
+        self, attribute_on_class: str, expected_model_manager: Type[Manager]
+    ):
+        """
+        Given an instance of `Ingestion`
+        When the object is initialized
+        Then the concrete core model managers
+            are set on the `Ingestion` object
+        """
+        # Given
+        mocked_data = mock.Mock()
+
+        # When
+        ingestion = Ingestion(data=mocked_data)
+
+        # Then
+        assert getattr(ingestion, attribute_on_class) is expected_model_manager
