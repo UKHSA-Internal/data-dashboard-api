@@ -112,22 +112,8 @@ class TestIngestion:
         "fields, expected_unique_values",
         [
             (["theme"], {("infectious_disease",)}),
-            (["theme", "sub_theme"], {("infectious_disease", "respiratory")}),
+            (["sub_theme", "theme"], {("respiratory", "infectious_disease",)}),
             (["topic", "sub_theme"], {("COVID-19", "respiratory")}),
-            (["geography_type"], {("UKHSA Region",), ("Lower Tier Local Authority",)}),
-            (
-                ["geography", "geography_type"],
-                {
-                    (
-                        "Yorkshire and Humber",
-                        "UKHSA Region",
-                    ),
-                    (
-                        "Babergh",
-                        "Lower Tier Local Authority",
-                    ),
-                },
-            ),
             (
                 ["metric", "metric_group", "topic"],
                 {("COVID-19_headline_positivity_latest", "headline", "COVID-19")},
@@ -136,8 +122,22 @@ class TestIngestion:
                 ["metric_group", "topic"],
                 {("headline", "COVID-19")},
             ),
-            (["stratum"], {("default",)}),
+            (["geography_type"], {("UKHSA Region",), ("Lower Tier Local Authority",)}),
+            (
+                    ["geography", "geography_type"],
+                    {
+                        (
+                                "Yorkshire and Humber",
+                                "UKHSA Region",
+                        ),
+                        (
+                                "Babergh",
+                                "Lower Tier Local Authority",
+                        ),
+                    },
+            ),
             (["age"], {("all",)}),
+            (["stratum"], {("default",)}),
         ],
     )
     def test_get_all_unique_values_for_fields(
@@ -196,3 +196,49 @@ class TestIngestion:
 
         # Then
         assert getattr(ingestion, attribute_on_class) is expected_model_manager
+
+    @pytest.mark.parametrize(
+        "fields, expected_attribute_on_class",
+        [
+            (["theme"], "theme_manager"),
+            (["sub_theme", "theme"], "sub_theme_manager"),
+            (["topic", "sub_theme"], "topic_manager"),
+            (["metric_group", "topic"], "metric_group_manager"),
+            (["metric", "metric_group", "topic"], "metric_manager"),
+            (["geography_type"], "geography_type_manager"),
+            (["geography", "geography_type"], "geography_manager"),
+            (["age"], "age_manager"),
+            (["stratum"], "stratum_manager"),
+        ],
+    )
+    def test_get_model_manager_for_fields(self, fields: List[str], expected_attribute_on_class: str):
+        """
+        Given a list of fields
+        When `get_model_manager_for_fields()` is called
+            from an instance of `Ingestion`
+        Then the corresponding model manager is returned
+        """
+        # Given
+        keys = fields
+        ingestion = Ingestion(data=mock.Mock())
+
+        # When
+        model_manager = ingestion.get_model_manager_for_fields(keys=keys)
+
+        # Then
+        assert model_manager is getattr(ingestion, expected_attribute_on_class)
+
+    def test_get_model_manager_for_fields_raises_error(self):
+        """
+        Given a list of fields which are not valid
+        When `get_model_manager_for_fields()` is called
+            from an instance of `Ingestion`
+        Then a `ValueError` is raised
+        """
+        # Given
+        fields = ["non-existent-field", ""]
+        ingestion = Ingestion(data=mock.Mock())
+
+        # When / Then
+        with pytest.raises(ValueError):
+            ingestion.get_model_manager_for_fields(keys=fields)

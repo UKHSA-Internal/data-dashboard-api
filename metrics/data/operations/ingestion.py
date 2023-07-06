@@ -1,4 +1,4 @@
-from typing import Dict, List, Set, Tuple, Union
+from typing import Dict, List, Set, Tuple, Union, Type
 
 from django.db.models import Manager
 from pydantic import BaseModel
@@ -128,3 +128,26 @@ class Ingestion:
     def get_unique_values_for_fields(self, keys: List[str]) -> Set[Tuple[str, ...]]:
         models = self.convert_to_models()
         return {tuple(getattr(model, key) for key in keys) for model in models}
+
+    def get_model_manager_for_fields(self, keys: List[str]) -> Type[Manager]:
+        match keys:
+            case ["theme"]:
+                return self.theme_manager
+            case ["sub_theme", "theme"]:
+                return self.sub_theme_manager
+            case ["topic", "sub_theme"]:
+                return self.topic_manager
+            case ["metric_group", "topic"]:
+                return self.metric_group_manager
+            case ["metric", "metric_group", "topic"]:
+                return self.metric_manager
+            case ["geography_type"]:
+                return self.geography_type_manager
+            case ["geography", "geography_type"]:
+                return self.geography_manager
+            case ["age"]:
+                return self.age_manager
+            case ["stratum"]:
+                return self.stratum_manager
+
+        raise ValueError
