@@ -1,4 +1,4 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple, Set
 
 from pydantic import BaseModel
 
@@ -47,3 +47,7 @@ class Ingestion:
             metric_value=data["metric_value"],
             refresh_date=data["refresh_date"],
         )
+
+    def get_unique_values_for_fields(self, keys: List[str]) -> Set[Tuple[str, ...]]:
+        models = self.convert_to_models()
+        return {tuple(getattr(model, key) for key in keys) for model in models}

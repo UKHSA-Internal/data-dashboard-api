@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Set, Tuple, Union
 from unittest import mock
 
 import pytest
@@ -24,7 +24,23 @@ def example_headline_data_json() -> List[Dict[str, float]]:
             "period_end": "2023-06-11",
             "metric_value": 0.087,
             "refresh_date": "2023-06-21",
-        }
+        },
+        {
+            "parent_theme": "infectious_disease",
+            "child_theme": "respiratory",
+            "topic": "COVID-19",
+            "metric_group": "headline",
+            "metric": "COVID-19_headline_positivity_latest",
+            "geography_type": "UKHSA Region",
+            "geography": "Yorkshire and Humber",
+            "age": "all",
+            "sex": "all",
+            "stratum": "default",
+            "period_start": "2023-06-05",
+            "period_end": "2023-06-11",
+            "metric_value": 0.0639,
+            "refresh_date": "2023-06-21",
+        },
     ]
 
 
@@ -89,3 +105,57 @@ class TestIngestion:
         spy_to_model.assert_has_calls(expected_calls, any_order=True)
 
         assert converted_headlines == [spy_to_model.return_value] * 2
+
+    @pytest.mark.parametrize(
+        "fields, expected_unique_values",
+        [
+            (["theme"], {("infectious_disease",)}),
+            (["theme", "sub_theme"], {("infectious_disease", "respiratory")}),
+            (["topic", "sub_theme"], {("COVID-19", "respiratory")}),
+            (["geography_type"], {("UKHSA Region",), ("Lower Tier Local Authority",)}),
+            (
+                ["geography", "geography_type"],
+                {
+                    (
+                        "Yorkshire and Humber",
+                        "UKHSA Region",
+                    ),
+                    (
+                        "Babergh",
+                        "Lower Tier Local Authority",
+                    ),
+                },
+            ),
+            (
+                ["metric", "metric_group", "topic"],
+                {("COVID-19_headline_positivity_latest", "headline", "COVID-19")},
+            ),
+            (
+                    ["metric_group", "topic"],
+                    {("headline", "COVID-19")},
+            ),
+            (["stratum"], {("default",)}),
+            (["age"], {("all",)}),
+        ],
+    )
+    def test_get_all_unique_values_for_fields(
+        self,
+        fields: List[str],
+        expected_unique_values: Set[Tuple[str, ...]],
+        example_headline_data_json: List[Dict[str, Union[str, float]]],
+    ):
+        """
+        Given some sample headline data
+        And a list of fields to get corresponding unique values for
+        When `get_unique_values_for_fields()` is called
+            from an instance of `Ingestion`
+        Then a set of correct values is returned
+        """
+        # Given
+        ingestion = Ingestion(data=example_headline_data_json)
+
+        # When
+        unique_values_for_keys: Set[Tuple[str, ...]] = ingestion.get_unique_values_for_fields(fields)
+
+        # Then
+        assert unique_values_for_keys == expected_unique_values
