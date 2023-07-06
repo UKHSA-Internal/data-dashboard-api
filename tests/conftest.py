@@ -57,7 +57,7 @@ def fake_password_suffix() -> str:
 
 @pytest.fixture
 def plot_serializer_payload_and_model_managers() -> (
-    Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]
+    tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]
 ):
     fake_metric = FakeMetricFactory.build_example_metric()
     fake_topic = fake_metric.metric_group.topic
