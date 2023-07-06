@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -184,7 +182,7 @@ class TestChartPlotSerializer:
     )
     def test_valid_payload_with_optional_line_colour_field_provided(
         self,
-        valid_colour_choice: Tuple[str, str],
+        valid_colour_choice: tuple[str, str],
         plot_serializer_payload_and_model_managers,
     ):
         """
@@ -223,7 +221,7 @@ class TestChartPlotSerializer:
     )
     def test_valid_payload_with_optional_line_type_field_provided(
         self,
-        valid_line_type_choice: Tuple[str, str],
+        valid_line_type_choice: tuple[str, str],
         plot_serializer_payload_and_model_managers,
     ):
         """
@@ -260,7 +258,7 @@ class TestChartPlotSerializer:
     @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
     def test_valid_chart_type(
         self,
-        valid_chart_type: Tuple[str, str],
+        valid_chart_type: tuple[str, str],
         plot_serializer_payload_and_model_managers,
     ):
         """
@@ -351,7 +349,7 @@ class TestChartPlotSerializer:
         )
 
         # Then
-        expected_metric_names: List[str] = metric_manager.get_all_names()
+        expected_metric_names: list[str] = metric_manager.get_all_names()
         assert list(serializer.fields["metric"].choices) == expected_metric_names
 
     def test_topic_manager_is_used_to_build_choices_for_field(
@@ -379,7 +377,7 @@ class TestChartPlotSerializer:
         )
 
         # Then
-        expected_topic_names: List[str] = topic_manager.get_all_names()
+        expected_topic_names: list[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names
 
     def test_to_models_returns_chart_plot_parameters_model(

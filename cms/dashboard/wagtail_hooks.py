@@ -1,18 +1,17 @@
-from typing import List
-
 from django.templatetags.static import static
 from django.utils.html import format_html
+from django.utils.safestring import SafeString
 from wagtail import hooks
 
 
 @hooks.register("insert_global_admin_css")
-def global_admin_css():
+def global_admin_css() -> SafeString:
     return format_html(
         '<link rel="stylesheet" type="text/css" href="{}">', static("css/theme.css")
     )
 
 
-ADDITIONAL_CUSTOM_ICONS: List[str] = [
+ADDITIONAL_CUSTOM_ICONS: list[str] = [
     "icons/chart_row_card.svg",
     "icons/chart_plot.svg",
     "icons/chart_with_headline_and_trend_card.svg",
@@ -26,7 +25,7 @@ ADDITIONAL_CUSTOM_ICONS: List[str] = [
 
 
 @hooks.register("register_icons")
-def register_icons(icons: List[str]):
+def register_icons(icons: list[str]) -> list[str]:
     """Registers additional svg icons used for the custom content blocks
 
     Args:

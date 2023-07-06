@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Dict, List, Tuple, Union
 
 import plotly
 
@@ -13,7 +12,7 @@ from metrics.domain.utils import get_last_day_of_month
 class ChartSettings:
     narrow_chart_width = 435
 
-    def __init__(self, width: int, height: int, plots_data: List[PlotData]):
+    def __init__(self, width: int, height: int, plots_data: list[PlotData]):
         self._width = width
         self._height = height
         self.plots_data = plots_data
@@ -33,7 +32,7 @@ class ChartSettings:
             "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
         }
 
-    def get_x_axis_config(self) -> Dict[str, Union[str, bool, DICT_OF_STR_ONLY]]:
+    def get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
         return {
             "showgrid": False,
             "zeroline": False,
@@ -46,7 +45,7 @@ class ChartSettings:
             "tickfont": self.get_tick_font_config(),
         }
 
-    def get_y_axis_config(self) -> Dict[str, Union[bool, DICT_OF_STR_ONLY]]:
+    def get_y_axis_config(self) -> dict[str, bool | DICT_OF_STR_ONLY]:
         return {
             "showgrid": False,
             "showticklabels": True,
@@ -70,7 +69,7 @@ class ChartSettings:
             "width": self.width,
         }
 
-    def get_simple_line_chart_config(self) -> Dict[str, Dict[str, bool]]:
+    def get_simple_line_chart_config(self) -> dict[str, dict[str, bool]]:
         set_axes_to_be_invisible = {"visible": False}
         return {
             "xaxis": set_axes_to_be_invisible,
@@ -172,7 +171,7 @@ class ChartSettings:
         }
 
 
-def get_existing_chart_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
+def get_existing_chart_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
     """Extract the x axis range from a chart figure
 
     Args:
@@ -204,7 +203,7 @@ def get_new_max_date(existing_dt: str) -> str:
     return new_dt.strftime("%Y-%m-%d")
 
 
-def get_x_axis_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
+def get_x_axis_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
     """Adjust the right-hand side of the charts' x axis to give Plotly the best chance of displaying a label for every tick
 
     Args:

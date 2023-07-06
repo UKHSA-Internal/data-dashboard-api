@@ -1,7 +1,7 @@
-from typing import Tuple, Union
+from typing import Any
 
 
-def change_between_each_half(values: list) -> Union[int, float]:
+def change_between_each_half(values: list) -> int | float:
     """Calculates the difference between the total of each half of the `values`
 
     Args:
@@ -16,7 +16,7 @@ def change_between_each_half(values: list) -> Union[int, float]:
     return sum(second_half_values) - sum(first_half_values)
 
 
-def split_list_in_half(values: list) -> Tuple[list, list]:
+def split_list_in_half(values: list) -> tuple[list[Any], list[Any]]:
     half = len(values) // 2
     return values[:half], values[half:]
 

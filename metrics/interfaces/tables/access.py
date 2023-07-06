@@ -1,9 +1,9 @@
-from typing import Dict, List, Optional
+from typing import Optional
 
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.models import PlotData, PlotsCollection
+from metrics.domain.models import PlotsCollection
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.interfaces.tables.validation import validate_each_requested_table_plot
@@ -25,7 +25,7 @@ class TablesInterface:
             core_time_series_manager=core_time_series_manager,
         )
 
-    def generate_plots_for_table(self) -> List[Dict[str, str]]:
+    def generate_plots_for_table(self) -> list[dict[str, str]]:
         """Create a list of plots from the request
 
         Returns:
@@ -38,7 +38,7 @@ class TablesInterface:
         return tabular_data.create_plots_in_tabular_format()
 
 
-def generate_table(plots_collection: PlotsCollection) -> List[Dict[str, str]]:
+def generate_table(plots_collection: PlotsCollection) -> list[dict[str, str]]:
     """Validates and creates tabular output based off the parameters provided within the `plots_collection` model
 
     Args:

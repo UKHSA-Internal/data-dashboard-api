@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import List
 
 import pytest
 from rest_framework.response import Response
@@ -46,7 +45,7 @@ class TestHeadlinesView:
         self,
         path: str,
         authenticated_api_client: APIClient,
-        core_timeseries_example: List[CoreTimeSeries],
+        core_timeseries_example: list[CoreTimeSeries],
     ):
         """
         Given a `topic` and a `metric` which has more than 1 record and is a timeseries type metric

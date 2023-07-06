@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict, Tuple, Union
 
 import pytest
 
@@ -9,7 +8,7 @@ from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
-DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
+DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
 
 
 @pytest.fixture

@@ -1,7 +1,6 @@
 import datetime
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import List, Tuple
 
 import pytest
 from rest_framework.response import Response
@@ -44,7 +43,7 @@ class TestPublicAPINestedLinkViews:
         geography_type_name: str,
         geography_name: str,
         metric_name: str,
-    ) -> List[Tuple[str, str, str, str]]:
+    ) -> list[tuple[str, str, str, str]]:
         return [
             (
                 "name",
@@ -141,8 +140,8 @@ class TestPublicAPINestedLinkViews:
         )
 
         # When
-        expected_response_fields: List[
-            Tuple[str, str, str, str]
+        expected_response_fields: list[
+            tuple[str, str, str, str]
         ] = self._build_expected_response_fields(
             theme_name=theme_name,
             sub_theme_name=sub_theme_name,

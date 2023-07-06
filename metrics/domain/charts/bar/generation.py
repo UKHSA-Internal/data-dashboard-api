@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List
+from typing import Any
 
 import plotly.graph_objects
 
@@ -10,7 +10,7 @@ from metrics.domain.models import PlotData
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[PlotData],
+    chart_plots_data: list[PlotData],
 ) -> plotly.graph_objects.Figure:
     """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
 
@@ -71,8 +71,8 @@ def generate_chart_figure(
 
 
 def _create_bar_plot(
-    x_axis_values: List[Any],
-    y_axis_values: List[Any],
+    x_axis_values: list[Any],
+    y_axis_values: list[Any],
     bar_colour: str,
     legend: str,
     showlegend: bool = False,

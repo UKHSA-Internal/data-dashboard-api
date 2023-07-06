@@ -1,5 +1,4 @@
 import io
-from typing import Dict, List
 
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -41,7 +40,7 @@ class DownloadsView(APIView):
     renderer_classes = (CoreJSONRenderer,)
 
     def _get_queryset(self):
-        all_query_filters: List[Dict[str, str]] = validate_query_filters(
+        all_query_filters: list[dict[str, str]] = validate_query_filters(
             possible_fields=self.filterset_fields,
             plots=self.request.data["plots"],
         )

@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, List
+from typing import Any
 
 import plotly.graph_objects
 
@@ -7,7 +7,7 @@ from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColour
 from metrics.domain.charts.line_multi_coloured import generation
 from metrics.domain.models import PlotData, PlotParameters
 
-DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
+DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
     datetime.date(2022, 9, 19),
     datetime.date(2022, 10, 3),
@@ -20,7 +20,7 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 12, 26),
     datetime.date(2023, 1, 9),
 ]
-EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
+EXAMPLE_VALUES: list[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
 HEIGHT = 220
 WIDTH = 930
 
@@ -28,8 +28,8 @@ WIDTH = 930
 class TestLineMultiColouredCharts:
     @staticmethod
     def _setup_chart_plot_data(
-        x_axis_values: List[Any],
-        y_axis_values: List[Any],
+        x_axis_values: list[Any],
+        y_axis_values: list[Any],
         label: str = "",
         line_type: str = "",
         line_colour: str = "",

@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import List
 
 import pytest
 from rest_framework.response import Response
@@ -15,7 +14,7 @@ class TestTrendsView:
         self,
         path: str,
         authenticated_api_client: APIClient,
-        core_trend_percentage_example: List[CoreTimeSeries],
+        core_trend_percentage_example: list[CoreTimeSeries],
         core_headline_example: CoreTimeSeries,
     ):
         """
@@ -58,7 +57,7 @@ class TestTrendsView:
         self,
         path: str,
         authenticated_api_client: APIClient,
-        core_trend_percentage_example: List[CoreTimeSeries],
+        core_trend_percentage_example: list[CoreTimeSeries],
     ):
         """
         Given the names of a `metric`, `percentage_metric` as well as an incorrect `topic`

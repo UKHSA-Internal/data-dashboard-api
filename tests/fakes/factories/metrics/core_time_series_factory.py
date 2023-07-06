@@ -1,6 +1,5 @@
 import datetime
 import secrets
-from typing import List
 
 import factory
 
@@ -9,7 +8,6 @@ from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
 from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.metrics.metric import FakeMetric
 from tests.fakes.models.metrics.stratum import FakeStratum
-from tests.fakes.models.metrics.topic import FakeTopic
 
 
 class FakeCoreTimeSeriesFactory(factory.Factory):
@@ -49,7 +47,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         )
 
     @classmethod
-    def build_example_covid_time_series_range(cls) -> List[FakeCoreTimeSeries]:
+    def build_example_covid_time_series_range(cls) -> list[FakeCoreTimeSeries]:
         time_series_range = []
 
         metric: FakeMetric = FakeMetricFactory.build_example_metric()
@@ -82,7 +80,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
     @classmethod
     def build_example_trend_type_records(
         cls, metric_name: str, percentage_metric_name: str
-    ) -> List[FakeCoreTimeSeries]:
+    ) -> list[FakeCoreTimeSeries]:
         time_series_records = []
 
         metric: FakeMetric = FakeMetricFactory.build_example_metric(

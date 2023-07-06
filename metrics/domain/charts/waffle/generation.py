@@ -1,5 +1,3 @@
-from typing import List
-
 import plotly.graph_objects
 from numpy.core.multiarray import ndarray
 
@@ -9,7 +7,7 @@ from metrics.domain.charts.waffle.colour_scheme import build_color_scale
 
 
 def generate_chart_figure(
-    values: List[int],
+    values: list[int],
     cell_gap: int = 3,
     width: int = 400,
     height: int = 400,
@@ -62,7 +60,7 @@ def _add_plot_to_figure(
     )
 
     # Fetch the colour scale values based on the index
-    colour_scale: List[List] = build_color_scale(identifier=index)
+    colour_scale: list[list[int, str]] = build_color_scale(identifier=index)
 
     # Create the heatmap plot
     heatmap_plot = plotly.graph_objects.Heatmap(

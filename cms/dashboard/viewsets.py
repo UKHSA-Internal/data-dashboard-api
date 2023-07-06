@@ -1,5 +1,3 @@
-from typing import List
-
 from django.urls import path
 from django.urls.resolvers import RoutePattern
 from drf_spectacular.utils import extend_schema
@@ -28,7 +26,7 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
         return Response(serializer.data)
 
     @classmethod
-    def get_urlpatterns(cls) -> List[RoutePattern]:
+    def get_urlpatterns(cls) -> list[RoutePattern]:
         """This returns a list of URL patterns for the viewset.
 
         Notes:

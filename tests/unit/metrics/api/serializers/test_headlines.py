@@ -1,5 +1,3 @@
-from typing import Dict, List, Tuple
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -10,12 +8,12 @@ from tests.fakes.managers.topic_manager import FakeTopicManager
 
 
 class TestHeadlinesQuerySerializer:
-    DATA_PAYLOAD_HINT = Dict[str, str]
+    DATA_PAYLOAD_HINT = dict[str, str]
 
     @classmethod
     def _setup_valid_data_payload_and_model_managers(
         cls,
-    ) -> Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
+    ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
         fake_metric = FakeMetricFactory.build_example_metric(
             metric_name="COVID-19_headline_ONSdeaths_7daytotals"
         )
@@ -107,7 +105,7 @@ class TestHeadlinesQuerySerializer:
         )
 
         # Then
-        expected_metric_names: List[str] = metric_manager.get_all_names()
+        expected_metric_names: list[str] = metric_manager.get_all_names()
         assert list(serializer.fields["metric"].choices) == expected_metric_names
 
     def test_topic_manager_is_used_to_build_choices_for_field(self):
@@ -134,5 +132,5 @@ class TestHeadlinesQuerySerializer:
         )
 
         # Then
-        expected_topic_names: List[str] = topic_manager.get_all_names()
+        expected_topic_names: list[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names

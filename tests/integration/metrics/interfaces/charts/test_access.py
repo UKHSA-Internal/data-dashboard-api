@@ -1,5 +1,4 @@
 import datetime
-from typing import List
 from unittest import mock
 
 import plotly
@@ -13,8 +12,8 @@ from metrics.interfaces.charts.access import ChartsInterface
 class TestChartsInterface:
     @staticmethod
     def _create_chart_plot_data(
-        x_axis_values: List[datetime.date],
-        y_axis_values: List[int],
+        x_axis_values: list[datetime.date],
+        y_axis_values: list[int],
     ) -> PlotData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
@@ -38,7 +37,7 @@ class TestChartsInterface:
             core_time_series_manager=mock.Mock(),
         )
 
-    plot_1_dates: List[datetime.date] = [
+    plot_1_dates: list[datetime.date] = [
         datetime.date(2022, 9, 5),
         datetime.date(2022, 9, 19),
         datetime.date(2022, 10, 3),
@@ -52,24 +51,24 @@ class TestChartsInterface:
     ]
     plot_1_values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
-    plot_2_dates: List[datetime.date] = [
+    plot_2_dates: list[datetime.date] = [
         datetime.date(2020, 9, 5),
         datetime.date(2022, 9, 19),
         datetime.date(2023, 3, 9),
     ]
     plot_2_values = [10, 20, 30]
 
-    first_chart_plots_data = _create_chart_plot_data(
+    first_chart_plots_data: PlotData = _create_chart_plot_data(
         x_axis_values=plot_1_dates,
         y_axis_values=plot_1_values,
     )
 
-    second_chart_plots_data = _create_chart_plot_data(
+    second_chart_plots_data: PlotData = _create_chart_plot_data(
         x_axis_values=plot_2_dates,
         y_axis_values=plot_2_values,
     )
 
-    mock_charts_interface = _create_charts_interface()
+    mock_charts_interface: ChartsInterface = _create_charts_interface()
 
     def test_determine_get_last_updated_where_chart_has_dates(self):
         """

@@ -1,4 +1,3 @@
-from typing import Optional
 from unittest import mock
 
 import pytest
@@ -29,9 +28,7 @@ class TestChartLineTypes:
     @pytest.mark.parametrize(
         "invalid_line_type", [(None, "null", "", "NON-EXISTENT-LINE-TYPE", "HOLLOW")]
     )
-    def test_get_chart_line_type_defaults_to_solid(
-        self, invalid_line_type: Optional[str]
-    ):
+    def test_get_chart_line_type_defaults_to_solid(self, invalid_line_type: str | None):
         """
         Given an invalid chart line type string
         When `get_chart_line_type()` is called from the `ChartLineTypes` class

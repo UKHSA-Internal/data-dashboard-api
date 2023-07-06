@@ -1,5 +1,3 @@
-from typing import List, Set
-
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
@@ -18,10 +16,10 @@ class TestBlankCommonPage:
         blank_page = FakeCommonPageFactory.build_blank_page()
 
         # When
-        api_fields: List[APIField] = blank_page.api_fields
+        api_fields: list[APIField] = blank_page.api_fields
 
         # Then
-        expected_api_field_names: Set[str] = {
+        expected_api_field_names: set[str] = {
             "body",
             "date_posted",
             "last_published_at",
@@ -29,7 +27,7 @@ class TestBlankCommonPage:
             "seo_title",
             "search_description",
         }
-        api_field_names: Set[str] = {api_field.name for api_field in api_fields}
+        api_field_names: set[str] = {api_field.name for api_field in api_fields}
         assert api_field_names == expected_api_field_names
 
     def test_has_correct_content_panels(self):
@@ -42,15 +40,15 @@ class TestBlankCommonPage:
         blank_page = FakeCommonPageFactory.build_blank_page()
 
         # When
-        content_panels: List[FieldPanel] = blank_page.content_panels
+        content_panels: list[FieldPanel] = blank_page.content_panels
 
         # Then
-        expected_content_panel_names: Set[str] = {
+        expected_content_panel_names: set[str] = {
             "title",
             "date_posted",
             "body",
         }
-        content_panel_names: Set[str] = {p.field_name for p in content_panels}
+        content_panel_names: set[str] = {p.field_name for p in content_panels}
         assert content_panel_names == expected_content_panel_names
 
     def test_has_correct_sidebar_panels(self):
@@ -63,13 +61,13 @@ class TestBlankCommonPage:
         blank_page = FakeCommonPageFactory.build_blank_page()
 
         # When
-        sidebar_content_panels: List[InlinePanel] = blank_page.sidebar_content_panels
+        sidebar_content_panels: list[InlinePanel] = blank_page.sidebar_content_panels
 
         # Then
-        expected_sidebar_content_panel_names: Set[str] = {
+        expected_sidebar_content_panel_names: set[str] = {
             "related_links",
         }
-        sidebar_content_panel_names: Set[str] = {
+        sidebar_content_panel_names: set[str] = {
             p.relation_name for p in sidebar_content_panels
         }
         assert sidebar_content_panel_names == expected_sidebar_content_panel_names

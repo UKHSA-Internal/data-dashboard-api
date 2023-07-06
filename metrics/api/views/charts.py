@@ -1,6 +1,5 @@
 import os
 from http import HTTPStatus
-from typing import Dict
 
 from django.http import FileResponse
 from drf_spectacular.utils import extend_schema
@@ -220,7 +219,7 @@ class EncodedChartsView(APIView):
         chart_plot_models = request_serializer.to_models()
 
         try:
-            response: Dict[str, str] = access.generate_encoded_chart(
+            response: dict[str, str] = access.generate_encoded_chart(
                 chart_plots=chart_plot_models,
             )
 

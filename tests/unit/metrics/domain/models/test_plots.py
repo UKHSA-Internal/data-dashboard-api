@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict
 from unittest import mock
 
 import pytest
@@ -100,7 +99,7 @@ class TestPlotParameters:
         fake_chart_plot_parameters.sex = sex
 
         # When
-        dict_used_for_query: Dict[
+        dict_used_for_query: dict[
             str, str
         ] = fake_chart_plot_parameters.to_dict_for_query()
 

@@ -10,14 +10,12 @@ This shall ensure that the `choices` are populated from the database.
 And allowing the CMS to provide the content creator with access to the `latest` data after the point of ingestion.
 """
 
-from typing import List, Tuple
-
 from cms.metrics_interface import MetricsAPIInterface
 
-LIST_OF_TWO_STRING_ITEM_TUPLES = List[Tuple[str, str]]
+LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 
 
-def _build_two_item_tuple_choices(choices: List[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+def _build_two_item_tuple_choices(choices: list[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return [(choice, choice) for choice in choices]
 
 

@@ -1,5 +1,3 @@
-from typing import List
-
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
@@ -36,7 +34,7 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         serializer: APITimeSeriesRequestSerializer = self._build_request_serializer(
             request=request
         )
-        timeseries_dto_slice: List[
+        timeseries_dto_slice: list[
             APITimeSeriesDTO
         ] = serializer.build_timeseries_dto_slice()
 

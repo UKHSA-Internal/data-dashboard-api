@@ -1,11 +1,9 @@
-from typing import List
-
 import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAColours
 from metrics.domain.charts.line import generation
 
-VALUES: List[int] = [1, 2, 3, 2, 2, 3, 4, 5, 5, 3, 2, 1]
+VALUES: list[int] = [1, 2, 3, 2, 2, 3, 4, 5, 5, 3, 2, 1]
 
 
 class TestLineCharts:

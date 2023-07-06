@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List
+from typing import Any
 
 import plotly
 
@@ -10,8 +10,8 @@ from metrics.domain.charts.line_with_shaded_section import information
 def create_line_chart_with_shaded_section(
     chart_height: int,
     chart_width: int,
-    x_axis_values: List[Any],
-    y_axis_values: List[Any],
+    x_axis_values: list[Any],
+    y_axis_values: list[Any],
     shaded_section_fill_colour: colour_scheme.RGBAColours,
     shaded_section_line_colour: colour_scheme.RGBAColours,
     rolling_period_slice: int,
@@ -93,8 +93,8 @@ def create_line_chart_with_shaded_section(
 
 
 def _create_main_line_plot(
-    x_axis_values: List[Any],
-    y_axis_values: List[Any],
+    x_axis_values: list[Any],
+    y_axis_values: list[Any],
     preceding_data_points_count: int,
     line_width: int,
     line_shape: str,
@@ -111,8 +111,8 @@ def _create_main_line_plot(
 
 
 def _create_shaded_section_plot(
-    x_axis_values: List[Any],
-    y_axis_values: List[Any],
+    x_axis_values: list[Any],
+    y_axis_values: list[Any],
     preceding_data_points_count: int,
     line_width: int,
     line_shape: str,
@@ -136,8 +136,8 @@ def _create_shaded_section_plot(
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    x_axis_values: List[Any],
-    y_axis_values: List[Any],
+    x_axis_values: list[Any],
+    y_axis_values: list[Any],
     metric_name: str,
     change_in_metric_value: int,
     rolling_period_slice: int = 7,
