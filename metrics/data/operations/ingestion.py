@@ -107,22 +107,32 @@ class Ingestion:
         return [self.to_model(record) for record in self.data]
 
     @staticmethod
-    def to_model(data: Dict[str, Union[str, float]]) -> HeadlineDTO:
+    def to_model(data_record: Dict[str, Union[str, float]]) -> HeadlineDTO:
+        """Takes the given `data_record` and returns an enriched `HeadlineDTO`
+
+        Args:
+            data_record: An individual record from the loaded JSON file
+
+        Returns:
+            A `HeadlineDTO` object with the correct fields
+            populated from the given `data_record`
+
+        """
         return HeadlineDTO(
-            theme=data["parent_theme"],
-            sub_theme=data["child_theme"],
-            metric_group=data["metric_group"],
-            topic=data["topic"],
-            metric=data["metric"],
-            geography_type=data["geography_type"],
-            geography=data["geography"],
-            age=data["age"],
-            sex=data["sex"],
-            stratum=data["stratum"],
-            period_start=data["period_start"],
-            period_end=data["period_end"],
-            metric_value=data["metric_value"],
-            refresh_date=data["refresh_date"],
+            theme=data_record["parent_theme"],
+            sub_theme=data_record["child_theme"],
+            metric_group=data_record["metric_group"],
+            topic=data_record["topic"],
+            metric=data_record["metric"],
+            geography_type=data_record["geography_type"],
+            geography=data_record["geography"],
+            age=data_record["age"],
+            sex=data_record["sex"],
+            stratum=data_record["stratum"],
+            period_start=data_record["period_start"],
+            period_end=data_record["period_end"],
+            metric_value=data_record["metric_value"],
+            refresh_date=data_record["refresh_date"],
         )
 
     def get_unique_values_for_fields(self, keys: List[str]) -> Set[Tuple[str, ...]]:
