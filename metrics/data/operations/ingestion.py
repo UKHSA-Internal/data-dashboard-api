@@ -462,7 +462,7 @@ class Ingestion:
         """
         headline_dtos: list[HeadlineDTO] = self.create_dtos_from_source()
 
-        model_instances: list = [
+        model_instances = [
             self.core_headline_manager.model(
                 metric_id=int(headline_dto.metric),
                 geography_id=int(headline_dto.geography),
