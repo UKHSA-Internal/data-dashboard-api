@@ -1,5 +1,3 @@
-from typing import List
-
 from metrics.data.managers.core_models.metric import MetricManager
 
 
@@ -13,7 +11,7 @@ class FakeMetricManager(MetricManager):
         self.metrics = metrics
         super().__init__(**kwargs)
 
-    def get_all_names(self) -> List[str]:
+    def get_all_names(self) -> list[str]:
         return [metric.name for metric in self.metrics]
 
     def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
@@ -26,7 +24,7 @@ class FakeMetricManager(MetricManager):
 
         return bool(filtered_by_topic)
 
-    def get_all_unique_change_type_names(self) -> List[str]:
+    def get_all_unique_change_type_names(self) -> list[str]:
         unique_metric_names = set(metric.name for metric in self.metrics)
         return [
             metric_name
@@ -34,7 +32,7 @@ class FakeMetricManager(MetricManager):
             if "change" in metric_name
         ]
 
-    def get_all_unique_percent_change_type_names(self) -> List[str]:
+    def get_all_unique_percent_change_type_names(self) -> list[str]:
         unique_metric_change_type_metric_names = self.get_all_unique_change_type_names()
         return [
             metric_name

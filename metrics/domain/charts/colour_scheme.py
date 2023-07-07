@@ -1,7 +1,6 @@
 from enum import Enum
-from typing import Tuple
 
-RGBA_VALUES = Tuple[int, int, int, int]
+RGBA_VALUES = tuple[int, int, int, int]
 
 
 class RGBAChartLineColours(Enum):

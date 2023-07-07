@@ -1,7 +1,6 @@
 import datetime
-from typing import Optional, Union
+from typing import Optional
 
-from metrics.data import enums
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
 
@@ -24,7 +23,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         y_axis: str,
         topic_name: str,
         metric_name: str,
-        date_from: Union[datetime.datetime, str],
+        date_from: datetime.datetime | str,
     ) -> int:
         date_from = _convert_string_to_date(date_string=date_from)
 
@@ -39,7 +38,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def get_latest_metric_value(
         self, topic_name: str, metric_name: str
-    ) -> Optional[float]:
+    ) -> float | None:
         try:
             core_time_series = next(
                 core_time_series
@@ -101,9 +100,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         return bool(self.time_series)
 
 
-def _convert_string_to_date(
-    date_string: Union[str, datetime.datetime]
-) -> datetime.date:
+def _convert_string_to_date(date_string: str | datetime.datetime) -> datetime.date:
     """Convenience function to convert date strings to `datetime.date` objects.
 
     Notes:

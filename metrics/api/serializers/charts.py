@@ -1,5 +1,3 @@
-from typing import List
-
 from django.db.utils import OperationalError
 from rest_framework import serializers
 
@@ -62,7 +60,7 @@ class ChartPlotsListSerializer(serializers.ListSerializer):
             pass
 
 
-FILE_FORMAT_CHOICES: List[str] = ["svg", "png", "jpg", "jpeg"]
+FILE_FORMAT_CHOICES: list[str] = ["svg", "png", "jpg", "jpeg"]
 
 
 class ChartsSerializer(serializers.Serializer):

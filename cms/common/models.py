@@ -1,5 +1,3 @@
-from typing import List
-
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -15,7 +13,7 @@ BOLD: str = "bold"
 BULLET_POINTS: str = "ul"
 LINKS: str = "link"
 
-AVAILABLE_RICH_TEXT_FEATURES: List[str] = [
+AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
     HEADING_2,
     HEADING_3,
     HEADING_4,

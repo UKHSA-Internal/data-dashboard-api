@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 import plotly.graph_objects
 
@@ -16,7 +14,7 @@ class TestWaffleCharts:
         """
         # Given
         plot_threshold_value = 86
-        points: List[int] = [plot_threshold_value]
+        points: list[int] = [plot_threshold_value]
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
@@ -53,7 +51,7 @@ class TestWaffleCharts:
         """
         # Given
         plot_threshold_value = 86
-        points: List[int] = [plot_threshold_value]
+        points: list[int] = [plot_threshold_value]
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
@@ -82,7 +80,7 @@ class TestWaffleCharts:
         # Given
         larger_plot_threshold_value = 86
         smaller_plot_threshold_value = 23
-        points: List[int] = [larger_plot_threshold_value, smaller_plot_threshold_value]
+        points: list[int] = [larger_plot_threshold_value, smaller_plot_threshold_value]
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
@@ -132,7 +130,7 @@ class TestWaffleCharts:
         larger_plot_threshold_value = 86
         middle_plot_threshold_value = 41
         smaller_plot_threshold_value = 23
-        values: List[int] = [
+        values: list[int] = [
             larger_plot_threshold_value,
             middle_plot_threshold_value,
             smaller_plot_threshold_value,

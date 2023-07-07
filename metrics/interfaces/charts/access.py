@@ -1,6 +1,6 @@
 import urllib.parse
 from datetime import datetime
-from typing import Dict, List, Optional, Union
+from typing import Optional
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -83,7 +83,7 @@ class ChartsInterface:
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
 
-        plots_data: List[PlotData] = self.build_chart_plots_data()
+        plots_data: list[PlotData] = self.build_chart_plots_data()
         plot_data: PlotData = plots_data[0]
         return line.generate_chart_figure(
             chart_height=chart_height,
@@ -103,7 +103,7 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotData] = self.build_chart_plots_data()
+        plots_data: list[PlotData] = self.build_chart_plots_data()
 
         return bar.generate_chart_figure(
             chart_height=chart_height,
@@ -123,7 +123,7 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotData] = self.build_chart_plots_data()
+        plots_data: list[PlotData] = self.build_chart_plots_data()
 
         return line_multi_coloured.generate_chart_figure(
             chart_height=chart_height,
@@ -142,13 +142,13 @@ class ChartsInterface:
             A plotly `Figure` object for the created line chart with shaded section
 
         """
-        plots_data: List[PlotData] = self.build_chart_plots_data()
+        plots_data: list[PlotData] = self.build_chart_plots_data()
         plot_data: PlotData = plots_data[0]
         params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
-    def build_chart_plots_data(self) -> List[PlotData]:
+    def build_chart_plots_data(self) -> list[PlotData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -262,7 +262,7 @@ class ChartsInterface:
         return filename
 
     @staticmethod
-    def calculate_change_in_metric_value(values, metric_name) -> Union[int, float]:
+    def calculate_change_in_metric_value(values, metric_name) -> int | float:
         rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(
             metric_name=metric_name
         )
@@ -272,7 +272,7 @@ class ChartsInterface:
 
         return calculations.change_between_each_half(values=values)
 
-    def get_encoded_chart(self, figure: plotly.graph_objects.Figure) -> Dict[str, str]:
+    def get_encoded_chart(self, figure: plotly.graph_objects.Figure) -> dict[str, str]:
         """Creates a dict containing a timestamp for the last data point + encoded string for the chart figure.
 
         Args:
@@ -309,7 +309,7 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     return charts_interface.write_figure(figure=figure)
 
 
-def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:
+def generate_encoded_chart(chart_plots: PlotsCollection) -> dict[str, str]:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
      Then encodes it, adds the last_updated_date to it and returns the result as a serialized JSON string
 

@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import List
 
 import pytest
 from rest_framework.response import Response
@@ -19,7 +18,7 @@ class TestTablesView:
         self,
         path: str,
         authenticated_api_client: APIClient,
-        core_timeseries_example: List[CoreTimeSeries],
+        core_timeseries_example: list[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart
@@ -61,7 +60,7 @@ class TestTablesView:
         self,
         path: str,
         authenticated_api_client: APIClient,
-        core_timeseries_example: List[CoreTimeSeries],
+        core_timeseries_example: list[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart
@@ -121,7 +120,7 @@ class TestTablesView:
         self,
         path: str,
         authenticated_api_client: APIClient,
-        core_timeseries_example: List[CoreTimeSeries],
+        core_timeseries_example: list[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart
@@ -172,7 +171,7 @@ class TestTablesView:
         self,
         path: str,
         authenticated_api_client: APIClient,
-        core_timeseries_example: List[CoreTimeSeries],
+        core_timeseries_example: list[CoreTimeSeries],
     ):
         """
         Given a valid payload to create a chart

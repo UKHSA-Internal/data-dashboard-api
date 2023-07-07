@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, List
+from typing import Any
 from unittest import mock
 
 from metrics.domain.models import PlotData, PlotParameters
@@ -19,8 +19,8 @@ PLOT_2_LABEL = "15 to 44 years old"
 
 
 def _create_plot_data(
-    x_axis_values: List[Any],
-    y_axis_values: List[Any],
+    x_axis_values: list[Any],
+    y_axis_values: list[Any],
     label: str = "",
     x_axis: str = "",
 ) -> PlotData:
@@ -186,14 +186,14 @@ class TestCombineListOfPlots:
         Then the correct response is generated
         """
         # Given
-        first_chart_plots_data = _create_plot_data(
+        first_chart_plots_data: PlotData = _create_plot_data(
             x_axis_values=X_AXIS_VALUES,
             y_axis_values=Y_AXIS_1_VALUES,
             label=PLOT_1_LABEL,
             x_axis="date",
         )
 
-        second_chart_plots_data = _create_plot_data(
+        second_chart_plots_data: PlotData = _create_plot_data(
             x_axis_values=X_AXIS_VALUES,
             y_axis_values=Y_AXIS_2_VALUES,
             label=PLOT_2_LABEL,

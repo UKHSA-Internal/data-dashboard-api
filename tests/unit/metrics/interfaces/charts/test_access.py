@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict, List
 from unittest import mock
 
 import plotly.graph_objects
@@ -403,7 +402,7 @@ class TestChartsInterface:
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
 
         # When
-        encoded_chart: Dict[str, str] = charts_interface.get_encoded_chart(
+        encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
             figure=mock.Mock()
         )
 
@@ -429,7 +428,7 @@ class TestChartsInterface:
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
 
         # When
-        encoded_chart: Dict[str, str] = charts_interface.get_encoded_chart(
+        encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
             figure=mocked_figure
         )
 

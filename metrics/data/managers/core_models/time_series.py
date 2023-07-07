@@ -263,7 +263,7 @@ class CoreTimeSeriesManager(models.Manager):
 
     def get_latest_metric_value(
         self, topic_name: str, metric_name: str
-    ) -> Optional[Decimal]:
+    ) -> Decimal | None:
         """Grabs by the latest record by the given `topic_name` and `metric_name`.
 
         Args:

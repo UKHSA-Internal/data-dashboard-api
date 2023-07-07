@@ -1,5 +1,3 @@
-from typing import List
-
 from metrics.domain.charts import colour_scheme
 
 
@@ -7,7 +5,7 @@ class InvalidIdentifierError(Exception):
     ...
 
 
-def build_color_scale(identifier: int) -> List[List]:
+def build_color_scale(identifier: int) -> list[list[int, str]]:
     """Builds the colour scale for the waffle chart plot based on the identifier.
 
     Args:
@@ -15,7 +13,7 @@ def build_color_scale(identifier: int) -> List[List]:
             Currently, this can only be 1, 2 or 3.
 
     Returns:
-        List[list[int, str]]: A nested list of values.
+        list[list[int, str]]: A nested list of values.
             >>> [
                     [0, 'rgba(216,216,216,1)'],
                     [0.5, 'rgba(0,156,145,1)'],

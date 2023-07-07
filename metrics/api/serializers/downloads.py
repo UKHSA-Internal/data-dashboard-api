@@ -1,10 +1,8 @@
-from typing import List
-
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts, plots
 
-FILE_FORMAT_CHOICES: List[str] = ["json", "csv"]
+FILE_FORMAT_CHOICES: list[str] = ["json", "csv"]
 
 
 class DownloadsQuerySerializer(serializers.Serializer):

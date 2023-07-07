@@ -1,5 +1,4 @@
 import datetime
-from typing import List, Tuple, Union
 from unittest import mock
 
 import pytest
@@ -28,7 +27,7 @@ class TestPlotsInterface:
     @staticmethod
     def _setup_fake_time_series_for_plot(
         plot_parameters: PlotParameters,
-    ) -> List[FakeCoreTimeSeries]:
+    ) -> list[FakeCoreTimeSeries]:
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
                 dt=datetime.date(year=2023, month=2, day=i + 1),
@@ -108,7 +107,7 @@ class TestPlotsInterface:
             x_axis="date",
             y_axis="metric",
         )
-        fake_core_time_series_records: List[
+        fake_core_time_series_records: list[
             FakeCoreTimeSeries
         ] = self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
@@ -121,7 +120,7 @@ class TestPlotsInterface:
         )
 
         # When
-        plots_data: List[PlotData] = plots_interface.build_plots_data()
+        plots_data: list[PlotData] = plots_interface.build_plots_data()
 
         # Then
         # Check that only 1 enriched `PlotData` model is returned
@@ -154,7 +153,7 @@ class TestPlotsInterface:
             x_axis="date",
             y_axis="metric",
         )
-        fake_core_time_series_for_plot: List[
+        fake_core_time_series_for_plot: list[
             FakeCoreTimeSeries
         ] = self._setup_fake_time_series_for_plot(
             plot_parameters=fake_chart_plot_parameters
@@ -413,7 +412,7 @@ class TestConvertType:
             ("default", "default"),
         ],
     )
-    def test_basic_operation(self, mock_input: str, mock_output: Union[int, str]):
+    def test_basic_operation(self, mock_input: str, mock_output: int | str):
         """
         Given a string that may or may not contain a number
         When `convert_type()` is called
@@ -447,7 +446,7 @@ class TestCreateSortableStratum:
         ],
     )
     def test_basic_operation(
-        self, input_stratum: str, expected_output: Tuple[Union[int, str]]
+        self, input_stratum: str, expected_output: tuple[int, ...]
     ):
         """
         Given a string that may or may not contain numbers

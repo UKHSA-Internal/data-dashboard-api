@@ -1,4 +1,3 @@
-from typing import Dict, List, Union
 from unittest import mock
 
 import pytest
@@ -121,13 +120,13 @@ class TestValidatePlotFilter:
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
 
         # Then
-        expected_result: Dict[str, str] = {
+        expected_result: dict[str, str] = {
             "topic": "COVID-19",
             "metric": "COVID-19_deaths_ONSRollingMean",
         }
@@ -151,13 +150,13 @@ class TestValidatePlotFilter:
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
 
         # Then
-        expected_result: Dict[str, str] = {
+        expected_result: dict[str, str] = {
             "topic": "COVID-19",
             "dt__gte": "2023-02-25",
         }
@@ -184,13 +183,13 @@ class TestValidatePlotFilter:
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
 
         # Then
-        expected_result: Dict[str, Union[str, List[str]]] = {
+        expected_result: dict[str, str | list[str]] = {
             "topic": "COVID-19",
             "metric__in": [
                 "COVID-19_deaths_ONSRollingMean",
@@ -217,7 +216,7 @@ class TestValidatePlotFilter:
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
@@ -250,13 +249,13 @@ class TestValidateQueryFilters:
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
 
         # Then
-        expected_result: List[Dict[str, str]] = [
+        expected_result: list[dict[str, str]] = [
             {
                 "topic": "COVID-19",
                 "metric": "COVID-19_deaths_ONSByDay",
@@ -282,13 +281,13 @@ class TestValidateQueryFilters:
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
 
         # Then
-        expected_result: List[Dict[str, str]] = [
+        expected_result: list[dict[str, str]] = [
             {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSByDay"},
             {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSRollingMean"},
         ]
@@ -314,13 +313,13 @@ class TestValidateQueryFilters:
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
 
         # Then
-        expected_result: List[Dict[str, str]] = [
+        expected_result: list[dict[str, str]] = [
             {
                 "topic": "COVID-19",
                 "dt__gte": "2023-02-25",
@@ -351,7 +350,7 @@ class TestValidateQueryFilters:
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields, plots=plots
         )
 
@@ -387,7 +386,7 @@ class TestValidateQueryFilters:
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )

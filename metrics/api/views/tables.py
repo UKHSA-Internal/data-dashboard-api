@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Dict, List
 
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
@@ -64,7 +63,7 @@ class TablesView(APIView):
         plots_collection = request_serializer.to_models()
 
         try:
-            tabular_data_response: List[Dict[str, str]] = access.generate_table(
+            tabular_data_response: list[dict[str, str]] = access.generate_table(
                 plots_collection=plots_collection
             )
 

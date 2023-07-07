@@ -1,5 +1,3 @@
-from typing import List, Set
-
 from metrics.data.managers.api_models.time_series import APITimeSeriesManager
 
 
@@ -15,14 +13,14 @@ class FakeAPITimeSeriesManager(APITimeSeriesManager):
 
     def get_distinct_column_values_with_filters(
         self, lookup_field, **kwargs
-    ) -> List[str]:
+    ) -> list[str]:
         filtered_time_series = self.time_series
         for field_name, field_value in kwargs.items():
             filtered_time_series = [
                 t for t in filtered_time_series if getattr(t, field_name) == field_value
             ]
 
-        lookup_values_of_timeseries: Set[str] = {
+        lookup_values_of_timeseries: set[str] = {
             getattr(x, lookup_field) for x in filtered_time_series
         }
         return list(lookup_values_of_timeseries)

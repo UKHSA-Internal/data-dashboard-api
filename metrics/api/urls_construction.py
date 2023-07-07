@@ -1,5 +1,3 @@
-from typing import List, Optional, Union
-
 from django.contrib import admin
 from django.urls import include, path, re_path, resolvers
 from django.views.static import serve
@@ -98,8 +96,8 @@ django_admin_urlpatterns = [
 
 
 def construct_urlpatterns(
-    app_mode: Optional[str],
-) -> List[Union[resolvers.URLResolver, resolvers.URLPattern]]:
+    app_mode: str | None,
+) -> list[resolvers.URLResolver, resolvers.URLPattern]:
     """Builds a list of `URLResolver` and `URLPattern` instances for the django app to consume.
 
     Notes:
