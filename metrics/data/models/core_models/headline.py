@@ -40,7 +40,7 @@ class CoreHeadline(models.Model):
 
     metric_value = models.DecimalField(
         max_digits=11,
-        decimal_places=1,
+        decimal_places=4,
     )
 
     def __str__(self):
