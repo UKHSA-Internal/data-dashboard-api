@@ -132,25 +132,109 @@ class Ingestion:
 
         """
         return HeadlineDTO(
-            theme=data_record["parent_theme"],
-            sub_theme=data_record["child_theme"],
-            metric_group=data_record["metric_group"],
-            topic=data_record["topic"],
-            metric=data_record["metric"],
-            geography_type=data_record["geography_type"],
-            geography=data_record["geography"],
-            age=data_record["age"],
-            sex=data_record["sex"],
-            stratum=data_record["stratum"],
-            period_start=data_record["period_start"],
-            period_end=data_record["period_end"],
-            metric_value=data_record["metric_value"],
-            refresh_date=data_record["refresh_date"],
+            theme=data_record.parent_theme,
+            sub_theme=data_record.child_theme,
+            metric_group=data_record.metric_group,
+            topic=data_record.topic,
+            metric=data_record.metric,
+            geography_type=data_record.geography_type,
+            geography=data_record.geography,
+            age=data_record.age,
+            sex=data_record.sex,
+            stratum=data_record.stratum,
+            period_start=data_record.period_start,
+            period_end=data_record.period_end,
+            metric_value=data_record.metric_value,
+            refresh_date=data_record.refresh_date,
         )
 
-    def get_unique_values_for_fields(self, keys: List[str]) -> Set[Tuple[str, ...]]:
-        models = self.convert_to_models()
-        return {tuple(getattr(model, key) for key in keys) for model in models}
+    def maintain_model(
+        self,
+        incoming_df: pd.DataFrame,
+        fields: dict[str, str],
+        model: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
+    ):
+        """
+        Maintain the individual models that are used in the normalisation of the Core source file
+        New values in the source file will be added to the model
+        All rows in the source file will get changed from the supplied cell
+        value (eg infectious_disease) to the pk for that value. eg 1
+
+        Args:
+            incoming_df: This is the entire source file in a DataFrame
+            fields: Dictionary of the model field names and the names of the relevant columns in the source file
+            model: The model we want to maintain
+
+        Returns:
+            incoming_df with the relevant column changed to the primary keys for that model
+            So, if the column cotained values like 'infectious_disease' it'll now be, say, 1 (the primary key for 'infectious_disease')
+        """
+
+        # From the source file, pull out the unique list of row values for this particular model
+        incoming_data: pd.DataFrame = incoming_df[fields.keys()].drop_duplicates()
+
+        # From the model, pull back the existing records along with their pks
+        existing_data: pd.DataFrame = pd.DataFrame.from_records(
+            model.all().values("pk", *fields.values())
+        )
+
+        if existing_data.empty:
+            existing_data: pd.DataFrame = pd.DataFrame(columns=list(fields.values()))
+
+        # Left join on incoming_data & existing_data dataframes
+        df: pd.DataFrame = pd.merge(
+            left=incoming_data,
+            right=existing_data,
+            how="left",
+            left_on=list(fields.keys()),
+            right_on=list(fields.values()),
+            indicator=True,
+        )
+
+        # left_only = those values in the source file which are not present the Model. So, these are new ones
+        new_data: list[dict[str, str]] = (
+            df.loc[df["_merge"] == "left_only"][fields.keys()]
+            .rename(columns=fields)
+            .to_dict("records")
+        )
+
+        # Add the new values to the model and pull back the pk for them.
+        new_records: list[dict[str, str]] = [
+            {**{"pk": model.create(**data).pk}, **data} for data in new_data
+        ]
+
+        # Turn the new records into a dataframe
+        added_data: pd.DataFrame = pd.DataFrame(new_records)
+
+        # Add them onto the end of the data that we already had
+        all_data: pd.DataFrame = pd.concat([existing_data, added_data])
+
+        # Now join this back onto the original dataframe.
+        # So, we're joining the pk and the relevant fields for this model onto the original dataframe
+        df = pd.merge(
+            left=incoming_df,
+            right=all_data,
+            how="inner",
+            left_on=list(fields.keys()),
+            right_on=list(fields.values()),
+        )
+
+        # Drop the original column(s) as we're now using the primary keys and not the text representation of them
+        # Drop the model field names too (were only here to make debugging easier)
+        df = df.drop(columns=[*list(fields.items())[0], *fields.values()])
+
+        # Rename the new columns back to what they are in the source file.
+        # So for the parent theme model we are changing it from pk back to parent_theme
+        df = df.rename(columns={"pk": list(fields.keys())[0]})
+
+        # At this point the rows for the parent_theme column for example have been changed
+        # from "infectious_disease" to, say, 1
+        # ie. the Foreign Key for "infectious_disease" in the Theme model.
+        return df
+
+    @property
+    def column_names_with_foreign_keys(self) -> list[str, ...]:
+        return COLUMN_NAMES_WITH_FOREIGN_KEYS
 
     def get_model_manager_for_fields(self, keys: List[str]) -> Type[Manager]:
         """Get the corresponding model manager for the given `keys`
