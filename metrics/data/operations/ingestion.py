@@ -99,9 +99,9 @@ class Ingestion:
     stratum_manager : `StratumManager`
         The model manager for `Stratum`
         Defaults to the concrete `StratumManager` via `Stratum.objects`
-    core_time_series_manager : `CoreTimeSeriesManager`
-        The model manager for `CoreTimeSeries`
-        Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
+    core_headline_manager : `CoreHeadlineManager`
+        The model manager for `CoreHeadline`
+        Defaults to the concrete `CoreHeadlineManager` via `CoreHeadline.objects`
 
     """
 
