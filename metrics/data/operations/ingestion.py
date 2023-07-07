@@ -34,7 +34,7 @@ DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
 DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
 DEFAULT_AGE_MANAGER = core_models.Age.objects
 DEFAULT_STRATUM_MANAGER = core_models.Stratum.objects
-DEFAULT_CORE_TIME_SERIES_MANAGER = core_models.CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = core_models.CoreHeadline.objects
 
 
 class Ingestion:
@@ -89,7 +89,7 @@ class Ingestion:
         geography_manager: Manager = DEFAULT_GEOGRAPHY_MANAGER,
         age_manager: Manager = DEFAULT_AGE_MANAGER,
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
-        core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     ):
         self.data = data
         self.theme_manager = theme_manager
@@ -101,7 +101,20 @@ class Ingestion:
         self.geography_manager = geography_manager
         self.age_manager = age_manager
         self.stratum_manager = stratum_manager
-        self.core_time_series_manager = core_time_series_manager
+        self.core_headline_manager = core_headline_manager
+
+    def _convert_to_models(self, dataframe: pd.DataFrame) -> list[HeadlineDTO]:
+        """Converts the given `dataframe` to a list of HeadlineDTOs
+
+        Notes:
+            This handles the translations between column names
+            from the data source to the column names expected by the database.
+            E.g. the value in the "parent_theme" column of the source file
+            will be passed into each `HeadlineDTO` as "theme"
+
+        Args:
+            dataframe: The parsed pandas.DataFrame which should be
+                consumed by the `HeadlineDTO`
 
     def convert_to_models(self) -> List[HeadlineDTO]:
         return [self.to_model(data_record=record) for record in self.data]
