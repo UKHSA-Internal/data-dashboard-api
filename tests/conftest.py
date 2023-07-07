@@ -70,3 +70,41 @@ def plot_serializer_payload_and_model_managers() -> (
     }
 
     return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])
+
+
+@pytest.fixture
+def example_headline_data_json() -> list[dict[str, float]]:
+    return [
+        {
+            "parent_theme": "infectious_disease",
+            "child_theme": "respiratory",
+            "topic": "COVID-19",
+            "metric_group": "headline",
+            "metric": "COVID-19_headline_positivity_latest",
+            "geography_type": "Lower Tier Local Authority",
+            "geography": "Babergh",
+            "age": "all",
+            "sex": "all",
+            "stratum": "default",
+            "period_start": "2023-06-05",
+            "period_end": "2023-06-11",
+            "metric_value": 0.087,
+            "refresh_date": "2023-06-21",
+        },
+        {
+            "parent_theme": "infectious_disease",
+            "child_theme": "respiratory",
+            "topic": "COVID-19",
+            "metric_group": "headline",
+            "metric": "COVID-19_headline_positivity_latest",
+            "geography_type": "UKHSA Region",
+            "geography": "Yorkshire and Humber",
+            "age": "all",
+            "sex": "all",
+            "stratum": "default",
+            "period_start": "2023-06-05",
+            "period_end": "2023-06-11",
+            "metric_value": 0.0639,
+            "refresh_date": "2023-06-21",
+        },
+    ]
