@@ -1,28 +1,56 @@
-from typing import Dict, List, Set, Tuple, Type, Union
+from typing import NamedTuple, Type
 
+import pandas as pd
 from django.db.models import Manager
 from pydantic import BaseModel
 
+from metrics.data.enums import TimePeriod
 from metrics.data.models import core_models
 
 
 class HeadlineDTO(BaseModel):
-    theme: str
-    sub_theme: str
-    topic: str
-    metric_group: str
-    metric: str
-    geography_type: str
-    geography: str
-    age: str
+    theme: str | int
+    sub_theme: str | int
+    topic: str | int
+    metric_group: str | int
+    metric: str | int
+    geography_type: str | int
+    geography: str | int
+    age: str | int
     sex: str
-    stratum: str
+    stratum: str | int
 
     period_start: str
     period_end: str
     refresh_date: str
 
     metric_value: float
+
+
+class FieldsAndModelManager(NamedTuple):
+    fields: dict[str, str]
+    model_manager: Type[Manager]
+
+
+COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str, ...] = [
+    "parent_theme",
+    "child_theme",
+    "topic",
+    "geography",
+    "geography_type",
+    "metric_group",
+    "metric",
+    "stratum",
+    "age",
+]
+
+
+sex_options = {"male": "M", "female": "F", "all": "ALL"}
+
+frequency = {
+    "weekly": TimePeriod.Weekly.value,
+    "daily": TimePeriod.Daily.value,
+}
 
 
 DEFAULT_THEME_MANAGER = core_models.Theme.objects
@@ -116,12 +144,17 @@ class Ingestion:
             dataframe: The parsed pandas.DataFrame which should be
                 consumed by the `HeadlineDTO`
 
-    def convert_to_models(self) -> List[HeadlineDTO]:
-        return [self.to_model(data_record=record) for record in self.data]
+        Returns:
+            list[HeadlineDTO]: A list of `HeadlineDTO` which
+                are enriched with the corresponding values
+                from the source file
+
+        """
+        return [self.to_model(data_record=record) for record in dataframe]
 
     @staticmethod
-    def to_model(data_record: Dict[str, Union[str, float]]) -> HeadlineDTO:
-        """Takes the given `data_record` and returns an enriched `HeadlineDTO`
+    def to_model(data_record: pd.DataFrame) -> HeadlineDTO:
+        """Takes the given `data_record` and returns a single enriched `HeadlineDTO`
 
         Args:
             data_record: An individual record from the loaded JSON file
@@ -236,39 +269,214 @@ class Ingestion:
     def column_names_with_foreign_keys(self) -> list[str, ...]:
         return COLUMN_NAMES_WITH_FOREIGN_KEYS
 
-    def get_model_manager_for_fields(self, keys: List[str]) -> Type[Manager]:
-        """Get the corresponding model manager for the given `keys`
-
-        Args:
-            keys: list of strings representing the keys needed.
-            i.e. ["sub_theme", "theme"] would return `SubThemeManager`
+    def open_data_as_dataframe(self) -> pd.DataFrame:
+        """Opens the JSON `data` as a dataframe
 
         Returns:
-            A model manager related to those set of keys
-
-        Raises:
-            `ValueError` if the given `keys` cannot be matched
-            to a particular model manager
+            A dataframe containing the raw JSON data
 
         """
-        match keys:
-            case ["theme"]:
-                return self.theme_manager
-            case ["sub_theme", "theme"]:
-                return self.sub_theme_manager
-            case ["topic", "sub_theme"]:
-                return self.topic_manager
-            case ["metric_group", "topic"]:
-                return self.metric_group_manager
-            case ["metric", "metric_group", "topic"]:
-                return self.metric_manager
-            case ["geography_type"]:
-                return self.geography_type_manager
-            case ["geography", "geography_type"]:
-                return self.geography_manager
-            case ["age"]:
-                return self.age_manager
-            case ["stratum"]:
-                return self.stratum_manager
+        return pd.read_json(self.data)
 
-        raise ValueError
+    def get_all_related_fields_and_model_managers(self) -> list[FieldsAndModelManager]:
+        """Get a list of all related fields and model managers as named tuples
+
+        Notes:
+            Each named tuple in the returned list is enriched with
+            1) `fields` -  A dict containing the related fields
+            2) `model_manager` - The corresponding model manager
+
+        Returns:
+            list[FieldsAndModelManager] - A list of named tuples
+                containing the related fields and model managers
+
+        """
+        return [
+            FieldsAndModelManager(
+                fields={"parent_theme": "name"}, model_manager=self.theme_manager
+            ),
+            FieldsAndModelManager(
+                fields={"child_theme": "name", "parent_theme": "theme_id"},
+                model_manager=self.sub_theme_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"topic": "name", "child_theme": "sub_theme_id"},
+                model_manager=self.topic_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"geography_type": "name"},
+                model_manager=self.geography_type_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"geography": "name", "geography_type": "geography_type_id"},
+                model_manager=self.geography_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"metric_group": "name", "topic": "topic_id"},
+                model_manager=self.metric_group_manager,
+            ),
+            FieldsAndModelManager(
+                fields={
+                    "metric": "name",
+                    "metric_group": "metric_group_id",
+                    "topic": "topic_id",
+                },
+                model_manager=self.metric_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"stratum": "name"}, model_manager=self.stratum_manager
+            ),
+            FieldsAndModelManager(
+                fields={"age": "name"}, model_manager=self.age_manager
+            ),
+        ]
+
+    def update_supporting_models(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Updates all supporting models, also replaces instances in the dataframe with IDs
+
+        Notes:
+            This method will accomplish 2 main things:
+            1)  Creates any new supporting models required.
+                For example, if the ingested data contains a new value
+                for the `topic` field, then a new `Topic` model
+                will be created and that record will be inserted
+                into the database.
+            2)  This method will also update supporting model columns
+                to instead use their corresponding database record IDS.
+                For example, if the dataframe showed `COVID-19`
+                for the `topic` field of each entry.
+                Then the dataframe will instead now show `123`,
+                which will be the ID/pk of the `Topic` model
+                which has the name `COVID-19`.
+
+        Args:
+            dataframe: The incoming dataframe containing
+                the raw JSON data
+
+        Returns:
+            An updated version of the dataframe, containing
+            corresponding database records instead of names
+            for the supporting model columns.
+
+        """
+        for (
+            related_fields_and_model_manager
+        ) in self.get_all_related_fields_and_model_managers():
+            dataframe: pd.DataFrame = self.maintain_model(
+                incoming_df=dataframe,
+                fields=related_fields_and_model_manager.fields,
+                model=related_fields_and_model_manager.model_manager,
+            )
+
+        return dataframe
+
+    def create_dtos_from_source(self) -> list[HeadlineDTO]:
+        """Creates a list of `HeadlineDTO`s and updates supporting models
+
+        Returns:
+            A list of enriched `HeadlineDTO`s which can be used
+            to create the corresponding `CoreHeadline` records.
+
+        """
+        dataframe: pd.DataFrame = self.open_data_as_dataframe()
+        dataframe: pd.DataFrame = self.update_supporting_models(dataframe=dataframe)
+        return self.convert_df_to_models(dataframe=dataframe)
+
+    def convert_df_to_models(self, dataframe) -> list[HeadlineDTO]:
+        """Convert the given `dataframe` to a list of `HeadlineDTO`
+
+        Notes:
+            This will also handle certain processing steps:
+            1)  Remove all rows with `NaN` in the `metric_value` column
+            2)  Cast all columns with foreign keys to int types
+            3)  Create an easy to use iterable from the dataframe
+
+            This method also assumes supporting model columns
+            have been replaced with database record IDS.
+            For example, if the dataframe showed `COVID-19`
+            for the `topic` field of each entry.
+            Then the dataframe should instead show `123`,
+            which should be the ID/pk of the `Topic` model
+            which has the name `COVID-19`.
+
+        Args:
+            dataframe: The incoming `DataFrame` which has replaced
+                the text representation of supporting models
+                with corresponding database record IDs
+
+        Returns:
+            A list of `HeadlineDTO` instances which are
+            enriched with all the data required to
+            insert a new database record in the table
+
+        """
+        dataframe: pd.DataFrame = self._remove_rows_with_nan_metric_value(
+            dataframe=dataframe
+        )
+        dataframe: pd.DataFrame = self._cast_int_type_on_columns_with_foreign_keys(
+            dataframe=dataframe
+        )
+        dataframe: pd.DataFrame = self._create_named_tuple_iterable_from(
+            dataframe=dataframe
+        )
+
+        return self._convert_to_models(dataframe=dataframe)
+
+    @staticmethod
+    def _remove_rows_with_nan_metric_value(dataframe: pd.DataFrame) -> pd.DataFrame:
+        return dataframe[dataframe["metric_value"].notnull()]
+
+    def _cast_int_type_on_columns_with_foreign_keys(
+        self, dataframe: pd.DataFrame
+    ) -> pd.DataFrame:
+        dataframe[self.column_names_with_foreign_keys] = dataframe[
+            self.column_names_with_foreign_keys
+        ].applymap(int)
+        return dataframe
+
+    @staticmethod
+    def _create_named_tuple_iterable_from(dataframe: pd.DataFrame) -> pd.DataFrame:
+        return dataframe.itertuples(index=False)
+
+    def create_headlines(self, batch_size: int = 100) -> None:
+        """Creates `CoreHeadline` records from the ingested data
+
+        Notes:
+            Any necessary supporting models will be created
+            as required for the `CoreHeadline` records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Args:
+            batch_size: Controls the number of objects created
+                in a single write query to the database.
+                Defaults to 100.
+
+        Returns:
+            None
+
+        """
+        headline_dtos: list[HeadlineDTO] = self.create_dtos_from_source()
+
+        model_instances: list = [
+            self.core_headline_manager.model(
+                metric_id=int(headline_dto.metric),
+                geography_id=int(headline_dto.geography),
+                stratum_id=int(headline_dto.stratum),
+                age_id=int(headline_dto.age),
+                sex=headline_dto.sex,
+                refresh_date=headline_dto.refresh_date,
+                period_start=headline_dto.period_start,
+                period_end=headline_dto.period_end,
+                metric_value=headline_dto.metric_value,
+            )
+            for headline_dto in headline_dtos
+        ]
+
+        self.core_headline_manager.bulk_create(
+            model_instances,
+            ignore_conflicts=True,
+            batch_size=batch_size,
+        )
