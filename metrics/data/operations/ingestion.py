@@ -359,9 +359,11 @@ class Ingestion:
             for the supporting model columns.
 
         """
-        for (
-            related_fields_and_model_manager
-        ) in self.get_all_related_fields_and_model_managers():
+        all_related_fields_and_model_managers: list[
+            FieldsAndModelManager
+        ] = self.get_all_related_fields_and_model_managers()
+
+        for related_fields_and_model_manager in all_related_fields_and_model_managers:
             dataframe: pd.DataFrame = self.maintain_model(
                 incoming_df=dataframe,
                 fields=related_fields_and_model_manager.fields,
