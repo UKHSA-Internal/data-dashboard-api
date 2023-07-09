@@ -1,5 +1,4 @@
 import datetime
-from typing import List
 
 import pytest
 from rest_framework.test import APIClient
@@ -38,7 +37,7 @@ def core_headline_example() -> CoreTimeSeries:
 
 
 @pytest.fixture
-def core_trend_percentage_example() -> List[CoreTimeSeries]:
+def core_trend_percentage_example() -> list[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
@@ -72,7 +71,7 @@ def core_trend_percentage_example() -> List[CoreTimeSeries]:
 
 
 @pytest.fixture
-def core_timeseries_example() -> List[CoreTimeSeries]:
+def core_timeseries_example() -> list[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(

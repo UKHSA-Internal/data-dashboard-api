@@ -7,7 +7,7 @@ Specifically, this file contains write database logic for the core models only.
 NOTE: This code is only for the Alpha. Once we have a data pipeline this code will cease to exist
 """
 import logging
-from typing import Dict, List, Type
+from typing import Type
 
 import pandas as pd
 from django.db import models
@@ -80,7 +80,7 @@ def check_file(filename: str) -> pd.DataFrame:
 
 def maintain_model(
     incoming_df: pd.DataFrame,
-    fields: Dict[str, str],
+    fields: dict[str, str],
     model: models.Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
 ):
     """
@@ -121,14 +121,14 @@ def maintain_model(
     )
 
     # left_only = those values in the source file which are not present the Model. So, these are new ones
-    new_data: List[Dict[str, str]] = (
+    new_data: list[dict[str, str]] = (
         df.loc[df["_merge"] == "left_only"][fields.keys()]
         .rename(columns=fields)
         .to_dict("records")
     )
 
     # Add the new values to the model and pull back the pk for them.
-    new_records: List[Dict[str, str]] = [
+    new_records: list[dict[str, str]] = [
         {**{"pk": model.create(**data).pk}, **data} for data in new_data
     ]
 
@@ -239,7 +239,7 @@ def load_core_data(
     # Dataset has NaN values so ignore those rows
     df = df[df["metric_value"].notnull()]
 
-    column_mapping: Dict[str, str] = {
+    column_mapping: dict[str, str] = {
         "period": "metric_frequency",
         "geography": "geography_id",
         "metric_name": "metric_id",
@@ -254,8 +254,8 @@ def load_core_data(
     df = df[list(column_mapping.keys())]
     df = df.rename(columns=column_mapping)
 
-    records: Dict[str:str] = df.to_dict("records")
-    model_instances: List = [core_time_series_model(**record) for record in records]
+    records: dict[str:str] = df.to_dict("records")
+    model_instances: list = [core_time_series_model(**record) for record in records]
 
     core_time_series_manager.bulk_create(
         model_instances,

@@ -1,5 +1,3 @@
-from typing import List
-
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.waffle.colour_scheme import build_color_scale
 
@@ -15,7 +13,7 @@ class TestBuildColorScale:
         identifier = 3
 
         # When
-        colour_scale: List[List] = build_color_scale(identifier=identifier)
+        colour_scale: list[list[int, str]] = build_color_scale(identifier=identifier)
 
         # Then
         expected_colour_scale = [
@@ -36,7 +34,7 @@ class TestBuildColorScale:
         identifier = 2
 
         # When
-        colour_scale: List[List] = build_color_scale(identifier=identifier)
+        colour_scale: list[list[int, str]] = build_color_scale(identifier=identifier)
 
         # Then
         expected_colour_scale = [
@@ -57,7 +55,7 @@ class TestBuildColorScale:
         identifier = 1
 
         # When
-        colour_scale: List[List] = build_color_scale(identifier=identifier)
+        colour_scale: list[list[int, str]] = build_color_scale(identifier=identifier)
 
         # Then
         expected_colour_scale = [

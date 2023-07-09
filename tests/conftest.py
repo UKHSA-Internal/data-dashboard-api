@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict, Tuple, Union
 
 import pytest
 
@@ -9,7 +8,7 @@ from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
-DATA_PAYLOAD_HINT = Dict[str, Union[str, datetime.date]]
+DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
 
 
 @pytest.fixture
@@ -58,7 +57,7 @@ def fake_password_suffix() -> str:
 
 @pytest.fixture
 def plot_serializer_payload_and_model_managers() -> (
-    Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]
+    tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]
 ):
     fake_metric = FakeMetricFactory.build_example_metric()
     fake_topic = fake_metric.metric_group.topic

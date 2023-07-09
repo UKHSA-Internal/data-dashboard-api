@@ -1,16 +1,16 @@
-from typing import Callable, List, Tuple
+from typing import Callable
 
 from metrics.domain.utils import _check_for_substring_match
 
-URL_PATTERN_HINT = Tuple[str, str, str, Callable]
+URL_PATTERN_HINT = tuple[str, str, str, Callable]
 
 
-PATHS_TO_HIDE_FROM_SWAGGER: Tuple[str] = ("cms-admin",)
+PATHS_TO_HIDE_FROM_SWAGGER: tuple[str] = ("cms-admin",)
 
 
 def pre_processing_endpoint_filter_hook(
-    endpoints: List[URL_PATTERN_HINT],
-) -> List[URL_PATTERN_HINT]:
+    endpoints: list[URL_PATTERN_HINT],
+) -> list[URL_PATTERN_HINT]:
     """Pre-processing hook used in conjunction with drf-spectacular to hide endpoints from swagger
 
     Args:

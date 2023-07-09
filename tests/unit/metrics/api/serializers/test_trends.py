@@ -1,5 +1,3 @@
-from typing import Dict, List, Tuple
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -13,12 +11,12 @@ from tests.fakes.managers.topic_manager import FakeTopicManager
 
 
 class TestTrendsQuerySerializer:
-    DATA_PAYLOAD_HINT = Dict[str, str]
+    DATA_PAYLOAD_HINT = dict[str, str]
 
     @classmethod
     def _setup_valid_data_payload_and_model_managers(
         cls,
-    ) -> Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
+    ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
         metric_name = "COVID-19_headline_ONSdeaths_7daychange"
 
         fake_metric = FakeMetricFactory.build_example_metric(metric_name=metric_name)
@@ -120,7 +118,7 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_metric_names: List[
+        expected_metric_names: list[
             str
         ] = metric_manager.get_all_unique_change_type_names()
         assert list(serializer.fields["metric"].choices) == expected_metric_names
@@ -149,7 +147,7 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_metric_names: List[
+        expected_metric_names: list[
             str
         ] = metric_manager.get_all_unique_percent_change_type_names()
         assert (
@@ -181,7 +179,7 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_topic_names: List[str] = topic_manager.get_all_names()
+        expected_topic_names: list[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names
 
 

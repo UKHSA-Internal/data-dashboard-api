@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from metrics.domain.charts.waffle import generation, validation
@@ -28,7 +26,7 @@ class TestGenerateChartFigure:
         ],
     )
     def test_throws_error_when_values_are_not_in_descending_order(
-        self, values: List[int]
+        self, values: list[int]
     ):
         """
         Given a list of `values` which are not in descending order

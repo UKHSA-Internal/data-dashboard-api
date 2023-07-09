@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from metrics.domain.charts import colour_scheme
@@ -53,7 +51,7 @@ class TestDetermineLineAndFillColours:
         assert fill_colour == colour_scheme.RGBAColours.LIGHT_RED
 
 
-CASES_METRIC_TYPES: List[str] = [
+CASES_METRIC_TYPES: list[str] = [
     "new_cases_7days_sum",
     "new_cases_7days_change",
     "new_cases_7days_change_percentage",
@@ -108,7 +106,7 @@ class TestIsMetricImprovingForCasesTypeMetrics:
         assert metric_is_improving
 
 
-DEATHS_METRIC_TYPES: List[str] = [
+DEATHS_METRIC_TYPES: list[str] = [
     "new_deaths_7days_sum",
     "new_deaths_7days_change",
     "new_deaths_7days_change_percentage",
@@ -160,7 +158,7 @@ class TestIsMetricImprovingForDeathTypeMetrics:
         assert metric_is_improving
 
 
-HEALTHCARE_METRIC_TYPES: List[str] = [
+HEALTHCARE_METRIC_TYPES: list[str] = [
     "new_admissions_7days",
     "new_admissions_7days_change",
     "new_admissions_7days_change_percentage",
@@ -218,7 +216,7 @@ class TestIsMetricImprovingForHealthcareTypeMetrics:
         assert metric_is_improving
 
 
-TESTING_METRIC_TYPES: List[str] = [
+TESTING_METRIC_TYPES: list[str] = [
     "new_tests_7days_change",
     "new_tests_7days_change_percentage",
     "unique_individuals_pcr_rolling_sum (bar)",
@@ -309,7 +307,7 @@ class TestIsMetricImprovingForTestingTypeMetrics:
         assert metric_is_improving
 
 
-VACCINATION_METRIC_TYPES: List[str] = [
+VACCINATION_METRIC_TYPES: list[str] = [
     "total_vaccines_given",
     "latest_total_vaccinations_autumn22",
     "latest_vaccination_uptake_autumn22",

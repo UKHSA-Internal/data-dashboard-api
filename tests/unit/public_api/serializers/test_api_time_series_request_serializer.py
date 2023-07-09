@@ -1,4 +1,3 @@
-from typing import Dict, List
 from unittest import mock
 
 import pytest
@@ -18,7 +17,7 @@ from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
 
 class TestAPITimeSeriesRequestSerializer:
     @staticmethod
-    def _setup_fake_api_time_series() -> List[FakeAPITimeSeries]:
+    def _setup_fake_api_time_series() -> list[FakeAPITimeSeries]:
         # Multiple `APITimeSeries` objects with 2 distinct `theme` values
         fake_api_timeseries = [
             # distinct theme value - `infectious_disease`
@@ -86,7 +85,7 @@ class TestAPITimeSeriesRequestSerializer:
     )
     def test_build_timeseries_dto(
         self,
-        request_kwargs: Dict[str, str],
+        request_kwargs: dict[str, str],
         value_returned_from_query: str,
         lookup_field: str,
     ):
@@ -168,7 +167,7 @@ class TestAPITimeSeriesRequestSerializer:
         )
 
         # When
-        timeseries_dto_slice: List[
+        timeseries_dto_slice: list[
             APITimeSeriesDTO
         ] = serializer.build_timeseries_dto_slice()
 
@@ -214,7 +213,7 @@ class TestAPITimeSeriesRequestSerializer:
         )
 
         # When
-        timeseries_dto_slice: List[
+        timeseries_dto_slice: list[
             APITimeSeriesDTO
         ] = serializer.build_timeseries_dto_slice()
 
@@ -262,7 +261,7 @@ class TestAPITimeSeriesRequestSerializer:
         )
 
         # When
-        timeseries_dto_slice: List[
+        timeseries_dto_slice: list[
             APITimeSeriesDTO
         ] = serializer.build_timeseries_dto_slice()
 

@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from metrics.interfaces.charts import calculations
@@ -16,9 +14,9 @@ class TestSplitListInHalf:
     )
     def test_split_list_in_half(
         self,
-        original_list: List[int],
-        expected_first_half: List[int],
-        expected_second_half: List[int],
+        original_list: list[int],
+        expected_first_half: list[int],
+        expected_second_half: list[int],
     ):
         """
         Given a list of integers
@@ -63,7 +61,7 @@ class TestChangeBetweenEachHalf:
         ),
     )
     def test_calculates_difference_correctly(
-        self, values: List[int], expected_difference: int
+        self, values: list[int], expected_difference: int
     ):
         """
         Given a list of values

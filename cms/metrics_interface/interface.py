@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 from django.db.models import Manager, QuerySet
 
 from metrics.data.models import core_models
@@ -62,12 +60,12 @@ class MetricsAPIInterface:
         self.core_time_series_manager = core_time_series_manager
 
     @staticmethod
-    def get_chart_types() -> List[Tuple[str, str]]:
+    def get_chart_types() -> list[tuple[str, str]]:
         """Gets all available chart type choices as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartTypes` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("line_with_shaded_section", "line_with_shaded_section"), ...]
 
@@ -75,12 +73,12 @@ class MetricsAPIInterface:
         return ChartTypes.choices()
 
     @staticmethod
-    def get_chart_axis_choices() -> List[Tuple[str, str]]:
+    def get_chart_axis_choices() -> list[tuple[str, str]]:
         """Gets all available axis choices for a chart as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartAxisFields` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("geography", "geography"), ...]
 
@@ -88,12 +86,12 @@ class MetricsAPIInterface:
         return ChartAxisFields.choices()
 
     @staticmethod
-    def get_chart_line_types() -> List[Tuple[str, str]]:
+    def get_chart_line_types() -> list[tuple[str, str]]:
         """Gets all available chart line types choices as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartLineTypes` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("SOLID", "SOLID"), ...]
 
@@ -101,12 +99,12 @@ class MetricsAPIInterface:
         return ChartLineTypes.choices()
 
     @staticmethod
-    def get_colours() -> List[Tuple[str, str]]:
+    def get_colours() -> list[tuple[str, str]]:
         """Gets all available colour choices as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `RGBAChartLineColours` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("BLUE", "BLUE"), ...]
 

@@ -1,5 +1,3 @@
-from typing import List, Union
-
 import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme
@@ -8,7 +6,7 @@ from metrics.domain.charts import chart_settings, colour_scheme
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    y_axis_values: List[Union[int, float]],
+    y_axis_values: list[int | float],
     line_color: str = colour_scheme.RGBAColours.BLACK.stringified,
     area_fill_color: str = colour_scheme.RGBAColours.LINE_DARK_GREY.stringified,
     background_color: str = colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
@@ -49,7 +47,7 @@ def generate_chart_figure(
 
     """
     values_count: int = len(y_axis_values)
-    x_axis_values: List[int] = [index for index in range(values_count)]
+    x_axis_values: list[int] = [index for index in range(values_count)]
 
     figure = plotly.graph_objects.Figure()
 
@@ -81,8 +79,8 @@ def generate_chart_figure(
 
 
 def _create_line_plot(
-    y_axis_values: List[Union[int, float]],
-    x_axis_values: List[int],
+    y_axis_values: list[int | float],
+    x_axis_values: list[int],
     area_fill_colour: str,
     line_colour: str,
     line_shape: str,

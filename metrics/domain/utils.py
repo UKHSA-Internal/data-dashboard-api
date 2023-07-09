@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 from enum import Enum
-from typing import List
 
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 435
@@ -11,7 +10,9 @@ def get_last_day_of_month(dt: date) -> date:
     return next_month - timedelta(days=next_month.day)
 
 
-def _check_for_substring_match(string_to_check: str, substrings: List[str]) -> bool:
+def _check_for_substring_match(
+    string_to_check: str, substrings: tuple[str, ...]
+) -> bool:
     return any((sub_string in string_to_check for sub_string in substrings))
 
 

@@ -1,4 +1,4 @@
-from typing import Any, Tuple
+from typing import Any
 
 from rest_framework_api_key.crypto import concatenate
 from rest_framework_api_key.models import APIKey, APIKeyManager
@@ -21,7 +21,7 @@ class CustomAPIKeyManager(APIKeyManager):
 
     """
 
-    def create_key(self, **kwargs: Any) -> Tuple[APIKey, str]:
+    def create_key(self, **kwargs: Any) -> tuple[APIKey, str]:
         """Creates an `APIKey` object and sets it up with the `api_key`, if given.
 
         If the `api_key` is not provided, then the fallback `create_key` method will be used.
@@ -49,7 +49,7 @@ class CustomAPIKeyManager(APIKeyManager):
 
     def assign_pre_generated_key(
         self, password_prefix: str, password_suffix: str, **kwargs
-    ) -> Tuple[APIKey, str]:
+    ) -> tuple[APIKey, str]:
         """Creates an `APIKey` object and sets it up with the given `password_prefix` and `password_suffix`.
 
         Args:

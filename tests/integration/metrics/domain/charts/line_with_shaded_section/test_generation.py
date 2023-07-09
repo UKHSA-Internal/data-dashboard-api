@@ -1,12 +1,11 @@
 import datetime
-from typing import List
 
 import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAColours
 from metrics.domain.charts.line_with_shaded_section import generation
 
-DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
+DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
     datetime.date(2022, 10, 10),
     datetime.date(2022, 11, 14),

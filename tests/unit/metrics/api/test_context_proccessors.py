@@ -1,4 +1,3 @@
-from typing import Dict
 from unittest import mock
 
 from metrics.api import context_processors
@@ -18,7 +17,7 @@ def test_frontend_url(spy_config: mock.MagicMock):
     mocked_request = mock.Mock()
 
     # When
-    returned_url: Dict[str, str] = context_processors.frontend_url(
+    returned_url: dict[str, str] = context_processors.frontend_url(
         request=mocked_request
     )
 
