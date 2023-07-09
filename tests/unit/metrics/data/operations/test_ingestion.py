@@ -129,10 +129,10 @@ class TestIngestion:
         # Then
         assert getattr(ingestion, attribute_on_class) is expected_model_manager
 
-    def test_get_column_names_with_foreign_keys(self):
+    def test_supporting_model_column_names(self):
         """
         Given mocked data
-        When the `column_names_with_foreign_keys` property
+        When the `supporting_model_column_names` property
             is called from an instance of `Ingestion`
         Then the correct list of strings is returned
         """
@@ -143,7 +143,7 @@ class TestIngestion:
         # When
         returned_column_names: tuple[
             str, ...
-        ] = ingestion.column_names_with_foreign_keys
+        ] = ingestion.supporting_model_column_names
 
         # Then
         assert returned_column_names == COLUMN_NAMES_WITH_FOREIGN_KEYS

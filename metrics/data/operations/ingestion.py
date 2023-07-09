@@ -266,7 +266,21 @@ class Ingestion:
         return df
 
     @property
-    def column_names_with_foreign_keys(self) -> list[str, ...]:
+    def supporting_model_column_names(self) -> list[str, ...]:
+        """Gets a list of column names, for each of the supporting models
+
+        Notes:
+            Supporting models are those which
+            link to the main core models via foreign keys.
+            E.g. the topic of `COVID-19` would be
+            represented by the supporting model `Topic`
+            which would have the name of `COVID-19`
+
+        Returns:
+            A list of strings, for each column name
+            which should be represented as a supporting model
+
+        """
         return COLUMN_NAMES_WITH_FOREIGN_KEYS
 
     def open_data_as_dataframe(self) -> pd.DataFrame:
@@ -431,8 +445,8 @@ class Ingestion:
     def _cast_int_type_on_columns_with_foreign_keys(
         self, dataframe: pd.DataFrame
     ) -> pd.DataFrame:
-        dataframe[self.column_names_with_foreign_keys] = dataframe[
-            self.column_names_with_foreign_keys
+        dataframe[self.supporting_model_column_names] = dataframe[
+            self.supporting_model_column_names
         ].applymap(int)
         return dataframe
 
