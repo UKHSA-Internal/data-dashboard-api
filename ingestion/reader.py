@@ -57,8 +57,10 @@ class Reader:
                 with the model currently being updated.
 
         Returns:
-            incoming_df with the relevant column changed to the primary keys for that model
-            So, if the column cotained values like 'infectious_disease' it'll now be, say, 1 (the primary key for 'infectious_disease')
+            The `DataFrame` with the relevant supporting model columns
+            renamed so that their original text representation has been
+            replaced with the corresponding database record IDs
+
         """
         incoming_data = self._get_unique_values_from_dataframe_for_keys(
             dataframe=incoming_dataframe, fields=fields
