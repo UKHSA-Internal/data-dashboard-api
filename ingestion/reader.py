@@ -1,3 +1,5 @@
+from typing import Iterable, Any
+
 import pandas as pd
 from django.db.models.manager import Manager
 
@@ -199,18 +201,63 @@ class Reader:
 
     @staticmethod
     def _remove_rows_with_nan_metric_value(dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Removes all rows in the `dataframe` which have NaN in the `metric_value` column
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+
+        Returns:
+            A `DataFrame` with no NaN values
+            in the `metric_value` column of its rows
+
+        """
         return dataframe[dataframe["metric_value"].notnull()]
 
     def _cast_int_type_on_columns_with_foreign_keys(
         self, dataframe: pd.DataFrame
     ) -> pd.DataFrame:
+        """Casts the supporting model columns to int types
+
+        Notes:
+            A previous processing step would have
+            set available IDs of corresponding model records
+            on the corresponding model columns.
+            For example, if the dataframe showed `COVID-19`
+            for the `topic` field of each entry.
+            Then the dataframe will be altered to instead
+            show `123`, which should be the ID/pk
+            of the `Topic` model which has the name `COVID-19`.
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+
+        Returns:
+            A `DataFrame` where all supporting model column
+            values have been cast as integers
+
+        """
         dataframe[self.supporting_model_column_names] = dataframe[
             self.supporting_model_column_names
         ].applymap(int)
         return dataframe
 
     @staticmethod
-    def _create_named_tuple_iterable_from(dataframe: pd.DataFrame) -> pd.DataFrame:
+    def _create_named_tuple_iterable_from(dataframe: pd.DataFrame) -> Iterable[Any]:
+        """Takes the given `dataframe` and returns an iterable of named tuples
+
+        Notes:
+            Each named tuple in the returned iterable
+            contains a field for each of the column names
+
+        Args:
+            dataframe: The final dataframe with all of
+                its processing steps having been completed
+
+        Returns:
+            An object to iterate over named tuples
+            for each row in the DataFrame
+
+        """
         return dataframe.itertuples(index=False)
 
     @property
