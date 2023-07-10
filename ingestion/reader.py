@@ -50,7 +50,7 @@ class Reader:
             incoming_df with the relevant column changed to the primary keys for that model
             So, if the column cotained values like 'infectious_disease' it'll now be, say, 1 (the primary key for 'infectious_disease')
         """
-        incoming_data = self._get_unique_values_for_keys(
+        incoming_data = self._get_unique_values_from_dataframe_for_keys(
             dataframe=incoming_dataframe, fields=fields
         )
 
@@ -92,7 +92,7 @@ class Reader:
         return dataframe
 
     @staticmethod
-    def _get_unique_values_for_keys(
+    def _get_unique_values_from_dataframe_for_keys(
         dataframe: pd.DataFrame, fields: dict[str, str]
     ) -> pd.DataFrame:
         return dataframe[fields.keys()].drop_duplicates()
