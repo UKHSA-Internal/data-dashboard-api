@@ -2,8 +2,8 @@ import json
 
 import pytest
 
+from ingestion.consumer import Ingestion
 from metrics.data.models.core_models import CoreHeadline
-from metrics.data.operations.ingestion import Ingestion
 
 
 class TestIngestion:
