@@ -29,7 +29,7 @@ class Reader:
 
     def maintain_model(
         self,
-        incoming_df: pd.DataFrame,
+        incoming_dataframe: pd.DataFrame,
         fields: dict[str, str],
         model_manager: Manager,
     ):
@@ -40,7 +40,7 @@ class Reader:
         value (eg infectious_disease) to the pk for that value. eg 1
 
         Args:
-            incoming_df: This is the entire source file in a DataFrame
+            incoming_dataframe: This is the entire source file in a DataFrame
             fields: Dictionary of the model field names and the names of the relevant columns in the source file
             model_manager: The model we want to maintain
 
@@ -48,33 +48,20 @@ class Reader:
             incoming_df with the relevant column changed to the primary keys for that model
             So, if the column cotained values like 'infectious_disease' it'll now be, say, 1 (the primary key for 'infectious_disease')
         """
-
-        # From the source file, pull out the unique list of row values for this particular model
-        incoming_data: pd.DataFrame = incoming_df[fields.keys()].drop_duplicates()
-
-        # From the model, pull back the existing records along with their pks
-        existing_data: pd.DataFrame = pd.DataFrame.from_records(
-            model_manager.all().values("pk", *fields.values())
+        incoming_data = self._get_unique_values_for_keys(
+            dataframe=incoming_dataframe, fields=fields
         )
 
-        if existing_data.empty:
-            existing_data: pd.DataFrame = pd.DataFrame(columns=list(fields.values()))
-
-        # Left join on incoming_data & existing_data dataframes
-        df: pd.DataFrame = pd.merge(
-            left=incoming_data,
-            right=existing_data,
-            how="left",
-            left_on=list(fields.keys()),
-            right_on=list(fields.values()),
-            indicator=True,
+        existing_data: pd.DataFrame = self._get_existing_records_for_values(
+            fields=fields, model_manager=model_manager
         )
 
-        # left_only = those values in the source file which are not present the Model. So, these are new ones
-        new_data: list[dict[str, str]] = (
-            df.loc[df["_merge"] == "left_only"][fields.keys()]
-            .rename(columns=fields)
-            .to_dict("records")
+        dataframe: pd.DataFrame = self._left_join_merge(
+            left_data=incoming_data, right_data=existing_data, fields=fields
+        )
+
+        new_data: list[dict[str, str]] = self._get_new_data_in_source(
+            dataframe=dataframe, fields=fields
         )
 
         # Add the new values to the model and pull back the pk for them.
@@ -82,61 +69,97 @@ class Reader:
             {**{"pk": model_manager.create(**data).pk}, **data} for data in new_data
         ]
 
-        # Turn the new records into a dataframe
-        added_data: pd.DataFrame = pd.DataFrame(new_records)
+        added_data = self._concatenate_new_records(
+            dataframe=existing_data, new_records=new_records
+        )
 
-        # Add them onto the end of the data that we already had
-        all_data: pd.DataFrame = pd.concat([existing_data, added_data])
+        dataframe = self._inner_merge(
+            left_data=incoming_dataframe, right_data=added_data, fields=fields
+        )
 
-        # Now join this back onto the original dataframe.
-        # So, we're joining the pk and the relevant fields for this model onto the original dataframe
-        df = pd.merge(
-            left=incoming_df,
-            right=all_data,
+        dataframe = self._drop_text_representations_of_columns(
+            dataframe=dataframe, fields=fields
+        )
+        dataframe = self._rename_columns_to_original_names(
+            dataframe=dataframe, fields=fields
+        )
+
+        # At this point the rows for the parent_theme column for example have been changed
+        # from "infectious_disease" to, say, 1
+        # ie. the Foreign Key for "infectious_disease" in the Theme model.
+        return dataframe
+
+    @staticmethod
+    def _get_unique_values_for_keys(
+        dataframe: pd.DataFrame, fields: dict[str, str]
+    ) -> pd.DataFrame:
+        return dataframe[fields.keys()].drop_duplicates()
+
+    @staticmethod
+    def _get_existing_records_for_values(
+        fields: dict[str, str], model_manager: Manager
+    ) -> pd.DataFrame:
+        existing_data: pd.DataFrame = pd.DataFrame.from_records(
+            model_manager.all().values("pk", *fields.values())
+        )
+
+        if existing_data.empty:
+            return pd.DataFrame(columns=list(fields.values()))
+
+        return existing_data
+
+    @staticmethod
+    def _rename_columns_to_original_names(
+        dataframe: pd.DataFrame, fields: dict[str, str]
+    ) -> pd.DataFrame:
+        return dataframe.rename(columns={"pk": list(fields.keys())[0]})
+
+    @staticmethod
+    def _drop_text_representations_of_columns(
+        dataframe: pd.DataFrame, fields: dict[str, str]
+    ) -> pd.DataFrame:
+        return dataframe.drop(columns=[*list(fields.items())[0], *fields.values()])
+
+    @staticmethod
+    def _left_join_merge(left_data, right_data, fields: dict[str, str]) -> pd.DataFrame:
+        return pd.merge(
+            left=left_data,
+            right=right_data,
+            how="left",
+            left_on=list(fields.keys()),
+            right_on=list(fields.values()),
+            indicator=True,
+        )
+
+    @staticmethod
+    def _inner_merge(left_data, right_data, fields: dict[str, str]) -> pd.DataFrame:
+        return pd.merge(
+            left=left_data,
+            right=right_data,
             how="inner",
             left_on=list(fields.keys()),
             right_on=list(fields.values()),
         )
 
-        # Drop the original column(s) as we're now using the primary keys and not the text representation of them
-        # Drop the model field names too (were only here to make debugging easier)
-        df = df.drop(columns=[*list(fields.items())[0], *fields.values()])
+    @staticmethod
+    def _get_new_data_in_source(
+        dataframe: pd.DataFrame, fields: dict[str, str]
+    ) -> list[dict[str, str]]:
+        return (
+            dataframe.loc[dataframe["_merge"] == "left_only"][fields.keys()]
+            .rename(columns=fields)
+            .to_dict("records")
+        )
 
-        # Rename the new columns back to what they are in the source file.
-        # So for the parent theme model we are changing it from pk back to parent_theme
-        df = df.rename(columns={"pk": list(fields.keys())[0]})
+    @staticmethod
+    def _concatenate_new_records(
+        dataframe: pd.DataFrame, new_records: list[dict[str, str]]
+    ) -> pd.DataFrame:
+        # Turn the new records into a dataframe
+        added_data: pd.DataFrame = pd.DataFrame(new_records)
 
-        # At this point the rows for the parent_theme column for example have been changed
-        # from "infectious_disease" to, say, 1
-        # ie. the Foreign Key for "infectious_disease" in the Theme model.
-        return df
-
-    @property
-    def supporting_model_column_names(self) -> list[str, ...]:
-        """Gets a list of column names, for each of the supporting models
-
-        Notes:
-            Supporting models are those which
-            link to the main core models via foreign keys.
-            E.g. the topic of `COVID-19` would be
-            represented by the supporting model `Topic`
-            which would have the name of `COVID-19`
-
-        Returns:
-            A list of strings, for each column name
-            which should be represented as a supporting model
-
-        """
-        return COLUMN_NAMES_WITH_FOREIGN_KEYS
-
-    def open_data_as_dataframe(self) -> pd.DataFrame:
-        """Opens the JSON `data` as a dataframe
-
-        Returns:
-            A dataframe containing the raw JSON data
-
-        """
-        return pd.read_json(self.data)
+        # Add them onto the end of the data that we already had
+        return pd.concat([dataframe, added_data])
 
     def parse_dataframe_as_iterable(self, dataframe) -> pd.DataFrame:
         """Convert the given `dataframe` to an iterable
@@ -189,3 +212,30 @@ class Reader:
     @staticmethod
     def _create_named_tuple_iterable_from(dataframe: pd.DataFrame) -> pd.DataFrame:
         return dataframe.itertuples(index=False)
+
+    @property
+    def supporting_model_column_names(self) -> list[str, ...]:
+        """Gets a list of column names, for each of the supporting models
+
+        Notes:
+            Supporting models are those which
+            link to the main core models via foreign keys.
+            E.g. the topic of `COVID-19` would be
+            represented by the supporting model `Topic`
+            which would have the name of `COVID-19`
+
+        Returns:
+            A list of strings, for each column name
+            which should be represented as a supporting model
+
+        """
+        return COLUMN_NAMES_WITH_FOREIGN_KEYS
+
+    def open_data_as_dataframe(self) -> pd.DataFrame:
+        """Opens the JSON `data` as a dataframe
+
+        Returns:
+            A dataframe containing the raw JSON data
+
+        """
+        return pd.read_json(self.data)

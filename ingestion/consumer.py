@@ -254,7 +254,7 @@ class Ingestion:
 
         for related_fields_and_model_manager in all_related_fields_and_model_managers:
             dataframe: pd.DataFrame = self.reader.maintain_model(
-                incoming_df=dataframe,
+                incoming_dataframe=dataframe,
                 fields=related_fields_and_model_manager.fields,
                 model_manager=related_fields_and_model_manager.model_manager,
             )
