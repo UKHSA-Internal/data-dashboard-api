@@ -95,12 +95,59 @@ class Reader:
     def _get_unique_values_from_dataframe_for_keys(
         dataframe: pd.DataFrame, fields: dict[str, str]
     ) -> pd.DataFrame:
+        """Pulls all the values in the given `dataframe` for the field keys.
+
+        Examples:
+            If the `fields` of {"parent_theme": "name"} is provided.
+            Then this method will return all the values
+            for the field combination dictated by the keys.
+            In this case, the "parent_theme" would return "infectious_disease"
+            >>> _get_unique_values_for_keys(dataframe=dataframe, fields={"parent_theme": "name"})
+                         parent_theme
+                0  infectious_disease
+
+        Args:
+            dataframe: The initial opened `dataframe`
+                prior to any processing steps
+            fields: The fields associated with the
+                model currently being updated.
+                E.g. For the `Theme` model,
+                    the `fields` argument is likely to be
+                    {'parent_theme': 'name'}
+        Returns:
+            A new `DataFrame` which contains only the values
+            speicific to the keys of the `fields` dict
+
+        """
         return dataframe[fields.keys()].drop_duplicates()
 
     @staticmethod
     def _get_existing_records_for_values(
         fields: dict[str, str], model_manager: type[Manager]
     ) -> pd.DataFrame:
+        """Gets the IDs of all existing records via the given `model_manager`
+
+        Notes:
+            If there are no existing matching records,
+            then an empty `DataFrame` is returned
+            which is set with the correct column names
+            via the values of the `fields` dict
+
+        Args:
+            fields: The fields associated with the
+                model currently being updated.
+                E.g. For the `Theme` model,
+                    the `fields` argument is likely to be
+                    {'parent_theme': 'name'}
+            model_manager: The model manager associated
+                with the model currently being updated.
+
+        Returns:
+            A new `DataFrame` which contains the ID/pks of any
+            existing records which are relevant to the given
+            `fields`.
+
+        """
         existing_data: pd.DataFrame = pd.DataFrame.from_records(
             model_manager.all().values("pk", *fields.values())
         )
