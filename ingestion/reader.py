@@ -35,16 +35,26 @@ class Reader:
         fields: dict[str, str],
         model_manager: Manager,
     ):
-        """
-        Maintain the individual models that are used in the normalisation of the Core source file
-        New values in the source file will be added to the model
-        All rows in the source file will get changed from the supplied cell
-        value (eg infectious_disease) to the pk for that value. eg 1
+        """Update the individual supporting core model by inserting new records as necessary.
+
+        Notes:
+            As the supporting core models are created and queried for,
+            the original text representations are replaced by their
+            corresponding ID/pks.
+            E.g. If the original column value for `parent_theme` is
+                "infectious_disease". This will be replaced by `123`
+                i.e. the foreign key for the `Theme` model
+                which has the name "infectious_disease"
 
         Args:
-            incoming_dataframe: This is the entire source file in a DataFrame
-            fields: Dictionary of the model field names and the names of the relevant columns in the source file
-            model_manager: The model we want to maintain
+            incoming_dataframe: The raw `DataFrame` opened from the source data file
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
+                E.g. For the `Theme` model,
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
+            model_manager: The model manager associated
+                with the model currently being updated.
 
         Returns:
             incoming_df with the relevant column changed to the primary keys for that model
@@ -58,7 +68,7 @@ class Reader:
             fields=fields, model_manager=model_manager
         )
 
-        dataframe: pd.DataFrame = self._left_join_merge(
+        dataframe: pd.DataFrame = self._merge_left_join(
             left_data=incoming_data, right_data=existing_data, fields=fields
         )
 
@@ -67,15 +77,15 @@ class Reader:
         )
 
         # Add the new values to the model and pull back the pk for them.
-        new_records: list[dict[str, str]] = [
+        new_records_data: list[dict[str, str]] = [
             {**{"pk": model_manager.create(**data).pk}, **data} for data in new_data
         ]
 
         added_data = self._concatenate_new_records(
-            dataframe=existing_data, new_records=new_records
+            dataframe=existing_data, new_records_data=new_records_data
         )
 
-        dataframe = self._inner_merge(
+        dataframe = self._merge_inner(
             left_data=incoming_dataframe, right_data=added_data, fields=fields
         )
 
@@ -86,9 +96,6 @@ class Reader:
             dataframe=dataframe, fields=fields
         )
 
-        # At this point the rows for the parent_theme column for example have been changed
-        # from "infectious_disease" to, say, 1
-        # ie. the Foreign Key for "infectious_disease" in the Theme model.
         return dataframe
 
     @staticmethod
@@ -109,11 +116,11 @@ class Reader:
         Args:
             dataframe: The initial opened `dataframe`
                 prior to any processing steps
-            fields: The fields associated with the
-                model currently being updated.
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
                 E.g. For the `Theme` model,
-                    the `fields` argument is likely to be
-                    {'parent_theme': 'name'}
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
         Returns:
             A new `DataFrame` which contains only the values
             speicific to the keys of the `fields` dict
@@ -134,11 +141,11 @@ class Reader:
             via the values of the `fields` dict
 
         Args:
-            fields: The fields associated with the
-                model currently being updated.
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
                 E.g. For the `Theme` model,
-                    the `fields` argument is likely to be
-                    {'parent_theme': 'name'}
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
             model_manager: The model manager associated
                 with the model currently being updated.
 
@@ -161,16 +168,71 @@ class Reader:
     def _rename_columns_to_original_names(
         dataframe: pd.DataFrame, fields: dict[str, str]
     ) -> pd.DataFrame:
+        """Renames the relevant columns and replaces the values by their corresponding ID/pks
+
+        Notes:
+            At this point the rows for the supporting model columns
+            have been changed.
+            E.g. The original column value for `parent_theme` is
+                "infectious_disease". This will be replaced by `123`
+                i.e. the foreign key for the `Theme` model
+                which has the name "infectious_disease"
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
+                E.g. For the `Theme` model,
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
+
+        Returns:
+            The `DataFrame` with the relevant supporting model columns
+            renamed so that their original text representation has been
+            replaced with the corresponding database record IDs
+
+        """
         return dataframe.rename(columns={"pk": list(fields.keys())[0]})
 
     @staticmethod
     def _drop_text_representations_of_columns(
         dataframe: pd.DataFrame, fields: dict[str, str]
     ) -> pd.DataFrame:
+        """Drop the relevant columns with text representations as they will be replaced by ID/pks values
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
+                E.g. For the `Theme` model,
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
+
+        Returns:
+            The `DataFrame` with the relevant supporting model columns dropped
+
+        """
         return dataframe.drop(columns=[*list(fields.items())[0], *fields.values()])
 
     @staticmethod
-    def _left_join_merge(left_data, right_data, fields: dict[str, str]) -> pd.DataFrame:
+    def _merge_left_join(
+        left_data: pd.DataFrame, right_data: pd.DataFrame, fields: dict[str, str]
+    ) -> pd.DataFrame:
+        """Left merge the `left_data` and `right_data` dataframes
+
+        Args:
+            left_data: The incoming `DataFrame`
+            right_data: The right side `DataFrame` to be merged in
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
+                E.g. For the `Theme` model,
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
+
+        Returns:
+            The merged `DataFrame`
+
+        """
         return pd.merge(
             left=left_data,
             right=right_data,
@@ -181,7 +243,24 @@ class Reader:
         )
 
     @staticmethod
-    def _inner_merge(left_data, right_data, fields: dict[str, str]) -> pd.DataFrame:
+    def _merge_inner(
+        left_data: pd.DataFrame, right_data: pd.DataFrame, fields: dict[str, str]
+    ) -> pd.DataFrame:
+        """Inner merge the `left_data` and `right_data` dataframes
+
+        Args:
+            left_data: The incoming `DataFrame`
+            right_data: The right side `DataFrame` to be merged in
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
+                E.g. For the `Theme` model,
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
+
+        Returns:
+            The merged `DataFrame`
+
+        """
         return pd.merge(
             left=left_data,
             right=right_data,
@@ -194,6 +273,25 @@ class Reader:
     def _get_new_data_in_source(
         dataframe: pd.DataFrame, fields: dict[str, str]
     ) -> list[dict[str, str]]:
+        """Gets the field keys of the left side of the pre-merged `dataframe`
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+            fields: Dict of the model field names and the names
+                of the relevant columns from the source file.
+                E.g. For the `Theme` model,
+                the `fields` argument is likely to be
+                {'parent_theme': 'name'}
+
+        Returns:
+            A list of dicts containing the fields
+            required for each of the new records
+            required for the current model being updated.
+            E.g. if the `Theme` model is being updated,
+            one might expect the following:
+                [{"name": "infectious_disease"}]
+
+        """
         return (
             dataframe.loc[dataframe["_merge"] == "left_only"][fields.keys()]
             .rename(columns=fields)
@@ -202,13 +300,25 @@ class Reader:
 
     @staticmethod
     def _concatenate_new_records(
-        dataframe: pd.DataFrame, new_records: list[dict[str, str]]
+        dataframe: pd.DataFrame, new_records_data: list[dict[str, str]]
     ) -> pd.DataFrame:
-        # Turn the new records into a dataframe
-        added_data: pd.DataFrame = pd.DataFrame(new_records)
+        """Turns the `new_records_data` into a `DataFrame` and concatenates it to the given `dataframe`
 
-        # Add them onto the end of the data that we already had
-        return pd.concat([dataframe, added_data])
+        Args:
+            dataframe: The `DataFrame` to be processed
+            new_records_data: A list of dicts containing
+                the fields for each new record with their
+                ID/pks included.
+                E.g. [{'name': 'infectious_disease', 'pk': 1}]
+
+        Returns:
+            The updated `DataFrame` including rows representing
+            the updated supporting models
+
+        """
+        new_record_dataframe: pd.DataFrame = pd.DataFrame(new_records_data)
+
+        return pd.concat([dataframe, new_record_dataframe])
 
     def parse_dataframe_as_iterable(self, dataframe) -> pd.DataFrame:
         """Convert the given `dataframe` to an iterable
