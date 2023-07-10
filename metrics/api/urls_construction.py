@@ -11,6 +11,7 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
+from feedback.views import SuggestionsView
 from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
@@ -54,6 +55,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
+    re_path(f"^{API_PREFIX}suggestions/v1", SuggestionsView.as_view()),
     # Endpoints to be migrated away from
     re_path(r"^upload/$", FileUploadView.as_view()),
     re_path(r"^charts/v2", ChartsView.as_view()),
