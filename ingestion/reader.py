@@ -65,11 +65,9 @@ class Reader:
         incoming_data = self._get_unique_values_from_dataframe_for_keys(
             dataframe=incoming_dataframe, fields=fields
         )
-
         existing_data: pd.DataFrame = self._get_existing_records_for_values(
             fields=fields, model_manager=model_manager
         )
-
         dataframe: pd.DataFrame = self._merge_left_join(
             left_data=incoming_data, right_data=existing_data, fields=fields
         )
@@ -77,12 +75,9 @@ class Reader:
         new_data: list[dict[str, str]] = self._get_new_data_in_source(
             dataframe=dataframe, fields=fields
         )
-
-        # Add the new values to the model and pull back the pk for them.
-        new_records_data: list[dict[str, str]] = [
-            {**{"pk": model_manager.create(**data).pk}, **data} for data in new_data
-        ]
-
+        new_records_data: list[dict[str, str]] = self._create_new_records_data(
+            new_data=new_data, model_manager=model_manager
+        )
         added_data = self._concatenate_new_records(
             dataframe=existing_data, new_records_data=new_records_data
         )
@@ -90,7 +85,6 @@ class Reader:
         dataframe = self._merge_inner(
             left_data=incoming_dataframe, right_data=added_data, fields=fields
         )
-
         dataframe = self._drop_text_representations_of_columns(
             dataframe=dataframe, fields=fields
         )
@@ -99,6 +93,31 @@ class Reader:
         )
 
         return dataframe
+
+    @staticmethod
+    def _create_new_records_data(
+        new_data: list[dict[str, str]], model_manager: type[Manager]
+    ) -> list[dict[str, str]]:
+        """Creates new records via the `model_manager` and rebuilds a dict containing the new ID/pks
+
+        Args:
+            new_data: A list of dicts containing the fields
+                required for each of the new records
+                required for the current model being updated.
+                E.g. if the `Theme` model is being updated,
+                one might expect the following:
+                    [{"name": "infectious_disease"}]
+            model_manager: The model manager associated
+                with the model currently being updated.
+
+        Returns:
+            A list of dictionaries with new values replaced by
+            the corresponding ID/pk for the new database records
+
+        """
+        return [
+            {**{"pk": model_manager.create(**data).pk}, **data} for data in new_data
+        ]
 
     @staticmethod
     def _get_unique_values_from_dataframe_for_keys(
