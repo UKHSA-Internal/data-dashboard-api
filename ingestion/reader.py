@@ -1,4 +1,4 @@
-from typing import Iterable, Any
+from typing import Any, Iterable
 
 import pandas as pd
 from django.db.models.manager import Manager
