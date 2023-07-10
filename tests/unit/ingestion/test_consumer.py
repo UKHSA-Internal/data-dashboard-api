@@ -4,11 +4,10 @@ from unittest import mock
 import pytest
 from django.db.models.manager import Manager
 
-from ingestion.consumer import FieldsAndModelManager, HeadlineDTO, Ingestion, Reader
-from ingestion.reader import COLUMN_NAMES_WITH_FOREIGN_KEYS
+from ingestion.consumer import HeadlineDTO, Ingestion, Reader
 from metrics.data.models import core_models
 
-MODULE_PATH = "metrics.data.operations.ingestion"
+MODULE_PATH = "ingestion.consumer"
 
 
 class TestIngestion:
@@ -139,3 +138,37 @@ class TestIngestion:
 
         # Then
         assert type(ingestion.reader) is Reader
+
+    @mock.patch.object(Ingestion, "create_dtos_from_source")
+    @mock.patch(f"{MODULE_PATH}.create_core_headlines")
+    def test_create_headlines_delegates_call_correctly(
+        self,
+        spy_create_core_headlines: mock.MagicMock,
+        spy_create_dtos_from_source: mock.MagicMock,
+    ):
+        """
+        Given mocked data
+        When `create_headlines()` is called
+            from an instance of `Ingestion`
+        Then the call is delegated
+            to `create_core_headlines()`
+        """
+        # Given
+        mocked_core_headline_manager = mock.Mock()
+        ingestion = Ingestion(
+            data=mock.Mock(),
+            reader=mock.Mock(),  # Stubbed
+            core_headline_manager=mocked_core_headline_manager,
+        )
+        batch_size = 100
+
+        # When
+        ingestion.create_headlines()
+
+        # Then
+        expected_headline_dtos = spy_create_dtos_from_source.return_value
+        spy_create_core_headlines.assert_called_once_with(
+            headline_dtos=expected_headline_dtos,
+            core_headline_manager=mocked_core_headline_manager,
+            batch_size=batch_size,
+        )

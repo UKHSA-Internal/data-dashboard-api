@@ -1,6 +1,5 @@
 from django.db.models.manager import Manager
 
-from ingestion.consumer import HeadlineDTO
 from metrics.data.models.core_models import CoreHeadline
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
@@ -8,7 +7,7 @@ DEFAULT_BATCH_SIZE = 100
 
 
 def create_core_headlines(
-    headline_dtos: list[HeadlineDTO],
+    headline_dtos: list["HeadlineDTO"],
     core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     batch_size: int = DEFAULT_BATCH_SIZE,
 ) -> None:

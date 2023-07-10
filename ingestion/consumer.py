@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from ingestion.reader import Reader
 from metrics.data.models import core_models
+from metrics.data.operations.ingestion import create_core_headlines
 
 
 class FieldsAndModelManager(NamedTuple):
@@ -297,23 +298,8 @@ class Ingestion:
         """
         headline_dtos: list[HeadlineDTO] = self.create_dtos_from_source()
 
-        model_instances = [
-            self.core_headline_manager.model(
-                metric_id=int(headline_dto.metric),
-                geography_id=int(headline_dto.geography),
-                stratum_id=int(headline_dto.stratum),
-                age_id=int(headline_dto.age),
-                sex=headline_dto.sex,
-                refresh_date=headline_dto.refresh_date,
-                period_start=headline_dto.period_start,
-                period_end=headline_dto.period_end,
-                metric_value=headline_dto.metric_value,
-            )
-            for headline_dto in headline_dtos
-        ]
-
-        self.core_headline_manager.bulk_create(
-            model_instances,
-            ignore_conflicts=True,
+        return create_core_headlines(
+            headline_dtos=headline_dtos,
+            core_headline_manager=self.core_headline_manager,
             batch_size=batch_size,
         )
