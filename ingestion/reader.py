@@ -99,7 +99,7 @@ class Reader:
 
     @staticmethod
     def _get_existing_records_for_values(
-        fields: dict[str, str], model_manager: Manager
+        fields: dict[str, str], model_manager: type[Manager]
     ) -> pd.DataFrame:
         existing_data: pd.DataFrame = pd.DataFrame.from_records(
             model_manager.all().values("pk", *fields.values())
