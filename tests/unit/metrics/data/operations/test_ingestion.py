@@ -1,6 +1,6 @@
 from unittest import mock
 
-from metrics.data.operations.ingestion import create_core_headlines, DEFAULT_BATCH_SIZE
+from metrics.data.operations.ingestion import DEFAULT_BATCH_SIZE, create_core_headlines
 
 
 class TestCreateCoreHeadlines:
