@@ -270,7 +270,7 @@ class Ingestion:
 
         """
         dataframe: pd.DataFrame = self.reader.open_data_as_dataframe()
-        dataframe = self.update_supporting_models(dataframe=dataframe)
+        dataframe: pd.DataFrame = self.update_supporting_models(dataframe=dataframe)
         processed_data: Iterable = self.reader.parse_dataframe_as_iterable(
             dataframe=dataframe
         )
