@@ -3,7 +3,17 @@ import json
 import pytest
 
 from ingestion.consumer import Ingestion
-from metrics.data.models.core_models import CoreHeadline
+from metrics.data.models.core_models import (
+    Age,
+    CoreHeadline,
+    Geography,
+    GeographyType,
+    Metric,
+    MetricGroup,
+    SubTheme,
+    Theme,
+    Topic,
+)
 
 
 class TestIngestion:
@@ -97,3 +107,17 @@ class TestIngestion:
             core_headline_one=core_headline_one,
             core_headline_two=core_headline_two,
         )
+
+        # Check that only 1 core supporting model is
+        # created where necessary for each value
+        assert Theme.objects.count() == 1
+        assert SubTheme.objects.count() == 1
+        assert Topic.objects.count() == 1
+        assert Metric.objects.count() == 1
+        assert MetricGroup.objects.count() == 1
+        assert Age.objects.count() == 1
+
+        # Check that different core supporting models
+        # are created where required
+        assert Geography.objects.count() == 2
+        assert GeographyType.objects.count() == 2
