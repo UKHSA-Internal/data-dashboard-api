@@ -72,7 +72,7 @@ def plot_serializer_payload_and_model_managers() -> (
 
 
 @pytest.fixture
-def example_headline_data_json() -> list[dict[str, float]]:
+def example_headline_data_json() -> list[dict[str, str | float]]:
     return [
         {
             "parent_theme": "infectious_disease",
