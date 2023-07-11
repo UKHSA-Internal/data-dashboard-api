@@ -94,18 +94,33 @@ forbidden_modules=
     feedback
 
 
-#------------------------------------- Feedback code contracts -------------------------------------------
+#------------------------------------- Feedback module contracts -------------------------------------------
 
-[importlinter:contract:Feedback isolated]
-name = Feedback module is independent of the rest of the codebase
+[importlinter:contract:Feedback module does not use the rest of the codebase]
+name = Feedback module does not depend on the rest of the codebase
 type = forbidden
 source_modules=
     feedback
 forbidden_modules=
     cms
-    metrics
+    metrics.api
+    metrics.data
+    metrics.domain
     public_api
-    ingestion
+
+[importlinter:contract:Feedback module not used by codebase]
+name = The rest of the codebase does not depend on the feedback module except for the connection of URLs
+type = forbidden
+source_modules=
+    cms
+    metrics.api
+    metrics.data
+    metrics.domain
+    public_api
+forbidden_modules=
+    feedback
+ignore_imports=
+    metrics.api.urls_construction -> feedback.views
 
 #------------------------------------- Source/Test code contracts -------------------------------------------
 
