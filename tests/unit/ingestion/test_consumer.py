@@ -140,7 +140,7 @@ class TestIngestion:
         assert type(ingestion.reader) is Reader
 
     @mock.patch.object(Ingestion, "create_dtos_from_source")
-    @mock.patch(f"{MODULE_PATH}.create_core_headlines")
+    @mock.patch(f"{MODULE_PATH}.CREATE_CORE_HEADLINES")
     def test_create_headlines_delegates_call_correctly(
         self,
         spy_create_core_headlines: mock.MagicMock,

@@ -3,7 +3,7 @@ from typing import Any, Iterable
 import pandas as pd
 from django.db.models.manager import Manager
 
-from metrics.data.enums import TimePeriod
+from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 
 COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str, ...] = [
     "parent_theme",
@@ -19,9 +19,10 @@ COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str, ...] = [
 
 sex_options = {"male": "M", "female": "F", "all": "ALL"}
 
+TIME_PERIOD_ENUM = MetricsAPIInterface.get_time_period_enum()
 frequency = {
-    "weekly": TimePeriod.Weekly.value,
-    "daily": TimePeriod.Daily.value,
+    "weekly": TIME_PERIOD_ENUM.Weekly.value,
+    "daily": TIME_PERIOD_ENUM.Daily.value,
 }
 
 

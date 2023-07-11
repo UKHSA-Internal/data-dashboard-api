@@ -1,12 +1,11 @@
-from typing import Iterable, NamedTuple, Optional, Type
+from typing import Callable, Iterable, NamedTuple, Optional, Type
 
 import pandas as pd
 from django.db.models import Manager
 from pydantic import BaseModel
 
+from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.reader import Reader
-from metrics.data.models import core_models
-from metrics.data.operations.ingestion import create_core_headlines
 
 
 class FieldsAndModelManager(NamedTuple):
@@ -33,16 +32,18 @@ class HeadlineDTO(BaseModel):
     metric_value: float
 
 
-DEFAULT_THEME_MANAGER = core_models.Theme.objects
-DEFAULT_SUB_THEME_MANAGER = core_models.SubTheme.objects
-DEFAULT_TOPIC_MANAGER = core_models.Topic.objects
-DEFAULT_METRIC_GROUP_MANAGER = core_models.MetricGroup.objects
-DEFAULT_METRIC_MANAGER = core_models.Metric.objects
-DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
-DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
-DEFAULT_AGE_MANAGER = core_models.Age.objects
-DEFAULT_STRATUM_MANAGER = core_models.Stratum.objects
-DEFAULT_CORE_HEADLINE_MANAGER = core_models.CoreHeadline.objects
+DEFAULT_THEME_MANAGER = MetricsAPIInterface.get_theme_manager()
+DEFAULT_SUB_THEME_MANAGER = MetricsAPIInterface.get_sub_theme_manager()
+DEFAULT_TOPIC_MANAGER = MetricsAPIInterface.get_topic_manager()
+DEFAULT_METRIC_GROUP_MANAGER = MetricsAPIInterface.get_metric_group_manager()
+DEFAULT_METRIC_MANAGER = MetricsAPIInterface.get_metric_manager()
+DEFAULT_GEOGRAPHY_TYPE_MANAGER = MetricsAPIInterface.get_geography_type_manager()
+DEFAULT_GEOGRAPHY_MANAGER = MetricsAPIInterface.get_geography_manager()
+DEFAULT_AGE_MANAGER = MetricsAPIInterface.get_age_manager()
+DEFAULT_STRATUM_MANAGER = MetricsAPIInterface.get_stratum_manager()
+DEFAULT_CORE_HEADLINE_MANAGER = MetricsAPIInterface.get_core_headline_manager()
+
+CREATE_CORE_HEADLINES: Callable = MetricsAPIInterface.get_create_core_headlines()
 
 
 class Ingestion:
@@ -298,7 +299,7 @@ class Ingestion:
         """
         headline_dtos: list[HeadlineDTO] = self.create_dtos_from_source()
 
-        return create_core_headlines(
+        return CREATE_CORE_HEADLINES(
             headline_dtos=headline_dtos,
             core_headline_manager=self.core_headline_manager,
             batch_size=batch_size,
