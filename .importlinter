@@ -3,6 +3,7 @@ root_packages =
     cms
     metrics
     public_api
+    feedback
     ingestion
     tests
 include_external_packages=True
@@ -49,6 +50,7 @@ forbidden_modules=
     metrics.interfaces
     cms
     ingestion
+    feedback
 ignore_imports=
     public_api.metrics_interface.interface -> metrics.data.models.api_models
 
@@ -62,6 +64,7 @@ source_modules=
     metrics.interfaces
     cms
     ingestion
+    feedback
 forbidden_modules=
     metrics.public_api
 ignore_imports=
@@ -99,6 +102,7 @@ forbidden_modules=
     metrics.interfaces
     cms
     ingestion
+    feedback
 
 [importlinter:contract:Metrics isolated trends library]
 name = Metrics trends library does not depend on the rest of the codebase
@@ -111,6 +115,32 @@ forbidden_modules=
     metrics.interfaces
     cms
     ingestion
+    feedback
+
+
+#------------------------------------- Feedback module contracts -------------------------------------------
+
+[importlinter:contract:Feedback module does not use the rest of the codebase]
+name = Feedback module does not depend on the rest of the codebase
+type = forbidden
+source_modules=
+    feedback
+forbidden_modules=
+    cms
+    metrics
+    public_api
+
+[importlinter:contract:Feedback module not used by codebase]
+name = The rest of the codebase does not depend on the feedback module except for the connection of URLs
+type = forbidden
+source_modules=
+    cms
+    metrics
+    public_api
+forbidden_modules=
+    feedback
+ignore_imports=
+    metrics.api.urls_construction -> feedback.views
 
 #------------------------------------- Source/Test code contracts -------------------------------------------
 
@@ -121,5 +151,6 @@ source_modules=
     metrics
     cms
     ingestion
+    feedback
 forbidden_modules=
     tests

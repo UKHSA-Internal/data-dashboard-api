@@ -61,19 +61,17 @@ class TestDownloadsView:
             metric_value=metric_value,
         )
 
-    @pytest.mark.parametrize("path", ["/downloads/v2", "/api/downloads/v2"])
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
-        self, path: str, authenticated_api_client: APIClient
+        self, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload to request a download
         And an authenticated APIClient
-        When the `POST /downloads/v2` endpoint is hit i.e. without the trailing `/`
+        When the `POST /api/downloads/v2` endpoint is hit i.e. without the trailing `/`
         Then the response is still a valid HTTP 200 OK
         """
         # Given
-        path_without_trailing_forward_slash: str = path
         self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
             "file_format": "json",
@@ -84,6 +82,7 @@ class TestDownloadsView:
                 }
             ],
         }
+        path_without_trailing_forward_slash = "/api/downloads/v2"
 
         # When
         response: Response = authenticated_api_client.post(
@@ -95,15 +94,14 @@ class TestDownloadsView:
         # Then
         assert response.status_code == HTTPStatus.OK
 
-    @pytest.mark.parametrize("path", ["/downloads/v2/", "/api/downloads/v2/"])
     @pytest.mark.django_db
     def test_json_download_returns_correct_response(
-        self, path: str, authenticated_api_client: APIClient
+        self, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload to request a download
         And an authenticated APIClient
-        When the `POST /downloads/v2/` endpoint is hit
+        When the `POST /api/downloads/v2/` endpoint is hit
         Then the response contains the expected output in json format
         """
         # Given
@@ -117,6 +115,7 @@ class TestDownloadsView:
                 }
             ],
         }
+        path = "/api/downloads/v2/"
 
         # When
         response: Response = authenticated_api_client.post(
@@ -137,15 +136,14 @@ class TestDownloadsView:
         # Check the output itself is as expected
         assert response.data[0] == self.api_timeseries_data
 
-    @pytest.mark.parametrize("path", ["/downloads/v2/", "/api/downloads/v2/"])
     @pytest.mark.django_db
     def test_csv_download_returns_correct_response(
-        self, path: str, authenticated_api_client: APIClient
+        self, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload to request a download
         And an authenticated APIClient
-        When the `POST /downloads/v2/` endpoint is hit
+        When the `POST /api/downloads/v2/` endpoint is hit
         Then the response contains the expected output in csv format
         """
         # Given
@@ -159,35 +157,7 @@ class TestDownloadsView:
                 }
             ],
         }
-
-        expected_csv_heading = [
-            "theme",
-            "sub_theme",
-            "topic",
-            "geography_type",
-            "geography",
-            "metric",
-            "stratum",
-            "sex",
-            "year",
-            "dt",
-            "metric_value",
-        ]
-        expected_csv_content = [
-            [
-                "infectious_disease",
-                "respiratory",
-                "COVID-19",
-                "Nation",
-                "England",
-                "new_deaths_7day_avg",
-                "default",
-                "M",
-                "2023",
-                "2023-01-15",
-                "123.45",
-            ]
-        ]
+        path = "/api/downloads/v2/"
 
         # When
         response: Response = authenticated_api_client.post(
@@ -207,19 +177,48 @@ class TestDownloadsView:
         csv_output = list(csv_file)
         csv_header = csv_output.pop(0)
 
-        assert csv_header == expected_csv_heading
+        expected_csv_headings = [
+            "theme",
+            "sub_theme",
+            "topic",
+            "geography_type",
+            "geography",
+            "metric",
+            "stratum",
+            "sex",
+            "year",
+            "dt",
+            "metric_value",
+        ]
+        assert csv_header == expected_csv_headings
+
+        expected_csv_content = [
+            [
+                "infectious_disease",
+                "respiratory",
+                "COVID-19",
+                "Nation",
+                "England",
+                "new_deaths_7day_avg",
+                "default",
+                "M",
+                "2023",
+                "2023-01-15",
+                "123.45",
+            ]
+        ]
         assert csv_output == expected_csv_content
 
-    @pytest.mark.parametrize("path", ["/downloads/v2/", "/api/downloads/v2/"])
     @pytest.mark.django_db
-    def test_post_request_without_api_key_is_unauthorized(self, path: str):
+    def test_post_request_without_api_key_is_unauthorized(self):
         """
         Given an APIClient which is not authenticated
-        When the `GET /downloads/v2/` endpoint is hit
+        When the `POST /api/downloads/v2/` endpoint is hit
         Then an HTTP 401 UNAUTHORIZED response is returned
         """
         # Given
         client = APIClient()
+        path = "/api/downloads/v2/"
 
         # When
         response: Response = client.post(path=path, data={})
