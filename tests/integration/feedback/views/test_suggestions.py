@@ -17,7 +17,12 @@ class TestSuggestionsView:
         """
         # Given
         path = "/api/suggestions/v1/"
-        valid_payload = {"suggestions": [{"question": "string", "answer": "string"}]}
+        valid_payload = {
+            "reason": "I wanted to find out the infection rates of Disease X in my area",
+            "improve_experience": "More context around metrics and figures",
+            "like_to_see": "I'd like to see more consistency across charts and graphs",
+            "did_you_find_everything": "yes",
+        }
 
         # When
         response: Response = authenticated_api_client.post(

@@ -1,113 +1,140 @@
-from typing import List, OrderedDict
+from typing import OrderedDict
 
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from feedback.serializers.questions import (
-    QuestionAnswerListSerializer,
-    QuestionAnswerSerializer,
-    SuggestionsSerializer,
-)
-
-EXAMPLE_QUESTION = "What would you like to see on the dashboard in the future?"
-EXAMPLE_ANSWER = "Location-based on maps, with breakdown of regional filters"
+from feedback.serializers.questions import SuggestionsSerializer
 
 
-class TestQuestionAnswerSerializer:
-    def test_can_serialize_successfully(self):
+class TestSuggestionsSerializer:
+    reason = "reason"
+    improve_experience = "improve_experience"
+    like_to_see = "like_to_see"
+    did_you_find_everything = "did_you_find_everything"
+
+    @pytest.mark.parametrize(
+        "question, answer",
+        (
+            [
+                "reason",
+                "I wanted to find out the infection rates of Disease X in my area",
+            ],
+            ["improve_experience", "More context around metrics and figures"],
+            [
+                "like_to_see",
+                "I'd like to see more consistency across charts and graphs",
+            ],
+        ),
+    )
+    def test_other_questions_with_valid_answers_can_be_successfully_serialized(
+        self, question: str, answer: str
+    ):
         """
-        Given a payload containing a question and answer pair
-        When that payload is serialized with the `QuestionAnswerSerializer`
+        Given a valid payload containing a valid question answer pair
+        And the mandatory "did_you_find_everything" question answer pair
+        When that payload is serialized with the `SuggestionsSerializer`
         Then the data is validated and returned
         """
         # Given
-        question = EXAMPLE_QUESTION
-        answer = EXAMPLE_ANSWER
-        payload = {"question": question, "answer": answer}
-        serializer = QuestionAnswerSerializer(data=payload)
+        payload = {self.did_you_find_everything: "yes", question: answer}
+        serializer = SuggestionsSerializer(data=payload)
 
         # When
         serializer.is_valid(raise_exception=True)
         validated_data: OrderedDict = serializer.validated_data
 
         # Then
-        assert validated_data["question"] == question
-        assert validated_data["answer"] == answer
+        assert validated_data[self.did_you_find_everything] == "yes"
+        assert validated_data[question] == answer
 
-    def test_invalidates_if_an_answer_is_not_provided(self):
+    @pytest.mark.parametrize(
+        "question",
+        (["reason", "improve_experience", "like_to_see"]),
+    )
+    def test_other_questions_with_none_answer_can_be_successfully_serialized(
+        self, question: str
+    ):
         """
-        Given a payload only containing a question but not an answer
-        When `is_valid()` is called from
-            an instance of the `QuestionAnswerSerializer`
-        Then a `ValidationError` is raised
-        """
-        # Given
-        question = EXAMPLE_QUESTION
-        payload = {"question": question}
-        serializer = QuestionAnswerSerializer(data=payload)
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            serializer.is_valid(raise_exception=True)
-
-    def test_invalidates_if_a_question_is_not_provided(self):
-        """
-        Given a payload only containing an answer but not a question
-        When `is_valid()` is called from
-            an instance of the `QuestionAnswerSerializer`
-        Then a `ValidationError` is raised
-        """
-        # Given
-        answer = EXAMPLE_ANSWER
-        payload = {"answer": answer}
-        serializer = QuestionAnswerSerializer(data=payload)
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            serializer.is_valid(raise_exception=True)
-
-
-class TestQuestionAnswerListSerializer:
-    def test_validates_successfully(self):
-        """
-        Given a valid payload containing a list of question answer pairs
-        When that payload is serialized with the `QuestionAnswerSerializer`
-        Then the data is validated and returned
-        """
-        # Given
-        question = EXAMPLE_QUESTION
-        answer = EXAMPLE_ANSWER
-        payload = [{"question": question, "answer": answer}]
-        serializer = QuestionAnswerListSerializer(data=payload)
-
-        # When
-        serializer.is_valid(raise_exception=True)
-        validated_data: List[OrderedDict] = serializer.validated_data
-
-        # Then
-        assert len(validated_data) == len(payload)
-        assert validated_data[0]["question"] == question
-        assert validated_data[0]["answer"] == answer
-
-
-class TestSuggestionsSerializer:
-    def test_validates_successfully(self):
-        """
-        Given a valid payload containing a list of question answer pairs
+        Given a valid payload containing an answer of None
+            for one of the optional question answer pairs
+        And the mandatory "did_you_find_everything" question answer pair
         When that payload is serialized with the `SuggestionsSerializer`
         Then the data is validated and returned
         """
         # Given
-        question = EXAMPLE_QUESTION
-        answer = EXAMPLE_ANSWER
-        payload = {"suggestions": [{"question": question, "answer": answer}]}
+        payload = {self.did_you_find_everything: "yes", question: None}
         serializer = SuggestionsSerializer(data=payload)
 
         # When
         serializer.is_valid(raise_exception=True)
-        validated_data: OrderedDict[List[OrderedDict]] = serializer.validated_data
+        validated_data: OrderedDict = serializer.validated_data
 
         # Then
-        validated_suggestions: List[OrderedDict] = validated_data["suggestions"]
-        assert validated_suggestions[0]["question"] == question
-        assert validated_suggestions[0]["answer"] == answer
+        assert validated_data[self.did_you_find_everything] == "yes"
+        assert validated_data[question] is None
+
+    @pytest.mark.parametrize(
+        "question",
+        (["reason", "improve_experience", "like_to_see"]),
+    )
+    def test_other_questions_with_empty_string_answer_can_be_successfully_serialized(
+        self, question: str
+    ):
+        """
+        Given a valid payload containing an answer of an empty string
+            for one of the optional question answer pairs
+        And the mandatory "did_you_find_everything" question answer pair
+        When that payload is serialized with the `SuggestionsSerializer`
+        Then the data is validated and returned
+        """
+        # Given
+        payload = {self.did_you_find_everything: "yes", question: ""}
+        serializer = SuggestionsSerializer(data=payload)
+
+        # When
+        serializer.is_valid(raise_exception=True)
+        validated_data: OrderedDict = serializer.validated_data
+
+        # Then
+        assert validated_data[self.did_you_find_everything] == "yes"
+        assert validated_data[question] == ""
+
+    @pytest.mark.parametrize("answer", ["yes", "no"])
+    def test_only_did_you_find_everything_answer_is_required(self, answer: str):
+        """
+        Given a payload which only contains a valid answer
+            for the "did_you_find_everything" question
+        When that payload is serialized with the `SuggestionsSerializer`
+        Then the data is validated and returned
+        """
+        # Given
+        # Only the "did_you_find_everything" question is required
+        payload = {self.did_you_find_everything: answer}
+        serializer = SuggestionsSerializer(data=payload)
+
+        # When
+        serializer.is_valid(raise_exception=True)
+        validated_data: OrderedDict = serializer.validated_data
+
+        # Then
+        assert validated_data[self.did_you_find_everything] == answer
+
+    @pytest.mark.parametrize(
+        "did_you_find_everything_value", ["", "maybe", "this is invalid"]
+    )
+    def test_invalid_did_you_find_everything_answer(
+        self, did_you_find_everything_value: str
+    ):
+        """
+        Given a payload which contains an invalid answer
+            for the *did_you_find_everything* question
+        When that payload is serialized with the `SuggestionsSerializer`
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = {self.did_you_find_everything: did_you_find_everything_value}
+        serializer = SuggestionsSerializer(data=payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
