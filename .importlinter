@@ -103,9 +103,7 @@ source_modules=
     feedback
 forbidden_modules=
     cms
-    metrics.api
-    metrics.data
-    metrics.domain
+    metrics
     public_api
 
 [importlinter:contract:Feedback module not used by codebase]
@@ -113,9 +111,7 @@ name = The rest of the codebase does not depend on the feedback module except fo
 type = forbidden
 source_modules=
     cms
-    metrics.api
-    metrics.data
-    metrics.domain
+    metrics
     public_api
 forbidden_modules=
     feedback
