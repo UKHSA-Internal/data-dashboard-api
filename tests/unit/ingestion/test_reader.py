@@ -1,12 +1,9 @@
-from typing import Type
 from unittest import mock
 
-import pytest
-from django.db.models.manager import Manager
+import pandas as pd
 
-from ingestion.consumer import FieldsAndModelManager, HeadlineDTO, Ingestion, Reader
+from ingestion.consumer import Reader
 from ingestion.reader import COLUMN_NAMES_WITH_FOREIGN_KEYS
-from metrics.data.models import core_models
 
 MODULE_PATH = "ingestion.reader"
 
@@ -189,64 +186,36 @@ class TestReader:
         # Then
         assert returned_iterable == spy_create_named_tuple_iterable_from.return_value
 
-    @pytest.mark.parametrize(
-        "expected_index, expected_fields, expected_model_manager_from_class",
-        [
-            (0, {"parent_theme": "name"}, "theme_manager"),
-            (
-                1,
-                {"child_theme": "name", "parent_theme": "theme_id"},
-                "sub_theme_manager",
-            ),
-            (2, {"topic": "name", "child_theme": "sub_theme_id"}, "topic_manager"),
-            (3, {"geography_type": "name"}, "geography_type_manager"),
-            (
-                4,
-                {"geography": "name", "geography_type": "geography_type_id"},
-                "geography_manager",
-            ),
-            (5, {"metric_group": "name", "topic": "topic_id"}, "metric_group_manager"),
-            (
-                6,
-                {
-                    "metric": "name",
-                    "metric_group": "metric_group_id",
-                    "topic": "topic_id",
-                },
-                "metric_manager",
-            ),
-            (7, {"stratum": "name"}, "stratum_manager"),
-            (8, {"age": "name"}, "age_manager"),
-        ],
-    )
-    def test_get_all_related_fields_and_model_managers(
-        self,
-        expected_index: int,
-        expected_fields: dict[str, str],
-        expected_model_manager_from_class: str,
-    ):
+    def test_get_unique_values_from_dataframe_for_keys_for_single_key(self):
         """
-        Given mocked data
-        When `get_all_related_fields_and_model_managers()` is called
-            from an instance of `Ingestion`
-        Then the correct list of named tuples is returned
-            where each named tuple contains the
-            relevant fields and the corresponding model manager
+        Given a `DataFrame` which contains multiple rows
+            with duplicate values for a specific field
+        When `_get_unique_values_from_dataframe_for_keys()` is called
+            from an instance of `Reader`
+        Then the returned dataframe does not contain duplicate values
         """
         # Given
-        mocked_data = mock.Mock()
-        ingestion = Ingestion(data=mocked_data)
+        theme = "infectious_disease"
+        data = [
+            {"parent_theme": theme, "topic": "Influenza"},
+            {"parent_theme": theme, "topic": "RSV"},
+        ]
+        dataframe = pd.DataFrame(data)
+        assert len(dataframe) == 2
+
+        fields = {"parent_theme": "name"}
+        reader = Reader(data=data)
 
         # When
-        all_related_fields_and_model_managers: list[
-            FieldsAndModelManager
-        ] = ingestion.get_all_related_fields_and_model_managers()
+        deduplicated_dataframe: pd.DataFrame = (
+            reader._get_unique_values_from_dataframe_for_keys(
+                dataframe=dataframe, fields=fields
+            )
+        )
 
         # Then
-        assert (
-            all_related_fields_and_model_managers[expected_index].fields
-            == expected_fields
-        )
-        assert all_related_fields_and_model_managers[
-            expected_index
-        ].model_manager == getattr(ingestion, expected_model_manager_from_class)
+        # In this case, the "parent_theme" key was requested
+        # So this column is the focus of the new dataframe
+        # And is consequently deduplicated
+        assert len(deduplicated_dataframe) == 1
+        assert deduplicated_dataframe.values.all() == theme

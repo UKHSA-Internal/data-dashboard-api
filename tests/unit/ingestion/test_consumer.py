@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 from django.db.models.manager import Manager
 
-from ingestion.consumer import HeadlineDTO, Ingestion, Reader
+from ingestion.consumer import FieldsAndModelManager, HeadlineDTO, Ingestion, Reader
 from metrics.data.models import core_models
 
 MODULE_PATH = "ingestion.consumer"
@@ -172,3 +172,65 @@ class TestIngestion:
             core_headline_manager=mocked_core_headline_manager,
             batch_size=batch_size,
         )
+
+    @pytest.mark.parametrize(
+        "expected_index, expected_fields, expected_model_manager_from_class",
+        [
+            (0, {"parent_theme": "name"}, "theme_manager"),
+            (
+                1,
+                {"child_theme": "name", "parent_theme": "theme_id"},
+                "sub_theme_manager",
+            ),
+            (2, {"topic": "name", "child_theme": "sub_theme_id"}, "topic_manager"),
+            (3, {"geography_type": "name"}, "geography_type_manager"),
+            (
+                4,
+                {"geography": "name", "geography_type": "geography_type_id"},
+                "geography_manager",
+            ),
+            (5, {"metric_group": "name", "topic": "topic_id"}, "metric_group_manager"),
+            (
+                6,
+                {
+                    "metric": "name",
+                    "metric_group": "metric_group_id",
+                    "topic": "topic_id",
+                },
+                "metric_manager",
+            ),
+            (7, {"stratum": "name"}, "stratum_manager"),
+            (8, {"age": "name"}, "age_manager"),
+        ],
+    )
+    def test_get_all_related_fields_and_model_managers(
+        self,
+        expected_index: int,
+        expected_fields: dict[str, str],
+        expected_model_manager_from_class: str,
+    ):
+        """
+        Given mocked data
+        When `get_all_related_fields_and_model_managers()` is called
+            from an instance of `Ingestion`
+        Then the correct list of named tuples is returned
+            where each named tuple contains the
+            relevant fields and the corresponding model manager
+        """
+        # Given
+        mocked_data = mock.Mock()
+        ingestion = Ingestion(data=mocked_data)
+
+        # When
+        all_related_fields_and_model_managers: list[
+            FieldsAndModelManager
+        ] = ingestion.get_all_related_fields_and_model_managers()
+
+        # Then
+        assert (
+            all_related_fields_and_model_managers[expected_index].fields
+            == expected_fields
+        )
+        assert all_related_fields_and_model_managers[
+            expected_index
+        ].model_manager == getattr(ingestion, expected_model_manager_from_class)
