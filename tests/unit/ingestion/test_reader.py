@@ -222,15 +222,25 @@ class TestReader:
 
     def test_create_named_tuple_iterable(self):
         """
-        Given
-        When
-        Then
+        Given a `DataFrame` which contains dummy data
+        When `_create_named_tuple_iterable()` is called
+            from an instance of `Reader`
+        Then an iterable of named tuples for each data row is returned
         """
         # Given
-
+        theme_name = "infectious_disease"
+        topic_name = "Influenza"
+        data = [
+            {"parent_theme": theme_name, "topic": topic_name},
+        ]
+        dataframe = pd.DataFrame(data)
+        reader = Reader(data=data)
 
         # When
-
+        named_tuple_iterable = reader._create_named_tuple_iterable(dataframe=dataframe)
 
         # Then
+        named_tuple = next(named_tuple_iterable)
+        assert named_tuple.parent_theme == "infectious_disease"
+        assert named_tuple.topic == topic_name
 
