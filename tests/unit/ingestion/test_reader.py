@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pandas as pd
+import pytest
 
 from ingestion.consumer import Reader
 from ingestion.reader import COLUMN_NAMES_WITH_FOREIGN_KEYS
@@ -243,3 +244,68 @@ class TestReader:
         named_tuple = next(named_tuple_iterable)
         assert named_tuple.parent_theme == "infectious_disease"
         assert named_tuple.topic == topic_name
+
+    def test_cast_int_type_on_columns_with_foreign_keys(self):
+        """
+        Given a `DataFrame` which contains IDs as floats
+            for the supporting model columns
+        When `_cast_int_type_on_columns_with_foreign_keys()` is called
+            from an instance of `Reader`
+        Then the supporting model columns i.e. those with foreign keys
+            will all be cast to int types
+        """
+        # Given
+        record = {
+            "parent_theme": 1.00,
+            "child_theme": 1.0,
+            "topic": 1.000,
+            "geography": 2,
+            "geography_type": 1,
+            "metric_group": 3,
+            "metric": 4.0,
+            "stratum": 1,
+            "age": 1.0000,
+        }
+        data = [record]
+        dataframe = pd.DataFrame(data)
+        reader = Reader(data=data)
+
+        # When
+        returned_dataframe = reader._cast_int_type_on_columns_with_foreign_keys(
+            dataframe=dataframe
+        )
+
+        # Then
+        for column_name, value in record.items():
+            assert getattr(returned_dataframe, column_name)[0] == int(value)
+
+    @pytest.mark.parametrize("column_name_to_remove", COLUMN_NAMES_WITH_FOREIGN_KEYS)
+    def test_cast_int_type_on_columns_with_foreign_keys_raises_error(
+        self, column_name_to_remove: str
+    ):
+        """
+        Given a `DataFrame` which does not contain all the required columns
+        When `_cast_int_type_on_columns_with_foreign_keys()`
+            is called from an instance of `Reader`
+        Then a `KeyError` is raised
+        """
+        # Given
+        record = {
+            "parent_theme": 1.00,
+            "child_theme": 1.0,
+            "topic": 1.000,
+            "geography": 2,
+            "geography_type": 1,
+            "metric_group": 3,
+            "metric": 4.0,
+            "stratum": 1,
+            "age": 1.0000,
+        }
+        record.pop(column_name_to_remove)
+        data = [record]
+        dataframe = pd.DataFrame(data)
+        reader = Reader(data=data)
+
+        # When
+        with pytest.raises(KeyError):
+            reader._cast_int_type_on_columns_with_foreign_keys(dataframe=dataframe)
