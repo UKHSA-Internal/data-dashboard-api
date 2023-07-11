@@ -243,4 +243,3 @@ class TestReader:
         named_tuple = next(named_tuple_iterable)
         assert named_tuple.parent_theme == "infectious_disease"
         assert named_tuple.topic == topic_name
-
