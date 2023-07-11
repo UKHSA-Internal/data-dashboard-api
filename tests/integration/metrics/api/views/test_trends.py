@@ -8,11 +8,9 @@ from metrics.data.models.core_models import CoreTimeSeries, Topic
 
 
 class TestTrendsView:
-    @pytest.mark.parametrize("path", ["/trends/v2/", "/api/trends/v2/"])
     @pytest.mark.django_db
     def test_get_returns_correct_response(
         self,
-        path: str,
         authenticated_api_client: APIClient,
         core_trend_percentage_example: list[CoreTimeSeries],
         core_headline_example: CoreTimeSeries,
@@ -20,7 +18,7 @@ class TestTrendsView:
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
         And an authenticated APIClient
-        When the `GET /trends/v2/` endpoint is hit
+        When the `GET /api/trends/v2/` endpoint is hit
         Then an HTTP 200 OK response is returned with the correct trend data
         """
         # Given
@@ -28,6 +26,7 @@ class TestTrendsView:
         topic_name = main_record.metric.metric_group.topic.name
         metric_name = main_record.metric.name
         percentage_metric_name = percentage_record.metric.name
+        path = "/api/trends/v2/"
 
         # When
         response: Response = authenticated_api_client.get(
@@ -51,18 +50,16 @@ class TestTrendsView:
         }
         assert response.data == expected_response_data
 
-    @pytest.mark.parametrize("path", ["/trends/v2/", "/api/trends/v2/"])
     @pytest.mark.django_db
     def test_get_returns_error_message_for_timeseries_type_metric(
         self,
-        path: str,
         authenticated_api_client: APIClient,
         core_trend_percentage_example: list[CoreTimeSeries],
     ):
         """
         Given the names of a `metric`, `percentage_metric` as well as an incorrect `topic`
         And an authenticated APIClient
-        When the `GET /trends/v2/` endpoint is hit
+        When the `GET /api/trends/v2/` endpoint is hit
         Then an HTTP 400 BAD REQUEST response is returned with the expected error message
         """
         # Given
@@ -74,6 +71,7 @@ class TestTrendsView:
         # Or else the serializer will invalidate the field choice first
         incorrect_topic_name = "Influenza"
         Topic.objects.create(name=incorrect_topic_name)
+        path = "/api/trends/v2/"
 
         # When
         response: Response = authenticated_api_client.get(
@@ -92,19 +90,19 @@ class TestTrendsView:
         )
         assert response.data == {"error_message": expected_error_message}
 
-    @pytest.mark.parametrize("path", ["/trends/v2/", "/api/trends/v2/"])
     @pytest.mark.django_db
-    def test_get_request_without_api_key_is_unauthorized(self, path: str):
+    def test_get_request_without_api_key_is_unauthorized(self):
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
         And an APIClient which is not authenticated
-        When the `GET /trends/v2/` endpoint is hit
+        When the `GET /api/trends/v2/` endpoint is hit
         Then an HTTP 401 UNAUTHORIZED response is returned
         """
         topic_name = "COVID-19"
         metric_name = "new_deaths_7days_change"
         percentage_metric_name = "new_deaths_7days_change_percentage"
         client = APIClient()
+        path = "/api/trends/v2/"
 
         # When
         response: Response = client.get(
