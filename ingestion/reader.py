@@ -376,7 +376,7 @@ class Reader:
         dataframe: pd.DataFrame = self._cast_int_type_on_columns_with_foreign_keys(
             dataframe=dataframe
         )
-        return self._create_named_tuple_iterable_from(dataframe=dataframe)
+        return self._create_named_tuple_iterable(dataframe=dataframe)
 
     @staticmethod
     def _remove_rows_with_nan_metric_value(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -421,7 +421,7 @@ class Reader:
         return dataframe
 
     @staticmethod
-    def _create_named_tuple_iterable_from(dataframe: pd.DataFrame) -> Iterable[Any]:
+    def _create_named_tuple_iterable(dataframe: pd.DataFrame) -> Iterable[Any]:
         """Takes the given `dataframe` and returns an iterable of named tuples
 
         Notes:

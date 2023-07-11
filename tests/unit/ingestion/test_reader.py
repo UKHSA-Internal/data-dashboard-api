@@ -120,10 +120,10 @@ class TestReader:
         )
 
     @mock.patch.object(Reader, "_cast_int_type_on_columns_with_foreign_keys")
-    @mock.patch.object(Reader, "_create_named_tuple_iterable_from")
+    @mock.patch.object(Reader, "_create_named_tuple_iterable")
     def test_parse_dataframe_as_iterable_calls_method_to_create_iterable(
         self,
-        spy_create_named_tuple_iterable_from: mock.MagicMock,
+        spy_create_named_tuple_iterable: mock.MagicMock,
         spy_cast_int_type_on_columns_with_foreign_keys: mock.MagicMock,
     ):
         """
@@ -134,12 +134,12 @@ class TestReader:
             `_cast_int_type_on_columns_with_foreign_keys()` method
 
         Patches:
-            `spy_create_named_tuple_iterable_from`: For
+            `spy_create_named_tuple_iterable`: For
                 the main assertion
             `spy_cast_int_type_on_columns_with_foreign_keys`: To isolate
                  the return value, so it can be used to check
                  the contract on the call to
-                 `_create_named_tuple_iterable_from()`
+                 `_create_named_tuple_iterable()`
 
         """
         # Given
@@ -153,24 +153,24 @@ class TestReader:
         dataframe_from_previous_callee_method = (
             spy_cast_int_type_on_columns_with_foreign_keys.return_value
         )
-        spy_create_named_tuple_iterable_from.assert_called_once_with(
+        spy_create_named_tuple_iterable.assert_called_once_with(
             dataframe=dataframe_from_previous_callee_method
         )
 
-    @mock.patch.object(Reader, "_create_named_tuple_iterable_from")
+    @mock.patch.object(Reader, "_create_named_tuple_iterable")
     def test_parse_dataframe_as_iterable_calls_method_for_return_value(
         self,
-        spy_create_named_tuple_iterable_from: mock.MagicMock,
+        spy_create_named_tuple_iterable: mock.MagicMock,
     ):
         """
         Given a mocked `DataFrame`
         When `parse_dataframe_as_iterable()` is called
             from an instance of `Reader`
         Then the final call is delegated to the
-            `spy_create_named_tuple_iterable_from()` method
+            `spy_create_named_tuple_iterable()` method
 
         Patches:
-            `spy_create_named_tuple_iterable_from`: For
+            `spy_create_named_tuple_iterable`: For
                 the main assertion
 
         """
@@ -184,7 +184,7 @@ class TestReader:
         )
 
         # Then
-        assert returned_iterable == spy_create_named_tuple_iterable_from.return_value
+        assert returned_iterable == spy_create_named_tuple_iterable.return_value
 
     def test_get_unique_values_from_dataframe_for_keys_for_single_key(self):
         """
@@ -219,3 +219,18 @@ class TestReader:
         # And is consequently deduplicated
         assert len(deduplicated_dataframe) == 1
         assert deduplicated_dataframe.values.all() == theme
+
+    def test_create_named_tuple_iterable(self):
+        """
+        Given
+        When
+        Then
+        """
+        # Given
+
+
+        # When
+
+
+        # Then
+
