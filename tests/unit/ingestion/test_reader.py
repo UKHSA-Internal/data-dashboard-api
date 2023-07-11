@@ -309,3 +309,54 @@ class TestReader:
         # When
         with pytest.raises(KeyError):
             reader._cast_int_type_on_columns_with_foreign_keys(dataframe=dataframe)
+
+    def test_remove_rows_with_nan_metric_value(self):
+        """
+        Given a `DataFrame` which contains "metric_value" column values of NaN
+        When `_remove_rows_with_nan_metric_value()`
+            is called from an instance of `Reader`
+        Then the rows which contain NaN values are removed
+        """
+        # Given
+        data = [
+            {"metric_value": None, "topic": "Influenza"},
+            {"metric_value": 123, "topic": "RSV"},
+        ]
+        dataframe = pd.DataFrame(data)
+        assert len(dataframe) == 2
+        reader = Reader(data=data)
+
+        # When
+        returned_dataframe = reader._remove_rows_with_nan_metric_value(
+            dataframe=dataframe
+        )
+
+        # Then
+        assert len(returned_dataframe) == 1
+        assert returned_dataframe.metric_value.item() == 123
+
+    def test_remove_rows_with_nan_metric_value_does_not_remove_valid_rows(self):
+        """
+        Given a `DataFrame` which does not contain
+            any "metric_value" column values of NaN
+        When `_remove_rows_with_nan_metric_value()`
+            is called from an instance of `Reader`
+        Then the original dataframe is returned
+        """
+        # Given
+        data = [
+            {"metric_value": 123, "topic": "Influenza"},
+            {"metric_value": 123, "topic": "RSV"},
+        ]
+        original_dataframe = pd.DataFrame(data)
+        assert len(original_dataframe) == 2
+        reader = Reader(data=data)
+
+        # When
+        returned_dataframe = reader._remove_rows_with_nan_metric_value(
+            dataframe=original_dataframe
+        )
+
+        # Then
+        assert len(returned_dataframe) == 2
+        assert returned_dataframe.equals(original_dataframe)
