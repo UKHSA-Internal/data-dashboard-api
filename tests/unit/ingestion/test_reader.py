@@ -360,3 +360,40 @@ class TestReader:
         # Then
         assert len(returned_dataframe) == 2
         assert returned_dataframe.equals(original_dataframe)
+
+    def test_concatenate_new_records(self):
+        """
+        Given a `DataFrame` and a list of data of new records
+        When `_concatenate_new_records()`
+            is called from an instance of `Reader`
+        Then the returned dataframe contains
+           the original dataframe contents and the new records
+        """
+        # Given
+        data = [
+            {"metric_value": 123, "topic": "Influenza"},
+            {"metric_value": 456, "topic": "RSV"},
+        ]
+        original_dataframe = pd.DataFrame(data)
+        new_records_data = [
+            {"metric_value": 789, "topic": "Parainfluenza"},
+        ]
+        reader = Reader(data=data)
+
+        # When
+        returned_dataframe: pd.DataFrame = reader._concatenate_new_records(
+            dataframe=original_dataframe, new_records_data=new_records_data
+        )
+
+        # Then
+        assert len(returned_dataframe) == 3
+
+        values = returned_dataframe.values
+        assert values[0][0] == data[0]["metric_value"]
+        assert values[0][1] == data[0]["topic"]
+
+        assert values[1][0] == data[1]["metric_value"]
+        assert values[1][1] == data[1]["topic"]
+
+        assert values[2][0] == new_records_data[0]["metric_value"]
+        assert values[2][1] == new_records_data[0]["topic"]
