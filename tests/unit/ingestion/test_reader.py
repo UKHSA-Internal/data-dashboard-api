@@ -462,3 +462,58 @@ class TestReader:
 
         record = next(returned_dataframe.itertuples())
         assert record.parent_theme == 1
+
+    def test_merge_left_join(self):
+        """
+        Given a `DataFrame` and another dataframe to be merged in
+        When `_merge_left_join()` is called from
+            an instance of `Reader`
+        Then the returned dataframe contains the merged contents
+        """
+        # Given
+        incoming_data = pd.DataFrame([{"parent_theme": "infectious_disease"}])
+        existing_data = pd.DataFrame([{"name": None}])
+        reader = Reader(data=mock.Mock())
+
+        # When
+        returned_dataframe = reader._merge_left_join(
+            left_data=incoming_data,
+            right_data=existing_data,
+            fields={"parent_theme": "name"},
+        )
+
+        # Then
+        assert "name" in returned_dataframe.columns
+        assert "parent_theme" in returned_dataframe.columns
+
+        record = next(returned_dataframe.itertuples())
+        assert record.parent_theme == "infectious_disease"
+        assert record[3] == "left_only"
+
+    def test_get_new_data_in_source(self):
+        """
+        Given a `DataFrame` which has undergone a left join merge
+        When `_get_new_data_in_source()` is called from
+            an instance of `Reader`
+        Then the returned dict contains the expected values
+        """
+        # Given
+        dataframe = pd.DataFrame(
+            [
+                {
+                    "parent_theme": "infectious_disease",
+                    "name": None,
+                    "_merge": "left_only",
+                }
+            ]
+        )
+        fields = {"parent_theme": "name"}
+        reader = Reader(data=mock.Mock())
+
+        # When
+        returned_data: list[dict[str, str]] = reader._get_new_data_in_source(
+            dataframe=dataframe, fields=fields
+        )
+
+        # Then
+        assert returned_data[0]["name"] == "infectious_disease"
