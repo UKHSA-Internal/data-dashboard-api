@@ -466,8 +466,7 @@ class TestReader:
     def test_merge_left_join(self):
         """
         Given a `DataFrame` and another dataframe to be merged in
-        When `_merge_left_join()` is called from
-            an instance of `Reader`
+        When `_merge_left_join()` is called from an instance of `Reader`
         Then the returned dataframe contains the merged contents
         """
         # Given
@@ -517,3 +516,26 @@ class TestReader:
 
         # Then
         assert returned_data[0]["name"] == "infectious_disease"
+
+    def test_merge_inner(self):
+        """
+        Given a `DataFrame` and another dataframe to be merged in
+        When `_merge_inner()` is called from an instance of `Reader`
+        Then the returned dataframe contains the merged contents
+        """
+        # Given
+        incoming_data = pd.DataFrame([{"parent_theme": "infectious_disease"}])
+        data_to_add = pd.DataFrame([{"name": "infectious_disease", "pk": 1}])
+        reader = Reader(data=mock.Mock())
+
+        # When
+        returned_dataframe = reader._merge_inner(
+            left_data=incoming_data,
+            right_data=data_to_add,
+            fields={"parent_theme": "name"},
+        )
+
+        # Then
+        record = next(returned_dataframe.itertuples())
+        assert record.parent_theme == record.name == "infectious_disease"
+        assert record.pk == 1
