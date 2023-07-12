@@ -425,8 +425,40 @@ class TestReader:
 
         # Then
         # Check the columns matching the given `fields` are dropped
-        assert "parent_theme" not in returned_dataframe.keys()
-        assert "name" not in returned_dataframe.keys()
+        assert "parent_theme" not in returned_dataframe.columns
+        assert "name" not in returned_dataframe.columns
 
         # Check other columns remain in the returned dataframe
-        assert "child_theme" in returned_dataframe.keys()
+        assert "child_theme" in returned_dataframe.columns
+
+    def test_rename_columns_to_original_names(self):
+        """
+        Given a `DataFrame` containing a "pk" column
+        When `_rename_columns_to_original_names()`
+            is called from an instance of `Reader`
+        Then the "pk" column is replaced with the "parent_theme"
+            column according to the given `fields`
+        """
+        # Given
+        data = [
+            {
+                "pk": 1,
+                "child_theme": "respiratory",
+                "name": "infectious_disease",
+            }
+        ]
+        dataframe = pd.DataFrame(data=data)
+        fields = {"parent_theme": "name"}
+        reader = Reader(data=data)
+
+        # When
+        returned_dataframe = reader._rename_columns_to_original_names(
+            dataframe=dataframe, fields=fields
+        )
+
+        # Then
+        assert "parent_theme" in returned_dataframe.columns
+        assert "pk" not in returned_dataframe.columns
+
+        record = next(returned_dataframe.itertuples())
+        assert record.parent_theme == 1
