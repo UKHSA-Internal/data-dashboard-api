@@ -190,7 +190,7 @@ class Reader:
     def _rename_columns_to_original_names(
         dataframe: pd.DataFrame, fields: dict[str, str]
     ) -> pd.DataFrame:
-        """Renames the relevant columns and replaces the values by their corresponding ID/pks
+        """Renames the "pk" column and replaces it with the first value of the given `fields`
 
         Notes:
             At this point the rows for the supporting model columns
