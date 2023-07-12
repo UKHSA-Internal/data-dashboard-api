@@ -26,12 +26,12 @@
         {
             "type": "section",
             "value": {
-                "heading": "Coronavirus",
+                "heading": "COVID-19",
                 "content": [
                     {
                         "type": "text_card",
                         "value": {
-                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on Coronavirus.</p>"
+                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on COVID-19.</p>"
                         },
                         "id": "6a399089-6e24-4010-a484-a12745d38872"
                     },
