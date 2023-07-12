@@ -397,3 +397,36 @@ class TestReader:
 
         assert values[2][0] == new_records_data[0]["metric_value"]
         assert values[2][1] == new_records_data[0]["topic"]
+
+    def test_drop_text_representation_of_columns(self):
+        """
+        Given a `DataFrame` and a dict of fields to be removed
+        When `_drop_text_representations_of_columns()`
+            is called from an instance of `Reader`
+        Then the returned dataframe does not contain
+            the columns required to be dropped by the given `fields`
+        """
+        # Given
+        data = [
+            {
+                "parent_theme": "infectious_disease",
+                "child_theme": "respiratory",
+                "name": "infectious_disease",
+            }
+        ]
+        dataframe = pd.DataFrame(data=data)
+        fields = {"parent_theme": "name"}
+        reader = Reader(data=data)
+
+        # When
+        returned_dataframe = reader._drop_text_representations_of_columns(
+            dataframe=dataframe, fields=fields
+        )
+
+        # Then
+        # Check the columns matching the given `fields` are dropped
+        assert "parent_theme" not in returned_dataframe.keys()
+        assert "name" not in returned_dataframe.keys()
+
+        # Check other columns remain in the returned dataframe
+        assert "child_theme" in returned_dataframe.keys()
