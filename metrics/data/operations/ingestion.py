@@ -28,7 +28,7 @@ def create_core_headlines(
         None
 
     """
-    core_headline_model_instances = [
+    core_headline_model_instances: list[CoreHeadline] = [
         core_headline_manager.model(
             metric_id=int(headline_dto.metric),
             geography_id=int(headline_dto.geography),
