@@ -2,8 +2,8 @@ from typing import Callable, Iterable, NamedTuple, Optional, Type
 
 import pandas as pd
 from django.db.models import Manager
-from pydantic import BaseModel
 
+from ingestion.data_transfer_models import HeadlineDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.reader import Reader
 
@@ -11,25 +11,6 @@ from ingestion.reader import Reader
 class FieldsAndModelManager(NamedTuple):
     fields: dict[str, str]
     model_manager: Type[Manager]
-
-
-class HeadlineDTO(BaseModel):
-    theme: str | int
-    sub_theme: str | int
-    topic: str | int
-    metric_group: str | int
-    metric: str | int
-    geography_type: str | int
-    geography: str | int
-    age: str | int
-    sex: str
-    stratum: str | int
-
-    period_start: str
-    period_end: str
-    refresh_date: str
-
-    metric_value: float
 
 
 DEFAULT_THEME_MANAGER = MetricsAPIInterface.get_theme_manager()
@@ -120,7 +101,7 @@ class Ingestion:
         self.stratum_manager = stratum_manager
         self.core_headline_manager = core_headline_manager
 
-    def _convert_to_models(self, processed_data: Iterable) -> list[HeadlineDTO]:
+    def _convert_to_headline_dtos(self, processed_data: Iterable) -> list[HeadlineDTO]:
         """Converts the given `processed_data` to a list of HeadlineDTOs
 
         Notes:
@@ -139,10 +120,10 @@ class Ingestion:
                 from the source file
 
         """
-        return [self.to_model(data_record=record) for record in processed_data]
+        return [self.to_headline_dto(data_record=record) for record in processed_data]
 
     @staticmethod
-    def to_model(data_record: pd.DataFrame) -> HeadlineDTO:
+    def to_headline_dto(data_record: pd.DataFrame) -> HeadlineDTO:
         """Takes the given `data_record` and returns a single enriched `HeadlineDTO`
 
         Args:
@@ -264,7 +245,7 @@ class Ingestion:
 
         return dataframe
 
-    def create_dtos_from_source(self) -> list[HeadlineDTO]:
+    def create_headlines_dtos_from_source(self) -> list[HeadlineDTO]:
         """Creates a list of `HeadlineDTO`s and updates supporting models
 
         Returns:
@@ -277,7 +258,7 @@ class Ingestion:
         processed_data: Iterable = self.reader.parse_dataframe_as_iterable(
             dataframe=dataframe
         )
-        return self._convert_to_models(processed_data=processed_data)
+        return self._convert_to_headline_dtos(processed_data=processed_data)
 
     def create_headlines(self, batch_size: int = 100) -> None:
         """Creates `CoreHeadline` records from the ingested data
@@ -299,7 +280,7 @@ class Ingestion:
             None
 
         """
-        headline_dtos: list[HeadlineDTO] = self.create_dtos_from_source()
+        headline_dtos: list[HeadlineDTO] = self.create_headlines_dtos_from_source()
 
         return CREATE_CORE_HEADLINES(
             headline_dtos=headline_dtos,

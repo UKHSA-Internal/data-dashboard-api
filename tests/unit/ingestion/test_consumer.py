@@ -11,10 +11,10 @@ MODULE_PATH = "ingestion.consumer"
 
 
 class TestIngestion:
-    def test_to_model(self, example_headline_data_json: list[dict[str, float]]):
+    def test_to_headline_dto(self, example_headline_data_json: list[dict[str, float]]):
         """
         Given a single headline record as a dictionary
-        When `to_model()` is called from an instance of `Ingestion`
+        When `to_headline_dto()` is called from an instance of `Ingestion`
         Then the returned model is enriched with the correct fields
         """
         # Given
@@ -38,7 +38,7 @@ class TestIngestion:
         ingestion = Ingestion(data=data)
 
         # When
-        model: HeadlineDTO = ingestion.to_model(data_record=headline_data)
+        model: HeadlineDTO = ingestion.to_headline_dto(data_record=headline_data)
 
         # Then
         assert model.theme == headline_data.parent_theme == data["parent_theme"]
@@ -60,17 +60,17 @@ class TestIngestion:
         assert model.metric_value == headline_data.metric_value == data["metric_value"]
         assert model.refresh_date == headline_data.refresh_date == data["refresh_date"]
 
-    @mock.patch.object(Ingestion, "to_model")
-    def test_convert_to_models(self, spy_to_model: mock.MagicMock):
+    @mock.patch.object(Ingestion, "to_headline_dto")
+    def test_convert_to_headline_dtos(self, spy_to_headline_dto: mock.MagicMock):
         """
         Given a list of dictionaries representing headline number records
-        When `convert_to_models()` is called from an instance of `Ingestion`
-        Then the call is delegated to the `to_models()` method for each entity
+        When `_convert_to_headline_dtos()` is called from an instance of `Ingestion`
+        Then the call is delegated to the `to_headline_dto()` method for each entity
 
         Patches:
-            `spy_to_model`: For the main assertion.
-                To check each model is built via
-                calls to `to_models()`
+            `spy_to_headline_dto`: For the main assertion.
+                To check each `HeadlineDTO` is built via
+                calls to `to_headline_dto()`
 
         """
         # Given
@@ -80,16 +80,16 @@ class TestIngestion:
         ingestion = Ingestion(data=data)
 
         # When
-        converted_headlines = ingestion._convert_to_models(data)
+        converted_headline_dtos = ingestion._convert_to_headline_dtos(data)
 
         # Then
         expected_calls = [
             mock.call(data_record=mocked_raw_headline_one),
             mock.call(data_record=mocked_raw_headline_two),
         ]
-        spy_to_model.assert_has_calls(expected_calls, any_order=True)
+        spy_to_headline_dto.assert_has_calls(expected_calls, any_order=True)
 
-        assert converted_headlines == [spy_to_model.return_value] * 2
+        assert converted_headline_dtos == [spy_to_headline_dto.return_value] * 2
 
     @pytest.mark.parametrize(
         "attribute_on_class, expected_model_manager",
@@ -139,12 +139,12 @@ class TestIngestion:
         # Then
         assert type(ingestion.reader) is Reader
 
-    @mock.patch.object(Ingestion, "create_dtos_from_source")
+    @mock.patch.object(Ingestion, "create_headlines_dtos_from_source")
     @mock.patch(f"{MODULE_PATH}.CREATE_CORE_HEADLINES")
     def test_create_headlines_delegates_call_correctly(
         self,
         spy_create_core_headlines: mock.MagicMock,
-        spy_create_dtos_from_source: mock.MagicMock,
+        spy_create_headlines_dtos_from_source: mock.MagicMock,
     ):
         """
         Given mocked data
@@ -166,7 +166,7 @@ class TestIngestion:
         ingestion.create_headlines()
 
         # Then
-        expected_headline_dtos = spy_create_dtos_from_source.return_value
+        expected_headline_dtos = spy_create_headlines_dtos_from_source.return_value
         spy_create_core_headlines.assert_called_once_with(
             headline_dtos=expected_headline_dtos,
             core_headline_manager=mocked_core_headline_manager,
