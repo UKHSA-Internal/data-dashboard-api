@@ -271,6 +271,38 @@ class TestIngestion:
             batch_size=batch_size,
         )
 
+    @mock.patch.object(Ingestion, "create_timeseries_dtos_from_source")
+    @mock.patch(f"{MODULE_PATH}.CREATE_CORE_TIMESERIES")
+    def test_create_timeseries_delegates_call_correctly(
+        self,
+        spy_create_timeseries: mock.MagicMock,
+        spy_create_timeseries_dtos_from_source: mock.MagicMock,
+    ):
+        """
+        Given mocked data
+        When `create_timeseries()` is called from an instance of `Ingestion`
+        Then the call is delegated to `create_core_headlines()`
+        """
+        # Given
+        mocked_core_timeseries_manager = mock.Mock()
+        ingestion = Ingestion(
+            data=mock.Mock(),
+            reader=mock.Mock(),  # Stubbed
+            core_timeseries_manager=mocked_core_timeseries_manager,
+        )
+        batch_size = 100
+
+        # When
+        ingestion.create_timeseries()
+
+        # Then
+        expected_timeseries_dtos = spy_create_timeseries_dtos_from_source.return_value
+        spy_create_timeseries.assert_called_once_with(
+            headline_dtos=expected_timeseries_dtos,
+            core_timeseries_manager=mocked_core_timeseries_manager,
+            batch_size=batch_size,
+        )
+
     @pytest.mark.parametrize(
         "expected_index, expected_fields, expected_model_manager_from_class",
         [

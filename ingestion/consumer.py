@@ -26,6 +26,7 @@ DEFAULT_CORE_HEADLINE_MANAGER = MetricsAPIInterface.get_core_headline_manager()
 DEFAULT_CORE_TIMESERIES_MANAGER = MetricsAPIInterface.get_core_timeseries_manager()
 
 CREATE_CORE_HEADLINES: Callable = MetricsAPIInterface.get_create_core_headlines()
+CREATE_CORE_TIMESERIES: Callable = MetricsAPIInterface.get_create_core_timeseries()
 
 
 class Ingestion:
