@@ -365,9 +365,10 @@ class Reader:
                 with corresponding database record IDs
 
         Returns:
-            A list of `HeadlineDTO` instances which are
-            enriched with all the data required to
-            insert a new database record in the table
+            An object to iterate over named tuples
+            for each row in the DataFrame.
+            From this a list of data transfer objects
+            can be produced
 
         """
         dataframe: pd.DataFrame = self._remove_rows_with_nan_metric_value(
