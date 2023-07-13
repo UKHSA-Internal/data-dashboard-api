@@ -11,10 +11,10 @@ MODULE_PATH = "ingestion.consumer"
 
 
 class TestIngestion:
-    def test_to_model(self, example_headline_data_json: list[dict[str, float]]):
+    def test_to_headline_dto(self, example_headline_data_json: list[dict[str, float]]):
         """
         Given a single headline record as a dictionary
-        When `to_model()` is called from an instance of `Ingestion`
+        When `to_headline_dto()` is called from an instance of `Ingestion`
         Then the returned model is enriched with the correct fields
         """
         # Given
@@ -38,7 +38,7 @@ class TestIngestion:
         ingestion = Ingestion(data=data)
 
         # When
-        model: HeadlineDTO = ingestion.to_model(data_record=headline_data)
+        model: HeadlineDTO = ingestion.to_headline_dto(data_record=headline_data)
 
         # Then
         assert model.theme == headline_data.parent_theme == data["parent_theme"]
@@ -60,17 +60,17 @@ class TestIngestion:
         assert model.metric_value == headline_data.metric_value == data["metric_value"]
         assert model.refresh_date == headline_data.refresh_date == data["refresh_date"]
 
-    @mock.patch.object(Ingestion, "to_model")
-    def test_convert_to_models(self, spy_to_model: mock.MagicMock):
+    @mock.patch.object(Ingestion, "to_headline_dto")
+    def test_convert_to_models(self, spy_to_headline_dto: mock.MagicMock):
         """
         Given a list of dictionaries representing headline number records
         When `convert_to_models()` is called from an instance of `Ingestion`
-        Then the call is delegated to the `to_models()` method for each entity
+        Then the call is delegated to the `to_headline_dto()` method for each entity
 
         Patches:
-            `spy_to_model`: For the main assertion.
-                To check each model is built via
-                calls to `to_models()`
+            `spy_to_headline_dto`: For the main assertion.
+                To check each `HeadlineDTO` is built via
+                calls to `to_headline_dto()`
 
         """
         # Given
@@ -87,9 +87,9 @@ class TestIngestion:
             mock.call(data_record=mocked_raw_headline_one),
             mock.call(data_record=mocked_raw_headline_two),
         ]
-        spy_to_model.assert_has_calls(expected_calls, any_order=True)
+        spy_to_headline_dto.assert_has_calls(expected_calls, any_order=True)
 
-        assert converted_headlines == [spy_to_model.return_value] * 2
+        assert converted_headlines == [spy_to_headline_dto.return_value] * 2
 
     @pytest.mark.parametrize(
         "attribute_on_class, expected_model_manager",

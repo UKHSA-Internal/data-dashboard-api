@@ -120,10 +120,10 @@ class Ingestion:
                 from the source file
 
         """
-        return [self.to_model(data_record=record) for record in processed_data]
+        return [self.to_headline_dto(data_record=record) for record in processed_data]
 
     @staticmethod
-    def to_model(data_record: pd.DataFrame) -> HeadlineDTO:
+    def to_headline_dto(data_record: pd.DataFrame) -> HeadlineDTO:
         """Takes the given `data_record` and returns a single enriched `HeadlineDTO`
 
         Args:
