@@ -1,9 +1,10 @@
 import urllib.parse
 from datetime import datetime
-from typing import Dict, List, Optional, Union
+from typing import Optional
 
 import plotly.graph_objects
 from django.db.models import Manager
+from scour import scour
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import (
@@ -13,7 +14,7 @@ from metrics.domain.charts import (
     line_with_shaded_section,
     waffle,
 )
-from metrics.domain.models import PlotParameters, PlotsCollection, PlotsData
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations, validation
 from metrics.interfaces.plots.access import PlotsInterface
@@ -82,8 +83,8 @@ class ChartsInterface:
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
 
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
-        plot_data: PlotsData = plots_data[0]
+        plots_data: list[PlotData] = self.build_chart_plots_data()
+        plot_data: PlotData = plots_data[0]
         return line.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
@@ -93,21 +94,21 @@ class ChartsInterface:
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot
 
+        Notes
+            This does support **multiple** plots on the same figure
+
         Returns:
             A plotly `Figure` object for the created bar chart
 
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
-        plot_data: PlotsData = plots_data[0]
+        plots_data: list[PlotData] = self.build_chart_plots_data()
 
         return bar.generate_chart_figure(
             chart_height=chart_height,
             chart_width=chart_width,
-            x_axis_values=plot_data.x_axis_values,
-            y_axis_values=plot_data.y_axis_values,
-            legend=plot_data.parameters.label,
+            chart_plots_data=plots_data,
         )
 
     def generate_line_multi_coloured_chart(self) -> plotly.graph_objects.Figure:
@@ -122,7 +123,7 @@ class ChartsInterface:
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
+        plots_data: list[PlotData] = self.build_chart_plots_data()
 
         return line_multi_coloured.generate_chart_figure(
             chart_height=chart_height,
@@ -141,14 +142,14 @@ class ChartsInterface:
             A plotly `Figure` object for the created line chart with shaded section
 
         """
-        plots_data: List[PlotsData] = self.build_chart_plots_data()
-        plot_data: PlotsData = plots_data[0]
+        plots_data: list[PlotData] = self.build_chart_plots_data()
+        plot_data: PlotData = plots_data[0]
         params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
-    def build_chart_plots_data(self) -> List[PlotsData]:
-        """Creates a list of `ChartPlotData` models which hold the params and corresponding data for the requested plots
+    def build_chart_plots_data(self) -> list[PlotData]:
+        """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
             The corresponding timeseries data is used to enrich a
@@ -159,13 +160,13 @@ class ChartsInterface:
             that chart plot is skipped and an enriched model is not provided.
 
         Returns:
-            List[PlotsData]: A list of `ChartPlotData` models for
+            List[PlotData]: A list of `PlotData` models for
                 each of the requested chart plots.
 
         """
         return self.plots_interface.build_plots_data()
 
-    def param_builder_for_line_with_shaded_section(self, plot_data: PlotsData):
+    def param_builder_for_line_with_shaded_section(self, plot_data: PlotData):
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
         x_axis_values = plot_data.x_axis_values
@@ -212,6 +213,18 @@ class ChartsInterface:
 
         return last_date
 
+    def create_optimized_svg(self, figure: plotly.graph_objects.Figure) -> str:
+        """Convert figure to a `svg` then optimize the size of it
+
+        Args:
+            figure: The figure object or a dictionary representing a figure
+
+        Returns:
+            A figure as an image and optimized for size if required
+        """
+        svg_image = figure.to_image(format=self.chart_plots.file_format)
+        return scour.scourString(in_string=svg_image)
+
     def encode_figure(self, figure: plotly.graph_objects.Figure) -> str:
         """
         URI Encode the supplied chart figure
@@ -221,32 +234,35 @@ class ChartsInterface:
 
         Returns:
             An encoded string representation of the figure
+
         """
-        encoded_chart: str = urllib.parse.quote_plus(
-            figure.to_image(format=self.chart_plots.file_format)
-        )
+        if self.chart_plots.file_format != "svg":
+            raise ValueError("Invalid file format, must be `svg`")
+
+        optimized_svg: str = self.create_optimized_svg(figure=figure)
+
+        encoded_chart: str = urllib.parse.quote_plus(optimized_svg)
 
         return encoded_chart
 
-    def write_figure(self, figure: plotly.graph_objects.Figure, topic: str) -> str:
+    def write_figure(self, figure: plotly.graph_objects.Figure) -> str:
         """
         Convert a figure to a static image and write to a file in the desired image format
 
         Args:
             figure: The figure object or a dictionary representing a figure
-            topic: The required topic (eg. COVID-19)
 
         Returns:
             The filename of the image
 
         """
-        filename = f"{topic}.{self.chart_plots.file_format}"
+        filename = f"new_chart.{self.chart_plots.file_format}"
         figure.write_image(file=filename, format=self.chart_plots.file_format)
 
         return filename
 
     @staticmethod
-    def calculate_change_in_metric_value(values, metric_name) -> Union[int, float]:
+    def calculate_change_in_metric_value(values, metric_name) -> int | float:
         rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(
             metric_name=metric_name
         )
@@ -255,6 +271,23 @@ class ChartsInterface:
         values = values[-preceding_slice:]
 
         return calculations.change_between_each_half(values=values)
+
+    def get_encoded_chart(self, figure: plotly.graph_objects.Figure) -> dict[str, str]:
+        """Creates a dict containing a timestamp for the last data point + encoded string for the chart figure.
+
+        Args:
+            figure: Plotly figure or figure dictionary
+
+        Returns:
+            A dict containing:
+             "last_updated": A timestamp for the last data point
+             "chart": An encoded string representing the chart figure
+
+        """
+        return {
+            "last_updated": self.get_last_updated(figure=figure),
+            "chart": self.encode_figure(figure=figure),
+        }
 
 
 def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
@@ -270,13 +303,13 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     """
     validate_each_requested_chart_plot(chart_plots=chart_plots)
 
-    library = ChartsInterface(chart_plots=chart_plots)
-    figure = library.generate_chart_figure()
+    charts_interface = ChartsInterface(chart_plots=chart_plots)
+    figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
-    return library.write_figure(figure=figure, topic="-")
+    return charts_interface.write_figure(figure=figure)
 
 
-def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:
+def generate_encoded_chart(chart_plots: PlotsCollection) -> dict[str, str]:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
      Then encodes it, adds the last_updated_date to it and returns the result as a serialized JSON string
 
@@ -285,23 +318,17 @@ def generate_encoded_chart(chart_plots: PlotsCollection) -> Dict[str, str]:
             encapsulated as a model
 
     Returns:
-        The encoded chart along with the last updated date as a serialized JSON string
-    """
+        A dict containing:
+         "last_updated": A timestamp for the last data point
+         "chart": An encoded string representing the chart figure
 
+    """
     validate_each_requested_chart_plot(chart_plots=chart_plots)
 
-    library = ChartsInterface(chart_plots=chart_plots)
-    figure = library.generate_chart_figure()
+    charts_interface = ChartsInterface(chart_plots=chart_plots)
+    figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
-    last_updated = library.get_last_updated(figure=figure)
-
-    # Encode the chart so it can be returned in JSON format
-    encoded_figure = library.encode_figure(figure=figure)
-
-    return {
-        "last_updated": last_updated,
-        "chart": encoded_figure,
-    }
+    return charts_interface.get_encoded_chart(figure=figure)
 
 
 def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
@@ -315,7 +342,7 @@ def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
 
         `MetricDoesNotSupportTopicError`: If the `metric` is not
             compatible for the required `topic`.
-            E.g. `new_cases_daily` is currently only available
+            E.g. `COVID-19_deaths_ONSByDay` is only available
             for the topic of `COVID-19`
 
     """
@@ -334,7 +361,7 @@ def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
 
         `MetricDoesNotSupportTopicError`: If the `metric` is not
             compatible for the required `topic`.
-            E.g. `new_cases_daily` is currently only available
+            E.g. `COVID-19_deaths_ONSByDay` is only available
             for the topic of `COVID-19`
 
     """

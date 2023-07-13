@@ -10,14 +10,12 @@ This shall ensure that the `choices` are populated from the database.
 And allowing the CMS to provide the content creator with access to the `latest` data after the point of ingestion.
 """
 
-from typing import List, Tuple
-
 from cms.metrics_interface import MetricsAPIInterface
 
-LIST_OF_TWO_STRING_ITEM_TUPLES = List[Tuple[str, str]]
+LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 
 
-def _build_two_item_tuple_choices(choices: List[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+def _build_two_item_tuple_choices(choices: list[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return [(choice, choice) for choice in choices]
 
 
@@ -55,7 +53,7 @@ def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of unique metric names.
         Examples:
-            [("new_cases_daily", "new_cases_daily"), ...]
+            [("COVID-19_deaths_ONSByDay", "COVID-19_deaths_ONSByDay"), ...]
 
     """
     metrics_interface = MetricsAPIInterface()
@@ -159,7 +157,10 @@ def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of change type metric names.
         Examples:
-            [("new_cases_7days_change", "new_cases_7days_change"), ...]
+            [("COVID-19_headline_ONSdeaths_7daychange",
+              "COVID-19_headline_ONSdeaths_7daychange"),
+                ...
+            ]
 
     """
     metrics_interface = MetricsAPIInterface()
@@ -182,7 +183,10 @@ def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES
     Returns:
         A list of 2-item tuples of change percent type metric names.
         Examples:
-            [("new_cases_7days_change_percentage", "new_cases_7days_change_percentage"), ...]
+            [("COVID-19_headline_ONSdeaths_7daypercentchange",
+              "COVID-19_headline_ONSdeaths_7daypercentchange"),
+                ...
+            ]
 
     """
     metrics_interface = MetricsAPIInterface()
@@ -205,7 +209,7 @@ def get_all_stratum_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of stratum names.
         Examples:
-            [("0_4", "0_4"), ...]
+            [("default", "default"), ...]
 
     """
     metrics_interface = MetricsAPIInterface()
@@ -254,3 +258,24 @@ def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return _build_two_item_tuple_choices(
         metrics_interface.get_all_geography_type_names()
     )
+
+
+def get_all_sex_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `sex` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Topic` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of sex names.
+        Examples:
+            [("M", "M"), ("F", "F"), ...]
+
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(metrics_interface.get_all_sex_names())

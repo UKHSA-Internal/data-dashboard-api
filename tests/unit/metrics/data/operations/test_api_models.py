@@ -41,7 +41,7 @@ class TestGenerateAPITimeSeries:
         Then `bulk_create()` is called from the `APITimeManager` with the correct args.
 
         Patches:
-          `create_weekly_time_series_from_core_time_series`: Isolation of the
+          `mocked_create_api_time_series_from_core_time_series`: Isolation of the
                 return values to be passed to the main assertion.
         """
         # Given
@@ -190,7 +190,7 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
 
         # Then
         assert isinstance(api_time_series, APITimeSeries)
-        assert api_time_series.period == mocked_time_series.period
+        assert api_time_series.period == mocked_time_series.metric_frequency
         assert (
             api_time_series.theme
             == mocked_time_series.metric.topic.sub_theme.theme.name

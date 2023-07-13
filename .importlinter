@@ -2,6 +2,9 @@
 root_packages =
     cms
     metrics
+    public_api
+    feedback
+    ingestion
     tests
 include_external_packages=True
 
@@ -39,15 +42,17 @@ modules=
 name = The Public API only depends on the `APITimeSeries` model & corresponding components via the designated interface
 type = forbidden
 source_modules=
-    metrics.public_api
+    public_api
 forbidden_modules=
     metrics.api
     metrics.data
     metrics.domain
     metrics.interfaces
     cms
+    ingestion
+    feedback
 ignore_imports=
-    metrics.public_api.metrics_interface.interface -> metrics.data.models.api_models
+    public_api.metrics_interface.interface -> metrics.data.models.api_models
 
 [importlinter:contract:Public API is only used for wiring of URLs]
 name = The Public API module is only imported for the wiring of URLs
@@ -58,10 +63,31 @@ source_modules=
     metrics.domain
     metrics.interfaces
     cms
+    ingestion
+    feedback
 forbidden_modules=
     metrics.public_api
 ignore_imports=
-    metrics.api.urls_construction -> metrics.public_api.urls
+    metrics.api.urls_construction -> public_api
+
+#----------------------------------------- Ingestion contracts -------------------------------------------
+
+[importlinter:contract:Ingestion only depends on the core models]
+name = The Ingestion module only depends on the core models & associated components via the designated interface
+type = forbidden
+source_modules=
+    ingestion
+forbidden_modules=
+    metrics.api
+    metrics.data
+    metrics.domain
+    metrics.interfaces
+    cms
+    public_api
+ignore_imports=
+    ingestion.metrics_interfaces.interface -> metrics.data.models.core_models
+    ingestion.metrics_interfaces.interface -> metrics.data.operations.ingestion
+    ingestion.metrics_interfaces.interface -> metrics.data.enums
 
 #------------------------------------- Metrics Domain library contracts -------------------------------------
 
@@ -75,6 +101,8 @@ forbidden_modules=
     metrics.data
     metrics.interfaces
     cms
+    ingestion
+    feedback
 
 [importlinter:contract:Metrics isolated trends library]
 name = Metrics trends library does not depend on the rest of the codebase
@@ -86,6 +114,33 @@ forbidden_modules=
     metrics.data
     metrics.interfaces
     cms
+    ingestion
+    feedback
+
+
+#------------------------------------- Feedback module contracts -------------------------------------------
+
+[importlinter:contract:Feedback module does not use the rest of the codebase]
+name = Feedback module does not depend on the rest of the codebase
+type = forbidden
+source_modules=
+    feedback
+forbidden_modules=
+    cms
+    metrics
+    public_api
+
+[importlinter:contract:Feedback module not used by codebase]
+name = The rest of the codebase does not depend on the feedback module except for the connection of URLs
+type = forbidden
+source_modules=
+    cms
+    metrics
+    public_api
+forbidden_modules=
+    feedback
+ignore_imports=
+    metrics.api.urls_construction -> feedback.views
 
 #------------------------------------- Source/Test code contracts -------------------------------------------
 
@@ -95,5 +150,7 @@ type = forbidden
 source_modules=
     metrics
     cms
+    ingestion
+    feedback
 forbidden_modules=
     tests

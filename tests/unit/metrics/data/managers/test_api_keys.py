@@ -1,7 +1,5 @@
-from typing import Dict
 from unittest import mock
 
-import pytest
 from rest_framework_api_key.models import APIKey, APIKeyManager
 
 from metrics.data.managers.api_keys import CustomAPIKeyManager

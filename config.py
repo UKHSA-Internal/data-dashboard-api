@@ -33,10 +33,14 @@ APP_MODE = os.environ.get("APP_MODE")
 
 # Django `SECRET_KEY` used to provide cryptographic signing of values
 SECRET_KEY = os.environ.get("SECRET_KEY")
-
 # If not provided then generate a new one.
 # Note that this will mean sessions and cookies will be lost between deployments,
 # if the `SECRET_KEY` is then set to another value.
 if not SECRET_KEY:
     logger.info("No `SECRET_KEY` provided, generating random secret key instead.")
     SECRET_KEY = django.core.management.utils.get_random_secret_key()
+
+# URL for the frontend application.
+# Note this is only used for a link on the public API
+# to direct users back to the frontend dashboard
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "")

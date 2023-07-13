@@ -1,13 +1,13 @@
 import datetime
-from typing import Any, List
+from typing import Any
 
 import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotParameters, PlotsData
+from metrics.domain.models import PlotData, PlotParameters
 
-DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
+DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
     datetime.date(2022, 9, 19),
     datetime.date(2022, 10, 3),
@@ -20,7 +20,7 @@ DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
     datetime.date(2022, 12, 26),
     datetime.date(2023, 1, 9),
 ]
-EXAMPLE_VALUES: List[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
+EXAMPLE_VALUES: list[int] = [10, 22, 8, 65, 81, 76, 67, 23, 12, 45, 71]
 HEIGHT = 220
 WIDTH = 930
 
@@ -28,22 +28,22 @@ WIDTH = 930
 class TestLineMultiColouredCharts:
     @staticmethod
     def _setup_chart_plot_data(
-        x_axis_values: List[Any],
-        y_axis_values: List[Any],
+        x_axis_values: list[Any],
+        y_axis_values: list[Any],
         label: str = "",
         line_type: str = "",
         line_colour: str = "",
-    ) -> PlotsData:
+    ) -> PlotData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
-            topic="RSV",
-            metric="weekly_positivity_by_age",
-            stratum="0_4",
+            topic="COVID-19",
+            metric="COVID-19_deaths_ONSByDay",
+            stratum="default",
             label=label,
             line_type=line_type,
             line_colour=line_colour,
         )
-        return PlotsData(
+        return PlotData(
             parameters=plot_params,
             x_axis_values=x_axis_values,
             y_axis_values=y_axis_values,
@@ -51,7 +51,7 @@ class TestLineMultiColouredCharts:
 
     def test_main_plot_and_axis_properties(self):
         """
-        Given a `ChartPlotData` models representing a line plot
+        Given a `PlotData` model representing a line plot
         When `generate_chart_figure()` is called from the `line_multi_coloured` module
         Then the figure is drawn with the expected parameters for the main background and the X & Y axis
         """
@@ -153,7 +153,7 @@ class TestLineMultiColouredCharts:
 
     def test_two_plots_with_provided_labels_and_colours(self):
         """
-        Given 2 `ChartPlotData` models representing 2 different line plots
+        Given 2 `PlotData` models representing 2 different line plots
         When `generate_chart_figure()` is called from the `line_multi_coloured` module
         Then the figure is drawn with the expected parameters for the line plots
         """

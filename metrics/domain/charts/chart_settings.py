@@ -1,19 +1,18 @@
 from datetime import datetime
-from typing import Dict, Tuple, Union
 
 import plotly
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
-from metrics.domain.models import PlotsData
+from metrics.domain.models import PlotData
 from metrics.domain.utils import get_last_day_of_month
 
 
 class ChartSettings:
     narrow_chart_width = 435
 
-    def __init__(self, width: int, height: int, plots_data: PlotsData):
+    def __init__(self, width: int, height: int, plots_data: list[PlotData]):
         self._width = width
         self._height = height
         self.plots_data = plots_data
@@ -33,7 +32,7 @@ class ChartSettings:
             "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
         }
 
-    def get_x_axis_config(self) -> Dict[str, Union[str, bool, DICT_OF_STR_ONLY]]:
+    def get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
         return {
             "showgrid": False,
             "zeroline": False,
@@ -46,7 +45,7 @@ class ChartSettings:
             "tickfont": self.get_tick_font_config(),
         }
 
-    def get_y_axis_config(self) -> Dict[str, Union[bool, DICT_OF_STR_ONLY]]:
+    def get_y_axis_config(self) -> dict[str, bool | DICT_OF_STR_ONLY]:
         return {
             "showgrid": False,
             "showticklabels": True,
@@ -70,7 +69,7 @@ class ChartSettings:
             "width": self.width,
         }
 
-    def get_simple_line_chart_config(self) -> Dict[str, Dict[str, bool]]:
+    def get_simple_line_chart_config(self) -> dict[str, dict[str, bool]]:
         set_axes_to_be_invisible = {"visible": False}
         return {
             "xaxis": set_axes_to_be_invisible,
@@ -118,10 +117,13 @@ class ChartSettings:
         )
         return {**chart_config, **self._get_legend_top_centre_config()}
 
+    def _get_date_tick_format(self) -> str:
+        return "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
+
     def _get_x_axis_date_type(
         self, figure: plotly.graph_objs.Figure
     ) -> DICT_OF_STR_ONLY:
-        tick_format = "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
+        tick_format = self._get_date_tick_format()
         min_date, max_date = get_x_axis_range(figure=figure)
         return {
             "type": "date",
@@ -172,7 +174,7 @@ class ChartSettings:
         }
 
 
-def get_existing_chart_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
+def get_existing_chart_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
     """Extract the x axis range from a chart figure
 
     Args:
@@ -204,7 +206,7 @@ def get_new_max_date(existing_dt: str) -> str:
     return new_dt.strftime("%Y-%m-%d")
 
 
-def get_x_axis_range(figure: plotly.graph_objs.Figure) -> Tuple[str, str]:
+def get_x_axis_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
     """Adjust the right-hand side of the charts' x axis to give Plotly the best chance of displaying a label for every tick
 
     Args:

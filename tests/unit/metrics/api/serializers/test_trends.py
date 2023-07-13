@@ -1,5 +1,3 @@
-from typing import Dict, List, Tuple
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -13,20 +11,18 @@ from tests.fakes.managers.topic_manager import FakeTopicManager
 
 
 class TestTrendsQuerySerializer:
-    DATA_PAYLOAD_HINT = Dict[str, str]
+    DATA_PAYLOAD_HINT = dict[str, str]
 
     @classmethod
     def _setup_valid_data_payload_and_model_managers(
         cls,
-    ) -> Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
-        base_metric_name = "new_tests_7days_change"
+    ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
+        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
 
-        fake_metric = FakeMetricFactory.build_example_metric(
-            metric_name=base_metric_name
-        )
-        fake_topic = fake_metric.topic
+        fake_metric = FakeMetricFactory.build_example_metric(metric_name=metric_name)
+        fake_topic = fake_metric.metric_group.topic
         fake_percentage_metric = FakeMetricFactory.build_example_metric(
-            metric_name=f"{base_metric_name}_percentage"
+            metric_name="COVID-19_headline_ONSdeaths_7daypercentchange"
         )
 
         data: cls.DATA_PAYLOAD_HINT = {
@@ -122,7 +118,7 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_metric_names: List[
+        expected_metric_names: list[
             str
         ] = metric_manager.get_all_unique_change_type_names()
         assert list(serializer.fields["metric"].choices) == expected_metric_names
@@ -151,7 +147,7 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_metric_names: List[
+        expected_metric_names: list[
             str
         ] = metric_manager.get_all_unique_percent_change_type_names()
         assert (
@@ -163,7 +159,8 @@ class TestTrendsQuerySerializer:
         """
         Given a valid payload passed to a `TrendsQuerySerializer` object
         When the serializer is initialized
-        Then the result of `get_all_names()` from the `TopicManager` is used to populate the correct field choices
+        Then the result of `get_all_names()` from the `TopicManager`
+            is used to populate the correct field choices
         """
         # Given
         (
@@ -182,7 +179,7 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_topic_names: List[str] = topic_manager.get_all_names()
+        expected_topic_names: list[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names
 
 
@@ -195,9 +192,9 @@ class TestTrendsResponseSerializer:
         """
         # Given
         payload = {
-            "metric_name": "new_cases_7days_change",
+            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
             "metric_value": 10,
-            "percentage_metric_name": "new_cases_7days_change_percentage",
+            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
             "percentage_metric_value": 3.2,
             "direction": "up",
             "colour": "red",

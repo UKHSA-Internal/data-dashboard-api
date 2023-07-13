@@ -1,5 +1,3 @@
-from typing import List, Optional, Union
-
 from django.contrib import admin
 from django.urls import include, path, re_path, resolvers
 from django.views.static import serve
@@ -12,7 +10,8 @@ from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
-from cms.dashboard.viewsets import CMSPagesAPIViewSet
+from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
+from feedback.views import SuggestionsView
 from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
@@ -24,7 +23,7 @@ from metrics.api.views import (
     TablesView,
     TrendsView,
 )
-from metrics.public_api.urls import urlpatterns as public_api_urlpatterns
+from public_api import urlpatterns as public_api_urlpatterns
 
 router = routers.DefaultRouter()
 
@@ -37,6 +36,7 @@ api_router = WagtailAPIRouter("wagtailapi")
 # is used in the URL of the endpoint
 # The second parameter is the endpoint class that handles the requests
 api_router.register_endpoint("pages", CMSPagesAPIViewSet)
+api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
 
 cms_api_urlpatterns = [
     # CMS pages endpoints
@@ -55,18 +55,10 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
-    # Endpoints to be migrated away from
-    re_path(r"^upload/$", FileUploadView.as_view()),
-    re_path(r"^charts/v2", ChartsView.as_view()),
-    re_path(r"^charts/v3", EncodedChartsView.as_view()),
-    re_path(r"^downloads/v2", DownloadsView.as_view()),
-    re_path(r"^headlines/v2", HeadlinesView.as_view()),
-    re_path(r"^tables/v2", TablesView.as_view()),
-    re_path(r"^trends/v2", TrendsView.as_view()),
+    re_path(f"^{API_PREFIX}suggestions/v1", SuggestionsView.as_view()),
 ]
 
 docs_urlspatterns = [
-    path("", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     # JSON schema view
     path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),
@@ -98,8 +90,8 @@ django_admin_urlpatterns = [
 
 
 def construct_urlpatterns(
-    app_mode: Optional[str],
-) -> List[Union[resolvers.URLResolver, resolvers.URLPattern]]:
+    app_mode: str | None,
+) -> list[resolvers.URLResolver, resolvers.URLPattern]:
     """Builds a list of `URLResolver` and `URLPattern` instances for the django app to consume.
 
     Notes:

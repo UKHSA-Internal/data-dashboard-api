@@ -1,25 +1,25 @@
 from collections import defaultdict
-from datetime import date, timedelta
-from typing import Any, Dict, List
+from datetime import date
+from typing import Any
 
-from metrics.domain.models import PlotsData
+from metrics.domain.models import PlotData
 from metrics.domain.utils import get_axis_name, get_last_day_of_month
 
 
 class TabularData:
-    def __init__(self, plots: List[PlotsData]):
+    def __init__(self, plots: list[PlotData]):
         self.plots = plots
 
         # The list of plot labels
-        self.plot_labels: List[str] = []
+        self.plot_labels: list[str] = []
 
         # The individual plots combined into one dictionary of dictionaries
-        self.combined_plots: Dict[str, Dict[str, str]] = defaultdict(dict)
+        self.combined_plots: dict[str, dict[str, str]] = defaultdict(dict)
 
         # The headings to use in the table
         self.column_heading: str = ""
 
-    def create_plots_in_tabular_format(self) -> List[Dict[str, str]]:
+    def create_plots_in_tabular_format(self) -> list[dict[str, str]]:
         """Creates the tabular output for the given plots
 
         Returns:
@@ -34,7 +34,7 @@ class TabularData:
 
         return tabular_format
 
-    def collate_data_by_date(self, plot_data: Dict[Any, Any], plot_label: str):
+    def collate_data_by_date(self, plot_data: dict[Any, Any], plot_label: str):
         """Add just the last values for each month to the combined plots dictionary
 
         Args:
@@ -46,7 +46,7 @@ class TabularData:
             month_end = str(get_last_day_of_month(k))
             self.combined_plots[month_end].update({plot_label: str(v)})
 
-    def collate_data_not_by_date(self, plot_data: Dict[Any, Any], plot_label: str):
+    def collate_data_not_by_date(self, plot_data: dict[Any, Any], plot_label: str):
         """Add the values to the combined plots dictionary
 
         Args:

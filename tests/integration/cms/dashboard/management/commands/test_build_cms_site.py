@@ -43,7 +43,7 @@ class TestBuildCMSSite:
 
         expected_titles = [
             "Respiratory viruses",
-            "Coronavirus",
+            "COVID-19",
             "Influenza",
             "How to use this data",
             "Maps",
@@ -83,6 +83,14 @@ class TestBuildCMSSite:
             == home_page_response_template["page_description"]
         )
         assert response_data["body"] == home_page_response_template["body"]
+        assert (
+            response_data["meta"]["seo_title"]
+            == home_page_response_template["meta"]["seo_title"]
+        )
+        assert (
+            response_data["meta"]["search_description"]
+            == home_page_response_template["meta"]["search_description"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -129,6 +137,14 @@ class TestBuildCMSSite:
             == topic_page_response_template["page_description"]
         )
         assert response_data["body"] == topic_page_response_template["body"]
+        assert (
+            response_data["meta"]["seo_title"]
+            == topic_page_response_template["meta"]["seo_title"]
+        )
+        assert (
+            response_data["meta"]["search_description"]
+            == topic_page_response_template["meta"]["search_description"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -166,6 +182,14 @@ class TestBuildCMSSite:
         about_page_template = open_example_page_response("about")
         assert response_data["title"] == about_page_template["title"]
         assert response_data["body"] == about_page_template["body"]
+        assert (
+            response_data["meta"]["seo_title"]
+            == about_page_template["meta"]["seo_title"]
+        )
+        assert (
+            response_data["meta"]["search_description"]
+            == about_page_template["meta"]["search_description"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -203,6 +227,14 @@ class TestBuildCMSSite:
         whats_new_page_template = open_example_page_response("whats_new")
         assert response_data["title"] == whats_new_page_template["title"]
         assert response_data["body"] == whats_new_page_template["body"]
+        assert (
+            response_data["meta"]["seo_title"]
+            == whats_new_page_template["meta"]["seo_title"]
+        )
+        assert (
+            response_data["meta"]["search_description"]
+            == whats_new_page_template["meta"]["search_description"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]

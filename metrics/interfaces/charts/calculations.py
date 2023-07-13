@@ -1,7 +1,7 @@
-from typing import Tuple, Union
+from typing import Any
 
 
-def change_between_each_half(values: list) -> Union[int, float]:
+def change_between_each_half(values: list) -> int | float:
     """Calculates the difference between the total of each half of the `values`
 
     Args:
@@ -16,7 +16,7 @@ def change_between_each_half(values: list) -> Union[int, float]:
     return sum(second_half_values) - sum(first_half_values)
 
 
-def split_list_in_half(values: list) -> Tuple[list, list]:
+def split_list_in_half(values: list) -> tuple[list[Any], list[Any]]:
     half = len(values) // 2
     return values[:half], values[half:]
 
@@ -26,7 +26,7 @@ def get_rolling_period_slice_for_metric(metric_name: str) -> int:
 
     Args:
         metric_name: The name of the metric being checked.
-            E.g. `new_cases_daily`
+            E.g. `COVID-19_deaths_ONSByDay`
 
     Returns:
         The number of points which would represent

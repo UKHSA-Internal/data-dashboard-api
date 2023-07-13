@@ -102,4 +102,4 @@ class ChartRowCard(blocks.StructBlock):
     )
 
     class Meta:
-        icon = "standalone_chart"
+        icon = "chart_row_card"

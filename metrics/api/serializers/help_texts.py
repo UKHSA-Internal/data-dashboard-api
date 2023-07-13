@@ -1,7 +1,8 @@
 TOPIC_FIELD: str = "The name of the topic being queried for. E.g. `COVID-19`"
 METRIC_FIELD: str = "The name of the metric being queried for. E.g. `{}`"
 STRATUM_FIELD: str = """
-The smallest subgroup a metric can be broken down into. E.g. `0_4` for the age band 0 - 4 years old.
+The smallest subgroup a metric can be broken down into.
+Defaults to `default`
 """
 GEOGRAPHY_FIELD: str = """
 The geography constraints to apply any data filtering to.
@@ -11,22 +12,27 @@ GEOGRAPHY_TYPE_FIELD: str = """
 The type of geographical categorisation to apply any data filtering to.
 E.g. `Nation`
 """
+SEX_FIELD: str = """
+The gender to apply data filtering to.
+The only options available are `M`, `F` and `ALL`.
+By default, `ALL` will be applied to the underlying query.
+"""
 LABEL_FIELD: str = """
 The label to assign on the legend for this individual plot.
 E.g. `15 to 44 years old`
 """
 HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT: str = """
-The associated value of the headline metric which was queried for. E.g. `new_cases_7days_change`
+The associated value of the headline metric which was queried for. E.g. `COVID-19_headline_newtests_7daycounttotal`
 """
 TREND_METRIC_NAME_FIELD: str = """
-The name of the main change type metric being queried for. E.g. `new_cases_7days_change`
+The name of the main change type metric being queried for. E.g. `COVID-19_headline_ONSdeaths_7daychange`
 """
 TREND_METRIC_VALUE_FIELD: str = """
 The associated value of the main change type metric which was queried for. E.g. `10`
 """
 
 TREND_PERCENTAGE_METRIC_NAME_FIELD: str = """
-The name of the percentage change type metric being queried for. E.g. `new_cases_7days_change_percentage`
+The name of the percentage change type metric being queried for. E.g. `COVID-19_headline_ONSdeaths_7daypercentchange`
 """
 TREND_PERCENTAGE_METRIC_VALUE_FIELD: str = """
 The associated value of the percentage change type metric being queried for. E.g. `3.2` would be considered as +3.2%
@@ -51,6 +57,10 @@ This can be one of the following `green`, `neutral` or `red`.
 CHART_FILE_FORMAT_FIELD: str = """
 The file format to render the chart in. 
 This can be one of the following `svg`, `png`, `jpg` or `jpeg`.
+"""
+ENCODED_CHARTS_FILE_FORMAT_FIELD: str = """
+The file format to render the chart in. 
+Note this currently only supports `svg`.
 """
 FILE_DOWNLOAD_FORMAT: str = """
 The format you want the data downloaded in. 

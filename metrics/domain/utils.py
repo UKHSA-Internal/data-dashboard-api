@@ -1,6 +1,5 @@
 from datetime import date, timedelta
 from enum import Enum
-from typing import List
 
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 435
@@ -11,7 +10,9 @@ def get_last_day_of_month(dt: date) -> date:
     return next_month - timedelta(days=next_month.day)
 
 
-def _check_for_substring_match(string_to_check: str, substrings: List[str]) -> bool:
+def _check_for_substring_match(
+    string_to_check: str, substrings: tuple[str, ...]
+) -> bool:
     return any((sub_string in string_to_check for sub_string in substrings))
 
 
@@ -39,7 +40,7 @@ class ChartAxisFields(Enum):
 
     @classmethod
     def choices(cls):
-        return tuple((field_name.value, field_name.name) for field_name in cls)
+        return tuple((field_name.name, field_name.name) for field_name in cls)
 
     @classmethod
     def values(cls):
@@ -47,6 +48,28 @@ class ChartAxisFields(Enum):
 
     def __str__(self):
         return str(self.value)
+
+    @classmethod
+    def get_default_x_axis(cls):
+        return cls.date
+
+    @classmethod
+    def get_x_axis_value(cls, name: str) -> str:
+        try:
+            return cls[name].value
+        except KeyError:
+            return cls.get_default_x_axis().value
+
+    @classmethod
+    def get_default_y_axis(cls):
+        return cls.metric
+
+    @classmethod
+    def get_y_axis_value(cls, name: str) -> str:
+        try:
+            return cls[name].value
+        except KeyError:
+            return cls.get_default_y_axis().value
 
 
 def get_axis_name(field_name: str):
@@ -66,5 +89,5 @@ def get_axis_name(field_name: str):
     )
 
 
-DEFAULT_X_AXIS = ChartAxisFields.date.value
-DEFAULT_Y_AXIS = ChartAxisFields.metric.value
+DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
+DEFAULT_Y_AXIS = ChartAxisFields.get_default_y_axis().name

@@ -1,7 +1,6 @@
 import datetime
-from typing import Optional, Union
+from typing import Optional
 
-from metrics.data import enums
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
 
@@ -15,26 +14,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         self.time_series = time_series
         super().__init__(**kwargs)
 
-    def filter_weekly(self):
-        return [
-            x for x in self.time_series if x.period == enums.TimePeriod.Weekly.value
-        ]
-
     def all_related(self):
-        return [x for x in self.time_series]
-
-    def by_topic_metric_for_dates_and_values(
-        self,
-        topic_name: str,
-        metric_name: str,
-        date_from: datetime.datetime,
-    ):
-        return [
-            (time_series.dt, time_series.metric_value)
-            for time_series in self.time_series
-            if time_series.metric.topic_name.name == topic_name
-            if time_series.metric.name == metric_name
-        ]
+        return self.time_series
 
     def get_count(
         self,
@@ -42,14 +23,14 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         y_axis: str,
         topic_name: str,
         metric_name: str,
-        date_from: Union[datetime.datetime, str],
+        date_from: datetime.datetime | str,
     ) -> int:
         date_from = _convert_string_to_date(date_string=date_from)
 
         filtered_for_metric_topic_and_date = [
             x
             for x in self.time_series
-            if x.metric.topic.name == topic_name
+            if x.metric.metric_group.topic.name == topic_name
             if x.metric.name == metric_name
             if x.dt >= date_from
         ]
@@ -57,19 +38,19 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def get_latest_metric_value(
         self, topic_name: str, metric_name: str
-    ) -> Optional[float]:
+    ) -> float | None:
         try:
             core_time_series = next(
                 core_time_series
                 for core_time_series in self.time_series
-                if core_time_series.metric.topic.name == topic_name
+                if core_time_series.metric.metric_group.topic.name == topic_name
                 if core_time_series.metric.name == metric_name
             )
         except StopIteration:
             return None
         return core_time_series.metric_value
 
-    def filter_for_dates_and_values(
+    def filter_for_x_and_y_values(
         self,
         x_axis: str,
         y_axis: str,
@@ -79,13 +60,14 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
+        sex: Optional[str] = None,
     ):
         date_from = _convert_string_to_date(date_string=date_from)
 
         filtered_time_series = [
             time_series
             for time_series in self.time_series
-            if time_series.metric.topic.name == topic_name
+            if time_series.metric.metric_group.topic.name == topic_name
             if time_series.metric.name == metric_name
             if time_series.dt > date_from
         ]
@@ -106,8 +88,11 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
                 x for x in filtered_time_series if x.stratum.name == stratum_name
             ]
 
+        if sex:
+            filtered_time_series = [x for x in filtered_time_series if x.sex == sex]
+
         return [
-            (time_series.dt, time_series.metric_value)
+            (getattr(time_series, x_axis), getattr(time_series, y_axis))
             for time_series in filtered_time_series
         ]
 
@@ -115,7 +100,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         return bool(self.time_series)
 
 
-def _convert_string_to_date(date_string: str) -> datetime.date:
+def _convert_string_to_date(date_string: str | datetime.datetime) -> datetime.date:
     """Convenience function to convert date strings to `datetime.date` objects.
 
     Notes:

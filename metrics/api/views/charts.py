@@ -1,8 +1,7 @@
 import os
 from http import HTTPStatus
-from typing import Dict
 
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,6 +11,7 @@ from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
     EncodedChartResponseSerializer,
+    EncodedChartsRequestSerializer,
 )
 from metrics.interfaces.charts import access, validation
 
@@ -35,14 +35,15 @@ class ChartsView(APIView):
         | Parameter name   | Description                                                                | Example                  | Mandatory |
         |------------------|----------------------------------------------------------------------------|--------------------------|-----------|
         | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
-        | `metric`         | The name of the metric being queried for                                   | new_cases_daily          | Yes       |
+        | `metric`         | The name of the metric being queried for                                   | COVID-19_deaths_ONSByDay | Yes       |
         | `chart_type`     | The type of chart to use for the individual plot                           | line_with_shaded_section | Yes       |
-        | `stratum`        | The smallest subgroup a metric can be broken down into                     | 0_4                      | No        |
+        | `stratum`        | The smallest subgroup a metric can be broken down into                     | default                  | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
+        | `sex`            | The gender to filter for, defaults to all                                  | F                        | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
-        | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
+        | `label`          | The label to assign on the legend for this individual plot                 | Females                  | No        |
         | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
         | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
 
@@ -64,17 +65,19 @@ class ChartsView(APIView):
         ## Incompatible timeseries type metrics with waffle charts
 
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
-        For example, if a timeseries type metric like `new_cases_daily` is being asked for with a `waffle` chart.
+        For example, if a timeseries type metric like `COVID-19_deaths_ONSByDay`
+        is being asked for with a `waffle` chart.
 
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
-            `new_cases_daily` is not compatible with `waffle` chart types
+            `COVID-19_deaths_ONSByDay` is not compatible with `waffle` chart types
 
         ---
 
         ## Selected metric not available for topic
 
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
-        For example, if a metric like `new_cases_daily` (which is only used for `COVID-19`) is being asked for with a topic of `Influenza`.
+        For example, if a metric like `COVID-19_deaths_ONSByDay` (which is only used for `COVID-19`)
+        is being asked for with a topic of `Influenza`.
 
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
             `Influenza` does not have a corresponding metric of `COVID-19`
@@ -86,15 +89,18 @@ class ChartsView(APIView):
         `chart_height`
 
         `chart_width`
+
         ---
-        # Chosing what to display along the x and y axis
+
+        # Choosing what to display along the x and y axis
 
         By default, dates will be displayed on the x axis and metric values on the y axis. If you want to
-        overide either/both of these values then you can do so as follows:
+        override either/both of these values then you can do so as follows:
 
-        `x_axis` Example: `x_axis: "stratum__name"`
+        `x_axis` Example: `x_axis: "stratum"`
 
-        `y_axis` Example: `y_axis: "stratum__name"`
+        `y_axis` Example: `y_axis: "stratum"`
+
         """
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
@@ -126,7 +132,7 @@ class EncodedChartsView(APIView):
     permission_classes = [HasAPIKey]
 
     @extend_schema(
-        request=ChartsSerializer,
+        request=EncodedChartsRequestSerializer,
         responses={HTTPStatus.OK.value: EncodedChartResponseSerializer},
         tags=[CHARTS_API_TAG],
     )
@@ -139,14 +145,15 @@ class EncodedChartsView(APIView):
         | Parameter name   | Description                                                                | Example                  | Mandatory |
         |------------------|----------------------------------------------------------------------------|--------------------------|-----------|
         | `topic`          | The name of the disease/threat                                             | COVID-19                 | Yes       |
-        | `metric`         | The name of the metric being queried for                                   | new_cases_daily          | Yes       |
+        | `metric`         | The name of the metric being queried for                                   | COVID-19_deaths_ONSByDay | Yes       |
         | `chart_type`     | The type of chart to use for the individual plot                           | line_with_shaded_section | Yes       |
-        | `stratum`        | The smallest subgroup a metric can be broken down into                     | 0_4                      | No        |
+        | `stratum`        | The smallest subgroup a metric can be broken down into                     | default                  | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
+        | `sex`            | The gender to filter for, defaults to all                                  | F                        | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
-        | `label`          | The label to assign on the legend for this individual plot                 | 15 to 44 years old       | No        |
+        | `label`          | The label to assign on the legend for this individual plot                 | Females                  | No        |
         | `line_colour`    | The colour to use for the line of this individual plot                     | BLUE                     | No        |
         | `line_type`      | The type to assign for this individual plot i.e. SOLID or DASH             | DASH                     | No        |
 
@@ -168,36 +175,51 @@ class EncodedChartsView(APIView):
         ## Incompatible timeseries type metrics with waffle charts
 
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
-        For example, if a timeseries type metric like `new_cases_daily` is being asked for with a `waffle` chart.
+        For example, if a timeseries type metric like `COVID-19_deaths_ONSByDay`
+        is being asked for with a `waffle` chart.
 
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
-            `new_cases_daily` is not compatible with `waffle` chart types
+            `COVID-19_deaths_ONSByDay` is not compatible with `waffle` chart types
 
         ---
 
         ## Selected metric not available for topic
 
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
-        For example, if a metric like `new_cases_daily` (which is only used for `COVID-19`) is being asked for with a topic of `Influenza`.
+        For example, if a metric like `COVID-19_deaths_ONSByDay` (which is only used for `COVID-19`)
+        is being asked for with a topic of `Influenza`.
 
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
             `Influenza` does not have a corresponding metric of `COVID-19`
         ---
         # Changing the size of the graph
 
-        If you are not happy with the default width and/or height of the graph you can override the values by setting one or both of them:
+        If you are not happy with the default width and/or height of the graph you can override
+        the values by setting one or both of them:
 
         `chart_height`
 
         `chart_width`
+
+        ---
+
+        # Choosing what to display along the x and y axis
+
+        By default, dates will be displayed on the x axis and metric values on the y axis. If you want to
+        override either/both of these values then you can do so as follows:
+
+        `x_axis` Example: `x_axis: "stratum"`
+
+        `y_axis` Example: `y_axis: "stratum"`
+
         """
-        request_serializer = ChartsSerializer(data=request.data)
+        request_serializer = EncodedChartsRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
         chart_plot_models = request_serializer.to_models()
 
         try:
-            response: Dict[str, str] = access.generate_encoded_chart(
+            response: dict[str, str] = access.generate_encoded_chart(
                 chart_plots=chart_plot_models,
             )
 

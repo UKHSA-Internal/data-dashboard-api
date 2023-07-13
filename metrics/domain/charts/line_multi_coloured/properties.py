@@ -1,7 +1,6 @@
 from enum import Enum
-from typing import List
 
-from metrics.domain.models import PlotsData
+from metrics.domain.models import PlotData
 
 
 class ChartLineTypes(Enum):
@@ -20,14 +19,14 @@ class ChartLineTypes(Enum):
             return cls.SOLID
 
 
-def is_legend_required(chart_plots_data: List[PlotsData]) -> bool:
-    """Checks if any of the `ChartPlotData` models contains a truthy `label` attribute.
+def is_legend_required(chart_plots_data: list[PlotData]) -> bool:
+    """Checks if any of the `PlotData` models contains a truthy `label` attribute.
 
-    chart_plots_data: List of `ChartPlotData` models,
+    chart_plots_data: List of `PlotData` models,
             where each model represents a requested plot.
 
     Returns:
-        True if at least one of the `ChartPlotData` models
+        True if at least one of the `PlotData` models
         contains a truthy `label` attribute.
         False otherwise.
 

@@ -1,6 +1,5 @@
 import datetime
 import secrets
-from typing import List
 
 import factory
 
@@ -9,7 +8,6 @@ from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
 from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.metrics.metric import FakeMetric
 from tests.fakes.models.metrics.stratum import FakeStratum
-from tests.fakes.models.metrics.topic import FakeTopic
 
 
 class FakeCoreTimeSeriesFactory(factory.Factory):
@@ -19,13 +17,6 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
 
     class Meta:
         model = FakeCoreTimeSeries
-
-    @classmethod
-    def _build_example_metric(
-        cls, metric_name: str = "new_cases_daily", topic_name: str = "COVID-19"
-    ) -> FakeMetric:
-        topic = FakeTopic(name=topic_name)
-        return FakeMetric(name=metric_name, topic=topic)
 
     @classmethod
     def build_time_series(
@@ -46,7 +37,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             stratum = None
 
         return cls.build(
-            period="D",
+            metric_frequency="D",
             sex="ALL",
             year=dt.year,
             metric_value=1,
@@ -56,17 +47,17 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         )
 
     @classmethod
-    def build_example_covid_time_series_range(cls) -> List[FakeCoreTimeSeries]:
+    def build_example_covid_time_series_range(cls) -> list[FakeCoreTimeSeries]:
         time_series_range = []
 
-        metric: FakeMetric = cls._build_example_metric()
+        metric: FakeMetric = FakeMetricFactory.build_example_metric()
 
         for month_number in range(4, 10, 1):
             for day_number in (3, 16, 28):
                 metric_value = cls._pick_random_positive_metric_value()
 
                 new_time_series = cls.build(
-                    period="D",
+                    metric_frequency="D",
                     sex="ALL",
                     year=2023,
                     dt=datetime.date(year=2023, month=month_number, day=day_number),
@@ -89,19 +80,21 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
     @classmethod
     def build_example_trend_type_records(
         cls, metric_name: str, percentage_metric_name: str
-    ) -> List[FakeCoreTimeSeries]:
+    ) -> list[FakeCoreTimeSeries]:
         time_series_records = []
 
-        metric: FakeMetric = cls._build_example_metric(metric_name=metric_name)
+        metric: FakeMetric = FakeMetricFactory.build_example_metric(
+            metric_name=metric_name
+        )
         metric_value: int = cls._pick_random_positive_metric_value()
 
-        percentage_metric: FakeMetric = cls._build_example_metric(
+        percentage_metric: FakeMetric = FakeMetricFactory.build_example_metric(
             metric_name=percentage_metric_name
         )
         percentage_metric_value: float = cls._pick_random_percentage_value()
 
         metric_time_series = cls.build(
-            period="D",
+            metric_frequency="D",
             sex="ALL",
             year=2023,
             dt=datetime.date(year=2023, month=1, day=1),
@@ -111,7 +104,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         time_series_records.append(metric_time_series)
 
         metric_time_series = cls.build(
-            period="D",
+            metric_frequency="D",
             sex="ALL",
             year=2023,
             dt=datetime.date(year=2023, month=1, day=1),

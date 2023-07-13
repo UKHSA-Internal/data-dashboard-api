@@ -1,14 +1,12 @@
-from typing import List
-
 import pytest
 
 from metrics.api.urls_construction import construct_urlpatterns
-from metrics.public_api.urls import PUBLIC_API_PREFIX
+from public_api.urls import PUBLIC_API_PREFIX
 
 
 class TestConstructUrlpatterns:
     @property
-    def private_api_endpoint_paths(self) -> List[str]:
+    def private_api_endpoint_paths(self) -> list[str]:
         api_prefix = "api"
         endpoints_paths = [
             "/charts/v2",
@@ -22,15 +20,15 @@ class TestConstructUrlpatterns:
         return main_endpoints + deprecated_endpoints
 
     @property
-    def public_api_endpoint_paths(self) -> List[str]:
+    def public_api_endpoint_paths(self) -> list[str]:
         return [f"{PUBLIC_API_PREFIX}", f"{PUBLIC_API_PREFIX}themes"]
 
     @property
-    def cms_endpoint_paths(self) -> List[str]:
+    def cms_endpoint_paths(self) -> list[str]:
         return ["cms", "admin"]
 
     @property
-    def common_endpoint_paths(self) -> List[str]:
+    def common_endpoint_paths(self) -> list[str]:
         return [
             "api/schema",
             "api/swagger",
@@ -66,7 +64,7 @@ class TestConstructUrlpatterns:
         """
         # Given
         app_mode = "PRIVATE_API"
-        excluded_endpoint_paths: List[str] = (
+        excluded_endpoint_paths: list[str] = (
             self.cms_endpoint_paths + self.public_api_endpoint_paths
         )
 
@@ -105,7 +103,7 @@ class TestConstructUrlpatterns:
         """
         # Given
         app_mode = "PUBLIC_API"
-        excluded_endpoint_paths: List[str] = (
+        excluded_endpoint_paths: list[str] = (
             self.private_api_endpoint_paths + self.cms_endpoint_paths
         )
 
@@ -144,7 +142,7 @@ class TestConstructUrlpatterns:
         """
         # Given
         app_mode = "CMS"
-        excluded_endpoint_paths: List[str] = (
+        excluded_endpoint_paths: list[str] = (
             self.private_api_endpoint_paths + self.public_api_endpoint_paths
         )
 

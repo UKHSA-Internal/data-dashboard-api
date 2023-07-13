@@ -1,6 +1,3 @@
-from typing import Dict, List, Union
-
-
 def filter_is_list(field_name: str) -> str:
     """
     This function will be called when the query parameter value is a list of values
@@ -35,27 +32,27 @@ def filter_is_string(field_name: str) -> str:
     return translations.get(field_name, field_name)
 
 
-def validate_filter_name(field_name: str, filter_value: Union[List[str], str]) -> str:
+def validate_filter_name(field_name: str, filter_value: list[str] | str) -> str:
     """
     This function will determine how the field_name is handled depending on what it is
 
     Args:
         field_name: The field name for the particular query parameter
-        field_value: The filter value for this particular field_name
+        filter_value: The filter value for this particular field_name
 
     Returns:
         The output from either filter_is_list or filter_is_string
     """
-    if isinstance(filter_value, List):
+    if isinstance(filter_value, list):
         return filter_is_list(field_name=field_name)
 
     return filter_is_string(field_name=field_name)
 
 
 def validate_plot_filter(
-    possible_fields: List[str],
-    plot: Dict[str, Union[List[str], str]],
-) -> Dict[str, Union[List[str], str]]:
+    possible_fields: list[str],
+    plot: dict[str, list[str] | str],
+) -> dict[str, list[str] | str]:
     """
     For a given plot update the filter key depending on whether it is
       already valid query parameter syntax or not
@@ -81,9 +78,9 @@ def validate_plot_filter(
 
 
 def validate_query_filters(
-    possible_fields: List[str],
-    plots: List[Dict[str, Union[List[str], str]]],
-) -> List[Dict[str, Union[List[str], str]]]:
+    possible_fields: list[str],
+    plots: list[dict[str, list[str] | str]],
+) -> list[dict[str, list[str] | str]]:
     """
     Adjust a list of query parameters to cater for things like 'dates from' and for lists of values
       as well as removing empty parameters. eg 'geography': '',

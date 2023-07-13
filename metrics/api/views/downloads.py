@@ -1,5 +1,4 @@
 import io
-from typing import Dict, List
 
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -41,7 +40,7 @@ class DownloadsView(APIView):
     renderer_classes = (CoreJSONRenderer,)
 
     def _get_queryset(self):
-        all_query_filters: List[Dict[str, str]] = validate_query_filters(
+        all_query_filters: list[dict[str, str]] = validate_query_filters(
             possible_fields=self.filterset_fields,
             plots=self.request.data["plots"],
         )
@@ -90,9 +89,9 @@ class DownloadsView(APIView):
         | `topic`           | The name of the disease/threat                                            | `COVID-19`                |
         | `geography_type`  | The type of geographical categorisation to apply any data filtering to    | `Nation`                  |
         | `geography`       | The geography constraints to apply any data filtering to                  | `London`                  |
-        | `metric`          | The name of the metric being queried for                                  | `new_cases_7day_avg`      |
-        | `stratum`         | The smallest subgroup a metric can be broken down into                    | `0_4`                     |
-        | `sex`             | The sex for those metrics that are broken down by sex                     | `M`                       |
+        | `metric`          | The name of the metric being queried for                                  | `COVID-19_deaths_ONSByDay`|
+        | `stratum`         | The smallest subgroup a metric can be broken down into                    | `default`                 |
+        | `sex`             | The sex for those metrics that are broken down by sex                     | `F`                       |
         | `date_from`       | The date to pull the data from                                            | `2020-01-20`              |
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
         """

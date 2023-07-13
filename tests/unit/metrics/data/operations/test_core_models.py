@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 from unittest import mock
 
 import _pytest
@@ -34,7 +33,7 @@ mock_data = [
 ]
 
 
-def create_dataframe(records: List[str]) -> pd.DataFrame:
+def create_dataframe(records: list[str]) -> pd.DataFrame:
     """
     Create a sample pandas DataFrame from a list of records
 

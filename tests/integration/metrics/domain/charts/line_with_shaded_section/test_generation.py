@@ -1,19 +1,18 @@
 import datetime
-from typing import List
 
 import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAColours
 from metrics.domain.charts.line_with_shaded_section import generation
 
-DATES_FROM_SEP_TO_JAN: List[datetime.datetime] = [
+DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
     datetime.date(2022, 10, 10),
     datetime.date(2022, 11, 14),
     datetime.date(2022, 12, 12),
     datetime.date(2023, 1, 9),
 ]
-WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC: str = "weekly_hospital_admissions_rate"
+METRIC_NAME: str = "COVID-19_deaths_ONSByWeek"
 HEIGHT = 220
 WIDTH = 930
 
@@ -36,7 +35,7 @@ class TestLineWithShadedSectionCharts:
             x_axis_values=x_axis_values,
             y_axis_values=y_axis_values,
             rolling_period_slice=1,
-            metric_name=WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC,
+            metric_name=METRIC_NAME,
             change_in_metric_value=-0.3,
         )
 
@@ -93,7 +92,7 @@ class TestLineWithShadedSectionCharts:
             x_axis_values=x_axis_values,
             y_axis_values=y_axis_values,
             rolling_period_slice=1,
-            metric_name=WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC,
+            metric_name=METRIC_NAME,
             change_in_metric_value=-0.3,
         )
 
@@ -114,14 +113,14 @@ class TestLineWithShadedSectionCharts:
 
     def test_weekly_hospital_admissions_rate_increasing_plot(self):
         """
-        Given a list of dates and values indicating an increase in `weekly_hospital_admissions_rate`
+        Given a list of dates and values indicating an increase in `COVID-19_deaths_ONSByWeek`
         When `generate_chart_figure()` is called from the `line_with_shaded_section` module
         Then the figure is drawn with the expected parameters for the main line and the shaded section plot
         """
         # Given
         x_axis_values = DATES_FROM_SEP_TO_JAN
         y_axis_values = [0.3, 0.3, 0.4, 0.6, 0.8]
-        metric_name = WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC
+        metric_name = METRIC_NAME
         rolling_period_slice = 1
         increasing_metric_value = 0.2
 
@@ -179,14 +178,14 @@ class TestLineWithShadedSectionCharts:
 
     def test_weekly_hospital_admissions_rate_decreasing_plot(self):
         """
-        Given a list of dates and values indicating a decrease in `weekly_hospital_admissions_rate`
+        Given a list of dates and values indicating a decrease in `COVID-19_deaths_ONSByWeek`
         When `generate_chart_figure()` is called from the `line_with_shaded_section` module
         Then the figure is drawn with the expected parameters for the main line and the highlighted region plot
         """
         # Given
         x_axis_values = DATES_FROM_SEP_TO_JAN
         y_axis_values = [1.1, 0.9, 0.8, 0.6, 0.3]
-        metric_name = WEEKLY_HOSPITAL_ADMISSIONS_RATE_METRIC
+        metric_name = METRIC_NAME
         rolling_period_slice = 1
         decreasing_metric_value = -0.3
 

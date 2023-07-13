@@ -46,13 +46,14 @@ class TrendsView(APIView):
 
         For example, a request for the following would be **invalid**:
 
-        - topic = `COVID-19`
+        - topic = `Influenza`
 
-        - metric =`weekly_positivity`
+        - metric =`COVID-19_headline_ONSdeaths_7daychange`
 
-        - percentage_metric =`new_deaths_7days_change_percentage`
+        - percentage_metric =`COVID-19_headline_ONSdeaths_7daypercentchange`
 
-        This would be **invalid** because the `metric` of `weekly_positivity` `COVID-19` will not return any data.
+        This would be **invalid** because the `metric` of `COVID-19_headline_ONSdeaths_7daychange`
+        and a topic of `Influenza` will not return any data.
 
         """
         query_serializer = TrendsQuerySerializer(data=request.query_params)

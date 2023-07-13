@@ -3,6 +3,7 @@ from enum import Enum
 
 class TimePeriod(Enum):
     Annual = "A"
+    Quarterly = "Q"
     Monthly = "M"
     Fortnightly = "F"
     Weekly = "W"

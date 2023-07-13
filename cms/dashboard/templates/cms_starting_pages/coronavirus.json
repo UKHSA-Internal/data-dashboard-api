@@ -6,8 +6,8 @@
         "html_url": null,
         "slug": "coronavirus",
         "show_in_menus": false,
-        "seo_title": "Coronavirus | UKHA data dashboard",
-        "search_description": "Overall summary of Coronavirus in circulation within the UK",
+        "seo_title": "COVID-19 | UKHSA data dashboard",
+        "search_description": "Overall summary of COVID-19 in circulation within the UK",
         "first_published_at": "2023-05-15T17:23:02.306556+01:00",
         "alias_of": null,
         "parent": {
@@ -20,8 +20,8 @@
             "title": "Respiratory viruses"
         }
     },
-    "title": "Coronavirus",
-    "page_description": "<p data-block-key=\"sud2w\">Data and insights from the UKHSA on Coronavirus. <a href=\"https://www.gov.uk/government/organisations/uk-health-security-agency\">See the simple summary for England (opens in a new tab).</a></p>",
+    "title": "COVID-19",
+    "page_description": "<p data-block-key=\"sud2w\">Data and insights from the UKHSA on COVID-19. <a href=\"https://www.gov.uk/government/organisations/uk-health-security-agency\">See the simple summary for England (opens in a new tab).</a></p>",
     "body": [
         {
             "type": "section",
@@ -51,6 +51,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -88,6 +89,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "Rate of cases per 100,000 population in 7-day period",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -103,8 +105,8 @@
                                     "value": {
                                         "title": "Case rates by age",
                                         "body": "Rates per 100,000 people of the total number of cases since the start of the pandemic, by age.",
-                                        "x_axis": "stratum__name",
-                                        "y_axis": "metric_value",
+                                        "x_axis": "stratum",
+                                        "y_axis": "metric",
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -117,6 +119,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -163,7 +166,8 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "New deaths daily",
+                                                    "sex": null,
+                                                    "label": "Number of deaths",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
                                                 },
@@ -180,7 +184,8 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "7 day rolling average",
+                                                    "sex": null,
+                                                    "label": "7-day average",
                                                     "line_colour": "RED",
                                                     "line_type": "DASH"
                                                 },
@@ -226,6 +231,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -255,6 +261,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -278,8 +285,8 @@
                                     "value": {
                                         "title": "Admissions rate by age",
                                         "body": "Age breakdown of people admitted to hospital, shown as the rate per 100,000 people, since the start of the pandemic. There are fewer people in the oldest age group so the rates show the relative impact on different age groups.",
-                                        "x_axis": "stratum__name",
-                                        "y_axis": "metric_value",
+                                        "x_axis": "stratum",
+                                        "y_axis": "metric",
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -292,6 +299,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "Admission rate",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -321,6 +329,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -367,6 +376,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -396,6 +406,7 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -442,7 +453,8 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
+                                                    "sex": null,
+                                                    "label": "Number of vaccinations",
                                                     "line_colour": "",
                                                     "line_type": ""
                                                 },
@@ -471,6 +483,7 @@
                                                     "stratum": "50_54",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "50 to 54 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -488,6 +501,7 @@
                                                     "stratum": "55_59",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "55 to 59 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -505,6 +519,7 @@
                                                     "stratum": "60_64",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "60 to 64 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID"
@@ -522,6 +537,7 @@
                                                     "stratum": "65_69",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "65 to 69 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "DASH"
@@ -539,6 +555,7 @@
                                                     "stratum": "70_74",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "70 to 74 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID"
@@ -556,6 +573,7 @@
                                                     "stratum": "75_79",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "75 to 79 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "DASH"
@@ -573,6 +591,7 @@
                                                     "stratum": "80_84",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "80 to 84 years",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -590,6 +609,7 @@
                                                     "stratum": "85_89",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "85 to 89 years",
                                                     "line_colour": "BLUE",
                                                     "line_type": "DASH"
@@ -607,6 +627,7 @@
                                                     "stratum": "90+",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "90 years and over",
                                                     "line_colour": "RED",
                                                     "line_type": "DASH"
@@ -644,7 +665,8 @@
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "label": "",
+                                                    "sex": null,
+                                                    "label": "Number of vaccinations",
                                                     "line_colour": "",
                                                     "line_type": ""
                                                 },
@@ -673,6 +695,7 @@
                                                     "stratum": "75_79",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "75 to 79 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -690,6 +713,7 @@
                                                     "stratum": "80_84",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "80 to 84 years",
                                                     "line_colour": "BLUE",
                                                     "line_type": "DASH"
@@ -707,6 +731,7 @@
                                                     "stratum": "85_89",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "85 to 89 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID"
@@ -724,6 +749,7 @@
                                                     "stratum": "90+",
                                                     "geography": "",
                                                     "geography_type": "",
+                                                    "sex": null,
                                                     "label": "90 years and above",
                                                     "line_colour": "RED",
                                                     "line_type": "SOLID"

@@ -1,5 +1,3 @@
-from typing import Dict, List, Tuple
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -10,16 +8,16 @@ from tests.fakes.managers.topic_manager import FakeTopicManager
 
 
 class TestHeadlinesQuerySerializer:
-    DATA_PAYLOAD_HINT = Dict[str, str]
+    DATA_PAYLOAD_HINT = dict[str, str]
 
     @classmethod
     def _setup_valid_data_payload_and_model_managers(
         cls,
-    ) -> Tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
+    ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
         fake_metric = FakeMetricFactory.build_example_metric(
-            metric_name="new_cases_7days_sum"
+            metric_name="COVID-19_headline_ONSdeaths_7daytotals"
         )
-        fake_topic = fake_metric.topic
+        fake_topic = fake_metric.metric_group.topic
 
         data: cls.DATA_PAYLOAD_HINT = {
             "topic": fake_topic.name,
@@ -87,7 +85,8 @@ class TestHeadlinesQuerySerializer:
         """
         Given a valid payload passed to a `HeadlinesQuerySerializer` object
         When the serializer is initialized
-        Then the result of `get_all_names()` from the `MetricManager` is used to populate the correct field choices
+        Then the result of `get_all_names()` from the `MetricManager`
+            is used to populate the correct field choices
         """
         # Given
         (
@@ -106,14 +105,15 @@ class TestHeadlinesQuerySerializer:
         )
 
         # Then
-        expected_metric_names: List[str] = metric_manager.get_all_names()
+        expected_metric_names: list[str] = metric_manager.get_all_names()
         assert list(serializer.fields["metric"].choices) == expected_metric_names
 
     def test_topic_manager_is_used_to_build_choices_for_field(self):
         """
         Given a valid payload passed to a `HeadlinesQuerySerializer` object
         When the serializer is initialized
-        Then the result of `get_all_names()` from the `TopicManager` is used to populate the correct field choices
+        Then the result of `get_all_names()` from the `TopicManager`
+            is used to populate the correct field choices
         """
         # Given
         (
@@ -132,5 +132,5 @@ class TestHeadlinesQuerySerializer:
         )
 
         # Then
-        expected_topic_names: List[str] = topic_manager.get_all_names()
+        expected_topic_names: list[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names

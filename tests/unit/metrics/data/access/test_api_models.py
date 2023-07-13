@@ -1,4 +1,3 @@
-from typing import Dict, List, Union
 from unittest import mock
 
 import pytest
@@ -117,19 +116,19 @@ class TestValidatePlotFilter:
         ]
         plot = {
             "topic": "COVID-19",
-            "metric": "new_cases_daily",
+            "metric": "COVID-19_deaths_ONSRollingMean",
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
 
         # Then
-        expected_result: Dict[str, str] = {
+        expected_result: dict[str, str] = {
             "topic": "COVID-19",
-            "metric": "new_cases_daily",
+            "metric": "COVID-19_deaths_ONSRollingMean",
         }
 
         assert actual_result == expected_result
@@ -151,13 +150,13 @@ class TestValidatePlotFilter:
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
 
         # Then
-        expected_result: Dict[str, str] = {
+        expected_result: dict[str, str] = {
             "topic": "COVID-19",
             "dt__gte": "2023-02-25",
         }
@@ -177,19 +176,25 @@ class TestValidatePlotFilter:
         ]
         plot = {
             "topic": "COVID-19",
-            "metric": ["new_cases_7day_avg", "new_cases_7day_avg"],
+            "metric": [
+                "COVID-19_deaths_ONSRollingMean",
+                "COVID-19_deaths_ONSRollingMean",
+            ],
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
 
         # Then
-        expected_result: Dict[str, Union[str, List[str]]] = {
+        expected_result: dict[str, str | list[str]] = {
             "topic": "COVID-19",
-            "metric__in": ["new_cases_7day_avg", "new_cases_7day_avg"],
+            "metric__in": [
+                "COVID-19_deaths_ONSRollingMean",
+                "COVID-19_deaths_ONSRollingMean",
+            ],
         }
 
         assert actual_result == expected_result
@@ -211,7 +216,7 @@ class TestValidatePlotFilter:
         }
 
         # When
-        actual_result: Dict[str, str] = validate_plot_filter(
+        actual_result: dict[str, str] = validate_plot_filter(
             possible_fields=possible_fields,
             plot=plot,
         )
@@ -239,21 +244,21 @@ class TestValidateQueryFilters:
         plots = [
             {
                 "topic": "COVID-19",
-                "metric": "new_cases_daily",
+                "metric": "COVID-19_deaths_ONSByDay",
             }
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
 
         # Then
-        expected_result: List[Dict[str, str]] = [
+        expected_result: list[dict[str, str]] = [
             {
                 "topic": "COVID-19",
-                "metric": "new_cases_daily",
+                "metric": "COVID-19_deaths_ONSByDay",
             }
         ]
 
@@ -271,20 +276,20 @@ class TestValidateQueryFilters:
             "metric",
         ]
         plots = [
-            {"topic": "COVID-19", "metric": "new_cases_daily"},
-            {"topic": "COVID-19", "metric": "new_cases_7day_avg"},
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSByDay"},
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSRollingMean"},
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
 
         # Then
-        expected_result: List[Dict[str, str]] = [
-            {"topic": "COVID-19", "metric": "new_cases_daily"},
-            {"topic": "COVID-19", "metric": "new_cases_7day_avg"},
+        expected_result: list[dict[str, str]] = [
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSByDay"},
+            {"topic": "COVID-19", "metric": "COVID-19_deaths_ONSRollingMean"},
         ]
 
         assert actual_result == expected_result
@@ -308,13 +313,13 @@ class TestValidateQueryFilters:
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )
 
         # Then
-        expected_result: List[Dict[str, str]] = [
+        expected_result: list[dict[str, str]] = [
             {
                 "topic": "COVID-19",
                 "dt__gte": "2023-02-25",
@@ -337,12 +342,15 @@ class TestValidateQueryFilters:
         plots = [
             {
                 "topic": "COVID-19",
-                "metric": ["new_cases_7day_avg", "new_cases_7day_avg"],
+                "metric": [
+                    "COVID-19_deaths_ONSRollingMean",
+                    "COVID-19_deaths_ONSRollingMean",
+                ],
             }
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields, plots=plots
         )
 
@@ -350,7 +358,10 @@ class TestValidateQueryFilters:
         expected_result = [
             {
                 "topic": "COVID-19",
-                "metric__in": ["new_cases_7day_avg", "new_cases_7day_avg"],
+                "metric__in": [
+                    "COVID-19_deaths_ONSRollingMean",
+                    "COVID-19_deaths_ONSRollingMean",
+                ],
             },
         ]
 
@@ -375,7 +386,7 @@ class TestValidateQueryFilters:
         ]
 
         # When
-        actual_result: List[Dict[str, str]] = validate_query_filters(
+        actual_result: list[dict[str, str]] = validate_query_filters(
             possible_fields=possible_fields,
             plots=plots,
         )

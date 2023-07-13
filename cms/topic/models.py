@@ -60,6 +60,8 @@ class TopicPage(Page):
         APIField("surveillance_and_reporting"),
         APIField("related_links"),
         APIField("last_published_at"),
+        APIField("seo_title"),
+        APIField("search_description"),
     ]
 
     # Tabs to position at the top of the view
@@ -70,6 +72,10 @@ class TopicPage(Page):
             ObjectList(Page.promote_panels, heading="Promote"),
         ]
     )
+
+    def is_previewable(self) -> bool:
+        """Returns False. Since this is a headless CMS the preview panel is not supported"""
+        return False
 
 
 class TopicPageRelatedLink(Orderable):

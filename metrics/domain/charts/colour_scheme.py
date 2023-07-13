@@ -1,7 +1,6 @@
 from enum import Enum
-from typing import Tuple
 
-RGBA_VALUES = Tuple[int, int, int, int]
+RGBA_VALUES = tuple[int, int, int, int]
 
 
 class RGBAChartLineColours(Enum):
@@ -40,6 +39,13 @@ class RGBAChartLineColours(Enum):
         except KeyError:
             return cls.BLACK
 
+    @classmethod
+    def get_bar_colour(cls, colour: str) -> "RGBAChartLineColours":
+        try:
+            return cls[colour]
+        except KeyError:
+            return cls.BLUE
+
 
 class RGBAColours(Enum):
     # Used for the line plot
@@ -57,13 +63,6 @@ class RGBAColours(Enum):
 
     # Used for the shaded filled region underneath the line plot (in Line charts)
     LINE_DARK_GREY: RGBA_VALUES = 243, 242, 241, 1
-
-    # -------------------
-    # Bar chart specific
-    # -------------------
-
-    # Used for the first plot
-    BAR_PLOT_1_BLUE: RGBA_VALUES = 86, 148, 202, 1
 
     # ----------------------
     # Waffle chart specific

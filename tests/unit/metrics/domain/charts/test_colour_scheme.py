@@ -1,11 +1,11 @@
-from typing import List, Optional
+from typing import Optional
 
 import pytest
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
 
-class TestRGBAColours:
+class TestRGBAChartLineColours:
     @pytest.mark.parametrize("rgba_enum", RGBAChartLineColours)
     def test_stringified_returns_correct_string(self, rgba_enum: RGBAChartLineColours):
         """
@@ -62,3 +62,41 @@ class TestRGBAColours:
         # Then
         assert type(retrieved_colour) is RGBAChartLineColours
         assert retrieved_colour == RGBAChartLineColours.BLACK
+
+    @pytest.mark.parametrize("rgba_enum", RGBAChartLineColours)
+    def test_get_bar_colour(self, rgba_enum: RGBAChartLineColours):
+        """
+        Given a valid colour string e.g. "RED"
+        When `get_bar_colour()` is called from the `RGBAColours` class
+        Then the correct enum is returned
+        """
+        # Given
+        colour: str = rgba_enum.name
+
+        # When
+        retrieved_colour: RGBAChartLineColours = RGBAChartLineColours.get_bar_colour(
+            colour=colour
+        )
+
+        # Then
+        assert type(retrieved_colour) is RGBAChartLineColours
+        assert retrieved_colour.name == colour
+
+    @pytest.mark.parametrize(
+        "invalid_colour", [(None, "null", "", "NON-EXISTENT-COLOUR", "CORAL")]
+    )
+    def test_get_bar_colour_defaults_to_blue(self, invalid_colour: Optional[str]):
+        """
+        Given an invalid colour which is not available as a GDS-conforming colour
+        When `get_bar_colour()` is called from the `RGBAColours` class
+        Then the `BLUE` enum is defaulted to and returned
+        """
+        # Given
+        colour: str = invalid_colour
+
+        # When
+        retrieved_colour = RGBAChartLineColours.get_bar_colour(colour=colour)
+
+        # Then
+        assert type(retrieved_colour) is RGBAChartLineColours
+        assert retrieved_colour == RGBAChartLineColours.BLUE

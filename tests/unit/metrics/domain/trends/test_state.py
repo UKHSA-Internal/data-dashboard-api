@@ -11,9 +11,9 @@ class TestTrend:
     @staticmethod
     def _create_valid_payload() -> TREND_AS_DICT:
         return {
-            "metric_name": "new_cases_7days_change",
+            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
             "metric_value": 24568,
-            "percentage_metric_name": "new_cases_7days_change_percentage",
+            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
             "percentage_metric_value": -0.1,
         }
 

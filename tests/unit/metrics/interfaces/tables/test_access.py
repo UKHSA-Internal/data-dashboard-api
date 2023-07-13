@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict, List
 from unittest import mock
 
 from metrics.domain.models import PlotParameters, PlotsCollection
@@ -73,6 +72,8 @@ class TestTablesInterface:
             file_format="svg",
             chart_height=123,
             chart_width=456,
+            x_axis="date",
+            y_axis="metric",
         )
 
         tables_interface = TablesInterface(
@@ -81,7 +82,7 @@ class TestTablesInterface:
         )
 
         # When
-        table_plots: List[Dict[str, str]] = tables_interface.generate_plots_for_table()
+        table_plots: list[dict[str, str]] = tables_interface.generate_plots_for_table()
 
         # Then
         spy_create_plots_in_tabular_format.assert_called_once()
