@@ -304,7 +304,34 @@ class Ingestion:
                 model_manager=related_fields_and_model_manager.model_manager,
             )
 
-        return dataframe
+    def _parse_data(self) -> Iterable:
+        """Convert the data to an iterable, ready to be translated into data transfer objects
+
+        Notes:
+            This will handle the following pre-processing steps:
+            1)  Creates any new supporting models required.
+                For example, if the ingested data contains a new value
+                for the `topic` field, then a new `Topic` model
+                will be created and that record will be inserted
+                into the database.
+            2)  The supporting model columns will also
+                instead use their corresponding database record IDS.
+                For example, if the data showed `COVID-19`
+                for the `topic` field of each entry.
+                Then the returned iterable will instead now show `123`,
+                which will be the ID/pk of the `Topic` model
+                which has the name `COVID-19`.
+            3)  Remove all rows with `NaN` in the `metric_value` column
+
+        Returns:
+            A list of `HeadlineDTO` instances which are
+            enriched with all the data required to
+            insert a new database record in the table
+
+        """
+        dataframe: pd.DataFrame = self.reader.open_data_as_dataframe()
+        dataframe: pd.DataFrame = self.update_supporting_models(dataframe=dataframe)
+        return self.reader.parse_dataframe_as_iterable(dataframe=dataframe)
 
     def create_headlines_dtos_from_source(self) -> list[HeadlineDTO]:
         """Creates a list of `HeadlineDTO`s and updates supporting models
@@ -314,11 +341,7 @@ class Ingestion:
             to create the corresponding `CoreHeadline` records.
 
         """
-        dataframe: pd.DataFrame = self.reader.open_data_as_dataframe()
-        dataframe: pd.DataFrame = self.update_supporting_models(dataframe=dataframe)
-        processed_data: Iterable = self.reader.parse_dataframe_as_iterable(
-            dataframe=dataframe
-        )
+        processed_data: Iterable = self._parse_data()
         return self._convert_to_headline_dtos(processed_data=processed_data)
 
     def create_headlines(self, batch_size: int = 100) -> None:
@@ -346,5 +369,44 @@ class Ingestion:
         return CREATE_CORE_HEADLINES(
             headline_dtos=headline_dtos,
             core_headline_manager=self.core_headline_manager,
+            batch_size=batch_size,
+        )
+
+    def create_timeseries_dtos_from_source(self) -> list[HeadlineDTO]:
+        """Creates a list of `TimeSeriesDTO`s and updates supporting models
+
+        Returns:
+            A list of enriched `TimeSeriesDTO`s which can be used
+            to create the corresponding `CoreTimeSeries` records.
+
+        """
+        processed_data: Iterable = self._parse_data()
+        return self._convert_to_timeseries_dtos(processed_data=processed_data)
+
+    def create_timeseries(self, batch_size: int = 100) -> None:
+        """Creates `CoreTimeSeries` records from the ingested data
+
+        Notes:
+            Any necessary supporting models will be created
+            as required for the `CoreTimeSeries` records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Args:
+            batch_size: Controls the number of objects created
+                in a single write query to the database.
+                Defaults to 100.
+
+        Returns:
+            None
+
+        """
+        timeseries_dtos: list[TimeSeriesDTO] = self.create_timeseries_dtos_from_source()
+
+        return CREATE_CORE_TIMESERIES(
+            headline_dtos=timeseries_dtos,
+            core_timeseries_manager=self.core_timeseries_manager,
             batch_size=batch_size,
         )
