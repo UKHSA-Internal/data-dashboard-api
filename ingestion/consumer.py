@@ -107,6 +107,102 @@ class Ingestion:
         self.core_headline_manager = core_headline_manager
         self.core_timeseries_manager = core_timeseries_manager
 
+    def update_supporting_models(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Updates all supporting models, also replaces instances in the dataframe with IDs
+
+        Notes:
+            This method will accomplish 2 main things:
+            1)  Creates any new supporting models required.
+                For example, if the ingested data contains a new value
+                for the `topic` field, then a new `Topic` model
+                will be created and that record will be inserted
+                into the database.
+            2)  This method will also update supporting model columns
+                to instead use their corresponding database record IDS.
+                For example, if the dataframe showed `COVID-19`
+                for the `topic` field of each entry.
+                Then the dataframe will instead now show `123`,
+                which will be the ID/pk of the `Topic` model
+                which has the name `COVID-19`.
+
+        Args:
+            dataframe: The incoming dataframe containing
+                the raw JSON data
+
+        Returns:
+            An updated version of the dataframe, containing
+            corresponding database records instead of names
+            for the supporting model columns.
+
+        """
+        all_related_fields_and_model_managers: list[
+            FieldsAndModelManager
+        ] = self.get_all_related_fields_and_model_managers()
+
+        for related_fields_and_model_manager in all_related_fields_and_model_managers:
+            dataframe: pd.DataFrame = self.reader.maintain_model(
+                incoming_dataframe=dataframe,
+                fields=related_fields_and_model_manager.fields,
+                model_manager=related_fields_and_model_manager.model_manager,
+            )
+
+        return dataframe
+
+    def get_all_related_fields_and_model_managers(self) -> list[FieldsAndModelManager]:
+        """Get a list of all related fields and model managers as named tuples
+
+        Notes:
+            Each named tuple in the returned list is enriched with
+            1) `fields` -  A dict containing the related fields
+            2) `model_manager` - The corresponding model manager
+
+        Returns:
+            list[FieldsAndModelManager] - A list of named tuples
+                containing the related fields and model managers
+
+        """
+        return [
+            FieldsAndModelManager(
+                fields={"parent_theme": "name"}, model_manager=self.theme_manager
+            ),
+            FieldsAndModelManager(
+                fields={"child_theme": "name", "parent_theme": "theme_id"},
+                model_manager=self.sub_theme_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"topic": "name", "child_theme": "sub_theme_id"},
+                model_manager=self.topic_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"geography_type": "name"},
+                model_manager=self.geography_type_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"geography": "name", "geography_type": "geography_type_id"},
+                model_manager=self.geography_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"metric_group": "name", "topic": "topic_id"},
+                model_manager=self.metric_group_manager,
+            ),
+            FieldsAndModelManager(
+                fields={
+                    "metric": "name",
+                    "metric_group": "metric_group_id",
+                    "topic": "topic_id",
+                },
+                model_manager=self.metric_manager,
+            ),
+            FieldsAndModelManager(
+                fields={"stratum": "name"}, model_manager=self.stratum_manager
+            ),
+            FieldsAndModelManager(
+                fields={"age": "name"}, model_manager=self.age_manager
+            ),
+        ]
+
+    # Data transfer object creation
+
     def _convert_to_headline_dtos(self, processed_data: Iterable) -> list[HeadlineDTO]:
         """Converts the given `processed_data` to a list of HeadlineDTOs
 
@@ -211,98 +307,6 @@ class Ingestion:
             date=data_record.date,
             refresh_date=data_record.refresh_date,
         )
-
-    def get_all_related_fields_and_model_managers(self) -> list[FieldsAndModelManager]:
-        """Get a list of all related fields and model managers as named tuples
-
-        Notes:
-            Each named tuple in the returned list is enriched with
-            1) `fields` -  A dict containing the related fields
-            2) `model_manager` - The corresponding model manager
-
-        Returns:
-            list[FieldsAndModelManager] - A list of named tuples
-                containing the related fields and model managers
-
-        """
-        return [
-            FieldsAndModelManager(
-                fields={"parent_theme": "name"}, model_manager=self.theme_manager
-            ),
-            FieldsAndModelManager(
-                fields={"child_theme": "name", "parent_theme": "theme_id"},
-                model_manager=self.sub_theme_manager,
-            ),
-            FieldsAndModelManager(
-                fields={"topic": "name", "child_theme": "sub_theme_id"},
-                model_manager=self.topic_manager,
-            ),
-            FieldsAndModelManager(
-                fields={"geography_type": "name"},
-                model_manager=self.geography_type_manager,
-            ),
-            FieldsAndModelManager(
-                fields={"geography": "name", "geography_type": "geography_type_id"},
-                model_manager=self.geography_manager,
-            ),
-            FieldsAndModelManager(
-                fields={"metric_group": "name", "topic": "topic_id"},
-                model_manager=self.metric_group_manager,
-            ),
-            FieldsAndModelManager(
-                fields={
-                    "metric": "name",
-                    "metric_group": "metric_group_id",
-                    "topic": "topic_id",
-                },
-                model_manager=self.metric_manager,
-            ),
-            FieldsAndModelManager(
-                fields={"stratum": "name"}, model_manager=self.stratum_manager
-            ),
-            FieldsAndModelManager(
-                fields={"age": "name"}, model_manager=self.age_manager
-            ),
-        ]
-
-    def update_supporting_models(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        """Updates all supporting models, also replaces instances in the dataframe with IDs
-
-        Notes:
-            This method will accomplish 2 main things:
-            1)  Creates any new supporting models required.
-                For example, if the ingested data contains a new value
-                for the `topic` field, then a new `Topic` model
-                will be created and that record will be inserted
-                into the database.
-            2)  This method will also update supporting model columns
-                to instead use their corresponding database record IDS.
-                For example, if the dataframe showed `COVID-19`
-                for the `topic` field of each entry.
-                Then the dataframe will instead now show `123`,
-                which will be the ID/pk of the `Topic` model
-                which has the name `COVID-19`.
-
-        Args:
-            dataframe: The incoming dataframe containing
-                the raw JSON data
-
-        Returns:
-            An updated version of the dataframe, containing
-            corresponding database records instead of names
-            for the supporting model columns.
-
-        """
-        all_related_fields_and_model_managers: list[
-            FieldsAndModelManager
-        ] = self.get_all_related_fields_and_model_managers()
-
-        for related_fields_and_model_manager in all_related_fields_and_model_managers:
-            dataframe: pd.DataFrame = self.reader.maintain_model(
-                incoming_dataframe=dataframe,
-                fields=related_fields_and_model_manager.fields,
-                model_manager=related_fields_and_model_manager.model_manager,
-            )
 
     def _parse_data(self) -> Iterable:
         """Convert the data to an iterable, ready to be translated into data transfer objects
