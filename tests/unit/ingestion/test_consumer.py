@@ -61,7 +61,7 @@ class TestIngestion:
         assert model.refresh_date == headline_data.refresh_date == data["refresh_date"]
 
     @mock.patch.object(Ingestion, "to_headline_dto")
-    def test__convert_to_headline_dtos(self, spy_to_headline_dto: mock.MagicMock):
+    def test_convert_to_headline_dtos(self, spy_to_headline_dto: mock.MagicMock):
         """
         Given a list of dictionaries representing headline number records
         When `_convert_to_headline_dtos()` is called from an instance of `Ingestion`
