@@ -3,7 +3,7 @@ from typing import Callable, Iterable, NamedTuple, Optional, Type
 import pandas as pd
 from django.db.models import Manager
 
-from ingestion.data_transfer_models import HeadlineDTO
+from ingestion.data_transfer_models import HeadlineDTO, TimeSeriesDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.reader import Reader
 
@@ -148,6 +148,61 @@ class Ingestion:
             period_start=data_record.period_start,
             period_end=data_record.period_end,
             metric_value=data_record.metric_value,
+            refresh_date=data_record.refresh_date,
+        )
+
+    def _convert_to_timeseries_dtos(
+        self, processed_data: Iterable
+    ) -> list[HeadlineDTO]:
+        """Converts the given `processed_data` to a list of TimeSeriesDTOs
+
+        Notes:
+            This handles the translations between column names
+            from the data source to the column names expected by the database.
+            E.g. the value in the "parent_theme" column of the source file
+            will be passed into each `TimeSeriesDTO` as "theme"
+
+        Args:
+            processed_data: The parsed iterable, for which each item
+                can be consumed by a `TimeSeriesDTO`
+
+        Returns:
+            list[TimeSeriesDTO]: A list of `TimeSeriesDTO` which
+                are enriched with the corresponding values
+                from the source file
+
+        """
+        return [self.to_timeseries_dto(data_record=record) for record in processed_data]
+
+    @staticmethod
+    def to_timeseries_dto(data_record: pd.DataFrame) -> HeadlineDTO:
+        """Takes the given `data_record` and returns a single enriched `TimeSeriesDTO`
+
+        Args:
+            data_record: An individual record from the loaded JSON file
+
+        Returns:
+            A `TimeSeriesDTO` object with the correct fields
+            populated from the given `data_record`
+
+        """
+        return TimeSeriesDTO(
+            theme=data_record.parent_theme,
+            sub_theme=data_record.child_theme,
+            metric_group=data_record.metric_group,
+            topic=data_record.topic,
+            metric=data_record.metric,
+            geography_type=data_record.geography_type,
+            geography=data_record.geography,
+            age=data_record.age,
+            sex=data_record.sex,
+            stratum=data_record.stratum,
+            metric_frequency=data_record.metric_frequency,
+            year=data_record.year,
+            month=data_record.month,
+            epiweek=data_record.epiweek,
+            metric_value=data_record.metric_value,
+            date=data_record.date,
             refresh_date=data_record.refresh_date,
         )
 
