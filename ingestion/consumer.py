@@ -101,7 +101,7 @@ class Ingestion:
         self.stratum_manager = stratum_manager
         self.core_headline_manager = core_headline_manager
 
-    def _convert_to_models(self, processed_data: Iterable) -> list[HeadlineDTO]:
+    def _convert_to_headline_dtos(self, processed_data: Iterable) -> list[HeadlineDTO]:
         """Converts the given `processed_data` to a list of HeadlineDTOs
 
         Notes:
@@ -258,7 +258,7 @@ class Ingestion:
         processed_data: Iterable = self.reader.parse_dataframe_as_iterable(
             dataframe=dataframe
         )
-        return self._convert_to_models(processed_data=processed_data)
+        return self._convert_to_headline_dtos(processed_data=processed_data)
 
     def create_headlines(self, batch_size: int = 100) -> None:
         """Creates `CoreHeadline` records from the ingested data

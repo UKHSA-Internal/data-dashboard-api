@@ -61,10 +61,10 @@ class TestIngestion:
         assert model.refresh_date == headline_data.refresh_date == data["refresh_date"]
 
     @mock.patch.object(Ingestion, "to_headline_dto")
-    def test_convert_to_models(self, spy_to_headline_dto: mock.MagicMock):
+    def test__convert_to_headline_dtos(self, spy_to_headline_dto: mock.MagicMock):
         """
         Given a list of dictionaries representing headline number records
-        When `convert_to_models()` is called from an instance of `Ingestion`
+        When `_convert_to_headline_dtos()` is called from an instance of `Ingestion`
         Then the call is delegated to the `to_headline_dto()` method for each entity
 
         Patches:
@@ -80,7 +80,7 @@ class TestIngestion:
         ingestion = Ingestion(data=data)
 
         # When
-        converted_headlines = ingestion._convert_to_models(data)
+        converted_headline_dtos = ingestion._convert_to_headline_dtos(data)
 
         # Then
         expected_calls = [
@@ -89,7 +89,7 @@ class TestIngestion:
         ]
         spy_to_headline_dto.assert_has_calls(expected_calls, any_order=True)
 
-        assert converted_headlines == [spy_to_headline_dto.return_value] * 2
+        assert converted_headline_dtos == [spy_to_headline_dto.return_value] * 2
 
     @pytest.mark.parametrize(
         "attribute_on_class, expected_model_manager",
