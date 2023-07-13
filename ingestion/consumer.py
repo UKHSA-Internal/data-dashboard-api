@@ -23,6 +23,7 @@ DEFAULT_GEOGRAPHY_MANAGER = MetricsAPIInterface.get_geography_manager()
 DEFAULT_AGE_MANAGER = MetricsAPIInterface.get_age_manager()
 DEFAULT_STRATUM_MANAGER = MetricsAPIInterface.get_stratum_manager()
 DEFAULT_CORE_HEADLINE_MANAGER = MetricsAPIInterface.get_core_headline_manager()
+DEFAULT_CORE_TIMESERIES_MANAGER = MetricsAPIInterface.get_core_timeseries_manager()
 
 CREATE_CORE_HEADLINES: Callable = MetricsAPIInterface.get_create_core_headlines()
 
@@ -67,6 +68,9 @@ class Ingestion:
     core_headline_manager : `CoreHeadlineManager`
         The model manager for `CoreHeadline`
         Defaults to the concrete `CoreHeadlineManager` via `CoreHeadline.objects`
+    core_timeseries_manager : `CoreTimeSeriesManager`
+        The model manager for `CoreTimeSeries`
+        Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
 
     """
 
@@ -86,6 +90,7 @@ class Ingestion:
         age_manager: Manager = DEFAULT_AGE_MANAGER,
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
         core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
+        core_timeseries_manager: Manager = DEFAULT_CORE_TIMESERIES_MANAGER,
     ):
         self.reader = reader or Reader(data=data)
 
@@ -100,6 +105,7 @@ class Ingestion:
         self.age_manager = age_manager
         self.stratum_manager = stratum_manager
         self.core_headline_manager = core_headline_manager
+        self.core_timeseries_manager = core_timeseries_manager
 
     def _convert_to_headline_dtos(self, processed_data: Iterable) -> list[HeadlineDTO]:
         """Converts the given `processed_data` to a list of HeadlineDTOs

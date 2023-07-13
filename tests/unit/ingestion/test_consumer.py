@@ -203,6 +203,7 @@ class TestIngestion:
             ("age_manager", core_models.Age.objects),
             ("stratum_manager", core_models.Stratum.objects),
             ("core_headline_manager", core_models.CoreHeadline.objects),
+            ("core_timeseries_manager", core_models.CoreTimeSeries.objects),
         ],
     )
     def test_initializes_with_default_core_model_managers(
