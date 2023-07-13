@@ -139,12 +139,12 @@ class TestIngestion:
         # Then
         assert type(ingestion.reader) is Reader
 
-    @mock.patch.object(Ingestion, "create_dtos_from_source")
+    @mock.patch.object(Ingestion, "create_headlines_dtos_from_source")
     @mock.patch(f"{MODULE_PATH}.CREATE_CORE_HEADLINES")
     def test_create_headlines_delegates_call_correctly(
         self,
         spy_create_core_headlines: mock.MagicMock,
-        spy_create_dtos_from_source: mock.MagicMock,
+        spy_create_headlines_dtos_from_source: mock.MagicMock,
     ):
         """
         Given mocked data
@@ -166,7 +166,7 @@ class TestIngestion:
         ingestion.create_headlines()
 
         # Then
-        expected_headline_dtos = spy_create_dtos_from_source.return_value
+        expected_headline_dtos = spy_create_headlines_dtos_from_source.return_value
         spy_create_core_headlines.assert_called_once_with(
             headline_dtos=expected_headline_dtos,
             core_headline_manager=mocked_core_headline_manager,

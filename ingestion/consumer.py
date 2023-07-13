@@ -245,7 +245,7 @@ class Ingestion:
 
         return dataframe
 
-    def create_dtos_from_source(self) -> list[HeadlineDTO]:
+    def create_headlines_dtos_from_source(self) -> list[HeadlineDTO]:
         """Creates a list of `HeadlineDTO`s and updates supporting models
 
         Returns:
@@ -280,7 +280,7 @@ class Ingestion:
             None
 
         """
-        headline_dtos: list[HeadlineDTO] = self.create_dtos_from_source()
+        headline_dtos: list[HeadlineDTO] = self.create_headlines_dtos_from_source()
 
         return CREATE_CORE_HEADLINES(
             headline_dtos=headline_dtos,
