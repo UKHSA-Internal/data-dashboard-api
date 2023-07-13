@@ -18,75 +18,6 @@ from metrics.data.models.core_models import (
 
 
 class TestIngestion:
-    @staticmethod
-    def _assert_core_headline_model_has_correct_values(
-        core_headline: CoreHeadline, headline_data: dict[str, float]
-    ) -> None:
-        assert core_headline.metric.metric_group.topic.name == headline_data["topic"]
-        assert core_headline.metric.metric_group.name == headline_data["metric_group"]
-        assert core_headline.metric.name == headline_data["metric"]
-        assert (
-            core_headline.geography.geography_type.name
-            == headline_data["geography_type"]
-        )
-        assert core_headline.geography.name == headline_data["geography"]
-        assert core_headline.sex == headline_data["sex"]
-        assert core_headline.age.name == headline_data["age"]
-        assert core_headline.stratum.name == headline_data["stratum"]
-
-        assert str(core_headline.period_start) == headline_data["period_start"]
-        assert str(core_headline.period_end) == headline_data["period_end"]
-        assert str(core_headline.refresh_date) == headline_data["refresh_date"]
-
-        assert float(core_headline.metric_value) == float(headline_data["metric_value"])
-
-    @staticmethod
-    def _assert_share_same_supporting_models(
-        first_record: CoreHeadline | CoreTimeSeries,
-        second_record: CoreHeadline | CoreTimeSeries,
-    ) -> None:
-        assert first_record.metric == second_record.metric
-        assert first_record.metric.metric_group == second_record.metric.metric_group
-        assert (
-            first_record.metric.metric_group.topic
-            == second_record.metric.metric_group.topic
-        )
-        assert (
-            first_record.metric.metric_group.topic.sub_theme
-            == second_record.metric.metric_group.topic.sub_theme
-        )
-        assert (
-            first_record.metric.metric_group.topic.sub_theme.theme
-            == second_record.metric.metric_group.topic.sub_theme.theme
-        )
-        assert first_record.age == second_record.age
-
-    @staticmethod
-    def _assert_core_timeseries_model_has_correct_values(
-        core_timeseries: CoreTimeSeries, timeseries_data: dict[str, str | float | int]
-    ) -> None:
-        assert (
-            core_timeseries.metric.metric_group.topic.name == timeseries_data["topic"]
-        )
-        assert (
-            core_timeseries.metric.metric_group.name == timeseries_data["metric_group"]
-        )
-        assert core_timeseries.metric.name == timeseries_data["metric"]
-        assert (
-            core_timeseries.geography.geography_type.name
-            == timeseries_data["geography_type"]
-        )
-        assert core_timeseries.geography.name == timeseries_data["geography"]
-        assert core_timeseries.sex == timeseries_data["sex"]
-        assert core_timeseries.age.name == timeseries_data["age"]
-        assert core_timeseries.stratum.name == timeseries_data["stratum"]
-
-        assert str(core_timeseries.refresh_date) == timeseries_data["refresh_date"]
-
-        assert float(core_timeseries.metric_value) == float(
-            timeseries_data["metric_value"]
-        )
-
     @pytest.mark.django_db
     def test_can_ingest_headline_data_successfully(
         self, example_headline_data_json: list[dict[str, float]]
@@ -201,3 +132,60 @@ class TestIngestion:
         assert Age.objects.count() == 1
         assert Geography.objects.count() == 1
         assert GeographyType.objects.count() == 1
+
+    @staticmethod
+    def _assert_core_model(
+        model: CoreHeadline | CoreTimeSeries, source_data: dict[str, str | float | int]
+    ):
+        assert model.metric.metric_group.topic.name == source_data["topic"]
+        assert model.metric.metric_group.name == source_data["metric_group"]
+        assert model.metric.name == source_data["metric"]
+        assert model.geography.geography_type.name == source_data["geography_type"]
+        assert model.geography.name == source_data["geography"]
+        assert model.sex == source_data["sex"]
+        assert model.age.name == source_data["age"]
+        assert model.stratum.name == source_data["stratum"]
+        assert float(model.metric_value) == float(source_data["metric_value"])
+
+    def _assert_core_headline_model_has_correct_values(
+        self, core_headline: CoreHeadline, headline_data: dict[str, str, float]
+    ) -> None:
+        self._assert_core_model(model=core_headline, source_data=headline_data)
+
+        assert str(core_headline.period_start) == headline_data["period_start"]
+        assert str(core_headline.period_end) == headline_data["period_end"]
+        assert str(core_headline.refresh_date) == headline_data["refresh_date"]
+
+    @staticmethod
+    def _assert_share_same_supporting_models(
+        first_record: CoreHeadline | CoreTimeSeries,
+        second_record: CoreHeadline | CoreTimeSeries,
+    ) -> None:
+        assert first_record.metric == second_record.metric
+        assert first_record.metric.metric_group == second_record.metric.metric_group
+        assert (
+            first_record.metric.metric_group.topic
+            == second_record.metric.metric_group.topic
+        )
+        assert (
+            first_record.metric.metric_group.topic.sub_theme
+            == second_record.metric.metric_group.topic.sub_theme
+        )
+        assert (
+            first_record.metric.metric_group.topic.sub_theme.theme
+            == second_record.metric.metric_group.topic.sub_theme.theme
+        )
+        assert first_record.age == second_record.age
+
+    def _assert_core_timeseries_model_has_correct_values(
+        self,
+        core_timeseries: CoreTimeSeries,
+        timeseries_data: dict[str, str | float | int],
+    ) -> None:
+        self._assert_core_model(model=core_timeseries, source_data=timeseries_data)
+        assert str(core_timeseries.refresh_date) == str(timeseries_data["refresh_date"])
+        assert str(core_timeseries.dt) == str(timeseries_data["date"])
+        assert core_timeseries.metric_frequency == timeseries_data["metric_frequency"]
+        assert core_timeseries.year == timeseries_data["year"]
+        assert core_timeseries.month == timeseries_data["month"]
+        assert core_timeseries.epiweek == timeseries_data["epiweek"]
