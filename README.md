@@ -23,26 +23,35 @@ export APIENV=LOCAL
 To do this, you should include this line in an `.env` file at the root level of the project.
 This will ensure that the Django `DEBUG` setting is set to True and the app will use a local sqlite database.
 
-3. Set up the virtual environment and install the project dependencies via:
+
+3. Ensure you have set a value for the `SECRET_KEY` environment variable.
+```bash
+export SECRET_KEY=REPLACE_ME_WITH_ACTUAL_VALUE
+```
+Once again, you should include this line in the `.env` file at the root level of your project structure.
+
+See the [Django documentation | SECRET_KEY](https://docs.djangoproject.com/en/4.2/ref/settings/#secret-key) for more information.
+
+4. Set up the virtual environment and install the project dependencies via:
 ```bash
 make setup-venv
 ```
 
 Note that this step requires a Python 3.11 version to be installed on your system.
 
-4. Apply the database migrations, ensure Django collects static files and run the server.
+5. Apply the database migrations, ensure Django collects static files and run the server.
 ```bash
 make run-server
 ```
 This will run the server locally on port 8000 - http://localhost:8000/
 
-5. Create a local superuser by activating the virtual environment and following the prompts:
+6. Create a local superuser by activating the virtual environment and following the prompts:
 ```bash
 source venv/bin/activate
 ./manage.py createsuperuser
 ```
 
-6. Sign in to the admin panel at `/admin/` and add an API key. 
+7. Sign in to the admin panel at `/admin/` and add an API key. 
 **Make sure you note it down** as it won't be displayed in full again. 
 You will need this key to be able to use the API later.
 If you did not note of the generated key, you can simply create another and use that instead.
@@ -93,8 +102,9 @@ requirements-prod.txt   # <- These are the Production-only dependencies. This is
 requirements-dev.txt    # <- These are the Dev dependencies-only. Includes testing/factory libraries
 ```
 
-If you followed the instructions above in [Initial configuration](#initial-configuration) and ran `make setup-venv` then you will have installed
-the complete set of dependencies, including those needed for local development.
+If you followed the instructions above in [Initial configuration](#initial-configuration) 
+and ran `make setup-venv` then you will have installed the complete set of dependencies, 
+including those needed for local development.
 
 ---
 
