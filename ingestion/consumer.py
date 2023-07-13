@@ -51,7 +51,8 @@ class Ingestion:
 
     Parameters:
     -----------
-    data: List[dict]
+    data: FilePath | ReadBuffer[str] | ReadBuffer[bytes]
+        The file or buffer containing the raw JSON data
     reader : `Reader`
         The reader object used to parse the data
         Defaults to a `Reader` object
@@ -90,7 +91,9 @@ class Ingestion:
 
     def __init__(
         self,
-        data,
+        data: pd._typing.FilePath
+        | pd._typing.ReadBuffer[str]
+        | pd._typing.ReadBuffer[bytes],
         reader: Optional[Reader] = None,
         theme_manager: Manager = DEFAULT_THEME_MANAGER,
         sub_theme_manager: Manager = DEFAULT_SUB_THEME_MANAGER,
@@ -103,7 +106,6 @@ class Ingestion:
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
         core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     ):
-        self.data = data
         self.reader = reader or Reader(data=data)
 
         # Model managers
