@@ -116,7 +116,7 @@ class TestTemplateHomePage:
 
         # Check that the first item is a `section` type for `Coronavirus`
         assert covid_section.block_type == "section"
-        assert covid_section.value["heading"] == "Coronavirus"
+        assert covid_section.value["heading"] == "COVID-19"
 
         # Check that the second item is a `section` type for `Influenza`
         assert influenza_section.block_type == "section"
@@ -142,7 +142,7 @@ class TestTemplateHomePage:
         text_card = covid_content_section[0]
         assert text_card.block_type == "text_card"
         assert (
-            "The UKHSA dashboard for data and insights on Coronavirus"
+            "The UKHSA dashboard for data and insights on COVID-19"
             in text_card.value["body"].source
         )
 

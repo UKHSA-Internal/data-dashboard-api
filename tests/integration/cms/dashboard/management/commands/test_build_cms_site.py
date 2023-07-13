@@ -43,7 +43,7 @@ class TestBuildCMSSite:
 
         expected_titles = [
             "Respiratory viruses",
-            "Coronavirus",
+            "COVID-19",
             "Influenza",
             "How to use this data",
             "Maps",
