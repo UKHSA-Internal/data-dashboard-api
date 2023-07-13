@@ -298,7 +298,7 @@ class TestIngestion:
         # Then
         expected_timeseries_dtos = spy_create_timeseries_dtos_from_source.return_value
         spy_create_timeseries.assert_called_once_with(
-            headline_dtos=expected_timeseries_dtos,
+            timeseries_dtos=expected_timeseries_dtos,
             core_timeseries_manager=mocked_core_timeseries_manager,
             batch_size=batch_size,
         )

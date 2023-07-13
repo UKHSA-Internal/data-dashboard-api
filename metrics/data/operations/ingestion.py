@@ -82,10 +82,10 @@ def create_core_timeseries(
             age_id=int(timeseries_dto.age),
             sex=timeseries_dto.sex,
             metric_frequency=timeseries_dto.metric_frequency,
-            year=timeseries_dto.metric_frequency,
+            year=timeseries_dto.year,
             month=timeseries_dto.month,
             epiweek=timeseries_dto.epiweek,
-            date=timeseries_dto.date,
+            dt=timeseries_dto.date.split(" ")[0],
             refresh_date=timeseries_dto.refresh_date,
             metric_value=timeseries_dto.metric_value,
         )

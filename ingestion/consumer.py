@@ -305,7 +305,7 @@ class Ingestion:
             month=data_record.month,
             epiweek=data_record.epiweek,
             metric_value=data_record.metric_value,
-            date=data_record.date,
+            date=str(data_record.date),
             refresh_date=data_record.refresh_date,
         )
 
@@ -411,7 +411,7 @@ class Ingestion:
         timeseries_dtos: list[TimeSeriesDTO] = self.create_timeseries_dtos_from_source()
 
         return CREATE_CORE_TIMESERIES(
-            headline_dtos=timeseries_dtos,
+            timeseries_dtos=timeseries_dtos,
             core_timeseries_manager=self.core_timeseries_manager,
             batch_size=batch_size,
         )
