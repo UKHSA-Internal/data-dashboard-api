@@ -539,3 +539,29 @@ class TestReader:
         record = next(returned_dataframe.itertuples())
         assert record.parent_theme == record.name == "infectious_disease"
         assert record.pk == 1
+
+    def test_create_new_records_data(self):
+        """
+        Given a list of data required to create new records
+        When `_create_new_records_data()`
+            is called from an instance of `Reader`
+        Then a list of data is returned, including the
+            pk of the new record created via the model manager
+        """
+        # Given
+        spy_model_manager = mock.Mock()
+        new_data_for_records = [{"parent_theme": "infectious_disease"}]
+        reader = Reader(data=mock.Mock())
+
+        # When
+        new_records_data: list[dict[str, str]] = reader._create_new_records_data(
+            new_data=new_data_for_records, model_manager=spy_model_manager
+        )
+
+        # Then
+        expected_record_pk = spy_model_manager.create.return_value.pk
+        expected_created_record_data = {
+            "parent_theme": "infectious_disease",
+            "pk": expected_record_pk,
+        }
+        assert new_records_data == [expected_created_record_data]
