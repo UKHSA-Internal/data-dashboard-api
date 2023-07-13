@@ -130,7 +130,7 @@ def example_timeseries_data_json() -> list[dict[str, str | float]]:
             "year": 2020,
             "date": "2020-03-02",
             "metric_value": 0,
-            "refresh_date": "2023-07-11"
+            "refresh_date": "2023-07-11",
         },
         {
             "parent_theme": "infectious_disease",
@@ -150,6 +150,6 @@ def example_timeseries_data_json() -> list[dict[str, str | float]]:
             "year": 2020,
             "date": "2020-03-03",
             "metric_value": 0,
-            "refresh_date": "2023-07-11"
+            "refresh_date": "2023-07-11",
         },
     ]
