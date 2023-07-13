@@ -63,7 +63,7 @@ class TestIngestion:
         assert core_headline_one.age == core_headline_two.age
 
     @pytest.mark.django_db
-    def test_can_ingest_data_successfully(
+    def test_can_ingest_headline_data_successfully(
         self, example_headline_data_json: list[dict[str, float]]
     ):
         """
