@@ -2,8 +2,8 @@ from typing import Callable, Iterable, NamedTuple, Optional, Type
 
 import pandas as pd
 from django.db.models import Manager
-from pydantic import BaseModel
 
+from ingestion.data_transfer_models import HeadlineDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.reader import Reader
 
@@ -11,25 +11,6 @@ from ingestion.reader import Reader
 class FieldsAndModelManager(NamedTuple):
     fields: dict[str, str]
     model_manager: Type[Manager]
-
-
-class HeadlineDTO(BaseModel):
-    theme: str | int
-    sub_theme: str | int
-    topic: str | int
-    metric_group: str | int
-    metric: str | int
-    geography_type: str | int
-    geography: str | int
-    age: str | int
-    sex: str
-    stratum: str | int
-
-    period_start: str
-    period_end: str
-    refresh_date: str
-
-    metric_value: float
 
 
 DEFAULT_THEME_MANAGER = MetricsAPIInterface.get_theme_manager()
