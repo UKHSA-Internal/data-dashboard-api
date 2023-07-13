@@ -247,10 +247,8 @@ class TestIngestion:
     ):
         """
         Given mocked data
-        When `create_headlines()` is called
-            from an instance of `Ingestion`
-        Then the call is delegated
-            to `create_core_headlines()`
+        When `create_headlines()` is called from an instance of `Ingestion`
+        Then the call is delegated to `create_core_headlines()`
         """
         # Given
         mocked_core_headline_manager = mock.Mock()
