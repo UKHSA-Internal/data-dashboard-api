@@ -110,7 +110,7 @@ def example_headline_data_json() -> list[dict[str, str | float]]:
 
 
 @pytest.fixture
-def example_timeseries_data_json() -> list[dict[str, str | float]]:
+def example_timeseries_data_json() -> list[dict[str, str | int | float]]:
     return [
         {
             "parent_theme": "infectious_disease",

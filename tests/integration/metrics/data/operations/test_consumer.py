@@ -20,7 +20,7 @@ from metrics.data.models.core_models import (
 class TestIngestion:
     @pytest.mark.django_db
     def test_can_ingest_headline_data_successfully(
-        self, example_headline_data_json: list[dict[str, float]]
+        self, example_headline_data_json: list[dict[str, str | float]]
     ):
         """
         Given an example headline data file
@@ -79,7 +79,7 @@ class TestIngestion:
 
     @pytest.mark.django_db
     def test_can_ingest_timeseries_data_successfully(
-        self, example_timeseries_data_json: list[dict[str, float]]
+        self, example_timeseries_data_json: list[dict[str, str | float]]
     ):
         """
         Given an example headline data file
@@ -148,7 +148,7 @@ class TestIngestion:
         assert float(model.metric_value) == float(source_data["metric_value"])
 
     def _assert_core_headline_model_has_correct_values(
-        self, core_headline: CoreHeadline, headline_data: dict[str, str, float]
+        self, core_headline: CoreHeadline, headline_data: dict[str, str | float]
     ) -> None:
         self._assert_core_model(model=core_headline, source_data=headline_data)
 
