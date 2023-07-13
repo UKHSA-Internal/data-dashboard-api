@@ -565,3 +565,55 @@ class TestReader:
             "pk": expected_record_pk,
         }
         assert new_records_data == [expected_created_record_data]
+
+    def test_get_existing_records_for_values_returns_dataframe_for_existing_records(
+        self,
+    ):
+        """
+        Given a model manager which contain an existing record
+        When `_get_existing_records_for_values()` is called
+            from an instance of `Reader`
+        Then a dataframe is returned with the data for
+            any matching existing records
+        """
+        # Given
+        mocked_model_manager = mock.MagicMock()
+        mocked_model_manager.all.return_value.values.return_value = [
+            {"parent_theme": "infectious_disease", "pk": 123},
+        ]
+        fields = {"parent_theme": "name"}
+        reader = Reader(data=mock.Mock())
+
+        # When
+        returned_dataframe = reader._get_existing_records_for_values(
+            fields=fields, model_manager=mocked_model_manager
+        )
+
+        # Then
+        record = next(returned_dataframe.itertuples())
+        assert record.parent_theme == "infectious_disease"
+        assert record.pk == 123
+
+    def test_get_existing_records_for_values_returns_empty_dataframe_for_no_records(
+        self,
+    ):
+        """
+        Given a model manager which does not contain any records
+        When `_get_existing_records_for_values()` is called
+            from an instance of `Reader`
+        Then an empty dataframe is returned with the
+            fields values as column names
+        """
+        # Given
+        mocked_model_manager = mock.MagicMock()
+        mocked_model_manager.all.return_value.values.return_value = []
+        fields = {"parent_theme": "name"}
+        reader = Reader(data=mock.Mock())
+
+        # When
+        returned_dataframe = reader._get_existing_records_for_values(
+            fields=fields, model_manager=mocked_model_manager
+        )
+
+        # Then
+        assert returned_dataframe.empty
