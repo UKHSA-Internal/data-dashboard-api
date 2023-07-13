@@ -1,5 +1,6 @@
 from .headline import CoreHeadline
 from .supporting import (
+    Age,
     Geography,
     GeographyType,
     Metric,
