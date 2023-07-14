@@ -17,7 +17,7 @@ COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str, ...] = [
     "age",
 ]
 
-sex_options = {"male": "M", "female": "F", "all": "ALL"}
+SEX_OPTIONS = {"male": "M", "female": "F", "all": "ALL"}
 
 TIME_PERIOD_ENUM = MetricsAPIInterface.get_time_period_enum()
 frequency = {
@@ -349,7 +349,8 @@ class Reader:
             This will handle the following pre-processing steps:
             1)  Remove all rows with `NaN` in the `metric_value` column
             2)  Cast all columns with foreign keys to int types
-            3)  Create an easy to use iterable from the dataframe
+            3)  Casts the `sex` column to the expected values
+            4)  Create an easy to use iterable from the dataframe
 
             This method also assumes supporting model columns
             have been replaced with database record IDS.
@@ -375,6 +376,9 @@ class Reader:
             dataframe=dataframe
         )
         dataframe: pd.DataFrame = self._cast_int_type_on_columns_with_foreign_keys(
+            dataframe=dataframe
+        )
+        dataframe: pd.DataFrame = self._cast_sex_column_to_expected_values(
             dataframe=dataframe
         )
         return self._create_named_tuple_iterable(dataframe=dataframe)
@@ -419,6 +423,31 @@ class Reader:
         dataframe[self.supporting_model_column_names] = dataframe[
             self.supporting_model_column_names
         ].applymap(int)
+        return dataframe
+
+    @staticmethod
+    def _cast_sex_column_to_expected_values(dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Casts each row in the "sex" column to one of the expected values
+
+        Notes:
+            Expected values are one of the following:
+            1) "ALL" - All genders with no filtering applied
+            2) "F" - Females
+            3) "M" - Males
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+
+        Returns:
+            A `DataFrame` where the "sex" column has
+            been parsed with the expected values
+
+        """
+
+        def _cast_sex_value(value: str) -> str:
+            return SEX_OPTIONS.get(value.lower(), "ALL")
+
+        dataframe["sex"] = dataframe["sex"].apply(_cast_sex_value)
         return dataframe
 
     @staticmethod
