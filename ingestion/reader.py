@@ -4,7 +4,6 @@ import pandas as pd
 from django.db.models.manager import Manager
 
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
-from metrics.data.enums import TimePeriod
 
 COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str, ...] = [
     "parent_theme",
@@ -477,7 +476,7 @@ class Reader:
         """
 
         def _cast_metric_frequency_value(value: str) -> str:
-            return TimePeriod[value.title()].value
+            return TIME_PERIOD_ENUM[value.title()].value
 
         dataframe["metric_frequency"] = dataframe["metric_frequency"].apply(
             _cast_metric_frequency_value
