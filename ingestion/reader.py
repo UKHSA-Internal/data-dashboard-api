@@ -17,7 +17,7 @@ COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str, ...] = [
     "age",
 ]
 
-sex_options = {"male": "M", "female": "F", "all": "ALL"}
+SEX_OPTIONS = {"male": "M", "female": "F", "all": "ALL"}
 
 TIME_PERIOD_ENUM = MetricsAPIInterface.get_time_period_enum()
 frequency = {
@@ -441,7 +441,7 @@ class Reader:
         """
 
         def _cast_sex_value(value: str) -> str:
-            return sex_options.get(value.lower(), "ALL")
+            return SEX_OPTIONS.get(value.lower(), "ALL")
 
         dataframe["sex"] = dataframe["sex"].apply(_cast_sex_value)
         return dataframe
