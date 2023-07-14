@@ -44,7 +44,7 @@ class ChartPlotElement(BaseMetricsElement):
     stratum = blocks.ChoiceBlock(
         required=False,
         choices=get_all_stratum_names,
-        help_text=help_texts.STRATUM_FIELD
+        help_text=help_texts.STRATUM_FIELD,
     )
     geography = blocks.ChoiceBlock(
         required=False,
