@@ -88,6 +88,20 @@ TOPIC_FIELD_HELP_TEXT: str = "The name of the topic to pull data e.g. COVID-19."
 METRIC_FIELD_HELP_TEXT: str = """
 The name of the metric to pull data for e.g. "COVID-19_deaths_ONSByDay".
 """
+STRATUM_FIELD: str = """
+The smallest subgroup a piece of data can be broken down into.
+For example, this could be broken down by ethnicity or testing pillar.
+If nothing is provided, then no filtering will be applied for this field.
+"""
+GEOGRAPHY_FIELD: str = """
+The name of the geography associated with this particular piece of data.
+If nothing is provided, then no filtering will be applied for this field.
+"""
+GEOGRAPHY_TYPE_FIELD: str = """
+The type of geographical categorisation to apply any data filtering to.
+If nothing is provided, then no filtering will be applied for this field.
+"""
+
 TREND_METRIC_FIELD_HELP_TEXT: str = """
 The name of the trend type metric to pull data e.g. "COVID-19_headline_ONSdeaths_7daychange". 
 Note that only 'change' type metrics are available for selection for this field type.
@@ -101,11 +115,11 @@ CHART_TYPE_FIELD_HELP_TEXT: str = """
 The name of the type of chart which you want to create e.g. waffle
 """
 DATE_FROM_FIELD_HELP_TEXT: str = """
-The date from which to begin the supporting chart data. 
+The date from which to begin the supporting plot data. 
 Note that if nothing is provided, a default of 1 year ago from the current date will be applied.
 """
 DATE_TO_FIELD_HELP_TEXT: str = """
-The date to which to end the supporting chart data. 
+The date to which to end the supporting plot data. 
 Note that if nothing is provided, a default of the current date will be applied.
 """
 SEX_FIELD: str = """
@@ -147,11 +161,12 @@ This text will be displayed after the title of the page and before any of the ma
 """
 
 X_AXIS_HELP_TEXT: str = """
-An optional choice of what to display along the X Axis of the chart.
+An optional choice of what to display along the x-axis of the chart.
+If nothing is provided, `dates` will be used by default.
 Dates are used by default
 """
 
 Y_AXIS_HELP_TEXT: str = """
-An optional choice of what to display along the Y Axis of the chart.
-The metric values are used by default
+An optional choice of what to display along the y-axis of the chart.
+If nothing is provided, `metric value` will be used by default.
 """

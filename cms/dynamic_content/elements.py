@@ -44,19 +44,22 @@ class ChartPlotElement(BaseMetricsElement):
     stratum = blocks.ChoiceBlock(
         required=False,
         choices=get_all_stratum_names,
+        help_text=help_texts.STRATUM_FIELD
     )
     geography = blocks.ChoiceBlock(
         required=False,
         choices=get_all_geography_names,
+        help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = blocks.ChoiceBlock(
         required=False,
         choices=get_all_geography_type_names,
+        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     sex = blocks.ChoiceBlock(
-        help_text=help_texts.SEX_FIELD,
         required=False,
         choices=get_all_sex_names,
+        help_text=help_texts.SEX_FIELD,
     )
     label = blocks.TextBlock(
         required=False,
