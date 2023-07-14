@@ -656,7 +656,17 @@ class TestReader:
         # Then
         assert returned_dataframe.empty
 
-    def test_cast_sex_column_to_expected_values(self):
+    @pytest.mark.parametrize(
+        "sex_column_value, expected_value",
+        (
+            ["all", "ALL"],
+            ["female", "F"],
+            ["male", "M"],
+        ),
+    )
+    def test_cast_sex_column_to_expected_values(
+        self, sex_column_value: str, expected_value: str
+    ):
         """
         Given a `DataFrame` which contains a "sex" column
         When `_cast_sex_column_to_expected_values()`
@@ -665,7 +675,7 @@ class TestReader:
             to a set of expected values
         """
         # Given
-        dataframe = pd.DataFrame([{"sex": "all"}, {"sex": "female"}, {"sex": "male"}])
+        dataframe = pd.DataFrame([{"sex": sex_column_value}])
         reader = Reader(data=mock.Mock())
 
         # When
