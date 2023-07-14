@@ -15,27 +15,23 @@ class ChartComponent(blocks.StreamBlock):
 
 
 class HeadlineNumberComponent(elements.BaseMetricsElement):
-    body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
-    )
+    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
 
     class Meta:
         icon = "bold"
 
 
 class TrendNumberComponent(elements.BaseMetricsElement):
-    body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD_HELP_TEXT
-    )
+    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
     metric = blocks.ChoiceBlock(
         required=True,
         choices=get_all_unique_change_type_metric_names,
-        help_text=help_texts.TREND_METRIC_FIELD_HELP_TEXT,
+        help_text=help_texts.TREND_METRIC_FIELD,
     )
     percentage_metric = blocks.ChoiceBlock(
         required=True,
         choices=get_all_unique_percent_change_type_names,
-        help_text=help_texts.TREND_PERCENTAGE_METRIC_FIELD_HELP_TEXT,
+        help_text=help_texts.TREND_PERCENTAGE_METRIC_FIELD,
     )
 
     class Meta:
