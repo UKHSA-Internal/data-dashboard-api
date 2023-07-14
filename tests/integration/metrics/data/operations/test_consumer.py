@@ -3,6 +3,7 @@ import json
 import pytest
 
 from ingestion.consumer import Ingestion
+from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (
     Age,
     CoreHeadline,
@@ -19,9 +20,7 @@ from metrics.data.models.core_models import (
 
 class TestIngestion:
     @pytest.mark.django_db
-    def test_can_ingest_headline_data_successfully(
-        self, example_headline_data
-    ):
+    def test_can_ingest_headline_data_successfully(self, example_headline_data):
         """
         Given an example headline data file
         When `create_headlines()` is called from an instance of `Ingestion`
@@ -78,9 +77,7 @@ class TestIngestion:
         assert Geography.objects.count() == 2
 
     @pytest.mark.django_db
-    def test_can_ingest_timeseries_data_successfully(
-        self, example_timeseries_data
-    ):
+    def test_can_ingest_timeseries_data_successfully(self, example_timeseries_data):
         """
         Given an example headline data file
         When `create_timeseries()` is called from an instance of `Ingestion`
@@ -187,7 +184,10 @@ class TestIngestion:
         self._assert_core_model(model=core_timeseries, source_data=timeseries_data)
         assert str(core_timeseries.refresh_date) == str(timeseries_data["refresh_date"])
         assert str(core_timeseries.dt) == str(timeseries_data["date"])
-        assert core_timeseries.metric_frequency == timeseries_data["metric_frequency"]
+        assert (
+            core_timeseries.metric_frequency
+            == TimePeriod[timeseries_data["metric_frequency"].title()].value
+        )
         assert core_timeseries.year == timeseries_data["year"]
         assert core_timeseries.month == timeseries_data["month"]
         assert core_timeseries.epiweek == timeseries_data["epiweek"]

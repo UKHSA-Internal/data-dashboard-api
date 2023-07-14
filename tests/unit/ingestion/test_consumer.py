@@ -95,9 +95,7 @@ class TestIngestion:
 
     # Timeseries DTO construction tests
 
-    def test_to_timeseries_dto(
-        self, example_timeseries_data
-    ):
+    def test_to_timeseries_dto(self, example_timeseries_data):
         """
         Given a single timeseries record as a dictionary
         When `to_timeseries_dto()` is called from an instance of `Ingestion`

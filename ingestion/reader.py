@@ -378,6 +378,17 @@ class Reader:
         dataframe: pd.DataFrame = self._cast_sex_column_to_expected_values(
             dataframe=dataframe
         )
+        try:
+            dataframe: pd.DataFrame = (
+                self._cast_metric_frequency_column_to_expected_values(
+                    dataframe=dataframe
+                )
+            )
+        except KeyError:
+            # The headline data does not contain the "metric_frequency" column
+            # so this can be safely bypassed
+            pass
+
         return self._create_named_tuple_iterable(dataframe=dataframe)
 
     @staticmethod
