@@ -71,11 +71,11 @@ class TestIngestion:
         assert Metric.objects.count() == 1
         assert MetricGroup.objects.count() == 1
         assert Age.objects.count() == 1
+        assert GeographyType.objects.count() == 1
 
         # Check that different core supporting models
         # are created where required
         assert Geography.objects.count() == 2
-        assert GeographyType.objects.count() == 2
 
     @pytest.mark.django_db
     def test_can_ingest_timeseries_data_successfully(
