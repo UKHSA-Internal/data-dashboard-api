@@ -6,6 +6,7 @@ from ingestion.consumer import Ingestion
 from metrics.data.models.core_models import (
     Age,
     CoreHeadline,
+    CoreTimeSeries,
     Geography,
     GeographyType,
     Metric,
@@ -17,60 +18,14 @@ from metrics.data.models.core_models import (
 
 
 class TestIngestion:
-    @staticmethod
-    def _assert_core_headline_model_has_correct_values(
-        core_headline: CoreHeadline, headline_data: dict[str, float]
-    ) -> None:
-        assert core_headline.metric.metric_group.topic.name == headline_data["topic"]
-        assert core_headline.metric.metric_group.name == headline_data["metric_group"]
-        assert core_headline.metric.name == headline_data["metric"]
-        assert (
-            core_headline.geography.geography_type.name
-            == headline_data["geography_type"]
-        )
-        assert core_headline.geography.name == headline_data["geography"]
-        assert core_headline.sex == headline_data["sex"]
-        assert core_headline.age.name == headline_data["age"]
-        assert core_headline.stratum.name == headline_data["stratum"]
-
-        assert str(core_headline.period_start) == headline_data["period_start"]
-        assert str(core_headline.period_end) == headline_data["period_end"]
-        assert str(core_headline.refresh_date) == headline_data["refresh_date"]
-
-        assert float(core_headline.metric_value) == float(headline_data["metric_value"])
-
-    @staticmethod
-    def _assert_core_headline_models_share_same_supporting_models(
-        core_headline_one: CoreHeadline, core_headline_two: CoreHeadline
-    ) -> None:
-        assert core_headline_one.metric == core_headline_two.metric
-        assert (
-            core_headline_one.metric.metric_group
-            == core_headline_two.metric.metric_group
-        )
-        assert (
-            core_headline_one.metric.metric_group.topic
-            == core_headline_two.metric.metric_group.topic
-        )
-        assert (
-            core_headline_one.metric.metric_group.topic.sub_theme
-            == core_headline_two.metric.metric_group.topic.sub_theme
-        )
-        assert (
-            core_headline_one.metric.metric_group.topic.sub_theme.theme
-            == core_headline_two.metric.metric_group.topic.sub_theme.theme
-        )
-        assert core_headline_one.age == core_headline_two.age
-
     @pytest.mark.django_db
-    def test_can_ingest_data_successfully(
-        self, example_headline_data_json: list[dict[str, float]]
+    def test_can_ingest_headline_data_successfully(
+        self, example_headline_data_json: list[dict[str, str | float]]
     ):
         """
         Given an example headline data file
-        When `create_headlines()` is called
-            from an instance of `Ingestion`
-        Then a `Headline` record is created with the correct values
+        When `create_headlines()` is called from an instance of `Ingestion`
+        Then `CoreHeadline` records are created with the correct values
         """
         # Given
         data = json.dumps(example_headline_data_json)
@@ -103,9 +58,9 @@ class TestIngestion:
         # Check that the 2 `CoreHeadline` records which are closely related
         # share the same supporting models
         # i.e. They should share the same `Theme`, `SubTheme` & `Topic` etc
-        self._assert_core_headline_models_share_same_supporting_models(
-            core_headline_one=core_headline_one,
-            core_headline_two=core_headline_two,
+        self._assert_share_same_supporting_models(
+            first_record=core_headline_one,
+            second_record=core_headline_two,
         )
 
         # Check that only 1 core supporting model is
@@ -121,3 +76,116 @@ class TestIngestion:
         # Check that different core supporting models
         # are created where required
         assert Geography.objects.count() == 2
+
+    @pytest.mark.django_db
+    def test_can_ingest_timeseries_data_successfully(
+        self, example_timeseries_data_json: list[dict[str, str | float]]
+    ):
+        """
+        Given an example headline data file
+        When `create_timeseries()` is called from an instance of `Ingestion`
+        Then `CoreTimeSeries` records are created with the correct values
+        """
+        # Given
+        data = json.dumps(example_timeseries_data_json)
+        ingestion = Ingestion(data=data)
+        assert CoreTimeSeries.objects.all().count() == 0
+
+        # When
+        ingestion.create_timeseries()
+
+        # Then
+        # Check that 1 `CoreTimeSeries` record is created per row of data
+        assert CoreTimeSeries.objects.all().count() == len(example_timeseries_data_json)
+
+        # Check the first `CoreTimeSeries` record was set
+        # with the values from the first object in the original JSON
+        core_timeseries_one = CoreTimeSeries.objects.first()
+        self._assert_core_timeseries_model_has_correct_values(
+            core_timeseries=core_timeseries_one,
+            timeseries_data=example_timeseries_data_json[0],
+        )
+
+        # Check the second `CoreTimeSeries` record was set
+        # with the correct corresponding the values as above
+        core_timeseries_two = CoreTimeSeries.objects.last()
+        self._assert_core_timeseries_model_has_correct_values(
+            core_timeseries=core_timeseries_two,
+            timeseries_data=example_timeseries_data_json[1],
+        )
+
+        # Check that the 2 `CoreTimeSeries` records which are closely related
+        # share the same supporting models
+        # i.e. They should share the same `Theme`, `SubTheme` & `Topic` etc
+        self._assert_share_same_supporting_models(
+            first_record=core_timeseries_one,
+            second_record=core_timeseries_two,
+        )
+
+        # Check that only 1 core supporting model is
+        # created where necessary for each value
+        assert Theme.objects.count() == 1
+        assert SubTheme.objects.count() == 1
+        assert Topic.objects.count() == 1
+        assert Metric.objects.count() == 1
+        assert MetricGroup.objects.count() == 1
+        assert Age.objects.count() == 1
+        assert Geography.objects.count() == 1
+        assert GeographyType.objects.count() == 1
+
+    @staticmethod
+    def _assert_core_model(
+        model: CoreHeadline | CoreTimeSeries, source_data: dict[str, str | float | int]
+    ):
+        assert model.metric.metric_group.topic.name == source_data["topic"]
+        assert model.metric.metric_group.name == source_data["metric_group"]
+        assert model.metric.name == source_data["metric"]
+        assert model.geography.geography_type.name == source_data["geography_type"]
+        assert model.geography.name == source_data["geography"]
+        assert model.sex == source_data["sex"]
+        assert model.age.name == source_data["age"]
+        assert model.stratum.name == source_data["stratum"]
+        assert float(model.metric_value) == float(source_data["metric_value"])
+
+    def _assert_core_headline_model_has_correct_values(
+        self, core_headline: CoreHeadline, headline_data: dict[str, str | float]
+    ) -> None:
+        self._assert_core_model(model=core_headline, source_data=headline_data)
+
+        assert str(core_headline.period_start) == headline_data["period_start"]
+        assert str(core_headline.period_end) == headline_data["period_end"]
+        assert str(core_headline.refresh_date) == headline_data["refresh_date"]
+
+    @staticmethod
+    def _assert_share_same_supporting_models(
+        first_record: CoreHeadline | CoreTimeSeries,
+        second_record: CoreHeadline | CoreTimeSeries,
+    ) -> None:
+        assert first_record.metric == second_record.metric
+        assert first_record.metric.metric_group == second_record.metric.metric_group
+        assert (
+            first_record.metric.metric_group.topic
+            == second_record.metric.metric_group.topic
+        )
+        assert (
+            first_record.metric.metric_group.topic.sub_theme
+            == second_record.metric.metric_group.topic.sub_theme
+        )
+        assert (
+            first_record.metric.metric_group.topic.sub_theme.theme
+            == second_record.metric.metric_group.topic.sub_theme.theme
+        )
+        assert first_record.age == second_record.age
+
+    def _assert_core_timeseries_model_has_correct_values(
+        self,
+        core_timeseries: CoreTimeSeries,
+        timeseries_data: dict[str, str | float | int],
+    ) -> None:
+        self._assert_core_model(model=core_timeseries, source_data=timeseries_data)
+        assert str(core_timeseries.refresh_date) == str(timeseries_data["refresh_date"])
+        assert str(core_timeseries.dt) == str(timeseries_data["date"])
+        assert core_timeseries.metric_frequency == timeseries_data["metric_frequency"]
+        assert core_timeseries.year == timeseries_data["year"]
+        assert core_timeseries.month == timeseries_data["month"]
+        assert core_timeseries.epiweek == timeseries_data["epiweek"]

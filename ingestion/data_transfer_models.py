@@ -26,3 +26,4 @@ class TimeSeriesDTO(BaseDTO):
     month: int
     epiweek: int
     date: str
+    metric_frequency: str

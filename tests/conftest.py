@@ -109,3 +109,49 @@ def example_headline_data_json() -> list[dict[str, str | float]]:
             "refresh_date": "2023-07-11",
         },
     ]
+
+
+@pytest.fixture
+def example_timeseries_data_json() -> list[dict[str, str | int | float]]:
+    return [
+        {
+            "parent_theme": "infectious_disease",
+            "child_theme": "respiratory",
+            "topic": "COVID-19",
+            "metric_group": "deaths",
+            "metric": "COVID-19_deaths_ONSByDay",
+            "geography_type": "Nation",
+            "geography": "England",
+            "geography_code": "E92000001",
+            "age": "all",
+            "sex": "all",
+            "stratum": "default",
+            "metric_frequency": "daily",
+            "epiweek": 10,
+            "month": 3,
+            "year": 2020,
+            "date": "2020-03-02",
+            "metric_value": 0,
+            "refresh_date": "2023-07-11",
+        },
+        {
+            "parent_theme": "infectious_disease",
+            "child_theme": "respiratory",
+            "topic": "COVID-19",
+            "metric_group": "deaths",
+            "metric": "COVID-19_deaths_ONSByDay",
+            "geography_type": "Nation",
+            "geography": "England",
+            "geography_code": "E92000001",
+            "age": "all",
+            "sex": "all",
+            "stratum": "default",
+            "metric_frequency": "daily",
+            "epiweek": 10,
+            "month": 3,
+            "year": 2020,
+            "date": "2020-03-03",
+            "metric_value": 0,
+            "refresh_date": "2023-07-11",
+        },
+    ]

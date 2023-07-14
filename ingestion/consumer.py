@@ -3,7 +3,7 @@ from typing import Callable, Iterable, NamedTuple, Optional, Type
 import pandas as pd
 from django.db.models import Manager
 
-from ingestion.data_transfer_models import HeadlineDTO
+from ingestion.data_transfer_models import HeadlineDTO, TimeSeriesDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.reader import Reader
 
@@ -23,8 +23,10 @@ DEFAULT_GEOGRAPHY_MANAGER = MetricsAPIInterface.get_geography_manager()
 DEFAULT_AGE_MANAGER = MetricsAPIInterface.get_age_manager()
 DEFAULT_STRATUM_MANAGER = MetricsAPIInterface.get_stratum_manager()
 DEFAULT_CORE_HEADLINE_MANAGER = MetricsAPIInterface.get_core_headline_manager()
+DEFAULT_CORE_TIMESERIES_MANAGER = MetricsAPIInterface.get_core_timeseries_manager()
 
 CREATE_CORE_HEADLINES: Callable = MetricsAPIInterface.get_create_core_headlines()
+CREATE_CORE_TIMESERIES: Callable = MetricsAPIInterface.get_create_core_timeseries()
 
 
 class Ingestion:
@@ -67,6 +69,9 @@ class Ingestion:
     core_headline_manager : `CoreHeadlineManager`
         The model manager for `CoreHeadline`
         Defaults to the concrete `CoreHeadlineManager` via `CoreHeadline.objects`
+    core_timeseries_manager : `CoreTimeSeriesManager`
+        The model manager for `CoreTimeSeries`
+        Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
 
     """
 
@@ -86,6 +91,7 @@ class Ingestion:
         age_manager: Manager = DEFAULT_AGE_MANAGER,
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
         core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
+        core_timeseries_manager: Manager = DEFAULT_CORE_TIMESERIES_MANAGER,
     ):
         self.reader = reader or Reader(data=data)
 
@@ -100,56 +106,48 @@ class Ingestion:
         self.age_manager = age_manager
         self.stratum_manager = stratum_manager
         self.core_headline_manager = core_headline_manager
+        self.core_timeseries_manager = core_timeseries_manager
 
-    def _convert_to_headline_dtos(self, processed_data: Iterable) -> list[HeadlineDTO]:
-        """Converts the given `processed_data` to a list of HeadlineDTOs
+    def update_supporting_models(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Updates all supporting models, also replaces instances in the dataframe with IDs
 
         Notes:
-            This handles the translations between column names
-            from the data source to the column names expected by the database.
-            E.g. the value in the "parent_theme" column of the source file
-            will be passed into each `HeadlineDTO` as "theme"
+            This method will accomplish 2 main things:
+            1)  Creates any new supporting models required.
+                For example, if the ingested data contains a new value
+                for the `topic` field, then a new `Topic` model
+                will be created and that record will be inserted
+                into the database.
+            2)  This method will also update supporting model columns
+                to instead use their corresponding database record IDS.
+                For example, if the dataframe showed `COVID-19`
+                for the `topic` field of each entry.
+                Then the dataframe will instead now show `123`,
+                which will be the ID/pk of the `Topic` model
+                which has the name `COVID-19`.
 
         Args:
-            processed_data: The parsed iterable, for which each item
-                can be consumed by a `HeadlineDTO`
+            dataframe: The incoming dataframe containing
+                the raw JSON data
 
         Returns:
-            list[HeadlineDTO]: A list of `HeadlineDTO` which
-                are enriched with the corresponding values
-                from the source file
+            An updated version of the dataframe, containing
+            corresponding database records instead of names
+            for the supporting model columns.
 
         """
-        return [self.to_headline_dto(data_record=record) for record in processed_data]
+        all_related_fields_and_model_managers: list[
+            FieldsAndModelManager
+        ] = self.get_all_related_fields_and_model_managers()
 
-    @staticmethod
-    def to_headline_dto(data_record: pd.DataFrame) -> HeadlineDTO:
-        """Takes the given `data_record` and returns a single enriched `HeadlineDTO`
+        for related_fields_and_model_manager in all_related_fields_and_model_managers:
+            dataframe: pd.DataFrame = self.reader.maintain_model(
+                incoming_dataframe=dataframe,
+                fields=related_fields_and_model_manager.fields,
+                model_manager=related_fields_and_model_manager.model_manager,
+            )
 
-        Args:
-            data_record: An individual record from the loaded JSON file
-
-        Returns:
-            A `HeadlineDTO` object with the correct fields
-            populated from the given `data_record`
-
-        """
-        return HeadlineDTO(
-            theme=data_record.parent_theme,
-            sub_theme=data_record.child_theme,
-            metric_group=data_record.metric_group,
-            topic=data_record.topic,
-            metric=data_record.metric,
-            geography_type=data_record.geography_type,
-            geography=data_record.geography,
-            age=data_record.age,
-            sex=data_record.sex,
-            stratum=data_record.stratum,
-            period_start=data_record.period_start,
-            period_end=data_record.period_end,
-            metric_value=data_record.metric_value,
-            refresh_date=data_record.refresh_date,
-        )
+        return dataframe
 
     def get_all_related_fields_and_model_managers(self) -> list[FieldsAndModelManager]:
         """Get a list of all related fields and model managers as named tuples
@@ -204,46 +202,141 @@ class Ingestion:
             ),
         ]
 
-    def update_supporting_models(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        """Updates all supporting models, also replaces instances in the dataframe with IDs
+    # Data transfer object creation
+
+    def _convert_to_headline_dtos(self, processed_data: Iterable) -> list[HeadlineDTO]:
+        """Converts the given `processed_data` to a list of HeadlineDTOs
 
         Notes:
-            This method will accomplish 2 main things:
+            This handles the translations between column names
+            from the data source to the column names expected by the database.
+            E.g. the value in the "parent_theme" column of the source file
+            will be passed into each `HeadlineDTO` as "theme"
+
+        Args:
+            processed_data: The parsed iterable, for which each item
+                can be consumed by a `HeadlineDTO`
+
+        Returns:
+            list[HeadlineDTO]: A list of `HeadlineDTO` which
+                are enriched with the corresponding values
+                from the source file
+
+        """
+        return [self.to_headline_dto(data_record=record) for record in processed_data]
+
+    @staticmethod
+    def to_headline_dto(data_record: pd.DataFrame) -> HeadlineDTO:
+        """Takes the given `data_record` and returns a single enriched `HeadlineDTO`
+
+        Args:
+            data_record: An individual record from the loaded JSON file
+
+        Returns:
+            A `HeadlineDTO` object with the correct fields
+            populated from the given `data_record`
+
+        """
+        return HeadlineDTO(
+            theme=data_record.parent_theme,
+            sub_theme=data_record.child_theme,
+            metric_group=data_record.metric_group,
+            topic=data_record.topic,
+            metric=data_record.metric,
+            geography_type=data_record.geography_type,
+            geography=data_record.geography,
+            age=data_record.age,
+            sex=data_record.sex,
+            stratum=data_record.stratum,
+            period_start=data_record.period_start,
+            period_end=data_record.period_end,
+            metric_value=data_record.metric_value,
+            refresh_date=data_record.refresh_date,
+        )
+
+    def _convert_to_timeseries_dtos(
+        self, processed_data: Iterable
+    ) -> list[HeadlineDTO]:
+        """Converts the given `processed_data` to a list of TimeSeriesDTOs
+
+        Notes:
+            This handles the translations between column names
+            from the data source to the column names expected by the database.
+            E.g. the value in the "parent_theme" column of the source file
+            will be passed into each `TimeSeriesDTO` as "theme"
+
+        Args:
+            processed_data: The parsed iterable, for which each item
+                can be consumed by a `TimeSeriesDTO`
+
+        Returns:
+            list[TimeSeriesDTO]: A list of `TimeSeriesDTO` which
+                are enriched with the corresponding values
+                from the source file
+
+        """
+        return [self.to_timeseries_dto(data_record=record) for record in processed_data]
+
+    @staticmethod
+    def to_timeseries_dto(data_record: pd.DataFrame) -> HeadlineDTO:
+        """Takes the given `data_record` and returns a single enriched `TimeSeriesDTO`
+
+        Args:
+            data_record: An individual record from the loaded JSON file
+
+        Returns:
+            A `TimeSeriesDTO` object with the correct fields
+            populated from the given `data_record`
+
+        """
+        return TimeSeriesDTO(
+            theme=data_record.parent_theme,
+            sub_theme=data_record.child_theme,
+            metric_group=data_record.metric_group,
+            topic=data_record.topic,
+            metric=data_record.metric,
+            geography_type=data_record.geography_type,
+            geography=data_record.geography,
+            age=data_record.age,
+            sex=data_record.sex,
+            stratum=data_record.stratum,
+            metric_frequency=data_record.metric_frequency,
+            year=data_record.year,
+            month=data_record.month,
+            epiweek=data_record.epiweek,
+            metric_value=data_record.metric_value,
+            date=str(data_record.date),
+            refresh_date=data_record.refresh_date,
+        )
+
+    def _parse_data(self) -> Iterable:
+        """Convert the data to an iterable, ready to be translated into data transfer objects
+
+        Notes:
+            This will handle the following pre-processing steps:
             1)  Creates any new supporting models required.
                 For example, if the ingested data contains a new value
                 for the `topic` field, then a new `Topic` model
                 will be created and that record will be inserted
                 into the database.
-            2)  This method will also update supporting model columns
-                to instead use their corresponding database record IDS.
-                For example, if the dataframe showed `COVID-19`
+            2)  The supporting model columns will also
+                instead use their corresponding database record IDS.
+                For example, if the data showed `COVID-19`
                 for the `topic` field of each entry.
-                Then the dataframe will instead now show `123`,
+                Then the returned iterable will instead now show `123`,
                 which will be the ID/pk of the `Topic` model
                 which has the name `COVID-19`.
-
-        Args:
-            dataframe: The incoming dataframe containing
-                the raw JSON data
+            3)  Remove all rows with `NaN` in the `metric_value` column
 
         Returns:
-            An updated version of the dataframe, containing
-            corresponding database records instead of names
-            for the supporting model columns.
+            A list of `HeadlineDTO` instances which are
+            enriched with all the data required to
+            insert a new database record in the table
 
         """
-        all_related_fields_and_model_managers: list[
-            FieldsAndModelManager
-        ] = self.get_all_related_fields_and_model_managers()
-
-        for related_fields_and_model_manager in all_related_fields_and_model_managers:
-            dataframe: pd.DataFrame = self.reader.maintain_model(
-                incoming_dataframe=dataframe,
-                fields=related_fields_and_model_manager.fields,
-                model_manager=related_fields_and_model_manager.model_manager,
-            )
-
-        return dataframe
+        dataframe: pd.DataFrame = self.reader.open_data_as_dataframe()
+        dataframe: pd.DataFrame = self.update_supporting_models(dataframe=dataframe)
+        return self.reader.parse_dataframe_as_iterable(dataframe=dataframe)
 
     def create_headlines_dtos_from_source(self) -> list[HeadlineDTO]:
         """Creates a list of `HeadlineDTO`s and updates supporting models
@@ -253,11 +346,7 @@ class Ingestion:
             to create the corresponding `CoreHeadline` records.
 
         """
-        dataframe: pd.DataFrame = self.reader.open_data_as_dataframe()
-        dataframe: pd.DataFrame = self.update_supporting_models(dataframe=dataframe)
-        processed_data: Iterable = self.reader.parse_dataframe_as_iterable(
-            dataframe=dataframe
-        )
+        processed_data: Iterable = self._parse_data()
         return self._convert_to_headline_dtos(processed_data=processed_data)
 
     def create_headlines(self, batch_size: int = 100) -> None:
@@ -285,5 +374,44 @@ class Ingestion:
         return CREATE_CORE_HEADLINES(
             headline_dtos=headline_dtos,
             core_headline_manager=self.core_headline_manager,
+            batch_size=batch_size,
+        )
+
+    def create_timeseries_dtos_from_source(self) -> list[HeadlineDTO]:
+        """Creates a list of `TimeSeriesDTO`s and updates supporting models
+
+        Returns:
+            A list of enriched `TimeSeriesDTO`s which can be used
+            to create the corresponding `CoreTimeSeries` records.
+
+        """
+        processed_data: Iterable = self._parse_data()
+        return self._convert_to_timeseries_dtos(processed_data=processed_data)
+
+    def create_timeseries(self, batch_size: int = 100) -> None:
+        """Creates `CoreTimeSeries` records from the ingested data
+
+        Notes:
+            Any necessary supporting models will be created
+            as required for the `CoreTimeSeries` records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Args:
+            batch_size: Controls the number of objects created
+                in a single write query to the database.
+                Defaults to 100.
+
+        Returns:
+            None
+
+        """
+        timeseries_dtos: list[TimeSeriesDTO] = self.create_timeseries_dtos_from_source()
+
+        return CREATE_CORE_TIMESERIES(
+            timeseries_dtos=timeseries_dtos,
+            core_timeseries_manager=self.core_timeseries_manager,
             batch_size=batch_size,
         )

@@ -5,6 +5,7 @@ from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (
     Age,
     CoreHeadline,
+    CoreTimeSeries,
     Geography,
     GeographyType,
     Metric,
@@ -167,6 +168,21 @@ class TestMetricsAPIInterface:
 
         # Then
         assert core_headline_manager is CoreHeadline.objects
+
+    def test_get_core_timeseries_manager(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_core_timeseries_manager()` is called from that object
+        Then the concrete `CoreTimeSeriesManager` is returned
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        core_timseries_manager = metrics_api_interface.get_core_timeseries_manager()
+
+        # Then
+        assert core_timseries_manager is CoreTimeSeries.objects
 
     def test_get_time_period_enum(self):
         """
