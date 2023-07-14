@@ -142,7 +142,9 @@ class TestIngestion:
         assert model.metric.name == source_data["metric"]
         assert model.geography.geography_type.name == source_data["geography_type"]
         assert model.geography.name == source_data["geography"]
-        assert model.sex == {"all": "ALL", "female": "F", "male": "M"}.get(source_data["sex"].lower())
+        assert model.sex == {"all": "ALL", "female": "F", "male": "M"}.get(
+            source_data["sex"].lower()
+        )
         assert model.age.name == source_data["age"]
         assert model.stratum.name == source_data["stratum"]
         assert float(model.metric_value) == float(source_data["metric_value"])
