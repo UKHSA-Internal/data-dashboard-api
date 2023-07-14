@@ -121,10 +121,10 @@ class TestReader:
         )
 
     @mock.patch.object(Reader, "_cast_int_type_on_columns_with_foreign_keys")
-    @mock.patch.object(Reader, "_create_named_tuple_iterable")
-    def test_parse_dataframe_as_iterable_calls_method_to_create_iterable(
+    @mock.patch.object(Reader, "_cast_sex_column_to_expected_values")
+    def test_parse_dataframe_as_iterable_calls_method_to_cast_sex_column(
         self,
-        spy_create_named_tuple_iterable: mock.MagicMock,
+        spy_cast_sex_column_to_expected_values: mock.MagicMock,
         spy_cast_int_type_on_columns_with_foreign_keys: mock.MagicMock,
     ):
         """
@@ -132,12 +132,50 @@ class TestReader:
         When `parse_dataframe_as_iterable()` is called
             from an instance of `Reader`
         Then a call is delegated to the
-            `_cast_int_type_on_columns_with_foreign_keys()` method
+            `_cast_sex_column_to_expected_values()` method
+
+        Patches:
+            `spy_cast_sex_column_to_expected_values`: For
+                the main assertion
+            `spy_cast_int_type_on_columns_with_foreign_keys`: To isolate
+                 the return value, so it can be used to check
+                 the contract on the call to
+                 `_cast_sex_column_to_expected_values()`
+
+        """
+        # Given
+        mocked_dataframe = mock.MagicMock()
+        reader = Reader(data=mock.Mock())
+
+        # When
+        reader.parse_dataframe_as_iterable(dataframe=mocked_dataframe)
+
+        # Then
+        dataframe_from_previous_callee_method = (
+            spy_cast_int_type_on_columns_with_foreign_keys.return_value
+        )
+        spy_cast_sex_column_to_expected_values.assert_called_once_with(
+            dataframe=dataframe_from_previous_callee_method
+        )
+
+    @mock.patch.object(Reader, "_cast_sex_column_to_expected_values")
+    @mock.patch.object(Reader, "_create_named_tuple_iterable")
+    def test_parse_dataframe_as_iterable_calls_method_to_create_iterable(
+        self,
+        spy_create_named_tuple_iterable: mock.MagicMock,
+        spy_cast_sex_column_to_expected_values: mock.MagicMock,
+    ):
+        """
+        Given a mocked `DataFrame`
+        When `parse_dataframe_as_iterable()` is called
+            from an instance of `Reader`
+        Then a call is delegated to the
+            `_create_named_tuple_iterable()` method
 
         Patches:
             `spy_create_named_tuple_iterable`: For
                 the main assertion
-            `spy_cast_int_type_on_columns_with_foreign_keys`: To isolate
+            `spy_cast_sex_column_to_expected_values`: To isolate
                  the return value, so it can be used to check
                  the contract on the call to
                  `_create_named_tuple_iterable()`
@@ -152,7 +190,7 @@ class TestReader:
 
         # Then
         dataframe_from_previous_callee_method = (
-            spy_cast_int_type_on_columns_with_foreign_keys.return_value
+            spy_cast_sex_column_to_expected_values.return_value
         )
         spy_create_named_tuple_iterable.assert_called_once_with(
             dataframe=dataframe_from_previous_callee_method
@@ -168,7 +206,7 @@ class TestReader:
         When `parse_dataframe_as_iterable()` is called
             from an instance of `Reader`
         Then the final call is delegated to the
-            `spy_create_named_tuple_iterable()` method
+            `_create_named_tuple_iterable()` method for the return value
 
         Patches:
             `spy_create_named_tuple_iterable`: For

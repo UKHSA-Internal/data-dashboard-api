@@ -349,7 +349,8 @@ class Reader:
             This will handle the following pre-processing steps:
             1)  Remove all rows with `NaN` in the `metric_value` column
             2)  Cast all columns with foreign keys to int types
-            3)  Create an easy to use iterable from the dataframe
+            3)  Casts the `sex` column to the expected values
+            4)  Create an easy to use iterable from the dataframe
 
             This method also assumes supporting model columns
             have been replaced with database record IDS.
@@ -375,6 +376,9 @@ class Reader:
             dataframe=dataframe
         )
         dataframe: pd.DataFrame = self._cast_int_type_on_columns_with_foreign_keys(
+            dataframe=dataframe
+        )
+        dataframe: pd.DataFrame = self._cast_sex_column_to_expected_values(
             dataframe=dataframe
         )
         return self._create_named_tuple_iterable(dataframe=dataframe)
