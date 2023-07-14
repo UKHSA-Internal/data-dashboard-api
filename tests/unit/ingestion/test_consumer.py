@@ -5,12 +5,14 @@ import pytest
 from django.db.models.manager import Manager
 
 from ingestion.consumer import FieldsAndModelManager, HeadlineDTO, Ingestion, Reader
+from ingestion.data_transfer_models import TimeSeriesDTO
 from metrics.data.models import core_models
 
 MODULE_PATH = "ingestion.consumer"
 
 
 class TestIngestion:
+    # Headline DTO construction tests
     def test_to_headline_dto(self, example_headline_data_json: list[dict[str, float]]):
         """
         Given a single headline record as a dictionary
@@ -91,6 +93,103 @@ class TestIngestion:
 
         assert converted_headline_dtos == [spy_to_headline_dto.return_value] * 2
 
+    # Timeseries DTO construction tests
+
+    def test_to_timeseries_dto(
+        self, example_timeseries_data_json: list[dict[str, float]]
+    ):
+        """
+        Given a single timeseries record as a dictionary
+        When `to_timeseries_dto()` is called from an instance of `Ingestion`
+        Then the returned model is enriched with the correct fields
+        """
+        # Given
+        data = example_timeseries_data_json[0]
+        timeseries_data = mock.Mock(
+            parent_theme=data["parent_theme"],
+            child_theme=data["child_theme"],
+            metric_group=data["metric_group"],
+            topic=data["topic"],
+            metric=data["metric"],
+            geography_type=data["geography_type"],
+            geography=data["geography"],
+            geography_code=data["geography_code"],
+            age=data["age"],
+            sex=data["sex"],
+            stratum=data["stratum"],
+            metric_frequency=data["metric_frequency"],
+            year=data["year"],
+            month=data["month"],
+            epiweek=data["epiweek"],
+            date=data["date"],
+            metric_value=data["metric_value"],
+            refresh_date=data["refresh_date"],
+        )
+        ingestion = Ingestion(data=data)
+
+        # When
+        model: TimeSeriesDTO = ingestion.to_timeseries_dto(data_record=timeseries_data)
+
+        # Then
+        assert model.theme == timeseries_data.parent_theme == data["parent_theme"]
+        assert model.sub_theme == timeseries_data.child_theme == data["child_theme"]
+        assert (
+            model.metric_group == timeseries_data.metric_group == data["metric_group"]
+        )
+        assert model.topic == timeseries_data.topic == data["topic"]
+        assert model.metric == timeseries_data.metric == data["metric"]
+        assert (
+            model.geography_type
+            == timeseries_data.geography_type
+            == data["geography_type"]
+        )
+        assert model.geography == timeseries_data.geography == data["geography"]
+        assert model.age == timeseries_data.age == data["age"]
+        assert model.sex == timeseries_data.sex == data["sex"]
+        assert model.stratum == timeseries_data.stratum == data["stratum"]
+        assert (
+            model.metric_frequency
+            == timeseries_data.metric_frequency
+            == data["metric_frequency"]
+        )
+        assert model.epiweek == timeseries_data.epiweek == data["epiweek"]
+        assert model.month == timeseries_data.month == data["month"]
+        assert model.year == timeseries_data.year == data["year"]
+        assert (
+            model.metric_value == timeseries_data.metric_value == data["metric_value"]
+        )
+
+    @mock.patch.object(Ingestion, "to_timeseries_dto")
+    def test_convert_to_timeseries_dtos(self, spy_to_timeseries_dto: mock.MagicMock):
+        """
+        Given a list of dictionaries representing timeseries records
+        When `_convert_to_timeseries_dtos()` is called from an instance of `Ingestion`
+        Then the call is delegated to the `to_timeseries_dto()` method for each entity
+
+        Patches:
+            `spy_to_timeseries_dto`: For the main assertion.
+                To check each `TimeSeriesDTO` is built via
+                calls to `to_timeseries_dto()`
+
+        """
+        # Given
+        mocked_raw_timeseries_one = mock.Mock()
+        mocked_raw_timeseries_two = mock.Mock()
+        data = [mocked_raw_timeseries_one, mocked_raw_timeseries_two]
+        ingestion = Ingestion(data=data)
+
+        # When
+        converted_timeseries_dtos = ingestion._convert_to_timeseries_dtos(data)
+
+        # Then
+        expected_calls = [
+            mock.call(data_record=mocked_raw_timeseries_one),
+            mock.call(data_record=mocked_raw_timeseries_two),
+        ]
+        spy_to_timeseries_dto.assert_has_calls(expected_calls, any_order=True)
+
+        assert converted_timeseries_dtos == [spy_to_timeseries_dto.return_value] * 2
+
     @pytest.mark.parametrize(
         "attribute_on_class, expected_model_manager",
         [
@@ -104,6 +203,7 @@ class TestIngestion:
             ("age_manager", core_models.Age.objects),
             ("stratum_manager", core_models.Stratum.objects),
             ("core_headline_manager", core_models.CoreHeadline.objects),
+            ("core_timeseries_manager", core_models.CoreTimeSeries.objects),
         ],
     )
     def test_initializes_with_default_core_model_managers(
@@ -148,10 +248,8 @@ class TestIngestion:
     ):
         """
         Given mocked data
-        When `create_headlines()` is called
-            from an instance of `Ingestion`
-        Then the call is delegated
-            to `create_core_headlines()`
+        When `create_headlines()` is called from an instance of `Ingestion`
+        Then the call is delegated to `create_core_headlines()`
         """
         # Given
         mocked_core_headline_manager = mock.Mock()
@@ -170,6 +268,38 @@ class TestIngestion:
         spy_create_core_headlines.assert_called_once_with(
             headline_dtos=expected_headline_dtos,
             core_headline_manager=mocked_core_headline_manager,
+            batch_size=batch_size,
+        )
+
+    @mock.patch.object(Ingestion, "create_timeseries_dtos_from_source")
+    @mock.patch(f"{MODULE_PATH}.CREATE_CORE_TIMESERIES")
+    def test_create_timeseries_delegates_call_correctly(
+        self,
+        spy_create_timeseries: mock.MagicMock,
+        spy_create_timeseries_dtos_from_source: mock.MagicMock,
+    ):
+        """
+        Given mocked data
+        When `create_timeseries()` is called from an instance of `Ingestion`
+        Then the call is delegated to `create_core_headlines()`
+        """
+        # Given
+        mocked_core_timeseries_manager = mock.Mock()
+        ingestion = Ingestion(
+            data=mock.Mock(),
+            reader=mock.Mock(),  # Stubbed
+            core_timeseries_manager=mocked_core_timeseries_manager,
+        )
+        batch_size = 100
+
+        # When
+        ingestion.create_timeseries()
+
+        # Then
+        expected_timeseries_dtos = spy_create_timeseries_dtos_from_source.return_value
+        spy_create_timeseries.assert_called_once_with(
+            timeseries_dtos=expected_timeseries_dtos,
+            core_timeseries_manager=mocked_core_timeseries_manager,
             batch_size=batch_size,
         )
 

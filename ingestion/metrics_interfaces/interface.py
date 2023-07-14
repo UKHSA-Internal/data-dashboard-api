@@ -2,7 +2,10 @@ from typing import Callable
 
 from metrics.data.enums import TimePeriod
 from metrics.data.models import core_models
-from metrics.data.operations.ingestion import create_core_headlines
+from metrics.data.operations.ingestion import (
+    create_core_headlines,
+    create_core_timeseries,
+)
 
 
 class MetricsAPIInterface:
@@ -47,9 +50,17 @@ class MetricsAPIInterface:
         return core_models.CoreHeadline.objects
 
     @staticmethod
+    def get_core_timeseries_manager():
+        return core_models.CoreTimeSeries.objects
+
+    @staticmethod
     def get_time_period_enum() -> TimePeriod:
         return TimePeriod
 
     @staticmethod
     def get_create_core_headlines() -> Callable:
         return create_core_headlines
+
+    @staticmethod
+    def get_create_core_timeseries() -> Callable:
+        return create_core_timeseries
