@@ -5,6 +5,7 @@ import pytest
 
 from ingestion.consumer import Reader
 from ingestion.reader import COLUMN_NAMES_WITH_FOREIGN_KEYS
+from metrics.data.enums import TimePeriod
 
 MODULE_PATH = "ingestion.reader"
 
@@ -685,11 +686,39 @@ class TestReader:
 
         # Then
         iterable = returned_dataframe.itertuples()
-        all_gender_record = next(iterable)
-        assert all_gender_record.sex == "ALL"
+        record = next(iterable)
+        assert record.sex == expected_value
 
-        female_gender_record = next(iterable)
-        assert female_gender_record.sex == "F"
+    @pytest.mark.parametrize(
+        "metric_frequency_column_value, expected_value",
+        (
+            ["daily", TimePeriod.Daily.value],
+            ["weekly", TimePeriod.Weekly.value],
+            ["monthly", TimePeriod.Monthly.value],
+            ["quarterly", TimePeriod.Quarterly.value],
+            ["annual", TimePeriod.Annual.value],
+        ),
+    )
+    def test_cast_metric_frequency_column_to_expected_values(
+        self, metric_frequency_column_value: str, expected_value: str
+    ):
+        """
+        Given a `DataFrame` which contains a "metric_frequency" column
+        When `_cast_metric_frequency_column_to_expected_values()`
+            is called from an instance of `Reader`
+        Then the returned dataframe has cast the "metric_frequency" column
+            to a set of expected values
+        """
+        # Given
+        dataframe = pd.DataFrame([{"metric_frequency": metric_frequency_column_value}])
+        reader = Reader(data=mock.Mock())
 
-        male_gender_record = next(iterable)
-        assert male_gender_record.sex == "M"
+        # When
+        returned_dataframe = reader._cast_metric_frequency_column_to_expected_values(
+            dataframe=dataframe,
+        )
+
+        # Then
+        iterable = returned_dataframe.itertuples()
+        record = next(iterable)
+        assert record.metric_frequency == expected_value
