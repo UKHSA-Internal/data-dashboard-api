@@ -617,3 +617,31 @@ class TestReader:
 
         # Then
         assert returned_dataframe.empty
+
+    def test_cast_sex_column_to_expected_values(self):
+        """
+        Given a `DataFrame` which contains a "sex" column
+        When `_cast_sex_column_to_expected_values()`
+            is called from an instance of `Reader`
+        Then the returned dataframe has cast the "sex" column
+            to a set of expected values
+        """
+        # Given
+        dataframe = pd.DataFrame([{"sex": "all"}, {"sex": "female"}, {"sex": "male"}])
+        reader = Reader(data=mock.Mock())
+
+        # When
+        returned_dataframe = reader._cast_sex_column_to_expected_values(
+            dataframe=dataframe,
+        )
+
+        # Then
+        iterable = returned_dataframe.itertuples()
+        all_gender_record = next(iterable)
+        assert all_gender_record.sex == "ALL"
+
+        female_gender_record = next(iterable)
+        assert female_gender_record.sex == "F"
+
+        male_gender_record = next(iterable)
+        assert male_gender_record.sex == "M"

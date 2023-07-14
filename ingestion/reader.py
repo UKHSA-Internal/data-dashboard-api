@@ -422,6 +422,31 @@ class Reader:
         return dataframe
 
     @staticmethod
+    def _cast_sex_column_to_expected_values(dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Casts each row in the "sex" column to one of the expected values
+
+        Notes:
+            Expected values are one of the following:
+            1) "ALL" - All genders with no filtering applied
+            2) "F" - Females
+            3) "M" - Males
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+
+        Returns:
+            A `DataFrame` where the "sex" column has
+            been parsed with the expected values
+
+        """
+
+        def _cast_sex_value(value: str) -> str:
+            return sex_options.get(value.lower(), "ALL")
+
+        dataframe["sex"] = dataframe["sex"].apply(_cast_sex_value)
+        return dataframe
+
+    @staticmethod
     def _create_named_tuple_iterable(dataframe: pd.DataFrame) -> Iterable[Any]:
         """Takes the given `dataframe` and returns an iterable of named tuples
 
