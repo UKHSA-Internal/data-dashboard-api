@@ -15,7 +15,7 @@ class HomePage(Page):
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
         null=True,
-        help_text=help_texts.PAGE_DESCRIPTION_FIELD_HELP_TEXT,
+        help_text=help_texts.PAGE_DESCRIPTION_FIELD,
     )
     body = ALLOWABLE_BODY_CONTENT
 

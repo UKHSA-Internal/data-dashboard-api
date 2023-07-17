@@ -35,6 +35,4 @@ class HeadlinesQuerySerializer(serializers.Serializer):
 
 
 class HeadlinesResponseSerializer(serializers.Serializer):
-    value = serializers.FloatField(
-        help_text=help_texts.HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT
-    )
+    value = serializers.FloatField(help_text=help_texts.HEADLINE_METRIC_VALUE_FIELD)

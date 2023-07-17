@@ -21,7 +21,7 @@ LABEL_FIELD: str = """
 The label to assign on the legend for this individual plot.
 E.g. `15 to 44 years old`
 """
-HEADLINE_METRIC_VALUE_FIELD_HELP_TEXT: str = """
+HEADLINE_METRIC_VALUE_FIELD: str = """
 The associated value of the headline metric which was queried for. E.g. `COVID-19_headline_newtests_7daycounttotal`
 """
 TREND_METRIC_NAME_FIELD: str = """
@@ -66,7 +66,7 @@ FILE_DOWNLOAD_FORMAT: str = """
 The format you want the data downloaded in. 
 This can be either `json` or `csv`
 """
-CHARTS_RESPONSE_HELP_TEXT: str = """
+CHARTS_RESPONSE: str = """
 The specified chart in the requested format e.g. svg
 """
 CHART_WIDTH: str = """
@@ -75,10 +75,10 @@ The width in pixels that you want to chart to be (default = 435 pixels)
 CHART_HEIGHT: str = """
 The height in pixels that you want to chart to be (default = 220 pixels)
 """
-TABLES_RESPONSE_DATE_HELP_TEXT: str = """
+TABLES_RESPONSE_DATE: str = """
 The dates for the specified plots in a tabular format
 """
-TABLES_RESPONSE_HELP_TEXT: str = """
+TABLES_RESPONSE: str = """
 The specified plots in a tabular format
 """
 CHART_X_AXIS: str = """
@@ -87,9 +87,9 @@ The metric to use along the X Axis of the chart
 CHART_Y_AXIS: str = """
 The metric to use along the Y Axis of the chart
 """
-ENCODED_CHARTS_RESPONSE_HELP_TEXT: str = """
+ENCODED_CHARTS_RESPONSE: str = """
 The specified chart in the requested format as a URI encoded string (default format = svg)
 """
-ENCODED_CHARTS_LAST_UPDATED_HELP_TEXT: str = """
+ENCODED_CHARTS_LAST_UPDATED: str = """
 The date that the chart data goes up to
 """

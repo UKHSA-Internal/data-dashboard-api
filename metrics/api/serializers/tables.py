@@ -71,6 +71,4 @@ class TablesSerializer(serializers.Serializer):
 
 
 class TablesResponseSerializer(serializers.Serializer):
-    tabular_output = serializers.FileField(
-        help_text=help_texts.TABLES_RESPONSE_HELP_TEXT
-    )
+    tabular_output = serializers.FileField(help_text=help_texts.TABLES_RESPONSE)
