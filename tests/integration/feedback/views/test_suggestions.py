@@ -18,6 +18,12 @@ class TestSuggestionsView:
         Given a valid payload containing a question and answer suggestion
         When the `POST /api/suggestions/v1/` endpoint is hit
         Then an HTTP OK response is returned
+
+        Patches:
+            `spy_send_email`: To check the correct function is delegated
+                to in order to send the message to the email server.
+                And to ensure that the email server
+                is not needed for this API test
         """
         # Given
         path = "/api/suggestions/v1/"
