@@ -1,14 +1,18 @@
 from http import HTTPStatus
+from unittest import mock
 
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
+MODULE_PATH = "feedback.views.suggestions"
+
 
 class TestSuggestionsView:
+    @mock.patch(f"{MODULE_PATH}.send_email")
     @pytest.mark.django_db
     def test_post_request_returns_correct_response(
-        self, authenticated_api_client: APIClient
+        self, spy_send_email: mock.MagicMock, authenticated_api_client: APIClient
     ):
         """
         Given a valid payload containing a question and answer suggestion
@@ -33,3 +37,4 @@ class TestSuggestionsView:
 
         # Then
         assert response.status_code == HTTPStatus.OK.value
+        spy_send_email.assert_called_once()
