@@ -10,8 +10,8 @@ class ContentCards(StreamBlock):
 
 
 class Section(StructBlock):
-    heading = TextBlock(help_text=help_texts.HEADING_BLOCK_HELP_TEXT, required=True)
-    content = ContentCards(help_text=help_texts.CONTENT_ROW_CARDS_HELP_TEXT)
+    heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
+    content = ContentCards(help_text=help_texts.CONTENT_ROW_CARDS)
 
     class Meta:
         icon = "thumbtack"

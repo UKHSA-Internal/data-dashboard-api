@@ -12,14 +12,10 @@ MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
 
 
 class HeadlineNumberBlockTypes(blocks.StreamBlock):
-    headline_number = HeadlineNumberComponent(
-        help_text=help_texts.HEADLINE_BLOCK_FIELD_HELP_TEXT
-    )
-    trend_number = TrendNumberComponent(
-        help_text=help_texts.TREND_BLOCK_FIELD_HELP_TEXT
-    )
+    headline_number = HeadlineNumberComponent(help_text=help_texts.HEADLINE_BLOCK_FIELD)
+    trend_number = TrendNumberComponent(help_text=help_texts.TREND_BLOCK_FIELD)
     percentage_number = PercentageNumberComponent(
-        help_text=help_texts.PERCENTAGE_BLOCK_FIELD_HELP_TEXT
+        help_text=help_texts.PERCENTAGE_BLOCK_FIELD
     )
 
     class Meta:
@@ -27,14 +23,12 @@ class HeadlineNumberBlockTypes(blocks.StreamBlock):
 
 
 class MetricNumberBlockTypes(blocks.StructBlock):
-    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD_HELP_TEXT)
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     rows = HeadlineNumberBlockTypes(
         required=True,
         min_num=MINIMUM_ROWS_NUMBER_BLOCK_COUNT,
         max_num=MAXIMUM_ROWS_NUMBER_BLOCK_COUNT,
-        help_text=help_texts.NUMBERS_ROW_FIELD_HELP_TEXT.format(
-            MAXIMUM_ROWS_NUMBER_BLOCK_COUNT
-        ),
+        help_text=help_texts.NUMBERS_ROW_FIELD.format(MAXIMUM_ROWS_NUMBER_BLOCK_COUNT),
     )
 
     class Meta:
