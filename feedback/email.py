@@ -13,5 +13,5 @@ def send_email(suggestions: dict[str, str]) -> None:
     EmailMessage(
         subject="Suggestions Feedback for UKHSA data dashboard",
         body=body,
-        to=["afaan.ashiq2@gmail.com"],
+        to=[],
     )
