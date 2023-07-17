@@ -5,6 +5,7 @@ import pytest
 
 from ingestion.consumer import Reader
 from ingestion.reader import COLUMN_NAMES_WITH_FOREIGN_KEYS
+from metrics.data.enums import TimePeriod
 
 MODULE_PATH = "ingestion.reader"
 
@@ -159,11 +160,49 @@ class TestReader:
         )
 
     @mock.patch.object(Reader, "_cast_sex_column_to_expected_values")
+    @mock.patch.object(Reader, "_cast_metric_frequency_column_to_expected_values")
+    def test_parse_dataframe_as_iterable_calls_method_to_cast_metric_frequency_column(
+        self,
+        spy_cast_metric_frequency_column_to_expected_values: mock.MagicMock,
+        spy_cast_sex_column_to_expected_values: mock.MagicMock,
+    ):
+        """
+        Given a mocked `DataFrame`
+        When `parse_dataframe_as_iterable()` is called
+            from an instance of `Reader`
+        Then a call is delegated to the
+            `_cast_metric_frequency_column_to_expected_values()` method
+
+        Patches:
+            `spy_cast_metric_frequency_column_to_expected_values`: For
+                the main assertion
+            `spy_cast_sex_column_to_expected_values`: To isolate
+                 the return value, so it can be used to check
+                 the contract on the call to
+                 `_cast_metric_frequency_column_to_expected_values()`
+
+        """
+        # Given
+        mocked_dataframe = mock.MagicMock()
+        reader = Reader(data=mock.Mock())
+
+        # When
+        reader.parse_dataframe_as_iterable(dataframe=mocked_dataframe)
+
+        # Then
+        dataframe_from_previous_callee_method = (
+            spy_cast_sex_column_to_expected_values.return_value
+        )
+        spy_cast_metric_frequency_column_to_expected_values.assert_called_once_with(
+            dataframe=dataframe_from_previous_callee_method
+        )
+
+    @mock.patch.object(Reader, "_cast_metric_frequency_column_to_expected_values")
     @mock.patch.object(Reader, "_create_named_tuple_iterable")
     def test_parse_dataframe_as_iterable_calls_method_to_create_iterable(
         self,
         spy_create_named_tuple_iterable: mock.MagicMock,
-        spy_cast_sex_column_to_expected_values: mock.MagicMock,
+        spy_cast_metric_frequency_column_to_expected_values: mock.MagicMock,
     ):
         """
         Given a mocked `DataFrame`
@@ -175,7 +214,7 @@ class TestReader:
         Patches:
             `spy_create_named_tuple_iterable`: For
                 the main assertion
-            `spy_cast_sex_column_to_expected_values`: To isolate
+            `spy_cast_metric_frequency_column_to_expected_values`: To isolate
                  the return value, so it can be used to check
                  the contract on the call to
                  `_create_named_tuple_iterable()`
@@ -190,7 +229,7 @@ class TestReader:
 
         # Then
         dataframe_from_previous_callee_method = (
-            spy_cast_sex_column_to_expected_values.return_value
+            spy_cast_metric_frequency_column_to_expected_values.return_value
         )
         spy_create_named_tuple_iterable.assert_called_once_with(
             dataframe=dataframe_from_previous_callee_method
@@ -656,7 +695,17 @@ class TestReader:
         # Then
         assert returned_dataframe.empty
 
-    def test_cast_sex_column_to_expected_values(self):
+    @pytest.mark.parametrize(
+        "sex_column_value, expected_value",
+        (
+            ["all", "ALL"],
+            ["female", "F"],
+            ["male", "M"],
+        ),
+    )
+    def test_cast_sex_column_to_expected_values(
+        self, sex_column_value: str, expected_value: str
+    ):
         """
         Given a `DataFrame` which contains a "sex" column
         When `_cast_sex_column_to_expected_values()`
@@ -665,7 +714,7 @@ class TestReader:
             to a set of expected values
         """
         # Given
-        dataframe = pd.DataFrame([{"sex": "all"}, {"sex": "female"}, {"sex": "male"}])
+        dataframe = pd.DataFrame([{"sex": sex_column_value}])
         reader = Reader(data=mock.Mock())
 
         # When
@@ -675,11 +724,39 @@ class TestReader:
 
         # Then
         iterable = returned_dataframe.itertuples()
-        all_gender_record = next(iterable)
-        assert all_gender_record.sex == "ALL"
+        record = next(iterable)
+        assert record.sex == expected_value
 
-        female_gender_record = next(iterable)
-        assert female_gender_record.sex == "F"
+    @pytest.mark.parametrize(
+        "metric_frequency_column_value, expected_value",
+        (
+            ["daily", TimePeriod.Daily.value],
+            ["weekly", TimePeriod.Weekly.value],
+            ["monthly", TimePeriod.Monthly.value],
+            ["quarterly", TimePeriod.Quarterly.value],
+            ["annual", TimePeriod.Annual.value],
+        ),
+    )
+    def test_cast_metric_frequency_column_to_expected_values(
+        self, metric_frequency_column_value: str, expected_value: str
+    ):
+        """
+        Given a `DataFrame` which contains a "metric_frequency" column
+        When `_cast_metric_frequency_column_to_expected_values()`
+            is called from an instance of `Reader`
+        Then the returned dataframe has cast the "metric_frequency" column
+            to a set of expected values
+        """
+        # Given
+        dataframe = pd.DataFrame([{"metric_frequency": metric_frequency_column_value}])
+        reader = Reader(data=mock.Mock())
 
-        male_gender_record = next(iterable)
-        assert male_gender_record.sex == "M"
+        # When
+        returned_dataframe = reader._cast_metric_frequency_column_to_expected_values(
+            dataframe=dataframe,
+        )
+
+        # Then
+        iterable = returned_dataframe.itertuples()
+        record = next(iterable)
+        assert record.metric_frequency == expected_value

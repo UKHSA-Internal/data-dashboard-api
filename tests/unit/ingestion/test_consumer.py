@@ -13,14 +13,14 @@ MODULE_PATH = "ingestion.consumer"
 
 class TestIngestion:
     # Headline DTO construction tests
-    def test_to_headline_dto(self, example_headline_data_json: list[dict[str, float]]):
+    def test_to_headline_dto(self, example_headline_data):
         """
         Given a single headline record as a dictionary
         When `to_headline_dto()` is called from an instance of `Ingestion`
         Then the returned model is enriched with the correct fields
         """
         # Given
-        data = example_headline_data_json[0]
+        data = example_headline_data[0]
         headline_data = mock.Mock(
             parent_theme=data["parent_theme"],
             child_theme=data["child_theme"],
@@ -95,16 +95,14 @@ class TestIngestion:
 
     # Timeseries DTO construction tests
 
-    def test_to_timeseries_dto(
-        self, example_timeseries_data_json: list[dict[str, float]]
-    ):
+    def test_to_timeseries_dto(self, example_timeseries_data):
         """
         Given a single timeseries record as a dictionary
         When `to_timeseries_dto()` is called from an instance of `Ingestion`
         Then the returned model is enriched with the correct fields
         """
         # Given
-        data = example_timeseries_data_json[0]
+        data = example_timeseries_data[0]
         timeseries_data = mock.Mock(
             parent_theme=data["parent_theme"],
             child_theme=data["child_theme"],

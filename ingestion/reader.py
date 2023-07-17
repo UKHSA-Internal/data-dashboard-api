@@ -20,10 +20,6 @@ COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str, ...] = [
 SEX_OPTIONS = {"male": "M", "female": "F", "all": "ALL"}
 
 TIME_PERIOD_ENUM = MetricsAPIInterface.get_time_period_enum()
-frequency = {
-    "weekly": TIME_PERIOD_ENUM.Weekly.value,
-    "daily": TIME_PERIOD_ENUM.Daily.value,
-}
 
 
 class Reader:
@@ -381,6 +377,17 @@ class Reader:
         dataframe: pd.DataFrame = self._cast_sex_column_to_expected_values(
             dataframe=dataframe
         )
+        try:
+            dataframe: pd.DataFrame = (
+                self._cast_metric_frequency_column_to_expected_values(
+                    dataframe=dataframe
+                )
+            )
+        except KeyError:
+            # The headline data does not contain the "metric_frequency" column
+            # so this can be safely bypassed
+            pass
+
         return self._create_named_tuple_iterable(dataframe=dataframe)
 
     @staticmethod
@@ -448,6 +455,32 @@ class Reader:
             return SEX_OPTIONS.get(value.lower(), "ALL")
 
         dataframe["sex"] = dataframe["sex"].apply(_cast_sex_value)
+        return dataframe
+
+    @staticmethod
+    def _cast_metric_frequency_column_to_expected_values(
+        dataframe: pd.DataFrame,
+    ) -> pd.DataFrame:
+        """Casts each row in the "metric_frequency" column to one of the expected values
+
+        Notes:
+            Expected values are dictated by the `TimePeriod` enum
+
+        Args:
+            dataframe: The `DataFrame` to be processed
+
+        Returns:
+            A `DataFrame` where the "metric_frequency" column
+            has been parsed with the expected values
+
+        """
+
+        def _cast_metric_frequency_value(value: str) -> str:
+            return TIME_PERIOD_ENUM[value.title()].value
+
+        dataframe["metric_frequency"] = dataframe["metric_frequency"].apply(
+            _cast_metric_frequency_value
+        )
         return dataframe
 
     @staticmethod
