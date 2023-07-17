@@ -14,7 +14,7 @@ def build_body_for_email(suggestions: dict[str, str]) -> str:
         the body of the feedback email
 
     """
-    enriched_suggestions = _enrich_suggestions_with_long_form_questions(
+    enriched_suggestions: dict[str, str] = _enrich_suggestions_with_long_form_questions(
         suggestions=suggestions
     )
     return _build_body_from_suggestions(suggestions=enriched_suggestions)
