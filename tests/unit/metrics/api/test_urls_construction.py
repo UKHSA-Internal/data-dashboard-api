@@ -1,7 +1,7 @@
 import pytest
 from django.urls.resolvers import URLResolver
 
-from metrics.api.urls_construction import construct_urlpatterns
+from metrics.api.urls_construction import AppMode, construct_urlpatterns
 from public_api.urls import PUBLIC_API_PREFIX
 
 HEADLESS_CMS_API_ENDPOINT_PATHS = ["drafts", "pages"]
@@ -43,7 +43,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the private API endpoints
         """
         # Given
-        app_mode = "PRIVATE_API"
+        app_mode = AppMode.PRIVATE_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -65,7 +65,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the headless CMS pages endpoints
         """
         # Given
-        app_mode = "PRIVATE_API"
+        app_mode = AppMode.PRIVATE_API.value
 
         # When
         private_api_urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -91,7 +91,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = "PRIVATE_API"
+        app_mode = AppMode.PRIVATE_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -113,7 +113,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the public API endpoints
         """
         # Given
-        app_mode = "PUBLIC_API"
+        app_mode = AppMode.PUBLIC_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -135,7 +135,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = "PUBLIC_API"
+        app_mode = AppMode.PUBLIC_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -155,7 +155,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the CMS admin endpoints
         """
         # Given
-        app_mode = "CMS_ADMIN"
+        app_mode = AppMode.CMS_ADMIN.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -177,7 +177,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = "CMS_ADMIN"
+        app_mode = AppMode.CMS_ADMIN.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -213,9 +213,9 @@ class TestConstructUrlpatterns:
     @pytest.mark.parametrize(
         "app_mode",
         [
-            "CMS_ADMIN",
-            "PUBLIC_API",
-            "PRIVATE_API",
+            AppMode.CMS_ADMIN.value,
+            AppMode.PUBLIC_API.value,
+            AppMode.PRIVATE_API.value,
             None,
             "",
             "COMPLETE_APP",
