@@ -4,6 +4,18 @@ This is a [Django](https://www.djangoproject.com/)
 and [Wagtail](https://docs.wagtail.org/en/stable/getting_started/index.html) project. 
 The REST API is served via [Django-Rest-Framework](https://www.django-rest-framework.org/)
 
+## Prerequisites
+
+Before proceeding with the initial configuration you will require `postgresql` to be installed
+on your development system. For Mac users this will require `homebrew`.
+
+For a guide on setting up home brew please find details on the following link https://brew.sh/
+
+Once homebrew has been setup you can run the following command to install `postgressql`
+
+```bash
+brew install postgresql
+```
 
 ## Standard command tooling
 
@@ -73,10 +85,12 @@ When developing locally, the app will point to a local database:
 ## Application data
 
 To seed your environment with data, including CMS content and a snapshot of metrics data, 
-you can run the following command:
+you can run the following commands:
 
 ```bash
-./boot.sh <API Key> <Admin Password>
+sudo chmod +x boot.sh # <- make the script executable
+
+sudo ./boot.sh <API Key> <Admin Password>
 ```
 
 Whereby, `API Key` should meet the following criteria:
