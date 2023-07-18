@@ -97,7 +97,7 @@ def construct_urlpatterns(
 
     Notes:
         If the `app_mode` argument is not one of the following:
-            - `CMS`
+            - `CMS_ADMIN`
             - `PRIVATE_API`
             - `PUBLIC_API`
         Then this function will return the complete set of URLs.
@@ -117,7 +117,7 @@ def construct_urlpatterns(
         docs_urlspatterns + static_urlpatterns + common_urlpatterns
     )
 
-    if app_mode == "CMS":
+    if app_mode == "CMS_ADMIN":
         constructed_url_patterns += cms_admin_urlpatterns
         constructed_url_patterns += django_admin_urlpatterns
     elif app_mode == "PUBLIC_API":

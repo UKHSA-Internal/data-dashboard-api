@@ -148,14 +148,14 @@ class TestConstructUrlpatterns:
     # Tests for APP_MODE = "CMS_ADMIN"
 
     @pytest.mark.parametrize("cms_admin_endpoint_path", CMS_ADMIN_ENDPOINT_PATHS)
-    def test_cms_mode_returns_cms_admin_urls(self, cms_admin_endpoint_path: str):
+    def test_cms_admin_mode_returns_cms_admin_urls(self, cms_admin_endpoint_path: str):
         """
-        Given an `app_mode` of "CMS"
+        Given an `app_mode` of "CMS_ADMIN"
         When `construct_urlpatterns()` is called
         Then the urlpatterns returned contain the CMS admin endpoints
         """
         # Given
-        app_mode = "CMS"
+        app_mode = "CMS_ADMIN"
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -168,14 +168,16 @@ class TestConstructUrlpatterns:
     @pytest.mark.parametrize(
         "excluded_endpoint_path", PRIVATE_API_ENDPOINT_PATHS + PUBLIC_API_ENDPOINT_PATHS
     )
-    def test_cms_mode_does_not_return_other_urls(self, excluded_endpoint_path: str):
+    def test_cms_admin_mode_does_not_return_other_urls(
+        self, excluded_endpoint_path: str
+    ):
         """
-        Given an `app_mode` of "CMS"
+        Given an `app_mode` of "CMS_ADMIN"
         When `construct_urlpatterns()` is called
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = "CMS"
+        app_mode = "CMS_ADMIN"
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -211,7 +213,7 @@ class TestConstructUrlpatterns:
     @pytest.mark.parametrize(
         "app_mode",
         [
-            "CMS",
+            "CMS_ADMIN",
             "PUBLIC_API",
             "PRIVATE_API",
             None,
