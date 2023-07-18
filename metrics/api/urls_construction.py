@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.contrib import admin
 from django.urls import include, path, re_path, resolvers
 from django.views.static import serve
@@ -90,6 +92,12 @@ django_admin_urlpatterns = [
 ]
 
 
+class AppMode(Enum):
+    CMS_ADMIN = "CMS_ADMIN"
+    PRIVATE_API = "PRIVATE_API"
+    PUBLIC_API = "PUBLIC_API"
+
+
 def construct_urlpatterns(
     app_mode: str | None,
 ) -> list[resolvers.URLResolver, resolvers.URLPattern]:
@@ -97,7 +105,7 @@ def construct_urlpatterns(
 
     Notes:
         If the `app_mode` argument is not one of the following:
-            - `CMS`
+            - `CMS_ADMIN`
             - `PRIVATE_API`
             - `PUBLIC_API`
         Then this function will return the complete set of URLs.
@@ -117,12 +125,12 @@ def construct_urlpatterns(
         docs_urlspatterns + static_urlpatterns + common_urlpatterns
     )
 
-    if app_mode == "CMS":
+    if app_mode == AppMode.CMS_ADMIN.value:
         constructed_url_patterns += cms_admin_urlpatterns
         constructed_url_patterns += django_admin_urlpatterns
-    elif app_mode == "PUBLIC_API":
+    elif app_mode == AppMode.PUBLIC_API.value:
         constructed_url_patterns += public_api_urlpatterns
-    elif app_mode == "PRIVATE_API":
+    elif app_mode == AppMode.PRIVATE_API.value:
         constructed_url_patterns += private_api_urlpatterns
     else:
         constructed_url_patterns += cms_admin_urlpatterns
