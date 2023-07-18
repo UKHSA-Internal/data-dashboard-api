@@ -28,15 +28,15 @@ from public_api import urlpatterns as public_api_urlpatterns
 router = routers.DefaultRouter()
 
 # Create the router. "wagtailapi" is the URL namespace
-api_router = WagtailAPIRouter("wagtailapi")
+cms_api_router = WagtailAPIRouter("wagtailapi")
 
 
 # Add the three endpoints using the "register_endpoint" method.
 # The first parameter is the name of the endpoint (such as pages, images). This
 # is used in the URL of the endpoint
 # The second parameter is the endpoint class that handles the requests
-api_router.register_endpoint("pages", CMSPagesAPIViewSet)
-api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
+cms_api_router.register_endpoint("pages", CMSPagesAPIViewSet)
+cms_api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
 
 cms_api_urlpatterns = [
     # CMS pages endpoints
@@ -117,14 +117,14 @@ def construct_urlpatterns(
     )
 
     if app_mode == "CMS":
-        constructed_url_patterns += cms_api_urlpatterns
+        constructed_url_patterns += cms_urlpatterns
         constructed_url_patterns += django_admin_urlpatterns
     elif app_mode == "PUBLIC_API":
         constructed_url_patterns += public_api_urlpatterns
     elif app_mode == "PRIVATE_API":
         constructed_url_patterns += private_api_urlpatterns
     else:
-        constructed_url_patterns += cms_api_urlpatterns
+        constructed_url_patterns += cms_urlpatterns
         constructed_url_patterns += django_admin_urlpatterns
         constructed_url_patterns += public_api_urlpatterns
         constructed_url_patterns += private_api_urlpatterns
