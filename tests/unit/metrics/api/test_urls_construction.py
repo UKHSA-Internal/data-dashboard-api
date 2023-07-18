@@ -31,6 +31,8 @@ COMMON_ENDPOINT_PATHS = [
 
 
 class TestConstructUrlpatterns:
+    # Tests for APP_MODE = "PRIVATE_API"
+
     @pytest.mark.parametrize("private_api_endpoint_path", PRIVATE_API_ENDPOINT_PATHS)
     def test_private_api_mode_returns_private_api_urls(
         self, private_api_endpoint_path: str
@@ -99,6 +101,8 @@ class TestConstructUrlpatterns:
             excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
 
+    # Tests for APP_MODE = "PUBLIC_API"
+
     @pytest.mark.parametrize("public_api_endpoint_path", PUBLIC_API_ENDPOINT_PATHS)
     def test_public_api_mode_returns_public_api_urls(
         self, public_api_endpoint_path: str
@@ -141,6 +145,8 @@ class TestConstructUrlpatterns:
             excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
 
+    # Tests for APP_MODE = "CMS_ADMIN"
+
     @pytest.mark.parametrize("cms_admin_endpoint_path", CMS_ADMIN_ENDPOINT_PATHS)
     def test_cms_mode_returns_cms_admin_urls(self, cms_admin_endpoint_path: str):
         """
@@ -178,6 +184,8 @@ class TestConstructUrlpatterns:
         assert not any(
             excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
+
+    # Tests for common/shared endpoints
 
     @pytest.mark.parametrize(
         "endpoint_path",
