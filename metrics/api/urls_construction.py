@@ -38,7 +38,7 @@ cms_api_router = WagtailAPIRouter("wagtailapi")
 cms_api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 cms_api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
 
-cms_urlpatterns = [
+cms_admin_urlpatterns = [
     # Serves the CMS admin view
     path("cms-admin/", include(wagtailadmin_urls)),
 ]
@@ -118,14 +118,14 @@ def construct_urlpatterns(
     )
 
     if app_mode == "CMS":
-        constructed_url_patterns += cms_urlpatterns
+        constructed_url_patterns += cms_admin_urlpatterns
         constructed_url_patterns += django_admin_urlpatterns
     elif app_mode == "PUBLIC_API":
         constructed_url_patterns += public_api_urlpatterns
     elif app_mode == "PRIVATE_API":
         constructed_url_patterns += private_api_urlpatterns
     else:
-        constructed_url_patterns += cms_urlpatterns
+        constructed_url_patterns += cms_admin_urlpatterns
         constructed_url_patterns += django_admin_urlpatterns
         constructed_url_patterns += public_api_urlpatterns
         constructed_url_patterns += private_api_urlpatterns
