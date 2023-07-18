@@ -1,7 +1,10 @@
 import pytest
+from django.urls.resolvers import URLResolver
 
 from metrics.api.urls_construction import construct_urlpatterns
 from public_api.urls import PUBLIC_API_PREFIX
+
+HEADLESS_CMS_API_ENDPOINT_PATHS = ["drafts", "pages"]
 
 PRIVATE_API_ENDPOINT_PATHS = [
     "api/charts/v2",
@@ -47,6 +50,32 @@ class TestConstructUrlpatterns:
         assert any(
             private_api_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
+
+    @pytest.mark.parametrize(
+        "headless_cms_api_endpoint_path", HEADLESS_CMS_API_ENDPOINT_PATHS
+    )
+    def test_private_api_mode_returns_headless_cms_api_urls(
+        self, headless_cms_api_endpoint_path: str
+    ):
+        """
+        Given an `app_mode` of "PRIVATE_API"
+        When `construct_urlpatterns()` is called
+        Then the urlpatterns returned contain the headless CMS pages endpoints
+        """
+        # Given
+        app_mode = "PRIVATE_API"
+
+        # When
+        private_api_urlpatterns = construct_urlpatterns(app_mode=app_mode)
+
+        # Then
+        cms_url_resolver = next(
+            x
+            for x in private_api_urlpatterns
+            if getattr(x, "app_name", None) == "wagtailapi"
+        )
+        namespaces: dict[str, tuple[str, URLResolver]] = cms_url_resolver.namespace_dict
+        assert headless_cms_api_endpoint_path in namespaces
 
     @pytest.mark.parametrize(
         "excluded_endpoint_path", PUBLIC_API_ENDPOINT_PATHS + CMS_ADMIN_ENDPOINT_PATHS
@@ -113,11 +142,11 @@ class TestConstructUrlpatterns:
         )
 
     @pytest.mark.parametrize("cms_admin_endpoint_path", CMS_ADMIN_ENDPOINT_PATHS)
-    def test_cms_mode_returns_cms_urls(self, cms_admin_endpoint_path: str):
+    def test_cms_mode_returns_cms_admin_urls(self, cms_admin_endpoint_path: str):
         """
         Given an `app_mode` of "CMS"
         When `construct_urlpatterns()` is called
-        Then the urlpatterns returned contain the CMS endpoints
+        Then the urlpatterns returned contain the CMS admin endpoints
         """
         # Given
         app_mode = "CMS"
