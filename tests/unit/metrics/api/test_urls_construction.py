@@ -3,22 +3,16 @@ import pytest
 from metrics.api.urls_construction import construct_urlpatterns
 from public_api.urls import PUBLIC_API_PREFIX
 
+PRIVATE_API_ENDPOINT_PATHS = [
+    "api/charts/v2",
+    "api/downloads/v2",
+    "api/headlines/v2",
+    "api/tables/v2",
+    "api/trends/v2",
+]
+
 
 class TestConstructUrlpatterns:
-    @property
-    def private_api_endpoint_paths(self) -> list[str]:
-        api_prefix = "api"
-        endpoints_paths = [
-            "/charts/v2",
-            "/downloads/v2",
-            "/headlines/v2",
-            "/tables/v2",
-            "/trends/v2",
-        ]
-        deprecated_endpoints = endpoints_paths
-        main_endpoints = [f"{api_prefix}{x}" for x in endpoints_paths]
-        return main_endpoints + deprecated_endpoints
-
     @property
     def public_api_endpoint_paths(self) -> list[str]:
         return [f"{PUBLIC_API_PREFIX}", f"{PUBLIC_API_PREFIX}themes"]
@@ -37,7 +31,10 @@ class TestConstructUrlpatterns:
             "health",
         ]
 
-    def test_private_api_mode_returns_private_api_urls(self):
+    @pytest.mark.parametrize("private_api_endpoint_path", PRIVATE_API_ENDPOINT_PATHS)
+    def test_private_api_mode_returns_private_api_urls(
+        self, private_api_endpoint_path: str
+    ):
         """
         Given an `app_mode` of "PRIVATE_API"
         When `construct_urlpatterns()` is called
@@ -50,11 +47,9 @@ class TestConstructUrlpatterns:
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
 
         # Then
-        for private_api_endpoint_path in self.private_api_endpoint_paths:
-            assert any(
-                private_api_endpoint_path in x.pattern.regex.pattern
-                for x in urlpatterns
-            )
+        assert any(
+            private_api_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
+        )
 
     def test_private_api_mode_does_not_return_other_urls(self):
         """
@@ -104,7 +99,7 @@ class TestConstructUrlpatterns:
         # Given
         app_mode = "PUBLIC_API"
         excluded_endpoint_paths: list[str] = (
-            self.private_api_endpoint_paths + self.cms_endpoint_paths
+            PRIVATE_API_ENDPOINT_PATHS + self.cms_endpoint_paths
         )
 
         # When
@@ -143,7 +138,7 @@ class TestConstructUrlpatterns:
         # Given
         app_mode = "CMS"
         excluded_endpoint_paths: list[str] = (
-            self.private_api_endpoint_paths + self.public_api_endpoint_paths
+            PRIVATE_API_ENDPOINT_PATHS + self.public_api_endpoint_paths
         )
 
         # When
@@ -171,7 +166,7 @@ class TestConstructUrlpatterns:
         all_endpoint_paths = (
             self.cms_endpoint_paths
             + self.public_api_endpoint_paths
-            + self.private_api_endpoint_paths
+            + PRIVATE_API_ENDPOINT_PATHS
         )
         for endpoint_path in all_endpoint_paths:
             assert any(endpoint_path in x.pattern.regex.pattern for x in urlpatterns)
