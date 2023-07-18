@@ -142,11 +142,11 @@ class TestConstructUrlpatterns:
         )
 
     @pytest.mark.parametrize("cms_admin_endpoint_path", CMS_ADMIN_ENDPOINT_PATHS)
-    def test_cms_mode_returns_cms_urls(self, cms_admin_endpoint_path: str):
+    def test_cms_mode_returns_cms_admin_urls(self, cms_admin_endpoint_path: str):
         """
         Given an `app_mode` of "CMS"
         When `construct_urlpatterns()` is called
-        Then the urlpatterns returned contain the CMS endpoints
+        Then the urlpatterns returned contain the CMS admin endpoints
         """
         # Given
         app_mode = "CMS"
