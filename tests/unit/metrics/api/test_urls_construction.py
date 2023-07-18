@@ -1,7 +1,10 @@
 import pytest
+from django.urls.resolvers import URLResolver
 
 from metrics.api.urls_construction import construct_urlpatterns
 from public_api.urls import PUBLIC_API_PREFIX
+
+HEADLESS_CMS_API_ENDPOINT_PATHS = ["drafts", "pages"]
 
 
 class TestConstructUrlpatterns:
@@ -55,6 +58,32 @@ class TestConstructUrlpatterns:
                 private_api_endpoint_path in x.pattern.regex.pattern
                 for x in urlpatterns
             )
+
+    @pytest.mark.parametrize(
+        "headless_cms_api_endpoint_path", HEADLESS_CMS_API_ENDPOINT_PATHS
+    )
+    def test_private_api_mode_returns_headless_cms_api_urls(
+        self, headless_cms_api_endpoint_path: str
+    ):
+        """
+        Given an `app_mode` of "PRIVATE_API"
+        When `construct_urlpatterns()` is called
+        Then the urlpatterns returned contain the headless CMS pages endpoints
+        """
+        # Given
+        app_mode = "PRIVATE_API"
+
+        # When
+        private_api_urlpatterns = construct_urlpatterns(app_mode=app_mode)
+
+        # Then
+        cms_url_resolver = next(
+            x
+            for x in private_api_urlpatterns
+            if getattr(x, "app_name", None) == "wagtailapi"
+        )
+        namespaces: dict[str, tuple[str, URLResolver]] = cms_url_resolver.namespace_dict
+        assert headless_cms_api_endpoint_path in namespaces
 
     def test_private_api_mode_does_not_return_other_urls(self):
         """

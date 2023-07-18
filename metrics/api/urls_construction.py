@@ -38,9 +38,7 @@ cms_api_router = WagtailAPIRouter("wagtailapi")
 cms_api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 cms_api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
 
-cms_api_urlpatterns = [
-    # CMS pages endpoints
-    path("api/", api_router.urls),
+cms_urlpatterns = [
     # Serves the CMS admin view
     path("cms-admin/", include(wagtailadmin_urls)),
 ]
@@ -48,6 +46,9 @@ cms_api_urlpatterns = [
 API_PREFIX = "api/"
 
 private_api_urlpatterns = [
+    # Headless CMS API - pages + drafts endpoints
+    path(API_PREFIX, cms_api_router.urls),
+    # Metrics/private content endpoints
     re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
