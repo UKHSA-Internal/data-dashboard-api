@@ -16,18 +16,16 @@ PUBLIC_API_ENDPOINT_PATHS = [f"{PUBLIC_API_PREFIX}", f"{PUBLIC_API_PREFIX}themes
 
 CMS_ADMIN_ENDPOINT_PATHS = ["cms", "admin"]
 
+COMMON_ENDPOINT_PATHS = [
+    "api/schema",
+    "api/swagger",
+    "api/redoc",
+    "static",
+    "health",
+]
+
 
 class TestConstructUrlpatterns:
-    @property
-    def common_endpoint_paths(self) -> list[str]:
-        return [
-            "api/schema",
-            "api/swagger",
-            "api/redoc",
-            "static",
-            "health",
-        ]
-
     @pytest.mark.parametrize("private_api_endpoint_path", PRIVATE_API_ENDPOINT_PATHS)
     def test_private_api_mode_returns_private_api_urls(
         self, private_api_endpoint_path: str
@@ -182,7 +180,10 @@ class TestConstructUrlpatterns:
             "COMPLETE_APP",
         ],
     )
-    def test_base_set_of_urls_returned_regardless_of_app_mode(self, app_mode: str):
+    @pytest.mark.parametrize("common_endpoint_path", COMMON_ENDPOINT_PATHS)
+    def test_base_set_of_urls_returned_regardless_of_app_mode(
+        self, app_mode: str, common_endpoint_path: str
+    ):
         """
         Given any `app_mode` value
         When `construct_urlpatterns()` is called
@@ -196,7 +197,4 @@ class TestConstructUrlpatterns:
         urlpatterns = construct_urlpatterns(app_mode=provided_app_mode)
 
         # Then
-        for common_endpoint_path in self.common_endpoint_paths:
-            assert any(
-                common_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
-            )
+        assert any(common_endpoint_path in x.pattern.regex.pattern for x in urlpatterns)
