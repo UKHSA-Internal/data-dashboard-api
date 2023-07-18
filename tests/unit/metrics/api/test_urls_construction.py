@@ -14,12 +14,10 @@ PRIVATE_API_ENDPOINT_PATHS = [
 
 PUBLIC_API_ENDPOINT_PATHS = [f"{PUBLIC_API_PREFIX}", f"{PUBLIC_API_PREFIX}themes"]
 
+CMS_ADMIN_ENDPOINT_PATHS = ["cms", "admin"]
+
 
 class TestConstructUrlpatterns:
-    @property
-    def cms_endpoint_paths(self) -> list[str]:
-        return ["cms", "admin"]
-
     @property
     def common_endpoint_paths(self) -> list[str]:
         return [
@@ -50,7 +48,12 @@ class TestConstructUrlpatterns:
             private_api_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
 
-    def test_private_api_mode_does_not_return_other_urls(self):
+    @pytest.mark.parametrize(
+        "excluded_endpoint_path", PUBLIC_API_ENDPOINT_PATHS + CMS_ADMIN_ENDPOINT_PATHS
+    )
+    def test_private_api_mode_does_not_return_other_urls(
+        self, excluded_endpoint_path: str
+    ):
         """
         Given an `app_mode` of "PRIVATE_API"
         When `construct_urlpatterns()` is called
@@ -58,18 +61,14 @@ class TestConstructUrlpatterns:
         """
         # Given
         app_mode = "PRIVATE_API"
-        excluded_endpoint_paths: list[str] = (
-            self.cms_endpoint_paths + PUBLIC_API_ENDPOINT_PATHS
-        )
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
 
         # Then
-        for excluded_endpoint_path in excluded_endpoint_paths:
-            assert not any(
-                excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
-            )
+        assert not any(
+            excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
+        )
 
     @pytest.mark.parametrize("public_api_endpoint_path", PUBLIC_API_ENDPOINT_PATHS)
     def test_public_api_mode_returns_public_api_urls(
@@ -91,7 +90,12 @@ class TestConstructUrlpatterns:
             public_api_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
 
-    def test_public_api_mode_does_not_return_other_urls(self):
+    @pytest.mark.parametrize(
+        "excluded_endpoint_path", PRIVATE_API_ENDPOINT_PATHS + CMS_ADMIN_ENDPOINT_PATHS
+    )
+    def test_public_api_mode_does_not_return_other_urls(
+        self, excluded_endpoint_path: str
+    ):
         """
         Given an `app_mode` of "PUBLIC_API"
         When `construct_urlpatterns()` is called
@@ -99,20 +103,17 @@ class TestConstructUrlpatterns:
         """
         # Given
         app_mode = "PUBLIC_API"
-        excluded_endpoint_paths: list[str] = (
-            PRIVATE_API_ENDPOINT_PATHS + self.cms_endpoint_paths
-        )
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
 
         # Then
-        for excluded_endpoint_path in excluded_endpoint_paths:
-            assert not any(
-                excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
-            )
+        assert not any(
+            excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
+        )
 
-    def test_cms_mode_returns_cms_urls(self):
+    @pytest.mark.parametrize("cms_admin_endpoint_path", CMS_ADMIN_ENDPOINT_PATHS)
+    def test_cms_mode_returns_cms_urls(self, cms_admin_endpoint_path: str):
         """
         Given an `app_mode` of "CMS"
         When `construct_urlpatterns()` is called
@@ -125,10 +126,9 @@ class TestConstructUrlpatterns:
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
 
         # Then
-        for cms_endpoint_path in self.cms_endpoint_paths:
-            assert any(
-                cms_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
-            )
+        assert any(
+            cms_admin_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
+        )
 
     @pytest.mark.parametrize(
         "excluded_endpoint_path", PRIVATE_API_ENDPOINT_PATHS + PUBLIC_API_ENDPOINT_PATHS
@@ -150,7 +150,13 @@ class TestConstructUrlpatterns:
             excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
 
-    def test_no_specific_app_mode_returns_all_urls(self):
+    @pytest.mark.parametrize(
+        "endpoint_path",
+        PRIVATE_API_ENDPOINT_PATHS
+        + PUBLIC_API_ENDPOINT_PATHS
+        + CMS_ADMIN_ENDPOINT_PATHS,
+    )
+    def test_no_specific_app_mode_returns_all_urls(self, endpoint_path: str):
         """
         Given no value given for the `app_mode`
         When `construct_urlpatterns()` is called
@@ -163,13 +169,7 @@ class TestConstructUrlpatterns:
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
 
         # Then
-        all_endpoint_paths = (
-            self.cms_endpoint_paths
-            + PUBLIC_API_ENDPOINT_PATHS
-            + PRIVATE_API_ENDPOINT_PATHS
-        )
-        for endpoint_path in all_endpoint_paths:
-            assert any(endpoint_path in x.pattern.regex.pattern for x in urlpatterns)
+        assert any(endpoint_path in x.pattern.regex.pattern for x in urlpatterns)
 
     @pytest.mark.parametrize(
         "app_mode",
