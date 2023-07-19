@@ -1,6 +1,7 @@
 from unittest import mock
 
 from wagtail.admin.site_summary import PagesSummaryItem
+from wagtail.documents.wagtail_hooks import DocumentsMenuItem
 
 from cms.dashboard import wagtail_hooks
 
@@ -32,14 +33,20 @@ def test_hide_default_menu_items():
     """
 
     # Given
-    class MenuItem:
-        def __init__(self, name):
-            self.name = name
+    class FakeDocumentsMenuItem(DocumentsMenuItem):
+        def __init__(self, name, url="mock_url"):
+            super(DocumentsMenuItem, self).__init__(name, url)
 
-    core_menu_items = [MenuItem("images"), MenuItem("documents"), MenuItem("pages")]
+    core_menu_items = [
+        FakeDocumentsMenuItem(name="images"),
+        FakeDocumentsMenuItem(name="documents"),
+        FakeDocumentsMenuItem(name="pages"),
+    ]
 
     # When
-    wagtail_hooks.hide_default_menu_items(mock.Mock(), core_menu_items)
+    wagtail_hooks.hide_default_menu_items(
+        request=mock.Mock(), menu_items=core_menu_items
+    )
 
     # Then
     assert len(core_menu_items) == 1
@@ -55,12 +62,23 @@ def test_update_summary_items():
     """
     # Given
     core_summary_items = ["document", "image", "pages"]
+    mock_request = mock.Mock()
 
     # When
-    edited_summary_items = wagtail_hooks.update_summary_items(
-        mock.Mock(), core_summary_items
+    edited_summary_items: list[object] = wagtail_hooks.update_summary_items(
+        request=mock_request, summary_items=core_summary_items
     )
 
     # Then
     assert len(edited_summary_items) == 1
     assert isinstance(edited_summary_items[0], PagesSummaryItem)
+
+    with mock.patch.object(
+        wagtail_hooks, "update_summary_items", wraps=wagtail_hooks.update_summary_items
+    ) as mock_update_summary_items:
+        wagtail_hooks.update_summary_items(
+            request=mock_request, summary_items=core_summary_items
+        )
+        mock_update_summary_items.assert_called_with(
+            request=mock_request, summary_items=core_summary_items
+        )

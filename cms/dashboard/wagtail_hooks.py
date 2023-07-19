@@ -3,6 +3,7 @@ from django.utils.html import format_html
 from django.utils.safestring import SafeString
 from wagtail import hooks
 from wagtail.admin.site_summary import PagesSummaryItem
+from wagtail.documents.wagtail_hooks import DocumentsMenuItem
 
 
 @hooks.register("insert_global_admin_css")
@@ -13,16 +14,33 @@ def global_admin_css() -> SafeString:
 
 
 @hooks.register("construct_main_menu")
-def hide_default_menu_items(request, menu_items):
+def hide_default_menu_items(request, menu_items: list[DocumentsMenuItem]) -> None:
+    """update menu items to remove `Documents` and `Images`
+
+    Args:
+        request: Request object provided by wagtail
+        menu_items: a list of objects containing menu items for the admin page.
+
+    Return:
+        None
+    """
     menu_items[:] = [
         item for item in menu_items if item.name != "images" if item.name != "documents"
     ]
 
 
 @hooks.register("construct_homepage_summary_items", order=1)
-def update_summary_items(request, summary_items):
-    summary_items.clear()
-    summary_items.append(PagesSummaryItem(request))
+def update_summary_items(request, summary_items: list[object]) -> list[object]:
+    """Updates the homepage summary items to remove default items `Documents` and `Images`
+
+    Args:
+        request: Request object provided by wagtail
+        summary_items: a list of objects providing the summary items to be displayed.
+
+    returns:
+        summary_items: an updated list of objects for display on the summary items panel.
+    """
+    summary_items[:] = [PagesSummaryItem(request)]
     return summary_items
 
 
