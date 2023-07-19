@@ -31,7 +31,7 @@ class TestBuildCMSSite:
 
         expected_slugs = [
             "respiratory-viruses",
-            "coronavirus",
+            "covid-19",
             "influenza",
             "how-to-use-this-data",
             "maps",
@@ -105,7 +105,7 @@ class TestBuildCMSSite:
 
     @pytest.mark.django_db
     @pytest.mark.parametrize(
-        "slug", ["coronavirus", "influenza", "other-respiratory-viruses"]
+        "slug", ["covid-19", "influenza", "other-respiratory-viruses"]
     )
     def test_command_builds_site_with_correct_topic_pages(
         self,
