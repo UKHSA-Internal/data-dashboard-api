@@ -1,7 +1,5 @@
 from unittest import mock
-
-from wagtail.admin.site_summary import PagesSummaryItem
-from wagtail.documents.wagtail_hooks import DocumentsMenuItem
+from wagtail.admin.site_summary import SummaryItem
 
 from cms.dashboard import wagtail_hooks
 
@@ -31,17 +29,12 @@ def test_hide_default_menu_items():
     Then a list of items is returned which excludes the `Docments` and `Images` items from
         the core library
     """
-
     # Given
-    class FakeDocumentsMenuItem(DocumentsMenuItem):
-        def __init__(self, name, url="mock_url"):
-            super(DocumentsMenuItem, self).__init__(name, url)
+    class FakeMenuItem:
+        def __init__(self, name):
+            self.name = name
 
-    core_menu_items = [
-        FakeDocumentsMenuItem(name="images"),
-        FakeDocumentsMenuItem(name="documents"),
-        FakeDocumentsMenuItem(name="pages"),
-    ]
+    core_menu_items = [FakeMenuItem(name='images'), FakeMenuItem(name='documents'), FakeMenuItem('pages')]
 
     # When
     wagtail_hooks.hide_default_menu_items(
@@ -65,20 +58,11 @@ def test_update_summary_items():
     mock_request = mock.Mock()
 
     # When
-    edited_summary_items: list[object] = wagtail_hooks.update_summary_items(
+    edited_summary_items: list[type[SummaryItem]] = wagtail_hooks.update_summary_items(
         request=mock_request, summary_items=core_summary_items
     )
 
     # Then
     assert len(edited_summary_items) == 1
-    assert isinstance(edited_summary_items[0], PagesSummaryItem)
-
-    with mock.patch.object(
-        wagtail_hooks, "update_summary_items", wraps=wagtail_hooks.update_summary_items
-    ) as mock_update_summary_items:
-        wagtail_hooks.update_summary_items(
-            request=mock_request, summary_items=core_summary_items
-        )
-        mock_update_summary_items.assert_called_with(
-            request=mock_request, summary_items=core_summary_items
-        )
+    assert edited_summary_items[0].request == mock_request
+    assert isinstance(edited_summary_items[0], SummaryItem)

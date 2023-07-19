@@ -2,8 +2,9 @@ from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
 from wagtail import hooks
-from wagtail.admin.site_summary import PagesSummaryItem
-from wagtail.documents.wagtail_hooks import DocumentsMenuItem
+from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
+from wagtail.admin.menu import MenuItem
+from django.core.handlers.wsgi import WSGIRequest
 
 
 @hooks.register("insert_global_admin_css")
@@ -14,15 +15,20 @@ def global_admin_css() -> SafeString:
 
 
 @hooks.register("construct_main_menu")
-def hide_default_menu_items(request, menu_items: list[DocumentsMenuItem]) -> None:
-    """update menu items to remove `Documents` and `Images`
+def hide_default_menu_items(request: WSGIRequest, menu_items: list[MenuItem]) -> None:
+    """Update menu items to remove `Documents` and `Images`
+
+    Notes:
+        menu_items has to be mutated as required by wagtail's hook, which is why we're not returning
+        a new value.
 
     Args:
         request: Request object provided by wagtail
-        menu_items: a list of objects containing menu items for the admin page.
+        menu_items: A list of objects containing menu items for the admin page.
 
-    Return:
+    Returns:
         None
+
     """
     menu_items[:] = [
         item for item in menu_items if item.name != "images" if item.name != "documents"
@@ -30,15 +36,21 @@ def hide_default_menu_items(request, menu_items: list[DocumentsMenuItem]) -> Non
 
 
 @hooks.register("construct_homepage_summary_items", order=1)
-def update_summary_items(request, summary_items: list[object]) -> list[object]:
+def update_summary_items(request: WSGIRequest, summary_items: list[type[SummaryItem]]) -> list[type[SummaryItem]]:
     """Updates the homepage summary items to remove default items `Documents` and `Images`
+
+    Notes:
+        summary_items has to be mutated as required by wagtail's hook, which is why we're not returning
+        a new value.
 
     Args:
         request: Request object provided by wagtail
-        summary_items: a list of objects providing the summary items to be displayed.
+        summary_items: A list of objects providing the summary items to be displayed.
 
-    returns:
-        summary_items: an updated list of objects for display on the summary items panel.
+    Returns:
+        summary_items: An updated list of objects for display on the summary items panel.
+
+
     """
     summary_items[:] = [PagesSummaryItem(request)]
     return summary_items
