@@ -408,7 +408,7 @@ class TestChartSettings:
             "barmode": "group",
             "legend": {
                 "orientation": "h",
-                "y": -0.15,
+                "y": -0.25,
                 "x": 0,
             },
         }
@@ -434,7 +434,7 @@ class TestChartSettings:
         expected_legend_bottom_left_config = {
             "legend": {
                 "orientation": "h",
-                "y": -0.15,
+                "y": -0.25,
                 "x": 0,
             },
         }
