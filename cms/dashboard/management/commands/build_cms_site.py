@@ -89,11 +89,6 @@ def _build_topic_page(name: str, parent_page: Page) -> TopicPage:
         page_description=data["page_description"],
         slug=data["meta"]["slug"],
         date_posted=data["meta"]["first_published_at"].split("T")[0],
-        symptoms=data["symptoms"],
-        transmission=data["transmission"],
-        treatment=data["treatment"],
-        prevention=data["prevention"],
-        surveillance_and_reporting=data["surveillance_and_reporting"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
     )
