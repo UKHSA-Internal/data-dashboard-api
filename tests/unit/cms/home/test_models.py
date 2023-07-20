@@ -114,7 +114,7 @@ class TestTemplateHomePage:
         assert len(body) == 2
         covid_section, influenza_section = body
 
-        # Check that the first item is a `section` type for `Coronavirus`
+        # Check that the first item is a `section` type for `COVID-19`
         assert covid_section.block_type == "section"
         assert covid_section.value["heading"] == "COVID-19"
 
@@ -122,7 +122,7 @@ class TestTemplateHomePage:
         assert influenza_section.block_type == "section"
         assert influenza_section.value["heading"] == "Influenza"
 
-    def test_coronavirus_section_text_card(self):
+    def test_covid_19_section_text_card(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -146,7 +146,7 @@ class TestTemplateHomePage:
             in text_card.value["body"].source
         )
 
-    def test_coronavirus_section_headline_number_row_card(self):
+    def test_covid_19_section_headline_number_row_card(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -170,7 +170,7 @@ class TestTemplateHomePage:
         headline_number_row_columns = headline_numbers_row_card.value["columns"]
         assert len(headline_number_row_columns) == 5
 
-    def test_coronavirus_section_headline_number_row_headline_and_trend_column(self):
+    def test_covid_19_section_headline_number_row_headline_and_trend_column(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -213,7 +213,7 @@ class TestTemplateHomePage:
             == self.expected_trend_number_block_body
         )
 
-    def test_coronavirus_section_headline_number_row_headline_and_percentage_blocks(
+    def test_covid_19_section_headline_number_row_headline_and_percentage_blocks(
         self,
     ):
         """
@@ -256,7 +256,7 @@ class TestTemplateHomePage:
         )
         assert fourth_column_percentage_block_value["body"] == "Percentage uptake"
 
-    def test_coronavirus_section_headline_number_row_single_headline_column_with_percentage_block(
+    def test_covid_19_section_headline_number_row_single_headline_column_with_percentage_block(
         self,
     ):
         """
@@ -289,7 +289,7 @@ class TestTemplateHomePage:
         )
         assert fifth_column_percentage_block_value["body"] == "Virus tests positivity"
 
-    def test_coronavirus_section_chart_row_card(self):
+    def test_covid_19_section_chart_row_card(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -312,7 +312,7 @@ class TestTemplateHomePage:
 
         assert len(chart_card_columns) == 2
 
-    def test_coronavirus_section_chart_card_plot(self):
+    def test_covid_19_section_chart_card_plot(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -346,7 +346,7 @@ class TestTemplateHomePage:
             chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
         )
 
-    def test_coronavirus_section_chart_card_headline_and_trend_number(self):
+    def test_covid_19_section_chart_card_headline_and_trend_number(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page

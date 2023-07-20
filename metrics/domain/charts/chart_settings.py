@@ -156,7 +156,7 @@ class ChartSettings:
         return {
             "legend": {
                 "orientation": "h",
-                "y": -0.15,
+                "y": -0.25,
                 "x": 0,
             },
         }

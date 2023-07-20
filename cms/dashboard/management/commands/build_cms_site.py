@@ -161,7 +161,7 @@ class Command(BaseCommand):
         respiratory_viruses_page: HomePage = _build_respiratory_viruses_page(
             parent_page=root_page
         )
-        _build_topic_page(name="coronavirus", parent_page=respiratory_viruses_page)
+        _build_topic_page(name="covid_19", parent_page=respiratory_viruses_page)
         _build_topic_page(name="influenza", parent_page=respiratory_viruses_page)
         _build_topic_page(
             name="other_respiratory_viruses", parent_page=respiratory_viruses_page

@@ -1,4 +1,5 @@
 from unittest import mock
+
 from wagtail.admin.site_summary import SummaryItem
 
 from cms.dashboard import wagtail_hooks
@@ -29,12 +30,17 @@ def test_hide_default_menu_items():
     Then a list of items is returned which excludes the `Docments` and `Images` items from
         the core library
     """
+
     # Given
     class FakeMenuItem:
         def __init__(self, name):
             self.name = name
 
-    core_menu_items = [FakeMenuItem(name='images'), FakeMenuItem(name='documents'), FakeMenuItem('pages')]
+    core_menu_items = [
+        FakeMenuItem(name="images"),
+        FakeMenuItem(name="documents"),
+        FakeMenuItem("pages"),
+    ]
 
     # When
     wagtail_hooks.hide_default_menu_items(

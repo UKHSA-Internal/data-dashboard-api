@@ -1,10 +1,10 @@
+from django.core.handlers.wsgi import WSGIRequest
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
 from wagtail import hooks
-from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
 from wagtail.admin.menu import MenuItem
-from django.core.handlers.wsgi import WSGIRequest
+from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
 
 
 @hooks.register("insert_global_admin_css")
@@ -36,7 +36,9 @@ def hide_default_menu_items(request: WSGIRequest, menu_items: list[MenuItem]) ->
 
 
 @hooks.register("construct_homepage_summary_items", order=1)
-def update_summary_items(request: WSGIRequest, summary_items: list[type[SummaryItem]]) -> list[type[SummaryItem]]:
+def update_summary_items(
+    request: WSGIRequest, summary_items: list[type[SummaryItem]]
+) -> list[type[SummaryItem]]:
     """Updates the homepage summary items to remove default items `Documents` and `Images`
 
     Notes:

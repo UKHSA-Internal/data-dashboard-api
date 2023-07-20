@@ -4,24 +4,24 @@ from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
-class TestTemplateCoronavirusPage:
+class TestTemplateCOVID19Page:
     @property
     def covid_19(self) -> str:
         return "COVID-19"
 
     def test_sections_in_body_are_correct_order(self):
         """
-        Given a `TopicPage` created with a template for the `coronavirus` page
+        Given a `TopicPage` created with a template for the `covid-19` page
         When the `body` is taken from the page
         Then the correct sections are in place
         """
         # Given
-        template_coronavirus_page = (
-            FakeTopicPageFactory.build_coronavirus_page_from_template()
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
         )
 
         # When
-        body = template_coronavirus_page.body
+        body = template_covid_19_page.body
 
         # Then
         assert len(body) == 5
@@ -53,17 +53,17 @@ class TestTemplateCoronavirusPage:
 
     def test_cases_section_chart_card(self):
         """
-        Given a `TopicPage` created with a template for the `coronavirus` page
+        Given a `TopicPage` created with a template for the `covid-19` page
         When the `body` is taken from the page
         Then the correct chart card is in place
         """
         # Given
-        template_coronavirus_page = (
-            FakeTopicPageFactory.build_coronavirus_page_from_template()
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
         )
 
         # When
-        body = template_coronavirus_page.body
+        body = template_covid_19_page.body
 
         # Then
         cases_section = body[0]
@@ -88,17 +88,17 @@ class TestTemplateCoronavirusPage:
 
     def test_is_previewable_returns_false(self):
         """
-        Given a `TopicPage` created with a template for the `coronavirus` page
+        Given a `TopicPage` created with a template for the `covid-19` page
         When `is_previewable()` is called
         Then False is returned
         """
         # Given
-        template_covid_topic_page = (
-            FakeTopicPageFactory.build_coronavirus_page_from_template()
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
         )
 
         # When
-        page_is_previewable: bool = template_covid_topic_page.is_previewable()
+        page_is_previewable: bool = template_covid_19_page.is_previewable()
 
         # Then
         assert not page_is_previewable
