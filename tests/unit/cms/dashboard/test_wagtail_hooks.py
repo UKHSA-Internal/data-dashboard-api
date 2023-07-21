@@ -64,11 +64,11 @@ def test_update_summary_items():
     mock_request = mock.Mock()
 
     # When
-    edited_summary_items: list[type[SummaryItem]] = wagtail_hooks.update_summary_items(
+    wagtail_hooks.update_summary_items(
         request=mock_request, summary_items=core_summary_items
     )
 
     # Then
-    assert len(edited_summary_items) == 1
-    assert edited_summary_items[0].request == mock_request
-    assert isinstance(edited_summary_items[0], SummaryItem)
+    assert len(core_summary_items) == 1
+    assert core_summary_items[0].request == mock_request
+    assert isinstance(core_summary_items[0], SummaryItem)

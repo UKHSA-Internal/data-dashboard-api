@@ -38,7 +38,7 @@ def hide_default_menu_items(request: WSGIRequest, menu_items: list[MenuItem]) ->
 @hooks.register("construct_homepage_summary_items", order=1)
 def update_summary_items(
     request: WSGIRequest, summary_items: list[type[SummaryItem]]
-) -> list[type[SummaryItem]]:
+) -> None:
     """Updates the homepage summary items to remove default items `Documents` and `Images`
 
     Notes:
@@ -50,12 +50,10 @@ def update_summary_items(
         summary_items: A list of objects providing the summary items to be displayed.
 
     Returns:
-        summary_items: An updated list of objects for display on the summary items panel.
-
+        None
 
     """
     summary_items[:] = [PagesSummaryItem(request)]
-    return summary_items
 
 
 ADDITIONAL_CUSTOM_ICONS: list[str] = [
