@@ -169,9 +169,7 @@ class Command(BaseCommand):
         _build_topic_page(
             name="other_respiratory_viruses", parent_page=respiratory_viruses_page
         )
-        _build_common_page(name="about", parent_page=respiratory_viruses_page)
-        _build_common_page(name="maps", parent_page=respiratory_viruses_page)
-        _build_common_page(
-            name="how_to_use_this_data", parent_page=respiratory_viruses_page
-        )
-        _build_common_page(name="whats_new", parent_page=respiratory_viruses_page)
+        _build_common_page(name="about", parent_page=root_page)
+        _build_common_page(name="maps", parent_page=root_page)
+        _build_common_page(name="how_to_use_this_data", parent_page=root_page)
+        _build_common_page(name="whats_new", parent_page=root_page)
