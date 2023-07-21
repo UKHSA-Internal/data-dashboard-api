@@ -58,8 +58,8 @@ def _add_page_to_parent(page: Page, parent_page: HomePage) -> None:
     page.save_revision().publish()
 
 
-def _build_respiratory_viruses_page(parent_page: Page) -> HomePage:
-    data = open_example_page_response(page_name="respiratory_viruses")
+def _build_landing_page(parent_page: Page) -> HomePage:
+    data = open_example_page_response(page_name="dashboard")
 
     page = HomePage(
         body=data["body"],
@@ -161,14 +161,10 @@ class Command(BaseCommand):
             is_default_site=True,
         )
 
-        respiratory_viruses_page: HomePage = _build_respiratory_viruses_page(
-            parent_page=root_page
-        )
-        _build_topic_page(name="covid_19", parent_page=respiratory_viruses_page)
-        _build_topic_page(name="influenza", parent_page=respiratory_viruses_page)
-        _build_topic_page(
-            name="other_respiratory_viruses", parent_page=respiratory_viruses_page
-        )
+        landing_page: HomePage = _build_landing_page(parent_page=root_page)
+        _build_topic_page(name="covid_19", parent_page=landing_page)
+        _build_topic_page(name="influenza", parent_page=landing_page)
+        _build_topic_page(name="other_respiratory_viruses", parent_page=landing_page)
         _build_common_page(name="about", parent_page=root_page)
         _build_common_page(name="maps", parent_page=root_page)
         _build_common_page(name="how_to_use_this_data", parent_page=root_page)

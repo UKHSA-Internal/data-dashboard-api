@@ -4,9 +4,9 @@
         "type": "home.HomePage",
         "detail_url": "http://localhost/api/pages/243/",
         "html_url": null,
-        "slug": "respiratory-viruses",
+        "slug": "dashboard",
         "show_in_menus": true,
-        "seo_title": "Respiratory Viruses | UKHSA data dashboard",
+        "seo_title": "UKHSA data dashboard",
         "search_description": "Overall summary of the respiratory viruses in circulation within the UK",
         "first_published_at": "2023-04-26T12:39:38.064114+01:00",
         "alias_of": null,
@@ -20,7 +20,7 @@
             "title": "UKHSA Dashboard Root"
         }
     },
-    "title": "Respiratory viruses",
+    "title": "Dashboard",
     "page_description": "<p data-block-key=\"sud2w\">Data and insights from the UKHSA on respiratory viruses. <a href=\"https://www.gov.uk/government/organisations/uk-health-security-agency\">See the simple summary for England (opens in a new tab).</a></p>",
     "body": [
         {

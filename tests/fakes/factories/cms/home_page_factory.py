@@ -18,7 +18,7 @@ class FakeHomePageFactory(factory.Factory):
 
     @classmethod
     def build_home_page_from_template(cls):
-        data = open_example_page_response(page_name="respiratory_viruses")
+        data = open_example_page_response(page_name="dashboard")
         return cls.build(
             body=data["body"],
             title=data["title"],
