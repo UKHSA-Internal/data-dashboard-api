@@ -4,7 +4,6 @@ from typing import OrderedDict
 import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
-from rest_framework.utils.serializer_helpers import ReturnList
 from wagtail.models import Page
 
 from cms.dashboard.management.commands.build_cms_site import (
@@ -98,12 +97,15 @@ class TestListPagesAPI:
 
         # Then
         assert response_from_pages_endpoint.status_code == HTTPStatus.OK
-        response_data: OrderedDict = response_from_pages_endpoint.data
-        items: ReturnList[OrderedDict] = response_data["items"]
 
+        response_data: OrderedDict = response_from_pages_endpoint.data
         topic_page_from_response: OrderedDict = next(
-            x for x in items if x["title"] == "COVID-19"
+            item for item in response_data["items"] if item["title"] == "COVID-19"
         )
+
+        # Check that the page is showing its `show_in_menus` attribute
         assert not topic_page_from_response["meta"]["show_in_menus"]
+
+        # Check that the `parent` field is pointing to the data for the correct parent page
         assert topic_page_from_response["meta"]["parent"]["id"] == home_page.id
         assert topic_page_from_response["meta"]["parent"]["title"] == home_page.title
