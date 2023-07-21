@@ -19,7 +19,7 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
     base_serializer_class = CMSDraftPagesSerializer
     permission_classes = [HasAPIKey]
 
-    def detail_view(self, request: Request, pk: int):
+    def detail_view(self, request: Request, pk: int) -> Response:
         instance = self.get_object()
         instance = instance.get_latest_revision_as_object()
         serializer = self.get_serializer(instance)
