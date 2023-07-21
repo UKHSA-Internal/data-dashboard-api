@@ -125,6 +125,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         topic_page = TopicPage.objects.get(slug=slug)
+        parent_home_page = HomePage.objects.get(title="Respiratory viruses")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{topic_page.id}/")
@@ -153,6 +154,8 @@ class TestBuildCMSSite:
             response_data["meta"]["show_in_menus"]
             == topic_page_response_template["meta"]["show_in_menus"]
         )
+        assert response_data["meta"]["parent"]["id"] == parent_home_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
