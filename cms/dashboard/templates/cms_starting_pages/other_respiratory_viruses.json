@@ -5,7 +5,7 @@
         "detail_url": "http://localhost/api/pages/10/",
         "html_url": null,
         "slug": "other-respiratory-viruses",
-        "show_in_menus": false,
+        "show_in_menus": true,
         "seo_title": "Other Respiratory Viruses | UKHSA data dashboard",
         "search_description": "Overall summary of other respiratory viruses in circulation within the UK",
         "first_published_at": "2023-05-12T16:58:42.332020+01:00",

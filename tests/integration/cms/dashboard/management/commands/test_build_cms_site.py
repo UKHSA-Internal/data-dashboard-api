@@ -91,6 +91,10 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == home_page_response_template["meta"]["search_description"]
         )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == home_page_response_template["meta"]["show_in_menus"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -145,6 +149,10 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == topic_page_response_template["meta"]["search_description"]
         )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == topic_page_response_template["meta"]["show_in_menus"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -190,6 +198,10 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == about_page_template["meta"]["search_description"]
         )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == about_page_template["meta"]["show_in_menus"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -234,6 +246,10 @@ class TestBuildCMSSite:
         assert (
             response_data["meta"]["search_description"]
             == whats_new_page_template["meta"]["search_description"]
+        )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == whats_new_page_template["meta"]["show_in_menus"]
         )
 
         # Check that the related links have been populated correctly
