@@ -5,7 +5,7 @@
         "detail_url": "http://localhost/api/pages/8/",
         "html_url": null,
         "slug": "covid-19",
-        "show_in_menus": false,
+        "show_in_menus": true,
         "seo_title": "COVID-19 | UKHSA data dashboard",
         "search_description": "Overall summary of COVID-19 in circulation within the UK",
         "first_published_at": "2023-05-15T17:23:02.306556+01:00",

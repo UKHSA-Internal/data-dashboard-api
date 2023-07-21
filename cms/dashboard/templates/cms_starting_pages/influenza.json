@@ -5,7 +5,7 @@
         "detail_url": "http://localhost/api/pages/111/",
         "html_url": null,
         "slug": "influenza",
-        "show_in_menus": false,
+        "show_in_menus": true,
         "seo_title": "Influenza | UKHSA data dashboard",
         "search_description": "Detailed summary of Influenza in circulation within the UK",
         "first_published_at": "2023-05-16T14:06:43.187457+01:00",
