@@ -182,6 +182,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         about_page = CommonPage.objects.get(slug="about")
+        parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{about_page.id}/")
@@ -205,6 +206,8 @@ class TestBuildCMSSite:
             response_data["meta"]["show_in_menus"]
             == about_page_template["meta"]["show_in_menus"]
         )
+        assert response_data["meta"]["parent"]["id"] == parent_home_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -231,6 +234,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         whats_new_page = CommonPage.objects.get(slug="whats-new")
+        parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{whats_new_page.id}/")
@@ -254,6 +258,8 @@ class TestBuildCMSSite:
             response_data["meta"]["show_in_menus"]
             == whats_new_page_template["meta"]["show_in_menus"]
         )
+        assert response_data["meta"]["parent"]["id"] == parent_home_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
