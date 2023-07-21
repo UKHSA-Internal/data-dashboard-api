@@ -5,7 +5,7 @@
         "detail_url": "http://localhost/api/pages/115/",
         "html_url": null,
         "slug": "about",
-        "show_in_menus": false,
+        "show_in_menus": true,
         "seo_title": "About | UKHSA data dashboard",
         "search_description": "The UKHSA data dashboard provides presents a wide range of public health data in an easily accessible format.",
         "first_published_at": "2023-05-16T11:18:41.084933+01:00",
