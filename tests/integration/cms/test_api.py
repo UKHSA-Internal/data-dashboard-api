@@ -85,13 +85,13 @@ class TestListPagesAPI:
         And the response contains the expected fields
         """
         # Given
-        page = Page.objects.last()
+        page = Page.objects.first()
         home_page: HomePage = _build_respiratory_viruses_page(parent_page=page)
         _build_topic_page(name="covid_19", parent_page=home_page)
 
         # When
         response_from_pages_endpoint: Response = authenticated_api_client.get(
-            path=f"{self.path}",
+            path=self.path,
             format="json",
         )
 
