@@ -107,5 +107,8 @@ class TestListPagesAPI:
         assert not topic_page_from_response["meta"]["show_in_menus"]
 
         # Check that the `parent` field is pointing to the data for the correct parent page
+        print(topic_page_from_response)
+
+        print(topic_page_from_response["meta"])
         assert topic_page_from_response["meta"]["parent"]["id"] == home_page.id
         assert topic_page_from_response["meta"]["parent"]["title"] == home_page.title
