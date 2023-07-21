@@ -66,4 +66,3 @@ class TestDraftPagesAPI:
             == unpublished_title
             != title_field_from_pages_endpoint
         )
-
