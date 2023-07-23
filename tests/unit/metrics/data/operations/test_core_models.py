@@ -251,4 +251,3 @@ class TestLoadCoreData:
 
         # Then
         assert "Core Time Series table has existing records" in caplog.text
-

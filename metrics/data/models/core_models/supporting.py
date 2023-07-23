@@ -54,7 +54,9 @@ class GeographyType(models.Model):
 
 class Geography(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
-    geography_code = models.CharField(max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True)
+    geography_code = models.CharField(
+        max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
+    )
     geography_type = models.ForeignKey(
         to=GeographyType, on_delete=models.SET_NULL, null=True
     )

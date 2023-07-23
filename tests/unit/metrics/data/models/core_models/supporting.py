@@ -8,7 +8,7 @@ def test_geography_model():
         None
     """
     # Given
-    geography_code = 'E450000012'
+    geography_code = "E450000012"
 
     # When
     geography_model = FakeGeography(geography_code=geography_code)
