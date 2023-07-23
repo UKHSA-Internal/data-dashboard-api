@@ -5,19 +5,19 @@
         "detail_url": "http://localhost/api/pages/115/",
         "html_url": null,
         "slug": "about",
-        "show_in_menus": false,
+        "show_in_menus": true,
         "seo_title": "About | UKHSA data dashboard",
         "search_description": "The UKHSA data dashboard provides presents a wide range of public health data in an easily accessible format.",
         "first_published_at": "2023-05-16T11:18:41.084933+01:00",
         "alias_of": null,
         "parent": {
-            "id": 109,
+            "id": 3,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/109/",
+                "detail_url": "http://localhost/api/pages/3/",
                 "html_url": null
             },
-            "title": "Respiratory viruses"
+            "title": "UKHSA Dashboard Root"
         }
     },
     "title": "About",

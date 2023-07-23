@@ -5,19 +5,19 @@
         "detail_url": "http://localhost/api/pages/134/",
         "html_url": null,
         "slug": "whats-new",
-        "show_in_menus": false,
+        "show_in_menus": true,
         "seo_title": "What's new | UKHSA data dashboard",
         "search_description": "A list of all the new features and key pieces of data which have been added to the UKHSA data dashboard",
         "first_published_at": "2023-05-16T11:46:07.719758+01:00",
         "alias_of": null,
         "parent": {
-            "id": 127,
+            "id": 3,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/127/",
+                "detail_url": "http://localhost/api/pages/3/",
                 "html_url": null
             },
-            "title": "Respiratory viruses"
+            "title": "UKHSA Dashboard Root"
         }
     },
     "title": "What's new",
