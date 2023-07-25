@@ -8,6 +8,7 @@ from metrics.data.managers.core_models.stratum import StratumManager
 from metrics.data.managers.core_models.topic import TopicManager
 
 CHAR_COLUMN_MAX_CONSTRAINT: int = 50
+GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT: int = 9
 
 
 class Theme(models.Model):
@@ -53,6 +54,9 @@ class GeographyType(models.Model):
 
 class Geography(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    geography_code = models.CharField(
+        max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
+    )
     geography_type = models.ForeignKey(
         to=GeographyType, on_delete=models.SET_NULL, null=True
     )
