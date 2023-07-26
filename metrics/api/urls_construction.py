@@ -25,7 +25,7 @@ from metrics.api.views import (
     TablesView,
     TrendsView,
 )
-from public_api import urlpatterns as public_api_urlpatterns
+from public_api import construct_urlpatterns_for_public_api
 
 router = routers.DefaultRouter()
 
@@ -44,6 +44,70 @@ cms_admin_urlpatterns = [
     # Serves the CMS admin view
     path("cms-admin/", include(wagtailadmin_urls)),
 ]
+
+
+def construct_cms_admin_urlpatterns(
+    app_mode: str | None,
+) -> list[resolvers.URLResolver]:
+    """Builds a list of `URLResolver` instances for the cms-admin application module
+
+    Notes:
+        If the `app_mode` argument is not equal to `CMS_ADMIN`,
+        then this function will return the URL at the designated path
+        i.e. "/cms-admin/
+        Otherwise, if the `app_mode` argument is equal to `CMS_ADMIN`,
+        the returned URL will be at the root i.e. "/"
+
+    Args:
+        app_mode: The 'mode' in which the application is currently in.
+            This can be provided via the `APP_MODE` environment variable.
+
+    Returns:
+        List of `URLResolver` object which
+        can then be consumed by the django application
+        via `urlpatterns` in `urls.py`
+
+    """
+    if app_mode == AppMode.CMS_ADMIN.value:
+        prefix = ""
+    else:
+        prefix = "cms-admin/"
+
+    return [path(prefix, include(wagtailadmin_urls))]
+
+
+DEFAULT_PUBLIC_API_PREFIX = "api/public/timeseries/"
+
+
+def construct_public_api_urlpatterns(
+    app_mode: str | None,
+) -> list[resolvers.URLResolver]:
+    """Builds a list of `URLResolver` instances for the public API application module
+
+    Notes:
+        If the `app_mode` argument is not equal to `PUBLIC_API`,
+        then this function will return the URL at the designated path
+        i.e. "/api/public/timeseries/"
+        Otherwise, if the `app_mode` argument is equal to `PUBLIC_API`,
+        the returned URL will be at the root i.e. "/"
+
+    Args:
+        app_mode: The 'mode' in which the application is currently in.
+            This can be provided via the `APP_MODE` environment variable.
+
+    Returns:
+        List of `URLResolver` object which
+        can then be consumed by the django application
+        via `urlpatterns` in `urls.py`
+
+    """
+    if app_mode == AppMode.PUBLIC_API.value:
+        prefix = ""
+    else:
+        prefix = DEFAULT_PUBLIC_API_PREFIX
+
+    return construct_urlpatterns_for_public_api(prefix=prefix)
+
 
 API_PREFIX = "api/"
 
@@ -126,16 +190,16 @@ def construct_urlpatterns(
     )
 
     if app_mode == AppMode.CMS_ADMIN.value:
-        constructed_url_patterns += cms_admin_urlpatterns
+        constructed_url_patterns += construct_cms_admin_urlpatterns(app_mode=app_mode)
         constructed_url_patterns += django_admin_urlpatterns
     elif app_mode == AppMode.PUBLIC_API.value:
-        constructed_url_patterns += public_api_urlpatterns
+        constructed_url_patterns += construct_public_api_urlpatterns(app_mode=app_mode)
     elif app_mode == AppMode.PRIVATE_API.value:
         constructed_url_patterns += private_api_urlpatterns
     else:
-        constructed_url_patterns += cms_admin_urlpatterns
+        constructed_url_patterns += construct_cms_admin_urlpatterns(app_mode=app_mode)
+        constructed_url_patterns += construct_public_api_urlpatterns(app_mode=app_mode)
         constructed_url_patterns += django_admin_urlpatterns
-        constructed_url_patterns += public_api_urlpatterns
         constructed_url_patterns += private_api_urlpatterns
 
     return constructed_url_patterns
