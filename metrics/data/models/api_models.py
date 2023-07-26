@@ -18,6 +18,11 @@ CHAR_COLUMN_MAX_CONSTRAINT: int = 50
 class APITimeSeries(models.Model):
     period = models.CharField(max_length=1)
 
+    age = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
+    month = models.PositiveSmallIntegerField(null=True)
+    refresh_date = models.DateField(null=True)
+    geography_code = models.CharField(max_length=9, null=True)
+    metric_group = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
     theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     sub_theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     topic = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
