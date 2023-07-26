@@ -10,7 +10,7 @@ from metrics.domain.utils import get_last_day_of_month
 
 
 class ChartSettings:
-    narrow_chart_width = 435
+    narrow_chart_width = 515
 
     def __init__(self, width: int, height: int, plots_data: list[PlotData]):
         self._width = width
