@@ -57,4 +57,4 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 # The recipient address to send feedback emails to
-FEEDBACK_EMAIL_RECIPIENT_ADDRESS = os.environ.get("EMAIL_RECIPIENT_ADDRESS")
+FEEDBACK_EMAIL_RECIPIENT_ADDRESS = os.environ.get("FEEDBACK_EMAIL_RECIPIENT_ADDRESS")
