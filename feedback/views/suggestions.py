@@ -17,6 +17,17 @@ class SuggestionsView(APIView):
 
     @extend_schema(tags=[SUGGESTIONS_API_TAG], request=SuggestionsSerializer)
     def post(self, request: Request, *args, **kwargs) -> HttpResponse:
+        """This endpoint sends a feedback email to the designated UKHSA recipient account.
+
+        Note that the only environments which will have this functionality are:
+
+        - `test`
+
+        - `prod`
+
+        **Hitting this endpoint in all other environments will not send any emails**
+
+        """
         serializer = SuggestionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         send_email(suggestions=serializer.validated_data)
