@@ -19,6 +19,5 @@ class SuggestionsView(APIView):
     def post(self, request: Request, *args, **kwargs) -> HttpResponse:
         serializer = SuggestionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        send_email(serializer.validated_data)
+        send_email(suggestions=serializer.validated_data)
         return HttpResponse(HTTPStatus.OK.value)
