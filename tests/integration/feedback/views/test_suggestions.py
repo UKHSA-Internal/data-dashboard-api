@@ -43,4 +43,4 @@ class TestSuggestionsView:
 
         # Then
         assert response.status_code == HTTPStatus.OK.value
-        spy_send_email.assert_called_once()
+        spy_send_email.assert_called_once_with(suggestions=valid_payload)
