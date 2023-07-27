@@ -44,3 +44,17 @@ if not SECRET_KEY:
 # Note this is only used for a link on the public API
 # to direct users back to the frontend dashboard
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
+
+
+# Email server configuration
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
+)
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", True)
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = os.environ.get("EMAIL_PORT", 587)
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+
+# The recipient address to send feedback emails to
+FEEDBACK_EMAIL_RECIPIENT_ADDRESS = os.environ.get("EMAIL_RECIPIENT_ADDRESS")
