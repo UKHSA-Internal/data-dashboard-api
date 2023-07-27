@@ -15,7 +15,7 @@ def send_email(
     suggestions: dict[str, str],
     subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
     recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,
-    fail_silently: bool = False,
+    fail_silently: bool = True,
 ) -> bool:
     """Sends a feedback email to the `recipient_email_address`
 
@@ -28,8 +28,8 @@ def send_email(
             Defaults to the environment variable
                 `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
         fail_silently: Switch to raise an exception
-            if the email was successfully sent.
-            Defaults to False
+            if the email failed and was not successfully sent.
+            Defaults to True
 
     Returns:
         A boolean to describe whether the email has been sent successfully
