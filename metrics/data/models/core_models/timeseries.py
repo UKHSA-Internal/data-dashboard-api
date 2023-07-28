@@ -2,10 +2,12 @@ from django.db import models
 
 from metrics.data.enums import TimePeriod
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
+from metrics.data.models.constants import (
+    METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN,
+    SEX_MAX_CHAR_CONSTRAINT,
+)
 from metrics.data.models.core_models import help_texts
 from metrics.data.models.core_models.supporting import Age, Geography, Metric, Stratum
-
-from ..constants import METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN, SEX_MAX_CHAR_CONSTRAINT
 
 
 class CoreTimeSeries(models.Model):

@@ -11,8 +11,7 @@ Note that the flat models should only be populated
 from django.db import models
 
 from metrics.data.managers.api_models.time_series import APITimeSeriesManager
-
-from .constants import (
+from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
     GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
     PERIOD_MAX_CHAR_CONSTRAINT,
