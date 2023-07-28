@@ -88,6 +88,34 @@ The codebase itself is generally structured as follows:
 
 ---
 
+## Separately deployable monolith
+
+The various backend components touch the same parts of the database. 
+As such, the codebase is at the time of writing (Jul 2023) is monolithic primarily because of:
+
+a) The shared database models/other parts of code.
+b) Ease of use/development speed for a small team.
+
+There is simply the 1 single Docker image used for the backend application.
+
+The `APP_MODE` environment variable is used to **switch the mode** in which the application is running.
+There are a number of different options available for this setting:
+
+- `"CMS_ADMIN"` - Used for deploying the CMS admin application only. This is the component used by the content creators.
+- `"PRIVATE_API"` - Deployment of the private API, which will only be used by the front end application.
+- `"PUBLIC_API"` - Deploying the hyperlinked browsable public API.
+
+Note that the same image is used to deploy each of these services. 
+The `APP_MODE` environment variable is used to toggle certain groups of endpoints off depending on the value being set.
+
+For example, if a container is spun up with the `APP_MODE` environment variable set to "CMS_ADMIN", 
+then the endpoints which belong to the private API and the public API will **not be available**.
+
+> When no value is specified for the `APP_MODE` environment variable, then the application server will run with no restrictions.
+i.e. all endpoints will be toggled on and available.
+
+---
+
 ## Testing approach
 
 ### Framework
