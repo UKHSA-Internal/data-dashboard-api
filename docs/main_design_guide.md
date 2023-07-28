@@ -39,26 +39,39 @@ The `metrics/` app takes a layered architectural approach:
 Whereby each layer can only reach down (but not upwards).
 This is enforced in this project with `import-linter`.
 
-The codebase itself is generally structured as follows:
+The codebase itself is *generally* structured as follows, this is not an exhaustive list:
 
 ```
 |- cms/
-   |- common/  # The wagtail app for the non-topic pages (about page).
-   |- dashboard/ # This is the *main/primary* wagtail app.
-   |- home/ # The wagtail app for the landing page.
-   |- topic/ # The wagtal app for the topic pages (diseases e.g. COVID-19)
-   |- dynamic_content/ # Contains the primary customised blocks and components used for dynamic content 
-   |- metrics_interface/ # Contains the funnel abstractions which links the cms <- metrics parts of the application
-   ...
+    |- common/  # The wagtail app for the non-topic pages (about page).
+    |- dashboard/ # This is the *main/primary* wagtail app.
+    |- home/ # The wagtail app for the landing page.
+    |- topic/ # The wagtal app for the topic pages (diseases e.g. COVID-19)
+    |- dynamic_content/ # Contains the primary customised blocks and components used for dynamic content 
+    |- metrics_interface/ # Contains the funnel abstractions which links the cms <- metrics parts of the application
+   
+|- feedback/ # Encapsulates the feedback module, email message construction and sending functionality
+    |- serializers/ Primarily used to validate the correct question answer pairs are in inbound requests
+    |- views/ # The view associated with the suggestions/ API
+    |- email.py # The functionality for creating email objects and sending them
+    |- email_template.py # Writing the body of the suggestions email
 
+|- ingestion/
+    |- api/ # views, serializers and viewsets associated with the ingestion API
+    |- data_transfer_models/ # The DTOs used for parsing the source file and for translating into the data layer
+    |- metrics_interface/ # Contains the funnel abstractions which links the ingestion <- metrics parts of the application
+    |- consumer.py # Holds the object used to open source files, orchestrating the creation of DTOs, and calling to the reader 
+    |- reader.py # The object used to parse the source file and perform any processing steps before the file can be consumed
+    
 |- metrics/
     |- api/ # This is the *main/primary* django app of the project. The centralised settings can be found within.
         settings.py # Settings for the main django app. The CMS apps are wired into place here.
         urls.py # URLs for the main django app. The CMS routes are wired into place here.
+        urls_construction.py # Where the URLs are configured, grouped and toggled accordingly
         ... # views, serializers and viewsets associated with the API layer.
-    |- data/ # Represents the database layer.
+    |- data/ # Represents the data layer and access to the database.
         |- models/
-            |- api_models.py # The flat model which holds everything in the single flat table.
+            |- api_models.py # The flat denormalized model which holds everything in the single flat table.
             |- core_models.py # The normalized models which house a series of FK relationships.
         |- access/ # Read-like functionality for interacting with the db (via managers ideally).
         |- operations/ # Write-like functionality for interacting with the db (via managers ideally).
@@ -66,13 +79,13 @@ The codebase itself is generally structured as follows:
         |- migrations/ # Contains the associated django migrations.
     |- domain/ # Represents the business logic layer. Currently houses the charts generation module.
     |- interfaces/ # Represents the interaction layer of the system. E.g. the API interacts with charts logic via the `interfaces/charts` module.
+    |- templates/ # Contains .html templates for base pages which have been customized with the UKHSA branding.
     
 |- public_api/ # This is the public facing unrestricted API, which provides programmatic access to the data.
-    |- __init__.py # Contains the public interface of the package. i.e. the fully constructed url patterns
     |- metrics_interface/ # Holds the class which bridges the public API -> metrics app
     |- serializers/ # All the serializers needed for the public API
     |- views/ # All the views needed for the public API
-    |- urls.py # The constructed url patterns for the public API
+    |- urls.py # The constructed group of url patterns for the public API
     
 |- tests/
     |- fakes/ # Contains fake implementations to remove additional dependencies for tests
