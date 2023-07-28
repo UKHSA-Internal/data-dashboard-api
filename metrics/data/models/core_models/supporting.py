@@ -7,8 +7,7 @@ from metrics.data.managers.core_models.metric import MetricManager
 from metrics.data.managers.core_models.stratum import StratumManager
 from metrics.data.managers.core_models.topic import TopicManager
 
-CHAR_COLUMN_MAX_CONSTRAINT: int = 50
-GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT: int = 9
+from ..constants import CHAR_COLUMN_MAX_CONSTRAINT, GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT
 
 
 class Theme(models.Model):

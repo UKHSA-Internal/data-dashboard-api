@@ -5,6 +5,8 @@ from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 from metrics.data.models.core_models import help_texts
 from metrics.data.models.core_models.supporting import Age, Geography, Metric, Stratum
 
+from ..constants import METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN, SEX_MAX_CHAR_CONSTRAINT
+
 
 class CoreTimeSeries(models.Model):
     metric = models.ForeignKey(
@@ -13,7 +15,7 @@ class CoreTimeSeries(models.Model):
         null=True,
     )
     metric_frequency = models.CharField(
-        max_length=1,
+        max_length=METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN,
         choices=TimePeriod.choices(),
     )
     geography = models.ForeignKey(
@@ -33,7 +35,7 @@ class CoreTimeSeries(models.Model):
         help_text=help_texts.AGE,
     )
     sex = models.CharField(
-        max_length=3,
+        max_length=SEX_MAX_CHAR_CONSTRAINT,
         null=True,
     )
 
