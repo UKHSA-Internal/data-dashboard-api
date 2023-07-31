@@ -384,16 +384,39 @@ class Ingestion:
 
         """
         incoming_source_data = self.reader.open_source_file()
-        pre_processed_incoming_headline_dtos = [
-            IncomingHeadlineDTO(**incoming_headline_data)
-            for incoming_headline_data in incoming_source_data
-        ]
-        processed_incoming_headline_dtos: list[IncomingHeadlineDTO] = self._parse_data(
+        pre_processed_incoming_headline_dtos = (
+            self.create_incoming_headline_dtos_from_source(
+                incoming_source_data=incoming_source_data
+            )
+        )
+        post_processed_incoming_headline_dtos: list[
+            IncomingHeadlineDTO
+        ] = self._parse_data(
             incoming_dtos=pre_processed_incoming_headline_dtos,
         )
         return self._convert_to_outgoing_headline_dtos(
-            processed_headline_dtos=processed_incoming_headline_dtos
+            processed_headline_dtos=post_processed_incoming_headline_dtos
         )
+
+    @staticmethod
+    def create_incoming_headline_dtos_from_source(
+        incoming_source_data: list[dict[str, str | int | float]]
+    ) -> list[IncomingHeadlineDTO]:
+        """Creates a list of `IncomingHeadlineDTO`s from the `incoming_source_data`
+
+        Args:
+            incoming_source_data: List of dicts loaded
+                directly from the source file
+
+        Returns:
+            List of `IncomingHeadlineDTO`s which represent
+            each entry in the source file
+
+        """
+        return [
+            IncomingHeadlineDTO(**incoming_headline_data)
+            for incoming_headline_data in incoming_source_data
+        ]
 
     def create_headlines(self, batch_size: int = 100) -> None:
         """Creates `CoreHeadline` records from the ingested data
@@ -436,13 +459,39 @@ class Ingestion:
 
         """
         incoming_source_data = self.reader.open_source_file()
-        pre_processed_incoming_timeseries_dtos = [
-            IncomingTimeSeriesDTO(**incoming_headline_data)
-            for incoming_headline_data in incoming_source_data
-        ]
-        return self._convert_to_outgoing_timeseries_dtos(
-            processed_timeseries_dtos=pre_processed_incoming_timeseries_dtos
+        pre_processed_incoming_timeseries_dtos = (
+            self.create_incoming_timeseries_dtos_from_source(
+                incoming_source_data=incoming_source_data
+            )
         )
+        post_processed_incoming_timeseries_dtos: list[
+            IncomingTimeSeriesDTO
+        ] = self._parse_data(
+            incoming_dtos=pre_processed_incoming_timeseries_dtos,
+        )
+        return self._convert_to_outgoing_timeseries_dtos(
+            processed_timeseries_dtos=post_processed_incoming_timeseries_dtos
+        )
+
+    @staticmethod
+    def create_incoming_timeseries_dtos_from_source(
+        incoming_source_data: list[dict[str, str | int | float]]
+    ) -> list[IncomingTimeSeriesDTO]:
+        """Creates a list of `IncomingTimeSeriesDTO`s from the `incoming_source_data`
+
+        Args:
+            incoming_source_data: List of dicts loaded
+                directly from the source file
+
+        Returns:
+            List of `IncomingTimeSeriesDTO`s which represent
+            each entry in the source file
+
+        """
+        return [
+            IncomingTimeSeriesDTO(**incoming_timeseries_data)
+            for incoming_timeseries_data in incoming_source_data
+        ]
 
     def create_timeseries(self, batch_size: int = 100) -> None:
         """Creates `CoreTimeSeries` records from the ingested data

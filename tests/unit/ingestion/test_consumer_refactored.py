@@ -394,3 +394,61 @@ class TestIngestion:
         assert all_related_fields_and_model_managers[
             expected_index
         ].model_manager == getattr(ingestion, expected_model_manager_from_class)
+
+    def test_create_incoming_headline_dtos_from_source(
+        self, example_headline_data: list[dict[str, str | float]]
+    ):
+        """
+        Given some sample headline data
+        When `create_incoming_headline_dtos_from_source()`
+            is called from an instance of `Reader`
+        Then a list of `IncomingHeadlineDTO`s are returned
+        """
+        # Given
+        fake_incoming_headline_source_data = example_headline_data
+        ingestion = Ingestion(data=mock.Mock())
+
+        # When
+        returned_incoming_headline_dtos = (
+            ingestion.create_incoming_headline_dtos_from_source(
+                incoming_source_data=fake_incoming_headline_source_data,
+            )
+        )
+
+        # Then
+        expected_created_incoming_headline_dtos = [
+            IncomingHeadlineDTO(**data) for data in fake_incoming_headline_source_data
+        ]
+        assert (
+            returned_incoming_headline_dtos == expected_created_incoming_headline_dtos
+        )
+
+    def test_create_incoming_timeseries_dtos_from_source(
+        self, example_timeseries_data: list[dict[str, str | float]]
+    ):
+        """
+        Given some sample timeseries data
+        When `create_incoming_timeseries_dtos_from_source()`
+            is called from an instance of `Reader`
+        Then a list of `IncomingTimeSeriesDTO`s are returned
+        """
+        # Given
+        fake_incoming_timeseries_source_data = example_timeseries_data
+        ingestion = Ingestion(data=mock.Mock())
+
+        # When
+        returned_incoming_timeseries_dtos = (
+            ingestion.create_incoming_timeseries_dtos_from_source(
+                incoming_source_data=fake_incoming_timeseries_source_data,
+            )
+        )
+
+        # Then
+        expected_created_incoming_timeseries_dtos = [
+            IncomingTimeSeriesDTO(**data)
+            for data in fake_incoming_timeseries_source_data
+        ]
+        assert (
+            returned_incoming_timeseries_dtos
+            == expected_created_incoming_timeseries_dtos
+        )
