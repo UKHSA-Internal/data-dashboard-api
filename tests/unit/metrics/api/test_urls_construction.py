@@ -1,8 +1,17 @@
+from unittest import mock
+
 import pytest
 from django.urls.resolvers import URLResolver
 
-from metrics.api.urls_construction import AppMode, construct_urlpatterns
-from public_api.urls import PUBLIC_API_PREFIX
+from metrics.api.urls_construction import (
+    DEFAULT_PUBLIC_API_PREFIX,
+    AppMode,
+    construct_cms_admin_urlpatterns,
+    construct_public_api_urlpatterns,
+    construct_urlpatterns,
+)
+
+MODULE_PATH = "metrics.api.urls_construction"
 
 HEADLESS_CMS_API_ENDPOINT_PATHS = ["drafts", "pages"]
 
@@ -17,7 +26,14 @@ PRIVATE_API_ENDPOINT_PATHS = [
 ]
 
 
-PUBLIC_API_ENDPOINT_PATHS = [f"{PUBLIC_API_PREFIX}", f"{PUBLIC_API_PREFIX}themes"]
+PUBLIC_API_ENDPOINT_PATHS = [
+    "themes/",
+    "sub_themes/",
+    "topics/",
+    "geography_types/",
+    "geographies/",
+    "metrics/",
+]
 
 CMS_ADMIN_ENDPOINT_PATHS = ["cms", "admin"]
 
@@ -28,6 +44,104 @@ COMMON_ENDPOINT_PATHS = [
     "static",
     "health",
 ]
+
+
+class TestConstructCMSAdminUrlpatterns:
+    def test_app_mode_cms_admin_returns_at_root(self):
+        """
+        Given an `app_mode` of "CMS_ADMIN"
+        When `construct_cms_admin_urlpatterns()` is called
+        Then the urlpatterns returned sets the cms admin URL at the root
+        """
+        # Given
+        app_mode = AppMode.CMS_ADMIN.value
+
+        # When
+        urlpatterns = construct_cms_admin_urlpatterns(app_mode=app_mode)
+
+        # Then
+        cms_admin_url_resolver: URLResolver = urlpatterns[0]
+        assert cms_admin_url_resolver.pattern.regex.pattern == "^"
+
+    @pytest.mark.parametrize(
+        "app_mode",
+        [
+            None,
+            "",
+            "COMPLETE_APP",
+        ],
+    )
+    def test_no_specific_app_mode_returns_at_designated_path(
+        self, app_mode: str | None
+    ):
+        """
+        Given any default `app_mode` value
+        When `construct_cms_admin_urlpatterns()` is called
+        Then the urlpatterns returned sets the cms admin URL at "/cms-admin/
+        """
+        # Given
+        provided_app_mode = app_mode
+
+        # When
+        urlpatterns = construct_cms_admin_urlpatterns(app_mode=provided_app_mode)
+
+        # Then
+        cms_admin_url_resolver: URLResolver = urlpatterns[0]
+        assert cms_admin_url_resolver.pattern.regex.pattern == "^cms\\-admin/"
+
+
+class TestConstructPublicAPIUrlpatterns:
+    @mock.patch(f"{MODULE_PATH}.construct_urlpatterns_for_public_api")
+    def test_public_api_app_mode_uses_root_as_prefix(
+        self, spy_construct_urlpatterns_for_public_api: mock.MagicMock
+    ):
+        """
+        Given an `app_mode` of "PUBLIC_API"
+        When `construct_public_api_urlpatterns()` is called
+        Then the root url is passed to the call
+            to `construct_urlpatterns_for_public_api()
+        """
+        # Given
+        app_mode = AppMode.PUBLIC_API.value
+
+        # When
+        urlpatterns = construct_public_api_urlpatterns(app_mode=app_mode)
+
+        # Then
+        spy_construct_urlpatterns_for_public_api.assert_called_once_with(prefix="")
+        assert urlpatterns == spy_construct_urlpatterns_for_public_api.return_value
+
+    @pytest.mark.parametrize(
+        "app_mode",
+        [
+            None,
+            "",
+            "COMPLETE_APP",
+        ],
+    )
+    @mock.patch(f"{MODULE_PATH}.construct_urlpatterns_for_public_api")
+    def test_public_api_app_mode_returns_at_designated_path(
+        self,
+        spy_construct_urlpatterns_for_public_api: mock.MagicMock,
+        app_mode: str | None,
+    ):
+        """
+        Given any default `app_mode` value
+        When `construct_public_api_urlpatterns()` is called
+        Then the root url is passed to the call
+            to `construct_urlpatterns_for_public_api()
+        """
+        # Given
+        provided_app_mode = app_mode
+
+        # When
+        urlpatterns = construct_public_api_urlpatterns(app_mode=provided_app_mode)
+
+        # Then
+        spy_construct_urlpatterns_for_public_api.assert_called_once_with(
+            prefix=DEFAULT_PUBLIC_API_PREFIX
+        )
+        assert urlpatterns == spy_construct_urlpatterns_for_public_api.return_value
 
 
 class TestConstructUrlpatterns:
@@ -147,8 +261,7 @@ class TestConstructUrlpatterns:
 
     # Tests for APP_MODE = "CMS_ADMIN"
 
-    @pytest.mark.parametrize("cms_admin_endpoint_path", CMS_ADMIN_ENDPOINT_PATHS)
-    def test_cms_admin_mode_returns_cms_admin_urls(self, cms_admin_endpoint_path: str):
+    def test_cms_admin_mode_returns_cms_admin_urls(self):
         """
         Given an `app_mode` of "CMS_ADMIN"
         When `construct_urlpatterns()` is called
@@ -161,9 +274,7 @@ class TestConstructUrlpatterns:
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
 
         # Then
-        assert any(
-            cms_admin_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
-        )
+        assert any("admin" in x.pattern.regex.pattern for x in urlpatterns)
 
     @pytest.mark.parametrize(
         "excluded_endpoint_path", PRIVATE_API_ENDPOINT_PATHS + PUBLIC_API_ENDPOINT_PATHS
