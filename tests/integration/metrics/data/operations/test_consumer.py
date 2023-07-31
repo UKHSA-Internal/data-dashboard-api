@@ -19,7 +19,7 @@ from metrics.data.models.core_models import (
 )
 
 
-class TestIngestion:
+class TestConsumer:
     @pytest.mark.django_db
     def test_can_ingest_headline_data_successfully(
         self, example_headline_data: list[dict[str, str | float]]
