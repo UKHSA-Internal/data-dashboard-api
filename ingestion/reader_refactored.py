@@ -583,7 +583,7 @@ class Reader:
         """
         return COLUMN_NAMES_WITH_FOREIGN_KEYS
 
-    def open_source_file(self) -> list[IncomingBaseDTO]:
+    def open_source_file(self) -> list[dict[str, str | int | float]]:
         """Opens the JSON `data` as an object
 
         Returns:
@@ -591,9 +591,4 @@ class Reader:
 
         """
         lines = self.data.readlines()[0]
-        data = json.loads(lines)
-
-        return [
-            IncomingHeadlineDTO(**incoming_headline_data)
-            for incoming_headline_data in data
-        ]
+        return json.loads(lines)
