@@ -1,6 +1,6 @@
+import io
 from typing import Callable, NamedTuple, Optional, Type
 
-import pandas as pd
 from django.db.models import Manager
 
 from ingestion.data_transfer_models import (
@@ -40,7 +40,7 @@ class Consumer:
 
     Parameters:
     -----------
-    data: FilePath | ReadBuffer[str] | ReadBuffer[bytes]
+    data: FileIO
         The file or buffer containing the raw JSON data
     reader : `Reader`
         The reader object used to parse the data
@@ -83,9 +83,7 @@ class Consumer:
 
     def __init__(
         self,
-        data: pd._typing.FilePath
-        | pd._typing.ReadBuffer[str]
-        | pd._typing.ReadBuffer[bytes],
+        data: io.FileIO,
         reader: Optional[Reader] = None,
         theme_manager: Manager = DEFAULT_THEME_MANAGER,
         sub_theme_manager: Manager = DEFAULT_SUB_THEME_MANAGER,
