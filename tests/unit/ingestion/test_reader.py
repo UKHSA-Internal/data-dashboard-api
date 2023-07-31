@@ -826,7 +826,7 @@ class TestReader:
     ):
         """
         Given a list of mocked incoming DTOs
-        When `_add_pk_as_primary_field_to_all_incoming_dtos_()`
+        When `_add_pk_as_primary_field_to_all_incoming_dtos()`
             is called from an instance of `Reader`
         Then the call is delegated to `_add_pk_as_primary_field_on_incoming_dto()`
             for each of the DTOs
@@ -840,7 +840,7 @@ class TestReader:
         reader = Reader(data=mock.Mock())
 
         # When
-        reader._add_pk_as_primary_field_to_all_incoming_dtos_(
+        reader._add_pk_as_primary_field_to_all_incoming_dtos(
             incoming_dtos=mocked_incoming_dtos,
             unique_value_groups_from_incoming_dtos=mocked_unique_value_groups_from_incoming_dtos,
             primary_field=mocked_primary_field,

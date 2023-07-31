@@ -100,17 +100,16 @@ class Reader:
             model_manager=model_manager,
         )
 
-        for incoming_dto in incoming_dtos:
-            self._add_pk_as_primary_field_on_incoming_dto(
-                incoming_dto=incoming_dto,
-                unique_value_groups_from_incoming_dtos=unique_value_groups_from_incoming_dtos,
-                primary_field=primary_field,
-                fields=fields,
-            )
+        self._add_pk_as_primary_field_to_all_incoming_dtos(
+            incoming_dtos=incoming_dtos,
+            unique_value_groups_from_incoming_dtos=unique_value_groups_from_incoming_dtos,
+            primary_field=primary_field,
+            fields=fields,
+        )
 
         return incoming_dtos
 
-    def _add_pk_as_primary_field_to_all_incoming_dtos_(
+    def _add_pk_as_primary_field_to_all_incoming_dtos(
         self,
         incoming_dtos: list[type[IncomingBaseDTO]],
         unique_value_groups_from_incoming_dtos,
