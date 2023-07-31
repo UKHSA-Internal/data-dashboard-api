@@ -11,7 +11,7 @@ from ingestion.data_transfer_models import (
 )
 from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
-from ingestion.reader_refactored import Reader
+from ingestion.reader import Reader
 
 
 class FieldsAndModelManager(NamedTuple):
