@@ -115,7 +115,7 @@ class Consumer:
     def update_supporting_models(
         self, incoming_dtos: list[IncomingBaseDTO]
     ) -> list[IncomingBaseDTO]:
-        """Updates all supporting models, also replaces instances in the dataframe with IDs
+        """Updates all supporting models, also replaces instances in the list of DTOs with IDs
 
         Notes:
             This method will accomplish 2 main things:
@@ -126,7 +126,7 @@ class Consumer:
                 into the database.
             2)  This method will also update supporting model columns
                 to instead use their corresponding database record IDS.
-                For example, if the dataframe showed `COVID-19`
+                For example, if the entry showed `COVID-19`
                 for the `topic` field of each entry.
                 Then the dataframe will instead now show `123`,
                 which will be the ID/pk of the `Topic` model
