@@ -35,7 +35,7 @@ CREATE_CORE_HEADLINES: Callable = MetricsAPIInterface.get_create_core_headlines(
 CREATE_CORE_TIMESERIES: Callable = MetricsAPIInterface.get_create_core_timeseries()
 
 
-class Ingestion:
+class Consumer:
     """This is responsible for ingesting raw JSON data and ultimately creating the core models in the database
 
     Parameters:
