@@ -336,8 +336,15 @@ class Ingestion:
             refresh_date=incoming_timeseries_dto.refresh_date,
         )
 
-    def _parse_data(self) -> list[IncomingBaseDTO]:
+    def _parse_data(
+        self, incoming_dtos: list[IncomingBaseDTO]
+    ) -> list[IncomingBaseDTO]:
         """Convert the data to a list of DTOs and update supporting core models
+
+        Args:
+            incoming_dtos: The list of incoming DTOs to be processed
+                Note that this is agnostic of whether the DTOs are
+                all type `IncomingHeadlineDTO` or `IncomingTimeSeriesDTO`.
 
         Notes:
             This will handle the following pre-processing steps:
@@ -361,7 +368,6 @@ class Ingestion:
             insert a new database record in the table
 
         """
-        incoming_dtos: list[IncomingBaseDTO] = self.reader.open_source_file()
         parsed_incoming_dtos: list[IncomingBaseDTO] = self.update_supporting_models(
             incoming_dtos=incoming_dtos
         )
@@ -377,9 +383,16 @@ class Ingestion:
             which can be used to create the corresponding `CoreHeadline` records.
 
         """
-        processed_incoming_dtos: list[IncomingHeadlineDTO] = self._parse_data()
+        incoming_source_data = self.reader.open_source_file()
+        pre_processed_incoming_headline_dtos = [
+            IncomingHeadlineDTO(**incoming_headline_data)
+            for incoming_headline_data in incoming_source_data
+        ]
+        processed_incoming_headline_dtos: list[IncomingHeadlineDTO] = self._parse_data(
+            incoming_dtos=pre_processed_incoming_headline_dtos,
+        )
         return self._convert_to_outgoing_headline_dtos(
-            processed_headline_dtos=processed_incoming_dtos
+            processed_headline_dtos=processed_incoming_headline_dtos
         )
 
     def create_headlines(self, batch_size: int = 100) -> None:
@@ -422,9 +435,13 @@ class Ingestion:
             to create the corresponding `CoreTimeSeries` records.
 
         """
-        processed_incoming_dtos: list[IncomingTimeSeriesDTO] = self._parse_data()
+        incoming_source_data = self.reader.open_source_file()
+        pre_processed_incoming_timeseries_dtos = [
+            IncomingTimeSeriesDTO(**incoming_headline_data)
+            for incoming_headline_data in incoming_source_data
+        ]
         return self._convert_to_outgoing_timeseries_dtos(
-            processed_timeseries_dtos=processed_incoming_dtos
+            processed_timeseries_dtos=pre_processed_incoming_timeseries_dtos
         )
 
     def create_timeseries(self, batch_size: int = 100) -> None:
