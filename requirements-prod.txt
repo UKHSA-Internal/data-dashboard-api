@@ -63,7 +63,7 @@ pip-api==0.0.30
 pip-requirements-parser==32.0.1
 platformdirs==2.5.2
 plotly==5.13.1
-pluggy==1.0.0
+pluggy==1.2.0
 psycopg2==2.9.5
 psycopg2-binary==2.9.5
 pydantic==1.10.7
