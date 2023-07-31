@@ -4,8 +4,9 @@ from unittest import mock
 import pytest
 from django.db.models.manager import Manager
 
-from ingestion.consumer_refactored import FieldsAndModelManager, Ingestion, Reader
-from ingestion.data_transfer_models_refactored import (
+from ingestion.consumer import FieldsAndModelManager, Ingestion
+from ingestion.reader import Reader
+from ingestion.data_transfer_models import (
     IncomingHeadlineDTO,
     IncomingTimeSeriesDTO,
     OutgoingHeadlineDTO,
@@ -13,7 +14,7 @@ from ingestion.data_transfer_models_refactored import (
 )
 from metrics.data.models import core_models
 
-MODULE_PATH = "ingestion.consumer_refactored"
+MODULE_PATH = "ingestion.consumer"
 
 
 class TestIngestion:

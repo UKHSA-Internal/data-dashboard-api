@@ -2,15 +2,13 @@ from unittest import mock
 
 import pytest
 
-from ingestion.consumer_refactored import Reader
-from ingestion.data_transfer_models_refactored import IncomingHeadlineDTO
-from ingestion.data_transfer_models_refactored.incoming import IncomingTimeSeriesDTO
-from ingestion.reader_refactored import COLUMN_NAMES_WITH_FOREIGN_KEYS
+from ingestion.reader import Reader, COLUMN_NAMES_WITH_FOREIGN_KEYS
+from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO, IncomingHeadlineDTO
 from metrics.data.enums import TimePeriod
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 
-MODULE_PATH = "ingestion.reader_refactored"
+MODULE_PATH = "ingestion.reader"
 
 
 class TestReader:
