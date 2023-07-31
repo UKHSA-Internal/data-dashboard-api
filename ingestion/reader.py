@@ -4,9 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.manager import Manager
 from django.db.models.query import QuerySet
 
-from ingestion.data_transfer_models.incoming import (
-    IncomingBaseDTO
-)
+from ingestion.data_transfer_models.incoming import IncomingBaseDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 
 COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str] = [

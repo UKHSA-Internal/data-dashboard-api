@@ -4,14 +4,14 @@ from unittest import mock
 import pytest
 from django.db.models.manager import Manager
 
-from ingestion.consumer import FieldsAndModelManager, Consumer
-from ingestion.reader import Reader
+from ingestion.consumer import Consumer, FieldsAndModelManager
 from ingestion.data_transfer_models import (
     IncomingHeadlineDTO,
     IncomingTimeSeriesDTO,
     OutgoingHeadlineDTO,
     OutgoingTimeSeriesDTO,
 )
+from ingestion.reader import Reader
 from metrics.data.models import core_models
 
 MODULE_PATH = "ingestion.consumer"

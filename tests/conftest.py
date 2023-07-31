@@ -2,8 +2,8 @@ import datetime
 
 import pytest
 
-from ingestion.data_transfer_models_refactored import IncomingHeadlineDTO
-from ingestion.data_transfer_models_refactored.incoming import IncomingTimeSeriesDTO
+from ingestion.data_transfer_models import IncomingHeadlineDTO
+from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
 from metrics.domain.models import PlotParameters
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory

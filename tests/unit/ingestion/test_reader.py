@@ -2,8 +2,11 @@ from unittest import mock
 
 import pytest
 
-from ingestion.reader import Reader, COLUMN_NAMES_WITH_FOREIGN_KEYS
-from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO, IncomingHeadlineDTO
+from ingestion.data_transfer_models.incoming import (
+    IncomingHeadlineDTO,
+    IncomingTimeSeriesDTO,
+)
+from ingestion.reader import COLUMN_NAMES_WITH_FOREIGN_KEYS, Reader
 from metrics.data.enums import TimePeriod
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
