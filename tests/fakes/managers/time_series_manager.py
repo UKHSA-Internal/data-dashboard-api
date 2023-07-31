@@ -32,7 +32,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             for x in self.time_series
             if x.metric.metric_group.topic.name == topic_name
             if x.metric.name == metric_name
-            if x.dt >= date_from
+            if x.date >= date_from
         ]
         return len(filtered_for_metric_topic_and_date)
 
@@ -69,7 +69,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             for time_series in self.time_series
             if time_series.metric.metric_group.topic.name == topic_name
             if time_series.metric.name == metric_name
-            if time_series.dt > date_from
+            if time_series.date > date_from
         ]
         if geography_name:
             filtered_time_series = [

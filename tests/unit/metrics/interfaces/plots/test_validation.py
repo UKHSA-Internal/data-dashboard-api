@@ -102,7 +102,7 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         matching_record = FakeCoreTimeSeriesFactory.build_time_series(
-            dt=date_from,
+            date=date_from,
             metric_name=metric_name,
             topic_name=topic_name,
         )
@@ -139,7 +139,7 @@ class TestDoesMetricHaveMultipleRecords:
             topic="non_existent_topic_name",
             chart_type=ChartTypes.simple_line.value,
             date_from="2022-01-01",
-            x_axis="dt",
+            x_axis="date",
             y_axis="metric_value",
         )
 
