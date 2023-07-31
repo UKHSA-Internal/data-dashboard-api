@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 
 from ingestion.consumer import Consumer
-from ingestion.file_ingestion import file_ingester
+from ingestion.file_ingestion import DataSourceFileType, file_ingester
 
 
 class TestFileIngester:
@@ -19,7 +19,7 @@ class TestFileIngester:
         """
         # Given
         mocked_file = mock.Mock()
-        mocked_file.name = "some_headline_file.json"
+        mocked_file.name = "COVID-19_headline_positivity_latest.json"
 
         # When
         file_ingester(file=mocked_file)
@@ -27,9 +27,21 @@ class TestFileIngester:
         # Then
         spy_create_headlines.assert_called_once()
 
+    @pytest.mark.parametrize(
+        "file_name_section",
+        [
+            DataSourceFileType.cases.value,
+            DataSourceFileType.deaths.value,
+            DataSourceFileType.healthcare.value,
+            DataSourceFileType.testing.value,
+            DataSourceFileType.vaccinations.value,
+        ],
+    )
     @mock.patch.object(Consumer, "create_timeseries")
     def test_delegates_call_to_create_timeseries_for_timeseries_data(
-        self, spy_create_timeseries: mock.MagicMock
+        self,
+        spy_create_timeseries: mock.MagicMock,
+        file_name_section: str,
     ):
         """
         Given a file which has `headline` in the filename
@@ -39,7 +51,7 @@ class TestFileIngester:
         """
         # Given
         mocked_file = mock.Mock()
-        mocked_file.name = "some_timeseries_file.json"
+        mocked_file.name = f"COVID-19_{file_name_section}_Latest.json"
 
         # When
         file_ingester(file=mocked_file)
