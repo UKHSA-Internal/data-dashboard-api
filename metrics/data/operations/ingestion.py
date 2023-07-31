@@ -85,7 +85,7 @@ def create_core_timeseries(
             year=timeseries_dto.year,
             month=timeseries_dto.month,
             epiweek=timeseries_dto.epiweek,
-            dt=timeseries_dto.date.split(" ")[0],
+            date=timeseries_dto.date.split(" ")[0],
             refresh_date=timeseries_dto.refresh_date,
             metric_value=timeseries_dto.metric_value,
         )

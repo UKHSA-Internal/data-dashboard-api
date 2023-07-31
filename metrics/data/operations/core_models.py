@@ -248,7 +248,7 @@ def load_core_data(
         "year": "year",
         "epiweek": "epiweek",
         "metric_value": "metric_value",
-        "date": "dt",
+        "date": "date",
     }
 
     df = df[list(column_mapping.keys())]

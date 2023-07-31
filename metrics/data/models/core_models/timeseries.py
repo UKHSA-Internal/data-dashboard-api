@@ -45,7 +45,7 @@ class CoreTimeSeries(models.Model):
     month = models.PositiveSmallIntegerField(null=True)
     epiweek = models.PositiveSmallIntegerField()
 
-    dt = models.DateField()
+    date = models.DateField()
     refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE, null=True)
 
     metric_value = models.DecimalField(
@@ -56,4 +56,4 @@ class CoreTimeSeries(models.Model):
     objects = CoreTimeSeriesManager()
 
     def __str__(self):
-        return f"Core Timeseries Data for {self.dt}, metric '{self.metric.name}', value: {self.metric_value}"
+        return f"Core Timeseries Data for {self.date}, metric '{self.metric.name}', value: {self.metric_value}"
