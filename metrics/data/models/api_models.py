@@ -11,13 +11,24 @@ Note that the flat models should only be populated
 from django.db import models
 
 from metrics.data.managers.api_models.time_series import APITimeSeriesManager
-
-CHAR_COLUMN_MAX_CONSTRAINT: int = 50
+from metrics.data.models.constants import (
+    CHAR_COLUMN_MAX_CONSTRAINT,
+    GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
+    PERIOD_MAX_CHAR_CONSTRAINT,
+    SEX_MAX_CHAR_CONSTRAINT,
+)
 
 
 class APITimeSeries(models.Model):
-    period = models.CharField(max_length=1)
+    period = models.CharField(max_length=PERIOD_MAX_CHAR_CONSTRAINT)
 
+    age = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
+    month = models.PositiveSmallIntegerField(null=True)
+    refresh_date = models.DateField(null=True)
+    geography_code = models.CharField(
+        max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
+    )
+    metric_group = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
     theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     sub_theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     topic = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -25,7 +36,7 @@ class APITimeSeries(models.Model):
     geography = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     metric = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     stratum = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
-    sex = models.CharField(max_length=3, null=True)
+    sex = models.CharField(max_length=SEX_MAX_CHAR_CONSTRAINT, null=True)
     year = models.PositiveSmallIntegerField()
     epiweek = models.PositiveSmallIntegerField()
     dt = models.DateField()
