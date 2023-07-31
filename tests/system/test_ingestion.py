@@ -25,7 +25,7 @@ class TestIngestion:
         # Given
         fake_data = mock.Mock()
         fake_data.readlines.return_value = [json.dumps(example_timeseries_data)]
-        fake_data.name = "sample_timeseries_data.json"
+        fake_data.name = "COVID-19_headline_positivity_latest.json"
 
         assert CoreTimeSeries.objects.count() == 0
 
