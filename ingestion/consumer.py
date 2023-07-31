@@ -3,13 +3,13 @@ from typing import Callable, NamedTuple, Optional, Type
 import pandas as pd
 from django.db.models import Manager
 
-from ingestion.data_transfer_models_refactored import (
+from ingestion.data_transfer_models import (
     IncomingBaseDTO,
     IncomingHeadlineDTO,
     OutgoingHeadlineDTO,
     OutgoingTimeSeriesDTO,
 )
-from ingestion.data_transfer_models_refactored.incoming import IncomingTimeSeriesDTO
+from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.reader_refactored import Reader
 
