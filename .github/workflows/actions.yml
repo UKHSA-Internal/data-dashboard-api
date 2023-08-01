@@ -65,7 +65,24 @@ jobs:
         run: |
           source .github/workflows/formatting.sh
 
- ###############################################################################
+  ###############################################################################
+  # pylint checks
+  ###############################################################################
+
+  pylint-checks:
+    name: pylint
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
+
+      - name: Run pylint
+        run: |
+          pylint --load-plugins pylint_django --django-settings-module=metrics.api.settings metrics feedback cms ingestion public_api --errors-only
+
+  ###############################################################################
  # Architectural constraints checks
  ###############################################################################
 
