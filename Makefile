@@ -33,10 +33,15 @@ unit-tests:
 integration-tests:
 	${BIN}python -m pytest tests/integration -v
 
+# Run all system tests
+system-tests:
+	${BIN}python -m pytest tests/system -v
+
 # Run all tests regardless of type
 all-tests:
 	make unit-tests
 	make integration-tests
+	make system-tests
 
 # Run pip-audit and bandit to check for vulnerabilities
 audit:
