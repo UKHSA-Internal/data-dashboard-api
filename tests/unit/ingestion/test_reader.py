@@ -34,40 +34,10 @@ class TestReader:
 
     # Tests for `post_process_incoming_dtos()`
 
-    @mock.patch.object(Reader, "_remove_any_dtos_with_none_metric_value")
-    def test_post_process_incoming_dtos_calls_method_to_remove_none_metric_values(
-        self,
-        spy_remove_any_dtos_with_none_metric_value: mock.MagicMock,
-    ):
-        """
-        Given mocked `incoming_dtos`
-        When `post_process_incoming_dtos()` is called
-            from an instance of `Reader`
-        Then a call is delegated to the
-            `_remove_any_dtos_with_none_metric_value()` method
-
-        Patches:
-            `spy_remove_any_dtos_with_none_metric_value`: For
-                the main assertion
-        """
-        # Given
-        mocked_incoming_dtos = mock.MagicMock()
-        reader = Reader(data=mock.Mock())
-
-        # When
-        reader.post_process_incoming_dtos(incoming_dtos=mocked_incoming_dtos)
-
-        # Then
-        spy_remove_any_dtos_with_none_metric_value.assert_called_once_with(
-            incoming_dtos=mocked_incoming_dtos
-        )
-
-    @mock.patch.object(Reader, "_remove_any_dtos_with_none_metric_value")
     @mock.patch.object(Reader, "_cast_sex_on_dtos_to_expected_values")
     def test_post_process_incoming_dtos_calls_method_to_cast_sex_attr(
         self,
         spy_cast_sex_on_dtos_to_expected_values: mock.MagicMock,
-        spy_remove_any_dtos_with_none_metric_value: mock.MagicMock,
     ):
         """
         Given mocked `incoming_dtos`
@@ -79,10 +49,6 @@ class TestReader:
         Patches:
             `spy_cast_sex_on_dtos_to_expected_values`: For
                 the main assertion
-            `spy_remove_any_dtos_with_none_metric_value`: To isolate
-                 the return value, so it can be used to check
-                 the contract on the call to
-                 `_cast_sex_on_dtos_to_expected_values()`
 
         """
         # Given
@@ -93,11 +59,8 @@ class TestReader:
         reader.post_process_incoming_dtos(incoming_dtos=mocked_incoming_dtos)
 
         # Then
-        incoming_dtos_from_previous_callee_method = (
-            spy_remove_any_dtos_with_none_metric_value.return_value
-        )
         spy_cast_sex_on_dtos_to_expected_values.assert_called_once_with(
-            incoming_dtos=incoming_dtos_from_previous_callee_method
+            incoming_dtos=mocked_incoming_dtos
         )
 
     @mock.patch.object(Reader, "_cast_sex_on_dtos_to_expected_values")
@@ -388,70 +351,6 @@ class TestReader:
             {"fields": expected_converted_unique_values, "pk": None}
         ]
         assert unique_value_for_fields == expected_return_value
-
-    def test_remove_any_dtos_with_none_metric_value(
-        self, example_incoming_headline_dto: IncomingHeadlineDTO
-    ):
-        """
-        Given a list of `IncomingHeadlineDTO` instances
-            where one instance has a None `metric_value`
-        When `_remove_any_dtos_with_none_metric_value()` is called
-            from an instance of `Reader`
-        Then the DTO without a `metric_value` is removed
-            from the returned `IncomingHeadlineDTO` instances
-        """
-        # Given
-        incoming_dto_with_none_metric_value = example_incoming_headline_dto.copy()
-        incoming_dto_with_none_metric_value.metric_value = None
-        fake_incoming_dtos = [
-            example_incoming_headline_dto,
-            incoming_dto_with_none_metric_value,
-        ]
-
-        reader = Reader(data=mock.Mock())
-
-        # When
-        returned_dtos = reader._remove_any_dtos_with_none_metric_value(
-            incoming_dtos=fake_incoming_dtos
-        )
-
-        # Then
-        assert all(
-            returned_dto.metric_value is not None for returned_dto in returned_dtos
-        )
-        assert len(returned_dtos) == len(fake_incoming_dtos) - 1 == 1
-
-    def test_remove_any_dtos_with_none_metric_value_does_not_remove_valid_rows(
-        self, example_incoming_headline_dto: IncomingHeadlineDTO
-    ):
-        """
-        Given a list of `IncomingHeadlineDTO` instances
-            where each has a valid `metric_value`
-        When `_remove_any_dtos_with_none_metric_value()` is called
-            from an instance of `Reader`
-        Then no DTOs are removed from the returned
-            list of `IncomingHeadlineDTO` instances
-        """
-        # Given
-        incoming_dto_with_valid_metric_value = example_incoming_headline_dto.copy()
-        incoming_dto_with_valid_metric_value.metric_value = 456
-        fake_incoming_dtos = [
-            example_incoming_headline_dto,
-            incoming_dto_with_valid_metric_value,
-        ]
-
-        reader = Reader(data=mock.Mock())
-
-        # When
-        returned_dtos = reader._remove_any_dtos_with_none_metric_value(
-            incoming_dtos=fake_incoming_dtos
-        )
-
-        # Then
-        assert all(
-            returned_dto.metric_value is not None for returned_dto in returned_dtos
-        )
-        assert len(returned_dtos) == len(fake_incoming_dtos)
 
     def test_create_record(self):
         """
