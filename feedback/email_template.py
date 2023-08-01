@@ -22,9 +22,9 @@ def build_body_for_email(suggestions: dict[str, str]) -> str:
 
 class FeedbackQuestion(Enum):
     reason = "What was your reason for visiting the dashboard today?"
+    did_you_find_everything = "Did you find everything you were looking for?"
     improve_experience = "How could we improve your experience with the dashboard?"
     like_to_see = "What would you like to see on the dashboard in the future?"
-    did_you_find_everything = "Did you find everything you were looking for?"
 
 
 def _enrich_suggestions_with_long_form_questions(

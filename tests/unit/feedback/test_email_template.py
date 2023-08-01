@@ -106,9 +106,9 @@ class TestBuildBodyForEmail:
         # Given
         suggestions = {
             FeedbackQuestion.reason.name: REASON_ANSWER,
+            FeedbackQuestion.did_you_find_everything.name: DID_YOU_FIND_EVERYTHING_ANSWER,
             FeedbackQuestion.improve_experience.name: IMPROVE_EXPERIENCE_ANSWER,
             FeedbackQuestion.like_to_see.name: LIKE_TO_SEE_ANSWER,
-            FeedbackQuestion.did_you_find_everything.name: DID_YOU_FIND_EVERYTHING_ANSWER,
         }
 
         # When
