@@ -402,6 +402,10 @@ class Consumer:
     ) -> list[IncomingHeadlineDTO]:
         """Creates a list of `IncomingHeadlineDTO`s from the `incoming_source_data`
 
+        Notes:
+            This will also filter out any entries
+            which have a "metric_value" of None
+
         Args:
             incoming_source_data: List of dicts loaded
                 directly from the source file
@@ -414,6 +418,7 @@ class Consumer:
         return [
             IncomingHeadlineDTO(**incoming_headline_data)
             for incoming_headline_data in incoming_source_data
+            if incoming_headline_data["metric_value"] is not None
         ]
 
     def create_headlines(self, batch_size: int = 100) -> None:

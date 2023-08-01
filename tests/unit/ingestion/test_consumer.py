@@ -424,6 +424,41 @@ class TestConsumer:
             returned_incoming_headline_dtos == expected_created_incoming_headline_dtos
         )
 
+    def test_create_incoming_headline_dtos_from_source_filters_out_none_metric_values(
+        self, example_headline_data: list[dict[str, str | float]]
+    ):
+        """
+        Given some sample headline data with a metric value of None
+        When `create_incoming_headline_dtos_from_source()`
+            is called from an instance of `Consumer`
+        Then a list of `IncomingHeadlineDTO`s are returned
+        And the entry with a None "metric_value" is filtered out
+        """
+        # Given
+        fake_example_data_with_metric_value = example_headline_data[0]
+        fake_example_data_with_none_metric_value = example_headline_data[1]
+        fake_example_data_with_none_metric_value["metric_value"] = None
+        consumer = Consumer(data=mock.Mock())
+
+        # When
+        returned_incoming_headline_dtos = (
+            consumer.create_incoming_headline_dtos_from_source(
+                incoming_source_data=example_headline_data,
+            )
+        )
+
+        # Then
+        expected_created_incoming_headline_dtos = [
+            IncomingHeadlineDTO(**fake_example_data_with_metric_value)
+        ]
+        assert (
+            returned_incoming_headline_dtos == expected_created_incoming_headline_dtos
+        )
+        assert all(
+            returned_dto.metric_value is not None
+            for returned_dto in returned_incoming_headline_dtos
+        )
+
     def test_create_incoming_timeseries_dtos_from_source(
         self, example_timeseries_data: list[dict[str, str | float]]
     ):
