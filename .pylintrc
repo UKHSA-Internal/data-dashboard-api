@@ -1,5 +1,7 @@
 [master]
 ignore=migrations, venv, docs, tests
+load-plugins=pylint_django
+django-settings-module=metrics.api.settings
 
 [MESSAGES CONTROL]
 disable=
