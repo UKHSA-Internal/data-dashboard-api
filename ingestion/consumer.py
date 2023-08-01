@@ -410,6 +410,10 @@ class Consumer:
             List of `IncomingHeadlineDTO`s which represent
             each entry in the source file
 
+        Raises:
+            `ValidationError`: If any of the expected
+                fields are missing or not of the expected type
+
         """
         return [
             IncomingHeadlineDTO(**incoming_headline_data)
@@ -484,6 +488,10 @@ class Consumer:
         Returns:
             List of `IncomingTimeSeriesDTO`s which represent
             each entry in the source file
+
+        Raises:
+            `ValidationError`: If any of the expected
+                fields are missing or not of the expected type
 
         """
         return [
