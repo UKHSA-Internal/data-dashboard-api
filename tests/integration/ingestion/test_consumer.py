@@ -190,7 +190,7 @@ class TestConsumer:
     ) -> None:
         self._assert_core_model(model=core_timeseries, source_data=timeseries_data)
         assert str(core_timeseries.refresh_date) == str(timeseries_data["refresh_date"])
-        assert str(core_timeseries.dt) == str(timeseries_data["date"])
+        assert str(core_timeseries.date) == str(timeseries_data["date"])
         assert (
             core_timeseries.metric_frequency
             == TimePeriod[timeseries_data["metric_frequency"].title()].value

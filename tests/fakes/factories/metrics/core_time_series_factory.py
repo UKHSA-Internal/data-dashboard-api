@@ -21,7 +21,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
     @classmethod
     def build_time_series(
         cls,
-        dt: datetime.date,
+        date: datetime.date,
         metric_name: str,
         topic_name: str,
         stratum_name: str = "",
@@ -39,10 +39,10 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         return cls.build(
             metric_frequency="D",
             sex="ALL",
-            year=dt.year,
+            year=date.year,
             metric_value=1,
             metric=metric,
-            dt=dt,
+            date=date,
             stratum=stratum,
         )
 
@@ -60,7 +60,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
                     metric_frequency="D",
                     sex="ALL",
                     year=2023,
-                    dt=datetime.date(year=2023, month=month_number, day=day_number),
+                    date=datetime.date(year=2023, month=month_number, day=day_number),
                     metric_value=metric_value,
                     metric=metric,
                 )
@@ -97,7 +97,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             metric_frequency="D",
             sex="ALL",
             year=2023,
-            dt=datetime.date(year=2023, month=1, day=1),
+            date=datetime.date(year=2023, month=1, day=1),
             metric_value=metric_value,
             metric=metric,
         )
@@ -107,7 +107,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             metric_frequency="D",
             sex="ALL",
             year=2023,
-            dt=datetime.date(year=2023, month=1, day=1),
+            date=datetime.date(year=2023, month=1, day=1),
             metric_value=percentage_metric_value,
             metric=percentage_metric,
         )

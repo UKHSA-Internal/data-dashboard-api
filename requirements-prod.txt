@@ -19,7 +19,7 @@ django-filter==22.1
 django-modelcluster==6.0
 django-permissionedforms==0.1
 django-taggit==3.1.0
-django-treebeard==4.6.1
+django-treebeard==4.7
 djangorestframework==3.14.0
 djangorestframework-api-key==2.3.0
 draftjs-exporter==2.1.7
@@ -27,7 +27,7 @@ drf-nested-routers==0.93.4
 drf-spectacular==0.26.1
 et-xmlfile==1.1.0
 exceptiongroup==1.1.1
-filelock==3.8.0
+filelock==3.12.2
 gitdb==4.0.10
 GitPython==3.1.31
 grimp==2.3
@@ -63,7 +63,7 @@ pip-api==0.0.30
 pip-requirements-parser==32.0.1
 platformdirs==2.5.2
 plotly==5.13.1
-pluggy==1.0.0
+pluggy==1.2.0
 psycopg2==2.9.5
 psycopg2-binary==2.9.5
 pydantic==1.10.7
