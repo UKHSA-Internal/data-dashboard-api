@@ -128,7 +128,7 @@ class Consumer:
                 to instead use their corresponding database record IDS.
                 For example, if the entry showed `COVID-19`
                 for the `topic` field of each entry.
-                Then the dataframe will instead now show `123`,
+                Then the entry will instead now show `123`,
                 which will be the ID/pk of the `Topic` model
                 which has the name `COVID-19`.
 
