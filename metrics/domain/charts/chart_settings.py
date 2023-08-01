@@ -186,9 +186,9 @@ def get_existing_chart_range(figure: plotly.graph_objs.Figure) -> tuple[str, str
 
     full_figure = figure.full_figure_for_development(warn=False)
 
-    min_dt, max_dt = full_figure.layout.xaxis.range
+    min_date, max_date = full_figure.layout.xaxis.range
 
-    return min_dt, max_dt
+    return min_date, max_date
 
 
 def get_new_max_date(existing_dt: str) -> str:
@@ -200,10 +200,10 @@ def get_new_max_date(existing_dt: str) -> str:
     Returns:
         The last day of the month for the given date
     """
-    new_dt: datetime.date = get_last_day_of_month(
-        dt=datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
+    new_date: datetime.date = get_last_day_of_month(
+        date=datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
     )
-    return new_dt.strftime("%Y-%m-%d")
+    return new_date.strftime("%Y-%m-%d")
 
 
 def get_x_axis_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
@@ -217,9 +217,9 @@ def get_x_axis_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
         Note: If the max_date was already the last day of the month then nothing gets changed
     """
 
-    min_date, max_dt = get_existing_chart_range(figure)
+    min_date, max_date = get_existing_chart_range(figure)
 
     # Go to the last day of the month to give label the best chance of being displayed
-    max_date = get_new_max_date(max_dt)
+    max_date = get_new_max_date(max_date)
 
     return min_date, max_date

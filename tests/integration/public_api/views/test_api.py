@@ -31,7 +31,7 @@ class TestPublicAPINestedLinkViews:
             metric_value=123,
             epiweek=1,
             year=2023,
-            dt=datetime.date(year=2023, month=1, day=day),
+            date=datetime.date(year=2023, month=1, day=day),
             **kwargs,
         )
 

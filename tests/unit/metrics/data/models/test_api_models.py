@@ -29,7 +29,7 @@ class TestAPITimeSeries:
             ["sex", "all"],
             ["year", "202"],
             ["apiweek", 11],
-            ["dt", "2020-03-10"],
+            ["date", "2020-03-10"],
             ["metric_value", 0],
         ),
     )

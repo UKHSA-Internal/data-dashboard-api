@@ -17,7 +17,7 @@ DOWNLOADS_API_TAG = "downloads"
 
 
 class DownloadsView(APIView):
-    queryset = APITimeSeries.objects.all().order_by("dt")
+    queryset = APITimeSeries.objects.all().order_by("date")
     serializer_class = APITimeSeriesSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [

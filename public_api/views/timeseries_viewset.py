@@ -53,7 +53,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     - `epiweek` - Epi week of the metric value (important for weekly metrics) e.g. **30**
 
-    - `dt` - The date which this metric value was recorded in the format **YYYY-MM-DD** e.g. **2020-07-20**
+    - `date` - The date which this metric value was recorded in the format **YYYY-MM-DD** e.g. **2020-07-20**
 
     """
 
@@ -62,7 +62,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         MetricsPublicAPIInterface.get_api_timeseries_model()
         .objects.all()
-        .order_by("dt")
+        .order_by("date")
     )
     serializer_class = APITimeSeriesListSerializer
     pagination_class = APITimeSeriesPagination
@@ -72,7 +72,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "sex",
         "year",
         "epiweek",
-        "dt",
+        "date",
     ]
 
     def get_queryset(self):

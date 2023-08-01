@@ -39,10 +39,10 @@ class APITimeSeries(models.Model):
     sex = models.CharField(max_length=SEX_MAX_CHAR_CONSTRAINT, null=True)
     year = models.PositiveSmallIntegerField()
     epiweek = models.PositiveSmallIntegerField()
-    dt = models.DateField()
+    date = models.DateField()
     metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = APITimeSeriesManager()
 
     def __str__(self):
-        return f"{self.__class__.__name__} for {self.dt}, metric '{self.metric}', stratum '{self.stratum}', value: {self.metric_value}"
+        return f"{self.__class__.__name__} for {self.date}, metric '{self.metric}', stratum '{self.stratum}', value: {self.metric_value}"
