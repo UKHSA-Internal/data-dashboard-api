@@ -451,9 +451,8 @@ class Reader:
 
         Notes:
             This will handle the following post-processing steps:
-            1)  Removes all DTOs in the which have None as the `metric_value` attribute
-            2)  Casts the `sex` attribute in each DTO to an expected value
-            3)  Casts the `metric_frequency` attribute in each DTO to an expected value
+            1)  Casts the `sex` attribute in each DTO to an expected value
+            2)  Casts the `metric_frequency` attribute in each DTO to an expected value
 
         Args:
             incoming_dtos: List of DTOs which are to be processed
@@ -463,10 +462,6 @@ class Reader:
             before they can be consumed by the data layer of the application
 
         """
-        incoming_dtos: list[
-            IncomingBaseDTO
-        ] = self._remove_any_dtos_with_none_metric_value(incoming_dtos=incoming_dtos)
-
         incoming_dtos: list[
             IncomingBaseDTO
         ] = self._cast_sex_on_dtos_to_expected_values(incoming_dtos=incoming_dtos)
@@ -483,26 +478,6 @@ class Reader:
             pass
 
         return incoming_dtos
-
-    @staticmethod
-    def _remove_any_dtos_with_none_metric_value(
-        incoming_dtos: list[IncomingBaseDTO],
-    ) -> list[IncomingBaseDTO]:
-        """Removes all DTOs in the `incoming_dtos` which have None as the `metric_value` attribute
-
-        Args:
-            incoming_dtos: List of DTOs which are to be processed
-
-        Returns:
-            A list of DTOs with no None values
-            as the `metric_value` attribute
-
-        """
-        return [
-            incoming_dto
-            for incoming_dto in incoming_dtos
-            if incoming_dto.metric_value is not None
-        ]
 
     @staticmethod
     def _cast_sex_on_dtos_to_expected_values(
