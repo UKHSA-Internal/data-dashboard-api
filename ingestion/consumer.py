@@ -482,6 +482,10 @@ class Consumer:
     ) -> list[IncomingTimeSeriesDTO]:
         """Creates a list of `IncomingTimeSeriesDTO`s from the `incoming_source_data`
 
+        Notes:
+            This will also filter out any entries
+            which have a "metric_value" of None
+
         Args:
             incoming_source_data: List of dicts loaded
                 directly from the source file
@@ -494,6 +498,7 @@ class Consumer:
         return [
             IncomingTimeSeriesDTO(**incoming_timeseries_data)
             for incoming_timeseries_data in incoming_source_data
+            if incoming_timeseries_data["metric_value"] is not None
         ]
 
     def create_timeseries(self, batch_size: int = 100) -> None:

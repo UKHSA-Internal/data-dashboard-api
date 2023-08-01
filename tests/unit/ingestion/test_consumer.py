@@ -488,3 +488,39 @@ class TestConsumer:
             returned_incoming_timeseries_dtos
             == expected_created_incoming_timeseries_dtos
         )
+
+    def test_create_incoming_timeseries_dtos_from_source_filters_out_none_metric_values(
+        self, example_timeseries_data: list[dict[str, str | float]]
+    ):
+        """
+        Given some sample timeseries data with a metric value of None
+        When `create_incoming_timeseries_dtos_from_source()`
+            is called from an instance of `Consumer`
+        Then a list of `IncomingTimeSeriesDTO`s are returned
+        And the entry with a None "metric_value" is filtered out
+        """
+        # Given
+        fake_example_data_with_metric_value = example_timeseries_data[0]
+        fake_example_data_with_none_metric_value = example_timeseries_data[1]
+        fake_example_data_with_none_metric_value["metric_value"] = None
+        consumer = Consumer(data=mock.Mock())
+
+        # When
+        returned_incoming_timeseries_dtos = (
+            consumer.create_incoming_timeseries_dtos_from_source(
+                incoming_source_data=example_timeseries_data,
+            )
+        )
+
+        # Then
+        expected_created_incoming_timeseries_dtos = [
+            IncomingTimeSeriesDTO(**fake_example_data_with_metric_value)
+        ]
+        assert (
+            returned_incoming_timeseries_dtos
+            == expected_created_incoming_timeseries_dtos
+        )
+        assert all(
+            returned_dto.metric_value is not None
+            for returned_dto in returned_incoming_timeseries_dtos
+        )
