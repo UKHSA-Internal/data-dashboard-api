@@ -32,7 +32,7 @@ def core_headline_example() -> CoreTimeSeries:
         metric=metric,
         year=year,
         epiweek=1,
-        dt=datetime.date(year=year, month=1, day=1),
+        date=datetime.date(year=year, month=1, day=1),
     )
 
 
@@ -58,14 +58,14 @@ def core_trend_percentage_example() -> list[CoreTimeSeries]:
         metric=metric,
         year=year,
         epiweek=1,
-        dt=datetime.date(year=year, month=1, day=1),
+        date=datetime.date(year=year, month=1, day=1),
     )
     percentage_timeseries: CoreTimeSeries = CoreTimeSeries.objects.create(
         metric_value=3,
         metric=percentage_metric,
         year=year,
         epiweek=1,
-        dt=datetime.date(year=year, month=1, day=1),
+        date=datetime.date(year=year, month=1, day=1),
     )
     return [main_timeseries, percentage_timeseries]
 
@@ -86,7 +86,7 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
             metric=metric,
             year=year,
             epiweek=1,
-            dt=datetime.date(year=year, month=1, day=i + 1),
+            date=datetime.date(year=year, month=1, day=i + 1),
         )
         for i in range(2)
     ]

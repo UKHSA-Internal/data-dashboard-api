@@ -2,6 +2,10 @@ from django.db import models
 
 from metrics.data.enums import TimePeriod
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
+from metrics.data.models.constants import (
+    METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN,
+    SEX_MAX_CHAR_CONSTRAINT,
+)
 from metrics.data.models.core_models import help_texts
 from metrics.data.models.core_models.supporting import Age, Geography, Metric, Stratum
 
@@ -13,7 +17,7 @@ class CoreTimeSeries(models.Model):
         null=True,
     )
     metric_frequency = models.CharField(
-        max_length=1,
+        max_length=METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN,
         choices=TimePeriod.choices(),
     )
     geography = models.ForeignKey(
@@ -33,7 +37,7 @@ class CoreTimeSeries(models.Model):
         help_text=help_texts.AGE,
     )
     sex = models.CharField(
-        max_length=3,
+        max_length=SEX_MAX_CHAR_CONSTRAINT,
         null=True,
     )
 
@@ -41,7 +45,7 @@ class CoreTimeSeries(models.Model):
     month = models.PositiveSmallIntegerField(null=True)
     epiweek = models.PositiveSmallIntegerField()
 
-    dt = models.DateField()
+    date = models.DateField()
     refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE, null=True)
 
     metric_value = models.DecimalField(
@@ -52,4 +56,4 @@ class CoreTimeSeries(models.Model):
     objects = CoreTimeSeriesManager()
 
     def __str__(self):
-        return f"Core Timeseries Data for {self.dt}, metric '{self.metric.name}', value: {self.metric_value}"
+        return f"Core Timeseries Data for {self.date}, metric '{self.metric.name}', value: {self.metric_value}"

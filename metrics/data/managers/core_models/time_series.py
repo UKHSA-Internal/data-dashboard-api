@@ -19,7 +19,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
     @staticmethod
     def _newest_to_oldest(queryset: models.QuerySet) -> models.QuerySet:
-        return queryset.order_by("-dt")
+        return queryset.order_by("-date")
 
     @staticmethod
     def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
@@ -61,7 +61,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         queryset = self.filter(
             metric__topic__name=topic_name,
             metric__name=metric_name,
-            dt__gte=date_from,
+            date__gte=date_from,
         ).values_list(x_axis, y_axis)
 
         return self._ascending_order(
@@ -136,7 +136,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         queryset = self.filter(
             metric__topic__name=topic_name,
             metric__name=metric_name,
-            dt__gte=date_from,
+            date__gte=date_from,
         )
 
         if geography_name:

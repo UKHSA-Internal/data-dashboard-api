@@ -27,7 +27,7 @@ class TestChartsInterface:
     def _setup_fake_time_series_for_plot(chart_plot_parameters: PlotParameters):
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
-                dt=datetime.date(year=2023, month=2, day=i + 1),
+                date=datetime.date(year=2023, month=2, day=i + 1),
                 metric_name=chart_plot_parameters.metric_name,
                 topic_name=chart_plot_parameters.topic_name,
                 stratum_name=chart_plot_parameters.stratum_name,
