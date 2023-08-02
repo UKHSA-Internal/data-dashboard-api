@@ -248,7 +248,7 @@ class TestConsumer:
         consumer = Consumer(data=mocked_data)
 
         # Then
-        assert getattr(consumer, attribute_on_class) is expected_model_manager
+        assert getattr(consumer, attribute_on_class) == expected_model_manager
 
     def test_initializes_with_default_reader(self):
         """
