@@ -18,12 +18,12 @@ bad_file = file_path / "fixtures/bad_sample_data.csv"
 good_file = file_path / "fixtures/good_sample_data.csv"
 
 sample_data = [
-    "parent_theme,child_theme,topic,geography_type,GEOGRAPHY,metric_name,sex,period,year,epiweek,date,metric_value",
+    "parent_theme,child_theme,topic,geography_type,GEOGRAPHY,metric_name,sex,metric_frequency,year,epiweek,date,metric_value",
     "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,female,daily,2023,10,2023-06-23,174.1",
 ]
 
 mock_data = [
-    "parent_theme,child_theme,topic,geography_type,geography,metric_name,stratum,sex,period,year,epiweek,date,metric_value",
+    "parent_theme,child_theme,topic,geography_type,geography,metric_name,stratum,sex,metric_frequency,year,epiweek,date,metric_value",
     "infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,6_17,female,daily,2023,10,23/06/2023,174.1",
     "infectious_disease,respiratory,COVID-20,nation,England,admission_rate_age,0_5,all,daily,2023,10,23/06/2023,540.1",
     "new_infectious_disease,respiratory,COVID-19,nation,England,admission_rate_age,85+,male,daily,2023,10,23/06/2023,14890",

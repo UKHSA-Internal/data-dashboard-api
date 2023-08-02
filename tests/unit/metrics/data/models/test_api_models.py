@@ -3,7 +3,7 @@ import pytest
 from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
     GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
-    PERIOD_MAX_CHAR_CONSTRAINT,
+    METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
     SEX_MAX_CHAR_CONSTRAINT,
 )
 from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
@@ -13,7 +13,7 @@ class TestAPITimeSeries:
     @pytest.mark.parametrize(
         "field_name, field_value",
         (
-            ["period", 0],
+            ["metric_frequency", 0],
             ["age", "all"],
             ["month", 3],
             ["refresh_date", "2023-07-11"],
@@ -55,7 +55,7 @@ class TestAPITimeSeries:
     @pytest.mark.parametrize(
         "field_name, field_value, field_max_length",
         (
-            ["period", 0, PERIOD_MAX_CHAR_CONSTRAINT],
+            ["metric_frequency", 0, METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT],
             ["age", "all", CHAR_COLUMN_MAX_CONSTRAINT],
             ["metric_group", "deaths", CHAR_COLUMN_MAX_CONSTRAINT],
             ["theme", "infectious_disease", CHAR_COLUMN_MAX_CONSTRAINT],

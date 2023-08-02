@@ -14,7 +14,7 @@ class TestDownloadsView:
     metric = "new_deaths_7day_avg"
     stratum = "default"
     api_timeseries_data = {
-        "period": "D",
+        "metric_frequency": "D",
         "theme": "infectious_disease",
         "sub_theme": "respiratory",
         "topic": "COVID-19",
@@ -31,7 +31,7 @@ class TestDownloadsView:
 
     @staticmethod
     def _setup_api_time_series(
-        period: str,
+        metric_frequency: str,
         theme: str,
         sub_theme: str,
         topic: str,
@@ -46,7 +46,7 @@ class TestDownloadsView:
         metric_value: float,
     ) -> APITimeSeries:
         return APITimeSeries.objects.create(
-            period=period,
+            metric_frequency=metric_frequency,
             theme=theme,
             sub_theme=sub_theme,
             topic=topic,

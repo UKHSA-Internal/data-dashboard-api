@@ -21,7 +21,7 @@ class DownloadsView(APIView):
     serializer_class = APITimeSeriesSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
-        "period",
+        "metric_frequency",
         "theme",
         "sub_theme",
         "topic",

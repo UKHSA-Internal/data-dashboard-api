@@ -16,7 +16,7 @@ class FakeAPITimeSeriesFactory(factory.Factory):
     @classmethod
     def build_example_covid_time_series(cls) -> FakeAPITimeSeries:
         return cls.build(
-            period="D",
+            metric_frequency="D",
             theme="infectious_disease",
             sub_theme="respiratory",
             topic="COVID-19",
@@ -35,7 +35,7 @@ class FakeAPITimeSeriesFactory(factory.Factory):
     # Sample model with some fields missing
     def build_example_api_time_series_fields_missing(cls) -> FakeAPITimeSeries:
         return cls.build(
-            period="D",
+            metric_frequency="D",
             theme="infectious_disease",
             sub_theme="respiratory",
             topic="COVID-19",
@@ -48,7 +48,7 @@ class FakeAPITimeSeriesFactory(factory.Factory):
     @classmethod
     def build_example_sickle_cell_disease_series(cls) -> FakeAPITimeSeries:
         return cls.build(
-            period="D",
+            metric_frequency="D",
             theme="genetic_disease",
             sub_theme="red_blood_cells",
             topic="Sickle Cell Disease",

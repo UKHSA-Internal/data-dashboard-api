@@ -14,13 +14,13 @@ from metrics.data.managers.api_models.time_series import APITimeSeriesManager
 from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
     GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
-    PERIOD_MAX_CHAR_CONSTRAINT,
+    METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
     SEX_MAX_CHAR_CONSTRAINT,
 )
 
 
 class APITimeSeries(models.Model):
-    period = models.CharField(max_length=PERIOD_MAX_CHAR_CONSTRAINT)
+    metric_frequency = models.CharField(max_length=METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT)
 
     age = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
     month = models.PositiveSmallIntegerField(null=True)
