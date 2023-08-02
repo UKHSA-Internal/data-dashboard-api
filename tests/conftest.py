@@ -1,7 +1,11 @@
 import datetime
 
 import pytest
+from rest_framework.test import APIClient
+from rest_framework_api_key.models import APIKey
 
+from ingestion.data_transfer_models import IncomingHeadlineDTO
+from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
 from metrics.domain.models import PlotParameters
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -112,6 +116,13 @@ def example_headline_data() -> list[dict[str, str | float]]:
 
 
 @pytest.fixture
+def example_incoming_headline_dto(
+    example_headline_data: list[dict[str, str | float]]
+) -> IncomingHeadlineDTO:
+    return IncomingHeadlineDTO(**example_headline_data[0])
+
+
+@pytest.fixture
 def example_timeseries_data() -> list[dict[str, str | int | float]]:
     return [
         {
@@ -155,3 +166,20 @@ def example_timeseries_data() -> list[dict[str, str | int | float]]:
             "refresh_date": "2023-07-11",
         },
     ]
+
+
+@pytest.fixture
+def example_incoming_timeseries_dto(
+    example_timeseries_data: list[dict[str, str | float]]
+) -> IncomingTimeSeriesDTO:
+    return IncomingTimeSeriesDTO(**example_timeseries_data[0])
+
+
+@pytest.fixture
+def authenticated_api_client() -> APIClient:
+    _, key = APIKey.objects.create_key(name="Test Key")
+
+    api_client = APIClient()
+    api_client.credentials(HTTP_AUTHORIZATION=key)
+
+    return api_client

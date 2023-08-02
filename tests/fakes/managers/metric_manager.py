@@ -1,3 +1,5 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from metrics.data.managers.core_models.metric import MetricManager
 
 
@@ -10,6 +12,16 @@ class FakeMetricManager(MetricManager):
     def __init__(self, metrics, **kwargs):
         self.metrics = metrics
         super().__init__(**kwargs)
+
+    def get(self, **kwargs):
+        metrics = self.metrics
+        for field, value in kwargs.items():
+            metrics = [x for x in metrics if getattr(x, field) == value]
+
+        try:
+            return metrics[0]
+        except IndexError:
+            raise ObjectDoesNotExist()
 
     def get_all_names(self) -> list[str]:
         return [metric.name for metric in self.metrics]

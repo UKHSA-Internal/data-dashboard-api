@@ -17,6 +17,6 @@ class APITimeSeriesListSerializer(serializers.ModelSerializer):
             "sex",
             "year",
             "epiweek",
-            "dt",
+            "date",
             "metric_value",
         ]

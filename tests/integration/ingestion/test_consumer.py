@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 
+from ingestion.consumer import Consumer
 from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (
     Age,
@@ -18,22 +19,24 @@ from metrics.data.models.core_models import (
 )
 
 
-class TestIngestion:
-    @pytest.mark.skip("Skipped temporarily during re-writing works")
+class TestConsumer:
     @pytest.mark.django_db
-    def test_can_ingest_headline_data_successfully(self, example_headline_data):
+    def test_can_ingest_headline_data_successfully(
+        self, example_headline_data: list[dict[str, str | float]]
+    ):
         """
         Given an example headline data file
         When `create_headlines()` is called from an instance of `Ingestion`
         Then `CoreHeadline` records are created with the correct values
         """
         # Given
-        data = json.dumps(example_headline_data)
-        ingestion = mock.Mock(data=data)
+        fake_data = mock.Mock()
+        fake_data.readlines.return_value = [json.dumps(example_headline_data)]
+        consumer = Consumer(data=fake_data)
         assert CoreHeadline.objects.all().count() == 0
 
         # When
-        ingestion.create_headlines()
+        consumer.create_headlines()
 
         # Then
         # Check that 1 `CoreHeadline` record is created per row of data
@@ -77,21 +80,23 @@ class TestIngestion:
         # are created where required
         assert Geography.objects.count() == 2
 
-    @pytest.mark.skip("Skipped temporarily during re-writing works")
     @pytest.mark.django_db
-    def test_can_ingest_timeseries_data_successfully(self, example_timeseries_data):
+    def test_can_ingest_timeseries_data_successfully(
+        self, example_timeseries_data: list[dict[str, str | int | float]]
+    ):
         """
         Given an example headline data file
         When `create_timeseries()` is called from an instance of `Ingestion`
         Then `CoreTimeSeries` records are created with the correct values
         """
         # Given
-        data = json.dumps(example_timeseries_data)
-        ingestion = mock.Mock(data=data)
+        fake_data = mock.Mock()
+        fake_data.readlines.return_value = [json.dumps(example_timeseries_data)]
+        consumer = Consumer(data=fake_data)
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When
-        ingestion.create_timeseries()
+        consumer.create_timeseries()
 
         # Then
         # Check that 1 `CoreTimeSeries` record is created per row of data

@@ -27,7 +27,7 @@ class FakeAPITimeSeriesFactory(factory.Factory):
             sex="ALL",
             year=2023,
             epiweek=10,
-            dt=datetime.date(year=2023, month=3, day=8),
+            date=datetime.date(year=2023, month=3, day=8),
             metric_value=2364,
         )
 
@@ -41,7 +41,7 @@ class FakeAPITimeSeriesFactory(factory.Factory):
             topic="COVID-19",
             metric="COVID-19_deaths_ONSByDay",
             stratum="default",
-            dt=datetime.date(year=2023, month=3, day=8),
+            date=datetime.date(year=2023, month=3, day=8),
             metric_value=2364,
         )
 
@@ -59,6 +59,6 @@ class FakeAPITimeSeriesFactory(factory.Factory):
             sex="ALL",
             year=2023,
             epiweek=10,
-            dt=datetime.date(year=2023, month=3, day=8),
+            date=datetime.date(year=2023, month=3, day=8),
             metric_value=123,
         )

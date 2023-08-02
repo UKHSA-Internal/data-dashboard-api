@@ -21,6 +21,14 @@ formatting:
 	${BIN}python -m isort .
 	${BIN}python -m black .
 
+# Run linting
+linting-all:
+	pylint */
+
+# Run linting with errors only
+linting-errors-only:
+	pylint */ --errors-only
+
 # Check architectural constraints
 architecture:
 	lint-imports
@@ -33,10 +41,15 @@ unit-tests:
 integration-tests:
 	${BIN}python -m pytest tests/integration -v
 
+# Run all system tests
+system-tests:
+	${BIN}python -m pytest tests/system -v
+
 # Run all tests regardless of type
 all-tests:
 	make unit-tests
 	make integration-tests
+	make system-tests
 
 # Run pip-audit and bandit to check for vulnerabilities
 audit:

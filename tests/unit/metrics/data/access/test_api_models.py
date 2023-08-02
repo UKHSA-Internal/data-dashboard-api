@@ -32,8 +32,8 @@ class TestFilterIsList:
 
 class TestFilterIsString:
     sample_filters = {
-        "date_from": "dt__gte",
-        "date_to": "dt__lte",
+        "date_from": "date__gte",
+        "date_to": "date__lte",
         "topic": "topic",
     }
 
@@ -158,7 +158,7 @@ class TestValidatePlotFilter:
         # Then
         expected_result: dict[str, str] = {
             "topic": "COVID-19",
-            "dt__gte": "2023-02-25",
+            "date__gte": "2023-02-25",
         }
 
         assert actual_result == expected_result
@@ -322,7 +322,7 @@ class TestValidateQueryFilters:
         expected_result: list[dict[str, str]] = [
             {
                 "topic": "COVID-19",
-                "dt__gte": "2023-02-25",
+                "date__gte": "2023-02-25",
             }
         ]
 

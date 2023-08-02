@@ -25,8 +25,8 @@ def filter_is_string(field_name: str) -> str:
     """
 
     translations = {
-        "date_from": "dt__gte",
-        "date_to": "dt__lte",
+        "date_from": "date__gte",
+        "date_to": "date__lte",
     }
 
     return translations.get(field_name, field_name)

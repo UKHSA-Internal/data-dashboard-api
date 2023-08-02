@@ -74,6 +74,6 @@ def create_api_time_series_from_core_time_series(
         sex=core_time_series.sex,
         year=core_time_series.year,
         epiweek=core_time_series.epiweek,
-        dt=core_time_series.date,
+        date=core_time_series.date,
         metric_value=core_time_series.metric_value,
     )
