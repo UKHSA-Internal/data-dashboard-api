@@ -234,7 +234,9 @@ def load_core_data(
     df["date"] = pd.to_datetime(df["date"], format="%d/%m/%Y")
 
     df["sex"] = df["sex"].apply(lambda x: sex_options.get(x.lower(), "ALL"))
-    df["metric_frequency"] = df["metric_frequency"].apply(lambda x: frequency.get(x.lower()))
+    df["metric_frequency"] = df["metric_frequency"].apply(
+        lambda x: frequency.get(x.lower())
+    )
 
     # Dataset has NaN values so ignore those rows
     df = df[df["metric_value"].notnull()]
