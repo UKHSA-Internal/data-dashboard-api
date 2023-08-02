@@ -3,7 +3,7 @@ from django.db import models
 from metrics.data.enums import TimePeriod
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 from metrics.data.models.constants import (
-    METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN,
+    METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
     SEX_MAX_CHAR_CONSTRAINT,
 )
 from metrics.data.models.core_models import help_texts
@@ -17,7 +17,7 @@ class CoreTimeSeries(models.Model):
         null=True,
     )
     metric_frequency = models.CharField(
-        max_length=METRIC_FREQUENCY_MAX_CHAR_CONSTRAIN,
+        max_length=METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
         choices=TimePeriod.choices(),
     )
     geography = models.ForeignKey(

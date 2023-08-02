@@ -190,7 +190,7 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
 
         # Then
         assert isinstance(api_time_series, APITimeSeries)
-        assert api_time_series.period == mocked_time_series.metric_frequency
+        assert api_time_series.metric_frequency == mocked_time_series.metric_frequency
         assert (
             api_time_series.theme
             == mocked_time_series.metric.topic.sub_theme.theme.name
