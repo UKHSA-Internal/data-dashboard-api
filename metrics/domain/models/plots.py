@@ -11,17 +11,17 @@ class PlotParameters(BaseModel):
     chart_type: str
     topic: str
     metric: str
-    stratum: Optional[str]
-    geography: Optional[str]
-    geography_type: Optional[str]
-    sex: Optional[str]
-    date_from: Optional[str]
-    date_to: Optional[str]
-    label: Optional[str] = ""
-    line_colour: Optional[str] = ""
-    line_type: Optional[str] = ""
-    x_axis: Optional[str] = ""
-    y_axis: Optional[str] = ""
+    stratum: str | None = ""
+    geography: str | None = ""
+    geography_type: str | None = ""
+    sex: str | None = ""
+    date_from: str | None = ""
+    date_to: str | None = ""
+    label: str | None = ""
+    line_colour: str | None = ""
+    line_type: str | None = ""
+    x_axis: str | None = ""
+    y_axis: str | None = ""
 
     @property
     def topic_name(self) -> str:
