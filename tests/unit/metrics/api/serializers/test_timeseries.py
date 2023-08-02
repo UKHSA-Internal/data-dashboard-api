@@ -6,11 +6,11 @@ from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
 
 
 class TestAPITimeSeriesSerializer:
-    def test_dt_is_serialized_correctly(self):
+    def test_date_is_serialized_correctly(self):
         """
         Given an `APITimeSeries` instance
         When that instance is passed through the `APITimeSeriesSerializer`
-        Then the `dt` field is returned in the expected format
+        Then the `date` field is returned in the expected format
         """
         # Given
         fake_api_time_series: FakeAPITimeSeries = (
@@ -21,11 +21,11 @@ class TestAPITimeSeriesSerializer:
         serializer = APITimeSeriesSerializer(instance=fake_api_time_series)
 
         # Then
-        serialized_dt: str = serializer.data["dt"]
-        expected_dt_value = str(fake_api_time_series.dt)
+        serialized_date: str = serializer.data["date"]
+        expected_date_value = str(fake_api_time_series.date)
         # Instead of a datetime object, the string representation is expected to be returned by the serializer
         # i.e. '2023-03-08` instead of `datetime.date(year=2023, month=3, day=8)`
-        assert serialized_dt == expected_dt_value
+        assert serialized_date == expected_date_value
 
     def test_data_is_serialized_correctly(self):
         """
@@ -43,7 +43,7 @@ class TestAPITimeSeriesSerializer:
 
         # Then
         serialized_data = serializer.data
-        serialized_data.pop("dt")
+        serialized_data.pop("date")
         # Datetime stamp is tested separately
         # because the str representation is serialized differently to other types
 

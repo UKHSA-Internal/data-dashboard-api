@@ -5,8 +5,8 @@ DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 435
 
 
-def get_last_day_of_month(dt: date) -> date:
-    next_month = dt.replace(day=28) + timedelta(days=4)
+def get_last_day_of_month(date: date) -> date:
+    next_month = date.replace(day=28) + timedelta(days=4)
     return next_month - timedelta(days=next_month.day)
 
 

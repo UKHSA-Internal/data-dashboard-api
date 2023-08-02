@@ -22,7 +22,7 @@ class TestWriteDataToCSV:
         "stratum",
         "sex",
         "year",
-        "dt",
+        "date",
         "metric_value",
     ]
 

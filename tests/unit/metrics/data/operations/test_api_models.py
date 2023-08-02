@@ -212,5 +212,5 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
         assert api_time_series.year == mocked_time_series.year
         assert api_time_series.epiweek == mocked_time_series.epiweek
 
-        assert api_time_series.dt == mocked_time_series.date
+        assert api_time_series.date == mocked_time_series.date
         assert api_time_series.metric_value == mocked_time_series.metric_value

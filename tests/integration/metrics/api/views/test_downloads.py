@@ -25,7 +25,7 @@ class TestDownloadsView:
         "sex": "M",
         "year": 2023,
         "epiweek": 1,
-        "dt": "2023-01-15",
+        "date": "2023-01-15",
         "metric_value": 123.45,
     }
 
@@ -42,7 +42,7 @@ class TestDownloadsView:
         sex: str,
         year: int,
         epiweek: int,
-        dt: str,
+        date: str,
         metric_value: float,
     ) -> APITimeSeries:
         return APITimeSeries.objects.create(
@@ -57,7 +57,7 @@ class TestDownloadsView:
             sex=sex,
             year=year,
             epiweek=epiweek,
-            dt=dt,
+            date=date,
             metric_value=metric_value,
         )
 
@@ -187,7 +187,7 @@ class TestDownloadsView:
             "stratum",
             "sex",
             "year",
-            "dt",
+            "date",
             "metric_value",
         ]
         assert csv_header == expected_csv_headings

@@ -13,7 +13,7 @@ COLUMNS_TO_WRITE = [
     "stratum",
     "sex",
     "year",
-    "dt",
+    "date",
     "metric_value",
 ]
 
