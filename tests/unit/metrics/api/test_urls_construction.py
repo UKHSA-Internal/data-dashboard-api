@@ -26,6 +26,8 @@ PRIVATE_API_ENDPOINT_PATHS = [
 ]
 
 
+INGESTION_API_ENDPOINT_PATHS = ["api/ingestion/v1"]
+
 PUBLIC_API_ENDPOINT_PATHS = [
     "themes/",
     "sub_themes/",
@@ -147,7 +149,10 @@ class TestConstructPublicAPIUrlpatterns:
 class TestConstructUrlpatterns:
     # Tests for APP_MODE = "PRIVATE_API"
 
-    @pytest.mark.parametrize("private_api_endpoint_path", PRIVATE_API_ENDPOINT_PATHS)
+    @pytest.mark.parametrize(
+        "private_api_endpoint_path",
+        PRIVATE_API_ENDPOINT_PATHS + INGESTION_API_ENDPOINT_PATHS,
+    )
     def test_private_api_mode_returns_private_api_urls(
         self, private_api_endpoint_path: str
     ):
@@ -304,7 +309,8 @@ class TestConstructUrlpatterns:
         "endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + PUBLIC_API_ENDPOINT_PATHS
-        + CMS_ADMIN_ENDPOINT_PATHS,
+        + CMS_ADMIN_ENDPOINT_PATHS
+        + INGESTION_API_ENDPOINT_PATHS,
     )
     def test_no_specific_app_mode_returns_all_urls(self, endpoint_path: str):
         """
