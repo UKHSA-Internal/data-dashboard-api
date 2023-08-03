@@ -17,7 +17,7 @@ class DataSourceFileType(Enum):
 
     @classmethod
     def headline_types(cls) -> tuple[str]:
-        return [f"_{cls.headline.value}_"]
+        return [f"{cls.headline.value}_"]
 
     @classmethod
     def timeseries_types(cls) -> tuple[str, ...]:
@@ -29,7 +29,7 @@ class DataSourceFileType(Enum):
             cls.vaccinations,
         ]
         return [
-            f"_{timeseries_file_type.value}_"
+            f"{timeseries_file_type.value}_"
             for timeseries_file_type in timeseries_file_types
         ]
 
