@@ -98,5 +98,5 @@ urllib3==1.26.15
 virtualenv==20.24.2
 wagtail==5.0.1
 webencodings==0.5.1
-Willow==1.5.0
+Willow==1.6
 zipp==3.13.0
