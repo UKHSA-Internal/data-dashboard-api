@@ -61,7 +61,7 @@ pbr==5.11.1
 Pillow==9.4.0
 pip-api==0.0.30
 pip-requirements-parser==32.0.1
-platformdirs==3.9.1
+platformdirs==3.10.0
 plotly==5.13.1
 pluggy==1.2.0
 psycopg2==2.9.5
