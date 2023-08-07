@@ -345,10 +345,14 @@ class TestPlotsInterface:
 
 
 class TestGetXAndYValues:
+    @pytest.mark.parametrize(
+        "axis_field", [ChartAxisFields.stratum.name, ChartAxisFields.age.name]
+    )
     @mock.patch(f"{MODULE_PATH}.sort_by_stratum")
     def test_can_delegate_call_to_sort_by_stratum(
         self,
         spy_sort_by_stratum: mock.MagicMock,
+        axis_field: str,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -357,7 +361,7 @@ class TestGetXAndYValues:
         Then the call is delegated to `sort_by_stratum()`
         """
         # Given
-        fake_chart_plot_parameters.x_axis = ChartAxisFields.stratum.name
+        fake_chart_plot_parameters.x_axis = axis_field
         mocked_queryset = mock.Mock()
 
         # When

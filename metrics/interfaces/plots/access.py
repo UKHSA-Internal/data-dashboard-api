@@ -199,8 +199,11 @@ def get_x_and_y_values(
 
     """
 
-    # Stratum needs special treatment because a regular sort does not yield the required result
-    if plot_parameters.x_axis == ChartAxisFields.stratum.name:
+    # Stratum/Age needs special treatment because a regular sort does not yield the required result
+    if plot_parameters.x_axis in (
+        ChartAxisFields.stratum.name,
+        ChartAxisFields.age.name,
+    ):
         return sort_by_stratum(queryset=queryset)
 
     return unzip_values(values=queryset)
