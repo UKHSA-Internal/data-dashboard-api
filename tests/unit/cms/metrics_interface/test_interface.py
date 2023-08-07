@@ -240,3 +240,24 @@ class TestMetricsAPIInterface:
         assert (
             all_sex_names == spy_core_time_series_manager.get_all_sex_names.return_value
         )
+
+    def test_get_all_age_names_delegates_call_correctly(
+        self,
+    ):
+        """
+        Given an `AgeManager` from the Metrics API app
+        When `get_all_age_names()` is called from an instance of the `MetricsAPIInterface`
+        Then the call is delegated to the correct method on the `AgeManager`
+        """
+        # Given
+        spy_age_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            age_manager=spy_age_manager,
+        )
+
+        # When
+        all_age_names = metrics_api_interface.get_all_age_names()
+
+        # Then
+        assert all_age_names == spy_age_manager.get_all_age_names.return_value
+

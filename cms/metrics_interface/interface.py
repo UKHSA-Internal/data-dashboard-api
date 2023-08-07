@@ -217,3 +217,16 @@ class MetricsAPIInterface:
 
         """
         return self.core_time_series_manager.get_all_sex_names()
+
+    def get_all_age_names(self) -> QuerySet:
+        """Gets all available age names as a flat list queryset.
+
+        Note this is achieved by delegating the call to the `AgeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual age names:
+                Examples:
+                    `<AgeQuerySet ['40-44', '45-54']>`
+
+        """
+        return self.age_manager.get_all_names()
