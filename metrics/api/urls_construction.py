@@ -14,6 +14,7 @@ from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from feedback.views import SuggestionsView
+from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (
     ChartsView,
@@ -125,6 +126,8 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}suggestions/v1", SuggestionsView.as_view()),
 ]
 
+ingestion_urlpatterns = construct_urlpatterns_for_ingestion(prefix=API_PREFIX)
+
 docs_urlspatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     # JSON schema view
@@ -196,10 +199,12 @@ def construct_urlpatterns(
         constructed_url_patterns += construct_public_api_urlpatterns(app_mode=app_mode)
     elif app_mode == AppMode.PRIVATE_API.value:
         constructed_url_patterns += private_api_urlpatterns
+        constructed_url_patterns += ingestion_urlpatterns
     else:
         constructed_url_patterns += construct_cms_admin_urlpatterns(app_mode=app_mode)
         constructed_url_patterns += construct_public_api_urlpatterns(app_mode=app_mode)
         constructed_url_patterns += django_admin_urlpatterns
         constructed_url_patterns += private_api_urlpatterns
+        constructed_url_patterns += ingestion_urlpatterns
 
     return constructed_url_patterns

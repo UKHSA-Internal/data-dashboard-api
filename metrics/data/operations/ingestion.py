@@ -1,5 +1,6 @@
 from django.db.models.manager import Manager
 
+from ingestion.data_transfer_models import OutgoingHeadlineDTO, OutgoingTimeSeriesDTO
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
@@ -9,7 +10,7 @@ DEFAULT_CORE_TIMESERIES_MANAGER = CoreTimeSeries.objects
 
 
 def create_core_headlines(
-    headline_dtos: list["HeadlineDTO"],
+    headline_dtos: list[OutgoingHeadlineDTO],
     core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     batch_size: int = DEFAULT_BATCH_SIZE,
 ) -> None:
@@ -53,7 +54,7 @@ def create_core_headlines(
 
 
 def create_core_timeseries(
-    timeseries_dtos: list["TimeSeriesDTO"],
+    timeseries_dtos: list[OutgoingTimeSeriesDTO],
     core_timeseries_manager: Manager = DEFAULT_CORE_TIMESERIES_MANAGER,
     batch_size: int = DEFAULT_BATCH_SIZE,
 ) -> None:
