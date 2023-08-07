@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+from metrics.data.managers.core_models.age import AgeManager
 from metrics.data.managers.core_models.geography import GeographyManager
 from metrics.data.managers.core_models.geography_type import GeographyTypeManager
 from metrics.data.managers.core_models.metric import MetricManager
@@ -73,3 +74,5 @@ class Stratum(models.Model):
 
 class Age(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+
+    objects = AgeManager()
