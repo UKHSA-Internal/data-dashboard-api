@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from enum import Enum
 
 DEFAULT_CHART_HEIGHT = 220
-DEFAULT_CHART_WIDTH = 435
+DEFAULT_CHART_WIDTH = 515
 
 
 def get_last_day_of_month(date: date) -> date:

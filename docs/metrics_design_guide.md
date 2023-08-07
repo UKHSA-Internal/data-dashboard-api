@@ -15,8 +15,7 @@ There is currently no active/automated data ingestion mechanism.
 As of June 2023, there is an ingestion point in the form of an AWS s3 bucket.
 Note that this has not been completely wired up yet.
 
-Currently, the `PUT upload/` endpoint is being used to load metrics data into the app.
-> This endpoint **should not be used in production** and should be removed before Beta release.
+The `POST /api/ingestion/v1` endpoint will be used to load metrics data into the application.
 
 ---
 
@@ -74,15 +73,11 @@ Multiple type of different plots cannot be applied on the same chart.
 
 ### Data ingestion
 
-Currently, the data is being ingested via the `PUT upload/` endpoint. 
-This endpoint is now deprecated and will need to be removed.
-
-An integration point will need to be agreed with the UKHSA data team so that this application can consume
+An integration point has been agreed with the UKHSA data team so that this application can consume
 data files produced by the UKHSA ETL pipeline.
 
-Note that this file is always provided in its entirety. With years worth of data which is unchanged.
+Note that this file is currently always provided in its entirety. With years worth of data which is unchanged.
 This is most likely costing a considerable sum of money for cloud storage costs.
 
 In the future, this should be altered so that a data file is provided which only shows the most recent month 
 of data. Since data prior to this is unlikely to change.
-

@@ -352,7 +352,7 @@ class TestTablesSerializer:
         valid_data_payload = {
             "file_format": "svg",
             "chart_height": 220,
-            "chart_width": 435,
+            "chart_width": 515,
             "plots": table_plots,
             "x_axis": "date",
             "y_axis": "metric",
