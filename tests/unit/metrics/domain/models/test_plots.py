@@ -24,6 +24,7 @@ class TestPlotParameters:
         "geography",
         "geography_type",
         "sex",
+        "age",
         "date_from",
         "date_to",
         "label",
@@ -84,6 +85,7 @@ class TestPlotParameters:
         geography = "London"
         geography_type = "Nation"
         sex = "Female"
+        age = "0_4"
 
         date_from = "2022-10-01"
         label = "0 to 4 years old"
@@ -97,6 +99,7 @@ class TestPlotParameters:
         fake_chart_plot_parameters.line_colour = line_colour
         fake_chart_plot_parameters.line_type = line_type
         fake_chart_plot_parameters.sex = sex
+        fake_chart_plot_parameters.age = age
 
         # When
         dict_used_for_query: dict[
@@ -111,6 +114,7 @@ class TestPlotParameters:
             "geography_name": fake_chart_plot_parameters.geography_name,
             "geography_type_name": fake_chart_plot_parameters.geography_type_name,
             "sex": fake_chart_plot_parameters.sex,
+            "age": fake_chart_plot_parameters.age,
             "date_from": fake_chart_plot_parameters.date_from_value,
             "x_axis": ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
             "y_axis": ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
