@@ -259,5 +259,4 @@ class TestMetricsAPIInterface:
         all_age_names = metrics_api_interface.get_all_age_names()
 
         # Then
-        assert all_age_names == spy_age_manager.get_all_age_names.return_value
-
+        assert all_age_names == spy_age_manager.get_all_names.return_value
