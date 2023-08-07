@@ -26,6 +26,13 @@ class PlotSerializer(serializers.Serializer):
         allow_null=True,
         default="",
     )
+    age = serializers.CharField(
+        help_text=help_texts.AGE_FIELD,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+    )
     geography = serializers.CharField(
         help_text=help_texts.GEOGRAPHY_FIELD,
         required=False,

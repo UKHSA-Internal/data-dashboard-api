@@ -5,12 +5,7 @@ from metrics.api.serializers.plots import PlotSerializer
 
 
 class TestPlotSerializer:
-    optional_field_names = [
-        "stratum",
-        "geography",
-        "geography_type",
-        "sex",
-    ]
+    optional_field_names = ["stratum", "geography", "geography_type", "sex", "age"]
 
     def test_validates_successfully_when_optional_parameters_are_none(
         self, plot_serializer_payload_and_model_managers
