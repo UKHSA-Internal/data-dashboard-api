@@ -186,9 +186,16 @@ def get_x_and_y_values(
     Args:
         plot_parameters: A `PlotParameters` model containing
             the requested info
-        queryset:
+        queryset: An ordered queryset from oldest -> newest
+            of the (dt, metric_value) numbers.
+                Examples:
+                    `<CoreTimeSeriesQuerySet [
+                        (datetime.date(2022, 10, 10), Decimal('0.8')),
+                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                    ]>`
 
     Returns:
+        Tuple containing the X and Y values
 
     """
 
