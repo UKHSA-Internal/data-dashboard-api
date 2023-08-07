@@ -92,6 +92,7 @@ class DownloadsView(APIView):
         | `metric`          | The name of the metric being queried for                                  | `COVID-19_deaths_ONSByDay`|
         | `stratum`         | The smallest subgroup a metric can be broken down into                    | `default`                 |
         | `sex`             | The sex for those metrics that are broken down by sex                     | `F`                       |
+        | `age`             | The patient age band                                                      | 0_4                       |
         | `date_from`       | The date to pull the data from                                            | `2020-01-20`              |
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
         """
