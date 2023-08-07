@@ -275,7 +275,7 @@ class TestGetAllAgeNames:
     @mock.patch.object(interface.MetricsAPIInterface, "get_all_age_names")
     def test_delegates_call_correctly(self, mocked_get_all_age_names: mock.MagicMock):
         """
-        Given an instance of the `MetricsAPIInterface` which returns sex names
+        Given an instance of the `MetricsAPIInterface` which returns age names
         When `get_all_age_names()` is called
         Then the age names are returned as a list of 2-item tuples
         """
