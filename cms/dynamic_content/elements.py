@@ -2,6 +2,7 @@ from wagtail import blocks
 
 from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
+    get_all_age_names,
     get_all_geography_names,
     get_all_geography_type_names,
     get_all_sex_names,
@@ -60,6 +61,11 @@ class ChartPlotElement(BaseMetricsElement):
         required=False,
         choices=get_all_sex_names,
         help_text=help_texts.SEX_FIELD,
+    )
+    age = blocks.ChoiceBlock(
+        required=False,
+        choices=get_all_age_names,
+        help_text=help_texts.AGE_FIELD,
     )
     label = blocks.TextBlock(
         required=False,

@@ -127,6 +127,10 @@ The gender to filter for, if any.
 The only options available are `M`, `F` and `ALL`.
 By default, no filtering will be applied to the underlying query if no selection is made.
 """
+AGE_FIELD: str = """
+The age band to filter for, if any.
+By default, no filtering will be applied to the underlying query if no selection is made.
+"""
 
 LABEL_FIELD: str = """
 The label to assign on the legend for this individual plot.
