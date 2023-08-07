@@ -85,6 +85,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def _filter_by_sex(queryset, sex):
         return queryset.filter(sex=sex)
 
+    @staticmethod
+    def _filter_by_age(queryset, age):
+        return queryset.filter(age=age)
+
     def filter_for_x_and_y_values(
         self,
         x_axis: str,
@@ -96,6 +100,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
+        age: Optional[str] = None,
     ) -> models.QuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -122,6 +127,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -156,6 +163,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         if sex:
             queryset = self._filter_by_sex(queryset=queryset, sex=sex)
+
+        if age:
+            queryset = self._filter_by_age(queryset=queryset, age=age)
 
         queryset = queryset.values_list(x_axis, y_axis)
         return self._ascending_order(
@@ -339,6 +349,7 @@ class CoreTimeSeriesManager(models.Manager):
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
+        age: Optional[str] = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -365,6 +376,8 @@ class CoreTimeSeriesManager(models.Manager):
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -386,6 +399,7 @@ class CoreTimeSeriesManager(models.Manager):
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
             sex=sex,
+            age=age,
         )
 
     def get_count(
