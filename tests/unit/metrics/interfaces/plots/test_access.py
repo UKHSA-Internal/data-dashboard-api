@@ -272,6 +272,7 @@ class TestPlotsInterface:
         mocked_geography_type = mock.Mock()
         mocked_stratum = mock.Mock()
         mocked_sex = mock.Mock()
+        mocked_age = mock.Mock()
 
         plots_interface = PlotsInterface(
             plots_collection=mock.MagicMock(),
@@ -289,6 +290,7 @@ class TestPlotsInterface:
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,
             sex=mocked_sex,
+            age=mocked_age,
         )
 
         # Then
@@ -306,6 +308,7 @@ class TestPlotsInterface:
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,
             sex=mocked_sex,
+            age=mocked_age,
         )
 
     @mock.patch.object(PlotsInterface, "get_timeseries")
