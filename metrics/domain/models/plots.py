@@ -15,6 +15,7 @@ class PlotParameters(BaseModel):
     geography: str | None = ""
     geography_type: str | None = ""
     sex: str | None = ""
+    age: str | None = ""
     date_from: str | None = ""
     date_to: str | None = ""
     label: str | None = ""
@@ -41,6 +42,10 @@ class PlotParameters(BaseModel):
 
     @property
     def stratum_name(self) -> Optional[str]:
+        return self.stratum
+
+    @property
+    def age_name(self) -> Optional[str]:
         return self.stratum
 
     @property
@@ -85,6 +90,7 @@ class PlotParameters(BaseModel):
             "geography_name": self.geography_name or "",
             "geography_type_name": self.geography_type_name or "",
             "sex": self.sex or "",
+            "age": self.age or "",
             "date_from": self.date_from_value,
             "x_axis": self.x_axis_value,
             "y_axis": self.y_axis_value,

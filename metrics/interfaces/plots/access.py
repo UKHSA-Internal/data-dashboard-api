@@ -54,6 +54,7 @@ class PlotsInterface:
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
+        age: Optional[str] = None,
     ):
         """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
 
@@ -85,6 +86,8 @@ class PlotsInterface:
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
@@ -106,6 +109,7 @@ class PlotsInterface:
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
             sex=sex,
+            age=age,
         )
 
     def build_plot_data_from_parameters(
