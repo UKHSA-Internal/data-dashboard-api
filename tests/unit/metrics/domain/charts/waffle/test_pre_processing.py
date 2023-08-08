@@ -87,7 +87,7 @@ class TestBuildTwoDimensionalMatrix:
         )
 
         # Then
-        flattened_matrix: list[int | stre] = [
+        flattened_matrix: list[int | str] = [
             value for sub_list in matrix for value in sub_list
         ]
         assert flattened_matrix[0] == identifier
