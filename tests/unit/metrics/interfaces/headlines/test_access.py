@@ -3,7 +3,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.interfaces.headlines import access
 from metrics.interfaces.headlines.access import HeadlineNumberDataNotFoundError
 
