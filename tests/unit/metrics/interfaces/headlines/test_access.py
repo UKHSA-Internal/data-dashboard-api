@@ -3,11 +3,30 @@ from unittest import mock
 
 import pytest
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
 from metrics.interfaces.headlines import access
 
 
 class TestHeadlinesInterface:
+    def test_initializes_with_default_manager(self):
+        """
+        Given a mocked topic and metric
+        When an instance of the `HeadlinesInterface` is created
+        Then the default `CoreHeadlineManager`
+            is set on the `HeadlinesInterface` object
+        """
+        mocked_topic = mock.Mock()
+        mocked_metric = mock.Mock()
+
+        # When
+        headlines_interface = access.HeadlinesInterface(
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
+        )
+
+        # Then
+        assert headlines_interface.core_headline_manager == CoreHeadline.objects
+
     def test_get_metric_value_calls_core_time_series_manager_with_correct_args(self):
         """
         Given a `CoreTimeSeriesManager`
