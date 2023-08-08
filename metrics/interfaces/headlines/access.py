@@ -1,6 +1,6 @@
 from django.db.models import Manager
 
-from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects

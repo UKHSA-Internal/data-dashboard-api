@@ -85,7 +85,10 @@ class CoreHeadlineManager(models.Manager):
         return CoreHeadlineQuerySet(model=self.model, using=self.db)
 
     def get_latest_metric_value(
-        self, topic_name: str, metric_name: str, geography_name: str = "England",
+        self,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str = "England",
     ) -> Decimal | None:
         """Grabs by the latest record by the given `topic_name` and `metric_name`.
 
@@ -107,7 +110,9 @@ class CoreHeadlineManager(models.Manager):
         return (
             self.get_queryset()
             .by_topic_metric_ordered_from_newest_to_oldest(
-                topic_name=topic_name, metric_name=metric_name, geography_name=geography_name
+                topic_name=topic_name,
+                metric_name=metric_name,
+                geography_name=geography_name,
             )
             .first()
         )
