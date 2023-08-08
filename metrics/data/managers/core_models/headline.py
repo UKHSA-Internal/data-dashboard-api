@@ -51,7 +51,11 @@ class CoreHeadlineQuerySet(models.QuerySet):
         )
 
     def by_topic_metric_ordered_from_newest_to_oldest(
-        self, topic_name: str, metric_name: str, geography_name: str
+        self,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
     ) -> models.QuerySet:
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
@@ -62,6 +66,9 @@ class CoreHeadlineQuerySet(models.QuerySet):
                 E.g. `COVID-19_deaths_ONSByDay`
             geography_name: The name of the geography being queried.
                 E.g. `England`
+            geography_type_name: The name of the geography
+                type being queried.
+                E.g. `Nation`
 
         Returns:
             An ordered queryset from oldest -> newest
@@ -74,6 +81,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             metric__metric_group__topic__name=topic_name,
             metric__name=metric_name,
             geography__name=geography_name,
+            geography__geography_type__name=geography_type_name,
         ).values_list("metric_value", flat=True)
         return self._newest_to_oldest(queryset=queryset)
 
@@ -89,6 +97,7 @@ class CoreHeadlineManager(models.Manager):
         topic_name: str,
         metric_name: str,
         geography_name: str = "England",
+        geography_type_name: str = "Nation",
     ) -> Decimal | None:
         """Grabs by the latest record by the given `topic_name` and `metric_name`.
 
@@ -99,6 +108,9 @@ class CoreHeadlineManager(models.Manager):
                 E.g. `COVID-19_deaths_ONSByDay`
             geography_name: The name of the geography being queried.
                 E.g. `England`
+            geography_type_name: The name of the geography
+                type being queried.
+                E.g. `Nation`
 
         Returns:
             The individual metric_value number only.
@@ -113,6 +125,7 @@ class CoreHeadlineManager(models.Manager):
                 topic_name=topic_name,
                 metric_name=metric_name,
                 geography_name=geography_name,
+                geography_type_name=geography_type_name,
             )
             .first()
         )
