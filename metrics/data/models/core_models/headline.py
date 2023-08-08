@@ -1,5 +1,6 @@
 from django.db import models
 
+from metrics.data.managers.core_models.headline import CoreHeadlineManager
 from metrics.data.models.core_models import help_texts
 from metrics.data.models.core_models.supporting import Age, Geography, Metric, Stratum
 
@@ -42,6 +43,8 @@ class CoreHeadline(models.Model):
         max_digits=11,
         decimal_places=4,
     )
+
+    objects = CoreHeadlineManager()
 
     def __str__(self):
         return f"Core Headline Data for {self.refresh_date}, metric '{self.metric.name}', value: {self.metric_value}"
