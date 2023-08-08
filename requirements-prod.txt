@@ -22,7 +22,7 @@ django-taggit==3.1.0
 django-treebeard==4.7
 djangorestframework==3.14.0
 djangorestframework-api-key==2.3.0
-draftjs-exporter==2.1.7
+draftjs-exporter==5.0.0
 drf-nested-routers==0.93.4
 drf-spectacular==0.26.4
 et-xmlfile==1.1.0
