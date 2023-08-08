@@ -1,5 +1,3 @@
-import numpy as np
-
 from metrics.domain.charts.waffle import pre_processing
 
 
@@ -7,7 +5,7 @@ class TestBuildTwoDimensionalMatrix:
     def test_output_array_contains_expected_values(self):
         """
         Given a certain `threshold`
-        When `build_logical_matrix()` is called
+        When `build_two_dimensional_matrix()` is called
         Then a 2D array is returned with the correct values
         """
         # Given
@@ -32,7 +30,7 @@ class TestBuildTwoDimensionalMatrix:
     def test_matrix_size_is_determined_by_the_input_dimensions(self):
         """
         Given custom dimensions for the `length` and `width`
-        When `build_logical_matrix()` is called
+        When `build_two_dimensional_matrix()` is called
         Then the `size()` of the returned matrix
             is equal to the multiplied value of `length` and `width`
         """
@@ -53,26 +51,28 @@ class TestBuildTwoDimensionalMatrix:
     def test_sum_is_equal_to_the_provided_threshold(self):
         """
         Given a certain `threshold`
-        When `build_logical_matrix()` is called
+        When `build_two_dimensional_matrix()` is called
         Then the `sum()` of the returned matrix is equal to the `threshold`
         """
         # Given
         threshold = 40
 
         # When
-        matrix: np.ndarray = pre_processing.build_two_dimensional_matrix(
+        matrix: list[list[int | str]] = pre_processing.build_two_dimensional_matrix(
             threshold=threshold, identifier=1
         )
-        matrix_sum = sum([value for sub_list in matrix for value in sub_list])
+        matrix_flattened: list[int | str] = [
+            value for sub_list in matrix for value in sub_list
+        ]
 
         # Then
-        assert matrix_sum == threshold
+        assert sum(matrix_flattened) == threshold
 
     def test_nan_values_are_used_for_zero_values_for_larger_identifiers(self):
         """
         Given an identifier which is greater than 1
         And custom dimensions for the `length` and `width`
-        When `build_logical_matrix()` is called
+        When `build_two_dimensional_matrix()` is called
         Then `0` values are replaced with `NaN` values
         """
         # Given
@@ -82,7 +82,7 @@ class TestBuildTwoDimensionalMatrix:
         identifier = 2
 
         # When
-        matrix: np.ndarray = pre_processing.build_two_dimensional_matrix(
+        matrix: list[list[int | str]] = pre_processing.build_two_dimensional_matrix(
             threshold=threshold, identifier=identifier, length=length, width=width
         )
 

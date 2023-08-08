@@ -1,5 +1,4 @@
 import plotly.graph_objects
-from numpy.core.multiarray import ndarray
 
 from metrics.domain.charts.chart_settings import ChartSettings
 from metrics.domain.charts.waffle import pre_processing, validation
@@ -55,9 +54,9 @@ def _add_plot_to_figure(
     value: int, index: int, cell_gap: int, figure: plotly.graph_objects.Figure
 ) -> plotly.graph_objects.Figure:
     # Build 2D matrix to represent the given `value`
-    two_dimensional_matrix: ndarray = pre_processing.build_two_dimensional_matrix(
-        threshold=value, identifier=index
-    )
+    two_dimensional_matrix: list[
+        list[int | str]
+    ] = pre_processing.build_two_dimensional_matrix(threshold=value, identifier=index)
 
     # Fetch the colour scale values based on the index
     colour_scale: list[list[int, str]] = build_color_scale(identifier=index)

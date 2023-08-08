@@ -10,7 +10,7 @@ def reshape(flat_list: list[int], length: int, width: int) -> list[list[int | st
         A 2D list of values using 'width' for row length
     """
     index = 0
-    matrix = []
+    matrix: list[list[int | str]] = []
     while index < length * width:
         matrix.append(flat_list[index : index + width])
         index += width
@@ -24,16 +24,16 @@ def build_two_dimensional_matrix(
 
     Examples:
         >>> build_two_dimensional_matrix(threshold=1, identifier=1, length=2, width=2)
-        array([[1, 0], [0, 0]])
+        list[[1, 0], [0, 0]]
 
         >>> build_two_dimensional_matrix(threshold=4, identifier=1, length=3, width=3)
-        array([[1, 1, 1], [1, 0, 0], [0, 0, 0]])
+        list[[1, 1, 1], [1, 0, 0], [0, 0, 0]]
 
         >>> build_two_dimensional_matrix(threshold=1, identifier=2, length=2, width=2)
-        array([[2, 'NaN'], ['NaN', 'NaN']])
+        list[[2, 'NaN'], ['NaN', 'NaN']]
 
         >>> build_two_dimensional_matrix(threshold=1, identifier=3, length=2, width=2)
-        array([[3, 'NaN'], ['NaN', 'NaN']])
+        list[[3, 'NaN'], ['NaN', 'NaN']]
 
     Args:
         threshold: represents the list position / number of non-zero values
@@ -45,10 +45,10 @@ def build_two_dimensional_matrix(
         A 2D list with the shape derived from the length and width
     """
     matrix_size: int = length * width
-    data = [0] * matrix_size
+    data: list[int | str] = [0] * matrix_size
 
     if identifier > 1:
         data[:] = ["NaN"] * matrix_size
 
     data[:threshold] = [identifier] * threshold
-    return reshape(data, length, width)
+    return reshape(flat_list=data, length=length, width=width)
