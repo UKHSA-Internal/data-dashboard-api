@@ -57,7 +57,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         geography_name: str,
         geography_type_name: str,
     ) -> models.QuerySet:
-        """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
+        """Filters by the given `topic_name` and `metric_name`
 
         Args:
             topic_name: The name of the disease being queried.
