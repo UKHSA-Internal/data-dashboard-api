@@ -1,56 +1,54 @@
-from numpy import NaN
-from numpy.core.multiarray import ndarray, zeros
+def reshape(flat_list: list[int], length: int, width: int) -> list[list[int | str]]:
+    """Given a (1D) list along with a length and width returns a 2D list
+
+    Args:
+        flat_list: flat list of values to be reshaped as a 2D list (matrix)
+        length: integer representing the length (columns) of the matrix
+        width: integer representing the width (rows) of the matrix
+
+    Returns:
+        A 2D list of values using 'width' for row length
+    """
+    index = 0
+    matrix = []
+    while index < length * width:
+        matrix.append(flat_list[index : index + width])
+        index += width
+    return matrix
 
 
 def build_two_dimensional_matrix(
     threshold: int, identifier: int, length: int = 10, width: int = 10
-) -> ndarray:
-    """Builds a 2D matrix with the `identifier` as the non-zero value.
-
-    Notes:
-        If the `identifier` is not given as `1`,
-        then all non-zero values will become `NaN` values.
-        The `length` and `width` default to 10.
-        This means that by default the returned matrix will be
-        of size `100`.
+) -> list[list[int | str]]:
+    """Builds a 2D matrix with the 'identifier' as the non-zero value.
 
     Examples:
         >>> build_two_dimensional_matrix(threshold=1, identifier=1, length=2, width=2)
-        array([[1., 0.], [0., 0.]])
+        array([[1, 0], [0, 0]])
 
         >>> build_two_dimensional_matrix(threshold=4, identifier=1, length=3, width=3)
-        array([[1., 1., 1.], [1., 0., 0.], [0., 0., 0.]])
+        array([[1, 1, 1], [1, 0, 0], [0, 0, 0]])
 
         >>> build_two_dimensional_matrix(threshold=1, identifier=2, length=2, width=2)
-        array([[2., nan.], [nan., nan.]])
+        array([[2, 'NaN'], ['NaN', 'NaN']])
 
         >>> build_two_dimensional_matrix(threshold=1, identifier=3, length=2, width=2)
-        array([[3., nan.], [nan., nan.]])
+        array([[3, 'NaN'], ['NaN', 'NaN']])
 
     Args:
-        threshold: The nominal point of non-zero values in the matrix
-        identifier: The number to assign to the non-zero values.
-        length: The size in the y-axis to build the matrix to.
-            Defaults to 10
-        width: The size in the x-axis to build the matrix to.
-            Defaults to 10
+        threshold: represents the list position / number of non-zero values
+        identifier: represents the non-zero value.
+        length: the length (colum size) of the matrix defaults to 10
+        width:  the width (row size) of the matrix default to 10
 
     Returns:
-        np.ndarray: A 2D array of the shape dicated
-        by the given `length` and `width` values.
-        E.g. With the following:
-            identifier = 1
-            length = 2
-            width = 2
-            threshold = 2
-        >>> array([[1., 1.], [0., 0.]])
-
+        A 2D list with the shape derived from the length and width
     """
     matrix_size: int = length * width
-    data: ndarray = zeros(shape=matrix_size)
+    data = [0] * matrix_size
 
     if identifier > 1:
-        data[:] = NaN
+        data[:] = ["NaN"] * matrix_size
 
-    data[:threshold] = identifier
-    return data.reshape([width, length])
+    data[:threshold] = [identifier] * threshold
+    return reshape(data, length, width)
