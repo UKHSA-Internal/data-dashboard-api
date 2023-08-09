@@ -1,4 +1,3 @@
-import numpy as np
 import plotly.graph_objects
 
 from metrics.domain.charts import colour_scheme
@@ -68,8 +67,10 @@ class TestWaffleCharts:
         assert single_plot.xgap == single_plot.ygap == 3
 
         # There are no nan values so check that the sum of the `z` array is equal to the threshold value
-        larger_plot_z_array: np.ndarray = single_plot.z
-        assert int(larger_plot_z_array.sum()) == plot_threshold_value
+        single_plot_list_flattened: list[int | str] = [
+            item for sub_list in single_plot.z for item in sub_list
+        ]
+        assert sum(single_plot_list_flattened) == plot_threshold_value
 
     def test_plot_with_two_points(self):
         """
@@ -97,8 +98,10 @@ class TestWaffleCharts:
         assert larger_plot.xgap == larger_plot.ygap == 3
 
         # There are no nan values so check that the sum of the `z` array is equal to the threshold value
-        larger_plot_z_array: np.ndarray = larger_plot.z
-        assert int(larger_plot_z_array.sum()) == larger_plot_threshold_value
+        larger_plot_list_flattened = [
+            item for sub_list in larger_plot.z for item in sub_list
+        ]
+        assert sum(larger_plot_list_flattened) == larger_plot_threshold_value
 
         # ---Smaller plot checks---
         smaller_plot: plotly.graph_objects.Heatmap = figure.data[1]
@@ -107,18 +110,19 @@ class TestWaffleCharts:
         assert smaller_plot.xgap == smaller_plot.ygap == 3
 
         # Since there are nan values in the `z` array, slice either side of the threshold value
-        smaller_plot_z_array: np.ndarray = smaller_plot.z
-        smaller_plot_flattened_matrix = smaller_plot_z_array.flatten()
+        smaller_plot_flattened_matrix: list[int | str] = [
+            value for sub_list in smaller_plot.z for value in sub_list
+        ]
 
         # Check that the identifier is used for the first 23 items in the array
         for threshold_value in smaller_plot_flattened_matrix[
             :smaller_plot_threshold_value
         ]:
-            assert threshold_value == 2.0
+            assert threshold_value == 2
 
         # Check that the nan placeholder value is used for the remaining 77 items in the array
         for nan_value in smaller_plot_flattened_matrix[smaller_plot_threshold_value:]:
-            np.isnan(nan_value)
+            assert nan_value == "NaN"
 
     def test_plot_with_three_points(self):
         """
@@ -148,8 +152,10 @@ class TestWaffleCharts:
         assert larger_plot.xgap == larger_plot.ygap == 3
 
         # There are no nan values so check that the sum of the `z` array is equal to the threshold value
-        larger_plot_z_array: np.ndarray = larger_plot.z
-        assert int(larger_plot_z_array.sum()) == larger_plot_threshold_value
+        larger_plot_z_list_flattened: list[int | str] = [
+            item for sub_list in larger_plot.z for item in sub_list
+        ]
+        assert sum(larger_plot_z_list_flattened) == larger_plot_threshold_value
 
         # ---Middle plot checks---
         middle_plot: plotly.graph_objects.Heatmap = figure.data[1]
@@ -157,19 +163,19 @@ class TestWaffleCharts:
         assert middle_plot.type == "heatmap"
         assert middle_plot.xgap == middle_plot.ygap == 3
 
-        # Since there are nan values in the `z` array, slice either side of the threshold value
-        middle_plot_z_array: np.ndarray = middle_plot.z
-        middle_plot_flattened_matrix = middle_plot_z_array.flatten()
-
         # Check that the identifier is used for the first 23 items in the array
+        middle_plot_flattened_matrix: list[int | str] = [
+            value for sub_list in middle_plot.z for value in sub_list
+        ]
+
         for threshold_value in middle_plot_flattened_matrix[
             :middle_plot_threshold_value
         ]:
-            assert threshold_value == 2.0
+            assert threshold_value == 2
 
         # Check that the nan placeholder value is used for the remaining 77 items in the array
         for nan_value in middle_plot_flattened_matrix[middle_plot_threshold_value:]:
-            np.isnan(nan_value)
+            assert nan_value == "NaN"
 
         # ---Smaller plot checks---
         smaller_plot: plotly.graph_objects.Heatmap = figure.data[2]
@@ -177,16 +183,16 @@ class TestWaffleCharts:
         assert smaller_plot.type == "heatmap"
         assert smaller_plot.xgap == smaller_plot.ygap == 3
 
-        # Since there are nan values in the `z` array, slice either side of the threshold value
-        smaller_plot_z_array: np.ndarray = smaller_plot.z
-        smaller_plot_flattened_matrix = smaller_plot_z_array.flatten()
-
         # Check that the identifier is used for the first 23 items in the array
-        for threshold_value in smaller_plot_flattened_matrix[
+        smaller_plot_z_list_flattened: list[int | str] = [
+            item for sub_list in smaller_plot.z for item in sub_list
+        ]
+
+        for threshold_value in smaller_plot_z_list_flattened[
             :smaller_plot_threshold_value
         ]:
-            assert threshold_value == 3.0
+            assert threshold_value == 3
 
         # Check that the nan placeholder value is used for the remaining 77 items in the array
-        for nan_value in smaller_plot_flattened_matrix[smaller_plot_threshold_value:]:
-            np.isnan(nan_value)
+        for nan_value in smaller_plot_z_list_flattened[smaller_plot_threshold_value:]:
+            assert nan_value == "NaN"
