@@ -163,7 +163,6 @@ class TrendsInterfaceBeta:
         )
 
 
-
 def generate_trend_numbers(
     topic: str, metric_name: str, percentage_metric_name: str
 ) -> TREND_AS_DICT:
