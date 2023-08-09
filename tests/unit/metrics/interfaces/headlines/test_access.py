@@ -3,11 +3,31 @@ from unittest import mock
 
 import pytest
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.interfaces.headlines import access
+from metrics.interfaces.headlines.access import HeadlineNumberDataNotFoundError
 
 
 class TestHeadlinesInterface:
+    def test_initializes_with_default_manager(self):
+        """
+        Given a mocked topic and metric
+        When an instance of the `HeadlinesInterface` is created
+        Then the default `CoreHeadlineManager`
+            is set on the `HeadlinesInterface` object
+        """
+        mocked_topic = mock.Mock()
+        mocked_metric = mock.Mock()
+
+        # When
+        headlines_interface = access.HeadlinesInterface(
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
+        )
+
+        # Then
+        assert headlines_interface.core_headline_manager == CoreHeadline.objects
+
     def test_get_metric_value_calls_core_time_series_manager_with_correct_args(self):
         """
         Given a `CoreTimeSeriesManager`
@@ -114,3 +134,24 @@ class TestGenerateHeadlineNumber:
 
         # Then
         assert metric_value == spy_get_metric_value.return_value
+
+    @mock.patch.object(access.HeadlinesInterface, "get_metric_value")
+    def test_raises_error_when_metric_value_is_none(
+        self, mocked_get_metric_value: mock.MagicMock
+    ):
+        """
+        Given a topic and metric which do not exist
+        When `generate_headline_number()` is called
+        Then a `HeadlineNumberDataNotFoundError` is raised
+        """
+        # Given
+        mocked_topic = mock.Mock()
+        mocked_metric = mock.Mock()
+        mocked_get_metric_value.return_value = None
+
+        # When / Then
+        with pytest.raises(HeadlineNumberDataNotFoundError):
+            access.generate_headline_number(
+                topic_name=mocked_topic,
+                metric_name=mocked_metric,
+            )
