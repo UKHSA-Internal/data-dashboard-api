@@ -13,7 +13,7 @@ def get_last_day_of_month(date: date) -> date:
 def _check_for_substring_match(
     string_to_check: str, substrings: tuple[str, ...]
 ) -> bool:
-    return any((sub_string in string_to_check for sub_string in substrings))
+    return any((sub_string in string_to_check.lower() for sub_string in substrings))
 
 
 class ChartTypes(Enum):
