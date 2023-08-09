@@ -51,7 +51,9 @@ class MetricQuerySet(models.QuerySet):
                 Examples:
                     `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daychange]>`
         """
-        return self.get_all_unique_names().filter(name__contains="change")
+        return self.get_all_unique_names().filter(
+            models.Q(name__icontains="change") & ~models.Q(name__icontains="percent")
+        )
 
     def get_all_unique_percent_change_type_names(self) -> models.QuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `percent`
