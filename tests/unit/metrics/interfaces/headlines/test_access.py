@@ -112,6 +112,94 @@ class TestHeadlinesInterface:
             headlines_interface.get_metric_value()
 
 
+class TestHeadlinesInterfaceBeta:
+    @property
+    def example_args(self) -> dict[str, str]:
+        return {
+            "topic_name": "COVID-19",
+            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
+            "geography_name": "England",
+            "geography_type_name": "Nation",
+            "stratum_name": "default",
+            "age": "all",
+            "sex": "all",
+        }
+
+    def test_initializes_with_default_manager(self):
+        """
+        Given a set of fake arguments
+        When an instance of the `HeadlinesInterface` is created
+        Then the default `CoreHeadlineManager`
+            is set on the `HeadlinesInterface` object
+        """
+        example_args = self.example_args
+
+        # When
+        headlines_interface = access.HeadlinesInterfaceBeta(**example_args)
+
+        # Then
+        assert headlines_interface.core_headline_manager == CoreHeadline.objects
+
+    def test_get_metric_value_calls_core_time_series_manager_with_correct_args(self):
+        """
+        Given a `CoreTimeSeriesManager`
+        When `get_latest_metric_value()`
+            is called from an instance of `HeadlinesInterface`
+        Then the correct method is called from `CoreHeadlineManager`
+            to retrieve the latest metric_value
+        """
+        # Given
+        expected_example_args = self.example_args
+
+        spy_core_headline_manager = mock.Mock()
+        headlines_interface = access.HeadlinesInterfaceBeta(
+            **expected_example_args,
+            core_headline_manager=spy_core_headline_manager,
+        )
+
+        # When
+        metric_value: Decimal = headlines_interface.get_latest_metric_value()
+
+        # Then
+        assert (
+            metric_value
+            == spy_core_headline_manager.get_latest_metric_value.return_value
+        )
+        spy_core_headline_manager.get_latest_metric_value.assert_called_once_with(
+            **expected_example_args,
+        )
+
+    def test_get_metric_value_raises_error_when_model_manager_raises_error_for_no_data_found(
+        self,
+    ):
+        """
+        Given a `CoreHeadlineManager` which contains no matching `CoreHeadline` objects
+        When `get_latest_metric_value()`
+            is called from an instance of `HeadlinesInterface`
+        Then a `HeadlineNumberDataNotFoundError` is raised
+        """
+        # Given
+        expected_example_args = self.example_args
+        spy_core_headline_manager = mock.Mock()
+        spy_core_headline_manager.get_latest_metric_value.return_value = None
+
+        headlines_interface = access.HeadlinesInterfaceBeta(
+            **expected_example_args,
+            core_headline_manager=spy_core_headline_manager,
+        )
+
+        # When / Then
+        metric_name = expected_example_args["metric_name"]
+        topic_name = expected_example_args["topic_name"]
+        expected_error_message = (
+            f"Data for `{topic_name}` and `{metric_name}` could not be found."
+        )
+        with pytest.raises(
+            access.HeadlineNumberDataNotFoundError, match=expected_error_message
+        ):
+            headlines_interface.get_latest_metric_value()
+
+
 class TestGenerateHeadlineNumber:
     @mock.patch.object(access.HeadlinesInterface, "get_metric_value")
     def test_delegates_call_to_interface_to_get_metric_value(

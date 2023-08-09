@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
@@ -44,6 +46,57 @@ class HeadlinesInterface:
             raise HeadlineNumberDataNotFoundError(
                 "No data could be found for those parameters"
             )
+
+
+class HeadlinesInterfaceBeta:
+    def __init__(
+        self,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+        core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
+    ):
+        self.topic_name = topic_name
+        self.metric_name = metric_name
+        self.geography_name = geography_name
+        self.geography_type_name = geography_type_name
+        self.stratum_name = stratum_name
+        self.sex = sex
+        self.age = age
+        self.core_headline_manager = core_headline_manager
+
+    def get_latest_metric_value(self) -> float:
+        """Gets the latest metric_value for the associated headline data.
+
+        Returns:
+            The associated `metric_value` as a float
+
+        Raises:
+            `HeadlineNumberDataNotFoundError`: If the query returned no records.
+
+        """
+        latest_metric_value: [
+            Decimal | None
+        ] = self.core_headline_manager.get_latest_metric_value(
+            topic_name=self.topic_name,
+            metric_name=self.metric_name,
+            geography_name=self.geography_name,
+            geography_type_name=self.geography_type_name,
+            age=self.age,
+            stratum_name=self.stratum_name,
+            sex=self.sex,
+        )
+
+        if latest_metric_value is None:
+            raise HeadlineNumberDataNotFoundError(
+                f"Data for `{self.topic_name}` and `{self.metric_name}` could not be found."
+            )
+
+        return latest_metric_value
 
 
 class BaseInvalidHeadlinesRequestError(Exception):
