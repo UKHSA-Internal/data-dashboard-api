@@ -62,7 +62,18 @@ class MetricQuerySet(models.QuerySet):
                     `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daypercentchange']>`
 
         """
-        return self.get_all_unique_names().filter(name__contains="percent")
+        return self.get_all_unique_names().filter(name__icontains="percent")
+
+    def get_all_headline_names(self) -> models.QuerySet:
+        """Gets all unique headline metric names as a flat list queryset
+
+        Returns:
+            QuerySet: A queryset of the individual metric names without repetition:
+                Examples:
+                    `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daypercentchange']>`
+
+        """
+        return self.get_all_unique_names().filter(metric_group__name="headline")
 
 
 class MetricManager(models.Manager):
@@ -127,3 +138,14 @@ class MetricManager(models.Manager):
 
         """
         return self.get_queryset().get_all_unique_percent_change_type_names()
+
+    def get_all_headline_names(self) -> MetricQuerySet:
+        """Gets all unique headline metric names as a flat list queryset
+
+        Returns:
+            QuerySet: A queryset of the individual metric names without repetition:
+                Examples:
+                    `<MetricQuerySet ['COVID-19_headline_ONSdeaths_7daypercentchange']>`
+
+        """
+        return self.get_queryset().get_all_headline_names()
