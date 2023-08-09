@@ -1,8 +1,9 @@
 from django.db.models import Manager
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class HeadlinesInterface:
@@ -11,10 +12,12 @@ class HeadlinesInterface:
         topic_name: str,
         metric_name: str,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     ):
         self.topic_name = topic_name
         self.metric_name = metric_name
         self.core_time_series_manager = core_time_series_manager
+        self.core_headline_manager = core_headline_manager
 
     def get_metric_value(self) -> float:
         """Gets the metric_value for the associated time series record.
@@ -76,5 +79,8 @@ def generate_headline_number(topic_name: str, metric_name: str) -> float:
     interface = HeadlinesInterface(topic_name=topic_name, metric_name=metric_name)
 
     metric_value = interface.get_metric_value()
+
+    if metric_value is None:
+        raise HeadlineNumberDataNotFoundError()
 
     return metric_value

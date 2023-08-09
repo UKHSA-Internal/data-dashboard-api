@@ -20,7 +20,6 @@ from metrics.api.views import (
     ChartsView,
     DownloadsView,
     EncodedChartsView,
-    FileUploadView,
     HeadlinesView,
     HealthView,
     TablesView,
@@ -116,7 +115,6 @@ private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
     # Metrics/private content endpoints
-    re_path(f"^{API_PREFIX}upload/", FileUploadView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
