@@ -125,26 +125,17 @@ class TestHeadlinesInterface:
 
 
 class TestHeadlinesInterfaceBeta:
-    @property
-    def example_args(self) -> dict[str, str]:
-        return {
-            "topic_name": "COVID-19",
-            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
-            "geography_name": "England",
-            "geography_type_name": "Nation",
-            "stratum_name": "default",
-            "age": "all",
-            "sex": "all",
-        }
-
-    def test_initializes_with_default_manager(self):
+    def test_initializes_with_default_manager(
+        self, example_headline_args: dict[str, str]
+    ):
         """
         Given a set of fake arguments
         When an instance of the `HeadlinesInterface` is created
         Then the default `CoreHeadlineManager`
             is set on the `HeadlinesInterface` object
         """
-        example_args = self.example_args
+        # Given
+        example_args = example_headline_args
 
         # When
         headlines_interface = access.HeadlinesInterfaceBeta(**example_args)
@@ -152,7 +143,9 @@ class TestHeadlinesInterfaceBeta:
         # Then
         assert headlines_interface.core_headline_manager == CoreHeadline.objects
 
-    def test_get_metric_value_calls_core_time_series_manager_with_correct_args(self):
+    def test_get_metric_value_calls_core_time_series_manager_with_correct_args(
+        self, example_headline_args: dict[str, str]
+    ):
         """
         Given a `CoreTimeSeriesManager`
         When `get_latest_metric_value()`
@@ -161,7 +154,7 @@ class TestHeadlinesInterfaceBeta:
             to retrieve the latest metric_value
         """
         # Given
-        expected_example_args = self.example_args
+        expected_example_args = example_headline_args
 
         spy_core_headline_manager = mock.Mock()
         headlines_interface = access.HeadlinesInterfaceBeta(
@@ -182,7 +175,7 @@ class TestHeadlinesInterfaceBeta:
         )
 
     def test_get_metric_value_raises_error_when_model_manager_raises_error_for_no_data_found(
-        self,
+        self, example_headline_args: dict[str, str]
     ):
         """
         Given a `CoreHeadlineManager` which contains no matching `CoreHeadline` objects
@@ -191,7 +184,7 @@ class TestHeadlinesInterfaceBeta:
         Then a `HeadlineNumberDataNotFoundError` is raised
         """
         # Given
-        expected_example_args = self.example_args
+        expected_example_args = example_headline_args
         spy_core_headline_manager = mock.Mock()
         spy_core_headline_manager.get_latest_metric_value.return_value = None
 
