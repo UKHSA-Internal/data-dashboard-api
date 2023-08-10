@@ -5,7 +5,19 @@ import pytest
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.interfaces.headlines import access
-from metrics.interfaces.headlines.access import HeadlineNumberDataNotFoundError
+
+
+@pytest.fixture
+def example_headline_args() -> dict[str, str]:
+    return {
+        "topic_name": "COVID-19",
+        "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
+        "geography_name": "England",
+        "geography_type_name": "Nation",
+        "stratum_name": "default",
+        "age": "all",
+        "sex": "all",
+    }
 
 
 class TestHeadlinesInterface:
