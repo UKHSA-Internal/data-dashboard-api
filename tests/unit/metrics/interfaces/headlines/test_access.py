@@ -243,3 +243,45 @@ class TestGenerateHeadlineNumber:
                 topic_name=mocked_topic,
                 metric_name=mocked_metric,
             )
+
+
+class TestGenerateHeadlineNumberBeta:
+    @mock.patch.object(access.HeadlinesInterfaceBeta, "get_latest_metric_value")
+    def test_delegates_call_to_interface_to_get_latest_metric_value(
+        self,
+        spy_get_latest_metric_value: mock.MagicMock,
+        example_headline_args: dict[str, str],
+    ):
+        """
+        Given a set of fake arguments
+        When `generate_headline_number()` is called
+        Then the call is delegated to `get_latest_metric_value()`
+            from an instance of the `HeadlinesInterface`
+        """
+        # Given
+        example_args = example_headline_args
+
+        # When
+        metric_value = access.generate_headline_number_beta(**example_args)
+
+        # Then
+        assert metric_value == spy_get_latest_metric_value.return_value
+
+    @mock.patch.object(access.HeadlinesInterfaceBeta, "get_latest_metric_value")
+    def test_raises_error_when_metric_value_is_none(
+        self,
+        mocked_get_metric_value: mock.MagicMock,
+        example_headline_args: dict[str, str],
+    ):
+        """
+        Given a set of fake arguments for a record which does not exist
+        When `generate_headline_number()` is called
+        Then a `HeadlineNumberDataNotFoundError` is raised
+        """
+        # Given
+        example_args = example_headline_args
+        mocked_get_metric_value.return_value = None
+
+        # When / Then
+        with pytest.raises(access.HeadlineNumberDataNotFoundError):
+            access.generate_headline_number_beta(**example_args)
