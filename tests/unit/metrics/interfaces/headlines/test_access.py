@@ -243,7 +243,7 @@ class TestGenerateHeadlineNumber:
         mocked_get_metric_value.return_value = None
 
         # When / Then
-        with pytest.raises(HeadlineNumberDataNotFoundError):
+        with pytest.raises(access.HeadlineNumberDataNotFoundError):
             access.generate_headline_number(
                 topic_name=mocked_topic,
                 metric_name=mocked_metric,
