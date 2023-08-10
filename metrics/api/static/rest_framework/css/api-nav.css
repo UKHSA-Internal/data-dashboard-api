@@ -1,0 +1,49 @@
+.navbar {
+    border-bottom: 10px solid #ffffff;
+}
+
+.navbar .container {
+    border-bottom: 15px solid #1D70B9;
+    margin-bottom: -15px;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding: 0;
+}
+
+.navbar-inverse .navbar-brand {
+    float: left;
+    text-align: left;
+    color: #ffffff;
+    padding-left: 0;
+}
+
+@media screen and (min-width: 576px) {
+    .navbar-inverse .navbar-brand {
+        text-align: center;
+        width: 62%;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .navbar-inverse .navbar-brand {
+        width: 60%;
+    }
+
+    .navbar .container {
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .navbar .container {
+        max-width: 940px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .navbar .container {
+        max-width: 1140px;
+    }
+}
