@@ -14,6 +14,7 @@
           crossorigin="anonymous"
     >
 {% endblock %}
+<link rel="stylesheet" type="text/css" href="{% static 'rest_framework/css/api-nav.css' %}" />
 {# Insert the UKHSA favicon #}
 <link rel="shortcut icon" type="image/png" href="/static/gov_uk_icon.png" />
 {% endblock %}
@@ -37,7 +38,6 @@
               {% block branding %}
                 <a class='navbar-brand navbar-center'
                    rel="nofollow"
-                   style="float: left; text-align: center; width: 60%; color: white"
                    href={{ frontend_url }}
                 >
                     UKHSA data dashboard
