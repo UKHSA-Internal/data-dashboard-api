@@ -32,7 +32,7 @@ gitdb==4.0.10
 GitPython==3.1.31
 grimp==2.5
 html5lib==1.1
-identify==2.5.6
+identify==2.5.26
 idna==3.4
 importlib-metadata==6.0.0
 inflection==0.5.1
