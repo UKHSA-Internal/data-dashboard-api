@@ -10,7 +10,7 @@ from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
 from tests.fakes.factories.metrics.headline_factory import FakeCoreHeadlineFactory
-from tests.fakes.managers.headlines import FakeCoreHeadlineManager
+from tests.fakes.managers.headline_manager import FakeCoreHeadlineManager
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 
 
