@@ -93,7 +93,7 @@ class TestHeadlinesView:
 class TestHeadlinesViewBeta:
     @property
     def path(self) -> str:
-        return "/headlines/v3/"
+        return "/api/headlines/v3/"
 
     @pytest.mark.django_db
     def test_get_returns_correct_response(
