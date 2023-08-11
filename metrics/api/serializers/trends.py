@@ -4,6 +4,7 @@ from rest_framework import serializers
 from metrics.api.serializers import help_texts
 from metrics.api.serializers.headlines import HeadlinesQuerySerializerBeta
 from metrics.data.models.core_models import Metric, Topic
+from metrics.domain.models.trends import TrendsParameters
 
 
 class TrendsQuerySerializer(serializers.Serializer):
@@ -57,6 +58,9 @@ class TrendsQuerySerializerBeta(HeadlinesQuerySerializerBeta):
         self.fields[
             "percentage_metric"
         ].choices = self.metric_manager.get_all_unique_percent_change_type_names()
+
+    def to_models(self) -> TrendsParameters:
+        return TrendsParameters(**self.validated_data)
 
 
 class TrendsResponseSerializer(serializers.Serializer):
