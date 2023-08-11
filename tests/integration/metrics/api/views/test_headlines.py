@@ -4,7 +4,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 
 
 class TestHeadlinesView:
@@ -88,3 +88,36 @@ class TestHeadlinesView:
 
         # Then
         assert response.status_code == HTTPStatus.UNAUTHORIZED
+
+
+class TestHeadlinesViewBeta:
+    @property
+    def path(self) -> str:
+        return "/headlines/v3/"
+
+    @pytest.mark.django_db
+    def test_get_returns_correct_response(
+        self,
+        authenticated_api_client: APIClient,
+        core_headline_example_beta: CoreHeadline,
+    ):
+        """
+        Given a valid payload for a `CoreHeadline` which exists
+        And an authenticated APIClient
+        When the `GET /api/headlines/v3/` endpoint is hit
+        Then an HTTP 200 OK response is returned with the associated metric_value
+        """
+        # Given
+        payload = {
+            "topic": core_headline_example_beta.metric.metric_group.topic.name,
+            "metric": core_headline_example_beta.metric.name,
+            "geography": core_headline_example_beta.geography.name,
+            "geography_type": core_headline_example_beta.geography.geography_type.name,
+        }
+
+        # When
+        response: Response = authenticated_api_client.get(path=self.path, data=payload)
+
+        # Then
+        assert response.status_code == HTTPStatus.OK
+        assert response.data == {"value": core_headline_example_beta.metric_value}
