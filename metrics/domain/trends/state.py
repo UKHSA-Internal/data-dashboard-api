@@ -32,7 +32,7 @@ class Trend(BaseModel):
     percentage_metric_name: str
     percentage_metric_value: float
 
-    def dict(self, *args, **kwargs) -> TREND_AS_DICT:
+    def model_dump(self, *args, **kwargs) -> TREND_AS_DICT:
         data = super().model_dump(*args, **kwargs)
         return self._add_arrow_direction_and_colour(data=data)
 

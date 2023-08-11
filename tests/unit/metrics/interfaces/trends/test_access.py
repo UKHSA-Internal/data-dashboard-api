@@ -264,4 +264,4 @@ class TestTrendNumbers:
         spy_get_trend.assert_called_once()
         mocked_trend = spy_get_trend.return_value
 
-        assert trend_data == mocked_trend.dict.return_value
+        assert trend_data == mocked_trend.model_dump.return_value

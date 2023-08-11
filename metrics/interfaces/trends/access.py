@@ -198,6 +198,6 @@ def generate_trend_numbers(
     )
 
     trend: Trend = interface.get_trend()
-    data: TREND_AS_DICT = trend.dict()
+    data: TREND_AS_DICT = trend.model_dump()
 
     return data
