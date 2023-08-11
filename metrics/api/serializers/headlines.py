@@ -1,4 +1,5 @@
 from django.db.models import Manager
+from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
@@ -85,7 +86,7 @@ class HeadlinesQuerySerializerBeta(serializers.Serializer):
         super().__init__(*args, **kwargs)
         try:
             self.populate_choices()
-        except RuntimeError:
+        except (RuntimeError, ProgrammingError, OperationalError):
             pass
 
     def populate_choices(self):
