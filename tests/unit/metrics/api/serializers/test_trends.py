@@ -519,6 +519,43 @@ class TestTrendsQuerySerializerBeta:
         expected_age_names: list[str] = age_manager.get_all_names()
         assert list(serializer.fields["age"].choices) == expected_age_names
 
+    def test_to_models(self):
+        """
+        Given a valid payload passed to a `TrendsQuerySerializer` object
+        When `to_models()` is called from the serializer
+        Then a model is returned containing the correct fields
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+        ) = self._setup_valid_data_payload_and_model_managers()
+        age_manager = FakeAgeManager(ages=[mock.Mock()])
+        serializer = TrendsQuerySerializerBeta(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+                "age_manager": age_manager,
+                "geography_manager": FakeGeographyManager([]),
+                "geography_type_manager": FakeGeographyTypeManager([]),
+                "stratum_manager": FakeStratumManager([]),
+            },
+        )
+        serializer.is_valid()
+
+        # When
+        trends_parameters = serializer.to_models()
+
+        # Then
+        assert trends_parameters.topic_name == valid_data_payload["topic"]
+        assert trends_parameters.metric_name == valid_data_payload["metric"]
+        assert (
+            trends_parameters.percentage_metric_name
+            == valid_data_payload["percentage_metric"]
+        )
+
 
 class TestTrendsResponseSerializer:
     def test_can_validate_successfully(self):
