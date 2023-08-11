@@ -201,3 +201,66 @@ def generate_trend_numbers(
     data: TREND_AS_DICT = trend.model_dump()
 
     return data
+
+
+def generate_trend_numbers_beta(
+    topic_name: str,
+    metric_name: str,
+    percentage_metric_name: str,
+    geography_name: str,
+    geography_type_name: str,
+    stratum_name: str,
+    sex: str,
+    age: str,
+) -> TREND_AS_DICT:
+    """Gets the trend data for the given metric names.
+
+    Args:
+        topic_name: The name of the disease being queried.
+            E.g. `COVID-19`
+        metric_name: The name of the metric being queried.
+            E.g. `COVID-19_deaths_ONSByDay`
+        percentage_metric_name: The name of the corresponding
+            percentage metric being queried.
+            E.g. `new_tests_7days_change_percentage`
+        geography_name: The name of the geography being queried.
+            E.g. `England`
+        geography_type_name: The name of the geography
+            type being queried.
+            E.g. `Nation`
+        stratum_name: The value of the stratum to apply additional filtering to.
+            E.g. `default`, which would be used to capture all strata.
+        sex: The gender to apply additional filtering to.
+            E.g. `F`, would be used to capture Females.
+            Note that options are `M`, `F`, or `ALL`.
+        age: The age range to apply additional filtering to.
+            E.g. `0_4` would be used to capture the age of 0-4 years old
+
+    Returns:
+        Dict containing the serialized trends data.
+            E.g.
+                {
+                  "metric_name": "new_cases_7days_change",
+                  "metric_value": -692,
+                  "percentage_metric_name": "new_deaths_7days_change_percentage",
+                  "percentage_metric_value": 3.1,
+                  "direction": "down",
+                  "colour": "green"
+                }
+
+    """
+    interface = TrendsInterfaceBeta(
+        topic_name=topic_name,
+        metric_name=metric_name,
+        percentage_metric_name=percentage_metric_name,
+        geography_name=geography_name,
+        geography_type_name=geography_type_name,
+        stratum_name=stratum_name,
+        sex=sex,
+        age=age,
+    )
+
+    trend: Trend = interface.get_trend()
+    data: TREND_AS_DICT = trend.model_dump()
+
+    return data
