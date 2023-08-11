@@ -28,7 +28,7 @@ class TestTrend:
         trend = Trend(**valid_payload)
 
         # When
-        trend_data: TREND_AS_DICT = trend.dict()
+        trend_data: TREND_AS_DICT = trend.model_dump()
 
         # Then
         expected_trend_data = valid_payload
