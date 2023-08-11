@@ -265,3 +265,43 @@ class TestTrendNumbers:
         mocked_trend = spy_get_trend.return_value
 
         assert trend_data == mocked_trend.model_dump.return_value
+
+
+class TestGenerateTrendNumbers:
+    @mock.patch.object(access.TrendsInterfaceBeta, "get_trend")
+    def test_delegates_call_to_interface_to_get_metric_values(
+        self, spy_get_trend: mock.MagicMock
+    ):
+        """
+        Given a `topic`, `metric_name` and `percentage_metric_name`
+        When `generate_trend_numbers()` is called
+        Then the call is delegated to `get_trend()` from an instance of the `TrendsInterface`
+            which is subsequently used to call and return `model_dump()` from the `Trend` model
+        """
+        # Given
+        mocked_topic = mock.Mock()
+        mocked_metric_name = mock.Mock()
+        mocked_percentage_metric_name = mock.Mock()
+        geography_name = mock.Mock()
+        geography_type_name = mock.Mock()
+        stratum_name = mock.Mock()
+        sex = mock.Mock()
+        age = mock.Mock()
+
+        # When
+        trend_data = access.generate_trend_numbers_beta(
+            topic_name=mocked_topic,
+            metric_name=mocked_metric_name,
+            percentage_metric_name=mocked_percentage_metric_name,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+
+        # Then
+        spy_get_trend.assert_called_once()
+        mocked_trend = spy_get_trend.return_value
+
+        assert trend_data == mocked_trend.model_dump.return_value
