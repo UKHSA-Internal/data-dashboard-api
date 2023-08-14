@@ -4,6 +4,10 @@ STRATUM_FIELD: str = """
 The smallest subgroup a metric can be broken down into.
 Defaults to `default`
 """
+AGE_FIELD: str = """
+The patient age band to apply any data filtering to
+E.g. `0_4`
+"""
 GEOGRAPHY_FIELD: str = """
 The geography constraints to apply any data filtering to.
 E.g. `London`

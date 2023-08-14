@@ -17,7 +17,6 @@ class AgeQuerySet(models.QuerySet):
             QuerySet: A queryset of the individual age names:
                 Examples:
                     `<AgeQuerySet ['40-44', '45-54']>`
-
         """
         return self.all().values_list("name", flat=True).order_by("name")
 

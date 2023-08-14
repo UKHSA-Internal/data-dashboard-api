@@ -1,6 +1,10 @@
 import pytest
 
-from metrics.domain.utils import ChartAxisFields, get_axis_name
+from metrics.domain.utils import (
+    ChartAxisFields,
+    _check_for_substring_match,
+    get_axis_name,
+)
 
 
 class TestGetAxisName:
@@ -117,3 +121,110 @@ class TestGetAxisName:
 
         # Then
         assert axis_value == ChartAxisFields.metric.value
+
+
+class TestCheckForSubstringMatch:
+    @pytest.mark.parametrize(
+        "metric_name",
+        [
+            "COVID-19_cases_casesByDay",
+            "COVID-19_cases_countRollingMean",
+            "COVID-19_cases_rateRollingMean",
+            "COVID-19_deaths_ONSByDay",
+            "COVID-19_deaths_ONSByWeek",
+            "COVID-19_deaths_ONSRollingMean",
+            "COVID-19_headline_7DayAdmissions",
+            "COVID-19_headline_7DayAdmissionsChange",
+            "COVID-19_headline_7DayAdmissionsPercentChange",
+            "COVID-19_headline_ONSdeaths_7daychange",
+            "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "COVID-19_headline_ONSdeaths_7daytotals",
+            "COVID-19_headline_newcases_7daychange",
+            "COVID-19_headline_newcases_7daypercentchange",
+            "COVID-19_headline_newcases_7daytotals",
+            "COVID-19_headline_positivity_latest",
+            "COVID-19_healthcare_AdmissionsByDay",
+            "COVID-19_healthcare_AdmissionsRollingMean",
+            "COVID-19_healthcare_OccupiedBedsByDay",
+            "COVID-19_testing_7daypositivity",
+            "RSV_headline_hospadmissionrateLatest",
+            "RSV_headline_positivityLatest",
+            "RSV_healthcare_hospadmissionrateByWeek",
+            "RSV_testing_positivityByWeek",
+            "adenovirus_headline_positivityLatest",
+            "hMPV_headline_positivityLatest",
+            "hMPV_testing_positivityByWeek",
+            "influenza_headline_ICUHDUadmissionrateChange",
+            "influenza_headline_ICUHDUadmissionrateLatest",
+            "influenza_headline_positivityLatest",
+            "influenza_healthcare_ICUHDUadmissionrateByWeek",
+            "parainfluenza_headline_positivityLatest",
+            "parainfluenza_testing_positivityByWeek",
+            "rhinovirus_headline_positivityLatest",
+            "rhinovirus_testing_positivityByWeek",
+        ],
+    )
+    def test_returns_true_for_cases_deaths_healthcare_substrings(
+        self, metric_name: str
+    ):
+        """
+        Given a metric name and a collection of substrings
+            of which 1 substring is contained within the metric name
+        When `_check_for_substring_match()` is called
+        Then True is returned
+        """
+        # Given
+        substrings: tuple[str, ...] = (
+            "cases",
+            "deaths",
+            "healthcare",
+            "admission",
+            "positivity",
+        )
+
+        # When
+        substrings_are_matching: bool = _check_for_substring_match(
+            string_to_check=metric_name, substrings=substrings
+        )
+
+        # Then
+        assert substrings_are_matching
+
+    @pytest.mark.parametrize(
+        "metric_name",
+        [
+            "COVID-19_vaccinations_autumn22_uptakeByDay",
+            "COVID-19_vaccinations_spring23_dosesByDay",
+            "COVID-19_vaccinations_autumn22_dosesByDay",
+            "COVID-19_vaccinations_spring23_uptakeByDay",
+            "COVID-19_headline_totalvaccineuptake_spring23",
+            "COVID-19_headline_newtests_7daypercentchange",
+            "COVID-19_headline_newtests_7daycountchange",
+            "COVID-19_headline_newtests_7daycounttotal",
+            "COVID-19_testing_PCRcountByDay",
+            "COVID-19_headline_totalvaccines_spring23",
+        ],
+    )
+    def test_returns_true_for_vaccination_testing_substrings(self, metric_name: str):
+        """
+        Given a metric name and a collection of substrings
+            of which 1 substring is contained within the metric name
+        When `_check_for_substring_match()` is called
+        Then True is returned
+        """
+        # Given
+        substrings: tuple[str, ...] = (
+            "vaccine",
+            "vaccination",
+            "vaccinated",
+            "tests",
+            "pcr",
+        )
+
+        # When
+        substrings_are_matching: bool = _check_for_substring_match(
+            string_to_check=metric_name, substrings=substrings
+        )
+
+        # Then
+        assert substrings_are_matching

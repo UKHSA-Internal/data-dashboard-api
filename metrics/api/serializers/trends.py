@@ -2,7 +2,9 @@ from django.db.models import Manager
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts
+from metrics.api.serializers.headlines import HeadlinesQuerySerializerBeta
 from metrics.data.models.core_models import Metric, Topic
+from metrics.domain.models.trends import TrendsParameters
 
 
 class TrendsQuerySerializer(serializers.Serializer):
@@ -42,6 +44,23 @@ class TrendsQuerySerializer(serializers.Serializer):
     @property
     def metric_manager(self) -> Manager:
         return self.context.get("metric_manager", Metric.objects)
+
+
+class TrendsQuerySerializerBeta(HeadlinesQuerySerializerBeta):
+    percentage_metric = serializers.ChoiceField(
+        choices=[],
+        required=True,
+        help_text=help_texts.TREND_PERCENTAGE_METRIC_NAME_FIELD,
+    )
+
+    def populate_choices(self):
+        super().populate_choices()
+        self.fields[
+            "percentage_metric"
+        ].choices = self.metric_manager.get_all_unique_percent_change_type_names()
+
+    def to_models(self) -> TrendsParameters:
+        return TrendsParameters(**self.validated_data)
 
 
 class TrendsResponseSerializer(serializers.Serializer):
