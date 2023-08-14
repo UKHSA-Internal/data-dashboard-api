@@ -347,7 +347,11 @@ class TestConsumer:
             (3, {"geography_type": "name"}, "geography_type_manager"),
             (
                 4,
-                {"geography": "name", "geography_type": "geography_type_id"},
+                {
+                    "geography": "name",
+                    "geography_type": "geography_type_id",
+                    "geography_code": "geography_code",
+                },
                 "geography_manager",
             ),
             (5, {"metric_group": "name", "topic": "topic_id"}, "metric_group_manager"),
