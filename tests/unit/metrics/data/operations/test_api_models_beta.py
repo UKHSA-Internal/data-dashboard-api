@@ -11,7 +11,7 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
     def test_uses_correct_fields_from_core_time_series(self):
         """
         Given a mocked `TimeSeries` object
-        When `api_time_series()` is called
+        When `create_api_time_series_from_core_time_series()` is called
         Then an `APITimeSeries` object is created
         And it takes the new fields from the `CoreTimeSeries` object
         """
