@@ -248,6 +248,11 @@ def generate_trend_numbers_beta(
                   "colour": "green"
                 }
 
+    Raises:
+        `TrendNumberDataNotFoundError`: If no data is found
+            for the given combination of
+            `topic` / `metric` / `percentage_metric`
+
     """
     interface = TrendsInterfaceBeta(
         topic_name=topic_name,

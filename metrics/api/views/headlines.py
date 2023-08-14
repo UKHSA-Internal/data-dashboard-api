@@ -27,9 +27,14 @@ class HeadlinesView(APIView):
         parameters=[HeadlinesQuerySerializer],
         responses={HTTPStatus.OK.value: HeadlinesResponseSerializer},
         tags=[HEADLINES_API_TAG],
+        deprecated=True,
     )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
+
+
+        **Note this endpoint is now deprecated as it only reference Alpha-scheme data.
+        For data using the latest schema, please migrate to `/api/headlines/v3/`**
 
         ---
 
