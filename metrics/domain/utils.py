@@ -34,6 +34,7 @@ class ChartTypes(Enum):
 
 class ChartAxisFields(Enum):
     stratum = "stratum__name"
+    age = "age__name"
     date = "date"
     metric = "metric_value"
     geography = "geography__geography_type__name"

@@ -11,14 +11,12 @@ class AgeQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `AgeManager`"""
 
     def get_all_names(self) -> models.QuerySet:
-        """Gets all available ages as a flat list queryset.
+        """Gets all available age names as a flat list queryset.
 
         Returns:
-            A queryset of the individual age categories
-                ordered in descending ordering starting from 0:
+            QuerySet: A queryset of the individual age names:
                 Examples:
-                    `<AgeQuerySet ['0-4', '10-14']>`
-
+                    `<AgeQuerySet ['40-44', '45-54']>`
         """
         return self.all().values_list("name", flat=True).order_by("name")
 
@@ -30,13 +28,12 @@ class AgeManager(models.Manager):
         return AgeQuerySet(model=self.model, using=self.db)
 
     def get_all_names(self) -> AgeQuerySet:
-        """Gets all available age categories as a flat list queryset.
+        """Gets all available age names as a flat list queryset.
 
         Returns:
-            A queryset of the individual age categories
-                ordered in descending ordering starting from 0:
+            QuerySet: A queryset of the individual age names:
                 Examples:
-                    `<AgeQuerySet ['0-4', '10-14']>`
+                    `<AgeQuerySet ['40-44', '45-54']>`
 
         """
         return self.get_queryset().get_all_names()

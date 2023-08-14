@@ -190,14 +190,24 @@ def get_x_and_y_values(
     Args:
         plot_parameters: A `PlotParameters` model containing
             the requested info
-        queryset:
+        queryset: An ordered queryset from oldest -> newest
+            of the (dt, metric_value) numbers.
+                Examples:
+                    `<CoreTimeSeriesQuerySet [
+                        (datetime.date(2022, 10, 10), Decimal('0.8')),
+                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                    ]>`
 
     Returns:
+        Tuple containing the X and Y values
 
     """
 
-    # Stratum needs special treatment because a regular sort does not yield the required result
-    if plot_parameters.x_axis == ChartAxisFields.stratum.name:
+    # Stratum/Age needs special treatment because a regular sort does not yield the required result
+    if plot_parameters.x_axis in (
+        ChartAxisFields.stratum.name,
+        ChartAxisFields.age.name,
+    ):
         return sort_by_stratum(queryset=queryset)
 
     return unzip_values(values=queryset)
