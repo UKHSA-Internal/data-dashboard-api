@@ -87,7 +87,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
     @staticmethod
     def _filter_by_age(queryset, age):
-        return queryset.filter(age=age)
+        return queryset.filter(age__name=age)
 
     def filter_for_x_and_y_values(
         self,
