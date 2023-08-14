@@ -10,7 +10,7 @@ from metrics.data.operations.api_models_beta import (
 class TestCreateAPITimeSeriesFromCoreTimeSeries:
     def test_uses_correct_fields_from_core_time_series(self):
         """
-        Given a mocked `TimeSeries` object
+        Given a mocked `CoreTimeSeries` object
         When `create_api_time_series_from_core_time_series()` is called
         Then an `APITimeSeries` object is created
         And it takes the new fields from the `CoreTimeSeries` object
