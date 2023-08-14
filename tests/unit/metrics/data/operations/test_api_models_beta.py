@@ -13,7 +13,7 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
         Given a mocked `TimeSeries` object
         When `api_time_series()` is called
         Then an `APITimeSeries` object is created
-        And it takes the new fields from the `TimeSeries` object
+        And it takes the new fields from the `CoreTimeSeries` object
         """
         # Given
         mocked_time_series = mock.Mock(spec=CoreTimeSeries)
