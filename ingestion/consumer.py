@@ -186,7 +186,11 @@ class Consumer:
                 model_manager=self.geography_type_manager,
             ),
             FieldsAndModelManager(
-                fields={"geography": "name", "geography_type": "geography_type_id"},
+                fields={
+                    "geography": "name",
+                    "geography_type": "geography_type_id",
+                    "geography_code": "geography_code",
+                },
                 model_manager=self.geography_manager,
             ),
             FieldsAndModelManager(
