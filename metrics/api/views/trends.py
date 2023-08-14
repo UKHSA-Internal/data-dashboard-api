@@ -25,9 +25,13 @@ class TrendsView(APIView):
         parameters=[TrendsQuerySerializer],
         responses={HTTPStatus.OK.value: TrendsResponseSerializer},
         tags=[TRENDS_API_TAG],
+        deprecated=True,
     )
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
+
+        **Note this endpoint is now deprecated as it only reference Alpha-scheme data.
+        For data using the latest schema, please migrate to `/api/trends/v3/`**
 
         The response will include data to indicate whether the change should be considered positive.
 
