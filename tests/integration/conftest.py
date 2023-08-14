@@ -54,6 +54,43 @@ def core_headline_example_beta() -> CoreHeadline:
 
 
 @pytest.fixture
+def core_trend_example_beta() -> tuple[CoreHeadline, CoreHeadline]:
+    topic = Topic.objects.create(name="COVID-19")
+    metric_group = MetricGroup.objects.create(name="headline", topic=topic)
+    metric = Metric.objects.create(
+        name="COVID-19_headline_ONSdeaths_7daychange",
+        metric_group=metric_group,
+        topic=topic,
+    )
+    percentage_metric = Metric.objects.create(
+        name="COVID-19_headline_ONSdeaths_7daypercentchange",
+        metric_group=metric_group,
+        topic=topic,
+    )
+
+    geography_type = GeographyType.objects.create(name="Nation")
+    geography = Geography.objects.create(name="England", geography_type=geography_type)
+
+    main_timeseries = CoreHeadline.objects.create(
+        metric_value=123,
+        metric=metric,
+        geography=geography,
+        refresh_date="2023-01-07",
+        period_start="2023-01-01",
+        period_end="2023-01-07",
+    )
+    percentage_timeseries = CoreHeadline.objects.create(
+        metric_value=3,
+        metric=percentage_metric,
+        geography=geography,
+        refresh_date="2023-01-07",
+        period_start="2023-01-01",
+        period_end="2023-01-07",
+    )
+    return main_timeseries, percentage_timeseries
+
+
+@pytest.fixture
 def core_trend_percentage_example() -> list[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
