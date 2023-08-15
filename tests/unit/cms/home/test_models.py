@@ -141,10 +141,7 @@ class TestTemplateHomePage:
         # Check the initial text card is set up correctly
         text_card = covid_content_section[0]
         assert text_card.block_type == "text_card"
-        assert (
-            "The UKHSA dashboard for data and insights on COVID-19"
-            in text_card.value["body"].source
-        )
+        assert "Summary of COVID-19 data." in text_card.value["body"].source
 
     def test_covid_19_section_headline_number_row_card(self):
         """
@@ -197,16 +194,22 @@ class TestTemplateHomePage:
         # Check that the headline_number block has the correct params
         first_column_headline_block_value = first_column_component["rows"][0].value
         assert first_column_headline_block_value["topic"] == self.covid_19
-        assert first_column_headline_block_value["metric"] == "new_cases_7days_sum"
+        assert (
+            first_column_headline_block_value["metric"]
+            == "COVID-19_headline_newcases_7daytotals"
+        )
         assert first_column_headline_block_value["body"] == "Weekly"
 
         # Check that the trend_number block has the correct params
         first_column_trend_block_value = first_column_component["rows"][1].value
         assert first_column_trend_block_value["topic"] == self.covid_19
-        assert first_column_trend_block_value["metric"] == "new_cases_7days_change"
+        assert (
+            first_column_trend_block_value["metric"]
+            == "COVID-19_headline_newcases_7daychange"
+        )
         assert (
             first_column_trend_block_value["percentage_metric"]
-            == "new_cases_7days_change_percentage"
+            == "COVID-19_headline_newcases_7daypercentchange"
         )
         assert (
             first_column_trend_block_value["body"]
@@ -242,19 +245,9 @@ class TestTemplateHomePage:
         assert fourth_column_headline_block_value["topic"] == self.covid_19
         assert (
             fourth_column_headline_block_value["metric"]
-            == "latest_total_vaccinations_autumn22"
+            == "COVID-19_headline_totalvaccines_spring23"
         )
         assert fourth_column_headline_block_value["body"] == "Autumn booster"
-
-        # Check that the bottom percentage block has the correct params
-        assert fourth_column_component["rows"][1].block_type == "percentage_number"
-        fourth_column_percentage_block_value = fourth_column_component["rows"][1].value
-        assert fourth_column_percentage_block_value["topic"] == self.covid_19
-        assert (
-            fourth_column_percentage_block_value["metric"]
-            == "latest_vaccinations_uptake_autumn22"
-        )
-        assert fourth_column_percentage_block_value["body"] == "Percentage uptake"
 
     def test_covid_19_section_headline_number_row_single_headline_column_with_percentage_block(
         self,
@@ -285,7 +278,8 @@ class TestTemplateHomePage:
         fifth_column_percentage_block_value = fifth_column_value["rows"][0].value
         assert fifth_column_percentage_block_value["topic"] == self.covid_19
         assert (
-            fifth_column_percentage_block_value["metric"] == "positivity_7days_latest"
+            fifth_column_percentage_block_value["metric"]
+            == "COVID-19_headline_positivity_latest"
         )
         assert fifth_column_percentage_block_value["body"] == "Virus tests positivity"
 
@@ -341,7 +335,7 @@ class TestTemplateHomePage:
         chart = chart_with_headline_and_trend_card_value["chart"]
         chart_plot_value = chart[0].value
         assert chart_plot_value["topic"] == self.covid_19
-        assert chart_plot_value["metric"] == "new_cases_daily"
+        assert chart_plot_value["metric"] == "COVID-19_cases_casesByDay"
         assert (
             chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
         )
@@ -372,16 +366,22 @@ class TestTemplateHomePage:
 
         headline_number_block_value = headline_number_columns[0].value
         assert headline_number_block_value["topic"] == self.covid_19
-        assert headline_number_block_value["metric"] == "new_cases_7days_sum"
+        assert (
+            headline_number_block_value["metric"]
+            == "COVID-19_headline_newcases_7daychange"
+        )
         assert (
             headline_number_block_value["body"] == self.expected_trend_number_block_body
         )
 
         trend_number_block_value = headline_number_columns[1].value
         assert trend_number_block_value["topic"] == self.covid_19
-        assert trend_number_block_value["metric"] == "new_cases_7days_change"
+        assert (
+            trend_number_block_value["metric"]
+            == "COVID-19_headline_newcases_7daychange"
+        )
         assert (
             trend_number_block_value["percentage_metric"]
-            == "new_cases_7days_change_percentage"
+            == "COVID-19_headline_newcases_7daypercentchange"
         )
         assert trend_number_block_value["body"] == ""

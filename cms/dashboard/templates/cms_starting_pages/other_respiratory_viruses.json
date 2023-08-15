@@ -1,27 +1,27 @@
 {
-    "id": 10,
+    "id": 7,
     "meta": {
+        "seo_title": "Other Respiratory Viruses | UKHSA data dashboard",
+        "search_description": "Overall summary of other respiratory viruses in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "http://localhost/api/pages/10/",
+        "detail_url": "http://localhost/api/pages/7/",
         "html_url": null,
         "slug": "other-respiratory-viruses",
         "show_in_menus": true,
-        "seo_title": "Other Respiratory Viruses | UKHSA data dashboard",
-        "search_description": "Overall summary of other respiratory viruses in circulation within the UK",
-        "first_published_at": "2023-05-12T16:58:42.332020+01:00",
+        "first_published_at": "2023-08-14T17:22:11.682522+01:00",
         "alias_of": null,
         "parent": {
-            "id": 6,
+            "id": 4,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/6/",
+                "detail_url": "http://localhost/api/pages/4/",
                 "html_url": null
             },
             "title": "Respiratory viruses"
         }
     },
     "title": "Other respiratory viruses",
-    "page_description": "<p data-block-key=\"rjyu9\">Data and insights from the UKHSA on other respiratory viruses. <a href=\"https://www.gov.uk/government/organisations/uk-health-security-agency\\\">See the simple summary for England (opens in a new tab)</a>.</p>",
+    "page_description": "<p data-block-key=\"rjyu9\">Other common respiratory viruses include  adenovirus, human metapneumovirus (hMPV), parainfluenza, rhinovirus and  respiratory syncytial virus (RSV).</p><p data-block-key=\"crg94\">The  healthcare data we have for other respiratory viruses comes from a  sentinel surveillance system (a data collection method used to monitor  trends). This means the healthcare data is not a count of every person  being treated for the respiratory virus in hospital. Find out more about  <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for other respiratory viruses</a>.</p>",
     "body": [
         {
             "type": "section",
@@ -37,22 +37,22 @@
                                     "value": {
                                         "title": "Line chart comparing RSV hospital (ICU or HDU) admission rates of positive cases per 100,000 population reported through SARI Watch, England",
                                         "body": "RSV SARI Watch surveillance has run from week 40 to week 20. In the 2022 to 2023 season onwards this was extended to run throughout the year, to allow for surveillance of out-of-season trends.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "RSV",
-                                                    "metric": "weekly_overall_hospital_admissions_rate",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
-                                                    "age": "",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -66,76 +66,6 @@
                             ]
                         },
                         "id": "c5fcf54c-1b0f-4a4e-9011-157e8c654454"
-                    },
-                    {
-                        "type": "chart_row_card",
-                        "value": {
-                            "columns": [
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Bar chart comparing RSV hospital admissions count by week",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with RSV as a weekly time series.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "weekly_hospital_admissions",
-                                                    "chart_type": "bar",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
-                                                },
-                                                "id": "1aaf26a0-4a87-491f-9359-e9a944a630f1"
-                                            }
-                                        ]
-                                    },
-                                    "id": "95375882-5cb9-4e6b-8086-e333426ade6b"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Bar chart comparing weekly RSV ICU/HDU admissions count by week",
-                                        "body": "Weekly admission rates of patients admitted to ICU/HDU with RSV as a weekly time series.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "weekly_icuhdu_admissions",
-                                                    "chart_type": "bar",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
-                                                },
-                                                "id": "ea2a0886-cd39-4ead-a3b8-74e827deb3c8"
-                                            }
-                                        ]
-                                    },
-                                    "id": "a7ff6a90-91ce-48d9-bedf-883638f118cc"
-                                }
-                            ]
-                        },
-                        "id": "aeca81ff-351f-4cf2-a677-71c38536ab8b"
                     }
                 ]
             },
@@ -155,22 +85,22 @@
                                     "value": {
                                         "title": "Line chart comparing Adenovirus test positivity count by week",
                                         "body": "Weekly admissions rates of patients admitted to hospital with Adenovirus as a weekly time series.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Adenovirus",
-                                                    "metric": "weekly_positivity",
+                                                    "metric": "adenovirus_testing_positivityByWeek",
                                                     "chart_type": "line_with_shaded_section",
-                                                    "age": "",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "sex": null,
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -180,113 +110,6 @@
                                         ]
                                     },
                                     "id": "5444836e-61df-4e3c-b8e7-42d998207ced"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Line chart comparing Adenovirus test positivity count by week broken down by age",
-                                        "body": "Age breakdown of people testing positive for Adenovirus per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Adenovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "0 to 4 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "4a66b485-6650-4795-907c-abea344ea76d"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Adenovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "5 to 14 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "9315867e-cf51-4940-a3ad-e26028976933"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Adenovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "15 to 44 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "1285ba99-6987-4d03-8148-90cfd551b490"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Adenovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "45_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "45 to 64 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "b43595bd-5207-4cdf-a729-8bd6a6533a6d"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Adenovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "65+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "65 years and over",
-                                                    "line_colour": "DARK_BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "79a3b4e2-5756-4ee0-a942-a04399b7ff17"
-                                            }
-                                        ]
-                                    },
-                                    "id": "111b7f86-bd64-4ade-9a60-fb6b2392f112"
                                 }
                             ]
                         },
@@ -301,22 +124,22 @@
                                     "value": {
                                         "title": "Line chart comparing hMPV test positivity count by week",
                                         "body": "Weekly admissions rates of patients admitted to hospital with hMPV as a weekly time series.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "hMPV",
-                                                    "metric": "weekly_positivity",
+                                                    "metric": "hMPV_testing_positivityByWeek",
                                                     "chart_type": "line_with_shaded_section",
-                                                    "age": "",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -326,113 +149,6 @@
                                         ]
                                     },
                                     "id": "f7556f3b-29f8-4be8-989f-69e80b245477"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Line chart comparing hMPV test positivity count by week broken down by age",
-                                        "body": "Age breakdown of people testing positive for hMPV per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "hMPV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "0 to 4 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "6594aef4-ae6d-41af-b6b4-de6a56eda6cb"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "hMPV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "5 to 14 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "b3e1456b-e9d3-486a-9625-eb7d0ff75920"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "hMPV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "15 to 44 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "8389118e-b484-42c4-8dc2-da4c6c2f6263"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "hMPV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "45_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "45 to 64 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "71950df7-5ac9-498d-b9b9-6298f1d71d52"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "hMPV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "65+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "65 years and over",
-                                                    "line_colour": "DARK_BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "71172c7d-305d-4510-838d-ff7aa5641de3"
-                                            }
-                                        ]
-                                    },
-                                    "id": "840dabb8-ec04-404e-9083-da7551b614b5"
                                 }
                             ]
                         },
@@ -447,22 +163,22 @@
                                     "value": {
                                         "title": "Line chart comparing Parainfluenza test positivity count by week",
                                         "body": "Weekly admissions rates of patients admitted to hospital with Parainfluenza as a weekly time series.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Parainfluenza",
-                                                    "metric": "weekly_positivity",
+                                                    "metric": "parainfluenza_testing_positivityByWeek",
                                                     "chart_type": "line_with_shaded_section",
-                                                    "age": "",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "sex": null,
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -472,113 +188,6 @@
                                         ]
                                     },
                                     "id": "7d9ff06d-8376-4303-8205-b18953c66a28"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Line chart comparing Parainfluenza test positivity count by week broken down by age",
-                                        "body": "Age breakdown of people testing positive for Parainfluenza per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Parainfluenza",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "0 to 4 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "93dbc8cc-680f-4e28-8aae-28a07f78370a"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Parainfluenza",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "5 to 14 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "d26c4969-8a80-4f98-88b7-d938ece14260"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Parainfluenza",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "15 to 44 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "38c74599-c405-4eac-b371-47a534282ef8"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Parainfluenza",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "45_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "45 to 64 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "e9ba8c89-383a-4ce3-a4e3-41f7acfe7aad"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Parainfluenza",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "65+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "65 years and over",
-                                                    "line_colour": "DARK_BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "550616ce-6ae2-4bf7-a38f-82fc2e8ce88b"
-                                            }
-                                        ]
-                                    },
-                                    "id": "db4509d8-8edc-41e8-b84f-2a89ed5f29f6"
                                 }
                             ]
                         },
@@ -593,22 +202,22 @@
                                     "value": {
                                         "title": "Line chart comparing Rhinovirus test positivity count by week",
                                         "body": "Weekly admissions rates of patients admitted to hospital with Rhinovirus as a weekly time series.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Rhinovirus",
-                                                    "metric": "weekly_positivity",
+                                                    "metric": "rhinovirus_testing_positivityByWeek",
                                                     "chart_type": "line_with_shaded_section",
-                                                    "age": "",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "sex": null,
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -618,113 +227,6 @@
                                         ]
                                     },
                                     "id": "97f595ff-3dcd-46dd-900c-5143e7ace6e9"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Line chart comparing Rhinovirus test positivity count by week broken down by age",
-                                        "body": "Age breakdown of people testing positive for Rhinovirus per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Rhinovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "0 to 4 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "a4f18431-fd1b-462f-88b7-a78710d3303c"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Rhinovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "5 to 14 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "516177c2-b058-458a-b685-30b93d758e76"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Rhinovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "15 to 44 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "5f926e66-cb40-4c76-80e4-e989aa41aa8d"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Rhinovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "45_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "45 to 64 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "1bc40a0e-ce93-481b-a853-7f9472de561a"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Rhinovirus",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "65+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "65 years and over",
-                                                    "line_colour": "DARK_BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "c553c951-6825-4baf-bb4f-64b25a82184b"
-                                            }
-                                        ]
-                                    },
-                                    "id": "5d73fc12-91cb-4bac-86eb-735836628600"
                                 }
                             ]
                         },
@@ -739,22 +241,22 @@
                                     "value": {
                                         "title": "Line chart comparing RSV test positivity count by week",
                                         "body": "Weekly admissions rates of patients admitted to hospital with RSV as a weekly time series.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "RSV",
-                                                    "metric": "weekly_positivity",
+                                                    "metric": "RSV_testing_positivityByWeek",
                                                     "chart_type": "line_with_shaded_section",
-                                                    "age": "",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
                                                     "geography": "",
                                                     "geography_type": "",
-                                                    "sex": null,
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -764,113 +266,6 @@
                                         ]
                                     },
                                     "id": "1fe5aaf7-ebfe-44ad-9438-51bc6c2b1f8c"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Line chart comparing RSV test positivity count by week broken down by age",
-                                        "body": "Age breakdown of people testing positive for Rhinovirus per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "0 to 4 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "d7bed88e-5ba6-4125-a461-5e68abdc5ccb"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "5 to 14 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "98f42d97-136f-420a-b8ed-3cf1ac440815"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "15 to 44 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "f542375d-1291-48cb-b22c-504439aa53f1"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "45_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "45 to 64 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "4813d13d-2326-498c-bc9f-be21d28a63af"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "weekly_positivity_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "age": "",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "65+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "65 years and over",
-                                                    "line_colour": "DARK_BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "490f11a0-e40b-4124-b70b-c4729dcb30b8"
-                                            }
-                                        ]
-                                    },
-                                    "id": "88c235e7-e2a9-496b-821d-ec4032db26d3"
                                 }
                             ]
                         },
@@ -933,5 +328,5 @@
             "body": "<p data-block-key=\"4kyrm\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-15T16:50:56.099792+01:00"
+    "last_published_at": "2023-08-15T11:35:01.144051+01:00"
 }
