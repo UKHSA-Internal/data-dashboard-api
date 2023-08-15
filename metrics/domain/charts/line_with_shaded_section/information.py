@@ -85,7 +85,7 @@ def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool
         "cases",
         "deaths",
         "admission",
-        "covid_occupied",
+        "occupied",
         "positivity",
     )
     increasing_is_good: tuple[str, ...] = (
