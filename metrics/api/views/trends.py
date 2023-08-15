@@ -76,10 +76,11 @@ class TrendsView(APIView):
                 metric_name=metric_name,
                 percentage_metric_name=percentage_metric_name,
             )
-        except TrendNumberDataNotFoundError as error:
-            return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
-            )
+        except TrendNumberDataNotFoundError:
+            request_data = request.query_params.dict()
+            request_data["geography"] = "England"
+            request_data["geography_type"] = "Nation"
+            return _handle_beta_schema_trends_request(request_data=request_data)
 
         return Response(trends_data)
 
@@ -125,25 +126,29 @@ class TrendsViewBeta(APIView):
         and a topic of `Influenza` will not return any data.
 
         """
-        query_serializer = TrendsQuerySerializerBeta(data=request.query_params)
-        query_serializer.is_valid(raise_exception=True)
+        return _handle_beta_schema_trends_request(request_data=request.query_params)
 
-        serialized_model: TrendsParameters = query_serializer.to_models()
 
-        try:
-            trends_data: TREND_AS_DICT = generate_trend_numbers_beta(
-                topic_name=serialized_model.topic_name,
-                metric_name=serialized_model.metric_name,
-                percentage_metric_name=serialized_model.percentage_metric_name,
-                geography_name=serialized_model.geography_name,
-                geography_type_name=serialized_model.geography_type_name,
-                stratum_name=serialized_model.stratum_name,
-                sex=serialized_model.sex,
-                age=serialized_model.age,
-            )
-        except TrendNumberDataNotFoundError as error:
-            return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
-            )
+def _handle_beta_schema_trends_request(request_data):
+    query_serializer = TrendsQuerySerializerBeta(data=request_data)
+    query_serializer.is_valid(raise_exception=True)
 
-        return Response(trends_data)
+    serialized_model: TrendsParameters = query_serializer.to_models()
+
+    try:
+        trends_data: TREND_AS_DICT = generate_trend_numbers_beta(
+            topic_name=serialized_model.topic_name,
+            metric_name=serialized_model.metric_name,
+            percentage_metric_name=serialized_model.percentage_metric_name,
+            geography_name=serialized_model.geography_name,
+            geography_type_name=serialized_model.geography_type_name,
+            stratum_name=serialized_model.stratum_name,
+            sex=serialized_model.sex,
+            age=serialized_model.age,
+        )
+    except TrendNumberDataNotFoundError as error:
+        return Response(
+            status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+        )
+
+    return Response(trends_data)
