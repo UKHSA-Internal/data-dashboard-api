@@ -78,10 +78,11 @@ class HeadlinesView(APIView):
             headline_number: str = generate_headline_number(
                 topic_name=topic, metric_name=metric
             )
-        except BaseInvalidHeadlinesRequestError as error:
-            return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
-            )
+        except BaseInvalidHeadlinesRequestError:
+            request_data = request.query_params.dict()
+            request_data["geography"] = "England"
+            request_data["geography_type"] = "Nation"
+            return _handle_beta_schema_headlines_request(request_data=request_data)
 
         return Response({"value": headline_number})
 
@@ -135,24 +136,28 @@ class HeadlinesViewBeta(APIView):
         A valid metric name for this endpoint should include `headline` as the metric group part of the name.
 
         """
-        query_serializer = HeadlinesQuerySerializerBeta(data=request.query_params)
-        query_serializer.is_valid(raise_exception=True)
+        return _handle_beta_schema_headlines_request(request_data=request.query_params)
 
-        serialized_model: HeadlineParameters = query_serializer.to_models()
 
-        try:
-            headline_number: float = generate_headline_number_beta(
-                topic_name=serialized_model.topic_name,
-                metric_name=serialized_model.metric_name,
-                geography_type_name=serialized_model.geography_type_name,
-                geography_name=serialized_model.geography_name,
-                stratum_name=serialized_model.stratum_name,
-                age=serialized_model.age,
-                sex=serialized_model.sex,
-            )
-        except BaseInvalidHeadlinesRequestError as error:
-            return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
-            )
+def _handle_beta_schema_headlines_request(request_data):
+    query_serializer = HeadlinesQuerySerializerBeta(data=request_data)
+    query_serializer.is_valid(raise_exception=True)
 
-        return Response({"value": headline_number})
+    serialized_model: HeadlineParameters = query_serializer.to_models()
+
+    try:
+        headline_number: float = generate_headline_number_beta(
+            topic_name=serialized_model.topic_name,
+            metric_name=serialized_model.metric_name,
+            geography_type_name=serialized_model.geography_type_name,
+            geography_name=serialized_model.geography_name,
+            stratum_name=serialized_model.stratum_name,
+            age=serialized_model.age,
+            sex=serialized_model.sex,
+        )
+    except BaseInvalidHeadlinesRequestError as error:
+        return Response(
+            status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+        )
+
+    return Response({"value": headline_number})
