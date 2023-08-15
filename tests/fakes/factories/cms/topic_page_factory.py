@@ -29,3 +29,7 @@ class FakeTopicPageFactory(factory.Factory):
     @classmethod
     def build_other_respiratory_viruses_page_from_template(cls) -> FakeTopicPage:
         return cls._build_page(page_name="other_respiratory_viruses")
+
+    @classmethod
+    def build_influenza_page_from_template(cls) -> FakeTopicPage:
+        return cls._build_page(page_name="influenza")
