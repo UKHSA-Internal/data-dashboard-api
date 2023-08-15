@@ -33,8 +33,7 @@ class TestBuildCMSSite:
             "respiratory-viruses",
             "covid-19",
             "influenza",
-            "how-to-use-this-data",
-            "maps",
+            "location-based-data",
             "about",
         ]
         created_slugs = [item["meta"]["slug"] for item in items]
@@ -45,8 +44,7 @@ class TestBuildCMSSite:
             "Respiratory viruses",
             "COVID-19",
             "Influenza",
-            "How to use this data",
-            "Maps",
+            "Location based data",
             "About",
             "What's new",
         ]
