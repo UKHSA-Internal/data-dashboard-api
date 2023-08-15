@@ -94,11 +94,13 @@ class TestDoesMetricHaveMultipleRecords:
         metric_name = "weekly_positivity"
         topic_name = "Influenza"
         date_from = datetime.date(year=2022, month=1, day=1)
+        date_to = datetime.date(year=2023, month=1, day=1)
         plot_parameters = PlotParameters(
             metric=metric_name,
             topic=topic_name,
             chart_type=ChartTypes.simple_line.value,
             date_from=date_from.strftime(EXPECTED_DATE_FORMAT),
+            date_to=date_to.strftime(EXPECTED_DATE_FORMAT),
         )
 
         matching_record = FakeCoreTimeSeriesFactory.build_time_series(
@@ -190,6 +192,7 @@ class TestDoesMetricHaveMultipleRecords:
             topic_name=valid_plot_parameters.topic_name,
             metric_name=valid_plot_parameters.metric_name,
             date_from=valid_plot_parameters.date_from_value,
+            date_to=valid_plot_parameters.date_to_value,
         )
 
 

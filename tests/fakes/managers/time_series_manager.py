@@ -24,6 +24,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.datetime | str,
+        date_to: datetime.datetime | str,
     ) -> int:
         date_from = _convert_string_to_date(date_string=date_from)
 
@@ -33,6 +34,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             if x.metric.metric_group.topic.name == topic_name
             if x.metric.name == metric_name
             if x.date >= date_from
+            if x.date <= date_to
         ]
         return len(filtered_for_metric_topic_and_date)
 
@@ -57,6 +59,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        date_to: Optional[datetime.date] = None,
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
@@ -71,7 +74,9 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             if time_series.metric.metric_group.topic.name == topic_name
             if time_series.metric.name == metric_name
             if time_series.date > date_from
+            if time_series.date < date_to
         ]
+
         if geography_name:
             filtered_time_series = [
                 x for x in filtered_time_series if x.geography.name == geography_name
