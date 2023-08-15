@@ -60,7 +60,7 @@ class TestTrendsView:
         Given the names of a `metric`, `percentage_metric` as well as an incorrect `topic`
         And an authenticated APIClient
         When the `GET /api/trends/v2/` endpoint is hit
-        Then an HTTP 400 BAD REQUEST response is returned with the expected error message
+        Then an HTTP 400 BAD REQUEST response is returned
         """
         # Given
         main_record, percentage_record = core_trend_percentage_example
@@ -85,10 +85,6 @@ class TestTrendsView:
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
-        # expected_error_message = (
-        #     f"Data for `{incorrect_topic_name}` and `{metric_name}` could not be found."
-        # )
-        # assert response.data == {"error_message": expected_error_message}
 
     @pytest.mark.django_db
     def test_get_request_without_api_key_is_unauthorized(self):

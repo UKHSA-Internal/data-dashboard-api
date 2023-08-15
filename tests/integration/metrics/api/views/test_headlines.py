@@ -48,7 +48,7 @@ class TestHeadlinesView:
         Given a `topic` and a `metric` which has more than 1 record and is a timeseries type metric
         And an authenticated APIClient
         When the `GET /api/headlines/v2/` endpoint is hit
-        Then an HTTP 400 BAD REQUEST response is returned with the expected error message
+        Then an HTTP 400 BAD REQUEST response is returned
         """
         # Given
         core_timeseries: CoreTimeSeries = core_timeseries_example[0]
@@ -64,8 +64,6 @@ class TestHeadlinesView:
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
-        # expected_error_message = f"`{metric_name}` is a timeseries-type metric. This should be a headline-type metric"
-        # assert response.data == {"error_message": expected_error_message}
 
     @pytest.mark.django_db
     def test_get_request_without_api_key_is_unauthorized(self):
