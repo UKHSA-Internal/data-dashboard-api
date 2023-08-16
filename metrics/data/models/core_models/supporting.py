@@ -10,6 +10,7 @@ from metrics.data.managers.core_models.topic import TopicManager
 from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
     GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
+    LARGE_CHAR_COLUMN_MAX_CONSTRAINT,
 )
 
 
@@ -37,7 +38,7 @@ class MetricGroup(models.Model):
 
 
 class Metric(models.Model):
-    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    name = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
     rounding = models.CharField(max_length=100)
 
     topic = models.ForeignKey(to=Topic, on_delete=models.SET_NULL, null=True)
@@ -55,7 +56,7 @@ class GeographyType(models.Model):
 
 
 class Geography(models.Model):
-    name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    name = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
     geography_code = models.CharField(
         max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
     )
