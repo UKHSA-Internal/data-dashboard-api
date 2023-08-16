@@ -272,7 +272,6 @@ class TestPublicAPINestedLinkViews:
             assert result["sex"] == sex
             assert result["age"] == age
 
-
     @pytest.mark.django_db
     def test_returns_correct_data_at_final_view_with_query_parameters(
         self, authenticated_api_client: APIClient
