@@ -49,7 +49,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     - `age` - Smallest subgroup a metric can be broken down into e.g. **15_44** for the age group of 15-44 years
 
-    - `sex` - Patient gender e.g. **F** for Female or **ALL** for all genders
+    - `sex` - Patient gender e.g. **f** for Female or **all** for all genders
 
     - `year` - Epi year of the metrics value (important for annual metrics) e.g. **2020**
 

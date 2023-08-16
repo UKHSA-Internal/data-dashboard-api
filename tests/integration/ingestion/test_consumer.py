@@ -146,7 +146,7 @@ class TestConsumer:
         assert model.metric.name == source_data["metric"]
         assert model.geography.geography_type.name == source_data["geography_type"]
         assert model.geography.name == source_data["geography"]
-        assert model.sex == {"all": "ALL", "female": "F", "male": "M"}.get(
+        assert model.sex == {"all": "all", "female": "f", "male": "m"}.get(
             source_data["sex"].lower()
         )
         assert model.age.name == source_data["age"]
