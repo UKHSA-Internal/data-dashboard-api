@@ -45,11 +45,15 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     From here you can filter the data further via a set of optional query parameters:
 
-    - `stratum` - Smallest subgroup a metric can be broken down into e.g. **15_44** for the age group of 15-44 years
+    - `stratum` - Smallest subgroup a metric can be broken down into e.g. ethnicity, testing pillar
+
+    - `age` - Smallest subgroup a metric can be broken down into e.g. **15_44** for the age group of 15-44 years
 
     - `sex` - Patient gender e.g. **F** for Female or **ALL** for all genders
 
     - `year` - Epi year of the metrics value (important for annual metrics) e.g. **2020**
+
+    - `month` - Epi month of the metric value (important for monthly metrics) e.g. **12**
 
     - `epiweek` - Epi week of the metric value (important for weekly metrics) e.g. **30**
 
@@ -70,6 +74,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = [
         "stratum",
         "sex",
+        "age",
         "year",
         "epiweek",
         "date",
