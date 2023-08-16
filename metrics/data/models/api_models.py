@@ -14,6 +14,7 @@ from metrics.data.managers.api_models.time_series import APITimeSeriesManager
 from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
     GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
+    LARGE_CHAR_COLUMN_MAX_CONSTRAINT,
     METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
     SEX_MAX_CHAR_CONSTRAINT,
 )
@@ -33,8 +34,8 @@ class APITimeSeries(models.Model):
     sub_theme = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     topic = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     geography_type = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
-    geography = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
-    metric = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
+    geography = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
+    metric = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
     stratum = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     sex = models.CharField(max_length=SEX_MAX_CHAR_CONSTRAINT, null=True)
     year = models.PositiveSmallIntegerField()
