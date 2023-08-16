@@ -110,7 +110,6 @@ class TestThemeDetailSerializer:
             None,
             # format -> None
         )
-        assert serialized_data["information"] == ""
         assert serialized_data["sub_themes"] == spy_get_url.return_value
 
 
@@ -214,7 +213,6 @@ class TestSubThemeDetailSerializer:
             None,
             # format -> None
         )
-        assert serialized_data["information"] == ""
         assert serialized_data["topics"] == spy_get_url.return_value
 
 
@@ -324,7 +322,6 @@ class TestTopicDetailSerializer:
             None,
             # format -> None
         )
-        assert serialized_data["information"] == ""
         assert serialized_data["geography_types"] == spy_get_url.return_value
 
 
@@ -451,7 +448,6 @@ class TestGeographyTypeDetailSerializer:
             None,
             # format -> None
         )
-        assert serialized_data["information"] == ""
         assert serialized_data["geographies"] == spy_get_url.return_value
 
 
@@ -584,7 +580,6 @@ class TestGeographyDetailSerializer:
             None,
             # format -> None
         )
-        assert serialized_data["information"] == ""
         assert serialized_data["metrics"] == spy_get_url.return_value
 
 

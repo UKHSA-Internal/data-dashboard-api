@@ -52,7 +52,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}",
             ),
             (
-                "information",
+                "",
                 "sub_themes",
                 "",
                 f"themes/{theme_name}/sub_themes/",
@@ -64,7 +64,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}",
             ),
             (
-                "information",
+                "",
                 "topics",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics",
@@ -76,7 +76,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}",
             ),
             (
-                "information",
+                "",
                 "geography_types",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types",
@@ -88,7 +88,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}",
             ),
             (
-                "information",
+                "",
                 "geographies",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies",
@@ -100,7 +100,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}",
             ),
             (
-                "information",
+                "",
                 "metrics",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics",
@@ -166,8 +166,10 @@ class TestPublicAPINestedLinkViews:
             # Check that the metadata field matches up to expected value
             # For example, the `name` of 1 of the items in the `themes` list view
             # should be equal to the `theme_name` which in this case is `infectious_disease`.
-            metadata_field_from_response: str = response_data[0][metadata_field]
-            assert metadata_field_from_response == expected_metadata_field_value
+            # The `information` field has been temporarily removed hence the if statement check is in place below.
+            if metadata_field:
+                metadata_field_from_response: str = response_data[0][metadata_field]
+                assert metadata_field_from_response == expected_metadata_field_value
 
             # Check that the link field matches up to expected value
             link_field_from_response: str = response_data[0][link_field]
