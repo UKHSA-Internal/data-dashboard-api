@@ -19,7 +19,7 @@ COLUMN_NAMES_WITH_FOREIGN_KEYS: list[str] = [
     "age",
 ]
 
-SEX_OPTIONS = {"male": "M", "female": "F", "all": "ALL"}
+SEX_OPTIONS = {"male": "m", "female": "f", "all": "all"}
 
 TIME_PERIOD_ENUM = MetricsAPIInterface.get_time_period_enum()
 
@@ -487,9 +487,9 @@ class Reader:
 
         Notes:
             Expected values are one of the following:
-            1) "ALL"    - All genders with no filtering applied
-            2) "F"      - Females
-            3) "M"      - Males
+            1) "all"    - All genders with no filtering applied
+            2) "f"      - Females
+            3) "m"      - Males
 
         Args:
             incoming_dtos: List of DTOs which are to be processed
@@ -501,7 +501,7 @@ class Reader:
         """
 
         def _cast_sex_value(value: str) -> str:
-            return SEX_OPTIONS.get(value.lower(), "ALL")
+            return SEX_OPTIONS.get(value.lower(), "all")
 
         for incoming_dto in incoming_dtos:
             incoming_dto.sex = _cast_sex_value(incoming_dto.sex)

@@ -465,9 +465,9 @@ class TestReader:
     @pytest.mark.parametrize(
         "sex_attribute_value, expected_value",
         (
-            ["all", "ALL"],
-            ["female", "F"],
-            ["male", "M"],
+            ["all", "all"],
+            ["female", "f"],
+            ["male", "m"],
         ),
     )
     def test_cast_sex_on_dtos_to_expected_values(
