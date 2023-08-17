@@ -112,7 +112,6 @@ def create_api_time_series_from_core_time_series(
             E.g. "2023-08-03"
             If not provided, the value will be taken from the related `CoreTimeSeries`
 
-
     Returns:
         An `APITimeSeries` instance which mirrors
         the given `CoreTimeSeries` instance
