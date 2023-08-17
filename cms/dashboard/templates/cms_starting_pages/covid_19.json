@@ -548,50 +548,12 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "80-84",
-                                                    "label": "80 to 84 years",
+                                                    "age": "80+",
+                                                    "label": "80 years and over",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "8455d4bf-b105-4062-8751-a9d8ce8290c4"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "85-89",
-                                                    "label": "85 to 89 years",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "3e0dbfc9-d580-451c-af02-e25cdd827bf2"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "90+",
-                                                    "label": "90 years and over",
-                                                    "line_colour": "RED",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "760e6dd2-2434-47e4-a31b-be0810b655fa"
                                             }
                                         ]
                                     },
@@ -675,50 +637,12 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "80-84",
-                                                    "label": "80 to 84 years",
-                                                    "line_colour": "BLUE",
+                                                    "age": "80+",
+                                                    "label": "80 years and over",
+                                                    "line_colour": "RED",
                                                     "line_type": "DASH"
                                                 },
                                                 "id": "6702853c-f150-4096-9ddd-7d6fb4ccfdde"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "85-89",
-                                                    "label": "85 to 89 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "f27a7a40-069a-4ff3-8b20-c3aa5ef44401"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "90+",
-                                                    "label": "90 years and above",
-                                                    "line_colour": "RED",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "1f11e3c6-edd8-4387-bfb9-2cea588affdc"
                                             }
                                         ]
                                     },
