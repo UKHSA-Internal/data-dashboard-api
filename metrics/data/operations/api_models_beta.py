@@ -86,19 +86,26 @@ def create_api_time_series_from_core_time_series(
             the flattened/de-normalized version of with an `APITimeSeries`
         theme: The value of the largest topical subgroup
             E.g. "infectious_disease"
+            If not provided, the value will be taken from the `CoreTimeSeries`
         sub_theme: The value of the topical subgroup
             E.g. "respiratory"
+            If not provided, the value will be taken from the `CoreTimeSeries`
         topic: The name of the disease/threat
             E.g. "COVID-19"
+            If not provided, the value will be taken from the `CoreTimeSeries`
         metric: The name of the metric associated with the timeseries
             E.g. "COVID-19_cases_casesByDay"
+            If not provided, the value will be taken from the `CoreTimeSeries`
         metric_group: The grouping in which the `metric` sits under.
             E.g. "cases"
+            If not provided, the value will be taken from the `CoreTimeSeries`
         metric_frequency: The smallest time period for which
             a metric is reported.
             E.g. "W" for "Weekly"
+            If not provided, the value will be taken from the `CoreTimeSeries`
         refresh_date: The date at which the `metric` was last updated
             E.g. "2023-08-03"
+            If not provided, the value will be taken from the `CoreTimeSeries`
 
     Returns:
         An `APITimeSeries` instance which mirrors
