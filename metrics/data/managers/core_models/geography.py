@@ -20,7 +20,7 @@ class GeographyQuerySet(models.QuerySet):
                     `<GeographyQuerySet ['England', 'London']>`
 
         """
-        return self.all().values_list("name", flat=True).order_by("name")
+        return self.all().values_list("name", flat=True).distinct().order_by("name")
 
 
 class GeographyManager(models.Manager):
@@ -30,7 +30,7 @@ class GeographyManager(models.Manager):
         return GeographyQuerySet(model=self.model, using=self.db)
 
     def get_all_names(self) -> GeographyQuerySet:
-        """Gets all available geography names as a flat list queryset.
+        """Gets all available deduplicated geography names as a flat list queryset.
 
         Returns:
             QuerySet: A queryset of the individual geography names
