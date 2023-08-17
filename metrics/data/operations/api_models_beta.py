@@ -61,24 +61,67 @@ def generate_api_time_series_beta(
 
 def create_api_time_series_from_core_time_series(
     core_time_series: CoreTimeSeries,
+    theme: str = "",
+    sub_theme: str = "",
+    topic: str = "",
+    metric: str = "",
+    metric_group: str = "",
+    metric_frequency: str = "",
+    refresh_date: str = "",
 ) -> APITimeSeries:
+    """Creates a new `APITimeSeries` object from the given `core_time_series`
+
+    Notes:
+        Additional fields can be provided to pass directly to the `APITimeSeries`.
+        This is to introduce a small optimization.
+        Files are ingested on a per-metric basis.
+        So we can say for each file, a group of fields will be the same.
+        We can take advantage of this and continuously pass them to each
+        record being created as per the file being ingested without having
+        to pull those fields again from the corresponding `CoreTimeSeries`
+        for each individual `APITimeSeries`
+
+    Args:
+        core_time_series: The `CoreTimeSeries` from which to produce
+            the flattened/de-normalized version of with an `APITimeSeries`
+        theme: The value of the largest topical subgroup
+            E.g. "infectious_disease"
+        sub_theme: The value of the topical subgroup
+            E.g. "respiratory"
+        topic: The name of the disease/threat
+            E.g. "COVID-19"
+        metric: The name of the metric associated with the timeseries
+            E.g. "COVID-19_cases_casesByDay"
+        metric_group: The grouping in which the `metric` sits under.
+            E.g. "cases"
+        metric_frequency: The smallest time period for which
+            a metric is reported.
+            E.g. "W" for "Weekly"
+        refresh_date: The date at which the `metric` was last updated
+            E.g. "2023-08-03"
+
+    Returns:
+        An `APITimeSeries` instance which mirrors
+        the given `CoreTimeSeries` instance
+
+    """
     return APITimeSeries(
-        theme=core_time_series.metric.topic.sub_theme.theme.name,
-        sub_theme=core_time_series.metric.topic.sub_theme.name,
-        topic=core_time_series.metric.topic.name,
-        metric=core_time_series.metric.name,
-        metric_group=core_time_series.metric.metric_group.name,
-        metric_frequency=core_time_series.metric_frequency,
+        theme=theme or core_time_series.metric.topic.sub_theme.theme.name,
+        sub_theme=sub_theme or core_time_series.metric.topic.sub_theme.name,
+        topic=topic or core_time_series.metric.topic.name,
+        metric=metric or core_time_series.metric.name,
+        metric_group=metric_group or core_time_series.metric.metric_group.name,
+        metric_frequency=metric_frequency or core_time_series.metric_frequency,
         geography_type=core_time_series.geography.geography_type.name,
         geography=core_time_series.geography.name,
         geography_code=core_time_series.geography.geography_code,
         age=core_time_series.age,
         sex=core_time_series.sex,
         stratum=core_time_series.stratum.name,
-        epiweek=core_time_series.epiweek,
         date=core_time_series.date,
-        metric_value=core_time_series.metric_value,
-        refresh_date=core_time_series.refresh_date,
-        month=core_time_series.month,
+        refresh_date=refresh_date or core_time_series.refresh_date,
         year=core_time_series.year,
+        month=core_time_series.month,
+        epiweek=core_time_series.epiweek,
+        metric_value=core_time_series.metric_value,
     )
