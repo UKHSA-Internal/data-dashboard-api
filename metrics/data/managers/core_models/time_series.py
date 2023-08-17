@@ -75,10 +75,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         )
 
     @staticmethod
-    def _filter_by_date_to(queryset, date__lte):
-        return queryset.filter(date__lte=date__lte)
-
-    @staticmethod
     def _filter_by_geography(queryset, geography_name):
         return queryset.filter(geography__name=geography_name)
 
