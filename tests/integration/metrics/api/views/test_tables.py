@@ -149,7 +149,7 @@ class TestTablesView:
                 "values": [
                     {
                         "label": "Plot1",
-                        "value": "123.0",
+                        "value": "123.0000",
                     },
                 ],
             }
@@ -200,8 +200,8 @@ class TestTablesView:
             {
                 "date": "2023-01-31",
                 "values": [
-                    {"label": "Plot1", "value": "123.0"},
-                    {"label": "plot_label", "value": "123.0"},
+                    {"label": "Plot1", "value": "123.0000"},
+                    {"label": "plot_label", "value": "123.0000"},
                 ],
             }
         ]
