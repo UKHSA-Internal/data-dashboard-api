@@ -29,7 +29,7 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
             api_time_series.geography_code
             == mocked_time_series.geography.geography_code
         )
-        assert api_time_series.age == mocked_time_series.age
+        assert api_time_series.age == mocked_time_series.age.name
         assert api_time_series.month == mocked_time_series.month
         assert (
             api_time_series.metric_group == mocked_time_series.metric.metric_group.name

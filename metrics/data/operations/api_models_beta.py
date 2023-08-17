@@ -130,7 +130,7 @@ def create_api_time_series_from_core_time_series(
         geography_type=core_time_series.geography.geography_type.name,
         geography=core_time_series.geography.name,
         geography_code=core_time_series.geography.geography_code,
-        age=core_time_series.age,
+        age=core_time_series.age.name,
         sex=core_time_series.sex,
         stratum=core_time_series.stratum.name,
         date=core_time_series.date,
