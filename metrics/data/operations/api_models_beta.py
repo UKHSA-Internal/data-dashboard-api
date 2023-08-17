@@ -118,12 +118,15 @@ def create_api_time_series_from_core_time_series(
 
     """
     return APITimeSeries(
+        # Fields which can be provided ahead of time
         theme=theme or core_time_series.metric.topic.sub_theme.theme.name,
         sub_theme=sub_theme or core_time_series.metric.topic.sub_theme.name,
         topic=topic or core_time_series.metric.topic.name,
         metric=metric or core_time_series.metric.name,
         metric_group=metric_group or core_time_series.metric.metric_group.name,
         metric_frequency=metric_frequency or core_time_series.metric_frequency,
+        refresh_date=refresh_date or core_time_series.refresh_date,
+        # Fields always taken from the `core_time_series`
         geography_type=core_time_series.geography.geography_type.name,
         geography=core_time_series.geography.name,
         geography_code=core_time_series.geography.geography_code,
@@ -131,7 +134,6 @@ def create_api_time_series_from_core_time_series(
         sex=core_time_series.sex,
         stratum=core_time_series.stratum.name,
         date=core_time_series.date,
-        refresh_date=refresh_date or core_time_series.refresh_date,
         year=core_time_series.year,
         month=core_time_series.month,
         epiweek=core_time_series.epiweek,
