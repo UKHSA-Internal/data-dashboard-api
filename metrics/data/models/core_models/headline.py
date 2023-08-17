@@ -1,6 +1,10 @@
 from django.db import models
 
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
+from metrics.data.models.constants import (
+    METRIC_VALUE_DECIMAL_PLACES,
+    METRIC_VALUE_MAX_DIGITS,
+)
 from metrics.data.models.core_models import help_texts
 from metrics.data.models.core_models.supporting import Age, Geography, Metric, Stratum
 
@@ -40,8 +44,8 @@ class CoreHeadline(models.Model):
     period_end = models.DateField(help_text=help_texts.PERIOD_END)
 
     metric_value = models.DecimalField(
-        max_digits=11,
-        decimal_places=4,
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
     )
 
     objects = CoreHeadlineManager()
