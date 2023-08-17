@@ -61,6 +61,17 @@ class PlotParameters(BaseModel):
         return make_date_from_string(date_from=self.date_from)
 
     @property
+    def date_to_value(self) -> Optional[datetime.date]:
+        """Parses the 'date_to' into a date object.
+            Defaults to today's date.
+
+        Returns:
+            'date' object representing the 'date_to' string
+            or a default of today's date
+        """
+        return make_date_to_string(date_to=self.date_to)
+
+    @property
     def x_axis_value(self) -> str:
         return ChartAxisFields.get_x_axis_value(name=self.x_axis)
 
@@ -92,6 +103,7 @@ class PlotParameters(BaseModel):
             "sex": self.sex or "",
             "age": self.age or "",
             "date_from": self.date_from_value,
+            "date_to": self.date_to_value,
             "x_axis": self.x_axis_value,
             "y_axis": self.y_axis_value,
         }
@@ -154,3 +166,20 @@ def make_date_from_string(date_from: Optional[str]) -> datetime.date:
         return get_date_n_months_ago_from_timestamp(
             datetime_stamp=datetime.date.today(), number_of_months=one_year
         )
+
+
+def make_date_to_string(date_to: Optional[str]) -> datetime.date:
+    """Parse the 'date_to' string into a date object, defaults to today's date.
+
+    Args:
+        date_to: a string representing the date in teh form '%y-%m-%d'
+            E.g. "2023-01-01"
+
+    Returns:
+        'date' object representing the 'date_to' string
+            or a default of 1 year ago from the current date
+    """
+    try:
+        return datetime.datetime.strptime(date_to, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return datetime.date.today()

@@ -268,6 +268,7 @@ class TestPlotsInterface:
         mocked_topic = mock.Mock()
         mocked_metric = mock.Mock()
         mocked_date_from = mock.Mock()
+        mocked_date_to = mock.Mock()
         mocked_geography = mock.Mock()
         mocked_geography_type = mock.Mock()
         mocked_stratum = mock.Mock()
@@ -286,6 +287,7 @@ class TestPlotsInterface:
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
+            date_to=mocked_date_to,
             geography_name=mocked_geography,
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,
@@ -304,6 +306,7 @@ class TestPlotsInterface:
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
+            date_to=mocked_date_to,
             geography_name=mocked_geography,
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,

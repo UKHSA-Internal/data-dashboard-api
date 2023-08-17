@@ -32,6 +32,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         topic_name: str,
         metric_name: str,
         date_from: datetime.datetime,
+        date_to: datetime.datetime,
     ) -> models.QuerySet:
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
@@ -47,6 +48,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
+                would cut off any records that occurred after that date.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -62,6 +66,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             metric__topic__name=topic_name,
             metric__name=metric_name,
             date__gte=date_from,
+            date__lte=date_to,
         ).values_list(x_axis, y_axis)
 
         return self._ascending_order(
@@ -96,6 +101,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        date_to: Optional[datetime.date] = None,
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
@@ -118,6 +124,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
+                would cut off any records that occurred after that date.
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             geography_type_name: The name of the type of geography to apply additional filtering.
@@ -144,6 +153,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             metric__topic__name=topic_name,
             metric__name=metric_name,
             date__gte=date_from,
+            date__lte=date_to,
         )
 
         if geography_name:
@@ -304,6 +314,7 @@ class CoreTimeSeriesManager(models.Manager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.datetime,
+        date_to: datetime.datetime,
     ) -> CoreTimeSeriesQuerySet:
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
@@ -336,6 +347,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
+            date_to=date_to,
         )
 
     def filter_for_x_and_y_values(
@@ -345,6 +357,7 @@ class CoreTimeSeriesManager(models.Manager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        date_to: Optional[datetime.date] = None,
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
@@ -367,6 +380,9 @@ class CoreTimeSeriesManager(models.Manager):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
+                would cut off any records that occurred after that date.
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             geography_type_name: The name of the type of geography to apply additional filtering.
@@ -395,6 +411,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
+            date_to=date_to,
             geography_name=geography_name,
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
@@ -409,6 +426,7 @@ class CoreTimeSeriesManager(models.Manager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.datetime,
+        date_to: datetime.datetime,
     ) -> int:
         """Gets the number of records which match the given `topic_name` and `metric_name`, newer than `date_from`
 
@@ -424,6 +442,9 @@ class CoreTimeSeriesManager(models.Manager):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
+                would cut any records which occurred after that date.
 
         Returns:
             int: The count of the number of `CoreTimeSeries` records which match the criteria
@@ -435,6 +456,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
+            date_to=date_to,
         ).count()
 
     def get_metric_value(self, topic_name: str, metric_name: str) -> Decimal:
