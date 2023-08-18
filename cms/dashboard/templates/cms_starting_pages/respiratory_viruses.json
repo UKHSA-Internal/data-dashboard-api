@@ -1,37 +1,37 @@
 {
-    "id": 243,
+    "id": 4,
     "meta": {
-        "type": "home.HomePage",
-        "detail_url": "http://localhost/api/pages/243/",
-        "html_url": null,
-        "slug": "respiratory-viruses",
-        "show_in_menus": false,
         "seo_title": "Respiratory Viruses | UKHSA data dashboard",
         "search_description": "Overall summary of the respiratory viruses in circulation within the UK",
-        "first_published_at": "2023-04-26T12:39:38.064114+01:00",
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/4/",
+        "html_url": null,
+        "slug": "respiratory-viruses",
+        "show_in_menus": true,
+        "first_published_at": "2023-08-14T17:22:11.579657+01:00",
         "alias_of": null,
         "parent": {
-            "id": 242,
+            "id": 3,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/242/",
+                "detail_url": "http://localhost/api/pages/3/",
                 "html_url": null
             },
             "title": "UKHSA Dashboard Root"
         }
     },
     "title": "Respiratory viruses",
-    "page_description": "<p data-block-key=\"sud2w\">Data and insights from the UKHSA on respiratory viruses. <a href=\"https://www.gov.uk/government/organisations/uk-health-security-agency\">See the simple summary for England (opens in a new tab).</a></p>",
+    "page_description": "<p data-block-key=\"sud2w\">The UKHSA data dashboard shows public health data across England. It builds on the success and is an iteration of the <a href=\"https://coronavirus.data.gov.uk/\">COVID-19 in the UK dashboard</a>.</p><p data-block-key=\"dj8jt\">Initially, the dashboard presents data on respiratory viruses. In the future, it  will grow to present a wider range of data on public health topics in  line with the remit of the UKHSA. Find out more about the UKHSA data dashboard.</p><p data-block-key=\"21gee\"><b>The  UKHSA data dashboard is still undergoing statistical review. For  reporting and analytical purposes, use the COVID-19 dashboard and the  weekly surveillance report.</b></p>",
     "body": [
         {
             "type": "section",
             "value": {
-                "heading": "Coronavirus",
+                "heading": "COVID-19",
                 "content": [
                     {
                         "type": "text_card",
                         "value": {
-                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on Coronavirus.</p>"
+                            "body": "<p data-block-key=\"6du8j\">Summary of COVID-19 data.</p>"
                         },
                         "id": "6a399089-6e24-4010-a484-a12745d38872"
                     },
@@ -48,7 +48,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_cases_7days_sum",
+                                                    "metric": "COVID-19_headline_newcases_7daytotals",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "eff08341-7bfa-4a3b-b013-527e7b954ce8"
@@ -57,9 +57,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_cases_7days_change",
+                                                    "metric": "COVID-19_headline_newcases_7daychange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "new_cases_7days_change_percentage"
+                                                    "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
                                                 },
                                                 "id": "a57a4ad5-6b52-45a6-acfd-2fe208cb5617"
                                             }
@@ -76,7 +76,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_deaths_7days_sum",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7daytotals",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "2e403485-030c-4122-86be-5827a095f30d"
@@ -85,9 +85,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_deaths_7days_change",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7daychange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "new_deaths_7days_change_percentage"
+                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange"
                                                 },
                                                 "id": "ea8603ca-7b4d-4ef5-a8b1-f27a565938b5"
                                             }
@@ -104,7 +104,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_admissions_7days",
+                                                    "metric": "COVID-19_headline_7DayAdmissions",
                                                     "body": "Patients admitted"
                                                 },
                                                 "id": "2f49a215-02e7-4ded-94b1-1a0c2933708b"
@@ -113,9 +113,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_admissions_7days_change",
+                                                    "metric": "COVID-19_headline_7DayAdmisionsChange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "new_admissions_7days_change_percentage"
+                                                    "percentage_metric": "COVID-19_headline_7DayAdmissionsPercentChange"
                                                 },
                                                 "id": "6c09d01e-82c5-425f-aa07-1bdd22d1eaa8"
                                             }
@@ -132,19 +132,10 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "latest_total_vaccinations_autumn22",
+                                                    "metric": "COVID-19_headline_totalvaccines_spring23",
                                                     "body": "Autumn booster"
                                                 },
                                                 "id": "ae3344f7-5b23-4977-bea9-2e1ccd84eb50"
-                                            },
-                                            {
-                                                "type": "percentage_number",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "latest_vaccinations_uptake_autumn22",
-                                                    "body": "Percentage uptake"
-                                                },
-                                                "id": "369587e1-5a30-4152-94d6-e6b43b812d76"
                                             }
                                         ]
                                     },
@@ -159,7 +150,7 @@
                                                 "type": "percentage_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "positivity_7days_latest",
+                                                    "metric": "COVID-19_headline_positivity_latest",
                                                     "body": "Virus tests positivity"
                                                 },
                                                 "id": "36746bcd-1dce-4e5e-81f8-60c8b9994540"
@@ -181,24 +172,25 @@
                                     "value": {
                                         "title": "Cases",
                                         "body": "Positive tests reported in England",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_cases_daily",
+                                                    "metric": "COVID-19_cases_casesByDay",
                                                     "chart_type": "line_with_shaded_section",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "b0ead98b-4102-48f6-b94e-ff7bcffe1dc4"
                                             }
@@ -208,7 +200,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_cases_7days_sum",
+                                                    "metric": "COVID-19_headline_newcases_7daychange",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "95b24a05-a015-42ed-b258-51c7ccaedbcd"
@@ -217,9 +209,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_cases_7days_change",
+                                                    "metric": "COVID-19_headline_newcases_7daychange",
                                                     "body": "",
-                                                    "percentage_metric": "new_cases_7days_change_percentage"
+                                                    "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
                                                 },
                                                 "id": "8c42a86e-f675-41d0-a65a-633c20ac98e3"
                                             }
@@ -232,24 +224,25 @@
                                     "value": {
                                         "title": "Deaths",
                                         "body": "Deaths with COVID-19 on the death certificate in England",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_deaths_daily",
+                                                    "metric": "COVID-19_deaths_ONSByDay",
                                                     "chart_type": "line_with_shaded_section",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "d3b521d8-a6bb-4960-9db9-864c3d362976"
                                             }
@@ -259,7 +252,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_deaths_7days_sum",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7daytotals",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "10c92d4c-bdb1-4bcc-a8a5-d0063dcee095"
@@ -268,9 +261,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "new_deaths_7days_change",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7daychange",
                                                     "body": "",
-                                                    "percentage_metric": "new_deaths_7days_change_percentage"
+                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange"
                                                 },
                                                 "id": "41ce6c59-99fe-486a-8225-341a306cc395"
                                             }
@@ -294,7 +287,7 @@
                     {
                         "type": "text_card",
                         "value": {
-                            "body": "<p data-block-key=\"6du8j\">The UKHSA dashboard for data and insights on Influenza.</p>"
+                            "body": "<p data-block-key=\"6du8j\">Summary of influenza data.</p>"
                         },
                         "id": "53fcc358-f10d-411d-9bd0-9acb3c4d3aae"
                     },
@@ -311,20 +304,10 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_latest",
+                                                    "metric": "influenza_headline_ICUHDUadmissionrateLatest",
                                                     "body": "Hospital admission rate (per 100,000)"
                                                 },
                                                 "id": "0520e9d6-794f-4616-b217-f5ec884a86d8"
-                                            },
-                                            {
-                                                "type": "trend_number",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_change",
-                                                    "body": "Last 7 days",
-                                                    "percentage_metric": "weekly_hospital_admissions_rate_change_percentage"
-                                                },
-                                                "id": "3849d44d-025a-464e-a171-34b5750ca725"
                                             }
                                         ]
                                     },
@@ -339,7 +322,7 @@
                                                 "type": "percentage_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity_latest",
+                                                    "metric": "influenza_headline_positivityLatest",
                                                     "body": "Virus tests positivity"
                                                 },
                                                 "id": "36ec8822-56e2-4513-ac8f-969e84f0d5e8"
@@ -361,24 +344,25 @@
                                     "value": {
                                         "title": "Healthcare",
                                         "body": "Weekly hospital admission rates for Influenza",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "c7340640-85c6-4b2e-b3b3-2695576f0355"
                                             }
@@ -388,20 +372,10 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_latest",
+                                                    "metric": "influenza_headline_positivityLatest",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "a93d4317-3814-41ab-b6f6-a6f0769770a7"
-                                            },
-                                            {
-                                                "type": "trend_number",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_change",
-                                                    "body": "",
-                                                    "percentage_metric": "weekly_hospital_admissions_rate_change_percentage"
-                                                },
-                                                "id": "7b860dc9-26d1-4d95-924a-c23f866a7eae"
                                             }
                                         ]
                                     },
@@ -412,24 +386,25 @@
                                     "value": {
                                         "title": "Testing",
                                         "body": "Weekly positivity",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity",
+                                                    "metric": "influenza_testing_positivityByWeek",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
-                                                    "line_colour": null,
-                                                    "line_type": null
+                                                    "line_colour": "",
+                                                    "line_type": ""
                                                 },
                                                 "id": "f1a643ba-ff7e-4118-a0a8-366288468cb0"
                                             }
@@ -449,40 +424,50 @@
     ],
     "related_links": [
         {
-            "id": 111,
-            "meta": {"type": "home.HomePageRelatedLink"},
+            "id": 1,
+            "meta": {
+                "type": "home.HomePageRelatedLink"
+            },
             "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
             "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"cc1q7\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 112,
-            "meta": {"type": "home.HomePageRelatedLink"},
+            "id": 2,
+            "meta": {
+                "type": "home.HomePageRelatedLink"
+            },
             "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
             "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
             "body": "<p data-block-key=\"cc1q7\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
         },
         {
-            "id": 113,
-            "meta": {"type": "home.HomePageRelatedLink"},
+            "id": 3,
+            "meta": {
+                "type": "home.HomePageRelatedLink"
+            },
             "title": "National norovirus and rotavirus report, week 1 report: data up to week 51 (25 December 2022)",
             "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
             "body": "<p data-block-key=\"cc1q7\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {
-            "id": 114,
-            "meta": {"type": "home.HomePageRelatedLink"},
+            "id": 4,
+            "meta": {
+                "type": "home.HomePageRelatedLink"
+            },
             "title": "Hepatitis (liver inflammation) cases in children – latest updates",
             "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
             "body": "<p data-block-key=\"cc1q7\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
         },
         {
-            "id": 115,
-            "meta": {"type": "home.HomePageRelatedLink"},
+            "id": 5,
+            "meta": {
+                "type": "home.HomePageRelatedLink"
+            },
             "title": "Human parainfluenza viruses: guidance and data",
             "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
             "body": "<p data-block-key=\"cc1q7\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-06-01T11:47:58.198864+01:00"
+    "last_published_at": "2023-08-15T13:53:53.174558+01:00"
 }

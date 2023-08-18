@@ -1,7 +1,7 @@
 from rest_framework_api_key.permissions import HasAPIKey
 
-from cms.dashboard.serializers import CMSDraftPagesSerializer
-from cms.dashboard.viewsets import CMSDraftPagesViewSet
+from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
+from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 
 
 class TestCMSDraftPagesViewSet:
@@ -52,3 +52,35 @@ class TestCMSDraftPagesViewSet:
         # Then
         assert len(permission_classes) == 1
         assert permission_classes[0] is HasAPIKey
+
+
+class TestCMSPagesAPIViewSet:
+    def test_base_serializer_class_is_set_with_correct_serializer(self):
+        """
+        Given an instance of the `CMSPagesAPIViewSet`
+        When the `base_serializer_class` attribute is called
+        Then the `ListablePageSerializer` class is returned
+        """
+        # Given
+        pages_viewset = CMSPagesAPIViewSet()
+
+        # When
+        base_serializer_class = pages_viewset.base_serializer_class
+
+        # Then
+        assert base_serializer_class is ListablePageSerializer
+
+    def test_listing_default_fields_is_set_with_show_in_menus(self):
+        """
+        Given an instance of the `CMSPagesAPIViewSet`
+        When the `listing_default_fields` attribute is called
+        Then "show_in_menus" is found within the returned list of fields
+        """
+        # Given
+        pages_viewset = CMSPagesAPIViewSet()
+
+        # When
+        listing_default_fields = pages_viewset.listing_default_fields
+
+        # Then
+        assert "show_in_menus" in listing_default_fields

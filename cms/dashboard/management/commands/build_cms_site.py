@@ -68,6 +68,7 @@ def _build_respiratory_viruses_page(parent_page: Page) -> HomePage:
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -89,13 +90,9 @@ def _build_topic_page(name: str, parent_page: Page) -> TopicPage:
         page_description=data["page_description"],
         slug=data["meta"]["slug"],
         date_posted=data["meta"]["first_published_at"].split("T")[0],
-        symptoms=data["symptoms"],
-        transmission=data["transmission"],
-        treatment=data["treatment"],
-        prevention=data["prevention"],
-        surveillance_and_reporting=data["surveillance_and_reporting"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -118,6 +115,7 @@ def _build_common_page(name: str, parent_page: Page) -> TopicPage:
         date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -161,14 +159,11 @@ class Command(BaseCommand):
         respiratory_viruses_page: HomePage = _build_respiratory_viruses_page(
             parent_page=root_page
         )
-        _build_topic_page(name="coronavirus", parent_page=respiratory_viruses_page)
+        _build_topic_page(name="covid_19", parent_page=respiratory_viruses_page)
         _build_topic_page(name="influenza", parent_page=respiratory_viruses_page)
         _build_topic_page(
             name="other_respiratory_viruses", parent_page=respiratory_viruses_page
         )
-        _build_common_page(name="about", parent_page=respiratory_viruses_page)
-        _build_common_page(name="maps", parent_page=respiratory_viruses_page)
-        _build_common_page(
-            name="how_to_use_this_data", parent_page=respiratory_viruses_page
-        )
-        _build_common_page(name="whats_new", parent_page=respiratory_viruses_page)
+        _build_common_page(name="about", parent_page=root_page)
+        _build_common_page(name="location_based_data", parent_page=root_page)
+        _build_common_page(name="whats_new", parent_page=root_page)

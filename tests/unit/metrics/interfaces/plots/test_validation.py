@@ -57,7 +57,7 @@ class TestDoesMetricHaveMultipleRecords:
         # Given
         time_series = FakeCoreTimeSeriesFactory.build_example_covid_time_series_range()
         metric_name = time_series[0].metric.name
-        topic_name = time_series[0].metric.topic.name
+        topic_name = time_series[0].metric.metric_group.topic.name
         date_from = "2020-01-01"
         plot_parameters = PlotParameters(
             metric=metric_name,
@@ -94,15 +94,17 @@ class TestDoesMetricHaveMultipleRecords:
         metric_name = "weekly_positivity"
         topic_name = "Influenza"
         date_from = datetime.date(year=2022, month=1, day=1)
+        date_to = datetime.date(year=2023, month=1, day=1)
         plot_parameters = PlotParameters(
             metric=metric_name,
             topic=topic_name,
             chart_type=ChartTypes.simple_line.value,
             date_from=date_from.strftime(EXPECTED_DATE_FORMAT),
+            date_to=date_to.strftime(EXPECTED_DATE_FORMAT),
         )
 
         matching_record = FakeCoreTimeSeriesFactory.build_time_series(
-            dt=date_from,
+            date=date_from,
             metric_name=metric_name,
             topic_name=topic_name,
         )
@@ -139,7 +141,7 @@ class TestDoesMetricHaveMultipleRecords:
             topic="non_existent_topic_name",
             chart_type=ChartTypes.simple_line.value,
             date_from="2022-01-01",
-            x_axis="dt",
+            x_axis="date",
             y_axis="metric_value",
         )
 
@@ -190,6 +192,7 @@ class TestDoesMetricHaveMultipleRecords:
             topic_name=valid_plot_parameters.topic_name,
             metric_name=valid_plot_parameters.metric_name,
             date_from=valid_plot_parameters.date_from_value,
+            date_to=valid_plot_parameters.date_to_value,
         )
 
 

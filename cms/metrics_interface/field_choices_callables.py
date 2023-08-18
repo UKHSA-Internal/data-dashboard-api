@@ -10,14 +10,12 @@ This shall ensure that the `choices` are populated from the database.
 And allowing the CMS to provide the content creator with access to the `latest` data after the point of ingestion.
 """
 
-from typing import List, Tuple
-
 from cms.metrics_interface import MetricsAPIInterface
 
-LIST_OF_TWO_STRING_ITEM_TUPLES = List[Tuple[str, str]]
+LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 
 
-def _build_two_item_tuple_choices(choices: List[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+def _build_two_item_tuple_choices(choices: list[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return [(choice, choice) for choice in choices]
 
 
@@ -281,3 +279,24 @@ def get_all_sex_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(metrics_interface.get_all_sex_names())
+
+
+def get_all_age_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `age` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Topic` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of sex names.
+        Examples:
+            [("40-44", "40-44"), ("45-54", "45-54"), ...]
+
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(metrics_interface.get_all_age_names())

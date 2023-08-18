@@ -2,6 +2,7 @@ from wagtail import blocks
 
 from cms.dynamic_content import help_texts
 from cms.metrics_interface.field_choices_callables import (
+    get_all_age_names,
     get_all_geography_names,
     get_all_geography_type_names,
     get_all_sex_names,
@@ -18,12 +19,12 @@ class BaseMetricsElement(blocks.StructBlock):
     topic = blocks.ChoiceBlock(
         required=True,
         choices=get_all_topic_names,
-        help_text=help_texts.TOPIC_FIELD_HELP_TEXT,
+        help_text=help_texts.TOPIC_FIELD,
     )
     metric = blocks.ChoiceBlock(
         required=True,
         choices=get_all_unique_metric_names,
-        help_text=help_texts.METRIC_FIELD_HELP_TEXT,
+        help_text=help_texts.METRIC_FIELD,
     )
 
 
@@ -31,32 +32,40 @@ class ChartPlotElement(BaseMetricsElement):
     chart_type = blocks.ChoiceBlock(
         required=True,
         choices=get_chart_types,
-        help_text=help_texts.CHART_TYPE_FIELD_HELP_TEXT,
+        help_text=help_texts.CHART_TYPE_FIELD,
     )
     date_from = blocks.DateBlock(
         required=False,
-        help_text=help_texts.DATE_FROM_FIELD_HELP_TEXT,
+        help_text=help_texts.DATE_FROM_FIELD,
     )
     date_to = blocks.DateBlock(
         required=False,
-        help_text=help_texts.DATE_TO_FIELD_HELP_TEXT,
+        help_text=help_texts.DATE_TO_FIELD,
     )
     stratum = blocks.ChoiceBlock(
         required=False,
         choices=get_all_stratum_names,
+        help_text=help_texts.STRATUM_FIELD,
     )
     geography = blocks.ChoiceBlock(
         required=False,
         choices=get_all_geography_names,
+        help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = blocks.ChoiceBlock(
         required=False,
         choices=get_all_geography_type_names,
+        help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     sex = blocks.ChoiceBlock(
-        help_text=help_texts.SEX_FIELD,
         required=False,
         choices=get_all_sex_names,
+        help_text=help_texts.SEX_FIELD,
+    )
+    age = blocks.ChoiceBlock(
+        required=False,
+        choices=get_all_age_names,
+        help_text=help_texts.AGE_FIELD,
     )
     label = blocks.TextBlock(
         required=False,

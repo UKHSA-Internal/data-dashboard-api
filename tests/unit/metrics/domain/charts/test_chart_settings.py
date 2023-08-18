@@ -408,7 +408,7 @@ class TestChartSettings:
             "barmode": "group",
             "legend": {
                 "orientation": "h",
-                "y": -0.15,
+                "y": -0.25,
                 "x": 0,
             },
         }
@@ -434,7 +434,7 @@ class TestChartSettings:
         expected_legend_bottom_left_config = {
             "legend": {
                 "orientation": "h",
-                "y": -0.15,
+                "y": -0.25,
                 "x": 0,
             },
         }
@@ -499,6 +499,29 @@ class TestChartSettings:
             line_multi_coloured_chart_config
             == expected_line_multi_coloured_chart_config
         )
+
+    @pytest.mark.parametrize(
+        "chart_width, expected_date_tick_format", ([430, "%b<br>%Y"], [930, "%b %Y"])
+    )
+    def test_get_date_tick_format(
+        self,
+        chart_width: int,
+        expected_date_tick_format: str,
+        fake_chart_settings: ChartSettings,
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `_get_date_tick_format()` is called
+        Then the correct string is returned
+        """
+        # Given
+        fake_chart_settings._width = chart_width
+
+        # When
+        returned_date_tick_format: str = fake_chart_settings._get_date_tick_format()
+
+        # Then
+        assert returned_date_tick_format == expected_date_tick_format
 
 
 class TestGetNewMaxDate:

@@ -28,8 +28,7 @@ class ThemeListView(BaseNestedAPITimeSeriesView):
 
 class ThemeDetailView(BaseNestedAPITimeSeriesView):
     """
-    This endpoint returns information about this specific `theme`
-    and a hyperlink to the next step in the data hierarchy.
+    This endpoint returns a hyperlink to the next step in the data hierarchy.
 
     In this case, the next step in the data hierarchy is **sub_themes**.
     """
@@ -55,8 +54,7 @@ class SubThemeListView(BaseNestedAPITimeSeriesView):
 
 class SubThemeDetailView(BaseNestedAPITimeSeriesView):
     """
-    This endpoint returns information about this specific `sub_theme`
-    and a hyperlink to the next step in the data hierarchy.
+    This endpoint returns a hyperlink to the next step in the data hierarchy.
 
     In this case, the next step in the data hierarchy is **topics**.
     """
@@ -82,8 +80,7 @@ class TopicListView(BaseNestedAPITimeSeriesView):
 
 class TopicDetailView(BaseNestedAPITimeSeriesView):
     """
-    This endpoint returns information about this specific `topic`
-    and a hyperlink to the next step in the data hierarchy.
+    This endpoint returns a hyperlink to the next step in the data hierarchy.
 
     In this case, the next step in the data hierarchy is **geography_type**.
     """
@@ -110,8 +107,7 @@ class GeographyTypeListView(BaseNestedAPITimeSeriesView):
 
 class GeographyTypeDetailView(BaseNestedAPITimeSeriesView):
     """
-    This endpoint returns information about this specific `geography_type`
-    and a hyperlink to the next step in the data hierarchy.
+    This endpoint returns a hyperlink to the next step in the data hierarchy.
 
     In this case, the next step in the data hierarchy is **geography**.
 
@@ -139,8 +135,7 @@ class GeographyListView(BaseNestedAPITimeSeriesView):
 
 class GeographyDetailView(BaseNestedAPITimeSeriesView):
     """
-    This endpoint returns information about this specific `geography`
-    and a hyperlink to the next step in the data hierarchy.
+    This endpoint returns a hyperlink to the next step in the data hierarchy.
 
     In this case, the next step in the data hierarchy is **metric**.
 

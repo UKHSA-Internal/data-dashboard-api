@@ -7,17 +7,20 @@ class APITimeSeriesListSerializer(serializers.ModelSerializer):
     class Meta:
         model = MetricsPublicAPIInterface.get_api_timeseries_model()
         fields = [
-            "period",
             "theme",
             "sub_theme",
             "topic",
             "geography_type",
             "geography",
+            "geography_code",
             "metric",
+            "metric_group",
             "stratum",
             "sex",
+            "age",
             "year",
+            "month",
             "epiweek",
-            "dt",
+            "date",
             "metric_value",
         ]

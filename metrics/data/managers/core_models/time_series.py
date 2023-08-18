@@ -10,28 +10,16 @@ from typing import Optional
 
 from django.db import models
 
-from metrics.data import enums
-
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
-
-    def filter_weekly(self) -> models.QuerySet:
-        """Filters for all `TimeSeries` records which are of `W` (weekly) period type.
-
-        Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the `TimeSeries` records which have a `W` as the `period` field
-
-        """
-        return self.filter(period=enums.TimePeriod.Weekly.value).order_by("start_date")
 
     def all_related(self) -> models.QuerySet:
         return self.prefetch_related("metric", "geography", "stratum").all()
 
     @staticmethod
     def _newest_to_oldest(queryset: models.QuerySet) -> models.QuerySet:
-        return queryset.order_by("-dt")
+        return queryset.order_by("-date")
 
     @staticmethod
     def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
@@ -44,6 +32,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         topic_name: str,
         metric_name: str,
         date_from: datetime.datetime,
+        date_to: datetime.datetime,
     ) -> models.QuerySet:
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
@@ -59,6 +48,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
+                would cut off any records that occurred after that date.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -73,7 +65,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         queryset = self.filter(
             metric__topic__name=topic_name,
             metric__name=metric_name,
-            dt__gte=date_from,
+            date__gte=date_from,
+            date__lte=date_to,
         ).values_list(x_axis, y_axis)
 
         return self._ascending_order(
@@ -97,6 +90,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def _filter_by_sex(queryset, sex):
         return queryset.filter(sex=sex)
 
+    @staticmethod
+    def _filter_by_age(queryset, age):
+        return queryset.filter(age__name=age)
+
     def filter_for_x_and_y_values(
         self,
         x_axis: str,
@@ -104,10 +101,12 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        date_to: Optional[datetime.date] = None,
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
+        age: Optional[str] = None,
     ) -> models.QuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -125,6 +124,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
+                would cut off any records that occurred after that date.
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             geography_type_name: The name of the type of geography to apply additional filtering.
@@ -134,6 +136,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -148,7 +152,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         queryset = self.filter(
             metric__topic__name=topic_name,
             metric__name=metric_name,
-            dt__gte=date_from,
+            date__gte=date_from,
+            date__lte=date_to,
         )
 
         if geography_name:
@@ -168,6 +173,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         if sex:
             queryset = self._filter_by_sex(queryset=queryset, sex=sex)
+
+        if age:
+            queryset = self._filter_by_age(queryset=queryset, age=age)
 
         queryset = queryset.values_list(x_axis, y_axis)
         return self._ascending_order(
@@ -248,16 +256,6 @@ class CoreTimeSeriesManager(models.Manager):
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
         return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
 
-    def filter_weekly(self) -> CoreTimeSeriesQuerySet:
-        """Filters for all `TimeSeries` records which are of `W` (weekly) period type.
-
-        Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the `TimeSeries` records which have a `W` as the `period` field
-
-        """
-        return self.get_queryset().filter_weekly()
-
     def all_related(self) -> CoreTimeSeriesQuerySet:
         return self.get_queryset().all_related()
 
@@ -285,7 +283,7 @@ class CoreTimeSeriesManager(models.Manager):
 
     def get_latest_metric_value(
         self, topic_name: str, metric_name: str
-    ) -> Optional[Decimal]:
+    ) -> Decimal | None:
         """Grabs by the latest record by the given `topic_name` and `metric_name`.
 
         Args:
@@ -316,6 +314,7 @@ class CoreTimeSeriesManager(models.Manager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.datetime,
+        date_to: datetime.datetime,
     ) -> CoreTimeSeriesQuerySet:
         """Filters by the given `topic_name` and `metric_name`. Slices all values older than the `date_from`.
 
@@ -348,6 +347,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
+            date_to=date_to,
         )
 
     def filter_for_x_and_y_values(
@@ -357,10 +357,12 @@ class CoreTimeSeriesManager(models.Manager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        date_to: Optional[datetime.date] = None,
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
+        age: Optional[str] = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -378,6 +380,9 @@ class CoreTimeSeriesManager(models.Manager):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
+                would cut off any records that occurred after that date.
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             geography_type_name: The name of the type of geography to apply additional filtering.
@@ -387,6 +392,8 @@ class CoreTimeSeriesManager(models.Manager):
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -404,10 +411,12 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
+            date_to=date_to,
             geography_name=geography_name,
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
             sex=sex,
+            age=age,
         )
 
     def get_count(
@@ -417,6 +426,7 @@ class CoreTimeSeriesManager(models.Manager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.datetime,
+        date_to: datetime.datetime,
     ) -> int:
         """Gets the number of records which match the given `topic_name` and `metric_name`, newer than `date_from`
 
@@ -432,6 +442,9 @@ class CoreTimeSeriesManager(models.Manager):
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
                 would strip off any records which occurred before that date.
+            date_to: The datetime object to end the query at.
+                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
+                would cut any records which occurred after that date.
 
         Returns:
             int: The count of the number of `CoreTimeSeries` records which match the criteria
@@ -443,6 +456,7 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
+            date_to=date_to,
         ).count()
 
     def get_metric_value(self, topic_name: str, metric_name: str) -> Decimal:

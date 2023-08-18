@@ -13,7 +13,6 @@ class ThemeListSerializer(Serializer):
 
 
 class ThemeDetailSerializer(Serializer):
-    information = CharField()
     sub_themes = HyperlinkedIdentityField(
         read_only=True,
         view_name="sub_theme-list",
@@ -32,7 +31,6 @@ class SubThemeListSerializer(Serializer):
 
 
 class SubThemeDetailSerializer(Serializer):
-    information = CharField()
     topics = NestedHyperlinkedIdentityField(
         read_only=True,
         view_name="topic-list",
@@ -58,7 +56,6 @@ class TopicListSerializer(Serializer):
 
 
 class TopicDetailSerializer(Serializer):
-    information = CharField()
     geography_types = NestedHyperlinkedIdentityField(
         read_only=True,
         view_name="geography_type-list",
@@ -86,7 +83,6 @@ class GeographyTypeListSerializer(Serializer):
 
 
 class GeographyTypeDetailSerializer(Serializer):
-    information = CharField()
     geographies = NestedHyperlinkedIdentityField(
         read_only=True,
         view_name="geography-list",
@@ -116,7 +112,6 @@ class GeographyListSerializer(Serializer):
 
 
 class GeographyDetailSerializer(Serializer):
-    information = CharField()
     metrics = NestedHyperlinkedIdentityField(
         read_only=True,
         view_name="metric-list",

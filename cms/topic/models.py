@@ -16,17 +16,10 @@ class TopicPage(Page):
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
         null=True,
-        help_text=help_texts.PAGE_DESCRIPTION_FIELD_HELP_TEXT,
+        help_text=help_texts.PAGE_DESCRIPTION_FIELD,
     )
     body = ALLOWABLE_BODY_CONTENT
     date_posted = models.DateField()
-
-    # TopicPage Bespoke content fields
-    symptoms = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
-    transmission = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
-    treatment = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
-    prevention = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
-    surveillance_and_reporting = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
 
     sidebar_content_panels = [
         InlinePanel("related_links", heading="Related links", label="Related link"),
@@ -42,22 +35,12 @@ class TopicPage(Page):
         FieldPanel("date_posted"),
         FieldPanel("page_description"),
         FieldPanel("body"),
-        FieldPanel("symptoms"),
-        FieldPanel("transmission"),
-        FieldPanel("treatment"),
-        FieldPanel("prevention"),
-        FieldPanel("surveillance_and_reporting"),
     ]
 
     # Sets which fields to expose on the API
     api_fields = [
         APIField("page_description"),
         APIField("body"),
-        APIField("symptoms"),
-        APIField("transmission"),
-        APIField("treatment"),
-        APIField("prevention"),
-        APIField("surveillance_and_reporting"),
         APIField("related_links"),
         APIField("last_published_at"),
         APIField("seo_title"),

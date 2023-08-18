@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict, List
 from unittest import mock
 
 from metrics.domain.models import PlotParameters, PlotsCollection
@@ -17,7 +16,7 @@ class TestTablesInterface:
     def _setup_fake_time_series_for_plot(chart_plot_parameters: PlotParameters):
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
-                dt=datetime.date(year=2023, month=2, day=i + 1),
+                date=datetime.date(year=2023, month=2, day=i + 1),
                 metric_name=chart_plot_parameters.metric_name,
                 topic_name=chart_plot_parameters.topic_name,
                 stratum_name=chart_plot_parameters.stratum_name,
@@ -83,7 +82,7 @@ class TestTablesInterface:
         )
 
         # When
-        table_plots: List[Dict[str, str]] = tables_interface.generate_plots_for_table()
+        table_plots: list[dict[str, str]] = tables_interface.generate_plots_for_table()
 
         # Then
         spy_create_plots_in_tabular_format.assert_called_once()

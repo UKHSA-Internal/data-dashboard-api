@@ -1,5 +1,4 @@
 import io
-from typing import Dict, List
 
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -18,11 +17,11 @@ DOWNLOADS_API_TAG = "downloads"
 
 
 class DownloadsView(APIView):
-    queryset = APITimeSeries.objects.all().order_by("dt")
+    queryset = APITimeSeries.objects.all().order_by("date")
     serializer_class = APITimeSeriesSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = [
-        "period",
+        "metric_frequency",
         "theme",
         "sub_theme",
         "topic",
@@ -41,7 +40,7 @@ class DownloadsView(APIView):
     renderer_classes = (CoreJSONRenderer,)
 
     def _get_queryset(self):
-        all_query_filters: List[Dict[str, str]] = validate_query_filters(
+        all_query_filters: list[dict[str, str]] = validate_query_filters(
             possible_fields=self.filterset_fields,
             plots=self.request.data["plots"],
         )
@@ -93,6 +92,7 @@ class DownloadsView(APIView):
         | `metric`          | The name of the metric being queried for                                  | `COVID-19_deaths_ONSByDay`|
         | `stratum`         | The smallest subgroup a metric can be broken down into                    | `default`                 |
         | `sex`             | The sex for those metrics that are broken down by sex                     | `F`                       |
+        | `age`             | The patient age band                                                      | 0_4                       |
         | `date_from`       | The date to pull the data from                                            | `2020-01-20`              |
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
         """

@@ -1,5 +1,4 @@
 import datetime
-from typing import Dict
 from unittest import mock
 
 import pytest
@@ -25,6 +24,7 @@ class TestPlotParameters:
         "geography",
         "geography_type",
         "sex",
+        "age",
         "date_from",
         "date_to",
         "label",
@@ -85,8 +85,10 @@ class TestPlotParameters:
         geography = "London"
         geography_type = "Nation"
         sex = "Female"
+        age = "0_4"
 
         date_from = "2022-10-01"
+        date_to = "2023-03-01"
         label = "0 to 4 years old"
         line_colour = "BLUE"
         line_type = "dash"
@@ -94,13 +96,15 @@ class TestPlotParameters:
         fake_chart_plot_parameters.geography = geography
         fake_chart_plot_parameters.geography_type = geography_type
         fake_chart_plot_parameters.date_from = date_from
+        fake_chart_plot_parameters.date_to = date_to
         fake_chart_plot_parameters.label = label
         fake_chart_plot_parameters.line_colour = line_colour
         fake_chart_plot_parameters.line_type = line_type
         fake_chart_plot_parameters.sex = sex
+        fake_chart_plot_parameters.age = age
 
         # When
-        dict_used_for_query: Dict[
+        dict_used_for_query: dict[
             str, str
         ] = fake_chart_plot_parameters.to_dict_for_query()
 
@@ -112,11 +116,13 @@ class TestPlotParameters:
             "geography_name": fake_chart_plot_parameters.geography_name,
             "geography_type_name": fake_chart_plot_parameters.geography_type_name,
             "sex": fake_chart_plot_parameters.sex,
+            "age": fake_chart_plot_parameters.age,
             "date_from": fake_chart_plot_parameters.date_from_value,
+            "date_to": fake_chart_plot_parameters.date_to_value,
             "x_axis": ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
             "y_axis": ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
         }
-        # `chart_type`, `label`, `line_colour`, `line_type` and `date_to` and are omitted
+        # `chart_type`, `label`, `line_colour`, and `line_type` are omitted
         assert dict_used_for_query == expected_dict_used_for_query
 
     def test_properties_return_correct_field_values(self):

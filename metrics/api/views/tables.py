@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Dict, List
 
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
@@ -35,6 +34,7 @@ class TablesView(APIView):
         | `stratum`        | The smallest subgroup a metric can be broken down into                     | default                  | No        |
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
+        | `age`            | The patient age band                                                       | 0_4                      | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `label`          | The label to assign on the legend for this individual plot                 | Daily Covid deaths       | No        |
@@ -64,7 +64,7 @@ class TablesView(APIView):
         plots_collection = request_serializer.to_models()
 
         try:
-            tabular_data_response: List[Dict[str, str]] = access.generate_table(
+            tabular_data_response: list[dict[str, str]] = access.generate_table(
                 plots_collection=plots_collection
             )
 

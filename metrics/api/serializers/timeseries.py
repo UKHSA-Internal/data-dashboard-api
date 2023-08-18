@@ -7,7 +7,7 @@ class APITimeSeriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = APITimeSeries
         fields = [
-            "period",
+            "metric_frequency",
             "theme",
             "sub_theme",
             "topic",
@@ -18,6 +18,6 @@ class APITimeSeriesSerializer(serializers.ModelSerializer):
             "sex",
             "year",
             "epiweek",
-            "dt",
+            "date",
             "metric_value",
         ]

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict, List
 
 from rest_framework.serializers import Serializer
 
@@ -38,7 +37,7 @@ class APITimeSeriesRequestSerializer(Serializer):
             "api_time_series_manager", api_time_series_model.objects
         )
 
-    def get_kwargs_from_request(self) -> Dict[str, str]:
+    def get_kwargs_from_request(self) -> dict[str, str]:
         """Gets the kwargs from the request passed into the context by the view object.
         Note that the `kwargs` are provided by the caller in the form of the URL parameters.
 
@@ -77,12 +76,12 @@ class APITimeSeriesRequestSerializer(Serializer):
                 `<APITimeSeriesQuerySet ['infectious_disease']>`
 
         """
-        kwargs: Dict[str, str] = self.get_kwargs_from_request()
+        kwargs: dict[str, str] = self.get_kwargs_from_request()
         return self.api_time_series_manager.get_distinct_column_values_with_filters(
             lookup_field=self.lookup_field, **kwargs
         )
 
-    def build_timeseries_dto_slice(self) -> List[APITimeSeriesDTO]:
+    def build_timeseries_dto_slice(self) -> list[APITimeSeriesDTO]:
         """Builds a list of simple `APITimeSeriesDTO` from the kwargs of the request and the given `value`
 
         Returns:

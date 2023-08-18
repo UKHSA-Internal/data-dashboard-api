@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 from rest_framework.exceptions import ValidationError
 
@@ -220,7 +218,7 @@ class TestTablePlotSerializer:
         )
 
         # Then
-        expected_metric_names: List[str] = metric_manager.get_all_names()
+        expected_metric_names: list[str] = metric_manager.get_all_names()
         assert list(serializer.fields["metric"].choices) == expected_metric_names
 
     def test_topic_manager_is_used_to_build_choices_for_field(
@@ -248,7 +246,7 @@ class TestTablePlotSerializer:
         )
 
         # Then
-        expected_topic_names: List[str] = topic_manager.get_all_names()
+        expected_topic_names: list[str] = topic_manager.get_all_names()
         assert list(serializer.fields["topic"].choices) == expected_topic_names
 
 
@@ -354,7 +352,7 @@ class TestTablesSerializer:
         valid_data_payload = {
             "file_format": "svg",
             "chart_height": 220,
-            "chart_width": 435,
+            "chart_width": 515,
             "plots": table_plots,
             "x_axis": "date",
             "y_axis": "metric",

@@ -10,6 +10,7 @@ class TestPlotSerializer:
         "geography",
         "geography_type",
         "sex",
+        "age",
     ]
 
     def test_validates_successfully_when_optional_parameters_are_none(

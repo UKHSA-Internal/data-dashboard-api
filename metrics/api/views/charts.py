@@ -1,6 +1,5 @@
 import os
 from http import HTTPStatus
-from typing import Dict
 
 from django.http import FileResponse
 from drf_spectacular.utils import extend_schema
@@ -42,6 +41,7 @@ class ChartsView(APIView):
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
         | `sex`            | The gender to filter for, defaults to all                                  | F                        | No        |
+        | `age`            | The patient age band                                                       | 0_4                      | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `label`          | The label to assign on the legend for this individual plot                 | Females                  | No        |
@@ -152,6 +152,7 @@ class EncodedChartsView(APIView):
         | `geography`      | The geography constraints to apply any data filtering to                   | London                   | No        |
         | `geography_type` | The type of geographical categorisation to apply any data filtering to     | Nation                   | No        |
         | `sex`            | The gender to filter for, defaults to all                                  | F                        | No        |
+        | `age`            | The patient age band                                                       | 0_4                      | No        |
         | `date_from`      | The date from which to start the data slice from. In the format YYYY-MM-DD | 2023-01-01               | No        |
         | `date_to`        | The date to end the data slice to. In the format YYYY-MM-DD                | 2023-05-01               | No        |
         | `label`          | The label to assign on the legend for this individual plot                 | Females                  | No        |
@@ -220,7 +221,7 @@ class EncodedChartsView(APIView):
         chart_plot_models = request_serializer.to_models()
 
         try:
-            response: Dict[str, str] = access.generate_encoded_chart(
+            response: dict[str, str] = access.generate_encoded_chart(
                 chart_plots=chart_plot_models,
             )
 

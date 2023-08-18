@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List
+from typing import Any
 
 import plotly
 
@@ -12,7 +12,7 @@ from metrics.domain.models import PlotData
 def create_multi_coloured_line_chart(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[PlotData],
+    chart_plots_data: list[PlotData],
     line_shape: str,
     line_width: int = 2,
 ) -> plotly.graph_objs.Figure:
@@ -75,8 +75,8 @@ def create_multi_coloured_line_chart(
 
 
 def _create_line_plot(
-    x_axis_values: List[Any],
-    y_axis_values: List[Any],
+    x_axis_values: list[Any],
+    y_axis_values: list[Any],
     colour: str,
     line_width: int,
     line_shape: str,
@@ -99,7 +99,7 @@ def _create_line_plot(
 def generate_chart_figure(
     chart_height: int,
     chart_width: int,
-    chart_plots_data: List[PlotData],
+    chart_plots_data: list[PlotData],
     line_shape: str = "spline",
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.

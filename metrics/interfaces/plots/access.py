@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Optional
 
 from django.db.models import Manager, QuerySet
 
@@ -40,7 +40,7 @@ class PlotsInterface:
                     ]>`
 
         """
-        plot_params: Dict[str, str] = plot_parameters.to_dict_for_query()
+        plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
         return self.get_timeseries(**plot_params)
 
     def get_timeseries(
@@ -49,11 +49,13 @@ class PlotsInterface:
         y_axis: str,
         topic_name: str,
         metric_name: str,
-        date_from: Union[datetime.date, str],
+        date_from: datetime.date | str,
+        date_to: Optional[datetime.date] = None,
         geography_name: Optional[str] = None,
         geography_type_name: Optional[str] = None,
         stratum_name: Optional[str] = None,
         sex: Optional[str] = None,
+        age: Optional[str] = None,
     ):
         """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
 
@@ -76,6 +78,8 @@ class PlotsInterface:
             date_from: The datetime object or string to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0) or "2023-03-27"
                 would strip off any records which occurred before that date.
+            date_to: The datetime object or string to end the query at.
+                E.g. datetime.datetime(2023, 6, 28, 0, 0, 0, 0) or "2023-06-28"
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             geography_type_name: The name of the type of geography to apply additional filtering.
@@ -85,6 +89,8 @@ class PlotsInterface:
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
@@ -102,10 +108,12 @@ class PlotsInterface:
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
+            date_to=date_to,
             geography_name=geography_name,
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
             sex=sex,
+            age=age,
         )
 
     def build_plot_data_from_parameters(
@@ -148,7 +156,7 @@ class PlotsInterface:
             y_axis_values=y_axis_values,
         )
 
-    def build_plots_data(self) -> List[PlotData]:
+    def build_plots_data(self) -> list[PlotData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -164,7 +172,7 @@ class PlotsInterface:
                 each of the requested plots.
 
         """
-        plots_data: List[PlotData] = []
+        plots_data: list[PlotData] = []
         for plot_parameters in self.plots_collection.plots:
             try:
                 plot_data: PlotData = self.build_plot_data_from_parameters(
@@ -180,26 +188,36 @@ class PlotsInterface:
 
 def get_x_and_y_values(
     plot_parameters: PlotParameters, queryset: QuerySet
-) -> Tuple[List, List]:
+) -> tuple[list[Any], list[Any]]:
     """Gets the X and Y values for a given `queryset` based on the `plot_parameters`
 
     Args:
         plot_parameters: A `PlotParameters` model containing
             the requested info
-        queryset:
+        queryset: An ordered queryset from oldest -> newest
+            of the (dt, metric_value) numbers.
+                Examples:
+                    `<CoreTimeSeriesQuerySet [
+                        (datetime.date(2022, 10, 10), Decimal('0.8')),
+                        (datetime.date(2022, 10, 17), Decimal('0.9'))
+                    ]>`
 
     Returns:
+        Tuple containing the X and Y values
 
     """
 
-    # Stratum needs special treatment because a regular sort does not yield the required result
-    if plot_parameters.x_axis == ChartAxisFields.stratum.name:
+    # Stratum/Age needs special treatment because a regular sort does not yield the required result
+    if plot_parameters.x_axis in (
+        ChartAxisFields.stratum.name,
+        ChartAxisFields.age.name,
+    ):
         return sort_by_stratum(queryset=queryset)
 
     return unzip_values(values=queryset)
 
 
-def convert_type(s: str) -> Union[int, str]:
+def convert_type(s: str) -> int | str:
     """
     Convert a string to a number if possible
 
@@ -214,7 +232,7 @@ def convert_type(s: str) -> Union[int, str]:
     return int(s) if s.isdigit() else s.lower()
 
 
-def create_sortable_stratum(stratum: str) -> Tuple[int, ...]:
+def create_sortable_stratum(stratum: str) -> tuple[int, ...]:
     """Take a Stratum and make it sortable
 
     Args:
@@ -224,9 +242,9 @@ def create_sortable_stratum(stratum: str) -> Tuple[int, ...]:
     Returns:
         A Tuple of the stratum values that can be used for sorting
     """
-    stratum = stratum.replace("+", "")
+    stratum: str = stratum.replace("+", "")
 
-    stratum_from_to: List = stratum.split("_")
+    stratum_from_to: list[str] = stratum.split("_")
 
     stratum_from = convert_type(s=stratum_from_to[0])
 
@@ -240,7 +258,7 @@ def create_sortable_stratum(stratum: str) -> Tuple[int, ...]:
     return (999, 999, stratum_from)
 
 
-def sort_by_stratum(queryset: QuerySet) -> Tuple[List, List]:
+def sort_by_stratum(queryset: QuerySet) -> tuple[list[Any], list[Any]]:
     """
     Take a list of tuples where Stratum is the first element, sort it, prettify the stratum values and return as two separate lists
 
@@ -263,7 +281,7 @@ def sort_by_stratum(queryset: QuerySet) -> Tuple[List, List]:
     return x_values, y_values
 
 
-def unzip_values(values) -> Tuple[List, List]:
+def unzip_values(values) -> tuple[list[Any], list[Any]]:
     """
     Take a list and zip it
 

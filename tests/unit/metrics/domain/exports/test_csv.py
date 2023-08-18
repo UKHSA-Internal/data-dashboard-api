@@ -1,5 +1,4 @@
 import io
-from typing import List
 
 from metrics.domain.exports.csv import write_data_to_csv
 from tests.fakes.factories.metrics.api_time_series_factory import (
@@ -8,7 +7,7 @@ from tests.fakes.factories.metrics.api_time_series_factory import (
 from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
 
 
-def _get_line_from_stream(filestream: io.StringIO) -> List[str]:
+def _get_line_from_stream(filestream: io.StringIO) -> list[str]:
     return filestream.readline().strip().split(",")
 
 
@@ -23,7 +22,7 @@ class TestWriteDataToCSV:
         "stratum",
         "sex",
         "year",
-        "dt",
+        "date",
         "metric_value",
     ]
 

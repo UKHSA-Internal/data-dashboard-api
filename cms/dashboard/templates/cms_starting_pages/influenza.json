@@ -1,27 +1,27 @@
 {
-    "id": 111,
+    "id": 6,
     "meta": {
-        "type": "topic.TopicPage",
-        "detail_url": "http://localhost/api/pages/111/",
-        "html_url": null,
-        "slug": "influenza",
-        "show_in_menus": false,
         "seo_title": "Influenza | UKHSA data dashboard",
         "search_description": "Detailed summary of Influenza in circulation within the UK",
-        "first_published_at": "2023-05-16T14:06:43.187457+01:00",
+        "type": "topic.TopicPage",
+        "detail_url": "http://localhost/api/pages/6/",
+        "html_url": null,
+        "slug": "influenza",
+        "show_in_menus": true,
+        "first_published_at": "2023-08-14T17:22:11.652815+01:00",
         "alias_of": null,
         "parent": {
-            "id": 109,
+            "id": 4,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/109/",
+                "detail_url": "http://localhost/api/pages/4/",
                 "html_url": null
             },
             "title": "Respiratory viruses"
         }
     },
     "title": "Influenza",
-    "page_description": "<p data-block-key=\"z3vrp\">Data and insights from the UKHSA on Influenza. <a href=\"https://www.gov.uk/government/organisations/uk-health-security-agency\\\">See the simple summary for England (opens in a new tab)</a>.</p>",
+    "page_description": "<p data-block-key=\"z3vrp\">Influenza (commonly known as flu) is a respiratory infection.</p><p data-block-key=\"a19js\">The healthcare data we have for influenza comes from a sentinel surveillance system (a data collection method used to monitor trends).  This means the influenza healthcare data is not a count of every person  being treated for influenza in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for influenza</a>.</p>",
     "body": [
         {
             "type": "section",
@@ -35,217 +35,24 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart with overlaying line comparing hospital admission rates of patients admitted to hospital with Influenza",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with Influenza as a weekly time series, shown as the rate per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "81701b20-d761-434c-bfc2-40a028a76618"
-                                            }
-                                        ]
-                                    },
-                                    "id": "946a95ac-605f-41af-af43-f283e1ecf093"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Line chart comparing Influenza hospital admission rates by age",
-                                        "body": "Age breakdown of people admitted to hospital, shown as the rate per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "0 to 4 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "7f4c5f99-4e16-44cc-96c6-73db1f3589b9"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "5 to 14 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "7487614e-daf5-4efe-9d57-accf227bd46c"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "15 to 44 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "639445db-948b-4590-930f-ce37a58c132c"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "45_54",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "45 to 54 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "996aab0e-cdf6-4569-8d49-4379e0de920f"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "55_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "55 to 64 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "7b8a91cb-4c22-43d9-969c-c9e660bb206b"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "65_74",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "65 to 74 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "d6520f98-3c39-47fc-998e-029bfd09a56e"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "75_84",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "75 to 84 years",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "bef9736d-d1dc-4133-99cd-75d1de49bc40"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "Influenza",
-                                                    "metric": "weekly_hospital_admissions_rate_by_age",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "85+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
-                                                    "label": "85 years and over",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "3b642efd-48a7-47fb-9de1-271e3401c7f9"
-                                            }
-                                        ]
-                                    },
-                                    "id": "7086dad7-c5fc-47df-bf5c-c0fe0e628af3"
-                                }
-                            ]
-                        },
-                        "id": "2e93017b-63bb-49d4-90e7-cd7690141df8"
-                    },
-                    {
-                        "type": "chart_row_card",
-                        "value": {
-                            "columns": [
-                                {
-                                    "type": "chart_card",
-                                    "value": {
                                         "title": "Line chart with overlaying line comparing ICU admission rates of patients admitted to hospital with Influenza",
                                         "body": "Weekly admissions rates of patients admitted to ICU with Influenza as a weekly time series, shown as the rate per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icuhdu_admissions_rate",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -261,21 +68,22 @@
                                     "value": {
                                         "title": "Line chart comparing Influenza ICU admission rates by age",
                                         "body": "Age breakdown of people admitted to ICU, shown as the rate per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "0-4",
                                                     "label": "0 to 4 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -286,14 +94,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "5-14",
                                                     "label": "5 to 14 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -304,14 +113,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "15-44",
                                                     "label": "15 to 44 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID"
@@ -322,14 +132,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "45_54",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "45-54",
                                                     "label": "45 to 54 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "DASH"
@@ -340,14 +151,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "55_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "55-64",
                                                     "label": "55 to 64 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID"
@@ -358,14 +170,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "65_74",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "65-74",
                                                     "label": "65 to 74 years",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "DASH"
@@ -376,14 +189,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "75_84",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "75-84",
                                                     "label": "75 to 84 years",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -394,14 +208,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_icu_admissions_rate_by_age",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "85+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "85+",
                                                     "label": "85 years and over",
                                                     "line_colour": "BLUE",
                                                     "line_type": "DASH"
@@ -434,21 +249,22 @@
                                     "value": {
                                         "title": "Bar chart with overlaying line comparing positivity for Influenza tests",
                                         "body": "Weekly admissions rates of patients admitted to hospital with Influenza as a weekly time series, shown as the rate per 100,000 people.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity",
+                                                    "metric": "influenza_testing_positivityByWeek",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -462,23 +278,24 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing weekly positivity for Influenza \r\ntests by age",
+                                        "title": "Line chart comparing weekly positivity for Influenza tests by age",
                                         "body": "Weekly time series of positivity for people testing positive for Influenza broken down by age.",
-                                        "x_axis": null,
-                                        "y_axis": null,
+                                        "x_axis": "",
+                                        "y_axis": "",
                                         "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity_by_age",
+                                                    "metric": "influenza_testing_positivityByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "0_4",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "0-4",
                                                     "label": "0 to 4 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -489,14 +306,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity_by_age",
+                                                    "metric": "influenza_testing_positivityByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "5_14",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "5-14",
                                                     "label": "5 to 14 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -507,14 +325,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity_by_age",
+                                                    "metric": "influenza_testing_positivityByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "15_44",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "15-44",
                                                     "label": "15 to 44 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID"
@@ -525,14 +344,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity_by_age",
+                                                    "metric": "influenza_testing_positivityByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "45_64",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "45-64",
                                                     "label": "45 to 64 years",
                                                     "line_colour": "PURPLE",
                                                     "line_type": "DASH"
@@ -543,14 +363,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "weekly_positivity_by_age",
+                                                    "metric": "influenza_testing_positivityByWeek",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "65+",
-                                                    "geography": "",
-                                                    "geography_type": "",
-                                                    "sex": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "65+",
                                                     "label": "65 years and over",
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID"
@@ -570,14 +391,9 @@
             "id": "0f9dae99-697b-4d7d-8c92-f977ffbcd622"
         }
     ],
-    "symptoms": "<p data-block-key=\"9dri3\">Text here</p>",
-    "transmission": "<p data-block-key=\"7vq7i\">Text here</p>",
-    "treatment": "<p data-block-key=\"9gmkc\">Text here</p>",
-    "prevention": "<p data-block-key=\"08t25\">Text here</p>",
-    "surveillance_and_reporting": "<p data-block-key=\"m4q2b\">Text here</p>",
     "related_links": [
         {
-            "id": 71,
+            "id": 6,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -586,7 +402,7 @@
             "body": "<p data-block-key=\"chb3o\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 72,
+            "id": 7,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -595,7 +411,7 @@
             "body": "<p data-block-key=\"chb3o\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
         },
         {
-            "id": 73,
+            "id": 8,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -604,7 +420,7 @@
             "body": "<p data-block-key=\"chb3o\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
         },
         {
-            "id": 74,
+            "id": 9,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -613,7 +429,7 @@
             "body": "<p data-block-key=\"chb3o\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
         },
         {
-            "id": 75,
+            "id": 10,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -622,5 +438,5 @@
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-05-15T16:26:41.095645+01:00"
+    "last_published_at": "2023-08-15T11:25:15.861171+01:00"
 }

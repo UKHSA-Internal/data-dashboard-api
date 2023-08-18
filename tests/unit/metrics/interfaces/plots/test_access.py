@@ -1,5 +1,4 @@
 import datetime
-from typing import List, Tuple, Union
 from unittest import mock
 
 import pytest
@@ -28,10 +27,10 @@ class TestPlotsInterface:
     @staticmethod
     def _setup_fake_time_series_for_plot(
         plot_parameters: PlotParameters,
-    ) -> List[FakeCoreTimeSeries]:
+    ) -> list[FakeCoreTimeSeries]:
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
-                dt=datetime.date(year=2023, month=2, day=i + 1),
+                date=datetime.date(year=2023, month=2, day=i + 1),
                 metric_name=plot_parameters.metric_name,
                 topic_name=plot_parameters.topic_name,
                 stratum_name=plot_parameters.stratum_name,
@@ -108,7 +107,7 @@ class TestPlotsInterface:
             x_axis="date",
             y_axis="metric",
         )
-        fake_core_time_series_records: List[
+        fake_core_time_series_records: list[
             FakeCoreTimeSeries
         ] = self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
@@ -121,7 +120,7 @@ class TestPlotsInterface:
         )
 
         # When
-        plots_data: List[PlotData] = plots_interface.build_plots_data()
+        plots_data: list[PlotData] = plots_interface.build_plots_data()
 
         # Then
         # Check that only 1 enriched `PlotData` model is returned
@@ -131,7 +130,7 @@ class TestPlotsInterface:
         # for the plot parameters which requested timeseries data that existed
         expected_plots_data_for_valid_params = PlotData(
             parameters=valid_plot_parameters,
-            x_axis_values=tuple(x.dt for x in fake_core_time_series_records),
+            x_axis_values=tuple(x.date for x in fake_core_time_series_records),
             y_axis_values=tuple(x.metric_value for x in fake_core_time_series_records),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
@@ -154,7 +153,7 @@ class TestPlotsInterface:
             x_axis="date",
             y_axis="metric",
         )
-        fake_core_time_series_for_plot: List[
+        fake_core_time_series_for_plot: list[
             FakeCoreTimeSeries
         ] = self._setup_fake_time_series_for_plot(
             plot_parameters=fake_chart_plot_parameters
@@ -179,7 +178,7 @@ class TestPlotsInterface:
 
         # Check the correct data is passed to the axis of the `PlotData` model
         assert plot_data.x_axis_values == tuple(
-            x.dt for x in fake_core_time_series_for_plot
+            x.date for x in fake_core_time_series_for_plot
         )
         assert plot_data.y_axis_values == tuple(
             x.metric_value for x in fake_core_time_series_for_plot
@@ -269,10 +268,12 @@ class TestPlotsInterface:
         mocked_topic = mock.Mock()
         mocked_metric = mock.Mock()
         mocked_date_from = mock.Mock()
+        mocked_date_to = mock.Mock()
         mocked_geography = mock.Mock()
         mocked_geography_type = mock.Mock()
         mocked_stratum = mock.Mock()
         mocked_sex = mock.Mock()
+        mocked_age = mock.Mock()
 
         plots_interface = PlotsInterface(
             plots_collection=mock.MagicMock(),
@@ -286,10 +287,12 @@ class TestPlotsInterface:
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
+            date_to=mocked_date_to,
             geography_name=mocked_geography,
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,
             sex=mocked_sex,
+            age=mocked_age,
         )
 
         # Then
@@ -303,10 +306,12 @@ class TestPlotsInterface:
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
+            date_to=mocked_date_to,
             geography_name=mocked_geography,
             geography_type_name=mocked_geography_type,
             stratum_name=mocked_stratum,
             sex=mocked_sex,
+            age=mocked_age,
         )
 
     @mock.patch.object(PlotsInterface, "get_timeseries")
@@ -346,10 +351,14 @@ class TestPlotsInterface:
 
 
 class TestGetXAndYValues:
+    @pytest.mark.parametrize(
+        "axis_field", [ChartAxisFields.stratum.name, ChartAxisFields.age.name]
+    )
     @mock.patch(f"{MODULE_PATH}.sort_by_stratum")
     def test_can_delegate_call_to_sort_by_stratum(
         self,
         spy_sort_by_stratum: mock.MagicMock,
+        axis_field: str,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -358,7 +367,7 @@ class TestGetXAndYValues:
         Then the call is delegated to `sort_by_stratum()`
         """
         # Given
-        fake_chart_plot_parameters.x_axis = ChartAxisFields.stratum.name
+        fake_chart_plot_parameters.x_axis = axis_field
         mocked_queryset = mock.Mock()
 
         # When
@@ -413,7 +422,7 @@ class TestConvertType:
             ("default", "default"),
         ],
     )
-    def test_basic_operation(self, mock_input: str, mock_output: Union[int, str]):
+    def test_basic_operation(self, mock_input: str, mock_output: int | str):
         """
         Given a string that may or may not contain a number
         When `convert_type()` is called
@@ -447,7 +456,7 @@ class TestCreateSortableStratum:
         ],
     )
     def test_basic_operation(
-        self, input_stratum: str, expected_output: Tuple[Union[int, str]]
+        self, input_stratum: str, expected_output: tuple[int, ...]
     ):
         """
         Given a string that may or may not contain numbers

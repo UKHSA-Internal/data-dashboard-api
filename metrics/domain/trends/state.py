@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Dict, Union
 
 from pydantic.main import BaseModel
 
@@ -24,17 +23,17 @@ class ArrowDirection(Enum):
     down = -1
 
 
-TREND_AS_DICT = Dict[str, Union[str, int, float]]
+TREND_AS_DICT = dict[str, str | int | float]
 
 
 class Trend(BaseModel):
     metric_name: str
-    metric_value: Union[int, float]
+    metric_value: int | float
     percentage_metric_name: str
     percentage_metric_value: float
 
-    def dict(self, *args, **kwargs) -> TREND_AS_DICT:
-        data = super().dict(*args, **kwargs)
+    def model_dump(self, *args, **kwargs) -> TREND_AS_DICT:
+        data = super().model_dump(*args, **kwargs)
         return self._add_arrow_direction_and_colour(data=data)
 
     def _add_arrow_direction_and_colour(self, data: TREND_AS_DICT) -> TREND_AS_DICT:

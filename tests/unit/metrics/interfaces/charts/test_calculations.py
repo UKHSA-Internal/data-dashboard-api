@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from metrics.interfaces.charts import calculations
@@ -16,9 +14,9 @@ class TestSplitListInHalf:
     )
     def test_split_list_in_half(
         self,
-        original_list: List[int],
-        expected_first_half: List[int],
-        expected_second_half: List[int],
+        original_list: list[int],
+        expected_first_half: list[int],
+        expected_second_half: list[int],
     ):
         """
         Given a list of integers
@@ -63,7 +61,7 @@ class TestChangeBetweenEachHalf:
         ),
     )
     def test_calculates_difference_correctly(
-        self, values: List[int], expected_difference: int
+        self, values: list[int], expected_difference: int
     ):
         """
         Given a list of values
@@ -100,18 +98,33 @@ class TestGetRollingPeriodSliceForEachHalf:
         # Then
         assert rolling_period_slice == 7
 
-    def test_weekly_metric_name(self):
+    @pytest.mark.parametrize(
+        "metric_name",
+        [
+            "influenza_healthcare_ICUHDUadmissionrateByWeek",
+            "COVID-19_deaths_ONSByWeek",
+            "RSV_healthcare_hospadmissionrateByWeek",
+            "RSV_testing_positivityByWeek",
+            "adenovirus_testing_positivityByWeek",
+            "hMPV_testing_positivityByWeek",
+            "influenza_testing_positivityByWeek",
+            "influenza_healthcare_ICUHDUadmissionrateByWeek",
+            "parainfluenza_testing_positivityByWeek",
+            "rhinovirus_testing_positivityByWeek",
+        ],
+    )
+    def test_weekly_metric_name(self, metric_name: str):
         """
-        Given a metric name which does not contain the word `weekly`
+        Given a metric name for weekly-centric data
         When `get_rolling_period_slice_for_metric()` is called
         Then the rolling period slice of 1 is returned
         """
         # Given
-        metric_name = "weekly_positivity"
+        metric_name_for_weekly_data = metric_name
 
         # When
         rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(
-            metric_name=metric_name
+            metric_name=metric_name_for_weekly_data
         )
 
         # Then

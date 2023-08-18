@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 from metrics.domain.charts.colour_scheme import RGBAColours
 from metrics.domain.charts.type_hints import COLOUR_PAIR
 from metrics.domain.utils import _check_for_substring_match
@@ -7,7 +5,7 @@ from metrics.domain.utils import _check_for_substring_match
 
 def _get_line_and_fill_colours(
     metric_is_improving: bool,
-) -> Tuple[RGBAColours, RGBAColours]:
+) -> tuple[RGBAColours, RGBAColours]:
     if metric_is_improving:
         return RGBAColours.LS_DARK_GREEN, RGBAColours.LS_LIGHT_GREEN
     return RGBAColours.DARK_RED, RGBAColours.LIGHT_RED
@@ -83,14 +81,20 @@ def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool
         `ValueError`: If the metric_name is not supported.
 
     """
-    increasing_is_bad = (
+    increasing_is_bad: tuple[str, ...] = (
         "cases",
         "deaths",
         "admission",
-        "covid_occupied",
+        "occupied",
         "positivity",
     )
-    increasing_is_good = ("vaccines", "vaccination", "vaccinated", "tests", "pcr")
+    increasing_is_good: tuple[str, ...] = (
+        "vaccines",
+        "vaccination",
+        "vaccinated",
+        "tests",
+        "pcr",
+    )
 
     if _check_for_substring_match(
         string_to_check=metric_name, substrings=increasing_is_bad

@@ -1,5 +1,3 @@
-from typing import List, Tuple
-
 from django.db.models import Manager, QuerySet
 
 from metrics.data.models import core_models
@@ -12,6 +10,7 @@ DEFAULT_METRIC_MANAGER = core_models.Metric.objects
 DEFAULT_STRATUM_MANAGER = core_models.Stratum.objects
 DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
 DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
+DEFAULT_AGE_MANAGER = core_models.Age.objects
 DEFAULT_CORE_TIME_SERIES_MANAGER = core_models.CoreTimeSeries.objects
 
 
@@ -39,6 +38,9 @@ class MetricsAPIInterface:
     geography_type_manager : `GeographyTypeManager`
         The model manager for the `GeographyType` model belonging to the Metrics API
         Defaults to the concrete `GeographyTypeManager` via `GeographyType.objects`
+    age_manager : `AgeManager`
+        The model manager for the `Age` model belonging to the Metrics API
+        Defaults to the concrete `AgeManager` via `Age.objects`
     core_time_series_manager : `CoreTimeSeriesManager`
         The model manager for the `CoreTimeSeries` model belonging to the Metrics API
         Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
@@ -52,6 +54,7 @@ class MetricsAPIInterface:
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
         geography_manager: Manager = DEFAULT_GEOGRAPHY_MANAGER,
         geography_type_manager: Manager = DEFAULT_GEOGRAPHY_TYPE_MANAGER,
+        age_manager: Manager = DEFAULT_AGE_MANAGER,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.topic_manager = topic_manager
@@ -59,15 +62,16 @@ class MetricsAPIInterface:
         self.stratum_manager = stratum_manager
         self.geography_manager = geography_manager
         self.geography_type_manager = geography_type_manager
+        self.age_manager = age_manager
         self.core_time_series_manager = core_time_series_manager
 
     @staticmethod
-    def get_chart_types() -> List[Tuple[str, str]]:
+    def get_chart_types() -> list[tuple[str, str]]:
         """Gets all available chart type choices as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartTypes` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("line_with_shaded_section", "line_with_shaded_section"), ...]
 
@@ -75,12 +79,12 @@ class MetricsAPIInterface:
         return ChartTypes.choices()
 
     @staticmethod
-    def get_chart_axis_choices() -> List[Tuple[str, str]]:
+    def get_chart_axis_choices() -> list[tuple[str, str]]:
         """Gets all available axis choices for a chart as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartAxisFields` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("geography", "geography"), ...]
 
@@ -88,12 +92,12 @@ class MetricsAPIInterface:
         return ChartAxisFields.choices()
 
     @staticmethod
-    def get_chart_line_types() -> List[Tuple[str, str]]:
+    def get_chart_line_types() -> list[tuple[str, str]]:
         """Gets all available chart line types choices as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartLineTypes` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("SOLID", "SOLID"), ...]
 
@@ -101,12 +105,12 @@ class MetricsAPIInterface:
         return ChartLineTypes.choices()
 
     @staticmethod
-    def get_colours() -> List[Tuple[str, str]]:
+    def get_colours() -> list[tuple[str, str]]:
         """Gets all available colour choices as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `RGBAChartLineColours` enum from the Metrics API
 
         Returns:
-            List[Tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
             Examples:
                 [("BLUE", "BLUE"), ...]
 
@@ -213,3 +217,16 @@ class MetricsAPIInterface:
 
         """
         return self.core_time_series_manager.get_all_sex_names()
+
+    def get_all_age_names(self) -> QuerySet:
+        """Gets all available age names as a flat list queryset.
+
+        Note this is achieved by delegating the call to the `AgeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual age names:
+                Examples:
+                    `<AgeQuerySet ['40-44', '45-54']>`
+
+        """
+        return self.age_manager.get_all_names()

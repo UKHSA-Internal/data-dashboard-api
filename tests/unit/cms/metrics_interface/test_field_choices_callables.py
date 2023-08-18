@@ -269,3 +269,25 @@ class TestGetAllSexNames:
 
         # Then
         assert sex_names == [(x, x) for x in retrieved_sex_names]
+
+
+class TestGetAllAgeNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_age_names")
+    def test_delegates_call_correctly(self, mocked_get_all_age_names: mock.MagicMock):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns age names
+        When `get_all_age_names()` is called
+        Then the age names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_age_names = [
+            "40-44",
+            "45-54",
+        ]
+        mocked_get_all_age_names.return_value = retrieved_age_names
+
+        # When
+        all_age_names = field_choices_callables.get_all_age_names()
+
+        # Then
+        assert all_age_names == [(x, x) for x in retrieved_age_names]

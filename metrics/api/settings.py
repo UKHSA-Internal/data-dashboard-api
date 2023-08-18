@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-c*9tu36z0@z70&x9+(phl(h@5u1epyogm!4%6j-aj+gi3a5-1y"
+SECRET_KEY = config.SECRET_KEY
 
 DEBUG = config.APIENV == "LOCAL"
 
@@ -93,6 +93,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "metrics.api.context_processors.frontend_url",
             ],
         },
     },
@@ -262,3 +263,13 @@ WAGTAILSEARCH_BACKENDS = {
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 WAGTAILADMIN_BASE_URL = "http://example.com"
+
+
+# Email server config
+EMAIL_BACKEND = config.EMAIL_BACKEND
+EMAIL_USE_TLS = config.EMAIL_USE_TLS
+EMAIL_HOST = config.EMAIL_HOST
+EMAIL_PORT = config.EMAIL_PORT
+EMAIL_HOST_USER = config.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
+FEEDBACK_EMAIL_RECIPIENT_ADDRESS = config.FEEDBACK_EMAIL_RECIPIENT_ADDRESS

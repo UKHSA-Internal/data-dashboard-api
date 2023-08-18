@@ -1,18 +1,19 @@
 from datetime import date, timedelta
 from enum import Enum
-from typing import List
 
 DEFAULT_CHART_HEIGHT = 220
-DEFAULT_CHART_WIDTH = 435
+DEFAULT_CHART_WIDTH = 515
 
 
-def get_last_day_of_month(dt: date) -> date:
-    next_month = dt.replace(day=28) + timedelta(days=4)
+def get_last_day_of_month(date: date) -> date:
+    next_month = date.replace(day=28) + timedelta(days=4)
     return next_month - timedelta(days=next_month.day)
 
 
-def _check_for_substring_match(string_to_check: str, substrings: List[str]) -> bool:
-    return any((sub_string in string_to_check for sub_string in substrings))
+def _check_for_substring_match(
+    string_to_check: str, substrings: tuple[str, ...]
+) -> bool:
+    return any((sub_string in string_to_check.lower() for sub_string in substrings))
 
 
 class ChartTypes(Enum):
@@ -33,7 +34,8 @@ class ChartTypes(Enum):
 
 class ChartAxisFields(Enum):
     stratum = "stratum__name"
-    date = "dt"
+    age = "age__name"
+    date = "date"
     metric = "metric_value"
     geography = "geography__geography_type__name"
 

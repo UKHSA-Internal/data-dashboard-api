@@ -61,9 +61,10 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
-      - name: Run isort & black
+      - name: Run isort, black & pylint
         run: |
           source .github/workflows/formatting.sh
+          pylint */ --errors-only
 
  ###############################################################################
  # Architectural constraints checks
@@ -117,12 +118,36 @@ jobs:
           python -m pytest tests/integration/
 
   ###############################################################################
+  # System tests
+  ###############################################################################
+
+  system-tests:
+    name: System tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
+
+      - name: Run System tests
+        run: |
+          python -m pytest tests/system/
+
+  ###############################################################################
   # Deploy
   ###############################################################################
 
   deploy:
     name: ECR Image Push
-    needs: [quality-checks, unit-tests, integration-tests, vulnerabilities, architecture-checks]
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      vulnerabilities,
+      architecture-checks
+    ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch

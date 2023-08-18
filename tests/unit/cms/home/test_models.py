@@ -1,5 +1,3 @@
-from typing import List, Set
-
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
@@ -19,10 +17,10 @@ class TestBlankHomePage:
         blank_page = FakeHomePageFactory.build_blank_page()
 
         # When
-        api_fields: List[APIField] = blank_page.api_fields
+        api_fields: list[APIField] = blank_page.api_fields
 
         # Then
-        expected_api_field_names: Set[str] = {
+        expected_api_field_names: set[str] = {
             "page_description",
             "body",
             "related_links",
@@ -30,7 +28,7 @@ class TestBlankHomePage:
             "seo_title",
             "search_description",
         }
-        api_field_names: Set[str] = {api_field.name for api_field in api_fields}
+        api_field_names: set[str] = {api_field.name for api_field in api_fields}
         assert api_field_names == expected_api_field_names
 
     def test_has_correct_content_panels(self):
@@ -43,15 +41,15 @@ class TestBlankHomePage:
         blank_page = FakeHomePageFactory.build_blank_page()
 
         # When
-        content_panels: List[FieldPanel] = blank_page.content_panels
+        content_panels: list[FieldPanel] = blank_page.content_panels
 
         # Then
-        expected_content_panel_names: Set[str] = {
+        expected_content_panel_names: set[str] = {
             "title",
             "page_description",
             "body",
         }
-        content_panel_names: Set[str] = {p.field_name for p in content_panels}
+        content_panel_names: set[str] = {p.field_name for p in content_panels}
         assert content_panel_names == expected_content_panel_names
 
     def test_has_correct_sidebar_panels(self):
@@ -64,13 +62,13 @@ class TestBlankHomePage:
         blank_page = FakeHomePageFactory.build_blank_page()
 
         # When
-        sidebar_content_panels: List[InlinePanel] = blank_page.sidebar_content_panels
+        sidebar_content_panels: list[InlinePanel] = blank_page.sidebar_content_panels
 
         # Then
-        expected_sidebar_content_panel_names: Set[str] = {
+        expected_sidebar_content_panel_names: set[str] = {
             "related_links",
         }
-        sidebar_content_panel_names: Set[str] = {
+        sidebar_content_panel_names: set[str] = {
             p.relation_name for p in sidebar_content_panels
         }
         assert sidebar_content_panel_names == expected_sidebar_content_panel_names
@@ -116,15 +114,15 @@ class TestTemplateHomePage:
         assert len(body) == 2
         covid_section, influenza_section = body
 
-        # Check that the first item is a `section` type for `Coronavirus`
+        # Check that the first item is a `section` type for `COVID-19`
         assert covid_section.block_type == "section"
-        assert covid_section.value["heading"] == "Coronavirus"
+        assert covid_section.value["heading"] == "COVID-19"
 
         # Check that the second item is a `section` type for `Influenza`
         assert influenza_section.block_type == "section"
         assert influenza_section.value["heading"] == "Influenza"
 
-    def test_coronavirus_section_text_card(self):
+    def test_covid_19_section_text_card(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -143,12 +141,9 @@ class TestTemplateHomePage:
         # Check the initial text card is set up correctly
         text_card = covid_content_section[0]
         assert text_card.block_type == "text_card"
-        assert (
-            "The UKHSA dashboard for data and insights on Coronavirus"
-            in text_card.value["body"].source
-        )
+        assert "Summary of COVID-19 data." in text_card.value["body"].source
 
-    def test_coronavirus_section_headline_number_row_card(self):
+    def test_covid_19_section_headline_number_row_card(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -172,7 +167,7 @@ class TestTemplateHomePage:
         headline_number_row_columns = headline_numbers_row_card.value["columns"]
         assert len(headline_number_row_columns) == 5
 
-    def test_coronavirus_section_headline_number_row_headline_and_trend_column(self):
+    def test_covid_19_section_headline_number_row_headline_and_trend_column(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -199,23 +194,29 @@ class TestTemplateHomePage:
         # Check that the headline_number block has the correct params
         first_column_headline_block_value = first_column_component["rows"][0].value
         assert first_column_headline_block_value["topic"] == self.covid_19
-        assert first_column_headline_block_value["metric"] == "new_cases_7days_sum"
+        assert (
+            first_column_headline_block_value["metric"]
+            == "COVID-19_headline_newcases_7daytotals"
+        )
         assert first_column_headline_block_value["body"] == "Weekly"
 
         # Check that the trend_number block has the correct params
         first_column_trend_block_value = first_column_component["rows"][1].value
         assert first_column_trend_block_value["topic"] == self.covid_19
-        assert first_column_trend_block_value["metric"] == "new_cases_7days_change"
+        assert (
+            first_column_trend_block_value["metric"]
+            == "COVID-19_headline_newcases_7daychange"
+        )
         assert (
             first_column_trend_block_value["percentage_metric"]
-            == "new_cases_7days_change_percentage"
+            == "COVID-19_headline_newcases_7daypercentchange"
         )
         assert (
             first_column_trend_block_value["body"]
             == self.expected_trend_number_block_body
         )
 
-    def test_coronavirus_section_headline_number_row_headline_and_percentage_blocks(
+    def test_covid_19_section_headline_number_row_headline_and_percentage_blocks(
         self,
     ):
         """
@@ -244,21 +245,11 @@ class TestTemplateHomePage:
         assert fourth_column_headline_block_value["topic"] == self.covid_19
         assert (
             fourth_column_headline_block_value["metric"]
-            == "latest_total_vaccinations_autumn22"
+            == "COVID-19_headline_totalvaccines_spring23"
         )
         assert fourth_column_headline_block_value["body"] == "Autumn booster"
 
-        # Check that the bottom percentage block has the correct params
-        assert fourth_column_component["rows"][1].block_type == "percentage_number"
-        fourth_column_percentage_block_value = fourth_column_component["rows"][1].value
-        assert fourth_column_percentage_block_value["topic"] == self.covid_19
-        assert (
-            fourth_column_percentage_block_value["metric"]
-            == "latest_vaccinations_uptake_autumn22"
-        )
-        assert fourth_column_percentage_block_value["body"] == "Percentage uptake"
-
-    def test_coronavirus_section_headline_number_row_single_headline_column_with_percentage_block(
+    def test_covid_19_section_headline_number_row_single_headline_column_with_percentage_block(
         self,
     ):
         """
@@ -287,11 +278,12 @@ class TestTemplateHomePage:
         fifth_column_percentage_block_value = fifth_column_value["rows"][0].value
         assert fifth_column_percentage_block_value["topic"] == self.covid_19
         assert (
-            fifth_column_percentage_block_value["metric"] == "positivity_7days_latest"
+            fifth_column_percentage_block_value["metric"]
+            == "COVID-19_headline_positivity_latest"
         )
         assert fifth_column_percentage_block_value["body"] == "Virus tests positivity"
 
-    def test_coronavirus_section_chart_row_card(self):
+    def test_covid_19_section_chart_row_card(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -314,7 +306,7 @@ class TestTemplateHomePage:
 
         assert len(chart_card_columns) == 2
 
-    def test_coronavirus_section_chart_card_plot(self):
+    def test_covid_19_section_chart_card_plot(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -343,12 +335,12 @@ class TestTemplateHomePage:
         chart = chart_with_headline_and_trend_card_value["chart"]
         chart_plot_value = chart[0].value
         assert chart_plot_value["topic"] == self.covid_19
-        assert chart_plot_value["metric"] == "new_cases_daily"
+        assert chart_plot_value["metric"] == "COVID-19_cases_casesByDay"
         assert (
             chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
         )
 
-    def test_coronavirus_section_chart_card_headline_and_trend_number(self):
+    def test_covid_19_section_chart_card_headline_and_trend_number(self):
         """
         Given a `HomePage` created with a template for the `respiratory-viruses` page
         When the `body` is taken from the page
@@ -374,16 +366,22 @@ class TestTemplateHomePage:
 
         headline_number_block_value = headline_number_columns[0].value
         assert headline_number_block_value["topic"] == self.covid_19
-        assert headline_number_block_value["metric"] == "new_cases_7days_sum"
+        assert (
+            headline_number_block_value["metric"]
+            == "COVID-19_headline_newcases_7daychange"
+        )
         assert (
             headline_number_block_value["body"] == self.expected_trend_number_block_body
         )
 
         trend_number_block_value = headline_number_columns[1].value
         assert trend_number_block_value["topic"] == self.covid_19
-        assert trend_number_block_value["metric"] == "new_cases_7days_change"
+        assert (
+            trend_number_block_value["metric"]
+            == "COVID-19_headline_newcases_7daychange"
+        )
         assert (
             trend_number_block_value["percentage_metric"]
-            == "new_cases_7days_change_percentage"
+            == "COVID-19_headline_newcases_7daypercentchange"
         )
         assert trend_number_block_value["body"] == ""

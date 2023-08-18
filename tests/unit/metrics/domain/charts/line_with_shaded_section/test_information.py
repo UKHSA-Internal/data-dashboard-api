@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from metrics.domain.charts import colour_scheme
@@ -53,7 +51,7 @@ class TestDetermineLineAndFillColours:
         assert fill_colour == colour_scheme.RGBAColours.LIGHT_RED
 
 
-CASES_METRIC_TYPES: List[str] = [
+CASES_METRIC_TYPES: list[str] = [
     "new_cases_7days_sum",
     "new_cases_7days_change",
     "new_cases_7days_change_percentage",
@@ -61,6 +59,24 @@ CASES_METRIC_TYPES: List[str] = [
     "new_cases_rolling_rate_by_age",
     "cases_age_sex",
     "cases_rate_age_sex",
+    "COVID-19_cases_casesByDay",
+    "COVID-19_cases_countRollingMean",
+    "COVID-19_cases_rateRollingMean",
+    "COVID-19_headline_newcases_7daychange",
+    "COVID-19_headline_newcases_7daypercentchange",
+    "COVID-19_headline_newcases_7daytotals",
+    "RSV_headline_hospadmissionrateLatest",
+    "RSV_headline_positivityLatest",
+    "adenovirus_headline_positivityLatest",
+    "adenovirus_testing_positivityByWeek",
+    "hMPV_headline_positivityLatest",
+    "hMPV_testing_positivityByWeek",
+    "influenza_headline_positivityLatest",
+    "influenza_testing_positivityByWeek",
+    "parainfluenza_headline_positivityLatest",
+    "parainfluenza_testing_positivityByWeek",
+    "rhinovirus_headline_positivityLatest",
+    "rhinovirus_testing_positivityByWeek",
 ]
 
 
@@ -108,11 +124,17 @@ class TestIsMetricImprovingForCasesTypeMetrics:
         assert metric_is_improving
 
 
-DEATHS_METRIC_TYPES: List[str] = [
+DEATHS_METRIC_TYPES: list[str] = [
     "new_deaths_7days_sum",
     "new_deaths_7days_change",
     "new_deaths_7days_change_percentage",
     "new_deaths_daily_cases_rolling_rate_by_age",
+    "COVID-19_deaths_ONSByDay",
+    "COVID-19_deaths_ONSByWeek",
+    "COVID-19_deaths_ONSRollingMean",
+    "COVID-19_headline_ONSdeaths_7daychange",
+    "COVID-19_headline_ONSdeaths_7daypercentchange",
+    "COVID-19_headline_ONSdeaths_7daytotals",
 ]
 
 
@@ -160,7 +182,7 @@ class TestIsMetricImprovingForDeathTypeMetrics:
         assert metric_is_improving
 
 
-HEALTHCARE_METRIC_TYPES: List[str] = [
+HEALTHCARE_METRIC_TYPES: list[str] = [
     "new_admissions_7days",
     "new_admissions_7days_change",
     "new_admissions_7days_change_percentage",
@@ -171,6 +193,21 @@ HEALTHCARE_METRIC_TYPES: List[str] = [
     "admissions_rates_age",
     "covid_occupied_mv_beds",
     "covid_occupied_beds",
+    "COVID-19_healthcare_AdmissionsByDay",
+    "COVID-19_healthcare_AdmissionsRollingMean",
+    "COVID-19_healthcare_OccupiedBedsRollingMean",
+    "COVID-19_healthcare_OccupiedBedsByDay",
+    "COVID-19_headline_7DayAdmissionsChange",
+    "COVID-19_headline_7DayAdmissions",
+    "COVID-19_headline_7DayAdmissionsPercentChange",
+    "COVID-19_headline_7DayOccupiedBeds",
+    "COVID-19_headline_7DayOccupiedBedsChange",
+    "COVID-19_headline_7DayOccupiedBedsPercentChange",
+    "RSV_headline_hospadmissionrateLatest",
+    "RSV_healthcare_hospadmissionrateByWeek",
+    "influenza_headline_ICUHDUadmissionrateChange",
+    "influenza_headline_ICUHDUadmissionrateLatest",
+    "influenza_healthcare_ICUHDUadmissionrateByWeek",
 ]
 
 
@@ -218,10 +255,13 @@ class TestIsMetricImprovingForHealthcareTypeMetrics:
         assert metric_is_improving
 
 
-TESTING_METRIC_TYPES: List[str] = [
+TESTING_METRIC_TYPES: list[str] = [
     "new_tests_7days_change",
     "new_tests_7days_change_percentage",
     "unique_individuals_pcr_rolling_sum (bar)",
+    "COVID-19_headline_newtests_7daycountchange",
+    "COVID-19_headline_newtests_7daycounttotal",
+    "COVID-19_headline_newtests_7daypercentchange",
 ]
 
 
@@ -309,7 +349,7 @@ class TestIsMetricImprovingForTestingTypeMetrics:
         assert metric_is_improving
 
 
-VACCINATION_METRIC_TYPES: List[str] = [
+VACCINATION_METRIC_TYPES: list[str] = [
     "total_vaccines_given",
     "latest_total_vaccinations_autumn22",
     "latest_vaccination_uptake_autumn22",
@@ -317,6 +357,10 @@ VACCINATION_METRIC_TYPES: List[str] = [
     "vaccination_percentage_uptake_autumn22",
     "new_people_vaccinated_spring22",
     "vaccination_percentage_uptake_spring22",
+    "COVID-19_vaccinations_autumn22_dosesByDay",
+    "COVID-19_vaccinations_autumn22_uptakeByDay",
+    "COVID-19_vaccinations_spring23_dosesByDay",
+    "COVID-19_vaccinations_spring23_uptakeByDay",
 ]
 
 

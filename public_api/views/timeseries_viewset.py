@@ -44,15 +44,19 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     From here you can filter the data further via a set of optional query parameters:
 
-    - `stratum` - Smallest subgroup a metric can be broken down into e.g. **15_44** for the age group of 15-44 years
+    - `stratum` - Smallest subgroup a metric can be broken down into e.g. ethnicity, testing pillar
 
-    - `sex` - Patient gender e.g. **F** for Female or **ALL** for all genders
+    - `age` - Smallest subgroup a metric can be broken down into e.g. **15_44** for the age group of 15-44 years
+
+    - `sex` - Patient gender e.g. **f** for Female or **all** for all genders
 
     - `year` - Epi year of the metrics value (important for annual metrics) e.g. **2020**
 
+    - `month` - Epi month of the metric value (important for monthly metrics) e.g. **12**
+
     - `epiweek` - Epi week of the metric value (important for weekly metrics) e.g. **30**
 
-    - `dt` - The date which this metric value was recorded in the format **YYYY-MM-DD** e.g. **2020-07-20**
+    - `date` - The date which this metric value was recorded in the format **YYYY-MM-DD** e.g. **2020-07-20**
 
     """
 
@@ -61,7 +65,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = (
         MetricsPublicAPIInterface.get_api_timeseries_model()
         .objects.all()
-        .order_by("dt")
+        .order_by("date")
     )
     serializer_class = APITimeSeriesListSerializer
     pagination_class = APITimeSeriesPagination
@@ -69,9 +73,10 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = [
         "stratum",
         "sex",
+        "age",
         "year",
         "epiweek",
-        "dt",
+        "date",
     ]
 
     def get_queryset(self):

@@ -1,7 +1,6 @@
 import datetime
 from collections import OrderedDict
 from http import HTTPStatus
-from typing import List, Tuple
 
 import pytest
 from rest_framework.response import Response
@@ -32,7 +31,7 @@ class TestPublicAPINestedLinkViews:
             metric_value=123,
             epiweek=1,
             year=2023,
-            dt=datetime.date(year=2023, month=1, day=day),
+            date=datetime.date(year=2023, month=1, day=day),
             **kwargs,
         )
 
@@ -44,7 +43,7 @@ class TestPublicAPINestedLinkViews:
         geography_type_name: str,
         geography_name: str,
         metric_name: str,
-    ) -> List[Tuple[str, str, str, str]]:
+    ) -> list[tuple[str, str, str, str]]:
         return [
             (
                 "name",
@@ -53,7 +52,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}",
             ),
             (
-                "information",
+                "",
                 "sub_themes",
                 "",
                 f"themes/{theme_name}/sub_themes/",
@@ -65,7 +64,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}",
             ),
             (
-                "information",
+                "",
                 "topics",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics",
@@ -77,7 +76,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}",
             ),
             (
-                "information",
+                "",
                 "geography_types",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types",
@@ -89,7 +88,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}",
             ),
             (
-                "information",
+                "",
                 "geographies",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies",
@@ -101,7 +100,7 @@ class TestPublicAPINestedLinkViews:
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}",
             ),
             (
-                "information",
+                "",
                 "metrics",
                 "",
                 f"themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics",
@@ -139,8 +138,8 @@ class TestPublicAPINestedLinkViews:
         )
 
         # When
-        expected_response_fields: List[
-            Tuple[str, str, str, str]
+        expected_response_fields: list[
+            tuple[str, str, str, str]
         ] = self._build_expected_response_fields(
             theme_name=theme_name,
             sub_theme_name=sub_theme_name,
@@ -165,8 +164,10 @@ class TestPublicAPINestedLinkViews:
             # Check that the metadata field matches up to expected value
             # For example, the `name` of 1 of the items in the `themes` list view
             # should be equal to the `theme_name` which in this case is `infectious_disease`.
-            metadata_field_from_response: str = response_data[0][metadata_field]
-            assert metadata_field_from_response == expected_metadata_field_value
+            # The `information` field has been temporarily removed hence the if statement check is in place below.
+            if metadata_field:
+                metadata_field_from_response: str = response_data[0][metadata_field]
+                assert metadata_field_from_response == expected_metadata_field_value
 
             # Check that the link field matches up to expected value
             link_field_from_response: str = response_data[0][link_field]
@@ -193,7 +194,11 @@ class TestPublicAPINestedLinkViews:
         topic_name = "COVID-19"
         geography_type_name = "Nation"
         geography_name = "England"
+        geography_code = "E92000001"
         metric_name = "COVID-19_deaths_ONSByDay"
+        metric_group = "deaths"
+        sex = "ALL"
+        age = "ALL"
 
         other_topic_name = "Influenza"
         other_metric_name = "Influenza_testing_7daypositivity"
@@ -208,7 +213,11 @@ class TestPublicAPINestedLinkViews:
                 topic=topic_name,
                 geography_type=geography_type_name,
                 geography=geography_name,
+                geography_code=geography_code,
+                metric_group=metric_group,
                 metric=metric_name,
+                sex=sex,
+                age=age,
                 day=i + 1,
             )
 
@@ -220,7 +229,11 @@ class TestPublicAPINestedLinkViews:
                 topic=other_topic_name,
                 geography_type=geography_type_name,
                 geography=geography_name,
+                geography_code=geography_code,
+                metric_group=metric_group,
                 metric=other_metric_name,
+                sex=sex,
+                age=age,
                 day=i + 1,
             )
 
@@ -248,8 +261,12 @@ class TestPublicAPINestedLinkViews:
             assert result["sub_theme"] == sub_theme_name
             assert result["geography_type"] == geography_type_name
             assert result["geography"] == geography_name
+            assert result["geography_code"] == geography_code
             assert result["topic"] == topic_name != other_topic_name
             assert result["metric"] == metric_name != other_metric_name
+            assert result["metric_group"] == metric_group
+            assert result["sex"] == sex
+            assert result["age"] == age
 
     @pytest.mark.django_db
     def test_returns_correct_data_at_final_view_with_query_parameters(
@@ -269,10 +286,10 @@ class TestPublicAPINestedLinkViews:
         geography_type_name = "Nation"
         geography_name = "England"
         metric_name = "COVID-19_deaths_ONSByDay"
-        stratum_name = "15_44"
+        age = "15_44"
         sex = "F"
 
-        other_stratum_name = "90+"
+        other_age = "90+"
         other_sex = "M"
 
         expected_matching_time_series_count: int = 2
@@ -287,7 +304,7 @@ class TestPublicAPINestedLinkViews:
                 geography=geography_name,
                 metric=metric_name,
                 day=i + 1,
-                stratum=stratum_name,
+                age=age,
                 sex=sex,
             )
 
@@ -300,7 +317,7 @@ class TestPublicAPINestedLinkViews:
                 geography_type=geography_type_name,
                 geography=geography_name,
                 metric=metric_name,
-                stratum=other_stratum_name,
+                age=other_age,
                 sex=other_sex,
                 day=i + 1,
             )
@@ -308,7 +325,7 @@ class TestPublicAPINestedLinkViews:
         # When
         path = f"{self.path}themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}"
         response: Response = client.get(
-            path=path, format="json", data={"sex": sex, "stratum": stratum_name}
+            path=path, format="json", data={"sex": sex, "age": age}
         )
 
         # Then
@@ -335,4 +352,4 @@ class TestPublicAPINestedLinkViews:
             assert result["topic"] == topic_name
             assert result["metric"] == metric_name
             assert result["sex"] == sex != other_sex
-            assert result["stratum"] == stratum_name != other_stratum_name
+            assert result["age"] == age != other_age

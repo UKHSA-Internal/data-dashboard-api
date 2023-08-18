@@ -31,10 +31,9 @@ class TestBuildCMSSite:
 
         expected_slugs = [
             "respiratory-viruses",
-            "coronavirus",
+            "covid-19",
             "influenza",
-            "how-to-use-this-data",
-            "maps",
+            "location-based-data",
             "about",
         ]
         created_slugs = [item["meta"]["slug"] for item in items]
@@ -43,10 +42,9 @@ class TestBuildCMSSite:
 
         expected_titles = [
             "Respiratory viruses",
-            "Coronavirus",
+            "COVID-19",
             "Influenza",
-            "How to use this data",
-            "Maps",
+            "Location based data",
             "About",
             "What's new",
         ]
@@ -91,6 +89,10 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == home_page_response_template["meta"]["search_description"]
         )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == home_page_response_template["meta"]["show_in_menus"]
+        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -105,7 +107,7 @@ class TestBuildCMSSite:
 
     @pytest.mark.django_db
     @pytest.mark.parametrize(
-        "slug", ["coronavirus", "influenza", "other-respiratory-viruses"]
+        "slug", ["covid-19", "influenza", "other-respiratory-viruses"]
     )
     def test_command_builds_site_with_correct_topic_pages(
         self,
@@ -121,6 +123,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         topic_page = TopicPage.objects.get(slug=slug)
+        parent_home_page = HomePage.objects.get(title="Respiratory viruses")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{topic_page.id}/")
@@ -145,6 +148,12 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == topic_page_response_template["meta"]["search_description"]
         )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == topic_page_response_template["meta"]["show_in_menus"]
+        )
+        assert response_data["meta"]["parent"]["id"] == parent_home_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -171,6 +180,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         about_page = CommonPage.objects.get(slug="about")
+        parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{about_page.id}/")
@@ -190,6 +200,12 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == about_page_template["meta"]["search_description"]
         )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == about_page_template["meta"]["show_in_menus"]
+        )
+        assert response_data["meta"]["parent"]["id"] == parent_home_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -216,6 +232,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         whats_new_page = CommonPage.objects.get(slug="whats-new")
+        parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{whats_new_page.id}/")
@@ -235,6 +252,12 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == whats_new_page_template["meta"]["search_description"]
         )
+        assert (
+            response_data["meta"]["show_in_menus"]
+            == whats_new_page_template["meta"]["show_in_menus"]
+        )
+        assert response_data["meta"]["parent"]["id"] == parent_home_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]

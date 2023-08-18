@@ -11,17 +11,18 @@ class PlotParameters(BaseModel):
     chart_type: str
     topic: str
     metric: str
-    stratum: Optional[str]
-    geography: Optional[str]
-    geography_type: Optional[str]
-    sex: Optional[str]
-    date_from: Optional[str]
-    date_to: Optional[str]
-    label: Optional[str] = ""
-    line_colour: Optional[str] = ""
-    line_type: Optional[str] = ""
-    x_axis: Optional[str] = ""
-    y_axis: Optional[str] = ""
+    stratum: str | None = ""
+    geography: str | None = ""
+    geography_type: str | None = ""
+    sex: str | None = ""
+    age: str | None = ""
+    date_from: str | None = ""
+    date_to: str | None = ""
+    label: str | None = ""
+    line_colour: str | None = ""
+    line_type: str | None = ""
+    x_axis: str | None = ""
+    y_axis: str | None = ""
 
     @property
     def topic_name(self) -> str:
@@ -44,6 +45,10 @@ class PlotParameters(BaseModel):
         return self.stratum
 
     @property
+    def age_name(self) -> Optional[str]:
+        return self.stratum
+
+    @property
     def date_from_value(self) -> datetime.date:
         """Parses the `date_from` into a date object.
         Defaults to 1 year ago from the current date.
@@ -54,6 +59,17 @@ class PlotParameters(BaseModel):
 
         """
         return make_date_from_string(date_from=self.date_from)
+
+    @property
+    def date_to_value(self) -> Optional[datetime.date]:
+        """Parses the 'date_to' into a date object.
+            Defaults to today's date.
+
+        Returns:
+            'date' object representing the 'date_to' string
+            or a default of today's date
+        """
+        return make_date_to_string(date_to=self.date_to)
 
     @property
     def x_axis_value(self) -> str:
@@ -85,7 +101,9 @@ class PlotParameters(BaseModel):
             "geography_name": self.geography_name or "",
             "geography_type_name": self.geography_type_name or "",
             "sex": self.sex or "",
+            "age": self.age or "",
             "date_from": self.date_from_value,
+            "date_to": self.date_to_value,
             "x_axis": self.x_axis_value,
             "y_axis": self.y_axis_value,
         }
@@ -148,3 +166,20 @@ def make_date_from_string(date_from: Optional[str]) -> datetime.date:
         return get_date_n_months_ago_from_timestamp(
             datetime_stamp=datetime.date.today(), number_of_months=one_year
         )
+
+
+def make_date_to_string(date_to: Optional[str]) -> datetime.date:
+    """Parse the 'date_to' string into a date object, defaults to today's date.
+
+    Args:
+        date_to: a string representing the date in teh form '%y-%m-%d'
+            E.g. "2023-01-01"
+
+    Returns:
+        'date' object representing the 'date_to' string
+            or a default of 1 year ago from the current date
+    """
+    try:
+        return datetime.datetime.strptime(date_to, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return datetime.date.today()
