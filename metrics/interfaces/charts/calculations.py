@@ -33,4 +33,4 @@ def get_rolling_period_slice_for_metric(metric_name: str) -> int:
         the rolling period of that metric.
 
     """
-    return 1 if "weekly" in metric_name else 7
+    return 1 if "week" in metric_name.lower() else 7
