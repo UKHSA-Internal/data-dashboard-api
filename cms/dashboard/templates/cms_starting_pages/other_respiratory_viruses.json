@@ -8,7 +8,7 @@
         "html_url": null,
         "slug": "other-respiratory-viruses",
         "show_in_menus": true,
-        "first_published_at": "2023-08-14T17:22:11.682522+01:00",
+        "first_published_at": "2023-08-16T18:43:52.977594+01:00",
         "alias_of": null,
         "parent": {
             "id": 4,
@@ -21,7 +21,7 @@
         }
     },
     "title": "Other respiratory viruses",
-    "page_description": "<p data-block-key=\"rjyu9\">Other common respiratory viruses include  adenovirus, human metapneumovirus (hMPV), parainfluenza, rhinovirus and  respiratory syncytial virus (RSV).</p><p data-block-key=\"crg94\">The  healthcare data we have for other respiratory viruses comes from a  sentinel surveillance system (a data collection method used to monitor  trends). This means the healthcare data is not a count of every person  being treated for the respiratory virus in hospital. Find out more about  <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for other respiratory viruses</a>.</p>",
+    "page_description": "<p data-block-key=\"rjyu9\">Other common respiratory viruses include adenovirus, human metapneumovirus (hMPV), parainfluenza, rhinovirus and respiratory syncytial virus (RSV).</p><p data-block-key=\"crg94\">The healthcare data we have for other respiratory viruses comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the healthcare data is not a count of every person being treated for the respiratory virus in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for other respiratory viruses</a>.</p>",
     "body": [
         {
             "type": "section",
@@ -52,12 +52,145 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "",
-                                                    "label": "",
-                                                    "line_colour": "BLUE",
+                                                    "age": "0-4",
+                                                    "label": "0 to 4 years",
+                                                    "line_colour": "GREEN",
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "b594dbf2-1455-4c08-ae52-6f63cf42f5da"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "RSV",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "5-14",
+                                                    "label": "5 to 14 years",
+                                                    "line_colour": "GREEN",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "00dc8f8e-0c00-4965-8a3d-2a4492631510"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "RSV",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "15-44",
+                                                    "label": "15 to 44 years",
+                                                    "line_colour": "PURPLE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "bd0439fe-e4b2-44a5-833d-a264fa5fe7c8"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "RSV",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "45-54",
+                                                    "label": "45 to 54 years",
+                                                    "line_colour": "PURPLE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "94597566-a23f-4c4e-821c-2a94047f2ee4"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "RSV",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "55-64",
+                                                    "label": "55 to 64 years",
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "09716db8-e5ba-4f0d-bde1-57fe6ae6d48c"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "RSV",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "65-74",
+                                                    "label": "65 to 74 years",
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "525766e9-62f0-45d9-829b-20677db54756"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "RSV",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "75-84",
+                                                    "label": "75 to 84 years",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "855d4503-f512-47c8-bbee-1ffc30714ba4"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "RSV",
+                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "85+",
+                                                    "label": "85 years and over",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "85b4c089-7e08-42f2-9983-4ab89852f546"
                                             }
                                         ]
                                     },
@@ -253,10 +386,10 @@
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "",
-                                                    "geography_type": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -323,5 +456,5 @@
             "body": "<p data-block-key=\"4kyrm\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-08-15T11:35:01.144051+01:00"
+    "last_published_at": "2023-08-17T18:57:25.537438+01:00"
 }
