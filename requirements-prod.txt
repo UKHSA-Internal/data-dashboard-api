@@ -1,7 +1,7 @@
 anyascii==0.3.1
 asgiref==3.7.2
 attrs==23.1.0
-beautifulsoup4==4.11.2
+beautifulsoup4==4.12.2
 CacheControl==0.13.1
 certifi==2023.7.22
 cfgv==3.4.0
