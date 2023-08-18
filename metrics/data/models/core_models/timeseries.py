@@ -4,6 +4,8 @@ from metrics.data.enums import TimePeriod
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 from metrics.data.models.constants import (
     METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
+    METRIC_VALUE_DECIMAL_PLACES,
+    METRIC_VALUE_MAX_DIGITS,
     SEX_MAX_CHAR_CONSTRAINT,
 )
 from metrics.data.models.core_models import help_texts
@@ -49,8 +51,8 @@ class CoreTimeSeries(models.Model):
     refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE, null=True)
 
     metric_value = models.DecimalField(
-        max_digits=11,
-        decimal_places=1,
+        max_digits=METRIC_VALUE_MAX_DIGITS,
+        decimal_places=METRIC_VALUE_DECIMAL_PLACES,
     )
 
     objects = CoreTimeSeriesManager()
