@@ -8,8 +8,8 @@ from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
+    _cast_x_value,
     convert_type,
-    create_sortable_stratum,
     get_x_and_y_values,
     sort_by_stratum,
     unzip_values,
@@ -447,7 +447,7 @@ class TestSortByStratum:
         # Given
         values = [
             ("65_84", 1),
-            ("6_17", 2),
+            ("06_17", 2),
             ("85+", 3),
             ("18_64", 4),
             ("default", 5),
@@ -459,6 +459,27 @@ class TestSortByStratum:
         # Then
         assert first_list == ["6-17", "18-64", "65-84", "85+", "default"]
         assert second_list == [2, 4, 1, 3, 5]
+
+
+class TestCastXValue:
+    @pytest.mark.parametrize(
+        "input_value, expected_value",
+        [("00-04", "0-4"), ("10-14", "10-14"), ("90+", "90+"), ("all", "all")],
+    )
+    def test_returns_correct_value(self, input_value: str, expected_value: str):
+        """
+        Given a value
+        When `_cast_x_value()` is called
+        Then the correct value is returned
+        """
+        # Given
+        value = input_value
+
+        # When
+        cast_value = _cast_x_value(value=value)
+
+        # Then
+        assert cast_value == expected_value
 
 
 class TestUnzipValues:
