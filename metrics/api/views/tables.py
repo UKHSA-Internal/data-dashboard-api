@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
-from metrics.api.serializers.tables import TablesResponseSerializer, TablesSerializer
+from metrics.api.serializers.tables import (
+    TablesResponseSerializer,
+    TablesResponseSerializerV3,
+    TablesSerializer,
+)
 from metrics.interfaces.plots import validation
 from metrics.interfaces.tables import access
 
@@ -82,7 +86,7 @@ class TablesViewV3(APIView):
 
     @extend_schema(
         request=TablesSerializer,
-        responses={HTTPStatus.OK.value: TablesResponseSerializer},
+        responses={HTTPStatus.OK.value: TablesResponseSerializerV3},
         tags=[TABLES_API_TAG],
     )
     def post(self, request, *args, **kwargs):

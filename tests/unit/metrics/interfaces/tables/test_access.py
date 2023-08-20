@@ -187,7 +187,7 @@ class TestGenerateTableV2:
         # Then
         expected_table: list[dict[str, str]] = [
             {
-                "heading_value": "2022-09-05",
+                "reference": "2022-09-05",
                 "values": [
                     {"label": "Plot1", "value": "10"},
                     {"label": "Plot2", "value": "11"},

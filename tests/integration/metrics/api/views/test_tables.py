@@ -347,7 +347,7 @@ class TestTablesViewV3:
         # Then
         expected_response = [
             {
-                "heading_value": "2023-01-31",
+                "reference": "2023-01-31",
                 "values": [
                     {
                         "label": "Plot1",
@@ -399,7 +399,7 @@ class TestTablesViewV3:
         # Then
         expected_response = [
             {
-                "heading_value": "2023-01-31",
+                "reference": "2023-01-31",
                 "values": [
                     {"label": "Plot1", "value": "123.0000"},
                     {"label": "plot_label", "value": "123.0000"},

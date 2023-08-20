@@ -72,3 +72,21 @@ class TablesSerializer(serializers.Serializer):
 
 class TablesResponseSerializer(serializers.Serializer):
     tabular_output = serializers.FileField(help_text=help_texts.TABLES_RESPONSE)
+
+
+class TablesResponseValueSerializer(serializers.Serializer):
+    label = serializers.CharField()
+    value = serializers.CharField()
+
+
+class TablesResponseValuesListSerializer(serializers.ListSerializer):
+    child = TablesResponseValueSerializer()
+
+
+class TablesResponsePlotsListSerializer(serializers.Serializer):
+    reference = serializers.CharField()
+    values = TablesResponseValuesListSerializer()
+
+
+class TablesResponseSerializerV3(serializers.ListSerializer):
+    child = TablesResponsePlotsListSerializer()

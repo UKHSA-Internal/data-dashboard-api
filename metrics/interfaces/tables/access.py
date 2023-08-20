@@ -107,6 +107,6 @@ def _cast_generic_key_over_column_value(
         explicit_column_heading = next(x for x in keys if x != "values")
 
         column_value = plot.pop(explicit_column_heading)
-        plot["heading_value"] = column_value
+        plot["reference"] = column_value
 
     return tabular_data
