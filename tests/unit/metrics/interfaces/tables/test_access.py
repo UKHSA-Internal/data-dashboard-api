@@ -1,8 +1,15 @@
 import datetime
 from unittest import mock
 
+import pytest
+
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.interfaces.tables.access import TablesInterface, generate_table
+from metrics.domain.utils import ChartAxisFields
+from metrics.interfaces.tables.access import (
+    TablesInterface,
+    generate_table,
+    generate_table_v3,
+)
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -144,3 +151,47 @@ class TestGenerateTables:
         # Then
         assert table == spy_generate_plots_for_table.return_value
         spy_generate_plots_for_table.assert_called_once()
+
+
+class TestGenerateTableV2:
+    @pytest.mark.parametrize(
+        "explicit_column_header_value",
+        [chart_axis_field.name for chart_axis_field in ChartAxisFields],
+    )
+    @mock.patch(f"{MODULE_PATH}.generate_table")
+    def test_sets_generic_key(
+        self, mocked_generate_table: mock.MagicMock, explicit_column_header_value: str
+    ):
+        """
+        Given `generate_table` which returns expected tabular output
+        When `generate_table_v2()` is called
+        Then returned output does contain an explicit key like `date` or `stratum`
+        """
+        # Given
+        mocked_plots_collection = mock.Mock()
+        mocked_generate_table.return_value = [
+            {
+                explicit_column_header_value: "2022-09-05",
+                "values": [
+                    {"label": "Plot1", "value": "10"},
+                    {"label": "Plot2", "value": "11"},
+                ],
+            },
+        ]
+
+        # When
+        generated_table: list[dict[str, str]] = generate_table_v3(
+            plots_collection=mocked_plots_collection
+        )
+
+        # Then
+        expected_table: list[dict[str, str]] = [
+            {
+                "heading_value": "2022-09-05",
+                "values": [
+                    {"label": "Plot1", "value": "10"},
+                    {"label": "Plot2", "value": "11"},
+                ],
+            },
+        ]
+        assert generated_table == expected_table
