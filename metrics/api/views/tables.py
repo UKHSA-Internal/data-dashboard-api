@@ -19,6 +19,7 @@ class TablesView(APIView):
         request=TablesSerializer,
         responses={HTTPStatus.OK.value: TablesResponseSerializer},
         tags=[TABLES_API_TAG],
+        deprecated=True,
     )
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate chart data in tabular format.
