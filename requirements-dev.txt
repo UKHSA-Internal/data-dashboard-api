@@ -11,3 +11,4 @@ pytest==7.4.0
 pytest-django==4.5.2
 pylint==2.17.5
 pylint-django==2.5.3
+pytest-random-order==1.1.0
