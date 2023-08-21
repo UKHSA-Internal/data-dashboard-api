@@ -141,7 +141,7 @@ else:
             "HOST": config.POSTGRES_HOST,
             "PORT": config.POSTGRES_PORT,
             "POOL_OPTIONS": {
-                "POOL_SIZE": 10,
+                "POOL_SIZE": 20,
                 # Number of connections to be persisted at all times
                 "MAX_OVERFLOW": 10,
                 # Additional connections to be created at peak loads
