@@ -45,7 +45,6 @@ if not SECRET_KEY:
 # to direct users back to the frontend dashboard
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
 
-
 # Email server configuration
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
@@ -58,3 +57,9 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
 # The recipient address to send feedback emails to
 FEEDBACK_EMAIL_RECIPIENT_ADDRESS = os.environ.get("FEEDBACK_EMAIL_RECIPIENT_ADDRESS")
+
+# The endpoint of the Redis cache
+REDIS_HOST = os.environ.get("REDIS_HOST", "")
+if not REDIS_HOST:
+    logger.info("No REDIS_HOST given, falling back to localhost")
+    REDIS_HOST = "redis://127.0.0.1:6379"
