@@ -84,7 +84,7 @@ simplejson==3.18.3
 six==1.16.0
 smmap==5.0.0
 sortedcontainers==2.4.0
-soupsieve==2.4
+soupsieve==2.4.1
 sqlparse==0.4.4
 sqlparams==5.1.0
 stevedore==5.1.0
