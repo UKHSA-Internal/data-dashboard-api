@@ -8,9 +8,9 @@ from caching.internal_api_client import InternalAPIClient
 from metrics.data.managers.api_keys import CustomAPIKeyManager
 
 
-class FakeAPIKeyManager:
+class FakeAPIKeyManager(CustomAPIKeyManager):
     @staticmethod
-    def create_key(name: str) -> tuple[mock.Mock, mock.Mock]:
+    def create_key(name: str) -> tuple[mock.Mock, str]:
         created_api_key = mock.Mock()
         created_api_key.name = name
 
