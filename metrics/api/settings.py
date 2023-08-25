@@ -124,10 +124,8 @@ CACHE_TTL = None
 # This means that the cache will only be refreshed explicitly
 
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": config.REDIS_HOST,
-        "KEY_PREFIX": "ukhsa",
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
 
