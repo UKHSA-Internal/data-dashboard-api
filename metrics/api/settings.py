@@ -124,8 +124,8 @@ CACHE_TTL = None
 # This means that the cache will only be refreshed explicitly
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
