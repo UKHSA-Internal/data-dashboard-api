@@ -119,6 +119,19 @@ API_KEY_CUSTOM_HEADER = "HTTP_AUTHORIZATION"
 
 WSGI_APPLICATION = "metrics.api.wsgi.application"
 
+# Caching configuration
+CACHE_TTL = None
+# This means that the cache will only be refreshed explicitly
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": config.REDIS_HOST,
+        "KEY_PREFIX": "ukhsa",
+    }
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 # Puts the db at the root level of the repo instead of within the `metrics` app
