@@ -57,7 +57,7 @@ def retrieve_response_from_cache_or_calculate(
     """
 
     request: Request = args[1]
-    cache_management = kwargs.pop("cache_management", CacheManagement(in_memory=True))
+    cache_management = kwargs.pop("cache_management", CacheManagement(in_memory=False))
 
     cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
         request=request

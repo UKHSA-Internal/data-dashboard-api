@@ -1,5 +1,7 @@
 from unittest import mock
 
+from rest_framework.response import Response
+
 from caching.decorators import retrieve_response_from_cache_or_calculate
 from caching.management import CacheManagement, CacheMissError
 
@@ -89,6 +91,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         mocked_view_function = mock.Mock()
         mocked_args = [mock.Mock(), mocked_request, mock.Mock()]
         mocked_kwargs = {"key_a": mock.Mock(), "key_b": mock.Mock()}
+        spy_calculate_response_from_view.return_value = Response()
 
         # When
         retrieved_response = retrieve_response_from_cache_or_calculate(
