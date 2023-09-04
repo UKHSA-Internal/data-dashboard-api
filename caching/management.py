@@ -36,7 +36,6 @@ class CacheManagement:
 
             If `in_memory` is set to False a remote cache client will be created instead.
 
-
         Args:
             in_memory: Whether to use an entirely in-memory cache or not.
 
