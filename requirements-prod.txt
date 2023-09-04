@@ -89,7 +89,7 @@ sqlparse==0.4.4
 sqlparams==5.1.0
 stevedore==5.1.0
 telepath==0.3
-tenacity==8.2.2
+tenacity==8.2.3
 toml==0.10.2
 tomli==2.0.1
 typing_extensions==4.7.1
