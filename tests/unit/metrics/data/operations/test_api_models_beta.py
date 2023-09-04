@@ -118,8 +118,7 @@ class TestGenerateAPITimeSeries:
         log_text = "No CoreTimeSeries provided, therefore no APITimeSeries records will be created"
         assert log_text in caplog.text
         spy_api_time_series_manager.bulk_create.assert_called_once_with(
-            objs=[],
-            batch_size=100
+            objs=[], batch_size=100
         )
 
 
