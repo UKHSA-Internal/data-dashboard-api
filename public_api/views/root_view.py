@@ -8,56 +8,52 @@ from public_api.views.base import PUBLIC_API_TAG
 
 class PublicAPIRootView(APIView):
     """
-    This is the root of the hyperlinked browsable timeseries API.
+    **Using the API**
 
-    From here you can use the `links` field to guide you to the data that you need.
+    Use the API to extract and save data from the UKHSA data dashboard.
+    To start, please select and filter to the specific data metric you’re interested in.
 
-    Whereby the `themes` field is a hyperlink to all the available **themes**.
-
-    ---
-
-    The data is hierarchical and is structured as follows:
-
-    - -> `theme` - The largest topical subgroup e.g. **infectious_disease**
-
-    - ---> `sub_theme` - A Topical subgroup e.g. **respiratory**
-
-    - -----> `topic` - The name of the topic e.g. **COVID-19**
-
-    - -------> `geography_type` - The type of geography e.g. **Nation**
-
-    - ---------> `geography` - The name of geography associated with metric  e.g. **London**
-
-    - -----------> `metric` - The name of the metric being queried for e.g. **COVID-19_deaths_ONSByDay**
-
-    - -------------> `timeseries` - The final slice of data, which will allow for further filtering via query parameters
+    The hyperlinked API will guide you to the data you’re looking for.
+    By clicking on each link, you’ll be shown the next options available for the data you’ve selected.
+    The data selection is structured, meaning the option you select will determine the options available.
 
     ---
 
-    For example, items stated in bold above would produce the following full URL:
+    This is how the data is structured:
+
+    - Theme – the overall subgroup of the data. For example, **infectious_disease**
+
+    - Sub_theme – the group the data falls in within the theme. For example, **respiratory**
+
+    - Topic – the type of data within the sub-theme. For example, **COVID-19**
+
+    - Geography_type – the type of geographical area for the data. For example, **NHS region**
+
+    - Geography – the specific geographical area related to the type. For example, **London**
+
+    - Metric – the name of the metric you’re interested in. For example, **COVID-19_cases_casesByDay**
+
+    - Timeseries – further filtering of the data
+
+    ---
+
+    The structure of the URL stays the same for each API query, following the filtering selection process.
+    For example, the data filtering shown above (in bold) would produce this URL:
 
     ```
-    .../themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/Nation/geographies/London/metrics/COVID-19_deaths_ONSByDay/
+    /themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/NHS_region/geographies/London/metrics/COVID-19_cases_casesByDay
     ```
 
-    Note the overall structure of the URL.
-    The category is required in plural form, followed by the detail of associated entity.
+    The overall category is plural (in this example, themes)
+    which is then followed by the detail selected (in this example, infectious_diseases).
 
-    For example, `/themes/` is the plural of `theme`.
-    This would then be followed by the referring entity, **infectious_disease**
-
-    ---
-
-    The final step in the hierarchy is the `timeseries` endpoint.
-
-    Which will provide the slice of data according to the selected URL parameters.
-
-    At that point, additional query parameters are provided for further granularity and filtering of the data.
+    Unlike the coronavirus (COVID-19) dashboard API, you cannot extract all the data across a topic or geography type.
+    The API is designed for you to be selective by data type, topic, geography and metric.
 
     """
 
     permission_classes = []
-    name = "Public API Root"
+    name = "API"
 
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request, format=None):
