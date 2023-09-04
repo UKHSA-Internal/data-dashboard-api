@@ -137,9 +137,9 @@ class CacheManagement:
 
         """
         match request.method:
-            case HTTPMethod.POST.value:
+            case "POST":
                 data = request.data
-            case HTTPMethod.GET.value:
+            case "GET":
                 data = {
                     k: v
                     for k, v in request.query_params.dict().items()
