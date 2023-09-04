@@ -330,7 +330,7 @@ class TestConsumer:
         )
         spy_create_timeseries.assert_called_once_with(
             timeseries_dtos=expected_outgoing_timeseries_dtos,
-            core_timeseries_manager=mocked_core_timeseries_manager,
+            core_time_series_manager=mocked_core_timeseries_manager,
             batch_size=batch_size,
         )
 
