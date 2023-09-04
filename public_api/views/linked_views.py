@@ -1,5 +1,3 @@
-from rest_framework_api_key.permissions import HasAPIKey
-
 from public_api.serializers.linked_serializers import (
     GeographyDetailSerializer,
     GeographyListSerializer,
@@ -23,7 +21,7 @@ class ThemeListView(BaseNestedAPITimeSeriesView):
     A `theme` is the largest topical subgroup e.g. **infectious_disease**.
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "theme"
     serializer_class = ThemeListSerializer
 
@@ -35,7 +33,7 @@ class ThemeDetailView(BaseNestedAPITimeSeriesView):
     In this case, the next step in the data hierarchy is **sub_themes**.
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "theme"
     serializer_class = ThemeDetailSerializer
 
@@ -49,7 +47,7 @@ class SubThemeListView(BaseNestedAPITimeSeriesView):
     A `sub_theme` is a topical subgroup  e.g. **respiratory**
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "sub_theme"
     serializer_class = SubThemeListSerializer
 
@@ -61,7 +59,7 @@ class SubThemeDetailView(BaseNestedAPITimeSeriesView):
     In this case, the next step in the data hierarchy is **topics**.
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "sub_theme"
     serializer_class = SubThemeDetailSerializer
 
@@ -75,7 +73,7 @@ class TopicListView(BaseNestedAPITimeSeriesView):
     A `topic` is the name of the topic/threat e.g. **COVID-19**
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "topic"
     serializer_class = TopicListSerializer
 
@@ -87,7 +85,7 @@ class TopicDetailView(BaseNestedAPITimeSeriesView):
     In this case, the next step in the data hierarchy is **geography_type**.
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "topic"
     serializer_class = TopicDetailSerializer
 
@@ -102,7 +100,7 @@ class GeographyTypeListView(BaseNestedAPITimeSeriesView):
 
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "geography_type"
     serializer_class = GeographyTypeListSerializer
 
@@ -115,7 +113,7 @@ class GeographyTypeDetailView(BaseNestedAPITimeSeriesView):
 
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "geography_type"
     serializer_class = GeographyTypeDetailSerializer
 
@@ -130,7 +128,7 @@ class GeographyListView(BaseNestedAPITimeSeriesView):
 
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "geography"
     serializer_class = GeographyListSerializer
 
@@ -143,7 +141,7 @@ class GeographyDetailView(BaseNestedAPITimeSeriesView):
 
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "geography"
     serializer_class = GeographyDetailSerializer
 
@@ -158,6 +156,6 @@ class MetricListView(BaseNestedAPITimeSeriesView):
 
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     lookup_field = "metric"
     serializer_class = MetricListSerializer

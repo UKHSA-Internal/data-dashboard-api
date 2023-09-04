@@ -2,7 +2,6 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
 
 from public_api.views.base import PUBLIC_API_TAG
 
@@ -53,7 +52,7 @@ class PublicAPIRootView(APIView):
 
     """
 
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     name = "API"
 
     @extend_schema(tags=[PUBLIC_API_TAG])
