@@ -3,8 +3,8 @@ from typing import Callable
 from metrics.data.enums import TimePeriod
 from metrics.data.models import core_models
 from metrics.data.operations.ingestion import (
+    create_core_and_api_timeseries,
     create_core_headlines,
-    create_core_timeseries,
 )
 
 
@@ -63,4 +63,4 @@ class MetricsAPIInterface:
 
     @staticmethod
     def get_create_core_timeseries() -> Callable:
-        return create_core_timeseries
+        return create_core_and_api_timeseries

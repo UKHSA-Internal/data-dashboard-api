@@ -22,7 +22,7 @@ def generate_api_time_series(
     api_time_series_manager: models.manager = DEFAULT_API_TIME_SERIES_MANAGER,
     batch_size: int = 100,
 ) -> None:
-    """Queries the core 'CoreTimeSeries' models and populates the flat 'APITimeSeries'
+    """Populates the flat 'APITimeSeries' from the given `all_core_time_series`
 
     Notes:
         If there are any existing 'APITimeSeries' records, then this will return early.
@@ -40,13 +40,25 @@ def generate_api_time_series(
         None
 
     """
+    api_time_series_models_to_be_saved = _create_api_time_series_model_instances(
+        all_core_time_series=all_core_time_series
+    )
+
+    api_time_series_manager.bulk_create(
+        objs=api_time_series_models_to_be_saved, batch_size=batch_size
+    )
+
+
+def _create_api_time_series_model_instances(
+    all_core_time_series: list[CoreTimeSeries],
+) -> list[APITimeSeries]:
     try:
         first_core_time_series: CoreTimeSeries = all_core_time_series[0]
     except IndexError:
         logger.info(
             "No CoreTimeSeries provided, therefore no APITimeSeries records will be created"
         )
-        return
+        return []
 
     theme = first_core_time_series.metric.topic.sub_theme.theme.name
     sub_theme = first_core_time_series.metric.topic.sub_theme.name
@@ -56,7 +68,7 @@ def generate_api_time_series(
     metric_frequency = first_core_time_series.metric_frequency
     refresh_date = first_core_time_series.refresh_date
 
-    models_to_be_saved = [
+    return [
         create_api_time_series_from_core_time_series(
             core_time_series=core_time_series,
             theme=theme,
@@ -69,7 +81,6 @@ def generate_api_time_series(
         )
         for core_time_series in all_core_time_series
     ]
-    api_time_series_manager.bulk_create(objs=models_to_be_saved, batch_size=batch_size)
 
 
 def create_api_time_series_from_core_time_series(
