@@ -1,6 +1,5 @@
 import hashlib
 import json
-from http import HTTPMethod
 from typing import Optional
 
 from rest_framework.renderers import JSONRenderer
