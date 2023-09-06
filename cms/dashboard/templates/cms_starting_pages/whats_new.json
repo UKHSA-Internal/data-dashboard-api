@@ -1,14 +1,14 @@
 {
-    "id": 134,
+    "id": 10,
     "meta": {
+        "seo_title": "What's new | UKHSA data dashboard",
+        "search_description": "A list of all the new features and key pieces of data which have been added to the UKHSA data dashboard",
         "type": "common.CommonPage",
-        "detail_url": "http://localhost/api/pages/134/",
+        "detail_url": "http://localhost/api/pages/10/",
         "html_url": null,
         "slug": "whats-new",
         "show_in_menus": true,
-        "seo_title": "What's new | UKHSA data dashboard",
-        "search_description": "A list of all the new features and key pieces of data which have been added to the UKHSA data dashboard",
-        "first_published_at": "2023-05-16T11:46:07.719758+01:00",
+        "first_published_at": "2023-09-06T13:51:55.912624+01:00",
         "alias_of": null,
         "parent": {
             "id": 3,
@@ -21,44 +21,63 @@
         }
     },
     "title": "What's new",
-    "date_posted": "2023-05-12",
-    "body": "<h2 data-block-key=\"z8uie\">March 2023</h2><h3 data-block-key=\"94s66\">2 March 2023 (v5)</h3><p data-block-key=\"58o2q\">The primary navigation items have been updated to focus on viruses included in the dashboard in the place of metrics. The primary navigation items now include ‘Home’ ‘Coronavirus’, ‘Influenza’ and ‘Other respiratory viruses’.</p><h3 data-block-key=\"67tct\">1 March 2023 (v5)</h3><p data-block-key=\"50b5c\">The name of the ‘Interactive maps’ page has been updated to ‘Maps’.</p><p data-block-key=\"a1i7i\"></p><h2 data-block-key=\"bipvm\">February 2023</h2><h3 data-block-key=\"b2l6r\">22 February 2023 (v4)</h3><p data-block-key=\"amg32\">The ‘About’ page has been updated to describe respiratory virus data displayed on the dashboard.</p><h3 data-block-key=\"7bc4f\">17 February 2023 (v4)</h3><p data-block-key=\"du7uj\">A secondary navigation menu has been added which includes additional links about the dashboard data.</p><h3 data-block-key=\"681kk\">16 February 2023 (v4)</h3><p data-block-key=\"bfoej\">The primary navigation menu items have now been updated to include a dropdown menu which lists individual respiratory viruses.</p>",
-    "last_published_at": "2023-05-16T11:46:07.719758+01:00",
+    "date_posted": "2023-05-16",
+    "body": "<p data-block-key=\"z8uie\">We regularly update the dashboard with new data and features. Here we&#x27;ll show a timeline of changes that have happened outside of the weekly data refresh.</p>",
+    "last_published_at": "2023-09-06T17:24:33.895391+01:00",
     "related_links": [
         {
-            "id": 21,
-            "meta": {"type": "common.CommonPageRelatedLink"},
-            "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
+            "id": 11,
+            "meta": {
+                "type": "common.CommonPageRelatedLink"
+            },
+            "title": "NHS: COVID-19",
+            "url": "https://www.nhs.uk/conditions/covid-19/",
+            "body": "<p data-block-key=\"y3631\">Get NHS advice on COVID-19, including symptoms, treatments, looking after yourself at home, how to avoid catching and spreading the virus, vaccinations and long-term effects.</p>"
+        },
+        {
+            "id": 12,
+            "meta": {
+                "type": "common.CommonPageRelatedLink"
+            },
+            "title": "NHS: influenza",
+            "url": "https://www.nhs.uk/conditions/flu/",
+            "body": "<p data-block-key=\"y3631\">Get NHS advice on influenza (flu), including symptoms, how to treat it at home and when to seek medical advice.</p>"
+        },
+        {
+            "id": 13,
+            "meta": {
+                "type": "common.CommonPageRelatedLink"
+            },
+            "title": "National flu and COVID-19 surveillance reports: 2023 to 2024 season",
+            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season",
             "body": "<p data-block-key=\"y3631\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 22,
-            "meta": {"type": "common.CommonPageRelatedLink"},
+            "id": 14,
+            "meta": {
+                "type": "common.CommonPageRelatedLink"
+            },
+            "title": "Sources of surveillance data for influenza, COVID-19 and other respiratory viruses",
+            "url": "https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-v",
+            "body": "<p data-block-key=\"y3631\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
+        },
+        {
+            "id": 15,
+            "meta": {
+                "type": "common.CommonPageRelatedLink"
+            },
             "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
-            "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
-            "body": "<p data-block-key=\"y3631\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
+            "url": "https://www.gov.uk/governhttps://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysisment/collections/human-parainfluenza-viruses-guidance-and-data",
+            "body": "<p data-block-key=\"y3631\">Read more on RSV, including advice on symptoms, diagnosis, treatment and management.</p>"
         },
         {
-            "id": 23,
-            "meta": {"type": "common.CommonPageRelatedLink"},
-            "title": "National norovirus and rotavirus surveillance reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
-            "body": "<p data-block-key=\"y3631\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
-        },
-        {
-            "id": 24,
-            "meta": {"type": "common.CommonPageRelatedLink"},
-            "title": "Hepatitis (liver inflammation) cases in children – latest updates",
-            "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
-            "body": "<p data-block-key=\"y3631\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
-        },
-        {
-            "id": 25,
-            "meta": {"type": "common.CommonPageRelatedLink"},
+            "id": 17,
+            "meta": {
+                "type": "common.CommonPageRelatedLink"
+            },
             "title": "Human parainfluenza viruses: guidance and data",
             "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
-            "body": "<p data-block-key=\"y3631\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
+            "body": "<p data-block-key=\"mtnnz\">Read more on the symptoms, diagnosis and management of human parainfluenza viruses (HPIVs).</p>"
         }
     ]
 }
