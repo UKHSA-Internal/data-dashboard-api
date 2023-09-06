@@ -8,7 +8,7 @@
         "html_url": null,
         "slug": "other-respiratory-viruses",
         "show_in_menus": true,
-        "first_published_at": "2023-08-16T18:43:52.977594+01:00",
+        "first_published_at": "2023-09-06T13:51:55.819364+01:00",
         "alias_of": null,
         "parent": {
             "id": 4,
@@ -17,11 +17,11 @@
                 "detail_url": "http://localhost/api/pages/4/",
                 "html_url": null
             },
-            "title": "Respiratory viruses"
+            "title": "UKHSA data dashboard"
         }
     },
     "title": "Other respiratory viruses",
-    "page_description": "<p data-block-key=\"rjyu9\">Other common respiratory viruses include adenovirus, human metapneumovirus (hMPV), parainfluenza, rhinovirus and respiratory syncytial virus (RSV).</p><p data-block-key=\"crg94\">The healthcare data we have for other respiratory viruses comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the healthcare data is not a count of every person being treated for the respiratory virus in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for other respiratory viruses</a>.</p>",
+    "page_description": "<p data-block-key=\"rjyu9\">Other common respiratory viruses include adenovirus, human metapneumovirus (hMPV), parainfluenza, rhinovirus and respiratory syncytial virus (RSV).</p><p data-block-key=\"47elv\">The healthcare data we have for other respiratory viruses comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the healthcare data is not a count of every person being treated for the respiratory virus in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for other respiratory viruses</a>.</p><p data-block-key=\"3t8e7\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
         {
             "type": "section",
@@ -35,8 +35,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing RSV hospital (ICU or HDU) admission rates of positive cases per 100,000 population reported through SARI Watch, England",
-                                        "body": "RSV SARI Watch surveillance has run from week 40 to week 20. In the 2022 to 2023 season onwards this was extended to run throughout the year, to allow for surveillance of out-of-season trends.",
+                                        "title": "Hospital admissions rate per 100,000 people - respiratory syncytial virus (RSV)",
+                                        "body": "Weekly rates per 100,000 people of patients admitted to hospital (including ICU and HDU) with RSV.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -52,145 +52,12 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "0-4",
-                                                    "label": "0 to 4 years",
-                                                    "line_colour": "GREEN",
+                                                    "age": "",
+                                                    "label": "",
+                                                    "line_colour": "BLUE",
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "b594dbf2-1455-4c08-ae52-6f63cf42f5da"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "5-14",
-                                                    "label": "5 to 14 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "00dc8f8e-0c00-4965-8a3d-2a4492631510"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "15-44",
-                                                    "label": "15 to 44 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "bd0439fe-e4b2-44a5-833d-a264fa5fe7c8"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "45-54",
-                                                    "label": "45 to 54 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "94597566-a23f-4c4e-821c-2a94047f2ee4"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "55-64",
-                                                    "label": "55 to 64 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "09716db8-e5ba-4f0d-bde1-57fe6ae6d48c"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "65-74",
-                                                    "label": "65 to 74 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "525766e9-62f0-45d9-829b-20677db54756"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "75-84",
-                                                    "label": "75 to 84 years",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "855d4503-f512-47c8-bbee-1ffc30714ba4"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "RSV",
-                                                    "metric": "RSV_healthcare_hospadmissionrateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "85+",
-                                                    "label": "85 years and over",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "85b4c089-7e08-42f2-9983-4ab89852f546"
                                             }
                                         ]
                                     },
@@ -216,8 +83,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing Adenovirus test positivity count by week",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with Adenovirus as a weekly time series.",
+                                        "title": "Weekly positivity of people receiving a PCR test - adenovirus",
+                                        "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for adenovirus in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -255,8 +122,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing hMPV test positivity count by week",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with hMPV as a weekly time series.",
+                                        "title": "Weekly positivity of people receiving a PCR test - human metapneumovirus (hMPV)",
+                                        "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for hMPV in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -294,8 +161,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing Parainfluenza test positivity count by week",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with Parainfluenza as a weekly time series.",
+                                        "title": "Weekly positivity of people receiving a PCR test - parainfluenza",
+                                        "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for parainfluenza in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -333,8 +200,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing Rhinovirus test positivity count by week",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with Rhinovirus as a weekly time series.",
+                                        "title": "Weekly positivity of people receiving a PCR test - rhinovirus",
+                                        "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for rhinovirus in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -372,8 +239,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing RSV test positivity count by week",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with RSV as a weekly time series.",
+                                        "title": "Weekly positivity of people receiving a PCR test - RSV",
+                                        "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for RSV in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -386,10 +253,10 @@
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
+                                                    "geography": "",
+                                                    "geography_type": "",
                                                     "sex": "",
-                                                    "age": "all",
+                                                    "age": "",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -411,50 +278,50 @@
     ],
     "related_links": [
         {
-            "id": 11,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
-            "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
-            "body": "<p data-block-key=\"4kyrm\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
-        },
-        {
             "id": 12,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
-            "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
-            "body": "<p data-block-key=\"4kyrm\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
+            "title": "NHS: common cold",
+            "url": "https://www.nhs.uk/conditions/common-cold/",
+            "body": "<p data-block-key=\"4kyrm\">Get NHS advice on treating cold symptoms often associated with respiratory viruses.</p>"
         },
         {
             "id": 13,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "National norovirus and rotavirus surveillance reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
-            "body": "<p data-block-key=\"4kyrm\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
+            "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
+            "url": "https://www.gov.uk/governmhttps://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-datent/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
+            "body": "<p data-block-key=\"4kyrm\">Read more on RSV, including advice on symptoms, diagnosis, treatment and management.</p>"
+        },
+        {
+            "id": 11,
+            "meta": {
+                "type": "topic.TopicPageRelatedLink"
+            },
+            "title": "Human parainfluenza viruses: guidance and data",
+            "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
+            "body": "<p data-block-key=\"4kyrm\">Read more on the symptoms, diagnosis and management of human parainfluenza viruses (HPIVs).</p>"
         },
         {
             "id": 14,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Hepatitis (liver inflammation) cases in children – latest updates",
-            "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
-            "body": "<p data-block-key=\"4kyrm\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
+            "title": "National flu and COVID-19 surveillance reports: 2023 to 2024 season",
+            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season",
+            "body": "<p data-block-key=\"4kyrm\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
             "id": 15,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Human parainfluenza viruses: guidance and data",
-            "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
-            "body": "<p data-block-key=\"4kyrm\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
+            "title": "Sources of surveillance data for influenza, COVID-19 and other respiratory viruses",
+            "url": "https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-v",
+            "body": "<p data-block-key=\"4kyrm\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-08-17T18:57:25.537438+01:00"
+    "last_published_at": "2023-09-06T17:18:07.816918+01:00"
 }
