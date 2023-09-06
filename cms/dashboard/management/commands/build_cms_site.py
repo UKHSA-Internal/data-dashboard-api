@@ -167,3 +167,5 @@ class Command(BaseCommand):
         _build_common_page(name="about", parent_page=root_page)
         _build_common_page(name="location_based_data", parent_page=root_page)
         _build_common_page(name="whats_new", parent_page=root_page)
+        _build_common_page(name="whats_coming", parent_page=root_page)
+
