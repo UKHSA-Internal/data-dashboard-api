@@ -8,7 +8,7 @@
         "html_url": null,
         "slug": "covid-19",
         "show_in_menus": true,
-        "first_published_at": "2023-08-14T17:22:11.614789+01:00",
+        "first_published_at": "2023-09-06T13:51:55.757373+01:00",
         "alias_of": null,
         "parent": {
             "id": 4,
@@ -17,11 +17,11 @@
                 "detail_url": "http://localhost/api/pages/4/",
                 "html_url": null
             },
-            "title": "Respiratory viruses"
+            "title": "UKHSA data dashboard"
         }
     },
     "title": "COVID-19",
-    "page_description": "<p data-block-key=\"sud2w\">COVID-19 is a respiratory infection caused by the SARS-CoV-2 virus.</p>",
+    "page_description": "<p data-block-key=\"sud2w\">COVID-19 is a respiratory infection caused by the SARS-CoV-2 virus. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for COVID-19</a>.</p><p data-block-key=\"6nbtl\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
         {
             "type": "section",
@@ -36,7 +36,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "Cases by specimen date",
-                                        "body": "Number of cases by specimen date. Data for the last 5 days, highlighted in grey, are incomplete.",
+                                        "body": "Number of cases by specimen date (the day the test was taken). Data for the last 5 days, highlighted in grey, is incomplete.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -74,8 +74,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "7-day case rates by specimen date",
-                                        "body": "Rate of cases per 100,000 people in the rolling 7-day period ending on the dates shown.",
+                                        "title": "7-day case rates by specimen date per 100,000 population",
+                                        "body": "Rate of cases per 100,000 people in the rolling 7-day period ending on the date shown.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -101,6 +101,37 @@
                                         ]
                                     },
                                     "id": "9cc32fa3-8ae3-4a12-b68e-fec49acb5062"
+                                },
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "Case rates by age per 100,000 population",
+                                        "body": "Rates per 100,000 people of the total number of cases since the start of the COVID-19 pandemic, by age.",
+                                        "x_axis": "age",
+                                        "y_axis": "metric",
+                                        "chart": [
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_cases_rateRollingMean",
+                                                    "chart_type": "bar",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
+                                                    "label": "",
+                                                    "line_colour": "",
+                                                    "line_type": ""
+                                                },
+                                                "id": "e1100c59-f3a3-4f4c-b9f5-6268107b69d1"
+                                            }
+                                        ]
+                                    },
+                                    "id": "926cb551-2a57-4a16-9ad0-0bf402246507"
                                 }
                             ]
                         },
@@ -122,8 +153,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Daily deaths with COVID-19 on the death certificate by date of death",
-                                        "body": "Daily numbers of deaths of people whose death certificate mentioned COVID-19 as one of the causes, and 7-day rolling average. Because of the time it takes for deaths to be registered, there is a lag in reporting of at least 11 days, and data are not shown for the 14 days before the most recent reported date as they are considered incomplete. Data are shown by date of death.",
+                                        "title": "Daily deaths with COVID-19 on the death certificate by date of death.",
+                                        "body": "Daily numbers of deaths of people whose death certificate mentioned COVID-19 as one of the causes, and 7-day rolling average. Because of the time it takes for deaths to be registered, there is a lag in reporting of at least 11 days. Data is not shown for the 14 days before the most recent reported date as it’s considered incomplete. Data is shown by date of death.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -189,8 +220,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Bar chart with overlaying line comparing patients admitted to hospital with COVID-19",
-                                        "body": "Daily and total numbers of COVID-19 patients admitted to hospital. The overlaying line shows the 7-day average.",
+                                        "title": "Patients admitted to hospital",
+                                        "body": "Daily number of COVID-19 patients admitted to hospital.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -221,7 +252,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "Patients in hospital",
-                                        "body": "Daily count of confirmed COVID-19 patients in hospital at 8am. The overlaying line shows the 7-day average.",
+                                        "body": "Daily count of confirmed COVID-19 patients in hospital at 8am.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -259,8 +290,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Admissions rate by age",
-                                        "body": "Age breakdown of people admitted to hospital, shown as the rate per 100,000 people, since the start of the pandemic. There are fewer people in the oldest age group so the rates show the relative impact on different age groups.",
+                                        "title": "Hospital admissions rate per 100,000 population by age",
+                                        "body": "Age breakdown of people admitted to hospital with COVID-19, shown as the rate per 100,000 people, since the start of the pandemic.",
                                         "x_axis": "stratum",
                                         "y_axis": "metric",
                                         "chart": [
@@ -308,7 +339,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "Total daily number of PCR tests reported",
-                                        "body": "The daily number of new polymerase chain reaction (PCR) tests reported. Data is shown by specimen date (the date the sample was collected from the person).",
+                                        "body": "The daily number of new PCR tests reported. Data is shown by specimen date (the date the sample was collected from the person).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -339,7 +370,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test",
-                                        "body": "The percentage positivity of people who received a polymerase chain reaction (PCR) and had at least one positive COVID-19 PCR test result in the same 7 days. Data is shown by specimen date (the date the sample was collected). People tested more than once in the period are only counted once in the denominator. People with more than one positive result in the period are only included once in the numerator.",
+                                        "body": "The percentage of people who received a PCR test and had at least one positive COVID-19 PCR test result in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -386,8 +417,135 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "People aged 50 and over who have received autumn booster vaccinations, by vaccination date",
-                                        "body": "The number of people aged 50 and over who have received an autumn booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, are incomplete. Data are shown by date of vaccination.",
+                                        "title": "People aged 75 and over who have had spring booster vaccinations, by vaccination date",
+                                        "body": "The number of people aged 75 and over who have had a spring booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, is incomplete. Data is shown by date of vaccination.",
+                                        "x_axis": "",
+                                        "y_axis": "",
+                                        "chart": [
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_vaccinations_spring23_dosesByDay",
+                                                    "chart_type": "bar",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "",
+                                                    "label": "Number of vaccinations",
+                                                    "line_colour": "",
+                                                    "line_type": ""
+                                                },
+                                                "id": "b83e67d5-0234-40e4-8c3e-cb7a1efb8549"
+                                            }
+                                        ]
+                                    },
+                                    "id": "38a88287-6e7d-4e01-8309-75bec95e0d1a"
+                                },
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "Spring booster vaccination uptake (75+), by vaccination date",
+                                        "body": "The percentage of people aged 75 and over who have had a spring booster COVID-19 vaccination.",
+                                        "x_axis": "",
+                                        "y_axis": "",
+                                        "chart": [
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "75-79",
+                                                    "label": "75 to 79 years",
+                                                    "line_colour": "GREEN",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "b7293a99-3068-416f-85a4-696e0cf9c402"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "80-84",
+                                                    "label": "80 to 84 years",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "6702853c-f150-4096-9ddd-7d6fb4ccfdde"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "85-89",
+                                                    "label": "85 to 89 years",
+                                                    "line_colour": "PURPLE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "f27a7a40-069a-4ff3-8b20-c3aa5ef44401"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "90+",
+                                                    "label": "90 years and above",
+                                                    "line_colour": "RED",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "1f11e3c6-edd8-4387-bfb9-2cea588affdc"
+                                            }
+                                        ]
+                                    },
+                                    "id": "ad27a0f3-5551-4397-aa32-efa5ddf79a93"
+                                }
+                            ]
+                        },
+                        "id": "de2ebb2b-02ae-45cd-b2fb-b0f22dd48567"
+                    },
+                    {
+                        "type": "chart_row_card",
+                        "value": {
+                            "columns": [
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "People aged 50 and over who have had autumn booster vaccinations, by vaccination date",
+                                        "body": "The number of people aged 50 and over who have had an autumn booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, is incomplete. Data is shown by date of vaccination.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -418,7 +576,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "Autumn booster vaccination uptake (50+), by vaccination date",
-                                        "body": "The percentage of people aged 50 and over who have received an autumn booster COVID-19 vaccination. The denominator is the number of people aged 50 and over on the National Immunisation Management Service (NIMS) database.",
+                                        "body": "The percentage of people aged 50 and over who have had an autumn booster COVID-19 vaccination.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -548,12 +706,50 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "80+",
-                                                    "label": "80 years and over",
+                                                    "age": "80-84",
+                                                    "label": "80 to 84 years",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "8455d4bf-b105-4062-8751-a9d8ce8290c4"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "85-89",
+                                                    "label": "85 to 89 years",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "3e0dbfc9-d580-451c-af02-e25cdd827bf2"
+                                            },
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_vaccinations_autumn22_uptakeByDay",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "",
+                                                    "age": "90+",
+                                                    "label": "90 years and over",
+                                                    "line_colour": "RED",
+                                                    "line_type": "DASH"
+                                                },
+                                                "id": "760e6dd2-2434-47e4-a31b-be0810b655fa"
                                             }
                                         ]
                                     },
@@ -562,95 +758,6 @@
                             ]
                         },
                         "id": "3cec62c9-9b13-4205-8ba7-b5bd450a8302"
-                    },
-                    {
-                        "type": "chart_row_card",
-                        "value": {
-                            "columns": [
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "People aged 75 and over who have received spring booster vaccinations, by vaccination date",
-                                        "body": "The number of people aged 75 and over who have received a spring booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, are incomplete. Data are shown by date of vaccination.",
-                                        "x_axis": "",
-                                        "y_axis": "",
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_vaccinations_spring23_dosesByDay",
-                                                    "chart_type": "bar",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
-                                                    "label": "Number of vaccinations",
-                                                    "line_colour": "",
-                                                    "line_type": ""
-                                                },
-                                                "id": "b83e67d5-0234-40e4-8c3e-cb7a1efb8549"
-                                            }
-                                        ]
-                                    },
-                                    "id": "38a88287-6e7d-4e01-8309-75bec95e0d1a"
-                                },
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Spring booster vaccination uptake (75+), by vaccination date",
-                                        "body": "The percentage of people aged 75 and over who have received a spring booster COVID-19 vaccination. The denominator is the number of people aged 75 and over on the National Immunisation Management Service (NIMS) database.",
-                                        "x_axis": "",
-                                        "y_axis": "",
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "75-79",
-                                                    "label": "75 to 79 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
-                                                },
-                                                "id": "b7293a99-3068-416f-85a4-696e0cf9c402"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_vaccinations_spring23_uptakeByDay",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "80+",
-                                                    "label": "80 years and over",
-                                                    "line_colour": "RED",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "6702853c-f150-4096-9ddd-7d6fb4ccfdde"
-                                            }
-                                        ]
-                                    },
-                                    "id": "ad27a0f3-5551-4397-aa32-efa5ddf79a93"
-                                }
-                            ]
-                        },
-                        "id": "de2ebb2b-02ae-45cd-b2fb-b0f22dd48567"
                     }
                 ]
             },
@@ -659,50 +766,59 @@
     ],
     "related_links": [
         {
+            "id": 16,
+            "meta": {
+                "type": "topic.TopicPageRelatedLink"
+            },
+            "title": "NHS: COVID-19",
+            "url": "https://www.nhs.uk/conditions/covid-19/",
+            "body": "<p data-block-key=\"wvdly\">Get NHS advice on COVID-19, including symptoms, treatments, looking after yourself at home, how to avoid catching and spreading the virus, vaccinations and long-term effects.</p>"
+        },
+        {
             "id": 1,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
-            "body": "<p data-block-key=\"fah3z\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
+            "title": "National flu and COVID-19 surveillance reports: 2023 to 2024 season",
+            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season",
+            "body": "<p data-block-key=\"fah3z\">https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season</p>"
         },
         {
-            "id": 2,
+            "id": 17,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
-            "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
-            "body": "<p data-block-key=\"fah3z\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
+            "title": "Sources of surveillance data for influenza, COVID-19 and other respiratory viruses",
+            "url": "https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-v",
+            "body": "<p data-block-key=\"wvdly\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         },
         {
-            "id": 3,
+            "id": 18,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "National norovirus and rotavirus surveillance reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
-            "body": "<p data-block-key=\"fah3z\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
+            "title": "NHS England: COVID-19 Hospital Activity",
+            "url": "https://www.england.nhs.uk/statistics/statistical-work-areas/covid-19-hospital-activity/",
+            "body": "<p data-block-key=\"wvdly\">Publication of COVID-19 hospital activity data in England, the number of patients admitted hospital with COVID-19, the number of patients diagnosed with COVID-19 while in hospital.</p>"
         },
         {
-            "id": 4,
+            "id": 19,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Hepatitis (liver inflammation) cases in children – latest updates",
-            "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
-            "body": "<p data-block-key=\"fah3z\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
+            "title": "ONS: Death registrations and occurrences by local authority and place of death",
+            "url": "https://www.ons.gov.uk/datasets/weekly-deaths-local-authority",
+            "body": "<p data-block-key=\"wvdly\">Provisional counts of the number of deaths registered in England and Wales (including deaths involving COVID-19), by local authority, health board and place of death in the latest weeks for which data is available.</p>"
         },
         {
-            "id": 5,
+            "id": 20,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Human parainfluenza viruses: guidance and data",
-            "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
-            "body": "<p data-block-key=\"fah3z\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
+            "title": "ONS: Deaths registered weekly in England and Wales, by age sex and region",
+            "url": "https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales",
+            "body": "<p data-block-key=\"wvdly\">Provisional counts of the number of deaths registered in England and Wales (including deaths involving COVID-19), by age, sex and region in the latest weeks for which data is available.</p>"
         }
     ],
-    "last_published_at": "2023-08-15T12:50:43.784164+01:00"
+    "last_published_at": "2023-09-06T17:16:23.513484+01:00"
 }
