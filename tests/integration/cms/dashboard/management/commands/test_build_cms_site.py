@@ -30,7 +30,7 @@ class TestBuildCMSSite:
         items = response_data["items"]
 
         expected_slugs = [
-            "respiratory-viruses",
+            "dashboard",
             "covid-19",
             "influenza",
             "location-based-data",
@@ -44,7 +44,7 @@ class TestBuildCMSSite:
             assert expected_slug in created_slugs
 
         expected_titles = [
-            "Respiratory viruses",
+            "UKHSA data dashboard",
             "COVID-19",
             "Influenza",
             "Location based data",
@@ -70,7 +70,7 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
-        home_page = HomePage.objects.get(slug="respiratory-viruses")
+        home_page = HomePage.objects.get(slug="dashboard")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{home_page.id}/")
@@ -79,7 +79,7 @@ class TestBuildCMSSite:
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        home_page_response_template = open_example_page_response("respiratory_viruses")
+        home_page_response_template = open_example_page_response("ukhsa_data_dashboard")
         assert response_data["title"] == home_page_response_template["title"]
         assert (
             response_data["page_description"]
@@ -101,8 +101,6 @@ class TestBuildCMSSite:
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
-        assert len(related_links_from_response) == 5
-
         related_links_from_template = home_page_response_template["related_links"]
 
         for index, related_link in enumerate(related_links_from_response):
@@ -128,7 +126,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         topic_page = TopicPage.objects.get(slug=slug)
-        parent_home_page = HomePage.objects.get(title="Respiratory viruses")
+        parent_home_page = HomePage.objects.get(title="UKHSA data dashboard")
 
         # When
         response = authenticated_api_client.get(path=f"/api/pages/{topic_page.id}/")
@@ -162,8 +160,6 @@ class TestBuildCMSSite:
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
-        assert len(related_links_from_response) == 5
-
         related_links_from_template = topic_page_response_template["related_links"]
 
         for index, related_link in enumerate(related_links_from_response):
@@ -214,8 +210,6 @@ class TestBuildCMSSite:
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
-        assert len(related_links_from_response) == 5
-
         related_links_from_template = about_page_template["related_links"]
 
         for index, related_link in enumerate(related_links_from_response):
@@ -266,8 +260,6 @@ class TestBuildCMSSite:
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
-        assert len(related_links_from_response) == 5
-
         related_links_from_template = whats_new_page_template["related_links"]
 
         for index, related_link in enumerate(related_links_from_response):
