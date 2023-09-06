@@ -35,6 +35,9 @@ class TestBuildCMSSite:
             "influenza",
             "location-based-data",
             "about",
+            "whats-new",
+            "whats-coming",
+            "cookies",
         ]
         created_slugs = [item["meta"]["slug"] for item in items]
         for expected_slug in expected_slugs:
@@ -47,6 +50,8 @@ class TestBuildCMSSite:
             "Location based data",
             "About",
             "What's new",
+            "What's coming",
+            "Cookies",
         ]
         created_titles = [item["title"] for item in items]
         for expected_title in expected_titles:
