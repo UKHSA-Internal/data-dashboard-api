@@ -52,7 +52,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
