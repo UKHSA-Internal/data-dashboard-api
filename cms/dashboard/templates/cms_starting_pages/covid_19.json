@@ -309,9 +309,9 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Hospital admissions rate per 100,000 population by age",
-                                        "body": "Age breakdown of people admitted to hospital with COVID-19, shown as the rate per 100,000 people, since the start of the pandemic.",
-                                        "x_axis": "stratum",
+                                        "title": "Hospital admissions rate per 100,000 population",
+                                        "body": "Breakdown of people admitted to hospital with COVID-19, shown as the rate per 100,000 people, since the start of the pandemic.",
+                                        "x_axis": "date",
                                         "y_axis": "metric",
                                         "chart": [
                                             {
