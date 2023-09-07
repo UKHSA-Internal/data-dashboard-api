@@ -1,5 +1,4 @@
 black==23.1.0
-bandit==1.7.5
 django-factory-boy==1.0.0
 factory-boy==3.3.0
 Faker==19.3.0
