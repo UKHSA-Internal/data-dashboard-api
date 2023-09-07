@@ -389,7 +389,7 @@
                                                     "geography": "",
                                                     "geography_type": "",
                                                     "sex": "",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
