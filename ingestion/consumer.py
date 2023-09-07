@@ -539,6 +539,6 @@ class Consumer:
 
         return CREATE_CORE_TIMESERIES(
             timeseries_dtos=timeseries_dtos,
-            core_timeseries_manager=self.core_timeseries_manager,
+            core_time_series_manager=self.core_timeseries_manager,
             batch_size=batch_size,
         )

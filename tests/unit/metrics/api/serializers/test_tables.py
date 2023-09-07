@@ -1,7 +1,14 @@
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers.tables import TablePlotSerializer, TablesSerializer
+from metrics.api.serializers.tables import (
+    TablePlotSerializer,
+    TablesResponsePlotsListSerializer,
+    TablesResponseSerializerV3,
+    TablesResponseValueSerializer,
+    TablesResponseValuesListSerializer,
+    TablesSerializer,
+)
 from metrics.domain.models import PlotParameters, PlotsCollection
 
 
@@ -374,3 +381,106 @@ class TestTablesSerializer:
             y_axis=valid_data_payload["y_axis"],
         )
         assert table_plots_serialized_models == expected_table_plots_model
+
+
+class TestTablesResponseValueSerializer:
+    def test_serializes_correctly(self):
+        """
+        Given a valid payload
+        When the `TablesResponseValueSerializer` is serialized
+        Then the validated data contains the serialized label and value
+        """
+        # Given
+        label = "Label 1"
+        value = "123"
+
+        # When
+        serializer = TablesResponseValueSerializer(
+            data={"label": label, "value": value}
+        )
+        serializer.is_valid(raise_exception=True)
+
+        # Then
+        validated_data = serializer.validated_data
+        assert validated_data["label"] == label
+        assert validated_data["value"] == value
+
+
+class TestTablesResponseValuesListSerializer:
+    def test_serializes_correctly(self):
+        """
+        Given a valid payload
+        When the `TablesResponseValuesListSerializer` is serialized
+        Then the validated data contains
+            the correct list serialized of label and value dicts
+        """
+        # Given
+        valid_payload = [
+            {"label": "Label 1", "value": "123"},
+            {"label": "Label 2", "value": "456"},
+        ]
+
+        # When
+        serializer = TablesResponseValuesListSerializer(data=valid_payload)
+        serializer.is_valid(raise_exception=True)
+
+        # Then
+        validated_data = serializer.validated_data
+        for validated_plot in validated_data:
+            assert validated_plot in valid_payload
+
+
+class TestTablesResponsePlotsListSerializer:
+    def test_serializes_correctly(self):
+        """
+        Given a valid payload
+        When the `TablesResponsePlotsListSerializer` is serialized
+        Then the validated data contains the correct serialized data
+        """
+        # Given
+        values_payload = [
+            {"label": "Label 1", "value": "123"},
+            {"label": "Label 2", "value": "456"},
+        ]
+        valid_payload = {
+            "reference": "2023-01-01",
+            "values": values_payload,
+        }
+
+        # When
+        serializer = TablesResponsePlotsListSerializer(data=valid_payload)
+        serializer.is_valid(raise_exception=True)
+
+        # Then
+        validated_data = serializer.validated_data
+        assert validated_data["reference"] == valid_payload["reference"]
+        assert validated_data["values"] == valid_payload["values"]
+
+
+class TestTablesResponseSerializerV3:
+    def test_serializes_correctly(self):
+        """
+        Given a valid payload
+        When the `TablesResponseSerializerV3` is serialized
+        Then the validated data contains the correct serialized data
+        """
+        # Given
+        values_payload = [
+            {"label": "Label 1", "value": "123"},
+            {"label": "Label 2", "value": "456"},
+        ]
+        valid_payload = [
+            {
+                "reference": "2023-01-01",
+                "values": values_payload,
+            }
+        ]
+
+        # When
+        serializer = TablesResponseSerializerV3(data=valid_payload)
+        serializer.is_valid(raise_exception=True)
+
+        # Then
+        validated_plot = serializer.validated_data[0]
+        assert validated_plot["reference"] == valid_payload[0]["reference"]
+        assert validated_plot["values"] == valid_payload[0]["values"]

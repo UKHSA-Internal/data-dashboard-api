@@ -28,9 +28,7 @@ drf-spectacular==0.26.4
 et-xmlfile==1.1.0
 exceptiongroup==1.1.2
 filelock==3.12.2
-gitdb==4.0.10
-GitPython==3.1.32
-grimp==2.5
+grimp==3.0
 html5lib==1.1
 identify==2.5.26
 idna==3.4
@@ -67,13 +65,14 @@ pluggy==1.2.0
 psycopg2==2.9.5
 psycopg2-binary==2.9.5
 pydantic==2.1.1
-Pygments==2.15.1
+Pygments==2.16.1
 pyparsing==3.1.0
 pyrsistent==0.19.3
 python-dateutil==2.8.2
 python-dotenv==1.0.0
 pytz==2022.7.1
 PyYAML==6.0
+redis==4.6.0
 requests==2.31.0
 rich==13.3.3
 ruamel.yaml==0.17.32
@@ -82,9 +81,8 @@ SQLAlchemy==2.0.17
 scour==0.38.2
 simplejson==3.18.3
 six==1.16.0
-smmap==5.0.0
 sortedcontainers==2.4.0
-soupsieve==2.4
+soupsieve==2.4.1
 sqlparse==0.4.4
 sqlparams==5.1.0
 stevedore==5.1.0

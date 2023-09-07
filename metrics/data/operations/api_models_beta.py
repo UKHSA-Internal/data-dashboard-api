@@ -7,7 +7,6 @@ Specifically, this file contains write database logic for the API models only.
 import logging
 
 from django.db import models
-from django.db.models import QuerySet
 
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreTimeSeries
@@ -18,21 +17,21 @@ DEFAULT_API_TIME_SERIES_MANAGER = APITimeSeries.objects
 logger = logging.getLogger(__name__)
 
 
-def generate_api_time_series_beta(
-    core_time_series_manager: models.manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-    api_time_series_manger: models.manager = DEFAULT_API_TIME_SERIES_MANAGER,
+def generate_api_time_series(
+    all_core_time_series: list[CoreTimeSeries],
+    api_time_series_manager: models.manager = DEFAULT_API_TIME_SERIES_MANAGER,
     batch_size: int = 100,
 ) -> None:
-    """Queries the core 'CoreTimeSeries' models and populates the flat 'APITimeSeries'
+    """Populates the flat 'APITimeSeries' from the given `all_core_time_series`
 
     Notes:
         If there are any existing 'APITimeSeries' records, then this will return early.
         And no additional records will be added to the 'APITimeSeries table.
 
     Args:
-        core_time_series_manager: the model manager for the 'CoreTimeSeries' model.
-            defaults to the native 'CoreTimeSeries' manager.
-        api_time_series_manger: the model manager for the 'APITimeSeries' model.
+        all_core_time_series: Iterable of 'CoreTimeSeries' models which
+            are to be translated into `APITimeSeries` objects.
+        api_time_series_manager: the model manager for the 'APITimeSeries' model.
             defaults to the native 'APITimeSeries' manager.
         batch_size: controls the number of objects created in a single query.
             defaults to 100.
@@ -41,22 +40,47 @@ def generate_api_time_series_beta(
         None
 
     """
-    if api_time_series_manger.exists():
+    api_time_series_models_to_be_saved = _create_api_time_series_model_instances(
+        all_core_time_series=all_core_time_series
+    )
+
+    api_time_series_manager.bulk_create(
+        objs=api_time_series_models_to_be_saved, batch_size=batch_size
+    )
+
+
+def _create_api_time_series_model_instances(
+    all_core_time_series: list[CoreTimeSeries],
+) -> list[APITimeSeries]:
+    try:
+        first_core_time_series: CoreTimeSeries = all_core_time_series[0]
+    except IndexError:
         logger.info(
-            "API Time Series table has existing records. Skipping duplicate record generation."
+            "No CoreTimeSeries provided, therefore no APITimeSeries records will be created"
         )
-        return
+        return []
 
-    all_core_time_series: QuerySet = core_time_series_manager.all_related()
+    theme = first_core_time_series.metric.topic.sub_theme.theme.name
+    sub_theme = first_core_time_series.metric.topic.sub_theme.name
+    topic = first_core_time_series.metric.topic.name
+    metric = first_core_time_series.metric.name
+    metric_group = first_core_time_series.metric.metric_group.name
+    metric_frequency = first_core_time_series.metric_frequency
+    refresh_date = first_core_time_series.refresh_date
 
-    models_to_be_saved = []
-    for core_time_series in all_core_time_series:
-        flat_time_series: APITimeSeries = create_api_time_series_from_core_time_series(
-            core_time_series=core_time_series
+    return [
+        create_api_time_series_from_core_time_series(
+            core_time_series=core_time_series,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            metric_group=metric_group,
+            metric_frequency=metric_frequency,
+            refresh_date=refresh_date,
         )
-        models_to_be_saved.append(flat_time_series)
-
-    api_time_series_manger.bulk_create(objs=models_to_be_saved, batch_size=batch_size)
+        for core_time_series in all_core_time_series
+    ]
 
 
 def create_api_time_series_from_core_time_series(

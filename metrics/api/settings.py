@@ -119,6 +119,17 @@ API_KEY_CUSTOM_HEADER = "HTTP_AUTHORIZATION"
 
 WSGI_APPLICATION = "metrics.api.wsgi.application"
 
+# Caching configuration
+CACHE_TTL = None
+# This means that the cache will only be refreshed explicitly
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+
+
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 # Puts the db at the root level of the repo instead of within the `metrics` app
@@ -141,7 +152,7 @@ else:
             "HOST": config.POSTGRES_HOST,
             "PORT": config.POSTGRES_PORT,
             "POOL_OPTIONS": {
-                "POOL_SIZE": 10,
+                "POOL_SIZE": 20,
                 # Number of connections to be persisted at all times
                 "MAX_OVERFLOW": 10,
                 # Additional connections to be created at peak loads
