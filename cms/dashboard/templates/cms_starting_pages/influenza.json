@@ -8,7 +8,7 @@
         "html_url": null,
         "slug": "influenza",
         "show_in_menus": true,
-        "first_published_at": "2023-08-14T17:22:11.652815+01:00",
+        "first_published_at": "2023-09-06T13:51:55.788890+01:00",
         "alias_of": null,
         "parent": {
             "id": 4,
@@ -17,11 +17,11 @@
                 "detail_url": "http://localhost/api/pages/4/",
                 "html_url": null
             },
-            "title": "Respiratory viruses"
+            "title": "UKHSA data dashboard"
         }
     },
     "title": "Influenza",
-    "page_description": "<p data-block-key=\"z3vrp\">Influenza (commonly known as flu) is a respiratory infection.</p><p data-block-key=\"a19js\">The healthcare data we have for influenza comes from a sentinel surveillance system (a data collection method used to monitor trends).  This means the influenza healthcare data is not a count of every person  being treated for influenza in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for influenza</a>.</p>",
+    "page_description": "<p data-block-key=\"z3vrp\">Influenza (commonly known as flu) is a respiratory infection.</p><p data-block-key=\"f9pfj\">The healthcare data we have for influenza comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the influenza healthcare data is not a count of every person being treated for influenza in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for influenza</a>.</p><p data-block-key=\"fjsfr\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
         {
             "type": "section",
@@ -35,8 +35,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart with overlaying line comparing ICU admission rates of patients admitted to hospital with Influenza",
-                                        "body": "Weekly admissions rates of patients admitted to ICU with Influenza as a weekly time series, shown as the rate per 100,000 people.",
+                                        "title": "ICU/HDU admission rates per 100,000 population",
+                                        "body": "Weekly rates per 100,000 people of patients admitted to ICU or HDU with influenza.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -52,7 +52,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -66,8 +66,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing Influenza ICU admission rates by age",
-                                        "body": "Age breakdown of people admitted to ICU, shown as the rate per 100,000 people.",
+                                        "title": "ICU/HDU admissions rate per 100,000 people by age",
+                                        "body": "Age breakdown of people admitted to ICU or HDU with influenza each week, shown as the rate per 100,000 people.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -83,7 +83,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "0-4",
+                                                    "age": "00-04",
                                                     "label": "0 to 4 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -102,7 +102,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "5-14",
+                                                    "age": "05-14",
                                                     "label": "5 to 14 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -247,8 +247,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Bar chart with overlaying line comparing positivity for Influenza tests",
-                                        "body": "Weekly admissions rates of patients admitted to hospital with Influenza as a weekly time series, shown as the rate per 100,000 people.",
+                                        "title": "Weekly positivity of people receiving a PCR test",
+                                        "body": "The percentage of people who received a PCR and had at least one positive PCR test result for influenza in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -278,8 +278,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Line chart comparing weekly positivity for Influenza tests by age",
-                                        "body": "Weekly time series of positivity for people testing positive for Influenza broken down by age.",
+                                        "title": "Weekly positivity of people receiving a PCR test by age",
+                                        "body": "The percentage of people who received a PCR and had at least one positive PCR test result for influenza in the same 7 days, by age. Data is shown by specimen date (the date the sample was collected).",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -295,7 +295,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "0-4",
+                                                    "age": "00-04",
                                                     "label": "0 to 4 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID"
@@ -314,7 +314,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "",
-                                                    "age": "5-14",
+                                                    "age": "05-14",
                                                     "label": "5 to 14 years",
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH"
@@ -393,50 +393,32 @@
     ],
     "related_links": [
         {
-            "id": 6,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
-            "title": "National flu and COVID-19 surveillance and reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2022-to-2023-season",
-            "body": "<p data-block-key=\"chb3o\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
-        },
-        {
             "id": 7,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
-            "url": "https://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysis",
-            "body": "<p data-block-key=\"chb3o\">These documents provide advice on the symptoms, diagnosis, treatment, management and epidemiology of respiratory syncytial virus.</p>"
+            "title": "NHS: influenza",
+            "url": "https://www.nhs.uk/conditions/flu/",
+            "body": "<p data-block-key=\"chb3o\">Get NHS advice on influenza (flu), including symptoms, how to treat it at home and when to seek medical advice.</p>"
         },
         {
-            "id": 8,
+            "id": 6,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "National norovirus and rotavirus surveillance reports: 2022 to 2023 season",
-            "url": "https://www.gov.uk/government/statistics/national-norovirus-and-rotavirus-surveillance-reports-2022-to-2023-season",
-            "body": "<p data-block-key=\"chb3o\">Data reported here provide a summary of norovirus and rotavirus activity (including enteric virus (EV) outbreaks) in England up to reporting week 51 of the 2022/2023 season.</p>"
-        },
-        {
-            "id": 9,
-            "meta": {
-                "type": "topic.TopicPageRelatedLink"
-            },
-            "title": "Hepatitis (liver inflammation) cases in children – latest updates",
-            "url": "https://www.gov.uk/government/news/hepatitis-liver-inflammation-cases-in-children-latest-updates",
-            "body": "<p data-block-key=\"chb3o\">Regular UKHSA updates on the ongoing investigation into higher than usual rates of liver inflammation (hepatitis) in children across the UK.</p>"
+            "title": "National flu and COVID-19 surveillance reports: 2023 to 2024 season",
+            "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season",
+            "body": "<p data-block-key=\"chb3o\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
             "id": 10,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
-            "title": "Human parainfluenza viruses: guidance and data",
-            "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
+            "title": "Sources of surveillance data for influenza, COVID-19 and other respiratory viruses",
+            "url": "https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-v",
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-08-15T11:25:15.861171+01:00"
+    "last_published_at": "2023-09-06T17:15:46.524407+01:00"
 }

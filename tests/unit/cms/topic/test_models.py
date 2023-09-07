@@ -77,7 +77,7 @@ class TestTemplateCOVID19Page:
 
         # Check the title and body passed to the chart card have been set correctly
         assert chart_card_value["title"] == "Cases by specimen date"
-        expected_body = """Number of cases by specimen date. Data for the last 5 days, highlighted in grey, are incomplete."""
+        expected_body = "Number of cases by specimen date (the day the test was taken). Data for the last 5 days, highlighted in grey, is incomplete."
         assert chart_card_value["body"] == expected_body
 
         # Check that the plot for the chart has been set correctly
@@ -149,7 +149,7 @@ class TestTemplateInfluenzaPage:
         assert (
             plot_0_4_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
         )
-        assert plot_0_4_years_value["age"] == "0-4"
+        assert plot_0_4_years_value["age"] == "00-04"
         assert plot_0_4_years_value["label"] == "0 to 4 years"
         assert plot_0_4_years_value["line_colour"] == RGBAChartLineColours.GREEN.name
         assert plot_0_4_years_value["line_type"] == ChartLineTypes.SOLID.name
@@ -179,7 +179,7 @@ class TestTemplateInfluenzaPage:
         assert (
             plot_5_14_years_value["chart_type"] == ChartTypes.line_multi_coloured.value
         )
-        assert plot_5_14_years_value["age"] == "5-14"
+        assert plot_5_14_years_value["age"] == "05-14"
         assert plot_5_14_years_value["label"] == "5 to 14 years"
         assert plot_5_14_years_value["line_colour"] == RGBAChartLineColours.GREEN.name
         assert plot_5_14_years_value["line_type"] == ChartLineTypes.DASH.name
