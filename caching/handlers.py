@@ -1,3 +1,5 @@
+import logging
+from timeit import default_timer
 from typing import Optional
 
 from django.db.models import Manager
@@ -10,11 +12,13 @@ from cms.topic.models import TopicPage
 DEFAULT_HOME_PAGE_MANAGER = HomePage.objects
 DEFAULT_TOPIC_PAGE_MANAGER = TopicPage.objects
 
+logger = logging.getLogger(__name__)
+
 
 def collect_all_pages(
     home_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
     topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
-) -> list[HomePage | TopicPage]:
+) -> list[HomePage, TopicPage]:
     """Collects and returns all pages which should be processed for caching
 
     Args:
@@ -52,3 +56,25 @@ def crawl_pages(pages: list[Page], crawler: Optional[Crawler] = None) -> None:
 
     for page in pages:
         crawler.process_all_sections(page=page)
+
+
+def refresh_cache_for_all_pages() -> None:
+    """Rehydrate the cache for all pages
+
+    Notes:
+        Currently "all pages" means the following:
+        - The home page with the slug of "dashboard"
+        - All live/published topic pages
+
+    Returns:
+        None
+
+    """
+    start: float = default_timer()
+    logging.info("Commencing refresh of cache")
+
+    pages: list[HomePage, TopicPage] = collect_all_pages()
+    crawl_pages(pages=pages)
+
+    duration: float = default_timer() - start
+    logging.info(f"Finished refreshing of cache in {round(duration, 2)}s")
