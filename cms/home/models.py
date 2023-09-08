@@ -8,6 +8,7 @@ from wagtail.models import Orderable, Page
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
+from cms.home.managers import HomePageManager
 
 
 class HomePage(Page):
@@ -46,6 +47,8 @@ class HomePage(Page):
             ObjectList(Page.promote_panels, heading="Promote"),
         ]
     )
+
+    objects = HomePageManager()
 
     def is_previewable(self) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""
