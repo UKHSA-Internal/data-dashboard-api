@@ -132,6 +132,7 @@ class TestCrawlerBuildRequestData:
                     "geography": plot_value["geography"],
                     "geography_type": plot_value["geography_type"],
                     "sex": plot_value["sex"],
+                    "age": plot_value["age"],
                     "label": plot_value["label"],
                     "line_colour": plot_value["line_colour"],
                     "line_type": plot_value["line_type"],
@@ -179,11 +180,14 @@ class TestCrawlerBuildRequestData:
                     "geography": plot_value["geography"],
                     "geography_type": plot_value["geography_type"],
                     "sex": plot_value["sex"],
+                    "age": plot_value["age"],
                     "label": plot_value["label"],
                     "line_colour": plot_value["line_colour"],
                     "line_type": plot_value["line_type"],
                 }
             ],
+            "x_axis": chart_block_data["x_axis"],
+            "y_axis": chart_block_data["y_axis"],
         }
         assert tables_request_data == expected_tables_request_data
 
@@ -204,6 +208,7 @@ class TestCrawlerBuildRequestData:
             "geography": "England",
             "geography_type": "Nation",
             "sex": "all",
+            "age": "all",
             "label": "",
             "line_colour": "BLUE",
             "line_type": "",
@@ -224,6 +229,7 @@ class TestCrawlerBuildRequestData:
         assert plot_data["geography"] == plot_value["geography"]
         assert plot_data["geography_type"] == plot_value["geography_type"]
         assert plot_data["sex"] == plot_value["sex"]
+        assert plot_data["age"] == plot_value["age"]
         assert plot_data["label"] == plot_value["label"]
         assert plot_data["line_colour"] == plot_value["line_colour"]
         assert plot_data["line_type"] == plot_value["line_type"]

@@ -436,12 +436,13 @@ class Crawler:
             "topic": plot_value["topic"],
             "metric": plot_value["metric"],
             "chart_type": plot_value["chart_type"],
-            "date_from": plot_value["date_from"],
-            "date_to": plot_value["date_to"],
             "stratum": plot_value["stratum"],
             "geography": plot_value["geography"],
             "geography_type": plot_value["geography_type"],
             "sex": plot_value["sex"],
+            "age": plot_value["age"],
+            "date_from": plot_value["date_from"],
+            "date_to": plot_value["date_to"],
             "label": plot_value["label"],
             "line_colour": plot_value["line_colour"],
             "line_type": plot_value["line_type"],
@@ -465,4 +466,6 @@ class Crawler:
                 self._build_plot_data(plot_value=plot["value"])
                 for plot in chart_block["chart"]
             ],
+            "x_axis": chart_block["x_axis"],
+            "y_axis": chart_block["y_axis"],
         }
