@@ -5,7 +5,7 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 from django.db import models
-from wagtail.models import BasePageManager
+from wagtail.models import PageManager
 from wagtail.query import PageQuerySet
 
 EXPECTED_HOME_PAGE_SLUG = "dashboard"
@@ -25,7 +25,7 @@ class HomePageQuerySet(PageQuerySet):
         return self.filter(slug=EXPECTED_HOME_PAGE_SLUG)
 
 
-class HomePageManager(BasePageManager):
+class HomePageManager(PageManager):
     """Custom model manager class for the `HomePage` model."""
 
     def get_queryset(self) -> HomePageQuerySet:
