@@ -5,7 +5,7 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 from django.db import models
-from wagtail.models import BasePageManager
+from wagtail.models import PageManager
 from wagtail.query import PageQuerySet
 
 
@@ -23,7 +23,7 @@ class TopicPageQuerySet(PageQuerySet):
         return self.filter(live=True)
 
 
-class TopicPageManager(BasePageManager):
+class TopicPageManager(PageManager):
     """Custom model manager class for the `TopicPage` model."""
 
     def get_queryset(self) -> TopicPageQuerySet:
