@@ -29,7 +29,8 @@ def collect_all_pages(
         List of `Page` objects which are to be processed for caching
 
     """
-    pages = [home_page_manager.get_landing_page()]
+    landing_page: HomePage = home_page_manager.get_landing_page()
+    pages = [] if landing_page is None else [landing_page]
     pages += topic_page_manager.get_live_pages()
     return pages
 
