@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def collect_all_pages(
-    home_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
+    home_page_manager: Manager = DEFAULT_HOME_PAGE_MANAGER,
     topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
 ) -> list[HomePage, TopicPage]:
     """Collects and returns all pages which should be processed for caching
