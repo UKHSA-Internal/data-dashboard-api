@@ -1,4 +1,7 @@
-from caching.handlers import collect_all_pages
+from unittest import mock
+
+from caching.crawler import Crawler
+from caching.handlers import collect_all_pages, crawl_pages
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
@@ -94,3 +97,43 @@ class TestCollectAllPages:
         assert published_home_page in collected_pages
         assert published_covid_page in collected_pages
         assert unpublished_page not in collected_pages
+
+
+class TestCrawlPages:
+    def test_delegates_call_to_crawler_for_each_page(self):
+        """
+        Given a list of mocked pages and a `Crawler`
+        When `crawl_pages()` is called
+        Then `process_all_sections()`
+            is called from the `Crawler` for each page
+        """
+        # Given
+        spy_crawler = mock.Mock()
+        mocked_pages = [mock.Mock()] * 3
+
+        # When
+        crawl_pages(pages=mocked_pages, crawler=spy_crawler)
+
+        # Then
+        expected_calls = [mock.call(page=mocked_page) for mocked_page in mocked_pages]
+        spy_crawler.process_all_sections.assert_has_calls(
+            calls=expected_calls, any_order=True
+        )
+
+    @mock.patch.object(Crawler, "__init__", return_value=None)
+    def test_initializes_default_crawler_when_not_provided(
+        self, spy_crawler_init: mock.MagicMock
+    ):
+        """
+        Given no provided `Crawler`
+        When `crawl_pages()` is called
+        Then a `Crawler()` is initialized by default
+        """
+        # Given
+        crawler = None
+
+        # When
+        crawl_pages(pages=[], crawler=crawler)
+
+        # Then
+        spy_crawler_init.assert_called_once()
