@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
+from caching.decorators import cache_response
 from metrics.api.serializers.tables import (
     TablesResponseSerializer,
     TablesResponseSerializerV3,
@@ -25,6 +26,7 @@ class TablesView(APIView):
         tags=[TABLES_API_TAG],
         deprecated=True,
     )
+    @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate chart data in tabular format.
 
@@ -89,6 +91,7 @@ class TablesViewV3(APIView):
         responses={HTTPStatus.OK.value: TablesResponseSerializerV3},
         tags=[TABLES_API_TAG],
     )
+    @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate chart data in tabular format.
 

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
+from caching.decorators import cache_response
 from metrics.api.serializers import HeadlinesQuerySerializer
 from metrics.api.serializers.headlines import (
     HeadlinesQuerySerializerBeta,
@@ -29,6 +30,7 @@ class HeadlinesView(APIView):
         tags=[HEADLINES_API_TAG],
         deprecated=True,
     )
+    @cache_response()
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers for a given `metric` & `topic` combination.
 
@@ -95,6 +97,7 @@ class HeadlinesViewBeta(APIView):
         responses={HTTPStatus.OK.value: HeadlinesResponseSerializer},
         tags=[HEADLINES_API_TAG],
     )
+    @cache_response()
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers.
 

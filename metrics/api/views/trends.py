@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
+from caching.decorators import cache_response
 from metrics.api.serializers import TrendsQuerySerializer, TrendsResponseSerializer
 from metrics.api.serializers.trends import TrendsQuerySerializerBeta
 from metrics.domain.models.trends import TrendsParameters
@@ -27,6 +28,7 @@ class TrendsView(APIView):
         tags=[TRENDS_API_TAG],
         deprecated=True,
     )
+    @cache_response()
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
 
@@ -93,6 +95,7 @@ class TrendsViewBeta(APIView):
         responses={HTTPStatus.OK.value: TrendsResponseSerializer},
         tags=[TRENDS_API_TAG],
     )
+    @cache_response()
     def get(self, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
 
