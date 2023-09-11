@@ -1,33 +1,32 @@
 from unittest import mock
 
-from rest_framework.response import Response
-
-from caching.decorators import retrieve_response_from_cache_or_calculate
-from caching.management import CacheManagement, CacheMissError
+from caching.decorators import (
+    _calculate_response_and_save_in_cache,
+    _retrieve_response_from_cache_or_calculate,
+)
+from caching.internal_api_client import CACHE_FORCE_REFRESH_HEADER_KEY
+from caching.management import CacheMissError
 
 MODULE_PATH = "caching.decorators"
 
 
 class TestRetrieveResponseFromCacheOrCalculate:
-    def test_retrieve_response_from_cache_or_calculate_can_return_response_if_available(
-        self,
-    ):
+    # Tests for cache hits + no force refreshing
+    def test_can_return_response_if_already_available(self):
         """
         Given a mocked request and a `CacheManagement` object
             which returns the expected response
-        When `retrieve_response_from_cache_or_calculate()` is called
+        When `_retrieve_response_from_cache_or_calculate()` is called
         Then the expected response is returned
         """
         # Given
-        mocked_request = mock.MagicMock(method="POST")
-        mocked_expected_response = mock.Mock()
-        mocked_cache_management = mock.Mock()
-        mocked_cache_management.retrieve_item_from_cache.return_value = (
-            mocked_expected_response
+        mocked_request = mock.MagicMock(
+            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: False}
         )
+        mocked_cache_management = mock.Mock()
 
         # When
-        retrieved_response = retrieve_response_from_cache_or_calculate(
+        retrieved_response = _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
             mock.Mock(),
             mocked_request,
@@ -35,31 +34,31 @@ class TestRetrieveResponseFromCacheOrCalculate:
         )
 
         # Then
-        assert retrieved_response == mocked_expected_response
+        assert (
+            retrieved_response
+            == mocked_cache_management.retrieve_item_from_cache.return_value
+        )
 
-    @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
-    def test_retrieve_response_from_cache_or_calculate_does_not_recalculate_response_if_already_available(
-        self, spy_calculate_response_from_view: mock.MagicMock
+    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
+    def test_does_not_recalculate_response_if_already_available(
+        self, spy_calculate_response_and_save_in_cache: mock.MagicMock
     ):
         """
         Given a mocked request and a `CacheManagement` object
             which returns the expected response
-        When `retrieve_response_from_cache_or_calculate()` is called
+        When `_retrieve_response_from_cache_or_calculate()` is called
         Then `_calculate_response_from_view()` is not called
 
         Patches:
-            `spy_calculate_response_from_view`: For the main assertion
+            `spy_calculate_response_and_save_in_cache`: For the main assertion
         """
-        # Given
-        mocked_request = mock.MagicMock(method="POST")
-        mocked_expected_response = mock.Mock()
-        mocked_cache_management = mock.Mock()
-        mocked_cache_management.retrieve_item_from_cache.return_value = (
-            mocked_expected_response
+        mocked_request = mock.MagicMock(
+            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: False}
         )
+        mocked_cache_management = mock.Mock()
 
         # When
-        retrieve_response_from_cache_or_calculate(
+        _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
             mock.Mock(),
             mocked_request,
@@ -67,34 +66,35 @@ class TestRetrieveResponseFromCacheOrCalculate:
         )
 
         # Then
-        spy_calculate_response_from_view.assert_not_called()
+        spy_calculate_response_and_save_in_cache.assert_not_called()
 
-    @mock.patch.object(CacheManagement, "build_cache_entry_key_for_request")
-    @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
-    def test_retrieve_response_from_cache_or_calculate_recalculate_response_when_not_available(
+    # Tests for cache misses + no force refreshing
+
+    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
+    def test_recalculates_response_when_not_available(
         self,
-        spy_calculate_response_from_view: mock.MagicMock,
-        spy_build_cache_entry_key_for_request: mock.MagicMock,
+        spy_calculate_response_and_save_in_cache: mock.MagicMock,
     ):
         """
         Given a mocked request which will miss the cache
-        When `retrieve_response_from_cache_or_calculate()` is called
-        Then `_calculate_response_from_view()` is called with the correct args
+        When `_retrieve_response_from_cache_or_calculate()` is called
+        Then `_calculate_response_and_save_in_cache()` is called with the correct args
 
         Patches:
-            `spy_calculate_response_from_view`: For the main assertion
-            `spy_build_cache_entry_key_for_request`: To isolate the side effect
-                of having to build a hash from mocked input data
+            `spy_calculate_response_and_save_in_cache`: For the main assertion
         """
         # Given
-        mocked_request = mock.MagicMock(method="POST")
+        mocked_request = mock.MagicMock(
+            method="POST", headers={CACHE_FORCE_REFRESH_HEADER_KEY: False}
+        )
         mocked_view_function = mock.Mock()
+        mocked_cache_management = mock.Mock()
         mocked_args = [mock.Mock(), mocked_request, mock.Mock()]
-        mocked_kwargs = {"key_a": mock.Mock(), "key_b": mock.Mock()}
-        spy_calculate_response_from_view.return_value = Response()
+        mocked_kwargs = {"cache_management": mocked_cache_management}
+        mocked_cache_management.retrieve_item_from_cache.side_effect = [CacheMissError]
 
         # When
-        retrieved_response = retrieve_response_from_cache_or_calculate(
+        retrieved_response = _retrieve_response_from_cache_or_calculate(
             mocked_view_function, *mocked_args, **mocked_kwargs  # view_function
         )
 
@@ -219,40 +219,42 @@ class TestCalculateResponseAndSaveInCache:
         spy_calculate_response_from_view.assert_called_once_with(
             mocked_view_function, *mocked_args, **mocked_kwargs
         )
-
-        assert retrieved_response == spy_calculate_response_from_view.return_value
+        assert response == spy_calculate_response_from_view.return_value
 
     @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
-    def test_retrieve_response_from_cache_or_calculate_calls_save_item_in_cache_when_recalculating_response(
+    def test_delegates_call_to_save_item_in_cache(
         self, spy_calculate_response_from_view: mock.MagicMock
     ):
         """
-        Given a mocked request which will miss the cache
-        When `retrieve_response_from_cache_or_calculate()` is called
-        Then `save_item_in_cache()` is called from the `CacheManagement` object
+        Given a mocked `CacheManagement`
+        When `_calculate_response_and_save_in_cache()`
+        Then the call is delegated  to the `save_item_in_cache()`
+            method on the `CacheManagement` object
 
         Patches:
-            `spy_calculate_response_from_view`: To isolate the return value
-                which is then passed to the main assertion
+            `spy_calculate_response_from_view`: To isolate
+                the expected response which has been calculated
+                so that it can be checked to have been
+                passed to `save_item_in_cache()`
         """
         # Given
         mocked_view_function = mock.Mock()
-        mocked_args = [mock.Mock(), mock.MagicMock(method="POST"), mock.Mock()]
         spy_cache_management = mock.Mock()
-        spy_cache_management.retrieve_item_from_cache.side_effect = CacheMissError()
-        mocked_kwargs = {
-            "key_a": mock.Mock(),
-            "key_b": mock.Mock(),
-            "cache_management": spy_cache_management,
-        }
+        fake_cache_entry_key = "abc"
+        mocked_args = [mock.Mock(), mock.Mock()]
+        mocked_kwargs = {"key_a": mock.Mock(), "key_b": mock.Mock}
 
         # When
-        retrieve_response_from_cache_or_calculate(
-            mocked_view_function, *mocked_args, **mocked_kwargs  # view_function
+        _calculate_response_and_save_in_cache(
+            mocked_view_function,
+            spy_cache_management,
+            fake_cache_entry_key,
+            *mocked_args,
+            **mocked_kwargs,
         )
 
         # Then
+        expected_calculated_response = spy_calculate_response_from_view.return_value
         spy_cache_management.save_item_in_cache.assert_called_once_with(
-            cache_entry_key=spy_cache_management.build_cache_entry_key_for_request.return_value,
-            item=spy_calculate_response_from_view.return_value,
+            cache_entry_key=fake_cache_entry_key, item=expected_calculated_response
         )
