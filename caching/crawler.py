@@ -23,6 +23,11 @@ class Crawler:
     def __init__(self, internal_api_client: Optional[InternalAPIClient] = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
 
+    @classmethod
+    def create_crawler_for_cache_checking_only(cls):
+        internal_api_client = InternalAPIClient(cache_check_only=True)
+        return cls(internal_api_client=internal_api_client)
+
     # Process pages
 
     def process_pages(self, pages: list[HomePage, TopicPage]) -> None:
