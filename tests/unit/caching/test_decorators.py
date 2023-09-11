@@ -1,10 +1,16 @@
 from unittest import mock
 
+import pytest
+
 from caching.decorators import (
+    CacheCheckResultedInMissError,
     _calculate_response_and_save_in_cache,
     _retrieve_response_from_cache_or_calculate,
 )
-from caching.internal_api_client import CACHE_FORCE_REFRESH_HEADER_KEY
+from caching.internal_api_client import (
+    CACHE_CHECK_HEADER_KEY,
+    CACHE_FORCE_REFRESH_HEADER_KEY,
+)
 from caching.management import CacheMissError
 
 MODULE_PATH = "caching.decorators"
@@ -183,6 +189,30 @@ class TestRetrieveResponseFromCacheOrCalculate:
         assert (
             retrieved_response == spy_calculate_response_and_save_in_cache.return_value
         )
+
+    # Tests for cache checking only
+
+    def test_cache_checking_only_raises_error_if_cache_miss(self):
+        """
+        Given a `Cache-Check` header of True and no pre-saved items in the cache
+        When `_retrieve_response_from_cache_or_calculate()` is called
+        Then a `CacheCheckResultedInMissError()` is raised
+        """
+        # Given
+        mocked_request = mock.MagicMock(
+            method="POST", headers={CACHE_CHECK_HEADER_KEY: True}
+        )
+        mocked_cache_management = mock.Mock()
+        mocked_cache_management.retrieve_item_from_cache.side_effect = [CacheMissError]
+
+        # When / Then
+        with pytest.raises(CacheCheckResultedInMissError):
+            _retrieve_response_from_cache_or_calculate(
+                mock.Mock(),  # view_function
+                mock.Mock(),
+                mocked_request,
+                cache_management=mocked_cache_management,
+            )
 
 
 class TestCalculateResponseAndSaveInCache:
