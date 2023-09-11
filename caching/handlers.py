@@ -47,6 +47,10 @@ def crawl_all_pages(crawler: Crawler) -> None:
         - The home page with the slug of "dashboard"
         - All live/published topic pages
 
+    Args:
+        crawler: A `Crawler` object which will be used to
+            orchestrate the various calls required to parse each page
+
     Returns:
         None
 
@@ -55,7 +59,7 @@ def crawl_all_pages(crawler: Crawler) -> None:
     logging.info("Commencing refresh of cache")
 
     pages: list[HomePage, TopicPage] = collect_all_pages()
-    crawl_pages(pages=pages)
+    crawler.process_pages(pages=pages)
 
     duration: float = default_timer() - start
     logging.info(f"Finished refreshing of cache in {round(duration, 2)}s")
