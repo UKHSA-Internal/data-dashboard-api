@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 from rest_framework_api_key.models import APIKey
 
 from caching.internal_api_client import (
+    CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
     InternalAPIClient,
 )
@@ -143,6 +144,21 @@ class TestInternalAPIClient:
         # Then
         assert not internal_api_client.force_refresh
 
+    def test_cache_check_only_attribute_defaults_to_false(self):
+        """
+        Given no provided argument for `cache_check_only`
+        When the `InternalAPIClient` class is initialized
+        Then the `cache_check_only` attribute is set to False
+        """
+        # Given
+        mocked_client = mock.Mock()
+
+        # When
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # Then
+        assert not internal_api_client.cache_check_only
+
     # API key manager & API client tests
 
     def test_create_api_key_manager(self):
@@ -214,10 +230,18 @@ class TestInternalAPIClient:
 
     # Header construction tests
 
-    @pytest.mark.parametrize("force_refresh", [True, False])
-    def test_build_headers(self, force_refresh: bool):
+    @pytest.mark.parametrize(
+        "force_refresh, cache_check_only",
+        (
+            [True, True],
+            [True, False],
+            [False, True],
+            [False, False],
+        ),
+    )
+    def test_build_headers(self, force_refresh: bool, cache_check_only: bool):
         """
-        Given a provided `force_refresh` value
+        Given provided `force_refresh` and `cache_check_only` values
         When `build_headers()` is called
             from an instance of `InternalAPIClient`
         Then the correct dict representing the headers is returned
@@ -225,14 +249,19 @@ class TestInternalAPIClient:
         # Given
         mocked_client = mock.Mock()
         internal_api_client = InternalAPIClient(
-            client=mocked_client, force_refresh=force_refresh
+            client=mocked_client,
+            force_refresh=force_refresh,
+            cache_check_only=cache_check_only,
         )
 
         # When
         headers = internal_api_client.build_headers()
 
         # Then
-        expected_headers = {CACHE_FORCE_REFRESH_HEADER_KEY: force_refresh}
+        expected_headers = {
+            CACHE_FORCE_REFRESH_HEADER_KEY: force_refresh,
+            CACHE_CHECK_HEADER_KEY: cache_check_only,
+        }
         assert headers == expected_headers
 
     # Endpoint calls tests

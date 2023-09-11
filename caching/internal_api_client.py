@@ -14,6 +14,7 @@ TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v3/"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
+CACHE_CHECK_HEADER_KEY = "Cache-Check"
 
 
 class InternalAPIClient:
@@ -31,16 +32,20 @@ class InternalAPIClient:
         client: Optional[APIClient] = None,
         api_key_manager: Optional[CustomAPIKeyManager] = None,
         force_refresh: bool = False,
+        cache_check_only: bool = False,
     ):
         self._api_key_manager = api_key_manager or self.create_api_key_manager()
         self._client = client or self.create_api_client()
 
+        # Endpoints
         self.headlines_endpoint_path = HEADLINES_ENDPOINT_PATH
         self.trends_endpoint_path = TRENDS_ENDPOINT_PATH
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
 
+        # Header configurations
         self.force_refresh = force_refresh
+        self.cache_check_only = cache_check_only
 
     # API key manager & client
 
@@ -76,7 +81,10 @@ class InternalAPIClient:
     # Headers
 
     def build_headers(self) -> dict[str, bool]:
-        return {CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh}
+        return {
+            CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh,
+            CACHE_CHECK_HEADER_KEY: self.cache_check_only,
+        }
 
     # Endpoints
 
