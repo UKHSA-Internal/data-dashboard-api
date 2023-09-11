@@ -3,10 +3,29 @@ from http import HTTPStatus
 from django.http import HttpResponse
 from rest_framework.views import APIView
 
+import config
+from caching.decorators import CacheCheckResultedInMissError
+from caching.handlers import check_cache_for_all_pages
+
 
 class HealthView(APIView):
     permission_classes = []
 
     @staticmethod
     def get(*args, **kwargs):
-        return HttpResponse(HTTPStatus.OK.value)
+        """This health probe can be used to determine whether the service is ready.
+
+        Note that if the service is running as a `PRIVATE_API` then the cache will be checked first.
+
+        In this case if the cache is not completely hydrated then a `503 SERVICE UNAVAILABLE` response will be returned
+
+        Otherwise, a `200 OK` response will be returned
+
+        """
+        if config.APP_MODE == "PRIVATE_API":
+            try:
+                check_cache_for_all_pages()
+            except CacheCheckResultedInMissError:
+                return HttpResponse(status=HTTPStatus.SERVICE_UNAVAILABLE.value)
+
+        return HttpResponse(status=HTTPStatus.OK.value)
