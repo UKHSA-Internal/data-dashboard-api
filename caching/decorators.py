@@ -90,7 +90,7 @@ def _retrieve_response_from_cache_or_calculate(
     except CacheMissError:
         # If the `Cache-Check` header is True
         # and there has been 1 cache miss, then error out early
-        if request.headers.get(CACHE_CHECK_HEADER_KEY, True):
+        if request.headers.get(CACHE_CHECK_HEADER_KEY, False):
             raise CacheCheckResultedInMissError
 
         return _calculate_response_and_save_in_cache(
