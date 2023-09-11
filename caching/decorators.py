@@ -71,7 +71,7 @@ def _retrieve_response_from_cache_or_calculate(
 
     if request.headers.get(CACHE_FORCE_REFRESH_HEADER_KEY, False):
         # If the `Cache-Force-Refresh` is True
-        # recalculate & save regardless of if the item exists in the cache
+        # recalculate & save regardless of whether the item exists in the cache
         return _calculate_response_and_save_in_cache(
             view_function, cache_management, cache_entry_key, *args, **kwargs
         )
