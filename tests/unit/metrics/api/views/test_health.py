@@ -28,11 +28,11 @@ class TestHealthView:
         Then `check_cache_for_all_pages()` is not called
         """
         # Given
-        with mock.patch("config.APP_MODE", app_mode_environment_variable_value):
-            health_view = HealthView()
+        health_view = HealthView()
 
         # When
-        health_view.get()
+        with mock.patch("config.APP_MODE", app_mode_environment_variable_value):
+            health_view.get()
 
         # Then
         spy_check_cache_for_all_pages.assert_not_called()
@@ -48,11 +48,11 @@ class TestHealthView:
         Then `check_cache_for_all_pages()` is called
         """
         # Given
-        with mock.patch("config.APP_MODE", "PRIVATE_API"):
-            health_view = HealthView()
+        health_view = HealthView()
 
         # When
-        health_view.get()
+        with mock.patch("config.APP_MODE", "PRIVATE_API"):
+            health_view.get()
 
         # Then
         spy_check_cache_for_all_pages.assert_called_once()
