@@ -31,7 +31,7 @@ def cache_response():
     def decorator(view_function):
         @wraps(view_function)
         def wrapped_view(*args, **kwargs) -> Response:
-            return retrieve_response_from_cache_or_calculate(
+            return _retrieve_response_from_cache_or_calculate(
                 view_function, *args, **kwargs
             )
 
@@ -40,7 +40,7 @@ def cache_response():
     return decorator
 
 
-def retrieve_response_from_cache_or_calculate(
+def _retrieve_response_from_cache_or_calculate(
     view_function, *args, **kwargs
 ) -> Response:
     """Gets the response from the cache, otherwise recalculates from the view
