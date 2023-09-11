@@ -39,8 +39,8 @@ def collect_all_pages(
     return pages
 
 
-def crawl_all_pages(crawler: Crawler) -> None:
-    """Rehydrate the cache for all pages
+def _crawl_all_pages(crawler: Crawler) -> None:
+    """Parses the CMS blocks for all pages with the given `crawler`
 
     Notes:
         Currently "all pages" means the following:

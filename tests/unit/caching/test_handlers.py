@@ -107,7 +107,7 @@ class TestCrawlAllPages:
     def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
         """
         Given a mocked `Crawler` object
-        When `crawl_all_pages()` is called
+        When `_crawl_all_pages()` is called
         Then calls are delegated to `collect_all_pages()`
         And to the `process_pages()` method on the `Crawler` object
 
@@ -119,7 +119,7 @@ class TestCrawlAllPages:
         spy_crawler = mock.Mock()
 
         # When
-        crawl_all_pages(crawler=spy_crawler)
+        _crawl_all_pages(crawler=spy_crawler)
 
         # Then
         # Check that all pages are collected
@@ -137,7 +137,7 @@ class TestCrawlAllPages:
     ):
         """
         Given no pages to be cached
-        When `crawl_all_pages()` is called
+        When `_crawl_all_pages()` is called
         Then the correct log statements are made
 
         Patches:
@@ -149,7 +149,7 @@ class TestCrawlAllPages:
         mocked_collect_all_pages.return_value = []
 
         # When
-        crawl_all_pages(crawler=mocked_crawler)
+        _crawl_all_pages(crawler=mocked_crawler)
 
         # Then
         assert "Commencing refresh of cache" in caplog.text
