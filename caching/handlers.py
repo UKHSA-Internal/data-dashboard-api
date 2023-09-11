@@ -63,3 +63,23 @@ def _crawl_all_pages(crawler: Crawler) -> None:
 
     duration: float = default_timer() - start
     logging.info(f"Finished refreshing of cache in {round(duration, 2)}s")
+
+
+def check_cache_for_all_pages() -> None:
+    """Checks the cache for all pages but does not calculate responses
+
+    Notes:
+        Currently "all pages" means the following:
+        - The home page with the slug of "dashboard"
+        - All live/published topic pages
+
+    Returns:
+        None
+
+    Raises:
+        `CacheCheckResultedInMissError`: If any cache misses occur.
+            Note that this will error at the 1st cache miss.
+
+    """
+    crawler = Crawler.create_crawler_for_cache_checking_only()
+    _crawl_all_pages(crawler=crawler)

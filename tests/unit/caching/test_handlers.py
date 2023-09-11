@@ -2,7 +2,12 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
-from caching.handlers import collect_all_pages, crawl_all_pages
+from caching.crawler import Crawler
+from caching.handlers import (
+    _crawl_all_pages,
+    check_cache_for_all_pages,
+    collect_all_pages,
+)
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
@@ -154,3 +159,31 @@ class TestCrawlAllPages:
         # Then
         assert "Commencing refresh of cache" in caplog.text
         assert "Finished refreshing of cache" in caplog.text
+
+
+class TestCheckCacheForAllPages:
+    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch.object(Crawler, "create_crawler_for_cache_checking_only")
+    def test_delegates_calls_successfully(
+        self,
+        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `check_cache_for_all_pages()` is called
+        Then the correct crawler is passed to `_crawl_all_pages()`
+
+        Patches:
+            `spy_create_crawler_for_cache_checking_only`: To assert that
+                the correct crawler is initialized i.e. the one
+                which can be used purely for checking purposes
+            `spy_crawl_all_pages`: For the main assertion
+        """
+        # Given / When
+        check_cache_for_all_pages()
+
+        # Then
+        spy_create_crawler_for_cache_checking_only.assert_called_once()
+        expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
+        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
