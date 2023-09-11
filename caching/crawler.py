@@ -25,7 +25,7 @@ class Crawler:
 
     # Process sections
 
-    def process_all_sections(self, page: HomePage | TopicPage) -> None:
+    def process_all_sections_in_page(self, page: HomePage | TopicPage) -> None:
         """Makes requests to each individual content item within each section of the given `page`
 
         Args:

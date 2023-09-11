@@ -6,14 +6,14 @@ from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 class TestCrawlerProcessSections:
     @mock.patch.object(Crawler, "process_section")
-    def test_process_all_sections_delegates_call_for_each_section(
+    def test_process_all_sections_in_page_delegates_call_for_each_section(
         self,
         spy_process_section: mock.MagicMock,
         crawler_with_mocked_internal_api_client: Crawler,
     ):
         """
         Given a `TopicPage`
-        When `process_all_sections()` is called from an instance of `Crawler`
+        When `process_all_sections_in_page()` is called from an instance of `Crawler`
         Then the `process_section()` method is called for each section
 
         Patches:
@@ -23,7 +23,7 @@ class TestCrawlerProcessSections:
         fake_topic_page = FakeTopicPageFactory._build_page(page_name="covid_19")
 
         # When
-        crawler_with_mocked_internal_api_client.process_all_sections(
+        crawler_with_mocked_internal_api_client.process_all_sections_in_page(
             page=fake_topic_page
         )
 
