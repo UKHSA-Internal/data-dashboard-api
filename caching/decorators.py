@@ -3,6 +3,7 @@ from functools import wraps
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from caching.internal_api_client import CACHE_FORCE_REFRESH_HEADER_KEY
 from caching.management import CacheManagement, CacheMissError
 
 
@@ -45,6 +46,11 @@ def _retrieve_response_from_cache_or_calculate(
 ) -> Response:
     """Gets the response from the cache, otherwise recalculates from the view
 
+    Notes:
+        If the "Cache-Force-Refresh" header is set to True,
+        then the response will be recalculated from the server
+        and this will overwrite the corresponding entry in the cache
+
     Args:
         view_function: The view associated with the endpoint
         *args: args provided by the rest framework middleware
@@ -63,18 +69,29 @@ def _retrieve_response_from_cache_or_calculate(
         request=request
     )
 
+    if request.headers.get(CACHE_FORCE_REFRESH_HEADER_KEY, False):
+        # If the `Cache-Force-Refresh` is True
+        # recalculate & save regardless of if the item exists in the cache
+        return _calculate_response_and_save_in_cache(
+            view_function, cache_management, cache_entry_key, *args, **kwargs
+        )
+
     try:
         return cache_management.retrieve_item_from_cache(
             cache_entry_key=cache_entry_key
         )
     except CacheMissError:
-        response: Response = _calculate_response_from_view(
-            view_function, *args, **kwargs
+        return _calculate_response_and_save_in_cache(
+            view_function, cache_management, cache_entry_key, *args, **kwargs
         )
-        cache_management.save_item_in_cache(
-            cache_entry_key=cache_entry_key, item=response
-        )
-        return response
+
+
+def _calculate_response_and_save_in_cache(
+    view_function, cache_management, cache_entry_key, *args, **kwargs
+) -> Response:
+    response: Response = _calculate_response_from_view(view_function, *args, **kwargs)
+    cache_management.save_item_in_cache(cache_entry_key=cache_entry_key, item=response)
+    return response
 
 
 def _calculate_response_from_view(view_function, *args, **kwargs) -> Response:
