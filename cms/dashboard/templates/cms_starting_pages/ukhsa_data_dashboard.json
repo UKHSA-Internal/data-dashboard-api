@@ -8,7 +8,7 @@
         "html_url": null,
         "slug": "dashboard",
         "show_in_menus": true,
-        "first_published_at": "2023-09-06T13:51:55.724310+01:00",
+        "first_published_at": "2023-09-08T09:27:05.497380+01:00",
         "alias_of": null,
         "parent": {
             "id": 3,
@@ -308,6 +308,16 @@
                                                     "body": "Hospital admission rate (per 100,000)"
                                                 },
                                                 "id": "0520e9d6-794f-4616-b217-f5ec884a86d8"
+                                            },
+                                            {
+                                                "type": "trend_number",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "influenza_headline_ICUHDUadmissionrateChange",
+                                                    "body": "Last 7 days",
+                                                    "percentage_metric": "influenza_headline_ICUHDUadmissionratePercentChange"
+                                                },
+                                                "id": "0db8d0b7-134f-4023-9c82-60f5355e9629"
                                             }
                                         ]
                                     },
@@ -372,10 +382,20 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_headline_positivityLatest",
+                                                    "metric": "influenza_headline_ICUHDUadmissionrateLatest",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "a93d4317-3814-41ab-b6f6-a6f0769770a7"
+                                            },
+                                            {
+                                                "type": "trend_number",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "influenza_headline_ICUHDUadmissionrateChange",
+                                                    "body": "",
+                                                    "percentage_metric": "influenza_headline_ICUHDUadmissionratePercentChange"
+                                                },
+                                                "id": "ef4da9b0-a67c-4e6e-891f-957059366911"
                                             }
                                         ]
                                     },
@@ -424,7 +444,7 @@
     ],
     "related_links": [
         {
-            "id": 6,
+            "id": 1,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -433,7 +453,7 @@
             "body": "<p data-block-key=\"jib2z\">Get NHS advice on COVID-19, including symptoms, treatments, looking after yourself at home, how to avoid catching and spreading the virus, vaccinations and long-term effects.</p>"
         },
         {
-            "id": 7,
+            "id": 2,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -442,7 +462,7 @@
             "body": "<p data-block-key=\"jib2z\">Get NHS advice on influenza (flu), including symptoms, how to treat it at home and when to seek medical advice.</p>"
         },
         {
-            "id": 1,
+            "id": 3,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -451,7 +471,7 @@
             "body": "<p data-block-key=\"cc1q7\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 8,
+            "id": 4,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -460,5 +480,5 @@
             "body": "<p data-block-key=\"jib2z\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-09-06T16:42:15.899964+01:00"
+    "last_published_at": "2023-09-12T11:33:38.760443+01:00"
 }
