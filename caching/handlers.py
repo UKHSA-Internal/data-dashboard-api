@@ -39,32 +39,17 @@ def collect_all_pages(
     return pages
 
 
-def crawl_pages(pages: list[Page], crawler: Optional[Crawler] = None) -> None:
-    """Parses the CMS blocks and fires the relevant requests for each given page
-
-    Args:
-        pages: List of `Page` objects which
-            are to be processed for caching
-        crawler: A `Crawler` object which will be used to
-            orchestrate the various calls required to parse each page
-
-    Returns:
-        None
-
-    """
-    crawler = crawler or Crawler()
-
-    for page in pages:
-        crawler.process_all_sections(page=page)
-
-
-def refresh_cache_for_all_pages() -> None:
+def crawl_all_pages(crawler: Crawler) -> None:
     """Rehydrate the cache for all pages
 
     Notes:
         Currently "all pages" means the following:
         - The home page with the slug of "dashboard"
         - All live/published topic pages
+
+    Args:
+        crawler: A `Crawler` object which will be used to
+            orchestrate the various calls required to parse each page
 
     Returns:
         None
@@ -74,7 +59,7 @@ def refresh_cache_for_all_pages() -> None:
     logging.info("Commencing refresh of cache")
 
     pages: list[HomePage, TopicPage] = collect_all_pages()
-    crawl_pages(pages=pages)
+    crawler.process_pages(pages=pages)
 
     duration: float = default_timer() - start
     logging.info(f"Finished refreshing of cache in {round(duration, 2)}s")

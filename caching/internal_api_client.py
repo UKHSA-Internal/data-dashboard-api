@@ -13,6 +13,9 @@ CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v3/"
 
 
+CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
+
+
 class InternalAPIClient:
     """The client used to interact with the private API
 
@@ -27,6 +30,7 @@ class InternalAPIClient:
         self,
         client: Optional[APIClient] = None,
         api_key_manager: Optional[CustomAPIKeyManager] = None,
+        force_refresh: bool = False,
     ):
         self._api_key_manager = api_key_manager or self.create_api_key_manager()
         self._client = client or self.create_api_client()
@@ -35,6 +39,10 @@ class InternalAPIClient:
         self.trends_endpoint_path = TRENDS_ENDPOINT_PATH
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
+
+        self.force_refresh = force_refresh
+
+    # API key manager & client
 
     @property
     def temporary_api_key_name(self) -> str:
@@ -65,6 +73,13 @@ class InternalAPIClient:
         api_key_manager.model = APIKey
         return api_key_manager
 
+    # Headers
+
+    def build_headers(self) -> dict[str, bool]:
+        return {CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh}
+
+    # Endpoints
+
     def hit_headlines_endpoint(self, data: dict[str, str]) -> Response:
         """Sends a `GET` request to the `headlines/` endpoint with the given `data`
 
@@ -76,7 +91,8 @@ class InternalAPIClient:
 
         """
         path = self.headlines_endpoint_path
-        return self._client.get(path=path, data=data)
+        headers = self.build_headers()
+        return self._client.get(path=path, data=data, headers=headers)
 
     def hit_trends_endpoint(self, data: dict[str, str]) -> Response:
         """Sends a `GET` request to the `trends/` endpoint with the given `data`
@@ -89,7 +105,8 @@ class InternalAPIClient:
 
         """
         path = self.trends_endpoint_path
-        return self._client.get(path=path, data=data)
+        headers = self.build_headers()
+        return self._client.get(path=path, data=data, headers=headers)
 
     def hit_charts_endpoint(self, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `charts/` endpoint with the given `data`
@@ -102,7 +119,8 @@ class InternalAPIClient:
 
         """
         path = self.charts_endpoint_path
-        return self._client.post(path=path, data=data, format="json")
+        headers = self.build_headers()
+        return self._client.post(path=path, data=data, headers=headers, format="json")
 
     def hit_tables_endpoint(self, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `tables/` endpoint with the given `data`
@@ -115,4 +133,5 @@ class InternalAPIClient:
 
         """
         path = self.tables_endpoint_path
-        return self._client.post(path=path, data=data, format="json")
+        headers = self.build_headers()
+        return self._client.post(path=path, data=data, headers=headers, format="json")

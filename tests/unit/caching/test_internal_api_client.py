@@ -4,7 +4,10 @@ import pytest
 from rest_framework.test import APIClient
 from rest_framework_api_key.models import APIKey
 
-from caching.internal_api_client import InternalAPIClient
+from caching.internal_api_client import (
+    CACHE_FORCE_REFRESH_HEADER_KEY,
+    InternalAPIClient,
+)
 from metrics.data.managers.api_keys import CustomAPIKeyManager
 
 
@@ -18,6 +21,7 @@ class FakeAPIKeyManager(CustomAPIKeyManager):
 
 
 class TestInternalAPIClient:
+    # Constructor tests
     @pytest.mark.parametrize(
         "attribute_on_class, expected_path",
         (
@@ -124,6 +128,23 @@ class TestInternalAPIClient:
         spy_create_api_client.assert_called_once()
         assert internal_api_client._client == spy_create_api_client.return_value
 
+    def test_force_refresh_attribute_defaults_to_false(self):
+        """
+        Given no provided argument for `force_refresh`
+        When the `InternalAPIClient` class is initialized
+        Then the `force_refresh` attribute is set to False
+        """
+        # Given
+        mocked_client = mock.Mock()
+
+        # When
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # Then
+        assert not internal_api_client.force_refresh
+
+    # API key manager & API client tests
+
     def test_create_api_key_manager(self):
         """
         Given an instance of the `InternalAPIClient`
@@ -191,6 +212,31 @@ class TestInternalAPIClient:
             HTTP_AUTHORIZATION=fake_expected_api_key_for_header
         )
 
+    # Header construction tests
+
+    @pytest.mark.parametrize("force_refresh", [True, False])
+    def test_build_headers(self, force_refresh: bool):
+        """
+        Given a provided `force_refresh` value
+        When `build_headers()` is called
+            from an instance of `InternalAPIClient`
+        Then the correct dict representing the headers is returned
+        """
+        # Given
+        mocked_client = mock.Mock()
+        internal_api_client = InternalAPIClient(
+            client=mocked_client, force_refresh=force_refresh
+        )
+
+        # When
+        headers = internal_api_client.build_headers()
+
+        # Then
+        expected_headers = {CACHE_FORCE_REFRESH_HEADER_KEY: force_refresh}
+        assert headers == expected_headers
+
+    # Endpoint calls tests
+
     def test_hit_headlines_endpoint_delegates_call_correctly(self):
         """
         Given a client and mocked request data
@@ -210,7 +256,9 @@ class TestInternalAPIClient:
         # Then
         assert response == internal_api_client._client.get.return_value
         mocked_client.get.assert_called_once_with(
-            path=internal_api_client.headlines_endpoint_path, data=mocked_request_data
+            path=internal_api_client.headlines_endpoint_path,
+            headers=internal_api_client.build_headers(),
+            data=mocked_request_data,
         )
 
     def test_hit_trends_endpoint_delegates_call_correctly(self):
@@ -232,7 +280,9 @@ class TestInternalAPIClient:
         # Then
         assert response == internal_api_client._client.get.return_value
         mocked_client.get.assert_called_once_with(
-            path=internal_api_client.trends_endpoint_path, data=mocked_request_data
+            path=internal_api_client.trends_endpoint_path,
+            headers=internal_api_client.build_headers(),
+            data=mocked_request_data,
         )
 
     def test_hit_charts_endpoint_delegates_call_correctly(self):
@@ -256,6 +306,7 @@ class TestInternalAPIClient:
         mocked_client.post.assert_called_once_with(
             path=internal_api_client.charts_endpoint_path,
             data=mocked_request_data,
+            headers=internal_api_client.build_headers(),
             format="json",
         )
 
@@ -280,5 +331,6 @@ class TestInternalAPIClient:
         mocked_client.post.assert_called_once_with(
             path=internal_api_client.tables_endpoint_path,
             data=mocked_request_data,
+            headers=internal_api_client.build_headers(),
             format="json",
         )

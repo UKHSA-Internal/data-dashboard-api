@@ -23,9 +23,24 @@ class Crawler:
     def __init__(self, internal_api_client: Optional[InternalAPIClient] = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
 
+    # Process pages
+
+    def process_pages(self, pages: list[HomePage, TopicPage]) -> None:
+        """Makes requests to each individual content item within each of the given `pages`
+
+        Args:
+            pages: List of `Page` instances to be processed
+
+        Returns:
+            None
+
+        """
+        for page in pages:
+            self.process_all_sections_in_page(page=page)
+
     # Process sections
 
-    def process_all_sections(self, page: HomePage | TopicPage) -> None:
+    def process_all_sections_in_page(self, page: HomePage | TopicPage) -> None:
         """Makes requests to each individual content item within each section of the given `page`
 
         Args:
