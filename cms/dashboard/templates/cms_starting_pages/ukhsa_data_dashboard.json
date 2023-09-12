@@ -113,7 +113,7 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_7DayAdmisionsChange",
+                                                    "metric": "COVID-19_headline_7DayAdmissionsChange",
                                                     "body": "Last 7 days",
                                                     "percentage_metric": "COVID-19_headline_7DayAdmissionsPercentChange"
                                                 },
