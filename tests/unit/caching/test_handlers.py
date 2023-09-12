@@ -2,7 +2,13 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
-from caching.handlers import collect_all_pages, crawl_all_pages
+from caching.crawler import Crawler
+from caching.handlers import (
+    _crawl_all_pages,
+    check_cache_for_all_pages,
+    collect_all_pages,
+    force_cache_refresh_for_all_pages,
+)
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
@@ -107,7 +113,7 @@ class TestCrawlAllPages:
     def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
         """
         Given a mocked `Crawler` object
-        When `crawl_all_pages()` is called
+        When `_crawl_all_pages()` is called
         Then calls are delegated to `collect_all_pages()`
         And to the `process_pages()` method on the `Crawler` object
 
@@ -119,7 +125,7 @@ class TestCrawlAllPages:
         spy_crawler = mock.Mock()
 
         # When
-        crawl_all_pages(crawler=spy_crawler)
+        _crawl_all_pages(crawler=spy_crawler)
 
         # Then
         # Check that all pages are collected
@@ -137,7 +143,7 @@ class TestCrawlAllPages:
     ):
         """
         Given no pages to be cached
-        When `crawl_all_pages()` is called
+        When `_crawl_all_pages()` is called
         Then the correct log statements are made
 
         Patches:
@@ -149,8 +155,64 @@ class TestCrawlAllPages:
         mocked_collect_all_pages.return_value = []
 
         # When
-        crawl_all_pages(crawler=mocked_crawler)
+        _crawl_all_pages(crawler=mocked_crawler)
 
         # Then
         assert "Commencing refresh of cache" in caplog.text
         assert "Finished refreshing of cache" in caplog.text
+
+
+class TestCheckCacheForAllPages:
+    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch.object(Crawler, "create_crawler_for_cache_checking_only")
+    def test_delegates_calls_successfully(
+        self,
+        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `check_cache_for_all_pages()` is called
+        Then the correct crawler is passed to `_crawl_all_pages()`
+
+        Patches:
+            `spy_create_crawler_for_cache_checking_only`: To assert that
+                the correct crawler is initialized i.e. the one
+                which can be used purely for checking purposes
+            `spy_crawl_all_pages`: For the main assertion
+        """
+        # Given / When
+        check_cache_for_all_pages()
+
+        # Then
+        spy_create_crawler_for_cache_checking_only.assert_called_once()
+        expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
+        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+
+
+class TestHydrateCacheForAllPages:
+    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch.object(Crawler, "create_crawler_for_force_cache_refresh")
+    def test_delegates_calls_successfully(
+        self,
+        spy_create_crawler_for_force_cache_refresh: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `force_cache_refresh_for_all_pages()` is called
+        Then the correct crawler is passed to `_crawl_all_pages()`
+
+        Patches:
+            `spy_create_crawler_for_force_cache_refresh`: To assert that
+                the correct crawler is initialized i.e. the one
+                which can be used to forcibly refresh the cache
+            `spy_crawl_all_pages`: For the main assertion
+        """
+        # Given / When
+        force_cache_refresh_for_all_pages()
+
+        # Then
+        spy_create_crawler_for_force_cache_refresh.assert_called_once()
+        expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
+        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)

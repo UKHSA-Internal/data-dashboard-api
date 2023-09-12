@@ -39,8 +39,8 @@ def collect_all_pages(
     return pages
 
 
-def crawl_all_pages(crawler: Crawler) -> None:
-    """Rehydrate the cache for all pages
+def _crawl_all_pages(crawler: Crawler) -> None:
+    """Parses the CMS blocks for all pages with the given `crawler`
 
     Notes:
         Currently "all pages" means the following:
@@ -63,3 +63,45 @@ def crawl_all_pages(crawler: Crawler) -> None:
 
     duration: float = default_timer() - start
     logging.info(f"Finished refreshing of cache in {round(duration, 2)}s")
+
+
+def check_cache_for_all_pages() -> None:
+    """Checks the cache for all pages but does not calculate responses
+
+    Notes:
+        Currently "all pages" means the following:
+        - The home page with the slug of "dashboard"
+        - All live/published topic pages
+
+    Returns:
+        None
+
+    Raises:
+        `CacheCheckResultedInMissError`: If any cache misses occur.
+            Note that this will error at the 1st cache miss.
+
+    """
+    crawler = Crawler.create_crawler_for_cache_checking_only()
+    _crawl_all_pages(crawler=crawler)
+
+
+def force_cache_refresh_for_all_pages() -> None:
+    """Forcibly refresh the cache for all pages
+
+    Notes:
+        Currently "all pages" means the following:
+        - The home page with the slug of "dashboard"
+        - All live/published topic pages
+
+        This will overwrite existing entries in the cache 1 by 1.
+        This currently does not support blue/green cache hydration.
+        As such, if the cache is hit during the invocation of this,
+        then it is feasible that the cache will contain 1 stale half
+        and another fresh half of items.
+
+    Returns:
+        None
+
+    """
+    crawler = Crawler.create_crawler_for_force_cache_refresh()
+    _crawl_all_pages(crawler=crawler)

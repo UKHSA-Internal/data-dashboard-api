@@ -3,8 +3,15 @@ from functools import wraps
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from caching.internal_api_client import CACHE_FORCE_REFRESH_HEADER_KEY
+from caching.internal_api_client import (
+    CACHE_CHECK_HEADER_KEY,
+    CACHE_FORCE_REFRESH_HEADER_KEY,
+)
 from caching.management import CacheManagement, CacheMissError
+
+
+class CacheCheckResultedInMissError(Exception):
+    ...
 
 
 def cache_response():
@@ -81,6 +88,11 @@ def _retrieve_response_from_cache_or_calculate(
             cache_entry_key=cache_entry_key
         )
     except CacheMissError:
+        # If the `Cache-Check` header is True
+        # and there has been 1 cache miss, then error out early
+        if request.headers.get(CACHE_CHECK_HEADER_KEY, False):
+            raise CacheCheckResultedInMissError
+
         return _calculate_response_and_save_in_cache(
             view_function, cache_management, cache_entry_key, *args, **kwargs
         )
