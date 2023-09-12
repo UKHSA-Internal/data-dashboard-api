@@ -100,9 +100,11 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- fixtures/                # The home for any fixtures/test data for the project.
     |- unit/                    # The home for all unit tests across the project.
     |- integration/             # The home for all integration tests across the project.
+
+|- scripts/                     # Utlity type scripts. E.g. bootstrap job
     
-|- manage.py                    # The main entrypoint into the app.
-|- Dockerfile                   # The dockerfile for the app. The entrypoint is pointed to the manage.py file above.
+|- manage.py                    # The main entrypoint into the Django app.
+|- Dockerfile                   # The multi-stage dockerfile for the application
 ```
 
 >Note that the `metrics.api` is the primary django app to which everything is wired into.
