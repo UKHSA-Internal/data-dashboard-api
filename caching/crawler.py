@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Self
 
 from caching.internal_api_client import InternalAPIClient
 from cms.home.models import HomePage
@@ -23,8 +23,10 @@ class Crawler:
     def __init__(self, internal_api_client: Optional[InternalAPIClient] = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
 
+    # Class constructors
+
     @classmethod
-    def create_crawler_for_cache_checking_only(cls):
+    def create_crawler_for_cache_checking_only(cls) -> Self:
         internal_api_client = InternalAPIClient(cache_check_only=True)
         return cls(internal_api_client=internal_api_client)
 
