@@ -32,7 +32,7 @@ class TestHealthView:
         spy_check_cache_for_all_pages.return_value = None
 
         # When
-        response = client.get(path=self.path, data={"key": "value"})
+        response = client.get(path=self.path)
 
         # Then
         assert response.status_code == HTTPStatus.OK.value
