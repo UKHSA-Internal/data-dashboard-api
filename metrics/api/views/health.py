@@ -22,10 +22,11 @@ class HealthView(APIView):
         Otherwise, a `200 OK` response will be returned
 
         """
-        if config.APP_MODE == "PRIVATE_API":
-            try:
-                check_cache_for_all_pages()
-            except CacheCheckResultedInMissError:
-                return HttpResponse(status=HTTPStatus.SERVICE_UNAVAILABLE.value)
+        # CDD-1157: Temporarily disable cache-specific health check for private API
+        # if config.APP_MODE == "PRIVATE_API":
+        #     try:
+        #         check_cache_for_all_pages()
+        #     except CacheCheckResultedInMissError:
+        #         return HttpResponse(status=HTTPStatus.SERVICE_UNAVAILABLE.value)
 
         return HttpResponse(status=HTTPStatus.OK.value)
