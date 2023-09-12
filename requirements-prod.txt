@@ -1,4 +1,4 @@
-anyascii==0.3.1
+anyascii==0.3.2
 asgiref==3.7.2
 attrs==23.1.0
 beautifulsoup4==4.11.2
