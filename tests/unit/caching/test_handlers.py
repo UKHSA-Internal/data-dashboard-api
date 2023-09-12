@@ -7,6 +7,7 @@ from caching.handlers import (
     _crawl_all_pages,
     check_cache_for_all_pages,
     collect_all_pages,
+    force_cache_refresh_for_all_pages,
 )
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
@@ -186,4 +187,32 @@ class TestCheckCacheForAllPages:
         # Then
         spy_create_crawler_for_cache_checking_only.assert_called_once()
         expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
+        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+
+
+class TestHydrateCacheForAllPages:
+    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch.object(Crawler, "create_crawler_for_force_cache_refresh")
+    def test_delegates_calls_successfully(
+        self,
+        spy_create_crawler_for_force_cache_refresh: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `force_cache_refresh_for_all_pages()` is called
+        Then the correct crawler is passed to `_crawl_all_pages()`
+
+        Patches:
+            `spy_create_crawler_for_force_cache_refresh`: To assert that
+                the correct crawler is initialized i.e. the one
+                which can be used to forcibly refresh the cache
+            `spy_crawl_all_pages`: For the main assertion
+        """
+        # Given / When
+        force_cache_refresh_for_all_pages()
+
+        # Then
+        spy_create_crawler_for_force_cache_refresh.assert_called_once()
+        expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
         spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)

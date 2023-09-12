@@ -83,3 +83,25 @@ def check_cache_for_all_pages() -> None:
     """
     crawler = Crawler.create_crawler_for_cache_checking_only()
     _crawl_all_pages(crawler=crawler)
+
+
+def force_cache_refresh_for_all_pages() -> None:
+    """Forcibly refresh the cache for all pages
+
+    Notes:
+        Currently "all pages" means the following:
+        - The home page with the slug of "dashboard"
+        - All live/published topic pages
+
+        This will overwrite existing entries in the cache 1 by 1.
+        This currently does not support blue/green cache hydration.
+        As such, if the cache is hit during the invocation of this,
+        then it is feasible that the cache will contain 1 stale half
+        and another fresh half of items.
+
+    Returns:
+        None
+
+    """
+    crawler = Crawler.create_crawler_for_force_cache_refresh()
+    _crawl_all_pages(crawler=crawler)
