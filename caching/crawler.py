@@ -30,6 +30,11 @@ class Crawler:
         internal_api_client = InternalAPIClient(cache_check_only=True)
         return cls(internal_api_client=internal_api_client)
 
+    @classmethod
+    def create_crawler_for_force_cache_refresh(cls) -> Self:
+        internal_api_client = InternalAPIClient(force_refresh=True)
+        return cls(internal_api_client=internal_api_client)
+
     # Process pages
 
     def process_pages(self, pages: list[HomePage, TopicPage]) -> None:
