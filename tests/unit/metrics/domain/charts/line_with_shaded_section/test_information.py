@@ -194,7 +194,7 @@ HEALTHCARE_METRIC_TYPES: list[str] = [
     "covid_occupied_mv_beds",
     "covid_occupied_beds",
     "COVID-19_healthcare_admissionByDay",
-    "COVID-19_healthcare_AdmissionsRollingMean",
+    "COVID-19_healthcare_admissionRollingMean",
     "COVID-19_healthcare_OccupiedBedsRollingMean",
     "COVID-19_healthcare_OccupiedBedsByDay",
     "COVID-19_headline_7DayAdmissionsChange",

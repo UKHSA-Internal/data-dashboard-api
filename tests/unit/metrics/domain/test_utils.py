@@ -144,7 +144,7 @@ class TestCheckForSubstringMatch:
             "COVID-19_headline_cases_7DayTotals",
             "COVID-19_headline_positivity_latest",
             "COVID-19_healthcare_admissionByDay",
-            "COVID-19_healthcare_AdmissionsRollingMean",
+            "COVID-19_healthcare_admissionRollingMean",
             "COVID-19_healthcare_OccupiedBedsByDay",
             "COVID-19_testing_7daypositivity",
             "RSV_headline_hospadmissionrateLatest",
