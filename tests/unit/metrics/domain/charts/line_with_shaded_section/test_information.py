@@ -206,7 +206,7 @@ HEALTHCARE_METRIC_TYPES: list[str] = [
     "RSV_headline_hospadmissionrateLatest",
     "RSV_healthcare_hospadmissionrateByWeek",
     "influenza_headline_ICUHDUadmissionRateChange",
-    "influenza_headline_ICUHDUadmissionrateLatest",
+    "influenza_headline_ICUHDUadmissionRateLatest",
     "influenza_healthcare_ICUHDUadmissionrateByWeek",
 ]
 
