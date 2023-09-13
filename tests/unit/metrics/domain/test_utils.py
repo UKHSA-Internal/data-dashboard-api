@@ -200,7 +200,7 @@ class TestCheckForSubstringMatch:
             "COVID-19_headline_totalvaccineuptake_spring23",
             "COVID-19_headline_newtests_7daypercentchange",
             "COVID-19_headline_tests_7DayChange",
-            "COVID-19_headline_newtests_7daycounttotal",
+            "COVID-19_headline_tests_7DayTotals",
             "COVID-19_testing_PCRcountByDay",
             "COVID-19_headline_totalvaccines_spring23",
         ],

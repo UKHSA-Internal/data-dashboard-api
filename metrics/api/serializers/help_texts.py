@@ -26,7 +26,7 @@ The label to assign on the legend for this individual plot.
 E.g. `15 to 44 years old`
 """
 HEADLINE_METRIC_VALUE_FIELD: str = """
-The associated value of the headline metric which was queried for. E.g. `COVID-19_headline_newtests_7daycounttotal`
+The associated value of the headline metric which was queried for. E.g. `COVID-19_headline_tests_7DayTotals`
 """
 TREND_METRIC_NAME_FIELD: str = """
 The name of the main change type metric being queried for. E.g. `COVID-19_headline_ONSdeaths_7daychange`
