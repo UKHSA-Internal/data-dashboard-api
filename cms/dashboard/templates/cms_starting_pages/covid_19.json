@@ -279,7 +279,7 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_healthcare_OccupiedBedsByDay",
+                                                    "metric": "COVID-19_healthcare_occupiedBedsByDay",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
