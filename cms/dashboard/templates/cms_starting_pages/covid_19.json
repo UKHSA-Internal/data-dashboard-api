@@ -397,7 +397,7 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_testing_7daypositivity",
+                                                    "metric": "COVID-19_testing_positivity7DayRolling",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,

@@ -95,7 +95,7 @@ class TestTrendsInterface:
         """
         # Given
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
-        fake_metric_name = "COVID-19_testing_7daypositivity"
+        fake_metric_name = "COVID-19_testing_positivity7DayRolling"
         fake_topic_name = "COVID-19"
 
         headlines_interface = access.TrendsInterface(
