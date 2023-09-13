@@ -196,7 +196,7 @@ class TestTemplateHomePage:
         assert first_column_headline_block_value["topic"] == self.covid_19
         assert (
             first_column_headline_block_value["metric"]
-            == "COVID-19_headline_newcases_7daytotals"
+            == "COVID-19_headline_cases_7DayTotals"
         )
         assert first_column_headline_block_value["body"] == "Weekly"
 

@@ -64,7 +64,7 @@ CASES_METRIC_TYPES: list[str] = [
     "COVID-19_cases_rateRollingMean",
     "COVID-19_headline_cases_7DayChange",
     "COVID-19_headline_cases_7DayPercentChange",
-    "COVID-19_headline_newcases_7daytotals",
+    "COVID-19_headline_cases_7DayTotals",
     "RSV_headline_hospadmissionrateLatest",
     "RSV_headline_positivityLatest",
     "adenovirus_headline_positivityLatest",

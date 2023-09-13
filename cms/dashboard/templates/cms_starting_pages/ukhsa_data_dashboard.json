@@ -48,7 +48,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daytotals",
+                                                    "metric": "COVID-19_headline_cases_7DayTotals",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "eff08341-7bfa-4a3b-b013-527e7b954ce8"
