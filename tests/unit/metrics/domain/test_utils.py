@@ -157,7 +157,7 @@ class TestCheckForSubstringMatch:
             "influenza_headline_ICUHDUadmissionRateChange",
             "influenza_headline_ICUHDUadmissionRateLatest",
             "influenza_headline_positivityLatest",
-            "influenza_healthcare_ICUHDUadmissionrateByWeek",
+            "influenza_healthcare_ICUHDUadmissionRateByWeek",
             "parainfluenza_headline_positivityLatest",
             "parainfluenza_testing_positivityByWeek",
             "rhinovirus_headline_positivityLatest",

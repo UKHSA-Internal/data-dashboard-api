@@ -361,7 +361,7 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,

@@ -101,14 +101,14 @@ class TestGetRollingPeriodSliceForEachHalf:
     @pytest.mark.parametrize(
         "metric_name",
         [
-            "influenza_healthcare_ICUHDUadmissionrateByWeek",
+            "influenza_healthcare_ICUHDUadmissionRateByWeek",
             "COVID-19_deaths_ONSByWeek",
             "RSV_healthcare_hospadmissionrateByWeek",
             "RSV_testing_positivityByWeek",
             "adenovirus_testing_positivityByWeek",
             "hMPV_testing_positivityByWeek",
             "influenza_testing_positivityByWeek",
-            "influenza_healthcare_ICUHDUadmissionrateByWeek",
+            "influenza_healthcare_ICUHDUadmissionRateByWeek",
             "parainfluenza_testing_positivityByWeek",
             "rhinovirus_testing_positivityByWeek",
         ],
