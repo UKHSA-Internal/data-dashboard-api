@@ -25,11 +25,6 @@ function create_core_time_series() {
 }
 
 
-function generate_api_time_series() {
-    echo "Creating API time series"
-    python manage.py generate_api_time_series
-}
-
 function generate_cms_content() {
     echo "Creating CMS content"
     python manage.py build_cms_site
