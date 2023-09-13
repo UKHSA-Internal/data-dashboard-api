@@ -202,7 +202,7 @@ class TestCheckForSubstringMatch:
             "COVID-19_headline_tests_7DayChange",
             "COVID-19_headline_tests_7DayTotals",
             "COVID-19_testing_PCRcountByDay",
-            "COVID-19_headline_totalvaccines_spring23",
+            "COVID-19_headline_vaccines_spring23Total",
         ],
     )
     def test_returns_true_for_vaccination_testing_substrings(self, metric_name: str):
