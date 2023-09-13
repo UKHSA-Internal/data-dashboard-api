@@ -57,7 +57,7 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daychange",
+                                                    "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "Last 7 days",
                                                     "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
                                                 },
@@ -200,7 +200,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daychange",
+                                                    "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "95b24a05-a015-42ed-b258-51c7ccaedbcd"
@@ -209,7 +209,7 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daychange",
+                                                    "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "",
                                                     "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
                                                 },

@@ -205,7 +205,7 @@ class TestTemplateHomePage:
         assert first_column_trend_block_value["topic"] == self.covid_19
         assert (
             first_column_trend_block_value["metric"]
-            == "COVID-19_headline_newcases_7daychange"
+            == "COVID-19_headline_cases_7DayChange"
         )
         assert (
             first_column_trend_block_value["percentage_metric"]
@@ -368,7 +368,7 @@ class TestTemplateHomePage:
         assert headline_number_block_value["topic"] == self.covid_19
         assert (
             headline_number_block_value["metric"]
-            == "COVID-19_headline_newcases_7daychange"
+            == "COVID-19_headline_cases_7DayChange"
         )
         assert (
             headline_number_block_value["body"] == self.expected_trend_number_block_body
@@ -378,7 +378,7 @@ class TestTemplateHomePage:
         assert trend_number_block_value["topic"] == self.covid_19
         assert (
             trend_number_block_value["metric"]
-            == "COVID-19_headline_newcases_7daychange"
+            == "COVID-19_headline_cases_7DayChange"
         )
         assert (
             trend_number_block_value["percentage_metric"]
