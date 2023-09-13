@@ -197,7 +197,7 @@ class TestCheckForSubstringMatch:
             "COVID-19_vaccinations_spring23_dosesByDay",
             "COVID-19_vaccinations_autumn22_dosesByDay",
             "COVID-19_vaccinations_spring23_uptakeByDay",
-            "COVID-19_headline_totalvaccineuptake_spring23",
+            "COVID-19_headline_vaccines_spring23Uptake",
             "COVID-19_headline_tests_7DayPercentChange",
             "COVID-19_headline_tests_7DayChange",
             "COVID-19_headline_tests_7DayTotals",
