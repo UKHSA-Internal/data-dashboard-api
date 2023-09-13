@@ -19,9 +19,9 @@ function create_admin_user() {
 }
 
 
-function create_core_time_series() {
-    echo "Creating core time series"
-    python manage.py upload_test_data
+function upload_truncated_test_data() {
+    echo "Uploading truncated test data"
+    python manage.py upload_truncated_test_data
 }
 
 
@@ -56,8 +56,7 @@ function run_script() {
     migrate_tables
     set_api_key $api_key
     create_admin_user $admin_password
-    create_core_time_series
-    generate_api_time_series
+    upload_truncated_test_data
     generate_cms_content
 }
 
