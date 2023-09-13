@@ -3,7 +3,12 @@ from unittest import mock
 from _pytest.logging import LogCaptureFixture
 
 from caching.crawler import Crawler
-from caching.handlers import collect_all_pages, crawl_pages, refresh_cache_for_all_pages
+from caching.handlers import (
+    _crawl_all_pages,
+    check_cache_for_all_pages,
+    collect_all_pages,
+    force_cache_refresh_for_all_pages,
+)
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
@@ -103,65 +108,24 @@ class TestCollectAllPages:
         assert unpublished_page not in collected_pages
 
 
-class TestCrawlPages:
-    def test_delegates_call_to_crawler_for_each_page(self):
-        """
-        Given a list of mocked pages and a `Crawler`
-        When `crawl_pages()` is called
-        Then `process_all_sections()`
-            is called from the `Crawler` for each page
-        """
-        # Given
-        spy_crawler = mock.Mock()
-        mocked_pages = [mock.Mock()] * 3
-
-        # When
-        crawl_pages(pages=mocked_pages, crawler=spy_crawler)
-
-        # Then
-        expected_calls = [mock.call(page=mocked_page) for mocked_page in mocked_pages]
-        spy_crawler.process_all_sections.assert_has_calls(
-            calls=expected_calls, any_order=True
-        )
-
-    @mock.patch.object(Crawler, "__init__", return_value=None)
-    def test_initializes_default_crawler_when_not_provided(
-        self, spy_crawler_init: mock.MagicMock
-    ):
-        """
-        Given no provided `Crawler`
-        When `crawl_pages()` is called
-        Then a `Crawler()` is initialized by default
-        """
-        # Given
-        crawler = None
-
-        # When
-        crawl_pages(pages=[], crawler=crawler)
-
-        # Then
-        spy_crawler_init.assert_called_once()
-
-
-class TestRefreshCacheForAllPages:
-    @mock.patch(f"{MODULE_PATH}.crawl_pages")
+class TestCrawlAllPages:
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
-    def test_delegates_calls_successfully(
-        self, spy_collect_all_pages: mock.MagicMock, spy_crawl_pages: mock.MagicMock
-    ):
+    def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
         """
-        Given pages to be cached
-        When `refresh_cache_for_all_pages()` is called
-        Then calls are delegated to `collect_all_pages()` and `crawl_pages()`
+        Given a mocked `Crawler` object
+        When `_crawl_all_pages()` is called
+        Then calls are delegated to `collect_all_pages()`
+        And to the `process_pages()` method on the `Crawler` object
 
         Patches:
             `spy_collect_all_pages`: To isolate the collected pages
                 and pass to the assertion on `spy_crawl_pages`
-            `spy_crawl_pages`: For the main assertion
-                of checking pages are passed to it
         """
-        # Given / When
-        refresh_cache_for_all_pages()
+        # Given
+        spy_crawler = mock.Mock()
+
+        # When
+        _crawl_all_pages(crawler=spy_crawler)
 
         # Then
         # Check that all pages are collected
@@ -169,33 +133,86 @@ class TestRefreshCacheForAllPages:
         collected_pages = spy_collect_all_pages.return_value
 
         # And then those pages are passed to be processed
-        spy_crawl_pages.assert_called_once_with(pages=collected_pages)
+        spy_crawler.process_pages.assert_called_once_with(pages=collected_pages)
 
-    @mock.patch(f"{MODULE_PATH}.crawl_pages")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_correct_logs_are_made(
         self,
         mocked_collect_all_pages: mock.MagicMock,
-        mocked_crawl_pages: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
         """
         Given no pages to be cached
-        When `refresh_cache_for_all_pages()` is called
+        When `_crawl_all_pages()` is called
         Then the correct log statements are made
 
         Patches:
             `mocked_collect_all_pages`: To simulate no collected pages
                 in order to avoid any unnecessary side effects
-            `mocked_crawl_pages`: To remove any unnecessary
-                side effects from the test
         """
         # Given
+        mocked_crawler = mock.Mock()
         mocked_collect_all_pages.return_value = []
 
         # When
-        refresh_cache_for_all_pages()
+        _crawl_all_pages(crawler=mocked_crawler)
 
         # Then
         assert "Commencing refresh of cache" in caplog.text
         assert "Finished refreshing of cache" in caplog.text
+
+
+class TestCheckCacheForAllPages:
+    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch.object(Crawler, "create_crawler_for_cache_checking_only")
+    def test_delegates_calls_successfully(
+        self,
+        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `check_cache_for_all_pages()` is called
+        Then the correct crawler is passed to `_crawl_all_pages()`
+
+        Patches:
+            `spy_create_crawler_for_cache_checking_only`: To assert that
+                the correct crawler is initialized i.e. the one
+                which can be used purely for checking purposes
+            `spy_crawl_all_pages`: For the main assertion
+        """
+        # Given / When
+        check_cache_for_all_pages()
+
+        # Then
+        spy_create_crawler_for_cache_checking_only.assert_called_once()
+        expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
+        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+
+
+class TestHydrateCacheForAllPages:
+    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch.object(Crawler, "create_crawler_for_force_cache_refresh")
+    def test_delegates_calls_successfully(
+        self,
+        spy_create_crawler_for_force_cache_refresh: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `force_cache_refresh_for_all_pages()` is called
+        Then the correct crawler is passed to `_crawl_all_pages()`
+
+        Patches:
+            `spy_create_crawler_for_force_cache_refresh`: To assert that
+                the correct crawler is initialized i.e. the one
+                which can be used to forcibly refresh the cache
+            `spy_crawl_all_pages`: For the main assertion
+        """
+        # Given / When
+        force_cache_refresh_for_all_pages()
+
+        # Then
+        spy_create_crawler_for_force_cache_refresh.assert_called_once()
+        expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
+        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
