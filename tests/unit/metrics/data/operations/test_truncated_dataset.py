@@ -6,7 +6,7 @@ from pydantic_core._pydantic_core import ValidationError
 
 from metrics.data.operations.truncated_dataset import (
     _gather_test_data_source_file_paths,
-    upload_test_data,
+    upload_truncated_test_data,
 )
 
 MODULE_PATH = "metrics.data.operations.truncated_dataset"
@@ -26,14 +26,14 @@ class TestGatherTestDataSourceFilePaths:
         assert len(gathered_test_file_paths) == 53
 
 
-class TestUploadTestData:
+class TestUploadTruncatedTestData:
     @mock.patch(f"{MODULE_PATH}.file_ingester")
     def test_error_log_made_for_failed_file(
         self, mocked_file_ingester: mock.MagicMock, caplog: LogCaptureFixture
     ):
         """
         Given the `file_ingester()` which will fail
-        When `upload_test_data()` is called
+        When `upload_truncated_test_data()` is called
         Then the correct log is made
 
         Patches:
@@ -45,7 +45,7 @@ class TestUploadTestData:
         mocked_file_ingester.side_effect = ValidationError
 
         # When
-        upload_test_data()
+        upload_truncated_test_data()
 
         # Then
         assert "Failed upload of" in caplog.text
@@ -56,7 +56,7 @@ class TestUploadTestData:
     ):
         """
         Given a set of truncated test files
-        When `upload_test_data()` is called
+        When `upload_truncated_test_data()` is called
         Then `file_ingester()` is called for each file
 
         Patches:
@@ -67,7 +67,7 @@ class TestUploadTestData:
         gathered_test_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
         # When
-        upload_test_data()
+        upload_truncated_test_data()
 
         # Then
         formatted_logged_text: str = caplog.text
@@ -85,7 +85,7 @@ class TestUploadTestData:
     ):
         """
         Given a set of truncated test files
-        When `upload_test_data()` is called
+        When `upload_truncated_test_data()` is called
         Then `file_ingester()` is called for each file
 
         Patches:
@@ -96,7 +96,7 @@ class TestUploadTestData:
         gathered_test_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
         # When
-        upload_test_data()
+        upload_truncated_test_data()
 
         # Then
         file_paths_called_by_file_ingester = []

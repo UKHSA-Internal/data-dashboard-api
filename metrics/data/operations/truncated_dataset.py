@@ -26,7 +26,7 @@ def _gather_test_data_source_file_paths() -> list[Path]:
     ]
 
 
-def upload_test_data() -> None:
+def upload_truncated_test_data() -> None:
     """Uploads the truncated test data set to the database
 
     Notes:
