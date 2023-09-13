@@ -88,7 +88,7 @@ class TestCrawlerBuildRequestData:
         expected_trend_request_data = {
             "topic": "COVID-19",
             "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-            "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
         }
         assert trend_request_data == expected_trend_request_data
 

@@ -24,7 +24,7 @@ class TestTrendParameters:
         payload = {
             "topic": "COVID-19",
             "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-            "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
         }
         payload[mandatory_field] = None
 
@@ -52,7 +52,7 @@ class TestTrendParameters:
         # Given
         topic = "COVID-19"
         metric = "COVID-19_headline_ONSdeaths_7DayChange"
-        percentage_metric = "COVID-19_headline_ONSdeaths_7daypercentchange"
+        percentage_metric = "COVID-19_headline_ONSdeaths_7DayPercentChange"
 
         # When
         headline_parameters = TrendsParameters(

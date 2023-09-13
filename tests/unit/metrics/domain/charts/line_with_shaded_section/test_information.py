@@ -133,7 +133,7 @@ DEATHS_METRIC_TYPES: list[str] = [
     "COVID-19_deaths_ONSByWeek",
     "COVID-19_deaths_ONSRollingMean",
     "COVID-19_headline_ONSdeaths_7DayChange",
-    "COVID-19_headline_ONSdeaths_7daypercentchange",
+    "COVID-19_headline_ONSdeaths_7DayPercentChange",
     "COVID-19_headline_ONSdeaths_7daytotals",
 ]
 

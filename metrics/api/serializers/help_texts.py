@@ -36,7 +36,7 @@ The associated value of the main change type metric which was queried for. E.g. 
 """
 
 TREND_PERCENTAGE_METRIC_NAME_FIELD: str = """
-The name of the percentage change type metric being queried for. E.g. `COVID-19_headline_ONSdeaths_7daypercentchange`
+The name of the percentage change type metric being queried for. E.g. `COVID-19_headline_ONSdeaths_7DayPercentChange`
 """
 TREND_PERCENTAGE_METRIC_VALUE_FIELD: str = """
 The associated value of the percentage change type metric being queried for. E.g. `3.2` would be considered as +3.2%

@@ -27,7 +27,7 @@ def example_trend_number_block() -> dict[str, str]:
         "topic": "COVID-19",
         "metric": "COVID-19_headline_ONSdeaths_7DayChange",
         "body": "Last 7 days",
-        "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange",
+        "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
     }
 
 

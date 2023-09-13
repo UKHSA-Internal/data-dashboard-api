@@ -87,7 +87,7 @@
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayChange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
                                                 },
                                                 "id": "ea8603ca-7b4d-4ef5-a8b1-f27a565938b5"
                                             }
@@ -263,7 +263,7 @@
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayChange",
                                                     "body": "",
-                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
                                                 },
                                                 "id": "41ce6c59-99fe-486a-8225-341a306cc395"
                                             }

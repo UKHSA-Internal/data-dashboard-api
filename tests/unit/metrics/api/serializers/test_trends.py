@@ -29,7 +29,7 @@ class TestTrendsQuerySerializer:
         fake_metric = FakeMetricFactory.build_example_metric(metric_name=metric_name)
         fake_topic = fake_metric.metric_group.topic
         fake_percentage_metric = FakeMetricFactory.build_example_metric(
-            metric_name="COVID-19_headline_ONSdeaths_7daypercentchange"
+            metric_name="COVID-19_headline_ONSdeaths_7DayPercentChange"
         )
 
         data: cls.DATA_PAYLOAD_HINT = {
@@ -205,7 +205,7 @@ class TestTrendsQuerySerializerBeta:
         )
         fake_topic = fake_metric.metric_group.topic
         fake_percentage_metric = FakeMetricFactory.build_example_metric(
-            metric_name="COVID-19_headline_ONSdeaths_7daypercentchange",
+            metric_name="COVID-19_headline_ONSdeaths_7DayPercentChange",
             metric_group_name="headline",
         )
 
@@ -568,7 +568,7 @@ class TestTrendsResponseSerializer:
         payload = {
             "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
             "metric_value": 10,
-            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
             "percentage_metric_value": 3.2,
             "direction": "up",
             "colour": "red",

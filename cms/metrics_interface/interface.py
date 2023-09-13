@@ -164,8 +164,8 @@ class MetricsAPIInterface:
             QuerySet: A queryset of the individual metric names without repetition:
                 Examples:
                     `<MetricQuerySet [
-                        'COVID-19_headline_ONSdeaths_7daypercentchange',
-                        'COVID-19_headline_ONSdeaths_7daypercentchange'
+                        'COVID-19_headline_ONSdeaths_7DayPercentChange',
+                        'COVID-19_headline_ONSdeaths_7DayPercentChange'
                         ]>`
 
         """

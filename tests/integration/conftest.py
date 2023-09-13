@@ -63,7 +63,7 @@ def core_trend_example_beta() -> tuple[CoreHeadline, CoreHeadline]:
         topic=topic,
     )
     percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daypercentchange",
+        name="COVID-19_headline_ONSdeaths_7DayPercentChange",
         metric_group=metric_group,
         topic=topic,
     )
@@ -100,7 +100,7 @@ def core_trend_percentage_example() -> list[CoreTimeSeries]:
         topic=topic,
     )
     percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daypercentchange",
+        name="COVID-19_headline_ONSdeaths_7DayPercentChange",
         metric_group=metric_group,
         topic=topic,
     )

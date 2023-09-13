@@ -13,7 +13,7 @@ class TestTrend:
         return {
             "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
             "metric_value": 24568,
-            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
             "percentage_metric_value": -0.1,
         }
 
