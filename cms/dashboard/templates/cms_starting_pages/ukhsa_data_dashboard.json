@@ -76,7 +76,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_ONSdeaths_7daytotals",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "2e403485-030c-4122-86be-5827a095f30d"
@@ -252,7 +252,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_ONSdeaths_7daytotals",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "10c92d4c-bdb1-4bcc-a8a5-d0063dcee095"
