@@ -209,7 +209,7 @@ class TestTemplateHomePage:
         )
         assert (
             first_column_trend_block_value["percentage_metric"]
-            == "COVID-19_headline_newcases_7daypercentchange"
+            == "COVID-19_headline_cases_7DayPercentChange"
         )
         assert (
             first_column_trend_block_value["body"]
@@ -382,6 +382,6 @@ class TestTemplateHomePage:
         )
         assert (
             trend_number_block_value["percentage_metric"]
-            == "COVID-19_headline_newcases_7daypercentchange"
+            == "COVID-19_headline_cases_7DayPercentChange"
         )
         assert trend_number_block_value["body"] == ""

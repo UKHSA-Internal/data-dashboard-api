@@ -59,7 +59,7 @@
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
                                                 },
                                                 "id": "a57a4ad5-6b52-45a6-acfd-2fe208cb5617"
                                             }
@@ -211,7 +211,7 @@
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "",
-                                                    "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
                                                 },
                                                 "id": "8c42a86e-f675-41d0-a65a-633c20ac98e3"
                                             }
