@@ -88,9 +88,9 @@ To seed your environment with data, including CMS content and a snapshot of metr
 you can run the following commands:
 
 ```bash
-sudo chmod +x boot.sh # <- make the script executable
+sudo chmod +x scripts/boot.sh # <- make the script executable
 
-sudo ./boot.sh <API Key> <Admin Password>
+./scripts/boot.sh <API Key> <Admin Password>
 ```
 
 Whereby, `API Key` should meet the following criteria:
