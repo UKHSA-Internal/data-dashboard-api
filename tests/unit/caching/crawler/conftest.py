@@ -43,7 +43,7 @@ def example_chart_block() -> dict[str, str | list[dict]]:
                 "type": "plot",
                 "value": {
                     "topic": "COVID-19",
-                    "metric": "COVID-19_healthcare_AdmissionsByDay",
+                    "metric": "COVID-19_healthcare_admissionByDay",
                     "chart_type": "bar",
                     "date_from": None,
                     "date_to": None,
