@@ -24,7 +24,7 @@ class HeadlinesQuerySerializer(serializers.Serializer):
         choices=[],
         required=True,
         help_text=help_texts.METRIC_FIELD.format(
-            "COVID-19_headline_ONSdeaths_7daychange"
+            "COVID-19_headline_ONSdeaths_7DayChange"
         ),
     )
 
@@ -53,7 +53,7 @@ class HeadlinesQuerySerializerBeta(serializers.Serializer):
         choices=[],
         required=True,
         help_text=help_texts.METRIC_FIELD.format(
-            "COVID-19_headline_ONSdeaths_7daychange"
+            "COVID-19_headline_ONSdeaths_7DayChange"
         ),
     )
     geography = serializers.ChoiceField(

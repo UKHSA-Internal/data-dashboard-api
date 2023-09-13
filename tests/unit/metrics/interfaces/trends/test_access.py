@@ -23,7 +23,7 @@ class TestTrendsInterface:
         """
         # Given
         topic_name = "COVID-19"
-        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
+        metric_name = "COVID-19_headline_ONSdeaths_7DayChange"
         percentage_metric_name = "COVID-19_headline_ONSdeaths_7daypercentchange"
         spy_core_time_series_manager = mock.Mock()
 
@@ -53,7 +53,7 @@ class TestTrendsInterface:
         """
         # Given
         topic_name = "COVID-19"
-        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
+        metric_name = "COVID-19_headline_ONSdeaths_7DayChange"
         percentage_metric_name = "COVID-19_headline_ONSdeaths_7daypercentchange"
 
         (
@@ -120,7 +120,7 @@ class TestTrendsInterfaceBeta:
     def example_args(self) -> dict[str, str]:
         return {
             "topic_name": "COVID-19",
-            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
+            "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
             "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
             "geography_name": "England",
             "geography_type_name": "Nation",

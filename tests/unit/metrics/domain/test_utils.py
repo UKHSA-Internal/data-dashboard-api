@@ -136,7 +136,7 @@ class TestCheckForSubstringMatch:
             "COVID-19_headline_7DayAdmissions",
             "COVID-19_headline_7DayAdmissionsChange",
             "COVID-19_headline_7DayAdmissionsPercentChange",
-            "COVID-19_headline_ONSdeaths_7daychange",
+            "COVID-19_headline_ONSdeaths_7DayChange",
             "COVID-19_headline_ONSdeaths_7daypercentchange",
             "COVID-19_headline_ONSdeaths_7daytotals",
             "COVID-19_headline_cases_7DayChange",

@@ -29,7 +29,7 @@ HEADLINE_METRIC_VALUE_FIELD: str = """
 The associated value of the headline metric which was queried for. E.g. `COVID-19_headline_tests_7DayTotals`
 """
 TREND_METRIC_NAME_FIELD: str = """
-The name of the main change type metric being queried for. E.g. `COVID-19_headline_ONSdeaths_7daychange`
+The name of the main change type metric being queried for. E.g. `COVID-19_headline_ONSdeaths_7DayChange`
 """
 TREND_METRIC_VALUE_FIELD: str = """
 The associated value of the main change type metric which was queried for. E.g. `10`
