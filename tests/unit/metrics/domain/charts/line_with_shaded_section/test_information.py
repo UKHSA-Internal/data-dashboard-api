@@ -259,7 +259,7 @@ TESTING_METRIC_TYPES: list[str] = [
     "new_tests_7days_change",
     "new_tests_7days_change_percentage",
     "unique_individuals_pcr_rolling_sum (bar)",
-    "COVID-19_headline_newtests_7daycountchange",
+    "COVID-19_headline_tests_7DayChange",
     "COVID-19_headline_newtests_7daycounttotal",
     "COVID-19_headline_newtests_7daypercentchange",
 ]
