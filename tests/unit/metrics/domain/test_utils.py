@@ -154,7 +154,7 @@ class TestCheckForSubstringMatch:
             "adenovirus_headline_positivityLatest",
             "hMPV_headline_positivityLatest",
             "hMPV_testing_positivityByWeek",
-            "influenza_headline_ICUHDUadmissionrateChange",
+            "influenza_headline_ICUHDUadmissionRateChange",
             "influenza_headline_ICUHDUadmissionrateLatest",
             "influenza_headline_positivityLatest",
             "influenza_healthcare_ICUHDUadmissionrateByWeek",

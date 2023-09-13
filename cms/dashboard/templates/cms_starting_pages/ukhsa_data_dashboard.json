@@ -313,7 +313,7 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_headline_ICUHDUadmissionrateChange",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateChange",
                                                     "body": "Last 7 days",
                                                     "percentage_metric": "influenza_headline_ICUHDUadmissionratePercentChange"
                                                 },
@@ -391,7 +391,7 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_headline_ICUHDUadmissionrateChange",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateChange",
                                                     "body": "",
                                                     "percentage_metric": "influenza_headline_ICUHDUadmissionratePercentChange"
                                                 },
