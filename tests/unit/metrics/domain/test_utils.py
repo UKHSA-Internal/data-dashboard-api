@@ -149,7 +149,7 @@ class TestCheckForSubstringMatch:
             "COVID-19_testing_positivity7DayRolling",
             "RSV_headline_admissionRateLatest",
             "RSV_headline_positivityLatest",
-            "RSV_healthcare_hospadmissionrateByWeek",
+            "RSV_healthcare_admissionRateByWeek",
             "RSV_testing_positivityByWeek",
             "adenovirus_headline_positivityLatest",
             "hMPV_headline_positivityLatest",

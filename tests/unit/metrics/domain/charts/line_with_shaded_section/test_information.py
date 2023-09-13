@@ -204,7 +204,7 @@ HEALTHCARE_METRIC_TYPES: list[str] = [
     "COVID-19_headline_7DayOccupiedBedsChange",
     "COVID-19_headline_7DayOccupiedBedsPercentChange",
     "RSV_headline_admissionRateLatest",
-    "RSV_healthcare_hospadmissionrateByWeek",
+    "RSV_healthcare_admissionRateByWeek",
     "influenza_headline_ICUHDUadmissionRateChange",
     "influenza_headline_ICUHDUadmissionRateLatest",
     "influenza_healthcare_ICUHDUadmissionRateByWeek",

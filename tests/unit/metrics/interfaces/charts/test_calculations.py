@@ -103,7 +103,7 @@ class TestGetRollingPeriodSliceForEachHalf:
         [
             "influenza_healthcare_ICUHDUadmissionRateByWeek",
             "COVID-19_deaths_ONSByWeek",
-            "RSV_healthcare_hospadmissionrateByWeek",
+            "RSV_healthcare_admissionRateByWeek",
             "RSV_testing_positivityByWeek",
             "adenovirus_testing_positivityByWeek",
             "hMPV_testing_positivityByWeek",
