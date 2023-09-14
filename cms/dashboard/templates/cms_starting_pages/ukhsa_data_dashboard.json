@@ -8,7 +8,7 @@
         "html_url": null,
         "slug": "dashboard",
         "show_in_menus": true,
-        "first_published_at": "2023-09-08T09:27:05.497380+01:00",
+        "first_published_at": "2023-09-14T15:51:50.271975+01:00",
         "alias_of": null,
         "parent": {
             "id": 3,
@@ -183,11 +183,11 @@
                                                     "chart_type": "line_with_shaded_section",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -235,11 +235,11 @@
                                                     "chart_type": "line_with_shaded_section",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -365,11 +365,11 @@
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -417,11 +417,11 @@
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -480,5 +480,5 @@
             "body": "<p data-block-key=\"jib2z\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-09-12T11:33:38.760443+01:00"
+    "last_published_at": "2023-09-14T16:47:37.559247+01:00"
 }
