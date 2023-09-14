@@ -214,14 +214,14 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `COVID-19_headline_ONSdeaths_7daytotals`
+                E.g. `COVID-19_headline_ONSdeaths_7DayTotals`
 
         Returns:
             QuerySet: A queryset containing the single record
                 Examples:
                     `<CoreTimeSeries:
                         Core Data for 2023-03-04,
-                        metric 'COVID-19_headline_ONSdeaths_7daytotals',
+                        metric 'COVID-19_headline_ONSdeaths_7DayTotals',
                         value: 24298.0
                     >`
 
@@ -466,14 +466,14 @@ class CoreTimeSeriesManager(models.Manager):
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
-                E.g. `COVID-19_headline_ONSdeaths_7daytotals`
+                E.g. `COVID-19_headline_ONSdeaths_7DayTotals`
 
         Returns:
             QuerySet: A queryset containing the single record
                 Examples:
                     `<CoreTimeSeries:
                         Core Data for 2023-03-04,
-                        metric 'COVID-19_headline_ONSdeaths_7daytotals',
+                        metric 'COVID-19_headline_ONSdeaths_7DayTotals',
                         value: 24298.0
                     >`
 

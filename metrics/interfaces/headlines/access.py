@@ -118,7 +118,7 @@ def generate_headline_number(topic_name: str, metric_name: str) -> float:
         topic_name: The name of the disease being queried.
             E.g. `COVID-19`
         metric_name: The name of the metric being queried.
-            E.g. `COVID-19_headline_ONSdeaths_7daytotals`
+            E.g. `COVID-19_headline_ONSdeaths_7DayTotals`
 
     Returns:
         float: The associated `metric_value`

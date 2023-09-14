@@ -196,7 +196,7 @@ class TestTemplateHomePage:
         assert first_column_headline_block_value["topic"] == self.covid_19
         assert (
             first_column_headline_block_value["metric"]
-            == "COVID-19_headline_newcases_7daytotals"
+            == "COVID-19_headline_cases_7DayTotals"
         )
         assert first_column_headline_block_value["body"] == "Weekly"
 
@@ -205,11 +205,11 @@ class TestTemplateHomePage:
         assert first_column_trend_block_value["topic"] == self.covid_19
         assert (
             first_column_trend_block_value["metric"]
-            == "COVID-19_headline_newcases_7daychange"
+            == "COVID-19_headline_cases_7DayChange"
         )
         assert (
             first_column_trend_block_value["percentage_metric"]
-            == "COVID-19_headline_newcases_7daypercentchange"
+            == "COVID-19_headline_cases_7DayPercentChange"
         )
         assert (
             first_column_trend_block_value["body"]
@@ -245,7 +245,7 @@ class TestTemplateHomePage:
         assert fourth_column_headline_block_value["topic"] == self.covid_19
         assert (
             fourth_column_headline_block_value["metric"]
-            == "COVID-19_headline_totalvaccines_spring23"
+            == "COVID-19_headline_vaccines_spring23Total"
         )
         assert fourth_column_headline_block_value["body"] == "Autumn booster"
 
@@ -368,7 +368,7 @@ class TestTemplateHomePage:
         assert headline_number_block_value["topic"] == self.covid_19
         assert (
             headline_number_block_value["metric"]
-            == "COVID-19_headline_newcases_7daychange"
+            == "COVID-19_headline_cases_7DayChange"
         )
         assert (
             headline_number_block_value["body"] == self.expected_trend_number_block_body
@@ -377,11 +377,10 @@ class TestTemplateHomePage:
         trend_number_block_value = headline_number_columns[1].value
         assert trend_number_block_value["topic"] == self.covid_19
         assert (
-            trend_number_block_value["metric"]
-            == "COVID-19_headline_newcases_7daychange"
+            trend_number_block_value["metric"] == "COVID-19_headline_cases_7DayChange"
         )
         assert (
             trend_number_block_value["percentage_metric"]
-            == "COVID-19_headline_newcases_7daypercentchange"
+            == "COVID-19_headline_cases_7DayPercentChange"
         )
         assert trend_number_block_value["body"] == ""

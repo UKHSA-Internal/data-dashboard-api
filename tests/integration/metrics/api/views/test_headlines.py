@@ -74,7 +74,7 @@ class TestHeadlinesView:
         Then an HTTP 401 UNAUTHORIZED response is returned
         """
         # Given
-        metric_name = "COVID-19_headline_ONSdeaths_7daytotals"
+        metric_name = "COVID-19_headline_ONSdeaths_7DayTotals"
         topic_name = "COVID-19"
         client = APIClient()
         path = "/api/headlines/v2/"

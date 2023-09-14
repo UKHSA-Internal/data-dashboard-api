@@ -24,12 +24,12 @@ class TestTrendsQuerySerializer:
     def _setup_valid_data_payload_and_model_managers(
         cls,
     ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
-        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
+        metric_name = "COVID-19_headline_ONSdeaths_7DayChange"
 
         fake_metric = FakeMetricFactory.build_example_metric(metric_name=metric_name)
         fake_topic = fake_metric.metric_group.topic
         fake_percentage_metric = FakeMetricFactory.build_example_metric(
-            metric_name="COVID-19_headline_ONSdeaths_7daypercentchange"
+            metric_name="COVID-19_headline_ONSdeaths_7DayPercentChange"
         )
 
         data: cls.DATA_PAYLOAD_HINT = {
@@ -197,7 +197,7 @@ class TestTrendsQuerySerializerBeta:
     def _setup_valid_data_payload_and_model_managers(
         cls,
     ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
-        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
+        metric_name = "COVID-19_headline_ONSdeaths_7DayChange"
 
         fake_metric = FakeMetricFactory.build_example_metric(
             metric_name=metric_name,
@@ -205,7 +205,7 @@ class TestTrendsQuerySerializerBeta:
         )
         fake_topic = fake_metric.metric_group.topic
         fake_percentage_metric = FakeMetricFactory.build_example_metric(
-            metric_name="COVID-19_headline_ONSdeaths_7daypercentchange",
+            metric_name="COVID-19_headline_ONSdeaths_7DayPercentChange",
             metric_group_name="headline",
         )
 
@@ -566,9 +566,9 @@ class TestTrendsResponseSerializer:
         """
         # Given
         payload = {
-            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
+            "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
             "metric_value": 10,
-            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
             "percentage_metric_value": 3.2,
             "direction": "up",
             "colour": "red",

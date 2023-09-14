@@ -44,7 +44,7 @@ class TestCrawlerBuildRequestData:
         # Given
         headline_number_block_with_no_geography_input = {
             "topic": "COVID-19",
-            "metric": "COVID-19_headline_ONSdeaths_7daytotals",
+            "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
             "body": "Last 7 days",
         }
 
@@ -87,8 +87,8 @@ class TestCrawlerBuildRequestData:
         # Then
         expected_trend_request_data = {
             "topic": "COVID-19",
-            "metric": "COVID-19_headline_ONSdeaths_7daychange",
-            "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "metric": "COVID-19_headline_ONSdeaths_7DayChange",
+            "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
         }
         assert trend_request_data == expected_trend_request_data
 

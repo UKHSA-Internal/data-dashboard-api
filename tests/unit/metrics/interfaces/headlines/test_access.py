@@ -11,7 +11,7 @@ from metrics.interfaces.headlines import access
 def example_headline_args() -> dict[str, str]:
     return {
         "topic_name": "COVID-19",
-        "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
+        "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
         "geography_name": "England",
         "geography_type_name": "Nation",
         "stratum_name": "default",

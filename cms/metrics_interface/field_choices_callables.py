@@ -157,8 +157,8 @@ def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     Returns:
         A list of 2-item tuples of change type metric names.
         Examples:
-            [("COVID-19_headline_ONSdeaths_7daychange",
-              "COVID-19_headline_ONSdeaths_7daychange"),
+            [("COVID-19_headline_ONSdeaths_7DayChange",
+              "COVID-19_headline_ONSdeaths_7DayChange"),
                 ...
             ]
 
@@ -183,8 +183,8 @@ def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES
     Returns:
         A list of 2-item tuples of change percent type metric names.
         Examples:
-            [("COVID-19_headline_ONSdeaths_7daypercentchange",
-              "COVID-19_headline_ONSdeaths_7daypercentchange"),
+            [("COVID-19_headline_ONSdeaths_7DayPercentChange",
+              "COVID-19_headline_ONSdeaths_7DayPercentChange"),
                 ...
             ]
 
