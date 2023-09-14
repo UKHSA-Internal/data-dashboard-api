@@ -377,8 +377,7 @@ class TestTemplateHomePage:
         trend_number_block_value = headline_number_columns[1].value
         assert trend_number_block_value["topic"] == self.covid_19
         assert (
-            trend_number_block_value["metric"]
-            == "COVID-19_headline_cases_7DayChange"
+            trend_number_block_value["metric"] == "COVID-19_headline_cases_7DayChange"
         )
         assert (
             trend_number_block_value["percentage_metric"]
