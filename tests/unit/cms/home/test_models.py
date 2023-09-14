@@ -92,7 +92,7 @@ class TestBlankHomePage:
 class TestTemplateHomePage:
     @property
     def expected_trend_number_block_body(self) -> str:
-        return "Last 7 days"
+        return "7 days"
 
     @property
     def covid_19(self) -> str:
@@ -247,7 +247,7 @@ class TestTemplateHomePage:
             fourth_column_headline_block_value["metric"]
             == "COVID-19_headline_vaccines_spring23Total"
         )
-        assert fourth_column_headline_block_value["body"] == "Autumn booster"
+        assert fourth_column_headline_block_value["body"] == "Spring booster"
 
     def test_covid_19_section_headline_number_row_single_headline_column_with_percentage_block(
         self,
@@ -329,13 +329,13 @@ class TestTemplateHomePage:
         assert chart_with_headline_and_trend_card_value["title"] == "Cases"
         assert (
             chart_with_headline_and_trend_card_value["body"]
-            == "Positive tests reported in England"
+            == "Positive COVID-19 cases reported in England (7-day rolling average)"
         )
 
         chart = chart_with_headline_and_trend_card_value["chart"]
         chart_plot_value = chart[0].value
         assert chart_plot_value["topic"] == self.covid_19
-        assert chart_plot_value["metric"] == "COVID-19_cases_casesByDay"
+        assert chart_plot_value["metric"] == "COVID-19_cases_countRollingMean"
         assert (
             chart_plot_value["chart_type"] == ChartTypes.line_with_shaded_section.value
         )
@@ -368,7 +368,7 @@ class TestTemplateHomePage:
         assert headline_number_block_value["topic"] == self.covid_19
         assert (
             headline_number_block_value["metric"]
-            == "COVID-19_headline_cases_7DayChange"
+            == "COVID-19_headline_cases_7DayTotals"
         )
         assert (
             headline_number_block_value["body"] == self.expected_trend_number_block_body

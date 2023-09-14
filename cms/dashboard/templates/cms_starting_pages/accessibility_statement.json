@@ -1,0 +1,28 @@
+{
+    "id": 14,
+    "meta": {
+        "seo_title": "",
+        "search_description": "",
+        "type": "common.CommonPage",
+        "detail_url": "http://localhost/api/pages/14/",
+        "html_url": null,
+        "slug": "accessibility-statement",
+        "show_in_menus": false,
+        "first_published_at": "2023-09-14T18:45:50.129558+01:00",
+        "alias_of": null,
+        "parent": {
+            "id": 3,
+            "meta": {
+                "type": "home.HomePage",
+                "detail_url": "http://localhost/api/pages/3/",
+                "html_url": null
+            },
+            "title": "UKHSA Dashboard Root"
+        }
+    },
+    "title": "Accessibility statement",
+    "date_posted": "2023-09-14",
+    "body": "<p data-block-key=\"y2lwi\">-</p>",
+    "last_published_at": "2023-09-14T18:46:04.855575+01:00",
+    "related_links": []
+}
