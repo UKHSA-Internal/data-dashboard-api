@@ -169,3 +169,5 @@ class Command(BaseCommand):
         _build_common_page(name="whats_new", parent_page=root_page)
         _build_common_page(name="whats_coming", parent_page=root_page)
         _build_common_page(name="cookies", parent_page=root_page)
+        _build_common_page(name="accessibility_statement", parent_page=root_page)
+        _build_common_page(name="compliance", parent_page=root_page)
