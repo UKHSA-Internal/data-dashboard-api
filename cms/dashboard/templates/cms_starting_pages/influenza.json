@@ -36,7 +36,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "ICU/HDU admission rates per 100,000 population",
-                                        "body": "Weekly rates per 100,000 people of patients admitted to ICU or HDU with influenza.",
+                                        "body": "Weekly overall influenza hospital ICU HDU rates per 100,000 trust catchment population.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -67,7 +67,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "ICU/HDU admissions rate per 100,000 people by age",
-                                        "body": "Age breakdown of people admitted to ICU or HDU with influenza each week, shown as the rate per 100,000 people.",
+                                        "body": "Age breakdown of people admitted to ICU or HDU with influenza each week, shown as the rate per 100,000 trust catchment population.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -104,8 +104,8 @@
                                                     "sex": "all",
                                                     "age": "05-14",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "RED",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "8e2b63e1-64e4-41f0-8f07-3b234c7a1395"
                                             },
@@ -142,8 +142,8 @@
                                                     "sex": "all",
                                                     "age": "45-54",
                                                     "label": "45 to 54 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "BLACK",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "d50cb8ad-d2ea-4d8b-aa69-bc9550883f0a"
                                             },
@@ -180,8 +180,8 @@
                                                     "sex": "all",
                                                     "age": "65-74",
                                                     "label": "65 to 74 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "YELLOW",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "b6befe9b-4631-4b93-98e1-6b10910618df"
                                             },
@@ -218,8 +218,8 @@
                                                     "sex": "all",
                                                     "age": "85+",
                                                     "label": "85 years and over",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "PINK",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "c1fac52c-d353-4bf7-8b85-9f13e94dff3f"
                                             }
@@ -316,8 +316,8 @@
                                                     "sex": "all",
                                                     "age": "05-14",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "RED",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "380c7572-6b43-4225-9c7b-0b79a55110e2"
                                             },
@@ -354,8 +354,8 @@
                                                     "sex": "all",
                                                     "age": "45-64",
                                                     "label": "45 to 64 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "BLACK",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "4a161076-04a0-4806-862c-8fed057321c9"
                                             },
@@ -420,5 +420,5 @@
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-09-14T16:30:44.156776+01:00"
+    "last_published_at": "2023-09-14T18:34:22.148413+01:00"
 }
