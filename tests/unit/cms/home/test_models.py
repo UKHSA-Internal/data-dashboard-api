@@ -245,7 +245,7 @@ class TestTemplateHomePage:
         assert fourth_column_headline_block_value["topic"] == self.covid_19
         assert (
             fourth_column_headline_block_value["metric"]
-            == "COVID-19_headline_totalvaccines_spring23"
+            == "COVID-19_headline_vaccines_spring23Total"
         )
         assert fourth_column_headline_block_value["body"] == "Autumn booster"
 

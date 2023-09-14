@@ -132,7 +132,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_totalvaccines_spring23",
+                                                    "metric": "COVID-19_headline_vaccines_spring23Total",
                                                     "body": "Autumn booster"
                                                 },
                                                 "id": "ae3344f7-5b23-4977-bea9-2e1ccd84eb50"

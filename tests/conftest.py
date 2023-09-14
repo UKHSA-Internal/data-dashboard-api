@@ -20,7 +20,7 @@ def fake_chart_plot_parameters() -> PlotParameters:
     return PlotParameters(
         chart_type="line_multi_coloured",
         topic="COVID-19",
-        metric="COVID-19_testing_7daypositivity",
+        metric="COVID-19_testing_positivity7DayRolling",
         stratum="default",
         date_from="2023-01-01",
         x_axis="date",
