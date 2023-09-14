@@ -73,8 +73,8 @@
                                                     "sex": "all",
                                                     "age": "05-14",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "RED",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "8b8a739f-af30-4b00-8e76-8425ef7aaf13"
                                             },
@@ -111,8 +111,8 @@
                                                     "sex": "all",
                                                     "age": "45-54",
                                                     "label": "45 to 54 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "YELLOW",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "1fde61b4-431d-4807-b3e0-0294e052584e"
                                             },
@@ -149,8 +149,8 @@
                                                     "sex": "all",
                                                     "age": "65-74",
                                                     "label": "65 to 74 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "56e0e796-1c4f-43f0-993b-beb32348d4df"
                                             },
@@ -168,7 +168,7 @@
                                                     "sex": "all",
                                                     "age": "75-84",
                                                     "label": "75 to 84 years",
-                                                    "line_colour": "BLUE",
+                                                    "line_colour": "PINK",
                                                     "line_type": "SOLID"
                                                 },
                                                 "id": "a4895cec-5999-4126-bacd-065de72dd06e"
@@ -187,8 +187,8 @@
                                                     "sex": "all",
                                                     "age": "85+",
                                                     "label": "85 years and over",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "DASH"
+                                                    "line_colour": "TURQUOISE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "d29756bc-e04f-4540-aca8-68e9895e4434"
                                             }
@@ -456,5 +456,5 @@
             "body": "<p data-block-key=\"4kyrm\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-09-14T16:42:45.325960+01:00"
+    "last_published_at": "2023-09-14T18:39:44.569896+01:00"
 }
