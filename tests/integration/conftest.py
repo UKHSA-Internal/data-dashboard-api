@@ -18,7 +18,7 @@ def core_headline_example() -> CoreTimeSeries:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_newtests_7daycounttotal",
+        name="COVID-19_headline_tests_7DayTotals",
         metric_group=metric_group,
         topic=topic,
     )
@@ -37,7 +37,7 @@ def core_headline_example_beta() -> CoreHeadline:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="headline", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_newtests_7daycounttotal",
+        name="COVID-19_headline_tests_7DayTotals",
         metric_group=metric_group,
         topic=topic,
     )
@@ -58,12 +58,12 @@ def core_trend_example_beta() -> tuple[CoreHeadline, CoreHeadline]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="headline", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daychange",
+        name="COVID-19_headline_ONSdeaths_7DayChange",
         metric_group=metric_group,
         topic=topic,
     )
     percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daypercentchange",
+        name="COVID-19_headline_ONSdeaths_7DayPercentChange",
         metric_group=metric_group,
         topic=topic,
     )
@@ -95,12 +95,12 @@ def core_trend_percentage_example() -> list[CoreTimeSeries]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daychange",
+        name="COVID-19_headline_ONSdeaths_7DayChange",
         metric_group=metric_group,
         topic=topic,
     )
     percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7daypercentchange",
+        name="COVID-19_headline_ONSdeaths_7DayPercentChange",
         metric_group=metric_group,
         topic=topic,
     )

@@ -14,7 +14,7 @@ def crawler_with_mocked_internal_api_client() -> Crawler:
 def example_headline_number_block() -> dict[str, str]:
     return {
         "topic": "COVID-19",
-        "metric": "COVID-19_headline_ONSdeaths_7daytotals",
+        "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
         "geography": "Croydon",
         "geography_type": "Upper Tier Local Authority",
         "body": "Last 7 days",
@@ -25,9 +25,9 @@ def example_headline_number_block() -> dict[str, str]:
 def example_trend_number_block() -> dict[str, str]:
     return {
         "topic": "COVID-19",
-        "metric": "COVID-19_headline_ONSdeaths_7daychange",
+        "metric": "COVID-19_headline_ONSdeaths_7DayChange",
         "body": "Last 7 days",
-        "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange",
+        "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
     }
 
 

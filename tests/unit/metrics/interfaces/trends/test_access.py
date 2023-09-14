@@ -23,8 +23,8 @@ class TestTrendsInterface:
         """
         # Given
         topic_name = "COVID-19"
-        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
-        percentage_metric_name = "COVID-19_headline_ONSdeaths_7daypercentchange"
+        metric_name = "COVID-19_headline_ONSdeaths_7DayChange"
+        percentage_metric_name = "COVID-19_headline_ONSdeaths_7DayPercentChange"
         spy_core_time_series_manager = mock.Mock()
 
         interface = TrendsInterface(
@@ -53,8 +53,8 @@ class TestTrendsInterface:
         """
         # Given
         topic_name = "COVID-19"
-        metric_name = "COVID-19_headline_ONSdeaths_7daychange"
-        percentage_metric_name = "COVID-19_headline_ONSdeaths_7daypercentchange"
+        metric_name = "COVID-19_headline_ONSdeaths_7DayChange"
+        percentage_metric_name = "COVID-19_headline_ONSdeaths_7DayPercentChange"
 
         (
             main_core_time_series,
@@ -120,8 +120,8 @@ class TestTrendsInterfaceBeta:
     def example_args(self) -> dict[str, str]:
         return {
             "topic_name": "COVID-19",
-            "metric_name": "COVID-19_headline_ONSdeaths_7daychange",
-            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7daypercentchange",
+            "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
+            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
             "geography_name": "England",
             "geography_type_name": "Nation",
             "stratum_name": "default",

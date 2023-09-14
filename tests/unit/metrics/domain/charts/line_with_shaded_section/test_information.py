@@ -62,9 +62,9 @@ CASES_METRIC_TYPES: list[str] = [
     "COVID-19_cases_casesByDay",
     "COVID-19_cases_countRollingMean",
     "COVID-19_cases_rateRollingMean",
-    "COVID-19_headline_newcases_7daychange",
-    "COVID-19_headline_newcases_7daypercentchange",
-    "COVID-19_headline_newcases_7daytotals",
+    "COVID-19_headline_cases_7DayChange",
+    "COVID-19_headline_cases_7DayPercentChange",
+    "COVID-19_headline_cases_7DayTotals",
     "RSV_headline_hospadmissionrateLatest",
     "RSV_headline_positivityLatest",
     "adenovirus_headline_positivityLatest",
@@ -132,9 +132,9 @@ DEATHS_METRIC_TYPES: list[str] = [
     "COVID-19_deaths_ONSByDay",
     "COVID-19_deaths_ONSByWeek",
     "COVID-19_deaths_ONSRollingMean",
-    "COVID-19_headline_ONSdeaths_7daychange",
-    "COVID-19_headline_ONSdeaths_7daypercentchange",
-    "COVID-19_headline_ONSdeaths_7daytotals",
+    "COVID-19_headline_ONSdeaths_7DayChange",
+    "COVID-19_headline_ONSdeaths_7DayPercentChange",
+    "COVID-19_headline_ONSdeaths_7DayTotals",
 ]
 
 
@@ -259,9 +259,9 @@ TESTING_METRIC_TYPES: list[str] = [
     "new_tests_7days_change",
     "new_tests_7days_change_percentage",
     "unique_individuals_pcr_rolling_sum (bar)",
-    "COVID-19_headline_newtests_7daycountchange",
-    "COVID-19_headline_newtests_7daycounttotal",
-    "COVID-19_headline_newtests_7daypercentchange",
+    "COVID-19_headline_tests_7DayChange",
+    "COVID-19_headline_tests_7DayTotals",
+    "COVID-19_headline_tests_7DayPercentChange",
 ]
 
 

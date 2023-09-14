@@ -48,7 +48,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daytotals",
+                                                    "metric": "COVID-19_headline_cases_7DayTotals",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "eff08341-7bfa-4a3b-b013-527e7b954ce8"
@@ -57,9 +57,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daychange",
+                                                    "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
                                                 },
                                                 "id": "a57a4ad5-6b52-45a6-acfd-2fe208cb5617"
                                             }
@@ -76,7 +76,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_ONSdeaths_7daytotals",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "2e403485-030c-4122-86be-5827a095f30d"
@@ -85,9 +85,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_ONSdeaths_7daychange",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayChange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
                                                 },
                                                 "id": "ea8603ca-7b4d-4ef5-a8b1-f27a565938b5"
                                             }
@@ -200,7 +200,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daychange",
+                                                    "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "95b24a05-a015-42ed-b258-51c7ccaedbcd"
@@ -209,9 +209,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_newcases_7daychange",
+                                                    "metric": "COVID-19_headline_cases_7DayChange",
                                                     "body": "",
-                                                    "percentage_metric": "COVID-19_headline_newcases_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
                                                 },
                                                 "id": "8c42a86e-f675-41d0-a65a-633c20ac98e3"
                                             }
@@ -252,7 +252,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_ONSdeaths_7daytotals",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "10c92d4c-bdb1-4bcc-a8a5-d0063dcee095"
@@ -261,9 +261,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_ONSdeaths_7daychange",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayChange",
                                                     "body": "",
-                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7daypercentchange"
+                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
                                                 },
                                                 "id": "41ce6c59-99fe-486a-8225-341a306cc395"
                                             }
