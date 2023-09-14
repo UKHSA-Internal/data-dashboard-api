@@ -105,9 +105,9 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Case rates by age and sex per 100,000 population",
-                                        "body": "Rates per 100,000 people of the total number of cases since the start of the COVID-19 pandemic, by age.",
-                                        "x_axis": "age",
+                                        "title": "Case rates by sex per 100,000 population (7-day rolling average)",
+                                        "body": "Rates per 100,000 people of the total number of COVID-19 cases since the start of the COVID-19 pandemic, by sex.",
+                                        "x_axis": "date",
                                         "y_axis": "metric",
                                         "chart": [
                                             {
@@ -115,17 +115,17 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_cases_rateRollingMean",
-                                                    "chart_type": "bar",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
                                                     "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "f",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "Females",
                                                     "line_colour": "DARK_BLUE",
-                                                    "line_type": ""
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "e1100c59-f3a3-4f4c-b9f5-6268107b69d1"
                                             },
@@ -141,10 +141,10 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "m",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "Males",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": ""
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "6b7726ab-e3f0-4a2e-99c2-604bf628d24a"
                                             }
@@ -173,7 +173,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "Daily deaths with COVID-19 on the death certificate by date of death.",
-                                        "body": "Daily numbers of deaths of people whose death certificate mentioned COVID-19 as one of the causes, and 7-day rolling average. Because of the time it takes for deaths to be registered, there is a lag in reporting of at least 11 days. Data is not shown for the 14 days before the most recent reported date as it’s considered incomplete. Data is shown by date of death.",
+                                        "body": "Daily numbers of deaths of people whose death certificate mentioned COVID-19 as one of the causes.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -190,7 +190,7 @@
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
-                                                    "label": "Number of deaths",
+                                                    "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": ""
                                                 },
@@ -199,6 +199,37 @@
                                         ]
                                     },
                                     "id": "a1e13a30-0940-4c3d-84f7-dae7fbadb922"
+                                },
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "7-day rolling average of deaths with COVID-19 on the death certificate",
+                                        "body": "7-day rolling average of deaths of people whose death certificate mentioned COVID-19 as one of the causes, by date of death registration",
+                                        "x_axis": "",
+                                        "y_axis": "",
+                                        "chart": [
+                                            {
+                                                "type": "plot",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_deaths_ONSRollingMean",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": null,
+                                                    "date_to": null,
+                                                    "stratum": "default",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "label": "Number of deaths",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
+                                                },
+                                                "id": "588acfaa-aa73-417d-b053-574c6a44838b"
+                                            }
+                                        ]
+                                    },
+                                    "id": "f66c86c4-377b-495b-b6b3-e3171ace2584"
                                 }
                             ]
                         },
@@ -299,8 +330,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Total daily number of PCR tests reported",
-                                        "body": "The daily number of new PCR tests reported. Data is shown by specimen date (the date the sample was collected from the person).",
+                                        "title": "Number of people receiving a PCR test (7-day rolling period)",
+                                        "body": "The number of people who received a PCR test in the previous 7 days. Data is shown by reference date (the date the 7-day calculation was made). People tested more than once in the period are only counted once.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -330,8 +361,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Weekly positivity of people receiving a PCR test",
-                                        "body": "The percentage of people who received a PCR test and had at least one positive COVID-19 PCR test result in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "title": "Positivity of people receiving a PCR test (7-day rolling average)",
+                                        "body": "The percentage of people who received a PCR test for COVID-19 and had at least one positive test result in the same 7 days. Data is shown by reference date (the date the 7-day calculation was made). People tested more than once in the period are only counted once.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -468,7 +499,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "People aged 50 and over who have had autumn booster vaccinations, by vaccination date",
-                                        "body": "The number of people aged 50 and over who have had an autumn booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, is incomplete. Data is shown by date of vaccination.",
+                                        "body": "The number of people aged 50 and over who have had an autumn booster COVID-19 vaccination.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -743,5 +774,5 @@
             "body": "<p data-block-key=\"wvdly\">Provisional counts of the number of deaths registered in England and Wales (including deaths involving COVID-19), by age, sex and region in the latest weeks for which data is available.</p>"
         }
     ],
-    "last_published_at": "2023-09-14T16:11:02.172645+01:00"
+    "last_published_at": "2023-09-14T18:25:21.963344+01:00"
 }
