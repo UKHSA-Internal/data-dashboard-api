@@ -58,7 +58,7 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_cases_7DayChange",
-                                                    "body": "Last 7 days",
+                                                    "body": "7 days",
                                                     "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
                                                 },
                                                 "id": "a57a4ad5-6b52-45a6-acfd-2fe208cb5617"
@@ -86,7 +86,7 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-                                                    "body": "Last 7 days",
+                                                    "body": "7 days",
                                                     "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
                                                 },
                                                 "id": "ea8603ca-7b4d-4ef5-a8b1-f27a565938b5"
@@ -114,7 +114,7 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_7DayAdmissionsChange",
-                                                    "body": "Last 7 days",
+                                                    "body": "7 days",
                                                     "percentage_metric": "COVID-19_headline_7DayAdmissionsPercentChange"
                                                 },
                                                 "id": "6c09d01e-82c5-425f-aa07-1bdd22d1eaa8"
@@ -133,7 +133,7 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_vaccines_spring23Total",
-                                                    "body": "Autumn booster"
+                                                    "body": "Spring booster"
                                                 },
                                                 "id": "ae3344f7-5b23-4977-bea9-2e1ccd84eb50"
                                             }
@@ -171,7 +171,7 @@
                                     "type": "chart_with_headline_and_trend_card",
                                     "value": {
                                         "title": "Cases",
-                                        "body": "Positive tests reported in England",
+                                        "body": "Positive COVID-19 cases reported in England (7-day rolling average)",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -179,7 +179,7 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_cases_casesByDay",
+                                                    "metric": "COVID-19_cases_countRollingMean",
                                                     "chart_type": "line_with_shaded_section",
                                                     "date_from": null,
                                                     "date_to": null,
@@ -200,8 +200,8 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_headline_cases_7DayChange",
-                                                    "body": "Last 7 days"
+                                                    "metric": "COVID-19_headline_cases_7DayTotals",
+                                                    "body": "7 days"
                                                 },
                                                 "id": "95b24a05-a015-42ed-b258-51c7ccaedbcd"
                                             },
@@ -223,7 +223,7 @@
                                     "type": "chart_with_headline_and_trend_card",
                                     "value": {
                                         "title": "Deaths",
-                                        "body": "Deaths with COVID-19 on the death certificate in England",
+                                        "body": "Deaths with COVID-19 on the death certificate in England (7-day rolling average)",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -253,7 +253,7 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
-                                                    "body": "Last 7 days"
+                                                    "body": "7 days"
                                                 },
                                                 "id": "10c92d4c-bdb1-4bcc-a8a5-d0063dcee095"
                                             },
@@ -353,7 +353,7 @@
                                     "type": "chart_with_headline_and_trend_card",
                                     "value": {
                                         "title": "Healthcare",
-                                        "body": "Weekly hospital admission rates for Influenza",
+                                        "body": "Weekly hospital admission rates for influenza per 100,000",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -383,7 +383,7 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_headline_ICUHDUadmissionRateLatest",
-                                                    "body": "Last 7 days"
+                                                    "body": "7 days"
                                                 },
                                                 "id": "a93d4317-3814-41ab-b6f6-a6f0769770a7"
                                             },
@@ -405,7 +405,7 @@
                                     "type": "chart_with_headline_and_trend_card",
                                     "value": {
                                         "title": "Testing",
-                                        "body": "Weekly positivity",
+                                        "body": "Weekly positivity for influenza",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -480,5 +480,5 @@
             "body": "<p data-block-key=\"jib2z\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-09-14T16:47:37.559247+01:00"
+    "last_published_at": "2023-09-14T18:06:51.200171+01:00"
 }
