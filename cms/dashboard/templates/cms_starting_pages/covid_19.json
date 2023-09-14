@@ -195,25 +195,6 @@
                                                     "line_type": ""
                                                 },
                                                 "id": "9999386d-261c-4ad8-9cbb-2b7a69c70f90"
-                                            },
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_deaths_ONSRollingMean",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
-                                                    "label": "7-day average",
-                                                    "line_colour": "RED",
-                                                    "line_type": "DASH"
-                                                },
-                                                "id": "ba7abe60-02f7-4220-ba64-25e64156f076"
                                             }
                                         ]
                                     },
@@ -301,45 +282,6 @@
                             ]
                         },
                         "id": "28b9df28-8af2-4083-a2ba-5e71de574baf"
-                    },
-                    {
-                        "type": "chart_row_card",
-                        "value": {
-                            "columns": [
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Hospital admissions rate per 100,000 population",
-                                        "body": "Breakdown of people admitted to hospital with COVID-19, shown as the rate per 100,000 people, since the start of the pandemic.",
-                                        "x_axis": "date",
-                                        "y_axis": "metric",
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_healthcare_admissionByDay",
-                                                    "chart_type": "bar",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
-                                                    "label": "Admission rate",
-                                                    "line_colour": "",
-                                                    "line_type": ""
-                                                },
-                                                "id": "791efbf1-8880-4dfa-9f5d-526982ed1539"
-                                            }
-                                        ]
-                                    },
-                                    "id": "7421a4ce-2961-4816-aa58-34edfa1b6e35"
-                                }
-                            ]
-                        },
-                        "id": "4424a010-0823-4ae1-a67d-a21ea4f1dd00"
                     }
                 ]
             },
