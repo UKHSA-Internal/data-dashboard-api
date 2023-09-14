@@ -304,7 +304,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_headline_ICUHDUadmissionrateLatest",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateLatest",
                                                     "body": "Hospital admission rate (per 100,000)"
                                                 },
                                                 "id": "0520e9d6-794f-4616-b217-f5ec884a86d8"
@@ -313,9 +313,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_headline_ICUHDUadmissionrateChange",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateChange",
                                                     "body": "Last 7 days",
-                                                    "percentage_metric": "influenza_headline_ICUHDUadmissionratePercentChange"
+                                                    "percentage_metric": "influenza_headline_ICUHDUadmissionRatePercentChange"
                                                 },
                                                 "id": "0db8d0b7-134f-4023-9c82-60f5355e9629"
                                             }
@@ -361,7 +361,7 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_healthcare_ICUHDUadmissionrateByWeek",
+                                                    "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
@@ -382,7 +382,7 @@
                                                 "type": "headline_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_headline_ICUHDUadmissionrateLatest",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateLatest",
                                                     "body": "Last 7 days"
                                                 },
                                                 "id": "a93d4317-3814-41ab-b6f6-a6f0769770a7"
@@ -391,9 +391,9 @@
                                                 "type": "trend_number",
                                                 "value": {
                                                     "topic": "Influenza",
-                                                    "metric": "influenza_headline_ICUHDUadmissionrateChange",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateChange",
                                                     "body": "",
-                                                    "percentage_metric": "influenza_headline_ICUHDUadmissionratePercentChange"
+                                                    "percentage_metric": "influenza_headline_ICUHDUadmissionRatePercentChange"
                                                 },
                                                 "id": "ef4da9b0-a67c-4e6e-891f-957059366911"
                                             }
