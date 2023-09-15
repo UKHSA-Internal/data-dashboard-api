@@ -23,7 +23,7 @@ class TestGatherTestDataSourceFilePaths:
         gathered_test_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
         # Then
-        assert len(gathered_test_file_paths) == 53
+        assert len(gathered_test_file_paths) == 52
 
 
 class TestUploadTruncatedTestData:

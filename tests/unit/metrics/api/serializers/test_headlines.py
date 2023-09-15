@@ -24,7 +24,7 @@ class TestHeadlinesQuerySerializer:
         cls,
     ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
         fake_metric = FakeMetricFactory.build_example_metric(
-            metric_name="COVID-19_headline_ONSdeaths_7daytotals"
+            metric_name="COVID-19_headline_ONSdeaths_7DayTotals"
         )
         fake_topic = fake_metric.metric_group.topic
 
@@ -153,7 +153,7 @@ class TestHeadlinesQuerySerializerBeta:
         cls,
     ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
         fake_metric = FakeMetricFactory.build_example_metric(
-            metric_name="COVID-19_headline_ONSdeaths_7daytotals",
+            metric_name="COVID-19_headline_ONSdeaths_7DayTotals",
             metric_group_name="headline",
         )
         fake_topic = fake_metric.metric_group.topic
