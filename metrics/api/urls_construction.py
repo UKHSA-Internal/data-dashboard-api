@@ -130,7 +130,6 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}tables/v3", TablesViewV3.as_view()),
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
-    re_path(f"^{API_PREFIX}suggestions/v1", SuggestionsView.as_view()),
 ]
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
@@ -228,5 +227,6 @@ def construct_urlpatterns(
             constructed_url_patterns += django_admin_urlpatterns
             constructed_url_patterns += private_api_urlpatterns
             constructed_url_patterns += ingestion_urlpatterns
+            constructed_url_patterns += feedback_urlpatterns
 
     return constructed_url_patterns
