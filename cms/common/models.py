@@ -6,6 +6,8 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 from wagtail.search import index
 
+from cms.common.managers import CommonPageManager
+
 HEADING_2: str = "h2"
 HEADING_3: str = "h3"
 HEADING_4: str = "h4"
@@ -59,6 +61,8 @@ class CommonPage(Page):
             ObjectList(Page.promote_panels, heading="Promote"),
         ]
     )
+
+    objects = CommonPageManager()
 
     def is_previewable(self) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""

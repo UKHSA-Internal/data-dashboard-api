@@ -1,3 +1,4 @@
+import logging
 from typing import Optional, Self
 
 from caching.internal_api_client import InternalAPIClient
@@ -6,6 +7,9 @@ from cms.home.models import HomePage
 from cms.topic.models import TopicPage
 
 CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
+
+
+logger = logging.getLogger(__name__)
 
 
 class Crawler:
@@ -92,7 +96,13 @@ class Crawler:
         self.process_detail_pages_for_headless_cms_api(pages=pages)
 
         for page in pages:
-            self.process_all_sections_in_page(page=page)
+            try:
+                self.process_all_sections_in_page(page=page)
+            except AttributeError:
+                logger.info(
+                    f"{page.title} page has no dynamic content blocks. So only the headless CMS API detail has been processed"
+                )
+                continue
 
     # Process sections
 
