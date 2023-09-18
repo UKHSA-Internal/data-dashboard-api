@@ -58,6 +58,7 @@ function run_script() {
     create_admin_user $admin_password
     upload_truncated_test_data
     generate_cms_content
+    echo "Completed running bootstrap script"
 }
 
 run_script $1 $2
