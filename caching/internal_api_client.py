@@ -183,4 +183,3 @@ class InternalAPIClient:
         path = f"{self.pages_endpoint_path}{page_id}"
         headers = self.build_headers()
         return self._client.get(path=path, headers=headers, format="json")
-
