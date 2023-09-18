@@ -25,6 +25,7 @@ from metrics.api.views import (
     TablesView,
     TrendsView,
 )
+from metrics.api.views.caching import CacheView
 from metrics.api.views.headlines import HeadlinesViewBeta
 from metrics.api.views.tables import TablesViewV3
 from metrics.api.views.trends import TrendsViewBeta
@@ -118,6 +119,7 @@ private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
     # Metrics/private content endpoints
+    re_path(f"^{API_PREFIX}caching/v1", CacheView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
