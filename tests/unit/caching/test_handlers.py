@@ -9,8 +9,10 @@ from caching.handlers import (
     collect_all_pages,
     force_cache_refresh_for_all_pages,
 )
+from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
+from tests.fakes.managers.cms.common_page_manager import FakeCommonPageManager
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
 from tests.fakes.managers.cms.topic_page_manager import FakeTopicPageManager
 
@@ -21,7 +23,7 @@ class TestCollectAllPages:
     def test_all_pages_collected(self):
         """
         Given a `HomePage` with a slug of "dashboard"
-        And a number of live `TopicPage`
+        And a number of live `TopicPages` and a `CommonPage`
         When `collect_all_pages()` is called
         Then the correct pages are returned
         """
@@ -39,16 +41,24 @@ class TestCollectAllPages:
             pages=[published_covid_page, published_influenza_page]
         )
 
+        # Published `CommonPage` which should be collected
+        published_about_page = FakeCommonPageFactory.build_blank_page(
+            slug="about", live=True
+        )
+        fake_common_page_manager = FakeCommonPageManager(pages=[published_about_page])
+
         # When
         collected_pages = collect_all_pages(
             home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
+            common_page_manager=fake_common_page_manager,
         )
 
         # Then
         assert published_home_page in collected_pages
         assert published_covid_page in collected_pages
         assert published_influenza_page in collected_pages
+        assert published_about_page in collected_pages
 
     def test_non_dashboard_home_pages_not_collected(self):
         """
@@ -68,6 +78,7 @@ class TestCollectAllPages:
         collected_pages = collect_all_pages(
             home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
+            common_page_manager=FakeCommonPageManager(pages=[]),
         )
 
         # Then
@@ -100,6 +111,7 @@ class TestCollectAllPages:
         collected_pages = collect_all_pages(
             home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
+            common_page_manager=FakeCommonPageManager(pages=[]),
         )
 
         # Then
