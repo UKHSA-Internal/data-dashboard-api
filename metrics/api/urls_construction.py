@@ -169,6 +169,7 @@ class AppMode(Enum):
     CMS_ADMIN = "CMS_ADMIN"
     PRIVATE_API = "PRIVATE_API"
     PUBLIC_API = "PUBLIC_API"
+    FEEDBACK_API = "FEEDBACK_API"
 
 
 def construct_urlpatterns(
@@ -181,6 +182,7 @@ def construct_urlpatterns(
             - `CMS_ADMIN`
             - `PRIVATE_API`
             - `PUBLIC_API`
+            - `FEEDBACK_API`
         Then this function will return the complete set of URLs.
 
     Args:
