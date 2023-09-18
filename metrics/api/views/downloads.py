@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
+from caching.decorators import cache_response
 from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
 from metrics.data.access.api_models import validate_query_filters
 from metrics.data.models.api_models import APITimeSeries
@@ -70,6 +71,7 @@ class DownloadsView(APIView):
         return response
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
+    @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
