@@ -3,7 +3,7 @@ from typing import OrderedDict
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from feedback.serializers.questions import SuggestionsSerializer
+from feedback.api.serializers.questions import SuggestionsSerializer
 
 
 class TestSuggestionsSerializer:

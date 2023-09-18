@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from feedback.serializers import help_texts
+from feedback.api.serializers import help_texts
 
 DID_YOU_FIND_EVERYTHING_CHOICES: tuple[str, str] = ("yes", "no")
 

@@ -13,7 +13,8 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
-from feedback.views import SuggestionsView
+from feedback.api.urls import construct_urlpatterns_for_feedback
+from feedback.api.views import SuggestionsView
 from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (

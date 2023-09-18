@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
 from feedback import send_email
-from feedback.serializers.questions import SuggestionsSerializer
+from feedback.api.serializers.questions import SuggestionsSerializer
 
 SUGGESTIONS_API_TAG = "suggestions"
 
