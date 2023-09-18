@@ -119,10 +119,27 @@ class TestSuggestionsSerializer:
         # Then
         assert validated_data[self.did_you_find_everything] == answer
 
+    def test_did_you_find_everything_answer_as_empty_string_is_valid(self):
+        """
+        Given a payload which contains an empty string
+            for the *did_you_find_everything* question
+        When that payload is serialized with the `SuggestionsSerializer`
+        Then the answer is serialized correctly
+        """
+        # Given
+        payload = {self.did_you_find_everything: ""}
+        serializer = SuggestionsSerializer(data=payload)
+
+        # When
+        serializer.is_valid(raise_exception=True)
+
+        # Then
+        assert serializer.validated_data["did_you_find_everything"] == ""
+
     @pytest.mark.parametrize(
-        "did_you_find_everything_value", ["", "maybe", "this is invalid"]
+        "did_you_find_everything_value", ["maybe", "this is invalid", None]
     )
-    def test_invalid_did_you_find_everything_answer(
+    def test_invalid_did_you_find_everything_answer_raises_error(
         self, did_you_find_everything_value: str
     ):
         """
