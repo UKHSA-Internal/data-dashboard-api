@@ -145,3 +145,25 @@ class InternalAPIClient:
         path = self.tables_endpoint_path
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
+
+    def hit_pages_list_endpoint(self) -> Response:
+        """Sends a `GET` request to the list `pages/` endpoint.
+
+        Returns:
+            `Response` from the list `pages/` endpoint
+
+        """
+        path = self.pages_endpoint_path
+        headers = self.build_headers()
+        return self._client.get(path=path, headers=headers, format="json")
+
+    def hit_pages_detail_endpoint(self, page_id: int) -> Response:
+        """Sends a `GET` request to the detail `pages/` endpoint for the given `page_id`
+
+        Returns:
+            `Response` from the detail `pages/` endpoint
+
+        """
+        path = f"{self.pages_endpoint_path}{page_id}"
+        headers = self.build_headers()
+        return self._client.get(path=path, headers=headers, format="json")
