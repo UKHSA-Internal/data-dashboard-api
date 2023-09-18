@@ -241,9 +241,9 @@ class Crawler:
         Notes:
             This will handle the requests for the chart block within the card.
             This will also handle the request required
-            for the accompanying table.
+            for the accompanying table and download.
 
-            For the chart block, 2 requests will be made.
+            For the chart itself, 2 requests will be made.
             1 for the double width chart, 1100.
             And another for the single width chart, 515
 
@@ -255,10 +255,19 @@ class Crawler:
 
         """
         chart_block_value = chart_block["value"]
-        tables_data = self._build_tables_request_data(chart_block=chart_block_value)
-        self._internal_api_client.hit_tables_endpoint(data=tables_data)
+
+        self._process_table_for_chart_block(chart_block=chart_block_value)
+        self._process_download_for_chart_block(chart_block=chart_block_value)
 
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
+
+    def _process_table_for_chart_block(self, chart_block: dict):
+        tables_data = self._build_tables_request_data(chart_block=chart_block)
+        self._internal_api_client.hit_tables_endpoint(data=tables_data)
+
+    def _process_download_for_chart_block(self, chart_block: dict):
+        downloads_data = self._build_downloads_request_data(chart_block=chart_block)
+        self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
 
     def _process_chart_for_both_possible_widths(
         self, chart_block: CMS_COMPONENT_BLOCK_TYPE

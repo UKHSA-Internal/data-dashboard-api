@@ -325,6 +325,38 @@ class TestCrawlerProcessIndividualBlocks:
             data=expected_tables_request_data
         )
 
+    def test_process_chart_block_hits_downloads_endpoint(
+        self,
+        example_chart_block: dict[str, str | list[dict]],
+        crawler_with_mocked_internal_api_client: Crawler,
+    ):
+        """
+        Given a chart block
+        When `process_chart_block()` is called from an instance of `Crawler`
+        Then the call is delegated to the `hit_downloads_endpoint()`
+            on the `InternalAPIClient`
+        """
+        # Given
+        chart_block = {"value": example_chart_block}
+        spy_internal_api_client: mock.Mock = (
+            crawler_with_mocked_internal_api_client._internal_api_client
+        )
+
+        # When
+        crawler_with_mocked_internal_api_client.process_chart_block(
+            chart_block=chart_block,
+        )
+
+        # Then
+        expected_downloads_request_data = (
+            crawler_with_mocked_internal_api_client._build_downloads_request_data(
+                chart_block=example_chart_block
+            )
+        )
+        spy_internal_api_client.hit_downloads_endpoint.assert_called_once_with(
+            data=expected_downloads_request_data
+        )
+
     def test_process_chart_block_hits_charts_endpoint(
         self,
         example_chart_block: dict[str, str | list[dict]],
