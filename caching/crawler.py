@@ -1,6 +1,7 @@
 from typing import Optional, Self
 
 from caching.internal_api_client import InternalAPIClient
+from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
 
@@ -74,6 +75,12 @@ class Crawler:
     def process_pages(self, pages: list[HomePage, TopicPage, CommonPage]) -> None:
         """Makes requests to each individual content item within each of the given `pages`
 
+        Notes:
+            This will also make requests to the headless CMS API `pages/` endpoints
+            in order to cache the CMS content in line with the content.
+            This is primarily so that the cached pages content is always in lockstep
+            with the cached content items (charts, headlines, tables etc).
+
         Args:
             pages: List of `Page` instances to be processed
 
@@ -81,6 +88,9 @@ class Crawler:
             None
 
         """
+        self.process_list_pages_for_headless_cms_api()
+        self.process_detail_pages_for_headless_cms_api(pages=pages)
+
         for page in pages:
             self.process_all_sections_in_page(page=page)
 
