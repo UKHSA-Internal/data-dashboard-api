@@ -364,3 +364,28 @@ class TestInternalAPIClient:
             headers=internal_api_client.build_headers(),
             format="json",
         )
+
+    def test_hit_downloads_endpoint_delegates_call_correctly(self):
+        """
+        Given a client and mocked request data
+        When `hit_downloads_endpoint()` is called from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        mocked_request_data = mock.Mock()
+        internal_api_client = InternalAPIClient(
+            client=mocked_client, api_key_manager=mock.Mock()
+        )
+
+        # When
+        response = internal_api_client.hit_downloads_endpoint(data=mocked_request_data)
+
+        # Then
+        assert response == internal_api_client._client.post.return_value
+        mocked_client.post.assert_called_once_with(
+            path=internal_api_client.downloads_endpoint_path,
+            data=mocked_request_data,
+            headers=internal_api_client.build_headers(),
+            format="json",
+        )

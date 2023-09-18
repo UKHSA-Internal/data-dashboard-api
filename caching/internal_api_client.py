@@ -145,3 +145,17 @@ class InternalAPIClient:
         path = self.tables_endpoint_path
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
+
+    def hit_downloads_endpoint(self, data: dict[str, str]) -> Response:
+        """Sends a `POST` request to the `downloads/` endpoint with the given `data`
+
+        Args:
+            data: A dict representing the request body
+
+        Returns:
+            `Response` from the `downloads/` endpoint
+
+        """
+        path = self.downloads_endpoint_path
+        headers = self.build_headers()
+        return self._client.post(path=path, data=data, headers=headers, format="json")
