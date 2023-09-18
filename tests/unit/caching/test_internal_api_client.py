@@ -27,6 +27,7 @@ class TestInternalAPIClient:
         "attribute_on_class, expected_path",
         (
             [
+                ("pages_endpoint_path", "/api/pages/"),
                 ("headlines_endpoint_path", "/api/headlines/v2/"),
                 ("trends_endpoint_path", "/api/trends/v2/"),
                 ("charts_endpoint_path", "/api/charts/v3/"),

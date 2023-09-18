@@ -7,6 +7,7 @@ from rest_framework_api_key.models import APIKey
 from metrics.data.managers.api_keys import CustomAPIKeyManager
 
 API_PREFIX = "/api/"
+PAGES_ENDPOINT_PATH = f"{API_PREFIX}pages/"
 HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v2/"
 TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v2/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
@@ -38,6 +39,7 @@ class InternalAPIClient:
         self._client = client or self.create_api_client()
 
         # Endpoints
+        self.pages_endpoint_path = PAGES_ENDPOINT_PATH
         self.headlines_endpoint_path = HEADLINES_ENDPOINT_PATH
         self.trends_endpoint_path = TRENDS_ENDPOINT_PATH
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
