@@ -113,6 +113,36 @@ class TestEnrichSuggestionsWithLongFormQuestions:
             == FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER
         )
 
+    @pytest.mark.parametrize("did_you_find_everything_value", ["", None])
+    def test_uses_default_value_when_did_you_find_everything_field_provided_as_falsy_value(
+        self, did_you_find_everything_value: str | None
+    ):
+        """
+        Given a dict which does not contain a value for the *did_you_find_everything* key
+        When `_enrich_suggestions_with_long_form_questions()` is called
+        Then a dict is returned with longform questions as the keys
+        And a fallback values is included for the *did_you_find_everything* key
+        """
+        # Given
+        suggestions = self._build_base_suggestions()
+        suggestions[
+            FeedbackQuestion.did_you_find_everything.name
+        ] = did_you_find_everything_value
+
+        # When
+        enriched_suggestions: dict[
+            str, str
+        ] = _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
+
+        # Then
+        for question in FeedbackQuestion.string_based_questions():
+            assert enriched_suggestions[question.value] == suggestions[question.name]
+
+        assert (
+            enriched_suggestions[FeedbackQuestion.did_you_find_everything.value]
+            == FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER
+        )
+
 
 class TestBuildBodyFromSuggestions:
     def test_returns_expected_string(self):
