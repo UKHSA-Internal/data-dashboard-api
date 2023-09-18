@@ -23,7 +23,7 @@ class TestHeadlineParameters:
         """
         # Given
         topic = "COVID-19"
-        metric = "COVID-19_headline_ONSdeaths_7daytotals"
+        metric = "COVID-19_headline_ONSdeaths_7DayTotals"
 
         # When
         headline_parameters = HeadlineParameters(topic=topic, metric=metric)

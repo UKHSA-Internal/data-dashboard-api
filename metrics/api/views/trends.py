@@ -57,11 +57,11 @@ class TrendsView(APIView):
 
         - topic = `Influenza`
 
-        - metric =`COVID-19_headline_ONSdeaths_7daychange`
+        - metric =`COVID-19_headline_ONSdeaths_7DayChange`
 
-        - percentage_metric =`COVID-19_headline_ONSdeaths_7daypercentchange`
+        - percentage_metric =`COVID-19_headline_ONSdeaths_7DayPercentChange`
 
-        This would be **invalid** because the `metric` of `COVID-19_headline_ONSdeaths_7daychange`
+        This would be **invalid** because the `metric` of `COVID-19_headline_ONSdeaths_7DayChange`
         and a topic of `Influenza` will not return any data.
 
         """
@@ -121,11 +121,11 @@ class TrendsViewBeta(APIView):
 
         - topic = `Influenza`
 
-        - metric =`COVID-19_headline_ONSdeaths_7daychange`
+        - metric =`COVID-19_headline_ONSdeaths_7DayChange`
 
-        - percentage_metric =`COVID-19_headline_ONSdeaths_7daypercentchange`
+        - percentage_metric =`COVID-19_headline_ONSdeaths_7DayPercentChange`
 
-        This would be **invalid** because the `metric` of `COVID-19_headline_ONSdeaths_7daychange`
+        This would be **invalid** because the `metric` of `COVID-19_headline_ONSdeaths_7DayChange`
         and a topic of `Influenza` will not return any data.
 
         """

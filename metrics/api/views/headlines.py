@@ -62,11 +62,11 @@ class HeadlinesView(APIView):
 
         Whereas, a request for the following would be **valid**:
 
-        - metric =`COVID-19_headline_ONSdeaths_7daychange`
+        - metric =`COVID-19_headline_ONSdeaths_7DayChange`
 
         - topic = `COVID-19`
 
-        This would be **valid** because the `metric` of `COVID-19_headline_ONSdeaths_7daychange`
+        This would be **valid** because the `metric` of `COVID-19_headline_ONSdeaths_7DayChange`
         relates to headline data, which can be represented by a single headline-type figure.
 
         """
@@ -125,11 +125,11 @@ class HeadlinesViewBeta(APIView):
 
         Whereas, a request for the following would be **valid**:
 
-        - metric =`COVID-19_headline_ONSdeaths_7daychange`
+        - metric =`COVID-19_headline_ONSdeaths_7DayChange`
 
         - topic = `COVID-19`
 
-        This would be **valid** because the `metric` of `COVID-19_headline_ONSdeaths_7daychange`
+        This would be **valid** because the `metric` of `COVID-19_headline_ONSdeaths_7DayChange`
         relates to headline data, which can be represented by a single headline-type figure.
 
         Note that the key difference here being the 2nd part of the metric naming methodology:

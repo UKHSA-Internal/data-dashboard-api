@@ -28,6 +28,8 @@ layers=
     metrics.api
     metrics.domain
     metrics.data
+ignore_imports=
+    metrics.data.operations.truncated_dataset -> metrics.api.settings
 
 [importlinter:contract:Metrics data access | operations slices]
 name = Metrics data access and operations slices are independent of each other

@@ -1,20 +1,20 @@
 {
-    "id": 25,
+    "id": 5,
     "meta": {
         "seo_title": "COVID-19 | UKHSA data dashboard",
         "search_description": "Overall summary of COVID-19 in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "http://localhost/api/pages/25/",
+        "detail_url": "http://localhost/api/pages/5/",
         "html_url": null,
         "slug": "covid-19",
         "show_in_menus": true,
-        "first_published_at": "2023-09-07T15:41:39.608198+01:00",
+        "first_published_at": "2023-09-14T15:51:50.302063+01:00",
         "alias_of": null,
         "parent": {
-            "id": 24,
+            "id": 4,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/24/",
+                "detail_url": "http://localhost/api/pages/4/",
                 "html_url": null
             },
             "title": "UKHSA data dashboard"
@@ -48,11 +48,11 @@
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -87,11 +87,11 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "Rate of cases per 100,000 population in 7-day period",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -105,9 +105,9 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Case rates by age and sex per 100,000 population",
-                                        "body": "Rates per 100,000 people of the total number of cases since the start of the COVID-19 pandemic, by age.",
-                                        "x_axis": "age",
+                                        "title": "Case rates by sex per 100,000 population (7-day rolling average)",
+                                        "body": "Rates per 100,000 people of the total number of COVID-19 cases since the start of the COVID-19 pandemic, by sex.",
+                                        "x_axis": "date",
                                         "y_axis": "metric",
                                         "chart": [
                                             {
@@ -115,17 +115,17 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_cases_rateRollingMean",
-                                                    "chart_type": "bar",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "f",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "Females",
                                                     "line_colour": "DARK_BLUE",
-                                                    "line_type": ""
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "e1100c59-f3a3-4f4c-b9f5-6268107b69d1"
                                             },
@@ -137,14 +137,14 @@
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "m",
-                                                    "age": "",
+                                                    "age": "all",
                                                     "label": "Males",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": ""
+                                                    "line_colour": "ORANGE",
+                                                    "line_type": "SOLID"
                                                 },
                                                 "id": "6b7726ab-e3f0-4a2e-99c2-604bf628d24a"
                                             }
@@ -173,7 +173,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "Daily deaths with COVID-19 on the death certificate by date of death.",
-                                        "body": "Daily numbers of deaths of people whose death certificate mentioned COVID-19 as one of the causes, and 7-day rolling average. Because of the time it takes for deaths to be registered, there is a lag in reporting of at least 11 days. Data is not shown for the 14 days before the most recent reported date as it’s considered incomplete. Data is shown by date of death.",
+                                        "body": "Daily numbers of deaths of people whose death certificate mentioned COVID-19 as one of the causes.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -182,20 +182,32 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_deaths_ONSByDay",
-                                                    "chart_type": "line_multi_coloured",
+                                                    "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
-                                                    "label": "Number of deaths",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "label": "",
                                                     "line_colour": "BLUE",
-                                                    "line_type": "SOLID"
+                                                    "line_type": ""
                                                 },
                                                 "id": "9999386d-261c-4ad8-9cbb-2b7a69c70f90"
-                                            },
+                                            }
+                                        ]
+                                    },
+                                    "id": "a1e13a30-0940-4c3d-84f7-dae7fbadb922"
+                                },
+                                {
+                                    "type": "chart_card",
+                                    "value": {
+                                        "title": "7-day rolling average of deaths with COVID-19 on the death certificate",
+                                        "body": "7-day rolling average of deaths of people whose death certificate mentioned COVID-19 as one of the causes, by date of death registration",
+                                        "x_axis": "",
+                                        "y_axis": "",
+                                        "chart": [
                                             {
                                                 "type": "plot",
                                                 "value": {
@@ -204,20 +216,20 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
-                                                    "label": "7-day average",
-                                                    "line_colour": "RED",
-                                                    "line_type": "DASH"
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "label": "Number of deaths",
+                                                    "line_colour": "BLUE",
+                                                    "line_type": "SOLID"
                                                 },
-                                                "id": "ba7abe60-02f7-4220-ba64-25e64156f076"
+                                                "id": "588acfaa-aa73-417d-b053-574c6a44838b"
                                             }
                                         ]
                                     },
-                                    "id": "a1e13a30-0940-4c3d-84f7-dae7fbadb922"
+                                    "id": "f66c86c4-377b-495b-b6b3-e3171ace2584"
                                 }
                             ]
                         },
@@ -248,15 +260,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_healthcare_AdmissionsByDay",
+                                                    "metric": "COVID-19_healthcare_admissionByDay",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -279,15 +291,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_healthcare_OccupiedBedsByDay",
+                                                    "metric": "COVID-19_healthcare_occupiedBedsByDay",
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -301,45 +313,6 @@
                             ]
                         },
                         "id": "28b9df28-8af2-4083-a2ba-5e71de574baf"
-                    },
-                    {
-                        "type": "chart_row_card",
-                        "value": {
-                            "columns": [
-                                {
-                                    "type": "chart_card",
-                                    "value": {
-                                        "title": "Hospital admissions rate per 100,000 population",
-                                        "body": "Breakdown of people admitted to hospital with COVID-19, shown as the rate per 100,000 people, since the start of the pandemic.",
-                                        "x_axis": "date",
-                                        "y_axis": "metric",
-                                        "chart": [
-                                            {
-                                                "type": "plot",
-                                                "value": {
-                                                    "topic": "COVID-19",
-                                                    "metric": "COVID-19_healthcare_AdmissionsByDay",
-                                                    "chart_type": "bar",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "",
-                                                    "geography": "England",
-                                                    "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
-                                                    "label": "Admission rate",
-                                                    "line_colour": "",
-                                                    "line_type": ""
-                                                },
-                                                "id": "791efbf1-8880-4dfa-9f5d-526982ed1539"
-                                            }
-                                        ]
-                                    },
-                                    "id": "7421a4ce-2961-4816-aa58-34edfa1b6e35"
-                                }
-                            ]
-                        },
-                        "id": "4424a010-0823-4ae1-a67d-a21ea4f1dd00"
                     }
                 ]
             },
@@ -357,8 +330,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Total daily number of PCR tests reported",
-                                        "body": "The daily number of new PCR tests reported. Data is shown by specimen date (the date the sample was collected from the person).",
+                                        "title": "Number of people receiving a PCR test (7-day rolling period)",
+                                        "body": "The number of people who received a PCR test in the previous 7 days. Data is shown by reference date (the date the 7-day calculation was made). People tested more than once in the period are only counted once.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -370,11 +343,11 @@
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -388,8 +361,8 @@
                                 {
                                     "type": "chart_card",
                                     "value": {
-                                        "title": "Weekly positivity of people receiving a PCR test",
-                                        "body": "The percentage of people who received a PCR test and had at least one positive COVID-19 PCR test result in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "title": "Positivity of people receiving a PCR test (7-day rolling average)",
+                                        "body": "The percentage of people who received a PCR test for COVID-19 and had at least one positive test result in the same 7 days. Data is shown by reference date (the date the 7-day calculation was made). People tested more than once in the period are only counted once.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -397,15 +370,15 @@
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "COVID-19",
-                                                    "metric": "COVID-19_testing_7daypositivity",
+                                                    "metric": "COVID-19_testing_positivity7DayRolling",
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
-                                                    "age": "",
+                                                    "sex": "all",
+                                                    "age": "all",
                                                     "label": "",
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID"
@@ -449,10 +422,10 @@
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "",
                                                     "label": "Number of vaccinations",
                                                     "line_colour": "",
@@ -480,10 +453,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "75-79",
                                                     "label": "75 to 79 years",
                                                     "line_colour": "GREEN",
@@ -499,10 +472,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "80+",
                                                     "label": "80 years and over",
                                                     "line_colour": "BLUE",
@@ -526,7 +499,7 @@
                                     "type": "chart_card",
                                     "value": {
                                         "title": "People aged 50 and over who have had autumn booster vaccinations, by vaccination date",
-                                        "body": "The number of people aged 50 and over who have had an autumn booster COVID-19 vaccination. Data for the latest 2 days, marked in grey, is incomplete. Data is shown by date of vaccination.",
+                                        "body": "The number of people aged 50 and over who have had an autumn booster COVID-19 vaccination.",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -538,10 +511,10 @@
                                                     "chart_type": "bar",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "",
                                                     "label": "Number of vaccinations",
                                                     "line_colour": "",
@@ -569,10 +542,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "50-54",
                                                     "label": "50 to 54 years",
                                                     "line_colour": "GREEN",
@@ -588,10 +561,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "55-59",
                                                     "label": "55 to 59 years",
                                                     "line_colour": "GREEN",
@@ -607,10 +580,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "60-64",
                                                     "label": "60 to 64 years",
                                                     "line_colour": "PURPLE",
@@ -626,10 +599,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "65-69",
                                                     "label": "65 to 69 years",
                                                     "line_colour": "PURPLE",
@@ -645,10 +618,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "70-74",
                                                     "label": "70 to 74 years",
                                                     "line_colour": "ORANGE",
@@ -664,10 +637,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "75-79",
                                                     "label": "75 to 79 years",
                                                     "line_colour": "ORANGE",
@@ -683,10 +656,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "80-84",
                                                     "label": "80 to 84 years",
                                                     "line_colour": "BLUE",
@@ -702,10 +675,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "85-89",
                                                     "label": "85 to 89 years",
                                                     "line_colour": "BLUE",
@@ -721,10 +694,10 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
-                                                    "sex": "",
+                                                    "sex": "all",
                                                     "age": "90+",
                                                     "label": "90 years and over",
                                                     "line_colour": "RED",
@@ -747,7 +720,7 @@
     ],
     "related_links": [
         {
-            "id": 29,
+            "id": 1,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -756,7 +729,7 @@
             "body": "<p data-block-key=\"wvdly\">Get NHS advice on COVID-19, including symptoms, treatments, looking after yourself at home, how to avoid catching and spreading the virus, vaccinations and long-term effects.</p>"
         },
         {
-            "id": 30,
+            "id": 2,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -765,7 +738,7 @@
             "body": "<p data-block-key=\"fah3z\">https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season</p>"
         },
         {
-            "id": 31,
+            "id": 3,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -774,7 +747,7 @@
             "body": "<p data-block-key=\"wvdly\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         },
         {
-            "id": 32,
+            "id": 4,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -783,7 +756,7 @@
             "body": "<p data-block-key=\"wvdly\">Publication of COVID-19 hospital activity data in England, the number of patients admitted hospital with COVID-19, the number of patients diagnosed with COVID-19 while in hospital.</p>"
         },
         {
-            "id": 33,
+            "id": 5,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -792,7 +765,7 @@
             "body": "<p data-block-key=\"wvdly\">Provisional counts of the number of deaths registered in England and Wales (including deaths involving COVID-19), by local authority, health board and place of death in the latest weeks for which data is available.</p>"
         },
         {
-            "id": 34,
+            "id": 6,
             "meta": {
                 "type": "topic.TopicPageRelatedLink"
             },
@@ -801,5 +774,5 @@
             "body": "<p data-block-key=\"wvdly\">Provisional counts of the number of deaths registered in England and Wales (including deaths involving COVID-19), by age, sex and region in the latest weeks for which data is available.</p>"
         }
     ],
-    "last_published_at": "2023-09-07T15:43:43.146774+01:00"
+    "last_published_at": "2023-09-14T18:25:21.963344+01:00"
 }

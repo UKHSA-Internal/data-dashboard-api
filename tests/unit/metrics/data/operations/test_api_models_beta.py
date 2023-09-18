@@ -140,18 +140,41 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
 
         # Then
         assert isinstance(api_time_series, APITimeSeries)
+
+        assert (
+            api_time_series.theme
+            == mocked_time_series.metric.topic.sub_theme.theme.name
+        )
+        assert (
+            api_time_series.sub_theme == mocked_time_series.metric.topic.sub_theme.name
+        )
+        assert api_time_series.topic == mocked_time_series.metric.topic.name
+        assert api_time_series.metric == mocked_time_series.metric.name
+        assert (
+            api_time_series.metric_group == mocked_time_series.metric.metric_group.name
+        )
+        assert api_time_series.metric_frequency == mocked_time_series.metric_frequency
+        assert api_time_series.refresh_date == mocked_time_series.refresh_date
+
+        assert api_time_series.geography == mocked_time_series.geography.name
+        assert (
+            api_time_series.geography_type
+            == mocked_time_series.geography.geography_type.name
+        )
         assert (
             api_time_series.geography_code
             == mocked_time_series.geography.geography_code
         )
         assert api_time_series.age == mocked_time_series.age.name
+        assert api_time_series.sex == mocked_time_series.sex
+        assert api_time_series.stratum == mocked_time_series.stratum.name
+        assert api_time_series.date == mocked_time_series.date
+        assert api_time_series.year == mocked_time_series.year
         assert api_time_series.month == mocked_time_series.month
-        assert (
-            api_time_series.metric_group == mocked_time_series.metric.metric_group.name
-        )
-        assert api_time_series.refresh_date == mocked_time_series.refresh_date
+        assert api_time_series.epiweek == mocked_time_series.epiweek
+        assert api_time_series.metric_value == mocked_time_series.metric_value
 
-    def test_uses_explicit_fields_from_call(self):
+    def test_uses_explicitly_provided_fields_from_call(self):
         """
         Given a mocked `CoreTimeSeries` object
         And a number of pre-defined fields
