@@ -1,16 +1,17 @@
 import logging
 from timeit import default_timer
-from typing import Optional
 
 from django.db.models import Manager
-from wagtail.models import Page
 
 from caching.crawler import Crawler
+from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
 
 DEFAULT_HOME_PAGE_MANAGER = HomePage.objects
 DEFAULT_TOPIC_PAGE_MANAGER = TopicPage.objects
+DEFAULT_COMMON_PAGE_MANAGER = CommonPage.objects
+
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,7 @@ logger = logging.getLogger(__name__)
 def collect_all_pages(
     home_page_manager: Manager = DEFAULT_HOME_PAGE_MANAGER,
     topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
+    common_page_manager: Manager = DEFAULT_COMMON_PAGE_MANAGER,
 ) -> list[HomePage, TopicPage]:
     """Collects and returns all pages which should be processed for caching
 
@@ -28,6 +30,9 @@ def collect_all_pages(
         topic_page_manager: The model manager for the `TopicPage` model
             Defaults to the concrete `TopicPageManager`
             via `TopicPage.objects`
+        common_page_manager: The model manager for the `CommonPage` model
+            Defaults to the concrete `CommonPageManager`
+            via `CommonPage.objects`
 
     Returns:
         List of `Page` objects which are to be processed for caching
@@ -36,6 +41,7 @@ def collect_all_pages(
     landing_page: HomePage = home_page_manager.get_landing_page()
     pages = [] if landing_page is None else [landing_page]
     pages += topic_page_manager.get_live_pages()
+    pages += common_page_manager.get_live_pages()
     return pages
 
 
