@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework_api_key.permissions import HasAPIKey
 from wagtail.api.v2.views import PagesAPIViewSet
 
+from caching.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 
 
@@ -14,6 +15,14 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     permission_classes = [HasAPIKey]
     base_serializer_class = ListablePageSerializer
     listing_default_fields = PagesAPIViewSet.listing_default_fields + ["show_in_menus"]
+
+    @cache_response()
+    def listing_view(self, request: Request) -> Response:
+        return super().listing_view(request=request)
+
+    @cache_response()
+    def detail_view(self, request: Request, pk: int) -> Response:
+        return super().detail_view(request=request, pk=pk)
 
 
 @extend_schema(tags=["cms"])
