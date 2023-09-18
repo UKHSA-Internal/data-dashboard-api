@@ -28,5 +28,6 @@ class SuggestionsSerializer(serializers.Serializer):
         help_text=help_texts.QUESTION_DID_YOU_FIND_EVERYTHING_HELP_TEXT,
         required=False,
         allow_blank=True,
+        allow_null=True,
         choices=DID_YOU_FIND_EVERYTHING_CHOICES,
     )
