@@ -11,6 +11,7 @@ HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v2/"
 TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v2/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v3/"
+DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
@@ -42,6 +43,7 @@ class InternalAPIClient:
         self.trends_endpoint_path = TRENDS_ENDPOINT_PATH
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
+        self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
 
         # Header configurations
         self.force_refresh = force_refresh
