@@ -128,7 +128,7 @@ class TestDownloadsView:
         assert response.status_code == HTTPStatus.OK
 
         # Check that the headers on the response indicate json is being returned
-        assert response.headers["Content-Type"] == "application/coreapi+json"
+        assert response.headers["Content-Type"] == "application/json"
 
         # Check the format of the output is as expected
         assert type(response.data[0]) == OrderedDict

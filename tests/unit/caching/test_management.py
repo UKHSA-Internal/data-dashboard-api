@@ -188,7 +188,7 @@ class TestCacheManagement:
         Then the call is delegated to the `put()` method on the underlying client
         """
         # Given
-        mocked_response = mock.Mock()
+        mocked_response = mock.Mock(headers={"Content-Type": "application/json"})
         fake_cache_entry_key = "abc123"
 
         # When
@@ -231,7 +231,7 @@ class TestCacheManagement:
         Then `render()` is called on the response
         """
         # Given
-        spy_response = mock.Mock()
+        spy_response = mock.Mock(headers={"Content-Type": "application/json"})
 
         # When
         rendered_response = cache_management_with_in_memory_cache._render_response(
@@ -240,6 +240,28 @@ class TestCacheManagement:
 
         # Then
         spy_response.render.assert_called_once()
+        assert rendered_response == spy_response
+
+    def test_render_response_does_not_call_render_on_csv_responses(
+        self, cache_management_with_in_memory_cache: CacheManagement
+    ):
+        """
+        Given a mocked `Response` which is content type csv
+        When `_render_response()` is called from an instance of `CacheManagement`
+        Then `render()` is not called on the response
+        """
+        # Given
+        fake_headers = {"Content-Type": "text/csv"}
+        spy_response = mock.Mock(headers=fake_headers)
+
+        # When
+        rendered_response = cache_management_with_in_memory_cache._render_response(
+            response=spy_response
+        )
+
+        # Then
+        spy_response.render.assert_not_called()
+        assert spy_response.accepted_media_type != "application/json"
         assert rendered_response == spy_response
 
     # Test to save and then retrieve an item from an in-memory cache
@@ -255,7 +277,7 @@ class TestCacheManagement:
             by calling `retrieve_response_from_cache()`
         """
         # Given
-        mocked_item = mock.Mock()
+        mocked_item = mock.Mock(headers={"Content-Type": "application/json"})
         fake_cache_entry_key = "abc"
 
         # When

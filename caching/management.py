@@ -86,8 +86,14 @@ class CacheManagement:
         self._client.put(cache_entry_key=cache_entry_key, value=item)
         return item
 
+    def _render_response(self, response: Response) -> Response:
+        if response.headers["Content-Type"] == "text/csv":
+            return response
+
+        return self._render_json_response(response=response)
+
     @staticmethod
-    def _render_response(response: Response) -> Response:
+    def _render_json_response(response: Response) -> Response:
         response.accepted_renderer = JSONRenderer()
         response.accepted_media_type = "application/json"
         response.renderer_context = {}
