@@ -15,5 +15,5 @@ This is the answer to the question of what the user would like to see on the das
 
 QUESTION_DID_YOU_FIND_EVERYTHING_HELP_TEXT = """
 The answer for the *did_you_find_everything* question provided by the user.
-Note that this can only be a choice of either *yes* or *no*.
+Note that this should be a choice of either *yes* or *no*.
 """

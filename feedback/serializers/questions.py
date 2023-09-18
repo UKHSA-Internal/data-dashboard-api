@@ -26,7 +26,8 @@ class SuggestionsSerializer(serializers.Serializer):
     )
     did_you_find_everything = serializers.ChoiceField(
         help_text=help_texts.QUESTION_DID_YOU_FIND_EVERYTHING_HELP_TEXT,
-        required=True,
-        allow_blank=False,
+        required=False,
+        allow_blank=True,
+        allow_null=True,
         choices=DID_YOU_FIND_EVERYTHING_CHOICES,
     )
