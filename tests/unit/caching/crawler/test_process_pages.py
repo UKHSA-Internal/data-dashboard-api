@@ -1,6 +1,9 @@
 from unittest import mock
 
+from _pytest.logging import LogCaptureFixture
+
 from caching.crawler import Crawler
+from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
@@ -88,3 +91,27 @@ class TestCrawlerProcessPages:
         spy_process_detail_pages_for_headless_cms_api.assert_called_once_with(
             pages=fake_pages
         )
+
+    def test_logs_when_page_sections_cannot_be_processed_eg_common_pages(
+        self,
+        crawler_with_mocked_internal_api_client: Crawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a list of `CommonPage`
+        When `process_pages()` is called from an instance of `Crawler`
+        Then the correct log statements are recorded
+        """
+        # Given
+        fake_common_pages = [
+            FakeCommonPageFactory.build_blank_page(title="About"),
+            FakeCommonPageFactory.build_blank_page(title="Compliance"),
+        ]
+
+        # When
+        crawler_with_mocked_internal_api_client.process_pages(pages=fake_common_pages)
+
+        # Then
+        for common_page in fake_common_pages:
+            expected_log = f"{common_page.title} page has no dynamic content blocks. So only the headless CMS API detail has been processed"
+            assert expected_log in caplog.text
