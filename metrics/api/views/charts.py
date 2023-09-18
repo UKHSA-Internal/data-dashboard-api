@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
 
+from caching.decorators import cache_response
 from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
@@ -137,6 +138,7 @@ class EncodedChartsView(APIView):
         responses={HTTPStatus.OK.value: EncodedChartResponseSerializer},
         tags=[CHARTS_API_TAG],
     )
+    @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
