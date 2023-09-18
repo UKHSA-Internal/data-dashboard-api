@@ -496,3 +496,49 @@ class Crawler:
             "x_axis": chart_block["x_axis"],
             "y_axis": chart_block["y_axis"],
         }
+
+    def _build_downloads_request_data(
+        self, chart_block: CMS_COMPONENT_BLOCK_TYPE
+    ) -> dict[str, str | int, list[dict[str, str]]]:
+        """Builds the tables endpoint request payload from the given `chart_block`
+
+        Args:
+            chart_block: The chart block from the CMS
+
+        Returns:
+            A dict which can be used as the payload to the
+            `tables` endpoint
+
+        """
+        return {
+            "plots": [
+                self._build_downloads_plot_data(plot_value=plot["value"])
+                for plot in chart_block["chart"]
+            ],
+            "file_format": "csv",
+        }
+
+    @staticmethod
+    def _build_downloads_plot_data(plot_value: dict[str, str]) -> dict[str, str]:
+        """Builds the individual downloadable plot data from the given `plot_value`
+
+        Args:
+            plot_value: The dict containing the plot data
+
+        Returns:
+            A dict which can be used to represent the individual plot
+            within the `plots` list of the payload
+            to the `downloads` endpoint only
+
+        """
+        return {
+            "topic": plot_value["topic"],
+            "metric": plot_value["metric"],
+            "date_from": plot_value["date_from"],
+            "date_to": plot_value["date_to"],
+            "stratum": plot_value["stratum"],
+            "geography": plot_value["geography"],
+            "geography_type": plot_value["geography_type"],
+            "sex": plot_value["sex"],
+            "age": plot_value["age"],
+        }
