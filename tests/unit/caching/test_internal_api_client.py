@@ -387,13 +387,15 @@ class TestInternalAPIClient:
         mocked_client.post.assert_called_once_with(
             path=internal_api_client.downloads_endpoint_path,
             data=mocked_request_data,
+            headers=internal_api_client.build_headers(),
+            format="json",
         )
 
     def test_hit_pages_list_endpoint_delegates_call_correctly(self):
         """
         Given a client
         When `hit_pages_list_endpoint()` is called from an instance of the `InternalAPIClient`
-
+        Then the call is delegated to the `client` object
         """
         # Given
         mocked_client = mock.Mock()
