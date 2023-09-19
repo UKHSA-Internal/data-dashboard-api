@@ -191,6 +191,46 @@ class TestCrawlerBuildRequestData:
         }
         assert tables_request_data == expected_tables_request_data
 
+    def test_build_downloads_request_data(
+        self,
+        example_chart_block: dict[str, str | list[dict]],
+        crawler_with_mocked_internal_api_client: Crawler,
+    ):
+        """
+        Given a chart block
+        When `build_downloads_request_data()` is called from an instance of `Crawler`
+        Then the correct dict is returned
+        """
+        # Given
+        chart_block_data = example_chart_block
+
+        # When
+        downloads_request_data = (
+            crawler_with_mocked_internal_api_client._build_downloads_request_data(
+                chart_block=chart_block_data,
+            )
+        )
+
+        # Then
+        plot_value = chart_block_data["chart"][0]["value"]
+        expected_downloads_request_data = {
+            "file_format": "csv",
+            "plots": [
+                {
+                    "topic": plot_value["topic"],
+                    "metric": plot_value["metric"],
+                    "date_from": plot_value["date_from"],
+                    "date_to": plot_value["date_to"],
+                    "stratum": plot_value["stratum"],
+                    "geography": plot_value["geography"],
+                    "geography_type": plot_value["geography_type"],
+                    "sex": plot_value["sex"],
+                    "age": plot_value["age"],
+                }
+            ],
+        }
+        assert downloads_request_data == expected_downloads_request_data
+
     def test_build_plot_data(self, crawler_with_mocked_internal_api_client: Crawler):
         """
         Given a plot value dict for a chart
