@@ -10,8 +10,24 @@ import logging
 import os
 from pathlib import Path
 
+from django.db import models
+
 from ingestion.file_ingestion import file_ingester
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
+from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.core_models import (
+    Age,
+    CoreHeadline,
+    CoreTimeSeries,
+    Geography,
+    GeographyType,
+    Metric,
+    MetricGroup,
+    Stratum,
+    SubTheme,
+    Theme,
+    Topic,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +42,42 @@ def _gather_test_data_source_file_paths() -> list[Path]:
     ]
 
 
+def collect_all_metric_models() -> tuple[models.Model, ...]:
+    """Collects all model classes associated with the metrics app"""
+    return (
+        CoreHeadline,
+        CoreTimeSeries,
+        APITimeSeries,
+        Theme,
+        SubTheme,
+        Topic,
+        MetricGroup,
+        Metric,
+        GeographyType,
+        Geography,
+        Stratum,
+        Age,
+    )
+
+
+def clear_metrics_tables() -> None:
+    """Deletes all records in the metric tables
+
+    Returns:
+         None
+    """
+
+    metric_models: tuple[models.Model] = collect_all_metric_models()
+
+    for model in metric_models:
+        logger.info(f"Deleting records of {model.__name__}")
+        model.objects.all().delete()
+
+    logger.info("Completed deleting existing metrics records")
+
+
 def upload_truncated_test_data() -> None:
-    """Uploads the truncated test data set to the database
+    """Uploads the truncated test data set to the database after clearing existing metrics records
 
     Notes:
         This will create records for all `CoreHeadline`, `CoreTimeSeries`
@@ -35,10 +85,14 @@ def upload_truncated_test_data() -> None:
 
         Upload will continue even if 1 file fails to be uploaded.
 
+        Existing metrics records will be deleted prior to the upload commencing.
+
     Returns:
         None
 
     """
+    clear_metrics_tables()
+
     test_source_data_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
     for test_source_data_file_path in test_source_data_file_paths:
