@@ -12,7 +12,7 @@ from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSeria
 
 @extend_schema(tags=["cms"])
 class CMSPagesAPIViewSet(PagesAPIViewSet):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
     base_serializer_class = ListablePageSerializer
     listing_default_fields = PagesAPIViewSet.listing_default_fields + ["show_in_menus"]
 
@@ -28,7 +28,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 @extend_schema(tags=["cms"])
 class CMSDraftPagesViewSet(PagesAPIViewSet):
     base_serializer_class = CMSDraftPagesSerializer
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     def detail_view(self, request: Request, pk: int) -> Response:
         instance = self.get_object()

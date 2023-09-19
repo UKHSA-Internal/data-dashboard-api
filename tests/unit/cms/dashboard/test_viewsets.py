@@ -36,12 +36,11 @@ class TestCMSDraftPagesViewSet:
         assert len(urlpatterns) == 1
         assert urlpatterns[0].name == "detail"
 
-    def test_permission_classes_has_api_key(self):
+    def test_permission_classes_has_no_api_key_constraint(self):
         """
         Given an instance of the `CMSDraftPagesViewSet`
         When `permission_classes` is called
-        Then a list of 1 item is returned
-            which is the `HasAPIKey` class
+        Then an empty list is returned
         """
         # Given
         draft_pages_viewset = CMSDraftPagesViewSet()
@@ -50,8 +49,7 @@ class TestCMSDraftPagesViewSet:
         permission_classes = draft_pages_viewset.permission_classes
 
         # Then
-        assert len(permission_classes) == 1
-        assert permission_classes[0] is HasAPIKey
+        assert permission_classes == []
 
 
 class TestCMSPagesAPIViewSet:
