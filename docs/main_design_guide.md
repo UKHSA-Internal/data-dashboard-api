@@ -68,6 +68,7 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- api/                     # Views, serializers and viewsets associated with the ingestion API
     |- data_transfer_models/    # DTOs used for parsing the source file and translating into the data layer
     |- metrics_interface/       # Contains the funnel abstractions which links the ingestion <- metrics modules
+    |- operations/              # Write-like functionality for interacting with the db to ingest metrics data
     |- consumer.py              # Holds the object used to open source files, orchestrating the creation of DTOs, and calling to the reader 
     |- reader.py                # The object used to parse the source file and perform any processing steps before the file can be consumed
     
@@ -82,7 +83,6 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
             |- api_models.py    # The flat denormalized model which holds everything in the single flat table.
             |- core_models.py   # The normalized models which house a series of FK relationships.
         |- access/              # Read-like functionality for interacting with the db (via managers ideally).
-        |- operations/          # Write-like functionality for interacting with the db (via managers ideally).
         |- managers/            # Contains files with custom queryset and model manager classes for the models.
         |- migrations/          # Contains the associated django migrations.
     |- domain/                  # Represents the business logic layer. Currently houses the charts generation module.
