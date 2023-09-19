@@ -3,7 +3,6 @@ from http import HTTPStatus
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
 
 from caching.decorators import cache_response
 from metrics.api.serializers import HeadlinesQuerySerializer
@@ -22,7 +21,7 @@ HEADLINES_API_TAG = "headlines"
 
 
 class HeadlinesView(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         parameters=[HeadlinesQuerySerializer],
@@ -90,7 +89,7 @@ class HeadlinesView(APIView):
 
 
 class HeadlinesViewBeta(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         parameters=[HeadlinesQuerySerializerBeta],
