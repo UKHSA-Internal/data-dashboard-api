@@ -214,7 +214,6 @@ def construct_urlpatterns(
             )
         case AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
-            constructed_url_patterns += ingestion_urlpatterns
         case AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
         case _:
