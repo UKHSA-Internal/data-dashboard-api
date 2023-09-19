@@ -7,10 +7,12 @@ from rest_framework_api_key.models import APIKey
 from metrics.data.managers.api_keys import CustomAPIKeyManager
 
 API_PREFIX = "/api/"
+PAGES_ENDPOINT_PATH = f"{API_PREFIX}pages/"
 HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v2/"
 TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v2/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v3/"
+DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
@@ -38,10 +40,12 @@ class InternalAPIClient:
         self._client = client or self.create_api_client()
 
         # Endpoints
+        self.pages_endpoint_path = PAGES_ENDPOINT_PATH
         self.headlines_endpoint_path = HEADLINES_ENDPOINT_PATH
         self.trends_endpoint_path = TRENDS_ENDPOINT_PATH
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
+        self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
 
         # Header configurations
         self.force_refresh = force_refresh
@@ -143,3 +147,39 @@ class InternalAPIClient:
         path = self.tables_endpoint_path
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
+
+    def hit_downloads_endpoint(self, data: dict[str, str]) -> Response:
+        """Sends a `POST` request to the `downloads/` endpoint with the given `data`
+
+        Args:
+            data: A dict representing the request body
+
+        Returns:
+            `Response` from the `downloads/` endpoint
+
+        """
+        path = self.downloads_endpoint_path
+        headers = self.build_headers()
+        return self._client.post(path=path, data=data, headers=headers, format="json")
+
+    def hit_pages_list_endpoint(self) -> Response:
+        """Sends a `GET` request to the list `pages/` endpoint.
+
+        Returns:
+            `Response` from the list `pages/` endpoint
+
+        """
+        path = self.pages_endpoint_path
+        headers = self.build_headers()
+        return self._client.get(path=path, headers=headers, format="json")
+
+    def hit_pages_detail_endpoint(self, page_id: int) -> Response:
+        """Sends a `GET` request to the detail `pages/` endpoint for the given `page_id`
+
+        Returns:
+            `Response` from the detail `pages/` endpoint
+
+        """
+        path = f"{self.pages_endpoint_path}{page_id}"
+        headers = self.build_headers()
+        return self._client.get(path=path, headers=headers, format="json")

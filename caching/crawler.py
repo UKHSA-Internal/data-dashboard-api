@@ -1,10 +1,15 @@
+import logging
 from typing import Optional, Self
 
 from caching.internal_api_client import InternalAPIClient
+from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
 
 CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
+
+
+logger = logging.getLogger(__name__)
 
 
 class Crawler:
@@ -35,10 +40,50 @@ class Crawler:
         internal_api_client = InternalAPIClient(force_refresh=True)
         return cls(internal_api_client=internal_api_client)
 
-    # Process pages
+    # Process headless CMS API
 
-    def process_pages(self, pages: list[HomePage, TopicPage]) -> None:
+    def process_list_pages_for_headless_cms_api(self) -> None:
+        """Makes a request to the headless CMS API list `pages/` endpoint
+
+        Returns:
+            None
+
+        """
+        self._internal_api_client.hit_pages_list_endpoint()
+
+    def process_detail_pages_for_headless_cms_api(
+        self, pages: list[HomePage, TopicPage]
+    ) -> None:
+        """Makes a request to the headless CMS API detail `pages/` endpoint for each of the given `pages`
+
+        Returns:
+            None
+
+        """
+        for page in pages:
+            self.process_individual_page_for_headless_cms_api(page=page)
+
+    def process_individual_page_for_headless_cms_api(
+        self, page: HomePage | TopicPage
+    ) -> None:
+        """Makes a request to the headless CMS API detail `pages/` endpoint for the given `page`
+
+        Returns:
+            None
+
+        """
+        self._internal_api_client.hit_pages_detail_endpoint(page_id=page.id)
+
+    # Process pages for content
+
+    def process_pages(self, pages: list[HomePage, TopicPage, CommonPage]) -> None:
         """Makes requests to each individual content item within each of the given `pages`
+
+        Notes:
+            This will also make requests to the headless CMS API `pages/` endpoints
+            in order to cache the CMS content in line with the content.
+            This is primarily so that the cached pages content is always in lockstep
+            with the cached content items (charts, headlines, tables etc).
 
         Args:
             pages: List of `Page` instances to be processed
@@ -47,8 +92,17 @@ class Crawler:
             None
 
         """
+        self.process_list_pages_for_headless_cms_api()
+        self.process_detail_pages_for_headless_cms_api(pages=pages)
+
         for page in pages:
-            self.process_all_sections_in_page(page=page)
+            try:
+                self.process_all_sections_in_page(page=page)
+            except AttributeError:
+                logger.info(
+                    f"{page.title} page has no dynamic content blocks. So only the headless CMS API detail has been processed"
+                )
+                continue
 
     # Process sections
 
@@ -241,9 +295,9 @@ class Crawler:
         Notes:
             This will handle the requests for the chart block within the card.
             This will also handle the request required
-            for the accompanying table.
+            for the accompanying table and download.
 
-            For the chart block, 2 requests will be made.
+            For the chart itself, 2 requests will be made.
             1 for the double width chart, 1100.
             And another for the single width chart, 515
 
@@ -255,10 +309,19 @@ class Crawler:
 
         """
         chart_block_value = chart_block["value"]
-        tables_data = self._build_tables_request_data(chart_block=chart_block_value)
-        self._internal_api_client.hit_tables_endpoint(data=tables_data)
+
+        self._process_table_for_chart_block(chart_block=chart_block_value)
+        self._process_download_for_chart_block(chart_block=chart_block_value)
 
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
+
+    def _process_table_for_chart_block(self, chart_block: dict):
+        tables_data = self._build_tables_request_data(chart_block=chart_block)
+        self._internal_api_client.hit_tables_endpoint(data=tables_data)
+
+    def _process_download_for_chart_block(self, chart_block: dict):
+        downloads_data = self._build_downloads_request_data(chart_block=chart_block)
+        self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
 
     def _process_chart_for_both_possible_widths(
         self, chart_block: CMS_COMPONENT_BLOCK_TYPE
@@ -495,4 +558,50 @@ class Crawler:
             ],
             "x_axis": chart_block["x_axis"],
             "y_axis": chart_block["y_axis"],
+        }
+
+    def _build_downloads_request_data(
+        self, chart_block: CMS_COMPONENT_BLOCK_TYPE
+    ) -> dict[str, str | int, list[dict[str, str]]]:
+        """Builds the tables endpoint request payload from the given `chart_block`
+
+        Args:
+            chart_block: The chart block from the CMS
+
+        Returns:
+            A dict which can be used as the payload to the
+            `tables` endpoint
+
+        """
+        return {
+            "plots": [
+                self._build_downloads_plot_data(plot_value=plot["value"])
+                for plot in chart_block["chart"]
+            ],
+            "file_format": "csv",
+        }
+
+    @staticmethod
+    def _build_downloads_plot_data(plot_value: dict[str, str]) -> dict[str, str]:
+        """Builds the individual downloadable plot data from the given `plot_value`
+
+        Args:
+            plot_value: The dict containing the plot data
+
+        Returns:
+            A dict which can be used to represent the individual plot
+            within the `plots` list of the payload
+            to the `downloads` endpoint only
+
+        """
+        return {
+            "topic": plot_value["topic"],
+            "metric": plot_value["metric"],
+            "date_from": plot_value["date_from"],
+            "date_to": plot_value["date_to"],
+            "stratum": plot_value["stratum"],
+            "geography": plot_value["geography"],
+            "geography_type": plot_value["geography_type"],
+            "sex": plot_value["sex"],
+            "age": plot_value["age"],
         }
