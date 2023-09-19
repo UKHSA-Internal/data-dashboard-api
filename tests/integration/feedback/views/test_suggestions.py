@@ -5,7 +5,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-MODULE_PATH = "feedback.views.suggestions"
+MODULE_PATH = "feedback.api.views.suggestions"
 
 
 class TestSuggestionsView:

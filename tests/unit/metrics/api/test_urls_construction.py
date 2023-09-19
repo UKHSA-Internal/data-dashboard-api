@@ -22,9 +22,10 @@ PRIVATE_API_ENDPOINT_PATHS = [
     "api/headlines/v2",
     "api/tables/v2",
     "api/trends/v2",
-    "api/suggestions/v1",
 ]
 
+
+FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v1"]
 
 INGESTION_API_ENDPOINT_PATHS = ["api/ingestion/v1"]
 
@@ -294,6 +295,48 @@ class TestConstructUrlpatterns:
         """
         # Given
         app_mode = AppMode.CMS_ADMIN.value
+
+        # When
+        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+
+        # Then
+        assert not any(
+            excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
+        )
+
+    # Tests for APP_MODE = "FEEDBACK_API"
+
+    def test_feedback_api_mode_returns_feedback_api_urls(self):
+        """
+        Given an `app_mode` of "FEEDBACK_API"
+        When `construct_urlpatterns()` is called
+        Then the urlpatterns returned contain the feedback API endpoints
+        """
+        # Given
+        app_mode = AppMode.FEEDBACK_API.value
+
+        # When
+        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+
+        # Then
+        assert any("suggestions" in x.pattern.regex.pattern for x in urlpatterns)
+
+    @pytest.mark.parametrize(
+        "excluded_endpoint_path",
+        PRIVATE_API_ENDPOINT_PATHS
+        + PUBLIC_API_ENDPOINT_PATHS
+        + CMS_ADMIN_ENDPOINT_PATHS,
+    )
+    def test_feedback_api_mode_does_not_return_other_urls(
+        self, excluded_endpoint_path: str
+    ):
+        """
+        Given an `app_mode` of "FEEDBACK_API"
+        When `construct_urlpatterns()` is called
+        Then the urlpatterns returned do not contain URLs for the other APIs
+        """
+        # Given
+        app_mode = AppMode.FEEDBACK_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)

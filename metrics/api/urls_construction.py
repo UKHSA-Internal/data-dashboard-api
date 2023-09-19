@@ -13,7 +13,8 @@ from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
-from feedback.views import SuggestionsView
+from feedback.api.urls import construct_urlpatterns_for_feedback
+from feedback.api.views import SuggestionsView
 from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (
@@ -132,6 +133,8 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}suggestions/v1", SuggestionsView.as_view()),
 ]
 
+feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
+
 ingestion_urlpatterns = construct_urlpatterns_for_ingestion(prefix=API_PREFIX)
 
 docs_urlspatterns = [
@@ -169,6 +172,7 @@ class AppMode(Enum):
     CMS_ADMIN = "CMS_ADMIN"
     PRIVATE_API = "PRIVATE_API"
     PUBLIC_API = "PUBLIC_API"
+    FEEDBACK_API = "FEEDBACK_API"
 
 
 def construct_urlpatterns(
@@ -181,6 +185,7 @@ def construct_urlpatterns(
             - `CMS_ADMIN`
             - `PRIVATE_API`
             - `PUBLIC_API`
+            - `FEEDBACK_API`
         Then this function will return the complete set of URLs.
 
     Args:
@@ -198,19 +203,30 @@ def construct_urlpatterns(
         docs_urlspatterns + static_urlpatterns + common_urlpatterns
     )
 
-    if app_mode == AppMode.CMS_ADMIN.value:
-        constructed_url_patterns += construct_cms_admin_urlpatterns(app_mode=app_mode)
-        constructed_url_patterns += django_admin_urlpatterns
-    elif app_mode == AppMode.PUBLIC_API.value:
-        constructed_url_patterns += construct_public_api_urlpatterns(app_mode=app_mode)
-    elif app_mode == AppMode.PRIVATE_API.value:
-        constructed_url_patterns += private_api_urlpatterns
-        constructed_url_patterns += ingestion_urlpatterns
-    else:
-        constructed_url_patterns += construct_cms_admin_urlpatterns(app_mode=app_mode)
-        constructed_url_patterns += construct_public_api_urlpatterns(app_mode=app_mode)
-        constructed_url_patterns += django_admin_urlpatterns
-        constructed_url_patterns += private_api_urlpatterns
-        constructed_url_patterns += ingestion_urlpatterns
+    match app_mode:
+        case AppMode.CMS_ADMIN.value:
+            constructed_url_patterns += construct_cms_admin_urlpatterns(
+                app_mode=app_mode
+            )
+            constructed_url_patterns += django_admin_urlpatterns
+        case AppMode.PUBLIC_API.value:
+            constructed_url_patterns += construct_public_api_urlpatterns(
+                app_mode=app_mode
+            )
+        case AppMode.PRIVATE_API.value:
+            constructed_url_patterns += private_api_urlpatterns
+            constructed_url_patterns += ingestion_urlpatterns
+        case AppMode.FEEDBACK_API.value:
+            constructed_url_patterns += feedback_urlpatterns
+        case _:
+            constructed_url_patterns += construct_cms_admin_urlpatterns(
+                app_mode=app_mode
+            )
+            constructed_url_patterns += construct_public_api_urlpatterns(
+                app_mode=app_mode
+            )
+            constructed_url_patterns += django_admin_urlpatterns
+            constructed_url_patterns += private_api_urlpatterns
+            constructed_url_patterns += ingestion_urlpatterns
 
     return constructed_url_patterns
