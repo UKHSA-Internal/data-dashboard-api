@@ -5,7 +5,7 @@ factory-boy==3.3.0
 Faker==19.6.1
 gitdb==4.0.10
 GitPython==3.1.36
-import-linter==1.11.0
+import-linter==1.11.1
 isort==5.12.0
 pip_audit==2.6.1
 pre-commit==3.4.0
