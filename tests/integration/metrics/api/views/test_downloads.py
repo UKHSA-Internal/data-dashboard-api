@@ -62,16 +62,14 @@ class TestDownloadsView:
         )
 
     @pytest.mark.django_db
-    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
-        self, authenticated_api_client: APIClient
-    ):
+    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(self):
         """
         Given a valid payload to request a download
-        And an authenticated APIClient
         When the `POST /api/downloads/v2` endpoint is hit i.e. without the trailing `/`
         Then the response is still a valid HTTP 200 OK
         """
         # Given
+        client = APIClient()
         self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
             "file_format": "json",
@@ -85,7 +83,7 @@ class TestDownloadsView:
         path_without_trailing_forward_slash = "/api/downloads/v2"
 
         # When
-        response: Response = authenticated_api_client.post(
+        response: Response = client.post(
             path=path_without_trailing_forward_slash,
             data=valid_payload,
             format="json",
@@ -95,16 +93,14 @@ class TestDownloadsView:
         assert response.status_code == HTTPStatus.OK
 
     @pytest.mark.django_db
-    def test_json_download_returns_correct_response(
-        self, authenticated_api_client: APIClient
-    ):
+    def test_json_download_returns_correct_response(self):
         """
         Given a valid payload to request a download
-        And an authenticated APIClient
         When the `POST /api/downloads/v2/` endpoint is hit
         Then the response contains the expected output in json format
         """
         # Given
+        client = APIClient()
         self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
             "file_format": "json",
@@ -118,7 +114,7 @@ class TestDownloadsView:
         path = "/api/downloads/v2/"
 
         # When
-        response: Response = authenticated_api_client.post(
+        response: Response = client.post(
             path=path,
             data=valid_payload,
             format="json",
@@ -137,16 +133,14 @@ class TestDownloadsView:
         assert response.data[0] == self.api_timeseries_data
 
     @pytest.mark.django_db
-    def test_csv_download_returns_correct_response(
-        self, authenticated_api_client: APIClient
-    ):
+    def test_csv_download_returns_correct_response(self):
         """
         Given a valid payload to request a download
-        And an authenticated APIClient
         When the `POST /api/downloads/v2/` endpoint is hit
         Then the response contains the expected output in csv format
         """
         # Given
+        client = APIClient()
         self._setup_api_time_series(**self.api_timeseries_data)
         valid_payload = {
             "file_format": "csv",
@@ -160,7 +154,7 @@ class TestDownloadsView:
         path = "/api/downloads/v2/"
 
         # When
-        response: Response = authenticated_api_client.post(
+        response: Response = client.post(
             path=path,
             data=valid_payload,
             format="json",
@@ -208,20 +202,3 @@ class TestDownloadsView:
             ]
         ]
         assert csv_output == expected_csv_content
-
-    @pytest.mark.django_db
-    def test_post_request_without_api_key_is_unauthorized(self):
-        """
-        Given an APIClient which is not authenticated
-        When the `POST /api/downloads/v2/` endpoint is hit
-        Then an HTTP 401 UNAUTHORIZED response is returned
-        """
-        # Given
-        client = APIClient()
-        path = "/api/downloads/v2/"
-
-        # When
-        response: Response = client.post(path=path, data={})
-
-        # Then
-        assert response.status_code == HTTPStatus.UNAUTHORIZED
