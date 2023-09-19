@@ -173,6 +173,7 @@ class AppMode(Enum):
     PRIVATE_API = "PRIVATE_API"
     PUBLIC_API = "PUBLIC_API"
     FEEDBACK_API = "FEEDBACK_API"
+    INGESTION = "INGESTION"
 
 
 def construct_urlpatterns(
@@ -186,6 +187,7 @@ def construct_urlpatterns(
             - `PRIVATE_API`
             - `PUBLIC_API`
             - `FEEDBACK_API`
+            - `INGESTION`
         Then this function will return the complete set of URLs.
 
     Args:
@@ -218,6 +220,8 @@ def construct_urlpatterns(
             constructed_url_patterns += ingestion_urlpatterns
         case AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
+        case AppMode.INGESTION.value:
+            constructed_url_patterns += ingestion_urlpatterns
         case _:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
