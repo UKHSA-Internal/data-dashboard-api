@@ -7,7 +7,7 @@ from pydantic_core._pydantic_core import ValidationError
 from ingestion.operations.truncated_dataset import (
     _gather_test_data_source_file_paths,
     clear_metrics_tables,
-    collect_all_metric_models,
+    collect_all_metric_model_managers,
     upload_truncated_test_data,
 )
 from metrics.data.models.api_models import APITimeSeries
@@ -42,63 +42,69 @@ class TestGatherTestDataSourceFilePaths:
         assert len(gathered_test_file_paths) == 52
 
 
-class TestCollectAllMetricModels:
+class TestCollectAllMetricModelManagers:
     def test_delegates_call_for_each_model(self):
         """
         Given no input
-        When `collect_all_metric_models()` is called
+        When `collect_all_metric_model_managers()` is called
         Then the correct metric models are returned
         """
         # Given / When
-        metric_models = collect_all_metric_models()
+        metric_models = collect_all_metric_model_managers()
 
         # Then
-        assert CoreHeadline in metric_models
-        assert CoreTimeSeries in metric_models
-        assert APITimeSeries in metric_models
-        assert Theme in metric_models
-        assert SubTheme in metric_models
-        assert Topic in metric_models
-        assert MetricGroup in metric_models
-        assert Metric in metric_models
-        assert GeographyType in metric_models
-        assert Geography in metric_models
-        assert Stratum in metric_models
-        assert Age in metric_models
+        assert CoreHeadline.objects in metric_models
+        assert CoreTimeSeries.objects in metric_models
+        assert APITimeSeries.objects in metric_models
+        assert Theme.objects in metric_models
+        assert SubTheme.objects in metric_models
+        assert Topic.objects in metric_models
+        assert MetricGroup.objects in metric_models
+        assert Metric.objects in metric_models
+        assert GeographyType.objects in metric_models
+        assert Geography.objects in metric_models
+        assert Stratum.objects in metric_models
+        assert Age.objects in metric_models
 
 
 class TestClearMetricsTables:
-    @mock.patch(f"{MODULE_PATH}.collect_all_metric_models")
+    @mock.patch(f"{MODULE_PATH}.collect_all_metric_model_managers")
     def test_calls_delete_on_collected_models(
-        self, spy_collect_all_metric_models: mock.MagicMock, caplog: LogCaptureFixture
+        self,
+        spy_collect_all_metric_model_managers: mock.MagicMock,
+        caplog: LogCaptureFixture,
     ):
         """
         Given no input
         When `clear_metrics_tables()` is called
-        Then `objects.all().delete()` is called
-            on each of the models returned from `collect_all_metric_models()`
+        Then `all().delete()` is called on each of the model managers
+            returned from `collect_all_metric_model_managers()`
 
         Patches:
-            `spy_collect_all_metric_models`: To isolate the
+            `spy_collect_all_metric_model_managers`: To isolate the
                 returned models and cast the main assertions on them
 
         """
         # Given
-        mocked_collected_metric_models = [
-            mock.MagicMock(__name__=f"model-{i}") for i in range(10)
+        mocked_collected_metric_model_managers = [
+            mock.MagicMock(model=mock.Mock(__name__=f"model-{i}")) for i in range(10)
         ]
-        spy_collect_all_metric_models.return_value = mocked_collected_metric_models
+        spy_collect_all_metric_model_managers.return_value = (
+            mocked_collected_metric_model_managers
+        )
 
         # When
         clear_metrics_tables()
 
         # Then
-        for mocked_metric_model in mocked_collected_metric_models:
-            assert mock.call.objects.all().delete() in mocked_metric_model.mock_calls
+        for mocked_metric_model_manager in mocked_collected_metric_model_managers:
+            assert mock.call.all().delete() in mocked_metric_model_manager.mock_calls
 
-    @mock.patch(f"{MODULE_PATH}.collect_all_metric_models")
+    @mock.patch(f"{MODULE_PATH}.collect_all_metric_model_managers")
     def test_records_expected_logs(
-        self, spy_collect_all_metric_models: mock.MagicMock, caplog: LogCaptureFixture
+        self,
+        spy_collect_all_metric_model_managers: mock.MagicMock,
+        caplog: LogCaptureFixture,
     ):
         """
         Given no input
@@ -106,23 +112,29 @@ class TestClearMetricsTables:
         Then the correct logs are recorded
 
         Patches:
-            `spy_collect_all_metric_models`: To isolate the
+            `spy_collect_all_metric_model_managers`: To isolate the
                 returned models
 
         """
         # Given
-        mocked_collected_metric_models = [
-            mock.MagicMock(__name__=f"model-{i}") for i in range(10)
+        mocked_collected_metric_model_managers = [
+            mock.MagicMock(model=mock.Mock(__name__=f"model-{i}")) for i in range(10)
         ]
-        # `MagicMock` does not implement `__name__` by default hence the need to explicitly set it here
-        spy_collect_all_metric_models.return_value = mocked_collected_metric_models
+        # `MagicMock` does not implement `__name__` by default
+        # hence the need to explicitly set it here on the inner model
+        spy_collect_all_metric_model_managers.return_value = (
+            mocked_collected_metric_model_managers
+        )
 
         # When
         clear_metrics_tables()
 
         # Then
-        for mocked_metric_model in mocked_collected_metric_models:
-            assert f"Deleting records of {mocked_metric_model.__name__}" in caplog.text
+        for mocked_metric_model_manager in mocked_collected_metric_model_managers:
+            assert (
+                f"Deleting records of {mocked_metric_model_manager.model.__name__}"
+                in caplog.text
+            )
 
         assert "Completed deleting existing metrics records" in caplog.text
 
