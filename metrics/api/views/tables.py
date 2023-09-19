@@ -3,7 +3,6 @@ from http import HTTPStatus
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
 
 from caching.decorators import cache_response
 from metrics.api.serializers.tables import (
@@ -18,7 +17,7 @@ TABLES_API_TAG = "tables"
 
 
 class TablesView(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         request=TablesSerializer,
@@ -84,7 +83,7 @@ class TablesView(APIView):
 
 
 class TablesViewV3(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         request=TablesSerializer,

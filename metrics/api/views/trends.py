@@ -3,7 +3,6 @@ from http import HTTPStatus
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
 
 from caching.decorators import cache_response
 from metrics.api.serializers import TrendsQuerySerializer, TrendsResponseSerializer
@@ -20,7 +19,7 @@ TRENDS_API_TAG = "trends"
 
 
 class TrendsView(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         parameters=[TrendsQuerySerializer],
@@ -88,7 +87,7 @@ class TrendsView(APIView):
 
 
 class TrendsViewBeta(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         parameters=[TrendsQuerySerializerBeta],

@@ -6,7 +6,6 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.renderers import CoreJSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_api_key.permissions import HasAPIKey
 
 from caching.decorators import cache_response
 from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
@@ -36,7 +35,7 @@ class DownloadsView(APIView):
         "date_from",
         "date_to",
     ]
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     renderer_classes = (CoreJSONRenderer,)
 
