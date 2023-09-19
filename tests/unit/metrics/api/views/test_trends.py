@@ -5,11 +5,11 @@ from metrics.api.views.trends import TrendsViewBeta
 
 
 class TestTrendsView:
-    def test_sets_api_key_restriction(self):
+    def test_sets_no_api_key_restriction(self):
         """
         Given an instance of the `TrendsView`
         When the `permission_classes` attribute is called
-        Then the `HasAPIKey` class is in the returned list
+        Then an empty list is returned
         """
         # Given
         trends_view = TrendsViewBeta()
@@ -18,7 +18,7 @@ class TestTrendsView:
         permission_classes = trends_view.permission_classes
 
         # Then
-        assert HasAPIKey in permission_classes
+        assert permission_classes == []
 
     def test_allowed_http_methods_contains_get_method(self):
         """
