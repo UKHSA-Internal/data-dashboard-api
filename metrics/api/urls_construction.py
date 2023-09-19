@@ -173,6 +173,7 @@ class AppMode(Enum):
     PRIVATE_API = "PRIVATE_API"
     PUBLIC_API = "PUBLIC_API"
     FEEDBACK_API = "FEEDBACK_API"
+    INGESTION = "INGESTION"
 
 
 def construct_urlpatterns(
