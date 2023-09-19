@@ -77,9 +77,7 @@ class TestTablesView:
         path = "/api/tables/v2/"
 
         # When
-        response: Response = client.post(
-            path=path, data=valid_payload, format="json"
-        )
+        response: Response = client.post(path=path, data=valid_payload, format="json")
 
         # Then
         assert response.status_code != HTTPStatus.UNAUTHORIZED
@@ -118,9 +116,7 @@ class TestTablesView:
         path = "/api/tables/v2/"
 
         # When
-        response: Response = client.post(
-            path=path, data=valid_payload, format="json"
-        )
+        response: Response = client.post(path=path, data=valid_payload, format="json")
 
         # Then
         expected_response = [
@@ -170,9 +166,7 @@ class TestTablesView:
         path = "/api/tables/v2/"
 
         # When
-        response: Response = client.post(
-            path=path, data=valid_payload, format="json"
-        )
+        response: Response = client.post(path=path, data=valid_payload, format="json")
 
         # Then
         expected_response = [
