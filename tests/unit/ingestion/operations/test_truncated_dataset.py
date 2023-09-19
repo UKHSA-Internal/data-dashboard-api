@@ -4,7 +4,7 @@ from unittest import mock
 from _pytest.logging import LogCaptureFixture
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.truncated_dataset import (
+from ingestion.operations.truncated_dataset import (
     _gather_test_data_source_file_paths,
     clear_metrics_tables,
     collect_all_metric_models,
@@ -25,7 +25,7 @@ from metrics.data.models.core_models import (
     Topic,
 )
 
-MODULE_PATH = "metrics.data.operations.truncated_dataset"
+MODULE_PATH = "ingestion.operations.truncated_dataset"
 
 
 class TestGatherTestDataSourceFilePaths:

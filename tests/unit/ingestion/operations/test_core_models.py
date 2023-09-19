@@ -1,13 +1,13 @@
 from unittest import mock
 
-from metrics.data.operations.ingestion import (
+from ingestion.operations.core_models import (
     DEFAULT_BATCH_SIZE,
     create_core_and_api_timeseries,
     create_core_headlines,
     generate_core_time_series,
 )
 
-MODULE_PATH = "metrics.data.operations.ingestion"
+MODULE_PATH = "ingestion.operations.core_models"
 
 
 class TestCreateCoreHeadlines:

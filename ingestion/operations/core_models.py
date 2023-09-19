@@ -1,9 +1,9 @@
 from django.db.models.manager import Manager
 
 from ingestion.data_transfer_models import OutgoingHeadlineDTO, OutgoingTimeSeriesDTO
+from ingestion.operations.api_models import generate_api_time_series
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from metrics.data.operations.api_models_beta import generate_api_time_series
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 DEFAULT_BATCH_SIZE = 100
