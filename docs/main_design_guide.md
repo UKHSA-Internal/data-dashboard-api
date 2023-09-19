@@ -127,6 +127,7 @@ There are a number of different options available for this setting:
 - `"CMS_ADMIN"` - Used for deploying the CMS admin application only. This is the component used by the content creators.
 - `"PRIVATE_API"` - Deployment of the private API, which will only be used by the front end application.
 - `"PUBLIC_API"` - Deploying the hyperlinked browsable public API.
+- `"FEEDBACK_API"` - Deployment of the feedback API, which will only be used by the front end application for submitting user suggestion feedback.`
 
 Note that the same image is used to deploy each of these services. 
 The `APP_MODE` environment variable is used to toggle certain groups of endpoints off depending on the value being set.
