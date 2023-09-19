@@ -8,17 +8,17 @@ import logging
 
 from django.db import models
 
+from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from metrics.data.models.api_models import APITimeSeries
-from metrics.data.models.core_models import CoreTimeSeries
 
-DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
-DEFAULT_API_TIME_SERIES_MANAGER = APITimeSeries.objects
+DEFAULT_CORE_TIME_SERIES_MANAGER = MetricsAPIInterface.get_core_timeseries_manager()
+DEFAULT_API_TIME_SERIES_MANAGER = MetricsAPIInterface.get_api_timeseries_manager()
 
 logger = logging.getLogger(__name__)
 
 
 def generate_api_time_series(
-    all_core_time_series: list[CoreTimeSeries],
+    all_core_time_series: list["CoreTimeSeries"],
     api_time_series_manager: models.manager = DEFAULT_API_TIME_SERIES_MANAGER,
     batch_size: int = 100,
 ) -> None:
@@ -50,10 +50,10 @@ def generate_api_time_series(
 
 
 def _create_api_time_series_model_instances(
-    all_core_time_series: list[CoreTimeSeries],
-) -> list[APITimeSeries]:
+    all_core_time_series: list["CoreTimeSeries"],
+) -> list["APITimeSeries"]:
     try:
-        first_core_time_series: CoreTimeSeries = all_core_time_series[0]
+        first_core_time_series: "CoreTimeSeries" = all_core_time_series[0]
     except IndexError:
         logger.info(
             "No CoreTimeSeries provided, therefore no APITimeSeries records will be created"
@@ -84,7 +84,7 @@ def _create_api_time_series_model_instances(
 
 
 def create_api_time_series_from_core_time_series(
-    core_time_series: CoreTimeSeries,
+    core_time_series: "CoreTimeSeries",
     theme: str = "",
     sub_theme: str = "",
     topic: str = "",
@@ -92,7 +92,7 @@ def create_api_time_series_from_core_time_series(
     metric_group: str = "",
     metric_frequency: str = "",
     refresh_date: str = "",
-) -> APITimeSeries:
+) -> "APITimeSeries":
     """Creates a new `APITimeSeries` object from the given `core_time_series`
 
     Notes:

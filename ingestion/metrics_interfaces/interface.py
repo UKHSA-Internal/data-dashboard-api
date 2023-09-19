@@ -1,5 +1,5 @@
 from metrics.data.enums import TimePeriod
-from metrics.data.models import core_models
+from metrics.data.models import api_models, core_models
 
 
 class MetricsAPIInterface:
@@ -46,6 +46,10 @@ class MetricsAPIInterface:
     @staticmethod
     def get_core_timeseries_manager():
         return core_models.CoreTimeSeries.objects
+
+    @staticmethod
+    def get_api_timeseries_manager():
+        return api_models.APITimeSeries.objects
 
     @staticmethod
     def get_time_period_enum() -> TimePeriod:

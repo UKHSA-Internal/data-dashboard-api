@@ -28,15 +28,6 @@ layers=
     metrics.api
     metrics.domain
     metrics.data
-ignore_imports=
-    metrics.data.operations.truncated_dataset -> metrics.api.settings
-
-[importlinter:contract:Metrics data access | operations slices]
-name = Metrics data access and operations slices are independent of each other
-type=independence
-modules=
-    metrics.data.operations
-    metrics.data.access
 
 #----------------------------------------- Public API contracts -------------------------------------------
 
@@ -88,8 +79,10 @@ forbidden_modules=
     public_api
 ignore_imports=
     ingestion.metrics_interfaces.interface -> metrics.data.models.core_models
-    ingestion.metrics_interfaces.interface -> metrics.data.operations.ingestion
+    ingestion.metrics_interfaces.interface -> metrics.data.models.api_models
     ingestion.metrics_interfaces.interface -> metrics.data.enums
+    ingestion.operations.api_models -> metrics.data.models.api_models
+    ingestion.operations.truncated_dataset -> metrics.api.settings
 
 #------------------------------------- Metrics Domain library contracts -------------------------------------
 
