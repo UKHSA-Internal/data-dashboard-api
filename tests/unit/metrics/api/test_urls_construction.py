@@ -346,6 +346,49 @@ class TestConstructUrlpatterns:
             excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
         )
 
+    # Tests for APP_MODE = "INGESTION"
+
+    def test_ingestion_mode_returns_feedback_api_urls(self):
+        """
+        Given an `app_mode` of "INGESTION"
+        When `construct_urlpatterns()` is called
+        Then the urlpatterns returned contain the feedback API endpoints
+        """
+        # Given
+        app_mode = AppMode.INGESTION.value
+
+        # When
+        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+
+        # Then
+        assert any("ingestion" in x.pattern.regex.pattern for x in urlpatterns)
+
+    @pytest.mark.parametrize(
+        "excluded_endpoint_path",
+        PRIVATE_API_ENDPOINT_PATHS
+        + PUBLIC_API_ENDPOINT_PATHS
+        + FEEDBACK_API_ENDPOINT_PATHS
+        + CMS_ADMIN_ENDPOINT_PATHS,
+    )
+    def test_ingestion_mode_does_not_return_other_urls(
+        self, excluded_endpoint_path: str
+    ):
+        """
+        Given an `app_mode` of "INGESTION"
+        When `construct_urlpatterns()` is called
+        Then the urlpatterns returned do not contain URLs for the other APIs
+        """
+        # Given
+        app_mode = AppMode.INGESTION.value
+
+        # When
+        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+
+        # Then
+        assert not any(
+            excluded_endpoint_path in x.pattern.regex.pattern for x in urlpatterns
+        )
+
     # Tests for common/shared endpoints
 
     @pytest.mark.parametrize(
@@ -376,6 +419,8 @@ class TestConstructUrlpatterns:
             AppMode.CMS_ADMIN.value,
             AppMode.PUBLIC_API.value,
             AppMode.PRIVATE_API.value,
+            AppMode.FEEDBACK_API.value,
+            AppMode.INGESTION.value,
             None,
             "",
             "COMPLETE_APP",
