@@ -18,7 +18,7 @@ TABLES_API_TAG = "tables"
 
 
 class TablesView(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         request=TablesSerializer,
@@ -84,7 +84,7 @@ class TablesView(APIView):
 
 
 class TablesViewV3(APIView):
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         request=TablesSerializer,
