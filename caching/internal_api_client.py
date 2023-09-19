@@ -32,11 +32,9 @@ class InternalAPIClient:
     def __init__(
         self,
         client: Optional[APIClient] = None,
-        api_key_manager: Optional[CustomAPIKeyManager] = None,
         force_refresh: bool = False,
         cache_check_only: bool = False,
     ):
-        self._api_key_manager = api_key_manager or self.create_api_key_manager()
         self._client = client or self.create_api_client()
 
         # Endpoints
@@ -51,36 +49,17 @@ class InternalAPIClient:
         self.force_refresh = force_refresh
         self.cache_check_only = cache_check_only
 
-    # API key manager & client
+    # API client
 
-    @property
-    def temporary_api_key_name(self) -> str:
-        return "Crawler Key"
-
-    def create_api_client(self) -> APIClient:
+    @staticmethod
+    def create_api_client() -> APIClient:
         """Initializes a new `APIClient` which can be used to emulate requests made to the private API.
 
         Returns:
-            An authenticated `APIClient` instance
+            An `APIClient` instance
 
         """
-        _, key = self._api_key_manager.create_key(name=self.temporary_api_key_name)
-
-        api_client = APIClient()
-        api_client.credentials(HTTP_AUTHORIZATION=key)
-
-        return api_client
-
-    @staticmethod
-    def create_api_key_manager() -> CustomAPIKeyManager:
-        """Initializes a new `CustomAPIKeyManager` which can be used to create a valid API key
-
-        Returns:
-            A `CustomAPIKeyManager` instance with the `APIKey` model set
-        """
-        api_key_manager = CustomAPIKeyManager()
-        api_key_manager.model = APIKey
-        return api_key_manager
+        return APIClient()
 
     # Headers
 
