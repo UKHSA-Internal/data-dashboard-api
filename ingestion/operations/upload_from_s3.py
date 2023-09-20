@@ -28,13 +28,14 @@ def download_files_and_upload(client: Optional[AWSClient] = None) -> None:
 
     """
     client = client or AWSClient()
-
-    filepaths: list[str] = client.download_all_items_in_bucket()
     clear_metrics_tables()
 
-    for filepath in filepaths:
-        _upload_file_and_remove_local_copy(filepath=filepath)
-        client.move_file_to_processed_folder(key=filepath)
+    keys: list[str] = client.list_item_keys_of_in_folder()
+
+    for key in keys:
+        downloaded_filepath: str = client.download_item(key=key)
+        _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
+        client.move_file_to_processed_folder(key=key)
 
     logger.info("Completed dataset upload")
 
