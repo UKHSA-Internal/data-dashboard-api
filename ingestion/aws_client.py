@@ -62,8 +62,11 @@ class AWSClient:
             List of keys of all the items in the bucket
 
         """
+        logger.info(f"Downloading all items in {BUCKET_NAME}")
         items: list[S3_BUCKET_ITEM_OBJECT_TYPE] = self.list_contents()
-        return [self.download_item(key=item["Key"]) for item in items]
+        keys = [self.download_item(key=item["Key"]) for item in items]
+        logger.info(f"Completed downloading all items in {BUCKET_NAME}")
+        return keys
 
     def move_file_to_processed_folder(self, key: str) -> None:
         """Moves the file matching the given `key` into the `processed/` folder within the s3 bucket
