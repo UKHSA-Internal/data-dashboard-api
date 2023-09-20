@@ -54,7 +54,7 @@ class AWSClient:
             The input `key`
 
         """
-        filename: str = key.split(FOLDER_TO_COLLECT_FILES_FROM)[1]
+        filename: str = self._get_filename_from_key(key=key)
         logger.info(f"Downloading {filename} from s3")
         self._client.download_file(Bucket=BUCKET_NAME, Key=key, Filename=filename)
         return filename
@@ -69,11 +69,18 @@ class AWSClient:
             None
 
         """
-        logger.info(f"Moving `{key}` to `processed/` in s3 bucket")
+        filename: str = self._get_filename_from_key(key=key)
+        logger.info(
+            f"Moving `{filename}` from `{FOLDER_TO_COLLECT_FILES_FROM}` to `{FOLDER_TO_MOVE_COMPLETED_FILES_TO}` in s3"
+        )
         copy_source = {"Bucket": BUCKET_NAME, "Key": key}
         self._client.copy(
             CopySource=copy_source,
             Bucket=BUCKET_NAME,
-            Key=f"{FOLDER_TO_MOVE_COMPLETED_FILES_TO}/{key}",
+            Key=f"{FOLDER_TO_MOVE_COMPLETED_FILES_TO}{filename}",
         )
         self._client.delete_object(Bucket=BUCKET_NAME, Key=key)
+
+    @staticmethod
+    def _get_filename_from_key(key: str) -> str:
+        return key.split(FOLDER_TO_COLLECT_FILES_FROM)[1]
