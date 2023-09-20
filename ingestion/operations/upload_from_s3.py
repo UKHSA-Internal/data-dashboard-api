@@ -36,7 +36,7 @@ def download_files_and_upload(client: Optional[AWSClient] = None) -> None:
         _upload_file_and_remove_local_copy(filepath=filepath)
         client.move_file_to_processed_folder(key=filepath)
 
-    print("Completed dataset upload")
+    logger.info("Completed dataset upload")
 
 
 def _upload_file_and_remove_local_copy(filepath: str):
