@@ -54,7 +54,8 @@ class AWSClient:
             The input `key`
 
         """
-        filename = key.split(FOLDER_TO_COLLECT_FILES_FROM)[1]
+        filename: str = key.split(FOLDER_TO_COLLECT_FILES_FROM)[1]
+        logger.info(f"Downloading {filename} from s3")
         self._client.download_file(Bucket=BUCKET_NAME, Key=key, Filename=filename)
         return filename
 
