@@ -3,15 +3,15 @@ from unittest import mock
 import pytest
 from _pytest.logging import LogCaptureFixture
 
-from metrics.data.managers.api_models.time_series import APITimeSeriesManager
-from metrics.data.models.api_models import APITimeSeries
-from metrics.data.models.core_models import CoreTimeSeries
-from metrics.data.operations.api_models_beta import (
+from ingestion.operations.api_models import (
     create_api_time_series_from_core_time_series,
     generate_api_time_series,
 )
+from metrics.data.managers.api_models.time_series import APITimeSeriesManager
+from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.core_models import CoreTimeSeries
 
-MODULE_PATH: str = "metrics.data.operations.api_models_beta"
+MODULE_PATH: str = "ingestion.operations.api_models"
 
 
 @pytest.fixture

@@ -1,33 +1,21 @@
+import logging
+import os
+
+from ingestion.metrics_interfaces.interface import MetricsAPIInterface
+
 """
 This file contains operation-like (write) functionality for interacting with the database layer.
 This shall only include functionality which is used to write to the database.
 
-Specifically, this file contains write database logic for the core models only.
-
 NOTE: This contains the functionality used to seed the database with the truncated test dataset only
 """
-import logging
-import os
+
 from pathlib import Path
 
 from django.db import models
 
 from ingestion.file_ingestion import file_ingester
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
-from metrics.data.models.api_models import APITimeSeries
-from metrics.data.models.core_models import (
-    Age,
-    CoreHeadline,
-    CoreTimeSeries,
-    Geography,
-    GeographyType,
-    Metric,
-    MetricGroup,
-    Stratum,
-    SubTheme,
-    Theme,
-    Topic,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -42,21 +30,21 @@ def _gather_test_data_source_file_paths() -> list[Path]:
     ]
 
 
-def collect_all_metric_models() -> tuple[models.Model, ...]:
-    """Collects all model classes associated with the metrics app"""
+def collect_all_metric_model_managers() -> tuple[models.Manager, ...]:
+    """Collects all model managers associated with the metrics app"""
     return (
-        CoreHeadline,
-        CoreTimeSeries,
-        APITimeSeries,
-        Theme,
-        SubTheme,
-        Topic,
-        MetricGroup,
-        Metric,
-        GeographyType,
-        Geography,
-        Stratum,
-        Age,
+        MetricsAPIInterface.get_core_headline_manager(),
+        MetricsAPIInterface.get_core_timeseries_manager(),
+        MetricsAPIInterface.get_api_timeseries_manager(),
+        MetricsAPIInterface.get_metric_manager(),
+        MetricsAPIInterface.get_metric_group_manager(),
+        MetricsAPIInterface.get_age_manager(),
+        MetricsAPIInterface.get_geography_manager(),
+        MetricsAPIInterface.get_geography_type_manager(),
+        MetricsAPIInterface.get_stratum_manager(),
+        MetricsAPIInterface.get_topic_manager(),
+        MetricsAPIInterface.get_theme_manager(),
+        MetricsAPIInterface.get_sub_theme_manager(),
     )
 
 
@@ -67,11 +55,11 @@ def clear_metrics_tables() -> None:
          None
     """
 
-    metric_models: tuple[models.Model] = collect_all_metric_models()
+    model_managers: tuple[models.Manager] = collect_all_metric_model_managers()
 
-    for model in metric_models:
-        logger.info(f"Deleting records of {model.__name__}")
-        model.objects.all().delete()
+    for model_manager in model_managers:
+        logger.info(f"Deleting records of {model_manager.model.__name__}")
+        model_manager.all().delete()
 
     logger.info("Completed deleting existing metrics records")
 

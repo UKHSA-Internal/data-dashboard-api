@@ -1,15 +1,13 @@
 from django.db.models.manager import Manager
 
 from ingestion.data_transfer_models import OutgoingHeadlineDTO, OutgoingTimeSeriesDTO
-from metrics.data.models.api_models import APITimeSeries
-from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from metrics.data.operations.api_models_beta import generate_api_time_series
+from ingestion.metrics_interfaces.interface import MetricsAPIInterface
+from ingestion.operations.api_models import generate_api_time_series
 
-DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 DEFAULT_BATCH_SIZE = 100
-
-DEFAULT_CORE_TIMESERIES_MANAGER = CoreTimeSeries.objects
-DEFAULT_API_TIMESERIES_MANAGER = APITimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = MetricsAPIInterface.get_core_headline_manager()
+DEFAULT_CORE_TIMESERIES_MANAGER = MetricsAPIInterface.get_core_timeseries_manager()
+DEFAULT_API_TIMESERIES_MANAGER = MetricsAPIInterface.get_api_timeseries_manager()
 
 
 def create_core_headlines(
@@ -34,7 +32,7 @@ def create_core_headlines(
         None
 
     """
-    core_headline_model_instances: list[CoreHeadline] = [
+    core_headline_model_instances: list["CoreHeadline"] = [
         core_headline_manager.model(
             metric_id=int(headline_dto.metric),
             geography_id=int(headline_dto.geography),
@@ -82,7 +80,7 @@ def create_core_and_api_timeseries(
         None
 
     """
-    core_timeseries_model_instances: list[CoreTimeSeries] = generate_core_time_series(
+    core_timeseries_model_instances: list["CoreTimeSeries"] = generate_core_time_series(
         timeseries_dtos=timeseries_dtos,
         core_time_series_manager=core_time_series_manager,
         batch_size=batch_size,
@@ -98,7 +96,7 @@ def generate_core_time_series(
     timeseries_dtos: list[OutgoingTimeSeriesDTO],
     core_time_series_manager: DEFAULT_CORE_TIMESERIES_MANAGER,
     batch_size: int = DEFAULT_BATCH_SIZE,
-) -> list[CoreTimeSeries]:
+) -> list["CoreTimeSeries"]:
     """Creates 'CoreTimeSeries' records and returns the corresponding model instances
 
     Args:
@@ -132,7 +130,7 @@ def generate_core_time_series(
 def _create_core_timeseries_model_instances(
     timeseries_dtos: list[OutgoingTimeSeriesDTO],
     core_time_series_manager: DEFAULT_CORE_TIMESERIES_MANAGER,
-) -> list[CoreTimeSeries]:
+) -> list["CoreTimeSeries"]:
     first_timeseries_dto = timeseries_dtos[0]
     metric_id = int(first_timeseries_dto.metric)
     metric_frequency = first_timeseries_dto.metric_frequency

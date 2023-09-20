@@ -1,11 +1,5 @@
-from typing import Callable
-
 from metrics.data.enums import TimePeriod
-from metrics.data.models import core_models
-from metrics.data.operations.ingestion import (
-    create_core_and_api_timeseries,
-    create_core_headlines,
-)
+from metrics.data.models import api_models, core_models
 
 
 class MetricsAPIInterface:
@@ -54,13 +48,9 @@ class MetricsAPIInterface:
         return core_models.CoreTimeSeries.objects
 
     @staticmethod
+    def get_api_timeseries_manager():
+        return api_models.APITimeSeries.objects
+
+    @staticmethod
     def get_time_period_enum() -> TimePeriod:
         return TimePeriod
-
-    @staticmethod
-    def get_create_core_headlines() -> Callable:
-        return create_core_headlines
-
-    @staticmethod
-    def get_create_core_timeseries() -> Callable:
-        return create_core_and_api_timeseries

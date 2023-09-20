@@ -15,7 +15,6 @@ from metrics.data.models.core_models import (
     Theme,
     Topic,
 )
-from metrics.data.operations.ingestion import create_core_headlines
 
 
 class TestMetricsAPIInterface:
@@ -198,20 +197,3 @@ class TestMetricsAPIInterface:
 
         # Then
         assert time_period_enum is TimePeriod
-
-    def test_get_create_core_headlines(self):
-        """
-        Given an instance of the `MetricsAPIInterface`
-        When `get_create_core_headlines()` is called from that object
-        Then the `get_create_core_headlines` function is returned
-        """
-        # Given
-        metrics_api_interface = interface.MetricsAPIInterface()
-
-        # When
-        create_core_headlines_function: Callable = (
-            metrics_api_interface.get_create_core_headlines()
-        )
-
-        # Then
-        assert create_core_headlines_function is create_core_headlines

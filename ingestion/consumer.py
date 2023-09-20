@@ -11,6 +11,10 @@ from ingestion.data_transfer_models import (
 )
 from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
+from ingestion.operations.core_models import (
+    create_core_and_api_timeseries,
+    create_core_headlines,
+)
 from ingestion.reader import Reader
 
 
@@ -30,9 +34,6 @@ DEFAULT_AGE_MANAGER = MetricsAPIInterface.get_age_manager()
 DEFAULT_STRATUM_MANAGER = MetricsAPIInterface.get_stratum_manager()
 DEFAULT_CORE_HEADLINE_MANAGER = MetricsAPIInterface.get_core_headline_manager()
 DEFAULT_CORE_TIMESERIES_MANAGER = MetricsAPIInterface.get_core_timeseries_manager()
-
-CREATE_CORE_HEADLINES: Callable = MetricsAPIInterface.get_create_core_headlines()
-CREATE_CORE_TIMESERIES: Callable = MetricsAPIInterface.get_create_core_timeseries()
 
 
 class Consumer:
@@ -453,7 +454,7 @@ class Consumer:
             OutgoingHeadlineDTO
         ] = self.create_outgoing_headlines_dtos_from_source()
 
-        return CREATE_CORE_HEADLINES(
+        return create_core_headlines(
             headline_dtos=outgoing_headline_dtos,
             core_headline_manager=self.core_headline_manager,
             batch_size=batch_size,
@@ -537,7 +538,7 @@ class Consumer:
             OutgoingTimeSeriesDTO
         ] = self.create_outgoing_timeseries_dtos_from_source()
 
-        return CREATE_CORE_TIMESERIES(
+        return create_core_and_api_timeseries(
             timeseries_dtos=timeseries_dtos,
             core_time_series_manager=self.core_timeseries_manager,
             batch_size=batch_size,

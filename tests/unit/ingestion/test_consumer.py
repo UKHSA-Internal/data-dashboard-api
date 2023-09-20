@@ -267,7 +267,7 @@ class TestConsumer:
         assert consumer.reader.data == mocked_data
 
     @mock.patch.object(Consumer, "create_outgoing_headlines_dtos_from_source")
-    @mock.patch(f"{MODULE_PATH}.CREATE_CORE_HEADLINES")
+    @mock.patch(f"{MODULE_PATH}.create_core_headlines")
     def test_create_headlines_delegates_call_correctly(
         self,
         spy_create_core_headlines: mock.MagicMock,
@@ -301,16 +301,16 @@ class TestConsumer:
         )
 
     @mock.patch.object(Consumer, "create_outgoing_timeseries_dtos_from_source")
-    @mock.patch(f"{MODULE_PATH}.CREATE_CORE_TIMESERIES")
+    @mock.patch(f"{MODULE_PATH}.create_core_and_api_timeseries")
     def test_create_timeseries_delegates_call_correctly(
         self,
-        spy_create_timeseries: mock.MagicMock,
+        spy_create_core_and_api_timeseries: mock.MagicMock,
         spy_create_outgoing_timeseries_dtos_from_source: mock.MagicMock,
     ):
         """
         Given mocked data
         When `create_timeseries()` is called from an instance of `Consumer`
-        Then the call is delegated to `create_core_headlines()`
+        Then the call is delegated to `create_core_and_api_timeseries()`
         """
         # Given
         mocked_core_timeseries_manager = mock.Mock()
@@ -328,7 +328,7 @@ class TestConsumer:
         expected_outgoing_timeseries_dtos = (
             spy_create_outgoing_timeseries_dtos_from_source.return_value
         )
-        spy_create_timeseries.assert_called_once_with(
+        spy_create_core_and_api_timeseries.assert_called_once_with(
             timeseries_dtos=expected_outgoing_timeseries_dtos,
             core_time_series_manager=mocked_core_timeseries_manager,
             batch_size=batch_size,
