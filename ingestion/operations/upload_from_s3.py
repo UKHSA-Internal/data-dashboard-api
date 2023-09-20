@@ -3,7 +3,8 @@ import os
 from typing import Optional
 
 from ingestion.aws_client import AWSClient
-from ingestion.operations.truncated_dataset import _upload_file, clear_metrics_tables
+from ingestion.file_ingestion import _upload_file
+from ingestion.operations.truncated_dataset import clear_metrics_tables
 
 logger = logging.getLogger(__name__)
 
