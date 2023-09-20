@@ -1,5 +1,6 @@
 import datetime
 import logging
+from typing import Optional
 
 import boto3
 import botocore.client
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class AWSClient:
-    def __init__(self, client: botocore.client.BaseClient = None):
+    def __init__(self, client: Optional[botocore.client.BaseClient] = None):
         boto3.setup_default_session(profile_name=PROFILE_NAME)
         self._client = client or boto3.client("s3")
 
