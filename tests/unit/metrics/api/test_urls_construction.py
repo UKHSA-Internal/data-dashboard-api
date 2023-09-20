@@ -152,7 +152,7 @@ class TestConstructUrlpatterns:
 
     @pytest.mark.parametrize(
         "private_api_endpoint_path",
-        PRIVATE_API_ENDPOINT_PATHS + INGESTION_API_ENDPOINT_PATHS,
+        PRIVATE_API_ENDPOINT_PATHS,
     )
     def test_private_api_mode_returns_private_api_urls(
         self, private_api_endpoint_path: str
@@ -203,7 +203,8 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PUBLIC_API_ENDPOINT_PATHS
         + CMS_ADMIN_ENDPOINT_PATHS
-        + FEEDBACK_API_ENDPOINT_PATHS,
+        + FEEDBACK_API_ENDPOINT_PATHS
+        + INGESTION_API_ENDPOINT_PATHS,
     )
     def test_private_api_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
@@ -250,7 +251,8 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + CMS_ADMIN_ENDPOINT_PATHS
-        + FEEDBACK_API_ENDPOINT_PATHS,
+        + FEEDBACK_API_ENDPOINT_PATHS
+        + INGESTION_API_ENDPOINT_PATHS,
     )
     def test_public_api_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
@@ -292,7 +294,8 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + PUBLIC_API_ENDPOINT_PATHS
-        + FEEDBACK_API_ENDPOINT_PATHS,
+        + FEEDBACK_API_ENDPOINT_PATHS
+        + INGESTION_API_ENDPOINT_PATHS,
     )
     def test_cms_admin_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
@@ -334,7 +337,8 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + PUBLIC_API_ENDPOINT_PATHS
-        + CMS_ADMIN_ENDPOINT_PATHS,
+        + CMS_ADMIN_ENDPOINT_PATHS
+        + INGESTION_API_ENDPOINT_PATHS,
     )
     def test_feedback_api_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
