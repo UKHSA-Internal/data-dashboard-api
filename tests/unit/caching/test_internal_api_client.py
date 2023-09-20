@@ -388,8 +388,18 @@ class TestInternalAPIClient:
         # Then
         assert response == internal_api_client._client.get.return_value
         expected_path = f"{internal_api_client.pages_endpoint_path}{fake_page_id}"
-        mocked_client.get.assert_called_once_with(
-            path=expected_path,
-            headers=internal_api_client.build_headers(),
-            format="json",
-        )
+
+        expected_calls = [
+            mock.call(
+                path=expected_path,
+                headers=internal_api_client.build_headers(),
+                format="json",
+            ),
+            mock.call(
+                path=f"{expected_path}/",
+                headers=internal_api_client.build_headers(),
+                format="json",
+            ),
+        ]
+
+        mocked_client.get.assert_has_calls(calls=expected_calls, any_order=True)
