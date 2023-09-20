@@ -53,8 +53,8 @@ def clear_metrics_tables() -> None:
 
     Returns:
          None
-    """
 
+    """
     model_managers: tuple[models.Manager] = collect_all_metric_model_managers()
 
     for model_manager in model_managers:
