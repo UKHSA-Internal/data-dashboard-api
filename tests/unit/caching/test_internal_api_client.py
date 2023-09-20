@@ -7,6 +7,7 @@ from rest_framework_api_key.models import APIKey
 from caching.internal_api_client import (
     CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
+    PAGE_TYPES,
     InternalAPIClient,
 )
 from metrics.data.managers.api_keys import CustomAPIKeyManager
@@ -304,6 +305,70 @@ class TestInternalAPIClient:
             path=internal_api_client.pages_endpoint_path,
             headers=internal_api_client.build_headers(),
             format="json",
+        )
+
+    @pytest.mark.parametrize(
+        "page_type_query_param",
+        ["common.CommonPage", "topic.TopicPage", "home.HomePage"],
+    )
+    def test_hit_pages_list_endpoint_for_page_type_query_param_delegates_call_correctly(
+        self, page_type_query_param: str
+    ):
+        """
+        Given a client
+        When `hit_pages_list_endpoint_for_page_type_query_param()`
+            is called from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        response = (
+            internal_api_client.hit_pages_list_endpoint_for_page_type_query_param(
+                page_type_query_param=page_type_query_param
+            )
+        )
+
+        # Then
+        assert response == internal_api_client._client.get.return_value
+        mocked_client.get.assert_called_with(
+            path=internal_api_client.pages_endpoint_path,
+            headers=internal_api_client.build_headers(),
+            data={"type": page_type_query_param},
+            format="json",
+        )
+
+    @mock.patch.object(
+        InternalAPIClient, "hit_pages_list_endpoint_for_page_type_query_param"
+    )
+    def test_hit_pages_list_endpoint_for_all_page_types_delegates_call_correctly(
+        self, spy_hit_pages_list_endpoint_for_page_type_query_param: mock.MagicMock
+    ):
+        """
+        Given a client
+        When `hit_pages_list_endpoint_for_all_page_types()`
+            is called from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+
+        Patches:
+            `spy_hit_pages_list_endpoint_for_page_type_query_param`: For the
+                main assertion, to check each page type query param is processed
+        """
+        # Given
+        mocked_client = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        internal_api_client.hit_pages_list_endpoint_for_all_page_types()
+
+        # Then
+        expected_calls = [
+            mock.call(page_type_query_param=page_type) for page_type in PAGE_TYPES
+        ]
+        spy_hit_pages_list_endpoint_for_page_type_query_param.assert_has_calls(
+            calls=expected_calls, any_order=True
         )
 
     def test_hit_pages_detail_endpoint_delegates_call_correctly(self):
