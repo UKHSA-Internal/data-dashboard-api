@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import Optional
 
@@ -11,6 +12,8 @@ FOLDER_TO_COLLECT_FILES_FROM = "in/"
 FOLDER_TO_MOVE_COMPLETED_FILES_TO = "processed/"
 
 logger = logging.getLogger(__name__)
+
+S3_BUCKET_ITEM_OBJECT_TYPE = dict[str, str | int | datetime.datetime]
 
 
 class AWSClient:
@@ -31,10 +34,10 @@ class AWSClient:
                 ]
 
         """
-        bucket_objects = self._client.list_objects(
+        bucket_objects: list[S3_BUCKET_ITEM_OBJECT_TYPE] = self._client.list_objects(
             Bucket=BUCKET_NAME, Prefix=FOLDER_TO_COLLECT_FILES_FROM
         )
-        bucket_contents = bucket_objects["Contents"]
+        bucket_contents: list[S3_BUCKET_ITEM_OBJECT_TYPE] = bucket_objects["Contents"]
         return [
             bucket_item["Key"]
             for bucket_item in bucket_contents
