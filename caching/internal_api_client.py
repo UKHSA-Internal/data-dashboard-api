@@ -19,6 +19,9 @@ CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
 CACHE_CHECK_HEADER_KEY = "Cache-Check"
 
 
+PAGE_TYPES = ("common.CommonPage", "topic.TopicPage", "home.HomePage")
+
+
 class InternalAPIClient:
     """The client used to interact with the private API
 
@@ -152,6 +155,40 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 
+    def hit_pages_list_endpoint_for_page_type_query_param(
+        self, page_type_query_param: str
+    ) -> Response:
+        """Sends a `GET` request to the list `pages/` endpoint with a query param for the given page type
+
+        Args:
+            page_type_query_param: The query parameter for the page type
+                E.g. "topic.TopicPage"
+
+        Returns:
+            `Response` from the list `pages/?type=` endpoint
+
+        """
+        path = self.pages_endpoint_path
+        headers = self.build_headers()
+        return self._client.get(
+            path=path,
+            headers=headers,
+            data={"type": page_type_query_param},
+            format="json",
+        )
+
+    def hit_pages_list_endpoint_for_all_page_types(self) -> None:
+        """Sends a `GET` request to the list `pages/` endpoint with a query param for each page type
+
+        Returns:
+            None
+
+        """
+        for page_type in PAGE_TYPES:
+            self.hit_pages_list_endpoint_for_page_type_query_param(
+                page_type_query_param=page_type
+            )
+
     def hit_pages_detail_endpoint(self, page_id: int) -> Response:
         """Sends a `GET` request to the detail `pages/` endpoint for the given `page_id`
 
@@ -161,4 +198,5 @@ class InternalAPIClient:
         """
         path = f"{self.pages_endpoint_path}{page_id}"
         headers = self.build_headers()
+        self._client.get(path=f"{path}/", headers=headers, format="json")
         return self._client.get(path=path, headers=headers, format="json")

@@ -50,6 +50,7 @@ class Crawler:
 
         """
         self._internal_api_client.hit_pages_list_endpoint()
+        self._internal_api_client.hit_pages_list_endpoint_for_all_page_types()
 
     def process_detail_pages_for_headless_cms_api(
         self, pages: list[HomePage, TopicPage]
