@@ -11,8 +11,8 @@ load_dotenv(dotenv_path)
 logger = logging.getLogger(__name__)
 
 # The environment in which this app is running in.
-# If this is set to "LOCAL" then a local sqlite db will be used
-# If this is set to any value other than "LOCAL"
+# If this is set to "LOCAL" or "STANDALONE" then a local sqlite db will be used
+# If this is set to any value other than "LOCAL" or "STANDALONE"
 #   then the `POSTGRES` credentials below
 #   will be used to connect to a remote database
 APIENV = os.environ.get("APIENV")

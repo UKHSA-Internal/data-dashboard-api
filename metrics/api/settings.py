@@ -146,7 +146,7 @@ else:
 # Puts the db at the root level of the repo instead of within the `metrics` app
 ROOT_LEVEL_BASE_DIR = BASE_DIR.parent
 
-if config.APIENV == "LOCAL":
+if config.APIENV in ("LOCAL", "STANDALONE"):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
