@@ -27,7 +27,6 @@ class TestCrawlerProcessHeadlessCMSAPI:
         spy_internal_api_client.hit_pages_list_endpoint.assert_called_once()
         spy_internal_api_client.hit_pages_list_endpoint_for_all_page_types.assert_called_once()
 
-
     @mock.patch.object(Crawler, "process_individual_page_for_headless_cms_api")
     def test_process_detail_pages_for_headless_cms_api_delegates_call_for_each_page(
         self,
