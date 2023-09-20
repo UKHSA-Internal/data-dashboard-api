@@ -85,16 +85,18 @@ def upload_truncated_test_data() -> None:
 
     for test_source_data_file_path in test_source_data_file_paths:
         test_source_data_file_name: str = test_source_data_file_path.name
-        logger.info(f"Uploading {test_source_data_file_name}")
-
-        with open(test_source_data_file_path, "rb") as f:
-            try:
-                file_ingester(file=f)
-            except Exception as error:
-                logger.warning(
-                    f"Failed upload of {test_source_data_file_name} due to {error}"
-                )
-            else:
-                logger.info(f"Completed {test_source_data_file_name}")
+        _upload_file(filepath=test_source_data_file_name)
 
     logger.info("Completed truncated dataset upload")
+
+
+def _upload_file(filepath: str) -> None:
+    logger.info(f"Uploading {filepath}")
+
+    with open(filepath, "rb") as f:
+        try:
+            file_ingester(file=f)
+        except Exception as error:
+            logger.warning(f"Failed upload of {filepath} due to {error}")
+        else:
+            logger.info(f"Completed {filepath}")
