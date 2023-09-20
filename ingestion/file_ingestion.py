@@ -1,7 +1,10 @@
 import io
+import logging
 from enum import Enum
 
 from ingestion.consumer import Consumer
+
+logger = logging.getLogger(__name__)
 
 
 class DataSourceFileType(Enum):
@@ -70,3 +73,15 @@ def file_ingester(file: io.FileIO) -> None:
         return consumer.create_timeseries()
 
     raise ValueError()
+
+
+def _upload_file(filepath: str) -> None:
+    logger.info(f"Uploading {filepath}")
+
+    with open(filepath, "rb") as f:
+        try:
+            file_ingester(file=f)
+        except Exception as error:
+            logger.warning(f"Failed upload of {filepath} due to {error}")
+        else:
+            logger.info(f"Completed ingestion of {filepath}")
