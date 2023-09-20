@@ -71,6 +71,8 @@ class AWSClient:
         logger.info(f"Moving `{key}` to `processed/` in s3 bucket")
         copy_source = {"Bucket": BUCKET_NAME, "Key": key}
         self._client.copy(
-            copy_source, BUCKET_NAME, f"{FOLDER_TO_MOVE_COMPLETED_FILES_TO}/{key}"
+            CopySource=copy_source,
+            Bucket=BUCKET_NAME,
+            Key=f"{FOLDER_TO_MOVE_COMPLETED_FILES_TO}/{key}",
         )
         self._client.delete_object(Bucket=BUCKET_NAME, Key=key)
