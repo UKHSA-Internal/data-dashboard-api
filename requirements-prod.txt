@@ -94,7 +94,7 @@ toml==0.10.2
 tomli==2.0.1
 typing_extensions==4.7.1
 uritemplate==4.1.1
-urllib3==2.0.4
+urllib3==1.25.4
 virtualenv==20.24.2
 wagtail==5.0.1
 webencodings==0.5.1
