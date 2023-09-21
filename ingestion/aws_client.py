@@ -5,11 +5,10 @@ from typing import Optional
 import boto3
 import botocore.client
 
-BUCKET_NAME = ""
-PROFILE_NAME = ""
+import config
 
-FOLDER_TO_COLLECT_FILES_FROM = "in/"
-FOLDER_TO_MOVE_COMPLETED_FILES_TO = "processed/"
+DEFAULT_INBOUND_INGESTION_FOLDER = "in/"
+DEFAULT_DESTINATION_INGESTION_FOLDER = "processed/"
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +16,29 @@ S3_BUCKET_ITEM_OBJECT_TYPE = dict[str, str | int | datetime.datetime]
 
 
 class AWSClient:
-    def __init__(self, client: Optional[botocore.client.BaseClient] = None):
-        boto3.setup_default_session(profile_name=PROFILE_NAME)
-        self._client = client or boto3.client("s3")
+    def __init__(
+        self,
+        client: Optional[botocore.client.BaseClient] = None,
+        profile_name: str = config.AWS_PROFILE_NAME,
+        bucket_name: str = config.INGESTION_BUCKET_NAME,
+        inbound_folder: str = DEFAULT_INBOUND_INGESTION_FOLDER,
+        destination_folder: str = DEFAULT_DESTINATION_INGESTION_FOLDER,
+    ):
+        self._client = client or self.create_client(profile_name=profile_name)
+        self._bucket_name = bucket_name
+        self._inbound_folder = inbound_folder
+        self._destination_folder = destination_folder
+
+    @classmethod
+    def create_client(cls, profile_name: str) -> botocore.client.BaseClient:
+        """Creates a boto3 client instance connected to s3
+
+        Returns:
+            A boto3 client instance for s3
+
+        """
+        boto3.setup_default_session(profile_name=profile_name)
+        return boto3.client("s3")
 
     def list_item_keys_of_in_folder(self) -> list[str]:
         """Lists the keys of all items the `in/` folder of the s3 bucket
@@ -35,7 +54,7 @@ class AWSClient:
 
         """
         bucket_objects: list[S3_BUCKET_ITEM_OBJECT_TYPE] = self._client.list_objects(
-            Bucket=BUCKET_NAME, Prefix=FOLDER_TO_COLLECT_FILES_FROM
+            Bucket=self._bucket_name, Prefix=self._inbound_folder
         )
         bucket_contents: list[S3_BUCKET_ITEM_OBJECT_TYPE] = bucket_objects["Contents"]
         return [
@@ -56,7 +75,7 @@ class AWSClient:
         """
         filename: str = self._get_filename_from_key(key=key)
         logger.info(f"Downloading {filename} from s3")
-        self._client.download_file(Bucket=BUCKET_NAME, Key=key, Filename=filename)
+        self._client.download_file(Bucket=self._bucket_name, Key=key, Filename=filename)
         return filename
 
     def move_file_to_processed_folder(self, key: str) -> None:
@@ -71,16 +90,48 @@ class AWSClient:
         """
         filename: str = self._get_filename_from_key(key=key)
         logger.info(
-            f"Moving `{filename}` from `{FOLDER_TO_COLLECT_FILES_FROM}` to `{FOLDER_TO_MOVE_COMPLETED_FILES_TO}` in s3"
+            f"Moving `{filename}` from `{self._inbound_folder}` to `{self._destination_folder}` in s3"
         )
         copy_source = {"Bucket": BUCKET_NAME, "Key": key}
         self._client.copy(
-            CopySource=copy_source,
-            Bucket=BUCKET_NAME,
-            Key=f"{FOLDER_TO_MOVE_COMPLETED_FILES_TO}{filename}",
+            CopySource={"Bucket": self._bucket_name, "Key": key},
+            Bucket=self._bucket_name,
+            Key=self._build_destination_key(key=key),
         )
         self._client.delete_object(Bucket=BUCKET_NAME, Key=key)
 
-    @staticmethod
-    def _get_filename_from_key(key: str) -> str:
-        return key.split(FOLDER_TO_COLLECT_FILES_FROM)[1]
+        """
+        self._client.delete_object(Bucket=self._bucket_name, Key=key)
+
+    def _get_filename_from_key(self, key: str) -> str:
+        """Extracts the filename from the `key`
+
+        Examples:
+            If the inbound `key` of "in/abc.json" is provided,
+            then "abc.json" will be returned
+
+        Args:
+            key: The inbound key of the item in the bucket
+
+        Returns:
+            The filename associated with the item
+
+        """
+        return key.split(self._inbound_folder)[1]
+
+    def _build_destination_key(self, key: str) -> str:
+        """Constructs the full destination `key` of the item
+
+        Examples:
+            If the inbound `key` of "in/abc.json" is provided,
+            then "processed/abc.json" will be returned
+
+        Args:
+            key: The inbound key of the item in the bucket
+
+        Returns:
+            The destination key of the item
+
+        """
+        filename: str = self._get_filename_from_key(key=key)
+        return f"{self._destination_folder}{filename}"
