@@ -34,9 +34,25 @@ def download_files_and_upload(client: Optional[AWSClient] = None) -> None:
     keys: list[str] = client.list_item_keys_of_in_folder()
 
     for key in keys:
-        downloaded_filepath: str = client.download_item(key=key)
-        _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
-        client.move_file_to_processed_folder(key=key)
+        _download_file_ingest_and_teardown(key=key, client=client)
+
+    logger.info("Completed dataset upload")
+
+
+def _download_file_ingest_and_teardown(key: str, client: AWSClient) -> None:
+    """Download the file of the given `key`, ingest, remove the local copy and move to `processed/` in the s3 bucket
+
+    Args:
+        key: The key of the item to be downloaded and processed
+        client: The `AWSClient` used to interact with s3
+
+    Returns:
+        None
+
+    """
+    downloaded_filepath: str = client.download_item(key=key)
+    _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
+    client.move_file_to_processed_folder(key=key)
 
 
 def _upload_file_and_remove_local_copy(filepath: str) -> None:
