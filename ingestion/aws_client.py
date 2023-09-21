@@ -23,6 +23,7 @@ class AWSClient:
         As well as to download them and move them to the designated outbound folder
 
     """
+
     def __init__(
         self,
         client: Optional[botocore.client.BaseClient] = None,
