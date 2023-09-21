@@ -43,4 +43,4 @@ def download_files_and_upload(client: Optional[AWSClient] = None) -> None:
 
 def _upload_file_and_remove_local_copy(filepath: str):
     _upload_file(filepath=filepath)
-    os.remove(filepath)
+    os.remove(path=filepath)
