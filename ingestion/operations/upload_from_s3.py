@@ -38,9 +38,16 @@ def download_files_and_upload(client: Optional[AWSClient] = None) -> None:
         _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
         client.move_file_to_processed_folder(key=key)
 
-    logger.info("Completed dataset upload")
 
+def _upload_file_and_remove_local_copy(filepath: str) -> None:
+    """Ingest the file at the given `filepath` and remove from the filesystem after uploading
 
-def _upload_file_and_remove_local_copy(filepath: str):
+    Args:
+        filepath: The path of the file to be ingested
+
+    Returns:
+        None
+
+    """
     _upload_file(filepath=filepath)
     os.remove(path=filepath)
