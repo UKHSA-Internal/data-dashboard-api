@@ -76,9 +76,9 @@ class TestAWSClient:
     @mock.patch(f"{MODULE_PATH}.boto3")
     def test_create_client(self, spy_boto3: mock.MagicMock):
         """
-        Given an AWS profile namew
+        Given an AWS profile name
         When `create_client()` is called from the `AWSClient` class
-        Then a boto3 client is created
+        Then a boto3 client is created with the provided profile name
 
         Patches:
             `spy_boto3`: For the main assertions
@@ -95,6 +95,29 @@ class TestAWSClient:
         spy_boto3.setup_default_session.assert_called_once_with(
             profile_name=aws_profile_name
         )
+        assert boto3_client == spy_boto3.client.return_value
+
+    @mock.patch(f"{MODULE_PATH}.boto3")
+    def test_create_client_does_not_setup_default_session_for_no_profile_name(self, spy_boto3: mock.MagicMock):
+        """
+        Given no provided AWS profile name
+        When `create_client()` is called from the `AWSClient` class
+        Then a boto3 client is created
+        And a default session is not setup with any profile name
+
+        Patches:
+            `spy_boto3`: For the main assertions
+                and to check the `boto3` library
+                is used correctly to create the boto3 client
+
+        """
+        # Given
+        no_aws_profile_name = ""
+
+        boto3_client = AWSClient.create_client(profile_name=no_aws_profile_name)
+
+        # Then
+        spy_boto3.setup_default_session.assert_not_called()
         assert boto3_client == spy_boto3.client.return_value
 
     # Tests for the `list_item_keys_of_in_folder()` method

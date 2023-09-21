@@ -45,7 +45,8 @@ class AWSClient:
             A boto3 client instance for s3
 
         """
-        boto3.setup_default_session(profile_name=profile_name)
+        if profile_name:
+            boto3.setup_default_session(profile_name=profile_name)
         return boto3.client("s3")
 
     def list_item_keys_of_in_folder(self) -> list[str]:
