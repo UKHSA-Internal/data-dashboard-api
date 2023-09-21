@@ -98,7 +98,9 @@ class TestAWSClient:
         assert boto3_client == spy_boto3.client.return_value
 
     @mock.patch(f"{MODULE_PATH}.boto3")
-    def test_create_client_does_not_setup_default_session_for_no_profile_name(self, spy_boto3: mock.MagicMock):
+    def test_create_client_does_not_setup_default_session_for_no_profile_name(
+        self, spy_boto3: mock.MagicMock
+    ):
         """
         Given no provided AWS profile name
         When `create_client()` is called from the `AWSClient` class
