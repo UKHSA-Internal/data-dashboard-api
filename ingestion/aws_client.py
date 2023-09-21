@@ -16,6 +16,13 @@ S3_BUCKET_ITEM_OBJECT_TYPE = dict[str, str | int | datetime.datetime]
 
 
 class AWSClient:
+    """This class is used to interact with the designated s3 bucket
+
+    Notes:
+        Primarily used to list files in the designated inbound folder in the bucket.
+        As well as to download them and move them to the designated outbound folder
+
+    """
     def __init__(
         self,
         client: Optional[botocore.client.BaseClient] = None,
