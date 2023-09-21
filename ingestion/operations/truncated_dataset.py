@@ -14,7 +14,7 @@ from pathlib import Path
 
 from django.db import models
 
-from ingestion.file_ingestion import file_ingester
+from ingestion.file_ingestion import _upload_file
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
 logger = logging.getLogger(__name__)
@@ -53,8 +53,8 @@ def clear_metrics_tables() -> None:
 
     Returns:
          None
-    """
 
+    """
     model_managers: tuple[models.Manager] = collect_all_metric_model_managers()
 
     for model_manager in model_managers:
@@ -85,16 +85,6 @@ def upload_truncated_test_data() -> None:
 
     for test_source_data_file_path in test_source_data_file_paths:
         test_source_data_file_name: str = test_source_data_file_path.name
-        logger.info(f"Uploading {test_source_data_file_name}")
-
-        with open(test_source_data_file_path, "rb") as f:
-            try:
-                file_ingester(file=f)
-            except Exception as error:
-                logger.warning(
-                    f"Failed upload of {test_source_data_file_name} due to {error}"
-                )
-            else:
-                logger.info(f"Completed {test_source_data_file_name}")
+        _upload_file(filepath=test_source_data_file_name)
 
     logger.info("Completed truncated dataset upload")

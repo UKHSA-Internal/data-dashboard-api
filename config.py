@@ -63,3 +63,8 @@ REDIS_HOST = os.environ.get("REDIS_HOST", "")
 if not REDIS_HOST:
     logger.info("No REDIS_HOST given, falling back to localhost")
     REDIS_HOST = "redis://127.0.0.1:6379"
+
+# The name of the s3 bucket used for ingestion
+INGESTION_BUCKET_NAME = os.environ.get("INGESTION_BUCKET_NAME")
+# The name of the AWS profile to use for the AWS client used for ingestion
+AWS_PROFILE_NAME = os.environ.get("AWS_PROFILE_NAME")

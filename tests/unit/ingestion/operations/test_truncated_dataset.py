@@ -141,85 +141,45 @@ class TestClearMetricsTables:
 
 class TestUploadTruncatedTestData:
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
-    @mock.patch(f"{MODULE_PATH}.file_ingester")
-    def test_error_log_made_for_failed_file(
-        self,
-        mocked_file_ingester: mock.MagicMock,
-        mocked_clear_metrics_tables: mock.MagicMock,
-        caplog: LogCaptureFixture,
-    ):
-        """
-        Given the `file_ingester()` which will fail
-        When `upload_truncated_test_data()` is called
-        Then the correct log is made
-
-        Patches:
-            `mocked_file_ingester`: To simulate an error
-                occuring when uploading a file via the
-                call to the `file_ingester()` function
-            `mocked_clear_metrics_tables`: To remove
-                the side effect of clearing records
-                and having to hit the database
-        """
-        # Given
-        mocked_file_ingester.side_effect = ValidationError
-
-        # When
-        upload_truncated_test_data()
-
-        # Then
-        assert "Failed upload of" in caplog.text
-
-    @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
-    @mock.patch(f"{MODULE_PATH}.file_ingester")
+    @mock.patch(f"{MODULE_PATH}._upload_file")
     def test_logs_made_correctly(
         self,
-        mocked_file_ingester: mock.MagicMock,
+        mocked_upload_file: mock.MagicMock,
         mocked_clear_metrics_tables: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
         """
-        Given a set of truncated test files
+        Given no input
         When `upload_truncated_test_data()` is called
-        Then `file_ingester()` is called for each file
+        Then the correct log statement is recorded
 
         Patches:
-            `mocked_file_ingester`: To remove side effects
+            `mocked_upload_file`: To remove side effects
                 of having to upload to the database
             `mocked_clear_metrics_tables`: To remove
                 the side effect of clearing records
                 and having to hit the database
         """
-        # Given
-        gathered_test_file_paths: list[Path] = _gather_test_data_source_file_paths()
-
-        # When
+        # Given / When
         upload_truncated_test_data()
 
         # Then
-        formatted_logged_text: str = caplog.text
-        for gathered_test_file_path in gathered_test_file_paths:
-            gathered_test_file_name = gathered_test_file_path.name
-
-            assert f"Uploading {gathered_test_file_name}" in formatted_logged_text
-            assert f"Completed {gathered_test_file_name}" in formatted_logged_text
-
-        assert "Completed truncated dataset upload" in formatted_logged_text
+        assert "Completed truncated dataset upload" in caplog.text
 
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
-    @mock.patch(f"{MODULE_PATH}.file_ingester")
+    @mock.patch(f"{MODULE_PATH}._upload_file")
     def test_delegates_calls_successfully_for_each_source_file(
         self,
-        spy_file_ingester: mock.MagicMock,
+        spy_upload_file: mock.MagicMock,
         mocked_clear_metrics_tables: mock.MagicMock,
     ):
         """
         Given a set of truncated test files
         When `upload_truncated_test_data()` is called
-        Then `file_ingester()` is called for each file
+        Then `_upload_file()` is called for each file
 
         Patches:
-            `spy_file_ingester`: For the main assertion
+            `spy_upload_file`: For the main assertion
                  and for collecting the calls which were made
             `mocked_clear_metrics_tables`: To remove
                 the side effect of clearing records
@@ -234,23 +194,24 @@ class TestUploadTruncatedTestData:
         # Then
         file_paths_called_by_file_ingester = []
         # Get the names of all the files which were opened and given to the `file_ingester()`
-        for mock_call_made in spy_file_ingester.mock_calls:
+        for mock_call_made in spy_upload_file.mock_calls:
             call_kwargs = mock_call_made.kwargs
             # There will be a few magic method calls that we don't want to include
             # hence the filtering for calls made specifically with a file
-            if "file" in call_kwargs:
-                file_paths_called_by_file_ingester.append(call_kwargs["file"].name)
+            if "filepath" in call_kwargs:
+                file_paths_called_by_file_ingester.append(call_kwargs["filepath"])
 
         # Check that they match with the gathered test file paths
         for gathered_test_file_path in gathered_test_file_paths:
-            assert str(gathered_test_file_path) in file_paths_called_by_file_ingester
+            gathered_test_file_path: Path
+            assert gathered_test_file_path.name in file_paths_called_by_file_ingester
 
-    @mock.patch(f"{MODULE_PATH}.file_ingester")
+    @mock.patch(f"{MODULE_PATH}._upload_file")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_delegates_call_to_delete_existing_metrics(
         self,
         spy_clear_metrics_tables: mock.MagicMock,
-        mocked_file_ingester: mock.MagicMock,
+        mocked_upload_file: mock.MagicMock,
     ):
         """
         Given no input
@@ -260,7 +221,7 @@ class TestUploadTruncatedTestData:
 
         Patches:
             `spy_clear_metrics_tables`: For the main assertion
-            `mocked_file_ingester`: To remove side effects
+            `mocked_upload_file`: To remove side effects
                 of having to upload to the database
         """
         # Given / When
