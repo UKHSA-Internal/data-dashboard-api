@@ -57,6 +57,7 @@ class AWSClient:
             Bucket=self._bucket_name, Prefix=self._inbound_folder
         )
         bucket_contents: list[S3_BUCKET_ITEM_OBJECT_TYPE] = bucket_objects["Contents"]
+
         return [
             bucket_item["Key"]
             for bucket_item in bucket_contents
@@ -70,7 +71,7 @@ class AWSClient:
             key: The key of the item to be downloaded
 
         Returns:
-            The input `key`
+            The filename associated with the item `key`
 
         """
         filename: str = self._get_filename_from_key(key=key)
@@ -92,13 +93,33 @@ class AWSClient:
         logger.info(
             f"Moving `{filename}` from `{self._inbound_folder}` to `{self._destination_folder}` in s3"
         )
-        copy_source = {"Bucket": BUCKET_NAME, "Key": key}
+        self._copy_file_to_destination(key=key)
+        self._delete_file_from_inbound(key=key)
+
+    def _copy_file_to_destination(self, key: str) -> None:
+        """Copies the file matching the given `key` into the destination folder within the s3 bucket
+
+        Args:
+            key: The key of the item to be moved
+
+        Returns:
+            None
+
+        """
         self._client.copy(
             CopySource={"Bucket": self._bucket_name, "Key": key},
             Bucket=self._bucket_name,
             Key=self._build_destination_key(key=key),
         )
-        self._client.delete_object(Bucket=BUCKET_NAME, Key=key)
+
+    def _delete_file_from_inbound(self, key: str) -> None:
+        """Deletes the file matching the given `key` from the inbound folder within the s3 bucket
+
+        Args:
+            key: The key of the item to be moved
+
+        Returns:
+            None
 
         """
         self._client.delete_object(Bucket=self._bucket_name, Key=key)
