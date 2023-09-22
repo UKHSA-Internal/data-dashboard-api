@@ -155,7 +155,7 @@ class TestAWSClient:
             "MaxKeys": 1000,
         }
         mocked_boto3_client = aws_client_with_mocked_boto_client._client
-        mocked_boto3_client.list_objects.return_value = fake_returned_bucket_objects
+        mocked_boto3_client.list_objects_v2.return_value = fake_returned_bucket_objects
 
         # When
         keys: list[
@@ -202,7 +202,7 @@ class TestAWSClient:
             "MaxKeys": 1000,
         }
         mocked_boto3_client = aws_client_with_mocked_boto_client._client
-        mocked_boto3_client.list_objects.return_value = fake_returned_bucket_objects
+        mocked_boto3_client.list_objects_v2.return_value = fake_returned_bucket_objects
 
         # When
         keys: list[
