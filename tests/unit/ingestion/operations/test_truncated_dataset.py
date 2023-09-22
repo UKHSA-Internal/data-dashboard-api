@@ -204,7 +204,7 @@ class TestUploadTruncatedTestData:
         # Check that they match with the gathered test file paths
         for gathered_test_file_path in gathered_test_file_paths:
             gathered_test_file_path: Path
-            assert gathered_test_file_path.name in file_paths_called_by_file_ingester
+            assert str(gathered_test_file_path) in file_paths_called_by_file_ingester
 
     @mock.patch(f"{MODULE_PATH}._upload_file")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")

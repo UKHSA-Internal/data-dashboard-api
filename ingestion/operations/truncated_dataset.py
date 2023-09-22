@@ -84,7 +84,6 @@ def upload_truncated_test_data() -> None:
     test_source_data_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
     for test_source_data_file_path in test_source_data_file_paths:
-        test_source_data_file_name: str = test_source_data_file_path.name
-        _upload_file(filepath=test_source_data_file_name)
+        _upload_file(filepath=str(test_source_data_file_path))
 
     logger.info("Completed truncated dataset upload")
