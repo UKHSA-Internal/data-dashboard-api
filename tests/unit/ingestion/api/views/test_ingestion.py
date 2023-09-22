@@ -6,11 +6,11 @@ from ingestion.api.views.ingestion import IngestionView
 
 
 class TestIngestionView:
-    def test_sets_api_key_restriction(self):
+    def test_does_not_set_api_key_restriction(self):
         """
         Given an instance of the `IngestionView`
         When the `permission_classes` attribute is called
-        Then the `HasAPIKey` class is in the returned list
+        Then an empty list is returned
         """
         # Given
         ingestion_view = IngestionView()
@@ -19,7 +19,7 @@ class TestIngestionView:
         permission_classes = ingestion_view.permission_classes
 
         # Then
-        assert HasAPIKey in permission_classes
+        assert permission_classes == []
 
     def test_sets_multi_part_parser(self):
         """

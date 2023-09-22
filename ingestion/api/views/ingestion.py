@@ -13,7 +13,7 @@ INGESTION_API_TAG = "ingestion"
 
 class IngestionView(APIView):
     parser_classes = [MultiPartParser]
-    permission_classes = [HasAPIKey]
+    permission_classes = []
 
     @extend_schema(
         operation_id="upload_file",
