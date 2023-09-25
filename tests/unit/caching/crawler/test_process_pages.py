@@ -162,3 +162,26 @@ class TestCrawlerProcessPages:
                 f"Completed processing of content blocks within `{mocked_page.title}` page"
                 in caplog.text
             )
+
+    def test_logs_are_recorded_with_counter_of_number_of_pages_completed(
+        self,
+        crawler_with_mocked_internal_api_client: Crawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a list of mocked `Page` objects
+        When `process_pages()` is called from an instance of `Crawler`
+        Then the correct logs are made with a counter of completed of pages
+        """
+        # Given
+        pages_count = 10
+        mocked_pages = [mock.MagicMock()] * pages_count
+        crawler = crawler_with_mocked_internal_api_client
+
+        # When
+        crawler.process_pages(pages=mocked_pages)
+
+        # Then
+        for i in range(pages_count):
+            index = i + 1
+            assert f"Completed {index} / {pages_count} pages" in caplog.text

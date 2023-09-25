@@ -103,18 +103,20 @@ class Crawler:
             "Completed processing of headless CMS API, now handling content blocks"
         )
 
-        for page in pages:
+        pages_count = len(pages)
+
+        for index, page in enumerate(pages, 1):
             try:
                 self.process_all_sections_in_page(page=page)
             except AttributeError:
                 logger.info(
                     f"`{page.title}` page has no dynamic content blocks. So only the headless CMS API detail has been processed"
                 )
-                continue
             else:
                 logger.info(
                     f"Completed processing of content blocks within `{page.title}` page"
                 )
+            logger.info(f"Completed {index} / {pages_count} pages")
 
     # Process sections
 
