@@ -49,7 +49,10 @@ class Crawler:
             None
 
         """
+        logger.info("Hitting list GET pages/ endpoint")
         self._internal_api_client.hit_pages_list_endpoint()
+
+        logger.info("Hitting list GET pages/ endpoint for all page types")
         self._internal_api_client.hit_pages_list_endpoint_for_all_page_types()
 
     def process_detail_pages_for_headless_cms_api(
@@ -73,6 +76,7 @@ class Crawler:
             None
 
         """
+        logger.info(f"Hitting GET pages/ endpoint for `{page.title}` page")
         self._internal_api_client.hit_pages_detail_endpoint(page_id=page.id)
 
     # Process pages for content
@@ -95,15 +99,22 @@ class Crawler:
         """
         self.process_list_pages_for_headless_cms_api()
         self.process_detail_pages_for_headless_cms_api(pages=pages)
+        logger.info(
+            "Completed processing of headless CMS API, now handling content blocks"
+        )
 
         for page in pages:
             try:
                 self.process_all_sections_in_page(page=page)
             except AttributeError:
                 logger.info(
-                    f"{page.title} page has no dynamic content blocks. So only the headless CMS API detail has been processed"
+                    f"`{page.title}` page has no dynamic content blocks. So only the headless CMS API detail has been processed"
                 )
                 continue
+            else:
+                logger.info(
+                    f"Completed processing of content blocks within `{page.title}` page"
+                )
 
     # Process sections
 

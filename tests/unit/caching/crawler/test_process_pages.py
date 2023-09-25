@@ -113,5 +113,52 @@ class TestCrawlerProcessPages:
 
         # Then
         for common_page in fake_common_pages:
-            expected_log = f"{common_page.title} page has no dynamic content blocks. So only the headless CMS API detail has been processed"
+            expected_log = f"`{common_page.title}` page has no dynamic content blocks. So only the headless CMS API detail has been processed"
             assert expected_log in caplog.text
+
+    def test_logs_are_recorded_for_completion_of_headless_cms_api(
+        self,
+        crawler_with_mocked_internal_api_client: Crawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a list of mocked `Page` objects
+        When `process_pages()` is called from an instance of `Crawler`
+        Then the correct logs are made for the processing of the headless CMS API
+        """
+        # Given
+        mocked_pages = [mock.MagicMock()] * 2
+        crawler = crawler_with_mocked_internal_api_client
+
+        # When
+        crawler.process_pages(pages=mocked_pages)
+
+        # Then
+        assert (
+            "Completed processing of headless CMS API, now handling content blocks"
+            in caplog.text
+        )
+
+    def test_logs_are_recorded_for_completion_of_private_api_content_blocks(
+        self,
+        crawler_with_mocked_internal_api_client: Crawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a list of mocked `Page` objects
+        When `process_pages()` is called from an instance of `Crawler`
+        Then the correct logs are made for the processing of content blocks
+        """
+        # Given
+        mocked_pages = [mock.MagicMock()] * 2
+        crawler = crawler_with_mocked_internal_api_client
+
+        # When
+        crawler.process_pages(pages=mocked_pages)
+
+        # Then
+        for mocked_page in mocked_pages:
+            assert (
+                f"Completed processing of content blocks within `{mocked_page.title}` page"
+                in caplog.text
+            )

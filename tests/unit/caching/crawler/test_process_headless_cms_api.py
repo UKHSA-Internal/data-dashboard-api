@@ -1,5 +1,7 @@
 from unittest import mock
 
+from _pytest.logging import LogCaptureFixture
+
 from caching.crawler import Crawler
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
@@ -85,3 +87,48 @@ class TestCrawlerProcessHeadlessCMSAPI:
         spy_internal_api_client.hit_pages_detail_endpoint.assert_called_once_with(
             page_id=mocked_page.id
         )
+
+    def test_process_list_pages_for_headless_cms_api_records_correct_log_(
+        self,
+        crawler_with_mocked_internal_api_client: Crawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given an instance of a `Crawler`
+        When `process_list_pages_for_headless_cms_api()` is called
+        Then the correct logs are recorded
+        """
+        # Given
+        crawler = crawler_with_mocked_internal_api_client
+
+        # When
+        crawler.process_list_pages_for_headless_cms_api()
+
+        # Then
+        assert "Hitting list GET pages/ endpoint" in caplog.text
+        assert "Hitting list GET pages/ endpoint for all page types" in caplog.text
+
+    def test_process_detail_pages_for_headless_cms_api_records_correct_log_(
+        self,
+        crawler_with_mocked_internal_api_client: Crawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a list of mocked `Page` objects
+        When `process_detail_pages_for_headless_cms_api()`
+            is called from an instance of `Crawler`
+        Then the correct logs are recorded
+        """
+        # Given
+        mocked_pages = [mock.Mock(title="COVID-19"), mock.Mock(title="Influenza")]
+        crawler = crawler_with_mocked_internal_api_client
+
+        # When
+        crawler.process_detail_pages_for_headless_cms_api(pages=mocked_pages)
+
+        # Then
+        for mocked_page in mocked_pages:
+            assert (
+                f"Hitting GET pages/ endpoint for `{mocked_page.title}` page"
+                in caplog.text
+            )
