@@ -139,7 +139,7 @@ class TestCrawlerProcessPages:
             in caplog.text
         )
 
-    def test_logs_are_recorded_for_completion_of_private_api_content_blocks(
+    def test_logs_are_recorded_for_processing_of_private_api_content_blocks(
         self,
         crawler_with_mocked_internal_api_client: Crawler,
         caplog: LogCaptureFixture,
@@ -159,7 +159,7 @@ class TestCrawlerProcessPages:
         # Then
         for mocked_page in mocked_pages:
             assert (
-                f"Completed processing of content blocks within `{mocked_page.title}` page"
+                f"Processing content blocks within `{mocked_page.title}` page"
                 in caplog.text
             )
 
