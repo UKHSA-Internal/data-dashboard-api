@@ -81,6 +81,7 @@ class TrendsView(APIView):
             request_data = request.query_params.dict()
             request_data["geography"] = "England"
             request_data["geography_type"] = "Nation"
+            request_data["age"] = "all"
             return _handle_beta_schema_trends_request(request_data=request_data)
 
         return Response(trends_data)

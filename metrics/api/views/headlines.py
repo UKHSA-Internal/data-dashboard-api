@@ -83,6 +83,12 @@ class HeadlinesView(APIView):
             request_data = request.query_params.dict()
             request_data["geography"] = "England"
             request_data["geography_type"] = "Nation"
+            request_data["age"] = "all"
+
+            # This is a temporary patch to ensure the correct age is set for this metric
+            if metric == "COVID-19_headline_vaccines_spring23Total":
+                request_data["age"] = "75+"
+
             return _handle_beta_schema_headlines_request(request_data=request_data)
 
         return Response({"value": headline_number})
