@@ -2,9 +2,6 @@ from typing import Optional
 
 from rest_framework.response import Response
 from rest_framework.test import APIClient
-from rest_framework_api_key.models import APIKey
-
-from metrics.data.managers.api_keys import CustomAPIKeyManager
 
 API_PREFIX = "/api/"
 PAGES_ENDPOINT_PATH = f"{API_PREFIX}pages/"
