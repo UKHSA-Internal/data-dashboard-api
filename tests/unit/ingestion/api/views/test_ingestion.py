@@ -1,6 +1,5 @@
 import pytest
 from rest_framework.parsers import MultiPartParser
-from rest_framework_api_key.permissions import HasAPIKey
 
 from ingestion.api.views.ingestion import IngestionView
 

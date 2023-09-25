@@ -3,7 +3,6 @@ from django.urls.resolvers import RoutePattern
 from drf_spectacular.utils import extend_schema
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework_api_key.permissions import HasAPIKey
 from wagtail.api.v2.views import PagesAPIViewSet
 
 from caching.decorators import cache_response
