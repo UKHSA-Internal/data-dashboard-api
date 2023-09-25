@@ -348,6 +348,43 @@ class TestCombineListOfPlots:
         assert tabular_data.combined_plots == expected_combined_plots
 
 
+class TestCombineAllPlots:
+    def test_plot_with_sequential_date_point(self):
+        """
+        Given a `TabularPlotData` model with x-axis values for consecutive dates
+        When `combine_all_plots()` is called
+        Then the correct response is generated
+        """
+        # Given
+        x_axis_values = [
+            datetime.date(2023, 9, 1),
+            datetime.date(2023, 9, 2),
+            datetime.date(2023, 9, 3),
+            datetime.date(2023, 9, 4),
+        ]
+        first_chart_plots_data = _create_plot_data(
+            x_axis_values=x_axis_values,
+            y_axis_values=[10, 66, 22, 26],
+            label=PLOT_1_LABEL,
+        )
+
+        # When
+        tabular_data = TabularData(plots=[first_chart_plots_data])
+        tabular_data.combine_all_plots()
+
+        # Then
+        # Check plot labels are as expected
+        assert len(tabular_data.plot_labels) == 1
+        assert tabular_data.plot_labels[0] == PLOT_1_LABEL
+
+        # Check combined plot output is as expected
+        combined_plots = tabular_data.combined_plots
+        assert combined_plots["2023-09-01"] == {PLOT_1_LABEL: str(10)}
+        assert combined_plots["2023-09-02"] == {PLOT_1_LABEL: str(66)}
+        assert combined_plots["2023-09-03"] == {PLOT_1_LABEL: str(22)}
+        assert combined_plots["2023-09-04"] == {PLOT_1_LABEL: str(26)}
+
+
 class TestGenerateMultiPlotOutput:
     def test_basic_generate_multi_plot_output(self):
         """

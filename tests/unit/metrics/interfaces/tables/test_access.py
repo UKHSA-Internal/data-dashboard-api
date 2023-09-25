@@ -4,11 +4,13 @@ from unittest import mock
 import pytest
 
 from metrics.domain.models import PlotParameters, PlotsCollection
+from metrics.domain.tables.generation import TabularData
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.tables.access import (
     TablesInterface,
     generate_table,
     generate_table_v3,
+    generate_table_v4,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
@@ -94,6 +96,48 @@ class TestTablesInterface:
         # Then
         spy_create_plots_in_tabular_format.assert_called_once()
         assert table_plots == spy_create_plots_in_tabular_format.return_value
+
+    @mock.patch.object(TabularData, "create_tabular_plots")
+    def test_generate_full_plots_for_table(
+        self,
+        spy_create_tabular_plots: mock.MagicMock,
+        valid_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a `PlotsCollection` and a `CoreTimeSeriesManager`
+        When a `generate_full_plots_for_table()`
+            is called from an instance of `TablesInterface`
+        Then the `PlotsInterface` is called to get the plots data
+        And the call is delegated to the `create_tabular_plots()` method
+        """
+        # Given
+        fake_core_time_series = self._setup_fake_time_series_for_plot(
+            chart_plot_parameters=valid_plot_parameters
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(fake_core_time_series)
+
+        plots_collection = PlotsCollection(
+            plots=[valid_plot_parameters],
+            file_format="svg",
+            chart_height=123,
+            chart_width=456,
+            x_axis="date",
+            y_axis="metric",
+        )
+
+        tables_interface = TablesInterface(
+            plots_collection=plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When
+        table_plots: list[
+            dict[str, str]
+        ] = tables_interface.generate_full_plots_for_table()
+
+        # Then
+        spy_create_tabular_plots.assert_called_once()
+        assert table_plots == spy_create_tabular_plots.return_value
 
 
 class TestGenerateTables:
@@ -181,6 +225,52 @@ class TestGenerateTableV2:
 
         # When
         generated_table: list[dict[str, str]] = generate_table_v3(
+            plots_collection=mocked_plots_collection
+        )
+
+        # Then
+        expected_table: list[dict[str, str]] = [
+            {
+                "reference": "2022-09-05",
+                "values": [
+                    {"label": "Plot1", "value": "10"},
+                    {"label": "Plot2", "value": "11"},
+                ],
+            },
+        ]
+        assert generated_table == expected_table
+
+
+class TestGenerateTableV4:
+    @pytest.mark.parametrize(
+        "explicit_column_header_value",
+        [chart_axis_field.name for chart_axis_field in ChartAxisFields],
+    )
+    @mock.patch(f"{MODULE_PATH}.generate_table_for_full_plots")
+    def test_sets_generic_key(
+        self,
+        mocked_generate_table_for_full_plots: mock.MagicMock,
+        explicit_column_header_value: str,
+    ):
+        """
+        Given `generate_table` which returns expected tabular output
+        When `generate_table_v4()` is called
+        Then returned output does contain an explicit key like `date` or `stratum`
+        """
+        # Given
+        mocked_plots_collection = mock.Mock()
+        mocked_generate_table_for_full_plots.return_value = [
+            {
+                explicit_column_header_value: "2022-09-05",
+                "values": [
+                    {"label": "Plot1", "value": "10"},
+                    {"label": "Plot2", "value": "11"},
+                ],
+            },
+        ]
+
+        # When
+        generated_table: list[dict[str, str]] = generate_table_v4(
             plots_collection=mocked_plots_collection
         )
 
