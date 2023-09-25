@@ -25,6 +25,9 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 ]
 
 
+MAXIMUM_URL_FIELD_LENGTH: int = 400
+
+
 class CommonPage(Page):
     date_posted = models.DateField()
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
@@ -74,7 +77,7 @@ class CommonPageRelatedLink(Orderable):
         CommonPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL")
+    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view

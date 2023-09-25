@@ -5,7 +5,7 @@ from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
+from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.home.managers import HomePageManager
@@ -60,7 +60,7 @@ class HomePageRelatedLink(Orderable):
         HomePage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL")
+    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view
