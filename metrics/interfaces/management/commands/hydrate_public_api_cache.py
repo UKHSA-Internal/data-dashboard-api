@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from caching.public_api_crawler import crawl_public_api
+from caching.public_api.crawler import crawl_public_api
 
 
 class Command(BaseCommand):
