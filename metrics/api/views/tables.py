@@ -89,6 +89,7 @@ class TablesViewV3(APIView):
         request=TablesSerializer,
         responses={HTTPStatus.OK.value: TablesResponseSerializerV3},
         tags=[TABLES_API_TAG],
+        deprecated=True,
     )
     @cache_response()
     def post(self, request, *args, **kwargs):
