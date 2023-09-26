@@ -1,22 +1,32 @@
 import logging
+import os
 
 import requests
 
 logger = logging.getLogger(__name__)
 
 
+def _get_api_key() -> str:
+    api_key = os.environ.get("API_KEY")
+    return f'"{api_key}"'
+
+
 def _hit_endpoint_for_json(url: str) -> dict:
-    response = requests.get(url)
+    api_key = _get_api_key()
+    response = requests.get(
+        url, headers={"Accept": "application/json", "x-cdn-auth": api_key}
+    )
     return response.json()
 
 
 def _hit_endpoint_for_html(url: str) -> str:
-    response = requests.get(url, headers={"Accept": "text/html"})
+    api_key = _get_api_key()
+    response = requests.get(url, headers={"Accept": "text/html", "x-cdn-auth": api_key})
     return response.content
 
 
 def crawl(url: str, crawled_urls: list[str]) -> None:
-    print(f" Calling {url}")
+    logger.info(f" Calling {url}")
     _hit_endpoint_for_html(url=url)
     api_level: dict = _hit_endpoint_for_json(url=url)
 
@@ -25,7 +35,7 @@ def crawl(url: str, crawled_urls: list[str]) -> None:
     for target in targets:
         if target not in crawled_urls:
             crawled_urls.append(target)
-            print(f"---------  {len(crawled_urls)} URLs crawled ---------")
+            logger.info(f"{len(crawled_urls)} URLs crawled")
             crawl(url=target, crawled_urls=crawled_urls)
 
     return crawled_urls
@@ -43,12 +53,12 @@ def get_targets_from_api_response(api_level: dict) -> list[str]:
 
 
 def crawl_public_api():
-    import os
-
     api_url = os.environ.get("PUBLIC_API_URL")
 
     if api_url is None:
-        raise ValueError("No `PUBLIC_API_URL` can't crawl public API right now")
+        raise ValueError("No `PUBLIC_API_URL` provided")
 
-    print(f"Crawling from root URL {api_url}")
+    api_url = f"{api_url}/themes/"
+
+    logger.info(f"Crawling from root URL {api_url}")
     crawl(api_url, crawled_urls=[])
