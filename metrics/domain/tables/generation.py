@@ -96,8 +96,8 @@ class TabularData:
     def combine_all_plots(self):
         """Merges the individual plots along the x axis"""
 
-        for plot_num, plot in enumerate(self.plots, 1):
-            plot_label: str = plot.parameters.label or "Plot" + str(plot_num)
+        for index, plot in enumerate(self.plots, 1):
+            plot_label: str = plot.parameters.label or f"Plot{index}"
             self.plot_labels.append(plot_label)
 
             self.column_heading = get_axis_name(field_name=plot.parameters.x_axis)
