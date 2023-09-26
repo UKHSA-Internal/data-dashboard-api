@@ -21,7 +21,9 @@ def _hit_endpoint_for_json(url: str) -> dict:
 
 def _hit_endpoint_for_html(url: str) -> str:
     api_key = _get_api_key()
-    response = requests.get(url=url, headers={"Accept": "text/html", "x-cdn-auth": api_key})
+    response = requests.get(
+        url=url, headers={"Accept": "text/html", "x-cdn-auth": api_key}
+    )
     return response.content
 
 
