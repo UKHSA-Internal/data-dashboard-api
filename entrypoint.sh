@@ -8,7 +8,7 @@ function set_up_django() {
     python manage.py collectstatic --noinput
 
     echo "Starting server"
-    python manage.py runserver 0.0.0.0:80
+    gunicorn -w 3 metrics.api.wsgi:application 0.0.0.0:80
 }
 
 set_up_django
