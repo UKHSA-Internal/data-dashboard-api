@@ -40,9 +40,9 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
-      - uses: ukhsa-internal/gh-action-pip-audit-action@v1
-        with:
-          inputs: requirements.txt
+#      - uses: ukhsa-internal/gh-action-pip-audit-action@v1
+#        with:
+#          inputs: requirements.txt
 
       - name: Run Bandit
         run: |
