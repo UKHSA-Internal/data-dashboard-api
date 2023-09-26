@@ -17,7 +17,7 @@ class TabularData:
         self.combined_plots: dict[str, dict[str, str]] = defaultdict(dict)
 
         # The headings to use in the table
-        self.column_heading: str = ""
+        self.column_heading: str = "reference"
 
     def create_plots_in_tabular_format(self) -> list[dict[str, str]]:
         """Creates the tabular output for the given plots
@@ -98,8 +98,6 @@ class TabularData:
         for index, plot in enumerate(self.plots, 1):
             plot_label: str = plot.parameters.label or f"Plot{index}"
             self.plot_labels.append(plot_label)
-
-            self.column_heading = get_axis_name(field_name=plot.parameters.x_axis)
 
             plot_data = dict(zip(plot.x_axis_values, plot.y_axis_values))
 
