@@ -17,7 +17,7 @@ class TabularData:
         self.combined_plots: dict[str, dict[str, str]] = defaultdict(dict)
 
         # The headings to use in the table
-        self.column_heading: str = ""
+        self.column_heading: str = "reference"
 
     def create_plots_in_tabular_format(self) -> list[dict[str, str]]:
         """Creates the tabular output for the given plots
@@ -33,6 +33,19 @@ class TabularData:
         tabular_format = self.generate_multi_plot_output()
 
         return tabular_format
+
+    def create_tabular_plots(self) -> list[dict[str, str]]:
+        """Creates the tabular output for the given plots
+
+        Returns:
+            A list of dictionaries showing the plot data in a tabular format
+
+        """
+        # Merge all the plots together by x axis
+        self.combine_all_plots()
+
+        # Create output in required format
+        return self.generate_multi_plot_output()
 
     def collate_data_by_date(self, plot_data: dict[Any, Any], plot_label: str):
         """Add just the last values for each month to the combined plots dictionary
@@ -55,7 +68,7 @@ class TabularData:
         """
 
         for k, v in plot_data.items():
-            self.combined_plots[k].update({plot_label: str(v)})
+            self.combined_plots[str(k)].update({plot_label: str(v)})
 
     def combine_list_of_plots(self):
         """Merges the individual plots along the x axis"""
@@ -78,6 +91,20 @@ class TabularData:
                     plot_data=temp_dict,
                     plot_label=plot_label,
                 )
+
+    def combine_all_plots(self):
+        """Merges the individual plots along the x axis"""
+
+        for index, plot in enumerate(self.plots, 1):
+            plot_label: str = plot.parameters.label or f"Plot{index}"
+            self.plot_labels.append(plot_label)
+
+            plot_data = dict(zip(plot.x_axis_values, plot.y_axis_values))
+
+            self.collate_data_not_by_date(
+                plot_data=plot_data,
+                plot_label=plot_label,
+            )
 
     def generate_multi_plot_output(self):
         """Creates the tabular output for the given plots

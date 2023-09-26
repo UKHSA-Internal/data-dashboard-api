@@ -8,10 +8,10 @@ from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
-    _cast_x_value,
+    _build_age_display_name,
     convert_type,
     get_x_and_y_values,
-    sort_by_stratum,
+    sort_by_age,
     unzip_values,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
@@ -351,23 +351,19 @@ class TestPlotsInterface:
 
 
 class TestGetXAndYValues:
-    @pytest.mark.parametrize(
-        "axis_field", [ChartAxisFields.stratum.name, ChartAxisFields.age.name]
-    )
-    @mock.patch(f"{MODULE_PATH}.sort_by_stratum")
-    def test_can_delegate_call_to_sort_by_stratum(
+    @mock.patch(f"{MODULE_PATH}.sort_by_age")
+    def test_can_delegate_call_to_sort_by_age(
         self,
-        spy_sort_by_stratum: mock.MagicMock,
-        axis_field: str,
+        spy_sort_by_age: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `PlotParameters` model which requests `stratum` along the X-axis
         When `get_x_and_y_values()` is called
-        Then the call is delegated to `sort_by_stratum()`
+        Then the call is delegated to `sort_by_age()`
         """
         # Given
-        fake_chart_plot_parameters.x_axis = axis_field
+        fake_chart_plot_parameters.x_axis = ChartAxisFields.age.name
         mocked_queryset = mock.Mock()
 
         # When
@@ -376,8 +372,8 @@ class TestGetXAndYValues:
         )
 
         # Then
-        assert x_and_y_values == spy_sort_by_stratum.return_value
-        spy_sort_by_stratum.assert_called_once_with(queryset=mocked_queryset)
+        assert x_and_y_values == spy_sort_by_age.return_value
+        spy_sort_by_age.assert_called_once_with(queryset=mocked_queryset)
 
     @pytest.mark.parametrize(
         "x_axis",
@@ -435,48 +431,48 @@ class TestConvertType:
         assert mock_output == actual_output
 
 
-class TestSortByStratum:
+class TestSortByAge:
     def test_returns_correct_x_and_y_values(self):
         """
         Given a list of 4 * 2-item tuples
-        When `sort_by_stratum()` is called
+        When `sort_by_age()` is called
         Then the result is 2 tuples which contain 4 items each
         And sorted properly
         And in display format
         """
         # Given
         values = [
-            ("65_84", 1),
-            ("06_17", 2),
+            ("65-84", 1),
+            ("06-17", 2),
             ("85+", 3),
-            ("18_64", 4),
-            ("default", 5),
+            ("18-64", 4),
+            ("all", 5),
         ]
 
         # When
-        first_list, second_list = sort_by_stratum(values)
+        first_list, second_list = sort_by_age(values)
 
         # Then
-        assert first_list == ["6-17", "18-64", "65-84", "85+", "default"]
+        assert first_list == ["06 - 17", "18 - 64", "65 - 84", "85+", "all"]
         assert second_list == [2, 4, 1, 3, 5]
 
 
-class TestCastXValue:
+class TestBuildAgeDisplayName:
     @pytest.mark.parametrize(
         "input_value, expected_value",
-        [("00-04", "0-4"), ("10-14", "10-14"), ("90+", "90+"), ("all", "all")],
+        [("00-04", "00 - 04"), ("10-14", "10 - 14"), ("90+", "90+"), ("all", "all")],
     )
     def test_returns_correct_value(self, input_value: str, expected_value: str):
         """
         Given a value
-        When `_cast_x_value()` is called
+        When `_build_age_display_name()` is called
         Then the correct value is returned
         """
         # Given
         value = input_value
 
         # When
-        cast_value = _cast_x_value(value=value)
+        cast_value = _build_age_display_name(value=value)
 
         # Then
         assert cast_value == expected_value
