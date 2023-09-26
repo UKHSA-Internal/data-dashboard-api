@@ -46,10 +46,14 @@ def get_targets_from_api_response(api_level: dict) -> list[str]:
     for links in api_level:
         if isinstance(links, dict):
             for key, value in links.items():
-                if "http" in value:
+                if _is_url(value=value):
                     targets.append(value)
 
     return targets
+
+
+def _is_url(value: str) -> bool:
+    return "http" in value
 
 
 def crawl_public_api():
