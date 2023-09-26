@@ -206,13 +206,8 @@ def get_x_and_y_values(
         Tuple containing the X and Y values
 
     """
-
-    # Stratum/Age needs special treatment because a regular sort does not yield the required result
-    if plot_parameters.x_axis in (
-        ChartAxisFields.stratum.name,
-        ChartAxisFields.age.name,
-    ):
-        return sort_by_stratum(queryset=queryset)
+    if plot_parameters.x_axis == ChartAxisFields.age.name:
+        return sort_by_age(queryset=queryset)
 
     return unzip_values(values=queryset)
 
@@ -232,40 +227,35 @@ def convert_type(s: str) -> int | str:
     return int(s) if s.isdigit() else s.lower()
 
 
-def sort_by_stratum(queryset: QuerySet) -> tuple[list[Any], list[Any]]:
+def sort_by_age(queryset: QuerySet) -> tuple[list[Any], list[Any]]:
     """
-    Take a list of tuples where Stratum is the first element, sort it, prettify the stratum values and return as two separate lists
+    Sorts a list of tuples where age is the first element and return as two separate lists
 
     Args:
         queryset: A queryset containing a list of tuples where
-        Stratum is the first value and the metric value is the second
+        Age is the first value and the metric value is the second
         E.g. ('15_44', Decimal('0.7'))
 
     Returns:
         A properly sorted and displayable version broken into two separate lists
+
     """
-    # Make a dictionary where the key is a tuple of the stratum values. So, 45_54 becomes (45, 54) etc
     temp_dict = {x[0]: x for x in queryset}
 
     # Now sort on the tuple and return the x and y values
-    # Change the Stratum so it looks nice. eg. 0_4 becomes 0-4
     x_values = []
     y_values = []
 
     for x in sorted(temp_dict.keys()):
-        x_value = _cast_x_value(value=temp_dict[x][0].replace("_", "-"))
+        x_value = _build_age_display_name(value=temp_dict[x][0])
         x_values.append(x_value)
         y_values.append(temp_dict[x][1])
 
     return x_values, y_values
 
 
-def _cast_x_value(value: str) -> str:
-    try:
-        integer_casted_x_values = [str(int(a)) for a in value.split("-")]
-        return "-".join(integer_casted_x_values)
-    except ValueError:
-        return value
+def _build_age_display_name(value: str) -> str:
+    return value.replace("-", " - ")
 
 
 def unzip_values(values) -> tuple[list[Any], list[Any]]:
