@@ -41,7 +41,6 @@ class TabularData:
             A list of dictionaries showing the plot data in a tabular format
 
         """
-
         # Merge all the plots together by x axis
         self.combine_all_plots()
 
