@@ -8,30 +8,30 @@ logger = logging.getLogger(__name__)
 DEFAULT_REQUEST_TIMEOUT = 60
 
 
-def _get_api_key() -> str:
+def _get_cdn_auth_key() -> str:
     try:
-        api_key = os.environ["API_KEY"]
+        cdn_auth_key = os.environ["CDN_AUTH_KEY"]
     except KeyError as error:
-        raise KeyError("No API key specified") from error
-    return f'"{api_key}"'
+        raise KeyError("No CDN auth key specified") from error
+    return f'"{cdn_auth_key}"'
 
 
 def _hit_endpoint_for_json(url: str) -> dict:
-    api_key = _get_api_key()
+    cdn_auth_key = _get_cdn_auth_key()
     response = requests.get(
         url=url,
         timeout=DEFAULT_REQUEST_TIMEOUT,
-        headers={"x-cdn-auth": api_key},
+        headers={"x-cdn-auth": cdn_auth_key},
     )
     return response.json()
 
 
 def _hit_endpoint_for_html(url: str) -> str:
-    api_key = _get_api_key()
+    cdn_auth_key = _get_cdn_auth_key()
     response = requests.get(
         url=url,
         timeout=DEFAULT_REQUEST_TIMEOUT,
-        headers={"Accept": "text/html", "x-cdn-auth": api_key},
+        headers={"Accept": "text/html", "x-cdn-auth": cdn_auth_key},
     )
     return response.content
 
