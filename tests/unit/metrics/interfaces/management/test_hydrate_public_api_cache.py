@@ -7,7 +7,9 @@ MODULE_PATH = "metrics.interfaces.management.commands.hydrate_public_api_cache"
 
 class TestGenerateAPITimeSeries:
     @mock.patch(f"{MODULE_PATH}.crawl_public_api_themes_path")
-    def test_delegates_call_successfully(self, spy_crawl_public_api_themes_path: mock.MagicMock):
+    def test_delegates_call_successfully(
+        self, spy_crawl_public_api_themes_path: mock.MagicMock
+    ):
         """
         Given an instance of the app
         When a call is made to the custom management command `hydrate_public_api_cache`
