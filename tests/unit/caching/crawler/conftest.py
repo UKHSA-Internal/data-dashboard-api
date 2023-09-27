@@ -17,6 +17,9 @@ def example_headline_number_block() -> dict[str, str]:
         "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
         "geography": "Croydon",
         "geography_type": "Upper Tier Local Authority",
+        "sex": "all",
+        "age": "all",
+        "stratum": "default",
         "body": "Last 7 days",
     }
 

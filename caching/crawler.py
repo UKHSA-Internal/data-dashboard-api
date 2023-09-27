@@ -473,6 +473,9 @@ class Crawler:
             "metric": headline_number_block["metric"],
             "geography": headline_number_block.get("geography", "England"),
             "geography_type": headline_number_block.get("geography_type", "Nation"),
+            "sex": headline_number_block.get("sex", "all"),
+            "age": headline_number_block.get("age", "all"),
+            "stratum": headline_number_block.get("stratum", "default"),
         }
 
     @staticmethod

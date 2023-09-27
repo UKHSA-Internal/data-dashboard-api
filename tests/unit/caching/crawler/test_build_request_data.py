@@ -30,6 +30,9 @@ class TestCrawlerBuildRequestData:
             "metric": headline_number_block["metric"],
             "geography": headline_number_block["geography"],
             "geography_type": headline_number_block["geography_type"],
+            "sex": headline_number_block["sex"],
+            "age": headline_number_block["age"],
+            "stratum": headline_number_block["stratum"],
         }
         assert headline_number_data == expected_headline_request_data
 
@@ -61,6 +64,9 @@ class TestCrawlerBuildRequestData:
             "metric": headline_number_block_with_no_geography_input["metric"],
             "geography": "England",
             "geography_type": "Nation",
+            "sex": "all",
+            "age": "all",
+            "stratum": "default",
         }
         assert headline_number_data == expected_headline_request_data
 
