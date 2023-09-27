@@ -4,11 +4,15 @@ import os
 import requests
 
 logger = logging.getLogger(__name__)
+
 DEFAULT_REQUEST_TIMEOUT = 60
 
 
 def _get_api_key() -> str:
-    api_key = os.environ.get("API_KEY")
+    try:
+        api_key = os.environ["API_KEY"]
+    except KeyError as error:
+        raise KeyError("No API key specified") from error
     return f'"{api_key}"'
 
 
@@ -17,7 +21,7 @@ def _hit_endpoint_for_json(url: str) -> dict:
     response = requests.get(
         url=url,
         timeout=DEFAULT_REQUEST_TIMEOUT,
-        headers={"Accept": "application/json", "x-cdn-auth": api_key},
+        headers={"x-cdn-auth": api_key},
     )
     return response.json()
 
@@ -63,11 +67,11 @@ def _is_url(value: str) -> bool:
     return "http" in value
 
 
-def crawl_public_api():
-    api_url = os.environ.get("PUBLIC_API_URL")
-
-    if api_url is None:
-        raise ValueError("No `PUBLIC_API_URL` provided")
+def crawl_public_api_themes_path():
+    try:
+        api_url = os.environ["PUBLIC_API_URL"]
+    except KeyError as error:
+        raise KeyError("No `PUBLIC_API_URL` provided") from error
 
     api_url = f"{api_url}/themes/"
 
