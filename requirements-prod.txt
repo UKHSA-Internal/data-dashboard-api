@@ -59,7 +59,7 @@ packaging==23.1
 pandas==1.5.3
 pathspec==0.11.2
 pbr==5.11.1
-Pillow==9.4.0
+Pillow==10.0.1
 pip-api==0.0.30
 pip-requirements-parser==32.0.1
 platformdirs==3.10.0
@@ -97,7 +97,7 @@ typing_extensions==4.8.0
 uritemplate==4.1.1
 urllib3==1.26.5
 virtualenv==20.24.2
-wagtail==5.0.1
+wagtail==5.1.2
 webencodings==0.5.1
-Willow==1.5
+Willow==1.6.2
 zipp==3.17.0
