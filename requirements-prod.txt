@@ -85,7 +85,7 @@ scour==0.38.2
 simplejson==3.19.1
 six==1.16.0
 sortedcontainers==2.4.0
-soupsieve==2.4.1
+soupsieve==2.5
 sqlparse==0.4.4
 sqlparams==5.1.0
 stevedore==5.1.0
