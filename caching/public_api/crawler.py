@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_REQUEST_TIMEOUT = 60
 
 
-def _get_cdn_auth_key() -> str:
+def get_cdn_auth_key() -> str:
     try:
         cdn_auth_key = os.environ["CDN_AUTH_KEY"]
     except KeyError as error:
@@ -17,7 +17,7 @@ def _get_cdn_auth_key() -> str:
 
 
 def _hit_endpoint_for_json(url: str) -> dict:
-    cdn_auth_key = _get_cdn_auth_key()
+    cdn_auth_key = get_cdn_auth_key()
     response = requests.get(
         url=url,
         timeout=DEFAULT_REQUEST_TIMEOUT,
@@ -27,7 +27,7 @@ def _hit_endpoint_for_json(url: str) -> dict:
 
 
 def _hit_endpoint_for_html(url: str) -> str:
-    cdn_auth_key = _get_cdn_auth_key()
+    cdn_auth_key = get_cdn_auth_key()
     response = requests.get(
         url=url,
         timeout=DEFAULT_REQUEST_TIMEOUT,
