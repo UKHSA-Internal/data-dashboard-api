@@ -13,7 +13,7 @@ class TestGenerateAPITimeSeries:
         """
         Given an instance of the app
         When a call is made to the custom management command `hydrate_public_api_cache`
-        Then the call is delegated to the `crawl_public_api()` function
+        Then the call is delegated to the `crawl_public_api_themes_path()` function
 
         Patches:
             `spy_crawl_public_api_themes_path`: For the main assertion
