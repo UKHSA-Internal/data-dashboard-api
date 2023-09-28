@@ -2,18 +2,18 @@ from unittest import mock
 
 import pytest
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 
 
 class TestCrawlerProcessBlocks:
-    @mock.patch.object(Crawler, "process_any_headline_number_block")
-    @mock.patch.object(Crawler, "process_chart_block")
+    @mock.patch.object(PrivateAPICrawler, "process_any_headline_number_block")
+    @mock.patch.object(PrivateAPICrawler, "process_chart_block")
     def test_process_chart_with_headline_and_trend_card(
         self,
         spy_process_chart_block: mock.MagicMock,
         spy_process_any_headline_number_block: mock.MagicMock,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
@@ -52,13 +52,13 @@ class TestCrawlerProcessBlocks:
         ]
         spy_process_any_headline_number_block.assert_has_calls(calls=expected_calls)
 
-    @mock.patch.object(Crawler, "process_chart_with_headline_and_trend_card")
-    @mock.patch.object(Crawler, "process_chart_block")
+    @mock.patch.object(PrivateAPICrawler, "process_chart_with_headline_and_trend_card")
+    @mock.patch.object(PrivateAPICrawler, "process_chart_block")
     def test_process_any_chart_card_for_chart_cards(
         self,
         spy_process_chart_block: mock.MagicMock,
         spy_process_chart_with_headline_and_trend_card: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a fake chart card which has "type" key of value "chart_card"
@@ -86,13 +86,13 @@ class TestCrawlerProcessBlocks:
         )
         spy_process_chart_with_headline_and_trend_card.assert_not_called()
 
-    @mock.patch.object(Crawler, "process_chart_with_headline_and_trend_card")
-    @mock.patch.object(Crawler, "process_chart_block")
+    @mock.patch.object(PrivateAPICrawler, "process_chart_with_headline_and_trend_card")
+    @mock.patch.object(PrivateAPICrawler, "process_chart_block")
     def test_process_any_chart_card_for_chart_with_headline_and_trend_cards(
         self,
         spy_process_chart_block: mock.MagicMock,
         spy_process_chart_with_headline_and_trend_card: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a fake chart card which has "type" key of value "chart_with_headline_and_trend_card"
@@ -122,7 +122,7 @@ class TestCrawlerProcessBlocks:
 
     def test_process_any_chart_card_raises_error_for_invalid_input(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a fake chart card which has an invalid "type" key
@@ -138,13 +138,13 @@ class TestCrawlerProcessBlocks:
                 chart_card=fake_chart_card
             )
 
-    @mock.patch.object(Crawler, "process_trend_number_block")
-    @mock.patch.object(Crawler, "process_headline_number_block")
+    @mock.patch.object(PrivateAPICrawler, "process_trend_number_block")
+    @mock.patch.object(PrivateAPICrawler, "process_headline_number_block")
     def test_process_any_headline_number_block_for_trend_number_block(
         self,
         spy_process_headline_number_block: mock.MagicMock,
         spy_process_trend_number_block: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a fake headline number block which has a "type" key of value "trend_number"
@@ -174,14 +174,14 @@ class TestCrawlerProcessBlocks:
     @pytest.mark.parametrize(
         "headline_number_block_type", ["headline_number", "percentage_number"]
     )
-    @mock.patch.object(Crawler, "process_trend_number_block")
-    @mock.patch.object(Crawler, "process_headline_number_block")
+    @mock.patch.object(PrivateAPICrawler, "process_trend_number_block")
+    @mock.patch.object(PrivateAPICrawler, "process_headline_number_block")
     def test_process_any_headline_number_block_for_trend_number_block(
         self,
         spy_process_headline_number_block: mock.MagicMock,
         spy_process_trend_number_block: mock.MagicMock,
         headline_number_block_type: str,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a fake headline number block which has a "type" key of value "headline_number"
@@ -210,7 +210,7 @@ class TestCrawlerProcessBlocks:
 
     def test_process_any_headline_number_block_raises_error_for_invalid_input(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a fake headline number block which has an invalid "type" key
@@ -231,7 +231,7 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_trend_number_block(
         self,
         example_trend_number_block: dict[str, str],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a trend number block
@@ -263,7 +263,7 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_headline_number_block(
         self,
         example_headline_number_block: dict[str, str],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a headline number block
@@ -296,7 +296,7 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_chart_block_hits_tables_endpoint(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
@@ -328,7 +328,7 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_chart_block_hits_downloads_endpoint(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
@@ -360,7 +360,7 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_chart_block_hits_charts_endpoint(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block

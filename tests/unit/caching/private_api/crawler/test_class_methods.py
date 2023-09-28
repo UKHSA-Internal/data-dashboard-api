@@ -1,7 +1,4 @@
-from unittest import mock
-
-from caching.crawler import Crawler
-from caching.internal_api_client import InternalAPIClient
+from caching.private_api.crawler import PrivateAPICrawler
 
 
 class TestCrawlerCreate:
@@ -15,7 +12,7 @@ class TestCrawlerCreate:
         Then the correct object is returned
         """
         # Given / When
-        crawler = Crawler.create_crawler_for_cache_checking_only()
+        crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
 
         # Then
         assert crawler._internal_api_client.cache_check_only
@@ -28,7 +25,7 @@ class TestCrawlerCreate:
         Then the correct object is returned
         """
         # Given / When
-        crawler = Crawler.create_crawler_for_force_cache_refresh()
+        crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
 
         # Then
         assert crawler._internal_api_client.force_refresh

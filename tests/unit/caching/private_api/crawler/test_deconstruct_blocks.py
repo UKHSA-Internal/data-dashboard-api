@@ -1,11 +1,11 @@
 from unittest import mock
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 
 
 class TestCrawlerDeconstructBlocks:
     def test_get_content_cards_from_section(
-        self, crawler_with_mocked_internal_api_client: Crawler
+        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given a mocked section which contains a list of content cards
@@ -28,7 +28,7 @@ class TestCrawlerDeconstructBlocks:
         assert retrieved_content_cards == mocked_content_cards
 
     def test_get_chart_row_cards_from_content_cards(
-        self, crawler_with_mocked_internal_api_client: Crawler
+        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given mocked content cards which contains a list of chart row cards
@@ -52,7 +52,7 @@ class TestCrawlerDeconstructBlocks:
         assert retrieved_chart_row_cards == mocked_chart_cards
 
     def test_get_headline_numbers_row_cards_from_content_cards(
-        self, crawler_with_mocked_internal_api_client: Crawler
+        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given mocked content cards which contains a list of headline number row cards

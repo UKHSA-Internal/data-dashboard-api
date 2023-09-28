@@ -1,7 +1,7 @@
 from unittest import mock
 
-from caching.crawler import Crawler
 from caching.internal_api_client import InternalAPIClient
+from caching.private_api.crawler import PrivateAPICrawler
 
 
 class TestCrawlerInit:
@@ -16,7 +16,7 @@ class TestCrawlerInit:
         mocked_internal_api_client = mock.Mock()
 
         # When
-        crawler = Crawler(internal_api_client=mocked_internal_api_client)
+        crawler = PrivateAPICrawler(internal_api_client=mocked_internal_api_client)
 
         # Then
         assert crawler._internal_api_client == mocked_internal_api_client
@@ -36,7 +36,7 @@ class TestCrawlerInit:
 
         """
         # Given / When
-        crawler = Crawler()
+        crawler = PrivateAPICrawler()
 
         # Then
         assert isinstance(crawler._internal_api_client, InternalAPIClient)

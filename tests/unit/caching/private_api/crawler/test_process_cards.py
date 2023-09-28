@@ -1,14 +1,14 @@
 from unittest import mock
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 
 
 class TestCrawlerProcessCards:
-    @mock.patch.object(Crawler, "process_any_headline_number_block")
+    @mock.patch.object(PrivateAPICrawler, "process_any_headline_number_block")
     def test_process_headline_numbers_row_card(
         self,
         spy_process_any_headline_number_block: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked a single headlines number row card with multiple columns
@@ -52,11 +52,11 @@ class TestCrawlerProcessCards:
             calls=expected_calls, any_order=True
         )
 
-    @mock.patch.object(Crawler, "process_headline_numbers_row_card")
+    @mock.patch.object(PrivateAPICrawler, "process_headline_numbers_row_card")
     def test_process_all_headline_numbers_row_cards(
         self,
         spy_process_headline_numbers_row_card: mock.Mock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked list of headlines number row cards
@@ -86,11 +86,11 @@ class TestCrawlerProcessCards:
             calls=expected_calls, any_order=True
         )
 
-    @mock.patch.object(Crawler, "process_any_chart_card")
+    @mock.patch.object(PrivateAPICrawler, "process_any_chart_card")
     def test_process_all_chart_cards(
         self,
         spy_process_any_chart_card: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked list of chart row cards

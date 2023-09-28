@@ -3,8 +3,6 @@ from unittest import mock
 
 from rest_framework.test import APIClient
 
-from caching.decorators import CacheCheckResultedInMissError
-
 MODULE_PATH = "metrics.api.views.health"
 
 
@@ -13,23 +11,15 @@ class TestHealthView:
     def path(self) -> str:
         return "/health/"
 
-    @mock.patch(f"{MODULE_PATH}.check_cache_for_all_pages")
-    def test_returns_200_if_check_cache_for_all_pages_succeeds(
-        self, spy_check_cache_for_all_pages: mock.MagicMock
-    ):
+    def test_returns_200_if_check_cache_for_all_pages_succeeds(self):
         """
         Given the `check_cache_for_all_pages()` function
             which will run successfully
         When a `GET` request is made to the `/health/` endpoint
         Then an HTTP 200 OK response is returned
-
-        Patches:
-            `spy_check_cache_for_all_pages`: To simulate
-                the cache being fully hydrated
         """
         # Given
         client = APIClient()
-        spy_check_cache_for_all_pages.return_value = None
 
         # When
         response = client.get(path=self.path)

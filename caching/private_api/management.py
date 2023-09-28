@@ -6,7 +6,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from caching.client import CacheClient, InMemoryCacheClient
+from caching.private_api.client import CacheClient, InMemoryCacheClient
 
 
 class CacheMissError(Exception):

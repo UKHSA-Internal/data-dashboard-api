@@ -2,14 +2,14 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
 class TestCrawlerProcessHeadlessCMSAPI:
     def test_process_list_pages_for_headless_cms_api_delegates_call_to_api_client(
-        self, crawler_with_mocked_internal_api_client: Crawler
+        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given a mocked `InternalAPIClient`
@@ -29,11 +29,13 @@ class TestCrawlerProcessHeadlessCMSAPI:
         spy_internal_api_client.hit_pages_list_endpoint.assert_called_once()
         spy_internal_api_client.hit_pages_list_endpoint_for_all_page_types.assert_called_once()
 
-    @mock.patch.object(Crawler, "process_individual_page_for_headless_cms_api")
+    @mock.patch.object(
+        PrivateAPICrawler, "process_individual_page_for_headless_cms_api"
+    )
     def test_process_detail_pages_for_headless_cms_api_delegates_call_for_each_page(
         self,
         spy_process_individual_page_for_headless_cms_api: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a number of pages
@@ -63,7 +65,7 @@ class TestCrawlerProcessHeadlessCMSAPI:
 
     def test_process_individual_page_for_headless_cms_api_delegates_call_to_api_client(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked page
@@ -90,7 +92,7 @@ class TestCrawlerProcessHeadlessCMSAPI:
 
     def test_process_list_pages_for_headless_cms_api_records_correct_log_(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
@@ -110,7 +112,7 @@ class TestCrawlerProcessHeadlessCMSAPI:
 
     def test_process_detail_pages_for_headless_cms_api_records_correct_log_(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """

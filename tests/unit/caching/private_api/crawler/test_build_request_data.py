@@ -1,13 +1,13 @@
 import pytest
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 
 
 class TestCrawlerBuildRequestData:
     def test_build_headlines_request_data(
         self,
         example_headline_number_block: dict[str, str],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a headline number block
@@ -34,7 +34,7 @@ class TestCrawlerBuildRequestData:
         assert headline_number_data == expected_headline_request_data
 
     def test_build_headlines_request_data_default_geography_fields(
-        self, crawler_with_mocked_internal_api_client: Crawler
+        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given a headline number block which does not contain geography information
@@ -67,7 +67,7 @@ class TestCrawlerBuildRequestData:
     def test_build_trend_request_data(
         self,
         example_trend_number_block: dict[str, str],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a trend number block
@@ -100,7 +100,7 @@ class TestCrawlerBuildRequestData:
         chart_is_double_width: bool,
         expected_chart_width: int,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
@@ -149,7 +149,7 @@ class TestCrawlerBuildRequestData:
     def test_build_tables_request_data(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
@@ -194,7 +194,7 @@ class TestCrawlerBuildRequestData:
     def test_build_downloads_request_data(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
@@ -231,7 +231,9 @@ class TestCrawlerBuildRequestData:
         }
         assert downloads_request_data == expected_downloads_request_data
 
-    def test_build_plot_data(self, crawler_with_mocked_internal_api_client: Crawler):
+    def test_build_plot_data(
+        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
+    ):
         """
         Given a plot value dict for a chart
         When `_build_plot_data()` is called from an instance of `Crawler`

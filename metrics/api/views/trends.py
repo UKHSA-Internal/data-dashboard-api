@@ -4,7 +4,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from caching.decorators import cache_response
+from caching.private_api.decorators import cache_response
 from metrics.api.serializers import TrendsQuerySerializer, TrendsResponseSerializer
 from metrics.api.serializers.trends import TrendsQuerySerializerBeta
 from metrics.domain.models.trends import TrendsParameters

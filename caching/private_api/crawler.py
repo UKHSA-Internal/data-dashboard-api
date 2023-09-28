@@ -12,7 +12,7 @@ CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]
 logger = logging.getLogger(__name__)
 
 
-class Crawler:
+class PrivateAPICrawler:
     """This is used to parse the CMS blocks and fire off the corresponding requests
 
     Notes:

@@ -5,8 +5,8 @@ import pytest
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from caching.client import CacheClient, InMemoryCacheClient
-from caching.management import CacheManagement, CacheMissError
+from caching.private_api.client import CacheClient, InMemoryCacheClient
+from caching.private_api.management import CacheManagement, CacheMissError
 
 
 @pytest.fixture

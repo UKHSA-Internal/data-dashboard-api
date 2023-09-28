@@ -2,17 +2,17 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
 class TestCrawlerProcessPages:
-    @mock.patch.object(Crawler, "process_all_sections_in_page")
+    @mock.patch.object(PrivateAPICrawler, "process_all_sections_in_page")
     def test_delegates_call_for_each_page(
         self,
         spy_process_all_sections_in_page: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of `TopicPages`
@@ -38,11 +38,11 @@ class TestCrawlerProcessPages:
             calls=expected_calls, any_order=True
         )
 
-    @mock.patch.object(Crawler, "process_list_pages_for_headless_cms_api")
+    @mock.patch.object(PrivateAPICrawler, "process_list_pages_for_headless_cms_api")
     def test_delegates_call_for_headless_cms_api_list_pages(
         self,
         spy_process_list_pages_for_headless_cms_api: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of pages
@@ -64,11 +64,11 @@ class TestCrawlerProcessPages:
         # Then
         spy_process_list_pages_for_headless_cms_api.assert_called_once()
 
-    @mock.patch.object(Crawler, "process_detail_pages_for_headless_cms_api")
+    @mock.patch.object(PrivateAPICrawler, "process_detail_pages_for_headless_cms_api")
     def test_delegates_call_for_processing_each_page_headless_cms_api_detail(
         self,
         spy_process_detail_pages_for_headless_cms_api: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of pages
@@ -94,7 +94,7 @@ class TestCrawlerProcessPages:
 
     def test_logs_when_page_sections_cannot_be_processed_eg_common_pages(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
@@ -118,7 +118,7 @@ class TestCrawlerProcessPages:
 
     def test_logs_are_recorded_for_completion_of_headless_cms_api(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
@@ -141,7 +141,7 @@ class TestCrawlerProcessPages:
 
     def test_logs_are_recorded_for_processing_of_private_api_content_blocks(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
@@ -165,7 +165,7 @@ class TestCrawlerProcessPages:
 
     def test_logs_are_recorded_with_counter_of_number_of_pages_completed(
         self,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """

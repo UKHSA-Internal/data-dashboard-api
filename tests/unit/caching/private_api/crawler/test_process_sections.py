@@ -1,15 +1,15 @@
 from unittest import mock
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
 class TestCrawlerProcessSections:
-    @mock.patch.object(Crawler, "process_section")
+    @mock.patch.object(PrivateAPICrawler, "process_section")
     def test_process_all_sections_in_page_delegates_call_for_each_section(
         self,
         spy_process_section: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a `TopicPage`
@@ -33,11 +33,11 @@ class TestCrawlerProcessSections:
         ]
         spy_process_section.assert_has_calls(calls=expected_calls)
 
-    @mock.patch.object(Crawler, "get_content_cards_from_section")
+    @mock.patch.object(PrivateAPICrawler, "get_content_cards_from_section")
     def test_process_section_delegates_call_for_gathering_content_cards_for_each_section(
         self,
         spy_get_content_cards_from_section: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked page section
@@ -59,15 +59,17 @@ class TestCrawlerProcessSections:
             section=mocked_section
         )
 
-    @mock.patch.object(Crawler, "process_all_headline_numbers_row_cards")
-    @mock.patch.object(Crawler, "get_headline_numbers_row_cards_from_content_cards")
-    @mock.patch.object(Crawler, "get_content_cards_from_section")
+    @mock.patch.object(PrivateAPICrawler, "process_all_headline_numbers_row_cards")
+    @mock.patch.object(
+        PrivateAPICrawler, "get_headline_numbers_row_cards_from_content_cards"
+    )
+    @mock.patch.object(PrivateAPICrawler, "get_content_cards_from_section")
     def test_process_section_delegates_call_for_processing_headline_numbers_row_cards(
         self,
         spy_get_content_cards_from_section: mock.MagicMock,
         spy_get_headline_numbers_row_cards_from_content_cards: mock.MagicMock,
         spy_process_all_headline_numbers_row_cards: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked section
@@ -106,15 +108,15 @@ class TestCrawlerProcessSections:
             headline_numbers_row_cards=headline_numbers_row_cards
         )
 
-    @mock.patch.object(Crawler, "process_all_chart_cards")
-    @mock.patch.object(Crawler, "get_chart_row_cards_from_content_cards")
-    @mock.patch.object(Crawler, "get_content_cards_from_section")
+    @mock.patch.object(PrivateAPICrawler, "process_all_chart_cards")
+    @mock.patch.object(PrivateAPICrawler, "get_chart_row_cards_from_content_cards")
+    @mock.patch.object(PrivateAPICrawler, "get_content_cards_from_section")
     def test_process_section_delegates_call_for_processing_chart_row_cards(
         self,
         spy_get_content_cards_from_section: mock.MagicMock,
         spy_get_chart_row_cards_from_content_cards: mock.MagicMock,
         spy_process_all_chart_cards: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: Crawler,
+        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked section
