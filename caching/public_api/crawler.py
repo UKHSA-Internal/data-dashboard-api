@@ -67,12 +67,15 @@ def _is_url(value: str) -> bool:
     return "http" in value
 
 
-def crawl_public_api_themes_path():
+def get_public_api_url() -> str:
     try:
-        api_url = os.environ["PUBLIC_API_URL"]
+        return os.environ["PUBLIC_API_URL"]
     except KeyError as error:
         raise KeyError("No `PUBLIC_API_URL` provided") from error
 
+
+def crawl_public_api_themes_path():
+    api_url = get_public_api_url()
     api_url = f"{api_url}/themes/"
 
     logger.info(f"Crawling from root URL {api_url}")
