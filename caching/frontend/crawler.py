@@ -6,6 +6,8 @@ from rest_framework.response import Response
 
 from caching.internal_api_client import InternalAPIClient
 
+DEFAULT_REQUEST_TIMEOUT = 60
+
 
 class FrontEndCrawler:
     """This is used to traverse the front end and send GET requests to all relevant pages
@@ -63,7 +65,11 @@ class FrontEndCrawler:
 
         """
         cdn_auth_key = f'"{self._cdn_auth_key}"'
-        requests.get(url=url, headers={"x-cdn-auth": cdn_auth_key})
+        requests.get(
+            url=url,
+            timeout=DEFAULT_REQUEST_TIMEOUT,
+            headers={"x-cdn-auth": cdn_auth_key},
+        )
 
     def process_page(self, page_item: dict) -> None:
         """Hit the URL for the corresponding `page_item`
