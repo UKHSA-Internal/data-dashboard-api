@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 from urllib.parse import urljoin
 
@@ -7,6 +8,8 @@ from rest_framework.response import Response
 from caching.internal_api_client import InternalAPIClient
 
 DEFAULT_REQUEST_TIMEOUT = 60
+
+logger = logging.getLogger(__name__)
 
 
 class FrontEndCrawler:
@@ -70,6 +73,7 @@ class FrontEndCrawler:
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": cdn_auth_key},
         )
+        logger.info(f"Processed `{url}`")
 
     def process_page(self, page_item: dict) -> None:
         """Hit the URL for the corresponding `page_item`
@@ -110,13 +114,14 @@ class FrontEndCrawler:
             None
 
         """
-
+        logger.info("Getting all pages from Headless CMS API")
         all_page_items: list[dict] = self.get_all_page_items_from_api()
 
         for page_item in all_page_items:
             self.process_page(page_item=page_item["meta"])
 
         self.hit_frontend_page(url=self._build_url_for_feedback_confirmation_page())
+        logger.info("Finished processing all pages for the frontend")
 
     # URL construction
 

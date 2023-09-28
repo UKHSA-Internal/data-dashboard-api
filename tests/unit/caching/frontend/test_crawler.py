@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+from _pytest.logging import LogCaptureFixture
 
 from caching.frontend.crawler import DEFAULT_REQUEST_TIMEOUT, FrontEndCrawler
 
@@ -52,6 +53,7 @@ class TestFrontEndCrawler:
         self,
         spy_requests: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+        caplog: LogCaptureFixture,
     ):
         """
         Given a URL
@@ -73,6 +75,8 @@ class TestFrontEndCrawler:
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": expected_cdn_auth_key},
         )
+
+        assert f"Processed `{url}`" in caplog.text
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
     @mock.patch.object(FrontEndCrawler, "_build_url_for_home_page")
