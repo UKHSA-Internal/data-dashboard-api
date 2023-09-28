@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_REQUEST_TIMEOUT = 60
 
 
-def _get_cdn_auth_key() -> str:
+def get_cdn_auth_key() -> str:
     try:
         cdn_auth_key = os.environ["CDN_AUTH_KEY"]
     except KeyError as error:
@@ -17,7 +17,7 @@ def _get_cdn_auth_key() -> str:
 
 
 def _hit_endpoint_for_json(url: str) -> dict:
-    cdn_auth_key = _get_cdn_auth_key()
+    cdn_auth_key = get_cdn_auth_key()
     response = requests.get(
         url=url,
         timeout=DEFAULT_REQUEST_TIMEOUT,
@@ -27,7 +27,7 @@ def _hit_endpoint_for_json(url: str) -> dict:
 
 
 def _hit_endpoint_for_html(url: str) -> str:
-    cdn_auth_key = _get_cdn_auth_key()
+    cdn_auth_key = get_cdn_auth_key()
     response = requests.get(
         url=url,
         timeout=DEFAULT_REQUEST_TIMEOUT,
@@ -67,12 +67,15 @@ def _is_url(value: str) -> bool:
     return "http" in value
 
 
-def crawl_public_api_themes_path():
+def _get_public_api_url() -> str:
     try:
-        api_url = os.environ["PUBLIC_API_URL"]
+        return os.environ["PUBLIC_API_URL"]
     except KeyError as error:
         raise KeyError("No `PUBLIC_API_URL` provided") from error
 
+
+def crawl_public_api_themes_path():
+    api_url = _get_public_api_url()
     api_url = f"{api_url}/themes/"
 
     logger.info(f"Crawling from root URL {api_url}")
