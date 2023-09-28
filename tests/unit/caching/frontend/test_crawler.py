@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from caching.frontend.crawler import FrontEndCrawler
+from caching.frontend.crawler import DEFAULT_REQUEST_TIMEOUT, FrontEndCrawler
 
 MODULE_PATH = "caching.frontend.crawler"
 
@@ -70,6 +70,7 @@ class TestFrontEndCrawler:
         )
         spy_requests.get.assert_called_once_with(
             url=url,
+            timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": expected_cdn_auth_key},
         )
 
