@@ -13,11 +13,15 @@ class TestCrawlFrontEnd:
         Given `FRONTEND_URL` & `CDN_AUTH_KEY` environment variables
         When `crawl_front_end()` is called
         Then `process_all_pages()` is called from an instance of `FrontEndCrawler`
+
+        Patches:
+            `spy_process_all_pages`: For the main assertion
         """
-        # Given / When
+        # Given
         monkeypatch.setenv("FRONTEND_URL", "fake-url")
         monkeypatch.setenv("CDN_AUTH_KEY", "fake-cdn-auth-key")
 
+        # When
         crawl_front_end()
 
         # Then
