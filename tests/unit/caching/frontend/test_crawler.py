@@ -10,7 +10,7 @@ MODULE_PATH = "caching.frontend.crawler"
 @pytest.fixture()
 def frontend_crawler_with_mocked_internal_api_client() -> FrontEndCrawler:
     return FrontEndCrawler(
-        frontend_base_url="http://fake-frontend.co.uk",
+        frontend_base_url="https://fake-frontend.co.uk",
         cdn_auth_key="123456789",
         internal_api_client=mock.MagicMock(),
     )
