@@ -10,12 +10,14 @@ class TestCrawlFrontEnd:
         self, spy_process_all_pages: mock.MagicMock, monkeypatch
     ):
         """
-        Given a `FRONTEND_URL` environment variable
+        Given `FRONTEND_URL` & `CDN_AUTH_KEY` environment variables
         When `crawl_front_end()` is called
         Then `process_all_pages()` is called from an instance of `FrontEndCrawler`
         """
         # Given / When
         monkeypatch.setenv("FRONTEND_URL", "fake-url")
+        monkeypatch.setenv("CDN_AUTH_KEY", "fake-cdn-auth-key")
+
         crawl_front_end()
 
         # Then
