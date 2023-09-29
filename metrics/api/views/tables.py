@@ -194,6 +194,30 @@ class TablesViewV4(APIView):
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
             `Influenza` does not have a corresponding metric of `COVID-19`
 
+        ---
+
+        ## Ordering of data
+
+        Note that for tables which are `date` based i.e. where the `x_axis` field is set to `date`.
+
+        Then the data will be returned in descending order from newest -> oldest:
+
+        ```
+        | 2023-09-29 | 1 |
+        | 2023-09-28 | 2 |
+        | 2023-09-27 | 3 |
+        ```
+
+        For tables which **not** `date` based i.e. where the `x_axis` field is set to something like `age`.
+
+        Then the data will be returned in ascending order:
+
+        ```
+        | 00 - 04 | 1 |
+        | 05 - 09 | 2 |
+        | 10 - 14 | 3 |
+        ```
+
         """
         request_serializer = TablesSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
