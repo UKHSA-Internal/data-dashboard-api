@@ -6,7 +6,7 @@ from rest_framework_api_key.models import APIKey
 
 from ingestion.data_transfer_models import IncomingHeadlineDTO
 from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
-from metrics.domain.models import PlotParameters
+from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -46,6 +46,25 @@ def valid_plot_parameters() -> PlotParameters:
         date_from="2022-01-01",
         x_axis="date",
         y_axis="metric",
+    )
+
+
+@pytest.fixture
+def fake_chart_plots_data() -> PlotData:
+    plot_params = PlotParameters(
+        chart_type="line_multi_coloured",
+        topic="COVID-19",
+        metric="COVID-19_deaths_ONSByDay",
+        x_axis="metric",
+        y_axis="date",
+    )
+    x_values = [1, 2, 4, 5, 5, 2, 1]
+    return PlotData(
+        parameters=plot_params,
+        x_axis_values=[1, 2, 4, 5, 5, 2, 1],
+        y_axis_values=[
+            datetime.date(year=2023, month=1, day=i + 1) for i in range(len(x_values))
+        ],
     )
 
 
