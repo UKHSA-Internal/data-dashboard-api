@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework.views import APIView
 
-from caching.handlers import force_cache_refresh_for_all_pages
+from caching.private_api.handlers import force_cache_refresh_for_all_pages
 
 
 class CacheView(APIView):

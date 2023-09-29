@@ -1,8 +1,8 @@
 from unittest import mock
 
-from caching.client import CacheClient, InMemoryCacheClient
+from caching.private_api.client import CacheClient, InMemoryCacheClient
 
-MODULE_PATH = "caching.client"
+MODULE_PATH = "caching.private_api.client"
 
 
 class TestCacheClient:

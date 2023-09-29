@@ -3,10 +3,6 @@ from http import HTTPStatus
 from django.http import HttpResponse
 from rest_framework.views import APIView
 
-import config
-from caching.decorators import CacheCheckResultedInMissError
-from caching.handlers import check_cache_for_all_pages
-
 
 class HealthView(APIView):
     permission_classes = []

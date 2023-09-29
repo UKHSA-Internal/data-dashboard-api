@@ -3,7 +3,7 @@ from timeit import default_timer
 
 from django.db.models import Manager
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
@@ -45,7 +45,7 @@ def collect_all_pages(
     return pages
 
 
-def _crawl_all_pages(crawler: Crawler) -> None:
+def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
     """Parses the CMS blocks for all pages with the given `crawler`
 
     Notes:
@@ -87,7 +87,7 @@ def check_cache_for_all_pages() -> None:
             Note that this will error at the 1st cache miss.
 
     """
-    crawler = Crawler.create_crawler_for_cache_checking_only()
+    crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
     _crawl_all_pages(crawler=crawler)
 
 
@@ -109,5 +109,5 @@ def force_cache_refresh_for_all_pages() -> None:
         None
 
     """
-    crawler = Crawler.create_crawler_for_force_cache_refresh()
+    crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
     _crawl_all_pages(crawler=crawler)

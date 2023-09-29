@@ -2,18 +2,18 @@ from unittest import mock
 
 import pytest
 
-from caching.decorators import (
-    CacheCheckResultedInMissError,
-    _calculate_response_and_save_in_cache,
-    _retrieve_response_from_cache_or_calculate,
-)
 from caching.internal_api_client import (
     CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
 )
-from caching.management import CacheMissError
+from caching.private_api.decorators import (
+    CacheCheckResultedInMissError,
+    _calculate_response_and_save_in_cache,
+    _retrieve_response_from_cache_or_calculate,
+)
+from caching.private_api.management import CacheMissError
 
-MODULE_PATH = "caching.decorators"
+MODULE_PATH = "caching.private_api.decorators"
 
 
 class TestRetrieveResponseFromCacheOrCalculate:

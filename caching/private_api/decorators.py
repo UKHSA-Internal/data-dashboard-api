@@ -7,7 +7,7 @@ from caching.internal_api_client import (
     CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
 )
-from caching.management import CacheManagement, CacheMissError
+from caching.private_api.management import CacheManagement, CacheMissError
 
 
 class CacheCheckResultedInMissError(Exception):

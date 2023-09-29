@@ -5,7 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from wagtail.api.v2.views import PagesAPIViewSet
 
-from caching.decorators import cache_response
+from caching.private_api.decorators import cache_response
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 
 

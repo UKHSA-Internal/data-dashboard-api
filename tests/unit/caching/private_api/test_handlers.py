@@ -2,8 +2,8 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
-from caching.crawler import Crawler
-from caching.handlers import (
+from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.handlers import (
     _crawl_all_pages,
     check_cache_for_all_pages,
     collect_all_pages,
@@ -16,7 +16,7 @@ from tests.fakes.managers.cms.common_page_manager import FakeCommonPageManager
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
 from tests.fakes.managers.cms.topic_page_manager import FakeTopicPageManager
 
-MODULE_PATH = "caching.handlers"
+MODULE_PATH = "caching.private_api.handlers"
 
 
 class TestCollectAllPages:
@@ -176,7 +176,7 @@ class TestCrawlAllPages:
 
 class TestCheckCacheForAllPages:
     @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
-    @mock.patch.object(Crawler, "create_crawler_for_cache_checking_only")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
     def test_delegates_calls_successfully(
         self,
         spy_create_crawler_for_cache_checking_only: mock.MagicMock,
@@ -204,7 +204,7 @@ class TestCheckCacheForAllPages:
 
 class TestHydrateCacheForAllPages:
     @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
-    @mock.patch.object(Crawler, "create_crawler_for_force_cache_refresh")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
     def test_delegates_calls_successfully(
         self,
         spy_create_crawler_for_force_cache_refresh: mock.MagicMock,

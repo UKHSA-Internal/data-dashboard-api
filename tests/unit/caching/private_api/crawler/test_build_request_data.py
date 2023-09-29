@@ -1,27 +1,26 @@
 import pytest
 
-from caching.crawler import Crawler
+from caching.private_api.crawler import PrivateAPICrawler
 
 
-class TestCrawlerBuildRequestData:
+class TestPrivateAPICrawlerBuildRequestData:
     def test_build_headlines_request_data(
         self,
         example_headline_number_block: dict[str, str],
-        crawler_with_mocked_internal_api_client: Crawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a headline number block
-        When `_build_headlines_request_data()` is called from an instance of `Crawler`
+        When `_build_headlines_request_data()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct dict is returned
         """
         # Given
         headline_number_block = example_headline_number_block
 
         # When
-        headline_number_data = (
-            crawler_with_mocked_internal_api_client._build_headlines_request_data(
-                headline_number_block=headline_number_block
-            )
+        headline_number_data = private_api_crawler_with_mocked_internal_api_client._build_headlines_request_data(
+            headline_number_block=headline_number_block
         )
 
         # Then
@@ -34,11 +33,12 @@ class TestCrawlerBuildRequestData:
         assert headline_number_data == expected_headline_request_data
 
     def test_build_headlines_request_data_default_geography_fields(
-        self, crawler_with_mocked_internal_api_client: Crawler
+        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given a headline number block which does not contain geography information
-        When `_build_headlines_request_data()` is called from an instance of `Crawler`
+        When `_build_headlines_request_data()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct dict is returned
         """
         # Given
@@ -49,10 +49,8 @@ class TestCrawlerBuildRequestData:
         }
 
         # When
-        headline_number_data = (
-            crawler_with_mocked_internal_api_client._build_headlines_request_data(
-                headline_number_block=headline_number_block_with_no_geography_input
-            )
+        headline_number_data = private_api_crawler_with_mocked_internal_api_client._build_headlines_request_data(
+            headline_number_block=headline_number_block_with_no_geography_input
         )
 
         # Then
@@ -67,21 +65,20 @@ class TestCrawlerBuildRequestData:
     def test_build_trend_request_data(
         self,
         example_trend_number_block: dict[str, str],
-        crawler_with_mocked_internal_api_client: Crawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a trend number block
-        When `_build_trend_request_data()` is called from an instance of `Crawler`
+        When `_build_trend_request_data()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct dict is returned
         """
         # Given
         trend_number_block = example_trend_number_block
 
         # When
-        trend_request_data = (
-            crawler_with_mocked_internal_api_client._build_trend_request_data(
-                trend_number_block=trend_number_block
-            )
+        trend_request_data = private_api_crawler_with_mocked_internal_api_client._build_trend_request_data(
+            trend_number_block=trend_number_block
         )
 
         # Then
@@ -100,22 +97,21 @@ class TestCrawlerBuildRequestData:
         chart_is_double_width: bool,
         expected_chart_width: int,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
-        When `_build_chart_request_data()` is called from an instance of `Crawler`
+        When `_build_chart_request_data()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct dict is returned
         """
         # Given
         chart_block_data = example_chart_block
 
         # When
-        chart_request_data = (
-            crawler_with_mocked_internal_api_client._build_chart_request_data(
-                chart_block=chart_block_data,
-                chart_is_double_width=chart_is_double_width,
-            )
+        chart_request_data = private_api_crawler_with_mocked_internal_api_client._build_chart_request_data(
+            chart_block=chart_block_data,
+            chart_is_double_width=chart_is_double_width,
         )
 
         # Then
@@ -149,21 +145,20 @@ class TestCrawlerBuildRequestData:
     def test_build_tables_request_data(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
-        When `_build_tables_request_data()` is called from an instance of `Crawler`
+        When `_build_tables_request_data()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct dict is returned
         """
         # Given
         chart_block_data = example_chart_block
 
         # When
-        tables_request_data = (
-            crawler_with_mocked_internal_api_client._build_tables_request_data(
-                chart_block=chart_block_data,
-            )
+        tables_request_data = private_api_crawler_with_mocked_internal_api_client._build_tables_request_data(
+            chart_block=chart_block_data,
         )
 
         # Then
@@ -194,21 +189,20 @@ class TestCrawlerBuildRequestData:
     def test_build_downloads_request_data(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        crawler_with_mocked_internal_api_client: Crawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
-        When `build_downloads_request_data()` is called from an instance of `Crawler`
+        When `build_downloads_request_data()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct dict is returned
         """
         # Given
         chart_block_data = example_chart_block
 
         # When
-        downloads_request_data = (
-            crawler_with_mocked_internal_api_client._build_downloads_request_data(
-                chart_block=chart_block_data,
-            )
+        downloads_request_data = private_api_crawler_with_mocked_internal_api_client._build_downloads_request_data(
+            chart_block=chart_block_data,
         )
 
         # Then
@@ -231,10 +225,13 @@ class TestCrawlerBuildRequestData:
         }
         assert downloads_request_data == expected_downloads_request_data
 
-    def test_build_plot_data(self, crawler_with_mocked_internal_api_client: Crawler):
+    def test_build_plot_data(
+        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
+    ):
         """
         Given a plot value dict for a chart
-        When `_build_plot_data()` is called from an instance of `Crawler`
+        When `_build_plot_data()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct plot data dict is returned
         """
         # Given
@@ -255,8 +252,10 @@ class TestCrawlerBuildRequestData:
         }
 
         # When
-        plot_data = crawler_with_mocked_internal_api_client._build_plot_data(
-            plot_value=plot_value
+        plot_data = (
+            private_api_crawler_with_mocked_internal_api_client._build_plot_data(
+                plot_value=plot_value
+            )
         )
 
         # Then
