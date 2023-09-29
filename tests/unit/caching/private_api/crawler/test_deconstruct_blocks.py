@@ -3,14 +3,14 @@ from unittest import mock
 from caching.private_api.crawler import PrivateAPICrawler
 
 
-class TestCrawlerDeconstructBlocks:
+class TestPrivateAPICrawlerDeconstructBlocks:
     def test_get_content_cards_from_section(
-        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
+        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given a mocked section which contains a list of content cards
         When `get_content_cards_from_section()` is called
-            from an instance of `Crawler`
+            from an instance of `PrivateAPICrawler`
         Then the correct content cards are returned
         """
         # Given
@@ -18,22 +18,20 @@ class TestCrawlerDeconstructBlocks:
         mocked_section = {"value": {"content": mocked_content_cards}}
 
         # When
-        retrieved_content_cards = (
-            crawler_with_mocked_internal_api_client.get_content_cards_from_section(
-                section=mocked_section
-            )
+        retrieved_content_cards = private_api_crawler_with_mocked_internal_api_client.get_content_cards_from_section(
+            section=mocked_section
         )
 
         # Then
         assert retrieved_content_cards == mocked_content_cards
 
     def test_get_chart_row_cards_from_content_cards(
-        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
+        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given mocked content cards which contains a list of chart row cards
         When `get_chart_row_cards_from_content_cards()` is called
-            from an instance of `Crawler`
+            from an instance of `PrivateAPICrawler`
         Then the correct chart row cards are returned
         """
         # Given
@@ -42,7 +40,7 @@ class TestCrawlerDeconstructBlocks:
         mocked_content_cards += mocked_chart_cards
 
         # When
-        retrieved_chart_row_cards = crawler_with_mocked_internal_api_client.get_chart_row_cards_from_content_cards(
+        retrieved_chart_row_cards = private_api_crawler_with_mocked_internal_api_client.get_chart_row_cards_from_content_cards(
             content_cards=mocked_content_cards
         )
 
@@ -52,12 +50,12 @@ class TestCrawlerDeconstructBlocks:
         assert retrieved_chart_row_cards == mocked_chart_cards
 
     def test_get_headline_numbers_row_cards_from_content_cards(
-        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
+        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given mocked content cards which contains a list of headline number row cards
         When `get_headline_numbers_row_cards_from_content_cards()` is called
-            from an instance of `Crawler`
+            from an instance of `PrivateAPICrawler`
         Then the correct headline numbers row cards  are returned
         """
         # Given
@@ -66,7 +64,7 @@ class TestCrawlerDeconstructBlocks:
         mocked_content_cards += mocked_headline_numbers_row_cards
 
         # When
-        retrieved_headline_numbers_row_cards = crawler_with_mocked_internal_api_client.get_headline_numbers_row_cards_from_content_cards(
+        retrieved_headline_numbers_row_cards = private_api_crawler_with_mocked_internal_api_client.get_headline_numbers_row_cards_from_content_cards(
             content_cards=mocked_content_cards
         )
 

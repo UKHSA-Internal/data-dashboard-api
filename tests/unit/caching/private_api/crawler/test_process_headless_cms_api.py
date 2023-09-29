@@ -7,23 +7,23 @@ from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
-class TestCrawlerProcessHeadlessCMSAPI:
+class TestPrivateAPICrawlerProcessHeadlessCMSAPI:
     def test_process_list_pages_for_headless_cms_api_delegates_call_to_api_client(
-        self, crawler_with_mocked_internal_api_client: PrivateAPICrawler
+        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
     ):
         """
         Given a mocked `InternalAPIClient`
         When `process_list_pages_for_headless_cms_api()`
-            is called from an instance of `Crawler`
+            is called from an instance of `PrivateAPICrawler`
         Then the call is delegated to the `InternalAPIClient`
         """
         # Given
         spy_internal_api_client = (
-            crawler_with_mocked_internal_api_client._internal_api_client
+            private_api_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
-        crawler_with_mocked_internal_api_client.process_list_pages_for_headless_cms_api()
+        private_api_crawler_with_mocked_internal_api_client.process_list_pages_for_headless_cms_api()
 
         # Then
         spy_internal_api_client.hit_pages_list_endpoint.assert_called_once()
@@ -35,12 +35,12 @@ class TestCrawlerProcessHeadlessCMSAPI:
     def test_process_detail_pages_for_headless_cms_api_delegates_call_for_each_page(
         self,
         spy_process_individual_page_for_headless_cms_api: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a number of pages
         When `process_detail_pages_for_headless_cms_api()`
-            is called from an instance of `Crawler`
+            is called from an instance of `PrivateAPICrawler`
         Then the `process_individual_page_for_headless_cms_api()` method
             is called for each section
 
@@ -53,7 +53,7 @@ class TestCrawlerProcessHeadlessCMSAPI:
         pages = [fake_common_page, fake_topic_page]
 
         # When
-        crawler_with_mocked_internal_api_client.process_detail_pages_for_headless_cms_api(
+        private_api_crawler_with_mocked_internal_api_client.process_detail_pages_for_headless_cms_api(
             pages=pages
         )
 
@@ -65,23 +65,23 @@ class TestCrawlerProcessHeadlessCMSAPI:
 
     def test_process_individual_page_for_headless_cms_api_delegates_call_to_api_client(
         self,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked page
         When `process_individual_page_for_headless_cms_api()`
-            is called from an instance of `Crawler`
+            is called from an instance of `PrivateAPICrawler`
         Then the call is delegated to the `InternalAPIClient`
 
         """
         # Given
         mocked_page = mock.Mock()
         spy_internal_api_client: mock.Mock = (
-            crawler_with_mocked_internal_api_client._internal_api_client
+            private_api_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
-        crawler_with_mocked_internal_api_client.process_individual_page_for_headless_cms_api(
+        private_api_crawler_with_mocked_internal_api_client.process_individual_page_for_headless_cms_api(
             page=mocked_page
         )
 
@@ -92,16 +92,16 @@ class TestCrawlerProcessHeadlessCMSAPI:
 
     def test_process_list_pages_for_headless_cms_api_records_correct_log_(
         self,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
-        Given an instance of a `Crawler`
+        Given an instance of a `PrivateAPICrawler`
         When `process_list_pages_for_headless_cms_api()` is called
         Then the correct logs are recorded
         """
         # Given
-        crawler = crawler_with_mocked_internal_api_client
+        crawler = private_api_crawler_with_mocked_internal_api_client
 
         # When
         crawler.process_list_pages_for_headless_cms_api()
@@ -112,18 +112,18 @@ class TestCrawlerProcessHeadlessCMSAPI:
 
     def test_process_detail_pages_for_headless_cms_api_records_correct_log_(
         self,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
         Given a list of mocked `Page` objects
         When `process_detail_pages_for_headless_cms_api()`
-            is called from an instance of `Crawler`
+            is called from an instance of `PrivateAPICrawler`
         Then the correct logs are recorded
         """
         # Given
         mocked_pages = [mock.Mock(title="COVID-19"), mock.Mock(title="Influenza")]
-        crawler = crawler_with_mocked_internal_api_client
+        crawler = private_api_crawler_with_mocked_internal_api_client
 
         # When
         crawler.process_detail_pages_for_headless_cms_api(pages=mocked_pages)

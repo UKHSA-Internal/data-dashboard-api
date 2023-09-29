@@ -7,16 +7,17 @@ from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
-class TestCrawlerProcessPages:
+class TestPrivateAPICrawlerProcessPages:
     @mock.patch.object(PrivateAPICrawler, "process_all_sections_in_page")
     def test_delegates_call_for_each_page(
         self,
         spy_process_all_sections_in_page: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of `TopicPages`
-        When `process_pages()` is called from an instance of `Crawler`
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
         Then the `process_all_sections_in_page()` method
             is called for each page
 
@@ -30,7 +31,9 @@ class TestCrawlerProcessPages:
         ]
 
         # When
-        crawler_with_mocked_internal_api_client.process_pages(pages=fake_pages)
+        private_api_crawler_with_mocked_internal_api_client.process_pages(
+            pages=fake_pages
+        )
 
         # Then
         expected_calls = [mock.call(page=page) for page in fake_pages]
@@ -42,11 +45,12 @@ class TestCrawlerProcessPages:
     def test_delegates_call_for_headless_cms_api_list_pages(
         self,
         spy_process_list_pages_for_headless_cms_api: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of pages
-        When `process_pages()` is called from an instance of `Crawler`
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
         Then the `process_list_pages_for_headless_cms_api()` method is called
 
         Patches:
@@ -59,7 +63,9 @@ class TestCrawlerProcessPages:
         ]
 
         # When
-        crawler_with_mocked_internal_api_client.process_pages(pages=fake_pages)
+        private_api_crawler_with_mocked_internal_api_client.process_pages(
+            pages=fake_pages
+        )
 
         # Then
         spy_process_list_pages_for_headless_cms_api.assert_called_once()
@@ -68,11 +74,12 @@ class TestCrawlerProcessPages:
     def test_delegates_call_for_processing_each_page_headless_cms_api_detail(
         self,
         spy_process_detail_pages_for_headless_cms_api: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a list of pages
-        When `process_pages()` is called from an instance of `Crawler`
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
         Then the `process_pages_for_headless_cms_api()` method is called
 
         Patches:
@@ -85,7 +92,9 @@ class TestCrawlerProcessPages:
         ]
 
         # When
-        crawler_with_mocked_internal_api_client.process_pages(pages=fake_pages)
+        private_api_crawler_with_mocked_internal_api_client.process_pages(
+            pages=fake_pages
+        )
 
         # Then
         spy_process_detail_pages_for_headless_cms_api.assert_called_once_with(
@@ -94,12 +103,13 @@ class TestCrawlerProcessPages:
 
     def test_logs_when_page_sections_cannot_be_processed_eg_common_pages(
         self,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
         Given a list of `CommonPage`
-        When `process_pages()` is called from an instance of `Crawler`
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct log statements are recorded
         """
         # Given
@@ -109,7 +119,9 @@ class TestCrawlerProcessPages:
         ]
 
         # When
-        crawler_with_mocked_internal_api_client.process_pages(pages=fake_common_pages)
+        private_api_crawler_with_mocked_internal_api_client.process_pages(
+            pages=fake_common_pages
+        )
 
         # Then
         for common_page in fake_common_pages:
@@ -118,17 +130,18 @@ class TestCrawlerProcessPages:
 
     def test_logs_are_recorded_for_completion_of_headless_cms_api(
         self,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
         Given a list of mocked `Page` objects
-        When `process_pages()` is called from an instance of `Crawler`
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct logs are made for the processing of the headless CMS API
         """
         # Given
         mocked_pages = [mock.MagicMock()] * 2
-        crawler = crawler_with_mocked_internal_api_client
+        crawler = private_api_crawler_with_mocked_internal_api_client
 
         # When
         crawler.process_pages(pages=mocked_pages)
@@ -141,17 +154,18 @@ class TestCrawlerProcessPages:
 
     def test_logs_are_recorded_for_processing_of_private_api_content_blocks(
         self,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
         Given a list of mocked `Page` objects
-        When `process_pages()` is called from an instance of `Crawler`
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct logs are made for the processing of content blocks
         """
         # Given
         mocked_pages = [mock.MagicMock()] * 2
-        crawler = crawler_with_mocked_internal_api_client
+        crawler = private_api_crawler_with_mocked_internal_api_client
 
         # When
         crawler.process_pages(pages=mocked_pages)
@@ -165,18 +179,19 @@ class TestCrawlerProcessPages:
 
     def test_logs_are_recorded_with_counter_of_number_of_pages_completed(
         self,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
         caplog: LogCaptureFixture,
     ):
         """
         Given a list of mocked `Page` objects
-        When `process_pages()` is called from an instance of `Crawler`
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
         Then the correct logs are made with a counter of completed of pages
         """
         # Given
         pages_count = 10
         mocked_pages = [mock.MagicMock()] * pages_count
-        crawler = crawler_with_mocked_internal_api_client
+        crawler = private_api_crawler_with_mocked_internal_api_client
 
         # When
         crawler.process_pages(pages=mocked_pages)

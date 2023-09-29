@@ -4,12 +4,12 @@ from caching.internal_api_client import InternalAPIClient
 from caching.private_api.crawler import PrivateAPICrawler
 
 
-class TestCrawlerInit:
+class TestPrivateAPICrawlerInit:
     # Tests for the __init__
     def test_internal_api_client_can_be_provided_to_init(self):
         """
         Given a pre-existing `InternalAPIClient`
-        When the `Crawler` class is initialized
+        When the `PrivateAPICrawler` class is initialized
         Then the `_internal_api_client` is set with the provided client
         """
         # Given
@@ -27,7 +27,7 @@ class TestCrawlerInit:
     ):
         """
         Given no provided pre-existing `InternalAPIClient`
-        When the `Crawler` class is initialized
+        When the `PrivateAPICrawler` class is initialized
         Then the `_internal_api_client` is set with an `InternalAPIClient` instance
 
         Patches:

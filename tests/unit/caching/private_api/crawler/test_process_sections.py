@@ -4,16 +4,17 @@ from caching.private_api.crawler import PrivateAPICrawler
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
-class TestCrawlerProcessSections:
+class TestPrivateAPICrawlerProcessSections:
     @mock.patch.object(PrivateAPICrawler, "process_section")
     def test_process_all_sections_in_page_delegates_call_for_each_section(
         self,
         spy_process_section: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a `TopicPage`
-        When `process_all_sections_in_page()` is called from an instance of `Crawler`
+        When `process_all_sections_in_page()` is called
+            from an instance of `PrivateAPICrawler`
         Then the `process_section()` method is called for each section
 
         Patches:
@@ -23,7 +24,7 @@ class TestCrawlerProcessSections:
         fake_topic_page = FakeTopicPageFactory._build_page(page_name="covid_19")
 
         # When
-        crawler_with_mocked_internal_api_client.process_all_sections_in_page(
+        private_api_crawler_with_mocked_internal_api_client.process_all_sections_in_page(
             page=fake_topic_page
         )
 
@@ -37,11 +38,12 @@ class TestCrawlerProcessSections:
     def test_process_section_delegates_call_for_gathering_content_cards_for_each_section(
         self,
         spy_get_content_cards_from_section: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked page section
-        When `process_section()` is called from an instance of `Crawler`
+        When `process_section()` is called
+            from an instance of `PrivateAPICrawler`
         Then the `get_content_cards_from_section()`
             method is called to gather content cards for that section
 
@@ -52,7 +54,9 @@ class TestCrawlerProcessSections:
         mocked_section = mock.Mock()
 
         # When
-        crawler_with_mocked_internal_api_client.process_section(section=mocked_section)
+        private_api_crawler_with_mocked_internal_api_client.process_section(
+            section=mocked_section
+        )
 
         # Then
         spy_get_content_cards_from_section.assert_called_once_with(
@@ -69,11 +73,12 @@ class TestCrawlerProcessSections:
         spy_get_content_cards_from_section: mock.MagicMock,
         spy_get_headline_numbers_row_cards_from_content_cards: mock.MagicMock,
         spy_process_all_headline_numbers_row_cards: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked section
-        When `process_section()` is called from an instance of `Crawler`
+        When `process_section()` is called
+            from an instance of `PrivateAPICrawler`
         Then `get_headline_numbers_row_cards_from_content_cards()`
             is called to filter for headline number rows cards
         And then these are passed to the call to `process_all_headline_numbers_row_cards()`
@@ -90,7 +95,9 @@ class TestCrawlerProcessSections:
         mocked_section = mock.Mock()
 
         # When
-        crawler_with_mocked_internal_api_client.process_section(section=mocked_section)
+        private_api_crawler_with_mocked_internal_api_client.process_section(
+            section=mocked_section
+        )
 
         # Then
         # All the content cards are gathered for the section
@@ -116,11 +123,11 @@ class TestCrawlerProcessSections:
         spy_get_content_cards_from_section: mock.MagicMock,
         spy_get_chart_row_cards_from_content_cards: mock.MagicMock,
         spy_process_all_chart_cards: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked section
-        When `process_section()` is called from an instance of `Crawler`
+        When `process_section()` is called from an instance of `PrivateAPICrawler`
         Then `get_chart_row_cards_from_content_cards()`
             is called to filter for chart row cards
         And then these are passed to the call to `process_all_chart_cards()`
@@ -137,7 +144,9 @@ class TestCrawlerProcessSections:
         mocked_section = mock.Mock()
 
         # When
-        crawler_with_mocked_internal_api_client.process_section(section=mocked_section)
+        private_api_crawler_with_mocked_internal_api_client.process_section(
+            section=mocked_section
+        )
 
         # Then
         # All the content cards are gathered for the section

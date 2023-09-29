@@ -1,14 +1,14 @@
 from caching.private_api.crawler import PrivateAPICrawler
 
 
-class TestCrawlerCreate:
+class TestPrivateAPICrawlerCreate:
     # Tests for the create class methods
 
     def test_create_crawler_for_cache_checking_only(self):
         """
         Given no pre-existing `InternalAPIClient`
         When the `create_crawler_for_cache_checking_only` class method
-            is called from the `Crawler` class
+            is called from the `PrivateAPICrawler` class
         Then the correct object is returned
         """
         # Given / When
@@ -21,7 +21,7 @@ class TestCrawlerCreate:
         """
         Given no pre-existing `InternalAPIClient`
         When the `create_crawler_for_force_cache_refresh` class method
-            is called from the `Crawler` class
+            is called from the `PrivateAPICrawler` class
         Then the correct object is returned
         """
         # Given / When

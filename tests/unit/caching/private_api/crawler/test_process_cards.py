@@ -3,17 +3,17 @@ from unittest import mock
 from caching.private_api.crawler import PrivateAPICrawler
 
 
-class TestCrawlerProcessCards:
+class TestPrivateAPICrawlerProcessCards:
     @mock.patch.object(PrivateAPICrawler, "process_any_headline_number_block")
     def test_process_headline_numbers_row_card(
         self,
         spy_process_any_headline_number_block: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked a single headlines number row card with multiple columns
         When `process_headline_numbers_row_card()` is called
-            from an instance of `Crawler`
+            from an instance of `PrivateAPICrawler`
         Then the call is delegated to the `process_any_headline_number_block()` method
             for each individual headlines number row block
 
@@ -39,7 +39,7 @@ class TestCrawlerProcessCards:
         }
 
         # When
-        crawler_with_mocked_internal_api_client.process_headline_numbers_row_card(
+        private_api_crawler_with_mocked_internal_api_client.process_headline_numbers_row_card(
             headline_numbers_row_card=mocked_headline_numbers_row_card
         )
 
@@ -56,12 +56,12 @@ class TestCrawlerProcessCards:
     def test_process_all_headline_numbers_row_cards(
         self,
         spy_process_headline_numbers_row_card: mock.Mock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked list of headlines number row cards
         When `process_all_headline_numbers_row_cards()` is called
-            from an instance of `Crawler`
+            from an instance of `PrivateAPICrawler`
         Then the call is delegated to the `process_headline_numbers_row_card()` method
             for each individual headlines number row card
 
@@ -73,7 +73,7 @@ class TestCrawlerProcessCards:
         mocked_headline_numbers_row_cards = [mock.Mock()] * 3
 
         # When
-        crawler_with_mocked_internal_api_client.process_all_headline_numbers_row_cards(
+        private_api_crawler_with_mocked_internal_api_client.process_all_headline_numbers_row_cards(
             headline_numbers_row_cards=mocked_headline_numbers_row_cards
         )
 
@@ -90,11 +90,12 @@ class TestCrawlerProcessCards:
     def test_process_all_chart_cards(
         self,
         spy_process_any_chart_card: mock.MagicMock,
-        crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a mocked list of chart row cards
-        When `process_all_chart_cards()` is called from an instance of `Crawler`
+        When `process_all_chart_cards()` is called
+            from an instance of `PrivateAPICrawler`
         Then the call is delegated to the `process_any_chart_card()` method
             for each individual chart row card
 
@@ -111,7 +112,7 @@ class TestCrawlerProcessCards:
         ]
 
         # When
-        crawler_with_mocked_internal_api_client.process_all_chart_cards(
+        private_api_crawler_with_mocked_internal_api_client.process_all_chart_cards(
             chart_row_cards=mocked_chart_row_cards
         )
 
