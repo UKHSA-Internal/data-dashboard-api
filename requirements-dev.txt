@@ -2,7 +2,7 @@ bandit==1.7.5
 black==23.1.0
 django-factory-boy==1.0.0
 factory-boy==3.3.0
-Faker==19.6.1
+Faker==19.6.2
 gitdb==4.0.10
 GitPython==3.1.36
 import-linter==1.11.1
