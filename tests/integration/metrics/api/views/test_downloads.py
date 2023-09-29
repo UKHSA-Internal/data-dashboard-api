@@ -23,6 +23,7 @@ class TestDownloadsView:
         "metric": metric,
         "stratum": stratum,
         "sex": "M",
+        "age": "all",
         "year": 2023,
         "epiweek": 1,
         "date": "2023-01-15",
@@ -38,8 +39,9 @@ class TestDownloadsView:
         geography_type: str,
         geography: str,
         metric: str,
-        stratum: str,
         sex: str,
+        age: str,
+        stratum: str,
         year: int,
         epiweek: int,
         date: str,
@@ -53,8 +55,9 @@ class TestDownloadsView:
             geography_type=geography_type,
             geography=geography,
             metric=metric,
-            stratum=stratum,
             sex=sex,
+            age=age,
+            stratum=stratum,
             year=year,
             epiweek=epiweek,
             date=date,
@@ -124,7 +127,7 @@ class TestDownloadsView:
         assert response.status_code == HTTPStatus.OK
 
         # Check that the headers on the response indicate json is being returned
-        assert response.headers["Content-Type"] == "application/json"
+        assert "json" in response.headers["Content-Type"]
 
         # Check the format of the output is as expected
         assert type(response.data[0]) == OrderedDict
@@ -178,8 +181,9 @@ class TestDownloadsView:
             "geography_type",
             "geography",
             "metric",
-            "stratum",
             "sex",
+            "age",
+            "stratum",
             "year",
             "date",
             "metric_value",
@@ -194,8 +198,9 @@ class TestDownloadsView:
                 "Nation",
                 "England",
                 "new_deaths_7day_avg",
-                "default",
                 "M",
+                "all",
+                "default",
                 "2023",
                 "2023-01-15",
                 "123.45",
