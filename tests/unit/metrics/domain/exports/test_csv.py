@@ -19,8 +19,9 @@ class TestWriteDataToCSV:
         "geography_type",
         "geography",
         "metric",
-        "stratum",
         "sex",
+        "age",
+        "stratum",
         "year",
         "date",
         "metric_value",
@@ -57,8 +58,9 @@ class TestWriteDataToCSV:
             "Nation",
             "England",
             "COVID-19_deaths_ONSByDay",
+            "all",
+            "75+",
             "default",
-            "ALL",
             "2023",
             "2023-03-08",
             "2364",
@@ -94,12 +96,13 @@ class TestWriteDataToCSV:
             "infectious_disease",
             "respiratory",
             "COVID-19",
-            "",
-            "",
+            "",  # geography type
+            "",  # geography
             "COVID-19_deaths_ONSByDay",
-            "default",
-            "",
-            "",
+            "",  # sex
+            "",  # age
+            "default",  # stratum
+            "",  # year
             "2023-03-08",
             "2364",
         ]

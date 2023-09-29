@@ -28,8 +28,9 @@ class DownloadsView(APIView):
         "geography_type",
         "geography",
         "metric",
-        "stratum",
         "sex",
+        "age",
+        "stratum",
         "year",
         "epiweek",
         "date_from",
@@ -70,7 +71,7 @@ class DownloadsView(APIView):
         return response
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
-    @cache_response()
+    # @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
