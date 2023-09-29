@@ -3,7 +3,7 @@ from datetime import date
 from typing import Any
 
 from metrics.domain.models import PlotData
-from metrics.domain.utils import get_axis_name, get_last_day_of_month
+from metrics.domain.utils import ChartAxisFields, get_axis_name, get_last_day_of_month
 
 
 class TabularData:
@@ -99,17 +99,26 @@ class TabularData:
             plot_label: str = plot.parameters.label or f"Plot{index}"
             self.plot_labels.append(plot_label)
 
-            plot_data = dict(
-                zip(
-                    plot.x_axis_values[::-1],
-                    plot.y_axis_values[::-1],
-                )
-            )
+            plot_data: dict = self._build_plot_data(plot=plot)
 
             self.collate_data_not_by_date(
                 plot_data=plot_data,
                 plot_label=plot_label,
             )
+
+    @property
+    def _is_date_based(self) -> bool:
+        return self.plots[0].parameters.x_axis == ChartAxisFields.date.name
+
+    def _build_plot_data(self, plot: PlotData) -> dict:
+        x_axis_values = plot.x_axis_values
+        y_axis_values = plot.y_axis_values
+
+        if self._is_date_based:
+            x_axis_values = list(reversed(x_axis_values))
+            y_axis_values = list(reversed(y_axis_values))
+
+        return dict(zip(x_axis_values, y_axis_values))
 
     def generate_multi_plot_output(self):
         """Creates the tabular output for the given plots
