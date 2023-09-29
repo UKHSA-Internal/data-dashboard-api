@@ -179,8 +179,7 @@ def generate_table_v4(plots_collection: PlotsCollection) -> list[dict[str, str]]
             then this error will not be raised.
 
     """
-    tabular_data = generate_table_for_full_plots(plots_collection=plots_collection)
-    return _cast_generic_key_over_column_value(tabular_data=tabular_data)
+    return generate_table_for_full_plots(plots_collection=plots_collection)
 
 
 def _cast_generic_key_over_column_value(
