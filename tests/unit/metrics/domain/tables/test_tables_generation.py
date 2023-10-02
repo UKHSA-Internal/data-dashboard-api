@@ -2,8 +2,11 @@ import datetime
 from typing import Any
 from unittest import mock
 
+import pytest
+
 from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.tables.generation import TabularData
+from metrics.domain.utils import ChartAxisFields
 
 TEST_PLOT = "Test Plot"
 
@@ -69,6 +72,118 @@ class TestTabularData:
         spy_combine_list_of_plots.assert_called_once()
         spy_generate_multi_plot_output.assert_called_once()
         assert plots_in_tabular_format == spy_generate_multi_plot_output.return_value
+
+    @pytest.mark.parametrize(
+        "x_axis",
+        [
+            ChartAxisFields.age.name,
+            ChartAxisFields.stratum.name,
+            ChartAxisFields.geography.name,
+            ChartAxisFields.metric.name,
+        ],
+    )
+    def test_is_date_based_returns_false_for_non_date_based_x_axis(
+        self, x_axis: str, fake_chart_plots_data: PlotData
+    ):
+        """
+        Given `PlotData` with an `x_axis` parameter which is not `date`
+        When the `_is_date_based` property is called
+            from an instance of `TabularData`
+        Then False is returned
+        """
+        # Given
+        fake_chart_plots_data.parameters.x_axis = x_axis
+        tabular_data = TabularData(plots=[fake_chart_plots_data])
+
+        # When
+        is_date_based: bool = tabular_data._is_date_based
+
+        # Then
+        assert not is_date_based
+
+    def test_is_date_based_returns_true_for_date_based_x_axis(
+        self, fake_chart_plots_data: PlotData
+    ):
+        """
+        Given `PlotData` with an `x_axis` parameter which is set to `date`
+        When the `_is_date_based` property is called
+            from an instance of `TabularData`
+        Then True is returned
+        """
+        # Given
+        fake_chart_plots_data.parameters.x_axis = ChartAxisFields.date.name
+        tabular_data = TabularData(plots=[fake_chart_plots_data])
+
+        # When
+        is_date_based: bool = tabular_data._is_date_based
+
+        # Then
+        assert is_date_based
+
+    def test_build_plot_data_returns_reversed_data_for_date_based_plot(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given `PlotData` with an `x_axis` parameter which is set to `date`
+        When `_build_plot_data()` is called from an instance of `TabularData`
+        Then the values are reversed
+        """
+        # Given
+        valid_plot_parameters.x_axis = ChartAxisFields.date.name
+        y_axis_values = [1, 2, 4, 5, 5, 2, 1]
+        dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=i + 1)
+            for i in range(len(y_axis_values))
+        ]
+        original_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+        tabular_data = TabularData(plots=[original_plot_data])
+
+        # When
+        constructed_plot_data: dict = tabular_data._build_plot_data(
+            plot=original_plot_data
+        )
+
+        # Then
+        assert list(constructed_plot_data.keys()) == list(
+            reversed(original_plot_data.x_axis_values)
+        )
+        assert list(constructed_plot_data.values()) == list(
+            reversed(original_plot_data.y_axis_values)
+        )
+
+    def test_build_plot_data_returns_data_in_same_order_for_non_date_based_plot(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given `PlotData` with an `x_axis` parameter which is not set to `date`
+        When `_build_plot_data()` is called from an instance of `TabularData`
+        Then the values are not reversed and returned as is
+        """
+        # Given
+        valid_plot_parameters.x_axis = ChartAxisFields.age.name
+        y_axis_values = [1, 2, 4, 5, 5, 2, 1]
+        age_x_axis_values_in_ascending_order = [
+            str(i * 10) for i in range(len(y_axis_values))
+        ]
+        original_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=age_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+        tabular_data = TabularData(plots=[original_plot_data])
+
+        # When
+        constructed_plot_data: dict = tabular_data._build_plot_data(
+            plot=original_plot_data
+        )
+
+        # Then
+        assert list(constructed_plot_data.keys()) == original_plot_data.x_axis_values
+        assert list(constructed_plot_data.values()) == original_plot_data.y_axis_values
 
 
 class TestCollateDataByDate:
