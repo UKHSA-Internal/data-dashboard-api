@@ -1,10 +1,19 @@
 import os
 
 from caching.frontend.crawler import FrontEndCrawler
-from caching.public_api.crawler import get_cdn_auth_key
+from caching.public_api.handlers import get_cdn_auth_key
 
 
 def _get_frontend_base_url() -> str:
+    """Returns the value of the "FRONTEND_URL" environment variable
+
+    Returns:
+        The value of the "FRONTEND_URL"
+
+    Raises:
+        `KeyError`: If the "FRONTEND_URL" has not been set
+
+    """
     try:
         return os.environ["FRONTEND_URL"]
     except KeyError as error:
