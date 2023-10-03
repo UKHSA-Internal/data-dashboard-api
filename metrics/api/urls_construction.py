@@ -14,7 +14,6 @@ from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from feedback.api.urls import construct_urlpatterns_for_feedback
-from feedback.api.views import SuggestionsView
 from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (
@@ -23,12 +22,11 @@ from metrics.api.views import (
     EncodedChartsView,
     HeadlinesView,
     HealthView,
-    TablesView,
     TrendsView,
 )
 from metrics.api.views.caching import CacheView
 from metrics.api.views.headlines import HeadlinesViewBeta
-from metrics.api.views.tables import TablesViewV3, TablesViewV4
+from metrics.api.views.tables import TablesView
 from metrics.api.views.trends import TrendsViewBeta
 from public_api import construct_urlpatterns_for_public_api
 
@@ -126,9 +124,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesViewBeta.as_view()),
-    re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
-    re_path(f"^{API_PREFIX}tables/v3", TablesViewV3.as_view()),
-    re_path(f"^{API_PREFIX}tables/v4", TablesViewV4.as_view()),
+    re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
 ]
