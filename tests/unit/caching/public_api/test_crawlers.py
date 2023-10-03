@@ -6,16 +6,15 @@ from caching.public_api.crawler import PublicAPICrawler
 
 MODULE_PATH = "caching.public_api.crawler"
 
+FAKE_URL = "https://www.fake-api.com"
+
 
 @pytest.fixture
 def fake_public_api_crawler() -> PublicAPICrawler:
     return PublicAPICrawler(
-        public_api_base_url=mock.Mock(),
-        cdn_auth_key=mock.Mock(),
+        public_api_base_url=FAKE_URL,
+        cdn_auth_key="abc",
     )
-
-
-FAKE_URL = "https://www.fake-api.com"
 
 
 class TestPublicAPICrawler:
@@ -172,6 +171,46 @@ class TestPublicAPICrawler:
         assert endpoint_response == spy_hit_endpoint_for_json.return_value
 
     # Recursive crawl
+
+    @mock.patch.object(PublicAPICrawler, "get_links_from_response_data")
+    @mock.patch.object(PublicAPICrawler, "hit_endpoint")
+    def test_crawl(
+        self,
+        spy_hit_endpoint: mock.MagicMock,
+        mocked_get_links_from_response_data: mock.MagicMock,
+        fake_public_api_crawler: PublicAPICrawler,
+    ):
+        """
+        Given a base root URL and a number of subsequent URLs
+        When the recursive `crawl()` method is called
+            from an instance of the `PublicAPICrawler`
+        Then each URL is called in order
+
+        Patches:
+            `spy_hit_endpoint`: To check all URLs
+                are processed properly
+            `mocked_get_links_from_response_data`: To provide
+                the fake response data to the test
+
+        """
+        # Given
+        url = FAKE_URL
+        subsequent_level_urls = [
+            f"{FAKE_URL}/respiratory",
+            f"{FAKE_URL}/respiratory/sub_themes",
+        ]
+        mocked_get_links_from_response_data.return_value = subsequent_level_urls
+
+        # When
+        fake_public_api_crawler.crawl(url=url, crawled_urls=[])
+
+        # Then
+        expected_urls_to_be_called = [url]
+        expected_urls_to_be_called += subsequent_level_urls
+
+        expected_calls = [mock.call(url=url) for url in expected_urls_to_be_called]
+        # URLs should be traversed from top down hence the `any_order=False` flag
+        spy_hit_endpoint.assert_has_calls(calls=expected_calls, any_order=False)
 
     def test_get_links_from_response_data(
         self, fake_public_api_crawler: PublicAPICrawler
