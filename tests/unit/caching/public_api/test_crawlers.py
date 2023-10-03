@@ -222,7 +222,7 @@ class TestPublicAPICrawler:
         Then the correct link is returned
         """
         # Given
-        valid_link = "http://example.com"
+        valid_link = "https://example.com"
         invalid_value = "abc"
         response_data = [{"link": valid_link, "information": invalid_value}]
 
