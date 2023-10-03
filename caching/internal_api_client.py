@@ -9,6 +9,7 @@ HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v2/"
 TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v2/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v3/"
+TABLES_V4_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
 DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
 
 
@@ -43,6 +44,7 @@ class InternalAPIClient:
         self.trends_endpoint_path = TRENDS_ENDPOINT_PATH
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
+        self.tables_v4_endpoint_path = TABLES_V4_ENDPOINT_PATH
         self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
 
         # Header configurations
@@ -123,9 +125,12 @@ class InternalAPIClient:
             `Response` from the `tables/` endpoint
 
         """
-        path = self.tables_endpoint_path
+        path = self.tables_v4_endpoint_path
         headers = self.build_headers()
-        return self._client.post(path=path, data=data, headers=headers, format="json")
+        self._client.post(path=path, data=data, headers=headers, format="json")
+        return self._client.post(
+            path=self.tables_endpoint_path, data=data, headers=headers, format="json"
+        )
 
     def hit_downloads_endpoint(self, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `downloads/` endpoint with the given `data`
