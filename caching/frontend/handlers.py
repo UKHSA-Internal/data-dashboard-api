@@ -1,7 +1,7 @@
 import os
 
 from caching.frontend.crawler import FrontEndCrawler
-from caching.public_api.crawler import get_cdn_auth_key
+from caching.public_api.handlers import get_cdn_auth_key
 
 
 def _get_frontend_base_url() -> str:
