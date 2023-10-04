@@ -79,7 +79,7 @@ redis==5.0.1
 requests==2.31.0
 rich==13.5.2
 ruamel.yaml==0.17.34
-ruamel.yaml.clib==0.2.7
+ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.21
 scour==0.38.2
 simplejson==3.19.1
