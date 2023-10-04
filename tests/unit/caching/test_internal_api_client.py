@@ -32,8 +32,7 @@ class TestInternalAPIClient:
                 ("headlines_endpoint_path", "/api/headlines/v2/"),
                 ("trends_endpoint_path", "/api/trends/v2/"),
                 ("charts_endpoint_path", "/api/charts/v3/"),
-                ("tables_endpoint_path", "/api/tables/v3/"),
-                ("tables_v4_endpoint_path", "/api/tables/v4/"),
+                ("tables_endpoint_path", "/api/tables/v4/"),
                 ("downloads_endpoint_path", "/api/downloads/v2/"),
             ]
         ),
@@ -257,24 +256,12 @@ class TestInternalAPIClient:
 
         # Then
         assert response == internal_api_client._client.post.return_value
-        # Check that both tables endpoints are hit
         expected_headers = internal_api_client.build_headers()
-        expected_paths = [
-            internal_api_client.tables_endpoint_path,
-            internal_api_client.tables_v4_endpoint_path,
-        ]
-        expected_calls = [
-            mock.call(
-                path=expected_path,
-                data=mocked_request_data,
-                headers=expected_headers,
-                format="json",
-            )
-            for expected_path in expected_paths
-        ]
-        mocked_client.post.assert_has_calls(
-            calls=expected_calls,
-            any_order=True,
+        mocked_client.post.assert_called_once_with(
+            path=internal_api_client.tables_endpoint_path,
+            data=mocked_request_data,
+            headers=expected_headers,
+            format="json",
         )
 
     def test_hit_downloads_endpoint_delegates_call_correctly(self):
