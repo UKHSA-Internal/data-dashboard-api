@@ -14,6 +14,12 @@ from cms.metrics_interface.field_choices_callables import (
     get_colours,
 )
 
+DEFAULT_GEOGRAPHY = "England"
+DEFAULT_GEOGRAPHY_TYPE = "Nation"
+DEFAULT_SEX = "all"
+DEFAULT_AGE = "all"
+DEFAULT_STRATUM = "default"
+
 
 class BaseMetricsElement(blocks.StructBlock):
     topic = blocks.ChoiceBlock(
@@ -29,26 +35,31 @@ class BaseMetricsElement(blocks.StructBlock):
     geography = blocks.ChoiceBlock(
         required=False,
         choices=get_all_geography_names,
+        default=DEFAULT_GEOGRAPHY,
         help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = blocks.ChoiceBlock(
         required=False,
         choices=get_all_geography_type_names,
+        default=DEFAULT_GEOGRAPHY_TYPE,
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     sex = blocks.ChoiceBlock(
         required=False,
         choices=get_all_sex_names,
+        default=DEFAULT_SEX,
         help_text=help_texts.SEX_FIELD,
     )
     age = blocks.ChoiceBlock(
         required=False,
         choices=get_all_age_names,
+        default=DEFAULT_AGE,
         help_text=help_texts.AGE_FIELD,
     )
     stratum = blocks.ChoiceBlock(
         required=False,
         choices=get_all_stratum_names,
+        default=DEFAULT_STRATUM,
         help_text=help_texts.STRATUM_FIELD,
     )
 
