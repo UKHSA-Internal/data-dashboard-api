@@ -3,9 +3,12 @@
 
 {% block branding_login %}UKHSA Data Dashboard CMS{% endblock %}
 
-
 {% block branding_logo %}
     <div class="login-logo">
       <img class="login-logo-img" alt="" src="{% static 'gov_uk_icon.png' %}" />
     </div>
+{% endblock %}
+
+{% block branding_favicon %}
+    <link rel="shortcut icon" href="{% static 'gov_uk_icon.png' %}" />
 {% endblock %}
