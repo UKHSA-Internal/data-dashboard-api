@@ -135,7 +135,6 @@ source_modules=
 forbidden_modules=
     feedback
 ignore_imports=
-    metrics.api.urls_construction -> feedback.api.views
     metrics.api.urls_construction -> feedback.api.urls
 
 #------------------------------------- Source/Test code contracts -------------------------------------------
