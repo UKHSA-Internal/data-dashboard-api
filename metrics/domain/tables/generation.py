@@ -44,8 +44,17 @@ class TabularData:
         # Merge all the plots together by x axis
         self.combine_all_plots()
 
+        # Order plots in chronological order for date-based tables
+        self._cast_combined_plots_in_order()
+
         # Create output in required format
         return self.create_multi_plot_output()
+
+    def _cast_combined_plots_in_order(self) -> None:
+        if self._is_date_based:
+            self.combined_plots = dict(
+                sorted(self.combined_plots.items(), reverse=True)
+            )
 
     def collate_data_by_date(self, plot_data: dict[Any, Any], plot_label: str):
         """Add just the last values for each month to the combined plots dictionary
@@ -110,15 +119,9 @@ class TabularData:
     def _is_date_based(self) -> bool:
         return self.plots[0].parameters.x_axis == ChartAxisFields.date.name
 
-    def _build_plot_data(self, plot: PlotData) -> dict:
-        x_axis_values = plot.x_axis_values
-        y_axis_values = plot.y_axis_values
-
-        if self._is_date_based:
-            x_axis_values = list(reversed(x_axis_values))
-            y_axis_values = list(reversed(y_axis_values))
-
-        return dict(zip(x_axis_values, y_axis_values))
+    @staticmethod
+    def _build_plot_data(plot: PlotData) -> dict:
+        return dict(zip(plot.x_axis_values, plot.y_axis_values))
 
     def generate_multi_plot_output(self):
         """Creates the tabular output for the given plots
