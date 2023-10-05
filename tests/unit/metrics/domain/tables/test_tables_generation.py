@@ -2,8 +2,11 @@ import datetime
 from typing import Any
 from unittest import mock
 
+import pytest
+
 from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.tables.generation import TabularData
+from metrics.domain.utils import ChartAxisFields
 
 TEST_PLOT = "Test Plot"
 
@@ -69,6 +72,245 @@ class TestTabularData:
         spy_combine_list_of_plots.assert_called_once()
         spy_generate_multi_plot_output.assert_called_once()
         assert plots_in_tabular_format == spy_generate_multi_plot_output.return_value
+
+    @pytest.mark.parametrize(
+        "x_axis",
+        [
+            ChartAxisFields.age.name,
+            ChartAxisFields.stratum.name,
+            ChartAxisFields.geography.name,
+            ChartAxisFields.metric.name,
+        ],
+    )
+    def test_is_date_based_returns_false_for_non_date_based_x_axis(
+        self, x_axis: str, fake_chart_plots_data: PlotData
+    ):
+        """
+        Given `PlotData` with an `x_axis` parameter which is not `date`
+        When the `_is_date_based` property is called
+            from an instance of `TabularData`
+        Then False is returned
+        """
+        # Given
+        fake_chart_plots_data.parameters.x_axis = x_axis
+        tabular_data = TabularData(plots=[fake_chart_plots_data])
+
+        # When
+        is_date_based: bool = tabular_data._is_date_based
+
+        # Then
+        assert not is_date_based
+
+    def test_is_date_based_returns_true_for_date_based_x_axis(
+        self, fake_chart_plots_data: PlotData
+    ):
+        """
+        Given `PlotData` with an `x_axis` parameter which is set to `date`
+        When the `_is_date_based` property is called
+            from an instance of `TabularData`
+        Then True is returned
+        """
+        # Given
+        fake_chart_plots_data.parameters.x_axis = ChartAxisFields.date.name
+        tabular_data = TabularData(plots=[fake_chart_plots_data])
+
+        # When
+        is_date_based: bool = tabular_data._is_date_based
+
+        # Then
+        assert is_date_based
+
+    def test_cast_combined_plots_in_order_produces_combined_plots_in_order(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given `PlotData` with an `x_axis` parameter which is set to `date`
+        When `_cast_combined_plots_in_order()` is called
+            from an instance of `TabularData`
+        Then the values are reversed and the data is mutated to chronological order
+            in descending order.
+        """
+        # Given
+        valid_plot_parameters.x_axis = ChartAxisFields.date.name
+        y_axis_values = [1, 2, 4, 5, 5, 2, 1]
+        dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=i + 1)
+            for i in range(len(y_axis_values))
+        ]
+        original_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+        tabular_data = TabularData(plots=[original_plot_data])
+        plot_data = dict(
+            zip(original_plot_data.x_axis_values, original_plot_data.y_axis_values)
+        )
+        tabular_data.combined_plots = plot_data
+
+        # When
+        tabular_data._cast_combined_plots_in_order()
+
+        # Then
+        sorted_combined_plots = tabular_data.combined_plots
+        assert list(sorted_combined_plots.keys()) == list(
+            reversed(original_plot_data.x_axis_values)
+        )
+        assert list(sorted_combined_plots.values()) == list(
+            reversed(original_plot_data.y_axis_values)
+        )
+
+    def test_create_tabular_plots_produces_combined_plots_in_order_for_multiple_offset_plots(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given 2 `PlotData` models with an `x_axis` parameter which is set to `date`
+            which are offset i.e. 1 plot has more recent data than the other
+        When `create_tabular_plots()` is called from an instance of `TabularData`
+        Then the data is returned in chronological order, descending from most recent
+        """
+        # Given
+        valid_plot_parameters.x_axis = ChartAxisFields.date.name
+        y_axis_values = [1, 2]
+        earlier_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=1, day=15),
+        ]
+        earlier_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=earlier_dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+
+        y_axis_values = [10, 20, 30, 40]
+        later_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=1, day=15),
+            datetime.date(year=2023, month=8, day=20),
+            datetime.date(year=2023, month=8, day=30),
+        ]
+        later_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=later_dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+        tabular_data = TabularData(plots=[earlier_plot_data, later_plot_data])
+
+        # When
+        tabular_plots = tabular_data.create_tabular_plots()
+
+        # Then
+        expected_tabular_plots = [
+            {
+                "reference": "2023-08-30",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "40"},
+                ],
+            },
+            {
+                "reference": "2023-08-20",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "30"},
+                ],
+            },
+            {
+                "reference": "2023-01-15",
+                "values": [
+                    {"label": "Plot1", "value": "2"},
+                    {"label": "Plot2", "value": "20"},
+                ],
+            },
+            {
+                "reference": "2023-01-01",
+                "values": [
+                    {"label": "Plot1", "value": "1"},
+                    {"label": "Plot2", "value": "10"},
+                ],
+            },
+        ]
+        assert tabular_plots == expected_tabular_plots
+
+    def test_create_tabular_plots_produces_combined_plots_in_order_for_multiple_mismatched_plots(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given 2 `PlotData` models with an `x_axis` parameter which is set to `date`
+            which are offset i.e. 1 plot has incomplete data
+        When `create_tabular_plots()` is called from an instance of `TabularData`
+        Then the data is returned in chronological order, descending from most recent
+        """
+        # Given
+        valid_plot_parameters.x_axis = ChartAxisFields.date.name
+        y_axis_values = [1, 2]
+        missing_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=12, day=31),
+        ]
+        incomplete_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=missing_dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+
+        y_axis_values = [10, 20, 30, 40, 50]
+        complete_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=1, day=15),
+            datetime.date(year=2023, month=8, day=20),
+            datetime.date(year=2023, month=8, day=30),
+            datetime.date(year=2023, month=12, day=31),
+        ]
+        complete_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=complete_dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+        tabular_data = TabularData(plots=[incomplete_plot_data, complete_plot_data])
+
+        # When
+        tabular_plots = tabular_data.create_tabular_plots()
+
+        # Then
+        expected_tabular_plots = [
+            {
+                "reference": "2023-12-31",
+                "values": [
+                    {"label": "Plot1", "value": "2"},
+                    {"label": "Plot2", "value": "50"},
+                ],
+            },
+            {
+                "reference": "2023-08-30",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "40"},
+                ],
+            },
+            {
+                "reference": "2023-08-20",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "30"},
+                ],
+            },
+            {
+                "reference": "2023-01-15",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "20"},
+                ],
+            },
+            {
+                "reference": "2023-01-01",
+                "values": [
+                    {"label": "Plot1", "value": "1"},
+                    {"label": "Plot2", "value": "10"},
+                ],
+            },
+        ]
+        assert tabular_plots == expected_tabular_plots
 
 
 class TestCollateDataByDate:

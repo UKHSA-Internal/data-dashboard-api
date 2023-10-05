@@ -7,7 +7,7 @@ from rest_framework.renderers import CoreJSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from caching.decorators import cache_response
+from caching.private_api.decorators import cache_response
 from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
 from metrics.data.access.api_models import validate_query_filters
 from metrics.data.models.api_models import APITimeSeries
@@ -28,8 +28,9 @@ class DownloadsView(APIView):
         "geography_type",
         "geography",
         "metric",
-        "stratum",
         "sex",
+        "age",
+        "stratum",
         "year",
         "epiweek",
         "date_from",

@@ -130,8 +130,8 @@ class TestPlotsInterface:
         # for the plot parameters which requested timeseries data that existed
         expected_plots_data_for_valid_params = PlotData(
             parameters=valid_plot_parameters,
-            x_axis_values=tuple(x.date for x in fake_core_time_series_records),
-            y_axis_values=tuple(x.metric_value for x in fake_core_time_series_records),
+            x_axis_values=[x.date for x in fake_core_time_series_records],
+            y_axis_values=[x.metric_value for x in fake_core_time_series_records],
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -177,12 +177,12 @@ class TestPlotsInterface:
         assert plot_data.parameters == fake_chart_plot_parameters
 
         # Check the correct data is passed to the axis of the `PlotData` model
-        assert plot_data.x_axis_values == tuple(
+        assert plot_data.x_axis_values == [
             x.date for x in fake_core_time_series_for_plot
-        )
-        assert plot_data.y_axis_values == tuple(
+        ]
+        assert plot_data.y_axis_values == [
             x.metric_value for x in fake_core_time_series_for_plot
-        )
+        ]
 
     @mock.patch.object(PlotsInterface, "get_timeseries_for_plot_parameters")
     @mock.patch(f"{MODULE_PATH}.get_x_and_y_values")

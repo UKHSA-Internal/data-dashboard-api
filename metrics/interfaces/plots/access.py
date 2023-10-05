@@ -152,8 +152,8 @@ class PlotsInterface:
 
         return PlotData(
             parameters=plot_parameters,
-            x_axis_values=x_axis_values,
-            y_axis_values=y_axis_values,
+            x_axis_values=list(x_axis_values),
+            y_axis_values=list(y_axis_values),
         )
 
     def build_plots_data(self) -> list[PlotData]:

@@ -10,23 +10,6 @@ from metrics.domain.models import PlotData, PlotParameters
 MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 
 
-@pytest.fixture
-def fake_chart_plots_data() -> PlotData:
-    plot_params = PlotParameters(
-        chart_type="line_multi_coloured",
-        topic="COVID-19",
-        metric="COVID-19_deaths_ONSByDay",
-    )
-    x_values = [1, 2, 4, 5, 5, 2, 1]
-    return PlotData(
-        parameters=plot_params,
-        x_axis_values=[1, 2, 4, 5, 5, 2, 1],
-        y_axis_values=[
-            datetime.date(year=2023, month=1, day=i + 1) for i in range(len(x_values))
-        ],
-    )
-
-
 @pytest.fixture()
 def fake_chart_settings(fake_chart_plots_data: PlotData) -> ChartSettings:
     return ChartSettings(

@@ -62,7 +62,7 @@ class AWSClient:
                 ]
 
         """
-        bucket_objects: list[S3_BUCKET_ITEM_OBJECT_TYPE] = self._client.list_objects(
+        bucket_objects: list[S3_BUCKET_ITEM_OBJECT_TYPE] = self._client.list_objects_v2(
             Bucket=self._bucket_name, Prefix=self._inbound_folder
         )
         bucket_contents: list[S3_BUCKET_ITEM_OBJECT_TYPE] = bucket_objects["Contents"]

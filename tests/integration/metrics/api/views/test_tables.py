@@ -482,15 +482,6 @@ class TestTablesViewV4:
         # Then
         expected_response = [
             {
-                "reference": "2023-01-01",
-                "values": [
-                    {
-                        "label": "Plot1",
-                        "value": "123.0000",
-                    },
-                ],
-            },
-            {
                 "reference": "2023-01-02",
                 "values": [
                     {
@@ -499,7 +490,17 @@ class TestTablesViewV4:
                     },
                 ],
             },
+            {
+                "reference": "2023-01-01",
+                "values": [
+                    {
+                        "label": "Plot1",
+                        "value": "123.0000",
+                    },
+                ],
+            },
         ]
+        # We expect the v4 endpoint to return data in descending order
         assert response.data == expected_response
 
     @pytest.mark.django_db
@@ -542,18 +543,20 @@ class TestTablesViewV4:
         # Then
         expected_response = [
             {
-                "reference": "2023-01-01",
-                "values": [
-                    {"label": "Plot1", "value": "123.0000"},
-                    {"label": "plot_label", "value": "123.0000"},
-                ],
-            },
-            {
                 "reference": "2023-01-02",
                 "values": [
                     {"label": "Plot1", "value": "123.0000"},
                     {"label": "plot_label", "value": "123.0000"},
                 ],
             },
+            {
+                "reference": "2023-01-01",
+                "values": [
+                    {"label": "Plot1", "value": "123.0000"},
+                    {"label": "plot_label", "value": "123.0000"},
+                ],
+            },
         ]
+        # For the v4 tables endpoint, we expect data to be returned in descending order
+        # i.e. the recent data points first going down to the latest data points last
         assert response.data == expected_response
