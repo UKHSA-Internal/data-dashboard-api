@@ -41,9 +41,7 @@ def send_email(
         recipient_email_address=recipient_email_address,
     )
 
-    email_was_sent = bool(email.send(fail_silently=fail_silently))
-
-    return email_was_sent
+    return bool(email.send(fail_silently=fail_silently))
 
 
 def create_email_message(
