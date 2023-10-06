@@ -79,7 +79,7 @@ class PlotParameters(BaseModel):
     def y_axis_value(self) -> str:
         return ChartAxisFields.get_y_axis_value(name=self.y_axis)
 
-    def to_dict_for_query(self) -> Dict[str, str]:
+    def to_dict_for_query(self) -> dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.
 
         Notes:

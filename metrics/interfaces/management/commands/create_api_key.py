@@ -1,5 +1,4 @@
 import uuid
-from typing import Dict
 
 from django.core.management.base import BaseCommand
 
@@ -17,7 +16,7 @@ class Command(BaseCommand):
         api_key_model_manager.create_key(**kwargs)
 
     @staticmethod
-    def _build_kwargs(options) -> Dict[str, str]:
+    def _build_kwargs(options) -> dict[str, str]:
         name = str(uuid.uuid4())
         kwargs = {"name": name}
 
