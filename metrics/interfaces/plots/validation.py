@@ -129,5 +129,3 @@ class PlotValidation:
 
         if not dates_in_chronological_order:
             raise DatesNotInChronologicalOrderError()
-
-        return None
