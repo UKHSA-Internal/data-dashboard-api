@@ -38,14 +38,14 @@ class HeadlinesInterface:
                 topic_name=self.topic_name,
                 metric_name=self.metric_name,
             )
-        except CoreTimeSeries.MultipleObjectsReturned:
+        except CoreTimeSeries.MultipleObjectsReturned as error:
             raise MetricIsTimeSeriesTypeError(
                 f"`{self.metric_name}` is a timeseries-type metric. This should be a headline-type metric"
-            )
-        except CoreTimeSeries.DoesNotExist:
+            ) from error
+        except CoreTimeSeries.DoesNotExist as error:
             raise HeadlineNumberDataNotFoundError(
                 "No data could be found for those parameters"
-            )
+            ) from error
 
 
 class HeadlinesInterfaceBeta:
