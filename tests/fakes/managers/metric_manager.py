@@ -33,14 +33,6 @@ class FakeMetricManager(MetricManager):
             if metric.metric_group.name == "headline"
         ]
 
-    def get_all_unique_percent_change_type_names(self) -> list[str]:
-        return [
-            metric.name
-            for metric in self.metrics
-            if metric.metric_group.name == "headline"
-            if "Percent" in metric.name
-        ]
-
     def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
         filtered_by_topic = [
             metric
