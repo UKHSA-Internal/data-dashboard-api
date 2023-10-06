@@ -111,7 +111,8 @@ class PrivateAPICrawler:
                 self.process_all_sections_in_page(page=page)
             except AttributeError:
                 logger.info(
-                    f"`{page.title}` page has no dynamic content blocks. So only the headless CMS API detail has been processed"
+                    f"`{page.title}` page has no dynamic content blocks. "
+                    f"So only the headless CMS API detail has been processed"
                 )
             logger.info(f"Completed {index} / {pages_count} pages")
 

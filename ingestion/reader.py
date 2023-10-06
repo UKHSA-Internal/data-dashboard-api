@@ -272,7 +272,11 @@ class Reader:
             >>> fields_for_unique_values = {'pk': None, 'fields': {'parent_theme': 'infectious_disease'}}
             >>> fields = {"parent_theme": "name"}
             >>> map_fields_for_unique_values(fields_for_unique_values, fields)
-            {'pk': None, 'fields': {'parent_theme': 'infectious_disease'}, 'mapped_fields': {'name': 'infectious_disease'}}
+            {
+                'pk': None,
+                'fields': {'parent_theme': 'infectious_disease'},
+                'mapped_fields': {'name': 'infectious_disease'}
+            }
 
         Args:
             fields_for_unique_values: Dict which encapsulates
