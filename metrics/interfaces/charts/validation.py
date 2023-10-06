@@ -79,7 +79,7 @@ class ChartsRequestValidator:
             return
 
         metric_is_series_chart_compatible: bool = (
-            self.plot_validation._does_metric_have_multiple_records()
+            self.plot_validation.does_metric_have_multiple_records()
         )
         if not metric_is_series_chart_compatible:
             raise ChartTypeDoesNotSupportMetricError(

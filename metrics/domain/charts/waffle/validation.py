@@ -1,4 +1,4 @@
-def _check_values(values: list[int]) -> None:
+def check_values(values: list[int]) -> None:
     if len(values) > 3:
         raise TooManyDataPointsError
 

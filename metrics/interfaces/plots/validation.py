@@ -46,7 +46,7 @@ class PlotValidation:
         self._validate_metric_is_available_for_topic()
         self._validate_dates()
 
-    def _does_metric_have_multiple_records(self) -> bool:
+    def does_metric_have_multiple_records(self) -> bool:
         """Checks the db if there are multiple associated `CoreTimeSeries` records.
 
         Returns:
