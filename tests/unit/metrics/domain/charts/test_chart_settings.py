@@ -203,7 +203,8 @@ class TestChartSettings:
             "ticks": None,
             "showticklabels": False,
         }
-        y_axis_args = {**x_axis_args, **{"scaleratio": 1, "scaleanchor": "x"}}
+        y_axis_args = x_axis_args | {"scaleratio": 1, "scaleanchor": "x"}
+
         expected_chart_config = {
             "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
             "showlegend": False,
