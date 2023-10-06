@@ -83,5 +83,6 @@ class ChartsRequestValidator:
         )
         if not metric_is_series_chart_compatible:
             raise ChartTypeDoesNotSupportMetricError(
-                f"`{self.plot_parameters.metric_name}` is not compatible with `{self.plot_parameters.chart_type}` chart types"
+                f"`{self.plot_parameters.metric_name}` "
+                f"is not compatible with `{self.plot_parameters.chart_type}` chart types"
             )

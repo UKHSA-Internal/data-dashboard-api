@@ -70,7 +70,8 @@ class PlotValidation:
 
         if not metric_is_topic_compatible:
             raise MetricDoesNotSupportTopicError(
-                f"`{self.plot_parameters.topic_name}` does not have a corresponding metric of `{self.plot_parameters.metric_name}`"
+                f"`{self.plot_parameters.topic_name}` does not have "
+                f"a corresponding metric of `{self.plot_parameters.metric_name}`"
             )
 
     def _is_metric_available_for_topic(self) -> bool:
