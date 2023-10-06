@@ -2,7 +2,6 @@ from unittest import mock
 
 import pytest
 from rest_framework.test import APIClient
-from rest_framework_api_key.models import APIKey
 
 from caching.internal_api_client import (
     CACHE_CHECK_HEADER_KEY,

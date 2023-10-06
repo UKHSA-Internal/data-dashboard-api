@@ -1,6 +1,5 @@
 import datetime
 from typing import Any
-from unittest import mock
 
 import pytest
 

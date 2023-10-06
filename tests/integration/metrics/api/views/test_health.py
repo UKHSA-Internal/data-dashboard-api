@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from unittest import mock
 
 from rest_framework.test import APIClient
 
