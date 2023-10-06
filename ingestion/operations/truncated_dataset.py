@@ -56,7 +56,7 @@ def clear_metrics_tables() -> None:
     model_managers: tuple[models.Manager] = collect_all_metric_model_managers()
 
     for model_manager in model_managers:
-        logger.info(f"Deleting records of {model_manager.model.__name__}")
+        logger.info("Deleting records of %s", model_manager.model.__name__)
         model_manager.all().delete()
 
     logger.info("Completed deleting existing metrics records")

@@ -76,7 +76,7 @@ class PrivateAPICrawler:
             None
 
         """
-        logger.info(f"Hitting GET pages/ endpoint for `{page.title}` page")
+        logger.info("Hitting GET pages/ endpoint for `%s` page", page.title)
         self._internal_api_client.hit_pages_detail_endpoint(page_id=page.id)
 
     # Process pages for content
@@ -107,14 +107,14 @@ class PrivateAPICrawler:
 
         for index, page in enumerate(pages, 1):
             try:
-                logger.info(f"Processing content blocks within `{page.title}` page")
+                logger.info("Processing content blocks within `%s` page", page.title)
                 self.process_all_sections_in_page(page=page)
             except AttributeError:
                 logger.info(
-                    f"`{page.title}` page has no dynamic content blocks. "
-                    f"So only the headless CMS API detail has been processed"
+                    "`%s` page has no dynamic content blocks. "
+                    "So only the headless CMS API detail has been processed", page.title
                 )
-            logger.info(f"Completed {index} / {pages_count} pages")
+            logger.info("Completed %s / %s pages", index, pages_count)
 
     # Process sections
 
