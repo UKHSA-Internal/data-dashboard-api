@@ -61,7 +61,9 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
-      - name: Run ruff & black
+      - uses: chartboost/ruff-action@v1
+
+      - name: Run black
         run: |
           source .github/workflows/formatting.sh
 
