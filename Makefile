@@ -21,14 +21,6 @@ formatting:
 	${BIN}python -m isort .
 	${BIN}python -m black .
 
-# Run linting
-linting-all:
-	pylint */
-
-# Run linting with errors only
-linting-errors-only:
-	pylint */ --errors-only
-
 # Check architectural constraints
 architecture:
 	lint-imports
