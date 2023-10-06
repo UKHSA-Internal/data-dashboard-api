@@ -37,7 +37,8 @@ select = [
     "AIR",      # airflow
     "FURB",     # refurb
     "I",        # isort
-    "TRY"       # tryceratops
+    "TRY",      # tryceratops
+    "UP",       # pyupgrade
 ]
 
 # Ignore rules
