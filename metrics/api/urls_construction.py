@@ -101,7 +101,9 @@ def construct_public_api_urlpatterns(
         via `urlpatterns` in `urls.py`
 
     """
-    prefix: str = "" if app_mode == AppMode.PUBLIC_API.value else DEFAULT_PUBLIC_API_PREFIX
+    prefix: str = (
+        "" if app_mode == AppMode.PUBLIC_API.value else DEFAULT_PUBLIC_API_PREFIX
+    )
 
     return construct_urlpatterns_for_public_api(prefix=prefix)
 
