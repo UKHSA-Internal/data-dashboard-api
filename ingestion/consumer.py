@@ -20,7 +20,7 @@ from ingestion.reader import Reader
 
 class FieldsAndModelManager(NamedTuple):
     fields: dict[str, str]
-    model_manager: Type[Manager]
+    model_manager: Manager
 
 
 DEFAULT_THEME_MANAGER = MetricsAPIInterface.get_theme_manager()
