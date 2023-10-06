@@ -1,3 +1,5 @@
+import contextlib
+
 from django.db.utils import OperationalError
 from rest_framework import serializers
 
@@ -54,10 +56,8 @@ class ChartPlotsListSerializer(serializers.ListSerializer):
     child = ChartPlotSerializer()
 
     def __init__(self, *args, **kwargs):
-        try:
+        with contextlib.suppress(OperationalError):
             super().__init__(*args, **kwargs)
-        except OperationalError:
-            pass
 
 
 FILE_FORMAT_CHOICES: list[str] = ["svg", "png", "jpg", "jpeg"]

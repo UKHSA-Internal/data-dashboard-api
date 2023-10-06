@@ -1,3 +1,5 @@
+import contextlib
+
 from django.db.models import Manager
 from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
@@ -84,10 +86,8 @@ class HeadlinesQuerySerializerBeta(serializers.Serializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        try:
+        with contextlib.suppress(RuntimeError, ProgrammingError, OperationalError):
             self.populate_choices()
-        except (RuntimeError, ProgrammingError, OperationalError):
-            pass
 
     def populate_choices(self):
         self.fields["topic"].choices = self.topic_manager.get_all_names()
