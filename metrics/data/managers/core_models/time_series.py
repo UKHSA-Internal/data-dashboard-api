@@ -6,7 +6,6 @@ The application should not interact directly with the `QuerySet` class.
 """
 import datetime
 from decimal import Decimal
-from typing import Optional
 
 from django.db import models
 
@@ -357,12 +356,12 @@ class CoreTimeSeriesManager(models.Manager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
-        date_to: Optional[datetime.date] = None,
-        geography_name: Optional[str] = None,
-        geography_type_name: Optional[str] = None,
-        stratum_name: Optional[str] = None,
-        sex: Optional[str] = None,
-        age: Optional[str] = None,
+        date_to: datetime.date | None = None,
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 

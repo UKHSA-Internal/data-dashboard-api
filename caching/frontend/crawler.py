@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 from urllib.parse import urljoin
 
 import requests
@@ -27,7 +26,7 @@ class FrontEndCrawler:
         self,
         frontend_base_url: str,
         cdn_auth_key: str,
-        internal_api_client: Optional[InternalAPIClient] = None,
+        internal_api_client: InternalAPIClient | None = None,
     ):
         self._frontend_base_url = frontend_base_url
         self._cdn_auth_key = cdn_auth_key

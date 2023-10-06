@@ -1,6 +1,5 @@
 import urllib.parse
 from datetime import datetime
-from typing import Optional
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -33,7 +32,7 @@ class ChartsInterface:
         self,
         chart_plots: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-        plots_interface: Optional[PlotsInterface] = None,
+        plots_interface: PlotsInterface | None = None,
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type

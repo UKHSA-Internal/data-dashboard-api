@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Optional
 
 from ingestion.aws_client import AWSClient
 from ingestion.file_ingestion import _upload_file
@@ -9,7 +8,7 @@ from ingestion.operations.truncated_dataset import clear_metrics_tables
 logger = logging.getLogger(__name__)
 
 
-def download_files_and_upload(client: Optional[AWSClient] = None) -> None:
+def download_files_and_upload(client: AWSClient | None = None) -> None:
     """Downloads all files in the s3 bucket and ingest them
 
     Notes:

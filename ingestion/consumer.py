@@ -1,5 +1,5 @@
 import io
-from typing import NamedTuple, Optional
+from typing import NamedTuple
 
 from django.db.models import Manager
 
@@ -85,7 +85,7 @@ class Consumer:
     def __init__(
         self,
         data: io.FileIO,
-        reader: Optional[Reader] = None,
+        reader: Reader | None = None,
         theme_manager: Manager = DEFAULT_THEME_MANAGER,
         sub_theme_manager: Manager = DEFAULT_SUB_THEME_MANAGER,
         topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
