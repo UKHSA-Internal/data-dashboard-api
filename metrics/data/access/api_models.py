@@ -124,11 +124,7 @@ def validate_query_filters(
     Returns:
         The list of query parameters in the required format
     """
-    all_queries = []
-
-    for plot in plots:
-        all_queries.append(
-            validate_plot_filter(possible_fields=possible_fields, plot=plot)
-        )
-
-    return all_queries
+    return [
+        validate_plot_filter(possible_fields=possible_fields, plot=plot)
+        for plot in plots
+    ]

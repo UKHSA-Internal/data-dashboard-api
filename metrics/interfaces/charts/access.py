@@ -202,10 +202,7 @@ class ChartsInterface:
         last_date = ""
 
         if figure.layout.xaxis.type == "date":
-            last_dates = []
-
-            for trace in figure.data:
-                last_dates.append(max(trace.x))
+            last_dates = [max(trace.x) for trace in figure.data]
 
             # Now we have the end-dates from each of the plots, return the latest one
             # and convert datetime to a string
