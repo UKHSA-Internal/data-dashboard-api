@@ -63,7 +63,7 @@ class CacheManagement:
         retrieved_entry = self._client.get(cache_entry_key=cache_entry_key)
 
         if retrieved_entry is None:
-            raise CacheMissError()
+            raise CacheMissError
 
         return retrieved_entry
 
@@ -150,7 +150,7 @@ class CacheManagement:
                     if k.lower() != "body"
                 }
             case _:
-                raise ValueError()
+                raise ValueError
 
         return self.build_cache_entry_key_for_data(
             endpoint_path=request.path, data=data

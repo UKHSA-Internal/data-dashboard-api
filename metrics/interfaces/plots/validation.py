@@ -128,4 +128,4 @@ class PlotValidation:
             return
 
         if not dates_in_chronological_order:
-            raise DatesNotInChronologicalOrderError()
+            raise DatesNotInChronologicalOrderError

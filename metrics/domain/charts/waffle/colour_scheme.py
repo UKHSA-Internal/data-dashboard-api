@@ -56,4 +56,4 @@ def build_color_scale(identifier: int) -> list[list[int, str]]:
             [1, lightest_plot_rgb_colour],
         ]
 
-    raise InvalidIdentifierError()
+    raise InvalidIdentifierError
