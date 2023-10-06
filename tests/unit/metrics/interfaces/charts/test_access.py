@@ -660,7 +660,7 @@ class TestMiscMethods:
         encoded_figure = charts_interface.encode_figure(figure=figure)
 
         # Then
-        assert type(encoded_figure) is str
+        assert isinstance(encoded_figure, str)
 
     @pytest.mark.parametrize(
         "file_format",

@@ -123,10 +123,10 @@ def _convert_string_to_date(date_string: str | datetime.datetime) -> datetime.da
         `datetime.date: The converted date as an object.
 
     """
-    if type(date_string) is str:
+    if isinstance(date_string, str):
         return datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
 
-    if type(date_string) is datetime.datetime:
+    if isinstance(date_string, datetime.datetime):
         return date_string.date()
 
     return date_string
