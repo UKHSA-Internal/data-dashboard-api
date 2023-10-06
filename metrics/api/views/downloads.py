@@ -105,5 +105,7 @@ class DownloadsView(APIView):
 
         if file_format == "json":
             return self._handle_json()
-        elif file_format == "csv":
+        if file_format == "csv":
             return self._handle_csv()
+
+        return None
