@@ -1,5 +1,5 @@
 import io
-from typing import NamedTuple, Optional, Type
+from typing import NamedTuple, Optional
 
 from django.db.models import Manager
 
