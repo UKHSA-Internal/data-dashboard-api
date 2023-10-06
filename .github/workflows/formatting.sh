@@ -10,7 +10,7 @@ black .
 changed_files=$(git diff --name-only | grep "\.py" || true)
 
 if [ -n "${changed_files}"  ]; then
-    echo "Some files appear to be unruffed or unblacked. Please rectify by running 'make formatting'."
+    echo "Some files appear to be unformatted. Please rectify by running 'make formatting'."
     echo "${changed_files}"
     exit 1
 else
