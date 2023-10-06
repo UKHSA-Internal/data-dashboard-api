@@ -1,14 +1,14 @@
-VENV=venv
 # This is the venv location. Typically this is set as either `.venv` or `venv`.
 # Here it is set as `venv`
+VENV=venv
 
-BIN=./${VENV}/bin/
 # Location of the venv/bin folder so that the
 # Python instance can be easily used by each recipe
 # without having to activate the venv explicitly within the process running the recipe.
+BIN=./${VENV}/bin/
 
-PORT=8000
 # The port to serve the application on
+PORT=8000
 
 # Create the virtual environment & install dependencies
 # Note: Requires Python 3.11 version
