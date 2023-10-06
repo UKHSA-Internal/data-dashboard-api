@@ -1,4 +1,3 @@
-
 from ingestion.metrics_interfaces import interface
 from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (

@@ -336,10 +336,12 @@ class TestAWSClient:
         expected_destination_folder: str = (
             aws_client_with_mocked_boto_client._destination_folder
         )
-        expected_log = (f"Moving `{expected_filename}` "
-                        f"from `{expected_inbound_folder}` "
-                        f"to `{expected_destination_folder}` "
-                        f"in s3")
+        expected_log = (
+            f"Moving `{expected_filename}` "
+            f"from `{expected_inbound_folder}` "
+            f"to `{expected_destination_folder}` "
+            f"in s3"
+        )
         assert expected_log in caplog.text
 
     # Tests for utility methods

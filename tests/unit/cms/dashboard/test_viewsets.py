@@ -1,4 +1,3 @@
-
 from cms.dashboard.serializers import CMSDraftPagesSerializer, ListablePageSerializer
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 
