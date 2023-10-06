@@ -77,7 +77,7 @@ class TestDoesMetricHaveMultipleRecords:
 
         # When
         metric_has_multiple_records: bool = (
-            validator._does_metric_have_multiple_records()
+            validator.does_metric_have_multiple_records()
         )
 
         # Then
@@ -123,7 +123,7 @@ class TestDoesMetricHaveMultipleRecords:
 
         # When
         metric_has_multiple_records: bool = (
-            validator._does_metric_have_multiple_records()
+            validator.does_metric_have_multiple_records()
         )
 
         # Then
@@ -157,7 +157,7 @@ class TestDoesMetricHaveMultipleRecords:
 
         # When
         metric_has_multiple_records: bool = (
-            validator._does_metric_have_multiple_records()
+            validator.does_metric_have_multiple_records()
         )
 
         # Then
@@ -169,7 +169,7 @@ class TestDoesMetricHaveMultipleRecords:
         """
         Given a valid `PlotParameters` model
         And the `CoreTimeSeriesManager`
-        When `_does_metric_have_multiple_records()` is called from an instance of `PlotValidation`
+        When `does_metric_have_multiple_records()` is called from an instance of `PlotValidation`
         Then the call is delegated to the `CoreTimeSeriesManager`
             with args from the `PlotParameters` model
         """
@@ -183,7 +183,7 @@ class TestDoesMetricHaveMultipleRecords:
         )
 
         # When
-        plot_validation._does_metric_have_multiple_records()
+        plot_validation.does_metric_have_multiple_records()
 
         # Then
         spy_core_time_series_manager.get_count.assert_called_once_with(

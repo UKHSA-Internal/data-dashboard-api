@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Self
+from typing import Self
 
 from caching.internal_api_client import InternalAPIClient
 from cms.common.models import CommonPage
@@ -25,7 +25,7 @@ class PrivateAPICrawler:
 
     """
 
-    def __init__(self, internal_api_client: Optional[InternalAPIClient] = None):
+    def __init__(self, internal_api_client: InternalAPIClient | None = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
 
     # Class constructors

@@ -194,14 +194,7 @@ class TestHeadlinesInterfaceBeta:
         )
 
         # When / Then
-        metric_name = expected_example_args["metric_name"]
-        topic_name = expected_example_args["topic_name"]
-        expected_error_message = (
-            f"Data for `{topic_name}` and `{metric_name}` could not be found."
-        )
-        with pytest.raises(
-            access.HeadlineNumberDataNotFoundError, match=expected_error_message
-        ):
+        with pytest.raises(access.HeadlineNumberDataNotFoundError):
             headlines_interface.get_latest_metric_value()
 
 

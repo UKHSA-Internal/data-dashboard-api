@@ -1,6 +1,5 @@
 import hashlib
 import json
-from typing import Optional
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
@@ -22,7 +21,7 @@ class CacheManagement:
 
     """
 
-    def __init__(self, in_memory: bool, client: Optional[CacheClient] = None):
+    def __init__(self, in_memory: bool, client: CacheClient | None = None):
         self._client = client or self._create_cache_client(in_memory=in_memory)
 
     @staticmethod

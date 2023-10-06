@@ -38,14 +38,12 @@ class HeadlinesInterface:
                 topic_name=self.topic_name,
                 metric_name=self.metric_name,
             )
-        except CoreTimeSeries.MultipleObjectsReturned:
+        except CoreTimeSeries.MultipleObjectsReturned as error:
             raise MetricIsTimeSeriesTypeError(
-                f"`{self.metric_name}` is a timeseries-type metric. This should be a headline-type metric"
-            )
-        except CoreTimeSeries.DoesNotExist:
-            raise HeadlineNumberDataNotFoundError(
-                "No data could be found for those parameters"
-            )
+                metric_name=self.metric_name,
+            ) from error
+        except CoreTimeSeries.DoesNotExist as error:
+            raise HeadlineNumberDataNotFoundError from error
 
 
 class HeadlinesInterfaceBeta:
@@ -92,9 +90,7 @@ class HeadlinesInterfaceBeta:
         )
 
         if latest_metric_value is None:
-            raise HeadlineNumberDataNotFoundError(
-                f"Data for `{self.topic_name}` and `{self.metric_name}` could not be found."
-            )
+            raise HeadlineNumberDataNotFoundError
 
         return latest_metric_value
 
@@ -104,11 +100,15 @@ class BaseInvalidHeadlinesRequestError(Exception):
 
 
 class MetricIsTimeSeriesTypeError(BaseInvalidHeadlinesRequestError):
-    ...
+    def __init__(self, metric_name: str):
+        message = f"`{metric_name}` is a timeseries-type metric. This should be a headline-type metric"
+        super().__init__(message)
 
 
 class HeadlineNumberDataNotFoundError(BaseInvalidHeadlinesRequestError):
-    ...
+    def __init__(self):
+        message = "No data could be found for those parameters"
+        super().__init__(message)
 
 
 def generate_headline_number(topic_name: str, metric_name: str) -> float:

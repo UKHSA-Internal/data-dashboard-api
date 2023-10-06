@@ -2,8 +2,10 @@ from unittest import mock
 
 import pytest
 
+from caching.errors import CDNAuthKeyNotProvidedError
 from caching.public_api.crawler import PublicAPICrawler
 from caching.public_api.handlers import (
+    PublicAPIURLNotProvidedError,
     _get_public_api_url,
     crawl_public_api,
     get_cdn_auth_key,
@@ -95,13 +97,13 @@ class TestGetPublicAPIURL:
         """
         Given no value set for the environment variable "PUBLIC_API_URL"
         When `_get_public_api_url()` is called
-        Then a `KeyError` is raised
+        Then a `PublicAPIURLNotProvidedError` is raised
         """
         # Given
         monkeypatch.delenv(name="PUBLIC_API_URL", raising=False)
 
         # When / Then
-        with pytest.raises(KeyError):
+        with pytest.raises(PublicAPIURLNotProvidedError):
             _get_public_api_url()
 
 
@@ -126,11 +128,11 @@ class TestGetCDNAuthKey:
         """
         Given no value set for the environment variable "CDN_AUTH_KEY"
         When `get_cdn_auth_key()` is called
-        Then a `KeyError` is raised
+        Then a `CDNAuthKeyNotProvidedError` is raised
         """
         # Given
         monkeypatch.delenv(name="CDN_AUTH_KEY", raising=False)
 
         # When / Then
-        with pytest.raises(KeyError):
+        with pytest.raises(CDNAuthKeyNotProvidedError):
             get_cdn_auth_key()

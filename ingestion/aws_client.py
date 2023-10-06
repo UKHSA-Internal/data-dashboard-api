@@ -1,6 +1,5 @@
 import datetime
 import logging
-from typing import Optional
 
 import boto3
 import botocore.client
@@ -26,7 +25,7 @@ class AWSClient:
 
     def __init__(
         self,
-        client: Optional[botocore.client.BaseClient] = None,
+        client: botocore.client.BaseClient | None = None,
         profile_name: str = config.AWS_PROFILE_NAME,
         bucket_name: str = config.INGESTION_BUCKET_NAME,
         inbound_folder: str = DEFAULT_INBOUND_INGESTION_FOLDER,

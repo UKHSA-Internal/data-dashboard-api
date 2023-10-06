@@ -8,6 +8,7 @@ from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartsInterface,
+    InvalidFileFormatError,
     generate_chart_as_file,
     generate_encoded_chart,
     validate_chart_plot_parameters,
@@ -674,7 +675,7 @@ class TestMiscMethods:
         """
         Given the user supplies an invalid file_format to pass to encode_figure
         When `encode_figure` is called from an instance of the `ChartsInterface`
-        Then a ValueError is raised
+        Then an `InvalidFileFormatError` is raised
         """
         # Given
         mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
@@ -691,7 +692,7 @@ class TestMiscMethods:
         figure = plotly.graph_objs.Figure()
 
         # When / Then
-        with pytest.raises(ValueError):
+        with pytest.raises(InvalidFileFormatError):
             charts_interface.encode_figure(figure=figure)
 
     @mock.patch("scour.scour.scourString")
