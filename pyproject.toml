@@ -23,6 +23,7 @@ select = [
     "SLOT",     # flake8-slots
     "TID",      # flake8-tidy-imports
     "INT",      # flake8-gettext
+    "PIE",      # flake8-pie
     "TD",       # flake8-todos
     "FIX",      # flake8-fixme
     "RSE",      # flake8-raise
