@@ -44,7 +44,7 @@ class FakeMetricManager(MetricManager):
         return bool(filtered_by_topic)
 
     def get_all_unique_change_type_names(self) -> list[str]:
-        unique_metric_names = set(metric.name for metric in self.metrics)
+        unique_metric_names = {metric.name for metric in self.metrics}
         return [
             metric_name
             for metric_name in unique_metric_names
