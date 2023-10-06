@@ -47,6 +47,13 @@ all-tests:
 audit:
 	pip-audit -r requirements.txt
 
+# Run development checks,
+# This includes all formatters, the full test suite and all architecture checks
+check:
+	make formatting
+	make architecture
+	make all-tests
+
 # Start the application
 run-server:
 	${BIN}python manage.py migrate
