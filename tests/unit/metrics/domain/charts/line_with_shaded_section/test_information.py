@@ -2,6 +2,9 @@ import pytest
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_with_shaded_section import information
+from metrics.domain.charts.line_with_shaded_section.information import (
+    TrendMetricNotSupportedError,
+)
 
 INCREASING_METRIC_VALUE: int = 10
 DECREASING_METRIC_VALUE: int = -10
@@ -412,13 +415,13 @@ def test_raises_error_for_unsupported_metric_name():
     """
     Given a metric name which is not supported
     When `is_metric_improving()` is called
-    Then a `ValueError` is raised
+    Then a `TrendMetricNotSupportedError` is raised
     """
     # Given
     unsupported_metric_name = "non_existent_metric"
 
     # When / Then
-    with pytest.raises(ValueError):
+    with pytest.raises(TrendMetricNotSupportedError):
         information.is_metric_improving(
             change_in_metric_value=10, metric_name=unsupported_metric_name
         )

@@ -12,7 +12,9 @@ DEFAULT_METRIC_MANAGER = Metric.objects
 
 
 class ChartTypeDoesNotSupportMetricError(Exception):
-    ...
+    def __init__(self, metric_name: str, chart_type: str):
+        message = f"`{metric_name}` is not compatible with `{chart_type}` chart types"
+        super().__init__(message)
 
 
 class ChartsRequestValidator:
@@ -83,6 +85,6 @@ class ChartsRequestValidator:
         )
         if not metric_is_series_chart_compatible:
             raise ChartTypeDoesNotSupportMetricError(
-                f"`{self.plot_parameters.metric_name}` "
-                f"is not compatible with `{self.plot_parameters.chart_type}` chart types"
+                metric_name=self.plot_parameters.metric_name,
+                chart_type=self.plot_parameters.chart_type,
             )

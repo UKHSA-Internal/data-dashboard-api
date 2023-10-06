@@ -22,6 +22,12 @@ from metrics.interfaces.plots.access import PlotsInterface
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
+class InvalidFileFormatError(Exception):
+    def __init__(self):
+        message = "Invalid file format, must be `svg`"
+        super().__init__(message)
+
+
 class ChartsInterface:
     def __init__(
         self,
@@ -234,7 +240,7 @@ class ChartsInterface:
 
         """
         if self.chart_plots.file_format != "svg":
-            raise ValueError("Invalid file format, must be `svg`")
+            raise InvalidFileFormatError
 
         optimized_svg: str = self.create_optimized_svg(figure=figure)
 

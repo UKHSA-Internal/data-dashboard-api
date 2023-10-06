@@ -8,7 +8,11 @@ DEFAULT_METRIC_MANAGER = Metric.objects
 
 
 class MetricDoesNotSupportTopicError(Exception):
-    ...
+    def __init__(self, topic_name: str, metric_name: str):
+        message = (
+            f"`{topic_name}` does not have a corresponding metric of `{metric_name}`"
+        )
+        super().__init__(message)
 
 
 class DatesNotInChronologicalOrderError(Exception):
@@ -70,8 +74,8 @@ class PlotValidation:
 
         if not metric_is_topic_compatible:
             raise MetricDoesNotSupportTopicError(
-                f"`{self.plot_parameters.topic_name}` does not have "
-                f"a corresponding metric of `{self.plot_parameters.metric_name}`"
+                topic_name=self.plot_parameters.topic_name,
+                metric_name=self.plot_parameters.metric_name,
             )
 
     def _is_metric_available_for_topic(self) -> bool:

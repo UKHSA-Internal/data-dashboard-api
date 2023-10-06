@@ -11,7 +11,9 @@ DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class TrendNumberDataNotFoundError(Exception):
-    ...
+    def __init__(self, topic_name: str, metric_name: str):
+        message = f"Data for `{topic_name}` and `{metric_name}` could not be found."
+        super().__init__(message)
 
 
 class TrendsInterface:
@@ -48,7 +50,8 @@ class TrendsInterface:
 
         if latest_metric_value is None:
             raise TrendNumberDataNotFoundError(
-                f"Data for `{self.topic_name}` and `{metric_name}` could not be found."
+                topic_name={self.topic_name},
+                metric_name={metric_name},
             )
 
         return latest_metric_value
@@ -130,7 +133,8 @@ class TrendsInterfaceBeta:
 
         if latest_metric_value is None:
             raise TrendNumberDataNotFoundError(
-                f"Data for `{self.topic_name}` and `{metric_name}` could not be found."
+                topic_name={self.topic_name},
+                metric_name={metric_name},
             )
 
         return latest_metric_value
