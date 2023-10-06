@@ -1,11 +1,10 @@
-import datetime
 from unittest import mock
 
 import pytest
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings, get_new_max_date
-from metrics.domain.models import PlotData, PlotParameters
+from metrics.domain.models import PlotData
 
 MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 

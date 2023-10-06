@@ -1,9 +1,8 @@
 from collections import defaultdict
-from datetime import date
 from typing import Any
 
 from metrics.domain.models import PlotData
-from metrics.domain.utils import ChartAxisFields, get_axis_name, get_last_day_of_month
+from metrics.domain.utils import ChartAxisFields
 
 
 class TabularData:

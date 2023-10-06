@@ -1,5 +1,4 @@
 import pytest
-from rest_framework_api_key.permissions import HasAPIKey
 
 from metrics.api.views.headlines import HeadlinesViewBeta
 

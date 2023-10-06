@@ -73,7 +73,7 @@ class FrontEndCrawler:
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": cdn_auth_key},
         )
-        logger.info(f"Processed `{url}`")
+        logger.info("Processed `%s`", url)
 
     def process_page(self, page_item: dict) -> None:
         """Hit the URL for the corresponding `page_item`

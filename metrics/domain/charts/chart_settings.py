@@ -207,7 +207,7 @@ def get_new_max_date(existing_dt: str) -> str:
 
 
 def get_x_axis_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
-    """Adjust the right-hand side of the charts' x axis to give Plotly the best chance of displaying a label for every tick
+    """Adjust the right-hand side of the charts' x-axis to display a label for every tick
 
     Args:
         figure: The chart figure

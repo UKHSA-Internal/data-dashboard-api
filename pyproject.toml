@@ -1,0 +1,82 @@
+[tool.ruff]
+select = [
+    "C90",      # mccabe
+    "E",        # pycodestyle
+    "W",        # pycodestyle
+    "F",        # Pyflakes
+    "N",        # pep8-naming
+    "ASYNC",    # flake8-async
+    "S",        # flake8-bandit
+    "BLE",      # flake8-blind-except
+    "A",        # flake8-builtins
+    "C4",       # flake8-comprehensions
+    "T10",      # flake8-debugger
+    "EXE",      # flake8-executable
+    "FA",       # flake8-future-annotations
+    "ISC",      # flake8-implicit-str-concat
+    "ICN",      # flake8-import-conventions
+    "G",        # flake8-logging-format
+    "T20",      # flake8-print
+    "PYI",      # flake8-pyi
+    "Q",        # flake8-quotes
+    "YTT",      # flake8-2020
+    "SLOT",     # flake8-slots
+    "TID",      # flake8-tidy-imports
+    "INT",      # flake8-gettext
+    "TD",       # flake8-todos
+    "FIX",      # flake8-fixme
+    "ERA",      # eradicate
+    "PGH",      # pygrep-hooks
+    "FLY",      # flynt
+    "AIR",      # airflow
+    "FURB",     # refurb
+    "I",        # isort
+]
+
+# Ignore rules
+ignore = [
+    "F821"      # Undefined class names - currently used to bypass circular imports in type hints
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".git",
+    ".github",
+    ".ruff_cache",
+    "venv",
+    ".venv",
+    "__pypackages__",
+    "build",
+    "dist",
+    "*/migrations/*",
+    "*/__init__.py",
+]
+
+# Allow line lengths of up to 120 characters
+line-length = 120
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.11
+target-version = "py311"
+
+[tool.ruff.per-file-ignores]
+"**/{tests}/*"                  = ["E501", "S101"]        # Ignore line length in test files
+"metrics/api/views/*"           = ["E501"]                # Ignore use of `assert` statement in tests
+                                                          # this infringement is due to
+                                                          # swagger-facing docstrings/documentation
+"**/help_texts.py"              = ["W291"]                # Ignore trailing whitespace for help texts
+"**/build_cms_site.py"          = ["W605"]                # Ignore escape sequences used in regex calls
+"ingestion/file_ingestion.py"   = ["BLE001"]              # Ignore blind exception catch for file ingestion function
+"public_api/views/root_view.py" = ["A002"]                # Ignore built-in `format` used in arg to extended
+                                                          # rest framework API view method
+
+
+[tool.ruff.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10

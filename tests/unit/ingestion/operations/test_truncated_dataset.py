@@ -2,7 +2,6 @@ from pathlib import Path
 from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
-from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.operations.truncated_dataset import (
     _gather_test_data_source_file_paths,
