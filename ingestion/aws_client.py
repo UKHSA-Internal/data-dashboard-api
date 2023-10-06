@@ -101,7 +101,9 @@ class AWSClient:
         filename: str = self._get_filename_from_key(key=key)
         logger.info(
             "Moving `%s` from `%s` to `%s` in s3",
-            filename, self._inbound_folder, self._destination_folder
+            filename,
+            self._inbound_folder,
+            self._destination_folder,
         )
         self._copy_file_to_destination(key=key)
         self._delete_file_from_inbound(key=key)

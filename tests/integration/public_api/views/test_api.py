@@ -246,7 +246,7 @@ class TestPublicAPINestedLinkViews:
             f"{geography_type_name}/geographies/"
             f"{geography_name}/metrics/"
             f"{metric_name}"
-            )
+        )
         response: Response = client.get(path=path, format="json")
 
         # Then

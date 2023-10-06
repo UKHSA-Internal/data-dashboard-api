@@ -12,7 +12,7 @@ def reshape(flat_list: list[int], length: int, width: int) -> list[list[int | st
     index = 0
     matrix: list[list[int | str]] = []
     while index < length * width:
-        matrix.append(flat_list[index: index + width])
+        matrix.append(flat_list[index : index + width])
         index += width
     return matrix
 
