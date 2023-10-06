@@ -61,7 +61,7 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
-      - name: Run black
+      - name: Run ruff & black
         run: |
           source .github/workflows/formatting.sh
 
