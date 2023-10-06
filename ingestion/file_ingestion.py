@@ -72,7 +72,7 @@ def file_ingester(file: io.FileIO) -> None:
     ):
         return consumer.create_timeseries()
 
-    raise ValueError()
+    raise ValueError
 
 
 def _upload_file(filepath: str) -> None:

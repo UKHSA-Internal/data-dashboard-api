@@ -169,7 +169,7 @@ class PublicAPICrawler:
         targets = []
         for links in response_data:
             if isinstance(links, dict):
-                for key, value in links.items():
+                for value in links.values():
                     if self._is_url(value=value):
                         targets.append(value)
 

@@ -134,7 +134,7 @@ def generate_headline_number(topic_name: str, metric_name: str) -> float:
     metric_value = interface.get_metric_value()
 
     if metric_value is None:
-        raise HeadlineNumberDataNotFoundError()
+        raise HeadlineNumberDataNotFoundError
 
     return metric_value
 
@@ -188,6 +188,6 @@ def generate_headline_number_beta(
     metric_value = interface.get_latest_metric_value()
 
     if metric_value is None:
-        raise HeadlineNumberDataNotFoundError()
+        raise HeadlineNumberDataNotFoundError
 
     return metric_value

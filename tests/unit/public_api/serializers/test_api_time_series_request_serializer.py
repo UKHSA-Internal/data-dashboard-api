@@ -19,14 +19,13 @@ class TestAPITimeSeriesRequestSerializer:
     @staticmethod
     def _setup_fake_api_time_series() -> list[FakeAPITimeSeries]:
         # Multiple `APITimeSeries` objects with 2 distinct `theme` values
-        fake_api_timeseries = [
+        return [
             # distinct theme value - `infectious_disease`
             FakeAPITimeSeriesFactory.build_example_covid_time_series(),
             FakeAPITimeSeriesFactory.build_example_covid_time_series(),
             # distinct theme value - `genetic_disease`
             FakeAPITimeSeriesFactory.build_example_sickle_cell_disease_series(),
         ]
-        return fake_api_timeseries
 
     def test_lookup_field_gets_field_from_context(self):
         """

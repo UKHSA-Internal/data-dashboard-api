@@ -238,7 +238,7 @@ class PrivateAPICrawler:
                     headline_number_block=headline_number_block
                 )
             case _:
-                raise ValueError()
+                raise ValueError
 
     def process_any_chart_card(self, chart_card: CMS_COMPONENT_BLOCK_TYPE) -> None:
         """Makes the relevant requests for the given single `chart_card`
@@ -264,7 +264,7 @@ class PrivateAPICrawler:
                     chart_with_headline_and_trend_card=chart_card,
                 )
             case _:
-                raise ValueError()
+                raise ValueError
 
     def process_chart_with_headline_and_trend_card(
         self,

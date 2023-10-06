@@ -21,7 +21,7 @@ class FakeMetricManager(MetricManager):
         try:
             return metrics[0]
         except IndexError:
-            raise ObjectDoesNotExist()
+            raise ObjectDoesNotExist
 
     def get_all_names(self) -> list[str]:
         return [metric.name for metric in self.metrics]
