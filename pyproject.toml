@@ -25,6 +25,9 @@ select = [
     "INT",      # flake8-gettext
     "TD",       # flake8-todos
     "FIX",      # flake8-fixme
+    "RSE",      # flake8-raise
+    "RET",      # flake8-return
+    "SIM",      # flake8-simplify
     "ERA",      # eradicate
     "PGH",      # pygrep-hooks
     "FLY",      # flynt
@@ -70,9 +73,12 @@ target-version = "py311"
 "metrics/api/views/*"           = ["E501"]                # Ignore use of `assert` statement in tests
                                                           # this infringement is due to
                                                           # swagger-facing docstrings/documentation
+"metrics/api/views/charts.py"   = ["SIM115"]               # Ignore context handler for opening file
+"**/waffle/pre_processing.py"   = ["E203"]                # Ignore whitespace before `:` conflicting with Black
 "**/help_texts.py"              = ["W291"]                # Ignore trailing whitespace for help texts
 "**/build_cms_site.py"          = ["W605"]                # Ignore escape sequences used in regex calls
 "ingestion/file_ingestion.py"   = ["BLE001"]              # Ignore blind exception catch for file ingestion function
+"ingestion/reader.py"           = ["SIM105"]              # Ignore request for `contextlib.supress()`
 "public_api/views/root_view.py" = ["A002"]                # Ignore built-in `format` used in arg to extended
                                                           # rest framework API view method
 
