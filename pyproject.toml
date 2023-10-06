@@ -49,7 +49,6 @@ unfixable = []
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".git",
-    ".github",
     ".ruff_cache",
     "venv",
     ".venv",
