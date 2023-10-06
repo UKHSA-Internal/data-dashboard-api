@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 from metrics.domain.utils import _check_for_substring_match
 
