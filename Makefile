@@ -18,7 +18,7 @@ setup-venv:
 
 # Apply formatting tools
 formatting:
-	${BIN}python -m isort .
+	${BIN}python -m ruff . --preview --fix
 	${BIN}python -m black .
 
 # Check architectural constraints
