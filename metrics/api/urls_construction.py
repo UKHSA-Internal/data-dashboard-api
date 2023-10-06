@@ -71,10 +71,7 @@ def construct_cms_admin_urlpatterns(
         via `urlpatterns` in `urls.py`
 
     """
-    if app_mode == AppMode.CMS_ADMIN.value:
-        prefix = ""
-    else:
-        prefix = "cms-admin/"
+    prefix: str = "" if app_mode == AppMode.CMS_ADMIN.value else "cms-admin/"
 
     return [path(prefix, include(wagtailadmin_urls))]
 
@@ -104,10 +101,7 @@ def construct_public_api_urlpatterns(
         via `urlpatterns` in `urls.py`
 
     """
-    if app_mode == AppMode.PUBLIC_API.value:
-        prefix = ""
-    else:
-        prefix = DEFAULT_PUBLIC_API_PREFIX
+    prefix: str = "" if app_mode == AppMode.PUBLIC_API.value else DEFAULT_PUBLIC_API_PREFIX
 
     return construct_urlpatterns_for_public_api(prefix=prefix)
 
