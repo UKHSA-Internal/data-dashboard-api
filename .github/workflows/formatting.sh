@@ -2,14 +2,15 @@
 # Exit immediately on non-zero status
 set -xe
 
-# Run black to check that there are no changes
+# Run ruff black to check that there are no changes
+ruff . --preview --fix
 black .
 
 # Only verify for .py files
 changed_files=$(git diff --name-only | grep "\.py" || true)
 
 if [ -n "${changed_files}"  ]; then
-    echo "Some files appear to be unblacked. Please rectify by running black over them."
+    echo "Some files appear to be unruffed or unblacked. Please rectify by running 'make formatting'."
     echo "${changed_files}"
     exit 1
 else
