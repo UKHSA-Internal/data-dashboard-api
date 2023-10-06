@@ -37,6 +37,7 @@ select = [
     "AIR",      # airflow
     "FURB",     # refurb
     "I",        # isort
+    "TRY"       # tryceratops
 ]
 
 # Ignore rules
@@ -88,6 +89,7 @@ target-version = "py311"
 "public_api/views/root_view.py" = ["A002"]                # Ignore built-in `format` used in arg to extended
                                                           # rest framework API view method
 "caching/public_api/crawler.py" = ["PERF401"]             # Ignore list comprehension which would reduce readibility
+"manage.py"                     = ["TRY003"]              # Ignore long message on exception from Django boilerplate
 
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
