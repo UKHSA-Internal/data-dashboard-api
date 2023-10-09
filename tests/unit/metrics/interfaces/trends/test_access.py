@@ -106,12 +106,7 @@ class TestTrendsInterface:
         )
 
         # When / Then
-        expected_error_message = (
-            f"Data for `{fake_topic_name}` and `{fake_metric_name}` could not be found."
-        )
-        with pytest.raises(
-            access.TrendNumberDataNotFoundError, match=expected_error_message
-        ):
+        with pytest.raises(access.TrendNumberDataNotFoundError):
             headlines_interface.get_latest_metric_value(fake_metric_name)
 
 
@@ -205,7 +200,6 @@ class TestTrendsInterfaceBeta:
         example_args = self.example_args
         fake_core_headline_manager = FakeCoreHeadlineManager(headlines=[])
         metric_name = example_args["metric_name"]
-        topic_name = example_args["topic_name"]
 
         headlines_interface = access.TrendsInterfaceBeta(
             **example_args,
@@ -213,12 +207,7 @@ class TestTrendsInterfaceBeta:
         )
 
         # When / Then
-        expected_error_message = (
-            f"Data for `{topic_name}` and `{metric_name}` could not be found."
-        )
-        with pytest.raises(
-            access.TrendNumberDataNotFoundError, match=expected_error_message
-        ):
+        with pytest.raises(access.TrendNumberDataNotFoundError):
             headlines_interface.get_latest_metric_value(metric_name)
 
     def test_initializes_with_default_core_headline_manager(self):

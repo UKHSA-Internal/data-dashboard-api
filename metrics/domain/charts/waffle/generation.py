@@ -34,7 +34,7 @@ def generate_chart_figure(
             From largest to smallest values, left to right.
 
     """
-    validation._check_values(values=values)
+    validation.check_values(values=values)
 
     figure = plotly.graph_objects.Figure()
 

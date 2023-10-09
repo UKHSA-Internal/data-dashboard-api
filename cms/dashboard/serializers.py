@@ -1,4 +1,4 @@
-from typing import OrderedDict
+from collections import OrderedDict
 
 from rest_framework import serializers
 from wagtail.api.v2.views import PageSerializer

@@ -180,7 +180,7 @@ class TestPrivateAPICrawlerProcessBlocks:
     )
     @mock.patch.object(PrivateAPICrawler, "process_trend_number_block")
     @mock.patch.object(PrivateAPICrawler, "process_headline_number_block")
-    def test_process_any_headline_number_block_for_trend_number_block(
+    def test_process_any_headline_number_block_for_headline_and_percentage_number_blocks(
         self,
         spy_process_headline_number_block: mock.MagicMock,
         spy_process_trend_number_block: mock.MagicMock,

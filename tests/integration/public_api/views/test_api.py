@@ -238,7 +238,15 @@ class TestPublicAPINestedLinkViews:
             )
 
         # When
-        path = f"{self.path}themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}"
+        path = (
+            f"{self.path}themes/"
+            f"{theme_name}/sub_themes/"
+            f"{sub_theme_name}/topics/"
+            f"{topic_name}/geography_types/"
+            f"{geography_type_name}/geographies/"
+            f"{geography_name}/metrics/"
+            f"{metric_name}"
+        )
         response: Response = client.get(path=path, format="json")
 
         # Then
@@ -323,7 +331,15 @@ class TestPublicAPINestedLinkViews:
             )
 
         # When
-        path = f"{self.path}themes/{theme_name}/sub_themes/{sub_theme_name}/topics/{topic_name}/geography_types/{geography_type_name}/geographies/{geography_name}/metrics/{metric_name}"
+        path = (
+            f"{self.path}themes/"
+            f"{theme_name}/sub_themes/"
+            f"{sub_theme_name}/topics/"
+            f"{topic_name}/geography_types/"
+            f"{geography_type_name}/geographies/"
+            f"{geography_name}/metrics/"
+            f"{metric_name}"
+        )
         response: Response = client.get(
             path=path, format="json", data={"sex": sex, "age": age}
         )

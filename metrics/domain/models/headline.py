@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic.main import BaseModel
 
 
@@ -21,21 +19,21 @@ class HeadlineParameters(BaseModel):
         return self.metric
 
     @property
-    def geography_name(self) -> Optional[str]:
+    def geography_name(self) -> str:
         return self.geography or ""
 
     @property
-    def geography_type_name(self) -> Optional[str]:
+    def geography_type_name(self) -> str:
         return self.geography_type or ""
 
     @property
-    def stratum_name(self) -> Optional[str]:
+    def stratum_name(self) -> str:
         return self.stratum or ""
 
     @property
-    def age_name(self) -> Optional[str]:
+    def age_name(self) -> str:
         return self.age or ""
 
     @property
-    def sex_name(self):
+    def sex_name(self) -> str:
         return self.sex or ""

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
@@ -16,7 +14,7 @@ class TablesInterface:
         self,
         plots_collection: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-        plots_interface: Optional[PlotsInterface] = None,
+        plots_interface: PlotsInterface | None = None,
     ):
         self.plots_collection = plots_collection
 

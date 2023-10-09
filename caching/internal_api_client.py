@@ -1,5 +1,3 @@
-from typing import Optional
-
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
@@ -31,7 +29,7 @@ class InternalAPIClient:
 
     def __init__(
         self,
-        client: Optional[APIClient] = None,
+        client: APIClient | None = None,
         force_refresh: bool = False,
         cache_check_only: bool = False,
     ):

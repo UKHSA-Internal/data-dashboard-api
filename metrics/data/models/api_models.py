@@ -46,4 +46,9 @@ class APITimeSeries(models.Model):
     objects = APITimeSeriesManager()
 
     def __str__(self):
-        return f"{self.__class__.__name__} for {self.date}, metric '{self.metric}', stratum '{self.stratum}', value: {self.metric_value}"
+        return (
+            f"{self.__class__.__name__} for {self.date}, "
+            f"metric '{self.metric}', "
+            f"stratum '{self.stratum}', "
+            f"value: {self.metric_value}"
+        )
