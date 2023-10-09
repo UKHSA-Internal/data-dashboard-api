@@ -1,6 +1,5 @@
 import hashlib
 import json
-from typing import Optional
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
@@ -22,7 +21,7 @@ class CacheManagement:
 
     """
 
-    def __init__(self, in_memory: bool, client: Optional[CacheClient] = None):
+    def __init__(self, in_memory: bool, client: CacheClient | None = None):
         self._client = client or self._create_cache_client(in_memory=in_memory)
 
     @staticmethod
@@ -63,7 +62,7 @@ class CacheManagement:
         retrieved_entry = self._client.get(cache_entry_key=cache_entry_key)
 
         if retrieved_entry is None:
-            raise CacheMissError()
+            raise CacheMissError
 
         return retrieved_entry
 
@@ -150,7 +149,7 @@ class CacheManagement:
                     if k.lower() != "body"
                 }
             case _:
-                raise ValueError()
+                raise ValueError
 
         return self.build_cache_entry_key_for_data(
             endpoint_path=request.path, data=data

@@ -1,6 +1,5 @@
 from metrics.data.models.core_models.supporting import (
     GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT,
-    Geography,
 )
 from tests.fakes.models.metrics.geography import FakeGeography
 

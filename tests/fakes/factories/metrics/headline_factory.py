@@ -1,5 +1,4 @@
 import secrets
-from typing import Optional
 
 import factory
 
@@ -38,11 +37,11 @@ class FakeCoreHeadlineFactory(factory.Factory):
         topic_name: str,
         metric_name: str,
         percentage_metric_name: str,
-        geography_name: Optional[str] = None,
-        geography_type_name: Optional[str] = None,
-        stratum_name: Optional[str] = None,
-        sex: Optional[str] = None,
-        age: Optional[str] = None,
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
     ) -> list[FakeCoreTimeSeries]:
         headline_records = []
 

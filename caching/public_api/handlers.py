@@ -1,6 +1,11 @@
 import os
 
+from caching.errors import CDNAuthKeyNotProvidedError
 from caching.public_api.crawler import PublicAPICrawler
+
+
+class PublicAPIURLNotProvidedError(Exception):
+    ...
 
 
 def _get_public_api_url() -> str:
@@ -10,13 +15,14 @@ def _get_public_api_url() -> str:
         The value of the "PUBLIC_API_URL"
 
     Raises:
-        `KeyError`: If the "PUBLIC_API_URL" has not been set
+        `PublicAPIURLNotProvidedError`: If the "PUBLIC_API_URL"
+            has not been set
 
     """
     try:
         return os.environ["PUBLIC_API_URL"]
     except KeyError as error:
-        raise KeyError("No `PUBLIC_API_URL` provided") from error
+        raise PublicAPIURLNotProvidedError from error
 
 
 def get_cdn_auth_key() -> str:
@@ -26,13 +32,14 @@ def get_cdn_auth_key() -> str:
         The value of the "CDN_AUTH_KEY"
 
     Raises:
-        `KeyError`: If the "CDN_AUTH_KEY" has not been set
+        `CDNAuthKeyNotProvidedError`: If the "CDN_AUTH_KEY"
+            environment variable has not been set
 
     """
     try:
         cdn_auth_key = os.environ["CDN_AUTH_KEY"]
     except KeyError as error:
-        raise KeyError("No CDN auth key specified") from error
+        raise CDNAuthKeyNotProvidedError from error
     return f'"{cdn_auth_key}"'
 
 

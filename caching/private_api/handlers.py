@@ -68,7 +68,7 @@ def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
     crawler.process_pages(pages=pages)
 
     duration: float = default_timer() - start
-    logging.info(f"Finished refreshing of cache in {round(duration, 2)}s")
+    logging.info("Finished refreshing of cache in %s seconds", round(duration, 2))
 
 
 def check_cache_for_all_pages() -> None:

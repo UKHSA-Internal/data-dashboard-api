@@ -4,6 +4,10 @@ from caching.frontend.crawler import FrontEndCrawler
 from caching.public_api.handlers import get_cdn_auth_key
 
 
+class FrontEndURLNotProvidedError(Exception):
+    ...
+
+
 def _get_frontend_base_url() -> str:
     """Returns the value of the "FRONTEND_URL" environment variable
 
@@ -11,13 +15,14 @@ def _get_frontend_base_url() -> str:
         The value of the "FRONTEND_URL"
 
     Raises:
-        `KeyError`: If the "FRONTEND_URL" has not been set
+        `FrontEndURLNotProvidedError`: If the "FRONTEND_URL"
+            environment variable has not been set
 
     """
     try:
         return os.environ["FRONTEND_URL"]
     except KeyError as error:
-        raise KeyError("No `FRONTEND_URL` provided") from error
+        raise FrontEndURLNotProvidedError from error
 
 
 def crawl_front_end() -> None:
@@ -27,9 +32,10 @@ def crawl_front_end() -> None:
         None
 
     Raises:
-        `KeyError`: If either `FRONTEND_URL` or `CDN_AUTH_KEY`
-            environment variables are not provided
-
+        `FrontEndURLNotProvidedError`: If the "FRONTEND_URL"
+            environment variable has not been set
+        `CDNAuthKeyNotProvidedError`: If the "CDN_AUTH_KEY"
+            environment variable has not been set
     """
     frontend_base_url: str = _get_frontend_base_url()
     cdn_auth_key: str = get_cdn_auth_key()

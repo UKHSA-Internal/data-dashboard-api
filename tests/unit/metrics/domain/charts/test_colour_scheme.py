@@ -1,5 +1,3 @@
-from typing import Optional
-
 import pytest
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
@@ -47,7 +45,7 @@ class TestRGBAChartLineColours:
     @pytest.mark.parametrize(
         "invalid_colour", [(None, "null", "", "NON-EXISTENT-COLOUR", "CORAL")]
     )
-    def test_get_colour_defaults_to_black(self, invalid_colour: Optional[str]):
+    def test_get_colour_defaults_to_black(self, invalid_colour: str | None):
         """
         Given an invalid colour which is not available as a GDS-conforming colour
         When `get_colour()` is called from the `RGBAColours` class
@@ -85,7 +83,7 @@ class TestRGBAChartLineColours:
     @pytest.mark.parametrize(
         "invalid_colour", [(None, "null", "", "NON-EXISTENT-COLOUR", "CORAL")]
     )
-    def test_get_bar_colour_defaults_to_blue(self, invalid_colour: Optional[str]):
+    def test_get_bar_colour_defaults_to_blue(self, invalid_colour: str | None):
         """
         Given an invalid colour which is not available as a GDS-conforming colour
         When `get_bar_colour()` is called from the `RGBAColours` class

@@ -12,4 +12,4 @@ class FakeGeographyManager(GeographyManager):
         super().__init__(**kwargs)
 
     def get_all_names(self) -> list[str]:
-        return list(set([geography.name for geography in self.geographies]))
+        return list({geography.name for geography in self.geographies})

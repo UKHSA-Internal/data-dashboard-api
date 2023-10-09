@@ -1,11 +1,10 @@
-import datetime
 from unittest import mock
 
 import pytest
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import ChartSettings, get_new_max_date
-from metrics.domain.models import PlotData, PlotParameters
+from metrics.domain.models import PlotData
 
 MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 
@@ -204,7 +203,8 @@ class TestChartSettings:
             "ticks": None,
             "showticklabels": False,
         }
-        y_axis_args = {**x_axis_args, **{"scaleratio": 1, "scaleanchor": "x"}}
+        y_axis_args = x_axis_args | {"scaleratio": 1, "scaleanchor": "x"}
+
         expected_chart_config = {
             "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
             "showlegend": False,
@@ -225,7 +225,7 @@ class TestChartSettings:
     ):
         """
         Given an instance of `ChartSettings`
-        When `_get_x_axis_date_type()` is called
+        When `get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
 
         Patches:
@@ -236,7 +236,7 @@ class TestChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        x_axis_date_type = chart_settings._get_x_axis_date_type(
+        x_axis_date_type = chart_settings.get_x_axis_date_type(
             figure=mock.Mock()  # Stubbed
         )
 
@@ -251,7 +251,7 @@ class TestChartSettings:
     ):
         """
         Given an instance of `ChartSettings`
-        When `_get_x_axis_date_type()` is called
+        When `get_x_axis_date_type()` is called
         Then `get_x_axis_range()` is called correctly
 
         Patches:
@@ -264,7 +264,7 @@ class TestChartSettings:
         mocked_figure = mock.Mock()
 
         # When
-        x_axis_date_type = chart_settings._get_x_axis_date_type(figure=mocked_figure)
+        x_axis_date_type = chart_settings.get_x_axis_date_type(figure=mocked_figure)
 
         # Then
         spy_get_x_axis_range.assert_called_once_with(figure=mocked_figure)
@@ -284,7 +284,7 @@ class TestChartSettings:
     ):
         """
         Given an instance of `ChartSettings` with a narrow `width`
-        When `_get_x_axis_date_type()` is called
+        When `get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
 
         Patches:
@@ -295,7 +295,7 @@ class TestChartSettings:
         chart_settings = ChartSettings(width=435, height=220, plots_data=mock.Mock())
 
         # When
-        x_axis_date_type = chart_settings._get_x_axis_date_type(
+        x_axis_date_type = chart_settings.get_x_axis_date_type(
             figure=mock.Mock()  # Stubbed
         )
 
@@ -311,14 +311,14 @@ class TestChartSettings:
     def test_get_x_axis_text_type(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
-        When `_get_x_axis_text_type()` is called
+        When `get_x_axis_text_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        x_axis_text_type = chart_settings._get_x_axis_text_type()
+        x_axis_text_type = chart_settings.get_x_axis_text_type()
 
         # Then
         expected_axis_config = {
@@ -354,14 +354,14 @@ class TestChartSettings:
     def test_get_margin_for_charts_with_dates(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
-        When `_get_margin_for_charts_with_dates()` is called
+        When `get_margin_for_charts_with_dates()` is called
         Then the correct configuration for margins is returned as a dict
         """
         # Given
         chart_settings = fake_chart_settings
 
         # When
-        margin_config = chart_settings._get_margin_for_charts_with_dates()
+        margin_config = chart_settings.get_margin_for_charts_with_dates()
 
         # Then
         expected_margin_config = {

@@ -1,5 +1,3 @@
-from typing import Optional
-
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
@@ -8,8 +6,7 @@ PAGES_ENDPOINT_PATH = f"{API_PREFIX}pages/"
 HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v2/"
 TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v2/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
-TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v3/"
-TABLES_V4_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
+TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
 DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
 
 
@@ -32,7 +29,7 @@ class InternalAPIClient:
 
     def __init__(
         self,
-        client: Optional[APIClient] = None,
+        client: APIClient | None = None,
         force_refresh: bool = False,
         cache_check_only: bool = False,
     ):
@@ -44,7 +41,6 @@ class InternalAPIClient:
         self.trends_endpoint_path = TRENDS_ENDPOINT_PATH
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
-        self.tables_v4_endpoint_path = TABLES_V4_ENDPOINT_PATH
         self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
 
         # Header configurations
@@ -125,9 +121,7 @@ class InternalAPIClient:
             `Response` from the `tables/` endpoint
 
         """
-        path = self.tables_v4_endpoint_path
         headers = self.build_headers()
-        self._client.post(path=path, data=data, headers=headers, format="json")
         return self._client.post(
             path=self.tables_endpoint_path, data=data, headers=headers, format="json"
         )

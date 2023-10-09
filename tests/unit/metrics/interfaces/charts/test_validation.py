@@ -100,7 +100,7 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         assert validated is None
         # Check that the call to validate the metric being okay was delegated to the `PlotValidation` object
         assert spy_plot_validation.method_calls == [
-            mock.call._does_metric_have_multiple_records()
+            mock.call.does_metric_have_multiple_records()
         ]
 
     def test_passes_naively_if_non_series_chart_type_provided(self):
@@ -146,7 +146,7 @@ class TestValidateSeriesChartTypeWorksWithMetric:
         )
 
         mocked_plot_validation = mock.Mock()
-        mocked_plot_validation._does_metric_have_multiple_records.return_value = False
+        mocked_plot_validation.does_metric_have_multiple_records.return_value = False
 
         validator = validation.ChartsRequestValidator(
             plot_parameters=plot_parameters,

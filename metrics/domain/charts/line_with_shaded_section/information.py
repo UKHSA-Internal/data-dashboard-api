@@ -52,6 +52,12 @@ def determine_line_and_fill_colours(
     return _get_line_and_fill_colours(metric_is_improving=metric_is_improving)
 
 
+class TrendMetricNotSupportedError(Exception):
+    def __init__(self, metric_name: str):
+        message = f"{metric_name} is not supported"
+        super().__init__(message)
+
+
 def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool:
     """Checks whether a positive or negative `change_in_metric_value` should be considered a good thing.
 
@@ -78,7 +84,8 @@ def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool
             positive relative to that metric. False otherwise.
 
     Raises:
-        `ValueError`: If the metric_name is not supported.
+        `TrendMetricNotSupportedError`: If the `metric_name`
+            is not supported.
 
     """
     increasing_is_bad: tuple[str, ...] = (
@@ -106,4 +113,4 @@ def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool
     ):
         return change_in_metric_value > 0
 
-    raise ValueError(f"{metric_name} is not supported")
+    raise TrendMetricNotSupportedError(metric_name=metric_name)

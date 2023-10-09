@@ -21,7 +21,7 @@ class FakeMetricManager(MetricManager):
         try:
             return metrics[0]
         except IndexError:
-            raise ObjectDoesNotExist()
+            raise ObjectDoesNotExist
 
     def get_all_names(self) -> list[str]:
         return [metric.name for metric in self.metrics]
@@ -31,14 +31,6 @@ class FakeMetricManager(MetricManager):
             metric.name
             for metric in self.metrics
             if metric.metric_group.name == "headline"
-        ]
-
-    def get_all_unique_percent_change_type_names(self) -> list[str]:
-        return [
-            metric.name
-            for metric in self.metrics
-            if metric.metric_group.name == "headline"
-            if "Percent" in metric.name
         ]
 
     def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
@@ -52,7 +44,7 @@ class FakeMetricManager(MetricManager):
         return bool(filtered_by_topic)
 
     def get_all_unique_change_type_names(self) -> list[str]:
-        unique_metric_names = set(metric.name for metric in self.metrics)
+        unique_metric_names = {metric.name for metric in self.metrics}
         return [
             metric_name
             for metric_name in unique_metric_names

@@ -17,11 +17,11 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
 
     @property
     def lookup_field(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @property
     def serializer_class(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _build_request_serializer(
         self, request: Request

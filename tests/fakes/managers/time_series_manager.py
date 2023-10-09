@@ -1,5 +1,4 @@
 import datetime
-from typing import Optional
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 
@@ -59,12 +58,12 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
-        date_to: Optional[datetime.date] = None,
-        geography_name: Optional[str] = None,
-        geography_type_name: Optional[str] = None,
-        stratum_name: Optional[str] = None,
-        sex: Optional[str] = None,
-        age: Optional[str] = None,
+        date_to: datetime.date | None = None,
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
     ):
         date_from = _convert_string_to_date(date_string=date_from)
 
@@ -123,10 +122,10 @@ def _convert_string_to_date(date_string: str | datetime.datetime) -> datetime.da
         `datetime.date: The converted date as an object.
 
     """
-    if type(date_string) is str:
+    if isinstance(date_string, str):
         return datetime.datetime.strptime(date_string, "%Y-%m-%d").date()
 
-    if type(date_string) is datetime.datetime:
+    if isinstance(date_string, datetime.datetime):
         return date_string.date()
 
     return date_string
