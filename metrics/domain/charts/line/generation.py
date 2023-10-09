@@ -47,7 +47,7 @@ def generate_chart_figure(
 
     """
     values_count: int = len(y_axis_values)
-    x_axis_values: list[int] = [index for index in range(values_count)]
+    x_axis_values: list[int] = list(range(values_count))
 
     figure = plotly.graph_objects.Figure()
 

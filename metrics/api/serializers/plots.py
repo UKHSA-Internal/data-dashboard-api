@@ -1,3 +1,5 @@
+import contextlib
+
 from django.db.models import Manager
 from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
@@ -70,10 +72,8 @@ class PlotSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        try:
+        with contextlib.suppress(RuntimeError, ProgrammingError, OperationalError):
             self.populate_choices()
-        except (RuntimeError, ProgrammingError, OperationalError):
-            pass
         # This is needed because the serializers are loaded by django at runtime
         # Because this is a child serializer, an `instance` must be passed
         # to the parent serializer.

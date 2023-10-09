@@ -105,11 +105,11 @@ class TestLineWithShadedSectionCharts:
         x_axis = figure.layout.xaxis
 
         # The `M1` dtick setting is only valid for dates
-        assert x_axis.dtick == None
+        assert x_axis.dtick is None
 
         # The x-axis type and ticks should be the default
         assert x_axis.type == "-"
-        assert x_axis.tickformat == None
+        assert x_axis.tickformat is None
 
     def test_weekly_hospital_admissions_rate_increasing_plot(self):
         """

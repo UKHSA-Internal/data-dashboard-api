@@ -1,5 +1,5 @@
 import datetime
-from typing import Dict, List, Literal, Optional
+from typing import Literal
 
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
@@ -33,19 +33,19 @@ class PlotParameters(BaseModel):
         return self.metric
 
     @property
-    def geography_name(self) -> Optional[str]:
+    def geography_name(self) -> str | None:
         return self.geography
 
     @property
-    def geography_type_name(self) -> Optional[str]:
+    def geography_type_name(self) -> str | None:
         return self.geography_type
 
     @property
-    def stratum_name(self) -> Optional[str]:
+    def stratum_name(self) -> str | None:
         return self.stratum
 
     @property
-    def age_name(self) -> Optional[str]:
+    def age_name(self) -> str | None:
         return self.stratum
 
     @property
@@ -61,7 +61,7 @@ class PlotParameters(BaseModel):
         return make_date_from_string(date_from=self.date_from)
 
     @property
-    def date_to_value(self) -> Optional[datetime.date]:
+    def date_to_value(self) -> datetime.date | None:
         """Parses the 'date_to' into a date object.
             Defaults to today's date.
 
@@ -79,7 +79,7 @@ class PlotParameters(BaseModel):
     def y_axis_value(self) -> str:
         return ChartAxisFields.get_y_axis_value(name=self.y_axis)
 
-    def to_dict_for_query(self) -> Dict[str, str]:
+    def to_dict_for_query(self) -> dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.
 
         Notes:
@@ -110,7 +110,7 @@ class PlotParameters(BaseModel):
 
 
 class PlotsCollection(BaseModel):
-    plots: List[PlotParameters]
+    plots: list[PlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
     chart_height: int
@@ -147,7 +147,7 @@ def get_date_n_months_ago_from_timestamp(
     ).date()
 
 
-def make_date_from_string(date_from: Optional[str]) -> datetime.date:
+def make_date_from_string(date_from: str | None) -> datetime.date:
     """Parses the `date_from` string into a date object. Defaults to 1 year ago from the current date.
 
     Args:
@@ -168,7 +168,7 @@ def make_date_from_string(date_from: Optional[str]) -> datetime.date:
         )
 
 
-def make_date_to_string(date_to: Optional[str]) -> datetime.date:
+def make_date_to_string(date_to: str | None) -> datetime.date:
     """Parse the 'date_to' string into a date object, defaults to today's date.
 
     Args:

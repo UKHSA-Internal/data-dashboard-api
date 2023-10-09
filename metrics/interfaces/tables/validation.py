@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries, Metric
@@ -16,7 +14,7 @@ class TablesValidation:
         plot_parameters: PlotParameters,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
-        plot_validation: Optional[PlotValidation] = None,
+        plot_validation: PlotValidation | None = None,
     ):
         self.plot_parameters = plot_parameters
         self.core_time_series_manager = core_time_series_manager

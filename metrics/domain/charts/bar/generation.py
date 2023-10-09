@@ -62,10 +62,10 @@ def generate_chart_figure(
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(primary_plot_x_axis_values[0]) is date:
-        figure.update_xaxes(**settings._get_x_axis_date_type(figure=figure))
-        figure.update_layout(**settings._get_margin_for_charts_with_dates())
+        figure.update_xaxes(**settings.get_x_axis_date_type(figure=figure))
+        figure.update_layout(**settings.get_margin_for_charts_with_dates())
     else:
-        figure.update_xaxes(**settings._get_x_axis_text_type())
+        figure.update_xaxes(**settings.get_x_axis_text_type())
 
     return figure
 

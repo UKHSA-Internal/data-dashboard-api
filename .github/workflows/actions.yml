@@ -61,10 +61,9 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
-      - name: Run isort, black & pylint
+      - name: Run ruff & black
         run: |
           source .github/workflows/formatting.sh
-          pylint */ --errors-only
 
  ###############################################################################
  # Architectural constraints checks

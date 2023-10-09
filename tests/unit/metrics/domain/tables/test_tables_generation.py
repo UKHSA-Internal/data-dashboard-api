@@ -1,6 +1,5 @@
 import datetime
 from typing import Any
-from unittest import mock
 
 import pytest
 
@@ -43,36 +42,6 @@ def _create_plot_data(
 
 
 class TestTabularData:
-    @mock.patch.object(TabularData, "combine_list_of_plots")
-    @mock.patch.object(TabularData, "generate_multi_plot_output")
-    def test_delegates_call_for_validation(
-        self,
-        spy_generate_multi_plot_output: mock.MagicMock,
-        spy_combine_list_of_plots: mock.MagicMock,
-    ):
-        """
-        Given a mock in place of a `PlotData` model
-        When `create_plots_in_tabular_format()` is called
-        Then a call is delegated to `combine_list_of_plots()` to combine the plots
-        And `generate_plots_for_table` is called to produce the output in the required format
-
-        Patches:
-            `spy_generate_multi_plot_output`: For the main collation
-            `spy_combine_list_of_plots`: For combining the plots
-        """
-        # Given
-        mocked_plots = mock.MagicMock()
-
-        # When
-        mock_tabular_data = TabularData(plots=mocked_plots)
-
-        plots_in_tabular_format = mock_tabular_data.create_plots_in_tabular_format()
-
-        # Then
-        spy_combine_list_of_plots.assert_called_once()
-        spy_generate_multi_plot_output.assert_called_once()
-        assert plots_in_tabular_format == spy_generate_multi_plot_output.return_value
-
     @pytest.mark.parametrize(
         "x_axis",
         [
@@ -120,13 +89,15 @@ class TestTabularData:
         # Then
         assert is_date_based
 
-    def test_build_plot_data_returns_reversed_data_for_date_based_plot(
+    def test_cast_combined_plots_in_order_produces_combined_plots_in_order(
         self, valid_plot_parameters: PlotParameters
     ):
         """
         Given `PlotData` with an `x_axis` parameter which is set to `date`
-        When `_build_plot_data()` is called from an instance of `TabularData`
-        Then the values are reversed
+        When `_cast_combined_plots_in_order()` is called
+            from an instance of `TabularData`
+        Then the values are reversed and the data is mutated to chronological order
+            in descending order.
         """
         # Given
         valid_plot_parameters.x_axis = ChartAxisFields.date.name
@@ -141,107 +112,182 @@ class TestTabularData:
             y_axis_values=y_axis_values,
         )
         tabular_data = TabularData(plots=[original_plot_data])
+        plot_data = dict(
+            zip(original_plot_data.x_axis_values, original_plot_data.y_axis_values)
+        )
+        tabular_data.combined_plots = plot_data
 
         # When
-        constructed_plot_data: dict = tabular_data._build_plot_data(
-            plot=original_plot_data
-        )
+        tabular_data._cast_combined_plots_in_order()
 
         # Then
-        assert list(constructed_plot_data.keys()) == list(
+        sorted_combined_plots = tabular_data.combined_plots
+        assert list(sorted_combined_plots.keys()) == list(
             reversed(original_plot_data.x_axis_values)
         )
-        assert list(constructed_plot_data.values()) == list(
+        assert list(sorted_combined_plots.values()) == list(
             reversed(original_plot_data.y_axis_values)
         )
 
-    def test_build_plot_data_returns_data_in_same_order_for_non_date_based_plot(
+    def test_create_tabular_plots_produces_combined_plots_in_order_for_multiple_offset_plots(
         self, valid_plot_parameters: PlotParameters
     ):
         """
-        Given `PlotData` with an `x_axis` parameter which is not set to `date`
-        When `_build_plot_data()` is called from an instance of `TabularData`
-        Then the values are not reversed and returned as is
+        Given 2 `PlotData` models with an `x_axis` parameter which is set to `date`
+            which are offset i.e. 1 plot has more recent data than the other
+        When `create_tabular_plots()` is called from an instance of `TabularData`
+        Then the data is returned in chronological order, descending from most recent
         """
         # Given
-        valid_plot_parameters.x_axis = ChartAxisFields.age.name
-        y_axis_values = [1, 2, 4, 5, 5, 2, 1]
-        age_x_axis_values_in_ascending_order = [
-            str(i * 10) for i in range(len(y_axis_values))
+        valid_plot_parameters.x_axis = ChartAxisFields.date.name
+        y_axis_values = [1, 2]
+        earlier_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=1, day=15),
         ]
-        original_plot_data = PlotData(
+        earlier_plot_data = PlotData(
             parameters=valid_plot_parameters,
-            x_axis_values=age_x_axis_values_in_ascending_order,
+            x_axis_values=earlier_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
         )
-        tabular_data = TabularData(plots=[original_plot_data])
+
+        y_axis_values = [10, 20, 30, 40]
+        later_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=1, day=15),
+            datetime.date(year=2023, month=8, day=20),
+            datetime.date(year=2023, month=8, day=30),
+        ]
+        later_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=later_dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+        tabular_data = TabularData(plots=[earlier_plot_data, later_plot_data])
 
         # When
-        constructed_plot_data: dict = tabular_data._build_plot_data(
-            plot=original_plot_data
-        )
+        tabular_plots = tabular_data.create_tabular_plots()
 
         # Then
-        assert list(constructed_plot_data.keys()) == original_plot_data.x_axis_values
-        assert list(constructed_plot_data.values()) == original_plot_data.y_axis_values
+        expected_tabular_plots = [
+            {
+                "reference": "2023-08-30",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "40"},
+                ],
+            },
+            {
+                "reference": "2023-08-20",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "30"},
+                ],
+            },
+            {
+                "reference": "2023-01-15",
+                "values": [
+                    {"label": "Plot1", "value": "2"},
+                    {"label": "Plot2", "value": "20"},
+                ],
+            },
+            {
+                "reference": "2023-01-01",
+                "values": [
+                    {"label": "Plot1", "value": "1"},
+                    {"label": "Plot2", "value": "10"},
+                ],
+            },
+        ]
+        assert tabular_plots == expected_tabular_plots
 
-
-class TestCollateDataByDate:
-    def test_basic_behaviour(self):
+    def test_create_tabular_plots_produces_combined_plots_in_order_for_multiple_mismatched_plots(
+        self, valid_plot_parameters: PlotParameters
+    ):
         """
-        Given a plot which is by date
-        When `collate_data_by_date()` is called
-        Then the correct response is generated
+        Given 2 `PlotData` models with an `x_axis` parameter which is set to `date`
+            which are offset i.e. 1 plot has incomplete data
+        When `create_tabular_plots()` is called from an instance of `TabularData`
+        Then the data is returned in chronological order, descending from most recent
         """
         # Given
-        first_chart_plots_data = dict(zip(X_AXIS_VALUES, Y_AXIS_1_VALUES))
+        valid_plot_parameters.x_axis = ChartAxisFields.date.name
+        y_axis_values = [1, 2]
+        missing_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=12, day=31),
+        ]
+        incomplete_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=missing_dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
 
-        expected_combined_plots = {"2022-09-30": {PLOT_1_LABEL: "22"}}
+        y_axis_values = [10, 20, 30, 40, 50]
+        complete_dates_x_axis_values_in_ascending_order = [
+            datetime.date(year=2023, month=1, day=1),
+            datetime.date(year=2023, month=1, day=15),
+            datetime.date(year=2023, month=8, day=20),
+            datetime.date(year=2023, month=8, day=30),
+            datetime.date(year=2023, month=12, day=31),
+        ]
+        complete_plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values=complete_dates_x_axis_values_in_ascending_order,
+            y_axis_values=y_axis_values,
+        )
+        tabular_data = TabularData(plots=[incomplete_plot_data, complete_plot_data])
 
         # When
-        tabular_data = TabularData(plots=[])
-
-        tabular_data.collate_data_by_date(
-            plot_data=first_chart_plots_data,
-            plot_label=PLOT_1_LABEL,
-        )
+        tabular_plots = tabular_data.create_tabular_plots()
 
         # Then
-        assert tabular_data.combined_plots == expected_combined_plots
+        expected_tabular_plots = [
+            {
+                "reference": "2023-12-31",
+                "values": [
+                    {"label": "Plot1", "value": "2"},
+                    {"label": "Plot2", "value": "50"},
+                ],
+            },
+            {
+                "reference": "2023-08-30",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "40"},
+                ],
+            },
+            {
+                "reference": "2023-08-20",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "30"},
+                ],
+            },
+            {
+                "reference": "2023-01-15",
+                "values": [
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "20"},
+                ],
+            },
+            {
+                "reference": "2023-01-01",
+                "values": [
+                    {"label": "Plot1", "value": "1"},
+                    {"label": "Plot2", "value": "10"},
+                ],
+            },
+        ]
+        assert tabular_plots == expected_tabular_plots
 
-    def test_two_plots(self):
-        """
-        Given two plot which are both by date
-        When `collate_data_by_date()` is called
-        Then the correct response is generated
-        """
-        # Given
-        first_chart_plots_data = dict(zip(X_AXIS_VALUES, Y_AXIS_1_VALUES))
-        second_chart_plots_data = dict(zip(X_AXIS_VALUES, Y_AXIS_2_VALUES))
-        tabular_data = TabularData(plots=[])
 
-        # When
-        tabular_data.collate_data_by_date(
-            plot_data=first_chart_plots_data,
-            plot_label=PLOT_1_LABEL,
-        )
-        tabular_data.collate_data_by_date(
-            plot_data=second_chart_plots_data,
-            plot_label=PLOT_2_LABEL,
-        )
-        expected_combined_plots = {
-            "2022-09-30": {PLOT_1_LABEL: "22", PLOT_2_LABEL: "45"},
-        }
-
-        # Then
-        assert tabular_data.combined_plots == expected_combined_plots
-
-
-class TestCollateDataNotByDate:
+class TestAddPlotDataToCombinedPlots:
     def test_basic_behaviour(self):
         """
         Given a plot which is not by date
-        When `collate_data_not_by_date()` is called
+        When `add_plot_data_to_combined_plots()` is called
+            from an instance of `TabularData`
         Then the correct response is generated
         """
         # Given
@@ -255,7 +301,7 @@ class TestCollateDataNotByDate:
         # When
         tabular_data = TabularData(plots=[])
 
-        tabular_data.collate_data_not_by_date(
+        tabular_data.add_plot_data_to_combined_plots(
             plot_data=first_chart_plots_data,
             plot_label=PLOT_1_LABEL,
         )
@@ -266,7 +312,8 @@ class TestCollateDataNotByDate:
     def test_two_plots(self):
         """
         Given two plot neither of which are by date
-        When `collate_data_not_by_date()` is called
+        When `add_plot_data_to_combined_plots()` is called
+            from an instance of `TabularData`
         Then the correct response is generated
         """
         first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
@@ -280,186 +327,16 @@ class TestCollateDataNotByDate:
         # When
         tabular_data = TabularData(plots=[])
 
-        tabular_data.collate_data_not_by_date(
+        tabular_data.add_plot_data_to_combined_plots(
             plot_data=first_chart_plots_data,
             plot_label=PLOT_1_LABEL,
         )
-        tabular_data.collate_data_not_by_date(
+        tabular_data.add_plot_data_to_combined_plots(
             plot_data=second_chart_plots_data,
             plot_label=PLOT_2_LABEL,
         )
 
         # Then
-        assert tabular_data.combined_plots == expected_combined_plots
-
-
-class TestCombineListOfPlots:
-    def test_plots_have_dates(self):
-        """
-        Given 2 `TabularPlotData` models representing 2 different line plots
-        When `combine_list_of_plots()` is called
-        Then the correct response is generated
-        """
-        # Given
-        first_chart_plots_data: PlotData = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_1_VALUES,
-            label=PLOT_1_LABEL,
-            x_axis="date",
-        )
-
-        second_chart_plots_data: PlotData = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
-            label=PLOT_2_LABEL,
-            x_axis="date",
-        )
-
-        expected_combined_plots = {
-            "2022-09-30": {PLOT_1_LABEL: "22", PLOT_2_LABEL: "45"},
-        }
-
-        # When
-        tabular_data = TabularData(
-            plots=[first_chart_plots_data, second_chart_plots_data]
-        )
-
-        tabular_data.combine_list_of_plots()
-
-        # Then
-        # Check plot labels are as expected
-        assert tabular_data.column_heading == "date"
-        assert len(tabular_data.plot_labels) == 2
-        assert tabular_data.plot_labels[0] == PLOT_1_LABEL
-        assert tabular_data.plot_labels[1] == PLOT_2_LABEL
-
-        # Check combined plot output is as expected
-        assert tabular_data.combined_plots == expected_combined_plots
-
-    def test_plots_do_not_have_dates(self):
-        """
-        Given 2 `TabularPlotData` models representing 2 different line plots
-         where neither plot has dates
-        When `combine_list_of_plots()` is called
-        Then the correct response is generated
-        """
-        # Given
-        X_AXIS_STRATUM = ["0-4", "5-8"]
-
-        first_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_STRATUM,
-            y_axis_values=Y_AXIS_1_VALUES,
-            label=PLOT_1_LABEL,
-            x_axis="stratum",
-        )
-
-        second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_STRATUM,
-            y_axis_values=Y_AXIS_2_VALUES,
-            label=PLOT_2_LABEL,
-            x_axis="stratum",
-        )
-
-        expected_combined_plots = {
-            "0-4": {PLOT_1_LABEL: "10", PLOT_2_LABEL: "20"},
-            "5-8": {PLOT_1_LABEL: "22", PLOT_2_LABEL: "45"},
-        }
-
-        # When
-        tabular_data = TabularData(
-            plots=[first_chart_plots_data, second_chart_plots_data]
-        )
-
-        tabular_data.combine_list_of_plots()
-
-        # Then
-        # Check plot labels are as expected
-        assert tabular_data.column_heading == "stratum"
-        assert len(tabular_data.plot_labels) == 2
-        assert tabular_data.plot_labels[0] == PLOT_1_LABEL
-        assert tabular_data.plot_labels[1] == PLOT_2_LABEL
-
-        # Check combined plot output is as expected
-        assert tabular_data.combined_plots == expected_combined_plots
-
-    def test_plots_have_no_labels(self):
-        """
-        Given 2 `TabularPlotData` models representing 2 different line plots without labels
-        When `combine_list_of_plots()` is called
-        Then labels are automatically assigned
-        """
-        # Given
-        first_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_1_VALUES,
-        )
-        second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
-        )
-        expected_combined_plots = {
-            "2022-09-30": {"Plot1": "22", "Plot2": "45"},
-        }
-
-        # When
-        tabular_data = TabularData(
-            plots=[first_chart_plots_data, second_chart_plots_data]
-        )
-        tabular_data.combine_list_of_plots()
-
-        # Then
-        # Check plot labels are as expected
-        assert len(tabular_data.plot_labels) == 2
-        assert tabular_data.plot_labels[0] == "Plot1"
-        assert tabular_data.plot_labels[1] == "Plot2"
-
-        # Check combined plot output is as expected
-        assert tabular_data.combined_plots == expected_combined_plots
-
-    def test_plots_have_different_lengths(self):
-        """
-        Given 2 `TabularPlotData` models representing 2 different line plots of unequal lengths
-        When `combine_list_of_plots()` is called
-        Then the correct response is generated
-        """
-        # Given
-        first_chart_plots_data = _create_plot_data(
-            x_axis_values=[
-                datetime.date(2022, 8, 5),
-                datetime.date(2022, 9, 6),
-                datetime.date(2022, 10, 19),
-                datetime.date(2022, 11, 25),
-            ],
-            y_axis_values=[10, 66, 22, 26],
-            label=PLOT_1_LABEL,
-        )
-
-        second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
-            label=PLOT_2_LABEL,
-        )
-
-        expected_combined_plots = {
-            "2022-08-31": {PLOT_1_LABEL: "10"},
-            "2022-09-30": {PLOT_1_LABEL: "66", PLOT_2_LABEL: "45"},
-            "2022-10-31": {PLOT_1_LABEL: "22"},
-            "2022-11-30": {PLOT_1_LABEL: "26"},
-        }
-
-        # When
-        tabular_data = TabularData(
-            plots=[first_chart_plots_data, second_chart_plots_data]
-        )
-        tabular_data.combine_list_of_plots()
-
-        # Then
-        # Check plot labels are as expected
-        assert len(tabular_data.plot_labels) == 2
-        assert tabular_data.plot_labels[0] == PLOT_1_LABEL
-        assert tabular_data.plot_labels[1] == PLOT_2_LABEL
-
-        # Check combined plot output is as expected
         assert tabular_data.combined_plots == expected_combined_plots
 
 
@@ -500,27 +377,28 @@ class TestCombineAllPlots:
         assert combined_plots["2023-09-04"] == {PLOT_1_LABEL: str(26)}
 
 
-class TestGenerateMultiPlotOutput:
-    def test_basic_generate_multi_plot_output(self):
+class TestCreateMultiPlotOutput:
+    def test_2_plots(self):
         """
         Given 2 plots with plot labels
-        When `generate_multi_plot_output()` is called
+        When `create_multi_plot_output()` is called
+            from an instance of `TabularData`
         Then the correct response is generated
         """
         # Given
         plot_labels = ["Plot1", "Plot2"]
         combined_plots = {
-            "2022-09-05": {"Plot1": "10", "Plot2": "11"},
             "2022-09-19": {"Plot1": "22", "Plot2": "33"},
             "2022-09-06": {"Plot1": "06", "Plot2": "63"},
+            "2022-09-05": {"Plot1": "10", "Plot2": "11"},
         }
 
         expected_output = [
             {
-                "date": "2022-09-05",
+                "date": "2022-09-19",
                 "values": [
-                    {"label": "Plot1", "value": "10"},
-                    {"label": "Plot2", "value": "11"},
+                    {"label": "Plot1", "value": "22"},
+                    {"label": "Plot2", "value": "33"},
                 ],
             },
             {
@@ -531,10 +409,10 @@ class TestGenerateMultiPlotOutput:
                 ],
             },
             {
-                "date": "2022-09-19",
+                "date": "2022-09-05",
                 "values": [
-                    {"label": "Plot1", "value": "22"},
-                    {"label": "Plot2", "value": "33"},
+                    {"label": "Plot1", "value": "10"},
+                    {"label": "Plot2", "value": "11"},
                 ],
             },
         ]
@@ -544,31 +422,39 @@ class TestGenerateMultiPlotOutput:
         tabular_data.plot_labels = plot_labels
         tabular_data.combined_plots = combined_plots
         tabular_data.column_heading = "date"
-        actual_output = tabular_data.generate_multi_plot_output()
+        actual_output = tabular_data.create_multi_plot_output()
 
         # Then
         assert actual_output == expected_output
 
-    def test_generate_multi_plot_output_unequal_length(self):
+    def test_plots_of_unequal_length(self):
         """
         Given 2 plots which are not the same length as each other
-        When `generate_multi_plot_output()` is called
+        When `create_multi_plot_output()` is called
+            from an instance of `TabularData`
         Then the correct response is generated
         """
         # Given
         plot_labels = ["Plot1", "Plot2"]
         combined_plots = {
-            "2022-09-05": {"Plot1": "10"},
-            "2022-09-19": {"Plot1": "22", "Plot2": "33"},
             "2022-09-25": {"Plot2": "44"},
+            "2022-09-19": {"Plot1": "22", "Plot2": "33"},
             "2022-09-06": {"Plot2": "06"},
+            "2022-09-05": {"Plot1": "10"},
         }
         expected_output = [
             {
-                "date": "2022-09-05",
+                "date": "2022-09-25",
                 "values": [
-                    {"label": "Plot1", "value": "10"},
-                    {"label": "Plot2", "value": None},
+                    {"label": "Plot1", "value": None},
+                    {"label": "Plot2", "value": "44"},
+                ],
+            },
+            {
+                "date": "2022-09-19",
+                "values": [
+                    {"label": "Plot1", "value": "22"},
+                    {"label": "Plot2", "value": "33"},
                 ],
             },
             {
@@ -579,17 +465,10 @@ class TestGenerateMultiPlotOutput:
                 ],
             },
             {
-                "date": "2022-09-19",
+                "date": "2022-09-05",
                 "values": [
-                    {"label": "Plot1", "value": "22"},
-                    {"label": "Plot2", "value": "33"},
-                ],
-            },
-            {
-                "date": "2022-09-25",
-                "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "44"},
+                    {"label": "Plot1", "value": "10"},
+                    {"label": "Plot2", "value": None},
                 ],
             },
         ]
@@ -599,48 +478,7 @@ class TestGenerateMultiPlotOutput:
         tabular_data.plot_labels = plot_labels
         tabular_data.combined_plots = combined_plots
         tabular_data.column_heading = "date"
-        actual_output = tabular_data.generate_multi_plot_output()
+        actual_output = tabular_data.create_multi_plot_output()
 
         # Then
         assert actual_output == expected_output
-
-
-class TestCreatePlotsInTabularFormat:
-    def test_two_plots_with_provided_labels(self):
-        """
-        Given 2 `PlotData` models representing 2 different line plots
-        When `generate_plots_for_table()` is called from the `TabularData` module
-        Then the correct response is generated
-        """
-        # Given
-        first_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_1_VALUES,
-            label=PLOT_1_LABEL,
-            x_axis="date",
-        )
-
-        second_chart_plots_data = _create_plot_data(
-            x_axis_values=X_AXIS_VALUES,
-            y_axis_values=Y_AXIS_2_VALUES,
-            label=PLOT_2_LABEL,
-            x_axis="date",
-        )
-
-        expected_x_axis_values = ["2022-09-30"]
-
-        # When
-        tabular_data = TabularData(
-            plots=[first_chart_plots_data, second_chart_plots_data]
-        )
-        actual_output = tabular_data.create_plots_in_tabular_format()
-
-        # Then
-        # Check the number of plots is as expected.
-        # Examine just the fist and last elements
-        assert len(actual_output[0]["values"]) == 2
-        assert len(actual_output[len(actual_output) - 1]["values"]) == 2
-
-        # Check the x axis values match
-        actual_x_axis_values = [col["date"] for col in actual_output]
-        assert expected_x_axis_values == actual_x_axis_values

@@ -72,16 +72,16 @@ def file_ingester(file: io.FileIO) -> None:
     ):
         return consumer.create_timeseries()
 
-    raise ValueError()
+    raise ValueError
 
 
 def _upload_file(filepath: str) -> None:
-    logger.info(f"Uploading {filepath}")
+    logger.info("Uploading %s", filepath)
 
     with open(filepath, "rb") as f:
         try:
             file_ingester(file=f)
         except Exception as error:
-            logger.warning(f"Failed upload of {filepath} due to {error}")
+            logger.warning("Failed upload of %s due to %s", filepath, error)
         else:
-            logger.info(f"Completed ingestion of {filepath}")
+            logger.info("Completed ingestion of %s", filepath)

@@ -2,15 +2,15 @@
 # Exit immediately on non-zero status
 set -xe
 
-# Run isort and black (in that order) to check that there are no changes
-isort .
+# Run ruff black to check that there are no changes
+ruff . --preview --fix
 black .
 
 # Only verify for .py files
 changed_files=$(git diff --name-only | grep "\.py" || true)
 
 if [ -n "${changed_files}"  ]; then
-    echo "Some files appear to be un-isorted or unblacked. Please rectify by running isort & then black over them."
+    echo "Some files appear to be un-formatted. Please rectify by running 'make formatting'."
     echo "${changed_files}"
     exit 1
 else

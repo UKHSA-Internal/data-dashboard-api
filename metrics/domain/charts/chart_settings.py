@@ -85,10 +85,8 @@ class ChartSettings:
             "ticks": None,
             "showticklabels": False,
         }
-        y_axis_args = {
-            **x_axis_args,
-            **{"scaleratio": 1, "scaleanchor": "x"},
-        }
+        y_axis_args = x_axis_args | {"scaleratio": 1, "scaleanchor": "x"}
+
         return {
             "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
             "showlegend": False,
@@ -120,7 +118,7 @@ class ChartSettings:
     def _get_date_tick_format(self) -> str:
         return "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
 
-    def _get_x_axis_date_type(
+    def get_x_axis_date_type(
         self, figure: plotly.graph_objs.Figure
     ) -> DICT_OF_STR_ONLY:
         tick_format = self._get_date_tick_format()
@@ -133,7 +131,7 @@ class ChartSettings:
         }
 
     @staticmethod
-    def _get_x_axis_text_type() -> DICT_OF_STR_ONLY:
+    def get_x_axis_text_type() -> DICT_OF_STR_ONLY:
         return {
             "type": "-",
             "dtick": None,
@@ -141,7 +139,7 @@ class ChartSettings:
         }
 
     @staticmethod
-    def _get_margin_for_charts_with_dates():
+    def get_margin_for_charts_with_dates():
         return {
             "margin": {
                 "l": 15,
@@ -207,7 +205,7 @@ def get_new_max_date(existing_dt: str) -> str:
 
 
 def get_x_axis_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
-    """Adjust the right-hand side of the charts' x axis to give Plotly the best chance of displaying a label for every tick
+    """Adjust the right-hand side of the charts' x-axis to display a label for every tick
 
     Args:
         figure: The chart figure

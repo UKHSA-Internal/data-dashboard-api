@@ -272,7 +272,11 @@ class Reader:
             >>> fields_for_unique_values = {'pk': None, 'fields': {'parent_theme': 'infectious_disease'}}
             >>> fields = {"parent_theme": "name"}
             >>> map_fields_for_unique_values(fields_for_unique_values, fields)
-            {'pk': None, 'fields': {'parent_theme': 'infectious_disease'}, 'mapped_fields': {'name': 'infectious_disease'}}
+            {
+                'pk': None,
+                'fields': {'parent_theme': 'infectious_disease'},
+                'mapped_fields': {'name': 'infectious_disease'}
+            }
 
         Args:
             fields_for_unique_values: Dict which encapsulates
@@ -346,10 +350,7 @@ class Reader:
         for unique_value_group in unique_value_groups:
             unique_values_with_pk = {
                 "pk": None,
-                "fields": {
-                    field_name: field_value
-                    for field_name, field_value in unique_value_group
-                },
+                "fields": dict(unique_value_group),
             }
             processed_unique_value_groups.append(unique_values_with_pk)
 
@@ -411,7 +412,7 @@ class Reader:
         unique_value_groups = set()
         for incoming_dto in incoming_dtos:
             values_from_dtos: tuple[tuple[str, str]] = tuple(
-                tuple((field, getattr(incoming_dto, field))) for field in fields
+                (field, getattr(incoming_dto, field)) for field in fields
             )
             unique_value_groups.add(values_from_dtos)
 

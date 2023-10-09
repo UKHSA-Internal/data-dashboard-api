@@ -20,7 +20,7 @@ PRIVATE_API_ENDPOINT_PATHS = [
     "api/charts/v3",
     "api/downloads/v2",
     "api/headlines/v2",
-    "api/tables/v2",
+    "api/tables/v4",
     "api/trends/v2",
 ]
 

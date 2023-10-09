@@ -22,7 +22,7 @@ class TestChartsView:
         }
 
     @pytest.mark.django_db
-    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
+    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly_for_v2(
         self,
         core_timeseries_example: list[CoreTimeSeries],
     ):
@@ -48,7 +48,7 @@ class TestChartsView:
         assert response.status_code == HTTPStatus.OK
 
     @pytest.mark.django_db
-    def test_returns_correct_response(
+    def test_returns_correct_response_for_v2(
         self,
         core_timeseries_example: list[CoreTimeSeries],
     ):
@@ -78,7 +78,7 @@ class TestChartsView:
         assert response.headers["Content-Type"] == "image/svg+xml"
 
     @pytest.mark.django_db
-    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(
+    def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly_for_v3(
         self,
         core_timeseries_example: list[CoreTimeSeries],
     ):
@@ -104,7 +104,7 @@ class TestChartsView:
         assert response.status_code == HTTPStatus.OK
 
     @pytest.mark.django_db
-    def test_returns_correct_response(
+    def test_returns_correct_response_for_v3(
         self,
         core_timeseries_example: list[CoreTimeSeries],
     ):

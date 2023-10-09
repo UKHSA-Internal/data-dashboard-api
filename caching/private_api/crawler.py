@@ -1,5 +1,5 @@
 import logging
-from typing import Optional, Self
+from typing import Self
 
 from caching.internal_api_client import InternalAPIClient
 from cms.common.models import CommonPage
@@ -25,7 +25,7 @@ class PrivateAPICrawler:
 
     """
 
-    def __init__(self, internal_api_client: Optional[InternalAPIClient] = None):
+    def __init__(self, internal_api_client: InternalAPIClient | None = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
 
     # Class constructors
@@ -76,7 +76,7 @@ class PrivateAPICrawler:
             None
 
         """
-        logger.info(f"Hitting GET pages/ endpoint for `{page.title}` page")
+        logger.info("Hitting GET pages/ endpoint for `%s` page", page.title)
         self._internal_api_client.hit_pages_detail_endpoint(page_id=page.id)
 
     # Process pages for content
@@ -107,13 +107,15 @@ class PrivateAPICrawler:
 
         for index, page in enumerate(pages, 1):
             try:
-                logger.info(f"Processing content blocks within `{page.title}` page")
+                logger.info("Processing content blocks within `%s` page", page.title)
                 self.process_all_sections_in_page(page=page)
             except AttributeError:
                 logger.info(
-                    f"`{page.title}` page has no dynamic content blocks. So only the headless CMS API detail has been processed"
+                    "`%s` page has no dynamic content blocks. "
+                    "So only the headless CMS API detail has been processed",
+                    page.title,
                 )
-            logger.info(f"Completed {index} / {pages_count} pages")
+            logger.info("Completed %s / %s pages", index, pages_count)
 
     # Process sections
 
@@ -236,7 +238,7 @@ class PrivateAPICrawler:
                     headline_number_block=headline_number_block
                 )
             case _:
-                raise ValueError()
+                raise ValueError
 
     def process_any_chart_card(self, chart_card: CMS_COMPONENT_BLOCK_TYPE) -> None:
         """Makes the relevant requests for the given single `chart_card`
@@ -262,7 +264,7 @@ class PrivateAPICrawler:
                     chart_with_headline_and_trend_card=chart_card,
                 )
             case _:
-                raise ValueError()
+                raise ValueError
 
     def process_chart_with_headline_and_trend_card(
         self,

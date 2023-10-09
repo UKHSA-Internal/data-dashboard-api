@@ -35,7 +35,7 @@ class TestIngestion:
         # Then
         assert CoreTimeSeries.objects.count() == 2
 
-        path = "/api/tables/v2/"
+        path = "/api/tables/v4/"
         timeseries_data: dict[str, str | float] = example_timeseries_data[0]
         valid_tables_endpoint_payload = {
             "file_format": "svg",

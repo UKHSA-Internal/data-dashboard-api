@@ -1,6 +1,5 @@
 import urllib.parse
 from datetime import datetime
-from typing import Optional
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -22,12 +21,18 @@ from metrics.interfaces.plots.access import PlotsInterface
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
+class InvalidFileFormatError(Exception):
+    def __init__(self):
+        message = "Invalid file format, must be `svg`"
+        super().__init__(message)
+
+
 class ChartsInterface:
     def __init__(
         self,
         chart_plots: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-        plots_interface: Optional[PlotsInterface] = None,
+        plots_interface: PlotsInterface | None = None,
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
@@ -202,10 +207,7 @@ class ChartsInterface:
         last_date = ""
 
         if figure.layout.xaxis.type == "date":
-            last_dates = []
-
-            for trace in figure.data:
-                last_dates.append(max(trace.x))
+            last_dates = [max(trace.x) for trace in figure.data]
 
             # Now we have the end-dates from each of the plots, return the latest one
             # and convert datetime to a string
@@ -237,7 +239,7 @@ class ChartsInterface:
 
         """
         if self.chart_plots.file_format != "svg":
-            raise ValueError("Invalid file format, must be `svg`")
+            raise InvalidFileFormatError
 
         optimized_svg: str = self.create_optimized_svg(figure=figure)
 

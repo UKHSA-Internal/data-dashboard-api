@@ -32,8 +32,7 @@ def make_slug(page_title: str) -> str:
         Currently only removes quotes, commas and full-stops.
     """
 
-    slug = re.sub("'|\.|\s|,", "-", page_title.lower())
-    return slug
+    return re.sub("'|\.|\s|,", "-", page_title.lower())
 
 
 def open_example_page_response(page_name: str):

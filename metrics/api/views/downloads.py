@@ -67,11 +67,10 @@ class DownloadsView(APIView):
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
 
         queryset = self._get_queryset()
-        response = write_data_to_csv(file=response, api_time_series=queryset)
-        return response
+        return write_data_to_csv(file=response, api_time_series=queryset)
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
-    # @cache_response()
+    @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
@@ -106,5 +105,7 @@ class DownloadsView(APIView):
 
         if file_format == "json":
             return self._handle_json()
-        elif file_format == "csv":
+        if file_format == "csv":
             return self._handle_csv()
+
+        return None
