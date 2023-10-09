@@ -98,3 +98,186 @@ target-version = "py311"
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
+
+########################################################################################################################
+# Pytest configuration
+########################################################################################################################
+[tool.pytest.ini_options]
+# This is needed to point pytest at the settings.py file for the django app
+DJANGO_SETTINGS_MODULE = "metrics.api.settings"
+addopts = "--random-order"
+
+########################################################################################################################
+# Import linter configuration
+########################################################################################################################
+[tool.importlinter]
+# This is needed to point pytest at the settings.py file for the django app
+root_packages = [
+    "cms",
+    "metrics",
+    "public_api",
+    "feedback",
+    "ingestion",
+    "tests",
+]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Metrics and CMS do not depend on each other, except via the designated interface and connection of URLs."
+type = "independence"
+modules = [
+    "metrics",
+    "cms",
+]
+ignore_imports = [
+    "cms.metrics_interface.interface -> metrics.data.models.core_models",
+    "cms.metrics_interface.interface -> metrics.domain.utils",
+    "cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.properties",
+    "cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme",
+    "metrics.api.urls_construction -> cms.dashboard.viewsets",
+]
+
+[[tool.importlinter.contracts]]
+name = "Metrics package enforces clear architectural layers within itself."
+type = "layers"
+layers = [
+    "metrics.api",
+    "metrics.domain",
+    "metrics.data",
+]
+#----------------------------------------------- Public API contracts -------------------------------------------------#
+[[tool.importlinter.contracts]]
+name = "Public API only depends on the APITimeSeries model & corresponding components via the designated interface."
+type = "forbidden"
+source_modules = [
+    "public_api",
+]
+forbidden_modules = [
+    "metrics.api",
+    "metrics.data",
+    "metrics.domain",
+    "metrics.interfaces",
+    "cms",
+    "ingestion",
+    "feedback",
+]
+ignore_imports = [
+    "public_api.metrics_interface.interface -> metrics.data.models.api_models",
+]
+
+[[tool.importlinter.contracts]]
+name = "The Public API module is only imported for the wiring of URLs."
+type = "forbidden"
+source_modules = [
+    "metrics.api",
+    "metrics.data",
+    "metrics.domain",
+    "metrics.interfaces",
+    "cms",
+    "ingestion",
+    "feedback",
+]
+forbidden_modules = [
+    "metrics.public_api",
+]
+ignore_imports = [
+    "metrics.api.urls_construction -> public_api",
+]
+#----------------------------------------------- Ingestion contracts --------------------------------------------------#
+[[tool.importlinter.contracts]]
+name = "The Ingestion module only depends on the core models & associated components via the designated interface"
+type = "forbidden"
+source_modules = [
+    "ingestion",
+]
+forbidden_modules = [
+    "metrics.api",
+    "metrics.data",
+    "metrics.domain",
+    "metrics.interfaces",
+    "cms",
+    "feedback",
+    "public_api",
+]
+ignore_imports = [
+    "ingestion.metrics_interfaces.interface -> metrics.data.models.core_models",
+    "ingestion.metrics_interfaces.interface -> metrics.data.models.api_models",
+    "ingestion.metrics_interfaces.interface -> metrics.data.enums",
+    "ingestion.operations.api_models -> metrics.data.models.api_models",
+    "ingestion.operations.truncated_dataset -> metrics.api.settings",
+]
+#------------------------------------------ Metrics Domain library contracts ------------------------------------------#
+[[tool.importlinter.contracts]]
+name = "Metrics charts library does not depend on the rest of the codebase"
+type = "forbidden"
+source_modules = [
+    "metrics.domain.charts",
+]
+forbidden_modules = [
+    "metrics.api",
+    "metrics.data",
+    "metrics.interfaces",
+    "cms",
+    "ingestion",
+    "feedback",
+    "public_api",
+]
+
+[[tool.importlinter.contracts]]
+name = "Metrics trends library does not depend on the rest of the codebase"
+type = "forbidden"
+source_modules = [
+    "metrics.domain.trends",
+]
+forbidden_modules = [
+    "metrics.api",
+    "metrics.data",
+    "metrics.interfaces",
+    "cms",
+    "ingestion",
+    "feedback",
+    "public_api",
+]
+#------------------------------------------- Feedback module contracts ------------------------------------------------#
+[[tool.importlinter.contracts]]
+name = "Feedback module does not depend on the rest of the codebase"
+type = "forbidden"
+source_modules = [
+    "feedback",
+]
+forbidden_modules = [
+    "cms",
+    "metrics",
+    "public_api",
+    "ingestion",
+]
+
+[[tool.importlinter.contracts]]
+name = "The rest of the codebase does not depend on the feedback module except for the connection of URLs"
+type = "forbidden"
+source_modules = [
+    "cms",
+    "metrics",
+    "public_api",
+    "ingestion",
+]
+forbidden_modules = [
+    "feedback",
+]
+ignore_imports = [
+    "metrics.api.urls_construction -> feedback.api.urls",
+]
+#------------------------------------------ Source/Test code contracts ------------------------------------------------#
+[[tool.importlinter.contracts]]
+name = "Source code does not depend on test code"
+type = "forbidden"
+source_modules = [
+    "cms",
+    "metrics",
+    "public_api",
+    "ingestion",
+    "feedback",
+]
+forbidden_modules = [
+    "tests",
+]
