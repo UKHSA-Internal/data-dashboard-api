@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from metrics.api.serializers.tables import (
     TablePlotSerializer,
     TablesResponsePlotsListSerializer,
-    TablesResponseSerializerV3,
+    TablesResponseSerializer,
     TablesResponseValueSerializer,
     TablesResponseValuesListSerializer,
     TablesSerializer,
@@ -457,11 +457,11 @@ class TestTablesResponsePlotsListSerializer:
         assert validated_data["values"] == valid_payload["values"]
 
 
-class TestTablesResponseSerializerV3:
+class TestTablesResponseSerializer:
     def test_serializes_correctly(self):
         """
         Given a valid payload
-        When the `TablesResponseSerializerV3` is serialized
+        When the `TablesResponseSerializer` is serialized
         Then the validated data contains the correct serialized data
         """
         # Given
@@ -477,7 +477,7 @@ class TestTablesResponseSerializerV3:
         ]
 
         # When
-        serializer = TablesResponseSerializerV3(data=valid_payload)
+        serializer = TablesResponseSerializer(data=valid_payload)
         serializer.is_valid(raise_exception=True)
 
         # Then

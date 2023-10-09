@@ -1,14 +1,14 @@
-VENV=venv
 # This is the venv location. Typically this is set as either `.venv` or `venv`.
 # Here it is set as `venv`
+VENV=venv
 
-BIN=./${VENV}/bin/
 # Location of the venv/bin folder so that the
 # Python instance can be easily used by each recipe
 # without having to activate the venv explicitly within the process running the recipe.
+BIN=./${VENV}/bin/
 
-PORT=8000
 # The port to serve the application on
+PORT=8000
 
 # Create the virtual environment & install dependencies
 # Note: Requires Python 3.11 version
@@ -18,16 +18,8 @@ setup-venv:
 
 # Apply formatting tools
 formatting:
-	${BIN}python -m isort .
+	${BIN}python -m ruff . --preview --fix
 	${BIN}python -m black .
-
-# Run linting
-linting-all:
-	pylint */
-
-# Run linting with errors only
-linting-errors-only:
-	pylint */ --errors-only
 
 # Check architectural constraints
 architecture:
@@ -54,6 +46,13 @@ all-tests:
 # Run pip-audit and bandit to check for vulnerabilities
 audit:
 	pip-audit -r requirements.txt
+
+# Run development checks,
+# This includes all formatters, the full test suite and all architecture checks
+check:
+	make formatting
+	make architecture
+	make all-tests
 
 # Start the application
 run-server:

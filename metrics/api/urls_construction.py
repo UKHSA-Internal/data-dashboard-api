@@ -14,7 +14,6 @@ from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from feedback.api.urls import construct_urlpatterns_for_feedback
-from feedback.api.views import SuggestionsView
 from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (
@@ -23,12 +22,11 @@ from metrics.api.views import (
     EncodedChartsView,
     HeadlinesView,
     HealthView,
-    TablesView,
     TrendsView,
 )
 from metrics.api.views.caching import CacheView
 from metrics.api.views.headlines import HeadlinesViewBeta
-from metrics.api.views.tables import TablesViewV3, TablesViewV4
+from metrics.api.views.tables import TablesView
 from metrics.api.views.trends import TrendsViewBeta
 from public_api import construct_urlpatterns_for_public_api
 
@@ -73,10 +71,7 @@ def construct_cms_admin_urlpatterns(
         via `urlpatterns` in `urls.py`
 
     """
-    if app_mode == AppMode.CMS_ADMIN.value:
-        prefix = ""
-    else:
-        prefix = "cms-admin/"
+    prefix: str = "" if app_mode == AppMode.CMS_ADMIN.value else "cms-admin/"
 
     return [path(prefix, include(wagtailadmin_urls))]
 
@@ -106,10 +101,9 @@ def construct_public_api_urlpatterns(
         via `urlpatterns` in `urls.py`
 
     """
-    if app_mode == AppMode.PUBLIC_API.value:
-        prefix = ""
-    else:
-        prefix = DEFAULT_PUBLIC_API_PREFIX
+    prefix: str = (
+        "" if app_mode == AppMode.PUBLIC_API.value else DEFAULT_PUBLIC_API_PREFIX
+    )
 
     return construct_urlpatterns_for_public_api(prefix=prefix)
 
@@ -126,9 +120,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesViewBeta.as_view()),
-    re_path(f"^{API_PREFIX}tables/v2", TablesView.as_view()),
-    re_path(f"^{API_PREFIX}tables/v3", TablesViewV3.as_view()),
-    re_path(f"^{API_PREFIX}tables/v4", TablesViewV4.as_view()),
+    re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
 ]

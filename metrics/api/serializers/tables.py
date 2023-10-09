@@ -1,3 +1,5 @@
+import contextlib
+
 from django.db.utils import OperationalError
 from rest_framework import serializers
 
@@ -54,10 +56,8 @@ class TablesSerializer(serializers.Serializer):
     )
 
     def __init__(self, *args, **kwargs):
-        try:
+        with contextlib.suppress(OperationalError):
             super().__init__(*args, **kwargs)
-        except OperationalError:
-            pass
 
     def to_models(self) -> PlotsCollection:
         return PlotsCollection(
@@ -68,10 +68,6 @@ class TablesSerializer(serializers.Serializer):
             x_axis=self.data.get("x_axis") or DEFAULT_X_AXIS,
             y_axis=self.data.get("y_axis") or DEFAULT_Y_AXIS,
         )
-
-
-class TablesResponseSerializer(serializers.Serializer):
-    tabular_output = serializers.FileField(help_text=help_texts.TABLES_RESPONSE)
 
 
 class TablesResponseValueSerializer(serializers.Serializer):
@@ -88,5 +84,5 @@ class TablesResponsePlotsListSerializer(serializers.Serializer):
     values = TablesResponseValuesListSerializer()
 
 
-class TablesResponseSerializerV3(serializers.ListSerializer):
+class TablesResponseSerializer(serializers.ListSerializer):
     child = TablesResponsePlotsListSerializer()

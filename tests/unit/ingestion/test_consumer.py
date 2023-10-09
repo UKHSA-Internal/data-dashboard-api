@@ -1,4 +1,3 @@
-from typing import Type
 from unittest import mock
 
 import pytest
@@ -233,7 +232,7 @@ class TestConsumer:
         ],
     )
     def test_initializes_with_default_core_model_managers(
-        self, attribute_on_class: str, expected_model_manager: Type[Manager]
+        self, attribute_on_class: str, expected_model_manager: Manager
     ):
         """
         Given an instance of `Consumer`

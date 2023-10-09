@@ -1,5 +1,4 @@
 from decimal import Decimal
-from typing import Optional
 
 from django.db.models import Manager
 
@@ -11,7 +10,9 @@ DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class TrendNumberDataNotFoundError(Exception):
-    ...
+    def __init__(self, topic_name: str, metric_name: str):
+        message = f"Data for `{topic_name}` and `{metric_name}` could not be found."
+        super().__init__(message)
 
 
 class TrendsInterface:
@@ -39,16 +40,17 @@ class TrendsInterface:
                 `topic` / `metric` / `percentage_metric`.
 
         """
-        latest_metric_value: Optional[
-            Decimal
-        ] = self.core_time_series_manager.get_latest_metric_value(
-            topic_name=self.topic_name,
-            metric_name=metric_name,
+        latest_metric_value: Decimal | None = (
+            self.core_time_series_manager.get_latest_metric_value(
+                topic_name=self.topic_name,
+                metric_name=metric_name,
+            )
         )
 
         if latest_metric_value is None:
             raise TrendNumberDataNotFoundError(
-                f"Data for `{self.topic_name}` and `{metric_name}` could not be found."
+                topic_name={self.topic_name},
+                metric_name={metric_name},
             )
 
         return latest_metric_value
@@ -116,21 +118,22 @@ class TrendsInterfaceBeta:
                 `topic` / `metric` / `percentage_metric`.
 
         """
-        latest_metric_value: Optional[
-            Decimal
-        ] = self.core_headline_manager.get_latest_metric_value(
-            topic_name=self.topic_name,
-            metric_name=metric_name,
-            geography_name=self.geography_name,
-            geography_type_name=self.geography_type_name,
-            age=self.age,
-            stratum_name=self.stratum_name,
-            sex=self.sex,
+        latest_metric_value: Decimal | None = (
+            self.core_headline_manager.get_latest_metric_value(
+                topic_name=self.topic_name,
+                metric_name=metric_name,
+                geography_name=self.geography_name,
+                geography_type_name=self.geography_type_name,
+                age=self.age,
+                stratum_name=self.stratum_name,
+                sex=self.sex,
+            )
         )
 
         if latest_metric_value is None:
             raise TrendNumberDataNotFoundError(
-                f"Data for `{self.topic_name}` and `{metric_name}` could not be found."
+                topic_name={self.topic_name},
+                metric_name={metric_name},
             )
 
         return latest_metric_value

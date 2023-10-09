@@ -17,4 +17,4 @@ class ListablePageParentField(PageParentField):
         try:
             return super().get_attribute(instance=instance)
         except AttributeError:
-            return
+            return None

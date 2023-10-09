@@ -182,9 +182,7 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "standard": {
-            "format": "%(asctime)s [%(levelname)s] [ENVIRONMENT:{env}] [%(name)s - %(funcName)s] %(message)s".format(
-                env=config.APIENV
-            )
+            "format": f"%(asctime)s [%(levelname)s] [ENVIRONMENT:{config.APIENV}] [%(name)s - %(funcName)s] %(message)s"
         },
     },
     "handlers": {

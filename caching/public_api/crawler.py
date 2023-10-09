@@ -139,7 +139,7 @@ class PublicAPICrawler:
             This is subsequently passed to another call to this method.
 
         """
-        logger.info(f" Calling {url}")
+        logger.info("Calling %s", url)
         response_data: dict = self.hit_endpoint(url=url)
 
         targets: list[str] = self.get_links_from_response_data(
@@ -149,7 +149,7 @@ class PublicAPICrawler:
         for target in targets:
             if target not in crawled_urls:
                 crawled_urls.append(target)
-                logger.info(f"{len(crawled_urls)} URLs crawled")
+                logger.info("%s URLs crawled", len(crawled_urls))
                 self.crawl(url=target, crawled_urls=crawled_urls)
 
         return crawled_urls
@@ -169,7 +169,7 @@ class PublicAPICrawler:
         targets = []
         for links in response_data:
             if isinstance(links, dict):
-                for key, value in links.items():
+                for value in links.values():
                     if self._is_url(value=value):
                         targets.append(value)
 
@@ -185,7 +185,7 @@ class PublicAPICrawler:
 
         """
         public_api_themes_root_path = self._build_themes_root_path()
-        logger.info(f"Crawling from root URL {public_api_themes_root_path}")
+        logger.info("Crawling from root URL %s", public_api_themes_root_path)
         self.crawl(url=public_api_themes_root_path, crawled_urls=[])
 
     def _build_themes_root_path(self) -> str:

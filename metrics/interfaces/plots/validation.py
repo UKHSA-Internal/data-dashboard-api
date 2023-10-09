@@ -8,7 +8,11 @@ DEFAULT_METRIC_MANAGER = Metric.objects
 
 
 class MetricDoesNotSupportTopicError(Exception):
-    ...
+    def __init__(self, topic_name: str, metric_name: str):
+        message = (
+            f"`{topic_name}` does not have a corresponding metric of `{metric_name}`"
+        )
+        super().__init__(message)
 
 
 class DatesNotInChronologicalOrderError(Exception):
@@ -46,7 +50,7 @@ class PlotValidation:
         self._validate_metric_is_available_for_topic()
         self._validate_dates()
 
-    def _does_metric_have_multiple_records(self) -> bool:
+    def does_metric_have_multiple_records(self) -> bool:
         """Checks the db if there are multiple associated `CoreTimeSeries` records.
 
         Returns:
@@ -70,7 +74,8 @@ class PlotValidation:
 
         if not metric_is_topic_compatible:
             raise MetricDoesNotSupportTopicError(
-                f"`{self.plot_parameters.topic_name}` does not have a corresponding metric of `{self.plot_parameters.metric_name}`"
+                topic_name=self.plot_parameters.topic_name,
+                metric_name=self.plot_parameters.metric_name,
             )
 
     def _is_metric_available_for_topic(self) -> bool:
@@ -127,6 +132,4 @@ class PlotValidation:
             return
 
         if not dates_in_chronological_order:
-            raise DatesNotInChronologicalOrderError()
-
-        return None
+            raise DatesNotInChronologicalOrderError
