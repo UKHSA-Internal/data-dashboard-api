@@ -18,11 +18,29 @@ class Theme(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     created_dt = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"], name="`Theme` name should be unique"
+            )
+        ]
+
 
 class SubTheme(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     theme = models.ForeignKey(to=Theme, on_delete=models.SET_NULL, null=True)
     created_dt = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"], name="`SubTheme` name should be unique"
+            ),
+            models.UniqueConstraint(
+                fields=["name", "theme"],
+                name="`SubTheme` and `Theme` should be a unique combination",
+            ),
+        ]
 
 
 class Topic(models.Model):
@@ -31,10 +49,25 @@ class Topic(models.Model):
 
     objects = TopicManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"], name="`Topic` name should be unique"
+            )
+        ]
+
 
 class MetricGroup(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     topic = models.ForeignKey(to=Topic, on_delete=models.SET_NULL, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("name", "topic"),
+                name="`MetricGroup` and `Topic` should be a unique combination",
+            ),
+        ]
 
 
 class Metric(models.Model):
@@ -48,11 +81,29 @@ class Metric(models.Model):
 
     objects = MetricManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"], name="`Metric` name should be unique"
+            ),
+            models.UniqueConstraint(
+                fields=["name", "topic"],
+                name="`Metric` and `Topic` should be a unique combination",
+            ),
+        ]
+
 
 class GeographyType(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = GeographyTypeManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"], name="`GeographyType` name should be unique"
+            )
+        ]
 
 
 class Geography(models.Model):
@@ -66,14 +117,34 @@ class Geography(models.Model):
 
     objects = GeographyManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "geography_type"],
+                name="`Geography` and `GeographyType` should be a unique combination",
+            )
+        ]
+
 
 class Stratum(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = StratumManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name"], name="`Stratum` name should be unique"
+            )
+        ]
+
 
 class Age(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = AgeManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["name"], name="`Age` name should be unique")
+        ]
