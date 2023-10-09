@@ -63,11 +63,6 @@ source venv/bin/activate
 ./manage.py createsuperuser
 ```
 
-7. Sign in to the admin panel at `/admin/` and add an API key. 
-**Make sure you note it down** as it won't be displayed in full again. 
-You will need this key to be able to use the API later.
-If you did not note of the generated key, you can simply create another and use that instead.
-
 ---
 
 ## Database
@@ -85,22 +80,12 @@ When developing locally, the app will point to a local database:
 ## Application data
 
 To seed your environment with data, including CMS content and a snapshot of metrics data, 
-you can run the following commands:
+you can run the following command:
 
 ```bash
 sudo chmod +x scripts/boot.sh # <- make the script executable
 
-./scripts/boot.sh <API Key> <Admin Password>
-```
-
-Whereby, `API Key` should meet the following criteria:
-
-- Random first 8 alphanumeric characters
-- `.` character on the 9th character
-- Another random 32 alphanumeric characters
-
-```
-APIKey = <8 alphanumeric characters>.<32 alphanumeric characters>
+./scripts/boot.sh <Admin Password>
 ```
 
 ---
@@ -204,9 +189,8 @@ then this will be handled for you and you will not need to manually run `python 
 With the server running, you can make requests as follows:
 
 ```bash
-curl -X 'GET' 'http://localhost:8000/api/pages/' -H 'accept: */*' -H 'Authorization: <Add API Key here>'
+curl -X 'GET' 'http://localhost:8000/api/pages/'
 ```
-Make sure you replace the placeholder with the API key generated from the `initial configuration` steps.
 
 ### Via Swagger
 
