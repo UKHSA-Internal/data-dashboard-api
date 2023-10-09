@@ -257,7 +257,9 @@ class Reader:
                 can be matched with the "mapped_fields" nested dict
 
         """
-        existing_record = model_manager.get(**values_for_unique_fields["mapped_fields"])
+        existing_record, _ = model_manager.get_or_create(
+            **values_for_unique_fields["mapped_fields"]
+        )
         values_for_unique_fields["pk"] = existing_record.pk
         return values_for_unique_fields
 
@@ -375,7 +377,7 @@ class Reader:
             None
 
         """
-        model_manager.create(**values_for_new_record)
+        model_manager.get_or_create(**values_for_new_record)
 
     @staticmethod
     def _get_unique_value_groups_from_incoming_dtos_for_model(
