@@ -15,12 +15,14 @@ from metrics.data.models.core_models import (
 
 @pytest.fixture
 def core_headline_example() -> CoreTimeSeries:
-    topic = Topic.objects.create(name="COVID-19")
-    metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
-    metric = Metric.objects.create(
+    topic, _ = Topic.objects.get_or_create(name="COVID-19")
+    metric_group, _ = MetricGroup.objects.get_or_create(
+        name="deaths", topic_id=topic.id
+    )
+    metric, _ = Metric.objects.get_or_create(
         name="COVID-19_headline_tests_7DayTotals",
-        metric_group=metric_group,
-        topic=topic,
+        metric_group_id=metric_group.id,
+        topic_id=topic.id,
     )
     year = 2023
     return CoreTimeSeries.objects.create(
