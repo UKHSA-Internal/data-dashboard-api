@@ -118,7 +118,7 @@ make audit
 
 ### Running tests
 
-The tests are split by type, `unit` and `integration`.
+The tests are split by type, `unit`, `integration` and `system`.
 
 You can run them separately via the `Makefile` or all at once:
 
@@ -150,7 +150,10 @@ You can check these by running the following command:
 make architecture
 ```
 
-Also note that this will also be enforced by virtue of the CI. 
+Also note that this will also be enforced by virtue of the CI.
+
+>As a helper, it may be easier to use `make check` during development. 
+This will run formatters, tests and architectural constraint checks in that order.
 
 ---
 
