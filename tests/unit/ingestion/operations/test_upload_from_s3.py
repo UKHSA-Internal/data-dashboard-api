@@ -36,23 +36,31 @@ class TestDownloadFilesAndUpload:
         # Then
         spy_clear_metrics_tables.assert_called_once()
 
+    @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
     @mock.patch(f"{MODULE_PATH}._download_file_ingest_and_teardown")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_delegates_calls_for_each_key_of_item_in_folder(
         self,
         mocked_clear_metrics_tables: mock.MagicMock,
         spy_download_file_ingest_and_teardown: mock.MagicMock,
+        spy_run_with_multiple_processes: mock.MagicMock,
     ):
         """
         Given a mocked `AWSClient` object
         When `download_files_and_upload()` is called
-        Then `_download_file_ingest_and_teardown()` is called
-            for each key listed from the client
+        Then `run_with_multiple_processes()` is called
+            with the correct callable
+            and iterable for each key listed from the client
 
         Patches:
             `mocked_clear_metrics_tables`: To remove the
                 side effects of having to delete records
                 from the database
+            `spy_download_file_ingest_and_teardown`: To check
+                the callable is passed to the
+                `run_with_multiple_processes` call
+            `spy_run_with_multiple_processes`: For the
+                main assertion.
 
         """
         # Given
@@ -64,16 +72,18 @@ class TestDownloadFilesAndUpload:
         download_files_and_upload(client=mocked_client)
 
         # Then
-        expected_calls = [
-            mock.call(key=fake_key, client=mocked_client) for fake_key in fake_keys
-        ]
-        spy_download_file_ingest_and_teardown.assert_has_calls(
-            calls=expected_calls, any_order=True
+        spy_run_with_multiple_processes.assert_called_once_with(
+            upload_function=spy_download_file_ingest_and_teardown,
+            items=fake_keys,
         )
 
+    @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_records_log_statement_for_completion(
-        self, mocked_clear_metrics_tables: mock.MagicMock, caplog: LogCaptureFixture
+        self,
+        mocked_clear_metrics_tables: mock.MagicMock,
+        mocked_run_with_multiple_processes: mock.MagicMock,
+        caplog: LogCaptureFixture,
     ):
         """
         Given a mocked `AWSClient` object
@@ -84,6 +94,9 @@ class TestDownloadFilesAndUpload:
             `mocked_clear_metrics_tables`: To remove the
                 side effects of having to delete records
                 from the database
+            `mocked_run_with_multiple_processes`: To remove
+                side effects of having to create multiple processes
+                and upload to the database
 
         """
         # Given
