@@ -8,6 +8,7 @@ from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
     PlotsInterface,
+    QuerySetResult,
     _build_age_display_name,
     convert_type,
     get_x_and_y_values,
@@ -132,6 +133,9 @@ class TestPlotsInterface:
             parameters=valid_plot_parameters,
             x_axis_values=[x.date for x in fake_core_time_series_records],
             y_axis_values=[x.metric_value for x in fake_core_time_series_records],
+            latest_refresh_date=str(
+                max(x.refresh_date for x in fake_core_time_series_records)
+            ),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -184,12 +188,12 @@ class TestPlotsInterface:
             x.metric_value for x in fake_core_time_series_for_plot
         ]
 
-    @mock.patch.object(PlotsInterface, "get_timeseries_for_plot_parameters")
+    @mock.patch.object(PlotsInterface, "get_queryset_result_for_plot_parameters")
     @mock.patch(f"{MODULE_PATH}.get_x_and_y_values")
     def test_build_plot_data_from_parameters_calls_get_x_and_y_values(
         self,
         spy_get_x_and_y_values: mock.MagicMock,
-        mocked_get_timeseries_for_plot_parameters: mock.MagicMock,
+        mocked_get_queryset_result_for_plot_parameters: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -217,7 +221,7 @@ class TestPlotsInterface:
         # Then
         spy_get_x_and_y_values.assert_called_once_with(
             plot_parameters=fake_chart_plot_parameters,
-            queryset=mocked_get_timeseries_for_plot_parameters.return_value,
+            queryset=mocked_get_queryset_result_for_plot_parameters.return_value.queryset,
         )
 
         # Check that the enriched `PlotsData` model has been set
@@ -315,14 +319,15 @@ class TestPlotsInterface:
         )
 
     @mock.patch.object(PlotsInterface, "get_timeseries")
-    def test_get_timeseries_for_plot_parameters_delegates_call_with_correct_args(
+    def test_get_queryset_result_for_plot_parameters_delegates_call_with_correct_args(
         self,
         mocked_get_timeseries: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `PlotParameters` model with a defined `date_from`
-        When `get_timeseries_for_plot_parameters()` is called from an instance of the `PlotsInterface`
+        When `get_queryset_result_for_plot_parameters()` is called
+            from an instance of the `PlotsInterface`
         Then the call is delegated to the `get_timeseries()` method with the correct args
         """
         # Given
@@ -335,13 +340,19 @@ class TestPlotsInterface:
         )
 
         # When
-        timeseries = plots_interface.get_timeseries_for_plot_parameters(
-            plot_parameters=fake_chart_plot_parameters
+        queryset_result: QuerySetResult = (
+            plots_interface.get_queryset_result_for_plot_parameters(
+                plot_parameters=fake_chart_plot_parameters
+            )
         )
 
         # Then
-        # The return value is delegated to the `get_timeseries` method
-        assert timeseries == mocked_get_timeseries.return_value
+        # The returned `QuerySetResult` is enriched via the `get_timeseries` method
+        assert queryset_result.queryset == mocked_get_timeseries.return_value
+        assert (
+            queryset_result.latest_refresh_date
+            == mocked_get_timeseries.return_value.latest_refresh_date
+        )
 
         # The dict representation of the `PlotParameters` model
         # is unpacked into the `get_timeseries` method
