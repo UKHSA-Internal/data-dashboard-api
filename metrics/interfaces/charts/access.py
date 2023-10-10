@@ -43,6 +43,8 @@ class ChartsInterface:
             core_time_series_manager=core_time_series_manager,
         )
 
+        self._latest_refresh_date: str = ""
+
     def generate_chart_figure(self) -> plotly.graph_objects.Figure:
         """Creates the chart figure dictated the instance variable of `chart_type`
 
@@ -169,7 +171,36 @@ class ChartsInterface:
                 each of the requested chart plots.
 
         """
-        return self.plots_interface.build_plots_data()
+        plots_data = self.plots_interface.build_plots_data()
+        self._set_latest_refresh_date_from_plots_data(plots_data=plots_data)
+        return plots_data
+
+    def _set_latest_refresh_date_from_plots_data(
+        self, plots_data: list[PlotData]
+    ) -> None:
+        """Extracts the latest refresh date from the list of given `plots_data`
+
+        Notes:
+            This extracted value is set on the `_latest_refresh_date`
+            instance attribute on this object
+
+        Args:
+            plots_data: List of `PlotData` models,
+                where each model represents a requested plot.
+                Note that each `PlotData` model is enriched
+                with the according x and y values along with
+                requests parameters like colour and plot label.
+
+        Returns:
+            None
+
+        """
+        latest_refresh_date: datetime.date = max(
+            plot.latest_refresh_date for plot in plots_data
+        )
+        self._latest_refresh_date: str = datetime.strftime(
+            latest_refresh_date, "%Y-%m-%d"
+        )
 
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotData):
         chart_height = self.chart_plots.chart_height
@@ -192,28 +223,6 @@ class ChartsInterface:
                 metric_name=metric_name
             ),
         }
-
-    def get_last_updated(self, figure: plotly.graph_objects.Figure) -> str:
-        """
-        If the chart has dates along the x-axis then extract the last dates from each plot
-        and return the latest date of all of them
-
-        Args:
-            figure: The generated plotly chart
-
-        Returns:
-            The last date in the chart if applicable
-        """
-        last_date = ""
-
-        if figure.layout.xaxis.type == "date":
-            last_dates = [max(trace.x) for trace in figure.data]
-
-            # Now we have the end-dates from each of the plots, return the latest one
-            # and convert datetime to a string
-            last_date = datetime.strftime(max(last_dates), "%Y-%m-%d")
-
-        return last_date
 
     def create_optimized_svg(self, figure: plotly.graph_objects.Figure) -> str:
         """Convert figure to a `svg` then optimize the size of it
@@ -287,7 +296,7 @@ class ChartsInterface:
 
         """
         return {
-            "last_updated": self.get_last_updated(figure=figure),
+            "last_updated": self._latest_refresh_date,
             "chart": self.encode_figure(figure=figure),
         }
 
