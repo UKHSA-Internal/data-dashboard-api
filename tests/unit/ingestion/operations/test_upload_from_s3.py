@@ -36,7 +36,7 @@ class TestDownloadFilesAndUpload:
         # Then
         spy_clear_metrics_tables.assert_called_once()
 
-    @mock.patch(f"{MODULE_PATH}._download_file_ingest_and_teardown")
+    @mock.patch(f"{MODULE_PATH}.download_file_ingest_and_teardown")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_delegates_calls_for_each_key_of_item_in_folder(
         self,
@@ -46,7 +46,7 @@ class TestDownloadFilesAndUpload:
         """
         Given a mocked `AWSClient` object
         When `download_files_and_upload()` is called
-        Then `_download_file_ingest_and_teardown()` is called
+        Then `download_file_ingest_and_teardown()` is called
             for each key listed from the client
 
         Patches:
