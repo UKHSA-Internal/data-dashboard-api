@@ -140,10 +140,10 @@ class TestClearMetricsTables:
 
 class TestUploadTruncatedTestData:
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
-    @mock.patch(f"{MODULE_PATH}._upload_file")
+    @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
     def test_logs_made_correctly(
         self,
-        mocked_upload_file: mock.MagicMock,
+        mocked_run_with_multiple_processes: mock.MagicMock,
         mocked_clear_metrics_tables: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
@@ -153,8 +153,9 @@ class TestUploadTruncatedTestData:
         Then the correct log statement is recorded
 
         Patches:
-            `mocked_upload_file`: To remove side effects
-                of having to upload to the database
+            `mocked_run_with_multiple_processes`: To remove side effects
+                of having to create multiple processes
+                and upload to the database
             `mocked_clear_metrics_tables`: To remove
                 the side effect of clearing records
                 and having to hit the database
@@ -165,52 +166,46 @@ class TestUploadTruncatedTestData:
         # Then
         assert "Completed truncated dataset upload" in caplog.text
 
-    @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     @mock.patch(f"{MODULE_PATH}._upload_file")
-    def test_delegates_calls_successfully_for_each_source_file(
+    @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
+    @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
+    def test_delegates_call_to_run_with_multiple_processes(
         self,
-        spy_upload_file: mock.MagicMock,
+        spy_run_with_multiple_processes: mock.MagicMock,
         mocked_clear_metrics_tables: mock.MagicMock,
+        spy_upload_file: mock.MagicMock,
     ):
         """
-        Given a set of truncated test files
+        Given a list of test source data files paths at the `source_data/` directory
         When `upload_truncated_test_data()` is called
-        Then `_upload_file()` is called for each file
+        Then `run_with_multiple_processes()` is called
+            with the `_upload_file` callable and the list of files
 
         Patches:
-            `spy_upload_file`: For the main assertion
-                 and for collecting the calls which were made
+            `spy_run_with_multiple_processes`: To check the upload callable
+                is invoked with multiple processes
             `mocked_clear_metrics_tables`: To remove
                 the side effect of clearing records
                 and having to hit the database
+            `spy_upload_file`: For the main assertion
         """
         # Given
-        gathered_test_file_paths: list[Path] = _gather_test_data_source_file_paths()
+        test_source_data_file_paths = _gather_test_data_source_file_paths()
 
         # When
         upload_truncated_test_data()
 
         # Then
-        file_paths_called_by_file_ingester = []
-        # Get the names of all the files which were opened and given to the `file_ingester()`
-        for mock_call_made in spy_upload_file.mock_calls:
-            call_kwargs = mock_call_made.kwargs
-            # There will be a few magic method calls that we don't want to include
-            # hence the filtering for calls made specifically with a file
-            if "filepath" in call_kwargs:
-                file_paths_called_by_file_ingester.append(call_kwargs["filepath"])
+        spy_run_with_multiple_processes.assert_called_once_with(
+            upload_function=spy_upload_file, items=test_source_data_file_paths
+        )
 
-        # Check that they match with the gathered test file paths
-        for gathered_test_file_path in gathered_test_file_paths:
-            gathered_test_file_path: Path
-            assert str(gathered_test_file_path) in file_paths_called_by_file_ingester
-
-    @mock.patch(f"{MODULE_PATH}._upload_file")
+    @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_delegates_call_to_delete_existing_metrics(
         self,
         spy_clear_metrics_tables: mock.MagicMock,
-        mocked_upload_file: mock.MagicMock,
+        mocked_run_with_multiple_processes: mock.MagicMock,
     ):
         """
         Given no input
@@ -220,8 +215,9 @@ class TestUploadTruncatedTestData:
 
         Patches:
             `spy_clear_metrics_tables`: For the main assertion
-            `mocked_upload_file`: To remove side effects
-                of having to upload to the database
+            `mocked_run_with_multiple_processes`: To remove side effects
+                of having to create multiple processes
+                and upload to the database
         """
         # Given / When
         upload_truncated_test_data()

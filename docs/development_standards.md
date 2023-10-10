@@ -320,7 +320,7 @@ instead of leaving a TODO comment in the source code.
 Currently, the following tools are used and enforced within our CI/CD pipeline:
 
 - `black`
-- `isort`
+- `ruff`
 - `importlinter`
 - `bandit`
 - `pip-audit`

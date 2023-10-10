@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 
 from metrics.data.managers.core_models.metric import MetricManager
+from tests.fakes.models.metrics.metric import FakeMetric
 
 
 class FakeMetricManager(MetricManager):
@@ -22,6 +23,14 @@ class FakeMetricManager(MetricManager):
             return metrics[0]
         except IndexError:
             raise ObjectDoesNotExist
+
+    def get_or_create(self, defaults=None, **kwargs) -> tuple[FakeMetric, bool]:
+        try:
+            return self.get(**kwargs), False
+        except ObjectDoesNotExist:
+            created_metric = FakeMetric(**kwargs)
+            self.metrics.append(created_metric)
+            return created_metric, True
 
     def get_all_names(self) -> list[str]:
         return [metric.name for metric in self.metrics]

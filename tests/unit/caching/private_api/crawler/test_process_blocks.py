@@ -296,6 +296,9 @@ class TestCrawlerProcessIndividualBlocks:
             "metric": example_headline_number_block["metric"],
             "geography": example_headline_number_block["geography"],
             "geography_type": example_headline_number_block["geography_type"],
+            "sex": example_headline_number_block["sex"],
+            "age": example_headline_number_block["age"],
+            "stratum": example_headline_number_block["stratum"],
         }
         spy_internal_api_client.hit_headlines_endpoint.assert_called_once_with(
             data=expected_data
