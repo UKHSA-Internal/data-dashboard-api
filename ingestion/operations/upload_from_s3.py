@@ -37,14 +37,14 @@ def download_files_and_upload(client: AWSClient | None = None) -> None:
     keys: list[str] = client.list_item_keys_of_in_folder()
 
     run_with_multiple_processes(
-        upload_function=_download_file_ingest_and_teardown,
+        upload_function=download_file_ingest_and_teardown,
         items=keys,
     )
 
     logger.info("Completed dataset upload")
 
 
-def _download_file_ingest_and_teardown(
+def download_file_ingest_and_teardown(
     key: str, client: AWSClient | None = None
 ) -> None:
     """Download the file of the given `key`, ingest, remove the local copy and move to `processed/` in the s3 bucket
