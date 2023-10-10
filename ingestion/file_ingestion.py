@@ -90,5 +90,5 @@ def _upload_file(filepath: str) -> None:
         except Exception as error:
             logger.warning("Failed upload of %s due to %s", filepath, error)
             raise FileIngestionFailedError(file_name=filepath) from error
-        else:
-            logger.info("Completed ingestion of %s", filepath)
+
+        logger.info("Completed ingestion of %s", filepath)
