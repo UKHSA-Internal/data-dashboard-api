@@ -10,34 +10,22 @@ MODULE_PATH = "ingestion.operations.concurrency"
 
 class TestRunWithMultiprocessing:
     @mock.patch(f"{MODULE_PATH}.call_with_multiprocessing")
-    @mock.patch(f"{MODULE_PATH}.db")
-    def test_closes_db_connections_from_first(
-        self, spy_db: mock.MagicMock, spy_call_with_multiprocessing: mock.MagicMock
+    def test_delegates_call_successfully(
+        self, spy_call_with_multiprocessing: mock.MagicMock
     ):
         """
         Given a mocked callable used for the upload
         When `run_with_multiple_processes()` is called
-        Then the database connections are closed
-            before `_call_with_multiprocessing()` is called
+        Then the call is delegated to `call_with_multiprocessing()`
 
         Patches:
-            `spy_db`: To check that `django.db.connections.close_all()`
-                is called before `_call_with_multiprocessing()`
-
             `spy_call_with_multiprocessing` To check that the callable
-                is passed to this call after database connections have been pre-closed
+                is passed to this call
 
         """
         # Given
         mocked_upload_callable = mock.Mock()
         mocked_items = [mock.Mock()]
-
-        # Set up a mock manager, so we can record calls made from both `spy_db` and `spy_call_with_multiprocessing`
-        mock_manager = mock.Mock()
-        mock_manager.attach_mock(spy_db, "spy_db")
-        mock_manager.attach_mock(
-            spy_call_with_multiprocessing, "spy_call_with_multiprocessing"
-        )
 
         # When
         run_with_multiple_processes(
@@ -45,29 +33,25 @@ class TestRunWithMultiprocessing:
         )
 
         # Then
-        expected_calls = [
-            mock.call.spy_db.connections.close_all(),
-            mock.call.spy_call_with_multiprocessing(
-                upload_function=mocked_upload_callable, items=mocked_items
-            ),
-        ]
-        mock_manager.assert_has_calls(calls=expected_calls, any_order=False)
+        spy_call_with_multiprocessing.assert_called_once_with(
+            upload_function=mocked_upload_callable, items=mocked_items
+        )
 
 
 class TestCallWithMultiprocessing:
     @mock.patch(f"{MODULE_PATH}.multiprocessing")
-    def test_call_with_multiprocessing_sets_method_of_fork(
+    def test_call_with_multiprocessing_sets_method_of_spawn(
         self, spy_multiprocessing: mock.MagicMock
     ):
         """
         Given a mocked callable used for the upload
         When `_call_with_multiprocessing()` is called
-        Then the multiprocessing library is set to "fork"
+        Then the multiprocessing library is set to "spawn"
             child processes.
 
         Patches:
             `spy_multiprocessing`: To check that the context is set
-                with child processes "forked" instead of spawned
+                with child processes "spawned" instead of forked
 
         """
         # Given
@@ -80,7 +64,7 @@ class TestCallWithMultiprocessing:
         )
 
         # Then
-        spy_multiprocessing.set_start_method.assert_called_once_with("fork")
+        spy_multiprocessing.set_start_method.assert_called_once_with("spawn")
 
     @mock.patch(f"{MODULE_PATH}.multiprocessing")
     def test_call_with_multiprocessing_pool(self, spy_multiprocessing: mock.MagicMock):

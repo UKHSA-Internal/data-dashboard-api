@@ -2,9 +2,25 @@ import io
 import logging
 from enum import Enum
 
-from ingestion.consumer import Consumer
+import django
+
+# `django.setup()` is required prior any models being imported
+# This is because we spawn processes during ingestion
+# primarily so that file descriptors & db connections are not
+# copied from the parent as they are when `forking` instead of `spawning`.
+# This is a temporary measure, once the main ingestion process is moved
+# to a 1-to-1 of job:ingested file then multiprocessing can be reconfigured
+django.setup()
+
+from ingestion.consumer import Consumer  # noqa: E402
 
 logger = logging.getLogger(__name__)
+
+
+class FileIngestionFailedError(Exception):
+    def __init__(self, file_name: str):
+        message = f"`{file_name}` upload failed."
+        super().__init__(message)
 
 
 class DataSourceFileType(Enum):
@@ -19,18 +35,18 @@ class DataSourceFileType(Enum):
     vaccinations = "vaccinations"
 
     @classmethod
-    def headline_types(cls) -> tuple[str]:
+    def headline_types(cls) -> list[str]:
         return [f"{cls.headline.value}_"]
 
     @classmethod
-    def timeseries_types(cls) -> tuple[str, ...]:
-        timeseries_file_types = [
+    def timeseries_types(cls) -> list[str]:
+        timeseries_file_types = (
             cls.cases,
             cls.deaths,
             cls.healthcare,
             cls.testing,
             cls.vaccinations,
-        ]
+        )
         return [
             f"{timeseries_file_type.value}_"
             for timeseries_file_type in timeseries_file_types
@@ -83,5 +99,6 @@ def _upload_file(filepath: str) -> None:
             file_ingester(file=f)
         except Exception as error:
             logger.warning("Failed upload of %s due to %s", filepath, error)
-        else:
-            logger.info("Completed ingestion of %s", filepath)
+            raise FileIngestionFailedError(file_name=filepath) from error
+
+        logger.info("Completed ingestion of %s", filepath)
