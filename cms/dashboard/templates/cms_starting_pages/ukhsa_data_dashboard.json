@@ -1,20 +1,20 @@
 {
-    "id": 4,
+    "id": 64,
     "meta": {
         "seo_title": "UKHSA data dashboard",
         "search_description": "Overall summary of the respiratory viruses in circulation within the UK",
         "type": "home.HomePage",
-        "detail_url": "http://localhost/api/pages/4/",
+        "detail_url": "http://localhost/api/pages/64/",
         "html_url": null,
         "slug": "dashboard",
         "show_in_menus": true,
-        "first_published_at": "2023-09-14T15:51:50.271975+01:00",
+        "first_published_at": "2023-09-26T20:12:03.963837+01:00",
         "alias_of": null,
         "parent": {
-            "id": 3,
+            "id": 63,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/3/",
+                "detail_url": "http://localhost/api/pages/63/",
                 "html_url": null
             },
             "title": "UKHSA Dashboard Root"
@@ -49,6 +49,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_cases_7DayTotals",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "eff08341-7bfa-4a3b-b013-527e7b954ce8"
@@ -58,6 +63,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_cases_7DayChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "7 days",
                                                     "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
                                                 },
@@ -77,6 +87,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "Weekly"
                                                 },
                                                 "id": "2e403485-030c-4122-86be-5827a095f30d"
@@ -86,6 +101,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "7 days",
                                                     "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
                                                 },
@@ -105,6 +125,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_7DayAdmissions",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "Patients admitted"
                                                 },
                                                 "id": "2f49a215-02e7-4ded-94b1-1a0c2933708b"
@@ -114,6 +139,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_7DayAdmissionsChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "7 days",
                                                     "percentage_metric": "COVID-19_headline_7DayAdmissionsPercentChange"
                                                 },
@@ -133,6 +163,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_vaccines_spring23Total",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "75+",
+                                                    "stratum": "default",
                                                     "body": "Spring booster"
                                                 },
                                                 "id": "ae3344f7-5b23-4977-bea9-2e1ccd84eb50"
@@ -151,6 +186,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_positivity_latest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "Virus tests positivity"
                                                 },
                                                 "id": "36746bcd-1dce-4e5e-81f8-60c8b9994540"
@@ -180,14 +220,14 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_cases_countRollingMean",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_with_shaded_section",
+                                                    "date_from": null,
+                                                    "date_to": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -201,6 +241,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_cases_7DayTotals",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "7 days"
                                                 },
                                                 "id": "95b24a05-a015-42ed-b258-51c7ccaedbcd"
@@ -210,6 +255,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_cases_7DayChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "",
                                                     "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
                                                 },
@@ -232,14 +282,14 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_deaths_ONSRollingMean",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_with_shaded_section",
+                                                    "date_from": null,
+                                                    "date_to": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -253,6 +303,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "7 days"
                                                 },
                                                 "id": "10c92d4c-bdb1-4bcc-a8a5-d0063dcee095"
@@ -262,6 +317,11 @@
                                                 "value": {
                                                     "topic": "COVID-19",
                                                     "metric": "COVID-19_headline_ONSdeaths_7DayChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "",
                                                     "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
                                                 },
@@ -305,6 +365,11 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_headline_ICUHDUadmissionRateLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "Hospital admission rate (per 100,000)"
                                                 },
                                                 "id": "0520e9d6-794f-4616-b217-f5ec884a86d8"
@@ -314,6 +379,11 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_headline_ICUHDUadmissionRateChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "Last 7 days",
                                                     "percentage_metric": "influenza_headline_ICUHDUadmissionRatePercentChange"
                                                 },
@@ -333,6 +403,11 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_headline_positivityLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "Virus tests positivity"
                                                 },
                                                 "id": "36ec8822-56e2-4513-ac8f-969e84f0d5e8"
@@ -362,14 +437,14 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "bar",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "bar",
+                                                    "date_from": null,
+                                                    "date_to": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -383,6 +458,11 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_headline_ICUHDUadmissionRateLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "7 days"
                                                 },
                                                 "id": "a93d4317-3814-41ab-b6f6-a6f0769770a7"
@@ -392,6 +472,11 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_headline_ICUHDUadmissionRateChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
                                                     "body": "",
                                                     "percentage_metric": "influenza_headline_ICUHDUadmissionRatePercentChange"
                                                 },
@@ -414,14 +499,14 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_testing_positivityByWeek",
-                                                    "chart_type": "bar",
-                                                    "date_from": null,
-                                                    "date_to": null,
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "bar",
+                                                    "date_from": null,
+                                                    "date_to": null,
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -444,7 +529,7 @@
     ],
     "related_links": [
         {
-            "id": 1,
+            "id": 21,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -453,7 +538,7 @@
             "body": "<p data-block-key=\"jib2z\">Get NHS advice on COVID-19, including symptoms, treatments, looking after yourself at home, how to avoid catching and spreading the virus, vaccinations and long-term effects.</p>"
         },
         {
-            "id": 2,
+            "id": 22,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -462,7 +547,7 @@
             "body": "<p data-block-key=\"jib2z\">Get NHS advice on influenza (flu), including symptoms, how to treat it at home and when to seek medical advice.</p>"
         },
         {
-            "id": 3,
+            "id": 23,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -471,7 +556,7 @@
             "body": "<p data-block-key=\"cc1q7\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 4,
+            "id": 24,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -480,5 +565,5 @@
             "body": "<p data-block-key=\"jib2z\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-09-14T18:06:51.200171+01:00"
+    "last_published_at": "2023-09-26T20:12:03.963837+01:00"
 }
