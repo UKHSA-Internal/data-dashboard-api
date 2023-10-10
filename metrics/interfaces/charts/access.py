@@ -199,7 +199,7 @@ class ChartsInterface:
                 plot.latest_refresh_date for plot in plots_data
             )
         except ValueError:
-            return None
+            return
 
         self._latest_refresh_date: str = datetime.strftime(
             latest_refresh_date, "%Y-%m-%d"
