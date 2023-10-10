@@ -16,7 +16,7 @@ class TestChartsView:
                 {
                     "topic": core_timeseries.metric.metric_group.topic.name,
                     "metric": core_timeseries.metric.name,
-                    "chart_type": "waffle",
+                    "chart_type": "bar",
                 }
             ],
         }
@@ -107,7 +107,7 @@ class TestChartsView:
         )
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_v3(
+    def test_returns_correct_response_for_v3_age_based_chart(
         self,
         core_timeseries_example: list[CoreTimeSeries],
     ):
