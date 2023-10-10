@@ -1,7 +1,9 @@
 from unittest import mock
 
+import pytest
 from _pytest.logging import LogCaptureFixture
 
+from ingestion.file_ingestion import FileIngestionFailedError
 from ingestion.operations.upload_from_s3 import (
     _download_file_ingest_and_teardown,
     _upload_file_and_remove_local_copy,
@@ -36,23 +38,31 @@ class TestDownloadFilesAndUpload:
         # Then
         spy_clear_metrics_tables.assert_called_once()
 
+    @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
     @mock.patch(f"{MODULE_PATH}._download_file_ingest_and_teardown")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_delegates_calls_for_each_key_of_item_in_folder(
         self,
         mocked_clear_metrics_tables: mock.MagicMock,
         spy_download_file_ingest_and_teardown: mock.MagicMock,
+        spy_run_with_multiple_processes: mock.MagicMock,
     ):
         """
         Given a mocked `AWSClient` object
         When `download_files_and_upload()` is called
-        Then `_download_file_ingest_and_teardown()` is called
-            for each key listed from the client
+        Then `run_with_multiple_processes()` is called
+            with the correct callable
+            and iterable for each key listed from the client
 
         Patches:
             `mocked_clear_metrics_tables`: To remove the
                 side effects of having to delete records
                 from the database
+            `spy_download_file_ingest_and_teardown`: To check
+                the callable is passed to the
+                `run_with_multiple_processes` call
+            `spy_run_with_multiple_processes`: For the
+                main assertion.
 
         """
         # Given
@@ -64,16 +74,18 @@ class TestDownloadFilesAndUpload:
         download_files_and_upload(client=mocked_client)
 
         # Then
-        expected_calls = [
-            mock.call(key=fake_key, client=mocked_client) for fake_key in fake_keys
-        ]
-        spy_download_file_ingest_and_teardown.assert_has_calls(
-            calls=expected_calls, any_order=True
+        spy_run_with_multiple_processes.assert_called_once_with(
+            upload_function=spy_download_file_ingest_and_teardown,
+            items=fake_keys,
         )
 
+    @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_records_log_statement_for_completion(
-        self, mocked_clear_metrics_tables: mock.MagicMock, caplog: LogCaptureFixture
+        self,
+        mocked_clear_metrics_tables: mock.MagicMock,
+        mocked_run_with_multiple_processes: mock.MagicMock,
+        caplog: LogCaptureFixture,
     ):
         """
         Given a mocked `AWSClient` object
@@ -84,6 +96,9 @@ class TestDownloadFilesAndUpload:
             `mocked_clear_metrics_tables`: To remove the
                 side effects of having to delete records
                 from the database
+            `mocked_run_with_multiple_processes`: To remove
+                side effects of having to create multiple processes
+                and upload to the database
 
         """
         # Given
@@ -174,6 +189,34 @@ class TestDownloadFileIngestAndTeardown:
         # Then
         spy_client.move_file_to_processed_folder.assert_called_once_with(key=fake_key)
 
+    @mock.patch(f"{MODULE_PATH}._upload_file_and_remove_local_copy")
+    def test_does_not_call_move_file_to_processed_folder_if_error_is_raised(
+        self, mocked_upload_file_and_remove_local_copy: mock.MagicMock
+    ):
+        """
+        Given a mocked `AWSClient` object and a fake item key
+        And a file upload which will raise a `FileIngestionFailedError`
+        When `_download_file_ingest_and_teardown()` is called
+        Then `move_file_to_processed_folder()` is not called from the client
+
+        Patches:
+            `mocked_upload_file_and_remove_local_copy`: To simulate
+                the file upload failing
+
+        """
+        # Given
+        spy_client = mock.MagicMock()
+        fake_key = FAKE_FILENAME
+        mocked_upload_file_and_remove_local_copy.side_effect = [
+            FileIngestionFailedError(file_name=fake_key)
+        ]
+
+        # When
+        _download_file_ingest_and_teardown(key=fake_key, client=spy_client)
+
+        # Then
+        spy_client.move_file_to_processed_folder.assert_not_called()
+
 
 class TestUploadFileAndRemoveLocalCopy:
     @mock.patch(f"{MODULE_PATH}.os.remove")
@@ -227,6 +270,38 @@ class TestUploadFileAndRemoveLocalCopy:
 
         # When
         _upload_file_and_remove_local_copy(filepath=fake_filepath)
+
+        # Then
+        spy_os_remove.assert_called_once_with(path=fake_filepath)
+
+    @mock.patch(f"{MODULE_PATH}.os.remove")
+    @mock.patch(f"{MODULE_PATH}._upload_file")
+    def test_calls_os_remove_to_remove_file_when_error_is_raised(
+        self,
+        mocked_upload_file: mock.MagicMock,
+        spy_os_remove: mock.MagicMock,
+    ):
+        """
+        Given a fake file path which will fail upon upload
+        When `_upload_file_and_remove_local_copy()` is called
+        Then the call is delegated to `os.remove`
+            despite the `FileIngestionFailedError` being raised
+
+        Patches:
+            `mocked_upload_file`: To simulate the file upload failing
+            `spy_os_remove`: For the main assertion to check
+                that the filesystem is cleared
+
+        """
+        # Given
+        fake_filepath = FAKE_FILENAME
+        mocked_upload_file.side_effect = [
+            FileIngestionFailedError(file_name=fake_filepath)
+        ]
+
+        # When
+        with pytest.raises(FileIngestionFailedError):
+            _upload_file_and_remove_local_copy(filepath=fake_filepath)
 
         # Then
         spy_os_remove.assert_called_once_with(path=fake_filepath)

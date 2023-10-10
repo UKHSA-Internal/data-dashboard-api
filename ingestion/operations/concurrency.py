@@ -4,8 +4,6 @@ import os
 import time
 from collections.abc import Callable
 
-from django import db
-
 logger = logging.getLogger(__name__)
 
 
@@ -22,8 +20,7 @@ def run_with_multiple_processes(upload_function: Callable, items: list[str]) -> 
         None
 
     """
-    logger.info("Pre-closing db connections before processes are forked from parent")
-    db.connections.close_all()
+    logger.info("Spawning processes for ingestion")
 
     start_time = time.perf_counter()
 
@@ -56,7 +53,7 @@ def call_with_multiprocessing(upload_function: Callable, items: list[str]) -> No
         None
 
     """
-    multiprocessing.set_start_method("fork")
+    multiprocessing.set_start_method("spawn")
 
     logger.info("Starting upload with %s No. cores", os.cpu_count())
     with multiprocessing.Pool() as pool:

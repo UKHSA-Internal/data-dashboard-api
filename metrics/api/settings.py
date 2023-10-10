@@ -153,6 +153,18 @@ if config.APIENV in ("LOCAL", "STANDALONE"):
             "NAME": os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
         }
     }
+elif config.APIENV == "INGESTION":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config.POSTGRES_DB,
+            "USER": config.POSTGRES_USER,
+            "PASSWORD": config.POSTGRES_PASSWORD,
+            "HOST": config.POSTGRES_HOST,
+            "PORT": config.POSTGRES_PORT,
+            "CONN_MAX_AGE": 60 * 60 * 12,
+        }
+    }
 else:
     DATABASES = {
         "default": {
@@ -163,7 +175,7 @@ else:
             "HOST": config.POSTGRES_HOST,
             "PORT": config.POSTGRES_PORT,
             "POOL_OPTIONS": {
-                "POOL_SIZE": 20,
+                "POOL_SIZE": 10,
                 # Number of connections to be persisted at all times
                 "MAX_OVERFLOW": 10,
                 # Additional connections to be created at peak loads
