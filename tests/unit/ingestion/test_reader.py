@@ -357,7 +357,7 @@ class TestReader:
         Given a dict of data required to create new records
         When `_create_record()`
             is called from an instance of `Reader`
-        Then the call is delegated to the `create`
+        Then the call is delegated to the `get_or_create`
             method on the model manager
         """
         # Given
@@ -372,7 +372,9 @@ class TestReader:
         )
 
         # Then
-        spy_model_manager.create.assert_called_once_with(**values_for_new_records)
+        spy_model_manager.get_or_create.assert_called_once_with(
+            **values_for_new_records
+        )
 
     @mock.patch.object(Reader, "_create_record")
     def test_create_records_for_new_values(self, spy_create_record: mock.MagicMock):
