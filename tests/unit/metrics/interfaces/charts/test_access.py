@@ -193,10 +193,12 @@ class TestChartsInterface:
             == spy_generate_line_multi_coloured_chart_method.return_value
         )
 
+    @mock.patch.object(ChartsInterface, "_set_latest_refresh_date_from_plots_data")
     @mock.patch(f"{MODULE_PATH}.line_multi_coloured.generate_chart_figure")
     def test_generate_line_multi_coloured_chart(
         self,
         spy_line_multi_coloured_generate_chart_figure: mock.MagicMock,
+        mocked_set_latest_refresh_date_from_plots_data: mock.MagicMock,
         valid_plot_parameters: PlotParameters,
     ):
         """
@@ -208,6 +210,8 @@ class TestChartsInterface:
         Patches:
             `spy_line_multi_coloured_generate_chart_figure`: For the
                 main assertion.
+            `mocked_set_latest_refresh_date_from_plots_data`: To isolate
+                date conversion logic away from the scope of the test
         """
         # Given
         fake_core_time_series_collection = self._setup_fake_time_series_for_plot(
@@ -246,8 +250,10 @@ class TestChartsInterface:
             == spy_line_multi_coloured_generate_chart_figure.return_value
         )
 
+    @mock.patch.object(ChartsInterface, "_set_latest_refresh_date_from_plots_data")
     def test_build_chart_plots_data_delegates_to_plots_interface(
         self,
+        spy_set_latest_refresh_date_from_plots_data: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
         fake_chart_plot_parameters_covid_cases: PlotParameters,
     ):
@@ -258,7 +264,7 @@ class TestChartsInterface:
             for each individual `PlotParameters` model
         """
         # Given
-        spy_plots_interface = mock.Mock()
+        spy_plots_interface = mock.MagicMock()
         fake_chart_plots = PlotsCollection(
             plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
@@ -280,6 +286,8 @@ class TestChartsInterface:
         # Then
         spy_plots_interface.build_plots_data.assert_called_once()
         assert plots_data == spy_plots_interface.build_plots_data.return_value
+        # Check that the latest_refresh_date is set on the `ChartsInterface`
+        spy_set_latest_refresh_date_from_plots_data.assert_called_once()
 
     @mock.patch(f"{MODULE_PATH}.calculations.get_rolling_period_slice_for_metric")
     @mock.patch.object(ChartsInterface, "calculate_change_in_metric_value")
@@ -381,26 +389,26 @@ class TestChartsInterface:
         )
 
     @mock.patch.object(ChartsInterface, "create_optimized_svg", return_value="abc")
-    @mock.patch.object(ChartsInterface, "get_last_updated")
     def test_get_encoded_chart_delegates_call_to_get_last_updated(
         self,
-        spy_get_last_updated: mock.MagicMock,
         mocked_create_optimized_svg: mock.MagicMock,
     ):
         """
         Given a mocked figure which returns
         When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
-        Then the `last_updated` field is populated via a call to the `get_last_updated()` method
+        Then the `last_updated` field is populated
+            from the `_latest_refresh_date` attribute
 
         Patches:
-            `spy_get_last_updated`: For the main assertion
             `mocked_create_optimized_svg`: To remove the side effect of
                 creating a svg and optimizing it
 
         """
         # Given
+        mocked_latest_refresh_date = mock.Mock()
         mocked_plots_collection = mock.MagicMock(file_format="svg")
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+        charts_interface._latest_refresh_date = mocked_latest_refresh_date
 
         # When
         encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
@@ -408,7 +416,7 @@ class TestChartsInterface:
         )
 
         # Then
-        assert encoded_chart["last_updated"] == spy_get_last_updated.return_value
+        assert encoded_chart["last_updated"] == mocked_latest_refresh_date
 
     @mock.patch.object(ChartsInterface, "encode_figure")
     def test_get_encoded_chart_delegates_call_to_encode_figure(
@@ -637,32 +645,6 @@ class TestValidateChartPlotParameters:
 
 
 class TestMiscMethods:
-    def test_svg_passed_to_encode_figure(self):
-        """
-        Given the user supplies a file_format of `svg` to pass to encode_figure
-        When `encode_figure` is called then no exception is raised as long as
-        the format is supported by the Plotly `to_image` function
-        """
-        # Given
-        mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
-        mocked_chart_plots = mock.Mock(
-            file_format="svg",
-            plots=[mocked_chart_plot_params],
-        )
-
-        charts_interface = ChartsInterface(
-            chart_plots=mocked_chart_plots,
-            core_time_series_manager=mock.Mock(),
-        )
-
-        figure = plotly.graph_objs.Figure()
-
-        # When
-        encoded_figure = charts_interface.encode_figure(figure=figure)
-
-        # Then
-        assert isinstance(encoded_figure, str)
-
     @pytest.mark.parametrize(
         "file_format",
         [
