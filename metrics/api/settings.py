@@ -181,7 +181,7 @@ else:
                 # Additional connections to be created at peak loads
                 "RECYCLE": 24 * 60 * 60,
                 # Time to close and replace connections
-                "TIMEOUT": 60 * 60 * 3,
+                "TIMEOUT": 60 * 10,
                 # Period of time to wait for a connection to become available
                 # during peak loads when all overflow slots are occupied
             },
