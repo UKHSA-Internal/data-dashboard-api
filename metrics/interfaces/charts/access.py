@@ -167,11 +167,10 @@ class ChartsInterface:
             that chart plot is skipped and an enriched model is not provided.
 
         Returns:
-            List[PlotData]: A list of `PlotData` models for
-                each of the requested chart plots.
+            A list of `PlotData` models for each of the requested chart plots.
 
         """
-        plots_data = self.plots_interface.build_plots_data()
+        plots_data: list[PlotData] = self.plots_interface.build_plots_data()
         self._set_latest_refresh_date_from_plots_data(plots_data=plots_data)
         return plots_data
 
