@@ -5,8 +5,8 @@ from _pytest.logging import LogCaptureFixture
 
 from ingestion.file_ingestion import FileIngestionFailedError
 from ingestion.operations.upload_from_s3 import (
-    _download_file_ingest_and_teardown,
     _upload_file_and_remove_local_copy,
+    download_file_ingest_and_teardown,
     download_files_and_upload,
 )
 
@@ -38,14 +38,14 @@ class TestDownloadFilesAndUpload:
         # Then
         spy_clear_metrics_tables.assert_called_once()
 
+    @mock.patch(f"{MODULE_PATH}.download_file_ingest_and_teardown")
     @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
-    @mock.patch(f"{MODULE_PATH}._download_file_ingest_and_teardown")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_delegates_calls_for_each_key_of_item_in_folder(
         self,
         mocked_clear_metrics_tables: mock.MagicMock,
-        spy_download_file_ingest_and_teardown: mock.MagicMock,
         spy_run_with_multiple_processes: mock.MagicMock,
+        spy_download_file_ingest_and_teardown: mock.MagicMock,
     ):
         """
         Given a mocked `AWSClient` object
@@ -119,7 +119,7 @@ class TestDownloadFileIngestAndTeardown:
     ):
         """
         Given a mocked `AWSClient` object and a fake item key
-        When `_download_file_ingest_and_teardown()` is called
+        When `download_file_ingest_and_teardown()` is called
         Then `download_item()` is called from the client
 
         Patches:
@@ -132,7 +132,7 @@ class TestDownloadFileIngestAndTeardown:
         fake_key = FAKE_FILENAME
 
         # When
-        _download_file_ingest_and_teardown(key=fake_key, client=spy_client)
+        download_file_ingest_and_teardown(key=fake_key, client=spy_client)
 
         # Then
         spy_client.download_item.assert_called_once_with(key=fake_key)
@@ -143,7 +143,7 @@ class TestDownloadFileIngestAndTeardown:
     ):
         """
         Given a mocked `AWSClient` object and a fake item key
-        When `_download_file_ingest_and_teardown()` is called
+        When `download_file_ingest_and_teardown()` is called
         Then `_upload_file_and_remove_local_copy()` is called
 
         Patches:
@@ -157,7 +157,7 @@ class TestDownloadFileIngestAndTeardown:
         fake_key = FAKE_FILENAME
 
         # When
-        _download_file_ingest_and_teardown(key=fake_key, client=spy_client)
+        download_file_ingest_and_teardown(key=fake_key, client=spy_client)
 
         # Then
         downloaded_item_filepath = spy_client.download_item.return_value
@@ -171,7 +171,7 @@ class TestDownloadFileIngestAndTeardown:
     ):
         """
         Given a mocked `AWSClient` object and a fake item key
-        When `_download_file_ingest_and_teardown()` is called
+        When `download_file_ingest_and_teardown()` is called
         Then `move_file_to_processed_folder()` is called from the client
 
         Patches:
@@ -184,7 +184,7 @@ class TestDownloadFileIngestAndTeardown:
         fake_key = FAKE_FILENAME
 
         # When
-        _download_file_ingest_and_teardown(key=fake_key, client=spy_client)
+        download_file_ingest_and_teardown(key=fake_key, client=spy_client)
 
         # Then
         spy_client.move_file_to_processed_folder.assert_called_once_with(key=fake_key)
@@ -196,7 +196,7 @@ class TestDownloadFileIngestAndTeardown:
         """
         Given a mocked `AWSClient` object and a fake item key
         And a file upload which will raise a `FileIngestionFailedError`
-        When `_download_file_ingest_and_teardown()` is called
+        When `download_file_ingest_and_teardown()` is called
         Then `move_file_to_processed_folder()` is not called from the client
 
         Patches:
@@ -212,7 +212,7 @@ class TestDownloadFileIngestAndTeardown:
         ]
 
         # When
-        _download_file_ingest_and_teardown(key=fake_key, client=spy_client)
+        download_file_ingest_and_teardown(key=fake_key, client=spy_client)
 
         # Then
         spy_client.move_file_to_processed_folder.assert_not_called()
