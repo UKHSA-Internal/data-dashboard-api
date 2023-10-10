@@ -100,8 +100,11 @@ class TestChartsView:
             data=valid_payload,
             format="json",
         )
-
         assert response.status_code == HTTPStatus.OK
+        response_data = response.data
+        assert response_data["last_updated"] == str(
+            core_timeseries_example[0].refresh_date
+        )
 
     @pytest.mark.django_db
     def test_returns_correct_response_for_v3(
@@ -109,15 +112,17 @@ class TestChartsView:
         core_timeseries_example: list[CoreTimeSeries],
     ):
         """
-        Given a valid payload to create a chart
+        Given a valid payload to create an age-based chart
         When the `POST /api/charts/v3/` endpoint is hit
         Then the response is not an HTTP 401 UNAUTHORIZED
+        And the `last_updated` field is returned with the correct value
         """
         # Given
         client = APIClient()
         valid_payload = self._build_valid_payload_for_existing_timeseries(
             core_timeseries=core_timeseries_example[0]
         )
+        valid_payload["x_axis"] = "age"
         path = "/api/charts/v3/"
 
         # When
@@ -132,3 +137,9 @@ class TestChartsView:
 
         # Check that the headers on the response indicate a json response is being returned
         assert response.headers["Content-Type"] == "application/json"
+
+        # Check that the "last_updated" is returned correctly for the age-based chart
+        response_data = response.data
+        assert response_data["last_updated"] == str(
+            core_timeseries_example[0].refresh_date
+        )
