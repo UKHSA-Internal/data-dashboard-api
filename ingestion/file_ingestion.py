@@ -2,7 +2,17 @@ import io
 import logging
 from enum import Enum
 
-from ingestion.consumer import Consumer
+import django
+
+# `django.setup()` is required prior any models being imported
+# This is because we spawn processes during ingestion
+# primarily so that file descriptors & db connections are not
+# copied from the parent as they are when `forking` instead of `spawning`.
+# This is a temporary measure, once the main ingestion process is moved
+# to a 1-to-1 of job:ingested file then multiprocessing can be reconfigured
+django.setup()
+
+from ingestion.consumer import Consumer  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
