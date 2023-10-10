@@ -175,13 +175,13 @@ else:
             "HOST": config.POSTGRES_HOST,
             "PORT": config.POSTGRES_PORT,
             "POOL_OPTIONS": {
-                "POOL_SIZE": 20,
+                "POOL_SIZE": 10,
                 # Number of connections to be persisted at all times
                 "MAX_OVERFLOW": 10,
                 # Additional connections to be created at peak loads
                 "RECYCLE": 24 * 60 * 60,
                 # Time to close and replace connections
-                "TIMEOUT": 60 * 10,
+                "TIMEOUT": 60 * 60 * 3,
                 # Period of time to wait for a connection to become available
                 # during peak loads when all overflow slots are occupied
             },
