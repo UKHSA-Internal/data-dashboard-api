@@ -2,7 +2,7 @@ import logging
 import os
 
 from ingestion.aws_client import AWSClient
-from ingestion.file_ingestion import _upload_file
+from ingestion.file_ingestion import FileIngestionFailedError, _upload_file
 from ingestion.operations.concurrency import run_with_multiple_processes
 from ingestion.operations.truncated_dataset import clear_metrics_tables
 
@@ -49,6 +49,11 @@ def _download_file_ingest_and_teardown(
 ) -> None:
     """Download the file of the given `key`, ingest, remove the local copy and move to `processed/` in the s3 bucket
 
+    Notes:
+        If the file upload fails
+        then the file will remain in the `in/` folder
+        and will therefore not be moved to the `processed/` folder
+
     Args:
         key: The key of the item to be downloaded and processed
         client: The `AWSClient` used to interact with s3.
@@ -60,12 +65,21 @@ def _download_file_ingest_and_teardown(
     """
     client = client or AWSClient()
     downloaded_filepath: str = client.download_item(key=key)
-    _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
+    try:
+        _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
+    except FileIngestionFailedError:
+        return
+
     client.move_file_to_processed_folder(key=key)
 
 
 def _upload_file_and_remove_local_copy(filepath: str) -> None:
     """Ingest the file at the given `filepath` and remove from the filesystem after uploading
+
+    Notes:
+        If the file upload fails
+        then the file will still be removed from the local filesystem
+        before the error is re-raised.
 
     Args:
         filepath: The path of the file to be ingested
@@ -73,6 +87,14 @@ def _upload_file_and_remove_local_copy(filepath: str) -> None:
     Returns:
         None
 
+    Raises:
+        `FileIngestionFailedError`: If the file upload fails
+            for any reason
+
     """
-    _upload_file(filepath=filepath)
+    try:
+        _upload_file(filepath=filepath)
+    except FileIngestionFailedError:
+        os.remove(path=filepath)
+        raise
     os.remove(path=filepath)

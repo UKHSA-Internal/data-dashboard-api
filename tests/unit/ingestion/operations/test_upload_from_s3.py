@@ -1,7 +1,9 @@
 from unittest import mock
 
+import pytest
 from _pytest.logging import LogCaptureFixture
 
+from ingestion.file_ingestion import FileIngestionFailedError
 from ingestion.operations.upload_from_s3 import (
     _download_file_ingest_and_teardown,
     _upload_file_and_remove_local_copy,
@@ -187,6 +189,34 @@ class TestDownloadFileIngestAndTeardown:
         # Then
         spy_client.move_file_to_processed_folder.assert_called_once_with(key=fake_key)
 
+    @mock.patch(f"{MODULE_PATH}._upload_file_and_remove_local_copy")
+    def test_does_not_call_move_file_to_processed_folder_if_error_is_raised(
+        self, mocked_upload_file_and_remove_local_copy: mock.MagicMock
+    ):
+        """
+        Given a mocked `AWSClient` object and a fake item key
+        And a file upload which will raise a `FileIngestionFailedError`
+        When `_download_file_ingest_and_teardown()` is called
+        Then `move_file_to_processed_folder()` is not called from the client
+
+        Patches:
+            `mocked_upload_file_and_remove_local_copy`: To simulate
+                the file upload failing
+
+        """
+        # Given
+        spy_client = mock.MagicMock()
+        fake_key = FAKE_FILENAME
+        mocked_upload_file_and_remove_local_copy.side_effect = [
+            FileIngestionFailedError(file_name=fake_key)
+        ]
+
+        # When
+        _download_file_ingest_and_teardown(key=fake_key, client=spy_client)
+
+        # Then
+        spy_client.move_file_to_processed_folder.assert_not_called()
+
 
 class TestUploadFileAndRemoveLocalCopy:
     @mock.patch(f"{MODULE_PATH}.os.remove")
@@ -240,6 +270,38 @@ class TestUploadFileAndRemoveLocalCopy:
 
         # When
         _upload_file_and_remove_local_copy(filepath=fake_filepath)
+
+        # Then
+        spy_os_remove.assert_called_once_with(path=fake_filepath)
+
+    @mock.patch(f"{MODULE_PATH}.os.remove")
+    @mock.patch(f"{MODULE_PATH}._upload_file")
+    def test_calls_os_remove_to_remove_file_when_error_is_raised(
+        self,
+        mocked_upload_file: mock.MagicMock,
+        spy_os_remove: mock.MagicMock,
+    ):
+        """
+        Given a fake file path which will fail upon upload
+        When `_upload_file_and_remove_local_copy()` is called
+        Then the call is delegated to `os.remove`
+            despite the `FileIngestionFailedError` being raised
+
+        Patches:
+            `mocked_upload_file`: To simulate the file upload failing
+            `spy_os_remove`: For the main assertion to check
+                that the filesystem is cleared
+
+        """
+        # Given
+        fake_filepath = FAKE_FILENAME
+        mocked_upload_file.side_effect = [
+            FileIngestionFailedError(file_name=fake_filepath)
+        ]
+
+        # When
+        with pytest.raises(FileIngestionFailedError):
+            _upload_file_and_remove_local_copy(filepath=fake_filepath)
 
         # Then
         spy_os_remove.assert_called_once_with(path=fake_filepath)

@@ -7,6 +7,12 @@ from ingestion.consumer import Consumer
 logger = logging.getLogger(__name__)
 
 
+class FileIngestionFailedError(Exception):
+    def __init__(self, file_name: str):
+        message = f"`{file_name}` upload failed."
+        super().__init__(message)
+
+
 class DataSourceFileType(Enum):
     # Headline types
     headline = "headline"
@@ -83,5 +89,6 @@ def _upload_file(filepath: str) -> None:
             file_ingester(file=f)
         except Exception as error:
             logger.warning("Failed upload of %s due to %s", filepath, error)
+            raise FileIngestionFailedError(file_name=filepath) from error
         else:
             logger.info("Completed ingestion of %s", filepath)
