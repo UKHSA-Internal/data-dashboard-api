@@ -162,7 +162,7 @@ elif config.APIENV == "INGESTION":
             "PASSWORD": config.POSTGRES_PASSWORD,
             "HOST": config.POSTGRES_HOST,
             "PORT": config.POSTGRES_PORT,
-            "CONN_MAX_AGE": 0,
+            "CONN_MAX_AGE": 60 * 60 * 12,
         }
     }
 else:
