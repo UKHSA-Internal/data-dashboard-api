@@ -194,9 +194,13 @@ class ChartsInterface:
             None
 
         """
-        latest_refresh_date: datetime.date = max(
-            plot.latest_refresh_date for plot in plots_data
-        )
+        try:
+            latest_refresh_date: datetime.date = max(
+                plot.latest_refresh_date for plot in plots_data
+            )
+        except ValueError:
+            return None
+
         self._latest_refresh_date: str = datetime.strftime(
             latest_refresh_date, "%Y-%m-%d"
         )
