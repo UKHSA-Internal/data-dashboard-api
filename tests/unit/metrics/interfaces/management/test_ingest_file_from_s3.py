@@ -7,7 +7,9 @@ MODULE_PATH = "metrics.interfaces.management.commands.ingest_file_from_s3"
 
 class TestUploadFilesFromS3:
     @mock.patch(f"{MODULE_PATH}.download_file_ingest_and_teardown")
-    def test_delegates_call(self, spy_download_file_ingest_and_teardown: mock.MagicMock):
+    def test_delegates_call(
+        self, spy_download_file_ingest_and_teardown: mock.MagicMock
+    ):
         """
         Given an instance of the app
         When a call is made to the
