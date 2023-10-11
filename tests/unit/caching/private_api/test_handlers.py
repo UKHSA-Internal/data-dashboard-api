@@ -12,9 +12,21 @@ from caching.private_api.handlers import (
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
+from tests.fakes.factories.cms.whats_new_child_page_factory import (
+    FakeWhatsNewChildPageFactory,
+)
+from tests.fakes.factories.cms.whats_new_parent_page_factory import (
+    FakeWhatsNewParentPageFactory,
+)
 from tests.fakes.managers.cms.common_page_manager import FakeCommonPageManager
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
 from tests.fakes.managers.cms.topic_page_manager import FakeTopicPageManager
+from tests.fakes.managers.cms.whats_new_child_page_manager import (
+    FakeWhatsNewChildPageManager,
+)
+from tests.fakes.managers.cms.whats_new_parent_page_manager import (
+    FakeWhatsNewParentPageManager,
+)
 
 MODULE_PATH = "caching.private_api.handlers"
 
@@ -52,6 +64,8 @@ class TestCollectAllPages:
             home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=fake_common_page_manager,
+            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
+            whats_new_child_page_manager=FakeWhatsNewChildPageManager(pages=[]),
         )
 
         # Then
@@ -59,6 +73,45 @@ class TestCollectAllPages:
         assert published_covid_page in collected_pages
         assert published_influenza_page in collected_pages
         assert published_about_page in collected_pages
+
+    def test_all_whats_new_type_pages_collected(self):
+        """
+        Given a `WhatsNewParentPage` and `WhatsNewChildPage`
+        When `collect_all_pages()` is called
+        Then the correct pages are returned
+        """
+        # Given
+        # Published `WhatsNewParentPage` which should be collected
+        published_whats_new_parent_page = (
+            FakeWhatsNewParentPageFactory.build_page_from_template(
+                live=True,
+            )
+        )
+        fake_whats_new_parent_page_manager = FakeWhatsNewParentPageManager(
+            pages=[published_whats_new_parent_page]
+        )
+        # Published `WhatsNewChildPage` which should be collected
+        published_whats_new_child_page = (
+            FakeWhatsNewChildPageFactory.build_page_from_template(
+                live=True,
+            )
+        )
+        fake_whats_new_child_page_manager = FakeWhatsNewChildPageManager(
+            pages=[published_whats_new_child_page]
+        )
+
+        # When
+        collected_pages = collect_all_pages(
+            home_page_manager=FakeHomePageManager(pages=[]),
+            topic_page_manager=FakeTopicPageManager(pages=[]),
+            common_page_manager=FakeCommonPageManager(pages=[]),
+            whats_new_child_page_manager=fake_whats_new_child_page_manager,
+            whats_new_parent_page_manager=fake_whats_new_parent_page_manager,
+        )
+
+        # Then
+        assert published_whats_new_parent_page in collected_pages
+        assert published_whats_new_child_page in collected_pages
 
     def test_non_dashboard_home_pages_not_collected(self):
         """
@@ -79,6 +132,8 @@ class TestCollectAllPages:
             home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=FakeCommonPageManager(pages=[]),
+            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
+            whats_new_child_page_manager=FakeWhatsNewChildPageManager(pages=[]),
         )
 
         # Then
@@ -112,6 +167,8 @@ class TestCollectAllPages:
             home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=FakeCommonPageManager(pages=[]),
+            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
+            whats_new_child_page_manager=FakeWhatsNewChildPageManager(pages=[]),
         )
 
         # Then

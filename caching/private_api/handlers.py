@@ -7,20 +7,27 @@ from caching.private_api.crawler import PrivateAPICrawler
 from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
+from cms.whats_new.models import WhatsNewChildPage, WhatsNewParentPage
 
 DEFAULT_HOME_PAGE_MANAGER = HomePage.objects
 DEFAULT_TOPIC_PAGE_MANAGER = TopicPage.objects
 DEFAULT_COMMON_PAGE_MANAGER = CommonPage.objects
+DEFAULT_WHATS_NEW_PARENT_PAGE_MANAGER = WhatsNewParentPage.objects
+DEFAULT_WHATS_NEW_CHILD_PAGE_MANAGER = WhatsNewChildPage.objects
 
 
 logger = logging.getLogger(__name__)
+
+ALL_PAGE_TYPES = list[HomePage, TopicPage, WhatsNewParentPage, WhatsNewChildPage]
 
 
 def collect_all_pages(
     home_page_manager: Manager = DEFAULT_HOME_PAGE_MANAGER,
     topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
     common_page_manager: Manager = DEFAULT_COMMON_PAGE_MANAGER,
-) -> list[HomePage, TopicPage]:
+    whats_new_parent_page_manager: Manager = DEFAULT_WHATS_NEW_PARENT_PAGE_MANAGER,
+    whats_new_child_page_manager: Manager = DEFAULT_WHATS_NEW_CHILD_PAGE_MANAGER,
+) -> ALL_PAGE_TYPES:
     """Collects and returns all pages which should be processed for caching
 
     Args:
@@ -33,6 +40,13 @@ def collect_all_pages(
         common_page_manager: The model manager for the `CommonPage` model
             Defaults to the concrete `CommonPageManager`
             via `CommonPage.objects`
+        whats_new_parent_page_manager: The model manager for the `WhatsNewParentPage` model
+            Defaults to the concrete `WhatsNewParentPageManager`
+            via `WhatsNewParentPage.objects`
+        whats_new_child_page_manager: The model manager for the `WhatsNewChildPage` model
+            Defaults to the concrete `WhatsNewChildPageManager`
+            via `WhatsNewChildPage.objects`
+
 
     Returns:
         List of `Page` objects which are to be processed for caching
@@ -42,6 +56,9 @@ def collect_all_pages(
     pages = [] if landing_page is None else [landing_page]
     pages += topic_page_manager.get_live_pages()
     pages += common_page_manager.get_live_pages()
+    pages += whats_new_parent_page_manager.get_live_pages()
+    pages += whats_new_child_page_manager.get_live_pages()
+
     return pages
 
 
@@ -64,7 +81,7 @@ def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
     start: float = default_timer()
     logging.info("Commencing refresh of cache")
 
-    pages: list[HomePage, TopicPage] = collect_all_pages()
+    pages: ALL_PAGE_TYPES = collect_all_pages()
     crawler.process_pages(pages=pages)
 
     duration: float = default_timer() - start
