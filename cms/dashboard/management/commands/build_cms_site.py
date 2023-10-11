@@ -13,6 +13,8 @@ from wagtail.models import Page, Site
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
 from cms.topic.models import TopicPage, TopicPageRelatedLink
+from cms.whats_new.models import Badge, WhatsNewChildPage, WhatsNewParentPage
+from cms.whats_new.models.parent import WhatsNewParentPageRelatedLink
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR, WAGTAIL_SITE_NAME
 
 logger = logging.getLogger(__name__)
@@ -127,6 +129,51 @@ def _build_common_page(name: str, parent_page: Page) -> TopicPage:
     return page
 
 
+def _build_whats_new_parent_page(name: str, parent_page: Page) -> TopicPage:
+    data = open_example_page_response(page_name=name)
+
+    page = WhatsNewParentPage(
+        body=data["body"],
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        date_posted=data["meta"]["first_published_at"].split("T")[0],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _build_related_links(
+        related_link_class=WhatsNewParentPageRelatedLink,
+        response_data=data,
+        page=page,
+    )
+
+    return page
+
+
+def _build_whats_new_child_page(name: str, parent_page: Page) -> TopicPage:
+    data = open_example_page_response(page_name=name)
+
+    badge = Badge(text=data["badge"]["text"], colour=data["badge"]["colour"])
+    badge.save()
+
+    page = WhatsNewChildPage(
+        body=data["body"],
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        date_posted=data["meta"]["first_published_at"].split("T")[0],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
+        additional_details=data["additional_details"],
+        badge=badge,
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    return page
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         """
@@ -165,8 +212,15 @@ class Command(BaseCommand):
         )
         _build_common_page(name="about", parent_page=root_page)
         _build_common_page(name="location_based_data", parent_page=root_page)
-        _build_common_page(name="whats_new", parent_page=root_page)
         _build_common_page(name="whats_coming", parent_page=root_page)
         _build_common_page(name="cookies", parent_page=root_page)
         _build_common_page(name="accessibility_statement", parent_page=root_page)
         _build_common_page(name="compliance", parent_page=root_page)
+
+        whats_new_parent_page = _build_whats_new_parent_page(
+            name="whats_new", parent_page=root_page
+        )
+        _build_whats_new_child_page(
+            name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
+            parent_page=whats_new_parent_page,
+        )
