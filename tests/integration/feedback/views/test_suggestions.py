@@ -12,7 +12,7 @@ class TestSuggestionsView:
     @mock.patch(f"{MODULE_PATH}.send_email")
     @pytest.mark.django_db
     def test_post_request_returns_correct_response(
-        self, spy_send_email: mock.MagicMock, authenticated_api_client: APIClient
+        self, spy_send_email: mock.MagicMock
     ):
         """
         Given a valid payload containing a question and answer suggestion
@@ -24,6 +24,7 @@ class TestSuggestionsView:
                 to in order to send the message to the email server.
                 And to ensure that the email server
                 is not needed for this API test
+
         """
         # Given
         path = "/api/suggestions/v1/"
@@ -33,9 +34,10 @@ class TestSuggestionsView:
             "like_to_see": "I'd like to see more consistency across charts and graphs",
             "did_you_find_everything": "yes",
         }
+        api_client = APIClient()
 
         # When
-        response: Response = authenticated_api_client.post(
+        response: Response = api_client.post(
             path=path,
             data=valid_payload,
             format="json",
