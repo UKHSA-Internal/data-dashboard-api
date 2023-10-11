@@ -1,8 +1,6 @@
 import datetime
 
 import pytest
-from rest_framework.test import APIClient
-from rest_framework_api_key.models import APIKey
 
 from ingestion.data_transfer_models import IncomingHeadlineDTO
 from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
@@ -192,13 +190,3 @@ def example_incoming_timeseries_dto(
     example_timeseries_data: list[dict[str, str | float]]
 ) -> IncomingTimeSeriesDTO:
     return IncomingTimeSeriesDTO(**example_timeseries_data[0])
-
-
-@pytest.fixture
-def authenticated_api_client() -> APIClient:
-    _, key = APIKey.objects.create_key(name="Test Key")
-
-    api_client = APIClient()
-    api_client.credentials(HTTP_AUTHORIZATION=key)
-
-    return api_client

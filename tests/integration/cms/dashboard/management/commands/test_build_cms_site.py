@@ -10,9 +10,7 @@ from cms.topic.models import TopicPage
 
 class TestBuildCMSSite:
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_slugs_and_titles(
-        self, authenticated_api_client: APIClient
-    ):
+    def test_command_builds_site_with_correct_slugs_and_titles(self):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
         When a GET request is made to `/api/pages/` list endpoint
@@ -21,9 +19,10 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
+        api_client = APIClient()
 
         # When
-        response = authenticated_api_client.get(path="/api/pages/")
+        response = api_client.get(path="/api/pages/")
 
         # Then
         response_data = response.data
@@ -58,10 +57,7 @@ class TestBuildCMSSite:
             assert expected_title in created_titles
 
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_home_page(
-        self,
-        authenticated_api_client: APIClient,
-    ):
+    def test_command_builds_site_with_correct_home_page(self):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
         And the ID of the `respiratory-viruses` page
@@ -71,9 +67,10 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         home_page = HomePage.objects.get(slug="dashboard")
+        api_client = APIClient()
 
         # When
-        response = authenticated_api_client.get(path=f"/api/pages/{home_page.id}/")
+        response = api_client.get(path=f"/api/pages/{home_page.id}/")
 
         # Then
         response_data = response.data
@@ -112,11 +109,7 @@ class TestBuildCMSSite:
     @pytest.mark.parametrize(
         "slug", ["covid-19", "influenza", "other-respiratory-viruses"]
     )
-    def test_command_builds_site_with_correct_topic_pages(
-        self,
-        authenticated_api_client: APIClient,
-        slug: str,
-    ):
+    def test_command_builds_site_with_correct_topic_pages(self, slug: str):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
         And the ID of the topic page
@@ -127,9 +120,10 @@ class TestBuildCMSSite:
         call_command("build_cms_site")
         topic_page = TopicPage.objects.get(slug=slug)
         parent_home_page = HomePage.objects.get(title="UKHSA data dashboard")
+        api_client = APIClient()
 
         # When
-        response = authenticated_api_client.get(path=f"/api/pages/{topic_page.id}/")
+        response = api_client.get(path=f"/api/pages/{topic_page.id}/")
 
         # Then
         response_data = response.data
@@ -168,10 +162,7 @@ class TestBuildCMSSite:
             assert related_link["body"] == related_links_from_template[index]["body"]
 
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_about_page(
-        self,
-        authenticated_api_client: APIClient,
-    ):
+    def test_command_builds_site_with_correct_about_page(self):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
         And the ID of the `about` page
@@ -182,9 +173,10 @@ class TestBuildCMSSite:
         call_command("build_cms_site")
         about_page = CommonPage.objects.get(slug="about")
         parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        api_client = APIClient()
 
         # When
-        response = authenticated_api_client.get(path=f"/api/pages/{about_page.id}/")
+        response = api_client.get(path=f"/api/pages/{about_page.id}/")
 
         # Then
         response_data = response.data
@@ -218,10 +210,7 @@ class TestBuildCMSSite:
             assert related_link["body"] == related_links_from_template[index]["body"]
 
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_whats_new_page(
-        self,
-        authenticated_api_client: APIClient,
-    ):
+    def test_command_builds_site_with_correct_whats_new_page(self):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
         And the ID of the `whats_new` page
@@ -232,9 +221,10 @@ class TestBuildCMSSite:
         call_command("build_cms_site")
         whats_new_page = CommonPage.objects.get(slug="whats-new")
         parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        api_client = APIClient()
 
         # When
-        response = authenticated_api_client.get(path=f"/api/pages/{whats_new_page.id}/")
+        response = api_client.get(path=f"/api/pages/{whats_new_page.id}/")
 
         # Then
         response_data = response.data

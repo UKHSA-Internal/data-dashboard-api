@@ -12,11 +12,9 @@ class TestDraftPagesAPI:
         return "/api/drafts"
 
     @pytest.mark.django_db
-    def test_request_returns_draft_with_unpublished_changes(
-        self, authenticated_api_client: APIClient
-    ):
+    def test_request_returns_draft_with_unpublished_changes(self):
         """
-        Given an APIClient which is authenticated
+        Given an APIClient
         And a `Page` record which has unpublished changes
         When the detail `GET /api/drafts/{id}/` endpoint is hit
         Then an HTTP 200 OK response is returned
@@ -28,12 +26,14 @@ class TestDraftPagesAPI:
         # Save a draft but do not publish the change
         page.save_revision()
 
+        api_client = APIClient()
+
         # When
-        response_from_drafts_endpoint: Response = authenticated_api_client.get(
+        response_from_drafts_endpoint: Response = api_client.get(
             path=f"{self.path}/{page.pk}/",
             format="json",
         )
-        response_from_pages_endpoint: Response = authenticated_api_client.get(
+        response_from_pages_endpoint: Response = api_client.get(
             path=f"/api/pages/{page.pk}/",
             format="json",
         )

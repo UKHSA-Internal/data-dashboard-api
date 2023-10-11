@@ -12,9 +12,7 @@ from metrics.data.models.core_models import CoreTimeSeries
 class TestIngestion:
     @pytest.mark.django_db
     def test_data_can_be_ingested_and_queried_from_tables_endpoint(
-        self,
-        authenticated_api_client: APIClient,
-        example_timeseries_data: list[dict[str, str | float]],
+        self, example_timeseries_data: list[dict[str, str | float]]
     ):
         """
         Given some sample timeseries data
@@ -26,6 +24,7 @@ class TestIngestion:
         fake_data = mock.Mock()
         fake_data.readlines.return_value = [json.dumps(example_timeseries_data)]
         fake_data.name = "metric_COVID-19_deaths_ONSByDay"
+        api_client = APIClient()
 
         assert CoreTimeSeries.objects.count() == 0
 
@@ -49,7 +48,7 @@ class TestIngestion:
             ],
         }
 
-        response: Response = authenticated_api_client.post(
+        response: Response = api_client.post(
             path=path, data=valid_tables_endpoint_payload, format="json"
         )
         response_data = response.data

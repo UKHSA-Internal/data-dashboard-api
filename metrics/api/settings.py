@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "drf_spectacular",
-    "rest_framework_api_key",
     "metrics.api",
     "metrics.data",
     "metrics.interfaces",
@@ -103,7 +102,7 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "metrics.api.authentication.TokenHeaderAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
 }
 
@@ -114,8 +113,6 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Docs for the API which supports the UKHSA Data Dashboard.",
     "VERSION": "v 0.1.0",
 }
-
-API_KEY_CUSTOM_HEADER = "HTTP_AUTHORIZATION"
 
 WSGI_APPLICATION = "metrics.api.wsgi.application"
 
