@@ -2,7 +2,7 @@
     "id": 15,
     "meta": {
         "seo_title": "What's new | UKHSA data dashboard",
-        "search_description": "",
+        "search_description": "A list of all the new features and key pieces of data which have been added to the UKHSA data dashboard",
         "type": "whats_new.WhatsNewParentPage",
         "detail_url": "http://localhost/api/pages/15/",
         "html_url": null,
