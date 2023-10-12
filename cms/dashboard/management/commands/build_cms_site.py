@@ -106,7 +106,7 @@ def _build_topic_page(name: str, parent_page: Page) -> TopicPage:
     return page
 
 
-def _build_common_page(name: str, parent_page: Page) -> TopicPage:
+def _build_common_page(name: str, parent_page: Page) -> CommonPage:
     data = open_example_page_response(page_name=name)
 
     page = CommonPage(
@@ -129,7 +129,7 @@ def _build_common_page(name: str, parent_page: Page) -> TopicPage:
     return page
 
 
-def _build_whats_new_parent_page(name: str, parent_page: Page) -> TopicPage:
+def _build_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParentPage:
     data = open_example_page_response(page_name=name)
 
     page = WhatsNewParentPage(
