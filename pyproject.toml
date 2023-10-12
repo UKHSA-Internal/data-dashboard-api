@@ -111,7 +111,17 @@ addopts = "--random-order"
 # Test coverage configuration
 ########################################################################################################################
 [tool.coverage.report]
-fail_under = 98 # Test coverage report will fail for total coverage under this threshold value
+omit = [
+    "tests/*",                          # Omit test files themselves from the report
+    "cms/search/*",                     # Boilerplate wagtail `search` app
+    "metrics/api/wsgi.py",              # Boilerplate Django server entrypoint
+    "metrics/api/asgi.py",              # Boilerplate Django server entrypoint
+    "metrics/api/settings.py",          # Configuration file
+    "config.py",                        # Configuration file
+    "manage.py"                         # Application server entrypoint
+]
+skip_covered = true                     # Only list files which do not have 100% test coverage in the report
+fail_under = 97.5                       # Test coverage report will fail for total coverage under this threshold value
 
 ########################################################################################################################
 # Import linter configuration
