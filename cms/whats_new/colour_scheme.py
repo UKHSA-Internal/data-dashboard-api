@@ -2,12 +2,19 @@ from django.db import models
 
 
 class BadgeColours(models.Choices):
-    GREY = "GREY"
-    GREEN = "GREEN"
-    TURQUOISE = "TURQUOISE"
+    """Enum for badge colours which conform to the GDS specification for tags
+
+    References:
+        - https://design-system.service.gov.uk/components/tag/all-colours/index.html
+
+    """
+
     BLUE = "BLUE"
-    PURPLE = "PURPLE"
-    PINK = "PINK"
-    RED = "RED"
+    GREEN = "GREEN"
+    GREY = "GREY"
     ORANGE = "ORANGE"
+    PINK = "PINK"
+    PURPLE = "PURPLE"
+    RED = "RED"
+    TURQUOISE = "TURQUOISE"
     YELLOW = "YELLOW"
