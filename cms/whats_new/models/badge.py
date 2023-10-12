@@ -19,10 +19,10 @@ class Badge(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["text", "colour"], name="text and colour `Badge` combinations should be unique"
+                fields=["text", "colour"],
+                name="text and colour `Badge` combinations should be unique",
             )
         ]
-
 
     # Sets which fields to expose on the CMS application to edit
     panels = [
