@@ -96,8 +96,14 @@ class TestCollectAllPages:
                 live=True,
             )
         )
+        # Unpublished `WhatsNewChildPage` which should not be collected
+        unpublished_whats_new_child_page = (
+            FakeWhatsNewChildPageFactory.build_page_from_template(
+                live=False,
+            )
+        )
         fake_whats_new_child_page_manager = FakeWhatsNewChildPageManager(
-            pages=[published_whats_new_child_page]
+            pages=[published_whats_new_child_page, unpublished_whats_new_child_page]
         )
 
         # When
@@ -112,6 +118,7 @@ class TestCollectAllPages:
         # Then
         assert published_whats_new_parent_page in collected_pages
         assert published_whats_new_child_page in collected_pages
+        assert unpublished_whats_new_child_page not in collected_pages
 
     def test_non_dashboard_home_pages_not_collected(self):
         """
