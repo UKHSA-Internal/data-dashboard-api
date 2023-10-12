@@ -82,6 +82,8 @@ class FrontEndCrawler:
             - "HomePage"
             - "TopicPage"
             - "CommonPage"
+            - "WhatsNewParentPage"
+            - "WhatsNewChildEntry"
 
         Args:
             page_item: The individual page information
