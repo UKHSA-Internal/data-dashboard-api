@@ -13,7 +13,7 @@ from wagtail.models import Page, Site
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
 from cms.topic.models import TopicPage, TopicPageRelatedLink
-from cms.whats_new.models import Badge, WhatsNewChildPage, WhatsNewParentPage
+from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
 from cms.whats_new.models.parent import WhatsNewParentPageRelatedLink
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR, WAGTAIL_SITE_NAME
 
@@ -152,13 +152,13 @@ def _build_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParent
     return page
 
 
-def _build_whats_new_child_page(name: str, parent_page: Page) -> TopicPage:
+def _build_whats_new_child_entry(name: str, parent_page: Page) -> WhatsNewChildEntry:
     data = open_example_page_response(page_name=name)
 
     badge = Badge(text=data["badge"]["text"], colour=data["badge"]["colour"])
     badge.save()
 
-    page = WhatsNewChildPage(
+    entry = WhatsNewChildEntry(
         body=data["body"],
         title=data["title"],
         slug=data["meta"]["slug"],
@@ -169,9 +169,9 @@ def _build_whats_new_child_page(name: str, parent_page: Page) -> TopicPage:
         additional_details=data["additional_details"],
         badge=badge,
     )
-    _add_page_to_parent(page=page, parent_page=parent_page)
+    _add_page_to_parent(page=entry, parent_page=parent_page)
 
-    return page
+    return entry
 
 
 class Command(BaseCommand):
@@ -220,7 +220,7 @@ class Command(BaseCommand):
         whats_new_parent_page = _build_whats_new_parent_page(
             name="whats_new", parent_page=root_page
         )
-        _build_whats_new_child_page(
+        _build_whats_new_child_entry(
             name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
             parent_page=whats_new_parent_page,
         )

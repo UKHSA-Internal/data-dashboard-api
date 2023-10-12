@@ -7,18 +7,18 @@ from caching.private_api.crawler import PrivateAPICrawler
 from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
-from cms.whats_new.models import WhatsNewChildPage, WhatsNewParentPage
+from cms.whats_new.models import WhatsNewChildEntry, WhatsNewParentPage
 
 DEFAULT_HOME_PAGE_MANAGER = HomePage.objects
 DEFAULT_TOPIC_PAGE_MANAGER = TopicPage.objects
 DEFAULT_COMMON_PAGE_MANAGER = CommonPage.objects
 DEFAULT_WHATS_NEW_PARENT_PAGE_MANAGER = WhatsNewParentPage.objects
-DEFAULT_WHATS_NEW_CHILD_PAGE_MANAGER = WhatsNewChildPage.objects
+DEFAULT_WHATS_NEW_CHILD_ENTRY_MANAGER = WhatsNewChildEntry.objects
 
 
 logger = logging.getLogger(__name__)
 
-ALL_PAGE_TYPES = list[HomePage, TopicPage, WhatsNewParentPage, WhatsNewChildPage]
+ALL_PAGE_TYPES = list[HomePage, TopicPage, WhatsNewParentPage, WhatsNewChildEntry]
 
 
 def collect_all_pages(
@@ -26,7 +26,7 @@ def collect_all_pages(
     topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
     common_page_manager: Manager = DEFAULT_COMMON_PAGE_MANAGER,
     whats_new_parent_page_manager: Manager = DEFAULT_WHATS_NEW_PARENT_PAGE_MANAGER,
-    whats_new_child_page_manager: Manager = DEFAULT_WHATS_NEW_CHILD_PAGE_MANAGER,
+    whats_new_child_entry_manager: Manager = DEFAULT_WHATS_NEW_CHILD_ENTRY_MANAGER,
 ) -> ALL_PAGE_TYPES:
     """Collects and returns all pages which should be processed for caching
 
@@ -43,10 +43,9 @@ def collect_all_pages(
         whats_new_parent_page_manager: The model manager for the `WhatsNewParentPage` model
             Defaults to the concrete `WhatsNewParentPageManager`
             via `WhatsNewParentPage.objects`
-        whats_new_child_page_manager: The model manager for the `WhatsNewChildPage` model
-            Defaults to the concrete `WhatsNewChildPageManager`
-            via `WhatsNewChildPage.objects`
-
+        whats_new_child_entry_manager: The model manager for the `WhatsNewChildEntry` model
+            Defaults to the concrete `WhatsNewChildEntryManager`
+            via `WhatsNewEntryPage.objects`
 
     Returns:
         List of `Page` objects which are to be processed for caching
@@ -57,7 +56,7 @@ def collect_all_pages(
     pages += topic_page_manager.get_live_pages()
     pages += common_page_manager.get_live_pages()
     pages += whats_new_parent_page_manager.get_live_pages()
-    pages += whats_new_child_page_manager.get_live_pages()
+    pages += whats_new_child_entry_manager.get_live_pages()
 
     return pages
 

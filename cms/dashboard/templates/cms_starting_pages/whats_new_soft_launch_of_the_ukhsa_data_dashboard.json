@@ -3,7 +3,7 @@
     "meta": {
         "seo_title": "",
         "search_description": "",
-        "type": "whats_new.WhatsNewChildPage",
+        "type": "whats_new.WhatsNewChildEntry",
         "detail_url": "http://localhost/api/pages/18/",
         "html_url": null,
         "slug": "soft-launch-of-the-ukhsa-data-dashboard",

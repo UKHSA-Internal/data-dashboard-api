@@ -2,16 +2,16 @@ import factory
 
 from cms.dashboard.management.commands.build_cms_site import open_example_page_response
 from cms.whats_new.models import Badge
-from tests.fakes.models.cms.whats_new_child import FakeWhatsNewChildPage
+from tests.fakes.models.cms.whats_new_child import FakeWhatsNewChildEntry
 
 
-class FakeWhatsNewChildPageFactory(factory.Factory):
+class FakeWhatsNewChildEntryFactory(factory.Factory):
     """
-    Factory for creating `FakeWhatsNewChildPage` instances for tests
+    Factory for creating `FakeWhatsNewChildEntry` instances for tests
     """
 
     class Meta:
-        model = FakeWhatsNewChildPage
+        model = FakeWhatsNewChildEntry
 
     @classmethod
     def build_page_from_template(cls, **kwargs):

@@ -6,11 +6,11 @@ from wagtail.models import Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
-from cms.whats_new.managers.child import WhatsNewChildPageManager
+from cms.whats_new.managers.child import WhatsNewChildEntryManager
 from cms.whats_new.serializers import BadgeSerializer
 
 
-class WhatsNewChildPage(Page):
+class WhatsNewChildEntry(Page):
     date_posted = models.DateField(null=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     badge = models.ForeignKey(
@@ -57,4 +57,4 @@ class WhatsNewChildPage(Page):
         ]
     )
 
-    objects = WhatsNewChildPageManager()
+    objects = WhatsNewChildEntryManager()

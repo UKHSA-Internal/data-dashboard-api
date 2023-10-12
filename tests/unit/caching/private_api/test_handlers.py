@@ -12,8 +12,8 @@ from caching.private_api.handlers import (
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
-from tests.fakes.factories.cms.whats_new_child_page_factory import (
-    FakeWhatsNewChildPageFactory,
+from tests.fakes.factories.cms.whats_new_child_entry_factory import (
+    FakeWhatsNewChildEntryFactory,
 )
 from tests.fakes.factories.cms.whats_new_parent_page_factory import (
     FakeWhatsNewParentPageFactory,
@@ -21,8 +21,8 @@ from tests.fakes.factories.cms.whats_new_parent_page_factory import (
 from tests.fakes.managers.cms.common_page_manager import FakeCommonPageManager
 from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
 from tests.fakes.managers.cms.topic_page_manager import FakeTopicPageManager
-from tests.fakes.managers.cms.whats_new_child_page_manager import (
-    FakeWhatsNewChildPageManager,
+from tests.fakes.managers.cms.whats_new_child_entry_manager import (
+    FakeWhatsNewChildEntryManager,
 )
 from tests.fakes.managers.cms.whats_new_parent_page_manager import (
     FakeWhatsNewParentPageManager,
@@ -65,7 +65,7 @@ class TestCollectAllPages:
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=fake_common_page_manager,
             whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
-            whats_new_child_page_manager=FakeWhatsNewChildPageManager(pages=[]),
+            whats_new_child_entry_manager=FakeWhatsNewChildEntryManager(pages=[]),
         )
 
         # Then
@@ -76,7 +76,7 @@ class TestCollectAllPages:
 
     def test_all_whats_new_type_pages_collected(self):
         """
-        Given a `WhatsNewParentPage` and `WhatsNewChildPage`
+        Given a `WhatsNewParentPage` and `WhatsNewChildEntry`
         When `collect_all_pages()` is called
         Then the correct pages are returned
         """
@@ -90,20 +90,20 @@ class TestCollectAllPages:
         fake_whats_new_parent_page_manager = FakeWhatsNewParentPageManager(
             pages=[published_whats_new_parent_page]
         )
-        # Published `WhatsNewChildPage` which should be collected
-        published_whats_new_child_page = (
-            FakeWhatsNewChildPageFactory.build_page_from_template(
+        # Published `WhatsNewChildEntry` which should be collected
+        published_whats_new_child_entry = (
+            FakeWhatsNewChildEntryFactory.build_page_from_template(
                 live=True,
             )
         )
-        # Unpublished `WhatsNewChildPage` which should not be collected
-        unpublished_whats_new_child_page = (
-            FakeWhatsNewChildPageFactory.build_page_from_template(
+        # Unpublished `WhatsNewChildEntry` which should not be collected
+        unpublished_whats_new_child_entry = (
+            FakeWhatsNewChildEntryFactory.build_page_from_template(
                 live=False,
             )
         )
-        fake_whats_new_child_page_manager = FakeWhatsNewChildPageManager(
-            pages=[published_whats_new_child_page, unpublished_whats_new_child_page]
+        fake_whats_new_child_entry_manager = FakeWhatsNewChildEntryManager(
+            pages=[published_whats_new_child_entry, unpublished_whats_new_child_entry]
         )
 
         # When
@@ -111,14 +111,14 @@ class TestCollectAllPages:
             home_page_manager=FakeHomePageManager(pages=[]),
             topic_page_manager=FakeTopicPageManager(pages=[]),
             common_page_manager=FakeCommonPageManager(pages=[]),
-            whats_new_child_page_manager=fake_whats_new_child_page_manager,
+            whats_new_child_entry_manager=fake_whats_new_child_entry_manager,
             whats_new_parent_page_manager=fake_whats_new_parent_page_manager,
         )
 
         # Then
         assert published_whats_new_parent_page in collected_pages
-        assert published_whats_new_child_page in collected_pages
-        assert unpublished_whats_new_child_page not in collected_pages
+        assert published_whats_new_child_entry in collected_pages
+        assert unpublished_whats_new_child_entry not in collected_pages
 
     def test_non_dashboard_home_pages_not_collected(self):
         """
@@ -140,7 +140,7 @@ class TestCollectAllPages:
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=FakeCommonPageManager(pages=[]),
             whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
-            whats_new_child_page_manager=FakeWhatsNewChildPageManager(pages=[]),
+            whats_new_child_entry_manager=FakeWhatsNewChildEntryManager(pages=[]),
         )
 
         # Then
@@ -175,7 +175,7 @@ class TestCollectAllPages:
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=FakeCommonPageManager(pages=[]),
             whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
-            whats_new_child_page_manager=FakeWhatsNewChildPageManager(pages=[]),
+            whats_new_child_entry_manager=FakeWhatsNewChildEntryManager(pages=[]),
         )
 
         # Then

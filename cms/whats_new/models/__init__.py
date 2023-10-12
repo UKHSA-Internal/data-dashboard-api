@@ -1,3 +1,3 @@
 from .parent import WhatsNewParentPage
-from .child import WhatsNewChildPage
+from .child import WhatsNewChildEntry
 from .badge import Badge
