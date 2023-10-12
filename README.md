@@ -198,10 +198,10 @@ curl -X 'GET' 'http://localhost:8000/api/pages/'
 ### Via Swagger
 
 Alternatively, you can use the swagger docs at `http://localhost:8000/api/swagger/`.
-To pass the API key to all requests made by swagger you will need to do the following:
-1. Click on the `Authorize` button
-2. Enter your generated secret API key in the `api_key` authorization field.
-3. You are now free to use the API via the swagger docs!
+
+### Via Redoc
+
+Or redoc at `http://localhost:8000/api/redoc/`
 
 ---
 
