@@ -15,7 +15,7 @@ coreschema==0.0.4
 cyclonedx-python-lib==4.2.2
 distlib==0.3.7
 Django==4.2.6
-django-cors-headers==4.2.0
+django-cors-headers==4.3.0
 django-db-connection-pool==1.2.4
 django-filter==22.1
 django-modelcluster==6.1
