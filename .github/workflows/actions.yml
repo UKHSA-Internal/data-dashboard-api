@@ -134,6 +134,23 @@ jobs:
           python -m pytest tests/system/
 
   ###############################################################################
+  # Test coverage
+  ###############################################################################
+
+  test-coverage:
+    name: Test coverage
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: ./.github/actions/install-cache
+
+      - name: Evaluate test coverage
+        run: |
+          pytest --cov=. tests/
+
+  ###############################################################################
   # Deploy
   ###############################################################################
 
@@ -144,6 +161,7 @@ jobs:
       unit-tests,
       integration-tests,
       system-tests,
+      test-coverage,
       vulnerabilities,
       architecture-checks
     ]
