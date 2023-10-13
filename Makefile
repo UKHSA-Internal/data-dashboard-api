@@ -3,6 +3,7 @@
 VENV=venv
 
 # Grab the current python version associated with the project
+# Note this is currently also used in the CI
 PYTHON_VERSION=`cat .python-version`
 
 # Location of the venv/bin folder so that the
