@@ -14,6 +14,6 @@ runs:
         path: ${{ env.pythonLocation }}
         key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
     - name: Install dependencies
-      if: steps.cache.outputs.cache-hit == 'false'
+      if: steps.cache.outputs.cache-hit != 'true'
       run: pip install -r requirements.txt
       shell: bash
