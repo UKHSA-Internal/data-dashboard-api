@@ -81,6 +81,7 @@ ruamel.yaml==0.17.35
 ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.21
 scour==0.38.2
+setuptools==65.5.1
 simplejson==3.19.2
 six==1.16.0
 sortedcontainers==2.4.0
@@ -94,7 +95,7 @@ toml==0.10.2
 tomli==2.0.1
 typing_extensions==4.8.0
 uritemplate==4.1.1
-urllib3==1.26.5
+urllib3==2.0.6
 virtualenv==20.24.5
 wagtail==5.1.2
 webencodings==0.5.1
