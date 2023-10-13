@@ -38,10 +38,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
-#      - uses: ukhsa-internal/gh-action-pip-audit-action@v1
-#        with:
-#          inputs: requirements.txt
 
+      # Scan dependencies with `pip-audit`
+      - uses: pypa/gh-action-pip-audit@v1.0.8
+
+      # Scan project with `Bandit`
       - name: Run Bandit
         run: |
           bandit -r .
