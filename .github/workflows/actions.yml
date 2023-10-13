@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
   ###############################################################################
@@ -38,7 +37,6 @@ jobs:
     runs-on: ubuntu-latest  
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 #      - uses: ukhsa-internal/gh-action-pip-audit-action@v1
 #        with:
@@ -58,7 +56,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
       - name: Run ruff & black
@@ -75,7 +72,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
       - name: Run import-linter
@@ -92,7 +88,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
       - name: Run unit tests
@@ -109,7 +104,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
       - name: Run Integration tests
@@ -126,7 +120,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
       - uses: ./.github/actions/install-cache
 
       - name: Run System tests

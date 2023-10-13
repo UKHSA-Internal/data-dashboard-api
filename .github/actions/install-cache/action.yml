@@ -5,14 +5,15 @@ description: 'Read / write install cache'
 runs:
   using: 'composite'
   steps:
-    - uses: ukhsa-internal/restore-virtualenv-action@v1
-      id: cache-virtualenv
-
-    - uses: ukhsa-internal/restore-pip-download-cache-action@v1
-      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-
+    - name: Set up Python
+      uses: actions/setup-python@v4
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      id: cache
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt --no-cache-dir
-      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit == 'false'
+      run: pip install -r requirements.txt
       shell: bash
