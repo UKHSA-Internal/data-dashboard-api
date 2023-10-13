@@ -10,6 +10,10 @@ runs:
     - name: Cache dependencies
       uses: actions/cache@v3
       id: cache
+      # Using the native `setup-python` `cache` interface only caches dependencies
+      # as opposed to the build itself.
+      # So even with dependencies cached, there is still a +1min penalty to pay
+      # With this we cache the build and so that each CI job can get straight into what it wants to do
       with:
         path: ${{ env.pythonLocation }}
         key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
