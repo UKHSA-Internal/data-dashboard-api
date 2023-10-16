@@ -21,12 +21,11 @@ from metrics.api.views import (
     DownloadsView,
     EncodedChartsView,
     HealthView,
-    TrendsView,
+    TablesView,
+    TrendsViewBeta,
 )
 from metrics.api.views.caching import CacheView
 from metrics.api.views.headlines import HeadlinesViewBeta
-from metrics.api.views.tables import TablesView
-from metrics.api.views.trends import TrendsViewBeta
 from public_api import construct_urlpatterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -119,7 +118,6 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesViewBeta.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
-    re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
 ]
 
