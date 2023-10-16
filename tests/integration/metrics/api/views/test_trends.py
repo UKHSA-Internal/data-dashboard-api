@@ -4,8 +4,6 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from metrics.data.models.core_models import CoreHeadline
-
 
 class TestTrendsViewBeta:
     @property
@@ -15,7 +13,7 @@ class TestTrendsViewBeta:
     @pytest.mark.django_db
     def test_get_returns_correct_response(
         self,
-        core_trend_example_beta: tuple[CoreHeadline, CoreHeadline],
+        core_trend_example,
     ):
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
@@ -24,7 +22,7 @@ class TestTrendsViewBeta:
         """
         # Given
         client = APIClient()
-        main_record, percentage_record = core_trend_example_beta
+        main_record, percentage_record = core_trend_example
         topic_name = main_record.metric.metric_group.topic.name
         metric_name = main_record.metric.name
         percentage_metric_name = percentage_record.metric.name
