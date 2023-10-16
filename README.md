@@ -27,7 +27,7 @@ Note that to use the `Makefile` you will need
 There are a number of steps to take before getting the environment setup for local development.
 
 1. At the time of writing you will need to ensure that 
-you have [Python version 3.11](https://www.python.org/downloads/) installed on your system.
+you have [Python version 3.12](https://www.python.org/downloads/) installed on your system.
 If in doubt, please check the `.python-version` file at the root level of the project. 
 This is used by the Makefile and the CI.
 
@@ -52,8 +52,6 @@ See the [Django documentation | SECRET_KEY](https://docs.djangoproject.com/en/4.
 ```bash
 make setup-venv
 ```
-
-Note that this step requires a Python 3.11 version to be installed on your system.
 
 5. Apply the database migrations, ensure Django collects static files and run the server.
 ```bash
