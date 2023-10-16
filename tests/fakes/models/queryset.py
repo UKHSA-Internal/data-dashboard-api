@@ -21,3 +21,6 @@ class FakeQuerySet(QuerySet):
 
     def _fetch_all(self):
         return self.fake_instances
+
+    def count(self) -> int:
+        return len(self.fake_instances)
