@@ -19,7 +19,7 @@ class TestInternalAPIClient:
             [
                 ("pages_endpoint_path", "/api/pages/"),
                 ("headlines_endpoint_path", "/api/headlines/v2/"),
-                ("trends_endpoint_path", "/api/trends/v2/"),
+                ("trends_endpoint_path", "/api/trends/v3/"),
                 ("charts_endpoint_path", "/api/charts/v3/"),
                 ("tables_endpoint_path", "/api/tables/v4/"),
                 ("downloads_endpoint_path", "/api/downloads/v2/"),
