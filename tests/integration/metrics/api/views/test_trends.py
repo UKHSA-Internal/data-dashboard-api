@@ -13,7 +13,7 @@ class TestTrendsViewBeta:
     @pytest.mark.django_db
     def test_get_returns_correct_response(
         self,
-        core_trend_example,
+        core_trend_example: tuple[CoreHeadline, CoreHeadline],
     ):
         """
         Given the names of a `topic`, `metric` and `percentage_metric`
