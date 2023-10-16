@@ -58,7 +58,7 @@ packaging==23.2
 pandas==1.5.3
 pathspec==0.11.2
 pbr==5.11.1
-Pillow==10.0.1
+Pillow==10.1.0
 pip-api==0.0.30
 pip-requirements-parser==32.0.1
 platformdirs==3.11.0
