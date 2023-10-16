@@ -120,6 +120,9 @@ class BulkDownloadsView(APIView):
 
     @extend_schema(tags=[DOWNLOADS_API_TAG])
     def get(self, request, *args, **kwargs):
+        """Use this endpoint to download a zip file of the CSV files associated with all the charts on the dashboard
+
+        """
         # Create a BytesIO buffer to write the zip file to
         buffer = io.BytesIO()
 
