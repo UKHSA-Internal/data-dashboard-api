@@ -1,6 +1,7 @@
 import datetime
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
+from tests.fakes.models.queryset import FakeQuerySet
 
 
 class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
@@ -64,7 +65,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-    ):
+    ) -> FakeQuerySet:
         date_from = _convert_string_to_date(date_string=date_from)
 
         filtered_time_series = [
@@ -99,10 +100,16 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         if age:
             filtered_time_series = [x for x in filtered_time_series if x.age == age]
 
-        return [
-            (getattr(time_series, x_axis), getattr(time_series, y_axis))
-            for time_series in filtered_time_series
-        ]
+        queryset = FakeQuerySet(
+            [
+                (getattr(time_series, x_axis), getattr(time_series, y_axis))
+                for time_series in filtered_time_series
+            ]
+        )
+        queryset.latest_refresh_date = max(
+            (x.refresh_date for x in filtered_time_series), default=""
+        )
+        return queryset
 
     def exists(self) -> bool:
         return bool(self.time_series)

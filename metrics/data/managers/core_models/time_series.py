@@ -177,10 +177,41 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             queryset = self._filter_by_age(queryset=queryset, age=age)
 
         queryset = queryset.values_list(x_axis, y_axis)
-        return self._ascending_order(
+        queryset = self._ascending_order(
             queryset=queryset,
             field_name=x_axis,
         )
+        return self._set_latest_refresh_date_on_queryset(queryset=queryset)
+
+    @staticmethod
+    def _set_latest_refresh_date_on_queryset(
+        queryset: models.QuerySet,
+    ) -> models.QuerySet:
+        """Sets a `latest_refresh_date` attribute on the given `queryset`
+
+        Notes:
+            The `latest_refresh_date` attribute is set according to
+            the latest/maximum date associated with any of the records
+            returned within the given `queryset`.
+            This is a custom attribute, so this must be the final queryset operation.
+            If additional filtering is performed, then this attribute will be lost
+
+        Args:
+            queryset: The queryset to be labelled with
+                the `latest_refresh_date` attribute
+
+        Returns:
+            The queryset which has been labelled with
+            the `latest_refresh_date` attribute
+
+        """
+        latest_refresh_date_aggregation = queryset.aggregate(
+            latest_refresh_date=models.Max("refresh_date")
+        )
+        queryset.latest_refresh_date = latest_refresh_date_aggregation[
+            "latest_refresh_date"
+        ]
+        return queryset
 
     def by_topic_metric_ordered_from_newest_to_oldest(
         self, topic_name: str, metric_name: str
