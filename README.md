@@ -26,7 +26,11 @@ Note that to use the `Makefile` you will need
 
 There are a number of steps to take before getting the environment setup for local development.
 
-1. Ensure that you have [Python version 3.11](https://www.python.org/downloads/) installed on your system.
+1. At the time of writing you will need to ensure that 
+you have [Python version 3.11](https://www.python.org/downloads/) installed on your system.
+If in doubt, please check the `.python-version` file at the root level of the project. 
+This is used by the Makefile and the CI.
+
 
 2. Set the `APIENV` environment variable set to `LOCAL`. 
 ```bash

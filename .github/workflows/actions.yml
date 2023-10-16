@@ -24,8 +24,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
   ###############################################################################
@@ -37,13 +36,13 @@ jobs:
     needs: [build]    
     runs-on: ubuntu-latest  
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
-#      - uses: ukhsa-internal/gh-action-pip-audit-action@v1
-#        with:
-#          inputs: requirements.txt
 
+      # Scan dependencies with `pip-audit`
+      - uses: pypa/gh-action-pip-audit@v1.0.8
+
+      # Scan project with `Bandit`
       - name: Run Bandit
         run: |
           bandit -r .
@@ -57,8 +56,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
       - name: Run ruff & black
@@ -74,8 +72,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
       - name: Run import-linter
@@ -91,8 +88,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
       - name: Run unit tests
@@ -108,8 +104,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
       - name: Run Integration tests
@@ -125,8 +120,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
       - name: Run System tests
@@ -153,7 +147,7 @@ jobs:
 
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1

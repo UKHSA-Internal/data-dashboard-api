@@ -44,6 +44,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             metric=metric,
             date=date,
             stratum=stratum,
+            refresh_date=str(date),
         )
 
     @classmethod
