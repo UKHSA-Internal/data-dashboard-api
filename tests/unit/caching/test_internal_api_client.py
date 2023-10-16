@@ -160,6 +160,35 @@ class TestInternalAPIClient:
         }
         assert headers == expected_headers
 
+    # Query parameters construction tests
+
+    @pytest.mark.parametrize(
+        "additional_query_parameters",
+        ({"fields": "*"}, {"fields": "date_posted"}),
+    )
+    def test_build_query_params(self, additional_query_parameters: dict[str, str]):
+        """
+        Given a page type and provided additional query parameters
+        When `build_query_params()` is called
+            from an instance of `InternalAPIClient`
+        Then the correct dict representing the query params is returned
+        """
+        # Given
+        page_type = "fake.Page"
+        internal_api_client = InternalAPIClient(
+            client=mock.Mock(),
+        )
+
+        # When
+        constructed_query_params = internal_api_client.build_query_params(
+            page_type=page_type, additional_query_params=additional_query_parameters
+        )
+
+        # Then
+        assert constructed_query_params["type"] == page_type
+        for key, value in additional_query_parameters.items():
+            assert additional_query_parameters[key] == value
+
     # Endpoint calls tests
 
     def test_hit_headlines_endpoint_delegates_call_correctly(self):

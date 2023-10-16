@@ -67,6 +67,15 @@ class InternalAPIClient:
             CACHE_CHECK_HEADER_KEY: self.cache_check_only,
         }
 
+    # Query parameters
+
+    @staticmethod
+    def build_query_params(
+        page_type: str, additional_query_params: dict[str, str] | None = None
+    ) -> dict[str, str]:
+        additional_query_params = additional_query_params or {}
+        return {"type": page_type, **additional_query_params}
+
     # Endpoints
 
     def hit_headlines_endpoint(self, data: dict[str, str]) -> Response:
