@@ -3,7 +3,7 @@ from rest_framework.test import APIClient
 
 API_PREFIX = "/api/"
 PAGES_ENDPOINT_PATH = f"{API_PREFIX}pages/"
-HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v2/"
+HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v3/"
 TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v2/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
