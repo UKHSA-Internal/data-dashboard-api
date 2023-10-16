@@ -16,35 +16,6 @@ from metrics.data.models.core_models import (
 from metrics.domain.models.headline import HeadlineParameters
 
 
-class HeadlinesQuerySerializer(serializers.Serializer):
-    topic = serializers.ChoiceField(
-        choices=[],
-        required=True,
-        help_text=help_texts.TOPIC_FIELD,
-    )
-    metric = serializers.ChoiceField(
-        choices=[],
-        required=True,
-        help_text=help_texts.METRIC_FIELD.format(
-            "COVID-19_headline_ONSdeaths_7DayChange"
-        ),
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields["topic"].choices = self.topic_manager.get_all_names()
-        self.fields["metric"].choices = self.metric_manager.get_all_names()
-
-    @property
-    def topic_manager(self) -> Manager:
-        return self.context.get("topic_manager", Topic.objects)
-
-    @property
-    def metric_manager(self) -> Manager:
-        return self.context.get("metric_manager", Metric.objects)
-
-
 class HeadlinesQuerySerializerBeta(serializers.Serializer):
     topic = serializers.ChoiceField(
         choices=[],
