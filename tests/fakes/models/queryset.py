@@ -16,5 +16,11 @@ class FakeQuerySet(QuerySet):
     def __iter__(self):
         yield from self.fake_instances
 
+    def __getitem__(self, k):
+        return self.fake_instances[k]
+
     def _fetch_all(self):
         return self.fake_instances
+
+    def count(self) -> int:
+        return len(self.fake_instances)
