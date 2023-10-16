@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 from caching.internal_api_client import (
     CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
-    PAGE_TYPES,
+    PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS,
     InternalAPIClient,
 )
 
@@ -330,12 +330,12 @@ class TestInternalAPIClient:
         "page_type_query_param",
         ["common.CommonPage", "topic.TopicPage", "home.HomePage"],
     )
-    def test_hit_pages_list_endpoint_for_page_type_query_param_delegates_call_correctly(
+    def test_hit_pages_list_endpoint_for_page_type_delegates_call_correctly(
         self, page_type_query_param: str
     ):
         """
         Given a client
-        When `hit_pages_list_endpoint_for_page_type_query_param()`
+        When `hit_pages_list_endpoint_for_page_type()`
             is called from an instance of the `InternalAPIClient`
         Then the call is delegated to the `client` object
         """
@@ -344,10 +344,8 @@ class TestInternalAPIClient:
         internal_api_client = InternalAPIClient(client=mocked_client)
 
         # When
-        response = (
-            internal_api_client.hit_pages_list_endpoint_for_page_type_query_param(
-                page_type_query_param=page_type_query_param
-            )
+        response = internal_api_client.hit_pages_list_endpoint_for_page_type(
+            page_type_query_param=page_type_query_param
         )
 
         # Then
@@ -359,11 +357,9 @@ class TestInternalAPIClient:
             format="json",
         )
 
-    @mock.patch.object(
-        InternalAPIClient, "hit_pages_list_endpoint_for_page_type_query_param"
-    )
+    @mock.patch.object(InternalAPIClient, "hit_pages_list_endpoint_for_page_type")
     def test_hit_pages_list_endpoint_for_all_page_types_delegates_call_correctly(
-        self, spy_hit_pages_list_endpoint_for_page_type_query_param: mock.MagicMock
+        self, spy_hit_pages_list_endpoint_for_page_type: mock.MagicMock
     ):
         """
         Given a client
@@ -372,7 +368,7 @@ class TestInternalAPIClient:
         Then the call is delegated to the `client` object
 
         Patches:
-            `spy_hit_pages_list_endpoint_for_page_type_query_param`: For the
+            `spy_hit_pages_list_endpoint_for_page_type`: For the
                 main assertion, to check each page type query param is processed
         """
         # Given
@@ -384,10 +380,76 @@ class TestInternalAPIClient:
 
         # Then
         expected_calls = [
-            mock.call(page_type_query_param=page_type) for page_type in PAGE_TYPES
+            mock.call(page_type_query_param=page_type)
+            for page_type in PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS
         ]
-        spy_hit_pages_list_endpoint_for_page_type_query_param.assert_has_calls(
+        spy_hit_pages_list_endpoint_for_page_type.assert_has_calls(
             calls=expected_calls, any_order=True
+        )
+
+    @mock.patch.object(InternalAPIClient, "hit_pages_list_endpoint_for_page_type")
+    def test_hit_pages_list_endpoint_for_all_page_types_delegates_call_for_whats_new_parent_page(
+        self, spy_hit_pages_list_endpoint_for_page_type: mock.MagicMock
+    ):
+        """
+        Given a client
+        When `hit_pages_list_endpoint_for_all_page_types()`
+            is called from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+            for the `WhatsNewParentPage` type
+
+        Patches:
+            `spy_hit_pages_list_endpoint_for_page_type`: For the
+                main assertion, to check the correct call is made for the
+                `WhatsNewParentPage` which has a bespoke set of query params
+        """
+        # Given
+        page_type = "whats_new.WhatsNewParentPage"
+        mocked_client = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        internal_api_client.hit_pages_list_endpoint_for_all_page_types()
+
+        # Then
+        expected_call = mock.call(
+            page_type_query_param=page_type,
+            additional_query_params={"fields": "date_posted"},
+        )
+        spy_hit_pages_list_endpoint_for_page_type.assert_has_calls(
+            calls=[expected_call], any_order=True
+        )
+
+    @mock.patch.object(InternalAPIClient, "hit_pages_list_endpoint_for_page_type")
+    def test_hit_pages_list_endpoint_for_all_page_types_delegates_call_for_whats_new_child_entry(
+        self, spy_hit_pages_list_endpoint_for_page_type: mock.MagicMock
+    ):
+        """
+        Given a client
+        When `hit_pages_list_endpoint_for_all_page_types()`
+            is called from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+            for the `WhatsNewChildEntry` type
+
+        Patches:
+            `spy_hit_pages_list_endpoint_for_page_type`: For the
+                main assertion, to check the correct call is made for the
+                `WhatsNewChildEntry` which has a bespoke set of query params
+        """
+        # Given
+        page_type = "whats_new.WhatsNewChildEntry"
+        mocked_client = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        internal_api_client.hit_pages_list_endpoint_for_all_page_types()
+
+        # Then
+        expected_call = mock.call(
+            page_type_query_param=page_type, additional_query_params={"fields": "*"}
+        )
+        spy_hit_pages_list_endpoint_for_page_type.assert_has_calls(
+            calls=[expected_call], any_order=True
         )
 
     def test_hit_pages_detail_endpoint_delegates_call_correctly(self):
