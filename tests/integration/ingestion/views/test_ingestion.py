@@ -15,12 +15,10 @@ class TestIngestionView:
 
     @pytest.mark.django_db
     @mock.patch(f"{MODULE_PATH}.file_ingester")
-    def test_delegates_call_correctly(
-        self, spy_file_ingester: mock.MagicMock, authenticated_api_client: APIClient
-    ):
+    def test_delegates_call_correctly(self, spy_file_ingester: mock.MagicMock):
         """
         Given a mocked file
-        And an authenticated APIClient
+        And an APIClient
         When the `POST /api/ingestion/v1/` endpoint is hit
         Then the response is a valid HTTP 201 OK
         And the call to handle the business logic is delegated correctly
@@ -31,9 +29,10 @@ class TestIngestionView:
         """
         # Given
         mocked_file = mock.MagicMock()
+        api_client = APIClient()
 
         # When
-        response: Response = authenticated_api_client.post(
+        response: Response = api_client.post(
             path=self.path, data={"file": mocked_file}, format="multipart"
         )
 
