@@ -63,7 +63,7 @@ class WhatsNewParentPage(Page):
 
     objects = WhatsNewParentPageManager()
 
-    def clean(self):
+    def clean(self) -> None:
         super().clean()
         self._raise_error_if_slug_not_whats_new()
         self._raise_error_for_multiple_live_pages()
