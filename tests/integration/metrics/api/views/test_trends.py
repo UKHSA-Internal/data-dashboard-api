@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 
-class TestTrendsViewBeta:
+
+class TestTrendsView:
     @property
     def path(self) -> str:
         return "/api/trends/v3/"
