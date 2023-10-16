@@ -1,4 +1,6 @@
+import datetime
 import io
+import zipfile
 
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -7,7 +9,9 @@ from rest_framework.renderers import CoreJSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.decorators import cache_response
+from caching.private_api.handlers import collect_all_pages
 from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
 from metrics.data.access.api_models import validate_query_filters
 from metrics.data.models.api_models import APITimeSeries
@@ -109,3 +113,33 @@ class DownloadsView(APIView):
             return self._handle_csv()
 
         return None
+
+
+class BulkDownloadsView(APIView):
+    permission_classes = []
+
+    @extend_schema(tags=[DOWNLOADS_API_TAG])
+    def get(self, request, *args, **kwargs):
+        # Create a BytesIO buffer to write the zip file to
+        buffer = io.BytesIO()
+
+        pages = collect_all_pages()
+
+        crawler = PrivateAPICrawler()
+
+        downloads = crawler.get_all_downloads(pages=pages)
+
+        # Create an in-memory zip file
+        in_memory_zip = io.BytesIO()
+        with zipfile.ZipFile(in_memory_zip, 'w') as zipf:
+            for download in downloads:
+                zipf.writestr(download["name"], download["content"])
+
+        # Create a response with the zip file
+        today: str = datetime.datetime.now().strftime("%Y-%m-%d")
+
+        zip_filename = f"ukhsa_data_dashboard_bulk_downloads_{today}.zip"
+
+        response = HttpResponse(in_memory_zip.getvalue(), content_type="application/zip")
+        response['Content-Disposition'] = f'attachment; filename="{zip_filename}"'
+        return response

@@ -81,6 +81,24 @@ class PrivateAPICrawler:
 
     # Process pages for content
 
+    def get_all_downloads(self, pages: list[HomePage, TopicPage]) -> None:
+        downloads = []
+        for page in pages:
+            try:
+                for section in page.body.raw_data:
+                    content_cards = self.get_content_cards_from_section(section=section)
+                    # Gather all chart row cards in this section of the page
+                    chart_row_cards = self.get_chart_row_cards_from_content_cards(
+                        content_cards=content_cards
+                    )
+                    # Process each of the chart row cards which were gathered
+                    extracted_downloads = self.process_all_chart_cards_for_downloads(chart_row_cards=chart_row_cards)
+                    downloads += extracted_downloads
+
+            except AttributeError:
+                pass
+        return downloads
+
     def process_pages(self, pages: list[HomePage, TopicPage, CommonPage]) -> None:
         """Makes requests to each individual content item within each of the given `pages`
 
@@ -184,6 +202,22 @@ class PrivateAPICrawler:
                 self.process_any_headline_number_block(
                     headline_number_block=headline_number_block
                 )
+
+    def process_all_chart_cards_for_downloads(
+            self, chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> None:
+        downloads = []
+
+        for chart_row_card in chart_row_cards:
+            chart_card_columns = chart_row_card["value"]["columns"]
+            for chart_card in chart_card_columns:
+                chart_block_value = chart_card["value"]
+
+                name = f"{chart_block_value['title']}.csv"
+                response = self._process_download_for_chart_block(chart_block=chart_block_value)
+                downloads.append({"name": name, "content": response.content})
+
+        return downloads
 
     def process_all_headline_numbers_row_cards(
         self, headline_numbers_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
@@ -334,7 +368,7 @@ class PrivateAPICrawler:
 
     def _process_download_for_chart_block(self, chart_block: dict):
         downloads_data = self._build_downloads_request_data(chart_block=chart_block)
-        self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
+        return self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
 
     def _process_chart_for_both_possible_widths(
         self, chart_block: CMS_COMPONENT_BLOCK_TYPE
