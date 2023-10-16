@@ -5,14 +5,19 @@ description: 'Read / write install cache'
 runs:
   using: 'composite'
   steps:
-    - uses: ukhsa-internal/restore-virtualenv-action@v1
-      id: cache-virtualenv
-
-    - uses: ukhsa-internal/restore-pip-download-cache-action@v1
-      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-
+    - name: Set up Python
+      uses: actions/setup-python@v4
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      id: cache
+      # Using the native `setup-python` `cache` interface only caches dependencies
+      # as opposed to the build itself.
+      # So even with dependencies cached, there is still a +1min penalty to pay
+      # With this we cache the build and so that each CI job can get straight into what it wants to do
+      with:
+        path: ${{ env.pythonLocation }}
+        key: ${{ env.pythonLocation }}-${{ hashFiles('requirements.txt') }}
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt --no-cache-dir
-      if: steps.cache-virtualenv.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: pip install -r requirements.txt
       shell: bash
