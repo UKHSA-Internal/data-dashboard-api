@@ -123,11 +123,7 @@ class BulkDownloadsView(APIView):
         """Use this endpoint to download a zip file of the CSV files associated with all the charts on the dashboard
 
         """
-        # Create a BytesIO buffer to write the zip file to
-        buffer = io.BytesIO()
-
         pages = collect_all_pages()
-
         crawler = PrivateAPICrawler()
 
         downloads = crawler.get_all_downloads(pages=pages)
