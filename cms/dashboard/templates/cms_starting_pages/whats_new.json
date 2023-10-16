@@ -1,14 +1,14 @@
 {
-    "id": 10,
+    "id": 15,
     "meta": {
         "seo_title": "What's new | UKHSA data dashboard",
         "search_description": "A list of all the new features and key pieces of data which have been added to the UKHSA data dashboard",
-        "type": "common.CommonPage",
-        "detail_url": "http://localhost/api/pages/10/",
+        "type": "whats_new.WhatsNewParentPage",
+        "detail_url": "http://localhost/api/pages/15/",
         "html_url": null,
         "slug": "whats-new",
         "show_in_menus": true,
-        "first_published_at": "2023-09-06T13:51:55.912624+01:00",
+        "first_published_at": "2023-10-11T16:28:47.619452+01:00",
         "alias_of": null,
         "parent": {
             "id": 3,
@@ -21,14 +21,14 @@
         }
     },
     "title": "What's new",
-    "date_posted": "2023-05-16",
-    "body": "<p data-block-key=\"z8uie\">We regularly update the dashboard with new data and features. Here we&#x27;ll show a timeline of changes that have happened outside of the weekly data refresh.</p>",
-    "last_published_at": "2023-09-06T17:24:33.895391+01:00",
+    "date_posted": "2023-10-11",
+    "body": "<p data-block-key=\"wk1ht\">We regularly update the dashboard with new data and features. Here we&#x27;ll  show a timeline of changes that have happened outside of the weekly  data refresh.</p>",
+    "last_published_at": "2023-10-11T16:28:47.619452+01:00",
     "related_links": [
         {
             "id": 11,
             "meta": {
-                "type": "common.CommonPageRelatedLink"
+                "type": "whats_new.WhatsNewParentPageRelatedLink"
             },
             "title": "NHS: COVID-19",
             "url": "https://www.nhs.uk/conditions/covid-19/",
@@ -37,7 +37,7 @@
         {
             "id": 12,
             "meta": {
-                "type": "common.CommonPageRelatedLink"
+                "type": "whats_new.WhatsNewParentPageRelatedLink"
             },
             "title": "NHS: influenza",
             "url": "https://www.nhs.uk/conditions/flu/",
@@ -46,7 +46,7 @@
         {
             "id": 13,
             "meta": {
-                "type": "common.CommonPageRelatedLink"
+                "type": "whats_new.WhatsNewParentPageRelatedLink"
             },
             "title": "National flu and COVID-19 surveillance reports: 2023 to 2024 season",
             "url": "https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season",
@@ -55,7 +55,7 @@
         {
             "id": 14,
             "meta": {
-                "type": "common.CommonPageRelatedLink"
+                "type": "whats_new.WhatsNewParentPageRelatedLink"
             },
             "title": "Sources of surveillance data for influenza, COVID-19 and other respiratory viruses",
             "url": "https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-v",
@@ -64,7 +64,7 @@
         {
             "id": 15,
             "meta": {
-                "type": "common.CommonPageRelatedLink"
+                "type": "whats_new.WhatsNewParentPageRelatedLink"
             },
             "title": "Respiratory syncytial virus (RSV): guidance, data and analysis",
             "url": "https://www.gov.uk/governhttps://www.gov.uk/government/collections/respiratory-syncytial-virus-rsv-guidance-data-and-analysisment/collections/human-parainfluenza-viruses-guidance-and-data",
@@ -73,7 +73,7 @@
         {
             "id": 17,
             "meta": {
-                "type": "common.CommonPageRelatedLink"
+                "type": "whats_new.WhatsNewParentPageRelatedLink"
             },
             "title": "Human parainfluenza viruses: guidance and data",
             "url": "https://www.gov.uk/government/collections/human-parainfluenza-viruses-guidance-and-data",
