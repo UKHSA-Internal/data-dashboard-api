@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "cms.topic",
     "cms.dashboard",
     "cms.common",
+    "cms.whats_new",
     "wagtail.api.v2",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",

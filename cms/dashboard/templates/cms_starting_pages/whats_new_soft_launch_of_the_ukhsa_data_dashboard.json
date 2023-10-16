@@ -1,0 +1,31 @@
+{
+    "id": 18,
+    "meta": {
+        "seo_title": "",
+        "search_description": "",
+        "type": "whats_new.WhatsNewChildEntry",
+        "detail_url": "http://localhost/api/pages/18/",
+        "html_url": null,
+        "slug": "soft-launch-of-the-ukhsa-data-dashboard",
+        "show_in_menus": false,
+        "first_published_at": "2023-10-11T16:32:46.397726+01:00",
+        "alias_of": null,
+        "parent": {
+            "id": 15,
+            "meta": {
+                "type": "whats_new.WhatsNewParentPage",
+                "detail_url": "http://localhost/api/pages/15/",
+                "html_url": null
+            },
+            "title": "What's new"
+        }
+    },
+    "title": "Soft launch of the UKHSA data dashboard",
+    "date_posted": "2023-09-26",
+    "body": "<p data-block-key=\"3xozx\">The UKHSA data dashboard is an iteration of the <a href=\"https://coronavirus.data.gov.uk/\">Coronavirus (COVID-19) in the UK dashboard</a>.  The dashboard is launching with data on respiratory viruses, including  COVID-19. It will grow to show data on a wider range of health topics.  We’ll use feedback from users during the soft launch to improve the  service.</p><p data-block-key=\"2orig\">Once the UKHSA data dashboard passes the government <a href=\"https://www.gov.uk/service-manual/service-standard\">Service Standard</a>  assessment, it will replace the COVID-19 dashboard and be the only  UKHSA dashboard for public-facing data (including COVID-19 data).</p><p data-block-key=\"73pav\">The  UKHSA data dashboard is in the initial phase of the government Service  Standard assessment and is still undergoing statistical review. For  reporting and analytical purposes, continue to use the COVID-19  dashboard.</p>",
+    "additional_details": "",
+    "badge": {
+        "text": "UPDATE",
+        "colour": "RED"
+    }
+}

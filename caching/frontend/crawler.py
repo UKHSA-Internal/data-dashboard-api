@@ -82,6 +82,8 @@ class FrontEndCrawler:
             - "HomePage"
             - "TopicPage"
             - "CommonPage"
+            - "WhatsNewParentPage"
+            - "WhatsNewChildEntry"
 
         Args:
             page_item: The individual page information
@@ -100,6 +102,10 @@ class FrontEndCrawler:
                 url = self._build_url_for_topic_page(slug=page_item["slug"])
             case "common.CommonPage":
                 url = self._build_url_for_common_page(slug=page_item["slug"])
+            case "whats_new.WhatsNewParentPage":
+                url = self._build_url_for_whats_new_parent_page()
+            case "whats_new.WhatsNewChildEntry":
+                url = self._build_url_for_whats_new_child_entry(slug=page_item["slug"])
             case _:
                 # Pass over for root page objects
                 return
@@ -146,7 +152,7 @@ class FrontEndCrawler:
             The full URL which can be passed to requests
 
         """
-        return urljoin(self._frontend_base_url, f"/{slug}")
+        return urljoin(self._frontend_base_url, slug)
 
     def _build_url_for_home_page(self) -> str:
         """Builds the full URL for the single home page
@@ -156,6 +162,27 @@ class FrontEndCrawler:
 
         """
         return self._frontend_base_url
+
+    def _build_url_for_whats_new_parent_page(self) -> str:
+        """Builds the full URL for the single what's new parent page
+
+        Returns:
+            The full URL which can be passed to requests
+
+        """
+        return urljoin(self._frontend_base_url, "whats-new")
+
+    def _build_url_for_whats_new_child_entry(self, slug: str) -> str:
+        """Builds the full URL for the single what's new child entry
+
+        Args:
+            slug: The slug associated with the `WhatsNewChildEntry`
+
+        Returns:
+            The full URL which can be passed to requests
+
+        """
+        return urljoin(self._frontend_base_url, f"whats-new/{slug}")
 
     def _build_url_for_feedback_confirmation_page(self) -> str:
         """Builds the full URL for the feedback confirmation page

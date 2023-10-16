@@ -6,6 +6,7 @@ from cms.common.models import CommonPage
 from cms.dashboard.management.commands.build_cms_site import open_example_page_response
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
+from cms.whats_new.models import WhatsNewParentPage
 
 
 class TestBuildCMSSite:
@@ -219,7 +220,7 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
-        whats_new_page = CommonPage.objects.get(slug="whats-new")
+        whats_new_page = WhatsNewParentPage.objects.get(slug="whats-new")
         parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
         api_client = APIClient()
 
