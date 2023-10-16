@@ -3,6 +3,7 @@ import datetime
 import pytest
 
 from metrics.data.models.core_models import (
+    Age,
     CoreHeadline,
     CoreTimeSeries,
     Geography,
@@ -135,14 +136,18 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
         metric_group=metric_group,
         topic=topic,
     )
+    age = Age.objects.create(name="all")
     year = 2023
+    month = 1
     return [
         CoreTimeSeries.objects.create(
             metric_value=123,
             metric=metric,
+            age=age,
             year=year,
             epiweek=1,
-            date=datetime.date(year=year, month=1, day=i + 1),
+            date=datetime.date(year=year, month=month, day=i + 1),
+            refresh_date=datetime.date(year=year, month=month, day=10),
         )
         for i in range(2)
     ]

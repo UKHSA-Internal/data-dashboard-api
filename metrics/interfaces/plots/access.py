@@ -2,6 +2,7 @@ import datetime
 from typing import Any
 
 from django.db.models import Manager, QuerySet
+from pydantic import BaseModel
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
@@ -14,6 +15,11 @@ class DataNotFoundError(ValueError):
     ...
 
 
+class QuerySetResult(BaseModel):
+    queryset: Any
+    latest_refresh_date: Any
+
+
 class PlotsInterface:
     def __init__(
         self,
@@ -23,25 +29,37 @@ class PlotsInterface:
         self.plots_collection = plots_collection
         self.core_time_series_manager = core_time_series_manager
 
-    def get_timeseries_for_plot_parameters(self, plot_parameters: PlotParameters):
-        """Returns the timeseries records for the requested plot as a QuerySet
+    def get_queryset_result_for_plot_parameters(
+        self, plot_parameters: PlotParameters
+    ) -> QuerySetResult:
+        """Returns the timeseries records for the requested plot as an enriched `QuerySetResult` model.
 
         Notes:
             If no `date_from` was provided within the `plot_parameters`,
             then a default of 1 year from the current date will be used.
 
+            A `latest_refresh_date` attribute is also set
+            on the returned `QuerySetResult` model.
+
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers.
-                Examples:
-                    `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('0.8')),
-                        (datetime.date(2022, 10, 17), Decimal('0.9'))
-                    ]>`
+            QuerySetResult: An enriched object containing
+                a) An ordered queryset from oldest -> newest
+                    of the (dt, metric_value) numbers.
+                    Examples:
+                        `<CoreTimeSeriesQuerySet [
+                            (datetime.date(2022, 10, 10), Decimal('0.8')),
+                            (datetime.date(2022, 10, 17), Decimal('0.9'))
+                        ]>`
+                b) The latest refresh date associated with the resulting data
 
         """
         plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
-        return self.get_timeseries(**plot_params)
+        queryset = self.get_timeseries(**plot_params)
+
+        return QuerySetResult(
+            queryset=queryset,
+            latest_refresh_date=queryset.latest_refresh_date,
+        )
 
     def get_timeseries(
         self,
@@ -139,13 +157,13 @@ class PlotsInterface:
         plot_parameters.x_axis = self.plots_collection.x_axis
         plot_parameters.y_axis = self.plots_collection.y_axis
 
-        timeseries_queryset = self.get_timeseries_for_plot_parameters(
+        queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
             plot_parameters=plot_parameters
         )
 
         try:
             x_axis_values, y_axis_values = get_x_and_y_values(
-                plot_parameters=plot_parameters, queryset=timeseries_queryset
+                plot_parameters=plot_parameters, queryset=queryset_result.queryset
             )
         except ValueError as error:
             raise DataNotFoundError from error
@@ -154,6 +172,7 @@ class PlotsInterface:
             parameters=plot_parameters,
             x_axis_values=list(x_axis_values),
             y_axis_values=list(y_axis_values),
+            latest_refresh_date=queryset_result.latest_refresh_date,
         )
 
     def build_plots_data(self) -> list[PlotData]:
