@@ -45,7 +45,7 @@ jobs:
       # Scan project with `Bandit`
       - name: Run Bandit
         run: |
-          bandit -r .
+          bandit -c pyproject.toml -r .
 
   ###############################################################################
   # Code quality checks

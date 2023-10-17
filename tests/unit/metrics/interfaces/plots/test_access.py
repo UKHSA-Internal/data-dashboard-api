@@ -391,7 +391,6 @@ class TestGetXAndYValues:
         [
             ChartAxisFields.date.name,
             ChartAxisFields.metric.name,
-            ChartAxisFields.geography.name,
         ],
     )
     @mock.patch(f"{MODULE_PATH}.unzip_values")

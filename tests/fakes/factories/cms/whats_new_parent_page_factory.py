@@ -15,6 +15,14 @@ class FakeWhatsNewParentPageFactory(factory.Factory):
     @classmethod
     def build_page_from_template(cls, **kwargs):
         data = open_example_page_response(page_name="whats_new")
-        return cls.build(
-            body=data["body"], title=data["title"], slug=data["meta"]["slug"], **kwargs
-        )
+
+        # Use the `slug` from the kwargs if possible otherwise take it from the template
+        try:
+            slug = kwargs["slug"]
+        except KeyError:
+            slug = data["meta"]["slug"]
+        else:
+            data["meta"]["slug"] = slug
+            kwargs.pop("slug")
+
+        return cls.build(body=data["body"], title=data["title"], slug=slug, **kwargs)
