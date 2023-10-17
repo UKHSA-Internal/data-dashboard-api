@@ -14,9 +14,6 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         self.time_series = time_series
         super().__init__(**kwargs)
 
-    def all_related(self):
-        return self.time_series
-
     def get_count(
         self,
         x_axis: str,

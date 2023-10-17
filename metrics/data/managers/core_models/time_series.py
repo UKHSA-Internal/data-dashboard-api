@@ -13,9 +13,6 @@ from django.db import models
 class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
 
-    def all_related(self) -> models.QuerySet:
-        return self.prefetch_related("metric", "geography", "stratum").all()
-
     @staticmethod
     def _newest_to_oldest(queryset: models.QuerySet) -> models.QuerySet:
         return queryset.order_by("-date")
@@ -285,9 +282,6 @@ class CoreTimeSeriesManager(models.Manager):
 
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
         return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
-
-    def all_related(self) -> CoreTimeSeriesQuerySet:
-        return self.get_queryset().all_related()
 
     def by_topic_metric_ordered_from_newest(
         self, topic_name: str, metric_name: str
