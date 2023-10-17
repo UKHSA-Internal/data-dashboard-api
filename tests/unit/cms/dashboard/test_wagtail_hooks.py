@@ -5,6 +5,20 @@ from wagtail.admin.site_summary import SummaryItem
 from cms.dashboard import wagtail_hooks
 
 
+def test_global_admin_css():
+    """
+    Given no input
+    When the wagtail hook `global_admin_css()` is called
+    Then the correct global admin CSS link is returned
+    """
+    # Given / When
+    global_admin_css_link: str = wagtail_hooks.global_admin_css()
+
+    # Then
+    assert global_admin_css_link.startswith('<link rel="stylesheet" type="text/css"')
+    assert "css/theme" in global_admin_css_link
+
+
 def test_register_icons_returns_correct_list_of_icons():
     """
     Given a list of icons
