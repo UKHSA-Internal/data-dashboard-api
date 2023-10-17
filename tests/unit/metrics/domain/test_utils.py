@@ -1,9 +1,6 @@
 import pytest
 
-from metrics.domain.utils import (
-    ChartAxisFields,
-    _check_for_substring_match, ChartTypes
-)
+from metrics.domain.utils import ChartAxisFields, ChartTypes, _check_for_substring_match
 
 
 class TestChartAxisFields:
@@ -98,6 +95,62 @@ class TestChartAxisFields:
 
         # Then
         assert axis_value == ChartAxisFields.metric.value
+
+    def test_values(self):
+        """
+        Given no input
+        When the `values()` class method is called
+            from the `ChartAxisFields` enum
+        Then the correct tuple is returned
+        """
+        # Given / When
+        values = ChartAxisFields.values()
+
+        # Then
+        expected_values = ("stratum__name", "age__name", "date", "metric_value")
+        assert values == expected_values
+
+
+class TestChartTypes:
+    def test_choices(self):
+        """
+        Given no input
+        When the `choices()` class method is called
+            from the `ChartTypes` enum
+        Then the correct tuple is returned
+        """
+        # Given / When
+        choices = ChartTypes.choices()
+
+        # Then
+        _choices = (
+            "simple_line",
+            "waffle",
+            "line_with_shaded_section",
+            "bar",
+            "line_multi_coloured",
+        )
+        assert choices == tuple((choice, choice) for choice in _choices)
+
+    def test_values(self):
+        """
+        Given no input
+        When the `values()` class method is called
+            from the `ChartTypes` enum
+        Then the correct list is returned
+        """
+        # Given / When
+        values = ChartTypes.values()
+
+        # Then
+        expected_values = [
+            "simple_line",
+            "waffle",
+            "line_with_shaded_section",
+            "bar",
+            "line_multi_coloured",
+        ]
+        assert values == expected_values
 
 
 class TestCheckForSubstringMatch:
