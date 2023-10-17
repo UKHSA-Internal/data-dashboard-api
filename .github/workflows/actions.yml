@@ -140,15 +140,8 @@ jobs:
       - uses: ./.github/actions/install-cache
 
       - name: Evaluate test coverage
-        run: >
-          pytest \
-            --cov=caching \
-            --cov=cms \
-            --cov=feedback \
-            --cov=ingestion \
-            --cov=metrics \
-            --cov=public_api
-
+        run: |
+          pytest --cov
 
   ###############################################################################
   # Deploy
