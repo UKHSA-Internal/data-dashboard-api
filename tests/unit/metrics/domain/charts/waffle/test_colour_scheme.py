@@ -1,5 +1,10 @@
+import pytest
+
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.waffle.colour_scheme import build_color_scale
+from metrics.domain.charts.waffle.colour_scheme import (
+    InvalidIdentifierError,
+    build_color_scale,
+)
 
 
 class TestBuildColorScale:
@@ -65,3 +70,16 @@ class TestBuildColorScale:
             [1, colour_scheme.RGBAColours.LIGHT_GREEN.stringified],
         ]
         assert colour_scale == expected_colour_scale
+
+    def test_raises_error_for_identifier_larger_than_three(self):
+        """
+        Given an identifier greater than 3
+        When `build_color_scale()` is called
+        Then an `InvalidIdentifierError` is raised
+        """
+        # Given
+        identifier = 4
+
+        # When / Then
+        with pytest.raises(InvalidIdentifierError):
+            build_color_scale(identifier=identifier)
