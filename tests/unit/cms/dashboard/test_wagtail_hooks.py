@@ -27,7 +27,9 @@ def test_global_admin_css(mocked_static: mock.MagicMock):
     global_admin_css_link: str = wagtail_hooks.global_admin_css()
 
     # Then
-    expected_value = f'<link rel="stylesheet" type="text/css" href="{returned_static_css_theme}">'
+    expected_value = (
+        f'<link rel="stylesheet" type="text/css" href="{returned_static_css_theme}">'
+    )
     assert global_admin_css_link == expected_value
 
 
