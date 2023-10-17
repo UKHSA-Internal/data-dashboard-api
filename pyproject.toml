@@ -111,6 +111,7 @@ addopts = "--random-order"
 # Test coverage configuration
 ########################################################################################################################
 [tool.coverage.report]
+testpaths = "tests/"
 omit = [
     "tests/*",                          # Omit test files themselves from the report
     "cms/search/*",                     # Boilerplate wagtail `search` app
