@@ -27,8 +27,8 @@ def test_global_admin_css(mocked_static: mock.MagicMock):
     global_admin_css_link: str = wagtail_hooks.global_admin_css()
 
     # Then
-    assert global_admin_css_link.startswith('<link rel="stylesheet" type="text/css"')
-    assert returned_static_css_theme in global_admin_css_link
+    expected_value = f'<link rel="stylesheet" type="text/css" href="{returned_static_css_theme}">'
+    assert global_admin_css_link == expected_value
 
 
 def test_register_icons_returns_correct_list_of_icons():
