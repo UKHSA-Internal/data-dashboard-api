@@ -141,7 +141,14 @@ jobs:
 
       - name: Evaluate test coverage
         run: |
-          pytest --cov=. tests/
+          pytest  \
+            --cov=caching
+            --cov=cms \ 
+            --cov=feedback \ 
+            --cov=ingestion \
+            --cov=metrics \
+            --cov=public_api
+
 
   ###############################################################################
   # Deploy
