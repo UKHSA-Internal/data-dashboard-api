@@ -10,13 +10,12 @@ FROM python:${PYTHON_VERSION}-slim AS build
 
 # Declare the non-root user
 ARG USER_NAME=ukhsa_user
-ARG GROUP_NAME=ukhsa_group
 
 # Ensure the virtual environment will be available on the `PATH` variable
 ENV PATH=/venv/bin:$PATH
 
 # Create a non-root user and group
-RUN groupadd -r ${GROUP_NAME} && useradd -r -g ${GROUP_NAME} ${USER_NAME}
+RUN groupadd -r ${USER_NAME} && useradd -r -g ${USER_NAME} ${USER_NAME}
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
@@ -48,10 +47,9 @@ WORKDIR /code
 
 # Redeclare the non-root user
 ARG USER_NAME=ukhsa_user
-ARG GROUP_NAME=ukhsa_user
 
 # Create a non-root user and group
-RUN groupadd -r ${GROUP_NAME} && useradd -r -g ${GROUP_NAME} ${USER_NAME}
+RUN groupadd -r ${USER_NAME} && useradd -r -g ${USER_NAME} ${USER_NAME}
 
 # Copy the virtual environment & application code from the `build` stage
 COPY --from=build /venv /venv
