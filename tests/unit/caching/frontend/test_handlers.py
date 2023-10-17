@@ -1,7 +1,44 @@
 from unittest import mock
 
+import pytest
+
 from caching.frontend.crawler import FrontEndCrawler
-from caching.frontend.handlers import crawl_front_end
+from caching.frontend.handlers import (
+    FrontEndURLNotProvidedError,
+    _get_frontend_base_url,
+    crawl_front_end,
+)
+
+
+class TestGetFrontendBaseURL:
+    def test_returns_correct_environment_variable_value(self, monkeypatch):
+        """
+        Given a value set for the environment variable "FRONTEND_URL"
+        When `_get_frontend_base_url()` is called
+        Then the correct value is returned
+        """
+        # Given
+        fake_front_end_base_url = "https://www.fake-url.com"
+        monkeypatch.setenv(name="FRONTEND_URL", value=fake_front_end_base_url)
+
+        # When
+        retrieved_frontend_base_url: str = _get_frontend_base_url()
+
+        # Then
+        assert retrieved_frontend_base_url == fake_front_end_base_url
+
+    def test_raises_error_when_environment_variable_does_not_exist(self, monkeypatch):
+        """
+        Given no value set for the environment variable "FRONTEND_URL"
+        When `_get_frontend_base_url()` is called
+        Then a `FrontEndURLNotProvidedError` is raised
+        """
+        # Given
+        monkeypatch.delenv(name="FRONTEND_URL", raising=False)
+
+        # When / Then
+        with pytest.raises(FrontEndURLNotProvidedError):
+            _get_frontend_base_url()
 
 
 class TestCrawlFrontEnd:
