@@ -34,7 +34,6 @@ class TestGetAxisName:
             "stratum",
             "date",
             "metric",
-            "geography",
         ],
     )
     def test_get_x_axis_value_for_valid_name(self, valid_name: str):
@@ -81,7 +80,6 @@ class TestGetAxisName:
             "stratum",
             "date",
             "metric",
-            "geography",
         ],
     )
     def test_get_y_axis_value_for_valid_name(self, valid_name: str):
