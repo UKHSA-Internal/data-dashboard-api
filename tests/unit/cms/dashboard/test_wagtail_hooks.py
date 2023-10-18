@@ -4,6 +4,34 @@ from wagtail.admin.site_summary import SummaryItem
 
 from cms.dashboard import wagtail_hooks
 
+MODULE_PATH = "cms.dashboard.wagtail_hooks"
+
+
+@mock.patch(f"{MODULE_PATH}.static")
+def test_global_admin_css(mocked_static: mock.MagicMock):
+    """
+    Given no input
+    When the wagtail hook `global_admin_css()` is called
+    Then the correct global admin CSS link is returned
+
+    Patches:
+        `mocked_static`: To isolate the return value
+            of the `static` function call and remove
+            the need of having to collect static files
+            for the test run
+
+    """
+    # Given / When
+    returned_static_css_theme = "fake-css-theme-static-location"
+    mocked_static.return_value = returned_static_css_theme
+    global_admin_css_link: str = wagtail_hooks.global_admin_css()
+
+    # Then
+    expected_value = (
+        f'<link rel="stylesheet" type="text/css" href="{returned_static_css_theme}">'
+    )
+    assert global_admin_css_link == expected_value
+
 
 def test_register_icons_returns_correct_list_of_icons():
     """

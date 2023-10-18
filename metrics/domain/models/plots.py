@@ -46,7 +46,7 @@ class PlotParameters(BaseModel):
 
     @property
     def age_name(self) -> str | None:
-        return self.stratum
+        return self.age
 
     @property
     def date_from_value(self) -> datetime.date:

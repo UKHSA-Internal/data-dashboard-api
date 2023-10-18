@@ -1,33 +1,9 @@
 import pytest
 
-from metrics.domain.utils import (
-    ChartAxisFields,
-    _check_for_substring_match,
-    get_axis_name,
-)
+from metrics.domain.utils import ChartAxisFields, ChartTypes, _check_for_substring_match
 
 
-class TestGetAxisName:
-    test_values = [(enums.value, enums.name) for enums in ChartAxisFields]
-    test_values.append(("not_a_field", "not_a_field"))
-
-    @pytest.mark.parametrize("field_name, expected_result", test_values)
-    def test_get_axis_field_name(self, field_name: str, expected_result: str):
-        """
-        Given a field name (eg. stratum__name)
-        When `get_axis_field_name()` is called
-        Then the expected output will be returned
-        """
-
-        # Given
-        input_field_name: str = field_name
-
-        # When
-        actual_result: str = get_axis_name(field_name=input_field_name)
-
-        # Then
-        assert actual_result == expected_result
-
+class TestChartAxisFields:
     @pytest.mark.parametrize(
         "valid_name",
         [
@@ -119,6 +95,62 @@ class TestGetAxisName:
 
         # Then
         assert axis_value == ChartAxisFields.metric.value
+
+    def test_values(self):
+        """
+        Given no input
+        When the `values()` class method is called
+            from the `ChartAxisFields` enum
+        Then the correct tuple is returned
+        """
+        # Given / When
+        values = ChartAxisFields.values()
+
+        # Then
+        expected_values = ("stratum__name", "age__name", "date", "metric_value")
+        assert values == expected_values
+
+
+class TestChartTypes:
+    def test_choices(self):
+        """
+        Given no input
+        When the `choices()` class method is called
+            from the `ChartTypes` enum
+        Then the correct tuple is returned
+        """
+        # Given / When
+        choices = ChartTypes.choices()
+
+        # Then
+        _choices = (
+            "simple_line",
+            "waffle",
+            "line_with_shaded_section",
+            "bar",
+            "line_multi_coloured",
+        )
+        assert choices == tuple((choice, choice) for choice in _choices)
+
+    def test_values(self):
+        """
+        Given no input
+        When the `values()` class method is called
+            from the `ChartTypes` enum
+        Then the correct list is returned
+        """
+        # Given / When
+        values = ChartTypes.values()
+
+        # Then
+        expected_values = [
+            "simple_line",
+            "waffle",
+            "line_with_shaded_section",
+            "bar",
+            "line_multi_coloured",
+        ]
+        assert values == expected_values
 
 
 class TestCheckForSubstringMatch:
