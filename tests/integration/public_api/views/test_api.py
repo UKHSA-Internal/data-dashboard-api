@@ -369,3 +369,21 @@ class TestPublicAPINestedLinkViews:
             assert result["metric"] == metric_name
             assert result["sex"] == sex != other_sex
             assert result["age"] == age != other_age
+
+    def test_root_view(self):
+        """
+        Given no existing `APITimeSeries` records
+        When a `GET` request is made to the root of the API
+        Then the correct response is returned
+        """
+        # Given
+        client = APIClient()
+        path = self.path
+
+        # When
+        response: Response = client.get(path=path, format="json")
+
+        # Then
+        assert response.status_code == 200
+        expected_response = {"links": {"themes": f"{self.api_base_path}themes/"}}
+        assert response.data == expected_response
