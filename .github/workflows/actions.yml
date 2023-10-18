@@ -41,6 +41,8 @@ jobs:
 
       # Scan dependencies with `pip-audit`
       - uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          inputs: requirements-prod.txt requirements-dev.txt
 
       # Scan project with `Bandit`
       - name: Run Bandit
