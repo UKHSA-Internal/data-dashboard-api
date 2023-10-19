@@ -166,7 +166,7 @@ class TestDownloadFileIngestAndTeardown:
         )
 
     @mock.patch(f"{MODULE_PATH}._upload_file_and_remove_local_copy")
-    def test_delegates_call_to_move_file_to_processed_folder(
+    def test_delegates_call_to_move_file_to_processed_folder_for_successful_upload(
         self, mocked_upload_file_and_remove_local_copy: mock.MagicMock
     ):
         """
@@ -188,16 +188,17 @@ class TestDownloadFileIngestAndTeardown:
 
         # Then
         spy_client.move_file_to_processed_folder.assert_called_once_with(key=fake_key)
+        spy_client.move_file_to_failed_folder.assert_not_called()
 
     @mock.patch(f"{MODULE_PATH}._upload_file_and_remove_local_copy")
-    def test_does_not_call_move_file_to_processed_folder_if_error_is_raised(
+    def test_calls_move_file_to_failed_folder_if_error_is_raised(
         self, mocked_upload_file_and_remove_local_copy: mock.MagicMock
     ):
         """
         Given a mocked `AWSClient` object and a fake item key
         And a file upload which will raise a `FileIngestionFailedError`
         When `download_file_ingest_and_teardown()` is called
-        Then `move_file_to_processed_folder()` is not called from the client
+        Then `move_file_to_failed_folder()` is called from the client
 
         Patches:
             `mocked_upload_file_and_remove_local_copy`: To simulate
@@ -215,6 +216,7 @@ class TestDownloadFileIngestAndTeardown:
         download_file_ingest_and_teardown(key=fake_key, client=spy_client)
 
         # Then
+        spy_client.move_file_to_failed_folder.assert_called_once_with(key=fake_key)
         spy_client.move_file_to_processed_folder.assert_not_called()
 
 
