@@ -98,6 +98,8 @@ uritemplate==4.1.1
 urllib3==2.0.7
 virtualenv==20.24.5
 wagtail==5.1.2
+wagtail_trash==1.0.1
+wagtail_modeladmin==1.0.0
 webencodings==0.5.1
 Willow==1.6.2
 zipp==3.17.0
