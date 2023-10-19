@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     "wagtail.api.v2",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
-    "wagtail.contrib.modeladmin",
+    "wagtail_modeladmin",
     "wagtail.embeds",
     "wagtail.sites",
     "wagtail.users",
