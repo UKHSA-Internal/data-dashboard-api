@@ -122,7 +122,7 @@ class PlotData(BaseModel):
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any
-    latest_refresh_date: Any = None  # noqa: UP007
+    latest_date: Any = None  # noqa: UP007
 
 
 def get_date_n_months_ago_from_timestamp(
