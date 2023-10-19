@@ -155,7 +155,7 @@ class AWSClient:
         return key.split(self._inbound_folder)[1]
 
     def _build_processed_key(self, key: str) -> str:
-        """Constructs the full destination `key` of the item
+        """Constructs the full processed `key` of the item
 
         Examples:
             If the inbound `key` of "in/abc.json" is provided,
@@ -165,7 +165,7 @@ class AWSClient:
             key: The inbound key of the item in the bucket
 
         Returns:
-            The destination key of the item
+            The processed key of the item
 
         """
         filename: str = self._get_filename_from_key(key=key)
