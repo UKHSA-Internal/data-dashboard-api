@@ -58,11 +58,11 @@ class TestAWSClient:
         # Then
         assert aws_client._inbound_folder == "in/"
 
-    def test_destination_folder_defaults_to_expected_value(self):
+    def test_processed_folder_defaults_to_expected_value(self):
         """
         Given a mocked boto3 client object
         When an instance of `AWSClient` is created
-        Then the correct default destination folder is set
+        Then the correct default processed folder is set
         """
         # Given
         mocked_boto3_client = mock.Mock()
@@ -323,7 +323,7 @@ class TestAWSClient:
             expected_delete_file_from_origin_call,
         ]
         # The ordering of the call is important, we expect to copy the file
-        # into the destination before it is deleted from the origin folder
+        # into the processed folder before it is deleted from the origin folder
         spy_client.assert_has_calls(calls=expected_calls, any_order=False)
 
     def test_move_file_to_processed_folder_records_correct_log(
@@ -348,13 +348,13 @@ class TestAWSClient:
         expected_inbound_folder: str = (
             aws_client_with_mocked_boto_client._inbound_folder
         )
-        expected_destination_folder: str = (
+        expected_processed_folder: str = (
             aws_client_with_mocked_boto_client._processed_folder
         )
         expected_log = (
             f"Moving `{expected_filename}` "
             f"from `{expected_inbound_folder}` "
-            f"to `{expected_destination_folder}` "
+            f"to `{expected_processed_folder}` "
             f"in s3"
         )
         assert expected_log in caplog.text
@@ -386,7 +386,7 @@ class TestAWSClient:
         Given a key from the s3 bucket for an item
         When `_build_processed_key()` is called
             from an instance of `AWSClient`
-        Then the correct destination key is returned
+        Then the correct processed key is returned
         """
         # Given
         fake_key = FAKE_KEY
