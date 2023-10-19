@@ -7,7 +7,7 @@ import botocore.client
 import config
 
 DEFAULT_INBOUND_INGESTION_FOLDER = "in/"
-DEFAULT_DESTINATION_INGESTION_FOLDER = "processed/"
+DEFAULT_PROCESSED_INGESTION_FOLDER = "processed/"
 DEFAULT_FAILED_INGESTION_FOLDER = "failed/"
 
 logger = logging.getLogger(__name__)
@@ -30,13 +30,13 @@ class AWSClient:
         profile_name: str = config.AWS_PROFILE_NAME,
         bucket_name: str = config.INGESTION_BUCKET_NAME,
         inbound_folder: str = DEFAULT_INBOUND_INGESTION_FOLDER,
-        destination_folder: str = DEFAULT_DESTINATION_INGESTION_FOLDER,
+        processed_folder: str = DEFAULT_PROCESSED_INGESTION_FOLDER,
         failed_folder: str = DEFAULT_FAILED_INGESTION_FOLDER,
     ):
         self._client = client or self.create_client(profile_name=profile_name)
         self._bucket_name = bucket_name
         self._inbound_folder = inbound_folder
-        self._destination_folder = destination_folder
+        self._processed_folder = processed_folder
         self._failed_folder = failed_folder
 
     @classmethod
@@ -105,13 +105,13 @@ class AWSClient:
             "Moving `%s` from `%s` to `%s` in s3",
             filename,
             self._inbound_folder,
-            self._destination_folder,
+            self._processed_folder,
         )
-        self._copy_file_to_destination(key=key)
+        self._copy_file_to_processed(key=key)
         self._delete_file_from_inbound(key=key)
 
-    def _copy_file_to_destination(self, key: str) -> None:
-        """Copies the file matching the given `key` into the destination folder within the s3 bucket
+    def _copy_file_to_processed(self, key: str) -> None:
+        """Copies the file matching the given `key` into the processed folder within the s3 bucket
 
         Args:
             key: The key of the item to be moved
@@ -123,7 +123,7 @@ class AWSClient:
         self._client.copy(
             CopySource={"Bucket": self._bucket_name, "Key": key},
             Bucket=self._bucket_name,
-            Key=self._build_destination_key(key=key),
+            Key=self._build_processed_key(key=key),
         )
 
     def _delete_file_from_inbound(self, key: str) -> None:
@@ -154,7 +154,7 @@ class AWSClient:
         """
         return key.split(self._inbound_folder)[1]
 
-    def _build_destination_key(self, key: str) -> str:
+    def _build_processed_key(self, key: str) -> str:
         """Constructs the full destination `key` of the item
 
         Examples:
@@ -169,4 +169,4 @@ class AWSClient:
 
         """
         filename: str = self._get_filename_from_key(key=key)
-        return f"{self._destination_folder}{filename}"
+        return f"{self._processed_folder}{filename}"

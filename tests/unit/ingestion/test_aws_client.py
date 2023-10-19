@@ -71,7 +71,7 @@ class TestAWSClient:
         aws_client = AWSClient(client=mocked_boto3_client)
 
         # Then
-        assert aws_client._destination_folder == "processed/"
+        assert aws_client._processed_folder == "processed/"
 
     def test_failed_folder_defaults_to_expected_value(self):
         """
@@ -294,7 +294,7 @@ class TestAWSClient:
         When `move_file_to_processed_folder()`
             is called from an instance of `AWSClient`
         Then the calls are delegated to move the file
-            to the destination folder
+            to the processed folder
         """
         # Given
         fake_key: str = FAKE_KEY
@@ -305,21 +305,21 @@ class TestAWSClient:
 
         # Then
         bucket_name: str = aws_client_with_mocked_boto_client._bucket_name
-        destination_key: str = (
-            aws_client_with_mocked_boto_client._build_destination_key(key=fake_key)
+        processed_key: str = (
+            aws_client_with_mocked_boto_client._build_processed_key(key=fake_key)
         )
         # Check that the call to copy the file is made correctly
-        expected_copy_file_to_destination_call = mock.call.copy(
+        expected_copy_file_to_processed_call = mock.call.copy(
             CopySource={"Bucket": bucket_name, "Key": fake_key},
             Bucket=bucket_name,
-            Key=destination_key,
+            Key=processed_key,
         )
         # Check that the call to delete the origin file is made correctly
         expected_delete_file_from_origin_call = mock.call.delete_object(
             Bucket=bucket_name, Key=fake_key
         )
         expected_calls = [
-            expected_copy_file_to_destination_call,
+            expected_copy_file_to_processed_call,
             expected_delete_file_from_origin_call,
         ]
         # The ordering of the call is important, we expect to copy the file
@@ -349,7 +349,7 @@ class TestAWSClient:
             aws_client_with_mocked_boto_client._inbound_folder
         )
         expected_destination_folder: str = (
-            aws_client_with_mocked_boto_client._destination_folder
+            aws_client_with_mocked_boto_client._processed_folder
         )
         expected_log = (
             f"Moving `{expected_filename}` "
@@ -381,10 +381,10 @@ class TestAWSClient:
         # Then
         assert filename == FAKE_FILE_NAME
 
-    def test_build_destination_key(self, aws_client_with_mocked_boto_client: AWSClient):
+    def test_build_processed_key(self, aws_client_with_mocked_boto_client: AWSClient):
         """
         Given a key from the s3 bucket for an item
-        When `_build_destination_key()` is called
+        When `_build_processed_key()` is called
             from an instance of `AWSClient`
         Then the correct destination key is returned
         """
@@ -392,9 +392,9 @@ class TestAWSClient:
         fake_key = FAKE_KEY
 
         # When
-        destination_key: str = (
-            aws_client_with_mocked_boto_client._build_destination_key(key=fake_key)
+        processed_key: str = (
+            aws_client_with_mocked_boto_client._build_processed_key(key=fake_key)
         )
 
         # Then
-        assert destination_key == f"processed/{FAKE_FILE_NAME}"
+        assert processed_key == f"processed/{FAKE_FILE_NAME}"
