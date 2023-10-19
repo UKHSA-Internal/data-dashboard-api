@@ -110,6 +110,26 @@ class AWSClient:
         self._copy_file_to_processed(key=key)
         self._delete_file_from_inbound(key=key)
 
+    def move_file_to_failed_folder(self, key: str) -> None:
+        """Moves the file matching the given `key` into the `failed/` folder within the s3 bucket
+
+        Args:
+            key: The key of the item to be moved
+
+        Returns:
+            None
+
+        """
+        filename: str = self._get_filename_from_key(key=key)
+        logger.info(
+            "Moving `%s` from `%s` to `%s` in s3",
+            filename,
+            self._inbound_folder,
+            self._failed_folder,
+        )
+        self._copy_file_to_failed(key=key)
+        self._delete_file_from_inbound(key=key)
+
     def _copy_file_to_processed(self, key: str) -> None:
         """Copies the file matching the given `key` into the processed folder within the s3 bucket
 
@@ -124,6 +144,22 @@ class AWSClient:
             CopySource={"Bucket": self._bucket_name, "Key": key},
             Bucket=self._bucket_name,
             Key=self._build_processed_key(key=key),
+        )
+
+    def _copy_file_to_failed(self, key: str) -> None:
+        """Copies the file matching the given `key` into the failed folder within the s3 bucket
+
+        Args:
+            key: The key of the item to be moved
+
+        Returns:
+            None
+
+        """
+        self._client.copy(
+            CopySource={"Bucket": self._bucket_name, "Key": key},
+            Bucket=self._bucket_name,
+            Key=self._build_failed_key(key=key),
         )
 
     def _delete_file_from_inbound(self, key: str) -> None:
@@ -154,6 +190,10 @@ class AWSClient:
         """
         return key.split(self._inbound_folder)[1]
 
+    def _build_destination_key(self, key: str, folder: str) -> str:
+        filename: str = self._get_filename_from_key(key=key)
+        return f"{folder}{filename}"
+
     def _build_processed_key(self, key: str) -> str:
         """Constructs the full processed `key` of the item
 
@@ -168,5 +208,20 @@ class AWSClient:
             The processed key of the item
 
         """
-        filename: str = self._get_filename_from_key(key=key)
-        return f"{self._processed_folder}{filename}"
+        return self._build_destination_key(key=key, folder=self._processed_folder)
+
+    def _build_failed_key(self, key: str) -> str:
+        """Constructs the full failed `key` of the item
+
+        Examples:
+            If the inbound `key` of "in/abc.json" is provided,
+            then "failed/abc.json" will be returned
+
+        Args:
+            key: The inbound key of the item in the bucket
+
+        Returns:
+            The failed key of the item
+
+        """
+        return self._build_destination_key(key=key, folder=self._failed_folder)
