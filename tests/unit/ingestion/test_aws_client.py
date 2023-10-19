@@ -43,7 +43,7 @@ class TestAWSClient:
         spy_create_client.assert_called_once()
         assert aws_client._client == spy_create_client.return_value
 
-    def test_in_bound_folder_defaults_to_expected_value(self):
+    def test_inbound_folder_defaults_to_expected_value(self):
         """
         Given a mocked boto3 client object
         When an instance of `AWSClient` is created
@@ -72,6 +72,21 @@ class TestAWSClient:
 
         # Then
         assert aws_client._destination_folder == "processed/"
+
+    def test_failed_folder_defaults_to_expected_value(self):
+        """
+        Given a mocked boto3 client object
+        When an instance of `AWSClient` is created
+        Then the correct default failed folder is set
+        """
+        # Given
+        mocked_boto3_client = mock.Mock()
+
+        # When
+        aws_client = AWSClient(client=mocked_boto3_client)
+
+        # Then
+        assert aws_client._failed_folder == "failed/"
 
     @mock.patch(f"{MODULE_PATH}.boto3")
     def test_create_client(self, spy_boto3: mock.MagicMock):

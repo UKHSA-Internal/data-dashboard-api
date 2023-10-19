@@ -8,6 +8,7 @@ import config
 
 DEFAULT_INBOUND_INGESTION_FOLDER = "in/"
 DEFAULT_DESTINATION_INGESTION_FOLDER = "processed/"
+DEFAULT_FAILED_INGESTION_FOLDER = "failed/"
 
 logger = logging.getLogger(__name__)
 
@@ -30,11 +31,13 @@ class AWSClient:
         bucket_name: str = config.INGESTION_BUCKET_NAME,
         inbound_folder: str = DEFAULT_INBOUND_INGESTION_FOLDER,
         destination_folder: str = DEFAULT_DESTINATION_INGESTION_FOLDER,
+        failed_folder: str = DEFAULT_FAILED_INGESTION_FOLDER,
     ):
         self._client = client or self.create_client(profile_name=profile_name)
         self._bucket_name = bucket_name
         self._inbound_folder = inbound_folder
         self._destination_folder = destination_folder
+        self._failed_folder = failed_folder
 
     @classmethod
     def create_client(cls, profile_name: str) -> botocore.client.BaseClient:
