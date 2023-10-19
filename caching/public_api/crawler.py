@@ -62,9 +62,24 @@ class PublicAPICrawler:
         headers["Accept"] = "text/html"
         return headers
 
+    def build_headers_for_json(self) -> dict[str, str]:
+        """Constructs headers which should be used in JSON requests
+
+        Notes:
+            In this case, the CDN auth key is constructed.
+            And the "Accept" header is provided as "application/json"
+
+        Returns:
+            Dict containing the necessary header key-value pairs
+
+        """
+        headers = self._build_base_headers()
+        headers["Accept"] = "application/json"
+        return headers
+
     # Endpoint call methods
 
-    def _hit_endpoint_for_json(self, url: str) -> dict:
+    def _hit_endpoint_with_base_headers(self, url: str) -> dict:
         """Makes a `GET` request to the given `url` for a JSON response
 
         Args:
@@ -81,7 +96,25 @@ class PublicAPICrawler:
         )
         return response.json()
 
-    def _hit_endpoint_for_html(self, url: str) -> str:
+    def _hit_endpoint_with_accept_json(self, url: str) -> str:
+        """Makes a 'GET' request to the given 'url' for a JSON response
+        Args:
+            url: The URL to amke the request to
+
+        Returns:
+            url: The URL to make the request to
+
+        """
+        headers = self.build_headers_for_json()
+        response = requests.get(
+            url=url,
+            timeout=self._request_timeout,
+            headers=headers,
+        )
+
+        return response.content
+
+    def _hit_endpoint_with_accept_html(self, url: str) -> str:
         """Makes a `GET` request to the given `url` for an HTML response
 
         Args:
@@ -97,6 +130,7 @@ class PublicAPICrawler:
             timeout=self._request_timeout,
             headers=headers,
         )
+
         return response.content
 
     def hit_endpoint(self, url: str) -> dict:
@@ -109,8 +143,9 @@ class PublicAPICrawler:
             Dict containing the JSON response data
 
         """
-        self._hit_endpoint_for_html(url=url)
-        return self._hit_endpoint_for_json(url=url)
+        self._hit_endpoint_with_accept_html(url=url)
+        self._hit_endpoint_with_accept_json(url=url)
+        return self._hit_endpoint_with_base_headers(url=url)
 
     @staticmethod
     def _is_url(value: str) -> bool:
