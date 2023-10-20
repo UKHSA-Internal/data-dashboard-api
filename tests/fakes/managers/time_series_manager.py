@@ -103,7 +103,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
                 for time_series in filtered_time_series
             ]
         )
-        queryset.latest_refresh_date = max(
+        queryset.latest_date = max(
             (x.refresh_date for x in filtered_time_series), default=""
         )
         return queryset

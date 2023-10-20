@@ -178,16 +178,16 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             queryset=queryset,
             field_name=x_axis,
         )
-        return self._set_latest_refresh_date_on_queryset(queryset=queryset)
+        return self._annotate_latest_date_on_queryset(queryset=queryset)
 
     @staticmethod
-    def _set_latest_refresh_date_on_queryset(
+    def _annotate_latest_date_on_queryset(
         queryset: models.QuerySet,
     ) -> models.QuerySet:
-        """Sets a `latest_refresh_date` attribute on the given `queryset`
+        """Sets `latest_date` attribute on the given `queryset`
 
         Notes:
-            The `latest_refresh_date` attribute is set according to
+            The `latest_date` attribute is set according to
             the latest/maximum date associated with any of the records
             returned within the given `queryset`.
             This is a custom attribute, so this must be the final queryset operation.
@@ -195,19 +195,15 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         Args:
             queryset: The queryset to be labelled with
-                the `latest_refresh_date` attribute
+                the `latest_date` attribute
 
         Returns:
             The queryset which has been labelled with
-            the `latest_refresh_date` attribute
+            the `latest_date` attribute
 
         """
-        latest_refresh_date_aggregation = queryset.aggregate(
-            latest_refresh_date=models.Max("refresh_date")
-        )
-        queryset.latest_refresh_date = latest_refresh_date_aggregation[
-            "latest_refresh_date"
-        ]
+        latest_date_aggregation = queryset.aggregate(latest_date=models.Max("date"))
+        queryset.latest_date = latest_date_aggregation["latest_date"]
         return queryset
 
     def by_topic_metric_ordered_from_newest_to_oldest(

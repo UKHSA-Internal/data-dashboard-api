@@ -193,12 +193,12 @@ class TestChartsInterface:
             == spy_generate_line_multi_coloured_chart_method.return_value
         )
 
-    @mock.patch.object(ChartsInterface, "_set_latest_refresh_date_from_plots_data")
+    @mock.patch.object(ChartsInterface, "_set_latest_date_from_plots_data")
     @mock.patch(f"{MODULE_PATH}.line_multi_coloured.generate_chart_figure")
     def test_generate_line_multi_coloured_chart(
         self,
         spy_line_multi_coloured_generate_chart_figure: mock.MagicMock,
-        mocked_set_latest_refresh_date_from_plots_data: mock.MagicMock,
+        mocked_set_latest_date_from_plots_data: mock.MagicMock,
         valid_plot_parameters: PlotParameters,
     ):
         """
@@ -210,7 +210,7 @@ class TestChartsInterface:
         Patches:
             `spy_line_multi_coloured_generate_chart_figure`: For the
                 main assertion.
-            `mocked_set_latest_refresh_date_from_plots_data`: To isolate
+            `mocked_set_latest_date_from_plots_data`: To isolate
                 date conversion logic away from the scope of the test
         """
         # Given
@@ -250,10 +250,10 @@ class TestChartsInterface:
             == spy_line_multi_coloured_generate_chart_figure.return_value
         )
 
-    @mock.patch.object(ChartsInterface, "_set_latest_refresh_date_from_plots_data")
+    @mock.patch.object(ChartsInterface, "_set_latest_date_from_plots_data")
     def test_build_chart_plots_data_delegates_to_plots_interface(
         self,
-        spy_set_latest_refresh_date_from_plots_data: mock.MagicMock,
+        spy_set_latest_date_from_plots_data: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
         fake_chart_plot_parameters_covid_cases: PlotParameters,
     ):
@@ -286,8 +286,8 @@ class TestChartsInterface:
         # Then
         spy_plots_interface.build_plots_data.assert_called_once()
         assert plots_data == spy_plots_interface.build_plots_data.return_value
-        # Check that the latest_refresh_date is set on the `ChartsInterface`
-        spy_set_latest_refresh_date_from_plots_data.assert_called_once()
+        # Check that the latest_date is set on the `ChartsInterface`
+        spy_set_latest_date_from_plots_data.assert_called_once()
 
     @mock.patch(f"{MODULE_PATH}.calculations.get_rolling_period_slice_for_metric")
     @mock.patch.object(ChartsInterface, "calculate_change_in_metric_value")
@@ -397,7 +397,7 @@ class TestChartsInterface:
         Given a mocked figure which returns
         When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
         Then the `last_updated` field is populated
-            from the `_latest_refresh_date` attribute
+            from the `_latest_date` attribute
 
         Patches:
             `mocked_create_optimized_svg`: To remove the side effect of
@@ -405,10 +405,10 @@ class TestChartsInterface:
 
         """
         # Given
-        mocked_latest_refresh_date = mock.Mock()
+        mocked_latest_date = mock.Mock()
         mocked_plots_collection = mock.MagicMock(file_format="svg")
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
-        charts_interface._latest_refresh_date = mocked_latest_refresh_date
+        charts_interface._latest_date = mocked_latest_date
 
         # When
         encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
@@ -416,7 +416,7 @@ class TestChartsInterface:
         )
 
         # Then
-        assert encoded_chart["last_updated"] == mocked_latest_refresh_date
+        assert encoded_chart["last_updated"] == mocked_latest_date
 
     @mock.patch.object(ChartsInterface, "encode_figure")
     def test_get_encoded_chart_delegates_call_to_encode_figure(
