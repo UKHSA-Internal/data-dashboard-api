@@ -2,8 +2,8 @@ anyascii==0.3.2
 asgiref==3.7.2
 attrs==23.1.0
 beautifulsoup4==4.11.2
-boto3==1.28.66
-botocore==1.31.66
+boto3==1.28.67
+botocore==1.31.67
 CacheControl==0.13.1
 certifi==2023.7.22
 cfgv==3.4.0
@@ -77,7 +77,7 @@ PyYAML==6.0.1
 redis==5.0.1
 requests==2.31.0
 rich==13.6.0
-ruamel.yaml==0.17.35
+ruamel.yaml==0.17.39
 ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.22
 scour==0.38.2
