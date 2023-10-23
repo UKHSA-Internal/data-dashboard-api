@@ -10,7 +10,7 @@ class FakeQuerySet(QuerySet):
 
     def __init__(self, instances: list = None, **kwargs):
         self.fake_instances = instances or []
-        self.latest_refresh_date = None
+        self.latest_date = None
         super().__init__(**kwargs)
 
     def __iter__(self):

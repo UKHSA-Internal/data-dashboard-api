@@ -8,14 +8,8 @@ ARG PYTHON_VERSION=3.11
 
 FROM python:${PYTHON_VERSION}-slim AS build
 
-# Declare the non-root user
-ARG USER_NAME=ukhsa_user
-
 # Ensure the virtual environment will be available on the `PATH` variable
 ENV PATH=/venv/bin:$PATH
-
-# Create a non-root user and group
-RUN groupadd -r ${USER_NAME} && useradd -r -g ${USER_NAME} ${USER_NAME}
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
@@ -45,12 +39,6 @@ FROM python:${PYTHON_VERSION}-slim AS production
 # Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR /code
 
-# Redeclare the non-root user
-ARG USER_NAME=ukhsa_user
-
-# Create a non-root user and group
-RUN groupadd -r ${USER_NAME} && useradd -r -g ${USER_NAME} ${USER_NAME}
-
 # Copy the virtual environment & application code from the `build` stage
 COPY --from=build /venv /venv
 COPY --from=build /code /code
@@ -68,13 +56,8 @@ RUN apt-get update \
     # Update the database of available packages
     && apt-get -y install libpq-dev \
     # Reinstall the C library needed for `psycopg2`
-    && chmod +x entrypoint.sh \
+    && chmod +x entrypoint.sh
     # Add execution permission for the entrypoint shell script
-    && chown -R ${USER_NAME}:${USER_NAME} /code
-    # Add permission for the non-root user
-
-# Switch to the non-root user
-USER ${USER_NAME}
 
 # Opens a shell on the entrypoint.
 # This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container

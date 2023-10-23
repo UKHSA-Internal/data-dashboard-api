@@ -17,7 +17,7 @@ class DataNotFoundError(ValueError):
 
 class QuerySetResult(BaseModel):
     queryset: Any
-    latest_refresh_date: Any
+    latest_date: Any
 
 
 class PlotsInterface:
@@ -38,7 +38,7 @@ class PlotsInterface:
             If no `date_from` was provided within the `plot_parameters`,
             then a default of 1 year from the current date will be used.
 
-            A `latest_refresh_date` attribute is also set
+            A `latest_date` attribute is also set
             on the returned `QuerySetResult` model.
 
         Returns:
@@ -58,7 +58,7 @@ class PlotsInterface:
 
         return QuerySetResult(
             queryset=queryset,
-            latest_refresh_date=queryset.latest_refresh_date,
+            latest_date=queryset.latest_date,
         )
 
     def get_timeseries(
@@ -172,7 +172,7 @@ class PlotsInterface:
             parameters=plot_parameters,
             x_axis_values=list(x_axis_values),
             y_axis_values=list(y_axis_values),
-            latest_refresh_date=queryset_result.latest_refresh_date,
+            latest_date=queryset_result.latest_date,
         )
 
     def build_plots_data(self) -> list[PlotData]:
