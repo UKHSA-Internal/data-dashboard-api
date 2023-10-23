@@ -51,8 +51,7 @@ def download_file_ingest_and_teardown(
 
     Notes:
         If the file upload fails
-        then the file will remain in the `in/` folder
-        and will therefore not be moved to the `processed/` folder
+        then the file will be moved to the `failed/` folder
 
     Args:
         key: The key of the item to be downloaded and processed
@@ -68,9 +67,9 @@ def download_file_ingest_and_teardown(
     try:
         _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
     except FileIngestionFailedError:
-        return
+        return client.move_file_to_failed_folder(key=key)
 
-    client.move_file_to_processed_folder(key=key)
+    return client.move_file_to_processed_folder(key=key)
 
 
 def _upload_file_and_remove_local_copy(filepath: str) -> None:

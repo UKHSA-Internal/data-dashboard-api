@@ -43,7 +43,7 @@ class TestAWSClient:
         spy_create_client.assert_called_once()
         assert aws_client._client == spy_create_client.return_value
 
-    def test_in_bound_folder_defaults_to_expected_value(self):
+    def test_inbound_folder_defaults_to_expected_value(self):
         """
         Given a mocked boto3 client object
         When an instance of `AWSClient` is created
@@ -58,11 +58,11 @@ class TestAWSClient:
         # Then
         assert aws_client._inbound_folder == "in/"
 
-    def test_destination_folder_defaults_to_expected_value(self):
+    def test_processed_folder_defaults_to_expected_value(self):
         """
         Given a mocked boto3 client object
         When an instance of `AWSClient` is created
-        Then the correct default destination folder is set
+        Then the correct default processed folder is set
         """
         # Given
         mocked_boto3_client = mock.Mock()
@@ -71,7 +71,22 @@ class TestAWSClient:
         aws_client = AWSClient(client=mocked_boto3_client)
 
         # Then
-        assert aws_client._destination_folder == "processed/"
+        assert aws_client._processed_folder == "processed/"
+
+    def test_failed_folder_defaults_to_expected_value(self):
+        """
+        Given a mocked boto3 client object
+        When an instance of `AWSClient` is created
+        Then the correct default failed folder is set
+        """
+        # Given
+        mocked_boto3_client = mock.Mock()
+
+        # When
+        aws_client = AWSClient(client=mocked_boto3_client)
+
+        # Then
+        assert aws_client._failed_folder == "failed/"
 
     @mock.patch(f"{MODULE_PATH}.boto3")
     def test_create_client(self, spy_boto3: mock.MagicMock):
@@ -279,7 +294,7 @@ class TestAWSClient:
         When `move_file_to_processed_folder()`
             is called from an instance of `AWSClient`
         Then the calls are delegated to move the file
-            to the destination folder
+            to the processed folder
         """
         # Given
         fake_key: str = FAKE_KEY
@@ -290,25 +305,25 @@ class TestAWSClient:
 
         # Then
         bucket_name: str = aws_client_with_mocked_boto_client._bucket_name
-        destination_key: str = (
-            aws_client_with_mocked_boto_client._build_destination_key(key=fake_key)
+        processed_key: str = aws_client_with_mocked_boto_client._build_processed_key(
+            key=fake_key
         )
         # Check that the call to copy the file is made correctly
-        expected_copy_file_to_destination_call = mock.call.copy(
+        expected_copy_file_to_processed_call = mock.call.copy(
             CopySource={"Bucket": bucket_name, "Key": fake_key},
             Bucket=bucket_name,
-            Key=destination_key,
+            Key=processed_key,
         )
         # Check that the call to delete the origin file is made correctly
         expected_delete_file_from_origin_call = mock.call.delete_object(
             Bucket=bucket_name, Key=fake_key
         )
         expected_calls = [
-            expected_copy_file_to_destination_call,
+            expected_copy_file_to_processed_call,
             expected_delete_file_from_origin_call,
         ]
         # The ordering of the call is important, we expect to copy the file
-        # into the destination before it is deleted from the origin folder
+        # into the processed folder before it is deleted from the origin folder
         spy_client.assert_has_calls(calls=expected_calls, any_order=False)
 
     def test_move_file_to_processed_folder_records_correct_log(
@@ -333,16 +348,167 @@ class TestAWSClient:
         expected_inbound_folder: str = (
             aws_client_with_mocked_boto_client._inbound_folder
         )
-        expected_destination_folder: str = (
-            aws_client_with_mocked_boto_client._destination_folder
+        expected_processed_folder: str = (
+            aws_client_with_mocked_boto_client._processed_folder
         )
         expected_log = (
             f"Moving `{expected_filename}` "
             f"from `{expected_inbound_folder}` "
-            f"to `{expected_destination_folder}` "
+            f"to `{expected_processed_folder}` "
             f"in s3"
         )
         assert expected_log in caplog.text
+
+    # Tests for the `move_file_to_failed_folder()` method
+
+    def test_move_file_to_failed_folder(
+        self, aws_client_with_mocked_boto_client: AWSClient
+    ):
+        """
+        Given a fake key for an item
+        When `move_file_to_failed_folder()`
+            is called from an instance of `AWSClient`
+        Then the calls are delegated to move the file
+            to the failed folder
+
+        """
+        # Given
+        fake_key: str = FAKE_KEY
+        spy_client = aws_client_with_mocked_boto_client._client
+
+        # When
+        aws_client_with_mocked_boto_client.move_file_to_failed_folder(key=fake_key)
+
+        # Then
+        bucket_name: str = aws_client_with_mocked_boto_client._bucket_name
+        failed_key: str = aws_client_with_mocked_boto_client._build_failed_key(
+            key=fake_key
+        )
+
+        # Check that the call to copy the file is made correctly
+        expected_copy_file_to_failed_call = mock.call.copy(
+            CopySource={"Bucket": bucket_name, "Key": fake_key},
+            Bucket=bucket_name,
+            Key=failed_key,
+        )
+        # Check that the call to delete the origin file is made correctly
+        expected_delete_file_from_origin_call = mock.call.delete_object(
+            Bucket=bucket_name, Key=fake_key
+        )
+        expected_calls = [
+            expected_copy_file_to_failed_call,
+            expected_delete_file_from_origin_call,
+        ]
+        # The ordering of the call is important, we expect to copy the file
+        # into the processed folder before it is deleted from the origin folder
+        spy_client.assert_has_calls(calls=expected_calls, any_order=False)
+
+    def test_move_file_to_failed_folder_records_correct_log(
+        self, caplog: LogCaptureFixture, aws_client_with_mocked_boto_client: AWSClient
+    ):
+        """
+        Given a fake key for an item
+        When `move_file_to_failed_folder()`
+            is called from an instance of `AWSClient`
+        Then the expected log is recorded
+        """
+        # Given
+        fake_key: str = FAKE_KEY
+
+        # When
+        aws_client_with_mocked_boto_client.move_file_to_failed_folder(key=fake_key)
+
+        # Then
+        expected_filename: str = (
+            aws_client_with_mocked_boto_client._get_filename_from_key(key=fake_key)
+        )
+        expected_inbound_folder: str = (
+            aws_client_with_mocked_boto_client._inbound_folder
+        )
+        expected_failed_folder: str = aws_client_with_mocked_boto_client._failed_folder
+        expected_log = (
+            f"Moving `{expected_filename}` "
+            f"from `{expected_inbound_folder}` "
+            f"to `{expected_failed_folder}` "
+            f"in s3"
+        )
+        assert expected_log in caplog.text
+
+    # Tests for the _copy_file_to methods
+
+    @mock.patch.object(AWSClient, "_build_processed_key")
+    def test_copy_file_to_processed(
+        self,
+        spy_build_processed_key: mock.MagicMock,
+        aws_client_with_mocked_boto_client: AWSClient,
+    ):
+        """
+        Given a bucket name and a key for a file
+        When `_copy_file_to_processed()` is called
+            from an instance of `AWSClient`
+        Then the call is delegated to the `copy` method
+            on the underlying client with the correct args
+
+        Patches:
+            `spy_build_processed_key`: To check the correct
+                method is called out to in order to create
+                the processed key for the file
+
+        """
+        # Given
+        bucket_name = "fake-bucket"
+        key = FAKE_KEY
+        aws_client_with_mocked_boto_client._bucket_name = bucket_name
+        spy_client: mock.Mock = aws_client_with_mocked_boto_client._client
+
+        # When
+        aws_client_with_mocked_boto_client._copy_file_to_processed(key=key)
+
+        # Then
+        spy_build_processed_key.assert_called_once_with(key=key)
+
+        spy_client.copy.assert_called_once_with(
+            CopySource={"Bucket": bucket_name, "Key": key},
+            Bucket=bucket_name,
+            Key=spy_build_processed_key.return_value,
+        )
+
+    @mock.patch.object(AWSClient, "_build_failed_key")
+    def test_copy_file_to_failed(
+        self,
+        spy_build_failed_key: mock.MagicMock,
+        aws_client_with_mocked_boto_client: AWSClient,
+    ):
+        """
+        Given a bucket name and a key for a file
+        When `_copy_file_to_failed()` is called
+            from an instance of `AWSClient`
+        Then the call is delegated to the `copy` method
+            on the underlying client with the correct args
+
+        Patches:
+            `spy_build_failed_key`: To check the correct
+                method is called out to in order to create
+                the failed key for the file
+
+        """
+        # Given
+        bucket_name = "fake-bucket"
+        key = FAKE_KEY
+        aws_client_with_mocked_boto_client._bucket_name = bucket_name
+        spy_client: mock.Mock = aws_client_with_mocked_boto_client._client
+
+        # When
+        aws_client_with_mocked_boto_client._copy_file_to_failed(key=key)
+
+        # Then
+        spy_build_failed_key.assert_called_once_with(key=key)
+
+        spy_client.copy.assert_called_once_with(
+            CopySource={"Bucket": bucket_name, "Key": key},
+            Bucket=bucket_name,
+            Key=spy_build_failed_key.return_value,
+        )
 
     # Tests for utility methods
 
@@ -366,20 +532,38 @@ class TestAWSClient:
         # Then
         assert filename == FAKE_FILE_NAME
 
-    def test_build_destination_key(self, aws_client_with_mocked_boto_client: AWSClient):
+    def test_build_processed_key(self, aws_client_with_mocked_boto_client: AWSClient):
         """
         Given a key from the s3 bucket for an item
-        When `_build_destination_key()` is called
+        When `_build_processed_key()` is called
             from an instance of `AWSClient`
-        Then the correct destination key is returned
+        Then the correct processed key is returned
         """
         # Given
         fake_key = FAKE_KEY
 
         # When
-        destination_key: str = (
-            aws_client_with_mocked_boto_client._build_destination_key(key=fake_key)
+        processed_key: str = aws_client_with_mocked_boto_client._build_processed_key(
+            key=fake_key
         )
 
         # Then
-        assert destination_key == f"processed/{FAKE_FILE_NAME}"
+        assert processed_key == f"processed/{FAKE_FILE_NAME}"
+
+    def test_build_failed_key(self, aws_client_with_mocked_boto_client: AWSClient):
+        """
+        Given a key from the s3 bucket for an item
+        When `_build_failed_key()` is called
+            from an instance of `AWSClient`
+        Then the correct failed key is returned
+        """
+        # Given
+        fake_key = FAKE_KEY
+
+        # When
+        failed_key: str = aws_client_with_mocked_boto_client._build_failed_key(
+            key=fake_key
+        )
+
+        # Then
+        assert failed_key == f"failed/{FAKE_FILE_NAME}"
