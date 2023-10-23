@@ -43,7 +43,7 @@ class ChartsInterface:
             core_time_series_manager=core_time_series_manager,
         )
 
-        self._latest_refresh_date: str = ""
+        self._latest_date: str = ""
 
     def generate_chart_figure(self) -> plotly.graph_objects.Figure:
         """Creates the chart figure dictated the instance variable of `chart_type`
@@ -171,16 +171,14 @@ class ChartsInterface:
 
         """
         plots_data: list[PlotData] = self.plots_interface.build_plots_data()
-        self._set_latest_refresh_date_from_plots_data(plots_data=plots_data)
+        self._set_latest_date_from_plots_data(plots_data=plots_data)
         return plots_data
 
-    def _set_latest_refresh_date_from_plots_data(
-        self, plots_data: list[PlotData]
-    ) -> None:
-        """Extracts the latest refresh date from the list of given `plots_data`
+    def _set_latest_date_from_plots_data(self, plots_data: list[PlotData]) -> None:
+        """Extracts the latest date from the list of given `plots_data`
 
         Notes:
-            This extracted value is set on the `_latest_refresh_date`
+            This extracted value is set on the `_latest_date`
             instance attribute on this object
 
         Args:
@@ -195,15 +193,11 @@ class ChartsInterface:
 
         """
         try:
-            latest_refresh_date: datetime.date = max(
-                plot.latest_refresh_date for plot in plots_data
-            )
+            latest_date: datetime.date = max(plot.latest_date for plot in plots_data)
         except ValueError:
             return
 
-        self._latest_refresh_date: str = datetime.strftime(
-            latest_refresh_date, "%Y-%m-%d"
-        )
+        self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
 
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotData):
         chart_height = self.chart_plots.chart_height
@@ -299,7 +293,7 @@ class ChartsInterface:
 
         """
         return {
-            "last_updated": self._latest_refresh_date,
+            "last_updated": self._latest_date,
             "chart": self.encode_figure(figure=figure),
         }
 

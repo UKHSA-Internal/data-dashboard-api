@@ -10,11 +10,17 @@ class FakeQuerySet(QuerySet):
 
     def __init__(self, instances: list = None, **kwargs):
         self.fake_instances = instances or []
-        self.latest_refresh_date = None
+        self.latest_date = None
         super().__init__(**kwargs)
 
     def __iter__(self):
         yield from self.fake_instances
 
+    def __getitem__(self, k):
+        return self.fake_instances[k]
+
     def _fetch_all(self):
         return self.fake_instances
+
+    def count(self) -> int:
+        return len(self.fake_instances)

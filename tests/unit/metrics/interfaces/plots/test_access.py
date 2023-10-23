@@ -133,9 +133,7 @@ class TestPlotsInterface:
             parameters=valid_plot_parameters,
             x_axis_values=[x.date for x in fake_core_time_series_records],
             y_axis_values=[x.metric_value for x in fake_core_time_series_records],
-            latest_refresh_date=str(
-                max(x.refresh_date for x in fake_core_time_series_records)
-            ),
+            latest_date=str(max(x.date for x in fake_core_time_series_records)),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -350,8 +348,8 @@ class TestPlotsInterface:
         # The returned `QuerySetResult` is enriched via the `get_timeseries` method
         assert queryset_result.queryset == mocked_get_timeseries.return_value
         assert (
-            queryset_result.latest_refresh_date
-            == mocked_get_timeseries.return_value.latest_refresh_date
+            queryset_result.latest_date
+            == mocked_get_timeseries.return_value.latest_date
         )
 
         # The dict representation of the `PlotParameters` model
@@ -391,7 +389,6 @@ class TestGetXAndYValues:
         [
             ChartAxisFields.date.name,
             ChartAxisFields.metric.name,
-            ChartAxisFields.geography.name,
         ],
     )
     @mock.patch(f"{MODULE_PATH}.unzip_values")

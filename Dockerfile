@@ -60,7 +60,7 @@ RUN apt-get update \
     # Add execution permission for the entrypoint shell script
 
 # Opens a shell on the entrypoint.
-# This allowis the `entrypoint.sh` shell script or any other tooling to be ran
+# This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
 ENTRYPOINT ["/bin/bash"]
 
 # Runs the production server by default

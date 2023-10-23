@@ -102,9 +102,10 @@ class TestChartsView:
         )
         assert response.status_code == HTTPStatus.OK
         response_data = response.data
-        assert response_data["last_updated"] == str(
-            core_timeseries_example[0].refresh_date
+        latest_date = max(
+            core_timeseries.date for core_timeseries in core_timeseries_example
         )
+        assert response_data["last_updated"] == str(latest_date)
 
     @pytest.mark.django_db
     def test_returns_correct_response_for_v3_age_based_chart(
@@ -140,6 +141,7 @@ class TestChartsView:
 
         # Check that the "last_updated" is returned correctly for the age-based chart
         response_data = response.data
-        assert response_data["last_updated"] == str(
-            core_timeseries_example[0].refresh_date
+        latest_date = max(
+            core_timeseries.date for core_timeseries in core_timeseries_example
         )
+        assert response_data["last_updated"] == str(latest_date)

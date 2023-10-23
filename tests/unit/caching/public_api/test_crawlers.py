@@ -83,13 +83,34 @@ class TestPublicAPICrawler:
 
     # Endpoint call methods
 
+    def test_build_headers_for_json(self):
+        """
+        Given a CDN auth key
+        When `build_headers_for_json()` is called
+            from an instance of the `PublicAPICrawler`
+        Then the returned headers contains the CDN auth key
+        And the correct "Accept" header
+        """
+        # Given
+        mocked_cdn_auth_key = mock.Mock()
+        crawler = PublicAPICrawler(
+            public_api_base_url=mock.Mock(), cdn_auth_key=mocked_cdn_auth_key
+        )
+
+        # When
+        constructed_headers: dict[str, str] = crawler.build_headers_for_json()
+
+        # Then
+        assert constructed_headers["x-cdn-auth"] == mocked_cdn_auth_key
+        assert constructed_headers["Accept"] == "application/json"
+
     @mock.patch(f"{MODULE_PATH}.requests")
-    def test_hit_endpoint_for_json(
+    def test_hit_endpoint_with_accept_json(
         self, spy_requests: mock.MagicMock, fake_public_api_crawler: PublicAPICrawler
     ):
         """
         Given a URL
-        When `_hit_endpoint_for_json()` is called
+        When `_hit_endpoint_with_accept_json()` is called
             from an instance of the `PublicAPICrawler`
         Then a GET request is made with the correct args
 
@@ -100,7 +121,9 @@ class TestPublicAPICrawler:
         fake_url = FAKE_URL
 
         # When
-        json_response = fake_public_api_crawler._hit_endpoint_for_json(url=fake_url)
+        json_response = fake_public_api_crawler._hit_endpoint_with_base_headers(
+            url=fake_url
+        )
 
         # Then
         spy_requests.get.assert_called_once_with(
@@ -111,12 +134,12 @@ class TestPublicAPICrawler:
         assert json_response == spy_requests.get.return_value.json.return_value
 
     @mock.patch(f"{MODULE_PATH}.requests")
-    def test_hit_endpoint_for_html(
+    def test_hit_endpoint_with_accept_html(
         self, spy_requests: mock.MagicMock, fake_public_api_crawler: PublicAPICrawler
     ):
         """
         Given a URL
-        When `_hit_endpoint_for_html()` is called
+        When `_hit_endpoint_with_accept_html()` is called
             from an instance of the `PublicAPICrawler`
         Then a GET request is made with the correct args
 
@@ -127,7 +150,9 @@ class TestPublicAPICrawler:
         fake_url = FAKE_URL
 
         # When
-        json_response = fake_public_api_crawler._hit_endpoint_for_html(url=fake_url)
+        json_response = fake_public_api_crawler._hit_endpoint_with_accept_html(
+            url=fake_url
+        )
 
         # Then
         spy_requests.get.assert_called_once_with(
@@ -137,12 +162,12 @@ class TestPublicAPICrawler:
         )
         assert json_response == spy_requests.get.return_value.content
 
-    @mock.patch.object(PublicAPICrawler, "_hit_endpoint_for_json")
-    @mock.patch.object(PublicAPICrawler, "_hit_endpoint_for_html")
+    @mock.patch.object(PublicAPICrawler, "_hit_endpoint_with_base_headers")
+    @mock.patch.object(PublicAPICrawler, "_hit_endpoint_with_accept_html")
     def test_hit_endpoint(
         self,
-        spy_hit_endpoint_for_html: mock.MagicMock,
-        spy_hit_endpoint_for_json: mock.MagicMock,
+        spy_hit_endpoint_with_accept_html: mock.MagicMock,
+        spy_hit_endpoint_with_base_headers: mock.MagicMock,
         fake_public_api_crawler,
     ):
         """
@@ -153,9 +178,9 @@ class TestPublicAPICrawler:
             types of supported requests which are to be cached
 
         Patches:
-            `spy_hit_endpoint_for_html`: To check the call
+            `spy_hit_endpoint_with_accept_html`: To check the call
                 for HTML requests are made
-            `spy_hit_endpoint_for_json`: To check the call
+            `spy_hit_endpoint_with_accept_json`: To check the call
                 for JSON requests are made
 
         """
@@ -166,9 +191,9 @@ class TestPublicAPICrawler:
         endpoint_response = fake_public_api_crawler.hit_endpoint(url=url)
 
         # Then
-        spy_hit_endpoint_for_html.assert_called_once_with(url=url)
-        spy_hit_endpoint_for_json.assert_called_once_with(url=url)
-        assert endpoint_response == spy_hit_endpoint_for_json.return_value
+        spy_hit_endpoint_with_accept_html.assert_called_once_with(url=url)
+        spy_hit_endpoint_with_base_headers.assert_called_once_with(url=url)
+        assert endpoint_response == spy_hit_endpoint_with_base_headers.return_value
 
     # Recursive crawl
 

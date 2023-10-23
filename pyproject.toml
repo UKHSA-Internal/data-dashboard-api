@@ -108,6 +108,33 @@ DJANGO_SETTINGS_MODULE = "metrics.api.settings"
 addopts = "--random-order"
 
 ########################################################################################################################
+# Test coverage configuration
+########################################################################################################################
+[tool.coverage.run]
+source = ["caching", "cms", "feedback", "ingestion", "metrics", "public_api"]
+
+[tool.coverage.report]
+omit = [
+    "tests/*",                          # Omit test files themselves from the report
+    "cms/search/*",                     # Boilerplate wagtail `search` app
+    "metrics/api/wsgi.py",              # Boilerplate Django server entrypoint
+    "metrics/api/asgi.py",              # Boilerplate Django server entrypoint
+    "metrics/api/settings.py",          # Configuration file
+    "config.py",                        # Configuration file
+    "manage.py"                         # Application server entrypoint
+]
+skip_covered = true                     # Only list files which do not have 100% test coverage in the report
+show_missing = true                     # Report lines which were not hit
+fail_under = 98.0                       # Test coverage report will fail for total coverage under this threshold value
+exclude_lines = ["__str__"]
+
+########################################################################################################################
+# Bandit configuration
+########################################################################################################################
+[tool.bandit]
+exclude_dirs = ["tests"]
+
+########################################################################################################################
 # Import linter configuration
 ########################################################################################################################
 [tool.importlinter]

@@ -14,7 +14,11 @@ CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
 CACHE_CHECK_HEADER_KEY = "Cache-Check"
 
 
-PAGE_TYPES = ("common.CommonPage", "topic.TopicPage", "home.HomePage")
+PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS = (
+    "common.CommonPage",
+    "topic.TopicPage",
+    "home.HomePage",
+)
 
 
 class InternalAPIClient:
@@ -66,6 +70,15 @@ class InternalAPIClient:
             CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh,
             CACHE_CHECK_HEADER_KEY: self.cache_check_only,
         }
+
+    # Query parameters
+
+    @staticmethod
+    def build_query_params(
+        page_type: str, additional_query_params: dict[str, str] | None = None
+    ) -> dict[str, str]:
+        additional_query_params = additional_query_params or {}
+        return {"type": page_type, **additional_query_params}
 
     # Endpoints
 
@@ -151,25 +164,35 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 
-    def hit_pages_list_endpoint_for_page_type_query_param(
-        self, page_type_query_param: str
+    def hit_pages_list_endpoint_for_page_type(
+        self,
+        page_type_query_param: str,
+        additional_query_params: dict[str, str] | None = None,
     ) -> Response:
         """Sends a `GET` request to the list `pages/` endpoint with a query param for the given page type
 
         Args:
             page_type_query_param: The query parameter for the page type
                 E.g. "topic.TopicPage"
+            additional_query_params: Dict of additional query parameters
+                to be passed to the request
 
         Returns:
             `Response` from the list `pages/?type=` endpoint
 
         """
-        path = self.pages_endpoint_path
-        headers = self.build_headers()
+        path: str = self.pages_endpoint_path
+        headers: dict[str, str] = self.build_headers()
+
+        query_params: dict[str, str] = self.build_query_params(
+            page_type=page_type_query_param,
+            additional_query_params=additional_query_params,
+        )
+
         return self._client.get(
             path=path,
             headers=headers,
-            data={"type": page_type_query_param},
+            data=query_params,
             format="json",
         )
 
@@ -180,10 +203,18 @@ class InternalAPIClient:
             None
 
         """
-        for page_type in PAGE_TYPES:
-            self.hit_pages_list_endpoint_for_page_type_query_param(
-                page_type_query_param=page_type
-            )
+        for page_type in PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS:
+            self.hit_pages_list_endpoint_for_page_type(page_type_query_param=page_type)
+
+        # The whats_new page types have bespoke query parameters which need to be cached
+        self.hit_pages_list_endpoint_for_page_type(
+            page_type_query_param="whats_new.WhatsNewParentPage",
+            additional_query_params={"fields": "date_posted"},
+        )
+        self.hit_pages_list_endpoint_for_page_type(
+            page_type_query_param="whats_new.WhatsNewChildEntry",
+            additional_query_params={"fields": "*"},
+        )
 
     def hit_pages_detail_endpoint(self, page_id: int) -> Response:
         """Sends a `GET` request to the detail `pages/` endpoint for the given `page_id`

@@ -37,7 +37,6 @@ class ChartAxisFields(Enum):
     age = "age__name"
     date = "date"
     metric = "metric_value"
-    geography = "geography__geography_type__name"
 
     @classmethod
     def choices(cls):
@@ -71,23 +70,6 @@ class ChartAxisFields(Enum):
             return cls[name].value
         except KeyError:
             return cls.get_default_y_axis().value
-
-
-def get_axis_name(field_name: str):
-    """Convert the given field_name into the "display" version
-    If no conversion is required then just return the supplied argument unaltered
-
-    Args:
-        field_name: The fieldname to convert to the display version if required
-
-    Returns:
-        The converted or unaltered fieldname
-    """
-    return (
-        ChartAxisFields(field_name).name
-        if field_name in ChartAxisFields.values()
-        else field_name
-    )
 
 
 DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
