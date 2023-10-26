@@ -130,7 +130,7 @@ class TestDownloadsView:
         assert "json" in response.headers["Content-Type"]
 
         # Check the format of the output is as expected
-        assert type(response.data[0]) == OrderedDict
+        assert isinstance(response.data[0], OrderedDict)
 
         # Check the output itself is as expected
         assert response.data[0] == self.api_timeseries_data
