@@ -238,6 +238,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         # Store the latest records for each day so that they can be mapped easily
         # Note that this currently incurs execution of an additional db query
+        # The alternative was to possibly use `DISTINCT ON` instead
+        # but that is specific to the postgresql backend and would
+        # mean we would no longer be agnostic to the underlying database engine.
+        # Given the level of caching in the system, the performance penalty incurred
+        # here is not noticeable.
         latest_records_map: dict[datetime.date, datetime.date] = {
             record["date"]: record["latest_refresh"]
             for record in latest_refresh_dates_associated_with_dates
