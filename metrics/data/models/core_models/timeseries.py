@@ -57,5 +57,24 @@ class CoreTimeSeries(models.Model):
 
     objects = CoreTimeSeriesManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "metric",
+                    "geography",
+                    "stratum",
+                    "age",
+                    "sex",
+                    "year",
+                    "month",
+                    "epiweek",
+                    "date",
+                    "metric_value",
+                ),
+                name="The `CoreTimeSeries` record should be unique",
+            )
+        ]
+
     def __str__(self):
         return f"Core Timeseries Data for {self.date}, metric '{self.metric.name}', value: {self.metric_value}"
