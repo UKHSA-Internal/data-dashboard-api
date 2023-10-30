@@ -45,7 +45,9 @@ def generate_api_time_series(
     )
 
     api_time_series_manager.bulk_create(
-        objs=api_time_series_models_to_be_saved, batch_size=batch_size
+        objs=api_time_series_models_to_be_saved,
+        batch_size=batch_size,
+        ignore_conflicts=True,
     )
 
 

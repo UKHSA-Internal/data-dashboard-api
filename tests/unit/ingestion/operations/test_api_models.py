@@ -59,6 +59,7 @@ class TestGenerateAPITimeSeries:
         spy_api_time_series_manager.bulk_create.assert_called_once_with(
             objs=expected_created_api_time_series,
             batch_size=100,
+            ignore_conflicts=True,
         )
 
     @mock.patch(f"{MODULE_PATH}.create_api_time_series_from_core_time_series")
@@ -118,7 +119,9 @@ class TestGenerateAPITimeSeries:
         log_text = "No CoreTimeSeries provided, therefore no APITimeSeries records will be created"
         assert log_text in caplog.text
         spy_api_time_series_manager.bulk_create.assert_called_once_with(
-            objs=[], batch_size=100
+            objs=[],
+            batch_size=100,
+            ignore_conflicts=True,
         )
 
 
