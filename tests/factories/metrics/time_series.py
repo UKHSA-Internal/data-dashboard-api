@@ -31,7 +31,7 @@ class CoreTimeSeriesFactory(factory.django.DjangoModelFactory):
         sub_theme_name: str = "respiratory",
         topic_name: str = "COVID-19",
         metric_name: str = "COVID-19_cases_casesByDay",
-        geography_name: str = "London",
+        geography_name: str = "England",
         geography_type_name: str = "Nation",
         stratum_name: str = "default",
         age_name: str = "all",
@@ -61,12 +61,14 @@ class CoreTimeSeriesFactory(factory.django.DjangoModelFactory):
 
         return cls.create(
             metric=metric,
+            metric_frequency="D",
             geography=geography,
             stratum=stratum,
             age=age,
             sex=sex,
             metric_value=metric_value,
             year=year,
+            month=1,
             epiweek=epiweek,
             date=date,
             **kwargs
