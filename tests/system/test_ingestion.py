@@ -247,15 +247,16 @@ class TestIngestion:
         # Note that the extra decimal places are cast by the database column
         assert tables_response[1]["values"][0]["value"] == f"{updated_metric_value:.4f}"
 
-        # Check that the public API also contains the retrospective updates
-        # as well as the records from the first file ingestion
+        # Check that the public API contains the retrospective update
+        # as well as the record from the first file ingestion
         public_api_data = self._hit_public_api(data=example_timeseries_data[0])
-        assert public_api_data["count"] == 3
+        assert public_api_data["count"] == 2
         assert public_api_data["results"][0]["metric"] == metric
         assert public_api_data["results"][0]["topic"] == topic
-        assert str(public_api_data["results"][1]["metric_value"]) == str(
+        assert str(public_api_data["results"][0]["metric_value"]) == str(
             updated_metric_value
         )
+        assert str(public_api_data["results"][1]["metric_value"]) == "0.0"
 
     @staticmethod
     def _rebuild_file_with_updated_refresh_date_only(
