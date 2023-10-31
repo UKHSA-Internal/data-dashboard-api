@@ -90,6 +90,38 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def _filter_by_age(queryset, age):
         return queryset.filter(age__name=age)
 
+    def _filter_for_any_optional_fields(
+        self,
+        queryset,
+        geography_name,
+        geography_type_name,
+        stratum_name,
+        sex,
+        age,
+    ):
+        if geography_name:
+            queryset = self._filter_by_geography(
+                queryset=queryset, geography_name=geography_name
+            )
+
+        if geography_type_name:
+            queryset = self._filter_by_geography_type(
+                queryset=queryset, geography_type_name=geography_type_name
+            )
+
+        if stratum_name:
+            queryset = self._filter_by_stratum(
+                queryset=queryset, stratum_name=stratum_name
+            )
+
+        if sex:
+            queryset = self._filter_by_sex(queryset=queryset, sex=sex)
+
+        if age:
+            queryset = self._filter_by_age(queryset=queryset, age=age)
+
+        return queryset
+
     def filter_for_x_and_y_values(
         self,
         x_axis: str,
@@ -151,34 +183,79 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             date__gte=date_from,
             date__lte=date_to,
         )
-
-        if geography_name:
-            queryset = self._filter_by_geography(
-                queryset=queryset, geography_name=geography_name
-            )
-
-        if geography_type_name:
-            queryset = self._filter_by_geography_type(
-                queryset=queryset, geography_type_name=geography_type_name
-            )
-
-        if stratum_name:
-            queryset = self._filter_by_stratum(
-                queryset=queryset, stratum_name=stratum_name
-            )
-
-        if sex:
-            queryset = self._filter_by_sex(queryset=queryset, sex=sex)
-
-        if age:
-            queryset = self._filter_by_age(queryset=queryset, age=age)
-
+        queryset = self._filter_for_any_optional_fields(
+            queryset=queryset,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+        queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
         queryset = queryset.values_list(x_axis, y_axis)
         queryset = self._ascending_order(
             queryset=queryset,
             field_name=x_axis,
         )
         return self._annotate_latest_date_on_queryset(queryset=queryset)
+
+    @staticmethod
+    def filter_for_latest_refresh_date_records(
+        queryset: models.QuerySet,
+    ) -> models.QuerySet:
+        """Filters the given `queryset` to ensure the latest record is returned for each individual date
+
+        Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 4th round  | 2nd round  | 3rd round  |   <- expected results
+
+            This method will handle mixtures of records
+            so that we don't simply return the latest round
+            in its entirety but rather the overall result
+            which return the most recent record
+            for the individual dates
+
+        Args:
+            queryset: The queryset to filter against
+
+        Returns:
+            A new filtered queryset containing
+            only the latest records for each date
+
+        """
+        # Build a queryset labelled with the latest `refresh_date` for each `date`
+        latest_refresh_dates_associated_with_dates: CoreTimeSeriesQuerySet = (
+            queryset.values("date").annotate(latest_refresh=models.Max("refresh_date"))
+        )
+
+        # Store the latest records for each day so that they can be mapped easily
+        # Note that this currently incurs execution of an additional db query
+        # The alternative was to possibly use `DISTINCT ON` instead
+        # but that is specific to the postgresql backend and would
+        # mean we would no longer be agnostic to the underlying database engine.
+        # Given the level of caching in the system, the performance penalty incurred
+        # here is not noticeable.
+        latest_records_map: dict[datetime.date, datetime.date] = {
+            record["date"]: record["latest_refresh"]
+            for record in latest_refresh_dates_associated_with_dates
+        }
+
+        # Filter the IDs for the records in memory to get the latest ones partitioned by each date
+        resulting_ids: list[int] = [
+            record.id
+            for record in queryset
+            if record.refresh_date == latest_records_map.get(record.date)
+        ]
+
+        return queryset.filter(pk__in=resulting_ids)
 
     @staticmethod
     def _annotate_latest_date_on_queryset(
@@ -414,6 +491,24 @@ class CoreTimeSeriesManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 4th round  | 2nd round  | 3rd round  |   <- expected results
+
+            This method will handle mixtures of records
+            so that we don't simply return the latest round
+            in its entirety but rather the overall result
+            which return the most recent record
+            for the individual dates
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
