@@ -183,3 +183,8 @@ This is the name of the s3 bucket from which to ingest metrics files from.
 #### `AWS_PROFILE_NAME`
 
 The name of the AWS profile to use for the AWS client used for ingestion.
+
+#### `S3_OBJECT_KEY`
+
+The name of the object key in the bucket to be ingested.
+Note that this is only used in conjunction with the 1-to-1 `ingest_file_from_s3.sh` script.
