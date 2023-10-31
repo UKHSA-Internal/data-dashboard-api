@@ -5,7 +5,6 @@ Only intended for use during development
 
 import json
 import logging
-import re
 
 from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
@@ -33,8 +32,7 @@ def make_slug(page_title: str) -> str:
         The page title as a slug with invalid characters removed.
         Currently only removes quotes, commas and full-stops.
     """
-
-    return re.sub("'|\.|\s|,", "-", page_title.lower())
+    return page_title.lower().replace("'", "").replace(" ", "-")
 
 
 def open_example_page_response(page_name: str):
