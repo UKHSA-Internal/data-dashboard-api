@@ -31,7 +31,7 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         sub_theme_name: str = "respiratory",
         topic_name: str = "COVID-19",
         metric_name: str = "COVID-19_headline_positivity_latest",
-        geography_name: str = "London",
+        geography_name: str = "England",
         geography_type_name: str = "Nation",
         stratum_name: str = "default",
         age_name: str = "all",

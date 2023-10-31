@@ -1,13 +1,3 @@
-"""
-For any given API we will require:
- - An API View
- - Flat model generated from the core data
- - Function to generate the flat model from the core data
-
-This file contains the flat models only.
-Note that the flat models should only be populated
-    via the `generate_weekly_time_series()` function not through any API route.
-"""
 from django.db import models
 
 from metrics.data.managers.api_models.time_series import APITimeSeriesManager
@@ -44,6 +34,30 @@ class APITimeSeries(models.Model):
     metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = APITimeSeriesManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "metric",
+                    "topic",
+                    "theme",
+                    "sub_theme",
+                    "geography",
+                    "geography_type",
+                    "geography_code",
+                    "stratum",
+                    "age",
+                    "sex",
+                    "year",
+                    "month",
+                    "epiweek",
+                    "date",
+                    "metric_value",
+                ),
+                name="The `APITimeSeries` record should be unique",
+            )
+        ]
 
     def __str__(self):
         return (

@@ -50,5 +50,22 @@ class CoreHeadline(models.Model):
 
     objects = CoreHeadlineManager()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "metric",
+                    "geography",
+                    "stratum",
+                    "age",
+                    "sex",
+                    "period_start",
+                    "period_end",
+                    "metric_value",
+                ),
+                name="The `CoreHeadline` record should be unique",
+            )
+        ]
+
     def __str__(self):
         return f"Core Headline Data for {self.refresh_date}, metric '{self.metric.name}', value: {self.metric_value}"
