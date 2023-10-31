@@ -1,6 +1,7 @@
 import datetime
 import json
 from collections import OrderedDict
+from decimal import Decimal
 from unittest import mock
 
 import pytest
@@ -9,6 +10,8 @@ from rest_framework.test import APIClient
 
 from ingestion.file_ingestion import file_ingester
 from metrics.data.models.core_models import CoreTimeSeries
+
+FAKE_FILE_NAME = "COVID-19_deaths_ONSByDay.json"
 
 
 def _create_fake_file(data: list[dict[str, str | float]], file_name: str) -> mock.Mock:
@@ -31,7 +34,7 @@ class TestIngestion:
         """
         # Given
         fake_data = _create_fake_file(
-            data=example_timeseries_data, file_name="COVID-19_deaths_ONSByDay.json"
+            data=example_timeseries_data, file_name=FAKE_FILE_NAME
         )
 
         api_client = APIClient()
@@ -67,6 +70,99 @@ class TestIngestion:
         )
 
     @pytest.mark.django_db
+    def test_when_multiple_files_are_ingested_the_correct_data_is_queried_for(
+        self, example_timeseries_data: list[dict[str, str | float]]
+    ):
+        """
+        Given multiple ingested files of
+            new data, no new functional data, and retrospective updates
+        When the data is queried for via the model manager
+        Then the correct data is returned at each point in time
+        """
+        # Given
+        file_name = FAKE_FILE_NAME
+        first_sample_data = example_timeseries_data
+        query_payload = {
+            "x_axis": "date",
+            "y_axis": "metric_value",
+            "topic_name": first_sample_data[0]["topic"],
+            "metric_name": first_sample_data[0]["metric"],
+            "date_from": "2020-01-01",
+            "date_to": "2023-10-31",
+        }
+        first_data_file = _create_fake_file(data=first_sample_data, file_name=file_name)
+
+        second_refresh_date = datetime.date(year=2023, month=10, day=30)
+        second_data_file_with_no_functional_updates = (
+            self._rebuild_file_with_updated_refresh_date_only(
+                data=example_timeseries_data,
+                refresh_date=second_refresh_date,
+                file_name=file_name,
+            )
+        )
+
+        final_refresh_date = datetime.date(year=2023, month=10, day=31)
+        updated_metric_value = 99.0000
+        third_data_file_with_retrospective_updates = (
+            self._rebuild_file_with_single_retrospective_update(
+                data=example_timeseries_data,
+                refresh_date=final_refresh_date,
+                metric_value=updated_metric_value,
+                file_name=file_name,
+            )
+        )
+
+        date_format = "%Y-%m-%d"
+        first_date: datetime.date = datetime.datetime.strptime(
+            example_timeseries_data[0]["date"], date_format
+        ).date()
+        second_date: datetime.date = datetime.datetime.strptime(
+            example_timeseries_data[1]["date"], date_format
+        ).date()
+
+        # When / Then
+        # Check that the 1st file is ingested properly
+        file_ingester(file=first_data_file)
+        filtered_core_time_series = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            **query_payload
+        )
+        assert filtered_core_time_series.count() == 2
+        assert (first_date, Decimal("0.0000")) in filtered_core_time_series
+        assert (second_date, Decimal("0.0000")) in filtered_core_time_series
+
+        # Check that the 2nd file is ingested
+        file_ingester(file=second_data_file_with_no_functional_updates)
+        filtered_core_time_series = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            **query_payload
+        )
+        assert filtered_core_time_series.count() == 2
+        # The `refresh_date` remains as per the original file
+        assert second_refresh_date not in filtered_core_time_series.values_list(
+            "refresh_date", flat=True
+        )
+        # And the returned data remains functionally the same
+        assert (first_date, Decimal("0.0000")) in filtered_core_time_series
+        assert (second_date, Decimal("0.0000")) in filtered_core_time_series
+
+        # Check that the 3rd file is ingested
+        file_ingester(file=third_data_file_with_retrospective_updates)
+        filtered_core_time_series = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            **query_payload
+        )
+        assert filtered_core_time_series.count() == 2
+        returned_refresh_dates = filtered_core_time_series.values_list(
+            "refresh_date", flat=True
+        )
+        assert second_refresh_date not in returned_refresh_dates
+        # The new `refresh_date` for the 1 retrospective update is included
+        assert final_refresh_date in returned_refresh_dates
+
+        # And the returned data contains the retrospective update
+        # as well as the other original data point
+        assert (first_date, Decimal(updated_metric_value)) in filtered_core_time_series
+        assert (second_date, Decimal("0.0000")) in filtered_core_time_series
+
+    @pytest.mark.django_db
     def test_data_is_deduplicated_on_write_to_db_and_return_latest_data_from_apis(
         self, example_timeseries_data: list[dict[str, str | float]]
     ):
@@ -78,7 +174,7 @@ class TestIngestion:
         Then the APIs should return the latest-functional data
         """
         # Given
-        file_name = "COVID-19_deaths_ONSByDay.json"
+        file_name = FAKE_FILE_NAME
         first_sample_data = example_timeseries_data
         first_data_file = _create_fake_file(data=first_sample_data, file_name=file_name)
 
@@ -87,7 +183,7 @@ class TestIngestion:
             self._rebuild_file_with_updated_refresh_date_only(
                 data=example_timeseries_data,
                 refresh_date=second_refresh_date,
-                file_name="COVID-19_deaths_ONSByDay.json",
+                file_name=file_name,
             )
         )
 
