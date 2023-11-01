@@ -149,6 +149,7 @@ def _create_core_timeseries_model_instances(
             epiweek=timeseries_dto.epiweek,
             date=timeseries_dto.date.split(" ")[0],
             refresh_date=refresh_date,
+            embargo=timeseries_dto.embargo,
             metric_value=timeseries_dto.metric_value,
         )
         for timeseries_dto in timeseries_dtos
