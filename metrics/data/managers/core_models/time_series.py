@@ -8,6 +8,7 @@ import datetime
 from decimal import Decimal
 
 from django.db import models
+from django.utils import timezone
 
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
@@ -191,12 +192,13 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
         queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
-        queryset = queryset.values_list(x_axis, y_axis)
         queryset = self._ascending_order(
             queryset=queryset,
             field_name=x_axis,
         )
+        queryset = queryset.values_list(x_axis, y_axis)
         return self._annotate_latest_date_on_queryset(queryset=queryset)
 
     @staticmethod
@@ -282,6 +284,26 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         latest_date_aggregation = queryset.aggregate(latest_date=models.Max("date"))
         queryset.latest_date = latest_date_aggregation["latest_date"]
         return queryset
+
+    @staticmethod
+    def _exclude_data_under_embargo(queryset: models.QuerySet) -> models.QuerySet:
+        """Excludes any data which is currently embargoed from the given `queryset`
+
+        Notes:
+            If the `embargo` value is None then it will be included
+            in the returned queryset
+
+        Args:
+            queryset: The queryset to exclude emargoed data from
+
+        Returns:
+            The filtered queryset which excludes emargoed data
+
+        """
+        current_time = timezone.now()
+        return queryset.filter(
+            models.Q(embargo__lte=current_time) | models.Q(embargo=None)
+        )
 
     def by_topic_metric_ordered_from_newest_to_oldest(
         self, topic_name: str, metric_name: str
