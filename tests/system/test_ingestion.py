@@ -13,6 +13,7 @@ from ingestion.file_ingestion import file_ingester
 from metrics.data.models.core_models import CoreTimeSeries
 
 FAKE_FILE_NAME = "COVID-19_deaths_ONSByDay.json"
+EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
 
 def _create_fake_file(data: list[dict[str, str | float]], file_name: str) -> mock.Mock:
@@ -301,6 +302,100 @@ class TestIngestion:
             updated_metric_value
         )
         assert str(public_api_data["results"][1]["metric_value"]) == "0.0"
+
+    @pytest.mark.django_db
+    def test_files_with_embargoed_data_can_be_ingested_and_not_shown_on_apis(
+        self, example_timeseries_data: list[dict[str, str | float]]
+    ):
+        """
+        Given a file containing live data
+        And another file which contains
+            1 data point which is under embargo
+            and another which should be considered to be a live successor
+        When the date is uploaded via `file_ingester()`
+        Then the correct data is returned
+            from the subsequent calls to `filter_for_x_and_y_values()`
+            from the `CoreTimeSeries` model manager
+        """
+        # Given
+        file_name = FAKE_FILE_NAME
+        first_sample_data = example_timeseries_data
+        first_data_file = _create_fake_file(data=first_sample_data, file_name=file_name)
+
+        date_format = EXPECTED_DATE_FORMAT
+        first_date: datetime.date = datetime.datetime.strptime(
+            example_timeseries_data[0]["date"], date_format
+        ).date()
+        second_date: datetime.date = datetime.datetime.strptime(
+            example_timeseries_data[1]["date"], date_format
+        ).date()
+
+        # The 2nd file only contains data which is under embargo
+        # and therefore should not be returned in queries
+        embargoed_data = example_timeseries_data
+        future_embargo_date = str(timezone.now() + datetime.timedelta(days=1))
+        expected_new_metric_value = 678
+        embargoed_metric_value = 5671
+        embargoed_data[0]["metric_value"] = expected_new_metric_value
+        embargoed_data[0]["refresh_date"] = "2023-11-01"
+        embargoed_data[1]["metric_value"] = embargoed_metric_value
+        embargoed_data[1]["embargo"] = future_embargo_date
+        embargoed_data_file = _create_fake_file(
+            data=embargoed_data, file_name=file_name
+        )
+
+        query_payload = {
+            "x_axis": "date",
+            "y_axis": "metric_value",
+            "topic_name": first_sample_data[0]["topic"],
+            "metric_name": first_sample_data[0]["metric"],
+            "date_from": "2020-01-01",
+            "date_to": "2023-10-31",
+        }
+
+        # When / Then
+        # Check that the 1st file is ingested properly
+        file_ingester(file=first_data_file)
+        assert CoreTimeSeries.objects.all().count() == len(first_sample_data)
+
+        filtered_core_time_series = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            **query_payload
+        )
+        assert filtered_core_time_series.count() == 2
+        assert (first_date, Decimal("0.0000")) in filtered_core_time_series
+        assert (second_date, Decimal("0.0000")) in filtered_core_time_series
+
+        # Check that the 2nd file is ingested properly
+        file_ingester(file=embargoed_data_file)
+        # The embargoed data points should have been ingested and persisted in the database
+        assert CoreTimeSeries.objects.all().count() == len(first_sample_data) + len(
+            embargoed_data
+        )
+
+        # Check the subsquent query again to ensure the embargoed data points are not coming through
+        filtered_core_time_series = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            **query_payload
+        )
+
+        # Our database will look like the following:
+        # |       2020-03-02       |         2020-03-03         |
+        # | 1st round              | 1st round                  | <- immediately live
+        # | 2nd round (successor)  | 2nd round (under embargo)  | <- mixture of immediate successor + embargoed data
+        # -------------------------------------------------------
+        # |        2nd round       |         1st round          | <- expected results
+
+        assert filtered_core_time_series.count() == 2
+        assert (
+            first_date,
+            Decimal(expected_new_metric_value),
+        ) in filtered_core_time_series
+        assert (second_date, Decimal("0.0000")) in filtered_core_time_series
+        # Even though the embargoed data was ingested successfully
+        # that data should not be made available to the subsequent query
+        assert (
+            second_date,
+            Decimal(embargoed_metric_value),
+        ) not in filtered_core_time_series
 
     @staticmethod
     def _rebuild_file_with_updated_refresh_date_only(
