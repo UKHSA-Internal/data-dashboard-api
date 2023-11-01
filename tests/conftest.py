@@ -111,6 +111,7 @@ def example_headline_data() -> list[dict[str, str | float]]:
             "period_end": "2023-06-30",
             "metric_value": 1,
             "refresh_date": "2023-07-11",
+            "embargo": "2023-07-18",
         },
         {
             "parent_theme": "infectious_disease",
@@ -128,6 +129,7 @@ def example_headline_data() -> list[dict[str, str | float]]:
             "period_end": "2023-06-30",
             "metric_value": -11,
             "refresh_date": "2023-07-11",
+            "embargo": "2023-07-18",
         },
     ]
 
@@ -161,6 +163,7 @@ def example_timeseries_data() -> list[dict[str, str | int | float]]:
             "date": "2020-03-02",
             "metric_value": 0,
             "refresh_date": "2023-07-11",
+            "embargo": "2023-07-18",
         },
         {
             "parent_theme": "infectious_disease",
@@ -181,6 +184,7 @@ def example_timeseries_data() -> list[dict[str, str | int | float]]:
             "date": "2020-03-03",
             "metric_value": 0,
             "refresh_date": "2023-07-11",
+            "embargo": "2023-07-18",
         },
     ]
 
