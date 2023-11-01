@@ -273,6 +273,7 @@ class Consumer:
             period_end=incoming_headline_dto.period_end,
             metric_value=incoming_headline_dto.metric_value,
             refresh_date=incoming_headline_dto.refresh_date,
+            embargo=incoming_headline_dto.embargo,
         )
 
     def _convert_to_outgoing_timeseries_dtos(
@@ -337,6 +338,7 @@ class Consumer:
             metric_value=incoming_timeseries_dto.metric_value,
             date=str(incoming_timeseries_dto.date),
             refresh_date=incoming_timeseries_dto.refresh_date,
+            embargo=incoming_timeseries_dto.embargo,
         )
 
     def _parse_data(

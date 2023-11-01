@@ -34,6 +34,7 @@ class TestConsumer:
             ["sex", "sex"],
             ["stratum", "stratum"],
             ["refresh_date", "refresh_date"],
+            ["embargo", "embargo"],
             ["metric_value", "metric_value"],
             # HeadlineDTO specific fields
             ["period_start", "period_start"],
@@ -131,6 +132,7 @@ class TestConsumer:
             ["sex", "sex"],
             ["stratum", "stratum"],
             ["refresh_date", "refresh_date"],
+            ["embargo", "embargo"],
             ["metric_value", "metric_value"],
             # TimeSeriesDTO specific fields
             ["metric_frequency", "metric_frequency"],
