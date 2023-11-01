@@ -40,9 +40,10 @@ class CoreHeadline(models.Model):
     )
 
     refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE)
+    embargo = models.DateTimeField(help_text=help_texts.EMBARGO, null=True)
+
     period_start = models.DateField(help_text=help_texts.PERIOD_START)
     period_end = models.DateField(help_text=help_texts.PERIOD_END)
-
     metric_value = models.DecimalField(
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
