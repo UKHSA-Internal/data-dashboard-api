@@ -5,6 +5,7 @@ from decimal import Decimal
 from unittest import mock
 
 import pytest
+from django.utils import timezone
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
@@ -92,6 +93,7 @@ class TestIngestion:
         }
         first_data_file = _create_fake_file(data=first_sample_data, file_name=file_name)
 
+        # 2nd file which contains no functional updates
         second_refresh_date = datetime.date(year=2023, month=10, day=30)
         second_data_file_with_no_functional_updates = (
             self._rebuild_file_with_updated_refresh_date_only(
@@ -101,6 +103,9 @@ class TestIngestion:
             )
         )
 
+        # 3rd file which contains a single retrospective update
+        # but the other data point is a non-functional update
+        # i.e. it should not be ingested
         final_refresh_date = datetime.date(year=2023, month=10, day=31)
         updated_metric_value = 99.0000
         third_data_file_with_retrospective_updates = (
@@ -108,6 +113,21 @@ class TestIngestion:
                 data=example_timeseries_data,
                 refresh_date=final_refresh_date,
                 metric_value=updated_metric_value,
+                file_name=file_name,
+            )
+        )
+
+        # 4th file which contains data under embargo until a future date
+        embargoed_refresh_date = datetime.date(year=2023, month=11, day=1)
+        future_embargo_date = timezone.now() + datetime.timedelta(days=7)
+        embargoed_data = example_timeseries_data
+        for data_point in embargoed_data:
+            data_point["embargo"] = str(future_embargo_date)
+        fourth_data_file_under_embargo = (
+            self._rebuild_file_with_single_retrospective_update(
+                data=example_timeseries_data,
+                refresh_date=embargoed_refresh_date,
+                metric_value=123456,
                 file_name=file_name,
             )
         )
@@ -156,6 +176,30 @@ class TestIngestion:
         assert second_refresh_date not in returned_refresh_dates
         # The new `refresh_date` for the 1 retrospective update is included
         assert final_refresh_date in returned_refresh_dates
+
+        # And the returned data contains the retrospective update
+        # as well as the other original data point
+        assert (first_date, Decimal(updated_metric_value)) in filtered_core_time_series
+        assert (second_date, Decimal("0.0000")) in filtered_core_time_series
+
+        # Check that the 4th file is ingested
+        file_ingester(file=fourth_data_file_under_embargo)
+        filtered_core_time_series = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            **query_payload
+        )
+        assert filtered_core_time_series.count() == 2
+        returned_refresh_dates = filtered_core_time_series.values_list(
+            "refresh_date", flat=True
+        )
+        # The 2nd `refresh_date` should remain excluded as it is considered stale
+        assert second_refresh_date not in returned_refresh_dates
+        # The 3rd `refresh_date` should remain in the returned refresh dates
+        # because it is the current 'live' refresh
+        assert final_refresh_date in returned_refresh_dates
+        # The 4th `refresh_date` should be excluded, although it is later
+        # than the 3rd `refresh_date` the embargo timestamp is later than the current date
+        # as such it should be excluded
+        assert embargoed_refresh_date not in returned_refresh_dates
 
         # And the returned data contains the retrospective update
         # as well as the other original data point
