@@ -100,7 +100,7 @@ def generate_core_time_series(
     """Creates 'CoreTimeSeries' records and returns the corresponding model instances
 
     Args:
-        timeseries_dtos: A list of TimeSeriesDTOs
+        timeseries_dtos: A list of OutgoingTimeSeriesDTOs
             which have been enriched with all the correct fields
             and ready to be translated into database records
         core_time_series_manager: The model manager for `CoreTimeSeries`
