@@ -1,8 +1,13 @@
+import datetime
+
 import pytest
+from django.utils import timezone
 
 from metrics.data.managers.api_models.time_series import APITimeSeriesQuerySet
 from metrics.data.models.api_models import APITimeSeries
 from tests.factories.metrics.api_models.time_series import APITimeSeriesFactory
+
+FAKE_DATES = ("2023-01-01", "2023-01-02", "2023-01-03")
 
 
 class TestAPITimeSeriesQuerySet:
@@ -19,7 +24,7 @@ class TestAPITimeSeriesQuerySet:
         Then only the live group of `APITimeSeries` records are returned
         """
         # Given
-        dates = ("2023-01-01", "2023-01-02", "2023-01-03")
+        dates = FAKE_DATES
         first_round_outdated_refresh_date = "2023-08-10"
         second_round_refresh_date = "2023-08-11"
         third_round_refresh_date = "2023-08-12"
@@ -102,3 +107,123 @@ class TestAPITimeSeriesQuerySet:
         # --- Checks for 4th round ---
         # The 4th round record should be returned since it belongs to the 'head' round and naturally has no successors
         assert fourth_round_for_first_date in retrieved_records
+
+    @pytest.mark.django_db
+    def test_exclude_data_under_embargo(self):
+        """
+        Given a number of `APITimeSeries` records which are live
+        And a number of `APITimeSeries` records which are under embargo
+        When `_exclude_data_under_embargo()` is called
+            from an instance of `APITimeSeriesQueryset`
+        Then only the live group of `APITimeSeries` records are returned
+        """
+        # Given
+        current_time = timezone.now()
+        dates = FAKE_DATES
+        live_api_time_series_records = [
+            APITimeSeriesFactory.create_record(
+                metric_value=1,
+                date=date,
+            )
+            for date in dates
+        ]
+
+        embargo_point_in_time = current_time + datetime.timedelta(days=7)
+        embargoed_api_time_series_records = [
+            APITimeSeriesFactory.create_record(
+                metric_value=2,
+                date=date,
+                embargo=embargo_point_in_time,
+            )
+            for date in dates
+        ]
+
+        # When
+        input_queryset = APITimeSeries.objects.get_queryset()
+        filtered_queryset = input_queryset._exclude_data_under_embargo(
+            queryset=input_queryset
+        )
+
+        # Then
+        # All the live records should be in the returned queryset
+        assert all(
+            live_record
+            for live_record in live_api_time_series_records
+            if live_record in filtered_queryset
+        )
+        # None of the embargo records should be in the returned queryset
+        assert not any(
+            embargoed_record
+            for embargoed_record in embargoed_api_time_series_records
+            if embargoed_record in filtered_queryset
+        )
+
+    @pytest.mark.django_db
+    def test_filter_for_list_view_excludes_embargoed_data(self):
+        """
+        Given a number of `APITimeSeries` records which are live
+        And a number of `APITimeSeries` records which are under embargo
+        When `filter_for_list_view()` is called
+            from an instance of `APITimeSeriesQueryset`
+        Then only the live group of `APITimeSeries` records are returned
+        """
+        # Given
+        dates = FAKE_DATES
+        current_time = timezone.now()
+
+        # 1st round of records which are considered to be live
+        live_api_time_series_records = [
+            APITimeSeriesFactory.create_record(
+                metric_value=1,
+                date=date,
+            )
+            for date in dates
+        ]
+
+        # 2nd round of records which are considered to be under embargo
+        # and therefore should not be made available by the query
+        embargo_point_in_time = current_time + datetime.timedelta(days=7)
+        embargoed_api_time_series_records = [
+            APITimeSeriesFactory.create_record(
+                metric_value=2,
+                date=date,
+                embargo=embargo_point_in_time,
+            )
+            for date in dates
+        ]
+
+        # When
+        api_time_series = live_api_time_series_records[0]
+        input_queryset = APITimeSeries.objects.get_queryset()
+        retrieved_records = input_queryset.filter_for_list_view(
+            theme_name=api_time_series.theme,
+            sub_theme_name=api_time_series.sub_theme,
+            topic_name=api_time_series.topic,
+            geography_type_name=api_time_series.geography_type,
+            geography_name=api_time_series.geography,
+            metric_name=api_time_series.metric,
+        )
+
+        # Then
+        # Our database will look like the following:
+        # | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+        # | 1st round  | 1st round  | 1st round  |   <- live
+        # | 2nd round  | 2nd round  | 2nd round  |   <- under embargo
+        # ----------------------------------------
+        # | 1st round  | 1st round  | 1st round  |   <- expected results
+
+        assert retrieved_records.count() == 3
+
+        # Then
+        # All the live records should be in the returned queryset
+        assert all(
+            live_record
+            for live_record in live_api_time_series_records
+            if live_record in retrieved_records
+        )
+        # None of the embargo records should be in the returned queryset
+        assert not any(
+            embargoed_record
+            for embargoed_record in embargoed_api_time_series_records
+            if embargoed_record in retrieved_records
+        )

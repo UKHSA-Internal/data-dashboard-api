@@ -4,9 +4,10 @@ This file contains the custom QuerySet and Manager classes associated with the `
 Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
-from datetime import datetime
+import datetime
 
 from django.db import models
+from django.utils import timezone
 
 
 class APITimeSeriesQuerySet(models.QuerySet):
@@ -79,6 +80,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
             geography=geography_name,
             metric=metric_name,
         )
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
 
     @staticmethod
@@ -125,7 +127,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         # mean we would no longer be agnostic to the underlying database engine.
         # Given the level of caching in the system, the performance penalty incurred
         # here is not noticeable.
-        latest_records_map: dict[datetime.date, datetime.date] = {
+        latest_records_map: dict[datetime.datetime.date, datetime.datetime.date] = {
             record["date"]: record["latest_refresh"]
             for record in latest_refresh_dates_associated_with_dates
         }
@@ -138,6 +140,26 @@ class APITimeSeriesQuerySet(models.QuerySet):
         ]
 
         return queryset.filter(pk__in=resulting_ids)
+
+    @staticmethod
+    def _exclude_data_under_embargo(queryset: models.QuerySet) -> models.QuerySet:
+        """Excludes any data which is currently embargoed from the given `queryset`
+
+        Notes:
+            If the `embargo` value is None then it will be included
+            in the returned queryset
+
+        Args:
+            queryset: The queryset to exclude emargoed data from
+
+        Returns:
+            The filtered queryset which excludes emargoed data
+
+        """
+        current_time = timezone.now()
+        return queryset.filter(
+            models.Q(embargo__lte=current_time) | models.Q(embargo=None)
+        )
 
 
 class APITimeSeriesManager(models.Manager):
