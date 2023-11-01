@@ -40,6 +40,7 @@ def create_core_headlines(
             age_id=int(headline_dto.age),
             sex=headline_dto.sex,
             refresh_date=headline_dto.refresh_date,
+            embargo=headline_dto.embargo,
             period_start=headline_dto.period_start,
             period_end=headline_dto.period_end,
             metric_value=headline_dto.metric_value,
