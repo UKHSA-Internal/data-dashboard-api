@@ -93,6 +93,7 @@ class TestGenerateAPITimeSeries:
                 metric_group=mocked_time_series.metric.metric_group.name,
                 metric_frequency=mocked_time_series.metric_frequency,
                 refresh_date=mocked_time_series.refresh_date,
+                embargo=mocked_time_series.embargo,
             )
         ]
 
@@ -176,6 +177,7 @@ class TestCreateAPITimeSeriesFromCoreTimeSeries:
         assert api_time_series.month == mocked_time_series.month
         assert api_time_series.epiweek == mocked_time_series.epiweek
         assert api_time_series.metric_value == mocked_time_series.metric_value
+        assert api_time_series.embargo == mocked_time_series.embargo
 
     def test_uses_explicitly_provided_fields_from_call(self):
         """

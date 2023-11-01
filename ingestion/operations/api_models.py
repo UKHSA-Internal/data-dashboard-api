@@ -80,6 +80,7 @@ def _create_api_time_series_model_instances(
             metric_group=metric_group,
             metric_frequency=metric_frequency,
             refresh_date=refresh_date,
+            embargo=core_time_series.embargo,
         )
         for core_time_series in all_core_time_series
     ]
@@ -94,6 +95,7 @@ def create_api_time_series_from_core_time_series(
     metric_group: str = "",
     metric_frequency: str = "",
     refresh_date: str = "",
+    embargo: str = "",
 ) -> "APITimeSeries":
     """Creates a new `APITimeSeries` object from the given `core_time_series`
 
@@ -137,6 +139,8 @@ def create_api_time_series_from_core_time_series(
         refresh_date: The date at which the `metric` was last updated
             E.g. "2023-08-03"
             If not provided, the value will be taken from the related `CoreTimeSeries`
+        embargo: The point in time at which the data will be released from embargo
+            and will therefore be made available for queries
 
     Returns:
         An `APITimeSeries` instance which mirrors
@@ -164,4 +168,5 @@ def create_api_time_series_from_core_time_series(
         month=core_time_series.month,
         epiweek=core_time_series.epiweek,
         metric_value=core_time_series.metric_value,
+        embargo=core_time_series.embargo,
     )
