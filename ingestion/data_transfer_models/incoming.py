@@ -16,6 +16,7 @@ class IncomingBaseDTO(BaseModel):
     sex: str
     stratum: str | int
     refresh_date: str
+    embargo: str | None = None
     metric_value: float | int
 
 
