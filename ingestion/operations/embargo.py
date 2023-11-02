@@ -1,8 +1,10 @@
 import datetime
 
+import pytz
+
 
 def _get_current_datetime() -> datetime.datetime:
-    return datetime.datetime.now()
+    return datetime.datetime.now(tz=pytz.UTC)
 
 
 def _get_next_thursday_cutoff_time(
