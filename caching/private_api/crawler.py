@@ -7,7 +7,7 @@ from cms.home.models import HomePage
 from cms.topic.models import TopicPage
 
 CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
-
+CHART_DOWNLOAD = dict[str, str]
 
 logger = logging.getLogger(__name__)
 
@@ -324,7 +324,9 @@ class PrivateAPICrawler:
         chart_block_value = chart_block["value"]
 
         self._process_table_for_chart_block(chart_block=chart_block_value)
-        self._process_download_for_chart_block(chart_block=chart_block_value)
+        self._process_download_for_chart_block(
+            chart_block=chart_block_value, file_format="csv"
+        )
 
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
 
@@ -332,9 +334,11 @@ class PrivateAPICrawler:
         tables_data = self._build_tables_request_data(chart_block=chart_block)
         self._internal_api_client.hit_tables_endpoint(data=tables_data)
 
-    def _process_download_for_chart_block(self, chart_block: dict):
-        downloads_data = self._build_downloads_request_data(chart_block=chart_block)
-        self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
+    def _process_download_for_chart_block(self, chart_block: dict, file_format: str):
+        downloads_data = self._build_downloads_request_data(
+            chart_block=chart_block, file_format=file_format
+        )
+        return self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
 
     def _process_chart_for_both_possible_widths(
         self, chart_block: CMS_COMPONENT_BLOCK_TYPE
@@ -577,12 +581,15 @@ class PrivateAPICrawler:
         }
 
     def _build_downloads_request_data(
-        self, chart_block: CMS_COMPONENT_BLOCK_TYPE
+        self,
+        chart_block: CMS_COMPONENT_BLOCK_TYPE,
+        file_format: str,
     ) -> dict[str, str | int, list[dict[str, str]]]:
         """Builds the tables endpoint request payload from the given `chart_block`
 
         Args:
             chart_block: The chart block from the CMS
+            file_format: The request format for downloaded data.
 
         Returns:
             A dict which can be used as the payload to the
@@ -594,7 +601,7 @@ class PrivateAPICrawler:
                 self._build_downloads_plot_data(plot_value=plot["value"])
                 for plot in chart_block["chart"]
             ],
-            "file_format": "csv",
+            "file_format": file_format,
         }
 
     @staticmethod
@@ -621,3 +628,158 @@ class PrivateAPICrawler:
             "sex": plot_value["sex"],
             "age": plot_value["age"],
         }
+
+    # process downloads
+
+    @staticmethod
+    def create_filename_for_chart_card(
+        file_name: str,
+        file_format: str,
+    ) -> str:
+        """Create filename for bulk download
+
+        Args:
+            file_name: String, unformatted filename.
+            file_format: Filename extension
+
+        Returns:
+            Formatted file name and extension taken from file_format
+        """
+        return f"{file_name.replace(' ', '_')}.{file_format}"
+
+    def get_downloads_from_chart_row_columns(
+        self,
+        chart_row_columns: list[CMS_COMPONENT_BLOCK_TYPE],
+        file_format: str,
+    ) -> list[CHART_DOWNLOAD]:
+        """Get downloads from chart row columns
+
+        Args:
+            chart_row_columns: list of cms component blocks containing chart
+                data for queries.
+            file_format: The format for download response data.
+                supports csv or json
+
+        Returns:
+            A list of dictionaries containing filenames and response content
+            from the downloads endpoint.
+        """
+        downloads = []
+
+        for chart_card in chart_row_columns:
+            chart_card_content = chart_card["value"]
+            filename = self.create_filename_for_chart_card(
+                chart_card_content["title"], file_format=file_format
+            )
+            response = self._process_download_for_chart_block(
+                chart_block=chart_card_content, file_format=file_format
+            )
+            downloads.append({"name": filename, "content": response.content})
+
+        return downloads
+
+    def get_downloads_from_chart_cards(
+        self,
+        chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE],
+        file_format: str,
+    ) -> list[CHART_DOWNLOAD]:
+        """Get downloads from chart row cards
+
+        Args:
+            chart_row_cards: Chart row data that includes query parameters for the download endpoint.
+            file_format: the file format for download response format csv or json
+
+        Returns:
+            A list of dictionaries containing a file name and response data
+        """
+        downloads = []
+
+        for chart_row_card in chart_row_cards:
+            chart_row_columns = chart_row_card["value"]["columns"]
+
+            downloads.extend(
+                self.get_downloads_from_chart_row_columns(
+                    chart_row_columns=chart_row_columns, file_format=file_format
+                )
+            )
+
+        return downloads
+
+    def get_chart_row_cards_from_page_section(
+        self,
+        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Get chart row cards from page section.
+
+        Args:
+            section: a page section to be processed for chart card data
+
+        Returns:
+            A list of dictionaries containing chart row cards from page section,
+        """
+        content_cards = self.get_content_cards_from_section(section=section)
+        return self.get_chart_row_cards_from_content_cards(content_cards=content_cards)
+
+    def get_downloads_from_page_sections(
+        self,
+        sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]],
+        file_format: str,
+    ) -> list[CHART_DOWNLOAD]:
+        """Get downloads from page sections, extracts chart row cards
+            from page sections and downloads chart data.
+
+        Args:
+            sections: list of page sections containing chart data
+            file_format: The request format for downloaded data.
+
+        Returns:
+           A list of dictionaries containing downloads data, which
+           includes a filename and download response data.
+        """
+        downloads = []
+
+        for section in sections:
+            chart_row_cards = self.get_chart_row_cards_from_page_section(
+                section=section
+            )
+
+            downloads.extend(
+                self.get_downloads_from_chart_cards(
+                    chart_row_cards=chart_row_cards,
+                    file_format=file_format,
+                )
+            )
+
+        return downloads
+
+    def get_all_downloads(
+        self,
+        pages: [HomePage, TopicPage, CommonPage],
+        file_format: str,
+    ) -> list[CHART_DOWNLOAD]:
+        """Get all chart downloads from supported pages.
+            These include `HomePage` and `TopicPage`, unsupported pages are
+            filtered out.
+
+        Args:
+            pages: A list of pages to process for downloads.
+            file_format: the file_format for response data.
+
+        Returns:
+            A list of dictionaries containing filename and download content in
+            either CSV or JSON.
+        """
+        downloads = []
+
+        for page in pages:
+            try:
+                downloads.extend(
+                    self.get_downloads_from_page_sections(
+                        sections=page.body.raw_data, file_format=file_format
+                    )
+                )
+            except AttributeError:
+                logger.info("Page %s does not contain chart data", page)
+                continue
+
+        return downloads
