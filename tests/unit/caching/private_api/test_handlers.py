@@ -8,6 +8,7 @@ from caching.private_api.handlers import (
     check_cache_for_all_pages,
     collect_all_pages,
     force_cache_refresh_for_all_pages,
+    get_all_downloads,
 )
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
@@ -292,3 +293,83 @@ class TestHydrateCacheForAllPages:
         spy_create_crawler_for_force_cache_refresh.assert_called_once()
         expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
         spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+
+
+class TestGetAllDownloads:
+    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
+    def test_delegates_calls_correctly(
+        self,
+        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_collect_all_pages: mock.MagicMock,
+    ):
+        """
+        Given a mocked `Crawler` object and fake_file_format
+        When `get_all_downloads()` is called
+        Then calls are delegated to `collect_all_pages()` and
+            crawler_get_all_downloads() methods.
+        """
+        # Given
+        crawler = spy_create_crawler_for_cache_checking_only.return_value
+        fake_file_format = "csv"
+
+        # When
+        get_all_downloads()
+
+        # Then
+        spy_collect_all_pages.assert_called_once()
+        expected_pages = spy_collect_all_pages.return_value
+        spy_create_crawler_for_cache_checking_only.assert_called_once()
+        crawler.get_all_downloads.assert_called_once_with(
+            pages=expected_pages, file_format=fake_file_format
+        )
+
+    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
+    def test_default_file_format_can_be_changed_to_json(
+        self,
+        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_collect_all_pages,
+    ):
+        """
+        Given a mocked `Crawler` object
+        When `get_all_downloads()` is called passing in a file_format parameter
+            set to json.
+        Then The file_format parameter set to json.
+        """
+        # Given
+        crawler = spy_create_crawler_for_cache_checking_only.return_value
+        file_format = "json"
+
+        # Then
+        get_all_downloads(file_format=file_format)
+
+        # Then
+        collected_pages = spy_collect_all_pages.return_value
+        crawler.get_all_downloads.assert_called_once_with(
+            pages=collected_pages, file_format=file_format
+        )
+
+    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
+    def test_default_file_format_is_csv(
+        self,
+        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_collect_all_pages,
+    ):
+        """
+        Given a mocked `Crawler` object.
+        When `get_all_downloads()` is called without passing a file_format parameter.
+        Then The default file_format parameter is set to csv.
+        """
+        # Given
+        crawler = spy_create_crawler_for_cache_checking_only.return_value
+
+        # When
+        get_all_downloads()
+
+        # Then crawl.get_all_downloads will have file_format csv
+        collected_pages = spy_collect_all_pages.return_value
+        crawler.get_all_downloads.assert_called_once_with(
+            pages=collected_pages, file_format="csv"
+        )
