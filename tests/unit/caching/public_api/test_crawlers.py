@@ -163,10 +163,12 @@ class TestPublicAPICrawler:
         assert json_response == spy_requests.get.return_value.content
 
     @mock.patch.object(PublicAPICrawler, "_hit_endpoint_with_base_headers")
+    @mock.patch.object(PublicAPICrawler, "_hit_endpoint_with_accept_json")
     @mock.patch.object(PublicAPICrawler, "_hit_endpoint_with_accept_html")
     def test_hit_endpoint(
         self,
         spy_hit_endpoint_with_accept_html: mock.MagicMock,
+        spy_hit_endpoint_with_accept_json: mock.MagicMock,
         spy_hit_endpoint_with_base_headers: mock.MagicMock,
         fake_public_api_crawler,
     ):
@@ -182,6 +184,9 @@ class TestPublicAPICrawler:
                 for HTML requests are made
             `spy_hit_endpoint_with_accept_json`: To check the call
                 for JSON requests are made
+            `spy_hit_endpoint_with_base_headers`: To check the call
+                for base headers only are made
+                i.e. no explicit Accept header
 
         """
         # Given
@@ -192,6 +197,7 @@ class TestPublicAPICrawler:
 
         # Then
         spy_hit_endpoint_with_accept_html.assert_called_once_with(url=url)
+        spy_hit_endpoint_with_accept_json.assert_called_once_with(url=url)
         spy_hit_endpoint_with_base_headers.assert_called_once_with(url=url)
         assert endpoint_response == spy_hit_endpoint_with_base_headers.return_value
 
