@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 S3_BUCKET_ITEM_OBJECT_TYPE = dict[str, str | int | datetime.datetime]
 
 
-class AWSClient:
+class S3Client:
     """This class is used to interact with the designated s3 bucket
 
     Notes:
