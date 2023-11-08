@@ -68,3 +68,5 @@ if not REDIS_HOST:
 INGESTION_BUCKET_NAME = os.environ.get("INGESTION_BUCKET_NAME")
 # The name of the AWS profile to use for the AWS client used for ingestion
 AWS_PROFILE_NAME = os.environ.get("AWS_PROFILE_NAME")
+# The URL of the AWS SQS (managed queue service) to poll message from for ingestion workers
+SQS_QUEUE_URL = os.environ.get("SQS_QUEUE_URL")
