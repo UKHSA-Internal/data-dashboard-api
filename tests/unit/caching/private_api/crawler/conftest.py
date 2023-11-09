@@ -63,3 +63,38 @@ def example_chart_block() -> dict[str, str | list[dict]]:
             }
         ],
     }
+
+
+@pytest.fixture
+def example_chart_row_cards() -> dict[str, str | list[dict]]:
+    return [
+        {
+            "type": "chart_row_card",
+            "value": {
+                "columns": [
+                    {
+                        "type": "chart_card",
+                        "value": "",
+                    },
+                    {
+                        "type": "chart_card",
+                        "value": "",
+                    },
+                ]
+            },
+        }
+    ]
+
+
+@pytest.fixture
+def example_chart_row_column() -> dict[str, str | list[dict]]:
+    return [
+        {
+            "type": "chart_card",
+            "value": {"title": "title text one", "body": "body text one", "chart": []},
+        },
+        {
+            "type": "chart_card",
+            "value": {"title": "title text two", "body": "body text two", "chart": []},
+        },
+    ]

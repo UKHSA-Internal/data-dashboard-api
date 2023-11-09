@@ -127,3 +127,22 @@ def force_cache_refresh_for_all_pages() -> None:
     """
     crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
     _crawl_all_pages(crawler=crawler)
+
+
+def get_all_downloads(file_format: str = "csv") -> list[dict[str, str]]:
+    """Get all downloads from chart cards on supported pages
+
+    Args:
+        file_format: the format for download response data supports csv and json
+            defaults to csv.
+
+    Notes: You can pass all pages to the crawler's `get_all_downloads'
+        and it will skip over any that don't contain chart data
+        skipped pages will be logged.
+
+    Returns:
+       A list of dictionaries containing a filename and download content.
+    """
+    pages = collect_all_pages()
+    crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
+    return crawler.get_all_downloads(pages=pages, file_format=file_format)

@@ -205,10 +205,11 @@ class TestPrivateAPICrawlerBuildRequestData:
         """
         # Given
         chart_block_data = example_chart_block
+        file_format = "csv"
 
         # When
         downloads_request_data = private_api_crawler_with_mocked_internal_api_client._build_downloads_request_data(
-            chart_block=chart_block_data,
+            chart_block=chart_block_data, file_format=file_format
         )
 
         # Then
