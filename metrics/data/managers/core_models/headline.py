@@ -7,6 +7,7 @@ The application should not interact directly with the `QuerySet` class.
 from decimal import Decimal
 
 from django.db import models
+from django.utils import timezone
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -142,8 +143,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         queryset = self.filter(
             metric__topic__name=topic_name,
             metric__name=metric_name,
-        ).values_list("metric_value", flat=True)
-
+        )
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
             geography_type_name=geography_type_name,
@@ -152,8 +152,30 @@ class CoreHeadlineQuerySet(models.QuerySet):
             age=age,
             sex=sex,
         )
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
+        queryset = queryset.values_list("metric_value", flat=True)
 
         return self._newest_to_oldest(queryset=queryset)
+
+    @staticmethod
+    def _exclude_data_under_embargo(queryset: models.QuerySet) -> models.QuerySet:
+        """Excludes any data which is currently embargoed from the given `queryset`
+
+        Notes:
+            If the `embargo` value is None then it will be included
+            in the returned queryset
+
+        Args:
+            queryset: The queryset to exclude emargoed data from
+
+        Returns:
+            The filtered queryset which excludes emargoed data
+
+        """
+        current_time = timezone.now()
+        return queryset.filter(
+            models.Q(embargo__lte=current_time) | models.Q(embargo=None)
+        )
 
 
 class CoreHeadlineManager(models.Manager):

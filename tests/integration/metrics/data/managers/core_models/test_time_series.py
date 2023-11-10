@@ -2,10 +2,13 @@ import datetime
 import decimal
 
 import pytest
+from django.utils import timezone
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import CoreTimeSeries
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
+
+FAKE_DATES = ("2023-01-01", "2023-01-02", "2023-01-03")
 
 
 class TestCoreTimeSeriesQuerySet:
@@ -22,7 +25,7 @@ class TestCoreTimeSeriesQuerySet:
         Then only the live group of `CoreTimeSeries` records are returned
         """
         # Given
-        dates = ("2023-01-01", "2023-01-02", "2023-01-03")
+        dates = FAKE_DATES
         first_round_outdated_refresh_date = "2023-08-10"
         second_round_refresh_date = "2023-08-11"
         third_round_refresh_date = "2023-08-12"
@@ -106,6 +109,56 @@ class TestCoreTimeSeriesQuerySet:
         # The 4th round record should be returned since it belongs to the 'head' round and naturally has no successors
         assert fourth_round_for_first_date in retrieved_records
 
+    @pytest.mark.django_db
+    def test_exclude_data_under_embargo(self):
+        """
+        Given a number of `CoreTimeSeries` records which are live
+        And a number of `CoreTimeSeries` records which are under embargo
+        When `_exclude_data_under_embargo()` is called
+            from an instance of  `CoreTimeSeriesQueryset`
+        Then only the live group of `CoreTimeSeries` records are returned
+        """
+        # Given
+        current_time = timezone.now()
+        dates = FAKE_DATES
+        live_core_time_series_records = [
+            CoreTimeSeriesFactory.create_record(
+                metric_value=1,
+                date=date,
+            )
+            for date in dates
+        ]
+
+        embargo_point_in_time = current_time + datetime.timedelta(days=7)
+        embargoed_core_time_series_records = [
+            CoreTimeSeriesFactory.create_record(
+                metric_value=2,
+                date=date,
+                embargo=embargo_point_in_time,
+            )
+            for date in dates
+        ]
+
+        # When
+        input_queryset = CoreTimeSeries.objects.get_queryset()
+        filtered_queryset = input_queryset._exclude_data_under_embargo(
+            queryset=input_queryset
+        )
+
+        # Then
+        # All the live records should be in the returned queryset
+        assert all(
+            live_record
+            for live_record in live_core_time_series_records
+            if live_record in filtered_queryset
+        )
+        # None of the embargo records should be in the returned queryset
+        assert not any(
+            embargoed_record
+            for embargoed_record in embargoed_core_time_series_records
+            if embargoed_record in filtered_queryset
+        )
+
 
 class TestCoreTimeSeriesManager:
     @pytest.mark.django_db
@@ -121,7 +174,7 @@ class TestCoreTimeSeriesManager:
         Then only the live group of `CoreTimeSeries` records are returned
         """
         # Given
-        dates = ("2023-01-01", "2023-01-02", "2023-01-03")
+        dates = FAKE_DATES
         first_round_outdated_refresh_date = "2023-08-10"
         second_round_refresh_date = "2023-08-11"
         third_round_refresh_date = "2023-08-12"
@@ -208,4 +261,69 @@ class TestCoreTimeSeriesManager:
                 day=int(day),
             ),
             decimal.Decimal(record.metric_value),
+        )
+
+    @pytest.mark.django_db
+    def test_filter_for_x_and_y_values_excludes_embargoed_data(self):
+        """
+        Given a number of `CoreTimeSeries` records which are live
+        And a number of `CoreTimeSeries` records which are under embargo
+        When `filter_for_x_and_y_values()` is called
+            from an instance of the `CoreTimeSeriesManager`
+        Then only the live group of `CoreTimeSeries` records are returned
+        """
+        # Given
+        dates = FAKE_DATES
+
+        # 1st round of records which are considered to be live
+        current_time = timezone.now()
+        live_core_time_series_records = [
+            CoreTimeSeriesFactory.create_record(
+                metric_value=1,
+                date=date,
+            )
+            for date in dates
+        ]
+
+        # 2nd round of records which are considered to be under embargo
+        # and therefore should not be made available by the query
+        embargo_point_in_time = current_time + datetime.timedelta(days=7)
+        [
+            CoreTimeSeriesFactory.create_record(
+                metric_value=2,
+                date=date,
+                embargo=embargo_point_in_time,
+            )
+            for date in dates
+        ]
+
+        # When
+        retrieved_records = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            x_axis="date",
+            y_axis="metric_value",
+            topic_name=live_core_time_series_records[0].metric.topic.name,
+            metric_name=live_core_time_series_records[0].metric.name,
+            date_from=dates[0],
+            date_to=dates[-1],
+        )
+
+        # Then
+        # Our database will look like the following:
+        # | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+        # | 1st round  | 1st round  | 1st round  |   <- live
+        # | 2nd round  | 2nd round  | 2nd round  |   <- under embargo
+        # ----------------------------------------
+        # | 1st round  | 1st round  | 1st round  |   <- expected results
+
+        assert retrieved_records.count() == 3
+
+        # As such we expect the live records to be returned
+        assert retrieved_records[0] == self._build_record_representation_in_queryset(
+            record=live_core_time_series_records[0]
+        )
+        assert retrieved_records[1] == self._build_record_representation_in_queryset(
+            record=live_core_time_series_records[1]
+        )
+        assert retrieved_records[2] == self._build_record_representation_in_queryset(
+            record=live_core_time_series_records[2]
         )
