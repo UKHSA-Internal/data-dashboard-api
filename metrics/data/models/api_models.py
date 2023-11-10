@@ -15,7 +15,6 @@ class APITimeSeries(models.Model):
 
     age = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT, null=True)
     month = models.PositiveSmallIntegerField(null=True)
-    refresh_date = models.DateField(null=True)
     geography_code = models.CharField(
         max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
     )
@@ -30,6 +29,10 @@ class APITimeSeries(models.Model):
     sex = models.CharField(max_length=SEX_MAX_CHAR_CONSTRAINT, null=True)
     year = models.PositiveSmallIntegerField()
     epiweek = models.PositiveSmallIntegerField()
+
+    refresh_date = models.DateField(null=True)
+    embargo = models.DateTimeField(null=True)
+
     date = models.DateField()
     metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 

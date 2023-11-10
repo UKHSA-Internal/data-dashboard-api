@@ -47,9 +47,10 @@ class CoreTimeSeries(models.Model):
     month = models.PositiveSmallIntegerField(null=True)
     epiweek = models.PositiveSmallIntegerField()
 
-    date = models.DateField()
     refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE, null=True)
+    embargo = models.DateTimeField(help_text=help_texts.EMBARGO, null=True)
 
+    date = models.DateField()
     metric_value = models.DecimalField(
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
