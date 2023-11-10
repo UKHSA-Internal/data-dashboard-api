@@ -348,6 +348,7 @@ class TestCrawlerProcessIndividualBlocks:
             on the `InternalAPIClient`
         """
         # Given
+        file_format = "csv"
         chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
             private_api_crawler_with_mocked_internal_api_client._internal_api_client
@@ -360,7 +361,8 @@ class TestCrawlerProcessIndividualBlocks:
 
         # Then
         expected_downloads_request_data = private_api_crawler_with_mocked_internal_api_client._build_downloads_request_data(
-            chart_block=example_chart_block
+            chart_block=example_chart_block,
+            file_format=file_format,
         )
         spy_internal_api_client.hit_downloads_endpoint.assert_called_once_with(
             data=expected_downloads_request_data
