@@ -98,11 +98,12 @@ class PublicAPICrawler:
 
     def _hit_endpoint_with_accept_json(self, url: str) -> str:
         """Makes a 'GET' request to the given 'url' for a JSON response
+
         Args:
             url: The URL to amke the request to
 
         Returns:
-            url: The URL to make the request to
+            JSON content containing the response
 
         """
         headers = self.build_headers_for_json()
