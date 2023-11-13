@@ -17,6 +17,7 @@ from feedback.api.urls import construct_urlpatterns_for_feedback
 from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (
+    BulkDownloadsView,
     ChartsView,
     DownloadsView,
     EncodedChartsView,
@@ -116,6 +117,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
+    re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v2", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesViewBeta.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
