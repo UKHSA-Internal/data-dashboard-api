@@ -105,12 +105,12 @@ class TestPublicAPICrawler:
         assert constructed_headers["Accept"] == "application/json"
 
     @mock.patch(f"{MODULE_PATH}.requests")
-    def test_hit_endpoint_with_accept_json(
+    def test_hit_endpoint_with_base_headers(
         self, spy_requests: mock.MagicMock, fake_public_api_crawler: PublicAPICrawler
     ):
         """
         Given a URL
-        When `_hit_endpoint_with_accept_json()` is called
+        When `_hit_endpoint_with_base_headers()` is called
             from an instance of the `PublicAPICrawler`
         Then a GET request is made with the correct args
 
@@ -132,6 +132,35 @@ class TestPublicAPICrawler:
             headers=fake_public_api_crawler._build_base_headers(),
         )
         assert json_response == spy_requests.get.return_value.json.return_value
+
+    @mock.patch(f"{MODULE_PATH}.requests")
+    def test_hit_endpoint_with_accept_json(
+        self, spy_requests: mock.MagicMock, fake_public_api_crawler: PublicAPICrawler
+    ):
+        """
+        Given a URL
+        When `_hit_endpoint_with_accept_json()` is called
+            from an instance of the `PublicAPICrawler`
+        Then a GET request is made with the correct args
+
+        Patches:
+            `spy_requests`: For the main assertion
+        """
+        # Given
+        fake_url = FAKE_URL
+
+        # When
+        json_response = fake_public_api_crawler._hit_endpoint_with_accept_json(
+            url=fake_url
+        )
+
+        # Then
+        spy_requests.get.assert_called_once_with(
+            url=fake_url,
+            timeout=fake_public_api_crawler._request_timeout,
+            headers=fake_public_api_crawler.build_headers_for_json(),
+        )
+        assert json_response == spy_requests.get.return_value.content
 
     @mock.patch(f"{MODULE_PATH}.requests")
     def test_hit_endpoint_with_accept_html(
