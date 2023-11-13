@@ -74,7 +74,7 @@ class WhatsNewParentPage(Page):
             raise WhatsNewParentMultipleLivePagesError
 
     def _raise_error_if_slug_not_whats_new(self) -> None:
-        if self.slug != "whats-new":
+        if "whats-new" not in self.slug:
             raise WhatsNewParentSlugNotValidError
 
 

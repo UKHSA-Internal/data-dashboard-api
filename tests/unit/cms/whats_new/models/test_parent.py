@@ -29,15 +29,48 @@ class TestWhatsNewParentPage:
         Patches:
             `spy_raise_error_for_multiple_live_pages`: To check
                 validation is performed for preventing multiple live pages
-            `spy_raise_error_if_slug_not_whats_new`: To check
-                validation is performed for preventing a slug which is
-                not equal to `whats-new`
+           `spy_raise_error_if_slug_not_whats_new`: To check
+                validation is performed for preventing a slug which
+                does not contain `whats-new`
 
         """
         # Given
         fake_whats_new_parent_page = (
             FakeWhatsNewParentPageFactory.build_page_from_template()
         )
+
+        # When
+        fake_whats_new_parent_page.clean()
+
+        # Then
+        spy_raise_error_for_multiple_live_pages.assert_called_once()
+        spy_raise_error_if_slug_not_whats_new.assert_called_once()
+
+    @mock.patch.object(WhatsNewParentPage, "_raise_error_if_slug_not_whats_new")
+    @mock.patch.object(WhatsNewParentPage, "_raise_error_for_multiple_live_pages")
+    def test_clean_passes_for_trash_can_slug(
+        self,
+        spy_raise_error_for_multiple_live_pages: mock.MagicMock,
+        spy_raise_error_if_slug_not_whats_new: mock.MagicMock,
+    ):
+        """
+        Given a `WhatsNewParentPage` which has slug prefixed with "trash-"
+        When `clean()` is called from that model
+        Then the extra validation methods are called out to
+
+        Patches:
+            `spy_raise_error_for_multiple_live_pages`: To check
+                validation is performed for preventing multiple live pages
+            `spy_raise_error_if_slug_not_whats_new`: To check
+                validation is performed for preventing a slug which
+                does not contain `whats-new`
+
+        """
+        # Given
+        fake_whats_new_parent_page = (
+            FakeWhatsNewParentPageFactory.build_page_from_template()
+        )
+        fake_whats_new_parent_page.slug = "trash-whats-new"
 
         # When
         fake_whats_new_parent_page.clean()
