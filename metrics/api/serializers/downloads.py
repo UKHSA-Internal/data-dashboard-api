@@ -41,3 +41,11 @@ class DownloadsSerializer(serializers.Serializer):
     )
 
     plots = DownloadListSerializer()
+
+
+class BulkDownloadsSerializer(serializers.Serializer):
+    file_format = serializers.ChoiceField(
+        choices=FILE_FORMAT_CHOICES,
+        required=True,
+        help_text=help_texts.FILE_DOWNLOAD_FORMAT,
+    )

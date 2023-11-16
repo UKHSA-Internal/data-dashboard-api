@@ -1,4 +1,5 @@
 import io
+import logging
 
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
@@ -8,12 +9,21 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
-from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
+from metrics.api.serializers import (
+    APITimeSeriesSerializer,
+    BulkDownloadsSerializer,
+    DownloadsSerializer,
+)
 from metrics.data.access.api_models import validate_query_filters
 from metrics.data.models.api_models import APITimeSeries
+from metrics.domain.bulk_downloads.get_downloads_archive import (
+    get_bulk_downloads_archive,
+)
 from metrics.domain.exports.csv import write_data_to_csv
 
 DOWNLOADS_API_TAG = "downloads"
+
+logger = logging.getLogger(__name__)
 
 
 class DownloadsView(APIView):
@@ -109,3 +119,40 @@ class DownloadsView(APIView):
             return self._handle_csv()
 
         return None
+
+
+class BulkDownloadsView(APIView):
+    @extend_schema(
+        parameters=[BulkDownloadsSerializer],
+        tags=[DOWNLOADS_API_TAG],
+    )
+    def get(self, request, *args, **kargs):
+        """This endpoint can be used to get all downloads from the current dashboard and return them in a zip file
+
+        Note this endpoint will return a zipfile containing a collection of folders based on page names, each
+        folder will contain a series of csv or json files named after the charts currently published on the dashboard.
+
+        # Main errors
+
+        If any of the charts fail to be retrieved a 500 server error will be returned and the file
+        will not be downloaded.
+
+        This endpoint supports both csv and json format for its downloads
+        this makes the 'file_format' parameter a required field
+        not supplying this as a query parameter will result in a 400 Bad Request.
+
+        """
+        request_serializer = BulkDownloadsSerializer(data=request.query_params)
+        request_serializer.is_valid(raise_exception=True)
+
+        file_format = request_serializer.data["file_format"]
+
+        compressed_downloads = get_bulk_downloads_archive(file_format=file_format)
+
+        response = HttpResponse(
+            compressed_downloads["zip_file_data"], content_type="application/zip"
+        )
+        response[
+            "Content-Disposition"
+        ] = f"attachment; filename={compressed_downloads['zip_file_name']}"
+        return response
