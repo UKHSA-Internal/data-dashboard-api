@@ -8,6 +8,7 @@ from ingestion.operations.upload_from_s3 import (
     _upload_file_and_remove_local_copy,
     download_file_ingest_and_teardown,
     download_files_and_upload,
+    ingest_data_and_post_process,
 )
 
 MODULE_PATH = "ingestion.operations.upload_from_s3"
@@ -214,6 +215,85 @@ class TestDownloadFileIngestAndTeardown:
 
         # When
         download_file_ingest_and_teardown(key=fake_key, client=spy_client)
+
+        # Then
+        spy_client.move_file_to_failed_folder.assert_called_once_with(key=fake_key)
+        spy_client.move_file_to_processed_folder.assert_not_called()
+
+
+class TestIngestDataAndPostProcess:
+    @mock.patch(f"{MODULE_PATH}.upload_data")
+    def test_delegates_call_to_upload_data(self, spy_upload_data: mock.MagicMock):
+        """
+        Given a mocked `AWSClient` object and a fake item key & data
+        When `ingest_data_and_post_process()` is called
+        Then `upload_data()` is called
+
+        Patches:
+            `spy_upload_data`: For the main assertion of
+                checking the data is passed to this function call
+
+        """
+        # Given
+        spy_client = mock.MagicMock()
+        fake_key = FAKE_FILENAME
+        fake_data = mock.Mock()
+
+        # When
+        ingest_data_and_post_process(data=fake_data, key=fake_key, client=spy_client)
+
+        # Then
+        spy_upload_data.assert_called_once_with(data=fake_data, key=fake_key)
+
+    @mock.patch(f"{MODULE_PATH}.upload_data")
+    def test_delegates_call_to_move_file_to_processed_folder_for_successful_upload(
+        self, mocked_upload_data: mock.MagicMock
+    ):
+        """
+        Given a mocked `AWSClient` object and a fake item key & data
+        When `ingest_data_and_post_process()` is called
+        Then `upload_data()` is called
+
+        Patches:
+            `mocked_upload_data`: To remove the side effects
+                of having to ingest the file
+
+        """
+        # Given
+        spy_client = mock.MagicMock()
+        fake_key = FAKE_FILENAME
+        fake_data = mock.Mock()
+
+        # When
+        ingest_data_and_post_process(data=fake_data, key=fake_key, client=spy_client)
+
+        # Then
+        spy_client.move_file_to_processed_folder.assert_called_once_with(key=fake_key)
+        spy_client.move_file_to_failed_folder.assert_not_called()
+
+    @mock.patch(f"{MODULE_PATH}.upload_data")
+    def test_delegates_call_to_move_file_to_failed_folder_if_error_is_raised(
+        self, mocked_upload_data: mock.MagicMock
+    ):
+        """
+        Given a mocked `AWSClient` object and a fake item key
+        And a file upload which will raise a `FileIngestionFailedError`
+        When `ingest_data_and_post_process()` is called
+        Then `move_file_to_failed_folder()` is called from the client
+
+        Patches:
+            `mocked_upload_data`: To simulate
+                the file upload failing
+
+        """
+        # Given
+        spy_client = mock.MagicMock()
+        fake_key = FAKE_FILENAME
+        fake_data = mock.Mock()
+        mocked_upload_data.side_effect = [FileIngestionFailedError(file_name=fake_key)]
+
+        # When
+        ingest_data_and_post_process(data=fake_data, key=fake_key, client=spy_client)
 
         # Then
         spy_client.move_file_to_failed_folder.assert_called_once_with(key=fake_key)
