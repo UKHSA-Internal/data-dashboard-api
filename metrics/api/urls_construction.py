@@ -208,6 +208,9 @@ def construct_urlpatterns(
             constructed_url_patterns += private_api_urlpatterns
         case AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
+        case AppMode.INGESTION.value:
+            # Ingestion mode does not expose any endpoints
+            return constructed_url_patterns
         case _:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode

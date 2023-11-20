@@ -28,8 +28,6 @@ PRIVATE_API_ENDPOINT_PATHS = [
 
 FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v1"]
 
-INGESTION_API_ENDPOINT_PATHS = ["api/ingestion/v1"]
-
 PUBLIC_API_ENDPOINT_PATHS = [
     "themes/",
     "sub_themes/",
@@ -251,8 +249,7 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + CMS_ADMIN_ENDPOINT_PATHS
-        + FEEDBACK_API_ENDPOINT_PATHS
-        + INGESTION_API_ENDPOINT_PATHS,
+        + FEEDBACK_API_ENDPOINT_PATHS,
     )
     def test_public_api_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
@@ -294,8 +291,7 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + PUBLIC_API_ENDPOINT_PATHS
-        + FEEDBACK_API_ENDPOINT_PATHS
-        + INGESTION_API_ENDPOINT_PATHS,
+        + FEEDBACK_API_ENDPOINT_PATHS,
     )
     def test_cms_admin_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
@@ -337,8 +333,7 @@ class TestConstructUrlpatterns:
         "excluded_endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
         + PUBLIC_API_ENDPOINT_PATHS
-        + CMS_ADMIN_ENDPOINT_PATHS
-        + INGESTION_API_ENDPOINT_PATHS,
+        + CMS_ADMIN_ENDPOINT_PATHS,
     )
     def test_feedback_api_mode_does_not_return_other_urls(
         self, excluded_endpoint_path: str
@@ -360,21 +355,6 @@ class TestConstructUrlpatterns:
         )
 
     # Tests for APP_MODE = "INGESTION"
-
-    def test_ingestion_mode_returns_feedback_api_urls(self):
-        """
-        Given an `app_mode` of "INGESTION"
-        When `construct_urlpatterns()` is called
-        Then the urlpatterns returned contain the feedback API endpoints
-        """
-        # Given
-        app_mode = AppMode.INGESTION.value
-
-        # When
-        urlpatterns = construct_urlpatterns(app_mode=app_mode)
-
-        # Then
-        assert any("ingestion" in x.pattern.regex.pattern for x in urlpatterns)
 
     @pytest.mark.parametrize(
         "excluded_endpoint_path",
@@ -409,7 +389,6 @@ class TestConstructUrlpatterns:
         PRIVATE_API_ENDPOINT_PATHS
         + PUBLIC_API_ENDPOINT_PATHS
         + CMS_ADMIN_ENDPOINT_PATHS
-        + INGESTION_API_ENDPOINT_PATHS
         + FEEDBACK_API_ENDPOINT_PATHS,
     )
     def test_no_specific_app_mode_returns_all_urls(self, endpoint_path: str):
