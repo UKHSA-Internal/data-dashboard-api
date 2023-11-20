@@ -1,10 +1,19 @@
 from unittest import mock
 
 import pytest
+from _pytest.logging import LogCaptureFixture
 
 from ingestion.consumer import Consumer
-from ingestion.file_ingestion import DataSourceFileType, data_ingester, file_ingester
+from ingestion.file_ingestion import (
+    DataSourceFileType,
+    FileIngestionFailedError,
+    data_ingester,
+    file_ingester,
+    upload_data,
+)
 from ingestion.v2.consumer import ConsumerV2
+
+MODULE_PATH = "ingestion.file_ingestion"
 
 
 class TestFileIngester:
@@ -135,3 +144,58 @@ class TestDataIngester:
         # Then
         spy_create_core_and_api_timeseries.assert_called_once()
         spy_create_core_headlines.assert_not_called()
+
+
+class TestUploadData:
+    @mock.patch(f"{MODULE_PATH}.data_ingester")
+    def test_delegates_call_to_data_ingester(
+        self, spy_data_ingester: mock.MagicMock, caplog: LogCaptureFixture
+    ):
+        """
+        Given mocked data and a file key
+        When `upload_data()` is called
+        Then the call is delegated to `data_ingester()`
+        And the correct logs are made
+
+        Patches:
+            `spy_data_ingester`: For the main assertion
+
+        """
+        # Given
+        mocked_key = mock.Mock()
+        mocked_data = mock.Mock()
+
+        # When
+        upload_data(key=mocked_key, data=mocked_data)
+
+        # Then
+        spy_data_ingester.assert_called_once_with(data=mocked_data)
+        assert f"Uploading {mocked_key}" in caplog.text
+        assert f"Completed ingestion of {mocked_key}" in caplog.text
+
+    @mock.patch(f"{MODULE_PATH}.data_ingester")
+    def test_raises_error_with_correct_log_statement(
+        self, mocked_data_ingester: mock.MagicMock, caplog: LogCaptureFixture
+    ):
+        """
+        Given mocked data and a file key
+        When `upload_data()` is called
+        Then the call is delegated to `data_ingester()`
+        And the correct logs are made
+
+        Patches:
+            `mocked_data_ingester`: To simulate an error
+                being thrown during the data ingestion
+
+        """
+        # Given
+        mocked_key = mock.Mock()
+        mocked_data = mock.Mock()
+        error = Exception()
+        mocked_data_ingester.side_effect = [error]
+
+        # When / Then
+        with pytest.raises(FileIngestionFailedError):
+            upload_data(key=mocked_key, data=mocked_data)
+
+            assert f"Failed upload of {mocked_key} due to {error}" in caplog.text
