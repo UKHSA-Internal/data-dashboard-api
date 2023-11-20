@@ -154,7 +154,11 @@ def _upload_file(filepath: str) -> None:
 def _upload_data_as_file(filepath: Path) -> None:
     logger.info("Uploading %s", filepath.name)
 
-    with open(filepath, "rb") as data:
-        lines = data.readlines()[0]
-        deserialized_data = json.loads(lines)
+    with open(filepath, "rb") as file:
+        deserialized_data = _open_data_from_file(file=file)
         upload_data(key=filepath.name, data=deserialized_data)
+
+
+def _open_data_from_file(file: io.FileIO) -> dict:
+    lines = file.readlines()[0]
+    return json.loads(lines)
