@@ -13,8 +13,11 @@ import django
 django.setup()
 
 from ingestion.consumer import Consumer  # noqa: E402
+from ingestion.v2.consumer import ConsumerV2  # noqa: E402
 
 logger = logging.getLogger(__name__)
+
+INCOMING_DATA_TYPE = dict[str, str | list[dict[str, str | float]]]
 
 
 class FileIngestionFailedError(Exception):
@@ -89,6 +92,26 @@ def file_ingester(file: io.FileIO) -> None:
         return consumer.create_timeseries()
 
     raise ValueError
+
+
+def data_ingester(data: INCOMING_DATA_TYPE) -> None:
+    """Consumes the data in the given `data` and populates the database
+
+    Args:
+        data: The incoming source data to be ingested.
+            Note that this is expected to be the dict
+            not the file handler or stream.
+
+    Returns:
+        None
+
+    """
+    consumer = ConsumerV2(data=data)
+
+    if consumer.is_headline_data:
+        return consumer.create_core_headlines()
+
+    return consumer.create_core_and_api_timeseries()
 
 
 def _upload_file(filepath: str) -> None:

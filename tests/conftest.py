@@ -133,10 +133,69 @@ def example_headline_data() -> list[dict[str, str | float]]:
 
 
 @pytest.fixture
+def example_headline_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
+    return {
+        "parent_theme": "infectious_disease",
+        "child_theme": "respiratory",
+        "topic": "RSV",
+        "metric_group": "headline",
+        "metric": "RSV_headline_positivityLatest",
+        "geography_type": "Nation",
+        "geography": "England",
+        "geography_code": "E92000001",
+        "age": "all",
+        "sex": "all",
+        "stratum": "default",
+        "data": [
+            {
+                "period_start": "2023-10-23",
+                "period_end": "2023-10-30",
+                "metric_value": 10.7,
+                "embargo": "2023-11-16 17:30:00",
+            }
+        ],
+        "refresh_date": "2023-11-09",
+    }
+
+
+@pytest.fixture
 def example_incoming_headline_dto(
     example_headline_data: list[dict[str, str | float]]
 ) -> IncomingHeadlineDTO:
     return IncomingHeadlineDTO(**example_headline_data[0])
+
+
+@pytest.fixture
+def example_time_series_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
+    return {
+        "parent_theme": "infectious_disease",
+        "child_theme": "respiratory",
+        "topic": "COVID-19",
+        "metric_group": "cases",
+        "metric": "COVID-19_cases_countRollingMean",
+        "geography_type": "Nation",
+        "geography": "England",
+        "geography_code": "E92000001",
+        "age": "all",
+        "sex": "all",
+        "stratum": "default",
+        "metric_frequency": "daily",
+        "refresh_date": "2023-11-20",
+        "time_series": [
+            {
+                "epiweek": 44,
+                "date": "2022-11-01",
+                "metric_value": 4141.43,
+                "embargo": "2023-11-16 17:30:00",
+            },
+            {
+                "epiweek": 44,
+                "date": "2022-11-02",
+                "metric_value": 3952.14,
+                "embargo": "2023-11-16 17:30:00",
+            },
+        ],
+    }
 
 
 @pytest.fixture
