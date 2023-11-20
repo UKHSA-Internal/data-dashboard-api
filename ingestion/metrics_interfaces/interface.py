@@ -54,3 +54,15 @@ class MetricsAPIInterface:
     @staticmethod
     def get_time_period_enum() -> TimePeriod:
         return TimePeriod
+
+    @staticmethod
+    def get_core_headline():
+        return core_models.CoreHeadline
+
+    @staticmethod
+    def get_core_timeseries():
+        return core_models.CoreTimeSeries
+
+    @staticmethod
+    def get_api_timeseries():
+        return api_models.APITimeSeries
