@@ -14,7 +14,6 @@ from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from feedback.api.urls import construct_urlpatterns_for_feedback
-from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (
     BulkDownloadsView,
@@ -127,8 +126,6 @@ private_api_urlpatterns = [
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
 
-ingestion_urlpatterns = construct_urlpatterns_for_ingestion(prefix=API_PREFIX)
-
 docs_urlspatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     # JSON schema view
@@ -209,11 +206,8 @@ def construct_urlpatterns(
             )
         case AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
-            constructed_url_patterns += ingestion_urlpatterns
         case AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
-        case AppMode.INGESTION.value:
-            constructed_url_patterns += ingestion_urlpatterns
         case _:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
@@ -223,7 +217,6 @@ def construct_urlpatterns(
             )
             constructed_url_patterns += django_admin_urlpatterns
             constructed_url_patterns += private_api_urlpatterns
-            constructed_url_patterns += ingestion_urlpatterns
             constructed_url_patterns += feedback_urlpatterns
 
     return constructed_url_patterns
