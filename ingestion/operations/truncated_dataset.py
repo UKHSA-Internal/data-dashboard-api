@@ -4,7 +4,7 @@ from pathlib import Path
 
 from django.db import models
 
-from ingestion.file_ingestion import _upload_file
+from ingestion.file_ingestion import _upload_data_as_file
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.operations.concurrency import run_with_multiple_processes
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
@@ -83,7 +83,7 @@ def upload_truncated_test_data() -> None:
     test_source_data_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
     run_with_multiple_processes(
-        upload_function=_upload_file, items=test_source_data_file_paths
+        upload_function=_upload_data_as_file, items=test_source_data_file_paths
     )
 
     logger.info("Completed truncated dataset upload")

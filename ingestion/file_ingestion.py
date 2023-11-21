@@ -1,6 +1,8 @@
 import io
+import json
 import logging
 from enum import Enum
+from pathlib import Path
 
 import django
 
@@ -147,3 +149,16 @@ def _upload_file(filepath: str) -> None:
             raise FileIngestionFailedError(file_name=filepath) from error
 
         logger.info("Completed ingestion of %s", filepath)
+
+
+def _upload_data_as_file(filepath: Path) -> None:
+    logger.info("Uploading %s", filepath.name)
+
+    with open(filepath, "rb") as file:
+        deserialized_data = _open_data_from_file(file=file)
+        upload_data(key=filepath.name, data=deserialized_data)
+
+
+def _open_data_from_file(file: io.FileIO) -> dict:
+    lines = file.readlines()[0]
+    return json.loads(lines)
