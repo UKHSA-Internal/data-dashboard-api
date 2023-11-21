@@ -1,5 +1,6 @@
 from unittest import mock
 
+from ingestion.utils import type_hints
 from ingestion.v2.consumer import ConsumerV2
 
 
