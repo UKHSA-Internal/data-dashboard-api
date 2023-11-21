@@ -1,6 +1,7 @@
 import pytest
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE, data_ingester
+from ingestion.file_ingestion import data_ingester
+from ingestion.utils import type_hints
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 

@@ -1,6 +1,5 @@
 import io
 import logging
-from enum import Enum
 
 import django
 
@@ -13,47 +12,17 @@ import django
 django.setup()
 
 from ingestion.consumer import Consumer  # noqa: E402
+from ingestion.utils.enums import DataSourceFileType  # noqa: E402
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE  # noqa: E402
 from ingestion.v2.consumer import ConsumerV2  # noqa: E402
 
 logger = logging.getLogger(__name__)
-
-INCOMING_DATA_TYPE = dict[str, str | list[dict[str, str | float]]]
 
 
 class FileIngestionFailedError(Exception):
     def __init__(self, file_name: str):
         message = f"`{file_name}` upload failed."
         super().__init__(message)
-
-
-class DataSourceFileType(Enum):
-    # Headline types
-    headline = "headline"
-
-    # Timeseries types
-    cases = "cases"
-    deaths = "deaths"
-    healthcare = "healthcare"
-    testing = "testing"
-    vaccinations = "vaccinations"
-
-    @classmethod
-    def headline_types(cls) -> list[str]:
-        return [f"{cls.headline.value}_"]
-
-    @classmethod
-    def timeseries_types(cls) -> list[str]:
-        timeseries_file_types = (
-            cls.cases,
-            cls.deaths,
-            cls.healthcare,
-            cls.testing,
-            cls.vaccinations,
-        )
-        return [
-            f"{timeseries_file_type.value}_"
-            for timeseries_file_type in timeseries_file_types
-        ]
 
 
 def file_ingester(file: io.FileIO) -> None:

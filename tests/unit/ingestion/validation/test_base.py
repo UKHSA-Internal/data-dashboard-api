@@ -1,7 +1,7 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.file_ingestion import DataSourceFileType
+from ingestion.utils.enums import DataSourceFileType
 from ingestion.validation.base import IncomingBaseDataModel
 
 VALID_PARENT_THEME = "infectious_disease"
