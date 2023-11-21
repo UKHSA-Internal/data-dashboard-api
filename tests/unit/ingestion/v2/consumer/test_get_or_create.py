@@ -21,7 +21,7 @@ class TestConsumerGetOrCreateMethods:
         spy_theme_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2, theme_manager=spy_theme_manager
+            source_data=example_headline_data_v2, theme_manager=spy_theme_manager
         )
 
         # When
@@ -50,7 +50,8 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_theme = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, sub_theme_manager=spy_sub_theme_manager
+            source_data=example_headline_data_v2,
+            sub_theme_manager=spy_sub_theme_manager,
         )
 
         # When
@@ -79,7 +80,7 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_sub_theme = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, topic_manager=spy_topic_manager
+            source_data=example_headline_data_v2, topic_manager=spy_topic_manager
         )
 
         # When
@@ -107,7 +108,7 @@ class TestConsumerGetOrCreateMethods:
         spy_geography_type_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2,
+            source_data=example_headline_data_v2,
             geography_type_manager=spy_geography_type_manager,
         )
 
@@ -137,7 +138,8 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_geography_type = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, geography_manager=spy_geography_manager
+            source_data=example_headline_data_v2,
+            geography_manager=spy_geography_manager,
         )
 
         # When
@@ -170,7 +172,8 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_topic = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, metric_group_manager=spy_metric_group_manager
+            source_data=example_headline_data_v2,
+            metric_group_manager=spy_metric_group_manager,
         )
 
         # When
@@ -201,7 +204,7 @@ class TestConsumerGetOrCreateMethods:
         mocked_topic = mock.Mock()
         mocked_metric_group = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, metric_manager=spy_metric_manager
+            source_data=example_headline_data_v2, metric_manager=spy_metric_manager
         )
 
         # When
@@ -233,7 +236,7 @@ class TestConsumerGetOrCreateMethods:
         spy_stratum_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2, stratum_manager=spy_stratum_manager
+            source_data=example_headline_data_v2, stratum_manager=spy_stratum_manager
         )
 
         # When
@@ -261,7 +264,7 @@ class TestConsumerGetOrCreateMethods:
         spy_age_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2, age_manager=spy_age_manager
+            source_data=example_headline_data_v2, age_manager=spy_age_manager
         )
 
         # When
