@@ -233,9 +233,8 @@ class TestConsumerUpdateSupportingModels:
         """
         # Given
         consumer = consumer_with_mocked_model_managers
-        data = consumer.data
-        data["sex"] = "all"
-        data["refresh_date"] = "2023-11-17"
+        consumer.dto.sex = "all"
+        consumer.dto.refresh_date = "2023-11-17"
 
         # When
         supporting_models_lookup = consumer.update_supporting_models()
@@ -257,4 +256,4 @@ class TestConsumerUpdateSupportingModels:
         assert supporting_models_lookup.age_id == spy_get_or_create_age.return_value.id
 
         assert supporting_models_lookup.sex == "all"
-        assert supporting_models_lookup.refresh_date == data["refresh_date"]
+        assert supporting_models_lookup.refresh_date == consumer.dto.refresh_date

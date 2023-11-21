@@ -2,6 +2,7 @@ from unittest import mock
 
 from ingestion.utils import type_hints
 from ingestion.v2.consumer import ConsumerV2
+from tests.unit.ingestion.validation.test_handlers import DATE_FORMAT, DATETIME_FORMAT
 
 
 class TestBuildModelMethods:
@@ -19,18 +20,17 @@ class TestBuildModelMethods:
             are enriched with the correct values
         """
         # Given
-        fake_data = {
-            "data": [
-                {
-                    "embargo": "2023-11-20 12:00:00",
-                    "period_start": "2023-10-01",
-                    "period_end": "2023-10-07",
-                    "metric_value": 123,
-                }
-            ]
-        }
+        fake_data = example_headline_data_v2
+        fake_data["data"] = [
+            {
+                "embargo": "2023-11-20 12:00:00",
+                "period_start": "2023-10-01",
+                "period_end": "2023-10-07",
+                "metric_value": 123,
+            }
+        ]
 
-        consumer = ConsumerV2(data=fake_data)
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         core_headline_model_instances = consumer.build_core_headlines()
@@ -59,13 +59,16 @@ class TestBuildModelMethods:
             == supporting_models_lookup.refresh_date
         )
 
-        assert built_core_headline_instance.embargo == fake_data["data"][0]["embargo"]
         assert (
-            built_core_headline_instance.period_start
+            built_core_headline_instance.embargo.strftime(DATETIME_FORMAT)
+            == fake_data["data"][0]["embargo"]
+        )
+        assert (
+            built_core_headline_instance.period_start.strftime(DATE_FORMAT)
             == fake_data["data"][0]["period_start"]
         )
         assert (
-            built_core_headline_instance.period_end
+            built_core_headline_instance.period_end.strftime(DATE_FORMAT)
             == fake_data["data"][0]["period_end"]
         )
         assert (
@@ -87,18 +90,17 @@ class TestBuildModelMethods:
             are enriched with the correct values
         """
         # Given
-        fake_data = {
-            "time_series": [
-                {
-                    "epiweek": 31,
-                    "embargo": "2023-11-20 12:00:00",
-                    "date": "2023-08-01",
-                    "metric_value": 123,
-                }
-            ]
-        }
+        fake_data = example_time_series_data_v2
+        fake_data["time_series"] = [
+            {
+                "epiweek": 31,
+                "embargo": "2023-11-20 12:00:00",
+                "date": "2023-08-01",
+                "metric_value": 123,
+            }
+        ]
 
-        consumer = ConsumerV2(data=fake_data)
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         core_time_series_model_instances = consumer.build_core_time_series()
@@ -129,11 +131,12 @@ class TestBuildModelMethods:
         )
 
         assert (
-            built_core_time_series_instance.embargo
+            built_core_time_series_instance.embargo.strftime(DATETIME_FORMAT)
             == fake_data["time_series"][0]["embargo"]
         )
         assert (
-            built_core_time_series_instance.date == fake_data["time_series"][0]["date"]
+            built_core_time_series_instance.date.strftime(DATE_FORMAT)
+            == fake_data["time_series"][0]["date"]
         )
         assert built_core_time_series_instance.month == 8
         assert built_core_time_series_instance.year == 2023
@@ -158,7 +161,7 @@ class TestBuildModelMethods:
         """
         # Given
         fake_data = example_time_series_data_v2
-        consumer = ConsumerV2(data=fake_data)
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         api_time_series_model_instances = consumer.build_api_time_series()
@@ -193,7 +196,8 @@ class TestBuildModelMethods:
                 == fake_data["metric_frequency"]
             )
             assert (
-                api_time_series_model_instance.refresh_date == fake_data["refresh_date"]
+                api_time_series_model_instance.refresh_date.strftime(DATE_FORMAT)
+                == fake_data["refresh_date"]
             )
 
             assert (
@@ -201,7 +205,7 @@ class TestBuildModelMethods:
                 == fake_data["time_series"][index]["epiweek"]
             )
             assert (
-                api_time_series_model_instance.date
+                api_time_series_model_instance.date.strftime(DATE_FORMAT)
                 == fake_data["time_series"][index]["date"]
             )
             assert (
@@ -209,6 +213,6 @@ class TestBuildModelMethods:
                 == fake_data["time_series"][index]["metric_value"]
             )
             assert (
-                api_time_series_model_instance.embargo
+                api_time_series_model_instance.embargo.strftime(DATETIME_FORMAT)
                 == fake_data["time_series"][index]["embargo"]
             )

@@ -27,8 +27,9 @@ class TestConsumerParseValueMethods:
         Then the correct string is returned
         """
         # Given
-        fake_data = {"sex": sex_attribute_value}
-        consumer = ConsumerV2(data=fake_data)
+        fake_data = example_headline_data_v2
+        fake_data["sex"] = sex_attribute_value
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         parsed_sex_value: str = consumer._parse_sex_value()
@@ -59,8 +60,9 @@ class TestConsumerParseValueMethods:
         Then the correct string is returned
         """
         # Given
-        fake_data = {"metric_frequency": metric_frequency_attribute_value}
-        consumer = ConsumerV2(data=fake_data)
+        fake_data = example_time_series_data_v2
+        fake_data["metric_frequency"] = metric_frequency_attribute_value
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         parsed_metric_frequency: str = consumer._parse_metric_frequency_value()

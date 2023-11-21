@@ -26,7 +26,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(data=mock.Mock())
+        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_core_headlines()
@@ -58,7 +58,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(data=mock.Mock())
+        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_core_time_series()
@@ -90,7 +90,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(data=mock.Mock())
+        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_api_time_series()
@@ -119,7 +119,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_api_time_series`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(data=mock.Mock())
+        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_core_and_api_timeseries()

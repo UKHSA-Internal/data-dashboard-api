@@ -16,8 +16,8 @@ class TestConsumerProperties:
         Then True is returned
         """
         # Given
-        fake_data = {"metric_group": DataSourceFileType.headline.value}
-        consumer = ConsumerV2(data=fake_data)
+        fake_data = example_headline_data_v2
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         is_headline_data: bool = consumer.is_headline_data
@@ -47,8 +47,9 @@ class TestConsumerProperties:
         Then False is returned
         """
         # Given
-        fake_data = {"metric_group": metric_group}
-        consumer = ConsumerV2(data=fake_data)
+        fake_data = example_time_series_data_v2
+        fake_data["metric_group"] = metric_group
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         is_headline_data: bool = consumer.is_headline_data

@@ -95,7 +95,7 @@ class TestDataIngester:
             on an instance of `Consumer`
         """
         # Given
-        fake_data = {"metric_group": DataSourceFileType.headline.value}
+        fake_data = example_headline_data_v2
 
         # When
         data_ingester(data=fake_data)
@@ -131,7 +131,8 @@ class TestDataIngester:
             on an instance of `Consumer`
         """
         # Given
-        fake_data = {"metric_group": metric_group}
+        fake_data = example_time_series_data_v2
+        fake_data["metric_group"] = metric_group
 
         # When
         data_ingester(data=fake_data)
