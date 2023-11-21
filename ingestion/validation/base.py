@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from ingestion.file_ingestion import DataSourceFileType
 
@@ -26,3 +26,5 @@ class IncomingBaseDataModel(BaseModel):
     sex: str
     stratum: str
     refresh_date: datetime.date
+
+    model_config = ConfigDict(use_enum_values=True)
