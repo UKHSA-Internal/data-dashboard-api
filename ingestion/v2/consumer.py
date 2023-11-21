@@ -33,8 +33,11 @@ class ConsumerV2:
 
     Parameters:
     -----------
-    data: dict[str, str | list[dict[str, str | float]]]
-        The source data to be ingested
+    source_data: dict[str, str | list[dict[str, str | float]]]
+        The raw source data to be ingested
+    dto: HeadlineDTO | TimeSeriesDTO | None
+        The parsed and validated DTO for the headline or timeseries data.
+        If not provided, this will be created from the source data
     reader : `Reader`
         The reader object used to parse the data
         Defaults to a `Reader` object
@@ -79,7 +82,8 @@ class ConsumerV2:
 
     def __init__(
         self,
-        data: dict[str, str | list[dict[str, str | float]]],
+        source_data: type_hints.INCOMING_DATA_TYPE,
+        dto: HeadlineDTO | TimeSeriesDTO | None = None,
         theme_manager: Manager = DEFAULT_THEME_MANAGER,
         sub_theme_manager: Manager = DEFAULT_SUB_THEME_MANAGER,
         topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
@@ -93,7 +97,8 @@ class ConsumerV2:
         core_timeseries_manager: Manager = CORE_TIME_SERIES_MODEL.objects,
         api_timeseries_manager: Manager = API_TIME_SERIES_MODEL.objects,
     ):
-        self.data = data
+        self._source_data = source_data
+        self.dto = dto or self._build_dto()
 
         # Model managers
         self.theme_manager = theme_manager

@@ -10,7 +10,8 @@ def consumer_with_mocked_model_managers() -> ConsumerV2:
     mocked_manager = mock.Mock()
     mocked_manager.get_or_create.return_value = mock.Mock(), mock.Mock()
     return ConsumerV2(
-        data=mock.MagicMock(),
+        source_data=mock.MagicMock(),
+        dto=mock.Mock(),
         theme_manager=mocked_manager,
         sub_theme_manager=mocked_manager,
         topic_manager=mocked_manager,

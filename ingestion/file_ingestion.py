@@ -75,7 +75,7 @@ def data_ingester(data: INCOMING_DATA_TYPE) -> None:
         None
 
     """
-    consumer = ConsumerV2(data=data)
+    consumer = ConsumerV2(source_data=data)
 
     if consumer.is_headline_data:
         return consumer.create_core_headlines()
