@@ -1,5 +1,6 @@
 import pytest
 
+from ingestion.utils import type_hints
 from ingestion.v2.consumer import ConsumerV2
 from metrics.data.enums import TimePeriod
 
@@ -13,7 +14,12 @@ class TestConsumerParseValueMethods:
             ["male", "m"],
         ),
     )
-    def test_parse_sex_value(self, sex_attribute_value: str, expected_value: str):
+    def test_parse_sex_value(
+        self,
+        sex_attribute_value: str,
+        expected_value: str,
+        example_headline_data_v2: type_hints.INCOMING_DATA_TYPE,
+    ):
         """
         Given a "sex" value in the provided "data"
         When `_parse_sex_value()` is called
@@ -41,7 +47,10 @@ class TestConsumerParseValueMethods:
         ),
     )
     def test_parse_metric_frequency_value(
-        self, metric_frequency_attribute_value: str, expected_value: str
+        self,
+        metric_frequency_attribute_value: str,
+        expected_value: str,
+        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given a "metric_frequency" value in the provided "data"

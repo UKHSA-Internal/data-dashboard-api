@@ -1,11 +1,14 @@
 import pytest
 
-from ingestion.file_ingestion import DataSourceFileType
+from ingestion.utils import type_hints
+from ingestion.utils.enums import DataSourceFileType
 from ingestion.v2.consumer import ConsumerV2
 
 
 class TestConsumerProperties:
-    def test_is_headline_data_returns_true_for_headline_metric_group(self):
+    def test_is_headline_data_returns_true_for_headline_metric_group(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given input data with a `metric_group` value of "headline"
         When `is_headline_data` is called
@@ -33,7 +36,9 @@ class TestConsumerProperties:
         ],
     )
     def test_is_headline_data_returns_false_for_other_metric_groups(
-        self, metric_group: str
+        self,
+        metric_group: str,
+        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given input data with a `metric_group` value other than "headline"

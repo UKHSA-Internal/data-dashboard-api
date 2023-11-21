@@ -8,7 +8,7 @@ from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 class TestDataIngester:
     @pytest.mark.django_db
     def test_creates_core_headlines_from_data(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline type data
@@ -55,7 +55,7 @@ class TestDataIngester:
 
     @pytest.mark.django_db
     def test_creates_core_time_series_from_data(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming time series type data
@@ -110,7 +110,7 @@ class TestDataIngester:
 
     @pytest.mark.django_db
     def test_creates_api_time_series_from_data(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming time series type data

@@ -2,7 +2,7 @@ import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from ingestion.file_ingestion import DataSourceFileType
+from ingestion.utils.enums import DataSourceFileType
 
 
 class MissingFieldError(Exception):

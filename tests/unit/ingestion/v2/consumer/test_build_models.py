@@ -5,7 +5,11 @@ from ingestion.v2.consumer import ConsumerV2
 
 class TestBuildModelMethods:
     @mock.patch.object(ConsumerV2, "update_supporting_models")
-    def test_build_core_headlines(self, spy_update_supporting_models: mock.MagicMock):
+    def test_build_core_headlines(
+        self,
+        spy_update_supporting_models: mock.MagicMock,
+        example_headline_data_v2: type_hints.INCOMING_DATA_TYPE,
+    ):
         """
         Given fake input data
         When `build_core_headlines()` is called
@@ -69,7 +73,11 @@ class TestBuildModelMethods:
         )
 
     @mock.patch.object(ConsumerV2, "update_supporting_models")
-    def test_build_core_time_series(self, spy_update_supporting_models: mock.MagicMock):
+    def test_build_core_time_series(
+        self,
+        spy_update_supporting_models: mock.MagicMock,
+        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
+    ):
         """
         Given fake input data
         When `build_core_time_series()` is called
@@ -137,7 +145,9 @@ class TestBuildModelMethods:
             == fake_data["time_series"][0]["metric_value"]
         )
 
-    def test_build_api_time_series(self, example_time_series_data_v2):
+    def test_build_api_time_series(
+        self, example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given fake input data
         When `build_api_time_series()` is called

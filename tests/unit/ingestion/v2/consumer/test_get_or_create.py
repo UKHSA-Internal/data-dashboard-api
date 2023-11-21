@@ -1,11 +1,13 @@
 from unittest import mock
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE
+from ingestion.utils import type_hints
 from ingestion.v2.consumer import ConsumerV2
 
 
 class TestConsumerGetOrCreateMethods:
-    def test_get_or_create_theme(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_theme(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_theme()` is called
@@ -32,7 +34,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_sub_theme(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -60,7 +62,9 @@ class TestConsumerGetOrCreateMethods:
             name=example_headline_data_v2["child_theme"], theme_id=mocked_theme.id
         )
 
-    def test_get_or_create_topic(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_topic(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_topic()` is called
@@ -88,7 +92,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_geography_type(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -117,7 +121,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_geography(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -150,7 +154,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_metric_group(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -179,7 +183,9 @@ class TestConsumerGetOrCreateMethods:
             topic_id=mocked_topic.id,
         )
 
-    def test_get_or_create_metric(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_metric(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_metric()` is called
@@ -211,7 +217,9 @@ class TestConsumerGetOrCreateMethods:
             metric_group_id=mocked_metric_group.id,
         )
 
-    def test_get_or_create_stratum(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_stratum(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_stratum()` is called
@@ -237,7 +245,9 @@ class TestConsumerGetOrCreateMethods:
             name=example_headline_data_v2["stratum"],
         )
 
-    def test_get_or_create_age(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_age(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_age()` is called
