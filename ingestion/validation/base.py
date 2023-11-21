@@ -5,8 +5,14 @@ from pydantic import BaseModel, Field
 from ingestion.file_ingestion import DataSourceFileType
 
 
-class IncomingBaseValidation(BaseModel):
-    """Base data validation object for the upper level fields"""
+class MissingFieldError(Exception):
+    def __init__(self, field: str):
+        message = f"`{field}` field is missing from the inbound source data"
+        super().__init__(message)
+
+
+class IncomingBaseDataModel(BaseModel):
+    """Base data validation object for the upper level/common fields"""
 
     parent_theme: str
     child_theme: str

@@ -2,7 +2,7 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.file_ingestion import DataSourceFileType
-from ingestion.validation.base import IncomingBaseValidation
+from ingestion.validation.base import IncomingBaseDataModel
 
 VALID_PARENT_THEME = "infectious_disease"
 VALID_CHILD_THEME = "respiratory"
@@ -26,7 +26,7 @@ class TestIncomingBaseValidation:
         Then model is deemed valid
         """
         # Given / When
-        incoming_headline_validation = IncomingBaseValidation(
+        incoming_headline_validation = IncomingBaseDataModel(
             parent_theme=VALID_PARENT_THEME,
             child_theme=VALID_CHILD_THEME,
             topic=VALID_TOPIC,
@@ -59,7 +59,7 @@ class TestIncomingBaseValidation:
 
         # When / Then
         with pytest.raises(ValidationError):
-            IncomingBaseValidation(
+            IncomingBaseDataModel(
                 parent_theme=VALID_PARENT_THEME,
                 child_theme=VALID_CHILD_THEME,
                 topic=VALID_TOPIC,
@@ -91,7 +91,7 @@ class TestIncomingBaseValidation:
 
         # When / Then
         with pytest.raises(ValidationError):
-            IncomingBaseValidation(
+            IncomingBaseDataModel(
                 parent_theme=VALID_PARENT_THEME,
                 child_theme=VALID_CHILD_THEME,
                 topic=VALID_TOPIC,
