@@ -39,6 +39,17 @@ class SupportingModelsLookup(NamedTuple):
 class ConsumerV2:
     """Ingests inbound data and ultimately creates the core & api models in the database
 
+    Notes:
+    ------
+    The given raw `source_data` is passed to a `HeadlineDTO` or `TimeSeriesDTO`
+    depending on whether the incoming data is headline or time series type.
+    This casts validation over incoming data ensuring that:
+        a) The required fields are all in place
+        b) They conform to the structure set by the underlying pydantic models.
+            i.e. is the provided `geography_code` a string between 3 and 9 characters.
+
+    The DTO is then used for the data ingestion.
+
     Parameters:
     -----------
     source_data: dict[str, str | list[dict[str, str | float]]]
