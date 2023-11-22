@@ -142,6 +142,7 @@ class BulkDownloadsView(APIView):
         not supplying this as a query parameter will result in a 400 Bad Request.
 
         """
+        raise Exception("This is a test error")
         request_serializer = BulkDownloadsSerializer(data=request.query_params)
         request_serializer.is_valid(raise_exception=True)
 
