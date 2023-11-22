@@ -53,4 +53,5 @@ def _build_enriched_time_series_specific_fields(
             metric_value=individual_time_series["metric_value"],
         )
         for individual_time_series in source_data["time_series"]
+        if individual_time_series["metric_value"] is not None
     ]

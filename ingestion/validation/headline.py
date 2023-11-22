@@ -51,4 +51,5 @@ def _build_enriched_headline_specific_fields(
             metric_value=individual_time_series["metric_value"],
         )
         for individual_time_series in source_data["data"]
+        if individual_time_series["metric_value"] is not None
     ]
