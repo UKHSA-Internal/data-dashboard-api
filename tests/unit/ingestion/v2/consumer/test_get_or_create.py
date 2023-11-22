@@ -1,11 +1,13 @@
 from unittest import mock
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE
+from ingestion.utils import type_hints
 from ingestion.v2.consumer import ConsumerV2
 
 
 class TestConsumerGetOrCreateMethods:
-    def test_get_or_create_theme(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_theme(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_theme()` is called
@@ -19,7 +21,7 @@ class TestConsumerGetOrCreateMethods:
         spy_theme_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2, theme_manager=spy_theme_manager
+            source_data=example_headline_data_v2, theme_manager=spy_theme_manager
         )
 
         # When
@@ -32,7 +34,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_sub_theme(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -48,7 +50,8 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_theme = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, sub_theme_manager=spy_sub_theme_manager
+            source_data=example_headline_data_v2,
+            sub_theme_manager=spy_sub_theme_manager,
         )
 
         # When
@@ -60,7 +63,9 @@ class TestConsumerGetOrCreateMethods:
             name=example_headline_data_v2["child_theme"], theme_id=mocked_theme.id
         )
 
-    def test_get_or_create_topic(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_topic(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_topic()` is called
@@ -75,7 +80,7 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_sub_theme = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, topic_manager=spy_topic_manager
+            source_data=example_headline_data_v2, topic_manager=spy_topic_manager
         )
 
         # When
@@ -88,7 +93,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_geography_type(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -103,7 +108,7 @@ class TestConsumerGetOrCreateMethods:
         spy_geography_type_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2,
+            source_data=example_headline_data_v2,
             geography_type_manager=spy_geography_type_manager,
         )
 
@@ -117,7 +122,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_geography(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -133,7 +138,8 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_geography_type = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, geography_manager=spy_geography_manager
+            source_data=example_headline_data_v2,
+            geography_manager=spy_geography_manager,
         )
 
         # When
@@ -150,7 +156,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
     def test_get_or_create_metric_group(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -166,7 +172,8 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_topic = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, metric_group_manager=spy_metric_group_manager
+            source_data=example_headline_data_v2,
+            metric_group_manager=spy_metric_group_manager,
         )
 
         # When
@@ -179,7 +186,9 @@ class TestConsumerGetOrCreateMethods:
             topic_id=mocked_topic.id,
         )
 
-    def test_get_or_create_metric(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_metric(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_metric()` is called
@@ -195,7 +204,7 @@ class TestConsumerGetOrCreateMethods:
         mocked_topic = mock.Mock()
         mocked_metric_group = mock.Mock()
         consumer = ConsumerV2(
-            data=example_headline_data_v2, metric_manager=spy_metric_manager
+            source_data=example_headline_data_v2, metric_manager=spy_metric_manager
         )
 
         # When
@@ -211,7 +220,9 @@ class TestConsumerGetOrCreateMethods:
             metric_group_id=mocked_metric_group.id,
         )
 
-    def test_get_or_create_stratum(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_stratum(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_stratum()` is called
@@ -225,7 +236,7 @@ class TestConsumerGetOrCreateMethods:
         spy_stratum_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2, stratum_manager=spy_stratum_manager
+            source_data=example_headline_data_v2, stratum_manager=spy_stratum_manager
         )
 
         # When
@@ -237,7 +248,9 @@ class TestConsumerGetOrCreateMethods:
             name=example_headline_data_v2["stratum"],
         )
 
-    def test_get_or_create_age(self, example_headline_data_v2: INCOMING_DATA_TYPE):
+    def test_get_or_create_age(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given incoming headline data
         When `get_or_create_age()` is called
@@ -251,7 +264,7 @@ class TestConsumerGetOrCreateMethods:
         spy_age_manager.get_or_create.return_value = expected_model, True
 
         consumer = ConsumerV2(
-            data=example_headline_data_v2, age_manager=spy_age_manager
+            source_data=example_headline_data_v2, age_manager=spy_age_manager
         )
 
         # When

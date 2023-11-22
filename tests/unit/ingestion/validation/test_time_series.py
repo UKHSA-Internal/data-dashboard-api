@@ -1,7 +1,7 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from ingestion.validation.time_series import (
     InboundTimeSeriesSpecificFields,
     TimeSeriesDTO,
@@ -124,6 +124,7 @@ class TestTimeSeriesDTO:
             topic=source_data["topic"],
             metric_group=source_data["metric_group"],
             metric=source_data["metric"],
+            metric_frequency=source_data["metric_frequency"],
             geography_type=source_data["geography_type"],
             geography=source_data["geography"],
             geography_code=source_data["geography_code"],

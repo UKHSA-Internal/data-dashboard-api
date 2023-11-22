@@ -1,7 +1,7 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from ingestion.validation.headline import (
     HeadlineDTO,
     InboundHeadlineSpecificFields,

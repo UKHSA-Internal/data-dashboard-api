@@ -2,7 +2,7 @@ import datetime
 
 from pydantic import BaseModel
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE
+from ingestion.utils import type_hints
 from ingestion.validation.base import IncomingBaseDataModel
 
 
@@ -20,7 +20,7 @@ class HeadlineDTO(IncomingBaseDataModel):
 
 
 def _build_headline_dto(
-    source_data: INCOMING_DATA_TYPE,
+    source_data: type_hints.INCOMING_DATA_TYPE,
     enriched_specific_fields: list[InboundHeadlineSpecificFields],
 ) -> HeadlineDTO:
     return HeadlineDTO(
@@ -41,7 +41,7 @@ def _build_headline_dto(
 
 
 def _build_enriched_headline_specific_fields(
-    source_data: INCOMING_DATA_TYPE,
+    source_data: type_hints.INCOMING_DATA_TYPE,
 ) -> list[InboundHeadlineSpecificFields]:
     return [
         InboundHeadlineSpecificFields(

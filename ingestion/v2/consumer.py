@@ -4,6 +4,14 @@ from django.db.models import Manager
 
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.operations.batch_record_creation import create_records
+from ingestion.utils import type_hints
+from ingestion.utils.enums import DataSourceFileType
+from ingestion.validation.handlers import (
+    build_headline_dto_from_source,
+    build_time_series_dto_from_source,
+)
+from ingestion.validation.headline import HeadlineDTO
+from ingestion.validation.time_series import TimeSeriesDTO
 
 DEFAULT_THEME_MANAGER = MetricsAPIInterface.get_theme_manager()
 DEFAULT_SUB_THEME_MANAGER = MetricsAPIInterface.get_sub_theme_manager()
@@ -29,12 +37,26 @@ class SupportingModelsLookup(NamedTuple):
 
 
 class ConsumerV2:
-    """This is responsible for ingesting inbound data and ultimately creating the core & api models in the database
+    """Ingests inbound data and ultimately creates the core & api models in the database
+
+    Notes:
+    ------
+    The given raw `source_data` is passed to a `HeadlineDTO` or `TimeSeriesDTO`
+    depending on whether the incoming data is headline or time series type.
+    This casts validation over incoming data ensuring that:
+        a) The required fields are all in place
+        b) They conform to the structure set by the underlying pydantic models.
+            i.e. is the provided `geography_code` a string between 3 and 9 characters.
+
+    The DTO is then used for the data ingestion.
 
     Parameters:
     -----------
-    data: dict[str, str | list[dict[str, str | float]]]
-        The source data to be ingested
+    source_data: dict[str, str | list[dict[str, str | float]]]
+        The raw source data to be ingested
+    dto: HeadlineDTO | TimeSeriesDTO | None
+        The parsed and validated DTO for the headline or timeseries data.
+        If not provided, this will be created from the source data
     reader : `Reader`
         The reader object used to parse the data
         Defaults to a `Reader` object
@@ -79,7 +101,8 @@ class ConsumerV2:
 
     def __init__(
         self,
-        data: dict[str, str | list[dict[str, str | float]]],
+        source_data: type_hints.INCOMING_DATA_TYPE,
+        dto: HeadlineDTO | TimeSeriesDTO | None = None,
         theme_manager: Manager = DEFAULT_THEME_MANAGER,
         sub_theme_manager: Manager = DEFAULT_SUB_THEME_MANAGER,
         topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
@@ -93,7 +116,8 @@ class ConsumerV2:
         core_timeseries_manager: Manager = CORE_TIME_SERIES_MODEL.objects,
         api_timeseries_manager: Manager = API_TIME_SERIES_MODEL.objects,
     ):
-        self.data = data
+        self._source_data = source_data
+        self.dto = dto or self._build_dto()
 
         # Model managers
         self.theme_manager = theme_manager
@@ -109,9 +133,14 @@ class ConsumerV2:
         self.core_timeseries_manager = core_timeseries_manager
         self.api_timeseries_manager = api_timeseries_manager
 
+    def _build_dto(self) -> HeadlineDTO | TimeSeriesDTO:
+        if self.is_headline_data:
+            return build_headline_dto_from_source(source_data=self._source_data)
+        return build_time_series_dto_from_source(source_data=self._source_data)
+
     @property
     def is_headline_data(self) -> bool:
-        return self.data["metric_group"] == "headline"
+        return self._source_data["metric_group"] == DataSourceFileType.headline.value
 
     # get or create supporting model methods
 
@@ -145,7 +174,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.theme_manager,
-            name=self.data["parent_theme"],
+            name=self.dto.parent_theme,
         )
 
     def get_or_create_sub_theme(self, theme):
@@ -161,7 +190,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.sub_theme_manager,
-            name=self.data["child_theme"],
+            name=self.dto.child_theme,
             theme_id=theme.id,
         )
 
@@ -178,7 +207,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.topic_manager,
-            name=self.data["topic"],
+            name=self.dto.topic,
             sub_theme_id=sub_theme.id,
         )
 
@@ -191,7 +220,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.geography_type_manager,
-            name=self.data["geography_type"],
+            name=self.dto.geography_type,
         )
 
     def get_or_create_geography(self, geography_type):
@@ -207,8 +236,8 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.geography_manager,
-            name=self.data["geography"],
-            geography_code=self.data["geography_code"],
+            name=self.dto.geography,
+            geography_code=self.dto.geography_code,
             geography_type_id=geography_type.id,
         )
 
@@ -225,7 +254,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.metric_group_manager,
-            name=self.data["metric_group"],
+            name=self.dto.metric_group,
             topic_id=topic.id,
         )
 
@@ -244,7 +273,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.metric_manager,
-            name=self.data["metric"],
+            name=self.dto.metric,
             metric_group_id=metric_group.id,
             topic_id=topic.id,
         )
@@ -258,7 +287,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.stratum_manager,
-            name=self.data["stratum"],
+            name=self.dto.stratum,
         )
 
     def get_or_create_age(self):
@@ -270,7 +299,7 @@ class ConsumerV2:
         """
         return self._get_or_create_record(
             model_manager=self.age_manager,
-            name=self.data["age"],
+            name=self.dto.age,
         )
 
     def update_supporting_models(self) -> SupportingModelsLookup:
@@ -307,7 +336,7 @@ class ConsumerV2:
             stratum_id=stratum.id,
             age_id=age.id,
             sex=self._parse_sex_value(),
-            refresh_date=self.data["refresh_date"],
+            refresh_date=self.dto.refresh_date,
         )
 
     # parse value methods
@@ -326,7 +355,7 @@ class ConsumerV2:
 
         """
         sex_options = {"male": "m", "female": "f", "all": "all"}
-        return sex_options.get(self.data["sex"].lower(), "all")
+        return sex_options.get(self.dto.sex.lower(), "all")
 
     def _parse_metric_frequency_value(self) -> str:
         """Casts the `metric_frequency` value on the incoming `data` to one of the expected values
@@ -339,7 +368,7 @@ class ConsumerV2:
 
         """
         time_period_enum = MetricsAPIInterface.get_time_period_enum()
-        return time_period_enum[self.data["metric_frequency"].title()].value
+        return time_period_enum[self.dto.metric_frequency.title()].value
 
     # build and create model methods
 
@@ -370,12 +399,12 @@ class ConsumerV2:
                 age_id=supporting_models_lookup.age_id,
                 sex=supporting_models_lookup.sex,
                 refresh_date=supporting_models_lookup.refresh_date,
-                embargo=headline_data["embargo"],
-                period_start=headline_data["period_start"],
-                period_end=headline_data["period_end"],
-                metric_value=headline_data["metric_value"],
+                embargo=headline_data.embargo,
+                period_start=headline_data.period_start,
+                period_end=headline_data.period_end,
+                metric_value=headline_data.metric_value,
             )
-            for headline_data in self.data["data"]
+            for headline_data in self.dto.data
         ]
 
     def create_core_headlines(self) -> None:
@@ -418,8 +447,8 @@ class ConsumerV2:
         )
 
         created_core_time_series = []
-        for time_series_data in self.data["time_series"]:
-            year, month, _ = time_series_data["date"].split("-")
+        for time_series_data in self.dto.time_series:
+            year, month, _ = str(time_series_data.date).split("-")
             core_time_series = CORE_TIME_SERIES_MODEL(
                 metric_id=supporting_models_lookup.metric_id,
                 geography_id=supporting_models_lookup.geography_id,
@@ -427,12 +456,12 @@ class ConsumerV2:
                 age_id=supporting_models_lookup.age_id,
                 sex=supporting_models_lookup.sex,
                 refresh_date=supporting_models_lookup.refresh_date,
-                embargo=time_series_data["embargo"],
-                date=time_series_data["date"],
-                epiweek=time_series_data["epiweek"],
+                embargo=time_series_data.embargo,
+                date=time_series_data.date,
+                epiweek=time_series_data.epiweek,
                 year=int(year),
                 month=int(month),
-                metric_value=time_series_data["metric_value"],
+                metric_value=time_series_data.metric_value,
             )
             created_core_time_series.append(core_time_series)
 
@@ -467,29 +496,29 @@ class ConsumerV2:
         """
         created_api_time_series = []
 
-        for time_series_data in self.data["time_series"]:
-            year, month, _ = time_series_data["date"].split("-")
+        for time_series_data in self.dto.time_series:
+            year, month, _ = str(time_series_data.date).split("-")
 
             api_time_series = API_TIME_SERIES_MODEL(
-                metric_frequency=self.data["metric_frequency"],
-                age=self.data["age"],
+                metric_frequency=self.dto.metric_frequency,
+                age=self.dto.age,
                 month=int(month),
                 year=int(year),
-                geography_code=self.data["geography_code"],
-                metric_group=self.data["metric_group"],
-                metric=self.data["metric"],
-                theme=self.data["parent_theme"],
-                sub_theme=self.data["child_theme"],
-                topic=self.data["topic"],
-                geography_type=self.data["geography_type"],
-                geography=self.data["geography"],
-                stratum=self.data["stratum"],
-                sex=self.data["sex"],
-                epiweek=time_series_data["epiweek"],
-                refresh_date=self.data["refresh_date"],
-                embargo=time_series_data["embargo"],
-                date=time_series_data["date"],
-                metric_value=time_series_data["metric_value"],
+                geography_code=self.dto.geography_code,
+                metric_group=self.dto.metric_group,
+                metric=self.dto.metric,
+                theme=self.dto.parent_theme,
+                sub_theme=self.dto.child_theme,
+                topic=self.dto.topic,
+                geography_type=self.dto.geography_type,
+                geography=self.dto.geography,
+                stratum=self.dto.stratum,
+                sex=self.dto.sex,
+                epiweek=time_series_data.epiweek,
+                refresh_date=self.dto.refresh_date,
+                embargo=time_series_data.embargo,
+                date=time_series_data.date,
+                metric_value=time_series_data.metric_value,
             )
             created_api_time_series.append(api_time_series)
 

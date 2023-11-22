@@ -2,7 +2,7 @@ import datetime
 
 from pydantic import BaseModel
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE
+from ingestion.utils import type_hints
 from ingestion.validation.base import IncomingBaseDataModel
 
 
@@ -16,11 +16,12 @@ class InboundTimeSeriesSpecificFields(BaseModel):
 
 
 class TimeSeriesDTO(IncomingBaseDataModel):
+    metric_frequency: str
     time_series: list[InboundTimeSeriesSpecificFields]
 
 
 def _build_time_series_dto(
-    source_data: INCOMING_DATA_TYPE,
+    source_data: type_hints.INCOMING_DATA_TYPE,
     enriched_specific_fields: list[InboundTimeSeriesSpecificFields],
 ) -> TimeSeriesDTO:
     return TimeSeriesDTO(
@@ -29,6 +30,7 @@ def _build_time_series_dto(
         topic=source_data["topic"],
         metric_group=source_data["metric_group"],
         metric=source_data["metric"],
+        metric_frequency=source_data["metric_frequency"],
         geography_type=source_data["geography_type"],
         geography=source_data["geography"],
         geography_code=source_data["geography_code"],
@@ -41,7 +43,7 @@ def _build_time_series_dto(
 
 
 def _build_enriched_time_series_specific_fields(
-    source_data: INCOMING_DATA_TYPE,
+    source_data: type_hints.INCOMING_DATA_TYPE,
 ) -> list[InboundTimeSeriesSpecificFields]:
     return [
         InboundTimeSeriesSpecificFields(

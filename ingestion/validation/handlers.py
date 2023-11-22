@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from ingestion.file_ingestion import INCOMING_DATA_TYPE
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from ingestion.validation.base import MissingFieldError
 from ingestion.validation.headline import (
     HeadlineDTO,

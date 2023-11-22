@@ -1,11 +1,14 @@
 import pytest
 
-from ingestion.file_ingestion import DataSourceFileType
+from ingestion.utils import type_hints
+from ingestion.utils.enums import DataSourceFileType
 from ingestion.v2.consumer import ConsumerV2
 
 
 class TestConsumerProperties:
-    def test_is_headline_data_returns_true_for_headline_metric_group(self):
+    def test_is_headline_data_returns_true_for_headline_metric_group(
+        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+    ):
         """
         Given input data with a `metric_group` value of "headline"
         When `is_headline_data` is called
@@ -13,8 +16,8 @@ class TestConsumerProperties:
         Then True is returned
         """
         # Given
-        fake_data = {"metric_group": DataSourceFileType.headline.value}
-        consumer = ConsumerV2(data=fake_data)
+        fake_data = example_headline_data_v2
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         is_headline_data: bool = consumer.is_headline_data
@@ -33,7 +36,9 @@ class TestConsumerProperties:
         ],
     )
     def test_is_headline_data_returns_false_for_other_metric_groups(
-        self, metric_group: str
+        self,
+        metric_group: str,
+        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given input data with a `metric_group` value other than "headline"
@@ -42,8 +47,9 @@ class TestConsumerProperties:
         Then False is returned
         """
         # Given
-        fake_data = {"metric_group": metric_group}
-        consumer = ConsumerV2(data=fake_data)
+        fake_data = example_time_series_data_v2
+        fake_data["metric_group"] = metric_group
+        consumer = ConsumerV2(source_data=fake_data)
 
         # When
         is_headline_data: bool = consumer.is_headline_data

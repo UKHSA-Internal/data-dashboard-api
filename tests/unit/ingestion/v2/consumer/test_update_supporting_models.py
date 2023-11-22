@@ -10,7 +10,8 @@ def consumer_with_mocked_model_managers() -> ConsumerV2:
     mocked_manager = mock.Mock()
     mocked_manager.get_or_create.return_value = mock.Mock(), mock.Mock()
     return ConsumerV2(
-        data=mock.MagicMock(),
+        source_data=mock.MagicMock(),
+        dto=mock.Mock(),
         theme_manager=mocked_manager,
         sub_theme_manager=mocked_manager,
         topic_manager=mocked_manager,
@@ -232,9 +233,8 @@ class TestConsumerUpdateSupportingModels:
         """
         # Given
         consumer = consumer_with_mocked_model_managers
-        data = consumer.data
-        data["sex"] = "all"
-        data["refresh_date"] = "2023-11-17"
+        consumer.dto.sex = "all"
+        consumer.dto.refresh_date = "2023-11-17"
 
         # When
         supporting_models_lookup = consumer.update_supporting_models()
@@ -256,4 +256,4 @@ class TestConsumerUpdateSupportingModels:
         assert supporting_models_lookup.age_id == spy_get_or_create_age.return_value.id
 
         assert supporting_models_lookup.sex == "all"
-        assert supporting_models_lookup.refresh_date == data["refresh_date"]
+        assert supporting_models_lookup.refresh_date == consumer.dto.refresh_date
