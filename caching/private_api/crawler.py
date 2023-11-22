@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Self
 
 from caching.internal_api_client import InternalAPIClient
@@ -632,7 +633,35 @@ class PrivateAPICrawler:
     # process downloads
 
     @staticmethod
+    def format_titles_for_filenames(file_name: str) -> str:
+        """Formats a string to be used for filenames and directory names.
+
+        Args:
+            file_name: String, unformatted file / directory name.
+
+        Returns:
+            formatted file / directory name as a string.
+        """
+        words = file_name.split(" ")
+        pattern = re.compile("[(+),/\\-{!'\\\\'&@%*;:^$£?|\".\\[\\]}]")
+        formatted_words = list(filter(None, [pattern.sub(r"", word) for word in words]))
+
+        return "_".join(formatted_words).lower()
+
+    def create_directory_name_for_downloads(self, file_name: str) -> str:
+        """Creates a directory name for bulk_download
+
+        Args:
+            file_name: String, unformatted filename.
+
+        Returns:
+            Formatted directory name.
+        """
+        file_name = "landing page" if file_name == "UKHSA data dashboard" else file_name
+        return self.format_titles_for_filenames(file_name)
+
     def create_filename_for_chart_card(
+        self,
         file_name: str,
         file_format: str,
     ) -> str:
@@ -645,7 +674,7 @@ class PrivateAPICrawler:
         Returns:
             Formatted file name and extension taken from file_format
         """
-        return f"{file_name.replace(' ', '_')}.{file_format}"
+        return f"{self.format_titles_for_filenames(file_name)}.{file_format}"
 
     def get_downloads_from_chart_row_columns(
         self,
@@ -669,7 +698,7 @@ class PrivateAPICrawler:
         for chart_card in chart_row_columns:
             chart_card_content = chart_card["value"]
             filename = self.create_filename_for_chart_card(
-                chart_card_content["title"], file_format=file_format
+                file_name=chart_card_content["title"], file_format=file_format
             )
             response = self._process_download_for_chart_block(
                 chart_block=chart_card_content, file_format=file_format
@@ -767,16 +796,21 @@ class PrivateAPICrawler:
 
         Returns:
             A list of dictionaries containing filename and download content in
-            either CSV or JSON.
+            either csv or json grouped by page name.
         """
         downloads = []
 
         for page in pages:
             try:
-                downloads.extend(
-                    self.get_downloads_from_page_sections(
-                        sections=page.body.raw_data, file_format=file_format
-                    )
+                downloads.append(
+                    {
+                        "directory_name": self.create_directory_name_for_downloads(
+                            page.title
+                        ),
+                        "downloads": self.get_downloads_from_page_sections(
+                            sections=page.body.raw_data, file_format=file_format
+                        ),
+                    }
                 )
             except AttributeError:
                 logger.info("Page %s does not contain chart data", page)
