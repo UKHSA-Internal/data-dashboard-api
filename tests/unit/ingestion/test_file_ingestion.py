@@ -6,7 +6,6 @@ from _pytest.logging import LogCaptureFixture
 
 from ingestion.consumer import Consumer
 from ingestion.file_ingestion import (
-    DataSourceFileType,
     FileIngestionFailedError,
     _open_data_from_file,
     _upload_data_as_file,
@@ -14,6 +13,8 @@ from ingestion.file_ingestion import (
     file_ingester,
     upload_data,
 )
+from ingestion.utils import type_hints
+from ingestion.utils.enums import DataSourceFileType
 from ingestion.v2.consumer import ConsumerV2
 
 MODULE_PATH = "ingestion.file_ingestion"
@@ -95,6 +96,7 @@ class TestDataIngester:
         self,
         spy_create_core_headlines: mock.MagicMock,
         spy_create_core_and_api_timeseries: mock.MagicMock,
+        example_headline_data_v2: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given data which has a "metric_group" value of "headline"
@@ -104,7 +106,7 @@ class TestDataIngester:
             on an instance of `Consumer`
         """
         # Given
-        fake_data = {"metric_group": DataSourceFileType.headline.value}
+        fake_data = example_headline_data_v2
 
         # When
         data_ingester(data=fake_data)
@@ -130,6 +132,7 @@ class TestDataIngester:
         spy_create_core_and_api_timeseries: mock.MagicMock,
         spy_create_core_headlines: mock.MagicMock,
         metric_group: str,
+        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given data which has a "metric_group" value other than "headline"
@@ -139,7 +142,8 @@ class TestDataIngester:
             on an instance of `Consumer`
         """
         # Given
-        fake_data = {"metric_group": metric_group}
+        fake_data = example_time_series_data_v2
+        fake_data["metric_group"] = metric_group
 
         # When
         data_ingester(data=fake_data)
