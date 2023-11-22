@@ -28,14 +28,12 @@ TIME_SERIES_SPECIFIC_FIELDS = [
     "epiweek",
     "date",
     "embargo",
-    "metric_value",
 ]
 
 HEADLINE_SPECIFIC_FIELDS = [
     "period_start",
     "period_end",
     "embargo",
-    "metric_value",
 ]
 
 
@@ -97,6 +95,26 @@ class TestBuildTimeSeriesDTOFromSource:
                 "embargo": specific_field_group.embargo.strftime(DATETIME_FORMAT),
             }
             assert rebuild_specific_fields in source_data["time_series"]
+
+    def test_filters_out_individual_data_points_with_metric_value_of_none(
+        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+    ):
+        """
+        Given valid incoming time series source data
+            of which 1 of the time series contains None for the `metric_value`
+        When `build_time_series_dto_from_source()` is called
+        Then the metric_value of None is filtered out
+        """
+        # Given
+        source_data = example_time_series_data_v2
+        source_data["time_series"][0]["metric_value"] = None
+
+        # When
+        time_series_dto = build_time_series_dto_from_source(source_data=source_data)
+
+        # Then
+        metric_values = [x.metric_value for x in time_series_dto.time_series]
+        assert None not in metric_values
 
     @pytest.mark.parametrize("field", COMMON_FIELDS)
     def test_raises_error_when_none_value_provided_to_common_field(
@@ -165,6 +183,23 @@ class TestBuildTimeSeriesDTOFromSource:
         # Given
         source_data = example_time_series_data_v2
         source_data["time_series"][0].pop(field)
+
+        # When / Then
+        with pytest.raises(MissingFieldError):
+            build_time_series_dto_from_source(source_data=source_data)
+
+    def test_raises_error_when_metric_value_is_missing_from_source_data(
+        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+    ):
+        """
+        Given otherwise valid incoming source data
+            which contains a `metric_value` of None
+        When `build_time_series_dto_from_source()` is called
+        Then a `MissingFieldError` is raised
+        """
+        # Given
+        source_data = example_time_series_data_v2
+        source_data["time_series"][0].pop("metric_value")
 
         # When / Then
         with pytest.raises(MissingFieldError):
@@ -264,6 +299,26 @@ class TestBuildHeadlineDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["data"]
 
+    def test_filters_out_individual_data_points_with_metric_value_of_none(
+        self, example_headline_data_v2: INCOMING_DATA_TYPE
+    ):
+        """
+        Given valid incoming headline source data
+            of which 1 of the headlines contains None for the `metric_value`
+        When `build_headline_dto_from_source()` is called
+        Then the metric_value of None is filtered out
+        """
+        # Given
+        source_data = example_headline_data_v2
+        source_data["data"][0]["metric_value"] = None
+
+        # When
+        headline_dto = build_headline_dto_from_source(source_data=source_data)
+
+        # Then
+        metric_values = [x.metric_value for x in headline_dto.data]
+        assert None not in metric_values
+
     @pytest.mark.parametrize("field", COMMON_FIELDS)
     def test_raises_error_when_none_value_provided_to_common_field(
         self, field: str, example_headline_data_v2: INCOMING_DATA_TYPE
@@ -331,6 +386,24 @@ class TestBuildHeadlineDTOFromSource:
         # Given
         source_data = example_headline_data_v2
         source_data["data"][0].pop(field)
+
+        # When / Then
+        with pytest.raises(MissingFieldError):
+            build_headline_dto_from_source(source_data=source_data)
+
+    @pytest.mark.parametrize("field", HEADLINE_SPECIFIC_FIELDS)
+    def test_raises_error_when_metric_value_is_missing_from_source_data(
+        self, field: str, example_headline_data_v2: INCOMING_DATA_TYPE
+    ):
+        """
+        Given otherwise valid incoming headline source data
+            which contains a `metric_value` of None
+        When `build_headline_dto_from_source()` is called
+        Then a `MissingFieldError` is raised
+        """
+        # Given
+        source_data = example_headline_data_v2
+        source_data["data"][0].pop("metric_value")
 
         # When / Then
         with pytest.raises(MissingFieldError):
