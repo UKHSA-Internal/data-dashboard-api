@@ -2,7 +2,12 @@ import logging
 import os
 
 from ingestion.aws_client import AWSClient
-from ingestion.file_ingestion import FileIngestionFailedError, _upload_file
+from ingestion.file_ingestion import (
+    INCOMING_DATA_TYPE,
+    FileIngestionFailedError,
+    _upload_file,
+    upload_data,
+)
 from ingestion.operations.concurrency import run_with_multiple_processes
 from ingestion.operations.truncated_dataset import clear_metrics_tables
 
@@ -66,6 +71,34 @@ def download_file_ingest_and_teardown(
     downloaded_filepath: str = client.download_item(key=key)
     try:
         _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
+    except FileIngestionFailedError:
+        return client.move_file_to_failed_folder(key=key)
+
+    return client.move_file_to_processed_folder(key=key)
+
+
+def ingest_data_and_post_process(
+    data: INCOMING_DATA_TYPE, key: str, client: AWSClient | None = None
+) -> None:
+    """Ingests the data and moves the file of the given `key` to the appropriate outbound folder in the s3 bucket
+
+    Notes:
+        If the ingest of data fails
+        then the file will be moved to the `failed/` folder
+
+    Args:
+        data: The inbound data to be ingested
+        key: The key of the item to be processed
+        client: The `AWSClient` used to interact with s3.
+            If not provided, the `AWSClient` will be initialized
+
+    Returns:
+        None
+
+    """
+    client = client or AWSClient()
+    try:
+        upload_data(data=data, key=key)
     except FileIngestionFailedError:
         return client.move_file_to_failed_folder(key=key)
 
