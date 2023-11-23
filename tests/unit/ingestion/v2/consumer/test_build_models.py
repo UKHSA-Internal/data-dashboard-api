@@ -53,11 +53,9 @@ class TestBuildModelMethods:
             == supporting_models_lookup.stratum_id
         )
         assert built_core_headline_instance.age_id == supporting_models_lookup.age_id
-        assert built_core_headline_instance.sex == supporting_models_lookup.sex
-        assert (
-            built_core_headline_instance.refresh_date
-            == supporting_models_lookup.refresh_date
-        )
+
+        assert built_core_headline_instance.sex == consumer.dto.sex
+        assert built_core_headline_instance.refresh_date == consumer.dto.refresh_date
 
         assert (
             built_core_headline_instance.embargo.strftime(DATETIME_FORMAT)

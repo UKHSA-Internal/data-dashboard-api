@@ -32,8 +32,6 @@ class SupportingModelsLookup(NamedTuple):
     geography_id: int
     stratum_id: int
     age_id: int
-    sex: str
-    refresh_date: str
 
 
 class ConsumerV2:
@@ -335,8 +333,6 @@ class ConsumerV2:
             geography_id=geography.id,
             stratum_id=stratum.id,
             age_id=age.id,
-            sex=self._parse_sex_value(),
-            refresh_date=self.dto.refresh_date,
         )
 
     # parse value methods
@@ -397,8 +393,8 @@ class ConsumerV2:
                 geography_id=supporting_models_lookup.geography_id,
                 stratum_id=supporting_models_lookup.stratum_id,
                 age_id=supporting_models_lookup.age_id,
-                sex=supporting_models_lookup.sex,
-                refresh_date=supporting_models_lookup.refresh_date,
+                sex=self.dto.sex,
+                refresh_date=self.dto.refresh_date,
                 embargo=headline_data.embargo,
                 period_start=headline_data.period_start,
                 period_end=headline_data.period_end,
@@ -454,8 +450,8 @@ class ConsumerV2:
                 geography_id=supporting_models_lookup.geography_id,
                 stratum_id=supporting_models_lookup.stratum_id,
                 age_id=supporting_models_lookup.age_id,
-                sex=supporting_models_lookup.sex,
-                refresh_date=supporting_models_lookup.refresh_date,
+                sex=self.dto.sex,
+                refresh_date=self.dto.refresh_date,
                 embargo=time_series_data.embargo,
                 date=time_series_data.date,
                 epiweek=time_series_data.epiweek,
