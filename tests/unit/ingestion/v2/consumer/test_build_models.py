@@ -122,11 +122,8 @@ class TestBuildModelMethods:
             == supporting_models_lookup.stratum_id
         )
         assert built_core_time_series_instance.age_id == supporting_models_lookup.age_id
-        assert built_core_time_series_instance.sex == supporting_models_lookup.sex
-        assert (
-            built_core_time_series_instance.refresh_date
-            == supporting_models_lookup.refresh_date
-        )
+        assert built_core_time_series_instance.sex == consumer.dto.sex
+        assert built_core_time_series_instance.refresh_date == consumer.dto.refresh_date
 
         assert (
             built_core_time_series_instance.embargo.strftime(DATETIME_FORMAT)
@@ -186,16 +183,16 @@ class TestBuildModelMethods:
                 == fake_data["geography_code"]
             )
             assert api_time_series_model_instance.age == fake_data["age"]
-            assert api_time_series_model_instance.sex == fake_data["sex"]
+            assert api_time_series_model_instance.sex == consumer.dto.sex
             assert api_time_series_model_instance.stratum == fake_data["stratum"]
             assert api_time_series_model_instance.stratum == fake_data["stratum"]
             assert (
                 api_time_series_model_instance.metric_frequency
-                == fake_data["metric_frequency"]
+                == consumer.dto.metric_frequency
             )
             assert (
                 api_time_series_model_instance.refresh_date.strftime(DATE_FORMAT)
-                == fake_data["refresh_date"]
+                == consumer.dto.refresh_date
             )
 
             assert (
