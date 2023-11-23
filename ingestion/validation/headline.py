@@ -11,7 +11,7 @@ class InboundHeadlineSpecificFields(BaseModel):
 
     period_start: datetime.date
     period_end: datetime.date
-    embargo: datetime.datetime
+    embargo: datetime.datetime | None
     metric_value: float
 
 

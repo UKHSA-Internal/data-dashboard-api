@@ -27,13 +27,11 @@ COMMON_FIELDS = [
 TIME_SERIES_SPECIFIC_FIELDS = [
     "epiweek",
     "date",
-    "embargo",
 ]
 
 HEADLINE_SPECIFIC_FIELDS = [
     "period_start",
     "period_end",
-    "embargo",
 ]
 
 
@@ -168,6 +166,23 @@ class TestBuildTimeSeriesDTOFromSource:
 
         # When / Then
         with pytest.raises(ValidationError):
+            build_time_series_dto_from_source(source_data=source_data)
+
+    def test_raises_error_when_embargo_is_missing_from_source_data(
+        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+    ):
+        """
+        Given otherwise valid incoming source data
+            which contains a field with a None value
+        When `build_time_series_dto_from_source()` is called
+        Then a `MissingFieldError` is raised
+        """
+        # Given
+        source_data = example_time_series_data_v2
+        source_data["time_series"][0].pop("embargo")
+
+        # When / Then
+        with pytest.raises(MissingFieldError):
             build_time_series_dto_from_source(source_data=source_data)
 
     @pytest.mark.parametrize("field", TIME_SERIES_SPECIFIC_FIELDS)
@@ -391,9 +406,25 @@ class TestBuildHeadlineDTOFromSource:
         with pytest.raises(MissingFieldError):
             build_headline_dto_from_source(source_data=source_data)
 
-    @pytest.mark.parametrize("field", HEADLINE_SPECIFIC_FIELDS)
+    def test_raises_error_when_embargo_is_missing_from_source_data(
+        self, example_headline_data_v2: INCOMING_DATA_TYPE
+    ):
+        """
+        Given otherwise valid incoming headline source data
+            which contains a field with a None value
+        When `build_headline_dto_from_source()` is called
+        Then a `MissingFieldError` is raised
+        """
+        # Given
+        source_data = example_headline_data_v2
+        source_data["data"][0].pop("embargo")
+
+        # When / Then
+        with pytest.raises(MissingFieldError):
+            build_headline_dto_from_source(source_data=source_data)
+
     def test_raises_error_when_metric_value_is_missing_from_source_data(
-        self, field: str, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data_v2: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
