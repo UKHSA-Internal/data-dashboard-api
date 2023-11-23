@@ -191,8 +191,7 @@ class TestBuildModelMethods:
                 == consumer.dto.metric_frequency
             )
             assert (
-                api_time_series_model_instance.refresh_date.strftime(DATE_FORMAT)
-                == consumer.dto.refresh_date
+                api_time_series_model_instance.refresh_date == consumer.dto.refresh_date
             )
 
             assert (
