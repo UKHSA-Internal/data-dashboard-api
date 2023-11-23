@@ -82,7 +82,7 @@ class TestIncomingBaseValidation:
     ):
         """
         Given an otherwise valid payload
-            containing an invalid geography coce value
+            containing an invalid geography code value
         When the `IncomingTimeSeriesValidation` model is initialized
         Then a `ValidationError` is raised
         """
