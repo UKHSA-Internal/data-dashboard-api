@@ -43,6 +43,32 @@ class TestInboundHeadlineSpecificFields:
             strict=True,
         )
 
+    def test_validates_embargo_of_none(self):
+        """
+        Given a payload containing valid values
+            which contains an `embargo` field of None
+        When the `InboundHeadlineSpecificFields` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        fake_period_start = "2023-11-20"
+        fake_period_end = "2023-11-27"
+        fake_embargo = None
+
+        # When
+        inbound_headline_specific_fields_validation = InboundHeadlineSpecificFields(
+            period_start=fake_period_start,
+            period_end=fake_period_end,
+            embargo=fake_embargo,
+            metric_value=123,
+        )
+
+        # Then
+        inbound_headline_specific_fields_validation.model_validate(
+            inbound_headline_specific_fields_validation,
+            strict=True,
+        )
+
     def test_raises_error_when_datetime_passed_to_period_start(self):
         """
         Given a payload containing a datetime string for `period_start`

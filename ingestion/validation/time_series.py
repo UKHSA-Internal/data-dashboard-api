@@ -11,7 +11,7 @@ class InboundTimeSeriesSpecificFields(BaseModel):
 
     epiweek: int
     date: datetime.date
-    embargo: datetime.datetime
+    embargo: datetime.datetime | None
     metric_value: float
 
 

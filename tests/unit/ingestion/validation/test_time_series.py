@@ -39,6 +39,35 @@ class TestInboundTimeSeriesSpecificFields:
             strict=True,
         )
 
+    def test_validates_payload_with_embargo_of_none(self):
+        """
+        Given a payload containing valid values
+            which contains an `embargo` field of None
+        When the `InboundTimeSeriesSpecificFields` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        fake_epiweek = 46
+        fake_date = "2023-11-01"
+        fake_embargo = None
+        fake_metric_value = 123
+
+        # When
+        imbound_time_series_specific_fields_validation = (
+            InboundTimeSeriesSpecificFields(
+                epiweek=fake_epiweek,
+                date=fake_date,
+                embargo=fake_embargo,
+                metric_value=fake_metric_value,
+            )
+        )
+
+        # Then
+        imbound_time_series_specific_fields_validation.model_validate(
+            imbound_time_series_specific_fields_validation,
+            strict=True,
+        )
+
     def test_raises_error_when_datetime_passed_to_epiweek(self):
         """
         Given a payload containing a datetime string for `epiweek`
