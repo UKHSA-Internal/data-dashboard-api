@@ -1,7 +1,8 @@
 import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
+from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.utils import type_hints
 from ingestion.validation.base import IncomingBaseDataModel
 
@@ -18,6 +19,21 @@ class InboundTimeSeriesSpecificFields(BaseModel):
 class TimeSeriesDTO(IncomingBaseDataModel):
     metric_frequency: str
     time_series: list[InboundTimeSeriesSpecificFields]
+
+    @field_validator("metric_frequency")
+    @classmethod
+    def cast_metric_frequency_to_an_expected_value(cls, metric_frequency: str):
+        """Casts the `metric_frequency` value to one of the expected values
+
+        Notes:
+            Expected values are dictated by the `TimePeriod` enum
+
+        Returns:
+            A string representation of the parsed metric_frequency value
+
+        """
+        time_period_enum = MetricsAPIInterface.get_time_period_enum()
+        return time_period_enum[metric_frequency.title()].value
 
 
 def _build_time_series_dto(
