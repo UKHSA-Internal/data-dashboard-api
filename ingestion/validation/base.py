@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ingestion.utils.enums import DataSourceFileType
 
@@ -28,3 +28,21 @@ class IncomingBaseDataModel(BaseModel):
     refresh_date: datetime.date
 
     model_config = ConfigDict(use_enum_values=True)
+
+    @field_validator("sex")
+    @classmethod
+    def cast_sex_to_an_expected_value(cls, sex: str):
+        """Casts the `sex` value to one of the expected values
+
+        Notes:
+            Expected values are one of the following:
+            1) "all"    - All genders with no filtering applied
+            2) "f"      - Females
+            3) "m"      - Males
+
+        Returns:
+            A string representation of the parsed sex value
+
+        """
+        sex_options = {"male": "m", "female": "f", "all": "all"}
+        return sex_options.get(sex.lower(), "all")
