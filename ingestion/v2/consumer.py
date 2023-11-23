@@ -335,37 +335,6 @@ class ConsumerV2:
             age_id=age.id,
         )
 
-    # parse value methods
-
-    def _parse_sex_value(self) -> str:
-        """Casts the `sex` value on the incoming `data` to one of the expected values
-
-        Notes:
-            Expected values are one of the following:
-            1) "all"    - All genders with no filtering applied
-            2) "f"      - Females
-            3) "m"      - Males
-
-        Returns:
-            A string representation of the parsed sex value
-
-        """
-        sex_options = {"male": "m", "female": "f", "all": "all"}
-        return sex_options.get(self.dto.sex.lower(), "all")
-
-    def _parse_metric_frequency_value(self) -> str:
-        """Casts the `metric_frequency` value on the incoming `data` to one of the expected values
-
-        Notes:
-            Expected values are dictated by the `TimePeriod` enum
-
-        Returns:
-            A string representation of the parsed metric_frequency value
-
-        """
-        time_period_enum = MetricsAPIInterface.get_time_period_enum()
-        return time_period_enum[self.dto.metric_frequency.title()].value
-
     # build and create model methods
 
     def build_core_headlines(self) -> list[CORE_HEADLINE_MODEL]:
