@@ -254,6 +254,3 @@ class TestConsumerUpdateSupportingModels:
             == spy_get_or_create_stratum.return_value.id
         )
         assert supporting_models_lookup.age_id == spy_get_or_create_age.return_value.id
-
-        assert supporting_models_lookup.sex == "all"
-        assert supporting_models_lookup.refresh_date == consumer.dto.refresh_date

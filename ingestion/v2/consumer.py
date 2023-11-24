@@ -32,8 +32,6 @@ class SupportingModelsLookup(NamedTuple):
     geography_id: int
     stratum_id: int
     age_id: int
-    sex: str
-    refresh_date: str
 
 
 class ConsumerV2:
@@ -335,40 +333,7 @@ class ConsumerV2:
             geography_id=geography.id,
             stratum_id=stratum.id,
             age_id=age.id,
-            sex=self._parse_sex_value(),
-            refresh_date=self.dto.refresh_date,
         )
-
-    # parse value methods
-
-    def _parse_sex_value(self) -> str:
-        """Casts the `sex` value on the incoming `data` to one of the expected values
-
-        Notes:
-            Expected values are one of the following:
-            1) "all"    - All genders with no filtering applied
-            2) "f"      - Females
-            3) "m"      - Males
-
-        Returns:
-            A string representation of the parsed sex value
-
-        """
-        sex_options = {"male": "m", "female": "f", "all": "all"}
-        return sex_options.get(self.dto.sex.lower(), "all")
-
-    def _parse_metric_frequency_value(self) -> str:
-        """Casts the `metric_frequency` value on the incoming `data` to one of the expected values
-
-        Notes:
-            Expected values are dictated by the `TimePeriod` enum
-
-        Returns:
-            A string representation of the parsed metric_frequency value
-
-        """
-        time_period_enum = MetricsAPIInterface.get_time_period_enum()
-        return time_period_enum[self.dto.metric_frequency.title()].value
 
     # build and create model methods
 
@@ -397,8 +362,8 @@ class ConsumerV2:
                 geography_id=supporting_models_lookup.geography_id,
                 stratum_id=supporting_models_lookup.stratum_id,
                 age_id=supporting_models_lookup.age_id,
-                sex=supporting_models_lookup.sex,
-                refresh_date=supporting_models_lookup.refresh_date,
+                sex=self.dto.sex,
+                refresh_date=self.dto.refresh_date,
                 embargo=headline_data.embargo,
                 period_start=headline_data.period_start,
                 period_end=headline_data.period_end,
@@ -454,8 +419,8 @@ class ConsumerV2:
                 geography_id=supporting_models_lookup.geography_id,
                 stratum_id=supporting_models_lookup.stratum_id,
                 age_id=supporting_models_lookup.age_id,
-                sex=supporting_models_lookup.sex,
-                refresh_date=supporting_models_lookup.refresh_date,
+                sex=self.dto.sex,
+                refresh_date=self.dto.refresh_date,
                 embargo=time_series_data.embargo,
                 date=time_series_data.date,
                 epiweek=time_series_data.epiweek,
