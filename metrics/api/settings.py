@@ -153,7 +153,7 @@ if config.APIENV in ("LOCAL", "STANDALONE"):
             "NAME": os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
         }
     }
-elif config.APIENV == "INGESTION":
+elif config.APP_MODE == "INGESTION":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
