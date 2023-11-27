@@ -9,6 +9,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from rest_framework import routers
+from rest_framework.routers import DefaultRouter
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
@@ -24,6 +25,7 @@ from metrics.api.views import (
     HealthView,
     TrendsView,
 )
+from metrics.api.views.geographies import GeographyTypesViewSet
 from metrics.api.views.headlines import HeadlinesViewBeta
 from metrics.api.views.tables import TablesView
 from metrics.api.views.trends import TrendsViewBeta
@@ -109,6 +111,11 @@ def construct_public_api_urlpatterns(
 
 API_PREFIX = "api/"
 
+geographies_router = DefaultRouter()
+geographies_router.register(
+    prefix=f"{API_PREFIX}geographies/v1/types", viewset=GeographyTypesViewSet
+)
+
 private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
@@ -123,6 +130,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}trends/v2", TrendsView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
 ]
+private_api_urlpatterns += geographies_router.urls
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
 
