@@ -150,7 +150,7 @@ jobs:
   ###############################################################################
 
   deploy:
-    name: ECR Image Push
+    name: Publish main image
     needs: [
       quality-checks,
       unit-tests,
@@ -175,7 +175,7 @@ jobs:
           aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
 
   build-ingestion-image:
-    name: ECR Ingestion Image Push
+    name: Publish ingestion image
     needs: [
       quality-checks,
       unit-tests,
