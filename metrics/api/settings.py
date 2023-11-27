@@ -49,8 +49,6 @@ if config.APP_MODE != "INGESTION":
         "rest_framework",
         "drf_spectacular",
         "metrics.api",
-        "metrics.data",
-        "metrics.interfaces",
         "cms.home",
         "cms.search",
         "cms.topic",
