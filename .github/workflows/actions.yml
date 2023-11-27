@@ -165,26 +165,11 @@ jobs:
     # Only deploy if the changes are being pushed to the `main` branch
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-          role-to-assume: arn:aws:iam::518944279943:role/devops_github_actions_wp_api
-          role-session-name: testsession
-          aws-region: ${{ env.AWS_REGION }}
+      - name: Publish main image to ECR
+        env:
+          ECR_REPOSITORY: wp-api
+        uses: ./.github/actions/publish-image
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: wp-api
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
+      - name: Restart dev cluster
+        run: |
+          aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
