@@ -173,3 +173,24 @@ jobs:
       - name: Restart dev cluster
         run: |
           aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
+
+  build-ingestion-image:
+    name: ECR Ingestion Image Push
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    # Only deploy if the changes are being pushed to the `main` branch
+
+    steps:
+      - name: Publish ingestion image to ECR
+        env:
+          ECR_REPOSITORY: wp-ingestion
+        uses: ./.github/actions/publish-image
