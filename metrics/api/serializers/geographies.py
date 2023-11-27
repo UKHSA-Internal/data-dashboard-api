@@ -6,7 +6,7 @@ from metrics.data.models.core_models import Geography, GeographyType
 class GeographySerializer(serializers.ModelSerializer):
     class Meta:
         model = Geography
-        fields = ["id", "name", "geography_code"]
+        fields = ["id", "name"]
 
 
 class GeographyTypesDetailSerializer(serializers.ModelSerializer):

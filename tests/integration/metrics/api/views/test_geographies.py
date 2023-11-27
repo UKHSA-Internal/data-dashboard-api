@@ -73,6 +73,5 @@ class TestGeographyTypesViewSet:
             expected_geography_detail_data = {
                 "id": associated_geography.id,
                 "name": associated_geography.name,
-                "geography_code": associated_geography.geography_code,
             }
             assert expected_geography_detail_data in returned_associated_geographies
