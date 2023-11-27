@@ -33,8 +33,8 @@ jobs:
 
   vulnerabilities:
     name: Vulnerabilities
-    needs: [build]    
-    runs-on: ubuntu-latest  
+    needs: [ build ]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -55,7 +55,7 @@ jobs:
 
   quality-checks:
     name: Linting
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,13 +65,13 @@ jobs:
         run: |
           source .github/workflows/formatting.sh
 
- ###############################################################################
- # Architectural constraints checks
- ###############################################################################
+  ###############################################################################
+  # Architectural constraints checks
+  ###############################################################################
 
   architecture-checks:
     name: Architecture checks
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -87,7 +87,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -103,7 +103,7 @@ jobs:
 
   integration-tests:
     name: Integration tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -119,7 +119,7 @@ jobs:
 
   system-tests:
     name: System tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -135,7 +135,7 @@ jobs:
 
   test-coverage:
     name: Test coverage
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
