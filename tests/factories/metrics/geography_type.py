@@ -12,8 +12,10 @@ class GeographyTypeFactory(factory.django.DjangoModelFactory):
         model = GeographyType
 
     @factory.post_generation
-    def with_geographies(self, create, extracted, geography_names, **kwargs):
+    def with_geographies(self, create, extracted, **kwargs):
         if create:
+            geography_names: list[str] = kwargs.get("geography_names", [])
+
             geographies = [
                 Geography.objects.create(name=geography_name)
                 for geography_name in geography_names
