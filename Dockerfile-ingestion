@@ -2,6 +2,8 @@ FROM public.ecr.aws/lambda/python:3.11
 
 # Ensure the virtual environment will be available on the `PATH` variable
 ENV PATH=/venv/bin:$PATH
+# Bake in the env var required to point Django at the correct settings file
+ENV DJANGO_SETTINGS_MODULE="metrics.api.settings"
 
 # Copy the production-only dependencies into place for the ingestion component
 COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
