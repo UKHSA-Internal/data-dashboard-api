@@ -10,7 +10,7 @@ COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 RUN pip install --upgrade pip \
     # Upgrade the pip installer to the latest version \
     && pip install -r requirements-prod-ingestion.txt
-    # Install project dependencies onto the virtual environment
+    # Install project dependencies for the ingestion component
 
 # Mounts the application code into the image
 COPY . ${LAMBDA_TASK_ROOT}
@@ -26,5 +26,5 @@ ENV PATH=/venv/bin:$PATH
 # This also assumes TCP.
 EXPOSE 8000
 
-# Runs the production server by default
+# Runs the lambda entrypoint by default
 CMD ["ingestion.operations.lambda_entrypoint.handler"]
