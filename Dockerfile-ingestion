@@ -18,9 +18,6 @@ COPY . ${LAMBDA_TASK_ROOT}
 ## Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
 WORKDIR ${LAMBDA_TASK_ROOT}
 
-## Ensure the virtual environment is made available on the system `PATH`
-ENV PATH=/venv/bin:$PATH
-
 # Listen on the specified port at runtime
 # Note that this does not actually publish the port.
 # This also assumes TCP.
