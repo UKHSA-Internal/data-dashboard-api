@@ -11,15 +11,16 @@ from ingestion.secrets_manager import (
 MODULE_PATH = "ingestion.secrets_manager"
 
 
-def build_fake_returned_secret_from_secrets_manager(password: str = "") -> str:
-    return json.dumps(
+def build_fake_returned_secret_from_secrets_manager(
+    password: str = "",
+) -> dict[str, str]:
+    serialized_secret: str = json.dumps(
         obj={
-            "SecretString": {
-                "username": "fake-user-name",
-                "password": password,
-            }
+            "username": "fake-user-name",
+            "password": password,
         }
     )
+    return {"SecretString": serialized_secret}
 
 
 class TestGetDatabasePassword:

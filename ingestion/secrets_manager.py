@@ -1,13 +1,28 @@
+import datetime
 import json
 import os
 
 import boto3
+
+SECRETS_MANAGER_RESPONSE_TYPE = dict[str, str | list[str] | datetime.datetime]
 
 
 class MissingSecretsManagerARNError(Exception):
     def __init__(self):
         message = "The `SECRETS_MANAGER_DB_CREDENTIALS_ARN` environment variable should be provided"
         super().__init__(message)
+
+
+def _extract_password_from_secret(secret: SECRETS_MANAGER_RESPONSE_TYPE) -> str:
+    deserialized_secret: str = json.loads(secret["SecretString"])
+    return deserialized_secret["password"]
+
+
+def _request_secret_from_secrets_manager(
+    db_credentials_secret_arn: str,
+) -> SECRETS_MANAGER_RESPONSE_TYPE:
+    secrets_manager_client = boto3.client("secretsmanager")
+    return secrets_manager_client.get_secret_value(SecretId=db_credentials_secret_arn)
 
 
 def get_database_password() -> str:
@@ -33,9 +48,7 @@ def get_database_password() -> str:
     except KeyError as error:
         raise MissingSecretsManagerARNError from error
 
-    secrets_manager_client = boto3.client("secretsmanager")
-    returned_secret: str = secrets_manager_client.get_secret_value(
-        SecretId=db_credentials_secret_arn
+    secret: SECRETS_MANAGER_RESPONSE_TYPE = _request_secret_from_secrets_manager(
+        db_credentials_secret_arn=db_credentials_secret_arn
     )
-    loaded_secret: dict[str, str] = json.loads(returned_secret)
-    return loaded_secret["SecretString"]["password"]
+    return _extract_password_from_secret(secret=secret)
