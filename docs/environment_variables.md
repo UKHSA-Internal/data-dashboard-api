@@ -96,6 +96,8 @@ This should be set to the name of the user on the postgresql database.
 
 This should be set to the password used for the user on the postgresql database.
 
+**Note that when running in `INGESTION` mode, this is fetched from AWS SecretsManager directly.**
+
 #### `POSTGRES_HOST`
 
 This should be set to endpoint host name of the postgresql database.
@@ -183,3 +185,11 @@ This is the name of the s3 bucket from which to ingest metrics files from.
 #### `AWS_PROFILE_NAME`
 
 The name of the AWS profile to use for the AWS client used for ingestion.
+
+
+#### `SECRETS_MANAGER_DB_CREDENTIALS_ARN`
+
+The ARN of the database credentials secret in AWS SecretsManager.
+
+When running in `INGESTION` mode, the `POSTGRES_PASSWORD` is 
+fetched from SecretsManager directly when the application is initialized.
