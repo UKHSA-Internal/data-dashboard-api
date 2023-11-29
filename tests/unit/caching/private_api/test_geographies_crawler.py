@@ -7,12 +7,12 @@ class TestGeographiesAPICrawler:
     @mock.patch.object(
         GeographiesAPICrawler, "hit_detail_endpoint_for_each_geography_type"
     )
-    def test_crawl_geographies_api(
+    def test_process_geographies_api(
         self, spy_hit_detail_endpoint_for_each_geography_type: mock.MagicMock
     ):
         """
         Given an instance of the `GeographiesAPICrawler`
-        When the `crawl_geographies_api()` method is called
+        When the `process_geographies_api()` method is called
         Then the call is delegated to the `InternalAPIClient`
         And to the `hit_detail_endpoint_for_each_geography_type()` method
         """
@@ -23,7 +23,7 @@ class TestGeographiesAPICrawler:
         )
 
         # When
-        geographies_api_crawler.crawl_geographies_api()
+        geographies_api_crawler.process_geographies_api()
 
         # Then
         spy_internal_api_client.hit_geographies_list_endpoint.assert_called_once()
