@@ -44,7 +44,7 @@ class TestPrivateAPICrawlerInit:
 
     def test_geographies_api_is_initialized(self):
         """
-        Given an`InternalAPIClient`
+        Given an `InternalAPIClient`
         When the `PrivateAPICrawler` class is initialized
         Then the `_internal_api_client` is set
             on the `GeographiesAPICrawler` class is initialized
