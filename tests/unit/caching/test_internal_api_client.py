@@ -341,7 +341,9 @@ class TestInternalAPIClient:
         fake_id = 123
 
         # When
-        response = internal_api_client.hit_geographies_detail_endpoint(geography_type_id=fake_id)
+        response = internal_api_client.hit_geographies_detail_endpoint(
+            geography_type_id=fake_id
+        )
 
         # Then
         assert response == internal_api_client._client.get.return_value
