@@ -1,0 +1,29 @@
+FROM public.ecr.aws/lambda/python:3.11
+
+# Ensure the virtual environment will be available on the `PATH` variable
+ENV PATH=/venv/bin:$PATH
+# Bake in the env var required to point Django at the correct settings file
+ENV DJANGO_SETTINGS_MODULE="metrics.api.settings"
+
+# Copy the production-only dependencies into place for the ingestion component
+COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
+
+# Main build process
+RUN pip install --upgrade pip \
+    # Upgrade the pip installer to the latest version \
+    && pip install -r requirements-prod-ingestion.txt
+    # Install project dependencies for the ingestion component
+
+# Mounts the application code into the image
+COPY . ${LAMBDA_TASK_ROOT}
+
+## Sets the working directory for subsequent `RUN`, `ENTRYPOINT` & `CMD` layers
+WORKDIR ${LAMBDA_TASK_ROOT}
+
+# Listen on the specified port at runtime
+# Note that this does not actually publish the port.
+# This also assumes TCP.
+EXPOSE 8000
+
+# Runs the lambda entrypoint by default
+CMD ["ingestion.operations.lambda_entrypoint.handler"]

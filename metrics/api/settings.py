@@ -38,36 +38,40 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_filters",
-    "corsheaders",
-    "rest_framework",
-    "drf_spectacular",
-    "metrics.api",
     "metrics.data",
     "metrics.interfaces",
-    "cms.home",
-    "cms.search",
-    "cms.topic",
-    "cms.dashboard",
-    "cms.common",
-    "cms.whats_new",
-    "wagtail.api.v2",
-    "wagtail.contrib.forms",
-    "wagtail.contrib.redirects",
-    "wagtail_modeladmin",
-    "wagtail.embeds",
-    "wagtail.sites",
-    "wagtail.users",
-    "wagtail.snippets",
-    "wagtail.documents",
-    "wagtail.images",
-    "wagtail.search",
-    "wagtail.admin",
-    "wagtail",
-    "wagtail_trash",
-    "modelcluster",
-    "taggit",
 ]
+
+if config.APP_MODE != "INGESTION":
+    INSTALLED_APPS += [
+        "django_filters",
+        "corsheaders",
+        "rest_framework",
+        "drf_spectacular",
+        "metrics.api",
+        "cms.home",
+        "cms.search",
+        "cms.topic",
+        "cms.dashboard",
+        "cms.common",
+        "cms.whats_new",
+        "wagtail.api.v2",
+        "wagtail.contrib.forms",
+        "wagtail.contrib.redirects",
+        "wagtail_modeladmin",
+        "wagtail.embeds",
+        "wagtail.sites",
+        "wagtail.users",
+        "wagtail.snippets",
+        "wagtail.documents",
+        "wagtail.images",
+        "wagtail.search",
+        "wagtail.admin",
+        "wagtail",
+        "wagtail_trash",
+        "modelcluster",
+        "taggit",
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -153,7 +157,7 @@ if config.APIENV in ("LOCAL", "STANDALONE"):
             "NAME": os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
         }
     }
-elif config.APIENV == "INGESTION":
+elif config.APP_MODE == "INGESTION":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
