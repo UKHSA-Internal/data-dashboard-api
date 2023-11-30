@@ -13,6 +13,7 @@ ENV PATH=/venv/bin:$PATH
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
+COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 
 # Main build process
 RUN apt-get update \
