@@ -58,4 +58,6 @@ class TestPrivateAPICrawlerInit:
         # Then
         geographies_api_crawler = crawler._geography_api_crawler
         assert isinstance(geographies_api_crawler, GeographiesAPICrawler)
-        assert geographies_api_crawler._internal_api_client == mocked_internal_api_client
+        assert (
+            geographies_api_crawler._internal_api_client == mocked_internal_api_client
+        )
