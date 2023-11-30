@@ -149,7 +149,7 @@ jobs:
   # Deploy
   ###############################################################################
 
-  deploy:
+  publish-main-image:
     name: Publish main image
     needs: [
       quality-checks,
@@ -170,11 +170,7 @@ jobs:
           ECR_REPOSITORY: wp-api
         uses: ./.github/actions/publish-image
 
-      - name: Restart dev cluster
-        run: |
-          aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
-
-  build-ingestion-image:
+  publish-ingestion-image:
     name: Publish ingestion image
     needs: [
       quality-checks,
