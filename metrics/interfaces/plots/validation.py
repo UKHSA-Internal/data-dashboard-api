@@ -49,48 +49,7 @@ class PlotValidation:
         """
         self._validate_metric_is_available_for_topic()
         self._validate_dates()
-
-    def does_metric_have_multiple_records(self) -> bool:
-        """Checks the db if there are multiple associated `CoreTimeSeries` records.
-
-        Returns:
-            bool: True if there is more than 1 `CoreTimeSeries` record
-                which match the criteria.
-                False otherwise.
-
-        """
-        count: int = self.core_time_series_manager.get_count(
-            x_axis=self.plot_parameters.x_axis_value,
-            y_axis=self.plot_parameters.y_axis_value,
-            topic_name=self.plot_parameters.topic_name,
-            metric_name=self.plot_parameters.metric_name,
-            date_from=self.plot_parameters.date_from_value,
-            date_to=self.plot_parameters.date_to_value,
-        )
-        return count > 1
-
-    def _validate_metric_is_available_for_topic(self) -> None:
-        metric_is_topic_compatible: bool = self._is_metric_available_for_topic()
-
-        if not metric_is_topic_compatible:
-            raise MetricDoesNotSupportTopicError(
-                topic_name=self.plot_parameters.topic_name,
-                metric_name=self.plot_parameters.metric_name,
-            )
-
-    def _is_metric_available_for_topic(self) -> bool:
-        """Checks the db if there are any `Metric` records for the `metric` and `topic`.
-
-        Returns:
-            bool: True if there are any `Metric` records
-                which match the criteria.
-                False otherwise.
-
-        """
-        return self.metric_manager.is_metric_available_for_topic(
-            metric_name=self.plot_parameters.metric_name,
-            topic_name=self.plot_parameters.topic_name,
-        )
+        self._validate_metric_with_topic()
 
     def _are_dates_in_chronological_order(self) -> bool:
         """Checks if the `date_to` stamp is chronologically ahead of `date_from`
