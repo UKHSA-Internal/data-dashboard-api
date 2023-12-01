@@ -3,6 +3,7 @@ from unittest import mock
 from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.geographies_crawler import GeographiesAPICrawler
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
@@ -101,6 +102,36 @@ class TestPrivateAPICrawlerProcessPages:
             pages=fake_pages
         )
 
+    @mock.patch.object(GeographiesAPICrawler, "process_geographies_api")
+    def test_delegates_call_to_geographies_api_crawler(
+        self,
+        spy_process_geographies_api: mock.MagicMock,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+    ):
+        """
+        Given a list of pages
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
+        Then `process_geographies_api()` is called
+            from the underlying `GeographiesAPICrawler`
+
+        Patches:
+            `spy_process_geographies_api`: For the main assertion
+        """
+        # Given
+        fake_pages = [
+            FakeTopicPageFactory._build_page(page_name="covid_19"),
+            FakeTopicPageFactory._build_page(page_name="influenza"),
+        ]
+
+        # When
+        private_api_crawler_with_mocked_internal_api_client.process_pages(
+            pages=fake_pages
+        )
+
+        # Then
+        spy_process_geographies_api.assert_called_once()
+
     def test_logs_when_page_sections_cannot_be_processed_eg_common_pages(
         self,
         private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
@@ -147,8 +178,30 @@ class TestPrivateAPICrawlerProcessPages:
         crawler.process_pages(pages=mocked_pages)
 
         # Then
+        assert "Completed processing of headless CMS API" in caplog.text
+
+    def test_logs_are_recorded_for_completion_of_geographies_api(
+        self,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a list of mocked `Page` objects
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
+        Then the correct logs are made for
+            the processing of the headless CMS API
+        """
+        # Given
+        mocked_pages = [mock.MagicMock()] * 2
+        crawler = private_api_crawler_with_mocked_internal_api_client
+
+        # When
+        crawler.process_pages(pages=mocked_pages)
+
+        # Then
         assert (
-            "Completed processing of headless CMS API, now handling content blocks"
+            "Completed processing of geographies API, now handling content blocks"
             in caplog.text
         )
 

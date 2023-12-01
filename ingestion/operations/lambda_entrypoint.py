@@ -6,7 +6,6 @@ import django
 django.setup()
 
 
-from ingestion.aws_client import DEFAULT_INBOUND_INGESTION_FOLDER  # noqa: E402
 from ingestion.file_ingestion import INCOMING_DATA_TYPE  # noqa: E402
 from ingestion.operations.upload_from_s3 import (  # noqa: E402
     ingest_data_and_post_process,
@@ -59,13 +58,11 @@ def extract_contents_from_record(record: dict) -> tuple[str, INCOMING_DATA_TYPE]
             written to the data of the record
 
     """
-    decoded_string = decode_base64(encoded=record["kinesis"]["data"])
-    message = deserialize_json(serialized=decoded_string)
-    file_name = message["name"]
-    file_name = f"{DEFAULT_INBOUND_INGESTION_FOLDER}{file_name}"
-
-    inbound_data = message["data"]
-    return file_name, inbound_data
+    decoded_string: str = decode_base64(encoded=record["kinesis"]["data"])
+    message: dict[str, str | INCOMING_DATA_TYPE] = deserialize_json(
+        serialized=decoded_string
+    )
+    return message["name"], message["data"]
 
 
 def handler(event, context) -> None:
@@ -83,5 +80,5 @@ def handler(event, context) -> None:
     records: list[dict] = event["Records"]
 
     for record in records:
-        filename, inbound_data = extract_contents_from_record(record=record)
-        ingest_data_and_post_process(data=inbound_data, key=filename)
+        key, inbound_data = extract_contents_from_record(record=record)
+        ingest_data_and_post_process(data=inbound_data, key=key)
