@@ -26,6 +26,7 @@ class TestValidate:
         self,
         spy_validate_metric_is_available_for_topic: mock.MagicMock,
         spy_validate_dates: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given an instance of the `PlotValidation` class
@@ -34,7 +35,7 @@ class TestValidate:
         """
         # Given
         validator = validation.PlotValidation(
-            plot_parameters=mock.Mock(),
+            plot_parameters=fake_chart_plot_parameters,
             core_time_series_manager=mock.Mock(),
             metric_manager=mock.Mock(),
         )
