@@ -4,7 +4,6 @@ from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotsCollection
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.plots.access import PlotsInterface
-from metrics.interfaces.tables.validation import validate_each_requested_table_plot
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -62,11 +61,6 @@ def generate_table_for_full_plots(
         The requested plots in tabular format
 
     Raises:
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
-            compatible for the required `topic`.
-            E.g. `COVID-19_deaths_ONSByDay` is only available
-            for the topic of `COVID-19`
-
         `DatesNotInChronologicalOrderError`: If a provided `date_to`
             is chronologically behind the provided `date_from`.
             E.g. date_from = datetime.datetime(2022, 10, 2)
@@ -75,7 +69,5 @@ def generate_table_for_full_plots(
             then this error will not be raised.
 
     """
-    validate_each_requested_table_plot(plots_collection=plots_collection)
-
     tables_interface = TablesInterface(plots_collection=plots_collection)
     return tables_interface.generate_full_plots_for_table()
