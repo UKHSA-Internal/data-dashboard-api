@@ -286,6 +286,35 @@ class TestChartsInterface:
         # Check that the latest_date is set on the `ChartsInterface`
         spy_set_latest_date_from_plots_data.assert_called_once()
 
+    def test_set_latest_date_from_plots_data_fails_silently_when_latest_date_not_provided(
+        self, fake_chart_plots_data: PlotData
+    ):
+        """
+        Given a `PlotData` model which contains
+            a `PlotParameters` model which does not declare a `latest_date`
+        When `_set_latest_date_from_plots_data()` is called
+            from an instance of the `ChartsInterface`
+        Then the `latest_date` value is left unchanged
+        """
+        # Given
+        for plot in fake_chart_plots_data:
+            plot.latest_date = None
+
+        original_latest_date_value = mock.Mock()
+        charts_interface = ChartsInterface(
+            chart_plots=fake_chart_plots_data,
+            core_time_series_manager=mock.Mock(),
+        )
+        charts_interface._latest_date = original_latest_date_value
+
+        # When
+        charts_interface._set_latest_date_from_plots_data(
+            plots_data=fake_chart_plots_data
+        )
+
+        # Then
+        assert charts_interface._latest_date == original_latest_date_value
+
     @mock.patch(f"{MODULE_PATH}.calculations.get_rolling_period_slice_for_metric")
     @mock.patch.object(ChartsInterface, "calculate_change_in_metric_value")
     def test_param_builder_for_line_with_shaded_section(
