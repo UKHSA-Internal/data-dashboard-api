@@ -3,29 +3,24 @@ from unittest import mock
 
 import pytest
 
-from metrics.data.managers.core_models.metric import MetricManager
 from metrics.domain.models import PlotParameters
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.plots import validation
-from tests.fakes.factories.metrics.core_time_series_factory import (
-    FakeCoreTimeSeriesFactory,
+from metrics.interfaces.plots.validation import (
+    MetricDoesNotSupportTopicError,
+    PlotValidation,
 )
-from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
-from tests.fakes.managers.metric_manager import FakeMetricManager
-from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 
 EXPECTED_DATE_FORMAT: str = "%Y-%m-%d"
 
 
 class TestValidate:
+    @mock.patch.object(validation.PlotValidation, "_validate_metric_with_topic")
     @mock.patch.object(validation.PlotValidation, "_validate_dates")
-    @mock.patch.object(
-        validation.PlotValidation, "_validate_metric_is_available_for_topic"
-    )
     def test_delegates_to_correct_validators(
         self,
-        spy_validate_metric_is_available_for_topic: mock.MagicMock,
         spy_validate_dates: mock.MagicMock,
+        spy_validate_metric_with_topic: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -35,17 +30,15 @@ class TestValidate:
         """
         # Given
         validator = validation.PlotValidation(
-            plot_parameters=fake_chart_plot_parameters,
-            core_time_series_manager=mock.Mock(),
-            metric_manager=mock.Mock(),
+            plot_parameters=fake_chart_plot_parameters
         )
 
         # When
         validator.validate()
 
         # Then
-        spy_validate_metric_is_available_for_topic.assert_called_once()
         spy_validate_dates.assert_called_once()
+        spy_validate_metric_with_topic.assert_called_once()
 
 
 class TestAreDatesInChronologicalOrder:
@@ -176,3 +169,125 @@ class TestValidateDates:
         # When / Then
         with pytest.raises(validation.DatesNotInChronologicalOrderError):
             validator._validate_dates()
+
+
+class TestValidateMetricWithTopic:
+    @mock.patch.object(PlotValidation, "_metric_is_compatible_with_topic")
+    def test_returns_none_when_metric_is_compatible_with_topic(
+        self,
+        mocked_metric_is_compatible_with_topic: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given the `_metric_is_compatible_with_topic()` method
+            return True
+        When `_validate_metric_with_topic()` is called
+            from an instance of `PlotValidation`
+        Then None is returned
+        """
+        # Given
+        mocked_metric_is_compatible_with_topic.return_value = True
+        validator = validation.PlotValidation(
+            plot_parameters=fake_chart_plot_parameters
+        )
+
+        # When
+        validated = validator._validate_metric_with_topic()
+
+        # Then
+        assert validated is None
+
+    @mock.patch.object(PlotValidation, "_metric_is_compatible_with_topic")
+    def test_raises_error_when_metric_is_not_compatible_with_topic(
+        self,
+        mocked_metric_is_compatible_with_topic: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given the `_metric_is_compatible_with_topic()` method
+            return False
+        When `_validate_metric_with_topic()` is called
+            from an instance of `PlotValidation`
+        Then a `MetricDoesNotSupportTopicError` is raised
+        """
+        # Given
+        mocked_metric_is_compatible_with_topic.return_value = False
+        validator = validation.PlotValidation(
+            plot_parameters=fake_chart_plot_parameters
+        )
+
+        # When / Then
+        with pytest.raises(MetricDoesNotSupportTopicError):
+            validator._validate_metric_with_topic()
+
+
+class TestMetricIsCompatibleWithTopic:
+    @pytest.mark.parametrize(
+        "metric, topic",
+        (
+            ("COVID-19_deaths_ONSByDay", "COVID-19"),
+            ("influenza_headline_positivityLatest", "Influenza"),
+            ("RSV_headline_positivityLatest", "RSV"),
+            ("parainfluenza_testing_positivityByWeek", "Parainfluenza"),
+            ("rhinovirus_headline_positivityLatest", "Rhinovirus"),
+            ("hMPV_testing_positivityByWeek", "hMPV"),
+            ("adenovirus_headline_positivityLatest", "Adenovirus"),
+        ),
+    )
+    def test_returns_true_for_valid_metric_and_topic(
+        self, metric: str, topic: str, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given a `topic` and `metric` which are valid together
+        When `_metric_is_compatible_with_topic()` is called
+            from an instance of the `PlotValidation`
+        Then True is returned
+        """
+        # Given
+        plot_parameters = valid_plot_parameters
+        plot_parameters.metric = metric
+        plot_parameters.topic = topic
+        validator = validation.PlotValidation(
+            plot_parameters=plot_parameters,
+        )
+
+        # When
+        is_metric_valid_with_topic: bool = validator._metric_is_compatible_with_topic()
+
+        # Then
+        assert is_metric_valid_with_topic
+
+    @pytest.mark.parametrize(
+        "metric, topic",
+        (
+            ("COVID-19_deaths_ONSByDay", "Adenovirus"),
+            ("influenza_headline_positivityLatest", "hMPV"),
+            ("RSV_headline_positivityLatest", "Rhinovirus"),
+            ("parainfluenza_testing_positivityByWeek", "RSV"),
+            ("rhinovirus_headline_positivityLatest", "Parainfluenza"),
+            ("hMPV_testing_positivityByWeek", "Influenza"),
+            ("adenovirus_headline_positivityLatest", "COVID-19"),
+        ),
+    )
+    def test_returns_false_for_invalid_metric_and_topic(
+        self, metric: str, topic: str, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given a `topic` and `metric` which are not valid together
+        When `_metric_is_compatible_with_topic()` is called
+            from an instance of the `PlotValidation`
+        Then False is returned
+        """
+        # Given
+        plot_parameters = valid_plot_parameters
+        plot_parameters.metric = metric
+        plot_parameters.topic = topic
+        validator = validation.PlotValidation(
+            plot_parameters=plot_parameters,
+        )
+
+        # When
+        is_metric_valid_with_topic: bool = validator._metric_is_compatible_with_topic()
+
+        # Then
+        assert not is_metric_valid_with_topic

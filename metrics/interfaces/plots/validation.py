@@ -10,7 +10,9 @@ class MetricDoesNotSupportTopicError(Exception):
 
 
 class DatesNotInChronologicalOrderError(Exception):
-    ...
+    def __init__(self, date_from: str, date_to: str):
+        message = f"`{date_to}` is not a date later than `{date_from}`"
+        super().__init__(message)
 
 
 class PlotValidation:
@@ -22,9 +24,9 @@ class PlotValidation:
 
         Raises:
             `MetricDoesNotSupportTopicError`: If the `metric` is not
-                compatible for the required `topic`.
-                E.g. `COVID-19_deaths_ONSByDay` is only available
-                for the topic of `COVID-19`
+                compatible with the requested `topic`.
+                E.g. `COVID-19_deaths_ONSByDay` metric is
+                not available for the topic of `Influenza`
 
             `DatesNotInChronologicalOrderError`: If a provided `date_to`
                 is chronologically behind the provided `date_from`.
@@ -34,7 +36,6 @@ class PlotValidation:
                 then this error will not be raised.
 
         """
-        self._validate_metric_is_available_for_topic()
         self._validate_dates()
         self._validate_metric_with_topic()
 
@@ -78,4 +79,36 @@ class PlotValidation:
             return
 
         if not dates_in_chronological_order:
-            raise DatesNotInChronologicalOrderError
+            raise DatesNotInChronologicalOrderError(
+                date_from=self.plot_parameters.date_from,
+                date_to=self.plot_parameters.date_to,
+            )
+
+    def _validate_metric_with_topic(self) -> None:
+        """Checks if the `topic` and `metric` on the plot parameters are compatible
+
+        Raises:
+            `MetricDoesNotSupportTopicError`: If the
+                `topic` and `metric` are not compatible
+
+        """
+        if self._metric_is_compatible_with_topic():
+            return
+
+        raise MetricDoesNotSupportTopicError(
+            topic_name=self.plot_parameters.topic_name,
+            metric_name=self.plot_parameters.metric_name,
+        )
+
+    def _metric_is_compatible_with_topic(self) -> bool:
+        """Checks if the `topic` and `metric` on the plot parameters are compatible
+
+        Returns:
+            bool: True if the `topic` and `metric` are compatible,
+                False otherwise
+
+        """
+        return (
+            self.plot_parameters.topic_name.lower()
+            in self.plot_parameters.metric_name.lower()
+        )
