@@ -11,10 +11,7 @@ from metrics.interfaces.charts.access import (
     InvalidFileFormatError,
     generate_chart_as_file,
     generate_encoded_chart,
-    validate_chart_plot_parameters,
-    validate_each_requested_chart_plot,
 )
-from metrics.interfaces.charts.validation import ChartsRequestValidator
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -448,18 +445,16 @@ class TestChartsInterface:
 class TestGenerateChartAsFile:
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
     def test_delegates_call_for_validation(
         self,
-        spy_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
         mocked_write_figure: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_chart_as_file()` is called
-        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `generate_chart_figure` is called from an instance of the `ChartsInterface`
+        Then `generate_chart_figure` is called
+            from an instance of the `ChartsInterface`
         """
         # Given
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
@@ -468,25 +463,19 @@ class TestGenerateChartAsFile:
         generate_chart_as_file(chart_plots=mocked_chart_plots)
 
         # Then
-        spy_validate_each_requested_chart_plot.assert_called_once_with(
-            chart_plots=mocked_chart_plots
-        )
         spy_generate_chart_figure.assert_called_once_with()
 
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
     def test_delegates_call_for_writing_the_chart(
         self,
-        mocked_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
         spy_write_figure: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_chart_as_file()` is called
-        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `write_figure` is called from an instance of the `ChartsInterface`
+        Then `write_figure` is called from an instance of the `ChartsInterface`
         """
         # Given
         mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
@@ -503,22 +492,18 @@ class TestGenerateChartAsFile:
 class TestGenerateEncodedChart:
     @mock.patch.object(ChartsInterface, "get_encoded_chart")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
     def test_delegates_call_for_validation(
         self,
-        spy_validate_each_requested_chart_plot: mock.MagicMock,
         spy_generate_chart_figure: mock.MagicMock,
         mocked_get_encoded_chart: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_encoded_chart()` is called
-        Then a call is delegated to `validate_each_requested_chart_plot()` for validation purposes
-        And `generate_chart_figure` is called from an instance of the `ChartsInterface`
+        Then a call is delegated to `generate_chart_figure`
+            from an instance of the `ChartsInterface`
 
         Patches:
-            `spy_validate_each_requested_chart_plot`: For one of
-                the main assertions
             `spy_generate_chart_figure`: For one of
                 the main assertions
             `mocked_get_encoded_chart`: To remove the side effects
@@ -531,17 +516,12 @@ class TestGenerateEncodedChart:
         generate_encoded_chart(chart_plots=mocked_chart_plots)
 
         # Then
-        spy_validate_each_requested_chart_plot.assert_called_once_with(
-            chart_plots=mocked_chart_plots
-        )
         spy_generate_chart_figure.assert_called_once_with()
 
     @mock.patch.object(ChartsInterface, "get_encoded_chart")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_chart_plot")
     def test_delegates_call_to_get_encoded_chart(
         self,
-        mocked_validate_each_requested_chart_plot: mock.MagicMock,
         mocked_generate_chart_figure: mock.MagicMock,
         spy_get_encoded_chart: mock.MagicMock,
     ):
@@ -552,9 +532,6 @@ class TestGenerateEncodedChart:
             from an instance of the `ChartsInterface`
 
         Patches:
-            `mocked_validate_each_requested_chart_plot`: To remove
-                side effects of accessing the db
-                for validating the requested chart
             `mocked_generate_chart_figure`: To set the returned figure
                 so that it can encoded more easily
                 and so the return value can be
@@ -574,74 +551,6 @@ class TestGenerateEncodedChart:
         spy_get_encoded_chart.assert_called_once_with(
             figure=mocked_generate_chart_figure.return_value
         )
-
-
-class TestValidateEachRequestedChartPlot:
-    @mock.patch(f"{MODULE_PATH}.validate_chart_plot_parameters")
-    def test_delegates_call_for_each_chart_plot(
-        self,
-        spy_validate_chart_plot_parameters: mock.MagicMock,
-        fake_chart_plot_parameters: PlotParameters,
-        fake_chart_plot_parameters_covid_cases: PlotParameters,
-    ):
-        """
-        Given a `PlotsCollection` model requesting plots
-            of multiple `PlotParameters` models
-        When `validate_each_requested_chart_plot()` is called
-        Then the call is delegated to `validate_chart_plot_parameters()`
-            for each `PlotParameters` models
-
-        Patches:
-            `spy_validate_chart_plot_parameters`: For the main assertion
-        """
-        # Given
-        fake_requested_chart_plots = [
-            fake_chart_plot_parameters,
-            fake_chart_plot_parameters_covid_cases,
-        ]
-        fake_chart_plots = PlotsCollection(
-            file_format="svg",
-            plots=fake_requested_chart_plots,
-            chart_width=123,
-            chart_height=456,
-            x_axis="date",
-            y_axis="metric",
-        )
-
-        # When
-        validate_each_requested_chart_plot(chart_plots=fake_chart_plots)
-
-        # Then
-        expected_calls = [
-            mock.call(chart_plot_parameters=requested_chart_plot)
-            for requested_chart_plot in fake_requested_chart_plots
-        ]
-        spy_validate_chart_plot_parameters.assert_has_calls(calls=expected_calls)
-
-
-class TestValidateChartPlotParameters:
-    @mock.patch.object(ChartsRequestValidator, "validate")
-    def test_delegates_call_to_validate_method_on_charts_request_validator_class(
-        self,
-        spy_validate_method: mock.MagicMock,
-        fake_chart_plot_parameters: PlotParameters,
-    ):
-        """
-        Given a `PlotParameters` model
-        When `validate_chart_plot_parameters()` is called
-        Then the call is delegated to the `validate()` from an instance of the `ChartsRequestValidator`
-
-        Patches:
-            `spy_validate_method`: For the main assertion
-        """
-        # Given
-        chart_plot_parameters = fake_chart_plot_parameters
-
-        # When
-        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_parameters)
-
-        # Then
-        spy_validate_method.assert_called_once()
 
 
 class TestMiscMethods:
