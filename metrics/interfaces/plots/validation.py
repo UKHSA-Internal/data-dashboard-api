@@ -1,10 +1,4 @@
-from django.db.models import Manager
-
-from metrics.data.models.core_models import CoreTimeSeries, Metric
 from metrics.domain.models import PlotParameters
-
-DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
-DEFAULT_METRIC_MANAGER = Metric.objects
 
 
 class MetricDoesNotSupportTopicError(Exception):
@@ -20,15 +14,8 @@ class DatesNotInChronologicalOrderError(Exception):
 
 
 class PlotValidation:
-    def __init__(
-        self,
-        plot_parameters: PlotParameters,
-        core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-        metric_manager: Manager = DEFAULT_METRIC_MANAGER,
-    ):
+    def __init__(self, plot_parameters: PlotParameters):
         self.plot_parameters = plot_parameters
-        self.core_time_series_manager = core_time_series_manager
-        self.metric_manager = metric_manager
 
     def validate(self) -> None:
         """Validates the request against the contents of the db
