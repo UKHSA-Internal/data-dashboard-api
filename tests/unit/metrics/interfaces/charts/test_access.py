@@ -287,7 +287,7 @@ class TestChartsInterface:
         spy_set_latest_date_from_plots_data.assert_called_once()
 
     def test_set_latest_date_from_plots_data_fails_silently_when_latest_date_not_provided(
-        self, fake_chart_plots_data: PlotData
+        self, fake_chart_plot_parameters
     ):
         """
         Given a `PlotData` model which contains
@@ -297,20 +297,25 @@ class TestChartsInterface:
         Then the `latest_date` value is left unchanged
         """
         # Given
-        for plot in fake_chart_plots_data:
-            plot.latest_date = None
+        plots_data = PlotsCollection(
+            plots=[fake_chart_plot_parameters],
+            file_format="svg",
+            chart_width=1000,
+            chart_height=200,
+            x_axis="",
+            y_axis="",
+        )
+        mocked_plots_data = [mock.MagicMock(latest_date=None) for _ in range(3)]
 
         original_latest_date_value = mock.Mock()
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_plots_data,
+            chart_plots=plots_data,
             core_time_series_manager=mock.Mock(),
         )
         charts_interface._latest_date = original_latest_date_value
 
         # When
-        charts_interface._set_latest_date_from_plots_data(
-            plots_data=fake_chart_plots_data
-        )
+        charts_interface._set_latest_date_from_plots_data(plots_data=mocked_plots_data)
 
         # Then
         assert charts_interface._latest_date == original_latest_date_value

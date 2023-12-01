@@ -194,7 +194,7 @@ class ChartsInterface:
         """
         try:
             latest_date: datetime.date = max(plot.latest_date for plot in plots_data)
-        except ValueError:
+        except (ValueError, TypeError):
             return
 
         self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
