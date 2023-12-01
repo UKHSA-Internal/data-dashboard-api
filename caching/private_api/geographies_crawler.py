@@ -9,7 +9,7 @@ class GeographiesAPICrawler:
     def __init__(self, internal_api_client: InternalAPIClient):
         self._internal_api_client = internal_api_client
 
-    def crawl_geographies_api(self) -> None:
+    def process_geographies_api(self) -> None:
         """Crawls the list and retrieve/detail endpoints associated with the geographies API
 
         Notes:

@@ -3,6 +3,7 @@ import re
 from typing import Self
 
 from caching.internal_api_client import InternalAPIClient
+from caching.private_api.geographies_crawler import GeographiesAPICrawler
 from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
@@ -28,6 +29,9 @@ class PrivateAPICrawler:
 
     def __init__(self, internal_api_client: InternalAPIClient | None = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
+        self._geography_api_crawler = GeographiesAPICrawler(
+            internal_api_client=self._internal_api_client
+        )
 
     # Class constructors
 
@@ -100,8 +104,11 @@ class PrivateAPICrawler:
         """
         self.process_list_pages_for_headless_cms_api()
         self.process_detail_pages_for_headless_cms_api(pages=pages)
+        logger.info("Completed processing of headless CMS API")
+
+        self._geography_api_crawler.process_geographies_api()
         logger.info(
-            "Completed processing of headless CMS API, now handling content blocks"
+            "Completed processing of geographies API, now handling content blocks"
         )
 
         pages_count = len(pages)

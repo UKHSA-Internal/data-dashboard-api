@@ -7,7 +7,7 @@ from caching.private_api.crawler import PrivateAPICrawler
 
 @pytest.fixture
 def private_api_crawler_with_mocked_internal_api_client() -> PrivateAPICrawler:
-    return PrivateAPICrawler(internal_api_client=mock.Mock())
+    return PrivateAPICrawler(internal_api_client=mock.MagicMock())
 
 
 @pytest.fixture
