@@ -61,12 +61,12 @@ def generate_table_for_full_plots(
         The requested plots in tabular format
 
     Raises:
-        `DatesNotInChronologicalOrderError`: If a provided `date_to`
-            is chronologically behind the provided `date_from`.
-            E.g. date_from = datetime.datetime(2022, 10, 2)
-                & date_to = datetime.datetime(2021, 8, 1)
-            Note that if None is provided to `date_to`
-            then this error will not be raised.
+        `InvalidPlotParametersError`: If an underlying
+            validation check has failed.
+            This could be because there is
+            an invalid topic and metric selection.
+            Or because the selected dates are not in
+            the expected chronological order.
 
     """
     tables_interface = TablesInterface(plots_collection=plots_collection)
