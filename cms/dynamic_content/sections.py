@@ -15,3 +15,4 @@ class Section(StructBlock):
 
     class Meta:
         icon = "thumbtack"
+

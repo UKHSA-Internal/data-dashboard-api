@@ -1,1 +1,2 @@
 from .parent import MetricsDocumentationParentPage
+from .child import MetricsDocumentationChildEntry
