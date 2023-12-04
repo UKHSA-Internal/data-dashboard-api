@@ -86,6 +86,10 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created simple line chart
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
@@ -107,6 +111,10 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created bar chart
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
@@ -127,6 +135,9 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created multi-coloured line chart
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
@@ -148,6 +159,9 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created line chart with shaded section
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
         """
         plots_data: list[PlotData] = self.build_chart_plots_data()
         plot_data: PlotData = plots_data[0]
@@ -168,6 +182,10 @@ class ChartsInterface:
 
         Returns:
             A list of `PlotData` models for each of the requested chart plots.
+
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
 
         """
         plots_data: list[PlotData] = self.plots_interface.build_plots_data()
@@ -315,6 +333,8 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
             an invalid topic and metric selection.
             Or because the selected dates are not in
             the expected chronological order.
+        `DataNotFoundForAnyPlotError`: If no plots
+            returned any data from the underlying queries
 
     """
     charts_interface = ChartsInterface(chart_plots=chart_plots)
@@ -343,7 +363,8 @@ def generate_encoded_chart(chart_plots: PlotsCollection) -> dict[str, str]:
             an invalid topic and metric selection.
             Or because the selected dates are not in
             the expected chronological order.
-
+        `DataNotFoundForAnyPlotError`: If no plots
+            returned any data from the underlying queries
     """
     charts_interface = ChartsInterface(chart_plots=chart_plots)
     figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()

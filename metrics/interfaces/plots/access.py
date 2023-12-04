@@ -20,6 +20,10 @@ class DataNotFoundForPlotError(Exception):
     ...
 
 
+class DataNotFoundForAnyPlotError(Exception):
+    ...
+
+
 class InvalidPlotParametersError(Exception):
     ...
 
@@ -225,6 +229,10 @@ class PlotsInterface:
             List[PlotData]: A list of `PlotData` models for
                 each of the requested plots.
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
         """
         plots_data: list[PlotData] = []
         for plot_parameters in self.plots_collection.plots:
@@ -236,6 +244,9 @@ class PlotsInterface:
                 continue
 
             plots_data.append(plot_data)
+
+        if not plots_data:
+            raise DataNotFoundForAnyPlotError
 
         return plots_data
 

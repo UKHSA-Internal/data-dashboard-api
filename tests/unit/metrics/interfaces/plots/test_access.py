@@ -6,7 +6,8 @@ import pytest
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
-    DataNotFoundError,
+    DataNotFoundForAnyPlotError,
+    DataNotFoundForPlotError,
     InvalidPlotParametersError,
     PlotsInterface,
     QuerySetResult,
@@ -139,6 +140,27 @@ class TestPlotsInterface:
             latest_date=str(max(x.date for x in fake_core_time_series_records)),
         )
         assert plots_data == [expected_plots_data_for_valid_params]
+
+    def test_build_plots_data_raises_error_when_all_plots_return_no_data(
+        self, fake_plots_collection: PlotsCollection
+    ):
+        """
+        Given a request with a `PlotsCollection` model
+            which will return no data for any of its plots
+        When `build_plots_data()` is called from
+            an instance of the `PlotsInterface`
+        Then a `DataNotFoundForAnyPlotError` is raised
+        """
+        # Given
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+        plots_interface = PlotsInterface(
+            plots_collection=fake_plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When / Then
+        with pytest.raises(DataNotFoundForAnyPlotError):
+            plots_interface.build_plots_data()
 
     def test_build_plot_data_from_parameters(
         self, fake_chart_plot_parameters: PlotParameters
