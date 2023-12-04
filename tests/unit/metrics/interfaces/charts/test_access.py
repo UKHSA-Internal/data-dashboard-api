@@ -12,6 +12,7 @@ from metrics.interfaces.charts.access import (
     generate_chart_as_file,
     generate_encoded_chart,
 )
+from metrics.interfaces.plots.access import InvalidPlotParametersError
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -37,6 +38,7 @@ class TestChartsInterface:
     def test_generate_chart_figure_delegates_call_for_simple_line_chart(
         self,
         spy_generate_simple_line_chart: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
         Given a requirement for a `simple_line_graph` chart
@@ -48,11 +50,10 @@ class TestChartsInterface:
         """
         # Given
         chart_type: str = ChartTypes.simple_line.value
-        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
-        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
+        fake_plots_collection.plots[0].chart_type = chart_type
 
         charts_interface = ChartsInterface(
-            chart_plots=mocked_chart_plots,
+            chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
         )
 
@@ -67,6 +68,7 @@ class TestChartsInterface:
     def test_generate_chart_figure_delegates_call_for_line_with_shaded_section_chart(
         self,
         spy_generate_line_with_shaded_section_chart: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
         Given a requirement for a `line_with_shaded_section` chart
@@ -77,12 +79,11 @@ class TestChartsInterface:
             `spy_generate_line_with_shaded_section_chart`: For the main assertion.
         """
         # Given
-        chart_type: str = ChartTypes.line_with_shaded_section.value
-        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
-        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
-
+        fake_plots_collection.plots[
+            0
+        ].chart_type = ChartTypes.line_with_shaded_section.value
         charts_interface = ChartsInterface(
-            chart_plots=mocked_chart_plots,
+            chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
         )
 
@@ -100,6 +101,7 @@ class TestChartsInterface:
     def test_generate_chart_figure_delegates_call_for_waffle_chart(
         self,
         spy_generate_waffle_chart: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
         Given a requirement for a `waffle` chart
@@ -110,12 +112,9 @@ class TestChartsInterface:
             `spy_generate_waffle_chart`: For the main assertion.
         """
         # Given
-        chart_type: str = ChartTypes.waffle.value
-        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
-        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
-
+        fake_plots_collection.plots[0].chart_type = ChartTypes.waffle.value
         charts_interface = ChartsInterface(
-            chart_plots=mocked_chart_plots,
+            chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
         )
 
@@ -130,6 +129,7 @@ class TestChartsInterface:
     def test_generate_chart_figure_delegates_call_for_bar(
         self,
         spy_generate_bar_chart: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
         Given a requirement for a `bar` chart
@@ -140,12 +140,9 @@ class TestChartsInterface:
             `spy_generate_bar_chart`: For the main assertion.
         """
         # Given
-        chart_type: str = ChartTypes.bar.value
-        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
-        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
-
+        fake_plots_collection.plots[0].chart_type = ChartTypes.bar.value
         charts_interface = ChartsInterface(
-            chart_plots=mocked_chart_plots,
+            chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
         )
 
@@ -160,6 +157,7 @@ class TestChartsInterface:
     def test_generate_chart_figure_delegates_call_for_line_multi_coloured(
         self,
         spy_generate_line_multi_coloured_chart_method: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
         Given a requirement for a `line_multi_coloured` chart
@@ -171,12 +169,9 @@ class TestChartsInterface:
                 main assertion.
         """
         # Given
-        chart_type: str = ChartTypes.line_multi_coloured.value
-        mocked_chart_plot_params = mock.Mock(chart_type=chart_type)
-        mocked_chart_plots = mock.Mock(plots=[mocked_chart_plot_params])
-
+        fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
         charts_interface = ChartsInterface(
-            chart_plots=mocked_chart_plots,
+            chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
         )
 
@@ -477,27 +472,47 @@ class TestChartsInterface:
 
 
 class TestGenerateChartAsFile:
-    @mock.patch.object(ChartsInterface, "write_figure")
-    @mock.patch.object(ChartsInterface, "generate_chart_figure")
-    def test_delegates_call_for_validation(
+    def test_raises_error_for_invalid_topic_and_metric_selection(
         self,
-        spy_generate_chart_figure: mock.MagicMock,
-        mocked_write_figure: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
-        Given a mock in place of a `PlotsCollection` model
+        Given a mocked `PlotsCollection` model
+            which contains a plot parameters model
+            for an invalid metric and topic combination
         When `generate_chart_as_file()` is called
-        Then `generate_chart_figure` is called
-            from an instance of the `ChartsInterface`
+        Then an `InvalidPlotParametersError` is raised
         """
         # Given
-        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+        fake_chart_plot_parameters.topic = "RSV"
+        fake_chart_plot_parameters.metric = "COVID-19_testing_PCRcountByDay"
+        mocked_plots_collection = mock.Mock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
 
-        # When
-        generate_chart_as_file(chart_plots=mocked_chart_plots)
+        # When / Then
+        with pytest.raises(InvalidPlotParametersError):
+            generate_chart_as_file(chart_plots=mocked_plots_collection)
 
-        # Then
-        spy_generate_chart_figure.assert_called_once_with()
+    def test_raises_error_for_invalid_dates_selection(
+        self,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a mocked `PlotsCollection` model
+            which contains a plot parameters model
+            for an invalid `date_from` and `date_to` selection
+        When `generate_chart_as_file()` is called
+        Then an `InvalidPlotParametersError` is raised
+        """
+        # Given
+        fake_chart_plot_parameters.date_from = "2023-01-01"
+        fake_chart_plot_parameters.date_to = "2022-12-31"
+        mocked_plots_collection = mock.Mock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
+
+        # When / Then
+        with pytest.raises(InvalidPlotParametersError):
+            generate_chart_as_file(chart_plots=mocked_plots_collection)
 
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_figure")
@@ -505,6 +520,7 @@ class TestGenerateChartAsFile:
         self,
         spy_generate_chart_figure: mock.MagicMock,
         spy_write_figure: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
@@ -512,10 +528,11 @@ class TestGenerateChartAsFile:
         Then `write_figure` is called from an instance of the `ChartsInterface`
         """
         # Given
-        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+        mocked_plots_collection = mock.Mock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
 
         # When
-        generate_chart_as_file(chart_plots=mocked_chart_plots)
+        generate_chart_as_file(chart_plots=mocked_plots_collection)
 
         # Then
         spy_write_figure.assert_called_once_with(
@@ -530,9 +547,10 @@ class TestGenerateEncodedChart:
         self,
         spy_generate_chart_figure: mock.MagicMock,
         mocked_get_encoded_chart: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
-        Given a mock in place of a `PlotsCollection` model
+        Given a fake `PlotsCollection` model
         When `generate_encoded_chart()` is called
         Then a call is delegated to `generate_chart_figure`
             from an instance of the `ChartsInterface`
@@ -544,10 +562,10 @@ class TestGenerateEncodedChart:
                 of having to encode the chart figure
         """
         # Given
-        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+        fake_chart_plots = fake_plots_collection
 
         # When
-        generate_encoded_chart(chart_plots=mocked_chart_plots)
+        generate_encoded_chart(chart_plots=fake_chart_plots)
 
         # Then
         spy_generate_chart_figure.assert_called_once_with()
@@ -558,9 +576,10 @@ class TestGenerateEncodedChart:
         self,
         mocked_generate_chart_figure: mock.MagicMock,
         spy_get_encoded_chart: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
-        Given a mock in place of a `PlotsCollection` model
+        Given a fake `PlotsCollection` model
         When `generate_encoded_chart()` is called
         Then the call is delegated to `get_encoded_chart()`
             from an instance of the `ChartsInterface`
@@ -573,13 +592,13 @@ class TestGenerateEncodedChart:
             `spy_get_encoded_chart`: For the main assertion
         """
         # Given
-        mocked_chart_plots = mock.MagicMock(plots=[mock.Mock()])
+        fake_chart_plots = fake_plots_collection
         mocked_figure = mock.Mock()
         mocked_figure.to_image.return_value = "abc"
         mocked_generate_chart_figure.return_value = mocked_figure
 
         # When
-        generate_encoded_chart(chart_plots=mocked_chart_plots)
+        generate_encoded_chart(chart_plots=fake_chart_plots)
 
         # Then
         spy_get_encoded_chart.assert_called_once_with(
@@ -596,21 +615,18 @@ class TestMiscMethods:
             "jpeg",
         ],
     )
-    def test_invalid_format_passed_to_encode_figure(self, file_format: str):
+    def test_invalid_format_passed_to_encode_figure(
+        self, file_format: str, fake_plots_collection: PlotsCollection
+    ):
         """
         Given the user supplies an invalid file_format to pass to encode_figure
         When `encode_figure` is called from an instance of the `ChartsInterface`
         Then an `InvalidFileFormatError` is raised
         """
         # Given
-        mocked_chart_plot_params = mock.Mock(chart_type=ChartTypes.simple_line.value)
-        mocked_chart_plots = mock.Mock(
-            file_format=file_format,
-            plots=[mocked_chart_plot_params],
-        )
-
+        fake_plots_collection.file_format = file_format
         charts_interface = ChartsInterface(
-            chart_plots=mocked_chart_plots,
+            chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
         )
 
