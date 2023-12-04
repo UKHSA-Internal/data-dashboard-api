@@ -236,7 +236,7 @@ class TestPlotsInterface:
         """
         Given a `PlotParameters` model requesting a plot for `CoreTimeSeries` data which cannot be found
         When `build_plot_data_from_parameters()` is called from an instance of the `PlotsInterface`
-        Then a `DataNotFoundError` is raised
+        Then a `DataNotFoundForPlotError` is raised
         """
         # Given
         fake_plots_collection = PlotsCollection(
@@ -255,7 +255,7 @@ class TestPlotsInterface:
         )
 
         # When / Then
-        with pytest.raises(DataNotFoundError):
+        with pytest.raises(DataNotFoundForPlotError):
             plots_interface.build_plot_data_from_parameters(
                 plot_parameters=fake_chart_plot_parameters
             )
