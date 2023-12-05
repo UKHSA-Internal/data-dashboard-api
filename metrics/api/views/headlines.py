@@ -88,6 +88,8 @@ class HeadlinesView(APIView):
             # This is a temporary patch to ensure the correct age is set for this metric
             if metric == "COVID-19_headline_vaccines_spring23Total":
                 request_data["age"] = "75+"
+            if metric == "COVID-19_headline_vaccines_autumn23Uptake":
+                request_data["age"] = "65+"
 
             return _handle_beta_schema_headlines_request(request_data=request_data)
 

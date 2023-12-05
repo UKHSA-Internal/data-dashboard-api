@@ -13,9 +13,9 @@ from metrics.domain.charts import (
     line_with_shaded_section,
     waffle,
 )
-from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
+from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.utils import ChartTypes
-from metrics.interfaces.charts import calculations, validation
+from metrics.interfaces.charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
@@ -194,7 +194,7 @@ class ChartsInterface:
         """
         try:
             latest_date: datetime.date = max(plot.latest_date for plot in plots_data)
-        except ValueError:
+        except (ValueError, TypeError):
             return
 
         self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
@@ -309,8 +309,6 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
         The filename of the created image
 
     """
-    validate_each_requested_chart_plot(chart_plots=chart_plots)
-
     charts_interface = ChartsInterface(chart_plots=chart_plots)
     figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
@@ -331,49 +329,7 @@ def generate_encoded_chart(chart_plots: PlotsCollection) -> dict[str, str]:
          "chart": An encoded string representing the chart figure
 
     """
-    validate_each_requested_chart_plot(chart_plots=chart_plots)
-
     charts_interface = ChartsInterface(chart_plots=chart_plots)
     figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
     return charts_interface.get_encoded_chart(figure=figure)
-
-
-def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
-    """Validates the request chart plots against the contents of the db
-
-    Raises:
-        `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
-            compatible for the required `chart_type`.
-            E.g. A cumulative headline type number like `positivity_7days_latest`
-            would not be viable for a line type (timeseries) chart.
-
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
-            compatible for the required `topic`.
-            E.g. `COVID-19_deaths_ONSByDay` is only available
-            for the topic of `COVID-19`
-
-    """
-    for chart_plot_params in chart_plots.plots:
-        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_params)
-
-
-def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
-    """Validates the individual given `chart_plot_parameters` against the contents of the db
-
-    Raises:
-        `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
-            compatible for the required `chart_type`.
-            E.g. A cumulative headline type number like `positivity_7days_latest`
-            would not be viable for a line type (timeseries) chart.
-
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
-            compatible for the required `topic`.
-            E.g. `COVID-19_deaths_ONSByDay` is only available
-            for the topic of `COVID-19`
-
-    """
-    charts_request_validator = validation.ChartsRequestValidator(
-        plot_parameters=chart_plot_parameters
-    )
-    charts_request_validator.validate()

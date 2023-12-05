@@ -1,10 +1,4 @@
-from django.db.models import Manager
-
-from metrics.data.models.core_models import CoreTimeSeries, Metric
 from metrics.domain.models import PlotParameters
-
-DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
-DEFAULT_METRIC_MANAGER = Metric.objects
 
 
 class MetricDoesNotSupportTopicError(Exception):
@@ -16,28 +10,23 @@ class MetricDoesNotSupportTopicError(Exception):
 
 
 class DatesNotInChronologicalOrderError(Exception):
-    ...
+    def __init__(self, date_from: str, date_to: str):
+        message = f"`{date_to}` is not a date later than `{date_from}`"
+        super().__init__(message)
 
 
 class PlotValidation:
-    def __init__(
-        self,
-        plot_parameters: PlotParameters,
-        core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
-        metric_manager: Manager = DEFAULT_METRIC_MANAGER,
-    ):
+    def __init__(self, plot_parameters: PlotParameters):
         self.plot_parameters = plot_parameters
-        self.core_time_series_manager = core_time_series_manager
-        self.metric_manager = metric_manager
 
     def validate(self) -> None:
         """Validates the request against the contents of the db
 
         Raises:
             `MetricDoesNotSupportTopicError`: If the `metric` is not
-                compatible for the required `topic`.
-                E.g. `COVID-19_deaths_ONSByDay` is only available
-                for the topic of `COVID-19`
+                compatible with the requested `topic`.
+                E.g. `COVID-19_deaths_ONSByDay` metric is
+                not available for the topic of `Influenza`
 
             `DatesNotInChronologicalOrderError`: If a provided `date_to`
                 is chronologically behind the provided `date_from`.
@@ -47,50 +36,8 @@ class PlotValidation:
                 then this error will not be raised.
 
         """
-        self._validate_metric_is_available_for_topic()
         self._validate_dates()
-
-    def does_metric_have_multiple_records(self) -> bool:
-        """Checks the db if there are multiple associated `CoreTimeSeries` records.
-
-        Returns:
-            bool: True if there is more than 1 `CoreTimeSeries` record
-                which match the criteria.
-                False otherwise.
-
-        """
-        count: int = self.core_time_series_manager.get_count(
-            x_axis=self.plot_parameters.x_axis_value,
-            y_axis=self.plot_parameters.y_axis_value,
-            topic_name=self.plot_parameters.topic_name,
-            metric_name=self.plot_parameters.metric_name,
-            date_from=self.plot_parameters.date_from_value,
-            date_to=self.plot_parameters.date_to_value,
-        )
-        return count > 1
-
-    def _validate_metric_is_available_for_topic(self) -> None:
-        metric_is_topic_compatible: bool = self._is_metric_available_for_topic()
-
-        if not metric_is_topic_compatible:
-            raise MetricDoesNotSupportTopicError(
-                topic_name=self.plot_parameters.topic_name,
-                metric_name=self.plot_parameters.metric_name,
-            )
-
-    def _is_metric_available_for_topic(self) -> bool:
-        """Checks the db if there are any `Metric` records for the `metric` and `topic`.
-
-        Returns:
-            bool: True if there are any `Metric` records
-                which match the criteria.
-                False otherwise.
-
-        """
-        return self.metric_manager.is_metric_available_for_topic(
-            metric_name=self.plot_parameters.metric_name,
-            topic_name=self.plot_parameters.topic_name,
-        )
+        self._validate_metric_with_topic()
 
     def _are_dates_in_chronological_order(self) -> bool:
         """Checks if the `date_to` stamp is chronologically ahead of `date_from`
@@ -132,4 +79,36 @@ class PlotValidation:
             return
 
         if not dates_in_chronological_order:
-            raise DatesNotInChronologicalOrderError
+            raise DatesNotInChronologicalOrderError(
+                date_from=self.plot_parameters.date_from,
+                date_to=self.plot_parameters.date_to,
+            )
+
+    def _validate_metric_with_topic(self) -> None:
+        """Checks if the `topic` and `metric` on the plot parameters are compatible
+
+        Raises:
+            `MetricDoesNotSupportTopicError`: If the
+                `topic` and `metric` are not compatible
+
+        """
+        if self._metric_is_compatible_with_topic():
+            return
+
+        raise MetricDoesNotSupportTopicError(
+            topic_name=self.plot_parameters.topic_name,
+            metric_name=self.plot_parameters.metric_name,
+        )
+
+    def _metric_is_compatible_with_topic(self) -> bool:
+        """Checks if the `topic` and `metric` on the plot parameters are compatible
+
+        Returns:
+            bool: True if the `topic` and `metric` are compatible,
+                False otherwise
+
+        """
+        return (
+            self.plot_parameters.topic_name.lower()
+            in self.plot_parameters.metric_name.lower()
+        )

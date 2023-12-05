@@ -93,10 +93,10 @@ class TestExtractContentsFromMessage:
         Then the correct key and data are returned
         """
         # Given
-        fake_filename = "abc.json"
+        fake_object_key = "in/abc.json"
         fake_data = {"metric": "COVID-19_cases_countRollingMean"}
         serialized_record = _create_fake_serialized_record(
-            filename=fake_filename, data=fake_data
+            filename=fake_object_key, data=fake_data
         )
 
         # When
@@ -105,7 +105,7 @@ class TestExtractContentsFromMessage:
         )
 
         # Then
-        assert extracted_key == f"in/{fake_filename}"
+        assert extracted_key == fake_object_key
         assert extracted_data == fake_data
 
 

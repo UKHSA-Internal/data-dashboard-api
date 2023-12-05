@@ -98,53 +98,19 @@ class TestTablesInterface:
 
 class TestGenerateTableForFullPlots:
     @mock.patch.object(TablesInterface, "generate_full_plots_for_table")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_table_plot")
-    def test_delegates_call_for_validation(
-        self,
-        spy_validate_each_requested_table_plot: mock.MagicMock,
-        mocked_generate_full_plots_for_table: mock.MagicMock,
-    ):
-        """
-        Given a mock in place of a `PlotsCollection` model
-        When `generate_table()` is called
-        Then a call is delegated to `validate_each_requested_table_plot()`
-            for validation purposes
-        And `generate_plots_for_table` is called
-            from an instance of the `TablesInterface`
-
-        Patches:
-            `spy_validate_each_requested_table_plot`: For the main assertion
-            `mocked_generate_full_plots_for_table`: Removal of table generation logic
-        """
-        # Given
-        mocked_plots_collection = mock.MagicMock(plots=[mock.Mock()])
-
-        # When
-        generate_table_for_full_plots(plots_collection=mocked_plots_collection)
-
-        # Then
-        spy_validate_each_requested_table_plot.assert_called_once_with(
-            plots_collection=mocked_plots_collection
-        )
-
-    @mock.patch.object(TablesInterface, "generate_full_plots_for_table")
-    @mock.patch(f"{MODULE_PATH}.validate_each_requested_table_plot")
     def test_delegates_call_for_producing_table(
         self,
-        mocked_validate_each_requested_table_plot: mock.MagicMock,
         spy_generate_full_plots_for_table: mock.MagicMock,
     ):
         """
         Given a mock in place of a `PlotsCollection` model
         When `generate_table_for_full_plots()` is called
-        Then a call is delegated to `validate_each_requested_table_plot()`
-            for validation purposes
-        And `generate_full_plots_for_table` is called
+        Then `generate_full_plots_for_table` is called
             from an instance of the `TablesInterface`
 
         Patches:
-            `mocked_validate_each_requested_table_plot`: Removal of validation side effects
             `spy_generate_full_plots_for_table`: For the main assertions
+
         """
         # Given
         mocked_plots_collection = mock.MagicMock(plots=[mock.Mock()])
