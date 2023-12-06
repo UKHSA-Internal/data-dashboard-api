@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 
 from ingestion.aws_client import AWSClient
 from ingestion.file_ingestion import (
@@ -122,6 +123,7 @@ def _upload_file_and_remove_local_copy(filepath: str) -> None:
             for any reason
 
     """
+    filepath = Path(filepath)
     try:
         _upload_data_as_file(filepath=filepath)
     except FileIngestionFailedError:
