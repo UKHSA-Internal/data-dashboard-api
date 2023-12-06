@@ -92,6 +92,9 @@ class Metric(models.Model):
             ),
         ]
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class GeographyType(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
