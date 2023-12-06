@@ -1,6 +1,8 @@
 from unittest import mock
 
 import pytest
+from wagtail.admin.panels import FieldPanel
+from wagtail.api import APIField
 
 from cms.metrics_documentation.models.parent import (
     MetricsDocumentationMultipleLivePagesError,
