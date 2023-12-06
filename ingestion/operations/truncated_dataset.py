@@ -50,6 +50,22 @@ def collect_all_metric_model_managers() -> tuple[models.Manager, ...]:
 def clear_metrics_tables() -> None:
     """Deletes all records in the metric tables
 
+    Notes:
+        This deletes all records in the following tables:
+            - Theme
+            - SubTheme
+            - Topic
+            - Metric
+            - MetricGroup
+            - Geography
+            - GeographyType
+            - Age
+            - Sex
+            - Stratum
+            - CoreHeadline
+            - CoreTimeSeries
+            - APITimeSeries
+
     Returns:
          None
 
