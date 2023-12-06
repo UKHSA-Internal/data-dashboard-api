@@ -34,7 +34,7 @@ class SupportingModelsLookup(NamedTuple):
     age_id: int
 
 
-class ConsumerV2:
+class Consumer:
     """Ingests inbound data and ultimately creates the core & api models in the database
 
     Notes:

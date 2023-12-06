@@ -1,13 +1,13 @@
 from unittest import mock
 
-from ingestion.v2.consumer import ConsumerV2
+from ingestion.v2.consumer import Consumer
 
 MODULE_PATH = "ingestion.v2.consumer"
 
 
 class TestConsumerCreateModelMethods:
     @mock.patch(f"{MODULE_PATH}.create_records")
-    @mock.patch.object(ConsumerV2, "build_core_headlines")
+    @mock.patch.object(Consumer, "build_core_headlines")
     def test_create_core_headlines_delegates_calls_successfully(
         self,
         spy_build_core_headlines: mock.MagicMock,
@@ -26,7 +26,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_core_headlines()
@@ -39,7 +39,7 @@ class TestConsumerCreateModelMethods:
         )
 
     @mock.patch(f"{MODULE_PATH}.create_records")
-    @mock.patch.object(ConsumerV2, "build_core_time_series")
+    @mock.patch.object(Consumer, "build_core_time_series")
     def test_create_core_time_series_delegates_calls_successfully(
         self,
         spy_build_core_time_series: mock.MagicMock,
@@ -58,7 +58,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_core_time_series()
@@ -71,7 +71,7 @@ class TestConsumerCreateModelMethods:
         )
 
     @mock.patch(f"{MODULE_PATH}.create_records")
-    @mock.patch.object(ConsumerV2, "build_api_time_series")
+    @mock.patch.object(Consumer, "build_api_time_series")
     def test_create_api_time_series_delegates_calls_successfully(
         self,
         spy_build_api_time_series: mock.MagicMock,
@@ -90,7 +90,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_records`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_api_time_series()
@@ -102,8 +102,8 @@ class TestConsumerCreateModelMethods:
             model_instances=spy_build_api_time_series.return_value,
         )
 
-    @mock.patch.object(ConsumerV2, "create_api_time_series")
-    @mock.patch.object(ConsumerV2, "create_core_time_series")
+    @mock.patch.object(Consumer, "create_api_time_series")
+    @mock.patch.object(Consumer, "create_core_time_series")
     def test_create_core_and_api_timeseries_delegates_calls_successfully(
         self,
         spy_create_core_time_series: mock.MagicMock,
@@ -119,7 +119,7 @@ class TestConsumerCreateModelMethods:
             `spy_create_api_time_series`: For the main assertion
         """
         # Given
-        consumer = ConsumerV2(source_data=mock.Mock(), dto=mock.Mock())
+        consumer = Consumer(source_data=mock.Mock(), dto=mock.Mock())
 
         # When
         consumer.create_core_and_api_timeseries()

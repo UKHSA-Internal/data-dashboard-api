@@ -2,7 +2,7 @@ import pytest
 
 from ingestion.utils import type_hints
 from ingestion.utils.enums import DataSourceFileType
-from ingestion.v2.consumer import ConsumerV2
+from ingestion.v2.consumer import Consumer
 
 
 class TestConsumerProperties:
@@ -17,7 +17,7 @@ class TestConsumerProperties:
         """
         # Given
         fake_data = example_headline_data
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
 
         # When
         is_headline_data: bool = consumer.is_headline_data
@@ -49,7 +49,7 @@ class TestConsumerProperties:
         # Given
         fake_data = example_time_series_data
         fake_data["metric_group"] = metric_group
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
 
         # When
         is_headline_data: bool = consumer.is_headline_data

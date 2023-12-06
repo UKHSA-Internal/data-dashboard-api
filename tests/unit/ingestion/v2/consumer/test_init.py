@@ -1,7 +1,7 @@
 from unittest import mock
 
 from ingestion.utils import type_hints
-from ingestion.v2.consumer import ConsumerV2
+from ingestion.v2.consumer import Consumer
 
 MODULE_PATH = "ingestion.v2.consumer"
 
@@ -28,7 +28,7 @@ class TestConsumerInit:
         fake_data = example_headline_data
 
         # When
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
         dto = consumer.dto
 
         # Then
@@ -58,7 +58,7 @@ class TestConsumerInit:
         fake_data = example_time_series_data
 
         # When
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
         dto = consumer.dto
 
         # Then

@@ -1,7 +1,7 @@
 import pytest
 
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
-from ingestion.v2.consumer import ConsumerV2
+from ingestion.v2.consumer import Consumer
 from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (
     Age,
@@ -19,7 +19,7 @@ from metrics.data.models.core_models import (
 EXPECTED_EMBARGO_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-class TestConsumerV2:
+class TestConsumer:
     @pytest.mark.django_db
     def test_can_ingest_headline_data_successfully(
         self, example_headline_data: INCOMING_DATA_TYPE
@@ -31,7 +31,7 @@ class TestConsumerV2:
         Then `CoreHeadline` records are created with the correct values
         """
         # Given
-        consumer = ConsumerV2(source_data=example_headline_data)
+        consumer = Consumer(source_data=example_headline_data)
         assert CoreHeadline.objects.all().count() == 0
 
         # When
@@ -89,7 +89,7 @@ class TestConsumerV2:
         Then `CoreTimeSeries` records are created with the correct values
         """
         # Given
-        consumer = ConsumerV2(source_data=example_time_series_data)
+        consumer = Consumer(source_data=example_time_series_data)
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When

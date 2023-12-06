@@ -14,7 +14,7 @@ import django
 django.setup()
 
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE  # noqa: E402
-from ingestion.v2.consumer import ConsumerV2  # noqa: E402
+from ingestion.v2.consumer import Consumer  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ def data_ingester(data: INCOMING_DATA_TYPE) -> None:
         None
 
     """
-    consumer = ConsumerV2(source_data=data)
+    consumer = Consumer(source_data=data)
 
     if consumer.is_headline_data:
         return consumer.create_core_headlines()

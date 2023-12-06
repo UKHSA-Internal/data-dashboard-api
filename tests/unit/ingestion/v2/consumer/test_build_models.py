@@ -1,7 +1,7 @@
 from unittest import mock
 
 from ingestion.utils import type_hints
-from ingestion.v2.consumer import ConsumerV2
+from ingestion.v2.consumer import Consumer
 from tests.unit.ingestion.data_transfer_models.test_handlers import (
     DATE_FORMAT,
     DATETIME_FORMAT,
@@ -9,7 +9,7 @@ from tests.unit.ingestion.data_transfer_models.test_handlers import (
 
 
 class TestBuildModelMethods:
-    @mock.patch.object(ConsumerV2, "update_supporting_models")
+    @mock.patch.object(Consumer, "update_supporting_models")
     def test_build_core_headlines(
         self,
         spy_update_supporting_models: mock.MagicMock,
@@ -33,7 +33,7 @@ class TestBuildModelMethods:
             }
         ]
 
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
 
         # When
         core_headline_model_instances = consumer.build_core_headlines()
@@ -77,7 +77,7 @@ class TestBuildModelMethods:
             == fake_data["data"][0]["metric_value"]
         )
 
-    @mock.patch.object(ConsumerV2, "update_supporting_models")
+    @mock.patch.object(Consumer, "update_supporting_models")
     def test_build_core_time_series(
         self,
         spy_update_supporting_models: mock.MagicMock,
@@ -101,7 +101,7 @@ class TestBuildModelMethods:
             }
         ]
 
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
 
         # When
         core_time_series_model_instances = consumer.build_core_time_series()
@@ -163,7 +163,7 @@ class TestBuildModelMethods:
         """
         # Given
         fake_data = example_time_series_data
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
 
         # When
         api_time_series_model_instances = consumer.build_api_time_series()

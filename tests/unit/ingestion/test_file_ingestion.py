@@ -13,14 +13,14 @@ from ingestion.file_ingestion import (
 )
 from ingestion.utils import type_hints
 from ingestion.utils.enums import DataSourceFileType
-from ingestion.v2.consumer import ConsumerV2
+from ingestion.v2.consumer import Consumer
 
 MODULE_PATH = "ingestion.file_ingestion"
 
 
 class TestDataIngester:
-    @mock.patch.object(ConsumerV2, "create_core_and_api_timeseries")
-    @mock.patch.object(ConsumerV2, "create_core_headlines")
+    @mock.patch.object(Consumer, "create_core_and_api_timeseries")
+    @mock.patch.object(Consumer, "create_core_headlines")
     def test_delegates_call_to_create_headlines_for_headline_data(
         self,
         spy_create_core_headlines: mock.MagicMock,
@@ -54,8 +54,8 @@ class TestDataIngester:
             DataSourceFileType.vaccinations.value,
         ],
     )
-    @mock.patch.object(ConsumerV2, "create_core_headlines")
-    @mock.patch.object(ConsumerV2, "create_core_and_api_timeseries")
+    @mock.patch.object(Consumer, "create_core_headlines")
+    @mock.patch.object(Consumer, "create_core_and_api_timeseries")
     def test_delegates_call_to_create_timeseries_for_timeseries_data(
         self,
         spy_create_core_and_api_timeseries: mock.MagicMock,
