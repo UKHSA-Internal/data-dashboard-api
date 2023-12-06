@@ -143,6 +143,21 @@ def get_all_topic_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return _build_two_item_tuple_choices(metrics_interface.get_all_topic_names())
 
 
+def get_a_list_of_all_topic_names():
+    """Callable for the `topic` fields of the CMS blocks
+
+    Notes:
+        This callable wraps the `MetricAPIInterface` and is
+        used to return all topic names as a list.
+
+    Returns:
+        A list of strings representing the topic names.
+        Examples ["COVID-19", "Influenza"]
+    """
+    metrics_interface = MetricsAPIInterface()
+    return list(metrics_interface.get_all_topic_names())
+
+
 def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `metric` fields of trend number CMS blocks.
 

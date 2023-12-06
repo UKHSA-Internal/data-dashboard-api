@@ -1,0 +1,40 @@
+{
+  "id": 17,
+  "meta": {
+    "search_description": "",
+    "type": "metrics_documentation.MetricsDocumentationChildEntry",
+    "detail_url": "http://localhost/api/pages/17/",
+    "html_url": null,
+    "slug": "covid-19-deaths-ons-by-week",
+    "show_in_menus": false,
+    "seo_title": "",
+    "first_published_at": "2023-12-11T18:53:25.857988Z",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "COVID-19 deaths ons by week",
+  "date_posted": "2023-12-12",
+  "metric": "COVID-19_deaths_ONSRollingMean",
+  "topic": "COVID-19",
+  "metric_group": "deaths",
+  "body": [
+    {
+      "type": "section",
+      "value": {
+        "title": "section title",
+        "body": "<p data-block-key=\"7ovby\">section body</p>"
+      },
+      "id": "d4d7d8b5-5ceb-490a-943c-3c07ec55a4ec"
+    }
+  ],
+  "last_published_at": "2023-12-11T18:53:25.857988Z",
+  "page_description": "covid-19 deaths ons by week"
+}
