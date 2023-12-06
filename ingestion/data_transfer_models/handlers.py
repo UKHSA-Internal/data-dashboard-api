@@ -1,17 +1,17 @@
 from collections.abc import Callable
 
-from ingestion.utils.type_hints import INCOMING_DATA_TYPE
-from ingestion.validation.base import MissingFieldError
-from ingestion.validation.headline import (
+from ingestion.data_transfer_models.base import MissingFieldError
+from ingestion.data_transfer_models.headline import (
     HeadlineDTO,
     _build_enriched_headline_specific_fields,
     _build_headline_dto,
 )
-from ingestion.validation.time_series import (
+from ingestion.data_transfer_models.time_series import (
     TimeSeriesDTO,
     _build_enriched_time_series_specific_fields,
     _build_time_series_dto,
 )
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 
 
 def build_time_series_dto_from_source(

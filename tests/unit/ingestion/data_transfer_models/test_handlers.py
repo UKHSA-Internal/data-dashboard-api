@@ -1,12 +1,12 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.utils.type_hints import INCOMING_DATA_TYPE
-from ingestion.validation.base import MissingFieldError
-from ingestion.validation.handlers import (
+from ingestion.data_transfer_models.base import MissingFieldError
+from ingestion.data_transfer_models.handlers import (
     build_headline_dto_from_source,
     build_time_series_dto_from_source,
 )
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 
 DATE_FORMAT = "%Y-%m-%d"
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"

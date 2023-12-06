@@ -1,11 +1,11 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.utils.type_hints import INCOMING_DATA_TYPE
-from ingestion.validation.time_series import (
+from ingestion.data_transfer_models.time_series import (
     InboundTimeSeriesSpecificFields,
     TimeSeriesDTO,
 )
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.enums import TimePeriod
 
 VALID_DATETIME = "2023-11-20 12:00:00"
