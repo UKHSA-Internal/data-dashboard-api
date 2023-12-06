@@ -17,7 +17,7 @@ DATE_FORMAT = "%Y-%m-%d"
 class TestIngestionV2:
     @pytest.mark.django_db
     def test_data_can_be_ingested_and_queried_from_tables_endpoint(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given some sample timeseries data
@@ -30,7 +30,7 @@ class TestIngestionV2:
         assert CoreTimeSeries.objects.count() == 0
 
         # When
-        data_ingester(data=example_time_series_data_v2)
+        data_ingester(data=example_time_series_data)
 
         # Then
         assert CoreTimeSeries.objects.count() == 2
@@ -40,8 +40,8 @@ class TestIngestionV2:
             "file_format": "svg",
             "plots": [
                 {
-                    "topic": example_time_series_data_v2["topic"],
-                    "metric": example_time_series_data_v2["metric"],
+                    "topic": example_time_series_data["topic"],
+                    "metric": example_time_series_data["metric"],
                     "date_from": "2020-01-01",
                     "chart_type": "waffle",
                 }
@@ -55,16 +55,16 @@ class TestIngestionV2:
         # We expect the data to be returned in chronological order, starting from the most recent
         assert (
             float(response_data[0]["values"][0]["value"])
-            == example_time_series_data_v2["time_series"][1]["metric_value"]
+            == example_time_series_data["time_series"][1]["metric_value"]
         )
         assert (
             float(response_data[1]["values"][0]["value"])
-            == example_time_series_data_v2["time_series"][0]["metric_value"]
+            == example_time_series_data["time_series"][0]["metric_value"]
         )
 
     @pytest.mark.django_db
     def test_when_multiple_files_are_ingested_the_correct_data_is_queried_for(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given multiple ingested files of
@@ -73,7 +73,7 @@ class TestIngestionV2:
         Then the correct data is returned at each point in time
         """
         # Given
-        first_sample_data = example_time_series_data_v2.copy()
+        first_sample_data = example_time_series_data.copy()
         query_payload = {
             "x_axis": "date",
             "y_axis": "metric_value",
@@ -89,19 +89,15 @@ class TestIngestionV2:
             **query_payload
         )
         first_date: datetime.date = datetime.datetime.strptime(
-            example_time_series_data_v2["time_series"][0]["date"], DATE_FORMAT
+            example_time_series_data["time_series"][0]["date"], DATE_FORMAT
         ).date()
         second_date: datetime.date = datetime.datetime.strptime(
-            example_time_series_data_v2["time_series"][1]["date"], DATE_FORMAT
+            example_time_series_data["time_series"][1]["date"], DATE_FORMAT
         ).date()
 
         assert filtered_core_time_series.count() == 2
-        first_metric_value = example_time_series_data_v2["time_series"][0][
-            "metric_value"
-        ]
-        second_metric_value = example_time_series_data_v2["time_series"][1][
-            "metric_value"
-        ]
+        first_metric_value = example_time_series_data["time_series"][0]["metric_value"]
+        second_metric_value = example_time_series_data["time_series"][1]["metric_value"]
         assert (
             first_date,
             Decimal(str(first_metric_value)),
@@ -116,7 +112,7 @@ class TestIngestionV2:
         second_refresh_date = datetime.date(year=2023, month=10, day=30)
         second_data_with_no_functional_updates = (
             self._rebuild_data_with_updated_refresh_date_only(
-                data=example_time_series_data_v2,
+                data=example_time_series_data,
                 refresh_date=second_refresh_date,
             )
         )
@@ -145,7 +141,7 @@ class TestIngestionV2:
         updated_metric_value = 99.0000
         third_data_with_retrospective_updates = (
             self._rebuild_data_with_single_retrospective_update(
-                data=example_time_series_data_v2,
+                data=example_time_series_data,
                 refresh_date=final_refresh_date,
                 metric_value=updated_metric_value,
             )
@@ -172,7 +168,7 @@ class TestIngestionV2:
 
     @pytest.mark.django_db
     def test_data_is_deduplicated_on_write_to_db_and_return_latest_data_from_apis(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given some sample timeseries data
@@ -182,7 +178,7 @@ class TestIngestionV2:
         Then the APIs should return the latest-functional data
         """
         # Given
-        first_sample_data = example_time_series_data_v2.copy()
+        first_sample_data = example_time_series_data.copy()
 
         # When / Then
         # The 1st file is ingested we expect all the data points to be made available
@@ -220,7 +216,7 @@ class TestIngestionV2:
         second_refresh_date = datetime.date(year=2023, month=10, day=30)
         second_data_file_with_no_functional_updates = (
             self._rebuild_data_with_updated_refresh_date_only(
-                data=example_time_series_data_v2,
+                data=example_time_series_data,
                 refresh_date=second_refresh_date,
             )
         )
@@ -244,7 +240,7 @@ class TestIngestionV2:
         updated_metric_value = 99.0000
         third_data_file_with_retrospective_updates = (
             self._rebuild_data_with_single_retrospective_update(
-                data=example_time_series_data_v2,
+                data=example_time_series_data,
                 refresh_date=final_refresh_date,
                 metric_value=updated_metric_value,
             )

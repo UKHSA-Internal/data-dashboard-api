@@ -9,7 +9,7 @@ from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 class TestDataIngester:
     @pytest.mark.django_db
     def test_creates_core_headlines_from_data(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline type data
@@ -17,7 +17,7 @@ class TestDataIngester:
         Then `CoreHeadline` records are created with the correct values
         """
         # Given
-        data = example_headline_data_v2
+        data = example_headline_data
         assert CoreHeadline.objects.all().count() == 0
 
         # When
@@ -25,9 +25,7 @@ class TestDataIngester:
 
         # Then
         # Check that 2 `CoreHeadline` records are created per row of data
-        assert CoreHeadline.objects.all().count() == len(
-            example_headline_data_v2["data"]
-        )
+        assert CoreHeadline.objects.all().count() == len(example_headline_data["data"])
         core_headline = CoreHeadline.objects.first()
 
         assert core_headline.metric.topic.sub_theme.theme.name == data["parent_theme"]
@@ -58,7 +56,7 @@ class TestDataIngester:
 
     @pytest.mark.django_db
     def test_creates_core_time_series_from_data(
-        self, example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming time series type data
@@ -66,7 +64,7 @@ class TestDataIngester:
         Then `CoreTimeSeries` records are created with the correct values
         """
         # Given
-        data = example_time_series_data_v2
+        data = example_time_series_data
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When
@@ -75,7 +73,7 @@ class TestDataIngester:
         # Then
         # Check that 1 `CoreTimeSeries` record is created per row of data
         assert CoreTimeSeries.objects.all().count() == len(
-            example_time_series_data_v2["time_series"]
+            example_time_series_data["time_series"]
         )
         core_time_series = CoreTimeSeries.objects.first()
 
@@ -113,7 +111,7 @@ class TestDataIngester:
 
     @pytest.mark.django_db
     def test_creates_api_time_series_from_data(
-        self, example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming time series type data
@@ -121,7 +119,7 @@ class TestDataIngester:
         Then `APITimeSeries` records are created with the correct values
         """
         # Given
-        data = example_time_series_data_v2
+        data = example_time_series_data
         assert APITimeSeries.objects.all().count() == 0
 
         # When
@@ -130,7 +128,7 @@ class TestDataIngester:
         # Then
         # Check that 1 `APITimeSeries` record is created per row of data
         assert APITimeSeries.objects.all().count() == len(
-            example_time_series_data_v2["time_series"]
+            example_time_series_data["time_series"]
         )
         core_time_series = APITimeSeries.objects.first()
 

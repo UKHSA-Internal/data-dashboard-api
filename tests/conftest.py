@@ -2,8 +2,6 @@ import datetime
 
 import pytest
 
-from ingestion.data_transfer_models import IncomingHeadlineDTO
-from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
 from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -93,47 +91,7 @@ def plot_serializer_payload_and_model_managers() -> (
 
 
 @pytest.fixture
-def example_headline_data() -> list[dict[str, str | float]]:
-    return [
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "headline",
-            "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-            "geography_type": "Government Office Region",
-            "geography": "East Midlands",
-            "geography_code": "E12000004",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "period_start": "2023-06-24",
-            "period_end": "2023-06-30",
-            "metric_value": 1,
-            "refresh_date": "2023-07-11",
-        },
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "headline",
-            "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-            "geography_type": "Government Office Region",
-            "geography": "East of England",
-            "geography_code": "E12000006",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "period_start": "2023-06-24",
-            "period_end": "2023-06-30",
-            "metric_value": -11,
-            "refresh_date": "2023-07-11",
-        },
-    ]
-
-
-@pytest.fixture
-def example_headline_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
+def example_headline_data() -> dict[str, str | list[dict[str, str | float]]]:
     return {
         "parent_theme": "infectious_disease",
         "child_theme": "respiratory",
@@ -165,14 +123,7 @@ def example_headline_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
 
 
 @pytest.fixture
-def example_incoming_headline_dto(
-    example_headline_data: list[dict[str, str | float]]
-) -> IncomingHeadlineDTO:
-    return IncomingHeadlineDTO(**example_headline_data[0])
-
-
-@pytest.fixture
-def example_time_series_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
+def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
     return {
         "parent_theme": "infectious_disease",
         "child_theme": "respiratory",
@@ -202,56 +153,3 @@ def example_time_series_data_v2() -> dict[str, str | list[dict[str, str | float]
             },
         ],
     }
-
-
-@pytest.fixture
-def example_timeseries_data() -> list[dict[str, str | int | float]]:
-    return [
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "deaths",
-            "metric": "COVID-19_deaths_ONSByDay",
-            "geography_type": "Nation",
-            "geography": "England",
-            "geography_code": "E92000001",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "metric_frequency": "daily",
-            "epiweek": 10,
-            "month": 3,
-            "year": 2020,
-            "date": "2020-03-02",
-            "metric_value": 0,
-            "refresh_date": "2023-07-11",
-        },
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "deaths",
-            "metric": "COVID-19_deaths_ONSByDay",
-            "geography_type": "Nation",
-            "geography": "England",
-            "geography_code": "E92000001",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "metric_frequency": "daily",
-            "epiweek": 10,
-            "month": 3,
-            "year": 2020,
-            "date": "2020-03-03",
-            "metric_value": 0,
-            "refresh_date": "2023-07-11",
-        },
-    ]
-
-
-@pytest.fixture
-def example_incoming_timeseries_dto(
-    example_timeseries_data: list[dict[str, str | float]]
-) -> IncomingTimeSeriesDTO:
-    return IncomingTimeSeriesDTO(**example_timeseries_data[0])

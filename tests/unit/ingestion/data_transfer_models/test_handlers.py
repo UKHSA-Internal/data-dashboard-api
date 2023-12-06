@@ -37,7 +37,7 @@ HEADLINE_SPECIFIC_FIELDS = [
 
 class TestBuildTimeSeriesDTOFromSource:
     def test_extracts_common_fields_from_source_correctly(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming time series source data
@@ -45,7 +45,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then the returned `TimeSeriesDTO` is enriched with the correct fields
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
 
         # When
         time_series_dto = build_time_series_dto_from_source(source_data=source_data)
@@ -69,7 +69,7 @@ class TestBuildTimeSeriesDTOFromSource:
         )
 
     def test_extracts_lower_level_specific_fields_from_source_correctly(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming time series source data
@@ -78,7 +78,7 @@ class TestBuildTimeSeriesDTOFromSource:
             with the correct lower level-specific fields
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
 
         # When
         time_series_dto = build_time_series_dto_from_source(source_data=source_data)
@@ -95,7 +95,7 @@ class TestBuildTimeSeriesDTOFromSource:
             assert rebuild_specific_fields in source_data["time_series"]
 
     def test_filters_out_individual_data_points_with_metric_value_of_none(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming time series source data
@@ -104,7 +104,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then the metric_value of None is filtered out
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data["time_series"][0]["metric_value"] = None
 
         # When
@@ -116,7 +116,7 @@ class TestBuildTimeSeriesDTOFromSource:
 
     @pytest.mark.parametrize("field", COMMON_FIELDS)
     def test_raises_error_when_none_value_provided_to_common_field(
-        self, field: str, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -125,7 +125,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `ValidationError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data[field] = None
 
         # When / Then
@@ -134,7 +134,7 @@ class TestBuildTimeSeriesDTOFromSource:
 
     @pytest.mark.parametrize("field", COMMON_FIELDS)
     def test_raises_error_when_field_is_missing_from_source_data(
-        self, field: str, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -143,7 +143,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data.pop(field)
 
         # When / Then
@@ -152,7 +152,7 @@ class TestBuildTimeSeriesDTOFromSource:
 
     @pytest.mark.parametrize("field", TIME_SERIES_SPECIFIC_FIELDS)
     def test_raises_error_when_none_value_provided_to_lower_level_field(
-        self, field: str, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -161,7 +161,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `ValidationError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data["time_series"][0][field] = None
 
         # When / Then
@@ -169,7 +169,7 @@ class TestBuildTimeSeriesDTOFromSource:
             build_time_series_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_embargo_is_missing_from_source_data(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -178,7 +178,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data["time_series"][0].pop("embargo")
 
         # When / Then
@@ -187,7 +187,7 @@ class TestBuildTimeSeriesDTOFromSource:
 
     @pytest.mark.parametrize("field", TIME_SERIES_SPECIFIC_FIELDS)
     def test_raises_error_when_lower_level_field_is_missing_from_source_data(
-        self, field: str, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -196,7 +196,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data["time_series"][0].pop(field)
 
         # When / Then
@@ -204,7 +204,7 @@ class TestBuildTimeSeriesDTOFromSource:
             build_time_series_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_metric_value_is_missing_from_source_data(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -213,7 +213,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data["time_series"][0].pop("metric_value")
 
         # When / Then
@@ -221,7 +221,7 @@ class TestBuildTimeSeriesDTOFromSource:
             build_time_series_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_time_series_field_is_missing_from_source_data(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -230,7 +230,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data.pop("time_series")
 
         # When / Then
@@ -238,7 +238,7 @@ class TestBuildTimeSeriesDTOFromSource:
             build_time_series_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_time_series_field_is_none_in_source_data(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -247,7 +247,7 @@ class TestBuildTimeSeriesDTOFromSource:
         Then a `ValueError` is raised
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
         source_data["time_series"] = None
 
         # When / Then
@@ -257,7 +257,7 @@ class TestBuildTimeSeriesDTOFromSource:
 
 class TestBuildHeadlineDTOFromSource:
     def test_extracts_common_fields_from_source_correctly(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming headline source data
@@ -265,7 +265,7 @@ class TestBuildHeadlineDTOFromSource:
         Then the returned `HeadlineDTO` is enriched with the correct fields
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
 
         # When
         headline_dto = build_headline_dto_from_source(source_data=source_data)
@@ -289,7 +289,7 @@ class TestBuildHeadlineDTOFromSource:
         )
 
     def test_extracts_lower_level_specific_fields_from_source_correctly(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming headline source data
@@ -298,7 +298,7 @@ class TestBuildHeadlineDTOFromSource:
             with the correct lower level-specific fields
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
 
         # When
         headline_dto = build_headline_dto_from_source(source_data=source_data)
@@ -315,7 +315,7 @@ class TestBuildHeadlineDTOFromSource:
             assert rebuild_specific_fields in source_data["data"]
 
     def test_filters_out_individual_data_points_with_metric_value_of_none(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming headline source data
@@ -324,7 +324,7 @@ class TestBuildHeadlineDTOFromSource:
         Then the metric_value of None is filtered out
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data["data"][0]["metric_value"] = None
 
         # When
@@ -336,7 +336,7 @@ class TestBuildHeadlineDTOFromSource:
 
     @pytest.mark.parametrize("field", COMMON_FIELDS)
     def test_raises_error_when_none_value_provided_to_common_field(
-        self, field: str, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
@@ -345,7 +345,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `ValidationError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data[field] = None
 
         # When / Then
@@ -354,7 +354,7 @@ class TestBuildHeadlineDTOFromSource:
 
     @pytest.mark.parametrize("field", COMMON_FIELDS)
     def test_raises_error_when_field_is_missing_from_source_data(
-        self, field: str, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
@@ -363,7 +363,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data.pop(field)
 
         # When / Then
@@ -372,7 +372,7 @@ class TestBuildHeadlineDTOFromSource:
 
     @pytest.mark.parametrize("field", HEADLINE_SPECIFIC_FIELDS)
     def test_raises_error_when_none_value_provided_to_lower_level_field(
-        self, field: str, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
@@ -381,7 +381,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `ValidationError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data["data"][0][field] = None
 
         # When / Then
@@ -390,7 +390,7 @@ class TestBuildHeadlineDTOFromSource:
 
     @pytest.mark.parametrize("field", HEADLINE_SPECIFIC_FIELDS)
     def test_raises_error_when_lower_level_field_is_missing_from_source_data(
-        self, field: str, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, field: str, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
@@ -399,7 +399,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data["data"][0].pop(field)
 
         # When / Then
@@ -407,7 +407,7 @@ class TestBuildHeadlineDTOFromSource:
             build_headline_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_embargo_is_missing_from_source_data(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
@@ -416,7 +416,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data["data"][0].pop("embargo")
 
         # When / Then
@@ -424,7 +424,7 @@ class TestBuildHeadlineDTOFromSource:
             build_headline_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_metric_value_is_missing_from_source_data(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
@@ -433,7 +433,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data["data"][0].pop("metric_value")
 
         # When / Then
@@ -441,7 +441,7 @@ class TestBuildHeadlineDTOFromSource:
             build_headline_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_time_series_field_is_missing_from_source_data(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming headline source data
@@ -450,7 +450,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `MissingFieldError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data.pop("data")
 
         # When / Then
@@ -458,7 +458,7 @@ class TestBuildHeadlineDTOFromSource:
             build_headline_dto_from_source(source_data=source_data)
 
     def test_raises_error_when_time_series_field_is_none_in_source_data(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given otherwise valid incoming source data
@@ -467,7 +467,7 @@ class TestBuildHeadlineDTOFromSource:
         Then a `ValueError` is raised
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
         source_data["data"] = None
 
         # When / Then

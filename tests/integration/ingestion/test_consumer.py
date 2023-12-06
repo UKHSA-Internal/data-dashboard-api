@@ -22,7 +22,7 @@ EXPECTED_EMBARGO_FORMAT = "%Y-%m-%d %H:%M:%S"
 class TestConsumerV2:
     @pytest.mark.django_db
     def test_can_ingest_headline_data_successfully(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given an example headline data file
@@ -31,7 +31,7 @@ class TestConsumerV2:
         Then `CoreHeadline` records are created with the correct values
         """
         # Given
-        consumer = ConsumerV2(source_data=example_headline_data_v2)
+        consumer = ConsumerV2(source_data=example_headline_data)
         assert CoreHeadline.objects.all().count() == 0
 
         # When
@@ -39,17 +39,15 @@ class TestConsumerV2:
 
         # Then
         # Check that 1 `CoreHeadline` record is created per row of data
-        assert CoreHeadline.objects.all().count() == len(
-            example_headline_data_v2["data"]
-        )
+        assert CoreHeadline.objects.all().count() == len(example_headline_data["data"])
 
         # Check the first `CoreHeadline` record was set
         # with the values from the first object in the original JSON
         core_headline_one = CoreHeadline.objects.first()
         self._assert_core_headline_model_has_correct_values(
             core_headline=CoreHeadline.objects.first(),
-            main_headline_data=example_headline_data_v2,
-            headline_specific_data=example_headline_data_v2["data"][0],
+            main_headline_data=example_headline_data,
+            headline_specific_data=example_headline_data["data"][0],
         )
 
         # Check the second `CoreHeadline` record was set
@@ -57,8 +55,8 @@ class TestConsumerV2:
         core_headline_two = CoreHeadline.objects.last()
         self._assert_core_headline_model_has_correct_values(
             core_headline=CoreHeadline.objects.last(),
-            main_headline_data=example_headline_data_v2,
-            headline_specific_data=example_headline_data_v2["data"][1],
+            main_headline_data=example_headline_data,
+            headline_specific_data=example_headline_data["data"][1],
         )
 
         # Check that the 2 `CoreHeadline` records which are closely related
@@ -82,7 +80,7 @@ class TestConsumerV2:
 
     @pytest.mark.django_db
     def test_can_ingest_timeseries_data_successfully(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given an example headline data file
@@ -91,7 +89,7 @@ class TestConsumerV2:
         Then `CoreTimeSeries` records are created with the correct values
         """
         # Given
-        consumer = ConsumerV2(source_data=example_time_series_data_v2)
+        consumer = ConsumerV2(source_data=example_time_series_data)
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When
@@ -100,7 +98,7 @@ class TestConsumerV2:
         # Then
         # Check that 1 `CoreTimeSeries` record is created per row of data
         assert CoreTimeSeries.objects.all().count() == len(
-            example_time_series_data_v2["time_series"]
+            example_time_series_data["time_series"]
         )
 
         # Check the first `CoreTimeSeries` record was set
@@ -108,8 +106,8 @@ class TestConsumerV2:
         core_timeseries_one = CoreTimeSeries.objects.first()
         self._assert_core_timeseries_model_has_correct_values(
             core_timeseries=core_timeseries_one,
-            main_timeseries_data=example_time_series_data_v2,
-            timeseries_specific_data=example_time_series_data_v2["time_series"][0],
+            main_timeseries_data=example_time_series_data,
+            timeseries_specific_data=example_time_series_data["time_series"][0],
         )
 
         # Check the second `CoreTimeSeries` record was set
@@ -117,8 +115,8 @@ class TestConsumerV2:
         core_timeseries_two = CoreTimeSeries.objects.last()
         self._assert_core_timeseries_model_has_correct_values(
             core_timeseries=core_timeseries_two,
-            main_timeseries_data=example_time_series_data_v2,
-            timeseries_specific_data=example_time_series_data_v2["time_series"][1],
+            main_timeseries_data=example_time_series_data,
+            timeseries_specific_data=example_time_series_data["time_series"][1],
         )
 
         # Check that the 2 `CoreTimeSeries` records which are closely related

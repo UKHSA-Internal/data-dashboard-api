@@ -7,7 +7,7 @@ from ingestion.v2.consumer import ConsumerV2
 
 class TestConsumerProperties:
     def test_is_headline_data_returns_true_for_headline_metric_group(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given input data with a `metric_group` value of "headline"
@@ -16,7 +16,7 @@ class TestConsumerProperties:
         Then True is returned
         """
         # Given
-        fake_data = example_headline_data_v2
+        fake_data = example_headline_data
         consumer = ConsumerV2(source_data=fake_data)
 
         # When
@@ -38,7 +38,7 @@ class TestConsumerProperties:
     def test_is_headline_data_returns_false_for_other_metric_groups(
         self,
         metric_group: str,
-        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given input data with a `metric_group` value other than "headline"
@@ -47,7 +47,7 @@ class TestConsumerProperties:
         Then False is returned
         """
         # Given
-        fake_data = example_time_series_data_v2
+        fake_data = example_time_series_data
         fake_data["metric_group"] = metric_group
         consumer = ConsumerV2(source_data=fake_data)
 

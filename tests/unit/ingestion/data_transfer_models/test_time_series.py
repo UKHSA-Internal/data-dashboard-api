@@ -131,7 +131,7 @@ class TestInboundTimeSeriesSpecificFields:
 
 class TestTimeSeriesDTO:
     def test_casts_upper_and_lower_level_fields(
-        self, example_time_series_data_v2: INCOMING_DATA_TYPE
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming source data for a headline data type
@@ -140,7 +140,7 @@ class TestTimeSeriesDTO:
         Then the payload is deemed valid
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
 
         # When
         lower_level_fields = [
@@ -189,7 +189,7 @@ class TestTimeSeriesDTO:
         self,
         input_metric_frequency_value: str,
         expected_metric_frequency_value: str,
-        example_time_series_data_v2: INCOMING_DATA_TYPE,
+        example_time_series_data: INCOMING_DATA_TYPE,
     ):
         """
         Given a payload containing valid values
@@ -199,7 +199,7 @@ class TestTimeSeriesDTO:
         And the correct value is cast for the output "metric_frequency" field
         """
         # Given
-        source_data = example_time_series_data_v2
+        source_data = example_time_series_data
 
         # When
         lower_level_fields = [

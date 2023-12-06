@@ -13,7 +13,7 @@ class TestBuildModelMethods:
     def test_build_core_headlines(
         self,
         spy_update_supporting_models: mock.MagicMock,
-        example_headline_data_v2: type_hints.INCOMING_DATA_TYPE,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given fake input data
@@ -23,7 +23,7 @@ class TestBuildModelMethods:
             are enriched with the correct values
         """
         # Given
-        fake_data = example_headline_data_v2
+        fake_data = example_headline_data
         fake_data["data"] = [
             {
                 "embargo": "2023-11-20 12:00:00",
@@ -81,7 +81,7 @@ class TestBuildModelMethods:
     def test_build_core_time_series(
         self,
         spy_update_supporting_models: mock.MagicMock,
-        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given fake input data
@@ -91,7 +91,7 @@ class TestBuildModelMethods:
             are enriched with the correct values
         """
         # Given
-        fake_data = example_time_series_data_v2
+        fake_data = example_time_series_data
         fake_data["time_series"] = [
             {
                 "epiweek": 31,
@@ -152,7 +152,7 @@ class TestBuildModelMethods:
         )
 
     def test_build_api_time_series(
-        self, example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given fake input data
@@ -162,7 +162,7 @@ class TestBuildModelMethods:
             are enriched with the correct values
         """
         # Given
-        fake_data = example_time_series_data_v2
+        fake_data = example_time_series_data
         consumer = ConsumerV2(source_data=fake_data)
 
         # When

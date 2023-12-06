@@ -130,7 +130,7 @@ class TestInboundHeadlineSpecificFields:
 
 class TestHeadlineDTO:
     def test_casts_upper_and_lower_level_fields(
-        self, example_headline_data_v2: INCOMING_DATA_TYPE
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming source data for a headline data type
@@ -139,7 +139,7 @@ class TestHeadlineDTO:
         Then the payload is deemed valid
         """
         # Given
-        source_data = example_headline_data_v2
+        source_data = example_headline_data
 
         # When
         lower_level_fields = [
