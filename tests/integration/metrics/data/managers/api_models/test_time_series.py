@@ -172,7 +172,9 @@ class TestAPITimeSeriesQuerySet:
         # Given
         original_metric_value = 1
         dates = FAKE_DATES
-        embargo = datetime.datetime(year=2023, month=12, day=1, hour=12, minute=0, second=0)
+        embargo = datetime.datetime(
+            year=2023, month=12, day=1, hour=12, minute=0, second=0
+        )
         original_refresh_date = datetime.datetime(year=2023, month=11, day=1)
         live_api_time_series_records = [
             APITimeSeriesFactory.create_record(
