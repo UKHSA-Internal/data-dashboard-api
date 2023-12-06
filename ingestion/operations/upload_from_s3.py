@@ -5,11 +5,10 @@ from ingestion.aws_client import AWSClient
 from ingestion.file_ingestion import (
     INCOMING_DATA_TYPE,
     FileIngestionFailedError,
-    _upload_file,
+    _upload_data_as_file,
     upload_data,
 )
 from ingestion.operations.concurrency import run_with_multiple_processes
-from ingestion.operations.truncated_dataset import clear_metrics_tables
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +36,6 @@ def download_files_and_upload(client: AWSClient | None = None) -> None:
 
     """
     client = client or AWSClient()
-    clear_metrics_tables()
-
     keys: list[str] = client.list_item_keys_of_in_folder()
 
     run_with_multiple_processes(
@@ -125,7 +122,7 @@ def _upload_file_and_remove_local_copy(filepath: str) -> None:
 
     """
     try:
-        _upload_file(filepath=filepath)
+        _upload_data_as_file(filepath=filepath)
     except FileIngestionFailedError:
         os.remove(path=filepath)
         raise
