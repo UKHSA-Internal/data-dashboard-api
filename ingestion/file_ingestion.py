@@ -13,8 +13,8 @@ import django
 # to a 1-to-1 of job:ingested file then multiprocessing can be reconfigured
 django.setup()
 
+from ingestion.consumer import Consumer  # noqa: E402
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE  # noqa: E402
-from ingestion.v2.consumer import Consumer  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

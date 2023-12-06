@@ -1,7 +1,7 @@
 from unittest import mock
 
+from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
-from ingestion.v2.consumer import Consumer
 from tests.unit.ingestion.data_transfer_models.test_handlers import (
     DATE_FORMAT,
     DATETIME_FORMAT,

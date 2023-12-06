@@ -1,7 +1,7 @@
 from unittest import mock
 
+from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
-from ingestion.v2.consumer import Consumer
 
 
 class TestConsumerGetOrCreateMethods:

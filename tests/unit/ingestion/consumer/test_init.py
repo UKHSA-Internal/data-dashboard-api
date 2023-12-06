@@ -1,9 +1,9 @@
 from unittest import mock
 
+from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
-from ingestion.v2.consumer import Consumer
 
-MODULE_PATH = "ingestion.v2.consumer"
+MODULE_PATH = "ingestion.consumer"
 
 
 class TestConsumerInit:

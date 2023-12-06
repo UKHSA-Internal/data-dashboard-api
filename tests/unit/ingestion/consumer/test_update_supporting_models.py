@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from ingestion.v2.consumer import Consumer
+from ingestion.consumer import Consumer
 
 
 @pytest.fixture()

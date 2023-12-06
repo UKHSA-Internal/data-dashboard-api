@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 from _pytest.logging import LogCaptureFixture
 
+from ingestion.consumer import Consumer
 from ingestion.file_ingestion import (
     FileIngestionFailedError,
     _open_data_from_file,
@@ -13,7 +14,6 @@ from ingestion.file_ingestion import (
 )
 from ingestion.utils import type_hints
 from ingestion.utils.enums import DataSourceFileType
-from ingestion.v2.consumer import Consumer
 
 MODULE_PATH = "ingestion.file_ingestion"
 

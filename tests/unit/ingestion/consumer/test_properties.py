@@ -1,8 +1,8 @@
 import pytest
 
+from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
 from ingestion.utils.enums import DataSourceFileType
-from ingestion.v2.consumer import Consumer
 
 
 class TestConsumerProperties:

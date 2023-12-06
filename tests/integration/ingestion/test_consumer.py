@@ -1,7 +1,7 @@
 import pytest
 
+from ingestion.consumer import Consumer
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
-from ingestion.v2.consumer import Consumer
 from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (
     Age,
