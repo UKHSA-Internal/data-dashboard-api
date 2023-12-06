@@ -105,7 +105,9 @@ class TestMetricsDocumentationParentPage:
         )
 
         # When
-        search_fields: list[SearchField] = fake_metrics_documentation_parent_page.search_fields
+        search_fields: list[
+            SearchField
+        ] = fake_metrics_documentation_parent_page.search_fields
 
         # Then
         search_fields: set[str] = {api_field.field_name for api_field in search_fields}
