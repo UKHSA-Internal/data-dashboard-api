@@ -118,32 +118,35 @@ class TestCoreHeadlineManager:
         """
         # Given
         original_metric_value = 99
+        original_refresh_date = datetime.datetime(year=2023, month=11, day=1)
         core_headline_live = CoreHeadlineFactory.create_record(
-            metric_value=original_metric_value
+            metric_value=original_metric_value,
+            refresh_date=original_refresh_date,
         )
 
+        updated_refresh_date = datetime.date(year=2023, month=11, day=8)
         embargoed_metric_value = 100
         core_headline_with_immediate_embargo = CoreHeadlineFactory.create_record(
-            metric_value=embargoed_metric_value, embargo=None
+            metric_value=embargoed_metric_value,
+            embargo=None,
+            refresh_date=updated_refresh_date,
         )
 
         # When
-        core_headline_queryset = CoreHeadline.objects.get_queryset()
-        returned_queryset = (
-            core_headline_queryset.by_topic_metric_ordered_from_newest_to_oldest(
-                topic_name=core_headline_live.metric.topic.name,
-                metric_name=core_headline_live.metric.name,
-                geography_name=core_headline_live.geography.name,
-                geography_type_name=core_headline_live.geography.geography_type.name,
-                stratum_name=core_headline_live.stratum.name,
-                sex=core_headline_live.sex,
-                age=core_headline_live.age.name,
-            )
+        returned_metric_value = CoreHeadline.objects.get_latest_metric_value(
+            topic_name=core_headline_live.metric.topic.name,
+            metric_name=core_headline_live.metric.name,
+            geography_name=core_headline_live.geography.name,
+            geography_type_name=core_headline_live.geography.geography_type.name,
+            stratum_name=core_headline_live.stratum.name,
+            sex=core_headline_live.sex,
+            age=core_headline_live.age.name,
         )
 
         # Then
-        assert core_headline_with_immediate_embargo.metric_value in returned_queryset
-        assert core_headline_live.metric_value not in returned_queryset
+        assert int(returned_metric_value) == int(
+            core_headline_with_immediate_embargo.metric_value
+        )
 
     @pytest.mark.django_db
     def test_exclude_data_under_embargo(self):
