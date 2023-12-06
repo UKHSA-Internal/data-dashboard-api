@@ -13,14 +13,15 @@ from ingestion.operations.concurrency import run_with_multiple_processes
 logger = logging.getLogger(__name__)
 
 
+def _create_aws_client_for_job() -> AWSClient:
+    inbound_folder = "inbound_job/"
+    return AWSClient(inbound_folder=inbound_folder)
+
+
 def download_files_and_upload(client: AWSClient | None = None) -> None:
     """Downloads all files in the s3 bucket and ingests them
 
     Notes:
-        Metrics tables will be cleared prior to commencing ingestion of files.
-        Therefore, the files in the s3 will mirror the metrics in the database
-        at the end of the ingestion process.
-
         After each file is ingested, it will be moved to `processed/`
         directory within the s3 bucket.
 
@@ -35,7 +36,7 @@ def download_files_and_upload(client: AWSClient | None = None) -> None:
         None
 
     """
-    client = client or AWSClient()
+    client = client or _create_aws_client_for_job()
     keys: list[str] = client.list_item_keys_of_in_folder()
 
     run_with_multiple_processes(
@@ -64,7 +65,7 @@ def download_file_ingest_and_teardown(
         None
 
     """
-    client = client or AWSClient()
+    client = client or _create_aws_client_for_job()
     downloaded_filepath: str = client.download_item(key=key)
     try:
         _upload_file_and_remove_local_copy(filepath=downloaded_filepath)
