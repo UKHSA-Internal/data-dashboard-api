@@ -24,8 +24,10 @@ class TestDataIngester:
         data_ingester(data=data)
 
         # Then
-        # Check that 1 `CoreHeadline` record is created per row of data
-        assert CoreHeadline.objects.all().count() == 1
+        # Check that 2 `CoreHeadline` records are created per row of data
+        assert CoreHeadline.objects.all().count() == len(
+            example_headline_data_v2["data"]
+        )
         core_headline = CoreHeadline.objects.first()
 
         assert core_headline.metric.topic.sub_theme.theme.name == data["parent_theme"]

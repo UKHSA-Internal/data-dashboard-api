@@ -422,6 +422,7 @@ class ConsumerV2:
                 sex=self.dto.sex,
                 refresh_date=self.dto.refresh_date,
                 embargo=time_series_data.embargo,
+                metric_frequency=self.dto.metric_frequency,
                 date=time_series_data.date,
                 epiweek=time_series_data.epiweek,
                 year=int(year),
