@@ -3,6 +3,7 @@ from unittest import mock
 import pytest
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
+from wagtail.search.index import SearchField
 
 from cms.metrics_documentation.models.parent import (
     MetricsDocumentationMultipleLivePagesError,
@@ -80,6 +81,35 @@ class TestMetricsDocumentationParentPage:
             content_panel.field_name for content_panel in content_panels
         }
         assert expected_content_panel_name in content_panel_names
+
+    @pytest.mark.parametrize(
+        "expected_search_field",
+        [
+            "body",
+            "title",
+            "id",
+        ],
+    )
+    def test_has_correct_search_fields(
+        self,
+        expected_search_field: str,
+    ):
+        """
+        Given a blank `MetricsDocumentationParentPage` model.
+        When `search_field` is called.
+        Then the expected names are on the returned `APIField` objects.
+        """
+        # Given
+        fake_metrics_documentation_parent_page = (
+            FakeMetricsDocumentationParentPageFactory.build_page_from_template()
+        )
+
+        # When
+        search_fields: list[SearchField] = fake_metrics_documentation_parent_page.search_fields
+
+        # Then
+        search_fields: set[str] = {api_field.field_name for api_field in search_fields}
+        assert expected_search_field in search_fields
 
     @mock.patch.object(
         MetricsDocumentationParentPage, "_raise_error_if_slug_not_metrics_documentation"
