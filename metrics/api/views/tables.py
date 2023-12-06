@@ -93,7 +93,7 @@ class TablesView(APIView):
                 plots_collection=plots_collection
             )
 
-        except validation.MetricDoesNotSupportTopicError as error:
+        except validation.DatesNotInChronologicalOrderError as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
