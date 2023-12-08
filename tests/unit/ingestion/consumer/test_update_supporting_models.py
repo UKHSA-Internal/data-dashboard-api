@@ -2,14 +2,14 @@ from unittest import mock
 
 import pytest
 
-from ingestion.v2.consumer import ConsumerV2
+from ingestion.consumer import Consumer
 
 
 @pytest.fixture()
-def consumer_with_mocked_model_managers() -> ConsumerV2:
+def consumer_with_mocked_model_managers() -> Consumer:
     mocked_manager = mock.Mock()
     mocked_manager.get_or_create.return_value = mock.Mock(), mock.Mock()
-    return ConsumerV2(
+    return Consumer(
         source_data=mock.MagicMock(),
         dto=mock.Mock(),
         theme_manager=mocked_manager,
@@ -25,15 +25,15 @@ def consumer_with_mocked_model_managers() -> ConsumerV2:
 
 
 class TestConsumerUpdateSupportingModels:
-    @mock.patch.object(ConsumerV2, "get_or_create_theme")
-    @mock.patch.object(ConsumerV2, "get_or_create_sub_theme")
-    @mock.patch.object(ConsumerV2, "get_or_create_topic")
+    @mock.patch.object(Consumer, "get_or_create_theme")
+    @mock.patch.object(Consumer, "get_or_create_sub_theme")
+    @mock.patch.object(Consumer, "get_or_create_topic")
     def test_updates_theme_sub_theme_and_topic(
         self,
         spy_get_or_create_topic: mock.MagicMock,
         spy_get_or_create_sub_theme: mock.MagicMock,
         spy_get_or_create_theme: mock.MagicMock,
-        consumer_with_mocked_model_managers: ConsumerV2,
+        consumer_with_mocked_model_managers: Consumer,
     ):
         """
         Given an instance of the `Consumer`
@@ -67,13 +67,13 @@ class TestConsumerUpdateSupportingModels:
             sub_theme=spy_get_or_create_sub_theme.return_value
         )
 
-    @mock.patch.object(ConsumerV2, "get_or_create_geography_type")
-    @mock.patch.object(ConsumerV2, "get_or_create_geography")
+    @mock.patch.object(Consumer, "get_or_create_geography_type")
+    @mock.patch.object(Consumer, "get_or_create_geography")
     def test_updates_geography_and_geography_type(
         self,
         spy_get_or_create_geography: mock.MagicMock,
         spy_get_or_create_geography_type: mock.MagicMock,
-        consumer_with_mocked_model_managers: ConsumerV2,
+        consumer_with_mocked_model_managers: Consumer,
     ):
         """
         Given an instance of the `Consumer`
@@ -101,15 +101,15 @@ class TestConsumerUpdateSupportingModels:
             geography_type=spy_get_or_create_geography_type.return_value
         )
 
-    @mock.patch.object(ConsumerV2, "get_or_create_topic")
-    @mock.patch.object(ConsumerV2, "get_or_create_metric_group")
-    @mock.patch.object(ConsumerV2, "get_or_create_metric")
+    @mock.patch.object(Consumer, "get_or_create_topic")
+    @mock.patch.object(Consumer, "get_or_create_metric_group")
+    @mock.patch.object(Consumer, "get_or_create_metric")
     def test_updates_metric_and_metric_group(
         self,
         spy_get_or_create_metric: mock.MagicMock,
         spy_get_or_create_metric_group: mock.MagicMock,
         spy_get_or_create_topic: mock.MagicMock,
-        consumer_with_mocked_model_managers: ConsumerV2,
+        consumer_with_mocked_model_managers: Consumer,
     ):
         """
         Given an instance of the `Consumer`
@@ -146,11 +146,11 @@ class TestConsumerUpdateSupportingModels:
             topic=spy_get_or_create_topic.return_value,
         )
 
-    @mock.patch.object(ConsumerV2, "get_or_create_stratum")
+    @mock.patch.object(Consumer, "get_or_create_stratum")
     def test_updates_stratum(
         self,
         spy_get_or_create_stratum: mock.MagicMock,
-        consumer_with_mocked_model_managers: ConsumerV2,
+        consumer_with_mocked_model_managers: Consumer,
     ):
         """
         Given an instance of the `Consumer`
@@ -172,11 +172,11 @@ class TestConsumerUpdateSupportingModels:
         # Then
         spy_get_or_create_stratum.assert_called_once()
 
-    @mock.patch.object(ConsumerV2, "get_or_create_age")
+    @mock.patch.object(Consumer, "get_or_create_age")
     def test_updates_age(
         self,
         spy_get_or_create_age: mock.MagicMock,
-        consumer_with_mocked_model_managers: ConsumerV2,
+        consumer_with_mocked_model_managers: Consumer,
     ):
         """
         Given an instance of the `Consumer`
@@ -198,17 +198,17 @@ class TestConsumerUpdateSupportingModels:
         # Then
         spy_get_or_create_age.assert_called_once()
 
-    @mock.patch.object(ConsumerV2, "get_or_create_stratum")
-    @mock.patch.object(ConsumerV2, "get_or_create_age")
-    @mock.patch.object(ConsumerV2, "get_or_create_geography")
-    @mock.patch.object(ConsumerV2, "get_or_create_metric")
+    @mock.patch.object(Consumer, "get_or_create_stratum")
+    @mock.patch.object(Consumer, "get_or_create_age")
+    @mock.patch.object(Consumer, "get_or_create_geography")
+    @mock.patch.object(Consumer, "get_or_create_metric")
     def test_returns_supporting_models_lookup(
         self,
         spy_get_or_create_metric: mock.MagicMock,
         spy_get_or_create_geography: mock.MagicMock,
         spy_get_or_create_age: mock.MagicMock,
         spy_get_or_create_stratum: mock.MagicMock,
-        consumer_with_mocked_model_managers: ConsumerV2,
+        consumer_with_mocked_model_managers: Consumer,
     ):
         """
         Given an instance of the `Consumer`

@@ -1,9 +1,9 @@
 from unittest import mock
 
+from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
-from ingestion.v2.consumer import ConsumerV2
 
-MODULE_PATH = "ingestion.v2.consumer"
+MODULE_PATH = "ingestion.consumer"
 
 
 class TestConsumerInit:
@@ -11,7 +11,7 @@ class TestConsumerInit:
     def test_build_dto_delegates_call_to_build_headline_dto_from_source(
         self,
         spy_build_headline_dto_from_source: mock.MagicMock,
-        example_headline_data_v2: type_hints.INCOMING_DATA_TYPE,
+        example_headline_data: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given headline type source data
@@ -25,10 +25,10 @@ class TestConsumerInit:
 
         """
         # Given
-        fake_data = example_headline_data_v2
+        fake_data = example_headline_data
 
         # When
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
         dto = consumer.dto
 
         # Then
@@ -41,7 +41,7 @@ class TestConsumerInit:
     def test_build_dto_delegates_call_to_build_time_series_dto_from_source(
         self,
         spy_build_time_series_dto_from_source: mock.MagicMock,
-        example_time_series_data_v2: type_hints.INCOMING_DATA_TYPE,
+        example_time_series_data: type_hints.INCOMING_DATA_TYPE,
     ):
         """
         Given time series type source data
@@ -55,10 +55,10 @@ class TestConsumerInit:
 
         """
         # Given
-        fake_data = example_time_series_data_v2
+        fake_data = example_time_series_data
 
         # When
-        consumer = ConsumerV2(source_data=fake_data)
+        consumer = Consumer(source_data=fake_data)
         dto = consumer.dto
 
         # Then

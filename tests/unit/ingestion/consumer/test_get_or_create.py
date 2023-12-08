@@ -1,12 +1,12 @@
 from unittest import mock
 
+from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
-from ingestion.v2.consumer import ConsumerV2
 
 
 class TestConsumerGetOrCreateMethods:
     def test_get_or_create_theme(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -20,8 +20,8 @@ class TestConsumerGetOrCreateMethods:
         expected_model = mock.Mock()
         spy_theme_manager.get_or_create.return_value = expected_model, True
 
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2, theme_manager=spy_theme_manager
+        consumer = Consumer(
+            source_data=example_headline_data, theme_manager=spy_theme_manager
         )
 
         # When
@@ -30,11 +30,11 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_theme_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["parent_theme"]
+            name=example_headline_data["parent_theme"]
         )
 
     def test_get_or_create_sub_theme(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -49,8 +49,8 @@ class TestConsumerGetOrCreateMethods:
         spy_sub_theme_manager.get_or_create.return_value = expected_model, True
 
         mocked_theme = mock.Mock()
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2,
+        consumer = Consumer(
+            source_data=example_headline_data,
             sub_theme_manager=spy_sub_theme_manager,
         )
 
@@ -60,11 +60,11 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_sub_theme_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["child_theme"], theme_id=mocked_theme.id
+            name=example_headline_data["child_theme"], theme_id=mocked_theme.id
         )
 
     def test_get_or_create_topic(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -79,8 +79,8 @@ class TestConsumerGetOrCreateMethods:
         spy_topic_manager.get_or_create.return_value = expected_model, True
 
         mocked_sub_theme = mock.Mock()
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2, topic_manager=spy_topic_manager
+        consumer = Consumer(
+            source_data=example_headline_data, topic_manager=spy_topic_manager
         )
 
         # When
@@ -89,11 +89,11 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_topic_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["topic"], sub_theme_id=mocked_sub_theme.id
+            name=example_headline_data["topic"], sub_theme_id=mocked_sub_theme.id
         )
 
     def test_get_or_create_geography_type(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -107,8 +107,8 @@ class TestConsumerGetOrCreateMethods:
         expected_model = mock.Mock()
         spy_geography_type_manager.get_or_create.return_value = expected_model, True
 
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2,
+        consumer = Consumer(
+            source_data=example_headline_data,
             geography_type_manager=spy_geography_type_manager,
         )
 
@@ -118,11 +118,11 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_geography_type_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["geography_type"],
+            name=example_headline_data["geography_type"],
         )
 
     def test_get_or_create_geography(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -137,8 +137,8 @@ class TestConsumerGetOrCreateMethods:
         spy_geography_manager.get_or_create.return_value = expected_model, True
 
         mocked_geography_type = mock.Mock()
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2,
+        consumer = Consumer(
+            source_data=example_headline_data,
             geography_manager=spy_geography_manager,
         )
 
@@ -150,13 +150,13 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_geography_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["geography"],
+            name=example_headline_data["geography"],
             geography_type_id=mocked_geography_type.id,
-            geography_code=example_headline_data_v2["geography_code"],
+            geography_code=example_headline_data["geography_code"],
         )
 
     def test_get_or_create_metric_group(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -171,8 +171,8 @@ class TestConsumerGetOrCreateMethods:
         spy_metric_group_manager.get_or_create.return_value = expected_model, True
 
         mocked_topic = mock.Mock()
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2,
+        consumer = Consumer(
+            source_data=example_headline_data,
             metric_group_manager=spy_metric_group_manager,
         )
 
@@ -182,12 +182,12 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_metric_group_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["metric_group"],
+            name=example_headline_data["metric_group"],
             topic_id=mocked_topic.id,
         )
 
     def test_get_or_create_metric(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -203,8 +203,8 @@ class TestConsumerGetOrCreateMethods:
 
         mocked_topic = mock.Mock()
         mocked_metric_group = mock.Mock()
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2, metric_manager=spy_metric_manager
+        consumer = Consumer(
+            source_data=example_headline_data, metric_manager=spy_metric_manager
         )
 
         # When
@@ -215,13 +215,13 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_metric_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["metric"],
+            name=example_headline_data["metric"],
             topic_id=mocked_topic.id,
             metric_group_id=mocked_metric_group.id,
         )
 
     def test_get_or_create_stratum(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -235,8 +235,8 @@ class TestConsumerGetOrCreateMethods:
         expected_model = mock.Mock()
         spy_stratum_manager.get_or_create.return_value = expected_model, True
 
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2, stratum_manager=spy_stratum_manager
+        consumer = Consumer(
+            source_data=example_headline_data, stratum_manager=spy_stratum_manager
         )
 
         # When
@@ -245,11 +245,11 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_stratum_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["stratum"],
+            name=example_headline_data["stratum"],
         )
 
     def test_get_or_create_age(
-        self, example_headline_data_v2: type_hints.INCOMING_DATA_TYPE
+        self, example_headline_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
         Given incoming headline data
@@ -263,8 +263,8 @@ class TestConsumerGetOrCreateMethods:
         expected_model = mock.Mock()
         spy_age_manager.get_or_create.return_value = expected_model, True
 
-        consumer = ConsumerV2(
-            source_data=example_headline_data_v2, age_manager=spy_age_manager
+        consumer = Consumer(
+            source_data=example_headline_data, age_manager=spy_age_manager
         )
 
         # When
@@ -273,5 +273,5 @@ class TestConsumerGetOrCreateMethods:
         # Then
         assert created_model == expected_model
         spy_age_manager.get_or_create.assert_called_once_with(
-            name=example_headline_data_v2["age"],
+            name=example_headline_data["age"],
         )
