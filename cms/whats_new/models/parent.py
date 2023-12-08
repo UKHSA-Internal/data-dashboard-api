@@ -61,6 +61,8 @@ class WhatsNewParentPage(Page):
         ]
     )
 
+    subpage_types = ["whats_new.WhatsNewChildEntry", "common.CommonPage"]
+
     objects = WhatsNewParentPageManager()
 
     def clean(self) -> None:

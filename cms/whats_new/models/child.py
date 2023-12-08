@@ -57,4 +57,6 @@ class WhatsNewChildEntry(Page):
         ]
     )
 
+    parent_page_type = ["whats_new.WhatsNewParentPage"]
+
     objects = WhatsNewChildEntryManager()
