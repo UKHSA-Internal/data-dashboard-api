@@ -33,8 +33,8 @@ jobs:
 
   vulnerabilities:
     name: Vulnerabilities
-    needs: [build]    
-    runs-on: ubuntu-latest  
+    needs: [ build ]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -55,7 +55,7 @@ jobs:
 
   quality-checks:
     name: Linting
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,13 +65,13 @@ jobs:
         run: |
           source .github/workflows/formatting.sh
 
- ###############################################################################
- # Architectural constraints checks
- ###############################################################################
+  ###############################################################################
+  # Architectural constraints checks
+  ###############################################################################
 
   architecture-checks:
     name: Architecture checks
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -87,7 +87,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -103,7 +103,7 @@ jobs:
 
   integration-tests:
     name: Integration tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -119,7 +119,7 @@ jobs:
 
   system-tests:
     name: System tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -135,7 +135,7 @@ jobs:
 
   test-coverage:
     name: Test coverage
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -149,8 +149,8 @@ jobs:
   # Deploy
   ###############################################################################
 
-  deploy:
-    name: ECR Image Push
+  publish-main-image:
+    name: Publish main image
     needs: [
       quality-checks,
       unit-tests,
@@ -165,26 +165,67 @@ jobs:
     # Only deploy if the changes are being pushed to the `main` branch
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
           role-to-assume: arn:aws:iam::518944279943:role/devops_github_actions_wp_api
           role-session-name: testsession
           aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: wp-api
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: wp-api
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        shell: bash
+
+
+  publish-ingestion-image:
+    name: Publish ingestion image
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    # Only deploy if the changes are being pushed to the `main` branch
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::518944279943:role/devops_github_actions_wp_api
+          role-session-name: testsession
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: wp-ingestion
+          IMAGE_TAG: latest
+        run: |
+          docker build -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        shell: bash
