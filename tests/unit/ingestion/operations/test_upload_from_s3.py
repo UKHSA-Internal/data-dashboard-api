@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -299,7 +300,7 @@ class TestUploadFileAndRemoveLocalCopy:
         _upload_file_and_remove_local_copy(filepath=fake_filepath)
 
         # Then
-        spy_upload_data_as_file.assert_called_once_with(filepath=fake_filepath)
+        spy_upload_data_as_file.assert_called_once_with(filepath=Path(fake_filepath))
 
     @mock.patch(f"{MODULE_PATH}.os.remove")
     @mock.patch(f"{MODULE_PATH}._upload_data_as_file")
@@ -327,7 +328,7 @@ class TestUploadFileAndRemoveLocalCopy:
         _upload_file_and_remove_local_copy(filepath=fake_filepath)
 
         # Then
-        spy_os_remove.assert_called_once_with(path=fake_filepath)
+        spy_os_remove.assert_called_once_with(path=Path(fake_filepath))
 
     @mock.patch(f"{MODULE_PATH}.os.remove")
     @mock.patch(f"{MODULE_PATH}._upload_data_as_file")
@@ -359,4 +360,4 @@ class TestUploadFileAndRemoveLocalCopy:
             _upload_file_and_remove_local_copy(filepath=fake_filepath)
 
         # Then
-        spy_os_remove.assert_called_once_with(path=fake_filepath)
+        spy_os_remove.assert_called_once_with(path=Path(fake_filepath))
