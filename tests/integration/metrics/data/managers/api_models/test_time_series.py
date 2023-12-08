@@ -159,6 +159,72 @@ class TestAPITimeSeriesQuerySet:
         )
 
     @pytest.mark.django_db
+    def test_data_with_no_embargo_set_is_returned(self):
+        """
+        Given a number of `APITimeSeries` records which are live
+        And a number of `APITimeSeries` records which have been
+            designated to be immediately queryable with a `None` embargo value
+        When `_exclude_data_under_embargo()` is called
+            from an instance of `APITimeSeriesQueryset`
+        Then only the newer immediately unembargoed
+            group of `APITimeSeries` records are returned
+        """
+        # Given
+        original_metric_value = 1
+        dates = FAKE_DATES
+        embargo = datetime.datetime(
+            year=2023, month=12, day=1, hour=12, minute=0, second=0
+        )
+        original_refresh_date = datetime.datetime(year=2023, month=11, day=1)
+        live_api_time_series_records = [
+            APITimeSeriesFactory.create_record(
+                metric_value=original_metric_value,
+                date=date,
+                embargo=embargo,
+                refresh_date=original_refresh_date,
+            )
+            for date in dates
+        ]
+
+        updated_refresh_date = datetime.date(year=2023, month=11, day=8)
+        immediately_unembargoed_metric_value = 2
+        embargoed_api_time_series_records = [
+            APITimeSeriesFactory.create_record(
+                metric_value=immediately_unembargoed_metric_value,
+                date=date,
+                embargo=None,
+                refresh_date=updated_refresh_date,
+            )
+            for date in dates
+        ]
+
+        # When
+        input_queryset = APITimeSeries.objects.get_queryset()
+        api_time_series = live_api_time_series_records[0]
+        retrieved_records = input_queryset.filter_for_list_view(
+            theme_name=api_time_series.theme,
+            sub_theme_name=api_time_series.sub_theme,
+            topic_name=api_time_series.topic,
+            geography_type_name=api_time_series.geography_type,
+            geography_name=api_time_series.geography,
+            metric_name=api_time_series.metric,
+        )
+
+        # Then
+        # All the 'live' records should not be in the returned queryset
+        assert not any(
+            live_record
+            for live_record in live_api_time_series_records
+            if live_record in retrieved_records
+        )
+        # And the immediately unembargoed records should be in the returned queryset
+        assert all(
+            embargoed_record
+            for embargoed_record in embargoed_api_time_series_records
+            if embargoed_record in retrieved_records
+        )
+
+    @pytest.mark.django_db
     def test_filter_for_list_view_excludes_embargoed_data(self):
         """
         Given a number of `APITimeSeries` records which are live

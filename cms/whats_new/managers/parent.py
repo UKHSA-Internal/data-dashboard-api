@@ -13,7 +13,7 @@ class WhatsNewParentPageQuerySet(PageQuerySet):
     """Custom queryset which can be used by the `WhatsNewParentPageManager`"""
 
     def get_live_pages(self) -> models.QuerySet:
-        """Gets the all currently live pages.
+        """Gets all currently live pages.
 
         Returns:
             QuerySet: A queryset of the live pages:
