@@ -45,7 +45,7 @@ class MetricsDocumentationParentPage(Page):
         APIField("date_posted"),
         APIField("body"),
         APIField("related_links"),
-        APIField("last_published_date"),
+        APIField("last_published_at"),
         APIField("seo_title"),
         APIField("search_description"),
     ]
