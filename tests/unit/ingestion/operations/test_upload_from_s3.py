@@ -16,35 +16,10 @@ FAKE_FILENAME = "abc.json"
 
 
 class TestDownloadFilesAndUpload:
-    @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
-    def test_delegates_call_to_clear_metrics_tables(
-        self, spy_clear_metrics_tables: mock.MagicMock
-    ):
-        """
-        Given a mocked `AWSClient` object
-        When `download_files_and_upload()` is called
-        Then `clear_metrics_tables()` is called
-
-        Patches:
-            `spy_clear_metrics_tables`: For the main assertion
-                of checking the metrics tables are cleared
-
-        """
-        # Given
-        mocked_client = mock.MagicMock()
-
-        # When
-        download_files_and_upload(client=mocked_client)
-
-        # Then
-        spy_clear_metrics_tables.assert_called_once()
-
     @mock.patch(f"{MODULE_PATH}.download_file_ingest_and_teardown")
     @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
-    @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_delegates_calls_for_each_key_of_item_in_folder(
         self,
-        mocked_clear_metrics_tables: mock.MagicMock,
         spy_run_with_multiple_processes: mock.MagicMock,
         spy_download_file_ingest_and_teardown: mock.MagicMock,
     ):
@@ -81,10 +56,8 @@ class TestDownloadFilesAndUpload:
         )
 
     @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
-    @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     def test_records_log_statement_for_completion(
         self,
-        mocked_clear_metrics_tables: mock.MagicMock,
         mocked_run_with_multiple_processes: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
@@ -302,10 +275,10 @@ class TestIngestDataAndPostProcess:
 
 class TestUploadFileAndRemoveLocalCopy:
     @mock.patch(f"{MODULE_PATH}.os.remove")
-    @mock.patch(f"{MODULE_PATH}._upload_file")
+    @mock.patch(f"{MODULE_PATH}._upload_data_as_file")
     def test_delegates_call_to_upload_file(
         self,
-        spy_upload_file: mock.MagicMock,
+        spy_upload_data_as_file: mock.MagicMock,
         mocked_os_remove: mock.MagicMock,
     ):
         """
@@ -314,7 +287,7 @@ class TestUploadFileAndRemoveLocalCopy:
         Then the call is delegated to `_upload_file()`
 
         Patches:
-            `spy_upload_file`: For the main assertion
+            `spy_upload_data_as_file`: For the main assertion
             `mocked_os_remove`: To remove the side effect
                 of having to remove a non-existent file on disk
 
@@ -326,13 +299,13 @@ class TestUploadFileAndRemoveLocalCopy:
         _upload_file_and_remove_local_copy(filepath=fake_filepath)
 
         # Then
-        spy_upload_file.assert_called_once_with(filepath=fake_filepath)
+        spy_upload_data_as_file.assert_called_once_with(filepath=fake_filepath)
 
     @mock.patch(f"{MODULE_PATH}.os.remove")
-    @mock.patch(f"{MODULE_PATH}._upload_file")
+    @mock.patch(f"{MODULE_PATH}._upload_data_as_file")
     def test_calls_os_remove_to_remove_file(
         self,
-        mocked_upload_file: mock.MagicMock,
+        mocked_upload_data_as_file: mock.MagicMock,
         spy_os_remove: mock.MagicMock,
     ):
         """
@@ -357,10 +330,10 @@ class TestUploadFileAndRemoveLocalCopy:
         spy_os_remove.assert_called_once_with(path=fake_filepath)
 
     @mock.patch(f"{MODULE_PATH}.os.remove")
-    @mock.patch(f"{MODULE_PATH}._upload_file")
+    @mock.patch(f"{MODULE_PATH}._upload_data_as_file")
     def test_calls_os_remove_to_remove_file_when_error_is_raised(
         self,
-        mocked_upload_file: mock.MagicMock,
+        mocked_upload_data_as_file: mock.MagicMock,
         spy_os_remove: mock.MagicMock,
     ):
         """
@@ -377,7 +350,7 @@ class TestUploadFileAndRemoveLocalCopy:
         """
         # Given
         fake_filepath = FAKE_FILENAME
-        mocked_upload_file.side_effect = [
+        mocked_upload_data_as_file.side_effect = [
             FileIngestionFailedError(file_name=fake_filepath)
         ]
 
