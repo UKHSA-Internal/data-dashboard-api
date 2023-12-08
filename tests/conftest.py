@@ -166,11 +166,17 @@ def example_headline_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
         "stratum": "default",
         "data": [
             {
+                "period_start": "2023-10-15",
+                "period_end": "2023-10-22",
+                "metric_value": 12.3,
+                "embargo": "2023-11-16 17:30:00",
+            },
+            {
                 "period_start": "2023-10-23",
                 "period_end": "2023-10-30",
                 "metric_value": 10.7,
                 "embargo": "2023-11-16 17:30:00",
-            }
+            },
         ],
         "refresh_date": "2023-11-09",
     }

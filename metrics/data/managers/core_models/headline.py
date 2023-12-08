@@ -15,7 +15,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
     @staticmethod
     def _newest_to_oldest(queryset: models.QuerySet) -> models.QuerySet:
-        return queryset.order_by("-period_end")
+        return queryset.order_by("-period_end", "-refresh_date")
 
     @staticmethod
     def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
