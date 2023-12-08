@@ -308,6 +308,14 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     Returns:
         The filename of the created image
 
+    Raises:
+        `InvalidPlotParametersError`: If an underlying
+            validation check has failed.
+            This could be because there is
+            an invalid topic and metric selection.
+            Or because the selected dates are not in
+            the expected chronological order.
+
     """
     charts_interface = ChartsInterface(chart_plots=chart_plots)
     figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
@@ -327,6 +335,14 @@ def generate_encoded_chart(chart_plots: PlotsCollection) -> dict[str, str]:
         A dict containing:
          "last_updated": A timestamp for the last data point
          "chart": An encoded string representing the chart figure
+
+    Raises:
+        `InvalidPlotParametersError`: If an underlying
+            validation check has failed.
+            This could be because there is
+            an invalid topic and metric selection.
+            Or because the selected dates are not in
+            the expected chronological order.
 
     """
     charts_interface = ChartsInterface(chart_plots=chart_plots)

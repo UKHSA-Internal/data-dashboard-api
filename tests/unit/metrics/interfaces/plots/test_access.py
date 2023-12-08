@@ -7,6 +7,7 @@ from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundError,
+    InvalidPlotParametersError,
     PlotsInterface,
     QuerySetResult,
     _build_age_display_name,
@@ -96,9 +97,11 @@ class TestPlotsInterface:
         """
         # Given
         plot_parameters_with_no_supporting_data = PlotParameters(
-            metric="non_existent_metric",
+            metric="non_existent_topic_cases_abc",
             topic="non_existent_topic",
             chart_type="line",
+            date_from="2023-01-01",
+            date_to="2023-12-31",
         )
         plots_collection = PlotsCollection(
             plots=[valid_plot_parameters, plot_parameters_with_no_supporting_data],
@@ -205,7 +208,7 @@ class TestPlotsInterface:
         fake_y_axis_values = ["a", "b", "c"]
         spy_get_x_and_y_values.return_value = fake_x_axis_values, fake_y_axis_values
         plots_interface = PlotsInterface(
-            plots_collection=mock.Mock(),
+            plots_collection=mock.Mock(plots=[]),
             core_time_series_manager=mock.Mock(),
         )
 
@@ -357,6 +360,105 @@ class TestPlotsInterface:
         mocked_get_timeseries.assert_called_once_with(
             **fake_chart_plot_parameters.to_dict_for_query(),
         )
+
+    @mock.patch(f"{MODULE_PATH}.PlotValidation")
+    def test_validate_plot_parameters_delegates_call_for_each_plot(
+        self, spy_plot_validation: mock.MagicMock
+    ):
+        """
+        Given a list of plot parameters on a mocked `PlotsCollection` model
+        When `validate_plot_parameters()` is called
+            from an instance of the `PlotsInterface`
+        Then the call is delegated to and instance of `PlotValidation`
+            for each plot parameters model
+
+        Patches:
+            `spy_plot_validation`: For the main assertion.
+                The entire class is patched so that
+                the init of the class can be checked
+                as this is where the plot parameters are provided.
+                As well as the subsequent `validate()` call.
+
+        """
+        # Given
+        mocked_plot_parameters = [mock.Mock()] * 3
+        mocked_plots_collection = mock.Mock()
+        mocked_plots_collection.plots = mocked_plot_parameters
+        plots_interface = PlotsInterface(plots_collection=mocked_plots_collection)
+
+        # When
+        plots_interface.validate_plot_parameters()
+
+        # Then
+        expected_calls = []
+        for mocked_plot_parameter in mocked_plot_parameters:
+            expected_calls += [
+                mock.call(plot_parameters=mocked_plot_parameter),
+                mock.call().validate(),
+            ]
+
+        spy_plot_validation.assert_has_calls(calls=expected_calls, any_order=True)
+
+    def test_validate_plot_parameters_raises_error_if_metric_does_not_support_topic(
+        self, fake_plots_collection: PlotsCollection
+    ):
+        """
+        Given a mocked `PlotsCollection` model
+            which contains a plot parameters model
+            for an invalid metric and topic combination
+        When the `PlotsInterface` is initialized
+        Then an `InvalidPlotParametersError` is raised
+        """
+        # Given
+        fake_plots_collection.plots[0].topic = "RSV"
+        fake_plots_collection.plots[0].metric = "COVID-19_testing_PCRcountByDay"
+
+        # When / Then
+        with pytest.raises(InvalidPlotParametersError):
+            plots_interface = PlotsInterface(plots_collection=fake_plots_collection)
+            plots_interface.validate_plot_parameters()
+
+    def test_validate_plot_parameters_raises_error_if_dates_are_not_in_correct_order(
+        self, fake_plots_collection: PlotsCollection
+    ):
+        """
+        Given a mocked `PlotsCollection` model
+            which contains a plot parameters model
+            for an invalid `date_from` and `date_to` selection
+        When the `PlotsInterface` is initialized
+        Then an `InvalidPlotParametersError` is raised
+
+        """
+        # Given
+        fake_plots_collection.plots[0].date_from = "2023-01-01"
+        fake_plots_collection.plots[0].date_to = "2022-12-31"
+
+        # When / Then
+        with pytest.raises(InvalidPlotParametersError):
+            plots_interface = PlotsInterface(plots_collection=fake_plots_collection)
+            plots_interface.validate_plot_parameters()
+
+    @mock.patch.object(PlotsInterface, "validate_plot_parameters")
+    def test_calls_validate_plot_parameters_during_init(
+        self, spy_validate_plot_parameters: mock.MagicMock
+    ):
+        """
+        Given a mocked `PlotCollection` model
+        When an instance of the `PlotsInterface` is created
+        Then the `validate_plot_parameters()` method is called
+
+        Patches:
+           `spy_validate_plot_parameters`: For the main assertion
+
+        """
+        # Given
+        mocked_plots_collection = mock.Mock()
+
+        # When
+        PlotsInterface(plots_collection=mocked_plots_collection)
+
+        # Then
+        spy_validate_plot_parameters.assert_called_once()
 
 
 class TestGetXAndYValues:

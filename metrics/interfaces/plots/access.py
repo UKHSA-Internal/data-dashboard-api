@@ -7,11 +7,20 @@ from pydantic import BaseModel
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartAxisFields
+from metrics.interfaces.plots.validation import (
+    DatesNotInChronologicalOrderError,
+    MetricDoesNotSupportTopicError,
+    PlotValidation,
+)
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
 class DataNotFoundError(ValueError):
+    ...
+
+
+class InvalidPlotParametersError(Exception):
     ...
 
 
@@ -28,6 +37,32 @@ class PlotsInterface:
     ):
         self.plots_collection = plots_collection
         self.core_time_series_manager = core_time_series_manager
+        self.validate_plot_parameters()
+
+    def validate_plot_parameters(self) -> None:
+        """Validates each plot parameters model on the `PlotCollection`
+
+        Returns:
+            None
+
+        Raises:
+            `InvalidPlotParametersError`: If an underlying
+                validation check has failed.
+                This could be because there is
+                an invalid topic and metric selection.
+                Or because the selected dates are not in
+                the expected chronological order.
+
+        """
+        for plot_parameters in self.plots_collection.plots:
+            validation = PlotValidation(plot_parameters=plot_parameters)
+            try:
+                validation.validate()
+            except (
+                MetricDoesNotSupportTopicError,
+                DatesNotInChronologicalOrderError,
+            ) as error:
+                raise InvalidPlotParametersError from error
 
     def get_queryset_result_for_plot_parameters(
         self, plot_parameters: PlotParameters
