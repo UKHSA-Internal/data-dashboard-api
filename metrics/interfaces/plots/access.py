@@ -16,7 +16,11 @@ from metrics.interfaces.plots.validation import (
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
-class DataNotFoundError(ValueError):
+class DataNotFoundForPlotError(Exception):
+    ...
+
+
+class DataNotFoundForAnyPlotError(Exception):
     ...
 
 
@@ -201,7 +205,7 @@ class PlotsInterface:
                 plot_parameters=plot_parameters, queryset=queryset_result.queryset
             )
         except ValueError as error:
-            raise DataNotFoundError from error
+            raise DataNotFoundForPlotError from error
 
         return PlotData(
             parameters=plot_parameters,
@@ -225,6 +229,10 @@ class PlotsInterface:
             List[PlotData]: A list of `PlotData` models for
                 each of the requested plots.
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
         """
         plots_data: list[PlotData] = []
         for plot_parameters in self.plots_collection.plots:
@@ -232,10 +240,13 @@ class PlotsInterface:
                 plot_data: PlotData = self.build_plot_data_from_parameters(
                     plot_parameters=plot_parameters
                 )
-            except DataNotFoundError:
+            except DataNotFoundForPlotError:
                 continue
 
             plots_data.append(plot_data)
+
+        if not plots_data:
+            raise DataNotFoundForAnyPlotError
 
         return plots_data
 
