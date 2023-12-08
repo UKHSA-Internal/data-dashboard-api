@@ -2,8 +2,6 @@ import datetime
 
 import pytest
 
-from ingestion.data_transfer_models import IncomingHeadlineDTO
-from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -183,13 +181,6 @@ def example_headline_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
 
 
 @pytest.fixture
-def example_incoming_headline_dto(
-    example_headline_data: list[dict[str, str | float]]
-) -> IncomingHeadlineDTO:
-    return IncomingHeadlineDTO(**example_headline_data[0])
-
-
-@pytest.fixture
 def example_time_series_data_v2() -> dict[str, str | list[dict[str, str | float]]]:
     return {
         "parent_theme": "infectious_disease",
@@ -266,10 +257,3 @@ def example_timeseries_data() -> list[dict[str, str | int | float]]:
             "refresh_date": "2023-07-11",
         },
     ]
-
-
-@pytest.fixture
-def example_incoming_timeseries_dto(
-    example_timeseries_data: list[dict[str, str | float]]
-) -> IncomingTimeSeriesDTO:
-    return IncomingTimeSeriesDTO(**example_timeseries_data[0])

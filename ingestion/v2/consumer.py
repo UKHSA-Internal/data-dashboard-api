@@ -2,16 +2,16 @@ from typing import NamedTuple
 
 from django.db.models import Manager
 
+from ingestion.data_transfer_models.handlers import (
+    build_headline_dto_from_source,
+    build_time_series_dto_from_source,
+)
+from ingestion.data_transfer_models.headline import HeadlineDTO
+from ingestion.data_transfer_models.time_series import TimeSeriesDTO
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.operations.batch_record_creation import create_records
 from ingestion.utils import type_hints
 from ingestion.utils.enums import DataSourceFileType
-from ingestion.validation.handlers import (
-    build_headline_dto_from_source,
-    build_time_series_dto_from_source,
-)
-from ingestion.validation.headline import HeadlineDTO
-from ingestion.validation.time_series import TimeSeriesDTO
 
 DEFAULT_THEME_MANAGER = MetricsAPIInterface.get_theme_manager()
 DEFAULT_SUB_THEME_MANAGER = MetricsAPIInterface.get_sub_theme_manager()

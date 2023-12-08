@@ -2,9 +2,9 @@ import datetime
 
 from pydantic import BaseModel, field_validator
 
+from ingestion.data_transfer_models.base import IncomingBaseDataModel
 from ingestion.metrics_interfaces.interface import MetricsAPIInterface
 from ingestion.utils import type_hints
-from ingestion.validation.base import IncomingBaseDataModel
 
 
 class InboundTimeSeriesSpecificFields(BaseModel):

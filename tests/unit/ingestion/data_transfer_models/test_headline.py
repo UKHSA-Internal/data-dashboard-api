@@ -1,11 +1,11 @@
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
-from ingestion.utils.type_hints import INCOMING_DATA_TYPE
-from ingestion.validation.headline import (
+from ingestion.data_transfer_models.headline import (
     HeadlineDTO,
     InboundHeadlineSpecificFields,
 )
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 
 VALID_DATETIME = "2023-11-20 12:00:00"
 

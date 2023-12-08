@@ -2,8 +2,8 @@ import datetime
 
 from pydantic import BaseModel
 
+from ingestion.data_transfer_models.base import IncomingBaseDataModel
 from ingestion.utils import type_hints
-from ingestion.validation.base import IncomingBaseDataModel
 
 
 class InboundHeadlineSpecificFields(BaseModel):

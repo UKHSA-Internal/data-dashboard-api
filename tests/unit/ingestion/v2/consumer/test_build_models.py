@@ -2,7 +2,10 @@ from unittest import mock
 
 from ingestion.utils import type_hints
 from ingestion.v2.consumer import ConsumerV2
-from tests.unit.ingestion.validation.test_handlers import DATE_FORMAT, DATETIME_FORMAT
+from tests.unit.ingestion.data_transfer_models.test_handlers import (
+    DATE_FORMAT,
+    DATETIME_FORMAT,
+)
 
 
 class TestBuildModelMethods:
