@@ -226,6 +226,6 @@ jobs:
           ECR_REPOSITORY: wp-ingestion
           IMAGE_TAG: latest
         run: |
-          docker build -f Dockerfile.ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         shell: bash
