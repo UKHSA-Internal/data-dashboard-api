@@ -23,7 +23,7 @@ class TestMetricsDocumentationParentPage:
             "date_posted",
             "body",
             "related_links",
-            "last_published_date",
+            "last_published_at",
             "seo_title",
             "search_description",
         ],
