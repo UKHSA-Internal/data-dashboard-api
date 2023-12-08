@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from metrics.domain.models import PlotData, PlotParameters
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -19,6 +19,21 @@ def fake_chart_plot_parameters() -> PlotParameters:
         metric="COVID-19_testing_positivity7DayRolling",
         stratum="default",
         date_from="2023-01-01",
+        date_to="2023-12-31",
+        x_axis="date",
+        y_axis="metric",
+    )
+
+
+@pytest.fixture
+def fake_plots_collection(
+    fake_chart_plot_parameters: PlotParameters,
+) -> PlotsCollection:
+    return PlotsCollection(
+        plots=[fake_chart_plot_parameters],
+        file_format="svg",
+        chart_width=930,
+        chart_height=220,
         x_axis="date",
         y_axis="metric",
     )
@@ -30,6 +45,8 @@ def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
         chart_type="line_multi_coloured",
         topic="COVID-19",
         metric="COVID-19_deaths_ONSByDay",
+        date_from="2023-01-01",
+        date_to="2023-12-31",
     )
 
 
@@ -39,7 +56,8 @@ def valid_plot_parameters() -> PlotParameters:
         metric="COVID-19_deaths_ONSByDay",
         topic="COVID-19",
         chart_type=ChartTypes.simple_line.value,
-        date_from="2022-01-01",
+        date_from="2023-01-01",
+        date_to="2023-12-31",
         x_axis="date",
         y_axis="metric",
     )
