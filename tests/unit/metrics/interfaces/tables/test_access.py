@@ -101,9 +101,10 @@ class TestGenerateTableForFullPlots:
     def test_delegates_call_for_producing_table(
         self,
         spy_generate_full_plots_for_table: mock.MagicMock,
+        fake_plots_collection: PlotsCollection,
     ):
         """
-        Given a mock in place of a `PlotsCollection` model
+        Given a fake `PlotsCollection` model
         When `generate_table_for_full_plots()` is called
         Then `generate_full_plots_for_table` is called
             from an instance of the `TablesInterface`
@@ -113,10 +114,10 @@ class TestGenerateTableForFullPlots:
 
         """
         # Given
-        mocked_plots_collection = mock.MagicMock(plots=[mock.Mock()])
+        plots_collection = fake_plots_collection
 
         # When
-        table = generate_table_for_full_plots(plots_collection=mocked_plots_collection)
+        table = generate_table_for_full_plots(plots_collection=plots_collection)
 
         # Then
         assert table == spy_generate_full_plots_for_table.return_value

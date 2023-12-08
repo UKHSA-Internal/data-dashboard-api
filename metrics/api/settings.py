@@ -55,6 +55,7 @@ if config.APP_MODE != "INGESTION":
         "cms.dashboard",
         "cms.common",
         "cms.whats_new",
+        "cms.metrics_documentation",
         "wagtail.api.v2",
         "wagtail.contrib.forms",
         "wagtail.contrib.redirects",
