@@ -244,6 +244,84 @@ class TestFrontEndCrawler:
         )
         spy_hit_frontend_page.assert_called_once_with(url=url_for_whats_new_child_entry)
 
+    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
+    def test_process_page_for_metrics_documentation_parent_page_page(
+        self,
+        spy_hit_frontend_page: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given a page item dict with a key "type"
+            of value "metrics_documentation.MetricsDocumentationParentPage"
+        When `process_page()` is called from an instance of `FrontEndCrawler`
+        Then `build_url_for_metrics_documentation_parent_page()` is called
+        And the returned url is passed to the call to `hit_frontend_page()`
+
+        Patches:
+            `spy_hit_frontend_page`: For the main assertion,
+                to check the request is being made to the correct URL
+        """
+        # Given
+        page_item = {"type": "metrics_documentation.MetricsDocumentationParentPage"}
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.process_page(
+            page_item=page_item
+        )
+
+        # Then
+        url_for_metrics_documentation_page: str = (
+            frontend_url_builder.build_url_for_metrics_documentation_parent_page()
+        )
+        spy_hit_frontend_page.assert_called_once_with(
+            url=url_for_metrics_documentation_page
+        )
+
+    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
+    def test_process_page_for_metrics_documentation_child_entry_page(
+        self,
+        spy_hit_frontend_page: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given a page item dict with a key "type"
+            of value "metrics_documentation.MetricsDocumentationChildEntry"
+        When `process_page()` is called from an instance of `FrontEndCrawler`
+        Then `build_url_for_metrics_documentation_child_entry()` is called
+        And the returned url is passed to the call to `hit_frontend_page()`
+
+        Patches:
+            `spy_hit_frontend_page`: For the main assertion,
+                to check the request is being made to the correct URL
+        """
+        # Given
+        slug = "issue-with-vaccination-data"
+        page_item = {
+            "type": "metrics_documentation.MetricsDocumentationChildEntry",
+            "slug": slug,
+        }
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.process_page(
+            page_item=page_item
+        )
+
+        # Then
+        url_for_metrics_documentation_child_entry: str = (
+            frontend_url_builder.build_url_for_metrics_documentation_child_entry(
+                slug=slug
+            )
+        )
+        spy_hit_frontend_page.assert_called_once_with(
+            url=url_for_metrics_documentation_child_entry
+        )
+
     @pytest.mark.parametrize("page_type", ["", None, "wagtailcore.Page"])
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
     def test_process_page_for_any_other_page_type(
