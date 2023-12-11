@@ -42,7 +42,7 @@ class WhatsNewChildEntry(Page):
     api_fields = [
         APIField("date_posted"),
         APIField("body"),
-        APIField("date_posted"),
+        APIField("last_published_at"),
         APIField("seo_title"),
         APIField("search_description"),
         APIField("additional_details"),
