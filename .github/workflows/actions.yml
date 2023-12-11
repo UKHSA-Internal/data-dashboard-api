@@ -226,6 +226,7 @@ jobs:
           ECR_REPOSITORY: wp-ingestion
           IMAGE_TAG: latest
         run: |
-          docker build -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        # The current self-hosted CI runners are X64 based. Hence, the need to build with AMD 64
         shell: bash
