@@ -120,3 +120,49 @@ class TestFrontEndURLBuilder:
 
         # Then
         assert feedback_confirmation_page_url == f"{base_url}/feedback/confirmation"
+
+    def test_build_url_for_metrics_documentation_parent_page(self):
+        """
+        Given a base URL
+        When `build_url_for_metrics_documentation_parent_page()` is called
+            from an instance of `FrontEndURLBuilder`
+        Then the correct URL will be returned
+        """
+        # Given
+        base_url = FAKE_BASE_URL
+        frontend_url_builder = FrontEndURLBuilder(base_url=base_url)
+
+        # When
+        metrics_documentation_parent_page_url: str = (
+            frontend_url_builder.build_url_for_metrics_documentation_parent_page()
+        )
+
+        # Then
+        assert (
+            metrics_documentation_parent_page_url == f"{base_url}/metrics_documentation"
+        )
+
+    def test_build_url_for_metrics_documentation_child_entry(self):
+        """
+        Given a slug for a metrics documentation child entry
+        When `build_url_for_metrics_documentation_child_entry()` is called
+            from an instance of `FrontEndURLBuilder`
+        Then the correct URL will be returned
+        """
+        # Given
+        base_url = FAKE_BASE_URL
+        frontend_url_builder = FrontEndURLBuilder(base_url=base_url)
+        metrics_documentation_child_entry_slug = "covid-19_cases_raterollingmean"
+
+        # When
+        metrics_documentation_child_entry_url: str = (
+            frontend_url_builder.build_url_for_metrics_documentation_child_entry(
+                slug=metrics_documentation_child_entry_slug
+            )
+        )
+
+        # Then
+        assert (
+            metrics_documentation_child_entry_url
+            == f"{base_url}/metrics_documentation/{metrics_documentation_child_entry_slug}"
+        )

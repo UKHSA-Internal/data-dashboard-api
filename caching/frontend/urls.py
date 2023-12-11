@@ -61,6 +61,27 @@ class FrontEndURLBuilder:
         """
         return urljoin(self._base_url, f"whats-new/{slug}")
 
+    def build_url_for_metrics_documentation_parent_page(self) -> str:
+        """Builds the full URL for the single metrics documentation parent page
+
+        Returns:
+            The full URL which can be passed to requests
+
+        """
+        return urljoin(self._base_url, "metrics_documentation")
+
+    def build_url_for_metrics_documentation_child_entry(self, slug: str) -> str:
+        """Builds the full URL for the single metrics documentation child entry
+
+        Args:
+            slug: The slug associated with the `MetricsDocumentationChildEntry`
+
+        Returns:
+            The full URL which can be passed to requests
+
+        """
+        return urljoin(self._base_url, f"metrics_documentation/{slug}")
+
     def build_url_for_feedback_confirmation_page(self) -> str:
         """Builds the full URL for the feedback confirmation page
 

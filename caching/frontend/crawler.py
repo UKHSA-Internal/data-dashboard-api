@@ -88,6 +88,8 @@ class FrontEndCrawler:
             - "CommonPage"
             - "WhatsNewParentPage"
             - "WhatsNewChildEntry"
+            - "MetricsDocumentationParentPage"
+            - "MetricsDocumentationChildEntry"
 
         Args:
             page_item: The individual page information
@@ -112,6 +114,14 @@ class FrontEndCrawler:
                 url = self._url_builder.build_url_for_whats_new_parent_page()
             case "whats_new.WhatsNewChildEntry":
                 url = self._url_builder.build_url_for_whats_new_child_entry(
+                    slug=page_item["slug"]
+                )
+            case "metrics_documentation.MetricsDocumentationParentPage":
+                url = (
+                    self._url_builder.build_url_for_metrics_documentation_parent_page()
+                )
+            case "metrics_documentation.MetricsDocumentationChildEntry":
+                url = self._url_builder.build_url_for_metrics_documentation_child_entry(
                     slug=page_item["slug"]
                 )
             case _:
