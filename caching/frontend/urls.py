@@ -2,6 +2,7 @@ from urllib.parse import urljoin
 
 
 class FrontEndURLBuilder:
+    """This is used by the `FrontEndCrawler` to construct URLs to send GET requests to all relevant pages"""
     def __init__(self, base_url: str):
         self._base_url = base_url
 
