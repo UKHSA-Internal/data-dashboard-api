@@ -7,7 +7,7 @@ class TestFrontEndURLBuilder:
     def test_build_url_for_topic_page(self):
         """
         Given a slug for a topic page
-        When `_build_url_for_topic_page()` is called from an instance of `FrontEndURLBuilder`
+        When `build_url_for_topic_page()` is called from an instance of `FrontEndURLBuilder`
         Then the correct URL will be returned
         """
         # Given
@@ -26,7 +26,7 @@ class TestFrontEndURLBuilder:
     def test_build_url_for_common_page(self):
         """
         Given a slug for a common page
-        When `_build_url_for_common_page()` is called from an instance of `FrontEndURLBuilder`
+        When `build_url_for_common_page()` is called from an instance of `FrontEndURLBuilder`
         Then the correct URL will be returned
         """
         # Given
@@ -45,7 +45,7 @@ class TestFrontEndURLBuilder:
     def test_build_url_for_home_page(self):
         """
         Given a base URL
-        When `_build_url_for_home_page()` is called from an instance of `FrontEndURLBuilder`
+        When `build_url_for_home_page()` is called from an instance of `FrontEndURLBuilder`
         Then the correct URL will be returned
         """
         # Given
@@ -61,7 +61,7 @@ class TestFrontEndURLBuilder:
     def test_build_url_for_whats_new_parent_page(self):
         """
         Given a base URL
-        When `_build_url_for_whats_new_parent_page()` is called
+        When `build_url_for_whats_new_parent_page()` is called
             from an instance of `FrontEndURLBuilder`
         Then the correct URL will be returned
         """
@@ -80,7 +80,7 @@ class TestFrontEndURLBuilder:
     def test_build_url_for_whats_new_child_entry(self):
         """
         Given a slug for a what's new child entry
-        When `_build_url_for_whats_new_child_entry()` is called
+        When `build_url_for_whats_new_child_entry()` is called
             from an instance of `FrontEndURLBuilder`
         Then the correct URL will be returned
         """
@@ -105,7 +105,7 @@ class TestFrontEndURLBuilder:
     def test_build_url_for_feedback_confirmation_page(self):
         """
         Given a base URL
-        When `_build_url_for_feedback_confirmation_page()` is called
+        When `build_url_for_feedback_confirmation_page()` is called
             from an instance of `FrontEndURLBuilder`
         Then the correct URL will be returned
         """
