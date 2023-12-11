@@ -79,10 +79,8 @@ class TestFrontEndCrawler:
         assert f"Processed `{url}`" in caplog.text
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    @mock.patch.object(FrontEndCrawler, "_build_url_for_home_page")
     def test_process_page_for_home_page(
         self,
-        spy_build_url_for_home_page: mock.MagicMock,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
     ):
@@ -93,13 +91,14 @@ class TestFrontEndCrawler:
         And the returned url is passed to the call to `hit_frontend_page()`
 
         Patches:
-            `spy_build_url_for_home_page`: To check the correct
-                method is being called to build the URL
             `spy_hit_frontend_page`: For the main assertion,
                 to check the request is being made to the correct URL
         """
         # Given
         page_item = {"type": "home.HomePage"}
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
 
         # When
         frontend_crawler_with_mocked_internal_api_client.process_page(
@@ -107,15 +106,12 @@ class TestFrontEndCrawler:
         )
 
         # Then
-        spy_build_url_for_home_page.assert_called_once()
-        url_for_home_page = spy_build_url_for_home_page.return_value
-        spy_hit_frontend_page.assert_called_once_with(url=url_for_home_page)
+        expected_home_page_url: str = frontend_url_builder.build_url_for_home_page()
+        spy_hit_frontend_page.assert_called_once_with(url=expected_home_page_url)
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    @mock.patch.object(FrontEndCrawler, "_build_url_for_topic_page")
     def test_process_page_for_topic_page(
         self,
-        spy_build_url_for_topic_page: mock.MagicMock,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
     ):
@@ -126,13 +122,14 @@ class TestFrontEndCrawler:
         And the returned url is passed to the call to `hit_frontend_page()`
 
         Patches:
-            `spy_build_url_for_topic_page`: To check the correct
-                method is being called to build the URL
             `spy_hit_frontend_page`: For the main assertion,
                 to check the request is being made to the correct URL
         """
         # Given
         page_item = {"type": "topic.TopicPage", "slug": "fake-topic-page-slug"}
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
 
         # When
         frontend_crawler_with_mocked_internal_api_client.process_page(
@@ -140,15 +137,14 @@ class TestFrontEndCrawler:
         )
 
         # Then
-        spy_build_url_for_topic_page.assert_called_once_with(slug=page_item["slug"])
-        url_for_topic_page = spy_build_url_for_topic_page.return_value
+        url_for_topic_page: str = frontend_url_builder.build_url_for_topic_page(
+            slug=page_item["slug"]
+        )
         spy_hit_frontend_page.assert_called_once_with(url=url_for_topic_page)
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    @mock.patch.object(FrontEndCrawler, "_build_url_for_common_page")
     def test_process_page_for_common_page(
         self,
-        spy_build_url_for_common_page: mock.MagicMock,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
     ):
@@ -159,13 +155,14 @@ class TestFrontEndCrawler:
         And the returned url is passed to the call to `hit_frontend_page()`
 
         Patches:
-            `spy_build_url_for_common_page`: To check the correct
-                method is being called to build the URL
             `spy_hit_frontend_page`: For the main assertion,
                 to check the request is being made to the correct URL
         """
         # Given
         page_item = {"type": "common.CommonPage", "slug": "fake-common-page-slug"}
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
 
         # When
         frontend_crawler_with_mocked_internal_api_client.process_page(
@@ -173,15 +170,14 @@ class TestFrontEndCrawler:
         )
 
         # Then
-        spy_build_url_for_common_page.assert_called_once_with(slug=page_item["slug"])
-        url_for_common_page = spy_build_url_for_common_page.return_value
+        url_for_common_page: str = frontend_url_builder.build_url_for_common_page(
+            slug=page_item["slug"]
+        )
         spy_hit_frontend_page.assert_called_once_with(url=url_for_common_page)
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    @mock.patch.object(FrontEndCrawler, "_build_url_for_whats_new_parent_page")
     def test_process_page_for_whats_new_parent_page_page(
         self,
-        spy_build_url_for_whats_new_parent_page: mock.MagicMock,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
     ):
@@ -193,13 +189,14 @@ class TestFrontEndCrawler:
         And the returned url is passed to the call to `hit_frontend_page()`
 
         Patches:
-            `spy_build_url_for_whats_new_parent_page`: To check the
-                correct method is being called to build the URL
             `spy_hit_frontend_page`: For the main assertion,
                 to check the request is being made to the correct URL
         """
         # Given
         page_item = {"type": "whats_new.WhatsNewParentPage"}
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
 
         # When
         frontend_crawler_with_mocked_internal_api_client.process_page(
@@ -207,17 +204,14 @@ class TestFrontEndCrawler:
         )
 
         # Then
-        spy_build_url_for_whats_new_parent_page.assert_called_once()
-        url_for_whats_new_parent_page = (
-            spy_build_url_for_whats_new_parent_page.return_value
+        url_for_whats_new_parent_page: str = (
+            frontend_url_builder.build_url_for_whats_new_parent_page()
         )
         spy_hit_frontend_page.assert_called_once_with(url=url_for_whats_new_parent_page)
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    @mock.patch.object(FrontEndCrawler, "_build_url_for_whats_new_child_entry")
     def test_process_page_for_whats_new_child_entry_page(
         self,
-        spy_build_url_for_whats_new_child_entry: mock.MagicMock,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
     ):
@@ -229,14 +223,15 @@ class TestFrontEndCrawler:
         And the returned url is passed to the call to `hit_frontend_page()`
 
         Patches:
-            `spy_build_url_for_whats_new_child_entry`: To check the
-                correct method is being called to build the URL
             `spy_hit_frontend_page`: For the main assertion,
                 to check the request is being made to the correct URL
         """
         # Given
         slug = "issue-with-vaccination-data"
         page_item = {"type": "whats_new.WhatsNewChildEntry", "slug": slug}
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
 
         # When
         frontend_crawler_with_mocked_internal_api_client.process_page(
@@ -244,9 +239,8 @@ class TestFrontEndCrawler:
         )
 
         # Then
-        spy_build_url_for_whats_new_child_entry.assert_called_once_with(slug=slug)
-        url_for_whats_new_child_entry = (
-            spy_build_url_for_whats_new_child_entry.return_value
+        url_for_whats_new_child_entry: str = (
+            frontend_url_builder.build_url_for_whats_new_child_entry(slug=slug)
         )
         spy_hit_frontend_page.assert_called_once_with(url=url_for_whats_new_child_entry)
 
@@ -317,10 +311,8 @@ class TestFrontEndCrawler:
         spy_process_page.assert_has_calls(calls=expected_calls, any_order=True)
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    @mock.patch.object(FrontEndCrawler, "_build_url_for_feedback_confirmation_page")
     def test_process_all_pages_hits_frontend_for_feedback_confirmation_page(
         self,
-        spy_build_url_for_feedback_confirmation_page: mock.MagicMock,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
     ):
@@ -331,136 +323,17 @@ class TestFrontEndCrawler:
             with the URL for the feedback confirmation page
 
         Patches:
-            `spy_build_url_for_feedback_confirmation_page`: To isolate the returned URL
             `spy_hit_frontend_page`: For the main assertion
 
         """
-        # Given / When
+        # Given
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
+
+        # When
         frontend_crawler_with_mocked_internal_api_client.process_all_pages()
 
         # Then
-        expected_url = spy_build_url_for_feedback_confirmation_page.return_value
+        expected_url = frontend_url_builder.build_url_for_feedback_confirmation_page()
         spy_hit_frontend_page.assert_called_with(url=expected_url)
-
-    # URL construction
-
-    def test_build_url_for_topic_page(
-        self, frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-    ):
-        """
-        Given a slug for a topic page
-        When `_build_url_for_topic_page()` is called from an instance of `FrontEndCrawler`
-        Then the correct URL will be returned
-        """
-        # Given
-        topic_page_slug = "influenza"
-
-        # When
-        topic_page_url: str = (
-            frontend_crawler_with_mocked_internal_api_client._build_url_for_topic_page(
-                slug=topic_page_slug
-            )
-        )
-
-        # Then
-        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
-        assert topic_page_url == f"{base_url}/topics/{topic_page_slug}"
-
-    def test_build_url_for_common_page(
-        self, frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-    ):
-        """
-        Given a slug for a common page
-        When `_build_url_for_common_page()` is called from an instance of `FrontEndCrawler`
-        Then the correct URL will be returned
-        """
-        # Given
-        common_page_slug = "about"
-
-        # When
-        common_page_url: str = (
-            frontend_crawler_with_mocked_internal_api_client._build_url_for_common_page(
-                slug=common_page_slug
-            )
-        )
-
-        # Then
-        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
-        assert common_page_url == f"{base_url}/{common_page_slug}"
-
-    def test_build_url_for_home_page(
-        self, frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-    ):
-        """
-        Given no input
-        When `_build_url_for_home_page()` is called from an instance of `FrontEndCrawler`
-        Then the correct URL will be returned
-        """
-        # Given / When
-        home_page_url: str = (
-            frontend_crawler_with_mocked_internal_api_client._build_url_for_home_page()
-        )
-
-        # Then
-        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
-        assert home_page_url == base_url
-
-    def test_build_url_for_whats_new_parent_page(
-        self, frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-    ):
-        """
-        Given no input
-        When `_build_url_for_whats_new_parent_page()` is called
-            from an instance of `FrontEndCrawler`
-        Then the correct URL will be returned
-        """
-        # Given / When
-        whats_new_parent_page_url: str = (
-            frontend_crawler_with_mocked_internal_api_client._build_url_for_whats_new_parent_page()
-        )
-
-        # Then
-        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
-        assert whats_new_parent_page_url == f"{base_url}/whats-new"
-
-    def test_build_url_for_whats_new_child_entry(
-        self, frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-    ):
-        """
-        Given a slug for a what's new child entry
-        When `_build_url_for_whats_new_child_entry()` is called
-            from an instance of `FrontEndCrawler`
-        Then the correct URL will be returned
-        """
-        # Given
-        whats_new_child_entry_slug = "issue-with-vaccination-data"
-
-        # When
-        whats_new_child_entry_url: str = frontend_crawler_with_mocked_internal_api_client._build_url_for_whats_new_child_entry(
-            slug=whats_new_child_entry_slug
-        )
-
-        # Then
-        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
-        assert (
-            whats_new_child_entry_url
-            == f"{base_url}/whats-new/{whats_new_child_entry_slug}"
-        )
-
-    def test_build_url_for_feedback_confirmation_page(
-        self, frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-    ):
-        """
-        Given no input
-        When `_build_url_for_feedback_confirmation_page()` is called
-            from an instance of `FrontEndCrawler`
-        Then the correct URL will be returned
-        """
-        # Given / When
-        feedback_confirmation_page_url: str = (
-            frontend_crawler_with_mocked_internal_api_client._build_url_for_feedback_confirmation_page()
-        )
-
-        # Then
-        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
-        assert feedback_confirmation_page_url == f"{base_url}/feedback/confirmation"
