@@ -139,7 +139,7 @@ class TestFrontEndURLBuilder:
 
         # Then
         assert (
-            metrics_documentation_parent_page_url == f"{base_url}/metrics_documentation"
+            metrics_documentation_parent_page_url == f"{base_url}/metrics-documentation"
         )
 
     def test_build_url_for_metrics_documentation_child_entry(self):
@@ -164,5 +164,5 @@ class TestFrontEndURLBuilder:
         # Then
         assert (
             metrics_documentation_child_entry_url
-            == f"{base_url}/metrics_documentation/{metrics_documentation_child_entry_slug}"
+            == f"{base_url}/metrics-documentation/{metrics_documentation_child_entry_slug}"
         )
