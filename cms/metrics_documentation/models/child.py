@@ -99,14 +99,9 @@ class MetricsDocumentationChildEntry(Page):
         Notes:
             This method will not be called when using `bulk_create()`
         """
-        self.topic = (self.topic if len(self.topic) > 0 else self.get_topic())
-        #self.topic = self.get_topic()
+        self.topic = self.get_topic()
         super().save(*args, **kwargs)
 
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
-
-    @metric_group.setter
-    def metric_group(self, value):
-        self._metric = value
