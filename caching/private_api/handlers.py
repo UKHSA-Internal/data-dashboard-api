@@ -4,6 +4,7 @@ from timeit import default_timer
 from django.db.models import Manager
 
 from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.management import CacheManagement
 from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
@@ -115,16 +116,18 @@ def force_cache_refresh_for_all_pages() -> None:
         - The home page with the slug of "dashboard"
         - All live/published topic pages
 
-        This will overwrite existing entries in the cache 1 by 1.
+        This will write to the cache 1 by 1.
         This currently does not support blue/green cache hydration.
         As such, if the cache is hit during the invocation of this,
-        then it is feasible that the cache will contain 1 stale half
-        and another fresh half of items.
+        then it is feasible that the request will be routed to the origin
 
     Returns:
         None
 
     """
+    cache_management = CacheManagement(in_memory=False)
+    cache_management.clear()
+
     crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
     _crawl_all_pages(crawler=crawler)
 
