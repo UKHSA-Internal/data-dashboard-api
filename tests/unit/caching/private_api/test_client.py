@@ -76,6 +76,7 @@ class TestCacheClient:
         # Then
         spy_cache.clear.assert_called_once()
 
+
 class TestInMemoryCacheClient:
     def test_put_stores_given_value(self):
         """
