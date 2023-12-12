@@ -85,6 +85,15 @@ class CacheManagement:
         self._client.put(cache_entry_key=cache_entry_key, value=item)
         return item
 
+    def clear(self) -> None:
+        """Deletes all keys in the cache
+
+        Returns:
+            None
+
+        """
+        self._client.clear()
+
     def _render_response(self, response: Response) -> Response:
         if response.headers["Content-Type"] == "text/csv":
             return response

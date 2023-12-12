@@ -10,6 +10,7 @@ from caching.private_api.handlers import (
     force_cache_refresh_for_all_pages,
     get_all_downloads,
 )
+from caching.private_api.management import CacheManagement
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
@@ -293,6 +294,43 @@ class TestHydrateCacheForAllPages:
         spy_create_crawler_for_force_cache_refresh.assert_called_once()
         expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
         spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
+    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch.object(CacheManagement, "clear")
+    def test_clears_cache_prior_to_crawler(
+        self,
+        spy_cache_management_clear: mock.MagicMock,
+        spy_crawl_all_pages: mock.MagicMock,
+        mocked_created_crawler: mock.MagicMock,
+    ):
+        """
+        Given no input
+        When `check_cache_for_all_pages()` is called
+        Then `clear()` is called from a `CacheManagement` object
+            before the call is made to `_crawl_all_pages()`
+        """
+        # Given
+        spy_manager = mock.Mock()
+        spy_manager.attach_mock(spy_cache_management_clear, "cache_management_clear")
+        spy_manager.attach_mock(spy_crawl_all_pages, "crawl_all_pages")
+
+        # When
+        force_cache_refresh_for_all_pages()
+
+        # Then
+        # `clear()` should only have been called once from the CacheManagement object
+        spy_cache_management_clear.assert_called_once()
+
+        # The cache should flushed before crawling the pages
+        expected_calls = [
+            mock.call.cache_management_clear(),
+            mock.call.crawl_all_pages(crawler=mocked_created_crawler.return_value),
+        ]
+        spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
+
+        # `_crawl_all_pages()` should only have been called once
+        spy_crawl_all_pages.assert_called_once()
 
 
 class TestGetAllDownloads:
