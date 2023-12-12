@@ -97,3 +97,12 @@ class InMemoryCacheClient(CacheClient):
 
         """
         self._cache[cache_entry_key] = value
+
+    def clear(self) -> None:
+        """Deletes all keys in the cache
+
+        Returns:
+            None
+
+        """
+        self._cache.clear()

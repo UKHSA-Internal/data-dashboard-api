@@ -139,3 +139,21 @@ class TestInMemoryCacheClient:
 
         # Then
         assert retrieved_value == mocked_value
+
+    def test_clear_flushes_all_items(self):
+        """
+        Given a cache entry key and a value
+        When `clear()` is called from an instance of the `InMemoryCacheClient`
+        Then the cache is flushed
+        """
+        # Given
+        mocked_value = mock.Mock()
+        fake_cache_entry_key = "abc"
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {fake_cache_entry_key: mocked_value}
+
+        # When
+        in_memory_cache_client.clear()
+
+        # Then
+        assert fake_cache_entry_key not in in_memory_cache_client._cache
