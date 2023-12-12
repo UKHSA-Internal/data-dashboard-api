@@ -37,7 +37,7 @@ class TestCacheClient:
         returned_entry = cache_client.get(cache_entry_key=fake_cache_entry_key)
 
         # Then
-        spy_cache.get.callled_once_with(key=fake_cache_entry_key, default=None)
+        spy_cache.get.assert_called_once_with(key=fake_cache_entry_key, default=None)
         assert returned_entry == spy_cache.get.return_value
 
     @mock.patch(f"{MODULE_PATH}.cache")
@@ -56,10 +56,25 @@ class TestCacheClient:
         cache_client.put(cache_entry_key=fake_cache_entry_key, value=mocked_value)
 
         # Then
-        spy_cache.set.callled_once_with(
+        spy_cache.set.assert_called_once_with(
             key=fake_cache_entry_key, value=mocked_value, timeout=None
         )
 
+    @mock.patch(f"{MODULE_PATH}.cache")
+    def test_clear_delegates_call(self, spy_cache: mock.MagicMock):
+        """
+        Given an instance of the `CacheClient`
+        When `clear()` is called from the client
+        Then the call is delegated to the underlying cache
+        """
+        # Given
+        cache_client = CacheClient()
+
+        # When
+        cache_client.clear()
+
+        # Then
+        spy_cache.clear.assert_called_once()
 
 class TestInMemoryCacheClient:
     def test_put_stores_given_value(self):

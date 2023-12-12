@@ -43,6 +43,15 @@ class CacheClient:
         """
         self._cache.set(key=cache_entry_key, value=value, timeout=None)
 
+    def clear(self) -> None:
+        """Deletes all keys in the cache
+
+        Returns:
+            None
+
+        """
+        self._cache.clear()
+
 
 class InMemoryCacheClient(CacheClient):
     """The client abstraction used to interact with an in-memory version the cache.
