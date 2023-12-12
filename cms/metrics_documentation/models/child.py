@@ -1,5 +1,3 @@
-import logging
-
 from django.db import models
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
@@ -11,8 +9,6 @@ from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
     get_all_unique_metric_names,
 )
-
-logger = logging.getLogger(__name__)
 
 
 class MetricsDocumentationChildEntry(Page):
@@ -103,9 +99,14 @@ class MetricsDocumentationChildEntry(Page):
         Notes:
             This method will not be called when using `bulk_create()`
         """
-        self.topic = self.get_topic()
+        self.topic = (self.topic if len(self.topic) > 0 else self.get_topic())
+        #self.topic = self.get_topic()
         super().save(*args, **kwargs)
 
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
+
+    @metric_group.setter
+    def metric_group(self, value):
+        self._metric = value
