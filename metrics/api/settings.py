@@ -306,6 +306,10 @@ WAGTAILSEARCH_BACKENDS = {
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
 WAGTAILADMIN_BASE_URL = "http://example.com"
 
+# Controls the maximum number of results which can be requested from the pages API.
+# Set to None for no limit.
+WAGTAILAPI_LIMIT_MAX = None
+
 
 # Email server config
 EMAIL_BACKEND = config.EMAIL_BACKEND
