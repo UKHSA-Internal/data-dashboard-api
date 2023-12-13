@@ -1,5 +1,7 @@
 import pytest
 
+from tests.fakes.factories.cms.metrics_documentation_factory import FakeMetricsDocumentationParentPageFactory
+
 
 @pytest.mark.django_db
 def test_metric_documentation_child_entry_forward_migration(migrator):

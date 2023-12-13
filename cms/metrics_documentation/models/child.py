@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
@@ -9,6 +11,8 @@ from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
     get_all_unique_metric_names,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class MetricsDocumentationChildEntry(Page):
@@ -80,7 +84,8 @@ class MetricsDocumentationChildEntry(Page):
             return next(topic for topic in topics if extracted_topic == topic.lower())
         except StopIteration:
             logging.info(
-                "StopIteration Error: extracted topic not present in the topics list."
+                "StopIteration Error: extracted topic not present in the topics list. %s",
+                extracted_topic,
             )
             raise
 
