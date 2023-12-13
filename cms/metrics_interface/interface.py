@@ -66,17 +66,17 @@ class MetricsAPIInterface:
         self.core_time_series_manager = core_time_series_manager
 
     @staticmethod
-    def get_chart_types() -> list[tuple[str, str]]:
-        """Gets all available chart type choices as a list of 2-item tuples.
+    def get_chart_types() -> tuple[tuple[str, str], ...]:
+        """Gets all available chart type choices as a nested tuple of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartTypes` enum from the Metrics API
 
         Returns:
-            list[tuple[str, str]]: List of 2 item tuples as expected by the form blocks.
+            Nested tuples of 2 item tuples as expected by the form blocks.
             Examples:
-                [("line_with_shaded_section", "line_with_shaded_section"), ...]
+                (("line_with_shaded_section", "line_with_shaded_section"), ...)
 
         """
-        return ChartTypes.choices()
+        return ChartTypes.selectable_choices()
 
     @staticmethod
     def get_chart_axis_choices() -> list[tuple[str, str]]:
