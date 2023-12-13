@@ -132,6 +132,44 @@ class TestChartTypes:
         )
         assert choices == tuple((choice, choice) for choice in _choices)
 
+    @pytest.mark.parametrize(
+        "expected_choice",
+        (
+            "waffle",
+            "line_with_shaded_section",
+            "bar",
+            "line_multi_coloured",
+        ),
+    )
+    def test_selectable_choices(self, expected_choice: str):
+        """
+        Given an expected choice
+        When the `selectable_choices()` class method is called
+            from the `ChartTypes` enum
+        Then choice is in the returned selectable choices
+        """
+        # Given / When
+        choices = ChartTypes.selectable_choices()
+
+        # Then
+        assert (expected_choice, expected_choice) in choices
+
+    def test_selectable_choices_does_not_return_simple_line(self):
+        """
+        Given the invalid choice of "simple_line"
+        When the `selectable_choices()` class method is called
+            from the `ChartTypes` enum
+        Then "simple_line" is not in the returned selectable choices
+        """
+        # Given
+        invalid_choice: str = ChartTypes.simple_line.value
+
+        # When
+        choices = ChartTypes.selectable_choices()
+
+        # Then
+        assert (invalid_choice, invalid_choice) not in choices
+
     def test_values(self):
         """
         Given no input
