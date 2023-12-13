@@ -24,11 +24,29 @@ class ChartTypes(Enum):
     line_multi_coloured = "line_multi_coloured"
 
     @classmethod
-    def choices(cls):
+    def choices(cls) -> tuple[tuple[str, str], ...]:
         return tuple((chart_type.value, chart_type.value) for chart_type in cls)
 
     @classmethod
-    def values(cls):
+    def selectable_choices(cls) -> tuple[tuple[str, str], ...]:
+        """Returns chart types which are selectable from the CMS as a nested tuple of 2-item tuples.
+
+        Returns:
+            Nested tuples of 2 item tuples as expected by the form blocks.
+            Examples:
+                (("line_with_shaded_section", "line_with_shaded_section"), ...)
+
+        """
+        selectable = (
+            cls.waffle,
+            cls.line_multi_coloured,
+            cls.bar,
+            cls.line_with_shaded_section,
+        )
+        return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
+
+    @classmethod
+    def values(cls) -> list[str]:
         return [chart_type.value for chart_type in cls]
 
 
