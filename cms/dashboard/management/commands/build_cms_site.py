@@ -219,18 +219,14 @@ class Command(BaseCommand):
         _build_common_page(name="cookies", parent_page=root_page)
         _build_common_page(name="accessibility_statement", parent_page=root_page)
         _build_common_page(name="compliance", parent_page=root_page)
-        try:
-            whats_new_parent_page = _build_whats_new_parent_page(
-                name="whats_new", parent_page=root_page
-            )
+        whats_new_parent_page = _build_whats_new_parent_page(
+            name="whats_new", parent_page=root_page
+        )
 
-            _build_whats_new_child_entry(
-                name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
-                parent_page=whats_new_parent_page,
-            )
-        except:
-            pass
+        _build_whats_new_child_entry(
+            name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
+            parent_page=whats_new_parent_page,
+        )
 
         create_metrics_documentation_parent_page()
         create_metrics_documentation_child_entries()
-
