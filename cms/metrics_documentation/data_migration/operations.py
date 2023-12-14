@@ -70,7 +70,7 @@ def create_metrics_documentation_child_entries() -> None:
             is being bootstrapped for the first time
 
     """
-    entries = get_metrics_definitions()
+    entries: list[dict[str | list[dict]]] = get_metrics_definitions()
     parent_page = MetricsDocumentationParentPage.objects.get(
         slug="metrics-documentation"
     )

@@ -62,7 +62,7 @@ def _load_worksheet() -> Worksheet:
     return metric_docs_workbook.active
 
 
-def get_metrics_definitions() -> list[dict]:
+def get_metrics_definitions() -> list[dict[str | list[dict]]]:
     """Retrieves a list of metrics documentation entries from a spreadsheet.
 
     Returns:
