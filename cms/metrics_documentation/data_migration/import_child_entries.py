@@ -52,11 +52,11 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
 
 
 def _load_worksheet():
-    FILE_PATH = f"{Path(__file__).resolve().parent.parent}/migration_data/"
-    FILE_NAME = "metrics_definitions_migration_edit.xlsx"
+    file_path = f"{Path(__file__).resolve().parent.parent}/migration_data/"
+    file_name = "metrics_definitions_migration_edit.xlsx"
 
     metric_docs_workbook = load_workbook(
-        filename=f"{FILE_PATH}{FILE_NAME}", read_only=True
+        filename=f"{file_path}{file_name}", read_only=True
     )
     return metric_docs_workbook.active
 
