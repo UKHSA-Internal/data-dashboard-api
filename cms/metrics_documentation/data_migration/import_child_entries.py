@@ -42,7 +42,7 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
         "page_description": row[4],
         "metric": row[1],
         "body": build_sections(
-            [
+            sections=[
                 ("Rationale", row[2]),
                 ("Definition", row[3]),
                 ("Methodology", row[5]),
