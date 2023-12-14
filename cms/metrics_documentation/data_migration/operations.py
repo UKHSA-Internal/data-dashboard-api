@@ -62,4 +62,10 @@ def create_metrics_documentation_child_entries() -> None:
 
 
 def remove_metrics_documentation_child_entries() -> None:
+    """Removes all `MetricsDocumentationChildEntry` record from the database
+
+    Returns:
+        None
+
+    """
     MetricsDocumentationChildEntry.objects.all().delete()
