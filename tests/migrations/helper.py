@@ -1,9 +1,16 @@
+import sys
+
 from django.apps import apps
-from django.db import connection
+from django.db import connection, models
 from django.db.migrations.executor import MigrationExecutor
+import pytest
 
 
-class MigrationTestHelper:
+REASON = "Migration tests are excluded from coverage test runs"
+
+
+@pytest.mark.skipif(condition="--cov" in sys.argv, reason=REASON)
+class MigrationTests:
     """Used to test django migrations.
 
     Notes:
@@ -17,6 +24,10 @@ class MigrationTestHelper:
         Call `self.migrate_forward()` to roll the project state to the current node.
         At any given point, call `get_model()` with the name of the model
             you are interested in to get that model state at that point in time.
+
+        Tests which inherit from this test helper class
+        will also be excluded from the test suite
+        when the --cov arg is used. i.e. for test coverage runs
 
     """
 
