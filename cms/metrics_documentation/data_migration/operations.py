@@ -30,6 +30,13 @@ def create_metrics_documentation_parent_page() -> None:
 
     Returns:
         None
+
+    Raises:
+        `HomePage.DoesNotExist`: If there is no root page model
+            with the reserved slug of "ukhsa-dashboard-root".
+            This typically happens when the application
+            is being bootstrapped for the first time
+
     """
     try:
         return MetricsDocumentationParentPage.objects.get(slug="metrics-documentation")
@@ -50,6 +57,14 @@ def create_metrics_documentation_child_entries() -> None:
 
     Returns:
         None
+
+    Raises:
+        `MetricsDocumentationParentPage.DoesNotExist`: If
+            there is no parent page model with the
+            reserved slug of "metrics-documentation".
+            This typically happens when the application
+            is being bootstrapped for the first time
+
     """
     entries = get_metrics_definitions()
     parent_page = MetricsDocumentationParentPage.objects.get(
