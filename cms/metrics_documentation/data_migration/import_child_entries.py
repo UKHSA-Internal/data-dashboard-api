@@ -3,12 +3,6 @@ from pathlib import Path
 
 from openpyxl import load_workbook
 
-FILE_PATH = f"{Path(__file__).resolve().parent.parent}/migration_data/"
-FILE_NAME = "metrics_definitions_migration_edit.xlsx"
-
-metric_docs_workbook = load_workbook(filename=f"{FILE_PATH}{FILE_NAME}", read_only=True)
-work_sheet = metric_docs_workbook.active
-
 
 def build_sections(sections) -> list[dict]:
     """Build metric documentation page sections.
@@ -57,12 +51,23 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
     }
 
 
+def _load_worksheet():
+    FILE_PATH = f"{Path(__file__).resolve().parent.parent}/migration_data/"
+    FILE_NAME = "metrics_definitions_migration_edit.xlsx"
+
+    metric_docs_workbook = load_workbook(
+        filename=f"{FILE_PATH}{FILE_NAME}", read_only=True
+    )
+    return metric_docs_workbook.active
+
+
 def get_metrics_definitions() -> list[dict]:
     """Retrieves a list of metrics documentation entries from a spreadsheet.
 
     Returns:
         list of dictionaries containing metric documentation page entries.
     """
+    work_sheet = _load_worksheet()
     return [
         build_entry_from_row_data(row)
         for row in work_sheet.iter_rows(min_row=2, max_row=28, values_only=True)
