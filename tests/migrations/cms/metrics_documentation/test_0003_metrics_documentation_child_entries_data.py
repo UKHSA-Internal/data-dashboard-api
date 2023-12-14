@@ -1,3 +1,5 @@
+import sys
+
 from cms.home.models import HomePage
 from wagtail.models import Page
 from django.core.management import call_command
@@ -7,6 +9,7 @@ import pytest
 from tests.migrations.helper import MigrationTestHelper
 
 
+@pytest.mark.django_db(transaction=True)
 class Test0003MetricsDocumentationChildEntriesData(MigrationTestHelper):
     previous_migration_name = "0002_metricsdocumentationchildentry"
     current_migration_name = "0003_metrics_documentation_child_entries_data"
@@ -16,7 +19,6 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTestHelper):
     def metrics_documentation_child_entry(self) -> str:
         return "MetricsDocumentationChildEntry"
 
-    @pytest.mark.django_db(transaction=True)
     def test_forwards_migration(self):
         """
         Given the database contains a full set of metrics data
@@ -28,7 +30,9 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTestHelper):
         self.migrate_back()
         # Populate the db with metrics data.
         # As the `MetricsDocumentationChildEntry` models will be verified with `Metric` and `Topic` models
-        call_command("upload_truncated_test_data", multiprocessing_enabled=False)
+        call_command(
+            command_name="upload_truncated_test_data", multiprocessing_enabled=False
+        )
         # The root page is required to be in place
         # for the `MetricsDocumentationParentPage` to be creatable
         self._create_root_page()

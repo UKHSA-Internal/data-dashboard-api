@@ -40,6 +40,10 @@ integration-tests:
 system-tests:
 	${BIN}python -m pytest tests/system -v
 
+# Run all migration tests
+migration-tests:
+	${BIN}python -m pytest tests/migrations -v
+
 # Run all tests regardless of type
 all-tests:
 	make unit-tests
