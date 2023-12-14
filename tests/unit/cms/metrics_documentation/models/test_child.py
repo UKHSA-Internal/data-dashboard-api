@@ -215,7 +215,7 @@ class TestMetricsDocumentationChildEntry:
         """
         Given a metric name that does not include a valid topic.
         When the `find_topic()` method is called with a list of topics.
-        Then an `InvalidTopicForChosenMetricForChildEntryError` exception is raised.
+        Then an `InvalidTopicForChosenMetricForChildEntryError` is raised.
         """
         # Given
         fake_invalid_metric = "invalid_metric_contains_no_topic"
