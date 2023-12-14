@@ -3,7 +3,6 @@ from cms.metrics_documentation.models import (
 )
 from cms.home.models import HomePage
 from django.db import migrations
-from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page,
