@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 
 from wagtail.models import Page
 
@@ -11,7 +12,12 @@ from cms.metrics_documentation.models import (
     MetricsDocumentationChildEntry,
     MetricsDocumentationParentPage,
 )
+from cms.metrics_documentation.models.child import (
+    InvalidTopicForChosenMetricForChildEntryError,
+)
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
+
+logger = logging.getLogger(__name__)
 
 
 def load_metric_documentation_parent_page() -> dict:
@@ -76,7 +82,16 @@ def create_metrics_documentation_child_entries() -> None:
     )
     for entry in entries:
         metrics_child = MetricsDocumentationChildEntry(**entry)
-        _add_page_as_subpage_to_parent(subpage=metrics_child, parent_page=parent_page)
+        try:
+            _add_page_as_subpage_to_parent(
+                subpage=metrics_child, parent_page=parent_page
+            )
+        except (InvalidTopicForChosenMetricForChildEntryError, AttributeError):
+            logger.warning(
+                "Metrics Documentation Child Entry for %s was not created. "
+                "Because the corresponding `Topic` was not created beforehand",
+                entry["metric"],
+            )
 
 
 def remove_metrics_documentation_child_entries() -> None:
