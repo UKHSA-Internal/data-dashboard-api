@@ -2,9 +2,10 @@ import datetime
 from pathlib import Path
 
 from openpyxl import load_workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 
-def build_sections(sections) -> list[dict]:
+def build_sections(sections: list[tuple[str, str]]) -> list[dict]:
     """Build metric documentation page sections.
 
     Args:
@@ -51,7 +52,7 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
     }
 
 
-def _load_worksheet():
+def _load_worksheet() -> Worksheet:
     file_path = f"{Path(__file__).resolve().parent.parent}/migration_data/"
     file_name = "metrics_definitions_migration_edit.xlsx"
 
