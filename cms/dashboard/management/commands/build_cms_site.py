@@ -15,6 +15,7 @@ from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
 from cms.whats_new.models.parent import WhatsNewParentPageRelatedLink
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR, WAGTAIL_SITE_NAME
+from cms.metrics_documentation.data_migration.operations import create_metrics_documentation_parent_page, create_metrics_documentation_child_entries
 
 logger = logging.getLogger(__name__)
 
@@ -180,6 +181,7 @@ class Command(BaseCommand):
 
         # Wipe the existing site and pages
         Site.objects.all().delete()
+        # delete snippet
         Page.objects.filter(pk__gte=2).delete()  # Wagtail welcome page and all others
 
         # Make a new home page
@@ -214,11 +216,18 @@ class Command(BaseCommand):
         _build_common_page(name="cookies", parent_page=root_page)
         _build_common_page(name="accessibility_statement", parent_page=root_page)
         _build_common_page(name="compliance", parent_page=root_page)
+        try:
+            whats_new_parent_page = _build_whats_new_parent_page(
+                name="whats_new", parent_page=root_page
+            )
 
-        whats_new_parent_page = _build_whats_new_parent_page(
-            name="whats_new", parent_page=root_page
-        )
-        _build_whats_new_child_entry(
-            name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
-            parent_page=whats_new_parent_page,
-        )
+            _build_whats_new_child_entry(
+                name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
+                parent_page=whats_new_parent_page,
+            )
+        except:
+            pass
+
+        create_metrics_documentation_parent_page()
+        create_metrics_documentation_child_entries()
+

@@ -10,22 +10,20 @@ from cms.home.models import HomePage
 from django.db import migrations, models
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
+from cms.metrics_documentation.data_migration.operations import create_metrics_documentation_parent_page, create_metrics_documentation_child_entries
 FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"
 
 
-def load_metric_documentation_parent_page():
-    """Returns a JSON Object of metrics documentation parent page date.
-
-    Returns:
-        JSON Object containing parent page data.
-    """
-    path = f"{FILE_PATH}metrics_documentation.json"
-    with open(path, "rb") as file:
-        return json.load(file)
 
 
-def forward_metric_documentation_parent(apps, schema_editor) -> None:
-    """Creates parent page for data migration.
+class RootPageDoesNotExist:
+    def __init__(self):
+        message = "There is no home page to act as your entries root."
+        super().__init__(message)
+
+
+def forward_migration_parent_entry(apps, schema_editor) -> None:
+    """Creates parent page for data migration if one doesn't exist.
 
     Args:
         apps: instance of `django.apps.registry.Apps` containing historical models.
@@ -35,31 +33,24 @@ def forward_metric_documentation_parent(apps, schema_editor) -> None:
         None
     """
     try:
-        MetricsDocumentationParentPage.objects.get()
-    except MetricsDocumentationParentPage.DoesNotExist:
-        root_page = HomePage.objects.last()
-        parent_page_data = load_metric_documentation_parent_page()
-        metrics_parent = MetricsDocumentationParentPage(
-            title=parent_page_data["title"],
-            depth=1,
-            date_posted=datetime.datetime.today(),
-            body=parent_page_data["body"],
-        )
-        root_page.add_child(instance=metrics_parent)
-        metrics_parent.save()
+        create_metrics_documentation_parent_page()
+        #HomePage.objects.get(slug="ukhsa_dashboard_root")
+    except HomePage.DoesNotExist:
+        print("no home page to act as root")
+        return
+
+    print("testing testing 123")
+    # call build metrics_documentation_parent_entry()
 
 
-def reverse_metric_documentation_parent(apps, schema_editor) -> None:
-    """Reverse the parent page migration by removing the entry.
-
-    Args:
-        apps: instance of `django.apps.registry.Apps` containing historical models.
-        schema_editor: instance of `SchemaEditor`
-
-    Returns:
-        None
+def forward_metric_documentation_parent(apps, schema_editor) -> None:
+    """moved to operations
     """
-    MetricsDocumentationParentPage.objects.all().delete()
+    # move this out to new create function - do this for child as well
+    # this function, try/except for calling the new function
+    # give an error
+
+        # if root_page == none raise error. custom error.
 
 
 def forward_metric_documentation_child_entries(apps, schema_editor) -> None:
@@ -72,12 +63,12 @@ def forward_metric_documentation_child_entries(apps, schema_editor) -> None:
     Returns:
         None
     """
-    entries = get_metrics_definitions()
-    root_page = MetricsDocumentationParentPage.objects.last()
-    for entry in entries:
-        metrics_child = MetricsDocumentationChildEntry(**entry)
-        root_page.add_child(instance=metrics_child)
-        metrics_child.save()
+    try:
+        create_metrics_documentation_child_entries()
+        #HomePage.objects.get(slug="ukhsa_dashboard_root")
+    except MetricsDocumentationParentPage.DoesNotExist:
+        print("no parent page to act as root")
+        return
 
 
 def reverse_metric_documentation_child_entries(apps, schema_editor) -> None:
@@ -98,8 +89,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=forward_metric_documentation_parent,
-            reverse_code=reverse_metric_documentation_parent,
+            code=forward_migration_parent_entry,
         ),
         migrations.RunPython(
             code=forward_metric_documentation_child_entries,
