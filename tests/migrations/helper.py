@@ -23,19 +23,19 @@ class MigrationTestHelper:
     application_registry = apps
 
     @property
-    def previous_migration_name(self):
+    def previous_migration_name(self) -> str:
         raise NotImplementedError(
             "Provide the `previous_migration_name` to the test class"
         )
 
     @property
-    def current_migration_name(self):
+    def current_migration_name(self) -> str:
         raise NotImplementedError(
             "Provide the `current_migration_name` to the test class"
         )
 
     @property
-    def current_django_app(self):
+    def current_django_app(self) -> str:
         return NotImplementedError("Provide the `current_django_app` to the test class")
 
     @property
@@ -73,7 +73,7 @@ class MigrationTestHelper:
         """Migrates the project state to the node associated with the `current_migration_name`"""
         self.migrate_to_node(node=self.current_node)
 
-    def get_model(self, name):
+    def get_model(self, name: str) -> models.base.ModelBase:
         """Returns the model associated with the `name` at the current project state
 
         Args:
