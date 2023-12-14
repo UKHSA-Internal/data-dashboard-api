@@ -1,3 +1,5 @@
+import logging
+
 from cms.metrics_documentation.models import (
     MetricsDocumentationParentPage,
 )
@@ -11,6 +13,9 @@ from cms.metrics_documentation.data_migration.operations import (
 )
 
 
+logger = logging.getLogger(__name__)
+
+
 def forward_migration_metrics_documentation_parent_page(apps, schema_editor) -> None:
     """Creates parent page for data migration if one doesn't exist.
 
@@ -22,13 +27,9 @@ def forward_migration_metrics_documentation_parent_page(apps, schema_editor) -> 
         None
     """
     try:
-        create_metrics_documentation_parent_page()
+        return create_metrics_documentation_parent_page()
     except HomePage.DoesNotExist:
-        print("no home page to act as root")
-        return
-
-    print("testing testing 123")
-    # call build metrics_documentation_parent_entry()
+        logger.info("No Root page available to create metrics docs parent page with")
 
 
 def forward_migration_metrics_documentation_child_entries(apps, schema_editor) -> None:
@@ -42,10 +43,11 @@ def forward_migration_metrics_documentation_child_entries(apps, schema_editor) -
         None
     """
     try:
-        create_metrics_documentation_child_entries()
+        return create_metrics_documentation_child_entries()
     except MetricsDocumentationParentPage.DoesNotExist:
-        print("no parent page to act as root")
-        return
+        logger.info(
+            "No metrics docs parent page available to create child entries with"
+        )
 
 
 def reverse_migration_metrics_documentation_child_entries(apps, schema_editor) -> None:
