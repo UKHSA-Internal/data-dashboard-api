@@ -15,6 +15,12 @@ from cms.metrics_interface.field_choices_callables import (
 logger = logging.getLogger(__name__)
 
 
+class InvalidTopicForChosenMetricForChildEntryError(Exception):
+    def __init__(self, topic: str, metric: str):
+        message = f"The `{topic}` is not available for selected metric of `{metric}`"
+        super().__init__(message)
+
+
 class MetricsDocumentationChildEntry(Page):
     date_posted = models.DateField(null=False)
     page_description = models.TextField()
@@ -78,16 +84,23 @@ class MetricsDocumentationChildEntry(Page):
 
         Returns:
             A string of the topic checked against the models metric value.
+
+        Raises:
+            `InvalidTopicForChosenMetricForChildEntry`: If the
+                selected metric cannot be matched to a `Topic`
+
         """
         extracted_topic = self.metric.split("_")[0].lower()
         try:
             return next(topic for topic in topics if extracted_topic == topic.lower())
-        except StopIteration:
+        except StopIteration as error:
             logging.info(
                 "StopIteration Error: extracted topic not present in the topics list. %s",
                 extracted_topic,
             )
-            raise
+            raise InvalidTopicForChosenMetricForChildEntryError(
+                topic=extracted_topic, metric=self.metric
+            ) from error
 
     def get_topic(self) -> str:
         """Finds the required topic name based on the selected metric name.

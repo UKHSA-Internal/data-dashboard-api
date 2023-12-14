@@ -5,6 +5,9 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.api.conf import APIField
 
 from cms.metrics_documentation.models import child
+from cms.metrics_documentation.models.child import (
+    InvalidTopicForChosenMetricForChildEntryError,
+)
 from tests.fakes.factories.cms.metrics_documentation_child_entry_factory import (
     FakeMetricsDocumentationChildEntryFactory,
 )
@@ -206,13 +209,13 @@ class TestMetricsDocumentationChildEntry:
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     def test_find_topic_raises_error(
         self,
-        spy_get_a_list_of_all_topic_names: mock.MagicMock(),
+        mock_get_a_list_of_all_topic_names: mock.MagicMock(),
         mock_get_all_unique_metric_names: mock.MagicMock(),
     ):
         """
         Given a metric name that does not include a valid topic.
         When the `find_topic()` method is called with a list of topics.
-        Then a `StopIteration` exception is raised.
+        Then an `InvalidTopicForChosenMetricForChildEntryError` exception is raised.
         """
         # Given
         fake_invalid_metric = "invalid_metric_contains_no_topic"
@@ -231,5 +234,5 @@ class TestMetricsDocumentationChildEntry:
         fake_metrics_documentation_child_entry_page.metric = fake_invalid_metric
 
         # When / Then
-        with pytest.raises(StopIteration):
+        with pytest.raises(InvalidTopicForChosenMetricForChildEntryError):
             fake_metrics_documentation_child_entry_page.find_topic(fake_topics)
