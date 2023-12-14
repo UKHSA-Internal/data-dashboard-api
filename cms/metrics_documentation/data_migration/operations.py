@@ -11,8 +11,6 @@ from cms.metrics_documentation.models import (
 )
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
-FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"
-
 
 def load_metric_documentation_parent_page() -> dict:
     """Returns a JSON Object of metrics documentation parent page date.
@@ -20,7 +18,7 @@ def load_metric_documentation_parent_page() -> dict:
     Returns:
         JSON Object containing parent page data.
     """
-    path = f"{FILE_PATH}metrics_documentation.json"
+    path = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/metrics_documentation.json"
     with open(path, "rb") as file:
         return json.load(file)
 
