@@ -214,6 +214,7 @@ jobs:
       unit-tests,
       integration-tests,
       system-tests,
+      migration-tests,
       test-coverage,
       vulnerabilities,
       architecture-checks
