@@ -52,7 +52,7 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
     }
 
 
-def _load_worksheet() -> Worksheet:
+def _load_source_data_as_worksheet() -> Worksheet:
     file_path = f"{Path(__file__).resolve().parent.parent}/data_migration/source_data/"
     file_name = "metrics_definitions_migration_edit.xlsx"
 
@@ -68,7 +68,7 @@ def get_metrics_definitions() -> list[dict[str | list[dict]]]:
     Returns:
         list of dictionaries containing metric documentation page entries.
     """
-    work_sheet = _load_worksheet()
+    work_sheet = _load_source_data_as_worksheet()
     return [
         build_entry_from_row_data(row)
         for row in work_sheet.iter_rows(min_row=2, max_row=28, values_only=True)
