@@ -6,11 +6,11 @@ from django.core.management import call_command
 
 import pytest
 
-from tests.migrations.helper import MigrationTestHelper
+from tests.migrations.helper import MigrationTests
 
 
 @pytest.mark.django_db(transaction=True)
-class Test0003MetricsDocumentationChildEntriesData(MigrationTestHelper):
+class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
     previous_migration_name = "0002_metricsdocumentationchildentry"
     current_migration_name = "0003_metrics_documentation_child_entries_data"
     current_django_app = "metrics_documentation"
