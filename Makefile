@@ -49,6 +49,7 @@ all-tests:
 	make unit-tests
 	make integration-tests
 	make system-tests
+	make migration-tests
 
 # Run pip-audit and bandit to check for vulnerabilities
 audit:
