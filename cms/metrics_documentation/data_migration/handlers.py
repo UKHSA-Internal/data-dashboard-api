@@ -1,17 +1,12 @@
 import logging
 
-from cms.metrics_documentation.models import (
-    MetricsDocumentationParentPage,
-)
 from cms.home.models import HomePage
-from django.db import migrations
-
 from cms.metrics_documentation.data_migration.operations import (
-    create_metrics_documentation_parent_page,
     create_metrics_documentation_child_entries,
+    create_metrics_documentation_parent_page,
     remove_metrics_documentation_child_entries,
 )
-
+from cms.metrics_documentation.models import MetricsDocumentationParentPage
 
 logger = logging.getLogger(__name__)
 
@@ -61,17 +56,3 @@ def reverse_migration_metrics_documentation_child_entries(apps, schema_editor) -
         None
     """
     remove_metrics_documentation_child_entries()
-
-
-class Migration(migrations.Migration):
-    dependencies = [("metrics_documentation", "0002_metricsdocumentationchildentry")]
-
-    operations = [
-        migrations.RunPython(
-            code=forward_migration_metrics_documentation_parent_page,
-        ),
-        migrations.RunPython(
-            code=forward_migration_metrics_documentation_child_entries,
-            reverse_code=reverse_migration_metrics_documentation_child_entries,
-        ),
-    ]
