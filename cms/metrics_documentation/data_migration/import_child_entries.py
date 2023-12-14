@@ -53,7 +53,7 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
 
 
 def _load_worksheet() -> Worksheet:
-    file_path = f"{Path(__file__).resolve().parent.parent}/migration_data/"
+    file_path = f"{Path(__file__).resolve().parent.parent}/data_migration/data/"
     file_name = "metrics_definitions_migration_edit.xlsx"
 
     metric_docs_workbook = load_workbook(
