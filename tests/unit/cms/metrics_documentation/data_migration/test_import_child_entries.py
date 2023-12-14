@@ -1,5 +1,3 @@
-import pytest
-
 from cms.metrics_documentation.data_migration.import_child_entries import build_sections
 
 
