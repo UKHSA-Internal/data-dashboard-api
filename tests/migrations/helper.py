@@ -46,8 +46,6 @@ class MigrationTestHelper:
     def current_node(self) -> list[tuple[str, str]]:
         return [(self.current_django_app, self.current_migration_name)]
 
-    @classmethod
-    def _create_migration_executor(cls) -> MigrationExecutor:
     @property
     def _migration_executor(self) -> MigrationExecutor:
         return MigrationExecutor(connection)
@@ -65,7 +63,9 @@ class MigrationTestHelper:
         migration_executor.migrate(targets=node)
 
         # Load the project state of the application at the point of the new migration node
-        self.application_registry = migration_executor.loader.project_state(node).apps
+        self.application_registry = migration_executor.loader.project_state(
+            nodes=node
+        ).apps
 
     def migrate_back(self) -> None:
         """Migrates the project state to the node associated with the `previous_migration_name`"""
