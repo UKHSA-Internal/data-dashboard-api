@@ -4,7 +4,7 @@ import json
 from wagtail.models import Page
 
 from cms.home.models import HomePage
-from cms.metrics_documentation.data_migration.import_child_entries import (
+from cms.metrics_documentation.data_migration.child_entries import (
     get_metrics_definitions,
 )
 from cms.metrics_documentation.models import (
