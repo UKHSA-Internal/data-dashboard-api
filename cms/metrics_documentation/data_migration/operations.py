@@ -1,13 +1,12 @@
 import datetime
 import json
 
+from cms.home.models import HomePage
+from cms.metrics_documentation.data_migration.import_child_entries import get_metrics_definitions
 from cms.metrics_documentation.models import (
     MetricsDocumentationChildEntry,
     MetricsDocumentationParentPage,
 )
-from cms.metrics_documentation.data_migration.import_child_entries import get_metrics_definitions
-from cms.home.models import HomePage
-from django.db import migrations, models
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
 FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"

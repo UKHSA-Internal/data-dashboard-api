@@ -11,11 +11,14 @@ from wagtail.models import Page, Site
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
+from cms.metrics_documentation.data_migration.operations import (
+    create_metrics_documentation_child_entries,
+    create_metrics_documentation_parent_page,
+)
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
 from cms.whats_new.models.parent import WhatsNewParentPageRelatedLink
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR, WAGTAIL_SITE_NAME
-from cms.metrics_documentation.data_migration.operations import create_metrics_documentation_parent_page, create_metrics_documentation_child_entries
 
 logger = logging.getLogger(__name__)
 
