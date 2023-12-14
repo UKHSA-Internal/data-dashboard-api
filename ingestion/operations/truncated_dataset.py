@@ -79,8 +79,14 @@ def clear_metrics_tables() -> None:
     logger.info("Completed deleting existing metrics records")
 
 
-def upload_truncated_test_data() -> None:
+def upload_truncated_test_data(multiprocessing_enabled: bool = True) -> None:
     """Uploads the truncated test data set to the database after clearing existing metrics records
+
+    Args:
+        multiprocessing_enabled: Whether to upload the truncated test data
+            by making use of N processes on the current machine.
+            Whereby the N == No. of cores on the current machine.
+            Otherwise, upload synchronously.
 
     Notes:
         This will create records for all `CoreHeadline`, `CoreTimeSeries`
@@ -98,8 +104,12 @@ def upload_truncated_test_data() -> None:
 
     test_source_data_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
-    run_with_multiple_processes(
-        upload_function=_upload_data_as_file, items=test_source_data_file_paths
-    )
+    if multiprocessing_enabled:
+        run_with_multiple_processes(
+            upload_function=_upload_data_as_file, items=test_source_data_file_paths
+        )
+    else:
+        for test_source_data_file_path in test_source_data_file_paths:
+            _upload_data_as_file(filepath=test_source_data_file_path)
 
     logger.info("Completed truncated dataset upload")
