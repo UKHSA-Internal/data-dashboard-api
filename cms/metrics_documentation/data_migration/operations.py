@@ -102,3 +102,13 @@ def remove_metrics_documentation_child_entries() -> None:
 
     """
     MetricsDocumentationChildEntry.objects.all().delete()
+
+
+def remove_metrics_documentation_parent_page() -> None:
+    """Removes the `MetricsDocumentationParentPage` record from the database
+
+    Returns:
+        None
+
+    """
+    MetricsDocumentationParentPage.objects.all().delete()

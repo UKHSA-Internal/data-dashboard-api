@@ -7,6 +7,7 @@ from cms.metrics_documentation.data_migration.handlers import (
     forward_migration_metrics_documentation_child_entries,
     forward_migration_metrics_documentation_parent_page,
     reverse_migration_metrics_documentation_child_entries,
+    reverse_migration_metrics_documentation_parent_page,
 )
 from cms.metrics_documentation.models import MetricsDocumentationParentPage
 
@@ -167,3 +168,31 @@ class TestReverseMigrationMetricsDocumentationChildEntries:
 
         # Then
         spy_remove_metrics_documentation_child_entries.assert_called_once()
+
+
+class TestReverseMigrationMetricsDocumentationParentPage:
+    @mock.patch(f"{MODULE_PATH}.remove_metrics_documentation_parent_page")
+    def test_delegates_call_successfully(
+        self, spy_remove_metrics_documentation_parent_page: mock.MagicMock
+    ):
+        """
+        Given mocked django objects for the apps and schema editor
+        When `reverse_migration_metrics_documentation_parent_page()` is called
+        Then the call is delegated to `remove_metrics_documentation_parent_page()`
+
+        Patches:
+            `spy_remove_metrics_documentation_parent_page`: For the main assertion
+
+        """
+        # Given
+        mocked_apps = mock.Mock()
+        mocked_schema_editor = mock.Mock()
+
+        # When
+        reverse_migration_metrics_documentation_parent_page(
+            apps=mocked_apps,
+            schema_editor=mocked_schema_editor,
+        )
+
+        # Then
+        spy_remove_metrics_documentation_parent_page.assert_called_once()

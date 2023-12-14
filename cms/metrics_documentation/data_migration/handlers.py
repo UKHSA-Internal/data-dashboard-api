@@ -5,6 +5,7 @@ from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_child_entries,
     create_metrics_documentation_parent_page,
     remove_metrics_documentation_child_entries,
+    remove_metrics_documentation_parent_page,
 )
 from cms.metrics_documentation.models import MetricsDocumentationParentPage
 
@@ -56,3 +57,16 @@ def reverse_migration_metrics_documentation_child_entries(apps, schema_editor) -
         None
     """
     remove_metrics_documentation_child_entries()
+
+
+def reverse_migration_metrics_documentation_parent_page(apps, schema_editor) -> None:
+    """Reverses the parent page migration by removing the page.
+
+    Args:
+        apps: instance of `django.apps.registry.Apps` containing historical models.
+        schema_editor: instance of `SchemaEditor`
+
+    Returns:
+        None
+    """
+    remove_metrics_documentation_parent_page()
