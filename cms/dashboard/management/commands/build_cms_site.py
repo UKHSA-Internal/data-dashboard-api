@@ -182,10 +182,7 @@ class Command(BaseCommand):
         Wipe the existing CMS pages and load in new ones
         """
 
-        # Wipe the existing site and pages
-        Site.objects.all().delete()
-        # delete snippet
-        Page.objects.filter(pk__gte=2).delete()  # Wagtail welcome page and all others
+        self._clear_cms()
 
         # Make a new home page
         title = "UKHSA Dashboard Root"
@@ -230,3 +227,10 @@ class Command(BaseCommand):
 
         create_metrics_documentation_parent_page()
         create_metrics_documentation_child_entries()
+
+    @staticmethod
+    def _clear_cms() -> None:
+        # Wipe the existing site, pages & badges
+        Site.objects.all().delete()
+        Badge.objects.all().delete()
+        Page.objects.filter(pk__gte=2).delete()  # Wagtail welcome page and all others
