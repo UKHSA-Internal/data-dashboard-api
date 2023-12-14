@@ -1,6 +1,8 @@
 import pytest
 
-from tests.fakes.factories.cms.metrics_documentation_factory import FakeMetricsDocumentationParentPageFactory
+from tests.fakes.factories.cms.metrics_documentation_factory import (
+    FakeMetricsDocumentationParentPageFactory,
+)
 
 
 @pytest.mark.django_db

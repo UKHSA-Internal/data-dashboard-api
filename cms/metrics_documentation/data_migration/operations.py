@@ -62,4 +62,4 @@ def create_metrics_documentation_child_entries() -> None:
 
 
 def remove_metrics_documentation_child_entries() -> None:
-    pass
+    MetricsDocumentationChildEntry.objects.all().delete()

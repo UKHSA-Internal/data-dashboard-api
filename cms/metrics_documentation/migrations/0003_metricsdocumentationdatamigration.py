@@ -9,6 +9,7 @@ from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page,
     create_metrics_documentation_child_entries,
+    remove_metrics_documentation_child_entries,
 )
 
 FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"
@@ -67,7 +68,7 @@ def reverse_migration_metrics_documentation_child_entries(apps, schema_editor) -
     Returns:
         None
     """
-    MetricsDocumentationChildEntry.objects.all().delete()
+    remove_metrics_documentation_child_entries()
 
 
 class Migration(migrations.Migration):
