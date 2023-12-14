@@ -1,6 +1,8 @@
 import datetime
 import json
 
+from wagtail.models import Page
+
 from cms.home.models import HomePage
 from cms.metrics_documentation.data_migration.import_child_entries import (
     get_metrics_definitions,
@@ -21,6 +23,11 @@ def load_metric_documentation_parent_page() -> dict:
     path = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/metrics_documentation.json"
     with open(path, "rb") as file:
         return json.load(file)
+
+
+def _add_page_as_subpage_to_parent(subpage: Page, parent_page: HomePage) -> None:
+    subpage = parent_page.add_child(instance=subpage)
+    subpage.save_revision().publish()
 
 
 def create_metrics_documentation_parent_page() -> None:
@@ -46,8 +53,7 @@ def create_metrics_documentation_parent_page() -> None:
             date_posted=datetime.datetime.today(),
             body=parent_page_data["body"],
         )
-        metrics_parent = root_page.add_child(instance=metrics_parent)
-        metrics_parent.save_revision().publish()
+        _add_page_as_subpage_to_parent(subpage=metrics_parent, parent_page=root_page)
 
 
 def create_metrics_documentation_child_entries() -> None:
@@ -70,8 +76,7 @@ def create_metrics_documentation_child_entries() -> None:
     )
     for entry in entries:
         metrics_child = MetricsDocumentationChildEntry(**entry)
-        metrics_child = parent_page.add_child(instance=metrics_child)
-        metrics_child.save_revision().publish()
+        _add_page_as_subpage_to_parent(subpage=metrics_child, parent_page=parent_page)
 
 
 def remove_metrics_documentation_child_entries() -> None:
