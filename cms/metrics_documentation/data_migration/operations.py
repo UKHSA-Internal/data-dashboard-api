@@ -2,7 +2,9 @@ import datetime
 import json
 
 from cms.home.models import HomePage
-from cms.metrics_documentation.data_migration.import_child_entries import get_metrics_definitions
+from cms.metrics_documentation.data_migration.import_child_entries import (
+    get_metrics_definitions,
+)
 from cms.metrics_documentation.models import (
     MetricsDocumentationChildEntry,
     MetricsDocumentationParentPage,
@@ -50,7 +52,9 @@ def create_metrics_documentation_child_entries() -> None:
         None
     """
     entries = get_metrics_definitions()
-    parent_page = MetricsDocumentationParentPage.objects.get(slug="metrics-documentation")
+    parent_page = MetricsDocumentationParentPage.objects.get(
+        slug="metrics-documentation"
+    )
     for entry in entries:
         metrics_child = MetricsDocumentationChildEntry(**entry)
         metrics_child = parent_page.add_child(instance=metrics_child)
