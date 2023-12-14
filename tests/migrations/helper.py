@@ -48,6 +48,8 @@ class MigrationTestHelper:
 
     @classmethod
     def _create_migration_executor(cls) -> MigrationExecutor:
+    @property
+    def _migration_executor(self) -> MigrationExecutor:
         return MigrationExecutor(connection)
 
     def migrate_to_node(self, node: list[tuple[str, str]]) -> None:
@@ -59,8 +61,8 @@ class MigrationTestHelper:
 
         """
         # Migrate to the given node
-        migration_executor = self._create_migration_executor()
-        migration_executor.migrate(node)
+        migration_executor = self._migration_executor
+        migration_executor.migrate(targets=node)
 
         # Load the project state of the application at the point of the new migration node
         self.application_registry = migration_executor.loader.project_state(node).apps
