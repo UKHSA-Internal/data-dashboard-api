@@ -1,5 +1,4 @@
 from cms.metrics_documentation.models import (
-    MetricsDocumentationChildEntry,
     MetricsDocumentationParentPage,
 )
 from cms.home.models import HomePage
