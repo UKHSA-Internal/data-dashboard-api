@@ -11,14 +11,6 @@ from cms.metrics_documentation.data_migration.operations import (
     remove_metrics_documentation_child_entries,
 )
 
-FILE_PATH = f"{ROOT_LEVEL_BASE_DIR}/cms/dashboard/templates/cms_starting_pages/"
-
-
-class RootPageDoesNotExist:
-    def __init__(self):
-        message = "There is no home page to act as your entries root."
-        super().__init__(message)
-
 
 def forward_migration_metrics_documentation_parent_page(apps, schema_editor) -> None:
     """Creates parent page for data migration if one doesn't exist.
