@@ -40,7 +40,7 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
         "title": row[0],
         "seo_title": f"{row[0]} - {row[1].split('_')[0]} | UKHSA data dashboard",
         "search_description": row[4],
-        "date_posted": datetime.datetime.today(),
+        "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
         "page_description": row[4],
         "metric": row[1],
         "body": build_sections(
