@@ -51,7 +51,7 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
         metrics_documentation_child_entry = self.get_model(
             self.metrics_documentation_child_entry
         )
-        assert metrics_documentation_child_entry.objects.count() == 55
+        assert metrics_documentation_child_entry.objects.count() == 53
 
         # When
         self.migrate_backward()
