@@ -2,6 +2,7 @@ import datetime
 from unittest import mock
 
 from openpyxl import Workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 from cms.metrics_documentation.data_migration.child_entries import (
     _load_source_data_as_worksheet,
@@ -10,7 +11,6 @@ from cms.metrics_documentation.data_migration.child_entries import (
     get_metrics_definitions,
 )
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
-from openpyxl.worksheet.worksheet import Worksheet
 
 MODULE_PATH = "cms.metrics_documentation.data_migration.child_entries"
 
