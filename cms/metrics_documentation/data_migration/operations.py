@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 
+from django.db.models import Manager
 from wagtail.models import Page
 
 from cms.home.models import HomePage
@@ -20,6 +21,11 @@ from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 logger = logging.getLogger(__name__)
 
 
+DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER = (
+    MetricsDocumentationParentPage.objects
+)
+
+
 def load_metric_documentation_parent_page() -> dict:
     """Returns a JSON Object of metrics documentation parent page date.
 
@@ -36,11 +42,19 @@ def _add_page_as_subpage_to_parent(subpage: Page, parent_page: HomePage) -> None
     subpage.save_revision().publish()
 
 
-def create_metrics_documentation_parent_page() -> None:
+def create_metrics_documentation_parent_page(
+    metrics_documentation_parent_page_manager: Manager = DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER,
+) -> MetricsDocumentationParentPage:
     """Creates parent page for data migration if one doesn't exist.
 
+    Args:
+        `metrics_documentation_parent_page_manager`: The model manager
+            for the `MetricsDocumentationParentPage` model.
+            Defaults to the concrete manager
+            on `MetricsDocumentationParentPage.objects`
+
     Returns:
-        None
+        The fetched or created `MetricsDocumentationParentPage` model
 
     Raises:
         `HomePage.DoesNotExist`: If there is no root page model
@@ -50,7 +64,9 @@ def create_metrics_documentation_parent_page() -> None:
 
     """
     try:
-        return MetricsDocumentationParentPage.objects.get(slug="metrics-documentation")
+        return metrics_documentation_parent_page_manager.get(
+            slug="metrics-documentation"
+        )
     except MetricsDocumentationParentPage.DoesNotExist:
         root_page = HomePage.objects.get(slug="ukhsa-dashboard-root")
         parent_page_data = load_metric_documentation_parent_page()
