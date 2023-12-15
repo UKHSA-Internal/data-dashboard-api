@@ -83,24 +83,28 @@ def _create_metrics_documentation_parent_page():
     return metrics_parent
 
 
-def create_metrics_documentation_child_entries() -> None:
-    """Creates child entries for data migration.
+def create_metrics_documentation_parent_page_and_child_entries() -> None:
+    """Creates the parent page & child entries for the metrics documentation app.
+
+    Notes:
+        This will also create the requisite
+        `MetricsDocumentationParentPage` model
+        if it does not already exist
 
     Returns:
         None
 
     Raises:
-        `MetricsDocumentationParentPage.DoesNotExist`: If
-            there is no parent page model with the
-            reserved slug of "metrics-documentation".
-            This typically happens when the application
-            is being bootstrapped for the first time
+        `HomePage.DoesNotExist`: If there is no root page model
+            with the reserved slug of "ukhsa-dashboard-root".
+            This typically happens when the migrations
+            are being applied to an empty application
+            and has not been bootstrapped yet.
 
     """
     entries: list[dict[str | list[dict]]] = get_metrics_definitions()
-    parent_page = MetricsDocumentationParentPage.objects.get(
-        slug="metrics-documentation"
-    )
+    parent_page = get_or_create_metrics_documentation_parent_page()
+
     for entry in entries:
         metrics_child = MetricsDocumentationChildEntry(**entry)
         try:

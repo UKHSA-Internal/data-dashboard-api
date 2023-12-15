@@ -8,11 +8,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=handlers.forward_migration_metrics_documentation_parent_page,
-            reverse_code=handlers.reverse_migration_metrics_documentation_parent_page,
-        ),
-        migrations.RunPython(
-            code=handlers.forward_migration_metrics_documentation_child_entries,
-            reverse_code=handlers.reverse_migration_metrics_documentation_child_entries,
+            code=handlers.forward_migration_metrics_documentation_models,
+            reverse_code=handlers.reverse_migration_metrics_documentation_models,
         ),
     ]

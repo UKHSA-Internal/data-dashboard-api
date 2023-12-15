@@ -16,14 +16,21 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
     def metrics_documentation_child_entry(self) -> str:
         return "MetricsDocumentationChildEntry"
 
+    @property
+    def metrics_documentation_parent_page(self) -> str:
+        return "MetricsDocumentationParentPage"
+
     def test_forward_and_then_backward_migration(self):
         """
         Given the database contains a full set of metrics data
-        And no existing `MetricsDocumentationChildEntry` records
+        And no existing `MetricsDocumentationChildEntry`
+            or `MetricsDocumentationParentPage` records
         When the new migration is applied
-        Then the `MetricsDocumentationChildEntries` records are created
+        Then the `MetricsDocumentationChildEntry`
+            & `MetricsDocumentationParentPage` records are created
         When the new migration is rolled back
-        Then the `MetricsDocumentationChildEntries` records are deleted
+        Then the `MetricsDocumentationChildEntry`
+            & `MetricsDocumentationParentPage` records are deleted
         """
         # Given
         self.migrate_backward()
@@ -37,6 +44,12 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
         # for the `MetricsDocumentationParentPage` to be creatable
         self._create_root_page()
 
+        # Verify that no `MetricsDocumentationParentPage` models currently exist
+        metrics_documentation_parent_page = self.get_model(
+            self.metrics_documentation_parent_page
+        )
+        assert not metrics_documentation_parent_page.objects.exists()
+
         # Verify that no `MetricsDocumentationChildEntry` models currently exist
         metrics_documentation_child_entry = self.get_model(
             self.metrics_documentation_child_entry
@@ -47,6 +60,12 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
         self.migrate_forward()
 
         # Then
+        # Verify that the `MetricsDocumentationParentPage` model was populated as expected
+        metrics_documentation_parent_page = self.get_model(
+            self.metrics_documentation_parent_page
+        )
+        assert metrics_documentation_parent_page.objects.count() == 1
+
         # Verify that the `MetricsDocumentationChildEntry` models were populated as expected
         metrics_documentation_child_entry = self.get_model(
             self.metrics_documentation_child_entry
@@ -57,6 +76,12 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
         self.migrate_backward()
 
         # Then
+        # Verify that the `MetricsDocumentationParentPage` model is reverted
+        metrics_documentation_parent_page = self.get_model(
+            self.metrics_documentation_parent_page
+        )
+        assert not metrics_documentation_parent_page.objects.exists()
+
         # Verify that all the `MetricsDocumentationChildEntry` models
         # which were created by the latest migration were reverted
         metrics_documentation_child_entry = self.get_model(
