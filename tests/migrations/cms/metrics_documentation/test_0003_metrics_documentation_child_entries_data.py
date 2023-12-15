@@ -1,9 +1,6 @@
-import sys
-
 from cms.home.models import HomePage
 from wagtail.models import Page
 from django.core.management import call_command
-
 import pytest
 
 from tests.migrations.helper import MigrationTests
@@ -19,15 +16,18 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
     def metrics_documentation_child_entry(self) -> str:
         return "MetricsDocumentationChildEntry"
 
-    def test_forwards_migration(self):
+    def test_forward_and_then_backward_migration(self):
         """
         Given the database contains a full set of metrics data
         And no existing `MetricsDocumentationChildEntry` records
         When the new migration is applied
         Then the `MetricsDocumentationChildEntries` records are created
+        When the new migration is rolled back
+        Then the `MetricsDocumentationChildEntries` records are deleted
         """
         # Given
-        self.migrate_back()
+        self.migrate_backward()
+
         # Populate the db with metrics data.
         # As the `MetricsDocumentationChildEntry` models will be verified with `Metric` and `Topic` models
         call_command(
@@ -52,6 +52,17 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
             self.metrics_documentation_child_entry
         )
         assert metrics_documentation_child_entry.objects.count() == 55
+
+        # When
+        self.migrate_backward()
+
+        # Then
+        # Verify that all the `MetricsDocumentationChildEntry` models
+        # which were created by the latest migration were reverted
+        metrics_documentation_child_entry = self.get_model(
+            self.metrics_documentation_child_entry
+        )
+        assert not metrics_documentation_child_entry.objects.exists()
 
     @staticmethod
     def _create_root_page() -> HomePage:
