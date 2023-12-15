@@ -158,6 +158,7 @@ class MetricsAPIInterface:
 
     def get_all_unique_percent_change_type_names(self) -> QuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change` & `percent`
+
         Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
 
         Returns:
