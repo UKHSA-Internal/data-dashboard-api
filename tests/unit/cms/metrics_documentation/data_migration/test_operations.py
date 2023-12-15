@@ -44,3 +44,36 @@ class TestGetOrCreateMetricsDocumentationParentPage:
         # Then
         assert returned_parent_page == parent_page
         spy_create_metrics_documentation_parent_page.assert_not_called()
+
+    @mock.patch(f"{MODULE_PATH}._create_metrics_documentation_parent_page")
+    def test_delegates_call_to_create_metrics_documentation_parent_page_when_not_readily_available(
+        self, spy_create_metrics_documentation_parent_page: mock.MagicMock
+    ):
+        """
+        Given no existing `MetricsDocumentationParentPage` model
+        When `get_or_create_metrics_documentation_parent_page()` is called
+        Then the call is delegated to
+            `_create_metrics_documentation_parent_page()`
+
+        Patches:
+            `spy_create_metrics_documentation_parent_page`: To check
+                that a new model is created when there is
+                no pre-existing valid parent page model
+
+        """
+        # Given
+        fake_metrics_documentation_parent_page_manager = (
+            FakeMetricsDocumentationParentPageManager(pages=[])
+        )
+
+        # When
+        returned_parent_page = get_or_create_metrics_documentation_parent_page(
+            metrics_documentation_parent_page_manager=fake_metrics_documentation_parent_page_manager
+        )
+
+        # Then
+        assert (
+            returned_parent_page
+            == spy_create_metrics_documentation_parent_page.return_value
+        )
+        spy_create_metrics_documentation_parent_page.assert_called_once()
