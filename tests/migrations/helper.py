@@ -47,7 +47,7 @@ class MigrationTests:
 
     @property
     def current_django_app(self) -> str:
-        return NotImplementedError("Provide the `current_django_app` to the test class")
+        raise NotImplementedError("Provide the `current_django_app` to the test class")
 
     @property
     def previous_node(self) -> list[tuple[str, str]]:
@@ -59,7 +59,7 @@ class MigrationTests:
 
     @property
     def _migration_executor(self) -> MigrationExecutor:
-        return MigrationExecutor(connection)
+        return MigrationExecutor(connection=connection)
 
     def migrate_to_node(self, node: list[tuple[str, str]]) -> None:
         """Migrates the state of the project to the given `node`
@@ -78,7 +78,7 @@ class MigrationTests:
             nodes=node
         ).apps
 
-    def migrate_back(self) -> None:
+    def migrate_backward(self) -> None:
         """Migrates the project state to the node associated with the `previous_migration_name`"""
         self.migrate_to_node(node=self.previous_node)
 
