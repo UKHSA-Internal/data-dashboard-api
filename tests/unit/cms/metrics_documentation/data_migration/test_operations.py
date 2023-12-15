@@ -1,7 +1,7 @@
 from unittest import mock
 
 from cms.metrics_documentation.data_migration.operations import (
-    create_metrics_documentation_parent_page,
+    get_or_create_metrics_documentation_parent_page,
 )
 from tests.fakes.managers.cms.metrics_documentation_parent_page_manager import (
     FakeMetricsDocumentationParentPageManager,
@@ -13,7 +13,7 @@ from tests.fakes.models.cms.metrics_documentation_parent import (
 MODULE_PATH = "cms.metrics_documentation.data_migration.operations"
 
 
-class TestCreateMetricsDocumentationParentPage:
+class TestGetOrCreateMetricsDocumentationParentPage:
     @mock.patch(f"{MODULE_PATH}._create_metrics_documentation_parent_page")
     def test_defaults_to_existing_parent_page_if_available(
         self, spy_create_metrics_documentation_parent_page: mock.MagicMock
@@ -37,7 +37,7 @@ class TestCreateMetricsDocumentationParentPage:
         )
 
         # When
-        returned_parent_page = create_metrics_documentation_parent_page(
+        returned_parent_page = get_or_create_metrics_documentation_parent_page(
             metrics_documentation_parent_page_manager=fake_metrics_documentation_parent_page_manager
         )
 

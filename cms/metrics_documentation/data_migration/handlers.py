@@ -3,7 +3,7 @@ import logging
 from cms.home.models import HomePage
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_child_entries,
-    create_metrics_documentation_parent_page,
+    get_or_create_metrics_documentation_parent_page,
     remove_metrics_documentation_child_entries,
     remove_metrics_documentation_parent_page,
 )
@@ -23,7 +23,7 @@ def forward_migration_metrics_documentation_parent_page(apps, schema_editor) -> 
         None
     """
     try:
-        return create_metrics_documentation_parent_page()
+        return get_or_create_metrics_documentation_parent_page()
     except HomePage.DoesNotExist:
         logger.info("No Root page available to create metrics docs parent page with")
 

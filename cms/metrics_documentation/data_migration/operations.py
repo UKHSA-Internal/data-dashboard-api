@@ -42,7 +42,7 @@ def _add_page_as_subpage_to_parent(subpage: Page, parent_page: HomePage) -> None
     subpage.save_revision().publish()
 
 
-def create_metrics_documentation_parent_page(
+def get_or_create_metrics_documentation_parent_page(
     metrics_documentation_parent_page_manager: Manager = DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER,
 ) -> MetricsDocumentationParentPage:
     """Creates parent page for data migration if one doesn't exist.
@@ -68,14 +68,19 @@ def create_metrics_documentation_parent_page(
             slug="metrics-documentation"
         )
     except MetricsDocumentationParentPage.DoesNotExist:
-        root_page = HomePage.objects.get(slug="ukhsa-dashboard-root")
-        parent_page_data = load_metric_documentation_parent_page()
-        metrics_parent = MetricsDocumentationParentPage(
-            title=parent_page_data["title"],
-            date_posted=datetime.datetime.today(),
-            body=parent_page_data["body"],
-        )
-        _add_page_as_subpage_to_parent(subpage=metrics_parent, parent_page=root_page)
+        return _create_metrics_documentation_parent_page()
+
+
+def _create_metrics_documentation_parent_page():
+    root_page = HomePage.objects.get(slug="ukhsa-dashboard-root")
+    parent_page_data = load_metric_documentation_parent_page()
+    metrics_parent = MetricsDocumentationParentPage(
+        title=parent_page_data["title"],
+        date_posted=datetime.datetime.today(),
+        body=parent_page_data["body"],
+    )
+    _add_page_as_subpage_to_parent(subpage=metrics_parent, parent_page=root_page)
+    return metrics_parent
 
 
 def create_metrics_documentation_child_entries() -> None:

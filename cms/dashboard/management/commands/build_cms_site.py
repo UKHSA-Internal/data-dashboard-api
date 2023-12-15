@@ -13,7 +13,7 @@ from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_child_entries,
-    create_metrics_documentation_parent_page,
+    get_or_create_metrics_documentation_parent_page,
 )
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
@@ -225,7 +225,7 @@ class Command(BaseCommand):
             parent_page=whats_new_parent_page,
         )
 
-        create_metrics_documentation_parent_page()
+        get_or_create_metrics_documentation_parent_page()
         create_metrics_documentation_child_entries()
 
     @staticmethod
