@@ -27,7 +27,7 @@ def build_sections(sections: list[tuple[str, str]]) -> list[dict]:
     ]
 
 
-def build_entry_from_row_data(row) -> dict[str | list[dict]]:
+def build_entry_from_row_data(row) -> dict[str, str | list[dict]]:
     """Build a metrics documentation page entry.
 
     Args:
@@ -36,13 +36,16 @@ def build_entry_from_row_data(row) -> dict[str | list[dict]]:
     Returns:
         dictionary containing metric documentation entry.
     """
+    title: str = row[0]
+    page_description: str = row[4]
+    metric: str = row[1]
     return {
-        "title": row[0],
-        "seo_title": f"{row[0]} - {row[1].split('_')[0]} | UKHSA data dashboard",
-        "search_description": row[4],
+        "title": title,
+        "seo_title": f"{title} - {metric.split('_')[0]} | UKHSA data dashboard",
+        "search_description": page_description,
         "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
-        "page_description": row[4],
-        "metric": row[1],
+        "page_description": page_description,
+        "metric": metric,
         "body": build_sections(
             sections=[
                 ("Rationale", row[2]),
