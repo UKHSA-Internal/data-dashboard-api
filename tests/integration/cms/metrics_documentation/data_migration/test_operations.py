@@ -73,3 +73,29 @@ class TestRemoveMetricsDocumentationParentPage:
         assert not MetricsDocumentationParentPage.objects.exists()
 
 
+class TestGetOrCreateMetricsDocumentationParentPage:
+    @pytest.mark.django_db
+    def test_creates_parent_page_if_not_readily_available(
+        self, dashboard_root_page: HomePage
+    ):
+        """
+        Given an existing `HomePage` record for the root page
+        And no pre-existing `MetricsDocumentationParentPage`
+        When `get_or_create_metrics_documentation_parent_page()` is called
+        Then a new `MetricsDocumentationParentPage` is created
+        """
+        # Given
+        root_page = dashboard_root_page
+        assert not MetricsDocumentationParentPage.objects.exists()
+
+        # When
+        parent_page: MetricsDocumentationParentPage = (
+            get_or_create_metrics_documentation_parent_page()
+        )
+
+        # Then
+        assert parent_page.slug == "metrics-documentation"
+        assert parent_page.title == "Metrics Documentation"
+        # Check the `MetricsDocumentationParentPage`
+        # was added as a child of the base root page
+        assert parent_page.is_child_of(node=root_page)
