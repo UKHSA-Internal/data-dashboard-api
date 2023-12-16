@@ -2,10 +2,16 @@ import datetime
 
 import pytest
 
+from cms.home.models import HomePage
 from cms.metrics_documentation.data_migration.operations import (
+    get_or_create_metrics_documentation_parent_page,
     remove_metrics_documentation_child_entries,
+    remove_metrics_documentation_parent_page,
 )
-from cms.metrics_documentation.models import MetricsDocumentationChildEntry
+from cms.metrics_documentation.models import (
+    MetricsDocumentationChildEntry,
+    MetricsDocumentationParentPage,
+)
 from metrics.data.models.core_models import Metric, Topic
 
 
@@ -38,3 +44,32 @@ class TestRemoveMetricsDocumentationChildEntries:
 
         # Then
         assert not MetricsDocumentationChildEntry.objects.exists()
+
+
+class TestRemoveMetricsDocumentationParentPage:
+    @pytest.mark.django_db
+    def test_removes_existing_parent_page(self):
+        """
+        Given an existing `MetricsDocumentationParentPage`
+            model in the database
+        When `remove_metrics_documentation_parent_page()` is called
+        Then all `MetricsDocumentationParentPage` models are removed
+        """
+        # Given
+        MetricsDocumentationParentPage.objects.create(
+            path="abc",
+            depth=3,
+            title="Test",
+            slug="metrics-documentation",
+            date_posted=datetime.date.today(),
+            body="xyz",
+        )
+        assert MetricsDocumentationParentPage.objects.exists()
+
+        # When
+        remove_metrics_documentation_parent_page()
+
+        # Then
+        assert not MetricsDocumentationParentPage.objects.exists()
+
+
