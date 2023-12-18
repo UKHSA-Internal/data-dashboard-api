@@ -75,6 +75,6 @@ def get_metrics_definitions() -> list[dict[str | list[dict]]]:
     """
     work_sheet = _load_source_data_as_worksheet()
     return [
-        build_entry_from_row_data(row)
+        build_entry_from_row_data(row=row)
         for row in work_sheet.iter_rows(min_row=2, values_only=True)
     ]
