@@ -66,6 +66,14 @@ class MetricsDocumentationChildEntry(Page):
         ]
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["metric"],
+                name="There can only be 1 `MetricsDocumentationChildEntry` for each `metric`",
+            )
+        ]
+
     def __init__(self, *args, **kwargs):
         """
         To dynamically load metric names into a choices field without
