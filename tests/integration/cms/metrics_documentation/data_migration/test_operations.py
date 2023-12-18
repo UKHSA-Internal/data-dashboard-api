@@ -101,6 +101,7 @@ class TestGetOrCreateMetricsDocumentationParentPage:
         # Check the `MetricsDocumentationParentPage`
         # was added as a child of the base root page
         assert parent_page.is_child_of(node=root_page)
+        assert parent_page.show_in_menus
 
 
 class TestCreateMetricsDocumentationParentPageAndChildEntries:
