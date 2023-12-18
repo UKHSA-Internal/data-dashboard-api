@@ -1,9 +1,11 @@
 import datetime
 
 import pytest
+from django.core.management import call_command
 
 from cms.home.models import HomePage
 from cms.metrics_documentation.data_migration.operations import (
+    create_metrics_documentation_parent_page_and_child_entries,
     get_or_create_metrics_documentation_parent_page,
     remove_metrics_documentation_child_entries,
     remove_metrics_documentation_parent_page,
@@ -99,3 +101,54 @@ class TestGetOrCreateMetricsDocumentationParentPage:
         # Check the `MetricsDocumentationParentPage`
         # was added as a child of the base root page
         assert parent_page.is_child_of(node=root_page)
+
+
+class TestCreateMetricsDocumentationParentPageAndChildEntries:
+    @pytest.mark.django_db
+    def test_creates_correct_child_entries(self, dashboard_root_page: HomePage):
+        """
+        Given a number of existing `Topic` and `Metric` combinations
+        When `create_metrics_documentation_parent_page_and_child_entries()` is called
+        Then the correct child entries are created
+            for the corresponding `Metric` records
+        """
+        # Given
+        call_command("upload_truncated_test_data")
+        healthcare_admission_metric = Metric.objects.get(
+            name="RSV_healthcare_admissionRateByWeek"
+        )
+
+        # When
+        create_metrics_documentation_parent_page_and_child_entries()
+
+        # Then
+        healthcare_admission_rate_child_entry = (
+            MetricsDocumentationChildEntry.objects.get(
+                metric=healthcare_admission_metric.name
+            )
+        )
+
+        assert healthcare_admission_rate_child_entry.metric_group == "healthcare"
+        expected_title = "RSV healthcare admission rate by week"
+        assert (
+            healthcare_admission_rate_child_entry.slug
+            == expected_title.lower().replace(" ", "-")
+        )
+        assert healthcare_admission_rate_child_entry.topic == "RSV"
+        assert healthcare_admission_rate_child_entry.title == expected_title
+        assert (
+            healthcare_admission_rate_child_entry.seo_title
+            == f"{expected_title} | UKHSA data dashboard"
+        )
+
+        expected_page_description = (
+            "This metric shows the rate per 100,000 people of the total number of people "
+            "with confirmed RSV admitted to hospital "
+            "(general admissions plus admissions to ICU and HDU) "
+            "in the 7 days up to and including the date shown."
+        )
+        assert (
+            healthcare_admission_rate_child_entry.search_description
+            == healthcare_admission_rate_child_entry.page_description
+            == expected_page_description
+        )
