@@ -41,7 +41,7 @@ def build_entry_from_row_data(row) -> dict[str, str | list[dict]]:
     metric: str = row[1]
     return {
         "title": title,
-        "seo_title": f"{title} - {metric.split('_')[0]} | UKHSA data dashboard",
+        "seo_title": f"{title} | UKHSA data dashboard",
         "search_description": page_description,
         "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
         "page_description": page_description,

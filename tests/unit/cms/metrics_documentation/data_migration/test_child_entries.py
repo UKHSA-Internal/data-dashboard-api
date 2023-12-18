@@ -68,7 +68,7 @@ class TestBuildEntryFromRowData:
         spy_build_sections.return_value = []
         expected_response = {
             "title": "Fake title",
-            "seo_title": "Fake title - Fake | UKHSA data dashboard",
+            "seo_title": "Fake title | UKHSA data dashboard",
             "search_description": "Fake page description",
             "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
             "page_description": "Fake page description",
@@ -110,7 +110,7 @@ class TestGetMetricsDefinitions:
         spy_load_source_data_as_worksheet: mock.MagicMock,
     ):
         """
-        Given a fake excell spread sheet (openpyxl worksheet).
+        Given a fake Excel spreadsheet (openpyxl worksheet).
         When the `get_metrics_definition()` method is called.
         Then the expected response should be returned.
         """
@@ -119,7 +119,7 @@ class TestGetMetricsDefinitions:
         expected_response = [
             {
                 "title": "Fake title",
-                "seo_title": "Fake title - Fake | UKHSA data dashboard",
+                "seo_title": "Fake title | UKHSA data dashboard",
                 "search_description": "Fake page description",
                 "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
                 "page_description": "Fake page description",
