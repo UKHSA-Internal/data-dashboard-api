@@ -1,5 +1,4 @@
 from cms.home.models import HomePage
-from wagtail.models import Page
 from django.core.management import call_command
 import pytest
 
@@ -20,7 +19,7 @@ class Test0004MetricsDocumentationChildEntriesData(MigrationTests):
     def metrics_documentation_parent_page(self) -> str:
         return "MetricsDocumentationParentPage"
 
-    def test_forward_and_then_backward_migration(self):
+    def test_forward_and_then_backward_migration(self, dashboard_root_page: HomePage):
         """
         Given the database contains a full set of metrics data
         And no existing `MetricsDocumentationChildEntry`
@@ -40,9 +39,6 @@ class Test0004MetricsDocumentationChildEntriesData(MigrationTests):
         call_command(
             command_name="upload_truncated_test_data", multiprocessing_enabled=False
         )
-        # The root page is required to be in place
-        # for the `MetricsDocumentationParentPage` to be creatable
-        self._create_root_page()
 
         # Verify that no `MetricsDocumentationParentPage` models currently exist
         metrics_documentation_parent_page = self.get_model(
@@ -88,17 +84,3 @@ class Test0004MetricsDocumentationChildEntriesData(MigrationTests):
             self.metrics_documentation_child_entry
         )
         assert not metrics_documentation_child_entry.objects.exists()
-
-    @staticmethod
-    def _create_root_page() -> HomePage:
-        root_page = HomePage(
-            title="UKHSA Dashboard Root",
-            slug="ukhsa-dashboard-root",
-        )
-
-        wagtail_root_page = Page.get_first_root_node()
-        root_page = wagtail_root_page.add_child(instance=root_page)
-        wagtail_root_page.save_revision().publish()
-
-        root_page.save_revision().publish()
-        return root_page
