@@ -27,7 +27,7 @@ def build_sections(sections: list[tuple[str, str]]) -> list[dict]:
     ]
 
 
-def build_entry_from_row_data(row) -> dict[str, str | list[dict]]:
+def build_entry_from_row_data(row: tuple[str, ...]) -> dict[str, str | list[dict]]:
     """Build a metrics documentation page entry.
 
     Args:
@@ -39,6 +39,7 @@ def build_entry_from_row_data(row) -> dict[str, str | list[dict]]:
     title: str = row[0]
     page_description: str = row[4]
     metric: str = row[1]
+    sections: list[tuple[str, str]] = gather_sections_and_omit_if_needed(row=row)
     return {
         "title": title,
         "seo_title": f"{title} | UKHSA data dashboard",
@@ -46,15 +47,35 @@ def build_entry_from_row_data(row) -> dict[str, str | list[dict]]:
         "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
         "page_description": page_description,
         "metric": metric,
-        "body": build_sections(
-            sections=[
-                ("Rationale", row[2]),
-                ("Definition", row[3]),
-                ("Methodology", row[5]),
-                ("Caveats", row[6]),
-            ]
-        ),
+        "body": build_sections(sections=sections),
     }
+
+
+def gather_sections_and_omit_if_needed(row: tuple[str, ...]) -> list[tuple[str, str]]:
+    """Builds a list of sections which can be parsed by the `build_sections()` function
+
+    Notes:
+        If an accompanying body of text for the section is an empty string,
+        then the section will be omitted entirely.
+
+    Args:
+        row: Tuple of strings representing each column value
+            of the given child entry
+
+    Returns:
+        List of tuples whereby each section consists of
+            1) The section title
+            2) The body of text for the associated section
+
+    """
+    title_indexes = [
+        ("Rationale", 2),
+        ("Definition", 3),
+        ("Methodology", 5),
+        ("Caveats", 6),
+    ]
+
+    return [(title, body) for title, index in title_indexes if (body := row[index])]
 
 
 def _load_source_data_as_worksheet() -> Worksheet:

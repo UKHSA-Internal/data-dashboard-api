@@ -8,6 +8,7 @@ from cms.metrics_documentation.data_migration.child_entries import (
     _load_source_data_as_worksheet,
     build_entry_from_row_data,
     build_sections,
+    gather_sections_and_omit_if_needed,
     get_metrics_definitions,
 )
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
@@ -41,6 +42,37 @@ class TestBuildSections:
                 "value": {"title": section[0], "body": section[1]},
             }
             assert expected_section in constructed_sections
+
+
+class TestGatherSectionsAndOmitIfNeeded:
+    def test_omits_empty_sections_with_an_empty_body(self):
+        """
+        Given a row which contains an empty section
+        When `gather_sections_and_omit_if_needed()` is called
+        Then the returned list omits the empty section
+        """
+        # Given
+        row = (
+            "fake-title",
+            "fake-metric-name",
+            "fake-rationale",
+            "fake-definition",
+            "fake-page-description",
+            "fake-methodology",
+            "",  # The body of text for the Caveats section is not provided
+        )
+
+        # When
+        sections = gather_sections_and_omit_if_needed(row=row)
+
+        # Then
+        expected_sections = [
+            ("Rationale", "fake-rationale"),
+            ("Definition", "fake-definition"),
+            ("Methodology", "fake-methodology"),
+            # Because body of text for the Caveats section was not provided, it is omitted
+        ]
+        assert sections == expected_sections
 
 
 class TestBuildEntryFromRowData:
