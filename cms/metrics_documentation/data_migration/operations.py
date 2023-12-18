@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 
+from django.core.exceptions import ValidationError
 from django.db.models import Manager
 from wagtail.models import Page
 
@@ -115,6 +116,12 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
             logger.warning(
                 "Metrics Documentation Child Entry for %s was not created. "
                 "Because the corresponding `Topic` was not created beforehand",
+                entry["metric"],
+            )
+        except ValidationError:
+            logger.warning(
+                "Metrics Documentation Child Entry for %s was not created. "
+                "Because the corresponding `Metric` was not created beforehand",
                 entry["metric"],
             )
 
