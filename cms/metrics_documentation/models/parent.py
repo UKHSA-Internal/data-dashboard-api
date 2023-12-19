@@ -66,6 +66,8 @@ class MetricsDocumentationParentPage(Page):
 
     objects = MetricsDocumentationParentPageManager()
 
+    subpage_types = ["metrics_documentation.MetricsDocumentationChildEntry", "common.CommonPage"]
+
     def clean(self) -> None:
         super().clean()
         self._raise_error_if_slug_not_metrics_documentation()
