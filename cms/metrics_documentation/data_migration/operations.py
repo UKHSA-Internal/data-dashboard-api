@@ -89,9 +89,12 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
     """Creates the parent page & child entries for the metrics documentation app.
 
     Notes:
-        This will also create the requisite
-        `MetricsDocumentationParentPage` model
-        if it does not already exist
+        - This will also create the requisite
+          `MetricsDocumentationParentPage` model
+          if it does not already exist
+        - This will also delete any existing
+          `MetricsDocumentationChildEntry` records
+          prior to creating the new child entries.
 
     Returns:
         None
@@ -106,6 +109,8 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
     """
     entries: list[dict[str | list[dict]]] = get_metrics_definitions()
     parent_page = get_or_create_metrics_documentation_parent_page()
+
+    remove_metrics_documentation_child_entries()
 
     for entry in entries:
         metrics_child = MetricsDocumentationChildEntry(**entry)
