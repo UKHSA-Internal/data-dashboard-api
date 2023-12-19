@@ -335,10 +335,10 @@ class TestHydrateCacheForAllPages:
 
 class TestGetAllDownloads:
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_lazy_loading")
     def test_delegates_calls_correctly(
         self,
-        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_create_crawler_for_lazy_loading: mock.MagicMock,
         spy_collect_all_pages: mock.MagicMock,
     ):
         """
@@ -348,7 +348,7 @@ class TestGetAllDownloads:
             crawler_get_all_downloads() methods.
         """
         # Given
-        crawler = spy_create_crawler_for_cache_checking_only.return_value
+        crawler = spy_create_crawler_for_lazy_loading.return_value
         fake_file_format = "csv"
 
         # When
@@ -357,16 +357,16 @@ class TestGetAllDownloads:
         # Then
         spy_collect_all_pages.assert_called_once()
         expected_pages = spy_collect_all_pages.return_value
-        spy_create_crawler_for_cache_checking_only.assert_called_once()
+        spy_create_crawler_for_lazy_loading.assert_called_once()
         crawler.get_all_downloads.assert_called_once_with(
             pages=expected_pages, file_format=fake_file_format
         )
 
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_lazy_loading")
     def test_default_file_format_can_be_changed_to_json(
         self,
-        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_create_crawler_for_lazy_loading: mock.MagicMock,
         spy_collect_all_pages,
     ):
         """
@@ -376,7 +376,7 @@ class TestGetAllDownloads:
         Then The file_format parameter set to json.
         """
         # Given
-        crawler = spy_create_crawler_for_cache_checking_only.return_value
+        crawler = spy_create_crawler_for_lazy_loading.return_value
         file_format = "json"
 
         # Then
@@ -389,10 +389,10 @@ class TestGetAllDownloads:
         )
 
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
+    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_lazy_loading")
     def test_default_file_format_is_csv(
         self,
-        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
+        spy_create_crawler_for_lazy_loading: mock.MagicMock,
         spy_collect_all_pages,
     ):
         """
@@ -401,7 +401,7 @@ class TestGetAllDownloads:
         Then The default file_format parameter is set to csv.
         """
         # Given
-        crawler = spy_create_crawler_for_cache_checking_only.return_value
+        crawler = spy_create_crawler_for_lazy_loading.return_value
 
         # When
         get_all_downloads()
