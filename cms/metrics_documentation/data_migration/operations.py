@@ -118,9 +118,9 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
 
     """
     entries: list[dict[str | list[dict]]] = get_metrics_definitions()
-    parent_page = get_or_create_metrics_documentation_parent_page()
-
     remove_metrics_documentation_child_entries()
+
+    parent_page = get_or_create_metrics_documentation_parent_page()
 
     for entry in entries:
         metrics_child = MetricsDocumentationChildEntry(**entry)
