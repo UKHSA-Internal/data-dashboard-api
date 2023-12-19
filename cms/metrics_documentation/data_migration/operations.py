@@ -38,7 +38,17 @@ def load_metric_documentation_parent_page() -> dict:
         return json.load(file)
 
 
-def _add_page_as_subpage_to_parent(subpage: Page, parent_page: HomePage) -> None:
+def add_page_as_subpage_to_parent(subpage: Page, parent_page: HomePage) -> None:
+    """Adds the given `subpage` as a child to the `parent_page`
+
+    Args:
+        subpage: The `Page` model to be added as the child node
+        parent_page: The parent model to add the `subpage` to
+
+    Returns:
+        None
+
+    """
     subpage = parent_page.add_child(instance=subpage)
     subpage.save_revision().publish()
 
@@ -81,7 +91,7 @@ def _create_metrics_documentation_parent_page():
         body=parent_page_data["body"],
         show_in_menus=False,
     )
-    _add_page_as_subpage_to_parent(subpage=metrics_parent, parent_page=root_page)
+    add_page_as_subpage_to_parent(subpage=metrics_parent, parent_page=root_page)
     return metrics_parent
 
 
@@ -115,7 +125,7 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
     for entry in entries:
         metrics_child = MetricsDocumentationChildEntry(**entry)
         try:
-            _add_page_as_subpage_to_parent(
+            add_page_as_subpage_to_parent(
                 subpage=metrics_child, parent_page=parent_page
             )
         except (InvalidTopicForChosenMetricForChildEntryError, AttributeError):
