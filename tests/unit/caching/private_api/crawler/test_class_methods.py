@@ -29,3 +29,17 @@ class TestPrivateAPICrawlerCreate:
 
         # Then
         assert crawler._internal_api_client.force_refresh
+
+    def test_create_crawler_for_lazy_loading(self):
+        """
+        Given no pre-existing `InternalAPIClient`
+        When the `create_crawler_for_lazy_loading` class method
+            is called from the `PrivateAPICrawler` class
+        Then the correct object is returned
+        """
+        # Given / When
+        crawler = PrivateAPICrawler.create_crawler_for_lazy_loading()
+
+        # Then
+        assert not crawler._internal_api_client.force_refresh
+        assert not crawler._internal_api_client.cache_check_only

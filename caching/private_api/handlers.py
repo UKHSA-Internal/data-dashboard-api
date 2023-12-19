@@ -139,13 +139,15 @@ def get_all_downloads(file_format: str = "csv") -> list[dict[str, str]]:
         file_format: the format for download response data supports csv and json
             defaults to csv.
 
-    Notes: You can pass all pages to the crawler's `get_all_downloads'
+    Notes:
+        You can pass all pages to the crawler's `get_all_downloads'
         and it will skip over any that don't contain chart data
         skipped pages will be logged.
 
     Returns:
        A list of dictionaries containing a filename and download content.
+
     """
     pages = collect_all_pages()
-    crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
+    crawler = PrivateAPICrawler.create_crawler_for_lazy_loading()
     return crawler.get_all_downloads(pages=pages, file_format=file_format)
