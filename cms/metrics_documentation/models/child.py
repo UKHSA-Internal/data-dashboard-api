@@ -66,6 +66,8 @@ class MetricsDocumentationChildEntry(Page):
         ]
     )
 
+    parent_page_type = ["metrics_documentation.MetricsDocumentationParentPage"]
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
