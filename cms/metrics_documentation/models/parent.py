@@ -66,7 +66,10 @@ class MetricsDocumentationParentPage(Page):
 
     objects = MetricsDocumentationParentPageManager()
 
-    subpage_types = ["metrics_documentation.MetricsDocumentationChildEntry", "common.CommonPage"]
+    subpage_types = [
+        "metrics_documentation.MetricsDocumentationChildEntry",
+        "common.CommonPage",
+    ]
 
     def clean(self) -> None:
         super().clean()

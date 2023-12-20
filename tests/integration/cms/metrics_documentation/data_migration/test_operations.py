@@ -4,12 +4,15 @@ import pytest
 from django.core.management import call_command
 
 from cms.home.models import HomePage
-from cms.metrics_documentation.data_migration.child_entries import get_metrics_definitions
+from cms.metrics_documentation.data_migration.child_entries import (
+    get_metrics_definitions,
+)
 from cms.metrics_documentation.data_migration.operations import (
+    add_page_as_subpage_to_parent,
     create_metrics_documentation_parent_page_and_child_entries,
     get_or_create_metrics_documentation_parent_page,
     remove_metrics_documentation_child_entries,
-    remove_metrics_documentation_parent_page, add_page_as_subpage_to_parent,
+    remove_metrics_documentation_parent_page,
 )
 from cms.metrics_documentation.models import (
     MetricsDocumentationChildEntry,
@@ -156,7 +159,9 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         )
 
     @pytest.mark.django_db
-    def test_existing_child_entries_are_removed_correctly(self, dashboard_root_page: HomePage):
+    def test_existing_child_entries_are_removed_correctly(
+        self, dashboard_root_page: HomePage
+    ):
         """
         Given an existing `MetricsDocumentationParentPage`
         And a related `MetricsDocumentationChildEntry` record
@@ -169,12 +174,12 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         # Given
         call_command("upload_truncated_test_data")
         individual_metric_data = get_metrics_definitions()[0]
-        parent_page: MetricsDocumentationParentPage = get_or_create_metrics_documentation_parent_page()
+        parent_page: MetricsDocumentationParentPage = (
+            get_or_create_metrics_documentation_parent_page()
+        )
         child_entry = MetricsDocumentationChildEntry(**individual_metric_data)
 
-        add_page_as_subpage_to_parent(
-            subpage=child_entry, parent_page=parent_page
-        )
+        add_page_as_subpage_to_parent(subpage=child_entry, parent_page=parent_page)
 
         # When
         create_metrics_documentation_parent_page_and_child_entries()
@@ -184,4 +189,3 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         assert child_entry not in MetricsDocumentationChildEntry.objects.all()
 
         assert parent_page in MetricsDocumentationParentPage.objects.all()
-

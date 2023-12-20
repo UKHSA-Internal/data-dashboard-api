@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("metrics_documentation", "0002_metricsdocumentationchildentry"),
+        ("metrics_documentation", "0003_metrics_documentation_child_entries_data"),
     ]
 
     operations = [

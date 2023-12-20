@@ -6,9 +6,9 @@ from tests.migrations.helper import MigrationTests
 
 
 @pytest.mark.django_db(transaction=True)
-class Test0004MetricsDocumentationChildEntriesData(MigrationTests):
-    previous_migration_name = "0003_metrics_documentation_child_entries_unique_metrics"
-    current_migration_name = "0004_metrics_documentation_child_entries_data"
+class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
+    previous_migration_name = "0002_metricsdocumentationchildentry"
+    current_migration_name = "0003_metrics_documentation_child_entries_data"
     current_django_app = "metrics_documentation"
 
     @property
@@ -66,7 +66,7 @@ class Test0004MetricsDocumentationChildEntriesData(MigrationTests):
         metrics_documentation_child_entry = self.get_model(
             self.metrics_documentation_child_entry
         )
-        assert metrics_documentation_child_entry.objects.count() == 53
+        assert metrics_documentation_child_entry.objects.count() == 55
 
         # When
         self.migrate_backward()
