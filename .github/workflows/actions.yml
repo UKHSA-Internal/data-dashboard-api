@@ -184,28 +184,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
         with:
-          role-to-assume: arn:aws:iam::518944279943:role/devops_github_actions_wp_api
-          role-session-name: testsession
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: wp-api
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        shell: bash
-
+          ecrRepository: "wp-api"
+          buildCommand: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
   publish-ingestion-image:
     name: Publish ingestion image
@@ -226,25 +209,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
         with:
-          role-to-assume: arn:aws:iam::518944279943:role/devops_github_actions_wp_api
-          role-session-name: testsession
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build, tag, and push image to Amazon ECR
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: wp-ingestion
-          IMAGE_TAG: latest
-        run: |
-          docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        # The current self-hosted CI runners are X64 based. Hence, the need to build with AMD 64
-        shell: bash
+          ecrRepository: "wp-ingestion"
+          buildCommand: |
+            docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          # The current self-hosted CI runners are X64 based. Hence, the need to build with AMD 64
