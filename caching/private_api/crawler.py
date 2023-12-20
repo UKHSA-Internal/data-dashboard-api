@@ -45,6 +45,13 @@ class PrivateAPICrawler:
         internal_api_client = InternalAPIClient(force_refresh=True)
         return cls(internal_api_client=internal_api_client)
 
+    @classmethod
+    def create_crawler_for_lazy_loading(cls) -> Self:
+        internal_api_client = InternalAPIClient(
+            force_refresh=False, cache_check_only=False
+        )
+        return cls(internal_api_client=internal_api_client)
+
     # Process headless CMS API
 
     def process_list_pages_for_headless_cms_api(self) -> None:
