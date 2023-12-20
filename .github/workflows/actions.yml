@@ -130,6 +130,22 @@ jobs:
           python -m pytest tests/system/
 
   ###############################################################################
+  # Migration tests
+  ###############################################################################
+
+  migration-tests:
+    name: Migration tests
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-cache
+
+      - name: Run Migration tests
+        run: |
+          python -m pytest tests/migrations/
+
+  ###############################################################################
   # Test coverage
   ###############################################################################
 
@@ -156,6 +172,7 @@ jobs:
       unit-tests,
       integration-tests,
       system-tests,
+      migration-tests,
       test-coverage,
       vulnerabilities,
       architecture-checks
@@ -197,6 +214,7 @@ jobs:
       unit-tests,
       integration-tests,
       system-tests,
+      migration-tests,
       test-coverage,
       vulnerabilities,
       architecture-checks

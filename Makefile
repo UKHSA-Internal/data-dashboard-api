@@ -40,11 +40,16 @@ integration-tests:
 system-tests:
 	${BIN}python -m pytest tests/system -v
 
+# Run all migration tests
+migration-tests:
+	${BIN}python -m pytest tests/migrations -v
+
 # Run all tests regardless of type
 all-tests:
 	make unit-tests
 	make integration-tests
 	make system-tests
+	make migration-tests
 
 # Run pip-audit and bandit to check for vulnerabilities
 audit:

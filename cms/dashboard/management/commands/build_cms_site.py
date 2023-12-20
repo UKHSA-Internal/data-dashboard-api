@@ -11,6 +11,9 @@ from wagtail.models import Page, Site
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
+from cms.metrics_documentation.data_migration.operations import (
+    create_metrics_documentation_parent_page_and_child_entries,
+)
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
 from cms.whats_new.models.parent import WhatsNewParentPageRelatedLink
@@ -178,9 +181,7 @@ class Command(BaseCommand):
         Wipe the existing CMS pages and load in new ones
         """
 
-        # Wipe the existing site and pages
-        Site.objects.all().delete()
-        Page.objects.filter(pk__gte=2).delete()  # Wagtail welcome page and all others
+        self._clear_cms()
 
         # Make a new home page
         title = "UKHSA Dashboard Root"
@@ -214,11 +215,20 @@ class Command(BaseCommand):
         _build_common_page(name="cookies", parent_page=root_page)
         _build_common_page(name="accessibility_statement", parent_page=root_page)
         _build_common_page(name="compliance", parent_page=root_page)
-
         whats_new_parent_page = _build_whats_new_parent_page(
             name="whats_new", parent_page=root_page
         )
+
         _build_whats_new_child_entry(
             name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
             parent_page=whats_new_parent_page,
         )
+
+        create_metrics_documentation_parent_page_and_child_entries()
+
+    @staticmethod
+    def _clear_cms() -> None:
+        # Wipe the existing site, pages & badges
+        Site.objects.all().delete()
+        Badge.objects.all().delete()
+        Page.objects.filter(pk__gte=2).delete()  # Wagtail welcome page and all others
