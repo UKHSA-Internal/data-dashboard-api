@@ -197,7 +197,7 @@ class TestCoreTimeSeriesQuerySet:
         # Then
         assert retrieved_records[0].metric.name == example_core_time_series.metric.name
         assert (
-            retrieved_records[0].topic.name
+            retrieved_records[0].metric.topic.name
             == example_core_time_series.metric.topic.name
         )
         assert (
