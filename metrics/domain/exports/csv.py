@@ -8,6 +8,7 @@ FIELDS = {
     "geography_type": "geography__geography_type__name",
     "geography": "geography__name",
     "metric": "metric__name",
+    "metric_frequency": "metric_frequency",
     "sex": "sex",
     "age": "age__name",
     "stratum": "stratum__name",
