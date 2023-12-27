@@ -138,6 +138,7 @@ class CompletePlotData(BaseModel):
         selected axes choices
 
     """
+
     parameters: PlotParameters
     queryset: Any
 
