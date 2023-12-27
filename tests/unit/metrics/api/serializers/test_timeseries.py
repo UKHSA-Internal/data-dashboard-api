@@ -1,4 +1,5 @@
 import datetime
+
 import pytest
 
 from metrics.api.serializers import CoreTimeSeriesSerializer
