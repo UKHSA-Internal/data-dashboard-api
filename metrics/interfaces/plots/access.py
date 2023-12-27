@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
+from metrics.domain.models.plots import CompletePlotData
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.validation import (
     DatesNotInChronologicalOrderError,
@@ -171,6 +172,37 @@ class PlotsInterface:
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+        )
+
+    def build_plot_data_from_parameters_with_complete_queryset(
+        self, plot_parameters: PlotParameters
+    ) -> CompletePlotData:
+        """Creates a `CompletePlotData` model which holds the params and full queryset for the given requested plot
+
+        Notes:
+            The corresponding timeseries data is used to enrich a
+            pydantic model which also holds the corresponding params.
+            These models can then be passed into the domain libraries.
+
+        Returns:
+            An individual `CompletePlotData` model
+            for the requested `plot_parameters`.
+
+        Raises:
+            `DataNotFoundForPlotError`: If no `CoreTimeSeries` data
+                can be found for a particular plot.
+
+        """
+        queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
+            plot_parameters=plot_parameters
+        )
+
+        if not queryset_result.queryset.exists():
+            raise DataNotFoundForPlotError
+
+        return CompletePlotData(
+            parameters=plot_parameters,
+            queryset=queryset_result.queryset,
         )
 
     def build_plot_data_from_parameters(

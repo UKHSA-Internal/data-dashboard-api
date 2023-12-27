@@ -4,6 +4,7 @@ from unittest import mock
 import pytest
 
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
+from metrics.domain.models.plots import CompletePlotData
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
@@ -279,6 +280,74 @@ class TestPlotsInterface:
         # When / Then
         with pytest.raises(DataNotFoundForPlotError):
             plots_interface.build_plot_data_from_parameters(
+                plot_parameters=fake_chart_plot_parameters
+            )
+
+    @mock.patch.object(PlotsInterface, "get_queryset_result_for_plot_parameters")
+    def test_build_plot_data_from_parameters_with_complete_queryset_delegates_call(
+        self,
+        spy_get_queryset_result_for_plot_parameters: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a set of `ChartParameters`
+        When `build_plot_data_from_parameters_with_complete_queryset()`
+            is called from an instance of `PlotsInterface`
+        Then the call is delegated to the
+            `get_queryset_result_for_plot_parameters()` method to fetch the data
+        """
+        # Given
+        plots_interface = PlotsInterface(
+            plots_collection=mock.Mock(plots=[]),
+            core_time_series_manager=mock.Mock(),
+        )
+
+        # When
+        complete_plot_data: CompletePlotData = (
+            plots_interface.build_plot_data_from_parameters_with_complete_queryset(
+                plot_parameters=fake_chart_plot_parameters
+            )
+        )
+
+        # Then
+        spy_get_queryset_result_for_plot_parameters.assert_called_once_with(
+            plot_parameters=fake_chart_plot_parameters
+        )
+        assert complete_plot_data.parameters == fake_chart_plot_parameters
+        assert (
+            complete_plot_data.queryset
+            == spy_get_queryset_result_for_plot_parameters.return_value.queryset
+        )
+
+    def test_build_plot_data_from_parameters_with_complete_queryset_raises_error_when_no_data_found(
+        self, fake_chart_plot_parameters: PlotParameters
+    ):
+        """
+        Given a `PlotParameters` model requesting a plot
+            for `CoreTimeSeries` data which cannot be found
+        When `build_plot_data_from_parameters_with_complete_queryset()`
+            is called from an instance of the `PlotsInterface`
+        Then a `DataNotFoundForPlotError` is raised
+        """
+        # Given
+        fake_plots_collection = PlotsCollection(
+            plots=[fake_chart_plot_parameters],
+            file_format="png",
+            chart_width=123,
+            chart_height=456,
+            x_axis="date",
+            y_axis="metric",
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+
+        plots_interface = PlotsInterface(
+            plots_collection=fake_plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When / Then
+        with pytest.raises(DataNotFoundForPlotError):
+            plots_interface.build_plot_data_from_parameters_with_complete_queryset(
                 plot_parameters=fake_chart_plot_parameters
             )
 
