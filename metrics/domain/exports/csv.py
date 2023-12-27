@@ -1,22 +1,21 @@
 import csv
 import io
 
-from metrics.data.models.api_models import APITimeSeries
-
-COLUMNS_TO_WRITE = [
-    "theme",
-    "sub_theme",
-    "topic",
-    "geography_type",
-    "geography",
-    "metric",
-    "sex",
-    "age",
-    "stratum",
-    "year",
-    "date",
-    "metric_value",
-]
+FIELDS = {
+    "theme": "metric__topic__sub_theme__theme__name",
+    "sub_theme": "metric__topic__sub_theme__name",
+    "topic": "metric__topic__name",
+    "geography_type": "geography__geography_type__name",
+    "geography": "geography__name",
+    "metric": "metric__name",
+    "sex": "sex",
+    "age": "age__name",
+    "stratum": "stratum__name",
+    "year": "year",
+    "epiweek": "epiweek",
+    "date": "date",
+    "metric_value": "metric_value",
+}
 
 
 def write_data_to_csv(
