@@ -1,6 +1,6 @@
 import csv
 import io
-from typing import Iterable
+from collections.abc import Iterable
 
 FIELDS = {
     "theme": "metric__topic__sub_theme__theme__name",
