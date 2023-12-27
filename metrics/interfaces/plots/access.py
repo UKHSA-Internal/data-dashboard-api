@@ -246,6 +246,44 @@ class PlotsInterface:
             latest_date=queryset_result.latest_date,
         )
 
+    def build_plots_data_for_full_queryset(self) -> list[CompletePlotData]:
+        """Creates a list of `CompletePlotData` models which hold the params and corresponding data for the plots
+
+        Notes:
+            The corresponding timeseries data is used to enrich a
+            pydantic model which also holds the corresponding params.
+            These models can then be passed into the domain libraries.
+
+            If no data is returned for a particular plot,
+            that plot is skipped and no enriched model will be provided.
+
+        Returns:
+            A list of `CompletePlotData` models for
+            each of the requested plots.
+
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
+        """
+        plots_data: list[CompletePlotData] = []
+        for plot_parameters in self.plots_collection.plots:
+            try:
+                plot_data: PlotData = (
+                    self.build_plot_data_from_parameters_with_complete_queryset(
+                        plot_parameters=plot_parameters
+                    )
+                )
+            except DataNotFoundForPlotError:
+                continue
+
+            plots_data.append(plot_data)
+
+        if not plots_data:
+            raise DataNotFoundForAnyPlotError
+
+        return plots_data
+
     def build_plots_data(self) -> list[PlotData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
