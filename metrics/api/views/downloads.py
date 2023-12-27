@@ -106,8 +106,8 @@ class DownloadsView(APIView):
         | `age`             | The patient age band                                                      | 0_4                       |
         | `date_from`       | The date to pull the data from                                            | `2020-01-20`              |
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
-        """
 
+        """
         request_serializer = DownloadsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
