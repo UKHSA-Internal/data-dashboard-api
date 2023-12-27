@@ -1,3 +1,5 @@
+import operator
+
 from django.db.models import QuerySet
 
 
@@ -24,3 +26,14 @@ class FakeQuerySet(QuerySet):
 
     def count(self) -> int:
         return len(self.fake_instances)
+
+    def values_list(self, *fields, **kwargs):
+        fields_as_dotted_paths = [f.replace("__", ".") for f in fields]
+
+        return [
+            tuple(
+                operator.attrgetter(field)(fake_instance)
+                for field in fields_as_dotted_paths
+            )
+            for fake_instance in self.fake_instances
+        ]
