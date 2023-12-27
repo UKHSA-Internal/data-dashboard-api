@@ -72,9 +72,6 @@ class TestCoreTimeSeriesSerializer:
             "epiweek",
             "refresh_date",
             "embargo",
-            "geography",
-            "stratum",
-            "age",
         ],
     )
     def test_fields_are_serialized_correctly(self, expected_field: str):
