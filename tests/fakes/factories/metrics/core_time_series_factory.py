@@ -25,6 +25,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         metric_name: str,
         topic_name: str,
         stratum_name: str = "",
+        metric_value: float | int = 1
     ) -> FakeCoreTimeSeries:
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
             metric_name=metric_name, topic_name=topic_name
@@ -40,7 +41,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             metric_frequency="D",
             sex="ALL",
             year=date.year,
-            metric_value=1,
+            metric_value=metric_value,
             metric=metric,
             date=date,
             stratum=stratum,
