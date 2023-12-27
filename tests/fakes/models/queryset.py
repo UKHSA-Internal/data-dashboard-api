@@ -37,3 +37,6 @@ class FakeQuerySet(QuerySet):
             )
             for fake_instance in self.fake_instances
         ]
+
+    def exists(self) -> bool:
+        return bool(self.fake_instances)
