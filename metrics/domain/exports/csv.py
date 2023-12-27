@@ -1,5 +1,6 @@
 import csv
 import io
+from typing import Iterable
 
 FIELDS = {
     "theme": "metric__topic__sub_theme__theme__name",
@@ -23,10 +24,18 @@ def write_data_to_csv(
     file: io.StringIO,
     core_time_series_queryset,
 ) -> io.StringIO:
-    writer = csv.writer(file)
-    writer.writerow(FIELDS.keys())
+    headers = FIELDS.keys()
+    rows = core_time_series_queryset
+    return _write_to_csv_file(file=file, headers=headers, rows=rows)
 
-    for core_time_series in core_time_series_queryset:
-        writer.writerow(core_time_series)
+
+def _write_to_csv_file(
+    file: io.StringIO, headers: list[str], rows: Iterable
+) -> io.StringIO:
+    writer = csv.writer(file)
+    writer.writerow(headers)
+
+    for row in rows:
+        writer.writerow(row)
 
     return file
