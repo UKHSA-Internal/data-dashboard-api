@@ -128,6 +128,20 @@ class PlotData(BaseModel):
     latest_date: Any = None  # noqa: UP007
 
 
+class CompletePlotData(BaseModel):
+    """Data model to hold the parameters and the full-enriched queryset
+
+    Notes:
+        This is primarily used for instances in which
+        the queryset is returned with full records
+        as opposed to the `values_list` of the
+        selected axes choices
+
+    """
+    parameters: PlotParameters
+    queryset: Any
+
+
 def get_date_n_months_ago_from_timestamp(
     datetime_stamp: datetime.datetime, number_of_months: int = 6
 ) -> datetime.date:
