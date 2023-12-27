@@ -44,7 +44,7 @@ def open_example_page_response(page_name: str):
         return json.load(f)
 
 
-def _build_related_links(related_link_class, response_data, page) -> None:
+def _create_related_links(related_link_class, response_data, page) -> None:
     for related_link_response_data in response_data["related_links"]:
         related_link_model = related_link_class(
             page=page,
@@ -60,7 +60,7 @@ def _add_page_to_parent(page: Page, parent_page: HomePage) -> None:
     page.save_revision().publish()
 
 
-def _build_landing_dashboard_page(parent_page: Page) -> HomePage:
+def _create_landing_dashboard_page(parent_page: Page) -> HomePage:
     data = open_example_page_response(page_name="ukhsa_data_dashboard")
 
     page = HomePage(
@@ -74,7 +74,7 @@ def _build_landing_dashboard_page(parent_page: Page) -> HomePage:
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
-    _build_related_links(
+    _create_related_links(
         related_link_class=HomePageRelatedLink,
         response_data=data,
         page=page,
@@ -83,7 +83,7 @@ def _build_landing_dashboard_page(parent_page: Page) -> HomePage:
     return page
 
 
-def _build_topic_page(name: str, parent_page: Page) -> TopicPage:
+def _create_topic_page(name: str, parent_page: Page) -> TopicPage:
     data = open_example_page_response(page_name=name)
 
     page = TopicPage(
@@ -98,7 +98,7 @@ def _build_topic_page(name: str, parent_page: Page) -> TopicPage:
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
-    _build_related_links(
+    _create_related_links(
         related_link_class=TopicPageRelatedLink,
         response_data=data,
         page=page,
@@ -107,7 +107,7 @@ def _build_topic_page(name: str, parent_page: Page) -> TopicPage:
     return page
 
 
-def _build_common_page(name: str, parent_page: Page) -> CommonPage:
+def _create_common_page(name: str, parent_page: Page) -> CommonPage:
     data = open_example_page_response(page_name=name)
 
     page = CommonPage(
@@ -121,7 +121,7 @@ def _build_common_page(name: str, parent_page: Page) -> CommonPage:
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
-    _build_related_links(
+    _create_related_links(
         related_link_class=CommonPageRelatedLink,
         response_data=data,
         page=page,
@@ -130,7 +130,7 @@ def _build_common_page(name: str, parent_page: Page) -> CommonPage:
     return page
 
 
-def _build_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParentPage:
+def _create_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParentPage:
     data = open_example_page_response(page_name=name)
 
     page = WhatsNewParentPage(
@@ -144,7 +144,7 @@ def _build_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParent
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
-    _build_related_links(
+    _create_related_links(
         related_link_class=WhatsNewParentPageRelatedLink,
         response_data=data,
         page=page,
@@ -153,7 +153,7 @@ def _build_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParent
     return page
 
 
-def _build_whats_new_child_entry(name: str, parent_page: Page) -> WhatsNewChildEntry:
+def _create_whats_new_child_entry(name: str, parent_page: Page) -> WhatsNewChildEntry:
     data = open_example_page_response(page_name=name)
 
     badge = Badge(text=data["badge"]["text"], colour=data["badge"]["colour"])
@@ -201,25 +201,25 @@ class Command(BaseCommand):
             is_default_site=True,
         )
 
-        landing_dashboard_page: HomePage = _build_landing_dashboard_page(
+        landing_dashboard_page: HomePage = _create_landing_dashboard_page(
             parent_page=root_page
         )
-        _build_topic_page(name="covid_19", parent_page=landing_dashboard_page)
-        _build_topic_page(name="influenza", parent_page=landing_dashboard_page)
-        _build_topic_page(
+        _create_topic_page(name="covid_19", parent_page=landing_dashboard_page)
+        _create_topic_page(name="influenza", parent_page=landing_dashboard_page)
+        _create_topic_page(
             name="other_respiratory_viruses", parent_page=landing_dashboard_page
         )
-        _build_common_page(name="about", parent_page=root_page)
-        _build_common_page(name="location_based_data", parent_page=root_page)
-        _build_common_page(name="whats_coming", parent_page=root_page)
-        _build_common_page(name="cookies", parent_page=root_page)
-        _build_common_page(name="accessibility_statement", parent_page=root_page)
-        _build_common_page(name="compliance", parent_page=root_page)
-        whats_new_parent_page = _build_whats_new_parent_page(
+        _create_common_page(name="about", parent_page=root_page)
+        _create_common_page(name="location_based_data", parent_page=root_page)
+        _create_common_page(name="whats_coming", parent_page=root_page)
+        _create_common_page(name="cookies", parent_page=root_page)
+        _create_common_page(name="accessibility_statement", parent_page=root_page)
+        _create_common_page(name="compliance", parent_page=root_page)
+        whats_new_parent_page = _create_whats_new_parent_page(
             name="whats_new", parent_page=root_page
         )
 
-        _build_whats_new_child_entry(
+        _create_whats_new_child_entry(
             name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
             parent_page=whats_new_parent_page,
         )
