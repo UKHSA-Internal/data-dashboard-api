@@ -1,6 +1,5 @@
 from .charts import ChartsSerializer
 from .downloads import (
-    DownloadsQuerySerializer,
     DownloadsSerializer,
     BulkDownloadsSerializer,
 )

@@ -1,7 +1,7 @@
 import pytest
 from rest_framework.exceptions import ValidationError
 
-from metrics.api.serializers import DownloadsQuerySerializer
+from metrics.api.serializers import DownloadsSerializer
 
 
 class TestDownloadsQuerySerializer:
