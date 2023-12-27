@@ -20,13 +20,12 @@ FIELDS = {
 
 def write_data_to_csv(
     file: io.StringIO,
-    api_time_series: list[APITimeSeries],
+    core_time_series_queryset,
 ) -> io.StringIO:
     writer = csv.writer(file)
-    writer.writerow(COLUMNS_TO_WRITE)
+    writer.writerow(FIELDS.keys())
 
-    for time_series in api_time_series:
-        time_series_attributes = [getattr(time_series, key) for key in COLUMNS_TO_WRITE]
-        writer.writerow(time_series_attributes)
+    for core_time_series in core_time_series_queryset:
+        writer.writerow(core_time_series)
 
     return file
