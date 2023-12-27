@@ -5,5 +5,5 @@ from .downloads import (
     BulkDownloadsSerializer,
 )
 from .headlines import HeadlinesQuerySerializer
-from .timeseries import APITimeSeriesSerializer
+from .timeseries import CoreTimeSeriesSerializer
 from .trends import TrendsQuerySerializer, TrendsResponseSerializer
