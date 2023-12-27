@@ -188,7 +188,7 @@ class PlotsInterface:
                 or the requested `plot_parameters`.
 
         Raises:
-            `DataNotFoundError`: If no `CoreTimeSeries` data can be found
+            `DataNotFoundForPlotError`: If no `CoreTimeSeries` data can be found
                 for a particular plot.
 
         """
