@@ -2,7 +2,7 @@ from unittest import mock
 
 from caching.internal_api_client import InternalAPIClient
 from caching.private_api.crawler import PrivateAPICrawler
-from caching.private_api.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
 
 
 class TestPrivateAPICrawlerInit:
