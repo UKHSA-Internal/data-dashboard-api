@@ -417,64 +417,6 @@ class PrivateAPICrawler:
         )
         self._internal_api_client.hit_trends_endpoint(data=data)
 
-    # Deconstruct blocks
-
-    @staticmethod
-    def get_content_cards_from_section(
-        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Filters for a list of content cards from the given `section`
-
-        Args:
-            section: The section dict from the CMS
-
-        Returns:
-            A list of content card dicts
-
-        """
-        return section["value"]["content"]
-
-    @staticmethod
-    def get_chart_row_cards_from_content_cards(
-        content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Filters for a list of chart row from the given `content_cards`
-
-        Args:
-            content_cards: The list of content card dicts
-                from the CMS
-
-        Returns:
-            A list of chart row card dicts which can be processed
-
-        """
-        return [
-            content_card
-            for content_card in content_cards
-            if content_card["type"] == "chart_row_card"
-        ]
-
-    @staticmethod
-    def get_headline_numbers_row_cards_from_content_cards(
-        content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Filters for a list of headliner number row cards from the given `content_cards`
-
-        Args:
-            content_cards: The list of content card dicts
-                from the CMS
-
-        Returns:
-            A list of headline number row card dicts
-            which can be processed
-
-        """
-        return [
-            content_card
-            for content_card in content_cards
-            if content_card["type"] == "headline_numbers_row_card"
-        ]
-
     # Building request data
 
     @staticmethod
@@ -750,21 +692,6 @@ class PrivateAPICrawler:
             )
 
         return downloads
-
-    def get_chart_row_cards_from_page_section(
-        self,
-        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Get chart row cards from page section.
-
-        Args:
-            section: a page section to be processed for chart card data
-
-        Returns:
-            A list of dictionaries containing chart row cards from page section,
-        """
-        content_cards = self.get_content_cards_from_section(section=section)
-        return self.get_chart_row_cards_from_content_cards(content_cards=content_cards)
 
     def get_downloads_from_page_sections(
         self,

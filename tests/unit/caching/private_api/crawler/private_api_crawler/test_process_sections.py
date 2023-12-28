@@ -35,7 +35,7 @@ class TestPrivateAPICrawlerProcessSections:
         ]
         spy_process_section.assert_has_calls(calls=expected_calls)
 
-    @mock.patch.object(PrivateAPICrawler, "get_content_cards_from_section")
+    @mock.patch.object(CMSBlockParser, "get_content_cards_from_section")
     def test_process_section_delegates_call_for_gathering_content_cards_for_each_section(
         self,
         spy_get_content_cards_from_section: mock.MagicMock,
