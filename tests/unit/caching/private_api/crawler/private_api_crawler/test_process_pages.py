@@ -42,7 +42,7 @@ class TestPrivateAPICrawlerProcessPages:
             calls=expected_calls, any_order=True
         )
 
-    @mock.patch.object(PrivateAPICrawler, "process_list_pages_for_headless_cms_api")
+    @mock.patch.object(HeadlessCMSAPICrawler, "process_list_pages_for_headless_cms_api")
     def test_delegates_call_for_headless_cms_api_list_pages(
         self,
         spy_process_list_pages_for_headless_cms_api: mock.MagicMock,
@@ -71,7 +71,9 @@ class TestPrivateAPICrawlerProcessPages:
         # Then
         spy_process_list_pages_for_headless_cms_api.assert_called_once()
 
-    @mock.patch.object(PrivateAPICrawler, "process_detail_pages_for_headless_cms_api")
+    @mock.patch.object(
+        HeadlessCMSAPICrawler, "process_detail_pages_for_headless_cms_api"
+    )
     def test_delegates_call_for_processing_each_page_headless_cms_api_detail(
         self,
         spy_process_detail_pages_for_headless_cms_api: mock.MagicMock,
