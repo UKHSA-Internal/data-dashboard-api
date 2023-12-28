@@ -29,6 +29,7 @@ class PrivateAPICrawler:
 
     def __init__(self, internal_api_client: InternalAPIClient | None = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
+        self._cms_block_parser = CMSBlockParser()
         self._geography_api_crawler = GeographiesAPICrawler(
             internal_api_client=self._internal_api_client
         )
@@ -158,11 +159,13 @@ class PrivateAPICrawler:
             None
 
         """
-        content_cards = self.get_content_cards_from_section(section=section)
+        content_cards = self._cms_block_parser.get_content_cards_from_section(
+            section=section
+        )
 
         # Gather all headline number row cards in this section of the page
         headline_numbers_row_cards = (
-            self.get_headline_numbers_row_cards_from_content_cards(
+            self._cms_block_parser.get_headline_numbers_row_cards_from_content_cards(
                 content_cards=content_cards
             )
         )
@@ -172,7 +175,7 @@ class PrivateAPICrawler:
         )
 
         # Gather all chart row cards in this section of the page
-        chart_row_cards = self.get_chart_row_cards_from_content_cards(
+        chart_row_cards = self._cms_block_parser.get_chart_row_cards_from_content_cards(
             content_cards=content_cards
         )
         # Process each of the chart row cards which were gathered
@@ -782,8 +785,10 @@ class PrivateAPICrawler:
         downloads = []
 
         for section in sections:
-            chart_row_cards = self.get_chart_row_cards_from_page_section(
-                section=section
+            chart_row_cards = (
+                self._cms_block_parser.get_chart_row_cards_from_page_section(
+                    section=section
+                )
             )
 
             downloads.extend(
