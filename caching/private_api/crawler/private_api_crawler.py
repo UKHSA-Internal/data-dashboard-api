@@ -8,9 +8,6 @@ from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
 
-CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
-CHART_DOWNLOAD = dict[str, str]
-
 logger = logging.getLogger(__name__)
 
 
