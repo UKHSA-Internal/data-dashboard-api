@@ -313,11 +313,13 @@ class PrivateAPICrawler:
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
 
     def _process_table_for_chart_block(self, chart_block: dict):
-        tables_data = self._build_tables_request_data(chart_block=chart_block)
+        tables_data = self._request_payload_builder.build_tables_request_data(
+            chart_block=chart_block
+        )
         self._internal_api_client.hit_tables_endpoint(data=tables_data)
 
     def _process_download_for_chart_block(self, chart_block: dict, file_format: str):
-        downloads_data = self._build_downloads_request_data(
+        downloads_data = self._request_payload_builder.build_downloads_request_data(
             chart_block=chart_block, file_format=file_format
         )
         return self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
@@ -340,7 +342,7 @@ class PrivateAPICrawler:
 
         """
         for chart_is_double_width in (True, False):
-            charts_data = self._build_chart_request_data(
+            charts_data = self._request_payload_builder.build_chart_request_data(
                 chart_block=chart_block["value"],
                 chart_is_double_width=chart_is_double_width,
             )
@@ -359,7 +361,7 @@ class PrivateAPICrawler:
             None
 
         """
-        data = self._build_headlines_request_data(
+        data = self._request_payload_builder.build_headlines_request_data(
             headline_number_block=headline_number_block["value"]
         )
         self._internal_api_client.hit_headlines_endpoint(data=data)
@@ -376,7 +378,7 @@ class PrivateAPICrawler:
             None
 
         """
-        data = self._build_trend_request_data(
+        data = self._request_payload_builder.build_trend_request_data(
             trend_number_block=trend_number_block["value"]
         )
         self._internal_api_client.hit_trends_endpoint(data=data)
