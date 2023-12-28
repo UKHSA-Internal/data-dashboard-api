@@ -390,8 +390,6 @@ class PrivateAPICrawler:
         )
         self._internal_api_client.hit_trends_endpoint(data=data)
 
-    # Building request data
-
     # process downloads
 
     @staticmethod
