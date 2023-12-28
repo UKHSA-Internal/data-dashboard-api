@@ -1,19 +1,19 @@
 from unittest import mock
 
-from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 
 
-class TestPrivateAPICrawlerProcessCards:
-    @mock.patch.object(PrivateAPICrawler, "process_any_headline_number_block")
+class TestDynamicContentBlockCrawlerProcessCards:
+    @mock.patch.object(DynamicContentBlockCrawler, "process_any_headline_number_block")
     def test_process_headline_numbers_row_card(
         self,
         spy_process_any_headline_number_block: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a mocked a single headlines number row card with multiple columns
         When `process_headline_numbers_row_card()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `process_any_headline_number_block()` method
             for each individual headlines number row block
 
@@ -39,7 +39,7 @@ class TestPrivateAPICrawlerProcessCards:
         }
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_headline_numbers_row_card(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_headline_numbers_row_card(
             headline_numbers_row_card=mocked_headline_numbers_row_card
         )
 
@@ -52,16 +52,16 @@ class TestPrivateAPICrawlerProcessCards:
             calls=expected_calls, any_order=True
         )
 
-    @mock.patch.object(PrivateAPICrawler, "process_headline_numbers_row_card")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_headline_numbers_row_card")
     def test_process_all_headline_numbers_row_cards(
         self,
         spy_process_headline_numbers_row_card: mock.Mock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a mocked list of headlines number row cards
         When `process_all_headline_numbers_row_cards()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `process_headline_numbers_row_card()` method
             for each individual headlines number row card
 
@@ -73,7 +73,7 @@ class TestPrivateAPICrawlerProcessCards:
         mocked_headline_numbers_row_cards = [mock.Mock()] * 3
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_all_headline_numbers_row_cards(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_all_headline_numbers_row_cards(
             headline_numbers_row_cards=mocked_headline_numbers_row_cards
         )
 
@@ -86,16 +86,16 @@ class TestPrivateAPICrawlerProcessCards:
             calls=expected_calls, any_order=True
         )
 
-    @mock.patch.object(PrivateAPICrawler, "process_any_chart_card")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_any_chart_card")
     def test_process_all_chart_cards(
         self,
         spy_process_any_chart_card: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a mocked list of chart row cards
         When `process_all_chart_cards()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `process_any_chart_card()` method
             for each individual chart row card
 
@@ -112,7 +112,7 @@ class TestPrivateAPICrawlerProcessCards:
         ]
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_all_chart_cards(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_all_chart_cards(
             chart_row_cards=mocked_chart_row_cards
         )
 

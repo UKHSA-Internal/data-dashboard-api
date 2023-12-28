@@ -5,6 +5,7 @@ from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.crawler.cms_blocks import CMSBlockParser
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
@@ -36,7 +37,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         assert expected_file_name == file_name
 
     @mock.patch.object(PrivateAPICrawler, "create_filename_for_chart_card")
-    @mock.patch.object(PrivateAPICrawler, "_process_download_for_chart_block")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_download_for_chart_block")
     def test_get_downloads_from_chart_row_columns_delegates_calls_correctly(
         self,
         spy_process_download_for_chart_block: mock.MagicMock,
@@ -47,7 +48,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         """
         Given two faked chart_row_columns
         When the get_downloads_from_chart_row_columns() method is called
-        Then _process_download_for_cart_block is called twice
+        Then process_download_for_cart_block is called twice
             and two downloads are returned.
         """
         # Given
