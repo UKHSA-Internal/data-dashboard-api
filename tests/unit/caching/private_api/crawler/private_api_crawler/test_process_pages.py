@@ -3,7 +3,8 @@ from unittest import mock
 from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
-from caching.private_api.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.headless_cms_api import HeadlessCMSAPICrawler
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
