@@ -12,4 +12,3 @@ match config.APP_MODE:
         from .ingestion import *
     case "PRIVATE_API":
         from .private_api import *
-
