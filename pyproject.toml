@@ -119,7 +119,7 @@ omit = [
     "cms/search/*",                     # Boilerplate wagtail `search` app
     "metrics/api/wsgi.py",              # Boilerplate Django server entrypoint
     "metrics/api/asgi.py",              # Boilerplate Django server entrypoint
-    "metrics/api/settings.py",          # Configuration file
+    "metrics/api/settings.*",           # Configuration paackage
     "config.py",                        # Configuration file
     "manage.py"                         # Application server entrypoint
 ]
