@@ -12,3 +12,5 @@ match config.APP_MODE:
         from .ingestion import *
     case "PRIVATE_API":
         from .private_api import *
+    case "FEEDBACK_API":
+        from .feedback_api import *
