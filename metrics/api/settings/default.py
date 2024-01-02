@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config.SECRET_KEY
 
-DEBUG = config.APIENV == "LOCAL"
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -128,22 +128,13 @@ WSGI_APPLICATION = "metrics.api.wsgi.application"
 CACHE_TTL = None
 # This means that the cache will only be refreshed explicitly
 
-# Only use the configured Redis cache when the application is running in private API mode
-if config.APP_MODE == "PRIVATE_API":
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": config.REDIS_HOST,
-            "KEY_PREFIX": "ukhsa",
-        }
+# Use the in-memory cache backend provided by Django
+# when the application is not running in private API mode
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
-else:
-    # Otherwise use the in-memory cache backend provided by Django
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        }
-    }
+}
 
 
 # Database
@@ -151,47 +142,27 @@ else:
 # Puts the db at the root level of the repo instead of within the `metrics` app
 ROOT_LEVEL_BASE_DIR = BASE_DIR.parent
 
-if config.APIENV in ("LOCAL", "STANDALONE"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "dj_db_conn_pool.backends.postgresql",
+        "NAME": config.POSTGRES_DB,
+        "USER": config.POSTGRES_USER,
+        "PASSWORD": config.POSTGRES_PASSWORD,
+        "HOST": config.POSTGRES_HOST,
+        "PORT": config.POSTGRES_PORT,
+        "POOL_OPTIONS": {
+            "POOL_SIZE": 10,
+            # Number of connections to be persisted at all times
+            "MAX_OVERFLOW": 10,
+            # Additional connections to be created at peak loads
+            "RECYCLE": 24 * 60 * 60,
+            # Time to close and replace connections
+            "TIMEOUT": 60 * 10,
+            # Period of time to wait for a connection to become available
+            # during peak loads when all overflow slots are occupied
+        },
     }
-elif config.APP_MODE == "INGESTION":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": config.POSTGRES_DB,
-            "USER": config.POSTGRES_USER,
-            "PASSWORD": config.POSTGRES_PASSWORD,
-            "HOST": config.POSTGRES_HOST,
-            "PORT": config.POSTGRES_PORT,
-            "CONN_MAX_AGE": 60 * 60 * 12,
-        }
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "dj_db_conn_pool.backends.postgresql",
-            "NAME": config.POSTGRES_DB,
-            "USER": config.POSTGRES_USER,
-            "PASSWORD": config.POSTGRES_PASSWORD,
-            "HOST": config.POSTGRES_HOST,
-            "PORT": config.POSTGRES_PORT,
-            "POOL_OPTIONS": {
-                "POOL_SIZE": 10,
-                # Number of connections to be persisted at all times
-                "MAX_OVERFLOW": 10,
-                # Additional connections to be created at peak loads
-                "RECYCLE": 24 * 60 * 60,
-                # Time to close and replace connections
-                "TIMEOUT": 60 * 10,
-                # Period of time to wait for a connection to become available
-                # during peak loads when all overflow slots are occupied
-            },
-        }
-    }
+}
 
 
 LOGGING = {
