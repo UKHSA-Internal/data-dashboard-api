@@ -168,6 +168,12 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
 
+        Notes:
+            If `x_axis` and `y_axis` are not provided
+            then the queryset will be returned for the
+            full records instead of the 2-item values
+            specified by the `x_axis` and `y_axis`
+
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
                 of the (x_axis, y_axis) numbers:
@@ -198,7 +204,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             queryset=queryset,
             field_name=x_axis,
         )
-        queryset = queryset.values_list(x_axis, y_axis)
+
+        if x_axis and y_axis:
+            queryset = queryset.values_list(x_axis, y_axis)
+
         return self._annotate_latest_date_on_queryset(queryset=queryset)
 
     @staticmethod

@@ -23,6 +23,7 @@ class PlotParameters(BaseModel):
     line_type: str | None = ""
     x_axis: str | None = ""
     y_axis: str | None = ""
+    override_y_axis_choice_to_none: bool = False
 
     @property
     def topic_name(self) -> str:
@@ -76,7 +77,9 @@ class PlotParameters(BaseModel):
         return ChartAxisFields.get_x_axis_value(name=self.x_axis)
 
     @property
-    def y_axis_value(self) -> str:
+    def y_axis_value(self) -> str | None:
+        if self.override_y_axis_choice_to_none:
+            return None
         return ChartAxisFields.get_y_axis_value(name=self.y_axis)
 
     def to_dict_for_query(self) -> dict[str, str]:
@@ -123,6 +126,21 @@ class PlotData(BaseModel):
     x_axis_values: Any
     y_axis_values: Any
     latest_date: Any = None  # noqa: UP007
+
+
+class CompletePlotData(BaseModel):
+    """Data model to hold the parameters and the full-enriched queryset
+
+    Notes:
+        This is primarily used for instances in which
+        the queryset is returned with full records
+        as opposed to the `values_list` of the
+        selected axes choices
+
+    """
+
+    parameters: PlotParameters
+    queryset: Any
 
 
 def get_date_n_months_ago_from_timestamp(
