@@ -2,23 +2,23 @@ from unittest import mock
 
 import pytest
 
-from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 
 
-class TestPrivateAPICrawlerProcessBlocks:
-    @mock.patch.object(PrivateAPICrawler, "process_any_headline_number_block")
-    @mock.patch.object(PrivateAPICrawler, "process_chart_block")
+class TestDynamicContentBlockCrawlerProcessBlocks:
+    @mock.patch.object(DynamicContentBlockCrawler, "process_any_headline_number_block")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_chart_block")
     def test_process_chart_with_headline_and_trend_card(
         self,
         spy_process_chart_block: mock.MagicMock,
         spy_process_any_headline_number_block: mock.MagicMock,
         example_chart_block: dict[str, str | list[dict]],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a chart block
         When `process_chart_with_headline_and_trend_card()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated
             to the `process_chart_block()` & `_process_any_headline_number_block()`
             methods accordingly
@@ -35,7 +35,7 @@ class TestPrivateAPICrawlerProcessBlocks:
         chart_block = {"value": example_chart_block}
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_chart_with_headline_and_trend_card(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_with_headline_and_trend_card(
             chart_with_headline_and_trend_card=chart_block,
         )
 
@@ -52,18 +52,20 @@ class TestPrivateAPICrawlerProcessBlocks:
         ]
         spy_process_any_headline_number_block.assert_has_calls(calls=expected_calls)
 
-    @mock.patch.object(PrivateAPICrawler, "process_chart_with_headline_and_trend_card")
-    @mock.patch.object(PrivateAPICrawler, "process_chart_block")
+    @mock.patch.object(
+        DynamicContentBlockCrawler, "process_chart_with_headline_and_trend_card"
+    )
+    @mock.patch.object(DynamicContentBlockCrawler, "process_chart_block")
     def test_process_any_chart_card_for_chart_cards(
         self,
         spy_process_chart_block: mock.MagicMock,
         spy_process_chart_with_headline_and_trend_card: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a fake chart card which has "type" key of value "chart_card"
         When `process_any_chart_card()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `process_chart_block()` method
         And the `process_chart_with_headline_and_trend_card()` is not called
 
@@ -77,7 +79,7 @@ class TestPrivateAPICrawlerProcessBlocks:
         fake_chart_card = {"type": "chart_card"}
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_any_chart_card(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_chart_card(
             chart_card=fake_chart_card,
         )
 
@@ -87,18 +89,20 @@ class TestPrivateAPICrawlerProcessBlocks:
         )
         spy_process_chart_with_headline_and_trend_card.assert_not_called()
 
-    @mock.patch.object(PrivateAPICrawler, "process_chart_with_headline_and_trend_card")
-    @mock.patch.object(PrivateAPICrawler, "process_chart_block")
+    @mock.patch.object(
+        DynamicContentBlockCrawler, "process_chart_with_headline_and_trend_card"
+    )
+    @mock.patch.object(DynamicContentBlockCrawler, "process_chart_block")
     def test_process_any_chart_card_for_chart_with_headline_and_trend_cards(
         self,
         spy_process_chart_block: mock.MagicMock,
         spy_process_chart_with_headline_and_trend_card: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a fake chart card which has "type" key of value "chart_with_headline_and_trend_card"
         When `process_any_chart_card()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `process_chart_with_headline_and_trend_card()` method
         And the `process_chart_block()` is not called
 
@@ -112,7 +116,7 @@ class TestPrivateAPICrawlerProcessBlocks:
         fake_chart_card = {"type": "chart_with_headline_and_trend_card"}
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_any_chart_card(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_chart_card(
             chart_card=fake_chart_card,
         )
 
@@ -124,12 +128,12 @@ class TestPrivateAPICrawlerProcessBlocks:
 
     def test_process_any_chart_card_raises_error_for_invalid_input(
         self,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a fake chart card which has an invalid "type" key
         When `process_any_chart_card()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then a `ValueError` is raised
         """
         # Given
@@ -137,22 +141,22 @@ class TestPrivateAPICrawlerProcessBlocks:
 
         # When / Then
         with pytest.raises(ValueError):
-            private_api_crawler_with_mocked_internal_api_client.process_any_chart_card(
+            dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_chart_card(
                 chart_card=fake_chart_card
             )
 
-    @mock.patch.object(PrivateAPICrawler, "process_trend_number_block")
-    @mock.patch.object(PrivateAPICrawler, "process_headline_number_block")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_trend_number_block")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_headline_number_block")
     def test_process_any_headline_number_block_for_trend_number_block(
         self,
         spy_process_headline_number_block: mock.MagicMock,
         spy_process_trend_number_block: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a fake headline number block which has a "type" key of value "trend_number"
         When `process_any_headline_number_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `process_trend_number_block()` method
         And `process_headline_number_block()` is not called
 
@@ -165,7 +169,7 @@ class TestPrivateAPICrawlerProcessBlocks:
         fake_headline_number_block = {"type": "trend_number"}
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_any_headline_number_block(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_headline_number_block(
             headline_number_block=fake_headline_number_block,
         )
 
@@ -178,19 +182,19 @@ class TestPrivateAPICrawlerProcessBlocks:
     @pytest.mark.parametrize(
         "headline_number_block_type", ["headline_number", "percentage_number"]
     )
-    @mock.patch.object(PrivateAPICrawler, "process_trend_number_block")
-    @mock.patch.object(PrivateAPICrawler, "process_headline_number_block")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_trend_number_block")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_headline_number_block")
     def test_process_any_headline_number_block_for_headline_and_percentage_number_blocks(
         self,
         spy_process_headline_number_block: mock.MagicMock,
         spy_process_trend_number_block: mock.MagicMock,
         headline_number_block_type: str,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a fake headline number block which has a "type" key of value "headline_number"
         When `process_any_headline_number_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `process_headline_number_block()` method
         And `process_trend_number_block()` is not called
 
@@ -203,7 +207,7 @@ class TestPrivateAPICrawlerProcessBlocks:
         fake_headline_number_block = {"type": headline_number_block_type}
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_any_headline_number_block(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_headline_number_block(
             headline_number_block=fake_headline_number_block,
         )
 
@@ -215,12 +219,12 @@ class TestPrivateAPICrawlerProcessBlocks:
 
     def test_process_any_headline_number_block_raises_error_for_invalid_input(
         self,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a fake headline number block which has an invalid "type" key
         When `process_any_headline_number_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then a `ValueError` is raised
         """
         # Given
@@ -228,7 +232,7 @@ class TestPrivateAPICrawlerProcessBlocks:
 
         # When / Then
         with pytest.raises(ValueError):
-            private_api_crawler_with_mocked_internal_api_client.process_any_headline_number_block(
+            dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_headline_number_block(
                 headline_number_block=fake_headline_number_block
             )
 
@@ -237,23 +241,23 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_trend_number_block(
         self,
         example_trend_number_block: dict[str, str],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a trend number block
         When `process_trend_number_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated
             to the `hit_trends_endpoint()` on the `InternalAPIClient`
         """
         # Given
         trend_number_block = {"value": example_trend_number_block}
         spy_internal_api_client: mock.Mock = (
-            private_api_crawler_with_mocked_internal_api_client._internal_api_client
+            dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_trend_number_block(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_trend_number_block(
             trend_number_block=trend_number_block
         )
 
@@ -270,23 +274,23 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_headline_number_block(
         self,
         example_headline_number_block: dict[str, str],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a headline number block
         When `process_headline_number_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated
             to the `hit_headlines_endpoint()` on the `InternalAPIClient`
         """
         # Given
         headline_number_block = {"value": example_headline_number_block}
         spy_internal_api_client: mock.Mock = (
-            private_api_crawler_with_mocked_internal_api_client._internal_api_client
+            dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_headline_number_block(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_headline_number_block(
             headline_number_block=headline_number_block
         )
 
@@ -307,29 +311,29 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_chart_block_hits_tables_endpoint(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a chart block
         When `process_chart_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `hit_tables_endpoint()`
             on the `InternalAPIClient`
         """
         # Given
         chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
-            private_api_crawler_with_mocked_internal_api_client._internal_api_client
+            dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_chart_block(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
             chart_block=chart_block,
         )
 
         # Then
         request_payload_builder = (
-            private_api_crawler_with_mocked_internal_api_client._request_payload_builder
+            dynamic_content_block_crawler_with_mocked_internal_api_client._request_payload_builder
         )
         expected_tables_request_data = (
             request_payload_builder.build_tables_request_data(
@@ -343,12 +347,12 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_chart_block_hits_downloads_endpoint(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a chart block
         When `process_chart_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `hit_downloads_endpoint()`
             on the `InternalAPIClient`
         """
@@ -356,17 +360,17 @@ class TestCrawlerProcessIndividualBlocks:
         file_format = "csv"
         chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
-            private_api_crawler_with_mocked_internal_api_client._internal_api_client
+            dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_chart_block(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
             chart_block=chart_block,
         )
 
         # Then
         request_payload_builder = (
-            private_api_crawler_with_mocked_internal_api_client._request_payload_builder
+            dynamic_content_block_crawler_with_mocked_internal_api_client._request_payload_builder
         )
         expected_downloads_request_data = (
             request_payload_builder.build_downloads_request_data(
@@ -381,23 +385,23 @@ class TestCrawlerProcessIndividualBlocks:
     def test_process_chart_block_hits_charts_endpoint(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
     ):
         """
         Given a chart block
         When `process_chart_block()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `DynamicContentBlockCrawler`
         Then the call is delegated to the `hit_charts_endpoint()`
             on the `InternalAPIClient`
         """
         # Given
         chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
-            private_api_crawler_with_mocked_internal_api_client._internal_api_client
+            dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_chart_block(
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
             chart_block=chart_block,
         )
 
@@ -405,7 +409,7 @@ class TestCrawlerProcessIndividualBlocks:
         # We expect the chart request to be hit twice
         # For the double and single width charts
         request_payload_builder = (
-            private_api_crawler_with_mocked_internal_api_client._request_payload_builder
+            dynamic_content_block_crawler_with_mocked_internal_api_client._request_payload_builder
         )
         expected_charts_request_data_for_double_width_chart = (
             request_payload_builder.build_chart_request_data(

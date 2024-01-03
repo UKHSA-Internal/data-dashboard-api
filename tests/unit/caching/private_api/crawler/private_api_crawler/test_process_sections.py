@@ -2,6 +2,7 @@ from unittest import mock
 
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.crawler.cms_blocks import CMSBlockParser
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
@@ -64,7 +65,9 @@ class TestPrivateAPICrawlerProcessSections:
             section=mocked_section
         )
 
-    @mock.patch.object(PrivateAPICrawler, "process_all_headline_numbers_row_cards")
+    @mock.patch.object(
+        DynamicContentBlockCrawler, "process_all_headline_numbers_row_cards"
+    )
     @mock.patch.object(
         CMSBlockParser, "get_headline_numbers_row_cards_from_content_cards"
     )
@@ -116,7 +119,7 @@ class TestPrivateAPICrawlerProcessSections:
             headline_numbers_row_cards=headline_numbers_row_cards
         )
 
-    @mock.patch.object(PrivateAPICrawler, "process_all_chart_cards")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_all_chart_cards")
     @mock.patch.object(CMSBlockParser, "get_chart_row_cards_from_content_cards")
     @mock.patch.object(CMSBlockParser, "get_content_cards_from_section")
     def test_process_section_delegates_call_for_processing_chart_row_cards(

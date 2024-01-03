@@ -3,6 +3,14 @@ from unittest import mock
 import pytest
 
 from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
+
+
+@pytest.fixture
+def dynamic_content_block_crawler_with_mocked_internal_api_client() -> (
+    DynamicContentBlockCrawler
+):
+    return DynamicContentBlockCrawler(internal_api_client=mock.Mock())
 
 
 @pytest.fixture
