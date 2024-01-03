@@ -46,7 +46,7 @@ class TestMergeAndProcessQuerysets:
         # Check that the sample first record taken from the results
         # has all the correct fields in the correct index position of the tuple
         # and they can be reached via the dunder notation
-        assert len(first_record) == 14
+        assert len(first_record) == 12
         assert (
             first_record[0]
             == first_record.metric__topic__sub_theme__theme__name
@@ -65,11 +65,9 @@ class TestMergeAndProcessQuerysets:
         assert (
             first_record[5] == first_record.metric__name == "COVID-19_cases_casesByDay"
         )
-        assert first_record[6] == first_record.metric_frequency == "D"
-        assert first_record[7] == first_record.sex == "f"
-        assert first_record[8] == first_record.age__name == "all"
-        assert first_record[9] == first_record.stratum__name == "default"
-        assert first_record[10] == first_record.year == 2023
-        assert first_record[11] == first_record.epiweek == 1
-        assert str(first_record[12]) == str(first_record.date) == dates[2]
-        assert str(first_record[13]) == str(first_record.metric_value) == f"{456:.4f}"
+        assert first_record[6] == first_record.sex == "f"
+        assert first_record[7] == first_record.age__name == "all"
+        assert first_record[8] == first_record.stratum__name == "default"
+        assert first_record[9] == first_record.year == 2023
+        assert str(first_record[10]) == str(first_record.date) == dates[2]
+        assert str(first_record[11]) == str(first_record.metric_value) == f"{456:.4f}"

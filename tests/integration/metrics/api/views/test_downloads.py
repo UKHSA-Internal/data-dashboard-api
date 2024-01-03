@@ -150,7 +150,7 @@ class TestDownloadsView:
         # Check the output itself is as expected
         csv_file = csv.reader(io.StringIO(response.content.decode("utf-8")))
         csv_output = list(csv_file)
-        csv_header = csv_output.pop(0)
+        csv_headers = csv_output.pop(0)
 
         expected_csv_headings = [
             "theme",
@@ -159,16 +159,14 @@ class TestDownloadsView:
             "geography_type",
             "geography",
             "metric",
-            "metric_frequency",
             "sex",
             "age",
             "stratum",
             "year",
-            "epiweek",
             "date",
             "metric_value",
         ]
-        assert csv_header == expected_csv_headings
+        assert csv_headers == expected_csv_headings
 
         expected_csv_content = [
             [
@@ -178,12 +176,10 @@ class TestDownloadsView:
                 core_time_series.geography.geography_type.name,
                 core_time_series.geography.name,
                 core_time_series.metric.name,
-                core_time_series.metric_frequency,
                 core_time_series.sex,
                 core_time_series.age.name,
                 core_time_series.stratum.name,
                 str(core_time_series.year),
-                str(core_time_series.epiweek),
                 core_time_series.date,
                 f"{core_time_series.metric_value:.4f}",
             ]
