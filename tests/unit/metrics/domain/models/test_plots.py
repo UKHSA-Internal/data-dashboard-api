@@ -178,6 +178,48 @@ class TestPlotParameters:
         )
         assert date_from_stamp == spy_make_date_from_string.return_value
 
+    def test_override_y_axis_choice_to_none_defaults_as_false(self):
+        """
+        Given a `PlotParameters` instance
+        When the `override_y_axis_choice_to_none` property is called
+        Then False is returned by default
+        """
+        # Given
+        topic_name = "COVID-19"
+        metric_name = "COVID-19_deaths_ONSByDay"
+
+        # When
+        chart_plot_parameters = PlotParameters(
+            topic=topic_name,
+            metric=metric_name,
+            chart_type="bar",
+        )
+
+        # Then
+        assert not chart_plot_parameters.override_y_axis_choice_to_none
+
+    def test_y_axis_returns_none_when_override_y_axis_choice_to_none_is_true(self):
+        """
+        Given a `PlotParameters` instance
+            which has `override_y_axis_choice_to_none` set to True
+        When the `y_axis_value` property is called
+        Then None is returned
+        """
+        # Given
+        topic_name = "COVID-19"
+        metric_name = "COVID-19_deaths_ONSByDay"
+
+        # When
+        chart_plot_parameters = PlotParameters(
+            topic=topic_name,
+            metric=metric_name,
+            chart_type="bar",
+            override_y_axis_choice_to_none=True,
+        )
+
+        # Then
+        assert chart_plot_parameters.y_axis_value is None
+
 
 class TestMakeDatetimeFromString:
     def test_returns_correct_value(self):

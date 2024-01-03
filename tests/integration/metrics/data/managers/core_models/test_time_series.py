@@ -159,6 +159,51 @@ class TestCoreTimeSeriesQuerySet:
             if embargoed_record in filtered_queryset
         )
 
+    @pytest.mark.django_db
+    def test_filter_for_x_and_y_values_returns_full_records_when_axes_not_provided(
+        self,
+    ):
+        """
+        Given existing `CoreTimeSeries` records
+        And no value for the "y_axis"
+        When `filter_for_x_and_y_values()` is called
+            from an instance of the `CoreTimeSeriesManager`
+        Then only the the returned queryset contains the full records
+        """
+        # Given
+        x_axis = "date"
+        y_axis = ""
+        dates = FAKE_DATES
+        core_time_series = [
+            CoreTimeSeriesFactory.create_record(
+                metric_value=1,
+                date=date,
+                refresh_date="2023-12-01",
+            )
+            for date in dates
+        ]
+        example_core_time_series = core_time_series[0]
+
+        # When
+        retrieved_records = CoreTimeSeries.objects.filter_for_x_and_y_values(
+            x_axis=x_axis,
+            y_axis=y_axis,
+            topic_name=core_time_series[0].metric.topic.name,
+            metric_name=core_time_series[0].metric.name,
+            date_from=dates[0],
+            date_to=dates[-1],
+        )
+
+        # Then
+        assert retrieved_records[0].metric.name == example_core_time_series.metric.name
+        assert (
+            retrieved_records[0].metric.topic.name
+            == example_core_time_series.metric.topic.name
+        )
+        assert (
+            retrieved_records[0].metric_value == example_core_time_series.metric_value
+        )
+
 
 class TestCoreTimeSeriesManager:
     @pytest.mark.django_db

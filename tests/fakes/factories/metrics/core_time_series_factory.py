@@ -3,8 +3,10 @@ import secrets
 
 import factory
 
+from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
+from tests.fakes.models.metrics.age import FakeAge
 from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.metrics.metric import FakeMetric
 from tests.fakes.models.metrics.stratum import FakeStratum
@@ -24,26 +26,38 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         date: datetime.date,
         metric_name: str,
         topic_name: str,
-        stratum_name: str = "",
+        geography_name: str = "England",
+        geography_type_name: str = "Nation",
+        age_name: str = "all",
+        sex: str = "all",
+        stratum_name: str = "default",
+        metric_value: float = 1,
+        epiweek: int = 1,
     ) -> FakeCoreTimeSeries:
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
             metric_name=metric_name, topic_name=topic_name
         )
-        if stratum_name:
-            stratum: FakeStratum = FakeStratumFactory.build_example(
-                stratum_name=stratum_name,
-            )
-        else:
-            stratum = None
+
+        geography = FakeGeographyFactory.build_example(
+            geography_name=geography_name, geography_type_name=geography_type_name
+        )
+
+        stratum: FakeStratum = FakeStratumFactory.build_example(
+            stratum_name=stratum_name,
+        )
+        age = FakeAge(name=age_name)
 
         return cls.build(
             metric_frequency="D",
-            sex="ALL",
             year=date.year,
-            metric_value=1,
+            metric_value=metric_value,
             metric=metric,
+            geography=geography,
             date=date,
             stratum=stratum,
+            age=age,
+            sex=sex,
+            epiweek=epiweek,
             refresh_date=str(date),
         )
 
