@@ -7,7 +7,7 @@ django.setup()
 
 
 from ingestion.file_ingestion import INCOMING_DATA_TYPE  # noqa: E402
-from ingestion.operations.upload_from_s3 import (  # noqa: E402
+from ingestion.operations.upload import (  # noqa: E402
     ingest_data_and_post_process,
 )
 
