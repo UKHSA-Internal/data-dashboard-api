@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
+from metrics.domain.models.plots import CompletePlotData
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.plots.validation import (
     DatesNotInChronologicalOrderError,
@@ -173,6 +174,37 @@ class PlotsInterface:
             age=age,
         )
 
+    def build_plot_data_from_parameters_with_complete_queryset(
+        self, plot_parameters: PlotParameters
+    ) -> CompletePlotData:
+        """Creates a `CompletePlotData` model which holds the params and full queryset for the given requested plot
+
+        Notes:
+            The corresponding timeseries data is used to enrich a
+            pydantic model which also holds the corresponding params.
+            These models can then be passed into the domain libraries.
+
+        Returns:
+            An individual `CompletePlotData` model
+            for the requested `plot_parameters`.
+
+        Raises:
+            `DataNotFoundForPlotError`: If no `CoreTimeSeries` data
+                can be found for a particular plot.
+
+        """
+        queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
+            plot_parameters=plot_parameters
+        )
+
+        if not queryset_result.queryset.exists():
+            raise DataNotFoundForPlotError
+
+        return CompletePlotData(
+            parameters=plot_parameters,
+            queryset=queryset_result.queryset,
+        )
+
     def build_plot_data_from_parameters(
         self, plot_parameters: PlotParameters
     ) -> PlotData:
@@ -188,7 +220,7 @@ class PlotsInterface:
                 or the requested `plot_parameters`.
 
         Raises:
-            `DataNotFoundError`: If no `CoreTimeSeries` data can be found
+            `DataNotFoundForPlotError`: If no `CoreTimeSeries` data can be found
                 for a particular plot.
 
         """
@@ -213,6 +245,44 @@ class PlotsInterface:
             y_axis_values=list(y_axis_values),
             latest_date=queryset_result.latest_date,
         )
+
+    def build_plots_data_for_full_queryset(self) -> list[CompletePlotData]:
+        """Creates a list of `CompletePlotData` models which hold the params and corresponding data for the plots
+
+        Notes:
+            The corresponding timeseries data is used to enrich a
+            pydantic model which also holds the corresponding params.
+            These models can then be passed into the domain libraries.
+
+            If no data is returned for a particular plot,
+            that plot is skipped and no enriched model will be provided.
+
+        Returns:
+            A list of `CompletePlotData` models for
+            each of the requested plots.
+
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
+        """
+        plots_data: list[CompletePlotData] = []
+        for plot_parameters in self.plots_collection.plots:
+            try:
+                plot_data: PlotData = (
+                    self.build_plot_data_from_parameters_with_complete_queryset(
+                        plot_parameters=plot_parameters
+                    )
+                )
+            except DataNotFoundForPlotError:
+                continue
+
+            plots_data.append(plot_data)
+
+        if not plots_data:
+            raise DataNotFoundForAnyPlotError
+
+        return plots_data
 
     def build_plots_data(self) -> list[PlotData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
