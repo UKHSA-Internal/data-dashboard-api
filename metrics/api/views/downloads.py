@@ -81,12 +81,13 @@ class DownloadsView(APIView):
             chart_plots=chart_plot_models
         )
 
-        if file_format == "json":
-            return self._handle_json(queryset=queryset)
-        if file_format == "csv":
-            return self._handle_csv(queryset=queryset)
-
-        return None
+        match file_format:
+            case "json":
+                return self._handle_json(queryset=queryset)
+            case "csv":
+                return self._handle_csv(queryset=queryset)
+            case _:
+                return None
 
 
 class BulkDownloadsView(APIView):
