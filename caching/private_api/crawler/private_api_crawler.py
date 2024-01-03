@@ -3,13 +3,17 @@ import re
 from typing import Self
 
 from caching.internal_api_client import InternalAPIClient
-from caching.private_api.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.cms_blocks import CMSBlockParser
+from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.headless_cms_api import HeadlessCMSAPICrawler
+from caching.private_api.crawler.request_payload_builder import RequestPayloadBuilder
+from caching.private_api.crawler.type_hints import (
+    CHART_DOWNLOAD,
+    CMS_COMPONENT_BLOCK_TYPE,
+)
 from cms.common.models import CommonPage
 from cms.home.models import HomePage
 from cms.topic.models import TopicPage
-
-CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
-CHART_DOWNLOAD = dict[str, str]
 
 logger = logging.getLogger(__name__)
 
@@ -29,9 +33,14 @@ class PrivateAPICrawler:
 
     def __init__(self, internal_api_client: InternalAPIClient | None = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
+        self._cms_block_parser = CMSBlockParser()
         self._geography_api_crawler = GeographiesAPICrawler(
             internal_api_client=self._internal_api_client
         )
+        self._headless_cms_api_crawler = HeadlessCMSAPICrawler(
+            internal_api_client=self._internal_api_client
+        )
+        self._request_payload_builder = RequestPayloadBuilder()
 
     # Class constructors
 
@@ -52,45 +61,6 @@ class PrivateAPICrawler:
         )
         return cls(internal_api_client=internal_api_client)
 
-    # Process headless CMS API
-
-    def process_list_pages_for_headless_cms_api(self) -> None:
-        """Makes a request to the headless CMS API list `pages/` endpoint
-
-        Returns:
-            None
-
-        """
-        logger.info("Hitting list GET pages/ endpoint")
-        self._internal_api_client.hit_pages_list_endpoint()
-
-        logger.info("Hitting list GET pages/ endpoint for all page types")
-        self._internal_api_client.hit_pages_list_endpoint_for_all_page_types()
-
-    def process_detail_pages_for_headless_cms_api(
-        self, pages: list[HomePage, TopicPage]
-    ) -> None:
-        """Makes a request to the headless CMS API detail `pages/` endpoint for each of the given `pages`
-
-        Returns:
-            None
-
-        """
-        for page in pages:
-            self.process_individual_page_for_headless_cms_api(page=page)
-
-    def process_individual_page_for_headless_cms_api(
-        self, page: HomePage | TopicPage
-    ) -> None:
-        """Makes a request to the headless CMS API detail `pages/` endpoint for the given `page`
-
-        Returns:
-            None
-
-        """
-        logger.info("Hitting GET pages/ endpoint for `%s` page", page.title)
-        self._internal_api_client.hit_pages_detail_endpoint(page_id=page.id)
-
     # Process pages for content
 
     def process_pages(self, pages: list[HomePage, TopicPage, CommonPage]) -> None:
@@ -109,8 +79,10 @@ class PrivateAPICrawler:
             None
 
         """
-        self.process_list_pages_for_headless_cms_api()
-        self.process_detail_pages_for_headless_cms_api(pages=pages)
+        self._headless_cms_api_crawler.process_list_pages_for_headless_cms_api()
+        self._headless_cms_api_crawler.process_detail_pages_for_headless_cms_api(
+            pages=pages
+        )
         logger.info("Completed processing of headless CMS API")
 
         self._geography_api_crawler.process_geographies_api()
@@ -158,11 +130,13 @@ class PrivateAPICrawler:
             None
 
         """
-        content_cards = self.get_content_cards_from_section(section=section)
+        content_cards = self._cms_block_parser.get_content_cards_from_section(
+            section=section
+        )
 
         # Gather all headline number row cards in this section of the page
         headline_numbers_row_cards = (
-            self.get_headline_numbers_row_cards_from_content_cards(
+            self._cms_block_parser.get_headline_numbers_row_cards_from_content_cards(
                 content_cards=content_cards
             )
         )
@@ -172,7 +146,7 @@ class PrivateAPICrawler:
         )
 
         # Gather all chart row cards in this section of the page
-        chart_row_cards = self.get_chart_row_cards_from_content_cards(
+        chart_row_cards = self._cms_block_parser.get_chart_row_cards_from_content_cards(
             content_cards=content_cards
         )
         # Process each of the chart row cards which were gathered
@@ -346,11 +320,13 @@ class PrivateAPICrawler:
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
 
     def _process_table_for_chart_block(self, chart_block: dict):
-        tables_data = self._build_tables_request_data(chart_block=chart_block)
+        tables_data = self._request_payload_builder.build_tables_request_data(
+            chart_block=chart_block
+        )
         self._internal_api_client.hit_tables_endpoint(data=tables_data)
 
     def _process_download_for_chart_block(self, chart_block: dict, file_format: str):
-        downloads_data = self._build_downloads_request_data(
+        downloads_data = self._request_payload_builder.build_downloads_request_data(
             chart_block=chart_block, file_format=file_format
         )
         return self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
@@ -373,7 +349,7 @@ class PrivateAPICrawler:
 
         """
         for chart_is_double_width in (True, False):
-            charts_data = self._build_chart_request_data(
+            charts_data = self._request_payload_builder.build_chart_request_data(
                 chart_block=chart_block["value"],
                 chart_is_double_width=chart_is_double_width,
             )
@@ -392,7 +368,7 @@ class PrivateAPICrawler:
             None
 
         """
-        data = self._build_headlines_request_data(
+        data = self._request_payload_builder.build_headlines_request_data(
             headline_number_block=headline_number_block["value"]
         )
         self._internal_api_client.hit_headlines_endpoint(data=data)
@@ -409,240 +385,10 @@ class PrivateAPICrawler:
             None
 
         """
-        data = self._build_trend_request_data(
+        data = self._request_payload_builder.build_trend_request_data(
             trend_number_block=trend_number_block["value"]
         )
         self._internal_api_client.hit_trends_endpoint(data=data)
-
-    # Deconstruct blocks
-
-    @staticmethod
-    def get_content_cards_from_section(
-        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Filters for a list of content cards from the given `section`
-
-        Args:
-            section: The section dict from the CMS
-
-        Returns:
-            A list of content card dicts
-
-        """
-        return section["value"]["content"]
-
-    @staticmethod
-    def get_chart_row_cards_from_content_cards(
-        content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Filters for a list of chart row from the given `content_cards`
-
-        Args:
-            content_cards: The list of content card dicts
-                from the CMS
-
-        Returns:
-            A list of chart row card dicts which can be processed
-
-        """
-        return [
-            content_card
-            for content_card in content_cards
-            if content_card["type"] == "chart_row_card"
-        ]
-
-    @staticmethod
-    def get_headline_numbers_row_cards_from_content_cards(
-        content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Filters for a list of headliner number row cards from the given `content_cards`
-
-        Args:
-            content_cards: The list of content card dicts
-                from the CMS
-
-        Returns:
-            A list of headline number row card dicts
-            which can be processed
-
-        """
-        return [
-            content_card
-            for content_card in content_cards
-            if content_card["type"] == "headline_numbers_row_card"
-        ]
-
-    # Building request data
-
-    @staticmethod
-    def _build_headlines_request_data(
-        headline_number_block: dict[str, str]
-    ) -> dict[str, str]:
-        """Builds the headlines endpoint request payload from the given `headline_number_block`
-
-        Args:
-            headline_number_block: The headline number block
-                from the CMS
-
-        Returns:
-            A dict which can be used as the payload to the
-            `headlines` endpoint
-
-        """
-        return {
-            "topic": headline_number_block["topic"],
-            "metric": headline_number_block["metric"],
-            "geography": headline_number_block.get("geography", "England"),
-            "geography_type": headline_number_block.get("geography_type", "Nation"),
-            "sex": headline_number_block.get("sex", "all"),
-            "age": headline_number_block.get("age", "all"),
-            "stratum": headline_number_block.get("stratum", "default"),
-        }
-
-    @staticmethod
-    def _build_trend_request_data(trend_number_block: dict[str, str]) -> dict[str, str]:
-        """Builds the trends endpoint request payload from the given `trend_number_block`
-
-        Args:
-            trend_number_block: The trends number block from the CMS
-
-        Returns:
-            A dict which can be used as the payload to the
-            `trends` endpoint
-
-        """
-        return {
-            "topic": trend_number_block["topic"],
-            "metric": trend_number_block["metric"],
-            "percentage_metric": trend_number_block["percentage_metric"],
-        }
-
-    def _build_chart_request_data(
-        self, chart_block: CMS_COMPONENT_BLOCK_TYPE, chart_is_double_width: bool
-    ) -> dict[str, str | int, list[dict[str, str]]]:
-        """Builds the charts endpoint request payload from the given `chart_block`
-
-        Args:
-            chart_block: The chart block from the CMS
-            chart_is_double_width: If True, a chart width of 1100 is applied.
-                If False, a chart width of 515 is applied.
-
-        Returns:
-            A dict which can be used as the payload to the
-            `charts` endpoint
-
-        """
-        return {
-            "plots": [
-                self._build_plot_data(plot_value=plot["value"])
-                for plot in chart_block["chart"]
-            ],
-            "file_format": "svg",
-            "chart_width": 1100 if chart_is_double_width else 515,
-            "chart_height": 260,
-            "x_axis": chart_block.get("x_axis", ""),
-            "y_axis": chart_block.get("y_axis", ""),
-        }
-
-    @staticmethod
-    def _build_plot_data(plot_value: dict[str, str]) -> dict[str, str]:
-        """Builds the individual plot data from the given `plot_value`
-
-        Args:
-            plot_value: The dict containing the plot data
-
-        Returns:
-            A dict which can be used to represent the individual plot
-            within the `plots` list of the payload
-            to the `charts` or `tables` endpoint
-
-        """
-        return {
-            "topic": plot_value["topic"],
-            "metric": plot_value["metric"],
-            "chart_type": plot_value["chart_type"],
-            "stratum": plot_value["stratum"],
-            "geography": plot_value["geography"],
-            "geography_type": plot_value["geography_type"],
-            "sex": plot_value["sex"],
-            "age": plot_value["age"],
-            "date_from": plot_value["date_from"],
-            "date_to": plot_value["date_to"],
-            "label": plot_value["label"],
-            "line_colour": plot_value["line_colour"],
-            "line_type": plot_value["line_type"],
-        }
-
-    def _build_tables_request_data(
-        self, chart_block: CMS_COMPONENT_BLOCK_TYPE
-    ) -> dict[str, str | int, list[dict[str, str]]]:
-        """Builds the tables endpoint request payload from the given `chart_block`
-
-        Args:
-            chart_block: The chart block from the CMS
-
-        Returns:
-            A dict which can be used as the payload to the
-            `tables` endpoint
-
-        """
-        return {
-            "plots": [
-                self._build_plot_data(plot_value=plot["value"])
-                for plot in chart_block["chart"]
-            ],
-            "x_axis": chart_block["x_axis"],
-            "y_axis": chart_block["y_axis"],
-        }
-
-    def _build_downloads_request_data(
-        self,
-        chart_block: CMS_COMPONENT_BLOCK_TYPE,
-        file_format: str,
-    ) -> dict[str, str | int, list[dict[str, str]]]:
-        """Builds the tables endpoint request payload from the given `chart_block`
-
-        Args:
-            chart_block: The chart block from the CMS
-            file_format: The request format for downloaded data.
-
-        Returns:
-            A dict which can be used as the payload to the
-            `tables` endpoint
-
-        """
-        return {
-            "plots": [
-                self._build_downloads_plot_data(plot_value=plot["value"])
-                for plot in chart_block["chart"]
-            ],
-            "file_format": file_format,
-        }
-
-    @staticmethod
-    def _build_downloads_plot_data(plot_value: dict[str, str]) -> dict[str, str]:
-        """Builds the individual downloadable plot data from the given `plot_value`
-
-        Args:
-            plot_value: The dict containing the plot data
-
-        Returns:
-            A dict which can be used to represent the individual plot
-            within the `plots` list of the payload
-            to the `downloads` endpoint only
-
-        """
-        return {
-            "topic": plot_value["topic"],
-            "metric": plot_value["metric"],
-            "date_from": plot_value["date_from"],
-            "date_to": plot_value["date_to"],
-            "stratum": plot_value["stratum"],
-            "geography": plot_value["geography"],
-            "geography_type": plot_value["geography_type"],
-            "sex": plot_value["sex"],
-            "age": plot_value["age"],
-        }
 
     # process downloads
 
@@ -748,21 +494,6 @@ class PrivateAPICrawler:
 
         return downloads
 
-    def get_chart_row_cards_from_page_section(
-        self,
-        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Get chart row cards from page section.
-
-        Args:
-            section: a page section to be processed for chart card data
-
-        Returns:
-            A list of dictionaries containing chart row cards from page section,
-        """
-        content_cards = self.get_content_cards_from_section(section=section)
-        return self.get_chart_row_cards_from_content_cards(content_cards=content_cards)
-
     def get_downloads_from_page_sections(
         self,
         sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]],
@@ -782,8 +513,10 @@ class PrivateAPICrawler:
         downloads = []
 
         for section in sections:
-            chart_row_cards = self.get_chart_row_cards_from_page_section(
-                section=section
+            chart_row_cards = (
+                self._cms_block_parser.get_chart_row_cards_from_page_section(
+                    section=section
+                )
             )
 
             downloads.extend(

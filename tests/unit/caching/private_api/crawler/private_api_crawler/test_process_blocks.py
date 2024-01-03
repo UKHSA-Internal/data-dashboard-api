@@ -328,8 +328,13 @@ class TestCrawlerProcessIndividualBlocks:
         )
 
         # Then
-        expected_tables_request_data = private_api_crawler_with_mocked_internal_api_client._build_tables_request_data(
-            chart_block=example_chart_block
+        request_payload_builder = (
+            private_api_crawler_with_mocked_internal_api_client._request_payload_builder
+        )
+        expected_tables_request_data = (
+            request_payload_builder.build_tables_request_data(
+                chart_block=example_chart_block
+            )
         )
         spy_internal_api_client.hit_tables_endpoint.assert_called_once_with(
             data=expected_tables_request_data
@@ -360,9 +365,14 @@ class TestCrawlerProcessIndividualBlocks:
         )
 
         # Then
-        expected_downloads_request_data = private_api_crawler_with_mocked_internal_api_client._build_downloads_request_data(
-            chart_block=example_chart_block,
-            file_format=file_format,
+        request_payload_builder = (
+            private_api_crawler_with_mocked_internal_api_client._request_payload_builder
+        )
+        expected_downloads_request_data = (
+            request_payload_builder.build_downloads_request_data(
+                chart_block=example_chart_block,
+                file_format=file_format,
+            )
         )
         spy_internal_api_client.hit_downloads_endpoint.assert_called_once_with(
             data=expected_downloads_request_data
@@ -394,13 +404,20 @@ class TestCrawlerProcessIndividualBlocks:
         # Then
         # We expect the chart request to be hit twice
         # For the double and single width charts
-        expected_charts_request_data_for_double_width_chart = private_api_crawler_with_mocked_internal_api_client._build_chart_request_data(
-            chart_block=example_chart_block,
-            chart_is_double_width=True,
+        request_payload_builder = (
+            private_api_crawler_with_mocked_internal_api_client._request_payload_builder
         )
-        expected_charts_request_data_for_single_width_chart = private_api_crawler_with_mocked_internal_api_client._build_chart_request_data(
-            chart_block=example_chart_block,
-            chart_is_double_width=False,
+        expected_charts_request_data_for_double_width_chart = (
+            request_payload_builder.build_chart_request_data(
+                chart_block=example_chart_block,
+                chart_is_double_width=True,
+            )
+        )
+        expected_charts_request_data_for_single_width_chart = (
+            request_payload_builder.build_chart_request_data(
+                chart_block=example_chart_block,
+                chart_is_double_width=False,
+            )
         )
         expected_calls = [
             mock.call(data=expected_charts_request_data_for_double_width_chart),

@@ -1,6 +1,6 @@
 from unittest import mock
 
-from caching.private_api.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
 
 
 class TestGeographiesAPICrawler:
