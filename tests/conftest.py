@@ -1,7 +1,9 @@
 import datetime
 
 import pytest
+from wagtail.models import Page
 
+from cms.home.models import HomePage
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -171,3 +173,18 @@ def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
             },
         ],
     }
+
+
+@pytest.fixture
+def dashboard_root_page() -> HomePage:
+    root_page = HomePage(
+        title="UKHSA Dashboard Root",
+        slug="ukhsa-dashboard-root",
+    )
+
+    wagtail_root_page = Page.get_first_root_node()
+    root_page = wagtail_root_page.add_child(instance=root_page)
+    wagtail_root_page.save_revision().publish()
+
+    root_page.save_revision().publish()
+    return root_page

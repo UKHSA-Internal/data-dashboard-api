@@ -159,6 +159,10 @@ OPTIONAL_BODY_FIELD: str = """
 An optional body of text to accompany this block.
 """
 
+REQUIRED_BODY_FIELD: str = """
+A required body of text to accompany this block.
+"""
+
 PAGE_DESCRIPTION_FIELD: str = """
 An optional body of text which will be rendered at the top of the page. 
 This text will be displayed after the title of the page and before any of the main content.

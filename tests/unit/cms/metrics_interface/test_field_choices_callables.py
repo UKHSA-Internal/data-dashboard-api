@@ -5,6 +5,7 @@ from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.utils import ChartAxisFields
 from metrics.interfaces.charts.access import ChartTypes
+from tests.fakes.models.queryset import FakeQuerySet
 
 
 class TestGetAllUniqueMetricNames:
@@ -185,6 +186,30 @@ class TestGetAllTopicNames:
 
         # Then
         assert topic_names == [(x, x) for x in retrieved_topic_names]
+
+
+class TestGetListOfAllTopicNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_topic_names")
+    def test_returns_names_in_the_correct_format(
+        self, mocked_get_a_list_of_all_topic_names: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns topic names.
+        When `get_a_list_of_all_topic_names()` is called.
+        Then the topic names are returned as a list of strings.
+        """
+        # Given
+        retrieved_topic_names = ["COVID-19", "Influenza"]
+        retrieved_topic_names_queryset = FakeQuerySet(retrieved_topic_names)
+        mocked_get_a_list_of_all_topic_names.return_value = (
+            retrieved_topic_names_queryset
+        )
+
+        # When
+        topic_names = field_choices_callables.get_a_list_of_all_topic_names()
+
+        # Then
+        assert topic_names == retrieved_topic_names
 
 
 class TestGetAllStratumNames:
