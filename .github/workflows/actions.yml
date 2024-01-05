@@ -236,4 +236,4 @@ jobs:
         uses: actions/checkout@v4
       - uses: ./.github/actions/trigger-deployments
         with:
-          token: ${{ secrets.GITHUB_ACTIONS_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
