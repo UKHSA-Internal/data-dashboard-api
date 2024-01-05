@@ -1,4 +1,4 @@
-name: "Triggers the deployment workflows"
+name: "Trigger deployment workflows"
 
 description: "Triggers deployments to the Well-Known Environments"
 
