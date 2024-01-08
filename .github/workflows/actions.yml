@@ -162,7 +162,7 @@ jobs:
           pytest --cov
 
   ###############################################################################
-  # Deploy
+  # Build image
   ###############################################################################
 
   publish-main-image:
@@ -179,7 +179,7 @@ jobs:
     ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
-    # Only deploy if the changes are being pushed to the `main` branch
+    # Only build if the changes are being pushed to the `main` branch
 
     steps:
       - name: Check out code
@@ -188,7 +188,9 @@ jobs:
         uses: ./.github/actions/publish-image
         with:
           ecrRepository: "wp-api"
-          buildCommand: docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          buildCommand: | 
+            docker build \
+              -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
   publish-ingestion-image:
     name: Publish ingestion image
@@ -204,7 +206,7 @@ jobs:
     ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
-    # Only deploy if the changes are being pushed to the `main` branch
+    # Only build if the changes are being pushed to the `main` branch
 
     steps:
       - name: Check out code
@@ -214,5 +216,29 @@ jobs:
         with:
           ecrRepository: "wp-ingestion"
           buildCommand: |
-            docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+            docker build \ 
+              --platform linux/amd64 \
+              -f Dockerfile-ingestion \
+              -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           # The current self-hosted CI runners are X64 based. Hence, the need to build with AMD 64
+
+  ###############################################################################
+  # Deploy
+  ###############################################################################
+
+  trigger-deployments:
+    name: Trigger deployments
+    needs: [
+      publish-main-image,
+      publish-ingestion-image
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    # Only deploy if the changes are being pushed to the `main` branch
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/trigger-deployments
+        with:
+          token: ${{ secrets.DEPLOYMENT_TRIGGER_TOKEN }}
