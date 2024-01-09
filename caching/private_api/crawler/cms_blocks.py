@@ -121,6 +121,21 @@ class CMSBlockParser:
         ]
 
     @classmethod
+    def get_chart_blocks_from_chart_cards(
+        cls, chart_cards: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts all chart blocks from the given list of `chart_cards`
+
+        Args:
+            chart_cards: List of all chart cards on the page
+
+        Returns:
+            List of chart blocks which can then be crawled accordingly
+
+        """
+        return [chart_card["value"] for chart_card in chart_cards]
+
+    @classmethod
     def get_headline_blocks_from_chart_cards(
         cls, chart_cards: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
