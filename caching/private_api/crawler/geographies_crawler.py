@@ -1,6 +1,13 @@
 from collections import OrderedDict
+from dataclasses import dataclass
 
 from caching.internal_api_client import InternalAPIClient
+
+
+@dataclass
+class GeographyTypeData:
+    name: str
+    geography_names: list[str]
 
 
 class GeographiesAPICrawler:
@@ -9,7 +16,7 @@ class GeographiesAPICrawler:
     def __init__(self, internal_api_client: InternalAPIClient):
         self._internal_api_client = internal_api_client
 
-    def process_geographies_api(self) -> dict[str, list[str]]:
+    def process_geographies_api(self) -> list[GeographyTypeData]:
         """Crawls the list and retrieve/detail endpoints associated with the geographies API
 
         Notes:
@@ -17,13 +24,14 @@ class GeographiesAPICrawler:
             every available geography type
 
         Returns:
-            Dict of geography type names keyed
-            by a list of associated geography names.
+            List of enriched `GeographyTypeData` models
+            which hold the geography type name
+            and its associated geography names
             E.g.
-            >>> {
-                    "Nation": ["England", ...],
-                    "Lower Tier Local Authority": ["Birmingham", ...]
-                }
+            >>> [
+                    GeographyData(name="Nation", geography_names=["England", ...]),
+                    GeographyData(name="Lower Tier Local Authority", geography_names=["Birmingham", ...]),
+                ]
 
         """
         response = self._internal_api_client.hit_geographies_list_endpoint()
@@ -33,34 +41,36 @@ class GeographiesAPICrawler:
 
     def hit_detail_endpoint_for_each_geography_type(
         self, response_data: list[OrderedDict]
-    ) -> dict[str, list[str]]:
+    ) -> list[GeographyTypeData]:
         """Traverses the retrieve/detail endpoint associated with each ID from the given `response_data`
 
         Returns:
-            Dict of geography type names keyed
-            by a list of associated geography names.
+            List of enriched `GeographyTypeData` models
+            which hold the geography type name
+            and its associated geography names
             E.g.
-            >>> {
-                    "Nation": ["England", ...],
-                    "Lower Tier Local Authority": ["Birmingham", ...]
-                }
+            >>> [
+                    GeographyData(name="Nation", geography_names=["England", ...]),
+                    GeographyData(name="Lower Tier Local Authority", geography_names=["Birmingham", ...]),
+                ]
 
         Raises:
             `KeyError`: If an object in the `response_data`
                 does not contain an "id" key
 
         """
-        data = {}
+        data = []
         for geography_type_data in response_data:
-            geography_type_name: str = geography_type_data["name"]
-            geography_type_id: int = geography_type_data["id"]
-
             geography_names: list[
                 str
             ] = self.get_associated_geography_names_for_geography_type(
-                geography_type_id=geography_type_id
+                geography_type_id=geography_type_data["id"]
             )
-            data[geography_type_name] = geography_names
+
+            geography_type_data = GeographyTypeData(
+                name=geography_type_data["name"], geography_names=geography_names
+            )
+            data.append(geography_type_data)
 
         return data
 

@@ -54,9 +54,8 @@ class TestGeographiesAPICrawler:
         """
         # Given
         fake_response_data = [
-            {"id": 1, "name": "Halton"},
-            {"id": 2, "name": "Crawler"},
-            {"id": 3, "name": "County Durham"},
+            {"id": 1, "name": "Nation"},
+            {"id": 2, "name": "Lower Tier Local Authority"},
         ]
         spy_internal_api_client = mock.Mock()
         geographies_api_crawler = GeographiesAPICrawler(
@@ -77,6 +76,48 @@ class TestGeographiesAPICrawler:
         spy_get_associated_geography_names_for_geography_type.assert_has_calls(
             calls=expected_calls, any_order=True
         )
+
+    @mock.patch.object(
+        GeographiesAPICrawler, "get_associated_geography_names_for_geography_type"
+    )
+    def test_hit_detail_endpoint_for_each_geography_type_returns_enriched_data_models(
+        self, spy_get_associated_geography_names_for_geography_type: mock.MagicMock
+    ):
+        """
+        Given a dict containing geography_type IDs
+        And geography names returned from the call to
+            `get_associated_geography_names_for_geography_type()`
+        When `crawl_geographies_api()` is called
+            from an instance of the `GeographiesAPICrawler`
+        Then an enriched `GeographyTypeData` model is returned
+
+        Patches:
+            `spy_get_associated_geography_names_for_geography_type`: To
+                remove the side effect of hitting the geographies API
+                and injecting the returned geography names
+        """
+        # Given
+        fake_response_data = [{"id": 1, "name": "Lower Tier Local Authority"}]
+        fake_geography_names = ["Birmingham", "Crawley", "Liverpool"]
+        spy_get_associated_geography_names_for_geography_type.return_value = (
+            fake_geography_names
+        )
+        spy_internal_api_client = mock.Mock()
+        geographies_api_crawler = GeographiesAPICrawler(
+            internal_api_client=spy_internal_api_client
+        )
+
+        # When
+        geography_data_models: list[
+            GeographyTypeData
+        ] = geographies_api_crawler.hit_detail_endpoint_for_each_geography_type(
+            response_data=fake_response_data
+        )
+
+        # Then
+        geography_data_model = geography_data_models[0]
+        assert geography_data_model.name == fake_response_data[0]["name"]
+        assert geography_data_model.geography_names == fake_geography_names
 
     def test_get_associated_geography_names_for_geography_type(self):
         """
