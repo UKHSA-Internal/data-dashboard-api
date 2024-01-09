@@ -35,18 +35,28 @@ class TestGeographiesAPICrawler:
             response_data=returned_response.data
         )
 
-    def test_hit_detail_endpoint_for_each_geography_type(self):
+    @mock.patch.object(
+        GeographiesAPICrawler, "get_associated_geography_names_for_geography_type"
+    )
+    def test_hit_detail_endpoint_for_each_geography_type(
+        self, spy_get_associated_geography_names_for_geography_type: mock.MagicMock
+    ):
         """
         Given a dict containing geography_type IDs
         When `crawl_geographies_api()` is called
             from an instance of the `GeographiesAPICrawler`
         Then the call is delegated to the `InternalAPIClient` for each ID
+
+        Patches:
+            `spy_get_associated_geography_names_for_geography_type`: For
+                the main assertion of checking each geography type ID
+                is used for the detail endpoint call.
         """
         # Given
-        fake_geography_type_ids = [1, 2, 3]
         fake_response_data = [
-            {"id": fake_geography_type_id}
-            for fake_geography_type_id in fake_geography_type_ids
+            {"id": 1, "name": "Halton"},
+            {"id": 2, "name": "Crawler"},
+            {"id": 3, "name": "County Durham"},
         ]
         spy_internal_api_client = mock.Mock()
         geographies_api_crawler = GeographiesAPICrawler(
@@ -59,10 +69,49 @@ class TestGeographiesAPICrawler:
         )
 
         # Then
+        fake_geography_type_ids = [x["id"] for x in fake_response_data]
         expected_calls = [
             mock.call(geography_type_id=fake_geography_type_id)
             for fake_geography_type_id in fake_geography_type_ids
         ]
-        spy_internal_api_client.hit_geographies_detail_endpoint.assert_has_calls(
+        spy_get_associated_geography_names_for_geography_type.assert_has_calls(
             calls=expected_calls, any_order=True
         )
+
+    def test_get_associated_geography_names_for_geography_type(self):
+        """
+        Given a mocked response containing georgraphy names
+        When `get_associated_geography_names_for_geography_type()` is called
+            from an instance of the `GeographiesAPICrawler`
+        Then the expected geography names are returned
+        """
+        # Given
+        expected_response = {
+            "geographies": [
+                {"id": 2, "name": "Birmingham"},
+                {"id": 3, "name": "Barrow-in-Furness"},
+                {"id": 4, "name": "Worthing"},
+            ]
+        }
+        spy_internal_api_client = mock.Mock()
+        mocked_response = mock.Mock(data=expected_response)
+        spy_internal_api_client.hit_geographies_detail_endpoint.return_value = (
+            mocked_response
+        )
+
+        geographies_api_crawler = GeographiesAPICrawler(
+            internal_api_client=spy_internal_api_client
+        )
+
+        # When
+        associated_geography_names = (
+            geographies_api_crawler.get_associated_geography_names_for_geography_type(
+                geography_type_id=mock.Mock()
+            )
+        )
+
+        # Then
+        expected_geography_names: list[str] = [
+            x["name"] for x in expected_response["geographies"]
+        ]
+        assert associated_geography_names == expected_geography_names
