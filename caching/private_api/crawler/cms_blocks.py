@@ -119,3 +119,22 @@ class CMSBlockParser:
             for chart_row_card in chart_row_cards
             for chart_card in chart_row_card["value"]["columns"]
         ]
+
+    @classmethod
+    def get_headline_blocks_from_chart_cards(
+        cls, chart_cards: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts all headline number blocks from the given list of `chart_cards`
+
+        Args:
+            chart_cards: List of all chart cards on the page
+
+        Returns:
+            List of headline number blocks which can then be crawled accordingly
+
+        """
+        return [
+            headline_number_block
+            for chart_card in chart_cards
+            for headline_number_block in chart_card["value"]["headline_number_columns"]
+        ]
