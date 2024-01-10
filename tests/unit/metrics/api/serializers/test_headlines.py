@@ -4,7 +4,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.headlines import (
-    HeadlinesQuerySerializerBeta,
+    HeadlinesQuerySerializer,
 )
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.age_manager import FakeAgeManager
@@ -15,7 +15,7 @@ from tests.fakes.managers.stratum_manager import FakeStratumManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
 
-class TestHeadlinesQuerySerializerBeta:
+class TestHeadlinesQuerySerializer:
     DATA_PAYLOAD_HINT = dict[str, str]
 
     @classmethod
@@ -48,7 +48,7 @@ class TestHeadlinesQuerySerializerBeta:
             topic_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -78,7 +78,7 @@ class TestHeadlinesQuerySerializerBeta:
         ) = self._setup_valid_data_payload_and_model_managers()
         data_payload[field_to_be_serialized] = "invalid-value"
 
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -105,7 +105,7 @@ class TestHeadlinesQuerySerializerBeta:
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -132,7 +132,7 @@ class TestHeadlinesQuerySerializerBeta:
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -160,7 +160,7 @@ class TestHeadlinesQuerySerializerBeta:
         geography_manager = FakeGeographyManager(geographies=[mock.Mock()])
 
         # When
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -192,7 +192,7 @@ class TestHeadlinesQuerySerializerBeta:
         geography_type_manager = FakeGeographyTypeManager(geography_types=[mock.Mock()])
 
         # When
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -229,7 +229,7 @@ class TestHeadlinesQuerySerializerBeta:
         stratum_manager = FakeStratumManager(strata=[mock.Mock()])
 
         # When
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -261,7 +261,7 @@ class TestHeadlinesQuerySerializerBeta:
         age_manager = FakeAgeManager(ages=[mock.Mock()])
 
         # When
-        serializer = HeadlinesQuerySerializerBeta(
+        serializer = HeadlinesQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
