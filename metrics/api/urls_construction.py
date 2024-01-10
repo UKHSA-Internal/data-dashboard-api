@@ -27,7 +27,6 @@ from metrics.api.views import (
 from metrics.api.views.geographies import GeographyTypesViewSet
 from metrics.api.views.headlines import HeadlinesViewBeta
 from metrics.api.views.tables import TablesView
-from metrics.api.views.trends import TrendsViewBeta
 from public_api import construct_urlpatterns_for_public_api
 
 router = routers.DefaultRouter()
