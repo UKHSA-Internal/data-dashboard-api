@@ -93,68 +93,6 @@ class DynamicContentBlockCrawler:
             case _:
                 raise ValueError
 
-    def process_any_chart_card(self, chart_card: CMS_COMPONENT_BLOCK_TYPE) -> None:
-        """Makes the relevant requests for the given single `chart_card`
-
-        Args:
-            chart_card: The chart block CMS information.
-                This can be of the following types:
-                    - "chart_card"
-                    - "chart_with_headline_and_trend_card"
-
-        Returns:
-            None
-
-        Raises:
-            `ValueError`: If an unrecognised block type is given
-
-        """
-        match chart_card["type"]:
-            case "chart_card":
-                self.process_chart_block(chart_block=chart_card)
-            case "chart_with_headline_and_trend_card":
-                self.process_chart_with_headline_and_trend_card(
-                    chart_with_headline_and_trend_card=chart_card,
-                )
-            case _:
-                raise ValueError
-
-    def process_chart_with_headline_and_trend_card(
-        self,
-        chart_with_headline_and_trend_card: CMS_COMPONENT_BLOCK_TYPE,
-    ) -> None:
-        """Makes the relevant requests for the given single `chart_with_headline_and_trend_card`
-
-        Notes:
-            This will handle the requests
-            for each of the content items within the card.
-            This includes the chart as well as any
-            headline number elements
-
-        Args:
-            chart_with_headline_and_trend_card: The chart block CMS information.
-
-        Returns:
-            None
-
-        Raises:
-            `ValueError`: If an unrecognised block type is given
-
-        """
-        self.process_chart_block(
-            chart_block=chart_with_headline_and_trend_card,
-        )
-
-        headline_number_columns = chart_with_headline_and_trend_card["value"][
-            "headline_number_columns"
-        ]
-        for headline_number_block in headline_number_columns:
-            self.process_any_headline_number_block(
-                headline_number_block=headline_number_block
-            )
-
-    # Process individual blocks
-
     def process_chart_block(self, chart_block: CMS_COMPONENT_BLOCK_TYPE) -> None:
         """Makes the relevant requests for the given single `chart_block`
 
