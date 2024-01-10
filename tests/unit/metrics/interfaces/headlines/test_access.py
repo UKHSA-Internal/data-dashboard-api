@@ -20,7 +20,7 @@ def example_headline_args() -> dict[str, str]:
     }
 
 
-class TestHeadlinesInterfaceBeta:
+class TestHeadlinesInterface:
     def test_initializes_with_default_manager(
         self, example_headline_args: dict[str, str]
     ):
