@@ -53,7 +53,7 @@ class ChartsInterface:
 
         """
         if self.chart_type == ChartTypes.waffle.value:
-            return self.generate_waffle_chart()
+            raise NotImplementedError
 
         if self.chart_type == ChartTypes.simple_line.value:
             return self.generate_simple_line_chart()

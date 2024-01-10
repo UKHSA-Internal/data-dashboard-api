@@ -15,28 +15,7 @@ from metrics.data.models.core_models import (
 
 
 @pytest.fixture
-def core_headline_example() -> CoreTimeSeries:
-    topic, _ = Topic.objects.get_or_create(name="COVID-19")
-    metric_group, _ = MetricGroup.objects.get_or_create(
-        name="deaths", topic_id=topic.id
-    )
-    metric, _ = Metric.objects.get_or_create(
-        name="COVID-19_headline_tests_7DayTotals",
-        metric_group_id=metric_group.id,
-        topic_id=topic.id,
-    )
-    year = 2023
-    return CoreTimeSeries.objects.create(
-        metric_value=123,
-        metric=metric,
-        year=year,
-        epiweek=1,
-        date=datetime.date(year=year, month=1, day=1),
-    )
-
-
-@pytest.fixture
-def core_headline_example_beta() -> CoreHeadline:
+def core_headline_example() -> CoreHeadline:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="headline", topic=topic)
     metric = Metric.objects.create(
@@ -57,7 +36,7 @@ def core_headline_example_beta() -> CoreHeadline:
 
 
 @pytest.fixture
-def core_trend_example_beta() -> tuple[CoreHeadline, CoreHeadline]:
+def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="headline", topic=topic)
     metric = Metric.objects.create(
@@ -91,40 +70,6 @@ def core_trend_example_beta() -> tuple[CoreHeadline, CoreHeadline]:
         period_end="2023-01-07",
     )
     return main_timeseries, percentage_timeseries
-
-
-@pytest.fixture
-def core_trend_percentage_example() -> list[CoreTimeSeries]:
-    topic = Topic.objects.create(name="COVID-19")
-    metric_group = MetricGroup.objects.create(name="deaths", topic=topic)
-    metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7DayChange",
-        metric_group=metric_group,
-        topic=topic,
-    )
-    percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7DayPercentChange",
-        metric_group=metric_group,
-        topic=topic,
-    )
-
-    year = 2023
-
-    main_timeseries: CoreTimeSeries = CoreTimeSeries.objects.create(
-        metric_value=123,
-        metric=metric,
-        year=year,
-        epiweek=1,
-        date=datetime.date(year=year, month=1, day=1),
-    )
-    percentage_timeseries: CoreTimeSeries = CoreTimeSeries.objects.create(
-        metric_value=3,
-        metric=percentage_metric,
-        year=year,
-        epiweek=1,
-        date=datetime.date(year=year, month=1, day=1),
-    )
-    return [main_timeseries, percentage_timeseries]
 
 
 @pytest.fixture

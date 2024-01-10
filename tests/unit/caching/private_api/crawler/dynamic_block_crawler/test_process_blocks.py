@@ -266,6 +266,11 @@ class TestCrawlerProcessIndividualBlocks:
             "topic": example_trend_number_block["topic"],
             "metric": example_trend_number_block["metric"],
             "percentage_metric": example_trend_number_block["percentage_metric"],
+            "geography": example_trend_number_block["geography"],
+            "geography_type": example_trend_number_block["geography_type"],
+            "sex": example_trend_number_block["sex"],
+            "age": example_trend_number_block["age"],
+            "stratum": example_trend_number_block["stratum"],
         }
         spy_internal_api_client.hit_trends_endpoint.assert_called_once_with(
             data=expected_data

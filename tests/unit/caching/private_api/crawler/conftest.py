@@ -39,6 +39,11 @@ def example_trend_number_block() -> dict[str, str]:
         "metric": "COVID-19_headline_ONSdeaths_7DayChange",
         "body": "Last 7 days",
         "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
+        "geography": "England",
+        "geography_type": "Nation",
+        "sex": "all",
+        "age": "all",
+        "stratum": "default",
     }
 
 
