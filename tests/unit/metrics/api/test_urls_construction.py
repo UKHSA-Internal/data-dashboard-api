@@ -22,7 +22,7 @@ PRIVATE_API_ENDPOINT_PATHS = [
     "api/headlines/v3",
     "api/bulkdownloads/v1",
     "api/tables/v4",
-    "api/trends/v2",
+    "api/trends/v3",
     "api/geographies/v1/types/",
 ]
 
