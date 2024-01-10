@@ -183,6 +183,8 @@ class DynamicContentBlockCrawler:
 
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
 
+    # Sub methods for processing charts
+
     def _process_table_for_chart_block(self, chart_block: dict):
         tables_data = self._request_payload_builder.build_tables_request_data(
             chart_block=chart_block
@@ -218,6 +220,8 @@ class DynamicContentBlockCrawler:
                 chart_is_double_width=chart_is_double_width,
             )
             self._internal_api_client.hit_charts_endpoint(data=charts_data)
+
+    # Sub methods for processing headline number blocks
 
     def process_headline_number_block(
         self, headline_number_block: CMS_COMPONENT_BLOCK_TYPE
