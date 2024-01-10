@@ -1,0 +1,28 @@
+{
+  "id": 16,
+  "meta": {
+    "seo_title": "Metrics Documentation | UKHSA data dashboard",
+    "search_description": "Documentation for all metrics on the dashboard",
+    "type": "metrics_documentation.MetricsDocumentationParentPage",
+    "detail_url": "http://localhost/api/pages/16",
+    "html_url": null,
+    "slug": "metrics-documentation",
+    "show_in_menus": true,
+    "first_published_at": "2023-10-11T16:15:57.617842+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/3",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "Metrics Documentation",
+  "data_posted": "2023-11-12",
+  "body": "<p data-block-key=\"wk1ht\">Here we outline a list of metrics available in the UKHSA data dashboard. Click to view more information about a metric</p>",
+  "last_published_at": "2023-10-11T16:15:57.617842+01:00",
+  "related_links": []
+}

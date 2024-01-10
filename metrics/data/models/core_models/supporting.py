@@ -92,6 +92,9 @@ class Metric(models.Model):
             ),
         ]
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class GeographyType(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -112,7 +115,10 @@ class Geography(models.Model):
         max_length=GEOGRAPHY_CODE_MAX_CHAR_CONSTRAINT, null=True
     )
     geography_type = models.ForeignKey(
-        to=GeographyType, on_delete=models.SET_NULL, null=True
+        to=GeographyType,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="geographies",
     )
 
     objects = GeographyManager()

@@ -11,7 +11,7 @@ from cms.whats_new.serializers import BadgeSerializer
 
 
 class WhatsNewChildEntry(Page):
-    date_posted = models.DateField(null=False)
+    date_posted = models.DateField(null=False, blank=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     badge = models.ForeignKey(
         "whats_new.badge",
@@ -42,7 +42,7 @@ class WhatsNewChildEntry(Page):
     api_fields = [
         APIField("date_posted"),
         APIField("body"),
-        APIField("date_posted"),
+        APIField("last_published_at"),
         APIField("seo_title"),
         APIField("search_description"),
         APIField("additional_details"),
@@ -56,5 +56,7 @@ class WhatsNewChildEntry(Page):
             ObjectList(Page.promote_panels, heading="Promote"),
         ]
     )
+
+    parent_page_type = ["whats_new.WhatsNewParentPage"]
 
     objects = WhatsNewChildEntryManager()

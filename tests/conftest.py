@@ -1,10 +1,10 @@
 import datetime
 
 import pytest
+from wagtail.models import Page
 
-from ingestion.data_transfer_models import IncomingHeadlineDTO
-from ingestion.data_transfer_models.incoming import IncomingTimeSeriesDTO
-from metrics.domain.models import PlotData, PlotParameters
+from cms.home.models import HomePage
+from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -21,6 +21,21 @@ def fake_chart_plot_parameters() -> PlotParameters:
         metric="COVID-19_testing_positivity7DayRolling",
         stratum="default",
         date_from="2023-01-01",
+        date_to="2023-12-31",
+        x_axis="date",
+        y_axis="metric",
+    )
+
+
+@pytest.fixture
+def fake_plots_collection(
+    fake_chart_plot_parameters: PlotParameters,
+) -> PlotsCollection:
+    return PlotsCollection(
+        plots=[fake_chart_plot_parameters],
+        file_format="svg",
+        chart_width=930,
+        chart_height=220,
         x_axis="date",
         y_axis="metric",
     )
@@ -32,6 +47,8 @@ def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
         chart_type="line_multi_coloured",
         topic="COVID-19",
         metric="COVID-19_deaths_ONSByDay",
+        date_from="2023-01-01",
+        date_to="2023-12-31",
     )
 
 
@@ -41,7 +58,8 @@ def valid_plot_parameters() -> PlotParameters:
         metric="COVID-19_deaths_ONSByDay",
         topic="COVID-19",
         chart_type=ChartTypes.simple_line.value,
-        date_from="2022-01-01",
+        date_from="2023-01-01",
+        date_to="2023-12-31",
         x_axis="date",
         y_axis="metric",
     )
@@ -93,100 +111,80 @@ def plot_serializer_payload_and_model_managers() -> (
 
 
 @pytest.fixture
-def example_headline_data() -> list[dict[str, str | float]]:
-    return [
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "headline",
-            "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-            "geography_type": "Government Office Region",
-            "geography": "East Midlands",
-            "geography_code": "E12000004",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "period_start": "2023-06-24",
-            "period_end": "2023-06-30",
-            "metric_value": 1,
-            "refresh_date": "2023-07-11",
-        },
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "headline",
-            "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-            "geography_type": "Government Office Region",
-            "geography": "East of England",
-            "geography_code": "E12000006",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "period_start": "2023-06-24",
-            "period_end": "2023-06-30",
-            "metric_value": -11,
-            "refresh_date": "2023-07-11",
-        },
-    ]
+def example_headline_data() -> dict[str, str | list[dict[str, str | float]]]:
+    return {
+        "parent_theme": "infectious_disease",
+        "child_theme": "respiratory",
+        "topic": "RSV",
+        "metric_group": "headline",
+        "metric": "RSV_headline_positivityLatest",
+        "geography_type": "Nation",
+        "geography": "England",
+        "geography_code": "E92000001",
+        "age": "all",
+        "sex": "all",
+        "stratum": "default",
+        "data": [
+            {
+                "period_start": "2023-10-15",
+                "period_end": "2023-10-22",
+                "metric_value": 12.3,
+                "embargo": "2023-11-16 17:30:00",
+            },
+            {
+                "period_start": "2023-10-23",
+                "period_end": "2023-10-30",
+                "metric_value": 10.7,
+                "embargo": "2023-11-16 17:30:00",
+            },
+        ],
+        "refresh_date": "2023-11-09",
+    }
 
 
 @pytest.fixture
-def example_incoming_headline_dto(
-    example_headline_data: list[dict[str, str | float]]
-) -> IncomingHeadlineDTO:
-    return IncomingHeadlineDTO(**example_headline_data[0])
+def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
+    return {
+        "parent_theme": "infectious_disease",
+        "child_theme": "respiratory",
+        "topic": "COVID-19",
+        "metric_group": "cases",
+        "metric": "COVID-19_cases_countRollingMean",
+        "geography_type": "Nation",
+        "geography": "England",
+        "geography_code": "E92000001",
+        "age": "all",
+        "sex": "all",
+        "stratum": "default",
+        "metric_frequency": "daily",
+        "refresh_date": "2023-11-20",
+        "time_series": [
+            {
+                "epiweek": 44,
+                "date": "2022-11-01",
+                "metric_value": 4141.43,
+                "embargo": "2023-11-16 17:30:00",
+            },
+            {
+                "epiweek": 44,
+                "date": "2022-11-02",
+                "metric_value": 3952.14,
+                "embargo": "2023-11-16 17:30:00",
+            },
+        ],
+    }
 
 
 @pytest.fixture
-def example_timeseries_data() -> list[dict[str, str | int | float]]:
-    return [
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "deaths",
-            "metric": "COVID-19_deaths_ONSByDay",
-            "geography_type": "Nation",
-            "geography": "England",
-            "geography_code": "E92000001",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "metric_frequency": "daily",
-            "epiweek": 10,
-            "month": 3,
-            "year": 2020,
-            "date": "2020-03-02",
-            "metric_value": 0,
-            "refresh_date": "2023-07-11",
-        },
-        {
-            "parent_theme": "infectious_disease",
-            "child_theme": "respiratory",
-            "topic": "COVID-19",
-            "metric_group": "deaths",
-            "metric": "COVID-19_deaths_ONSByDay",
-            "geography_type": "Nation",
-            "geography": "England",
-            "geography_code": "E92000001",
-            "age": "all",
-            "sex": "all",
-            "stratum": "default",
-            "metric_frequency": "daily",
-            "epiweek": 10,
-            "month": 3,
-            "year": 2020,
-            "date": "2020-03-03",
-            "metric_value": 0,
-            "refresh_date": "2023-07-11",
-        },
-    ]
+def dashboard_root_page() -> HomePage:
+    root_page = HomePage(
+        title="UKHSA Dashboard Root",
+        slug="ukhsa-dashboard-root",
+    )
 
+    wagtail_root_page = Page.get_first_root_node()
+    root_page = wagtail_root_page.add_child(instance=root_page)
+    wagtail_root_page.save_revision().publish()
 
-@pytest.fixture
-def example_incoming_timeseries_dto(
-    example_timeseries_data: list[dict[str, str | float]]
-) -> IncomingTimeSeriesDTO:
-    return IncomingTimeSeriesDTO(**example_timeseries_data[0])
+    root_page.save_revision().publish()
+    return root_page

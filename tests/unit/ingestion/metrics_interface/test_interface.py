@@ -1,5 +1,6 @@
 from ingestion.metrics_interfaces import interface
 from metrics.data.enums import TimePeriod
+from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import (
     Age,
     CoreHeadline,
@@ -180,6 +181,51 @@ class TestMetricsAPIInterface:
 
         # Then
         assert core_timseries_manager is CoreTimeSeries.objects
+
+    def test_get_core_headline(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_core_headline()` is called from that object
+        Then the concrete `CoreHeadline` is returned
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        core_headline = metrics_api_interface.get_core_headline()
+
+        # Then
+        assert core_headline is CoreHeadline
+
+    def test_get_core_timeseries(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_core_timeseries()` is called from that object
+        Then the concrete `CoreTimeSeries` is returned
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        core_time_series = metrics_api_interface.get_core_timeseries()
+
+        # Then
+        assert core_time_series is CoreTimeSeries
+
+    def test_get_api_timeseries(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_api_timeseries()` is called from that object
+        Then the concrete `APITimeSeries` is returned
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        api_time_series = metrics_api_interface.get_api_timeseries()
+
+        # Then
+        assert api_time_series is APITimeSeries
 
     def test_get_time_period_enum(self):
         """

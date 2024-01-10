@@ -101,6 +101,23 @@ If you feel like your unit test has too many assertions then it is probably wort
 
 *Unit* tests which take > 100ms are most definitely not drawing the right boundaries and should be revisited.
 
+Note keep in mind that test cases should act as a specification of the system, so if an edge or "special" case is
+conditional for a method or function you are testing, make that condition its own test.
+
+An example of this would be formatting file or directory names, the method you are testing may format the names based
+on a set of rules around what special characters are allowed or should be removed. However there could be a case where
+a name under some condition is changed for an alternative display name. A condition that changes one name to another
+would warrant a new test to highlight this requirement in the spec.
+
+```python
+class TestFormatFilenames:
+    def test_filename_is_formatted_correctly(self):
+        ...
+    
+    def test_dashboard_is_changed_to_landing_page(self):
+        ...
+```
+
 ### Patching in tests
 
 When it comes to patching the following pattern is preferred:

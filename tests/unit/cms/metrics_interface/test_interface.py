@@ -17,10 +17,10 @@ class TestMetricsAPIInterface:
         metrics_api_interface = interface.MetricsAPIInterface()
 
         # When
-        all_chart_types = metrics_api_interface.get_chart_types()
+        selectable_chart_types = metrics_api_interface.get_chart_types()
 
         # Then
-        assert all_chart_types == ChartTypes.choices()
+        assert selectable_chart_types == ChartTypes.selectable_choices()
 
     def test_get_chart_axis_choices_delegates_call_correctly(self):
         """

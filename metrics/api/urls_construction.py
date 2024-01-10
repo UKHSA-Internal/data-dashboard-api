@@ -9,23 +9,24 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from rest_framework import routers
+from rest_framework.routers import DefaultRouter
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from feedback.api.urls import construct_urlpatterns_for_feedback
-from ingestion.api.urls import construct_urlpatterns_for_ingestion
 from metrics.api import settings
 from metrics.api.views import (
+    BulkDownloadsView,
     ChartsView,
     DownloadsView,
     EncodedChartsView,
+    HeadlinesViewBeta,
     HealthView,
     TablesView,
     TrendsViewBeta,
 )
-from metrics.api.views.caching import CacheView
-from metrics.api.views.headlines import HeadlinesViewBeta
+from metrics.api.views.geographies import GeographyTypesViewSet
 from public_api import construct_urlpatterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -108,22 +109,26 @@ def construct_public_api_urlpatterns(
 
 API_PREFIX = "api/"
 
+geographies_router = DefaultRouter()
+geographies_router.register(
+    prefix=f"{API_PREFIX}geographies/v1/types", viewset=GeographyTypesViewSet
+)
+
 private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
     # Metrics/private content endpoints
-    re_path(f"^{API_PREFIX}caching/v1", CacheView.as_view()),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
+    re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesViewBeta.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
 ]
+private_api_urlpatterns += geographies_router.urls
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
-
-ingestion_urlpatterns = construct_urlpatterns_for_ingestion(prefix=API_PREFIX)
 
 docs_urlspatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
@@ -205,11 +210,11 @@ def construct_urlpatterns(
             )
         case AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
-            constructed_url_patterns += ingestion_urlpatterns
         case AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
         case AppMode.INGESTION.value:
-            constructed_url_patterns += ingestion_urlpatterns
+            # Ingestion mode does not expose any endpoints
+            return constructed_url_patterns
         case _:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
@@ -219,7 +224,6 @@ def construct_urlpatterns(
             )
             constructed_url_patterns += django_admin_urlpatterns
             constructed_url_patterns += private_api_urlpatterns
-            constructed_url_patterns += ingestion_urlpatterns
             constructed_url_patterns += feedback_urlpatterns
 
     return constructed_url_patterns

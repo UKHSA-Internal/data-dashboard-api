@@ -72,8 +72,8 @@ line-length = 120
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# Assume Python 3.11
-target-version = "py311"
+# Assume Python 3.12
+target-version = "py312"
 
 [tool.ruff.per-file-ignores]
 "**/{tests}/*"                  = [
@@ -108,6 +108,27 @@ DJANGO_SETTINGS_MODULE = "metrics.api.settings"
 addopts = "--random-order"
 
 ########################################################################################################################
+# Test coverage configuration
+########################################################################################################################
+[tool.coverage.run]
+source = ["caching", "cms", "feedback", "ingestion", "metrics", "public_api"]
+
+[tool.coverage.report]
+omit = [
+    "tests/*",                          # Omit test files themselves from the report
+    "cms/search/*",                     # Boilerplate wagtail `search` app
+    "metrics/api/wsgi.py",              # Boilerplate Django server entrypoint
+    "metrics/api/asgi.py",              # Boilerplate Django server entrypoint
+    "metrics/api/settings/*",           # Configuration paackage
+    "config.py",                        # Configuration file
+    "manage.py"                         # Application server entrypoint
+]
+skip_covered = true                     # Only list files which do not have 100% test coverage in the report
+show_missing = true                     # Report lines which were not hit
+fail_under = 99.0                       # Test coverage report will fail for total coverage under this threshold value
+exclude_lines = ["__str__"]
+
+########################################################################################################################
 # Bandit configuration
 ########################################################################################################################
 [tool.bandit]
@@ -140,6 +161,7 @@ ignore_imports = [
     "cms.metrics_interface.interface -> metrics.domain.utils",
     "cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.properties",
     "cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme",
+    "cms.metrics_documentation.data_migration.operations -> metrics.api.settings",
     "metrics.api.urls_construction -> cms.dashboard.viewsets",
 ]
 
@@ -209,7 +231,6 @@ ignore_imports = [
     "ingestion.metrics_interfaces.interface -> metrics.data.models.core_models",
     "ingestion.metrics_interfaces.interface -> metrics.data.models.api_models",
     "ingestion.metrics_interfaces.interface -> metrics.data.enums",
-    "ingestion.operations.api_models -> metrics.data.models.api_models",
     "ingestion.operations.truncated_dataset -> metrics.api.settings",
 ]
 #------------------------------------------ Metrics Domain library contracts ------------------------------------------#

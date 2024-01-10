@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -8,6 +9,18 @@ from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
 from cms.whats_new.managers.parent import WhatsNewParentPageManager
+
+
+class WhatsNewParentSlugNotValidError(ValidationError):
+    def __init__(self):
+        message = "The `WhatsNewParentPage` must have a slug of `whats-new`"
+        super().__init__(message)
+
+
+class WhatsNewParentMultipleLivePagesError(ValidationError):
+    def __init__(self):
+        message = "There should only be 1 `WhatsNewParentPage`"
+        super().__init__(message)
 
 
 class WhatsNewParentPage(Page):
@@ -48,7 +61,23 @@ class WhatsNewParentPage(Page):
         ]
     )
 
+    subpage_types = ["whats_new.WhatsNewChildEntry", "common.CommonPage"]
+
     objects = WhatsNewParentPageManager()
+
+    def clean(self) -> None:
+        super().clean()
+        self._raise_error_if_slug_not_whats_new()
+        self._raise_error_for_multiple_live_pages()
+
+    def _raise_error_for_multiple_live_pages(self) -> None:
+        live_pages = WhatsNewParentPage.objects.get_live_pages()
+        if live_pages.count() == 1 and self.pk != live_pages[0].id:
+            raise WhatsNewParentMultipleLivePagesError
+
+    def _raise_error_if_slug_not_whats_new(self) -> None:
+        if "whats-new" not in self.slug:
+            raise WhatsNewParentSlugNotValidError
 
 
 class WhatsNewParentPageRelatedLink(Orderable):

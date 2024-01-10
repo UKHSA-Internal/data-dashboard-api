@@ -1,9 +1,7 @@
-import json
-from unittest import mock
-
 import pytest
 
 from ingestion.consumer import Consumer
+from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.enums import TimePeriod
 from metrics.data.models.core_models import (
     Age,
@@ -18,36 +16,38 @@ from metrics.data.models.core_models import (
     Topic,
 )
 
+EXPECTED_EMBARGO_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 class TestConsumer:
     @pytest.mark.django_db
     def test_can_ingest_headline_data_successfully(
-        self, example_headline_data: list[dict[str, str | float]]
+        self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given an example headline data file
-        When `create_headlines()` is called from an instance of `Ingestion`
+        When `create_core_headlines()` is called
+            from an instance of `Consumer`
         Then `CoreHeadline` records are created with the correct values
         """
         # Given
-        fake_data = mock.Mock()
-        fake_data.readlines.return_value = [json.dumps(example_headline_data)]
-        consumer = Consumer(data=fake_data)
+        consumer = Consumer(source_data=example_headline_data)
         assert CoreHeadline.objects.all().count() == 0
 
         # When
-        consumer.create_headlines()
+        consumer.create_core_headlines()
 
         # Then
         # Check that 1 `CoreHeadline` record is created per row of data
-        assert CoreHeadline.objects.all().count() == len(example_headline_data)
+        assert CoreHeadline.objects.all().count() == len(example_headline_data["data"])
 
         # Check the first `CoreHeadline` record was set
         # with the values from the first object in the original JSON
         core_headline_one = CoreHeadline.objects.first()
         self._assert_core_headline_model_has_correct_values(
             core_headline=CoreHeadline.objects.first(),
-            headline_data=example_headline_data[0],
+            main_headline_data=example_headline_data,
+            headline_specific_data=example_headline_data["data"][0],
         )
 
         # Check the second `CoreHeadline` record was set
@@ -55,7 +55,8 @@ class TestConsumer:
         core_headline_two = CoreHeadline.objects.last()
         self._assert_core_headline_model_has_correct_values(
             core_headline=CoreHeadline.objects.last(),
-            headline_data=example_headline_data[1],
+            main_headline_data=example_headline_data,
+            headline_specific_data=example_headline_data["data"][1],
         )
 
         # Check that the 2 `CoreHeadline` records which are closely related
@@ -75,39 +76,38 @@ class TestConsumer:
         assert MetricGroup.objects.count() == 1
         assert Age.objects.count() == 1
         assert GeographyType.objects.count() == 1
-
-        # Check that different core supporting models
-        # are created where required
-        assert Geography.objects.count() == 2
+        assert Geography.objects.count() == 1
 
     @pytest.mark.django_db
     def test_can_ingest_timeseries_data_successfully(
-        self, example_timeseries_data: list[dict[str, str | int | float]]
+        self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given an example headline data file
-        When `create_timeseries()` is called from an instance of `Ingestion`
+        When `create_core_time_series()` is called
+            from an instance of `Consumer`
         Then `CoreTimeSeries` records are created with the correct values
         """
         # Given
-        fake_data = mock.Mock()
-        fake_data.readlines.return_value = [json.dumps(example_timeseries_data)]
-        consumer = Consumer(data=fake_data)
+        consumer = Consumer(source_data=example_time_series_data)
         assert CoreTimeSeries.objects.all().count() == 0
 
         # When
-        consumer.create_timeseries()
+        consumer.create_core_time_series()
 
         # Then
         # Check that 1 `CoreTimeSeries` record is created per row of data
-        assert CoreTimeSeries.objects.all().count() == len(example_timeseries_data)
+        assert CoreTimeSeries.objects.all().count() == len(
+            example_time_series_data["time_series"]
+        )
 
         # Check the first `CoreTimeSeries` record was set
         # with the values from the first object in the original JSON
         core_timeseries_one = CoreTimeSeries.objects.first()
         self._assert_core_timeseries_model_has_correct_values(
             core_timeseries=core_timeseries_one,
-            timeseries_data=example_timeseries_data[0],
+            main_timeseries_data=example_time_series_data,
+            timeseries_specific_data=example_time_series_data["time_series"][0],
         )
 
         # Check the second `CoreTimeSeries` record was set
@@ -115,7 +115,8 @@ class TestConsumer:
         core_timeseries_two = CoreTimeSeries.objects.last()
         self._assert_core_timeseries_model_has_correct_values(
             core_timeseries=core_timeseries_two,
-            timeseries_data=example_timeseries_data[1],
+            main_timeseries_data=example_time_series_data,
+            timeseries_specific_data=example_time_series_data["time_series"][1],
         )
 
         # Check that the 2 `CoreTimeSeries` records which are closely related
@@ -139,28 +140,43 @@ class TestConsumer:
 
     @staticmethod
     def _assert_core_model(
-        model: CoreHeadline | CoreTimeSeries, source_data: dict[str, str | float | int]
+        model: CoreHeadline | CoreTimeSeries, source_data: INCOMING_DATA_TYPE
     ):
+        assert model.metric.topic.sub_theme.theme.name == source_data["parent_theme"]
+        assert model.metric.topic.sub_theme.name == source_data["child_theme"]
         assert model.metric.metric_group.topic.name == source_data["topic"]
         assert model.metric.metric_group.name == source_data["metric_group"]
         assert model.metric.name == source_data["metric"]
+
         assert model.geography.geography_type.name == source_data["geography_type"]
         assert model.geography.name == source_data["geography"]
+        assert model.geography.geography_code == source_data["geography_code"]
+
+        assert model.age.name == source_data["age"]
         assert model.sex == {"all": "all", "female": "f", "male": "m"}.get(
             source_data["sex"].lower()
         )
-        assert model.age.name == source_data["age"]
         assert model.stratum.name == source_data["stratum"]
-        assert float(model.metric_value) == float(source_data["metric_value"])
+        assert str(model.refresh_date) == source_data["refresh_date"]
 
     def _assert_core_headline_model_has_correct_values(
-        self, core_headline: CoreHeadline, headline_data: dict[str, str | float]
+        self,
+        core_headline: CoreHeadline,
+        main_headline_data: INCOMING_DATA_TYPE,
+        headline_specific_data: dict[str, str | float],
     ) -> None:
-        self._assert_core_model(model=core_headline, source_data=headline_data)
+        self._assert_core_model(model=core_headline, source_data=main_headline_data)
 
-        assert str(core_headline.period_start) == headline_data["period_start"]
-        assert str(core_headline.period_end) == headline_data["period_end"]
-        assert str(core_headline.refresh_date) == headline_data["refresh_date"]
+        assert str(core_headline.period_start) == headline_specific_data["period_start"]
+        assert str(core_headline.period_end) == headline_specific_data["period_end"]
+        assert (
+            str(core_headline.metric_value)
+            == f"{headline_specific_data['metric_value']:.4f}"
+        )
+        assert (
+            core_headline.embargo.strftime(EXPECTED_EMBARGO_FORMAT)
+            == headline_specific_data["embargo"]
+        )
 
     @staticmethod
     def _assert_share_same_supporting_models(
@@ -186,15 +202,16 @@ class TestConsumer:
     def _assert_core_timeseries_model_has_correct_values(
         self,
         core_timeseries: CoreTimeSeries,
-        timeseries_data: dict[str, str | float | int],
+        main_timeseries_data: INCOMING_DATA_TYPE,
+        timeseries_specific_data: dict[str, str | float],
     ) -> None:
-        self._assert_core_model(model=core_timeseries, source_data=timeseries_data)
-        assert str(core_timeseries.refresh_date) == str(timeseries_data["refresh_date"])
-        assert str(core_timeseries.date) == str(timeseries_data["date"])
+        self._assert_core_model(model=core_timeseries, source_data=main_timeseries_data)
+        assert str(core_timeseries.date) == str(timeseries_specific_data["date"])
         assert (
             core_timeseries.metric_frequency
-            == TimePeriod[timeseries_data["metric_frequency"].title()].value
+            == TimePeriod[main_timeseries_data["metric_frequency"].title()].value
         )
-        assert core_timeseries.year == timeseries_data["year"]
-        assert core_timeseries.month == timeseries_data["month"]
-        assert core_timeseries.epiweek == timeseries_data["epiweek"]
+        year, month, _ = timeseries_specific_data["date"].split("-")
+        assert str(core_timeseries.year) == year
+        assert str(core_timeseries.month) == month
+        assert str(core_timeseries.epiweek) == str(timeseries_specific_data["epiweek"])

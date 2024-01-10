@@ -205,3 +205,35 @@ class TestTablesView:
         # For the v4 tables endpoint, we expect data to be returned in descending order
         # i.e. the recent data points first going down to the latest data points last
         assert response.data == expected_response
+
+    @pytest.mark.django_db
+    def test_returns_bad_request_response_when_queried_data_does_not_exist(
+        self, core_timeseries_example: list[CoreTimeSeries]
+    ):
+        """
+        Given a payload for which there is no corresponding data
+        When the `POST /api/tables/v4/` endpoint is hit
+        Then the response is an HTTP 400 BAD REQUEST
+        """
+        # Given
+        client = APIClient()
+        valid_payload = {
+            "plots": [
+                {
+                    "topic": core_timeseries_example[0].metric.topic.name,
+                    "metric": core_timeseries_example[0].metric.name,
+                    "chart_type": "bar",
+                    "age": "non-existent-age",
+                }
+            ],
+        }
+
+        # When
+        response: Response = client.post(
+            path=self.path,
+            data=valid_payload,
+            format="json",
+        )
+
+        # Then
+        assert response.status_code == HTTPStatus.BAD_REQUEST

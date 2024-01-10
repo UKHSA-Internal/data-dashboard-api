@@ -1,11 +1,12 @@
 import logging
 import os
-from os.path import dirname, join
 
 import django.core.management.utils
 from dotenv import load_dotenv
 
-dotenv_path = join(dirname(__file__), ".env")
+from ingestion.secrets_manager import get_database_password
+
+dotenv_path = os.path.join(os.path.dirname(__file__), ".env")
 load_dotenv(dotenv_path)
 
 logger = logging.getLogger(__name__)
@@ -16,13 +17,6 @@ logger = logging.getLogger(__name__)
 #   then the `POSTGRES` credentials below
 #   will be used to connect to a remote database
 APIENV = os.environ.get("APIENV")
-
-# Database configuration
-POSTGRES_DB = os.environ.get("POSTGRES_DB")
-POSTGRES_USER = os.environ.get("POSTGRES_USER")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
-POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)
 
 # Logging configuration
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
@@ -68,3 +62,17 @@ if not REDIS_HOST:
 INGESTION_BUCKET_NAME = os.environ.get("INGESTION_BUCKET_NAME")
 # The name of the AWS profile to use for the AWS client used for ingestion
 AWS_PROFILE_NAME = os.environ.get("AWS_PROFILE_NAME")
+
+# Database configuration
+POSTGRES_DB = os.environ.get("POSTGRES_DB")
+POSTGRES_USER = os.environ.get("POSTGRES_USER")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
+POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)
+
+# When the application is running in `INGESTION` mode
+# the password is fetched directly from secretsmanager.
+# At the time of writing (Nov 2023) there is no
+# easy way to inject secrets into serverless lambda functions
+if APP_MODE == "INGESTION":
+    POSTGRES_PASSWORD = get_database_password()

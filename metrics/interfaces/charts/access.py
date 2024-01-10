@@ -13,9 +13,9 @@ from metrics.domain.charts import (
     line_with_shaded_section,
     waffle,
 )
-from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
+from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.utils import ChartTypes
-from metrics.interfaces.charts import calculations, validation
+from metrics.interfaces.charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
@@ -43,7 +43,7 @@ class ChartsInterface:
             core_time_series_manager=core_time_series_manager,
         )
 
-        self._latest_refresh_date: str = ""
+        self._latest_date: str = ""
 
     def generate_chart_figure(self) -> plotly.graph_objects.Figure:
         """Creates the chart figure dictated the instance variable of `chart_type`
@@ -86,6 +86,10 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created simple line chart
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
@@ -107,6 +111,10 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created bar chart
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
@@ -127,6 +135,9 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created multi-coloured line chart
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
         """
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
@@ -148,6 +159,9 @@ class ChartsInterface:
         Returns:
             A plotly `Figure` object for the created line chart with shaded section
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
         """
         plots_data: list[PlotData] = self.build_chart_plots_data()
         plot_data: PlotData = plots_data[0]
@@ -169,18 +183,20 @@ class ChartsInterface:
         Returns:
             A list of `PlotData` models for each of the requested chart plots.
 
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+
         """
         plots_data: list[PlotData] = self.plots_interface.build_plots_data()
-        self._set_latest_refresh_date_from_plots_data(plots_data=plots_data)
+        self._set_latest_date_from_plots_data(plots_data=plots_data)
         return plots_data
 
-    def _set_latest_refresh_date_from_plots_data(
-        self, plots_data: list[PlotData]
-    ) -> None:
-        """Extracts the latest refresh date from the list of given `plots_data`
+    def _set_latest_date_from_plots_data(self, plots_data: list[PlotData]) -> None:
+        """Extracts the latest date from the list of given `plots_data`
 
         Notes:
-            This extracted value is set on the `_latest_refresh_date`
+            This extracted value is set on the `_latest_date`
             instance attribute on this object
 
         Args:
@@ -195,15 +211,11 @@ class ChartsInterface:
 
         """
         try:
-            latest_refresh_date: datetime.date = max(
-                plot.latest_refresh_date for plot in plots_data
-            )
-        except ValueError:
+            latest_date: datetime.date = max(plot.latest_date for plot in plots_data)
+        except (ValueError, TypeError):
             return
 
-        self._latest_refresh_date: str = datetime.strftime(
-            latest_refresh_date, "%Y-%m-%d"
-        )
+        self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
 
     def param_builder_for_line_with_shaded_section(self, plot_data: PlotData):
         chart_height = self.chart_plots.chart_height
@@ -299,7 +311,7 @@ class ChartsInterface:
 
         """
         return {
-            "last_updated": self._latest_refresh_date,
+            "last_updated": self._latest_date,
             "chart": self.encode_figure(figure=figure),
         }
 
@@ -314,9 +326,17 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     Returns:
         The filename of the created image
 
-    """
-    validate_each_requested_chart_plot(chart_plots=chart_plots)
+    Raises:
+        `InvalidPlotParametersError`: If an underlying
+            validation check has failed.
+            This could be because there is
+            an invalid topic and metric selection.
+            Or because the selected dates are not in
+            the expected chronological order.
+        `DataNotFoundForAnyPlotError`: If no plots
+            returned any data from the underlying queries
 
+    """
     charts_interface = ChartsInterface(chart_plots=chart_plots)
     figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
@@ -336,50 +356,17 @@ def generate_encoded_chart(chart_plots: PlotsCollection) -> dict[str, str]:
          "last_updated": A timestamp for the last data point
          "chart": An encoded string representing the chart figure
 
+    Raises:
+        `InvalidPlotParametersError`: If an underlying
+            validation check has failed.
+            This could be because there is
+            an invalid topic and metric selection.
+            Or because the selected dates are not in
+            the expected chronological order.
+        `DataNotFoundForAnyPlotError`: If no plots
+            returned any data from the underlying queries
     """
-    validate_each_requested_chart_plot(chart_plots=chart_plots)
-
     charts_interface = ChartsInterface(chart_plots=chart_plots)
     figure: plotly.graph_objects.Figure = charts_interface.generate_chart_figure()
 
     return charts_interface.get_encoded_chart(figure=figure)
-
-
-def validate_each_requested_chart_plot(chart_plots: PlotsCollection) -> None:
-    """Validates the request chart plots against the contents of the db
-
-    Raises:
-        `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
-            compatible for the required `chart_type`.
-            E.g. A cumulative headline type number like `positivity_7days_latest`
-            would not be viable for a line type (timeseries) chart.
-
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
-            compatible for the required `topic`.
-            E.g. `COVID-19_deaths_ONSByDay` is only available
-            for the topic of `COVID-19`
-
-    """
-    for chart_plot_params in chart_plots.plots:
-        validate_chart_plot_parameters(chart_plot_parameters=chart_plot_params)
-
-
-def validate_chart_plot_parameters(chart_plot_parameters: PlotParameters):
-    """Validates the individual given `chart_plot_parameters` against the contents of the db
-
-    Raises:
-        `ChartTypeDoesNotSupportMetricError`: If the `metric` is not
-            compatible for the required `chart_type`.
-            E.g. A cumulative headline type number like `positivity_7days_latest`
-            would not be viable for a line type (timeseries) chart.
-
-        `MetricDoesNotSupportTopicError`: If the `metric` is not
-            compatible for the required `topic`.
-            E.g. `COVID-19_deaths_ONSByDay` is only available
-            for the topic of `COVID-19`
-
-    """
-    charts_request_validator = validation.ChartsRequestValidator(
-        plot_parameters=chart_plot_parameters
-    )
-    charts_request_validator.validate()

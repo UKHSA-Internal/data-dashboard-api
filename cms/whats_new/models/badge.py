@@ -12,7 +12,7 @@ class Badge(models.Model):
     colour = models.CharField(
         max_length=20,
         choices=BadgeColours.choices,
-        default=BadgeColours.GREY,
+        default=BadgeColours.GREY.value,
         blank=False,
     )
 

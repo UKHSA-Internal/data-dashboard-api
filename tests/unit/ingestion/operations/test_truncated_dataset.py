@@ -38,7 +38,7 @@ class TestGatherTestDataSourceFilePaths:
         gathered_test_file_paths: list[Path] = _gather_test_data_source_file_paths()
 
         # Then
-        assert len(gathered_test_file_paths) == 52
+        assert len(gathered_test_file_paths) == 585
 
 
 class TestCollectAllMetricModelManagers:
@@ -166,14 +166,14 @@ class TestUploadTruncatedTestData:
         # Then
         assert "Completed truncated dataset upload" in caplog.text
 
-    @mock.patch(f"{MODULE_PATH}._upload_file")
+    @mock.patch(f"{MODULE_PATH}._upload_data_as_file")
     @mock.patch(f"{MODULE_PATH}.clear_metrics_tables")
     @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")
     def test_delegates_call_to_run_with_multiple_processes(
         self,
         spy_run_with_multiple_processes: mock.MagicMock,
         mocked_clear_metrics_tables: mock.MagicMock,
-        spy_upload_file: mock.MagicMock,
+        spy_upload_data_as_file: mock.MagicMock,
     ):
         """
         Given a list of test source data files paths at the `source_data/` directory
@@ -187,7 +187,7 @@ class TestUploadTruncatedTestData:
             `mocked_clear_metrics_tables`: To remove
                 the side effect of clearing records
                 and having to hit the database
-            `spy_upload_file`: For the main assertion
+            `spy_upload_data_as_file`: For the main assertion
         """
         # Given
         test_source_data_file_paths = _gather_test_data_source_file_paths()
@@ -197,7 +197,7 @@ class TestUploadTruncatedTestData:
 
         # Then
         spy_run_with_multiple_processes.assert_called_once_with(
-            upload_function=spy_upload_file, items=test_source_data_file_paths
+            upload_function=spy_upload_data_as_file, items=test_source_data_file_paths
         )
 
     @mock.patch(f"{MODULE_PATH}.run_with_multiple_processes")

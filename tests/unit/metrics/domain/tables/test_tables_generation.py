@@ -47,7 +47,6 @@ class TestTabularData:
         [
             ChartAxisFields.age.name,
             ChartAxisFields.stratum.name,
-            ChartAxisFields.geography.name,
             ChartAxisFields.metric.name,
         ],
     )

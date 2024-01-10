@@ -13,7 +13,11 @@ from metrics.api.serializers.charts import (
     EncodedChartResponseSerializer,
     EncodedChartsRequestSerializer,
 )
-from metrics.interfaces.charts import access, validation
+from metrics.interfaces.charts import access
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
+)
 
 CHARTS_API_TAG = "charts"
 
@@ -112,7 +116,7 @@ class ChartsView(APIView):
             filename: str = access.generate_chart_as_file(
                 chart_plots=chart_plot_models,
             )
-        except validation.ChartTypeDoesNotSupportMetricError as error:
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
@@ -229,7 +233,7 @@ class EncodedChartsView(APIView):
             serializer = EncodedChartResponseSerializer(data=response)
             serializer.is_valid(raise_exception=True)
 
-        except validation.ChartTypeDoesNotSupportMetricError as error:
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )

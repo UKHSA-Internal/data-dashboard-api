@@ -1,4 +1,4 @@
-from wagtail.blocks import StreamBlock, StructBlock, TextBlock
+from wagtail.blocks import RichTextBlock, StreamBlock, StructBlock, TextBlock
 
 from cms.dynamic_content import cards, help_texts
 
@@ -15,3 +15,8 @@ class Section(StructBlock):
 
     class Meta:
         icon = "thumbtack"
+
+
+class TextSection(StructBlock):
+    title = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
+    body = RichTextBlock(help_text=help_texts.REQUIRED_BODY_FIELD, required=True)

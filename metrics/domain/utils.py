@@ -24,11 +24,29 @@ class ChartTypes(Enum):
     line_multi_coloured = "line_multi_coloured"
 
     @classmethod
-    def choices(cls):
+    def choices(cls) -> tuple[tuple[str, str], ...]:
         return tuple((chart_type.value, chart_type.value) for chart_type in cls)
 
     @classmethod
-    def values(cls):
+    def selectable_choices(cls) -> tuple[tuple[str, str], ...]:
+        """Returns chart types which are selectable from the CMS as a nested tuple of 2-item tuples.
+
+        Returns:
+            Nested tuples of 2 item tuples as expected by the form blocks.
+            Examples:
+                (("line_with_shaded_section", "line_with_shaded_section"), ...)
+
+        """
+        selectable = (
+            cls.waffle,
+            cls.line_multi_coloured,
+            cls.bar,
+            cls.line_with_shaded_section,
+        )
+        return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
+
+    @classmethod
+    def values(cls) -> list[str]:
         return [chart_type.value for chart_type in cls]
 
 
@@ -37,7 +55,6 @@ class ChartAxisFields(Enum):
     age = "age__name"
     date = "date"
     metric = "metric_value"
-    geography = "geography__geography_type__name"
 
     @classmethod
     def choices(cls):
@@ -71,23 +88,6 @@ class ChartAxisFields(Enum):
             return cls[name].value
         except KeyError:
             return cls.get_default_y_axis().value
-
-
-def get_axis_name(field_name: str):
-    """Convert the given field_name into the "display" version
-    If no conversion is required then just return the supplied argument unaltered
-
-    Args:
-        field_name: The fieldname to convert to the display version if required
-
-    Returns:
-        The converted or unaltered fieldname
-    """
-    return (
-        ChartAxisFields(field_name).name
-        if field_name in ChartAxisFields.values()
-        else field_name
-    )
 
 
 DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name

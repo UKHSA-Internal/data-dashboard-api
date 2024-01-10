@@ -621,3 +621,19 @@ class TestCacheManagement:
             cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
                 request=mocked_request
             )
+
+    def test_clear(self):
+        """
+        Given an instance of `CacheManagement`
+        When `clear()` is called from the object
+        Then the call is delegated to the underlying client
+        """
+        # Given
+        spy_client = mock.Mock()
+        cache_management = CacheManagement(in_memory=True, client=spy_client)
+
+        # When
+        cache_management.clear()
+
+        # Then
+        spy_client.clear.assert_called_once()

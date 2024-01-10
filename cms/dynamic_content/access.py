@@ -8,3 +8,10 @@ ALLOWABLE_BODY_CONTENT = StreamField(
     ],
     use_json_field=True,
 )
+
+ALLOWABLE_BODY_CONTENT_TEXT_SECTION = StreamField(
+    [
+        ("section", sections.TextSection()),
+    ],
+    use_json_field=True,
+)

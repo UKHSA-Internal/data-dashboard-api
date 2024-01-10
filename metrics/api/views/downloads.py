@@ -1,73 +1,46 @@
 import io
+import logging
 
 from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework.renderers import CoreJSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
-from metrics.api.serializers import APITimeSeriesSerializer, DownloadsSerializer
-from metrics.data.access.api_models import validate_query_filters
-from metrics.data.models.api_models import APITimeSeries
+from metrics.api.serializers import (
+    BulkDownloadsSerializer,
+    CoreTimeSeriesSerializer,
+    DownloadsSerializer,
+)
+from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
+from metrics.domain.bulk_downloads.get_downloads_archive import (
+    get_bulk_downloads_archive,
+)
 from metrics.domain.exports.csv import write_data_to_csv
+from metrics.interfaces.downloads import access
 
 DOWNLOADS_API_TAG = "downloads"
 
+logger = logging.getLogger(__name__)
+
 
 class DownloadsView(APIView):
-    queryset = APITimeSeries.objects.all().order_by("date")
-    serializer_class = APITimeSeriesSerializer
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = [
-        "metric_frequency",
-        "theme",
-        "sub_theme",
-        "topic",
-        "geography_type",
-        "geography",
-        "metric",
-        "sex",
-        "age",
-        "stratum",
-        "year",
-        "epiweek",
-        "date_from",
-        "date_to",
-    ]
+    serializer_class = CoreTimeSeriesSerializer
     permission_classes = []
 
     renderer_classes = (CoreJSONRenderer,)
 
-    def _get_queryset(self):
-        all_query_filters: list[dict[str, str]] = validate_query_filters(
-            possible_fields=self.filterset_fields,
-            plots=self.request.data["plots"],
-        )
-
-        # Fire off first query
-        queryset = self.queryset.filter(**all_query_filters[0])
-
-        # Now do the rest of the queries and join the results to the first one
-        for query in all_query_filters[1:]:
-            queryset = queryset | self.queryset.filter(**query)
-
-        return queryset
-
-    def _handle_json(self) -> Response:
+    def _handle_json(self, queryset: CoreTimeSeriesQuerySet) -> Response:
         # Return the requested data in json format
-        queryset = self._get_queryset()
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
-    def _handle_csv(self) -> io.StringIO:
+    def _handle_csv(self, queryset: CoreTimeSeriesQuerySet) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
-
-        queryset = self._get_queryset()
-        return write_data_to_csv(file=response, api_time_series=queryset)
+        return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
@@ -96,16 +69,59 @@ class DownloadsView(APIView):
         | `age`             | The patient age band                                                      | 0_4                       |
         | `date_from`       | The date to pull the data from                                            | `2020-01-20`              |
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
-        """
 
+        """
         request_serializer = DownloadsSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        file_format: str = request_serializer.data["file_format"]
+        chart_plot_models = request_serializer.to_models()
+
+        queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
+            chart_plots=chart_plot_models
+        )
+
+        match file_format:
+            case "json":
+                return self._handle_json(queryset=queryset)
+            case "csv":
+                return self._handle_csv(queryset=queryset)
+            case _:
+                return None
+
+
+class BulkDownloadsView(APIView):
+    @extend_schema(
+        parameters=[BulkDownloadsSerializer],
+        tags=[DOWNLOADS_API_TAG],
+    )
+    def get(self, request, *args, **kargs):
+        """This endpoint can be used to get all downloads from the current dashboard and return them in a zip file
+
+        Note this endpoint will return a zipfile containing a collection of folders based on page names, each
+        folder will contain a series of csv or json files named after the charts currently published on the dashboard.
+
+        # Main errors
+
+        If any of the charts fail to be retrieved a 500 server error will be returned and the file
+        will not be downloaded.
+
+        This endpoint supports both csv and json format for its downloads
+        this makes the 'file_format' parameter a required field
+        not supplying this as a query parameter will result in a 400 Bad Request.
+
+        """
+        request_serializer = BulkDownloadsSerializer(data=request.query_params)
         request_serializer.is_valid(raise_exception=True)
 
         file_format = request_serializer.data["file_format"]
 
-        if file_format == "json":
-            return self._handle_json()
-        if file_format == "csv":
-            return self._handle_csv()
+        compressed_downloads = get_bulk_downloads_archive(file_format=file_format)
 
-        return None
+        response = HttpResponse(
+            compressed_downloads["zip_file_data"], content_type="application/zip"
+        )
+        response[
+            "Content-Disposition"
+        ] = f"attachment; filename={compressed_downloads['zip_file_name']}"
+        return response
