@@ -7,7 +7,7 @@ from metrics.data.models.core_models import CoreHeadline
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
-class HeadlinesInterfaceBeta:
+class HeadlinesInterface:
     def __init__(
         self,
         topic_name: str,
@@ -108,7 +108,7 @@ def generate_headline_number_beta(
         `HeadlineNumberDataNotFoundError`: If the query returned no records.
 
     """
-    interface = HeadlinesInterfaceBeta(
+    interface = HeadlinesInterface(
         topic_name=topic_name,
         metric_name=metric_name,
         geography_name=geography_name,
