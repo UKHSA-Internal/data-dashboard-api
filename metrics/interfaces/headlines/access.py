@@ -60,12 +60,6 @@ class BaseInvalidHeadlinesRequestError(Exception):
     ...
 
 
-class MetricIsTimeSeriesTypeError(BaseInvalidHeadlinesRequestError):
-    def __init__(self, metric_name: str):
-        message = f"`{metric_name}` is a timeseries-type metric. This should be a headline-type metric"
-        super().__init__(message)
-
-
 class HeadlineNumberDataNotFoundError(BaseInvalidHeadlinesRequestError):
     def __init__(self):
         message = "No data could be found for those parameters"
