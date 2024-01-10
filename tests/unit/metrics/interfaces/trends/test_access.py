@@ -148,7 +148,7 @@ class TestGenerateTrendNumbers:
         age = mock.Mock()
 
         # When
-        trend_data = access.generate_trend_numbers_beta(
+        trend_data = access.generate_trend_numbers(
             topic_name=mocked_topic,
             metric_name=mocked_metric_name,
             percentage_metric_name=mocked_percentage_metric_name,

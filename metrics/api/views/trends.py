@@ -13,7 +13,7 @@ from metrics.domain.models.trends import TrendsParameters
 from metrics.domain.trends.state import TREND_AS_DICT
 from metrics.interfaces.trends.access import (
     TrendNumberDataNotFoundError,
-    generate_trend_numbers_beta,
+    generate_trend_numbers,
 )
 
 TRENDS_API_TAG = "trends"
@@ -67,7 +67,7 @@ class TrendsViewBeta(APIView):
         serialized_model: TrendsParameters = query_serializer.to_models()
 
         try:
-            trends_data: TREND_AS_DICT = generate_trend_numbers_beta(
+            trends_data: TREND_AS_DICT = generate_trend_numbers(
                 topic_name=serialized_model.topic_name,
                 metric_name=serialized_model.metric_name,
                 percentage_metric_name=serialized_model.percentage_metric_name,

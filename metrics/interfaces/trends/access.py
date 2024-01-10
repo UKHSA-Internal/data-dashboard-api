@@ -97,7 +97,7 @@ class TrendsInterfaceBeta:
         )
 
 
-def generate_trend_numbers_beta(
+def generate_trend_numbers(
     topic_name: str,
     metric_name: str,
     percentage_metric_name: str,
