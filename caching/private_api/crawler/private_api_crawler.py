@@ -140,28 +140,22 @@ class PrivateAPICrawler:
             None
 
         """
-        content_cards = self._cms_block_parser.get_content_cards_from_section(
+        # Gather all headline number blocks in this section of the page
+        headline_number_blocks = (
+            self._cms_block_parser.get_all_headline_blocks_from_section(section=section)
+        )
+        # Process each of the headline number blocks which were gathered
+        self._dynamic_content_block_crawler.process_all_headline_number_blocks(
+            headline_number_blocks=headline_number_blocks
+        )
+
+        # Gather all chart blocks in this section of the page
+        chart_blocks = self._cms_block_parser.get_all_chart_blocks_from_section(
             section=section
         )
-
-        # Gather all headline number row cards in this section of the page
-        headline_numbers_row_cards = (
-            self._cms_block_parser.get_headline_numbers_row_cards_from_content_cards(
-                content_cards=content_cards
-            )
-        )
-        # Process each of the headline number row cards which were gathered
-        self._dynamic_content_block_crawler.process_all_headline_numbers_row_cards(
-            headline_numbers_row_cards=headline_numbers_row_cards
-        )
-
-        # Gather all chart row cards in this section of the page
-        chart_row_cards = self._cms_block_parser.get_chart_row_cards_from_content_cards(
-            content_cards=content_cards
-        )
-        # Process each of the chart row cards which were gathered
-        self._dynamic_content_block_crawler.process_all_chart_cards(
-            chart_row_cards=chart_row_cards
+        # Process each of the chart blocks which were gathered
+        self._dynamic_content_block_crawler.process_all_chart_blocks(
+            chart_blocks=chart_blocks
         )
 
     # process downloads
