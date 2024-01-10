@@ -19,7 +19,7 @@ from metrics.interfaces.trends.access import (
 TRENDS_API_TAG = "trends"
 
 
-class TrendsViewBeta(APIView):
+class TrendsView(APIView):
     permission_classes = []
 
     @extend_schema(
