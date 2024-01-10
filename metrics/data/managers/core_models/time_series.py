@@ -14,10 +14,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
 
     @staticmethod
-    def _newest_to_oldest(queryset: models.QuerySet) -> models.QuerySet:
-        return queryset.order_by("-date")
-
-    @staticmethod
     def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
         return queryset.order_by(field_name)
 
