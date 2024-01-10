@@ -111,7 +111,7 @@ class TestGenerateHeadlineNumberBeta:
         example_args = example_headline_args
 
         # When
-        metric_value = access.generate_headline_number_beta(**example_args)
+        metric_value = access.generate_headline_number(**example_args)
 
         # Then
         assert metric_value == spy_get_latest_metric_value.return_value
@@ -133,4 +133,4 @@ class TestGenerateHeadlineNumberBeta:
 
         # When / Then
         with pytest.raises(access.HeadlineNumberDataNotFoundError):
-            access.generate_headline_number_beta(**example_args)
+            access.generate_headline_number(**example_args)

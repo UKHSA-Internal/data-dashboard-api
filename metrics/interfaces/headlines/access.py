@@ -72,7 +72,7 @@ class HeadlineNumberDataNotFoundError(BaseInvalidHeadlinesRequestError):
         super().__init__(message)
 
 
-def generate_headline_number_beta(
+def generate_headline_number(
     topic_name: str,
     metric_name: str,
     geography_name: str,
