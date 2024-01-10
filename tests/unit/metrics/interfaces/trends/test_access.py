@@ -10,7 +10,7 @@ from tests.fakes.factories.metrics.headline_factory import FakeCoreHeadlineFacto
 from tests.fakes.managers.headline_manager import FakeCoreHeadlineManager
 
 
-class TestTrendsInterfaceBeta:
+class TestTrendsInterface:
     @property
     def example_args(self) -> dict[str, str]:
         return {
