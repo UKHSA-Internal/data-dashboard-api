@@ -98,3 +98,23 @@ class TestGetHeadlineBlocksFromHeadlineNumberRowCards:
             headline_number_row_cards[0]["value"]["columns"][1]["value"]["rows"][0],
         ]
         assert headline_number_blocks == expected_headline_number_blocks
+
+    def test_returns_empty_list_for_no_headline_number_row_cards(self):
+        """
+        Given an empty list of headline number row cards
+        When `get_headline_blocks_from_headline_number_row_cards()` is called
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        no_headline_number_row_cards = []
+
+        # When
+        headline_number_blocks = (
+            CMSBlockParser.get_headline_blocks_from_headline_number_row_cards(
+                headline_numbers_row_cards=no_headline_number_row_cards
+            )
+        )
+
+        # Then
+        assert headline_number_blocks == []

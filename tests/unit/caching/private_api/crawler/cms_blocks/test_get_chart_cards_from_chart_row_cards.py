@@ -158,3 +158,21 @@ class TestGetChartCardsFromChartRowCards:
             chart_row_cards[0]["value"]["columns"][1],
         ]
         assert chart_cards == expected_chart_cards
+
+    def test_returns_empty_list_for_no_chart_row_cards(self):
+        """
+        Given an empty list of chart row cards
+        When `get_chart_cards_from_chart_row_cards()`
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        no_chart_row_cards = []
+
+        # When
+        chart_cards = CMSBlockParser.get_chart_cards_from_chart_row_cards(
+            chart_row_cards=no_chart_row_cards
+        )
+
+        # Then
+        assert chart_cards == []

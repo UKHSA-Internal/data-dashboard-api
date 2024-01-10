@@ -92,12 +92,15 @@ class CMSBlockParser:
             List of headline number blocks which can then be crawled accordingly
 
         """
-        return [
-            block
-            for headline_numbers_row_card in headline_numbers_row_cards
-            for column in headline_numbers_row_card["value"]["columns"]
-            for block in column["value"]["rows"]
-        ]
+        try:
+            return [
+                block
+                for headline_numbers_row_card in headline_numbers_row_cards
+                for column in headline_numbers_row_card["value"]["columns"]
+                for block in column["value"]["rows"]
+            ]
+        except KeyError:
+            return []
 
     @classmethod
     def get_chart_cards_from_chart_row_cards(
@@ -114,11 +117,14 @@ class CMSBlockParser:
             blocks within them.
 
         """
-        return [
-            chart_card
-            for chart_row_card in chart_row_cards
-            for chart_card in chart_row_card["value"]["columns"]
-        ]
+        try:
+            return [
+                chart_card
+                for chart_row_card in chart_row_cards
+                for chart_card in chart_row_card["value"]["columns"]
+            ]
+        except KeyError:
+            return []
 
     @classmethod
     def get_chart_blocks_from_chart_cards(
@@ -148,8 +154,13 @@ class CMSBlockParser:
             List of headline number blocks which can then be crawled accordingly
 
         """
-        return [
-            headline_number_block
-            for chart_card in chart_cards
-            for headline_number_block in chart_card["value"]["headline_number_columns"]
-        ]
+        try:
+            return [
+                headline_number_block
+                for chart_card in chart_cards
+                for headline_number_block in chart_card["value"][
+                    "headline_number_columns"
+                ]
+            ]
+        except KeyError:
+            return []

@@ -152,3 +152,21 @@ class TestGetHeadlineBlocksFromChartCards:
             chart_cards[1]["value"]["headline_number_columns"][1],
         ]
         assert headline_blocks == expected_headline_blocks
+
+    def test_returns_empty_list_for_no_chart_cards(self):
+        """
+        Given an empty list of chart cards
+        When `get_headline_blocks_from_chart_cards()` is called
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        no_chart_cards = []
+
+        # When
+        headline_number_blocks = CMSBlockParser.get_headline_blocks_from_chart_cards(
+            chart_cards=no_chart_cards
+        )
+
+        # Then
+        assert headline_number_blocks == []
