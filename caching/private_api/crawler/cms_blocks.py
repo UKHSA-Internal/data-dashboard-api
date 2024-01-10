@@ -3,6 +3,59 @@ from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 class CMSBlockParser:
     @classmethod
+    def get_all_chart_blocks_from_section(
+        cls, section: CMS_COMPONENT_BLOCK_TYPE
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts a list of all chart blocks from the given `section`
+
+        Args:
+            section: The section component from the CMS
+
+        Returns:
+            A list of chart block dictionaries
+
+        """
+        chart_row_cards = cls.get_chart_row_cards_from_page_section(section=section)
+        chart_cards = cls.get_chart_cards_from_chart_row_cards(
+            chart_row_cards=chart_row_cards
+        )
+        return cls.get_chart_blocks_from_chart_cards(chart_cards=chart_cards)
+
+    @classmethod
+    def get_all_headline_blocks_from_section(
+        cls, section: CMS_COMPONENT_BLOCK_TYPE
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts a list of all headline number blocks from the given `section`
+
+        Args:
+            section: The section component from the CMS
+
+        Returns:
+            A list of headline number block dictionaries
+
+        """
+        content_cards = cls.get_content_cards_from_section(section=section)
+        headline_numbers_row_cards = (
+            cls.get_headline_numbers_row_cards_from_content_cards(
+                content_cards=content_cards
+            )
+        )
+        headline_blocks = cls.get_headline_blocks_from_headline_number_row_cards(
+            headline_numbers_row_cards=headline_numbers_row_cards
+        )
+
+        chart_row_cards = cls.get_chart_row_cards_from_content_cards(
+            content_cards=content_cards
+        )
+        chart_cards = cls.get_chart_cards_from_chart_row_cards(
+            chart_row_cards=chart_row_cards
+        )
+        headline_blocks += cls.get_headline_blocks_from_chart_cards(
+            chart_cards=chart_cards
+        )
+        return headline_blocks
+
+    @classmethod
     def get_content_cards_from_section(
         cls,
         section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
