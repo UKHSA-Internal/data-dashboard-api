@@ -2,7 +2,7 @@
 # Here it is set as `venv`
 VENV=venv
 
-# Grab the current python version associated with the project
+# Grab the current python version associated with the project (3.12)
 # Note this is currently also used in the CI
 PYTHON_VERSION=`cat .python-version`
 
@@ -15,7 +15,6 @@ BIN=./${VENV}/bin/
 PORT=8000
 
 # Create the virtual environment & install dependencies
-# Note: Requires Python 3.11 version
 setup-venv:
 	python${PYTHON_VERSION} -m venv ${VENV}
 	${BIN}pip install -r requirements.txt
@@ -41,11 +40,16 @@ integration-tests:
 system-tests:
 	${BIN}python -m pytest tests/system -v
 
+# Run all migration tests
+migration-tests:
+	${BIN}python -m pytest tests/migrations -v
+
 # Run all tests regardless of type
 all-tests:
 	make unit-tests
 	make integration-tests
 	make system-tests
+	make migration-tests
 
 # Run pip-audit and bandit to check for vulnerabilities
 audit:

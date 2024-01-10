@@ -4,10 +4,11 @@ from rest_framework.test import APIClient
 API_PREFIX = "/api/"
 PAGES_ENDPOINT_PATH = f"{API_PREFIX}pages/"
 HEADLINES_ENDPOINT_PATH = f"{API_PREFIX}headlines/v3/"
-TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v2/"
+TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v3/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
 DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
+GEOGRAPHIES_ENDPOINT_PATH = f"{API_PREFIX}geographies/v1/types/"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
@@ -46,6 +47,7 @@ class InternalAPIClient:
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
         self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
+        self.geographies_endpoint_path = GEOGRAPHIES_ENDPOINT_PATH
 
         # Header configurations
         self.force_refresh = force_refresh
@@ -152,6 +154,28 @@ class InternalAPIClient:
         path = self.downloads_endpoint_path
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
+
+    def hit_geographies_list_endpoint(self) -> Response:
+        """Sends a `GET` request to the list `geographies/` endpoint
+
+        Returns:
+            `Response` from the `geographies/` endpoint
+
+        """
+        path = self.geographies_endpoint_path
+        headers = self.build_headers()
+        return self._client.get(path=path, headers=headers, format="json")
+
+    def hit_geographies_detail_endpoint(self, geography_type_id: int) -> Response:
+        """Sends a `GET` request to the detail `geographies/` endpoint for the given `geography_type_id`
+
+        Returns:
+            `Response` from the `geographies/` endpoint
+
+        """
+        path = f"{self.geographies_endpoint_path}{geography_type_id}"
+        headers = self.build_headers()
+        return self._client.get(path=path, headers=headers, format="json")
 
     def hit_pages_list_endpoint(self) -> Response:
         """Sends a `GET` request to the list `pages/` endpoint.

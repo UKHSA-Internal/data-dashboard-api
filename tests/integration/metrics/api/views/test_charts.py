@@ -102,9 +102,10 @@ class TestChartsView:
         )
         assert response.status_code == HTTPStatus.OK
         response_data = response.data
-        assert response_data["last_updated"] == str(
-            core_timeseries_example[0].refresh_date
+        latest_date = max(
+            core_timeseries.date for core_timeseries in core_timeseries_example
         )
+        assert response_data["last_updated"] == str(latest_date)
 
     @pytest.mark.django_db
     def test_returns_correct_response_for_v3_age_based_chart(
@@ -140,6 +141,41 @@ class TestChartsView:
 
         # Check that the "last_updated" is returned correctly for the age-based chart
         response_data = response.data
-        assert response_data["last_updated"] == str(
-            core_timeseries_example[0].refresh_date
+        latest_date = max(
+            core_timeseries.date for core_timeseries in core_timeseries_example
         )
+        assert response_data["last_updated"] == str(latest_date)
+
+    @pytest.mark.django_db
+    def test_returns_bad_request_response_when_queried_data_does_not_exist(
+        self, core_timeseries_example: list[CoreTimeSeries]
+    ):
+        """
+        Given a payload for which there is no corresponding data
+        When the `POST /api/charts/v3/` endpoint is hit
+        Then the response is an HTTP 400 BAD REQUEST
+        """
+        # Given
+        client = APIClient()
+        valid_payload = {
+            "file_format": "svg",
+            "plots": [
+                {
+                    "topic": core_timeseries_example[0].metric.topic.name,
+                    "metric": core_timeseries_example[0].metric.name,
+                    "chart_type": "bar",
+                    "age": "non-existent-age",
+                }
+            ],
+        }
+        path = "/api/charts/v3/"
+
+        # When
+        response: Response = client.post(
+            path=path,
+            data=valid_payload,
+            format="json",
+        )
+
+        # Then
+        assert response.status_code == HTTPStatus.BAD_REQUEST

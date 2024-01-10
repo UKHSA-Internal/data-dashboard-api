@@ -37,7 +37,7 @@ class TestCacheClient:
         returned_entry = cache_client.get(cache_entry_key=fake_cache_entry_key)
 
         # Then
-        spy_cache.get.callled_once_with(key=fake_cache_entry_key, default=None)
+        spy_cache.get.assert_called_once_with(key=fake_cache_entry_key, default=None)
         assert returned_entry == spy_cache.get.return_value
 
     @mock.patch(f"{MODULE_PATH}.cache")
@@ -56,9 +56,25 @@ class TestCacheClient:
         cache_client.put(cache_entry_key=fake_cache_entry_key, value=mocked_value)
 
         # Then
-        spy_cache.set.callled_once_with(
+        spy_cache.set.assert_called_once_with(
             key=fake_cache_entry_key, value=mocked_value, timeout=None
         )
+
+    @mock.patch(f"{MODULE_PATH}.cache")
+    def test_clear_delegates_call(self, spy_cache: mock.MagicMock):
+        """
+        Given an instance of the `CacheClient`
+        When `clear()` is called from the client
+        Then the call is delegated to the underlying cache
+        """
+        # Given
+        cache_client = CacheClient()
+
+        # When
+        cache_client.clear()
+
+        # Then
+        spy_cache.clear.assert_called_once()
 
 
 class TestInMemoryCacheClient:
@@ -124,3 +140,21 @@ class TestInMemoryCacheClient:
 
         # Then
         assert retrieved_value == mocked_value
+
+    def test_clear_flushes_all_items(self):
+        """
+        Given a cache entry key and a value
+        When `clear()` is called from an instance of the `InMemoryCacheClient`
+        Then the cache is flushed
+        """
+        # Given
+        mocked_value = mock.Mock()
+        fake_cache_entry_key = "abc"
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {fake_cache_entry_key: mocked_value}
+
+        # When
+        in_memory_cache_client.clear()
+
+        # Then
+        assert fake_cache_entry_key not in in_memory_cache_client._cache

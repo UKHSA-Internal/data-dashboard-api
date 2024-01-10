@@ -1,9 +1,9 @@
 import logging
-from urllib.parse import urljoin
 
 import requests
 from rest_framework.response import Response
 
+from caching.frontend.urls import FrontEndURLBuilder
 from caching.internal_api_client import InternalAPIClient
 
 DEFAULT_REQUEST_TIMEOUT = 60
@@ -27,10 +27,14 @@ class FrontEndCrawler:
         frontend_base_url: str,
         cdn_auth_key: str,
         internal_api_client: InternalAPIClient | None = None,
+        frontend_url_builder: FrontEndURLBuilder | None = None,
     ):
         self._frontend_base_url = frontend_base_url
         self._cdn_auth_key = cdn_auth_key
         self._internal_api_client = internal_api_client or InternalAPIClient()
+        self._url_builder = frontend_url_builder or FrontEndURLBuilder(
+            base_url=self._frontend_base_url
+        )
 
     @classmethod
     def create_crawler_for_cache_refresh(
@@ -84,6 +88,8 @@ class FrontEndCrawler:
             - "CommonPage"
             - "WhatsNewParentPage"
             - "WhatsNewChildEntry"
+            - "MetricsDocumentationParentPage"
+            - "MetricsDocumentationChildEntry"
 
         Args:
             page_item: The individual page information
@@ -97,15 +103,27 @@ class FrontEndCrawler:
 
         match page_type:
             case "home.HomePage":
-                url = self._build_url_for_home_page()
+                url = self._url_builder.build_url_for_home_page()
             case "topic.TopicPage":
-                url = self._build_url_for_topic_page(slug=page_item["slug"])
+                url = self._url_builder.build_url_for_topic_page(slug=page_item["slug"])
             case "common.CommonPage":
-                url = self._build_url_for_common_page(slug=page_item["slug"])
+                url = self._url_builder.build_url_for_common_page(
+                    slug=page_item["slug"]
+                )
             case "whats_new.WhatsNewParentPage":
-                url = self._build_url_for_whats_new_parent_page()
+                url = self._url_builder.build_url_for_whats_new_parent_page()
             case "whats_new.WhatsNewChildEntry":
-                url = self._build_url_for_whats_new_child_entry(slug=page_item["slug"])
+                url = self._url_builder.build_url_for_whats_new_child_entry(
+                    slug=page_item["slug"]
+                )
+            case "metrics_documentation.MetricsDocumentationParentPage":
+                url = (
+                    self._url_builder.build_url_for_metrics_documentation_parent_page()
+                )
+            case "metrics_documentation.MetricsDocumentationChildEntry":
+                url = self._url_builder.build_url_for_metrics_documentation_child_entry(
+                    slug=page_item["slug"]
+                )
             case _:
                 # Pass over for root page objects
                 return
@@ -125,70 +143,7 @@ class FrontEndCrawler:
         for page_item in all_page_items:
             self.process_page(page_item=page_item["meta"])
 
-        self.hit_frontend_page(url=self._build_url_for_feedback_confirmation_page())
+        self.hit_frontend_page(
+            url=self._url_builder.build_url_for_feedback_confirmation_page()
+        )
         logger.info("Finished processing all pages for the frontend")
-
-    # URL construction
-
-    def _build_url_for_topic_page(self, slug: str) -> str:
-        """Builds the full URL for the given topic page `slug`
-
-        Args:
-            slug: The slug associated with the Topic page
-
-        Returns:
-            The full URL which can be passed to requests
-
-        """
-        return urljoin(self._frontend_base_url, f"/topics/{slug}")
-
-    def _build_url_for_common_page(self, slug: str) -> str:
-        """Builds the full URL for the given common page `slug`
-
-        Args:
-            slug: The slug associated with the Common page
-
-        Returns:
-            The full URL which can be passed to requests
-
-        """
-        return urljoin(self._frontend_base_url, slug)
-
-    def _build_url_for_home_page(self) -> str:
-        """Builds the full URL for the single home page
-
-        Returns:
-            The full URL which can be passed to requests
-
-        """
-        return self._frontend_base_url
-
-    def _build_url_for_whats_new_parent_page(self) -> str:
-        """Builds the full URL for the single what's new parent page
-
-        Returns:
-            The full URL which can be passed to requests
-
-        """
-        return urljoin(self._frontend_base_url, "whats-new")
-
-    def _build_url_for_whats_new_child_entry(self, slug: str) -> str:
-        """Builds the full URL for the single what's new child entry
-
-        Args:
-            slug: The slug associated with the `WhatsNewChildEntry`
-
-        Returns:
-            The full URL which can be passed to requests
-
-        """
-        return urljoin(self._frontend_base_url, f"whats-new/{slug}")
-
-    def _build_url_for_feedback_confirmation_page(self) -> str:
-        """Builds the full URL for the feedback confirmation page
-
-        Returns:
-            The full URL which can be passed to requests
-
-        """
-        return urljoin(self._frontend_base_url, "/feedback/confirmation")

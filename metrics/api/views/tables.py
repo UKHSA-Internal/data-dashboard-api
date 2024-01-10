@@ -6,7 +6,10 @@ from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.tables import TablesResponseSerializer, TablesSerializer
-from metrics.interfaces.plots import validation
+from metrics.interfaces.plots.access import (
+    DataNotFoundForAnyPlotError,
+    InvalidPlotParametersError,
+)
 from metrics.interfaces.tables import access
 
 TABLES_API_TAG = "tables"
@@ -92,8 +95,7 @@ class TablesView(APIView):
             tabular_data: list[dict[str, str]] = access.generate_table_for_full_plots(
                 plots_collection=plots_collection
             )
-
-        except validation.MetricDoesNotSupportTopicError as error:
+        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )

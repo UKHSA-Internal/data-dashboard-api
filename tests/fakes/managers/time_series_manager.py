@@ -14,9 +14,6 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         self.time_series = time_series
         super().__init__(**kwargs)
 
-    def all_related(self):
-        return self.time_series
-
     def get_count(
         self,
         x_axis: str,
@@ -106,7 +103,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
                 for time_series in filtered_time_series
             ]
         )
-        queryset.latest_refresh_date = max(
+        queryset.latest_date = max(
             (x.refresh_date for x in filtered_time_series), default=""
         )
         return queryset

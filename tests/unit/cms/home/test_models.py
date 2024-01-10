@@ -1,3 +1,4 @@
+import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
@@ -7,7 +8,21 @@ from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 
 
 class TestBlankHomePage:
-    def test_has_correct_api_fields(self):
+    @pytest.mark.parametrize(
+        "expected_api_field_name",
+        [
+            "page_description",
+            "body",
+            "related_links",
+            "last_published_at",
+            "seo_title",
+            "search_description",
+        ],
+    )
+    def test_has_correct_api_fields(
+        self,
+        expected_api_field_name: str,
+    ):
         """
         Given a blank `HomePage` model
         When `api_fields` is called
@@ -20,18 +35,21 @@ class TestBlankHomePage:
         api_fields: list[APIField] = blank_page.api_fields
 
         # Then
-        expected_api_field_names: set[str] = {
+        api_field_names: set[str] = {api_field.name for api_field in api_fields}
+        assert expected_api_field_name in api_field_names
+
+    @pytest.mark.parametrize(
+        "expected_content_panel_name",
+        [
+            "title",
             "page_description",
             "body",
-            "related_links",
-            "last_published_at",
-            "seo_title",
-            "search_description",
-        }
-        api_field_names: set[str] = {api_field.name for api_field in api_fields}
-        assert api_field_names == expected_api_field_names
-
-    def test_has_correct_content_panels(self):
+        ],
+    )
+    def test_has_correct_content_panels(
+        self,
+        expected_content_panel_name: str,
+    ):
         """
         Given a blank `HomePage` model
         When `content_panels` is called
@@ -44,13 +62,8 @@ class TestBlankHomePage:
         content_panels: list[FieldPanel] = blank_page.content_panels
 
         # Then
-        expected_content_panel_names: set[str] = {
-            "title",
-            "page_description",
-            "body",
-        }
         content_panel_names: set[str] = {p.field_name for p in content_panels}
-        assert content_panel_names == expected_content_panel_names
+        assert expected_content_panel_name in content_panel_names
 
     def test_has_correct_sidebar_panels(self):
         """

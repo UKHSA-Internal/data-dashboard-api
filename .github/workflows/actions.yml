@@ -33,14 +33,16 @@ jobs:
 
   vulnerabilities:
     name: Vulnerabilities
-    needs: [build]    
-    runs-on: ubuntu-latest  
+    needs: [ build ]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
       # Scan dependencies with `pip-audit`
       - uses: pypa/gh-action-pip-audit@v1.0.8
+        with:
+          inputs: requirements-prod.txt requirements-dev.txt
 
       # Scan project with `Bandit`
       - name: Run Bandit
@@ -53,7 +55,7 @@ jobs:
 
   quality-checks:
     name: Linting
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,13 +65,13 @@ jobs:
         run: |
           source .github/workflows/formatting.sh
 
- ###############################################################################
- # Architectural constraints checks
- ###############################################################################
+  ###############################################################################
+  # Architectural constraints checks
+  ###############################################################################
 
   architecture-checks:
     name: Architecture checks
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -85,7 +87,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -101,7 +103,7 @@ jobs:
 
   integration-tests:
     name: Integration tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -117,7 +119,7 @@ jobs:
 
   system-tests:
     name: System tests
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -128,44 +130,112 @@ jobs:
           python -m pytest tests/system/
 
   ###############################################################################
-  # Deploy
+  # Migration tests
   ###############################################################################
 
-  deploy:
-    name: ECR Image Push
+  migration-tests:
+    name: Migration tests
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-cache
+
+      - name: Run Migration tests
+        run: |
+          python -m pytest tests/migrations/
+
+  ###############################################################################
+  # Test coverage
+  ###############################################################################
+
+  test-coverage:
+    name: Test coverage
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-cache
+
+      - name: Evaluate test coverage
+        run: |
+          pytest --cov
+
+  ###############################################################################
+  # Build image
+  ###############################################################################
+
+  publish-main-image:
+    name: Publish main image
     needs: [
       quality-checks,
       unit-tests,
       integration-tests,
       system-tests,
+      migration-tests,
+      test-coverage,
       vulnerabilities,
       architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    # Only build if the changes are being pushed to the `main` branch
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecrRepository: "wp-api"
+          buildCommand: | 
+            docker build \
+              -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+
+  publish-ingestion-image:
+    name: Publish ingestion image
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    # Only build if the changes are being pushed to the `main` branch
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecrRepository: "wp-ingestion"
+          buildCommand: |
+            docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          # The current self-hosted CI runners are X64 based. Hence, the need to build with AMD 64
+
+  ###############################################################################
+  # Deploy
+  ###############################################################################
+
+  trigger-deployments:
+    name: Trigger deployments
+    needs: [
+      publish-main-image,
+      publish-ingestion-image
     ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-    
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-          role-to-assume: arn:aws:iam::518944279943:role/devops_github_actions_wp_api
-          role-session-name: testsession
-          aws-region: ${{ env.AWS_REGION }}
-
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: wp-api
-        IMAGE_TAG: latest
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        aws ecs update-service --cluster wp-api-cluster --service wp-api-service --force-new-deployment --region eu-west-2
+      - name: Check out code
+        uses: actions/checkout@v4
+      - uses: ./.github/actions/trigger-deployments
+        with:
+          token: ${{ secrets.DEPLOYMENT_TRIGGER_TOKEN }}

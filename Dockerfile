@@ -4,7 +4,7 @@
 # Default arguments
 # This version is hardcoded but ideally it should pull from the `.python-version`
 # When bumping Python versions, we currently have to update the `.python-version` file and this `ARG`
-ARG PYTHON_VERSION=3.11
+ARG PYTHON_VERSION=3.12
 
 FROM python:${PYTHON_VERSION}-slim AS build
 
@@ -13,6 +13,7 @@ ENV PATH=/venv/bin:$PATH
 
 # Copy the production-only dependencies into place
 COPY requirements-prod.txt requirements-prod.txt
+COPY requirements-prod-ingestion.txt requirements-prod-ingestion.txt
 
 # Main build process
 RUN apt-get update \
@@ -60,7 +61,7 @@ RUN apt-get update \
     # Add execution permission for the entrypoint shell script
 
 # Opens a shell on the entrypoint.
-# This allowis the `entrypoint.sh` shell script or any other tooling to be ran
+# This allows the `entrypoint.sh` shell script or any other tooling to be ran from the container
 ENTRYPOINT ["/bin/bash"]
 
 # Runs the production server by default

@@ -40,15 +40,33 @@ class CoreHeadline(models.Model):
     )
 
     refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE)
+    embargo = models.DateTimeField(help_text=help_texts.EMBARGO, null=True)
+
     period_start = models.DateField(help_text=help_texts.PERIOD_START)
     period_end = models.DateField(help_text=help_texts.PERIOD_END)
-
     metric_value = models.DecimalField(
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
     )
 
     objects = CoreHeadlineManager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=(
+                    "metric",
+                    "geography",
+                    "stratum",
+                    "age",
+                    "sex",
+                    "period_start",
+                    "period_end",
+                    "metric_value",
+                ),
+                name="The `CoreHeadline` record should be unique",
+            )
+        ]
 
     def __str__(self):
         return f"Core Headline Data for {self.refresh_date}, metric '{self.metric.name}', value: {self.metric_value}"
