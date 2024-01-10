@@ -18,10 +18,6 @@ class CoreHeadlineQuerySet(models.QuerySet):
         return queryset.order_by("-period_end", "-refresh_date")
 
     @staticmethod
-    def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
-        return queryset.order_by(field_name)
-
-    @staticmethod
     def _filter_by_geography(queryset, geography_name):
         return queryset.filter(geography__name=geography_name)
 
