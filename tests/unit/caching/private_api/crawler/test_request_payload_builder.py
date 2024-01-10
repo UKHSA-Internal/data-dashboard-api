@@ -88,9 +88,14 @@ class TestRequestPayloadBuilder:
 
         # Then
         expected_trend_request_data = {
-            "topic": "COVID-19",
+            "age": "all",
+            "geography": "England",
+            "geography_type": "Nation",
             "metric": "COVID-19_headline_ONSdeaths_7DayChange",
             "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
+            "sex": "all",
+            "stratum": "default",
+            "topic": "COVID-19",
         }
         assert trend_request_data == expected_trend_request_data
 

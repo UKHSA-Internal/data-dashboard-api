@@ -18,40 +18,6 @@ class CoreHeadlineQuerySet(models.QuerySet):
         return queryset.order_by("-period_end", "-refresh_date")
 
     @staticmethod
-    def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
-        return queryset.order_by(field_name)
-
-    def get_metric_value(self, topic_name: str, metric_name: str) -> "CoreHeadline":
-        """Gets the record associated with the given `topic_name` and `metric_name`.
-
-        Args:
-            topic_name: The name of the disease being queried.
-                E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
-                E.g. `COVID-19_headline_ONSdeaths_7DayTotals`
-
-        Returns:
-            QuerySet: A queryset containing the single record
-                Examples:
-                    `<CoreHeadline:
-                        Core Headline Data for 2023-03-04,
-                        metric 'COVID-19_headline_ONSdeaths_7DayTotals',
-                        value: 24298.0
-                    >`
-
-        Raises:
-            `MultipleObjectsReturned`: If the query returned more than 1 record.
-                We expect this if the provided `metric` is for timeseries type data
-
-            `DoesNotExist`: If the query returned no records.
-
-        """
-        return self.get(
-            metric__topic__name=topic_name,
-            metric__name=metric_name,
-        )
-
-    @staticmethod
     def _filter_by_geography(queryset, geography_name):
         return queryset.filter(geography__name=geography_name)
 

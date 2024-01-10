@@ -41,11 +41,12 @@ class RequestPayloadBuilder:
             `trends` endpoint
 
         """
-        return {
-            "topic": trend_number_block["topic"],
-            "metric": trend_number_block["metric"],
-            "percentage_metric": trend_number_block["percentage_metric"],
-        }
+        # The basis of the trends request is the same as the headlines request payload
+        request_data = cls.build_headlines_request_data(
+            headline_number_block=trend_number_block
+        )
+        request_data["percentage_metric"] = trend_number_block["percentage_metric"]
+        return request_data
 
     def build_chart_request_data(
         self, chart_block: CMS_COMPONENT_BLOCK_TYPE, chart_is_double_width: bool
