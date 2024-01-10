@@ -1,8 +1,8 @@
 from .charts import ChartsSerializer
+from .headlines import HeadlinesQuerySerializerBeta
 from .downloads import (
     DownloadsSerializer,
     BulkDownloadsSerializer,
 )
-from .headlines import HeadlinesQuerySerializer
 from .timeseries import CoreTimeSeriesSerializer
 from .trends import TrendsQuerySerializer, TrendsResponseSerializer
