@@ -18,7 +18,7 @@ from metrics.interfaces.headlines.access import (
 HEADLINES_API_TAG = "headlines"
 
 
-class HeadlinesViewBeta(APIView):
+class HeadlinesView(APIView):
     permission_classes = []
 
     @extend_schema(

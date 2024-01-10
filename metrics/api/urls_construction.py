@@ -21,7 +21,7 @@ from metrics.api.views import (
     ChartsView,
     DownloadsView,
     EncodedChartsView,
-    HeadlinesViewBeta,
+    HeadlinesView,
     HealthView,
     TablesView,
     TrendsViewBeta,
@@ -122,7 +122,7 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
-    re_path(f"^{API_PREFIX}headlines/v3", HeadlinesViewBeta.as_view()),
+    re_path(f"^{API_PREFIX}headlines/v3", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
 ]

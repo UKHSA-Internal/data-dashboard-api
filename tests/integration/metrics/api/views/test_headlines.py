@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from metrics.data.models.core_models import CoreHeadline
 
 
-class TestHeadlinesViewBeta:
+class TestHeadlinesView:
     @property
     def path(self) -> str:
         return "/api/headlines/v3/"
