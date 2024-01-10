@@ -14,7 +14,7 @@ class TrendNumberDataNotFoundError(Exception):
         super().__init__(message)
 
 
-class TrendsInterfaceBeta:
+class TrendsInterface:
     def __init__(
         self,
         topic_name: str,
@@ -148,7 +148,7 @@ def generate_trend_numbers(
             `topic` / `metric` / `percentage_metric`
 
     """
-    interface = TrendsInterfaceBeta(
+    interface = TrendsInterface(
         topic_name=topic_name,
         metric_name=metric_name,
         percentage_metric_name=percentage_metric_name,

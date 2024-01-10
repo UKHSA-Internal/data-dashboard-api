@@ -5,7 +5,7 @@ import pytest
 from metrics.data.models.core_models import CoreHeadline
 from metrics.domain.trends.state import Trend
 from metrics.interfaces.trends import access
-from metrics.interfaces.trends.access import TrendsInterfaceBeta
+from metrics.interfaces.trends.access import TrendsInterface
 from tests.fakes.factories.metrics.headline_factory import FakeCoreHeadlineFactory
 from tests.fakes.managers.headline_manager import FakeCoreHeadlineManager
 
@@ -34,7 +34,7 @@ class TestTrendsInterfaceBeta:
         expected_args = self.example_args
         spy_core_headline_manager = mock.Mock()
 
-        interface = TrendsInterfaceBeta(
+        interface = TrendsInterface(
             **expected_args,
             core_headline_manager=spy_core_headline_manager,
         )
@@ -68,7 +68,7 @@ class TestTrendsInterfaceBeta:
             percentage_core_time_series,
         ) = FakeCoreHeadlineFactory.build_example_trend_type_records(**example_args)
 
-        interface = TrendsInterfaceBeta(
+        interface = TrendsInterface(
             **example_args,
             core_headline_manager=FakeCoreHeadlineManager(
                 headlines=[main_core_time_series, percentage_core_time_series]
@@ -101,7 +101,7 @@ class TestTrendsInterfaceBeta:
         fake_core_headline_manager = FakeCoreHeadlineManager(headlines=[])
         metric_name = example_args["metric_name"]
 
-        headlines_interface = access.TrendsInterfaceBeta(
+        headlines_interface = access.TrendsInterface(
             **example_args,
             core_headline_manager=fake_core_headline_manager,
         )
@@ -120,14 +120,14 @@ class TestTrendsInterfaceBeta:
         example_args = self.example_args
 
         # When
-        trends_interface = TrendsInterfaceBeta(**example_args)
+        trends_interface = TrendsInterface(**example_args)
 
         # Then
         assert trends_interface.core_headline_manager == CoreHeadline.objects
 
 
 class TestGenerateTrendNumbers:
-    @mock.patch.object(access.TrendsInterfaceBeta, "get_trend")
+    @mock.patch.object(access.TrendsInterface, "get_trend")
     def test_delegates_call_to_interface_to_get_metric_values(
         self, spy_get_trend: mock.MagicMock
     ):
