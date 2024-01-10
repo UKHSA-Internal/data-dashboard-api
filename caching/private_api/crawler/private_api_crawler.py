@@ -31,17 +31,25 @@ class PrivateAPICrawler:
 
     """
 
-    def __init__(self, internal_api_client: InternalAPIClient | None = None):
+    def __init__(
+        self,
+        internal_api_client: InternalAPIClient | None = None,
+        cms_block_parser: CMSBlockParser | None = None,
+        dynamic_content_block_crawler: DynamicContentBlockCrawler | None = None,
+    ):
         self._internal_api_client = internal_api_client or InternalAPIClient()
-        self._cms_block_parser = CMSBlockParser()
+        self._cms_block_parser = cms_block_parser or CMSBlockParser()
         self._geography_api_crawler = GeographiesAPICrawler(
             internal_api_client=self._internal_api_client
         )
         self._headless_cms_api_crawler = HeadlessCMSAPICrawler(
             internal_api_client=self._internal_api_client
         )
-        self._dynamic_content_block_crawler = DynamicContentBlockCrawler(
-            internal_api_client=self._internal_api_client,
+        self._dynamic_content_block_crawler = (
+            dynamic_content_block_crawler
+            or DynamicContentBlockCrawler(
+                internal_api_client=self._internal_api_client,
+            )
         )
 
     # Class constructors
