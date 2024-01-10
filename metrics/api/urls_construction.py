@@ -21,12 +21,12 @@ from metrics.api.views import (
     ChartsView,
     DownloadsView,
     EncodedChartsView,
+    HeadlinesView,
     HealthView,
-    TrendsViewBeta,
+    TablesView,
+    TrendsView,
 )
 from metrics.api.views.geographies import GeographyTypesViewSet
-from metrics.api.views.headlines import HeadlinesViewBeta
-from metrics.api.views.tables import TablesView
 from public_api import construct_urlpatterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -122,9 +122,9 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
-    re_path(f"^{API_PREFIX}headlines/v3", HeadlinesViewBeta.as_view()),
+    re_path(f"^{API_PREFIX}headlines/v3", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
-    re_path(f"^{API_PREFIX}trends/v3", TrendsViewBeta.as_view()),
+    re_path(f"^{API_PREFIX}trends/v3", TrendsView.as_view()),
 ]
 private_api_urlpatterns += geographies_router.urls
 

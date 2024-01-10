@@ -16,7 +16,7 @@ from metrics.data.models.core_models import (
 from metrics.domain.models.headline import HeadlineParameters
 
 
-class HeadlinesQuerySerializerBeta(serializers.Serializer):
+class HeadlinesQuerySerializer(serializers.Serializer):
     topic = serializers.ChoiceField(
         choices=[],
         required=True,

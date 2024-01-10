@@ -20,7 +20,7 @@ def example_headline_args() -> dict[str, str]:
     }
 
 
-class TestHeadlinesInterfaceBeta:
+class TestHeadlinesInterface:
     def test_initializes_with_default_manager(
         self, example_headline_args: dict[str, str]
     ):
@@ -34,7 +34,7 @@ class TestHeadlinesInterfaceBeta:
         example_args = example_headline_args
 
         # When
-        headlines_interface = access.HeadlinesInterfaceBeta(**example_args)
+        headlines_interface = access.HeadlinesInterface(**example_args)
 
         # Then
         assert headlines_interface.core_headline_manager == CoreHeadline.objects
@@ -53,7 +53,7 @@ class TestHeadlinesInterfaceBeta:
         expected_example_args = example_headline_args
 
         spy_core_headline_manager = mock.Mock()
-        headlines_interface = access.HeadlinesInterfaceBeta(
+        headlines_interface = access.HeadlinesInterface(
             **expected_example_args,
             core_headline_manager=spy_core_headline_manager,
         )
@@ -84,7 +84,7 @@ class TestHeadlinesInterfaceBeta:
         spy_core_headline_manager = mock.Mock()
         spy_core_headline_manager.get_latest_metric_value.return_value = None
 
-        headlines_interface = access.HeadlinesInterfaceBeta(
+        headlines_interface = access.HeadlinesInterface(
             **expected_example_args,
             core_headline_manager=spy_core_headline_manager,
         )
@@ -95,7 +95,7 @@ class TestHeadlinesInterfaceBeta:
 
 
 class TestGenerateHeadlineNumberBeta:
-    @mock.patch.object(access.HeadlinesInterfaceBeta, "get_latest_metric_value")
+    @mock.patch.object(access.HeadlinesInterface, "get_latest_metric_value")
     def test_delegates_call_to_interface_to_get_latest_metric_value(
         self,
         spy_get_latest_metric_value: mock.MagicMock,
@@ -111,12 +111,12 @@ class TestGenerateHeadlineNumberBeta:
         example_args = example_headline_args
 
         # When
-        metric_value = access.generate_headline_number_beta(**example_args)
+        metric_value = access.generate_headline_number(**example_args)
 
         # Then
         assert metric_value == spy_get_latest_metric_value.return_value
 
-    @mock.patch.object(access.HeadlinesInterfaceBeta, "get_latest_metric_value")
+    @mock.patch.object(access.HeadlinesInterface, "get_latest_metric_value")
     def test_raises_error_when_metric_value_is_none(
         self,
         mocked_get_metric_value: mock.MagicMock,
@@ -133,4 +133,4 @@ class TestGenerateHeadlineNumberBeta:
 
         # When / Then
         with pytest.raises(access.HeadlineNumberDataNotFoundError):
-            access.generate_headline_number_beta(**example_args)
+            access.generate_headline_number(**example_args)

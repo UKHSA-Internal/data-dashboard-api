@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from metrics.data.models.core_models import CoreHeadline
 
 
-class TestHeadlinesViewBeta:
+class TestHeadlinesView:
     @property
     def path(self) -> str:
         return "/api/headlines/v3/"
@@ -15,7 +15,7 @@ class TestHeadlinesViewBeta:
     @pytest.mark.django_db
     def test_get_returns_correct_response(
         self,
-        core_headline_example_beta: CoreHeadline,
+        core_headline_example: CoreHeadline,
     ):
         """
         Given a valid payload for a `CoreHeadline` which exists
@@ -25,10 +25,10 @@ class TestHeadlinesViewBeta:
         # Given
         client = APIClient()
         payload = {
-            "topic": core_headline_example_beta.metric.metric_group.topic.name,
-            "metric": core_headline_example_beta.metric.name,
-            "geography": core_headline_example_beta.geography.name,
-            "geography_type": core_headline_example_beta.geography.geography_type.name,
+            "topic": core_headline_example.metric.metric_group.topic.name,
+            "metric": core_headline_example.metric.name,
+            "geography": core_headline_example.geography.name,
+            "geography_type": core_headline_example.geography.geography_type.name,
         }
 
         # When
@@ -36,4 +36,4 @@ class TestHeadlinesViewBeta:
 
         # Then
         assert response.status_code == HTTPStatus.OK
-        assert response.data == {"value": core_headline_example_beta.metric_value}
+        assert response.data == {"value": core_headline_example.metric_value}

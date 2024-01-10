@@ -6,23 +6,23 @@ from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.headlines import (
-    HeadlinesQuerySerializerBeta,
+    HeadlinesQuerySerializer,
     HeadlinesResponseSerializer,
 )
 from metrics.domain.models.headline import HeadlineParameters
 from metrics.interfaces.headlines.access import (
     BaseInvalidHeadlinesRequestError,
-    generate_headline_number_beta,
+    generate_headline_number,
 )
 
 HEADLINES_API_TAG = "headlines"
 
 
-class HeadlinesViewBeta(APIView):
+class HeadlinesView(APIView):
     permission_classes = []
 
     @extend_schema(
-        parameters=[HeadlinesQuerySerializerBeta],
+        parameters=[HeadlinesQuerySerializer],
         responses={HTTPStatus.OK.value: HeadlinesResponseSerializer},
         tags=[HEADLINES_API_TAG],
     )
@@ -68,13 +68,13 @@ class HeadlinesViewBeta(APIView):
         A valid metric name for this endpoint should include `headline` as the metric group part of the name.
 
         """
-        query_serializer = HeadlinesQuerySerializerBeta(data=request.query_params)
+        query_serializer = HeadlinesQuerySerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
         serialized_model: HeadlineParameters = query_serializer.to_models()
 
         try:
-            headline_number: float = generate_headline_number_beta(
+            headline_number: float = generate_headline_number(
                 topic_name=serialized_model.topic_name,
                 metric_name=serialized_model.metric_name,
                 geography_type_name=serialized_model.geography_type_name,

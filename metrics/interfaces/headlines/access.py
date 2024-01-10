@@ -7,7 +7,7 @@ from metrics.data.models.core_models import CoreHeadline
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
-class HeadlinesInterfaceBeta:
+class HeadlinesInterface:
     def __init__(
         self,
         topic_name: str,
@@ -60,19 +60,13 @@ class BaseInvalidHeadlinesRequestError(Exception):
     ...
 
 
-class MetricIsTimeSeriesTypeError(BaseInvalidHeadlinesRequestError):
-    def __init__(self, metric_name: str):
-        message = f"`{metric_name}` is a timeseries-type metric. This should be a headline-type metric"
-        super().__init__(message)
-
-
 class HeadlineNumberDataNotFoundError(BaseInvalidHeadlinesRequestError):
     def __init__(self):
         message = "No data could be found for those parameters"
         super().__init__(message)
 
 
-def generate_headline_number_beta(
+def generate_headline_number(
     topic_name: str,
     metric_name: str,
     geography_name: str,
@@ -108,7 +102,7 @@ def generate_headline_number_beta(
         `HeadlineNumberDataNotFoundError`: If the query returned no records.
 
     """
-    interface = HeadlinesInterfaceBeta(
+    interface = HeadlinesInterface(
         topic_name=topic_name,
         metric_name=metric_name,
         geography_name=geography_name,
