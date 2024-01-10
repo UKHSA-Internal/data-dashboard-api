@@ -4,7 +4,7 @@ import pytest
 from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.trends import (
-    TrendsQuerySerializerBeta,
+    TrendsQuerySerializer,
     TrendsResponseSerializer,
 )
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -16,7 +16,7 @@ from tests.fakes.managers.stratum_manager import FakeStratumManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
 
-class TestTrendsQuerySerializerBeta:
+class TestTrendsQuerySerializer:
     DATA_PAYLOAD_HINT = dict[str, str]
 
     @classmethod
@@ -60,7 +60,7 @@ class TestTrendsQuerySerializerBeta:
             topic_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -96,7 +96,7 @@ class TestTrendsQuerySerializerBeta:
         ) = self._setup_valid_data_payload_and_model_managers()
         data_payload[field_to_be_serialized] = "invalid-value"
 
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -127,7 +127,7 @@ class TestTrendsQuerySerializerBeta:
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -160,7 +160,7 @@ class TestTrendsQuerySerializerBeta:
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -196,7 +196,7 @@ class TestTrendsQuerySerializerBeta:
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -228,7 +228,7 @@ class TestTrendsQuerySerializerBeta:
         geography_manager = FakeGeographyManager(geographies=[mock.Mock()])
 
         # When
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -260,7 +260,7 @@ class TestTrendsQuerySerializerBeta:
         geography_type_manager = FakeGeographyTypeManager(geography_types=[mock.Mock()])
 
         # When
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -297,7 +297,7 @@ class TestTrendsQuerySerializerBeta:
         stratum_manager = FakeStratumManager(strata=[mock.Mock()])
 
         # When
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -329,7 +329,7 @@ class TestTrendsQuerySerializerBeta:
         age_manager = FakeAgeManager(ages=[mock.Mock()])
 
         # When
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
@@ -358,7 +358,7 @@ class TestTrendsQuerySerializerBeta:
             topic_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         age_manager = FakeAgeManager(ages=[mock.Mock()])
-        serializer = TrendsQuerySerializerBeta(
+        serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,

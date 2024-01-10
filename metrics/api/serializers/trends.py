@@ -5,7 +5,7 @@ from metrics.api.serializers.headlines import HeadlinesQuerySerializer
 from metrics.domain.models.trends import TrendsParameters
 
 
-class TrendsQuerySerializerBeta(HeadlinesQuerySerializer):
+class TrendsQuerySerializer(HeadlinesQuerySerializer):
     percentage_metric = serializers.ChoiceField(
         choices=[],
         required=True,

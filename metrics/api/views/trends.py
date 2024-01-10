@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.trends import (
-    TrendsQuerySerializerBeta,
+    TrendsQuerySerializer,
     TrendsResponseSerializer,
 )
 from metrics.domain.models.trends import TrendsParameters
@@ -23,7 +23,7 @@ class TrendsViewBeta(APIView):
     permission_classes = []
 
     @extend_schema(
-        parameters=[TrendsQuerySerializerBeta],
+        parameters=[TrendsQuerySerializer],
         responses={HTTPStatus.OK.value: TrendsResponseSerializer},
         tags=[TRENDS_API_TAG],
     )
@@ -61,7 +61,7 @@ class TrendsViewBeta(APIView):
         and a topic of `Influenza` will not return any data.
 
         """
-        query_serializer = TrendsQuerySerializerBeta(data=request.query_params)
+        query_serializer = TrendsQuerySerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
         serialized_model: TrendsParameters = query_serializer.to_models()
