@@ -136,28 +136,28 @@ EXAMPLE_CHART_ROW_CARDS = [
 ]
 
 
-class TestGetChartCardsFromChartRowCards:
+class TestGetChartBlocksFromChartRowCards:
     def test_returns_correct_chart_cards(self):
         """
         Given a list of example chart row cards
-        When `get_chart_cards_from_chart_row_cards()` is called
+        When `get_chart_blocks_from_chart_row_cards()` is called
             from the `CMSBlockParser` class
-        Then the correct chart cards are extracted and returned
+        Then the correct chart blocks are extracted and returned
         """
         # Given
         chart_row_cards = EXAMPLE_CHART_ROW_CARDS
 
         # When
-        chart_cards = CMSBlockParser.get_chart_cards_from_chart_row_cards(
+        chart_blocks = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
             chart_row_cards=chart_row_cards
         )
 
         # Then
-        expected_chart_cards = [
+        expected_chart_blocks = [
             chart_row_cards[0]["value"]["columns"][0],
             chart_row_cards[0]["value"]["columns"][1],
         ]
-        assert chart_cards == expected_chart_cards
+        assert chart_blocks == expected_chart_blocks
 
     def test_returns_empty_list_for_no_chart_row_cards(self):
         """
@@ -170,7 +170,7 @@ class TestGetChartCardsFromChartRowCards:
         no_chart_row_cards = []
 
         # When
-        chart_cards = CMSBlockParser.get_chart_cards_from_chart_row_cards(
+        chart_cards = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
             chart_row_cards=no_chart_row_cards
         )
 

@@ -16,10 +16,9 @@ class CMSBlockParser:
 
         """
         chart_row_cards = cls.get_chart_row_cards_from_page_section(section=section)
-        chart_cards = cls.get_chart_cards_from_chart_row_cards(
+        return cls.get_chart_blocks_from_chart_row_cards(
             chart_row_cards=chart_row_cards
         )
-        return cls.get_chart_blocks_from_chart_cards(chart_cards=chart_cards)
 
     @classmethod
     def get_all_headline_blocks_from_section(
@@ -44,10 +43,12 @@ class CMSBlockParser:
             headline_numbers_row_cards=headline_numbers_row_cards
         )
 
+        # Headline blocks can also be places within chart cards
+        # so they have to be extracted from any charts cards in the section
         chart_row_cards = cls.get_chart_row_cards_from_content_cards(
             content_cards=content_cards
         )
-        chart_cards = cls.get_chart_cards_from_chart_row_cards(
+        chart_cards = cls.get_chart_blocks_from_chart_row_cards(
             chart_row_cards=chart_row_cards
         )
         headline_blocks += cls.get_headline_blocks_from_chart_cards(
@@ -156,43 +157,28 @@ class CMSBlockParser:
             return []
 
     @classmethod
-    def get_chart_cards_from_chart_row_cards(
+    def get_chart_blocks_from_chart_row_cards(
         cls, chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Extracts all chart cards blocks from the given list of `chart_row_cards`
+        """Extracts all chart blocks from the given list of `chart_row_cards`
 
         Args:
             chart_row_cards: List of all chart row cards on the page
 
         Returns:
-            List of chart cards which can then be crawled accordingly
-            Note that these cards may still also contain headline
+            List of chart blocks which can then be crawled accordingly
+            Note that these blocks may still also contain headline
             blocks within them.
 
         """
         try:
             return [
-                chart_card
+                chart_block
                 for chart_row_card in chart_row_cards
-                for chart_card in chart_row_card["value"]["columns"]
+                for chart_block in chart_row_card["value"]["columns"]
             ]
         except KeyError:
             return []
-
-    @classmethod
-    def get_chart_blocks_from_chart_cards(
-        cls, chart_cards: list[CMS_COMPONENT_BLOCK_TYPE]
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Extracts all chart blocks from the given list of `chart_cards`
-
-        Args:
-            chart_cards: List of all chart cards on the page
-
-        Returns:
-            List of chart blocks which can then be crawled accordingly
-
-        """
-        return [chart_card["value"] for chart_card in chart_cards]
 
     @classmethod
     def get_headline_blocks_from_chart_cards(
