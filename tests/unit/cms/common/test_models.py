@@ -21,6 +21,7 @@ class TestBlankCommonPage:
         # Then
         expected_api_field_names: set[str] = {
             "body",
+            "button",
             "date_posted",
             "last_published_at",
             "related_links",
@@ -47,6 +48,7 @@ class TestBlankCommonPage:
             "title",
             "date_posted",
             "body",
+            "button",
         }
         content_panel_names: set[str] = {p.field_name for p in content_panels}
         assert content_panel_names == expected_content_panel_names

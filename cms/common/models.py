@@ -7,6 +7,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.managers import CommonPageManager
+from cms.snippets.serializers import ButtonSerializer
 
 HEADING_2: str = "h2"
 HEADING_3: str = "h3"
@@ -31,6 +32,13 @@ MAXIMUM_URL_FIELD_LENGTH: int = 400
 class CommonPage(Page):
     date_posted = models.DateField()
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
+    button = models.ForeignKey(
+        "snippets.button",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
 
     search_fields = Page.search_fields + [
         index.SearchField("body"),
@@ -39,6 +47,7 @@ class CommonPage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
         FieldPanel("body"),
+        FieldPanel("button"),
     ]
 
     sidebar_content_panels = [
@@ -49,6 +58,7 @@ class CommonPage(Page):
     api_fields = [
         APIField("date_posted"),
         APIField("body"),
+        APIField("button", serializer=ButtonSerializer()),
         APIField("last_published_at"),
         APIField("related_links"),
         APIField("seo_title"),
