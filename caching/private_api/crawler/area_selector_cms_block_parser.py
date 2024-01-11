@@ -9,6 +9,7 @@ from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 class AreaSelectorCMSBlockParser:
     """Used to produce all possible geography combinations for chart/headline blocks"""
+
     def __init__(
         self,
         geographies_api_crawler: GeographiesAPICrawler,
