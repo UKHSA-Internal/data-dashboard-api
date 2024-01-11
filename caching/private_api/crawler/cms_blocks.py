@@ -2,6 +2,22 @@ from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 
 class CMSBlockParser:
+    """This is used to deconstruct CMS blocks into pieces which can then be handled by the `RequestPayloadBuilder`
+
+    Notes:
+        Generally the hierarchy of CMS component blocks is as follows:
+
+            content cards -> row cards -> cards -> blocks
+
+        Whereby the content cards are the uppermost level.
+        And blocks containing the data which can then be
+        passed to the `RequestPayloadBuilder` and then
+        subsequently requests can then be made against
+        the corresponding endpoint via
+        the `DynamicContentBlockCrawler`.
+
+    """
+
     @classmethod
     def get_all_chart_blocks_from_section(
         cls, section: CMS_COMPONENT_BLOCK_TYPE
