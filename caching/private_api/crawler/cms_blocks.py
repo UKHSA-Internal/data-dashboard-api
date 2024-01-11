@@ -212,13 +212,9 @@ class CMSBlockParser:
         headline_number_blocks = []
 
         for chart_block in chart_blocks:
-            try:
-                headline_number_blocks_in_chart_block = chart_block[
-                    "headline_number_columns"
-                ]
-            except KeyError:
-                continue
-            else:
-                headline_number_blocks.extend(headline_number_blocks_in_chart_block)
+            headline_number_blocks_in_chart_block = chart_block.get(
+                "headline_number_columns", []
+            )
+            headline_number_blocks += headline_number_blocks_in_chart_block
 
         return headline_number_blocks
