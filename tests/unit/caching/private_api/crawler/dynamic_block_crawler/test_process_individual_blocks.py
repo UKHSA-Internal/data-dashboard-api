@@ -187,14 +187,13 @@ class TestCrawlerProcessIndividualBlocks:
             on the `InternalAPIClient`
         """
         # Given
-        chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
             dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
         dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
-            chart_block=chart_block,
+            chart_block=example_chart_block,
         )
 
         # Then
@@ -224,14 +223,13 @@ class TestCrawlerProcessIndividualBlocks:
         """
         # Given
         file_format = "csv"
-        chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
             dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
         dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
-            chart_block=chart_block,
+            chart_block=example_chart_block,
         )
 
         # Then
@@ -261,14 +259,13 @@ class TestCrawlerProcessIndividualBlocks:
             on the `InternalAPIClient`
         """
         # Given
-        chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
             dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
         dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
-            chart_block=chart_block,
+            chart_block=example_chart_block,
         )
 
         # Then

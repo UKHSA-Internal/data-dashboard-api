@@ -3,7 +3,7 @@ from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 class CMSBlockParser:
     @classmethod
-    def get_all_chart_cards_from_section(
+    def get_all_chart_blocks_from_section(
         cls, section: CMS_COMPONENT_BLOCK_TYPE
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts a list of all chart cards from the given `section`
@@ -48,11 +48,11 @@ class CMSBlockParser:
         chart_row_cards = cls.get_chart_row_cards_from_content_cards(
             content_cards=content_cards
         )
-        chart_cards = cls.get_chart_blocks_from_chart_row_cards(
+        chart_blocks = cls.get_chart_blocks_from_chart_row_cards(
             chart_row_cards=chart_row_cards
         )
-        headline_blocks += cls.get_headline_blocks_from_chart_cards(
-            chart_cards=chart_cards
+        headline_blocks += cls.get_headline_blocks_from_chart_blocks(
+            chart_blocks=chart_blocks
         )
         return headline_blocks
 
@@ -173,33 +173,36 @@ class CMSBlockParser:
         """
         try:
             return [
-                chart_block
+                chart_card["value"]
                 for chart_row_card in chart_row_cards
-                for chart_block in chart_row_card["value"]["columns"]
+                for chart_card in chart_row_card["value"]["columns"]
             ]
         except KeyError:
             return []
 
     @classmethod
-    def get_headline_blocks_from_chart_cards(
-        cls, chart_cards: list[CMS_COMPONENT_BLOCK_TYPE]
+    def get_headline_blocks_from_chart_blocks(
+        cls, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Extracts all headline number blocks from the given list of `chart_cards`
+        """Extracts all headline number blocks from the given list of `chart_blocks`
 
         Args:
-            chart_cards: List of all chart cards on the page
+            chart_blocks: List of all chart blocks on the page
 
         Returns:
             List of headline number blocks which can then be crawled accordingly
 
         """
-        try:
-            return [
-                headline_number_block
-                for chart_card in chart_cards
-                for headline_number_block in chart_card["value"][
+        headline_number_blocks = []
+
+        for chart_block in chart_blocks:
+            try:
+                headline_number_blocks_in_chart_block = chart_block[
                     "headline_number_columns"
                 ]
-            ]
-        except KeyError:
-            return []
+            except KeyError:
+                continue
+            else:
+                headline_number_blocks.extend(headline_number_blocks_in_chart_block)
+
+        return headline_number_blocks

@@ -150,7 +150,7 @@ class PrivateAPICrawler:
         )
 
         # Gather all chart blocks in this section of the page
-        chart_blocks = self._cms_block_parser.get_all_chart_cards_from_section(
+        chart_blocks = self._cms_block_parser.get_all_chart_blocks_from_section(
             section=section
         )
         # Process each of the chart blocks which were gathered

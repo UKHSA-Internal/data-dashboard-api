@@ -154,8 +154,8 @@ class TestGetChartBlocksFromChartRowCards:
 
         # Then
         expected_chart_blocks = [
-            chart_row_cards[0]["value"]["columns"][0],
-            chart_row_cards[0]["value"]["columns"][1],
+            chart_row_cards[0]["value"]["columns"][0]["value"],
+            chart_row_cards[0]["value"]["columns"][1]["value"],
         ]
         assert chart_blocks == expected_chart_blocks
 

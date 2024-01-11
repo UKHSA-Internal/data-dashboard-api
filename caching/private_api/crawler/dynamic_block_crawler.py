@@ -112,11 +112,9 @@ class DynamicContentBlockCrawler:
             None
 
         """
-        chart_block_value = chart_block["value"]
-
-        self._process_table_for_chart_block(chart_block=chart_block_value)
+        self._process_table_for_chart_block(chart_block=chart_block)
         self.process_download_for_chart_block(
-            chart_block=chart_block_value, file_format="csv"
+            chart_block=chart_block, file_format="csv"
         )
 
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
@@ -154,7 +152,7 @@ class DynamicContentBlockCrawler:
         """
         for chart_is_double_width in (True, False):
             charts_data = self._request_payload_builder.build_chart_request_data(
-                chart_block=chart_block["value"],
+                chart_block=chart_block,
                 chart_is_double_width=chart_is_double_width,
             )
             self._internal_api_client.hit_charts_endpoint(data=charts_data)
