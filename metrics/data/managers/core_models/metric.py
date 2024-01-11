@@ -22,15 +22,6 @@ class MetricQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True).order_by("name")
 
-    def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
-        """Checks whether there are any metrics available for the given `metric_name` and `topic_name`
-
-        Returns:
-            bool: True if any `Metric` records match the criteria, False otherwise
-
-        """
-        return self.filter(name=metric_name, topic__name=topic_name).exists()
-
     def get_all_unique_names(self) -> models.QuerySet:
         """Gets all unique metric names as a flat list queryset.
 
@@ -95,17 +86,6 @@ class MetricManager(models.Manager):
 
         """
         return self.get_queryset().get_all_names()
-
-    def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
-        """Checks whether there are any metrics available for the given `metric_name` and `topic_name`
-
-        Returns:
-            bool: True if any `Metric` records match the criteria, False otherwise
-
-        """
-        return self.get_queryset().is_metric_available_for_topic(
-            metric_name=metric_name, topic_name=topic_name
-        )
 
     def get_all_unique_names(self) -> MetricQuerySet:
         """Gets all unique metric names as a flat list queryset.

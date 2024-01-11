@@ -1,9 +1,8 @@
 from .charts import ChartsSerializer
+from .headlines import HeadlinesQuerySerializer
+from .trends import TrendsQuerySerializer, TrendsResponseSerializer
 from .downloads import (
-    DownloadsQuerySerializer,
     DownloadsSerializer,
     BulkDownloadsSerializer,
 )
-from .headlines import HeadlinesQuerySerializer
-from .timeseries import APITimeSeriesSerializer
-from .trends import TrendsQuerySerializer, TrendsResponseSerializer
+from .timeseries import CoreTimeSeriesSerializer

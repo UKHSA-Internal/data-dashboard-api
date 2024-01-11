@@ -97,19 +97,13 @@ class TestChartsInterface:
             == spy_generate_line_with_shaded_section_chart.return_value
         )
 
-    @mock.patch.object(ChartsInterface, "generate_waffle_chart")
-    def test_generate_chart_figure_delegates_call_for_waffle_chart(
-        self,
-        spy_generate_waffle_chart: mock.MagicMock,
-        fake_plots_collection: PlotsCollection,
+    def test_generate_chart_figure_raises_error_for_waffle_chart_selection(
+        self, fake_plots_collection: PlotsCollection
     ):
         """
         Given a requirement for a `waffle` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
-        Then the call is delegated to the `generate_waffle_chart()` method
-
-        Patches:
-            `spy_generate_waffle_chart`: For the main assertion.
+        Then a `NotImplementedError` is raised
         """
         # Given
         fake_plots_collection.plots[0].chart_type = ChartTypes.waffle.value
@@ -119,11 +113,8 @@ class TestChartsInterface:
         )
 
         # When
-        generated_chart_figure = charts_interface.generate_chart_figure()
-
-        # Then
-        spy_generate_waffle_chart.assert_called_once()
-        assert generated_chart_figure == spy_generate_waffle_chart.return_value
+        with pytest.raises(NotImplementedError):
+            charts_interface.generate_chart_figure()
 
     @mock.patch.object(ChartsInterface, "generate_bar_chart")
     def test_generate_chart_figure_delegates_call_for_bar(

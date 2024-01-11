@@ -1,6 +1,6 @@
 import pytest
 
-from metrics.api.views.trends import TrendsViewBeta
+from metrics.api.views.trends import TrendsView
 
 
 class TestTrendsView:
@@ -11,7 +11,7 @@ class TestTrendsView:
         Then an empty list is returned
         """
         # Given
-        trends_view = TrendsViewBeta()
+        trends_view = TrendsView()
 
         # When
         permission_classes = trends_view.permission_classes
@@ -26,7 +26,7 @@ class TestTrendsView:
         Then "GET" is in the returned list
         """
         # Given
-        trends_view = TrendsViewBeta()
+        trends_view = TrendsView()
 
         # When
         allowed_methods: list[str] = trends_view.allowed_methods
@@ -44,7 +44,7 @@ class TestTrendsView:
         Then excluded HTTP methods are not in the returned list
         """
         # Given
-        trends_view = TrendsViewBeta()
+        trends_view = TrendsView()
 
         # When
         allowed_methods: list[str] = trends_view.allowed_methods

@@ -4,6 +4,8 @@ from unittest import mock
 from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.cms_blocks import CMSBlockParser
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
@@ -35,7 +37,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         assert expected_file_name == file_name
 
     @mock.patch.object(PrivateAPICrawler, "create_filename_for_chart_card")
-    @mock.patch.object(PrivateAPICrawler, "_process_download_for_chart_block")
+    @mock.patch.object(DynamicContentBlockCrawler, "process_download_for_chart_block")
     def test_get_downloads_from_chart_row_columns_delegates_calls_correctly(
         self,
         spy_process_download_for_chart_block: mock.MagicMock,
@@ -46,7 +48,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         """
         Given two faked chart_row_columns
         When the get_downloads_from_chart_row_columns() method is called
-        Then _process_download_for_cart_block is called twice
+        Then process_download_for_cart_block is called twice
             and two downloads are returned.
         """
         # Given
@@ -89,35 +91,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         # Then
         spy_get_downloads_from_chart_row_columns.assert_called_once()
 
-    @mock.patch.object(PrivateAPICrawler, "get_content_cards_from_section")
-    @mock.patch.object(PrivateAPICrawler, "get_chart_row_cards_from_content_cards")
-    def test_get_chart_row_cards_from_page_section_delegates_calls_correctly(
-        self,
-        spy_get_chart_row_cards_from_content_cards: mock.MagicMock,
-        spy_get_content_cards_from_section: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
-    ):
-        """
-        Given I have a page section
-        When the get_chart_row_cards_from_page_section() is called
-        Then the correct calls are delegated.
-        """
-        # Given
-        mock_section = mock.Mock()
-
-        # When
-        private_api_crawler_with_mocked_internal_api_client.get_chart_row_cards_from_page_section(
-            section=mock_section
-        )
-
-        # Then
-        spy_get_content_cards_from_section.assert_called_once_with(section=mock_section)
-        expected_content_cards = spy_get_content_cards_from_section.return_value
-        spy_get_chart_row_cards_from_content_cards.assert_called_once_with(
-            content_cards=expected_content_cards
-        )
-
-    @mock.patch.object(PrivateAPICrawler, "get_chart_row_cards_from_page_section")
+    @mock.patch.object(CMSBlockParser, "get_chart_row_cards_from_page_section")
     @mock.patch.object(PrivateAPICrawler, "get_downloads_from_chart_cards")
     def test_get_downloads_from_sections_delegates_calls_correctly(
         self,

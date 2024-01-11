@@ -1,25 +1,25 @@
 import pytest
 
-from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.request_payload_builder import RequestPayloadBuilder
 
 
-class TestPrivateAPICrawlerBuildRequestData:
+class TestRequestPayloadBuilder:
     def test_build_headlines_request_data(
         self,
         example_headline_number_block: dict[str, str],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a headline number block
-        When `_build_headlines_request_data()` is called
-            from an instance of `PrivateAPICrawler`
+        When `build_headlines_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
         Then the correct dict is returned
         """
         # Given
         headline_number_block = example_headline_number_block
+        request_payload_builder = RequestPayloadBuilder()
 
         # When
-        headline_number_data = private_api_crawler_with_mocked_internal_api_client._build_headlines_request_data(
+        headline_number_data = request_payload_builder.build_headlines_request_data(
             headline_number_block=headline_number_block
         )
 
@@ -35,13 +35,11 @@ class TestPrivateAPICrawlerBuildRequestData:
         }
         assert headline_number_data == expected_headline_request_data
 
-    def test_build_headlines_request_data_default_geography_fields(
-        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
-    ):
+    def test_build_headlines_request_data_default_geography_fields(self):
         """
         Given a headline number block which does not contain geography information
-        When `_build_headlines_request_data()` is called
-            from an instance of `PrivateAPICrawler`
+        When `build_headlines_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
         Then the correct dict is returned
         """
         # Given
@@ -50,9 +48,10 @@ class TestPrivateAPICrawlerBuildRequestData:
             "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
             "body": "Last 7 days",
         }
+        request_payload_builder = RequestPayloadBuilder()
 
         # When
-        headline_number_data = private_api_crawler_with_mocked_internal_api_client._build_headlines_request_data(
+        headline_number_data = request_payload_builder.build_headlines_request_data(
             headline_number_block=headline_number_block_with_no_geography_input
         )
 
@@ -71,27 +70,32 @@ class TestPrivateAPICrawlerBuildRequestData:
     def test_build_trend_request_data(
         self,
         example_trend_number_block: dict[str, str],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a trend number block
-        When `_build_trend_request_data()` is called
-            from an instance of `PrivateAPICrawler`
+        When `build_trend_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
         Then the correct dict is returned
         """
         # Given
         trend_number_block = example_trend_number_block
+        request_payload_builder = RequestPayloadBuilder()
 
         # When
-        trend_request_data = private_api_crawler_with_mocked_internal_api_client._build_trend_request_data(
+        trend_request_data = request_payload_builder.build_trend_request_data(
             trend_number_block=trend_number_block
         )
 
         # Then
         expected_trend_request_data = {
-            "topic": "COVID-19",
+            "age": "all",
+            "geography": "England",
+            "geography_type": "Nation",
             "metric": "COVID-19_headline_ONSdeaths_7DayChange",
             "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
+            "sex": "all",
+            "stratum": "default",
+            "topic": "COVID-19",
         }
         assert trend_request_data == expected_trend_request_data
 
@@ -103,19 +107,19 @@ class TestPrivateAPICrawlerBuildRequestData:
         chart_is_double_width: bool,
         expected_chart_width: int,
         example_chart_block: dict[str, str | list[dict]],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
-        When `_build_chart_request_data()` is called
-            from an instance of `PrivateAPICrawler`
+        When `build_chart_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
         Then the correct dict is returned
         """
         # Given
         chart_block_data = example_chart_block
+        request_payload_builder = RequestPayloadBuilder()
 
         # When
-        chart_request_data = private_api_crawler_with_mocked_internal_api_client._build_chart_request_data(
+        chart_request_data = request_payload_builder.build_chart_request_data(
             chart_block=chart_block_data,
             chart_is_double_width=chart_is_double_width,
         )
@@ -151,19 +155,19 @@ class TestPrivateAPICrawlerBuildRequestData:
     def test_build_tables_request_data(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
-        When `_build_tables_request_data()` is called
-            from an instance of `PrivateAPICrawler`
+        When `build_tables_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
         Then the correct dict is returned
         """
         # Given
         chart_block_data = example_chart_block
+        request_payload_builder = RequestPayloadBuilder()
 
         # When
-        tables_request_data = private_api_crawler_with_mocked_internal_api_client._build_tables_request_data(
+        tables_request_data = request_payload_builder.build_tables_request_data(
             chart_block=chart_block_data,
         )
 
@@ -195,20 +199,20 @@ class TestPrivateAPICrawlerBuildRequestData:
     def test_build_downloads_request_data(
         self,
         example_chart_block: dict[str, str | list[dict]],
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
     ):
         """
         Given a chart block
         When `build_downloads_request_data()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `RequestPayloadBuilder`
         Then the correct dict is returned
         """
         # Given
         chart_block_data = example_chart_block
         file_format = "csv"
+        request_payload_builder = RequestPayloadBuilder()
 
         # When
-        downloads_request_data = private_api_crawler_with_mocked_internal_api_client._build_downloads_request_data(
+        downloads_request_data = request_payload_builder.build_downloads_request_data(
             chart_block=chart_block_data, file_format=file_format
         )
 
@@ -232,13 +236,11 @@ class TestPrivateAPICrawlerBuildRequestData:
         }
         assert downloads_request_data == expected_downloads_request_data
 
-    def test_build_plot_data(
-        self, private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler
-    ):
+    def test_build_plot_data(self):
         """
         Given a plot value dict for a chart
         When `_build_plot_data()` is called
-            from an instance of `PrivateAPICrawler`
+            from an instance of `RequestPayloadBuilder`
         Then the correct plot data dict is returned
         """
         # Given
@@ -257,13 +259,10 @@ class TestPrivateAPICrawlerBuildRequestData:
             "line_colour": "BLUE",
             "line_type": "",
         }
+        request_payload_builder = RequestPayloadBuilder()
 
         # When
-        plot_data = (
-            private_api_crawler_with_mocked_internal_api_client._build_plot_data(
-                plot_value=plot_value
-            )
-        )
+        plot_data = request_payload_builder._build_plot_data(plot_value=plot_value)
 
         # Then
         assert plot_data["topic"] == plot_value["topic"]

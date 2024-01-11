@@ -3,6 +3,14 @@ from unittest import mock
 import pytest
 
 from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
+
+
+@pytest.fixture
+def dynamic_content_block_crawler_with_mocked_internal_api_client() -> (
+    DynamicContentBlockCrawler
+):
+    return DynamicContentBlockCrawler(internal_api_client=mock.Mock())
 
 
 @pytest.fixture
@@ -31,6 +39,11 @@ def example_trend_number_block() -> dict[str, str]:
         "metric": "COVID-19_headline_ONSdeaths_7DayChange",
         "body": "Last 7 days",
         "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
+        "geography": "England",
+        "geography_type": "Nation",
+        "sex": "all",
+        "age": "all",
+        "stratum": "default",
     }
 
 

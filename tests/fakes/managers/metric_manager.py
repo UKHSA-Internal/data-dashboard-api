@@ -42,16 +42,6 @@ class FakeMetricManager(MetricManager):
             if metric.metric_group.name == "headline"
         ]
 
-    def is_metric_available_for_topic(self, metric_name: str, topic_name: str) -> bool:
-        filtered_by_topic = [
-            metric
-            for metric in self.metrics
-            if metric.name == metric_name
-            if metric.topic.name == topic_name
-        ]
-
-        return bool(filtered_by_topic)
-
     def get_all_unique_change_type_names(self) -> list[str]:
         unique_metric_names = {metric.name for metric in self.metrics}
         return [
