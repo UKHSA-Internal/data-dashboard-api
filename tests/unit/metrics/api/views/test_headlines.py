@@ -1,6 +1,6 @@
 import pytest
 
-from metrics.api.views.headlines import HeadlinesViewBeta
+from metrics.api.views.headlines import HeadlinesView
 
 
 class TestHeadlinesView:
@@ -11,7 +11,7 @@ class TestHeadlinesView:
         Then an empty list is returned
         """
         # Given
-        headlines_view = HeadlinesViewBeta()
+        headlines_view = HeadlinesView()
 
         # When
         permission_classes = headlines_view.permission_classes
@@ -26,7 +26,7 @@ class TestHeadlinesView:
         Then "GET" is in the returned list
         """
         # Given
-        headlines_view = HeadlinesViewBeta()
+        headlines_view = HeadlinesView()
 
         # When
         allowed_methods: list[str] = headlines_view.allowed_methods
@@ -44,7 +44,7 @@ class TestHeadlinesView:
         Then excluded HTTP methods are not in the returned list
         """
         # Given
-        headlines_view = HeadlinesViewBeta()
+        headlines_view = HeadlinesView()
 
         # When
         allowed_methods: list[str] = headlines_view.allowed_methods
