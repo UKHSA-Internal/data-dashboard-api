@@ -136,6 +136,11 @@ EXAMPLE_CHART_ROW_CARDS = [
 ]
 
 
+EXAMPLE_INCORRECT_CHART_ROW_CARDS = [
+    {"type": "chart_row_card", "value": {"incorrect_key": []}}
+]
+
+
 class TestGetChartBlocksFromChartRowCards:
     def test_returns_correct_chart_cards(self):
         """
@@ -170,9 +175,27 @@ class TestGetChartBlocksFromChartRowCards:
         no_chart_row_cards = []
 
         # When
-        chart_cards = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
+        chart_blocks = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
             chart_row_cards=no_chart_row_cards
         )
 
         # Then
-        assert chart_cards == []
+        assert chart_blocks == []
+
+    def test_returns_empty_list_for_incorrect_cards(self):
+        """
+        Given a list of incorrect headline number row cards
+        When `get_chart_blocks_from_chart_row_cards()` is called
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        incorrect_chart_cards = EXAMPLE_INCORRECT_CHART_ROW_CARDS
+
+        # When
+        chart_blocks = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
+            chart_row_cards=incorrect_chart_cards
+        )
+
+        # Then
+        assert chart_blocks == []
