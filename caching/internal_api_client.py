@@ -173,7 +173,7 @@ class InternalAPIClient:
             `Response` from the `geographies/` endpoint
 
         """
-        path = f"{self.geographies_endpoint_path}{geography_type_id}"
+        path = f"{self.geographies_endpoint_path}{geography_type_id}/"
         headers = self.build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 

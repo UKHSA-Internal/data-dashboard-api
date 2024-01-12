@@ -347,7 +347,7 @@ class TestInternalAPIClient:
 
         # Then
         assert response == internal_api_client._client.get.return_value
-        expected_path = f"{internal_api_client.geographies_endpoint_path}{fake_id}"
+        expected_path = f"{internal_api_client.geographies_endpoint_path}{fake_id}/"
         mocked_client.get.assert_called_once_with(
             path=expected_path,
             headers=internal_api_client.build_headers(),
