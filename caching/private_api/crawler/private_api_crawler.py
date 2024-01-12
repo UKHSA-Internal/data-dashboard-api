@@ -31,17 +31,25 @@ class PrivateAPICrawler:
 
     """
 
-    def __init__(self, internal_api_client: InternalAPIClient | None = None):
+    def __init__(
+        self,
+        internal_api_client: InternalAPIClient | None = None,
+        cms_block_parser: CMSBlockParser | None = None,
+        dynamic_content_block_crawler: DynamicContentBlockCrawler | None = None,
+    ):
         self._internal_api_client = internal_api_client or InternalAPIClient()
-        self._cms_block_parser = CMSBlockParser()
+        self._cms_block_parser = cms_block_parser or CMSBlockParser()
         self._geography_api_crawler = GeographiesAPICrawler(
             internal_api_client=self._internal_api_client
         )
         self._headless_cms_api_crawler = HeadlessCMSAPICrawler(
             internal_api_client=self._internal_api_client
         )
-        self._dynamic_content_block_crawler = DynamicContentBlockCrawler(
-            internal_api_client=self._internal_api_client,
+        self._dynamic_content_block_crawler = (
+            dynamic_content_block_crawler
+            or DynamicContentBlockCrawler(
+                internal_api_client=self._internal_api_client,
+            )
         )
 
     # Class constructors
@@ -132,28 +140,22 @@ class PrivateAPICrawler:
             None
 
         """
-        content_cards = self._cms_block_parser.get_content_cards_from_section(
+        # Gather all headline number blocks in this section of the page
+        headline_number_blocks = (
+            self._cms_block_parser.get_all_headline_blocks_from_section(section=section)
+        )
+        # Process each of the headline number blocks which were gathered
+        self._dynamic_content_block_crawler.process_all_headline_number_blocks(
+            headline_number_blocks=headline_number_blocks
+        )
+
+        # Gather all chart blocks in this section of the page
+        chart_blocks = self._cms_block_parser.get_all_chart_blocks_from_section(
             section=section
         )
-
-        # Gather all headline number row cards in this section of the page
-        headline_numbers_row_cards = (
-            self._cms_block_parser.get_headline_numbers_row_cards_from_content_cards(
-                content_cards=content_cards
-            )
-        )
-        # Process each of the headline number row cards which were gathered
-        self._dynamic_content_block_crawler.process_all_headline_numbers_row_cards(
-            headline_numbers_row_cards=headline_numbers_row_cards
-        )
-
-        # Gather all chart row cards in this section of the page
-        chart_row_cards = self._cms_block_parser.get_chart_row_cards_from_content_cards(
-            content_cards=content_cards
-        )
-        # Process each of the chart row cards which were gathered
-        self._dynamic_content_block_crawler.process_all_chart_cards(
-            chart_row_cards=chart_row_cards
+        # Process each of the chart blocks which were gathered
+        self._dynamic_content_block_crawler.process_all_chart_blocks(
+            chart_blocks=chart_blocks
         )
 
     # process downloads

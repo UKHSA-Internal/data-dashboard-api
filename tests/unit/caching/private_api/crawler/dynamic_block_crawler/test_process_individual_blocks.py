@@ -6,145 +6,6 @@ from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBloc
 
 
 class TestDynamicContentBlockCrawlerProcessBlocks:
-    @mock.patch.object(DynamicContentBlockCrawler, "process_any_headline_number_block")
-    @mock.patch.object(DynamicContentBlockCrawler, "process_chart_block")
-    def test_process_chart_with_headline_and_trend_card(
-        self,
-        spy_process_chart_block: mock.MagicMock,
-        spy_process_any_headline_number_block: mock.MagicMock,
-        example_chart_block: dict[str, str | list[dict]],
-        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
-    ):
-        """
-        Given a chart block
-        When `process_chart_with_headline_and_trend_card()` is called
-            from an instance of `DynamicContentBlockCrawler`
-        Then the call is delegated
-            to the `process_chart_block()` & `_process_any_headline_number_block()`
-            methods accordingly
-
-        Patches:
-            `spy_process_chart_block`: To check the call is made
-                to handle the chart itself
-            `spy_process_any_headline_number_block`: To check the
-                call is made to handle each headline number block
-        """
-        # Given
-        mocked_headline_number_columns = [mock.Mock(), mock.Mock()]
-        example_chart_block["headline_number_columns"] = mocked_headline_number_columns
-        chart_block = {"value": example_chart_block}
-
-        # When
-        dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_with_headline_and_trend_card(
-            chart_with_headline_and_trend_card=chart_block,
-        )
-
-        # Then
-        # Check the `process_chart_block()` method is delegated
-        # to in order to handle the chart block itself
-        spy_process_chart_block.assert_called_once_with(chart_block=chart_block)
-
-        # Check the `process_any_headline_number_block()` method is delegated
-        # to in order to handle any of the headline numbers which accompany the chart
-        expected_calls = [
-            mock.call(headline_number_block=mocked_headline_number_column)
-            for mocked_headline_number_column in mocked_headline_number_columns
-        ]
-        spy_process_any_headline_number_block.assert_has_calls(calls=expected_calls)
-
-    @mock.patch.object(
-        DynamicContentBlockCrawler, "process_chart_with_headline_and_trend_card"
-    )
-    @mock.patch.object(DynamicContentBlockCrawler, "process_chart_block")
-    def test_process_any_chart_card_for_chart_cards(
-        self,
-        spy_process_chart_block: mock.MagicMock,
-        spy_process_chart_with_headline_and_trend_card: mock.MagicMock,
-        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
-    ):
-        """
-        Given a fake chart card which has "type" key of value "chart_card"
-        When `process_any_chart_card()` is called
-            from an instance of `DynamicContentBlockCrawler`
-        Then the call is delegated to the `process_chart_block()` method
-        And the `process_chart_with_headline_and_trend_card()` is not called
-
-        Patches:
-            `spy_process_chart_block`: To check the call is made
-                to handle the chart itself
-            `spy_process_any_headline_number_block`: To check this
-            is not called as this is a standalone chart card
-        """
-        # Given
-        fake_chart_card = {"type": "chart_card"}
-
-        # When
-        dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_chart_card(
-            chart_card=fake_chart_card,
-        )
-
-        # Then
-        spy_process_chart_block.assert_called_once_with(
-            chart_block=fake_chart_card,
-        )
-        spy_process_chart_with_headline_and_trend_card.assert_not_called()
-
-    @mock.patch.object(
-        DynamicContentBlockCrawler, "process_chart_with_headline_and_trend_card"
-    )
-    @mock.patch.object(DynamicContentBlockCrawler, "process_chart_block")
-    def test_process_any_chart_card_for_chart_with_headline_and_trend_cards(
-        self,
-        spy_process_chart_block: mock.MagicMock,
-        spy_process_chart_with_headline_and_trend_card: mock.MagicMock,
-        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
-    ):
-        """
-        Given a fake chart card which has "type" key of value "chart_with_headline_and_trend_card"
-        When `process_any_chart_card()` is called
-            from an instance of `DynamicContentBlockCrawler`
-        Then the call is delegated to the `process_chart_with_headline_and_trend_card()` method
-        And the `process_chart_block()` is not called
-
-        Patches:
-            `spy_process_chart_block`: To check the call is not made
-                as this is a chart with headline and trend card
-            `spy_process_any_headline_number_block`: To check this
-                is called correctly
-        """
-        # Given
-        fake_chart_card = {"type": "chart_with_headline_and_trend_card"}
-
-        # When
-        dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_chart_card(
-            chart_card=fake_chart_card,
-        )
-
-        # Then
-        spy_process_chart_with_headline_and_trend_card.assert_called_once_with(
-            chart_with_headline_and_trend_card=fake_chart_card,
-        )
-        spy_process_chart_block.assert_not_called()
-
-    def test_process_any_chart_card_raises_error_for_invalid_input(
-        self,
-        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
-    ):
-        """
-        Given a fake chart card which has an invalid "type" key
-        When `process_any_chart_card()` is called
-            from an instance of `DynamicContentBlockCrawler`
-        Then a `ValueError` is raised
-        """
-        # Given
-        fake_chart_card = {"type": "invalid_card_type"}
-
-        # When / Then
-        with pytest.raises(ValueError):
-            dynamic_content_block_crawler_with_mocked_internal_api_client.process_any_chart_card(
-                chart_card=fake_chart_card
-            )
-
     @mock.patch.object(DynamicContentBlockCrawler, "process_trend_number_block")
     @mock.patch.object(DynamicContentBlockCrawler, "process_headline_number_block")
     def test_process_any_headline_number_block_for_trend_number_block(
@@ -326,14 +187,13 @@ class TestCrawlerProcessIndividualBlocks:
             on the `InternalAPIClient`
         """
         # Given
-        chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
             dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
         dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
-            chart_block=chart_block,
+            chart_block=example_chart_block,
         )
 
         # Then
@@ -363,14 +223,13 @@ class TestCrawlerProcessIndividualBlocks:
         """
         # Given
         file_format = "csv"
-        chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
             dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
         dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
-            chart_block=chart_block,
+            chart_block=example_chart_block,
         )
 
         # Then
@@ -400,14 +259,13 @@ class TestCrawlerProcessIndividualBlocks:
             on the `InternalAPIClient`
         """
         # Given
-        chart_block = {"value": example_chart_block}
         spy_internal_api_client: mock.Mock = (
             dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
         )
 
         # When
         dynamic_content_block_crawler_with_mocked_internal_api_client.process_chart_block(
-            chart_block=chart_block,
+            chart_block=example_chart_block,
         )
 
         # Then
