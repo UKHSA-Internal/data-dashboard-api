@@ -2,6 +2,8 @@ from unittest import mock
 
 from caching.internal_api_client import InternalAPIClient
 from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.cms_blocks import CMSBlockParser
+from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
 
 
@@ -22,10 +24,7 @@ class TestPrivateAPICrawlerInit:
         # Then
         assert crawler._internal_api_client == mocked_internal_api_client
 
-    @mock.patch.object(InternalAPIClient, "create_api_client")
-    def test_internal_api_client_is_created_when_not_provided_to_init(
-        self, mocked_create_api_client: mock.MagicMock
-    ):
+    def test_internal_api_client_is_created_when_not_provided_to_init(self):
         """
         Given no provided pre-existing `InternalAPIClient`
         When the `PrivateAPICrawler` class is initialized
@@ -41,6 +40,33 @@ class TestPrivateAPICrawlerInit:
 
         # Then
         assert isinstance(crawler._internal_api_client, InternalAPIClient)
+
+    def test_cms_block_parser_is_created_when_not_provided_to_init(self):
+        """
+        Given no provided pre-existing `CMSBlockParser`
+        When the `PrivateAPICrawler` class is initialized
+        Then the `_cms_block_parser` is set with an `CMSBlockParser` instance
+        """
+        # Given / When
+        crawler = PrivateAPICrawler()
+
+        # Then
+        assert isinstance(crawler._cms_block_parser, CMSBlockParser)
+
+    def test_dynamic_content_block_crawler_is_created_when_not_provided_to_init(self):
+        """
+        Given no provided pre-existing `DynamicContentBlockCrawler`
+        When the `PrivateAPICrawler` class is initialized
+        Then the `_dynamic_content_block_crawler` is set
+            with an `DynamicContentBlockCrawler` instance
+        """
+        # Given / When
+        crawler = PrivateAPICrawler()
+
+        # Then
+        assert isinstance(
+            crawler._dynamic_content_block_crawler, DynamicContentBlockCrawler
+        )
 
     def test_geographies_api_is_initialized(self):
         """

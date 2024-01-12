@@ -1,8 +1,6 @@
 from unittest import mock
 
 from caching.private_api.crawler import PrivateAPICrawler
-from caching.private_api.crawler.cms_blocks import CMSBlockParser
-from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 
@@ -36,132 +34,74 @@ class TestPrivateAPICrawlerProcessSections:
         ]
         spy_process_section.assert_has_calls(calls=expected_calls)
 
-    @mock.patch.object(CMSBlockParser, "get_content_cards_from_section")
-    def test_process_section_delegates_call_for_gathering_content_cards_for_each_section(
-        self,
-        spy_get_content_cards_from_section: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
-    ):
-        """
-        Given a mocked page section
-        When `process_section()` is called
-            from an instance of `PrivateAPICrawler`
-        Then the `get_content_cards_from_section()`
-            method is called to gather content cards for that section
-
-        Patches:
-            `spy_get_content_cards_from_section`: For the main assertion
-        """
-        # Given
-        mocked_section = mock.Mock()
-
-        # When
-        private_api_crawler_with_mocked_internal_api_client.process_section(
-            section=mocked_section
-        )
-
-        # Then
-        spy_get_content_cards_from_section.assert_called_once_with(
-            section=mocked_section
-        )
-
-    @mock.patch.object(
-        DynamicContentBlockCrawler, "process_all_headline_numbers_row_cards"
-    )
-    @mock.patch.object(
-        CMSBlockParser, "get_headline_numbers_row_cards_from_content_cards"
-    )
-    @mock.patch.object(CMSBlockParser, "get_content_cards_from_section")
-    def test_process_section_delegates_call_for_processing_headline_numbers_row_cards(
-        self,
-        spy_get_content_cards_from_section: mock.MagicMock,
-        spy_get_headline_numbers_row_cards_from_content_cards: mock.MagicMock,
-        spy_process_all_headline_numbers_row_cards: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
-    ):
+    def test_process_section_delegates_calls_for_headline_number_blocks(self):
         """
         Given a mocked section
-        When `process_section()` is called
+        When `process_all_sections_in_page()` is called
             from an instance of `PrivateAPICrawler`
-        Then `get_headline_numbers_row_cards_from_content_cards()`
-            is called to filter for headline number rows cards
-        And then these are passed to the call to `process_all_headline_numbers_row_cards()`
-
-        Patches:
-            `spy_get_content_cards_from_section`: For the main assertion
-            `spy_get_headline_numbers_row_cards_from_content_cards: To check
-                that the headline number row cards are fetched from the main
-                content cards
-            `spy_process_all_headline_numbers_row_cards: To check that the
-                previously fetched headline number row cards are then processed
+        Then `get_all_headline_blocks_from_section()`
+            is called from the `CMSBlockParser`
+        And these blocks are passed to
+            `process_all_headline_number_blocks()` from the
+            `DynamicContentBlockCrawler`
         """
         # Given
         mocked_section = mock.Mock()
+        spy_cms_block_parser = mock.Mock()
+        spy_dynamic_content_block_crawler = mock.Mock()
+        private_api_crawler = PrivateAPICrawler(
+            internal_api_client=mock.Mock(),
+            cms_block_parser=spy_cms_block_parser,
+            dynamic_content_block_crawler=spy_dynamic_content_block_crawler,
+        )
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_section(
+        private_api_crawler.process_section(section=mocked_section)
+
+        # Then
+        spy_cms_block_parser.get_all_headline_blocks_from_section.assert_called_once_with(
             section=mocked_section
         )
 
-        # Then
-        # All the content cards are gathered for the section
-        content_cards = spy_get_content_cards_from_section.return_value
-        # The headline number row cards are filtered for
-        spy_get_headline_numbers_row_cards_from_content_cards.assert_called_once_with(
-            content_cards=content_cards
+        expected_headline_number_blocks = (
+            spy_cms_block_parser.get_all_headline_blocks_from_section.return_value
+        )
+        spy_dynamic_content_block_crawler.process_all_headline_number_blocks.assert_called_once_with(
+            headline_number_blocks=expected_headline_number_blocks
         )
 
-        headline_numbers_row_cards = (
-            spy_get_headline_numbers_row_cards_from_content_cards.return_value
-        )
-        # The headline number row cards are then passed to the method which handles processing
-        spy_process_all_headline_numbers_row_cards.assert_called_once_with(
-            headline_numbers_row_cards=headline_numbers_row_cards
-        )
-
-    @mock.patch.object(DynamicContentBlockCrawler, "process_all_chart_cards")
-    @mock.patch.object(CMSBlockParser, "get_chart_row_cards_from_content_cards")
-    @mock.patch.object(CMSBlockParser, "get_content_cards_from_section")
-    def test_process_section_delegates_call_for_processing_chart_row_cards(
-        self,
-        spy_get_content_cards_from_section: mock.MagicMock,
-        spy_get_chart_row_cards_from_content_cards: mock.MagicMock,
-        spy_process_all_chart_cards: mock.MagicMock,
-        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
-    ):
+    def test_process_section_delegates_calls_for_chart_blocks(self):
         """
         Given a mocked section
-        When `process_section()` is called from an instance of `PrivateAPICrawler`
-        Then `get_chart_row_cards_from_content_cards()`
-            is called to filter for chart row cards
-        And then these are passed to the call to `process_all_chart_cards()`
-
-        Patches:
-            `spy_get_content_cards_from_section`: For the main assertion
-            `spy_get_chart_row_cards_from_content_cards: To check
-                that the chart row cards are fetched from the main
-                content cards
-            `spy_process_all_chart_cards: To check that the
-                previously fetched chart row cards are then processed
+        When `process_all_sections_in_page()` is called
+            from an instance of `PrivateAPICrawler`
+        Then `get_all_chart_blocks_from_section()`
+            is called from the `CMSBlockParser`
+        And these blocks are passed to
+            `process_all_chart_blocks()` from the
+            `DynamicContentBlockCrawler`
         """
         # Given
         mocked_section = mock.Mock()
+        spy_cms_block_parser = mock.Mock()
+        spy_dynamic_content_block_crawler = mock.Mock()
+        private_api_crawler = PrivateAPICrawler(
+            internal_api_client=mock.Mock(),
+            cms_block_parser=spy_cms_block_parser,
+            dynamic_content_block_crawler=spy_dynamic_content_block_crawler,
+        )
 
         # When
-        private_api_crawler_with_mocked_internal_api_client.process_section(
+        private_api_crawler.process_section(section=mocked_section)
+
+        # Then
+        spy_cms_block_parser.get_all_chart_blocks_from_section.assert_called_once_with(
             section=mocked_section
         )
 
-        # Then
-        # All the content cards are gathered for the section
-        content_cards = spy_get_content_cards_from_section.return_value
-        # The chart row cards are filtered for
-        spy_get_chart_row_cards_from_content_cards.assert_called_once_with(
-            content_cards=content_cards
+        expected_chart_blocks = (
+            spy_cms_block_parser.get_all_chart_blocks_from_section.return_value
         )
-
-        chart_row_cards = spy_get_chart_row_cards_from_content_cards.return_value
-        # The chart row cards are then passed to the method which handles processing
-        spy_process_all_chart_cards.assert_called_once_with(
-            chart_row_cards=chart_row_cards
+        spy_dynamic_content_block_crawler.process_all_chart_blocks.assert_called_once_with(
+            chart_blocks=expected_chart_blocks
         )

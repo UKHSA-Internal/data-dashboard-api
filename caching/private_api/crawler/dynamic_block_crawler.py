@@ -8,45 +8,55 @@ class DynamicContentBlockCrawler:
         self._internal_api_client = internal_api_client
         self._request_payload_builder = RequestPayloadBuilder()
 
-    def process_headline_numbers_row_card(
-        self, headline_numbers_row_card: CMS_COMPONENT_BLOCK_TYPE
+    # Process all blocks
+
+    def process_all_headline_number_blocks(
+        self, headline_number_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> None:
-        """Makes the relevant requests for the given single `headline_numbers_row_card`
+        """Makes the relevant requests for the given `headline_number_blocks`
+
+        Notes:
+            This will handle the requests for all types of
+            headline number elements, including:
+            - "headline"
+            - "percentage"
+            - "trend"
 
         Args:
-            headline_numbers_row_card: the headliner number row card CMS information
+            headline_number_blocks: List of all headline number
+                blocks on the page which are to be crawled
 
         Returns:
             None
 
         """
-        headline_number_columns = headline_numbers_row_card["value"]["columns"]
-
-        for column in headline_number_columns:
-            for headline_number_block in column["value"]["rows"]:
-                self.process_any_headline_number_block(
-                    headline_number_block=headline_number_block
-                )
-
-    def process_all_headline_numbers_row_cards(
-        self, headline_numbers_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
-    ) -> None:
-        for headline_numbers_row_card in headline_numbers_row_cards:
-            self.process_headline_numbers_row_card(
-                headline_numbers_row_card=headline_numbers_row_card
+        for headline_number_block in headline_number_blocks:
+            self.process_any_headline_number_block(
+                headline_number_block=headline_number_block
             )
 
-    def process_all_chart_cards(
-        self, chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
+    def process_all_chart_blocks(
+        self, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> None:
-        for chart_row_card in chart_row_cards:
-            chart_card_columns = chart_row_card["value"]["columns"]
-            for chart_card in chart_card_columns:
-                self.process_any_chart_card(
-                    chart_card=chart_card,
-                )
+        """Makes the relevant requests for the given `chart_blocks`
 
-    # Process blocks
+        Notes:
+            This will handle the requests only for the chart elements.
+            This will not include any headline number elements,
+            which are located within the chart card
+
+        Args:
+            chart_blocks: List of all chart blocks on the page
+                which are to be crawled
+
+        Returns:
+            None
+
+        """
+        for chart_block in chart_blocks:
+            self.process_chart_block(chart_block=chart_block)
+
+    # Process individual blocks
 
     def process_any_headline_number_block(
         self, headline_number_block: CMS_COMPONENT_BLOCK_TYPE
@@ -83,68 +93,6 @@ class DynamicContentBlockCrawler:
             case _:
                 raise ValueError
 
-    def process_any_chart_card(self, chart_card: CMS_COMPONENT_BLOCK_TYPE) -> None:
-        """Makes the relevant requests for the given single `chart_card`
-
-        Args:
-            chart_card: The chart block CMS information.
-                This can be of the following types:
-                    - "chart_card"
-                    - "chart_with_headline_and_trend_card"
-
-        Returns:
-            None
-
-        Raises:
-            `ValueError`: If an unrecognised block type is given
-
-        """
-        match chart_card["type"]:
-            case "chart_card":
-                self.process_chart_block(chart_block=chart_card)
-            case "chart_with_headline_and_trend_card":
-                self.process_chart_with_headline_and_trend_card(
-                    chart_with_headline_and_trend_card=chart_card,
-                )
-            case _:
-                raise ValueError
-
-    def process_chart_with_headline_and_trend_card(
-        self,
-        chart_with_headline_and_trend_card: CMS_COMPONENT_BLOCK_TYPE,
-    ) -> None:
-        """Makes the relevant requests for the given single `chart_with_headline_and_trend_card`
-
-        Notes:
-            This will handle the requests
-            for each of the content items within the card.
-            This includes the chart as well as any
-            headline number elements
-
-        Args:
-            chart_with_headline_and_trend_card: The chart block CMS information.
-
-        Returns:
-            None
-
-        Raises:
-            `ValueError`: If an unrecognised block type is given
-
-        """
-        self.process_chart_block(
-            chart_block=chart_with_headline_and_trend_card,
-        )
-
-        headline_number_columns = chart_with_headline_and_trend_card["value"][
-            "headline_number_columns"
-        ]
-        for headline_number_block in headline_number_columns:
-            self.process_any_headline_number_block(
-                headline_number_block=headline_number_block
-            )
-
-    # Process individual blocks
-
     def process_chart_block(self, chart_block: CMS_COMPONENT_BLOCK_TYPE) -> None:
         """Makes the relevant requests for the given single `chart_block`
 
@@ -164,14 +112,14 @@ class DynamicContentBlockCrawler:
             None
 
         """
-        chart_block_value = chart_block["value"]
-
-        self._process_table_for_chart_block(chart_block=chart_block_value)
+        self._process_table_for_chart_block(chart_block=chart_block)
         self.process_download_for_chart_block(
-            chart_block=chart_block_value, file_format="csv"
+            chart_block=chart_block, file_format="csv"
         )
 
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
+
+    # Sub methods for processing charts
 
     def _process_table_for_chart_block(self, chart_block: dict):
         tables_data = self._request_payload_builder.build_tables_request_data(
@@ -204,10 +152,12 @@ class DynamicContentBlockCrawler:
         """
         for chart_is_double_width in (True, False):
             charts_data = self._request_payload_builder.build_chart_request_data(
-                chart_block=chart_block["value"],
+                chart_block=chart_block,
                 chart_is_double_width=chart_is_double_width,
             )
             self._internal_api_client.hit_charts_endpoint(data=charts_data)
+
+    # Sub methods for processing headline number blocks
 
     def process_headline_number_block(
         self, headline_number_block: CMS_COMPONENT_BLOCK_TYPE

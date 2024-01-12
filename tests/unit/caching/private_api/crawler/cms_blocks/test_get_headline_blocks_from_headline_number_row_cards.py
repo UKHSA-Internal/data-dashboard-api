@@ -73,6 +73,11 @@ EXAMPLE_HEADLINE_NUMBERS_ROW_CARDS = [
 ]
 
 
+EXAMPLE_INCORRECT_HEADLINE_NUMBER_ROW_CARDS = [
+    {"type": "headline_numbers_row_card", "value": {"incorrect_key": []}}
+]
+
+
 class TestGetHeadlineBlocksFromHeadlineNumberRowCards:
     def test_returns_correct_headline_number_blocks(self):
         """
@@ -98,3 +103,45 @@ class TestGetHeadlineBlocksFromHeadlineNumberRowCards:
             headline_number_row_cards[0]["value"]["columns"][1]["value"]["rows"][0],
         ]
         assert headline_number_blocks == expected_headline_number_blocks
+
+    def test_returns_empty_list_for_no_headline_number_row_cards(self):
+        """
+        Given an empty list of headline number row cards
+        When `get_headline_blocks_from_headline_number_row_cards()` is called
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        no_headline_number_row_cards = []
+
+        # When
+        headline_number_blocks = (
+            CMSBlockParser.get_headline_blocks_from_headline_number_row_cards(
+                headline_numbers_row_cards=no_headline_number_row_cards
+            )
+        )
+
+        # Then
+        assert headline_number_blocks == []
+
+    def test_returns_empty_list_for_incorrect_cards(self):
+        """
+        Given a list of incorrect headline number row cards
+        When `get_headline_blocks_from_headline_number_row_cards()` is called
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        incorrect_headline_number_row_cards = (
+            EXAMPLE_INCORRECT_HEADLINE_NUMBER_ROW_CARDS
+        )
+
+        # When
+        headline_number_blocks = (
+            CMSBlockParser.get_headline_blocks_from_headline_number_row_cards(
+                headline_numbers_row_cards=incorrect_headline_number_row_cards
+            )
+        )
+
+        # Then
+        assert headline_number_blocks == []
