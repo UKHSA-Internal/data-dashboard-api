@@ -1,5 +1,6 @@
 import io
 import logging
+from http import HTTPStatus
 
 from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema
@@ -19,6 +20,7 @@ from metrics.domain.bulk_downloads.get_downloads_archive import (
 )
 from metrics.domain.exports.csv import write_data_to_csv
 from metrics.interfaces.downloads import access
+from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
 
 DOWNLOADS_API_TAG = "downloads"
 
@@ -77,9 +79,14 @@ class DownloadsView(APIView):
         file_format: str = request_serializer.data["file_format"]
         chart_plot_models = request_serializer.to_models()
 
-        queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
-            chart_plots=chart_plot_models
-        )
+        try:
+            queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
+                chart_plots=chart_plot_models
+            )
+        except DataNotFoundForAnyPlotError as error:
+            return Response(
+                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+            )
 
         match file_format:
             case "json":
