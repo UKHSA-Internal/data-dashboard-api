@@ -62,6 +62,10 @@ class TestDownloadsView:
             date=self.core_timeseries_data["date"],
         )
 
+    @property
+    def path(self) -> str:
+        return "/api/downloads/v2/"
+
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly(self):
         """
@@ -100,11 +104,10 @@ class TestDownloadsView:
         self._create_example_core_time_series()
         valid_payload = self._build_valid_payload()
         valid_payload["file_format"] = "json"
-        path = "/api/downloads/v2/"
 
         # When
         response: Response = client.post(
-            path=path,
+            path=self.path,
             data=valid_payload,
             format="json",
         )
@@ -132,11 +135,10 @@ class TestDownloadsView:
         client = APIClient()
         core_time_series = self._create_example_core_time_series()
         valid_payload = self._build_valid_payload()
-        path = "/api/downloads/v2/"
 
         # When
         response: Response = client.post(
-            path=path,
+            path=self.path,
             data=valid_payload,
             format="json",
         )
@@ -185,3 +187,26 @@ class TestDownloadsView:
             ]
         ]
         assert csv_output == expected_csv_content
+
+    @pytest.mark.django_db
+    def test_returns_bad_request_response_for_invalid_data(self):
+        """
+        Given a payload to request a download for non-existent data
+        When the `POST /api/downloads/v2/` endpoint is hit
+        Then an HTTP 400 BAD REQUEST response is returned
+        """
+        # Given
+        client = APIClient()
+        valid_payload = self._build_valid_payload()
+        valid_payload["plots"][0]["date_from"] = "2000-01-01"
+        valid_payload["plots"][0]["date_to"] = "2000-12-31"
+
+        # When
+        response: Response = client.post(
+            path=self.path,
+            data=valid_payload,
+            format="json",
+        )
+
+        # Then
+        assert response.status_code == HTTPStatus.BAD_REQUEST
