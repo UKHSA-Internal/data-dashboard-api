@@ -10,18 +10,23 @@ class ButtonTypes(models.Choices):
     DOWNLOAD = "DOWNLOAD"
     SUBMIT = "SUBMIT"
 
+    @classmethod
+    def choices(cls) -> list[tuple[str, str]]:
+        """ """
+        return [(button_type, button_type) for button_type in cls]
+
+
+def get_scores():
+    return [(i, str(i)) for i in range(10)]
+
 
 @register_snippet
 class Button(models.Model):
     text = models.CharField(max_length=255)
     loading_text = models.CharField(max_length=255, blank=True)
-    link = models.CharField(max_length=255, blank=True)
-    button_type = models.CharField(
-        max_length=10,
-        choices=ButtonTypes.choices,
-        default=ButtonTypes.DOWNLOAD.value,
-        blank=False,
-    )
+    endpoint = models.CharField(max_length=255, blank=True)
+    method = models.CharField(max_length=255, default="POST", blank=False)
+    button_type = models.CharField(max_length=35)
 
     class Meta:
         constraints = [
@@ -30,6 +35,11 @@ class Button(models.Model):
                 name="text and button type combinations should be unique",
             )
         ]
+
+    def __init__(self, *args, **kwargs):
+        """ """
+        super().__init__(*args, **kwargs)
+        self._meta.get_field("button_type").choices = get_scores()
 
     panels = [
         FieldPanel("text"),
