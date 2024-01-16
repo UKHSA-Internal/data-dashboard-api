@@ -11,7 +11,7 @@ on your development system. For Mac users this will require `homebrew`.
 
 For a guide on setting up home brew please find details on the following link https://brew.sh/
 
-Once homebrew has been setup you can run the following command to install `postgressql`
+Once homebrew has been set up you can run the following command to install `postgressql`
 
 ```bash
 brew install postgresql
@@ -19,8 +19,7 @@ brew install postgresql
 
 ## Standard command tooling
 
-To unify commonly used commands, there is a `Makefile` at the root level of the project.
-Note that to use the `Makefile` you will need 
+To unify commonly used commands for local development, there is a `Makefile` at the root level of the project.
 
 ## Initial configuration
 
@@ -29,16 +28,15 @@ There are a number of steps to take before getting the environment setup for loc
 1. At the time of writing you will need to ensure that 
 you have [Python version 3.12](https://www.python.org/downloads/) installed on your system.
 If in doubt, please check the `.python-version` file at the root level of the project. 
-This is used by the Makefile and the CI.
-
+This is the Python version used by the Makefile and the CI pipeline.
 
 2. Set the `APIENV` environment variable set to `LOCAL`. 
 ```bash
 export APIENV=LOCAL
 ```
 To do this, you should include this line in an `.env` file at the root level of the project.
-This will ensure that the Django `DEBUG` setting is set to True and the app will use a local sqlite database.
-
+This will ensure that the Django `DEBUG` setting is set to True.
+The application will also point to a local [SQLite](https://www.sqlite.org/index.html) database.
 
 3. Ensure you have set a value for the `SECRET_KEY` environment variable.
 ```bash
@@ -52,18 +50,15 @@ See the [Django documentation | SECRET_KEY](https://docs.djangoproject.com/en/4.
 ```bash
 make setup-venv
 ```
+This command will create a virtual environment at the `venv/` folder at the root level of the project.
+The version of Python which will be used is dictated by the aforementioned `.python-version` file.
+And finally, the entire project dependencies will be installed within the virtual environment.
 
 5. Apply the database migrations, ensure Django collects static files and run the server.
 ```bash
 make run-server
 ```
 This will run the server locally on port 8000 - http://localhost:8000/
-
-6. Create a local superuser by activating the virtual environment and following the prompts:
-```bash
-source venv/bin/activate
-./manage.py createsuperuser
-```
 
 ---
 
@@ -72,6 +67,7 @@ source venv/bin/activate
 When developing locally, the app will point to a local database:
 
 ```
+|- venv/
 ...
 |- README.md
 |- db.sqlite3  # <- this is the database
@@ -81,14 +77,25 @@ When developing locally, the app will point to a local database:
 
 ## Application data
 
-To seed your environment with data, including CMS content and a snapshot of metrics data, 
+To seed your environment with data, including CMS content, a snapshot of metrics data and an admin user,
 you can run the following command:
 
 ```bash
-sudo chmod +x scripts/boot.sh # <- make the script executable
+sudo chmod +x scripts/boot.sh       # <- make the script executable
 
 ./scripts/boot.sh <Admin Password>
 ```
+
+
+## Logging into the CMS admin application
+
+Once your database has been populated, with the `boot.sh` script, you will be able to log in.
+Head to http://localhost:8000/cms-admin/ and use the following credentials:
+
+- Username: **testadmin**
+- Password: <Admin Password>
+
+Where the <Admin Password> is the password you provided to the previous `./scripts/boot.sh` script.
 
 ---
 
@@ -98,14 +105,46 @@ sudo chmod +x scripts/boot.sh # <- make the script executable
 
 The project dependencies are seperated into usage:
 ```
-requirements.txt        # <- This imports the prod + dev dependencies. This includes all dependencies, regardless of usage.
-requirements-prod.txt   # <- These are the Production-only dependencies. This is ingested by the Dockerfile
-requirements-dev.txt    # <- These are the Dev dependencies-only. Includes testing/factory libraries
+requirements.txt                  # <- This imports the prod + dev dependencies. This includes all dependencies, regardless of usage.
+requirements-prod.txt             # <- These are the Production-only dependencies. This is ingested by the Dockerfile
+requirements-prod-ingestion.txt   # <- These are the Production dependencies for the ingestion image only.
+requirements-dev.txt              # <- These are the Dev dependencies-only. Includes testing/factory libraries
 ```
 
 If you followed the instructions above in [Initial configuration](#initial-configuration) 
 and ran `make setup-venv` then you will have installed the complete set of dependencies, 
 including those needed for local development.
+
+---
+
+### Running tests
+
+The tests are split by type, `unit`, `integration`, `system` and `migration`.
+
+You can run them separately via the `Makefile` or all at once:
+
+```bash
+make all-tests
+```
+
+---
+
+### Code quality checks
+
+You can run the standard formatting tooling over your code with the following command:
+
+```bash
+make formatting
+```
+
+---
+
+Note that if you push code to the remote repository which does not conform to the styling enforced by this tooling, 
+that CI build will fail.
+
+In this case you will need to run `make formatting` and push the code changes to the remote repository.
+
+> In the future, this will be automated.
 
 ---
 
@@ -117,31 +156,6 @@ make audit
 ```
 
 ---
-
-### Running tests
-
-The tests are split by type, `unit`, `integration` and `system`.
-
-You can run them separately via the `Makefile` or all at once:
-
-```bash
-make all-tests
-```
-
-### Code quality checks
-
-You can run the standard formatting tooling over your code with the following command:
-
-```bash
-make formatting
-```
-
-Note that if you push code to the remote repository which does not conform to the styling enforced by this tooling, 
-that CI build will fail.
-
-In this case you will need to run `make formatting` and push the code changes to the remote repository.
-
-> In the future, this will be automated.
 
 ### Architectural constraints check
 
@@ -155,7 +169,7 @@ make architecture
 Also note that this will also be enforced by virtue of the CI.
 
 >As a helper, it may be easier to use `make check` during development. 
-This will run formatters, tests and architectural constraint checks in that order.
+This will run all formatters, tests and architectural constraint checks in that order.
 
 ---
 
