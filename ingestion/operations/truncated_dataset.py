@@ -5,7 +5,7 @@ from pathlib import Path
 from django.db import models
 
 from ingestion.file_ingestion import _upload_data_as_file
-from ingestion.metrics_interfaces.interface import MetricsAPIInterface
+from ingestion.metrics_interface.interface import MetricsAPIInterface
 from ingestion.operations.concurrency import run_with_multiple_processes
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
