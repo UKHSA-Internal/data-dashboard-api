@@ -46,11 +46,17 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
 
 ```
 |- caching/
+    |- frontend/
+        crawler.py              # The class used to send requests to the designated frontend URLs.
+        handlers.py             # Handler used by the interface i.e. the Django management command.
+        urls.py                 # Holds the class used to construct all the required URLs.
+    |- private_api/             # Contains the private API crawler and all of its associated components.
+        client.py               # Abstraction used to interact with the cache itself. Mainly for adding & getting items.
+        decorators.py           # Decorator used to wrap endpoints which are to be cached with the lazy-loading method.
+        management.py           # The class used to interact with the cache and handle hashing of item keys.
+    |- public_api/              # Contains the public API crawler and all of its associated components.
     |- client.py                # Abstraction used to interact with the cache itself. Mainly for adding & getting items.
-    |- crawler.py               # The class used to parse CMS content and fire the corresponding requests internally.
-    |- decorators.py            # Decorator used to wrap endpoints which are to be cached with a lazy-loading method.
     |- internal_api_client.py   # The class used to hit the internal endpoints. Mainly used by the crawler.
-    |- management.py            # The class used to interact with the cache and handle hashing of item keys.
     
 |- cms/
     |- common/                  # The wagtail app for the non-topic pages (about page).
@@ -67,18 +73,17 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- email_template.py        # Writing the body of the suggestions email
 
 |- ingestion/
-    |- api/                     # Views, serializers and viewsets associated with the ingestion API
     |- data_transfer_models/    # DTOs used for parsing the source file and translating into the data layer
     |- metrics_interface/       # Contains the funnel abstractions which links the ingestion <- metrics modules
     |- operations/              # Write-like functionality for interacting with the db to ingest metrics data
-    |- consumer.py              # Holds the object used to open source files, orchestrating the creation of DTOs, and calling to the reader 
-    |- reader.py                # The object used to parse the source file and perform any processing steps before the file can be consumed
+    |- aws_client.py            # The `AWSClient` used to interact with the s3 ingest bucket
+    |- consumer.py              # Holds the object used to ingest source files
     
 |- metrics/
     |- api/                     # This is the *main/primary* django app of the project. The centralised settings can be found within.
         settings.py             # Settings for the main django app. The CMS apps are wired into place here.
         urls.py                 # URLs for the main django app. The CMS routes are wired into place here.
-        urls_construction.      # Where the URLs are configured, grouped and toggled accordingly
+        urls_construction.py    # Where the URLs are configured, grouped and toggled accordingly
         ...                     # views, serializers and viewsets associated with the API layer.
     |- data/                    # Represents the data layer and access to the database.
         |- models/
@@ -92,10 +97,10 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- templates/               # Contains .html templates for base pages which have been customized with the UKHSA branding.
     
 |- public_api/                  # This is the public facing unrestricted API, which provides programmatic access to the data.
-    |- metrics_interface/       # Holds the class which bridges the public API -> metrics app
-    |- serializers/             # All the serializers needed for the public API
-    |- views/                   # All the views needed for the public API
-    |- urls.py                  # The constructed group of url patterns for the public API
+    |- metrics_interface/       # Holds the class which bridges the public API -> metrics app.
+    |- serializers/             # All the serializers needed for the public API.
+    |- views/                   # All the views needed for the public API.
+    |- urls.py                  # The constructed group of url patterns for the public API.
     
 |- tests/
     |- fakes/                   # Contains fake implementations to remove additional dependencies for tests
@@ -103,10 +108,15 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- unit/                    # The home for all unit tests across the project.
     |- integration/             # The home for all integration tests across the project.
 
-|- scripts/                     # Utlity type scripts. E.g. bootstrap job
+|- source_data/                 # Holds a number of source test files which are used to populate dev environments.
+
+|- scripts/                     # Utlity type scripts. E.g. bootstrap job.
     
 |- manage.py                    # The main entrypoint into the Django app.
-|- Dockerfile                   # The multi-stage dockerfile for the application
+|- Dockerfile                   # The multi-stage dockerfile for the application.
+|- Dockerfile-ingestion         # The dockerfile used for the ingestion workload, which is deployed to a serverless lambda function.
+|- pyproject.toml               # The single configuration file used for all of our dev tools.
+
 ```
 
 >Note that the `metrics.api` is the primary django app to which everything is wired into.
