@@ -17,13 +17,15 @@ This system comprises the following:
 - Public API to provide view of data associated with health threat information.
 - Content Management System (CMS) to provide the means of serving content to the dashboard.
 - Relational database to store data associated with health threat insights & text-based content for the site.
-- Cache for the read-heavy Private API
+- Redis cache for the read-heavy Private API workload
+- Feedback API to send emails to a designated email address for user feedback.
+- Ingestion module used to ingest incoming data and populate the relational database.
 
 ---
 
 ## Project structure
 
-This project is currently split with the metrics, CMS and public API distinct from each other.
+This project is currently split with the metrics, CMS, feedback API and public API distinct from each other.
 This structure has been designed with modularity in mind. 
 If in the future, a decision is made to move the CMS out and into its own codebase then that should be achievable.
 
