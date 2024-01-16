@@ -9,7 +9,7 @@ click==8.1.7
 colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
-cyclonedx-python-lib==4.2.3
+cyclonedx-python-lib==6.3.0
 distlib==0.3.7
 django-cors-headers==4.3.1
 django-db-connection-pool==1.2.4
