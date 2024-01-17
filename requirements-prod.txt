@@ -53,7 +53,7 @@ packageurl-python==0.13.4
 packaging==23.2
 pandas==2.1.2
 pathspec==0.11.2
-pbr==5.11.1
+pbr==6.0.0
 Pillow==10.1.0
 pip-api==0.0.30
 pip-requirements-parser==32.0.1
