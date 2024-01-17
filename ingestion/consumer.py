@@ -8,7 +8,7 @@ from ingestion.data_transfer_models.handlers import (
 )
 from ingestion.data_transfer_models.headline import HeadlineDTO
 from ingestion.data_transfer_models.time_series import TimeSeriesDTO
-from ingestion.metrics_interfaces.interface import MetricsAPIInterface
+from ingestion.metrics_interface.interface import MetricsAPIInterface
 from ingestion.operations.batch_record_creation import create_records
 from ingestion.utils import type_hints
 from ingestion.utils.enums import DataSourceFileType

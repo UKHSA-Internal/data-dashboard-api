@@ -9,20 +9,7 @@ and [Django Rest Framework](https://www.django-rest-framework.org/).
 
 ---
 
-## Data ingestion
-
-There is currently no active/automated data ingestion mechanism.
-As of June 2023, there is an ingestion point in the form of an AWS s3 bucket.
-Note that this has not been completely wired up yet.
-
-The `POST /api/ingestion/v1` endpoint will be used to load metrics data into the application.
-
----
-
 ## Data model
-
-The raw data ingested by the system is already > 60k rows. 
-A significant portion of the data is redundant and replicated across rows.
 
 The data model has been designed as 2 distinct sub-systems:
 
@@ -70,14 +57,3 @@ As of June 2023, the following charts can be generated from this project:
 
 Currently multiple plots can be applied for either bar charts or line charts.
 Multiple type of different plots cannot be applied on the same chart.
-
-### Data ingestion
-
-An integration point has been agreed with the UKHSA data team so that this application can consume
-data files produced by the UKHSA ETL pipeline.
-
-Note that this file is currently always provided in its entirety. With years worth of data which is unchanged.
-This is most likely costing a considerable sum of money for cloud storage costs.
-
-In the future, this should be altered so that a data file is provided which only shows the most recent month 
-of data. Since data prior to this is unlikely to change.
