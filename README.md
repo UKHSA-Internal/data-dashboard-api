@@ -81,9 +81,7 @@ To seed your environment with data, including CMS content, a snapshot of metrics
 you can run the following command:
 
 ```bash
-sudo chmod +x scripts/boot.sh       # <- make the script executable
-
-./scripts/boot.sh <Admin Password>
+source scripts/boot.sh <Admin Password>
 ```
 
 
