@@ -46,7 +46,8 @@ select = [
 
 # Ignore rules
 ignore = [
-    "F821"      # Undefined class names - currently used to bypass circular imports in type hints
+    "F821",     # Undefined class names - currently used to bypass circular imports in type hints
+    "ISC001",   # Implicitly concatenated strings on a single line - conflicts with the ruff formatter
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
