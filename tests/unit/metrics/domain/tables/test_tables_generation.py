@@ -51,7 +51,7 @@ class TestTabularData:
         ],
     )
     def test_is_date_based_returns_false_for_non_date_based_x_axis(
-        self, x_axis: str, fake_chart_plots_data: PlotData
+        self, x_axis: str, fake_plot_data: PlotData
     ):
         """
         Given `PlotData` with an `x_axis` parameter which is not `date`
@@ -60,8 +60,8 @@ class TestTabularData:
         Then False is returned
         """
         # Given
-        fake_chart_plots_data.parameters.x_axis = x_axis
-        tabular_data = TabularData(plots=[fake_chart_plots_data])
+        fake_plot_data.parameters.x_axis = x_axis
+        tabular_data = TabularData(plots=[fake_plot_data])
 
         # When
         is_date_based: bool = tabular_data._is_date_based
@@ -70,7 +70,7 @@ class TestTabularData:
         assert not is_date_based
 
     def test_is_date_based_returns_true_for_date_based_x_axis(
-        self, fake_chart_plots_data: PlotData
+        self, fake_plot_data: PlotData
     ):
         """
         Given `PlotData` with an `x_axis` parameter which is set to `date`
@@ -79,8 +79,8 @@ class TestTabularData:
         Then True is returned
         """
         # Given
-        fake_chart_plots_data.parameters.x_axis = ChartAxisFields.date.name
-        tabular_data = TabularData(plots=[fake_chart_plots_data])
+        fake_plot_data.parameters.x_axis = ChartAxisFields.date.name
+        tabular_data = TabularData(plots=[fake_plot_data])
 
         # When
         is_date_based: bool = tabular_data._is_date_based

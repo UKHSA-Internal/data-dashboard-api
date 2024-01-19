@@ -66,7 +66,7 @@ def valid_plot_parameters() -> PlotParameters:
 
 
 @pytest.fixture
-def fake_chart_plots_data() -> PlotData:
+def fake_plot_data() -> PlotData:
     plot_params = PlotParameters(
         chart_type="line_multi_coloured",
         topic="COVID-19",

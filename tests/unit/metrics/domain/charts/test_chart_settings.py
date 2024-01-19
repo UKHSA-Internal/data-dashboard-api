@@ -10,7 +10,7 @@ MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 
 
 @pytest.fixture()
-def fake_chart_settings(fake_chart_plots_data: PlotData) -> ChartSettings:
+def fake_chart_settings(fake_plot_data: PlotData) -> ChartSettings:
     return ChartSettings(
         width=930,
         height=220,
@@ -144,7 +144,7 @@ class TestChartSettings:
         }
         assert simple_line_chart_config == expected_line_chart_config
 
-    def test_chart_settings_width(self, fake_chart_plots_data: PlotData):
+    def test_chart_settings_width(self, fake_plot_data: PlotData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -164,7 +164,7 @@ class TestChartSettings:
         # Then
         assert chart_width == width
 
-    def test_chart_settings_height(self, fake_chart_plots_data: PlotData):
+    def test_chart_settings_height(self, fake_plot_data: PlotData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -182,7 +182,7 @@ class TestChartSettings:
         # Then
         assert chart_height == height
 
-    def test_waffle_chart_config(self, fake_chart_plots_data: PlotData):
+    def test_waffle_chart_config(self, fake_plot_data: PlotData):
         """
         Given an instance of `ChartSettings`
         When `get_waffle_chart_config()` is called
