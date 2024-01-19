@@ -23,7 +23,7 @@ class TestConvertGraphObjectToDict:
         )
 
         # Then
-        assert type(serialized_graph_object) is dict
+        assert isinstance(serialized_graph_object, dict)
         assert tuple(serialized_graph_object["x"]) == graph_object.x
         assert tuple(serialized_graph_object["y"]) == graph_object.y
         assert serialized_graph_object["type"] == graph_object.type
