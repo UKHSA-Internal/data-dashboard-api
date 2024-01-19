@@ -6,6 +6,7 @@ import plotly
 from metrics.domain.charts import chart_settings
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
+from metrics.domain.charts.serialization import convert_graph_object_to_dict
 from metrics.domain.models import PlotData
 
 
@@ -27,6 +28,7 @@ def create_multi_coloured_line_chart(
             This can be either `linear` or `spline`.
         line_width: The weight to assign to the width of the line plots.
             Defaults to 2.
+
     Returns:
         `Figure`: A `plotly` object which can then be
             written to a file, or shown.
@@ -42,7 +44,7 @@ def create_multi_coloured_line_chart(
             line_type=plot_data.parameters.line_type
         )
 
-        line_plot: plotly.graph_objects.Scatter = _create_line_plot(
+        line_plot: dict = _create_line_plot(
             x_axis_values=plot_data.x_axis_values,
             y_axis_values=plot_data.y_axis_values,
             colour=selected_colour.stringified,
@@ -82,8 +84,8 @@ def _create_line_plot(
     line_shape: str,
     legend: str,
     dash: str,
-):
-    return plotly.graph_objects.Scatter(
+) -> dict:
+    scatter = plotly.graph_objects.Scatter(
         x=x_axis_values,
         y=y_axis_values,
         line={
@@ -94,6 +96,7 @@ def _create_line_plot(
         line_shape=line_shape,
         name=legend,
     )
+    return convert_graph_object_to_dict(graph_object=scatter)
 
 
 def generate_chart_figure(
