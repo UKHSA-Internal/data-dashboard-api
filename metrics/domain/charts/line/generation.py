@@ -1,6 +1,7 @@
 import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme
+from metrics.domain.charts.serialization import convert_graph_object_to_dict
 
 
 def generate_chart_figure(
@@ -52,7 +53,7 @@ def generate_chart_figure(
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot object
-    line_plot = _create_line_plot(
+    line_plot: dict = _create_line_plot(
         y_axis_values=y_axis_values,
         x_axis_values=x_axis_values,
         area_fill_colour=area_fill_color,
@@ -62,9 +63,7 @@ def generate_chart_figure(
     )
 
     # Add line plot to the figure
-    figure.add_trace(
-        trace=line_plot,
-    )
+    figure.add_trace(trace=line_plot)
 
     settings = chart_settings.ChartSettings(
         width=chart_width, height=chart_height, plots_data=x_axis_values
@@ -85,8 +84,8 @@ def _create_line_plot(
     line_colour: str,
     line_shape: str,
     line_width: int,
-) -> plotly.graph_objects.Scatter:
-    return plotly.graph_objects.Scatter(
+) -> dict:
+    scatter = plotly.graph_objects.Scatter(
         x=x_axis_values,
         y=y_axis_values,
         fill="tozeroy",
@@ -95,3 +94,4 @@ def _create_line_plot(
         line={"color": line_colour, "width": line_width},
         marker={"symbol": "circle", "size": line_width * 3},
     )
+    return convert_graph_object_to_dict(graph_object=scatter)

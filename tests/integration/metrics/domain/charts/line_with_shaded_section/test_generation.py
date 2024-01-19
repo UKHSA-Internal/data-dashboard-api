@@ -119,6 +119,7 @@ class TestLineWithShadedSectionCharts:
         """
         # Given
         x_axis_values = DATES_FROM_SEP_TO_JAN
+        x_axis_values_as_strings = [str(x) for x in x_axis_values]
         y_axis_values = [0.3, 0.3, 0.4, 0.6, 0.8]
         metric_name = METRIC_NAME
         rolling_period_slice = 1
@@ -150,8 +151,10 @@ class TestLineWithShadedSectionCharts:
         # The main line should also not include the last number of points denoted by the `rolling_period_slice` arg
         index_slice_excluding_rolling_period_slice = -rolling_period_slice
         assert list(main_line_plot.x) == list(
-            x_axis_values[:index_slice_excluding_rolling_period_slice]
+            x_axis_values_as_strings[:index_slice_excluding_rolling_period_slice]
         )
+        # Note that the dates along the x-axis are returned as strings
+        # i.e. `2022-9-5` instead of as datetime objects hence the need for the string conversion
         assert list(main_line_plot.y) == list(
             y_axis_values[:index_slice_excluding_rolling_period_slice]
         )
@@ -170,7 +173,7 @@ class TestLineWithShadedSectionCharts:
         # denoted by the `rolling_period_slice` arg
         index_slice_including_only_rolling_period = -(rolling_period_slice + 1)
         assert list(shaded_section_plot.x) == list(
-            x_axis_values[index_slice_including_only_rolling_period:]
+            x_axis_values_as_strings[index_slice_including_only_rolling_period:]
         )
         assert list(shaded_section_plot.y) == list(
             y_axis_values[index_slice_including_only_rolling_period:]
@@ -184,6 +187,7 @@ class TestLineWithShadedSectionCharts:
         """
         # Given
         x_axis_values = DATES_FROM_SEP_TO_JAN
+        x_axis_values_as_strings = [str(x) for x in x_axis_values]
         y_axis_values = [1.1, 0.9, 0.8, 0.6, 0.3]
         metric_name = METRIC_NAME
         rolling_period_slice = 1
@@ -215,8 +219,10 @@ class TestLineWithShadedSectionCharts:
         # The main line should also not include the last number of points denoted by the `rolling_period_slice` arg
         index_slice_excluding_rolling_period_slice = -rolling_period_slice
         assert list(main_line_plot.x) == list(
-            x_axis_values[:index_slice_excluding_rolling_period_slice]
+            x_axis_values_as_strings[:index_slice_excluding_rolling_period_slice]
         )
+        # Note that the dates along the x-axis are returned as strings
+        # i.e. `2022-9-5` instead of as datetime objects hence the need for the string conversion
         assert list(main_line_plot.y) == list(
             y_axis_values[:index_slice_excluding_rolling_period_slice]
         )
@@ -235,7 +241,7 @@ class TestLineWithShadedSectionCharts:
         # denoted by the `rolling_period_slice` arg
         index_slice_including_only_rolling_period = -(rolling_period_slice + 1)
         assert list(shaded_section_plot.x) == list(
-            x_axis_values[index_slice_including_only_rolling_period:]
+            x_axis_values_as_strings[index_slice_including_only_rolling_period:]
         )
         assert list(shaded_section_plot.y) == list(
             y_axis_values[index_slice_including_only_rolling_period:]

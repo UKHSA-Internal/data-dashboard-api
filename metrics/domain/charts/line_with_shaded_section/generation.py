@@ -5,6 +5,7 @@ import plotly
 
 from metrics.domain.charts import chart_settings, colour_scheme
 from metrics.domain.charts.line_with_shaded_section import information
+from metrics.domain.charts.serialization import convert_graph_object_to_dict
 
 
 def create_line_chart_with_shaded_section(
@@ -49,7 +50,7 @@ def create_line_chart_with_shaded_section(
     figure = plotly.graph_objects.Figure()
 
     # Create the line plot for the preceding points as a simple neutral grey line
-    line_plot: plotly.graph_objects.Scatter = _create_main_line_plot(
+    line_plot: dict = _create_main_line_plot(
         x_axis_values=x_axis_values,
         y_axis_values=y_axis_values,
         preceding_data_points_count=preceding_data_points_count,
@@ -62,7 +63,7 @@ def create_line_chart_with_shaded_section(
 
     # Create the shaded section for the last `n` points
     # Where `n` is denoted by `rolling_period_slice`
-    shaded_section_plot: plotly.graph_objects.Scatter = _create_shaded_section_plot(
+    shaded_section_plot: dict = _create_shaded_section_plot(
         x_axis_values=x_axis_values,
         y_axis_values=y_axis_values,
         preceding_data_points_count=preceding_data_points_count,
@@ -98,8 +99,8 @@ def _create_main_line_plot(
     preceding_data_points_count: int,
     line_width: int,
     line_shape: str,
-):
-    return plotly.graph_objects.Scatter(
+) -> dict:
+    graph_object = plotly.graph_objects.Scatter(
         x=x_axis_values[: preceding_data_points_count + 1],
         y=y_axis_values[: preceding_data_points_count + 1],
         line={
@@ -108,6 +109,7 @@ def _create_main_line_plot(
         },
         line_shape=line_shape,
     )
+    return convert_graph_object_to_dict(graph_object=graph_object)
 
 
 def _create_shaded_section_plot(
@@ -118,8 +120,8 @@ def _create_shaded_section_plot(
     line_shape: str,
     shaded_section_line_colour: str,
     shaded_section_fill_colour: str,
-):
-    return plotly.graph_objects.Scatter(
+) -> dict:
+    scatter = plotly.graph_objects.Scatter(
         x=x_axis_values[preceding_data_points_count:],
         y=y_axis_values[preceding_data_points_count:],
         line={"width": line_width},
@@ -131,6 +133,7 @@ def _create_shaded_section_plot(
         fillcolor=shaded_section_fill_colour,
         line_shape=line_shape,
     )
+    return convert_graph_object_to_dict(graph_object=scatter)
 
 
 def generate_chart_figure(
