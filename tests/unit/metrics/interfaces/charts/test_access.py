@@ -355,13 +355,14 @@ class TestChartsInterface:
         # When
         params_for_line_graph = (
             charts_interface.param_builder_for_line_with_shaded_section(
-                plot_data=fake_plot_data
+                plots_data=[fake_plot_data]
             )
         )
 
         # When
         metric: str = fake_plot_data.parameters.metric_name
         expected_constructed_params = {
+            "plots_data": [fake_plot_data],
             "chart_width": width,
             "chart_height": height,
             "x_axis_values": mocked_x_axis_values,

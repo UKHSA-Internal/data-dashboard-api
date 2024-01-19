@@ -9,6 +9,7 @@ from metrics.data.access.api_models import (
     validate_plot_filter,
     validate_query_filters,
 )
+from metrics.domain.utils import ChartTypes
 
 
 class TestFilterIsList:
@@ -212,7 +213,7 @@ class TestValidatePlotFilter:
         ]
         plot = {
             "topic": "COVID-19",
-            "chart_type": "simple_line",
+            "chart_type": ChartTypes.line_multi_coloured.value,
         }
 
         # When
@@ -381,7 +382,7 @@ class TestValidateQueryFilters:
         plots = [
             {
                 "topic": "COVID-19",
-                "chart_type": "simple_line",
+                "chart_type": ChartTypes.line_multi_coloured.value,
             }
         ]
 

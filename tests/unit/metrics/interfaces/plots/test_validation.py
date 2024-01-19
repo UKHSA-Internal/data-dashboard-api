@@ -159,7 +159,7 @@ class TestValidateDates:
         plot_parameters = PlotParameters(
             metric="COVID-19_deaths_ONSByDay",
             topic="COVID-19",
-            chart_type=ChartTypes.simple_line.value,
+            chart_type=ChartTypes.line_multi_coloured.value,
             date_from=date_from.strftime(EXPECTED_DATE_FORMAT),
             date_to=date_to.strftime(EXPECTED_DATE_FORMAT),
         )
