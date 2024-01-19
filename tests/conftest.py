@@ -57,7 +57,7 @@ def valid_plot_parameters() -> PlotParameters:
     return PlotParameters(
         metric="COVID-19_deaths_ONSByDay",
         topic="COVID-19",
-        chart_type=ChartTypes.simple_line.value,
+        chart_type=ChartTypes.line_multi_coloured.value,
         date_from="2023-01-01",
         date_to="2023-12-31",
         x_axis="date",

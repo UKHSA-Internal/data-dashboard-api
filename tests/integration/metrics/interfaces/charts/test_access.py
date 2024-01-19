@@ -16,7 +16,7 @@ class TestChartsInterface:
         """
         # Given
         fake_plots_collection.file_format = "svg"
-        fake_plots_collection.plots[0].chart_type = ChartTypes.simple_line.value
+        fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
@@ -43,7 +43,7 @@ class TestChartsInterface:
 
         # Given
         fake_plots_collection.file_format = "svg"
-        fake_plots_collection.plots[0].chart_type = ChartTypes.simple_line.value
+        fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
