@@ -55,7 +55,7 @@ def generate_chart_figure(
     primary_plot_x_axis_values = chart_plots_data[0].x_axis_values
 
     settings = chart_settings.ChartSettings(
-        width=chart_width, height=chart_height, plots_data=primary_plot_x_axis_values
+        width=chart_width, height=chart_height, plots_data=chart_plots_data
     )
 
     layout_args = settings.get_bar_chart_config()

@@ -14,7 +14,7 @@ def fake_chart_settings(fake_plot_data: PlotData) -> ChartSettings:
     return ChartSettings(
         width=930,
         height=220,
-        plots_data=fake_chart_plots_data,
+        plots_data=[fake_plot_data],
     )
 
 
@@ -155,7 +155,7 @@ class TestChartSettings:
         chart_settings = ChartSettings(
             width=width,
             height=220,
-            plots_data=fake_chart_plots_data,
+            plots_data=[fake_plot_data],
         )
 
         # When
@@ -173,7 +173,7 @@ class TestChartSettings:
         # Given
         height = 220
         chart_settings = ChartSettings(
-            width=930, height=height, plots_data=fake_chart_plots_data
+            width=930, height=height, plots_data=[fake_plot_data]
         )
 
         # When
@@ -191,7 +191,7 @@ class TestChartSettings:
         # Given
         width = height = 400
         chart_settings = ChartSettings(
-            width=width, height=height, plots_data=fake_chart_plots_data
+            width=width, height=height, plots_data=[fake_plot_data]
         )
 
         # When
