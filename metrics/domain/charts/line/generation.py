@@ -66,7 +66,7 @@ def generate_chart_figure(
     figure.add_trace(trace=line_plot)
 
     settings = chart_settings.ChartSettings(
-        width=chart_width, height=chart_height, plots_data=x_axis_values
+        width=chart_width, height=chart_height, plots_data=[]
     )
     layout_args = settings.get_simple_line_chart_config()
     figure.update_layout(**layout_args)
