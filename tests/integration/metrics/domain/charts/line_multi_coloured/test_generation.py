@@ -172,6 +172,7 @@ class TestLineMultiColouredCharts:
         )
 
         x_axis_values = DATES_FROM_SEP_TO_JAN
+        x_axis_values_as_strings = [str(x) for x in x_axis_values]
         y_axis_values = [20, 45, 62, 41, 32, 43, 45, 57, 88, 76, 9]
         second_plot_line_type = "SOLID"
         second_plot_label = "15 to 44 years old"
@@ -198,7 +199,9 @@ class TestLineMultiColouredCharts:
         # ---First line plot checks---
         first_plot: plotly.graph_objects.Scatter = figure.data[0]
         # Check that each axis has been populated with the correct data
-        assert list(first_plot.x) == first_chart_plots_data.x_axis_values
+        # Note that the dates along the x-axis are returned as strings
+        # i.e. `2022-9-5` instead of as datetime objects hence the need for the string conversion
+        assert list(first_plot.x) == x_axis_values_as_strings
         assert list(first_plot.y) == first_chart_plots_data.y_axis_values
 
         # The name of the plot should match the provided custom label
@@ -220,7 +223,7 @@ class TestLineMultiColouredCharts:
         # ---Second line plot checks---
         second_plot: plotly.graph_objects.Scatter = figure.data[1]
         # Check that each axis has been populated with the correct data
-        assert list(second_plot.x) == second_chart_plots_data.x_axis_values
+        assert list(second_plot.x) == x_axis_values_as_strings
         assert list(second_plot.y) == second_chart_plots_data.y_axis_values
 
         # The name of the plot should match the provided custom label

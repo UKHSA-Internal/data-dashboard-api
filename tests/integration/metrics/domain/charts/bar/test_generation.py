@@ -88,7 +88,11 @@ class TestBarCharts:
         assert type(main_bar_plot) == plotly.graph_objects.Bar
 
         # Check x & y values were correctly assigned
-        assert main_bar_plot.x == tuple(mocked_plot_data.x_axis_values)
+        # Note that the dates along the x-axis are returned as strings
+        # i.e. `2022-9-5` instead of as datetime objects hence the need for the string conversion
+        assert main_bar_plot.x == tuple(
+            [str(x) for x in mocked_plot_data.x_axis_values]
+        )
         assert main_bar_plot.y == tuple(mocked_plot_data.y_axis_values)
 
         # Bars should be Blue

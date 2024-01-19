@@ -4,6 +4,7 @@ from typing import Any
 import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme
+from metrics.domain.charts.serialization import convert_graph_object_to_dict
 from metrics.domain.models import PlotData
 
 
@@ -40,7 +41,7 @@ def generate_chart_figure(
         plot_label: str = plot_data.parameters.label
 
         # Create Bar plot
-        bar_plot: plotly.graph_objects.Bar = _create_bar_plot(
+        bar_plot: dict = _create_bar_plot(
             x_axis_values=plot_data.x_axis_values,
             y_axis_values=plot_data.y_axis_values,
             bar_colour=selected_colour.stringified,
@@ -76,7 +77,7 @@ def _create_bar_plot(
     bar_colour: str,
     legend: str,
     showlegend: bool = False,
-) -> plotly.graph_objects.Bar:
+) -> dict:
     """Create a Bar plot to add to the chart (via the add_trace method)
 
     Args:
@@ -84,15 +85,16 @@ def _create_bar_plot(
         y_axis_values: The values to display along the y-axis
         bar_colour: The colour to assign to the bars.
         legend: Legend to display for this plot.
-        showlegend: Whether or not to display the associated legend for this plot
+        showlegend: Whether to display the associated legend for this plot
             Note: showlegend in BAR_CHART_LAYOUT_ARGS constant has to be True
             for this setting to have any effect
 
     Returns:
-        `Bar`: A `plotly` bar which can then be added to the chart
+        Dictionary representation of the graph object
+        which can be added to the figure
 
     """
-    return plotly.graph_objects.Bar(
+    bar = plotly.graph_objects.Bar(
         x=x_axis_values,
         y=y_axis_values,
         marker={
@@ -105,3 +107,4 @@ def _create_bar_plot(
         name=legend,
         showlegend=showlegend,
     )
+    return convert_graph_object_to_dict(graph_object=bar)
