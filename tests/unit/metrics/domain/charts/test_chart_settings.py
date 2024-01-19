@@ -255,7 +255,7 @@ class TestChartSettings:
         x_axis_date_type = chart_settings.get_x_axis_date_type()
 
         # Then
-        min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
+        min_date, _ = chart_settings.get_min_and_max_x_axis_values()
         month_end_of_max_date = "2023-01-31"
 
         expected_axis_config = {
