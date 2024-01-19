@@ -13,14 +13,14 @@ cyclonedx-python-lib==6.3.0
 distlib==0.3.8
 django-cors-headers==4.3.1
 django-db-connection-pool==1.2.4
-django-filter==22.1
+django-filter==23.5
 django-modelcluster==6.1
 django-permissionedforms==0.1
 django-taggit==3.1.0
 django-treebeard==4.7
 djangorestframework==3.14.0
 draftjs-exporter==2.1.7
-drf-nested-routers==0.93.4
+drf-nested-routers==0.93.5
 drf-spectacular==0.27.0
 et-xmlfile==1.1.0
 exceptiongroup==1.1.3
