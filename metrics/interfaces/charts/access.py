@@ -248,7 +248,7 @@ class ChartsInterface:
         Returns:
             A figure as an image and optimized for size if required
         """
-        svg_image = figure.to_image(format=self.chart_plots.file_format)
+        svg_image = figure.to_image(format=self.chart_plots.file_format, validate=False)
         return scour.scourString(in_string=svg_image)
 
     def encode_figure(self, figure: plotly.graph_objects.Figure) -> str:
@@ -283,7 +283,7 @@ class ChartsInterface:
 
         """
         filename = f"new_chart.{self.chart_plots.file_format}"
-        figure.write_image(file=filename, format=self.chart_plots.file_format)
+        figure.write_image(file=filename, format=self.chart_plots.file_format, validate=False)
 
         return filename
 
