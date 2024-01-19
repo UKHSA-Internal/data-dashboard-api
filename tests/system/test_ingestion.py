@@ -14,7 +14,7 @@ FAKE_FILE_NAME = "COVID-19_deaths_ONSByDay.json"
 DATE_FORMAT = "%Y-%m-%d"
 
 
-class TestIngestionV2:
+class TestIngestion:
     @pytest.mark.django_db
     def test_data_can_be_ingested_and_queried_from_tables_endpoint(
         self, example_time_series_data: INCOMING_DATA_TYPE
