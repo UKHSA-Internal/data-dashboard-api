@@ -1,3 +1,4 @@
+import operator
 from collections.abc import Iterator
 from functools import reduce
 
@@ -83,7 +84,7 @@ def merge_querysets(
         from each queryset in `all_querysets`
 
     """
-    merged_queryset = reduce(lambda x, y: x | y, all_querysets)
+    merged_queryset = reduce(operator.or_, all_querysets)
     return merged_queryset.distinct()
 
 
