@@ -38,10 +38,6 @@ class PrivateAPICrawler:
         dynamic_content_block_crawler: DynamicContentBlockCrawler | None = None,
     ):
         self._internal_api_client = internal_api_client or InternalAPIClient()
-        self._cms_block_parser = cms_block_parser or CMSBlockParser()
-        self._geography_api_crawler = GeographiesAPICrawler(
-            internal_api_client=self._internal_api_client
-        )
         self._headless_cms_api_crawler = HeadlessCMSAPICrawler(
             internal_api_client=self._internal_api_client
         )
@@ -50,6 +46,10 @@ class PrivateAPICrawler:
             or DynamicContentBlockCrawler(
                 internal_api_client=self._internal_api_client,
             )
+        )
+        self.cms_block_parser = cms_block_parser or CMSBlockParser()
+        self.geography_api_crawler = GeographiesAPICrawler(
+            internal_api_client=self._internal_api_client
         )
 
     # Class constructors
@@ -142,7 +142,7 @@ class PrivateAPICrawler:
         """
         # Gather all headline number blocks in this section of the page
         headline_number_blocks = (
-            self._cms_block_parser.get_all_headline_blocks_from_section(section=section)
+            self.cms_block_parser.get_all_headline_blocks_from_section(section=section)
         )
         # Process each of the headline number blocks which were gathered
         self._dynamic_content_block_crawler.process_all_headline_number_blocks(
@@ -284,7 +284,7 @@ class PrivateAPICrawler:
 
         for section in sections:
             chart_row_cards = (
-                self._cms_block_parser.get_chart_row_cards_from_page_section(
+                self.cms_block_parser.get_chart_row_cards_from_page_section(
                     section=section
                 )
             )
