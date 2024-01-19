@@ -283,7 +283,9 @@ class ChartsInterface:
 
         """
         filename = f"new_chart.{self.chart_plots.file_format}"
-        figure.write_image(file=filename, format=self.chart_plots.file_format, validate=False)
+        figure.write_image(
+            file=filename, format=self.chart_plots.file_format, validate=False
+        )
 
         return filename
 
