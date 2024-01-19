@@ -164,8 +164,7 @@ class ChartsInterface:
                 returned any data from the underlying queries
         """
         plots_data: list[PlotData] = self.build_chart_plots_data()
-        plot_data: PlotData = plots_data[0]
-        params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
+        params = self.param_builder_for_line_with_shaded_section(plots_data=plots_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
@@ -217,7 +216,8 @@ class ChartsInterface:
 
         self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
 
-    def param_builder_for_line_with_shaded_section(self, plot_data: PlotData):
+    def param_builder_for_line_with_shaded_section(self, plots_data: list[PlotData]):
+        plot_data = plots_data[0]
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
         x_axis_values = plot_data.x_axis_values
@@ -225,6 +225,7 @@ class ChartsInterface:
         metric_name = plot_data.parameters.metric_name
 
         return {
+            "plots_data": plots_data,
             "chart_height": chart_height,
             "chart_width": chart_width,
             "x_axis_values": x_axis_values,
