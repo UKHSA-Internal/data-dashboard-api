@@ -4,9 +4,9 @@ from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.handlers import (
-    _crawl_all_pages,
     check_cache_for_all_pages,
     collect_all_pages,
+    crawl_all_pages,
     extract_topic_pages_from_all_pages,
     force_cache_refresh_for_all_pages,
     get_all_downloads,
@@ -215,7 +215,7 @@ class TestCrawlAllPages:
     def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
         """
         Given a mocked `Crawler` object
-        When `_crawl_all_pages()` is called
+        When `crawl_all_pages()` is called
         Then calls are delegated to `collect_all_pages()`
         And to the `process_pages()` method on the `Crawler` object
 
@@ -227,7 +227,7 @@ class TestCrawlAllPages:
         spy_crawler = mock.Mock()
 
         # When
-        _crawl_all_pages(private_api_crawler=spy_crawler)
+        crawl_all_pages(private_api_crawler=spy_crawler)
 
         # Then
         # Check that all pages are collected
@@ -245,7 +245,7 @@ class TestCrawlAllPages:
     ):
         """
         Given no pages to be cached
-        When `_crawl_all_pages()` is called
+        When `crawl_all_pages()` is called
         Then the correct log statements are made
 
         Patches:
@@ -257,7 +257,7 @@ class TestCrawlAllPages:
         mocked_collect_all_pages.return_value = []
 
         # When
-        _crawl_all_pages(private_api_crawler=mocked_crawler)
+        crawl_all_pages(private_api_crawler=mocked_crawler)
 
         # Then
         assert "Commencing refresh of cache" in caplog.text

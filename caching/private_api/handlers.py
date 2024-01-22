@@ -78,7 +78,7 @@ def extract_topic_pages_from_all_pages(
     return [page for page in all_pages if isinstance(page, TopicPage)]
 
 
-def _crawl_all_pages(private_api_crawler: PrivateAPICrawler) -> None:
+def crawl_all_pages(private_api_crawler: PrivateAPICrawler) -> None:
     """Parses the CMS blocks for all pages with the given `crawler`
 
     Notes:
@@ -122,7 +122,7 @@ def check_cache_for_all_pages() -> None:
 
     """
     crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
-    _crawl_all_pages(private_api_crawler=crawler)
+    crawl_all_pages(private_api_crawler=crawler)
 
 
 def force_cache_refresh_for_all_pages() -> None:
@@ -146,7 +146,7 @@ def force_cache_refresh_for_all_pages() -> None:
     cache_management.clear()
 
     crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
-    _crawl_all_pages(private_api_crawler=crawler)
+    crawl_all_pages(private_api_crawler=crawler)
 
 
 def get_all_downloads(file_format: str = "csv") -> list[dict[str, str]]:
