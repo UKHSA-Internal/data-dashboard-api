@@ -11,7 +11,6 @@ from metrics.domain.charts import (
     line,
     line_multi_coloured,
     line_with_shaded_section,
-    waffle,
 )
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.utils import ChartTypes
@@ -52,9 +51,6 @@ class ChartsInterface:
             A plotly `Figure` object for the created chart
 
         """
-        if self.chart_type == ChartTypes.waffle.value:
-            raise NotImplementedError
-
         if self.chart_type == ChartTypes.simple_line.value:
             return self.generate_simple_line_chart()
 
@@ -65,20 +61,6 @@ class ChartsInterface:
             return self.generate_line_multi_coloured_chart()
 
         return self.generate_line_with_shaded_section_chart()
-
-    def generate_waffle_chart(self) -> plotly.graph_objects.Figure:
-        """Creates a waffle chart figure for the requested chart plot
-
-        Returns:
-            A plotly `Figure` object for the created waffle chart
-
-        """
-        plot_parameters = self.chart_plots.plots[0]
-        value = self.core_time_series_manager.get_latest_metric_value(
-            topic_name=plot_parameters.topic_name,
-            metric_name=plot_parameters.metric_name,
-        )
-        return waffle.generate_chart_figure([value])
 
     def generate_simple_line_chart(self) -> plotly.graph_objects.Figure:
         """Creates a simple line chart figure for the requested chart plot

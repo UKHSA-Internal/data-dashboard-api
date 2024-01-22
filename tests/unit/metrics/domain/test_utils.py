@@ -135,7 +135,6 @@ class TestChartTypes:
     @pytest.mark.parametrize(
         "expected_choice",
         (
-            "waffle",
             "line_with_shaded_section",
             "bar",
             "line_multi_coloured",
