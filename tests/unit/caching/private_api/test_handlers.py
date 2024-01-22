@@ -268,7 +268,7 @@ class TestCheckCacheForAllPages:
         spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
 
 
-class TestHydrateCacheForAllPages:
+class TestForceCacheRefreshForAllPages:
     @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
     def test_delegates_calls_successfully(
