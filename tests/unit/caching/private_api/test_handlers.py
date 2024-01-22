@@ -289,7 +289,7 @@ class TestCheckCacheForAllPages:
         # Then
         spy_create_crawler_for_cache_checking_only.assert_called_once()
         expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
-        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+        spy_crawl_all_pages.assert_called_once_with(private_api_crawler=expected_crawler)
 
 
 class TestForceCacheRefreshForAllPages:
@@ -317,7 +317,7 @@ class TestForceCacheRefreshForAllPages:
         # Then
         spy_create_crawler_for_force_cache_refresh.assert_called_once()
         expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
-        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+        spy_crawl_all_pages.assert_called_once_with(private_api_crawler=expected_crawler)
 
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
