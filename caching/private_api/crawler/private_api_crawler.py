@@ -41,10 +41,10 @@ class PrivateAPICrawler:
         dynamic_content_block_crawler: DynamicContentBlockCrawler | None = None,
     ):
         self._internal_api_client = internal_api_client or InternalAPIClient()
-        self._cms_block_parser = cms_block_parser or CMSBlockParser()
-        self._geography_api_crawler = GeographiesAPICrawler(
+        self.geography_api_crawler = GeographiesAPICrawler(
             internal_api_client=self._internal_api_client
         )
+        self._cms_block_parser = cms_block_parser or CMSBlockParser()
         self._headless_cms_api_crawler = HeadlessCMSAPICrawler(
             internal_api_client=self._internal_api_client
         )
@@ -98,7 +98,7 @@ class PrivateAPICrawler:
         )
         logger.info("Completed processing of headless CMS API")
 
-        self._geography_api_crawler.process_geographies_api()
+        self.geography_api_crawler.process_geographies_api()
         logger.info(
             "Completed processing of geographies API, now handling content blocks"
         )
