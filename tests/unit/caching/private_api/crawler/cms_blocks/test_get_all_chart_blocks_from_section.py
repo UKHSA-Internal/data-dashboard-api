@@ -2,7 +2,9 @@ from caching.private_api.crawler.cms_blocks import CMSBlockParser
 
 
 class TestCMSBlockParserGetAllChartBlocksFromSection:
-    def test_returns_correct_chart_blocks(self, example_section_with_headline_card_and_chart_card):
+    def test_returns_correct_chart_blocks(
+        self, example_section_with_headline_card_and_chart_card
+    ):
         """
         Given a section containing chart blocks within chart cards
         When `get_all_chart_blocks_from_section()` is called
