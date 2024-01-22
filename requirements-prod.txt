@@ -71,7 +71,7 @@ PyYAML==6.0.1
 redis==5.0.1
 requests==2.31.0
 rich==13.6.0
-ruamel.yaml==0.18.2
+ruamel.yaml==0.18.5
 ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.22
 scour==0.38.2
