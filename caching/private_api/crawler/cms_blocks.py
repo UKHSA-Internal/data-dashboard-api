@@ -1,3 +1,6 @@
+import copy
+
+from caching.private_api.crawler.geographies_crawler import GeographyData
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 
@@ -17,6 +20,66 @@ class CMSBlockParser:
         the `DynamicContentBlockCrawler`.
 
     """
+
+    @classmethod
+    def get_all_chart_blocks_from_section_for_geography(
+        cls, section: CMS_COMPONENT_BLOCK_TYPE, geography_data: GeographyData | None
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts a list of all chart cards from the given `section` for the specific `geography_data`
+
+        Args:
+            section: The section component from the CMS
+            geography_data: An optional enriched `GeographyData` model,
+                containing the name of the geography
+                and its parent geography type.
+                If not provided, then the base choices from
+                the CMS blocks will be used
+
+        Returns:
+            A list of chart card dictionaries
+
+        """
+        all_chart_blocks_from_section: list[
+            CMS_COMPONENT_BLOCK_TYPE
+        ] = cls.get_all_chart_blocks_from_section(section=section)
+        if not geography_data:
+            return all_chart_blocks_from_section
+
+        return [
+            cls.rebuild_chart_block_for_geography(
+                chart_block=chart_block, geography_data=geography_data
+            )
+            for chart_block in all_chart_blocks_from_section
+        ]
+
+    @classmethod
+    def rebuild_chart_block_for_geography(
+        cls, chart_block: CMS_COMPONENT_BLOCK_TYPE, geography_data: GeographyData
+    ) -> CMS_COMPONENT_BLOCK_TYPE:
+        """Builds a copy of the given `chart_block` with the `geography_data` applied
+
+        Args:
+            chart_block:
+                A single chart block which could be crawled accordingly.
+                Note that this blocks may still also contain headline
+                blocks within it.
+            geography_data:
+                An enriched `GeographyData` model,
+                containing the name of the geography
+                and its parent geography type.
+
+        Returns:
+            The single chart block with the `geograpy_data`
+            injected into the geography fields on each
+            plot of the chart block.
+
+        """
+        chart_block_with_geography = copy.deepcopy(chart_block)
+        for plot in chart_block_with_geography["chart"]:
+            plot["value"]["geography_type"] = geography_data.geography_type_name
+            plot["value"]["geography"] = geography_data.name
+
+        return chart_block_with_geography
 
     @classmethod
     def get_all_chart_blocks_from_section(
