@@ -289,7 +289,9 @@ class TestCheckCacheForAllPages:
         # Then
         spy_create_crawler_for_cache_checking_only.assert_called_once()
         expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
-        spy_crawl_all_pages.assert_called_once_with(private_api_crawler=expected_crawler)
+        spy_crawl_all_pages.assert_called_once_with(
+            private_api_crawler=expected_crawler
+        )
 
 
 class TestForceCacheRefreshForAllPages:
@@ -317,7 +319,9 @@ class TestForceCacheRefreshForAllPages:
         # Then
         spy_create_crawler_for_force_cache_refresh.assert_called_once()
         expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
-        spy_crawl_all_pages.assert_called_once_with(private_api_crawler=expected_crawler)
+        spy_crawl_all_pages.assert_called_once_with(
+            private_api_crawler=expected_crawler
+        )
 
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
@@ -349,7 +353,9 @@ class TestForceCacheRefreshForAllPages:
         # The cache should flushed before crawling the pages
         expected_calls = [
             mock.call.cache_management_clear(),
-            mock.call.crawl_all_pages(crawler=mocked_created_crawler.return_value),
+            mock.call.crawl_all_pages(
+                private_api_crawler=mocked_created_crawler.return_value
+            ),
         ]
         spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
 
