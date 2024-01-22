@@ -330,7 +330,7 @@ class TestForceCacheRefreshForAllPages:
         self,
         spy_cache_management_clear: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
-        mocked_created_crawler: mock.MagicMock,
+        mocked_created_private_api_crawler: mock.MagicMock,
     ):
         """
         Given no input
@@ -354,7 +354,7 @@ class TestForceCacheRefreshForAllPages:
         expected_calls = [
             mock.call.cache_management_clear(),
             mock.call.crawl_all_pages(
-                private_api_crawler=mocked_created_crawler.return_value
+                private_api_crawler=mocked_created_private_api_crawler.return_value
             ),
         ]
         spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
