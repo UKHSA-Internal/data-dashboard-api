@@ -62,6 +62,22 @@ def collect_all_pages(
     return pages
 
 
+def extract_topic_pages_from_all_pages(
+    all_pages: ALL_PAGE_TYPES,
+) -> list[TopicPage]:
+    """Builds a new list containing only the `TopicPage` models from the given `all_pages` iterable
+
+    Args:
+        all_pages: Iterable of a mixture of page types
+
+    Returns:
+        List of `TopicPage` models contained
+        within the given `all_pages` iterable
+
+    """
+    return [page for page in all_pages if isinstance(page, TopicPage)]
+
+
 def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
     """Parses the CMS blocks for all pages with the given `crawler`
 
@@ -71,8 +87,9 @@ def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
         - All live/published topic pages
 
     Args:
-        crawler: A `Crawler` object which will be used to
-            orchestrate the various calls required to parse each page
+        crawler: A `PrivateAPICrawler` object which will be used
+            to process and crawl the various CMS blocks
+            which are required to parse each page
 
     Returns:
         None

@@ -7,6 +7,7 @@ from caching.private_api.handlers import (
     _crawl_all_pages,
     check_cache_for_all_pages,
     collect_all_pages,
+    extract_topic_pages_from_all_pages,
     force_cache_refresh_for_all_pages,
     get_all_downloads,
 )
@@ -184,6 +185,29 @@ class TestCollectAllPages:
         assert published_home_page in collected_pages
         assert published_covid_page in collected_pages
         assert unpublished_page not in collected_pages
+
+
+class TestExtractTopicPagesFromAllPages:
+    def test_returns_for_topic_pages_only(self):
+        """
+        Given a list of pages of different types
+            including a `TopicPage`
+        When `extract_topic_pages_from_all_pages()` is called
+        Then only the `TopicPage` models are returned
+        """
+        # Given
+        topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+        other_pages = [
+            FakeHomePageFactory.build_blank_page(slug="dashboard"),
+            FakeWhatsNewParentPageFactory.build_page_from_template(live=True),
+        ]
+        all_pages = other_pages + [topic_page]
+
+        # When
+        topic_pages = extract_topic_pages_from_all_pages(all_pages=all_pages)
+
+        # Then
+        assert topic_pages == [topic_page]
 
 
 class TestCrawlAllPages:
