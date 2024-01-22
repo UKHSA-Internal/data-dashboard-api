@@ -227,7 +227,7 @@ class TestCrawlAllPages:
         spy_crawler = mock.Mock()
 
         # When
-        _crawl_all_pages(crawler=spy_crawler)
+        _crawl_all_pages(private_api_crawler=spy_crawler)
 
         # Then
         # Check that all pages are collected
@@ -257,7 +257,7 @@ class TestCrawlAllPages:
         mocked_collect_all_pages.return_value = []
 
         # When
-        _crawl_all_pages(crawler=mocked_crawler)
+        _crawl_all_pages(private_api_crawler=mocked_crawler)
 
         # Then
         assert "Commencing refresh of cache" in caplog.text
