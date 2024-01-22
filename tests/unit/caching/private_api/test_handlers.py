@@ -265,7 +265,7 @@ class TestCrawlAllPages:
 
 
 class TestCheckCacheForAllPages:
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
     def test_delegates_calls_successfully(
         self,
@@ -275,7 +275,7 @@ class TestCheckCacheForAllPages:
         """
         Given no input
         When `check_cache_for_all_pages()` is called
-        Then the correct crawler is passed to `_crawl_all_pages()`
+        Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
             `spy_create_crawler_for_cache_checking_only`: To assert that
@@ -293,7 +293,7 @@ class TestCheckCacheForAllPages:
 
 
 class TestForceCacheRefreshForAllPages:
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
     def test_delegates_calls_successfully(
         self,
@@ -303,7 +303,7 @@ class TestForceCacheRefreshForAllPages:
         """
         Given no input
         When `force_cache_refresh_for_all_pages()` is called
-        Then the correct crawler is passed to `_crawl_all_pages()`
+        Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
             `spy_create_crawler_for_force_cache_refresh`: To assert that
@@ -320,7 +320,7 @@ class TestForceCacheRefreshForAllPages:
         spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
 
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(CacheManagement, "clear")
     def test_clears_cache_prior_to_crawler(
         self,
@@ -332,7 +332,7 @@ class TestForceCacheRefreshForAllPages:
         Given no input
         When `check_cache_for_all_pages()` is called
         Then `clear()` is called from a `CacheManagement` object
-            before the call is made to `_crawl_all_pages()`
+            before the call is made to `crawl_all_pages()`
         """
         # Given
         spy_manager = mock.Mock()
@@ -353,7 +353,7 @@ class TestForceCacheRefreshForAllPages:
         ]
         spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
 
-        # `_crawl_all_pages()` should only have been called once
+        # `crawl_all_pages()` should only have been called once
         spy_crawl_all_pages.assert_called_once()
 
 
