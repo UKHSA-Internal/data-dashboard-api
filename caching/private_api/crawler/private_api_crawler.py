@@ -95,7 +95,7 @@ class PrivateAPICrawler:
         )
         logger.info("Completed processing of headless CMS API")
 
-        self._geography_api_crawler.process_geographies_api()
+        self.geography_api_crawler.process_geographies_api()
         logger.info(
             "Completed processing of geographies API, now handling content blocks"
         )
