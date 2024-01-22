@@ -28,7 +28,7 @@ class CMSBlockParser:
             section: The section component from the CMS
 
         Returns:
-            A list of chart card dictionaries
+            A list of chart block dictionaries
 
         """
         chart_row_cards = cls.get_chart_row_cards_from_page_section(section=section)
