@@ -5,7 +5,10 @@ from typing import Self
 from caching.internal_api_client import InternalAPIClient
 from caching.private_api.crawler.cms_blocks import CMSBlockParser
 from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
-from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.geographies_crawler import (
+    GeographiesAPICrawler,
+    GeographyData,
+)
 from caching.private_api.crawler.headless_cms_api import HeadlessCMSAPICrawler
 from caching.private_api.crawler.type_hints import (
     CHART_DOWNLOAD,
