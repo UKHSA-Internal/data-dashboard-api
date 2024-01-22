@@ -14,7 +14,7 @@ distlib==0.3.8
 django-cors-headers==4.3.1
 django-db-connection-pool==1.2.4
 django-filter==23.5
-django-modelcluster==6.1
+django-modelcluster==6.2.1
 django-permissionedforms==0.1
 django-taggit==3.1.0
 django-treebeard==4.7
@@ -29,7 +29,7 @@ grimp==3.2
 gunicorn==21.2.0
 html5lib==1.1
 identify==2.5.30
-idna==3.4
+idna==3.6
 importlib-metadata==6.8.0
 inflection==0.5.1
 iniconfig==2.0.0
@@ -71,7 +71,7 @@ PyYAML==6.0.1
 redis==5.0.1
 requests==2.31.0
 rich==13.6.0
-ruamel.yaml==0.18.2
+ruamel.yaml==0.18.5
 ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.22
 scour==0.38.2
