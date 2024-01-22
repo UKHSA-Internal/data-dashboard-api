@@ -1,6 +1,39 @@
 from unittest import mock
 
-from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.geographies_crawler import (
+    GeographiesAPICrawler,
+    GeographyData,
+    GeographyTypeData,
+)
+
+
+class TestGeographyTypeData:
+    def test_export_all_geography_combinations(self):
+        """
+        Given an enriched `GeographyTypeData` model
+        When `export_all_geography_combinations()` is called
+            from the `GeographyTypeData` model
+        Then the correct `GeographyData` models are returned
+        """
+        # Given
+        geography_type_name = "Nation"
+        geography_names = ["England", "Wales"]
+        geography_type_data = GeographyTypeData(
+            name=geography_type_name,
+            geography_names=geography_names,
+        )
+
+        # When
+        all_geography_combinations = (
+            geography_type_data.export_all_geography_combinations()
+        )
+
+        # Then
+        expected_geography_combinations = [
+            GeographyData(name=x, geography_type_name=geography_type_name)
+            for x in geography_names
+        ]
+        assert all_geography_combinations == expected_geography_combinations
 
 
 class TestGeographiesAPICrawler:

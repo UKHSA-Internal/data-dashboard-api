@@ -21,6 +21,12 @@ class GeographyTypeData:
     name: str
     geography_names: list[str]
 
+    def export_all_geography_combinations(self) -> list[GeographyData]:
+        return [
+            GeographyData(name=geography_name, geography_type_name=self.name)
+            for geography_name in self.geography_names
+        ]
+
 
 class GeographiesAPICrawler:
     """Crawls the `geographies/types` endpoints for all possible combinations"""
