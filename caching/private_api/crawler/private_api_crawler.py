@@ -2,21 +2,34 @@ import logging
 import re
 from typing import Self
 
-from caching.internal_api_client import InternalAPIClient
-from caching.private_api.crawler.cms_blocks import CMSBlockParser
-from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
-from caching.private_api.crawler.geographies_crawler import (
+import django
+
+django.setup()
+# File descriptors & db connections are not copied from the parent
+# as they are when `forking` instead of `spawning`.
+# So `django.setup()` is required prior any models being imported
+# This is because we spawn multiple processes when crawling the private API
+# for all the available geography combinations.
+
+from caching.internal_api_client import InternalAPIClient  # noqa: E402
+from caching.private_api.crawler.cms_blocks import CMSBlockParser  # noqa: E402
+from caching.private_api.crawler.dynamic_block_crawler import (  # noqa: E402
+    DynamicContentBlockCrawler,
+)
+from caching.private_api.crawler.geographies_crawler import (  # noqa: E402
     GeographiesAPICrawler,
     GeographyData,
 )
-from caching.private_api.crawler.headless_cms_api import HeadlessCMSAPICrawler
-from caching.private_api.crawler.type_hints import (
+from caching.private_api.crawler.headless_cms_api import (  # noqa: E402
+    HeadlessCMSAPICrawler,
+)
+from caching.private_api.crawler.type_hints import (  # noqa: E402
     CHART_DOWNLOAD,
     CMS_COMPONENT_BLOCK_TYPE,
 )
-from cms.common.models import CommonPage
-from cms.home.models import HomePage
-from cms.topic.models import TopicPage
+from cms.common.models import CommonPage  # noqa: E402
+from cms.home.models import HomePage  # noqa: E402
+from cms.topic.models import TopicPage  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
