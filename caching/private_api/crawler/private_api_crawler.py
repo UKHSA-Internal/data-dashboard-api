@@ -41,6 +41,10 @@ class PrivateAPICrawler:
         dynamic_content_block_crawler: DynamicContentBlockCrawler | None = None,
     ):
         self._internal_api_client = internal_api_client or InternalAPIClient()
+        self._cms_block_parser = cms_block_parser or CMSBlockParser()
+        self._geography_api_crawler = GeographiesAPICrawler(
+            internal_api_client=self._internal_api_client
+        )
         self._headless_cms_api_crawler = HeadlessCMSAPICrawler(
             internal_api_client=self._internal_api_client
         )
@@ -49,10 +53,6 @@ class PrivateAPICrawler:
             or DynamicContentBlockCrawler(
                 internal_api_client=self._internal_api_client,
             )
-        )
-        self.cms_block_parser = cms_block_parser or CMSBlockParser()
-        self.geography_api_crawler = GeographiesAPICrawler(
-            internal_api_client=self._internal_api_client
         )
 
     # Class constructors
@@ -98,7 +98,7 @@ class PrivateAPICrawler:
         )
         logger.info("Completed processing of headless CMS API")
 
-        self.geography_api_crawler.process_geographies_api()
+        self._geography_api_crawler.process_geographies_api()
         logger.info(
             "Completed processing of geographies API, now handling content blocks"
         )
@@ -159,7 +159,7 @@ class PrivateAPICrawler:
         """
         # Gather all headline number blocks in this section of the page
         headline_number_blocks = (
-            self.cms_block_parser.get_all_headline_blocks_from_section(section=section)
+            self._cms_block_parser.get_all_headline_blocks_from_section(section=section)
         )
         # Process each of the headline number blocks which were gathered
         self._dynamic_content_block_crawler.process_all_headline_number_blocks(
@@ -168,7 +168,7 @@ class PrivateAPICrawler:
 
         # Gather all chart blocks in this section of the page
         chart_blocks = (
-            self.cms_block_parser.get_all_chart_blocks_from_section_for_geography(
+            self._cms_block_parser.get_all_chart_blocks_from_section_for_geography(
                 section=section, geography_data=geography_data
             )
         )
@@ -304,7 +304,7 @@ class PrivateAPICrawler:
 
         for section in sections:
             chart_row_cards = (
-                self.cms_block_parser.get_chart_row_cards_from_page_section(
+                self._cms_block_parser.get_chart_row_cards_from_page_section(
                     section=section
                 )
             )

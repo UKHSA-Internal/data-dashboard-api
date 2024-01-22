@@ -51,7 +51,7 @@ class TestPrivateAPICrawlerInit:
         crawler = PrivateAPICrawler()
 
         # Then
-        assert isinstance(crawler.cms_block_parser, CMSBlockParser)
+        assert isinstance(crawler._cms_block_parser, CMSBlockParser)
 
     def test_dynamic_content_block_crawler_is_created_when_not_provided_to_init(self):
         """
@@ -82,7 +82,7 @@ class TestPrivateAPICrawlerInit:
         crawler = PrivateAPICrawler(internal_api_client=mocked_internal_api_client)
 
         # Then
-        geographies_api_crawler = crawler.geography_api_crawler
+        geographies_api_crawler = crawler._geography_api_crawler
         assert isinstance(geographies_api_crawler, GeographiesAPICrawler)
         assert (
             geographies_api_crawler._internal_api_client == mocked_internal_api_client
