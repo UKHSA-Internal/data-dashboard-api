@@ -116,25 +116,39 @@ class PrivateAPICrawler:
 
     # Process sections
 
-    def process_all_sections_in_page(self, page: HomePage | TopicPage) -> None:
+    def process_all_sections_in_page(
+        self, page: HomePage | TopicPage, geography_data: GeographyData | None = None
+    ) -> None:
         """Makes requests to each individual content item within each section of the given `page`
 
         Args:
             page: The `Page` instance to be processed
+            geography_data: The `GeographyData` describing
+                the geography to apply to the given `page`
+                If provided as None, then the original blocks
+                throughout the `page` will be processed
 
         Returns:
             None
 
         """
         for section in page.body.raw_data:
-            self.process_section(section=section)
+            self.process_section(section=section, geography_data=geography_data)
 
-    def process_section(self, section: dict[list[CMS_COMPONENT_BLOCK_TYPE]]) -> None:
+    def process_section(
+        self,
+        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
+        geography_data: GeographyData | None = None,
+    ) -> None:
         """Makes requests to each individual content item within the given `section`
 
         Args:
             section: The `dict containing the CMS information
                 about the section contents
+            geography_data: The `GeographyData` describing
+                the geography to apply to the given `section`
+                If provided as None, then the original blocks
+                in the `section` will be processed
 
         Returns:
             None
