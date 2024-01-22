@@ -109,10 +109,10 @@ class TestPrivateAPICrawlerProcessSections:
 
     def test_process_section_delegates_calls_for_chart_blocks(self):
         """
-        Given a mocked section
+        Given a mocked section and no explicit `GeographyData`
         When `process_all_sections_in_page()` is called
             from an instance of `PrivateAPICrawler`
-        Then `get_all_chart_blocks_from_section()`
+        Then `get_all_chart_blocks_from_section_for_geography()`
             is called from the `CMSBlockParser`
         And these blocks are passed to
             `process_all_chart_blocks()` from the
@@ -132,12 +132,15 @@ class TestPrivateAPICrawlerProcessSections:
         private_api_crawler.process_section(section=mocked_section)
 
         # Then
-        spy_cms_block_parser.get_all_chart_blocks_from_section.assert_called_once_with(
-            section=mocked_section
+        spy_cms_block_parser.get_all_chart_blocks_from_section_for_geography.assert_called_once_with(
+            section=mocked_section,
+            geography_data=None,
         )
+        # Note that when the `geography_data` is given as None
+        # then we expect to extract the base chart blocks from the section
 
         expected_chart_blocks = (
-            spy_cms_block_parser.get_all_chart_blocks_from_section.return_value
+            spy_cms_block_parser.get_all_chart_blocks_from_section_for_geography.return_value
         )
         spy_dynamic_content_block_crawler.process_all_chart_blocks.assert_called_once_with(
             chart_blocks=expected_chart_blocks
