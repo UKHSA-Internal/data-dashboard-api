@@ -5,7 +5,10 @@ from typing import Self
 from caching.internal_api_client import InternalAPIClient
 from caching.private_api.crawler.cms_blocks import CMSBlockParser
 from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
-from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
+from caching.private_api.crawler.geographies_crawler import (
+    GeographiesAPICrawler,
+    GeographyData,
+)
 from caching.private_api.crawler.headless_cms_api import HeadlessCMSAPICrawler
 from caching.private_api.crawler.type_hints import (
     CHART_DOWNLOAD,
@@ -116,25 +119,39 @@ class PrivateAPICrawler:
 
     # Process sections
 
-    def process_all_sections_in_page(self, page: HomePage | TopicPage) -> None:
+    def process_all_sections_in_page(
+        self, page: HomePage | TopicPage, geography_data: GeographyData | None = None
+    ) -> None:
         """Makes requests to each individual content item within each section of the given `page`
 
         Args:
             page: The `Page` instance to be processed
+            geography_data: The `GeographyData` describing
+                the geography to apply to the given `page`
+                If provided as None, then the original blocks
+                throughout the `page` will be processed
 
         Returns:
             None
 
         """
         for section in page.body.raw_data:
-            self.process_section(section=section)
+            self.process_section(section=section, geography_data=geography_data)
 
-    def process_section(self, section: dict[list[CMS_COMPONENT_BLOCK_TYPE]]) -> None:
+    def process_section(
+        self,
+        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
+        geography_data: GeographyData | None = None,
+    ) -> None:
         """Makes requests to each individual content item within the given `section`
 
         Args:
             section: The `dict containing the CMS information
                 about the section contents
+            geography_data: The `GeographyData` describing
+                the geography to apply to the given `section`
+                If provided as None, then the original blocks
+                in the `section` will be processed
 
         Returns:
             None
@@ -150,9 +167,12 @@ class PrivateAPICrawler:
         )
 
         # Gather all chart blocks in this section of the page
-        chart_blocks = self._cms_block_parser.get_all_chart_blocks_from_section(
-            section=section
+        chart_blocks = (
+            self._cms_block_parser.get_all_chart_blocks_from_section_for_geography(
+                section=section, geography_data=geography_data
+            )
         )
+
         # Process each of the chart blocks which were gathered
         self._dynamic_content_block_crawler.process_all_chart_blocks(
             chart_blocks=chart_blocks

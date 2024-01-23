@@ -5,9 +5,27 @@ from caching.internal_api_client import InternalAPIClient
 
 
 @dataclass
+class GeographyData:
+    name: str
+    geography_type_name: str
+
+    def __eq__(self, other: "GeographyData") -> bool:
+        return (
+            self.name == other.name
+            and self.geography_type_name == other.geography_type_name
+        )
+
+
+@dataclass
 class GeographyTypeData:
     name: str
     geography_names: list[str]
+
+    def export_all_geography_combinations(self) -> list[GeographyData]:
+        return [
+            GeographyData(name=geography_name, geography_type_name=self.name)
+            for geography_name in self.geography_names
+        ]
 
 
 class GeographiesAPICrawler:
