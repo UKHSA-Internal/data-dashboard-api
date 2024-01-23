@@ -66,20 +66,28 @@ def collect_all_pages(
     return pages
 
 
-def extract_topic_pages_from_all_pages(
-    all_pages: ALL_PAGE_TYPES,
+def get_covid_page_only(
+    topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
 ) -> list[TopicPage]:
-    """Builds a new list containing only the `TopicPage` models from the given `all_pages` iterable
+    """Fetches the COVID-19 `TopicPage` model
+
+    Notes:
+        This is a temporary measure to filter for only the
+        COVID-19 `TopicPage`.
+        Whilst the area selector feature is being redesigned
+        for the other `TopicPages`, the crawler will only
+        process the geography/page combinations for COVID-19 data.
 
     Args:
-        all_pages: Iterable of a mixture of page types
+        topic_page_manager: The model manager for the `TopicPage` model
+            Defaults to the concrete `TopicPageManager`
+            via `TopicPage.objects`
 
     Returns:
-        List of `TopicPage` models contained
-        within the given `all_pages` iterable
+        The `TopicPage` model for the COVID-19 page
 
     """
-    return [page for page in all_pages if isinstance(page, TopicPage)]
+    return topic_page_manager.get_covid_page()
 
 
 def crawl_all_pages(
@@ -111,11 +119,9 @@ def crawl_all_pages(
     all_pages: ALL_PAGE_TYPES = collect_all_pages()
     private_api_crawler.process_pages(pages=all_pages)
 
-    if os.environ.get("ENABLE_AREA_SELECTOR"):
-        topic_pages: list[TopicPage] = extract_topic_pages_from_all_pages(
-            all_pages=all_pages
-        )
-        area_selector_orchestrator.process_pages(pages=topic_pages)
+    if os.environ.get("ENABLE_AREA_SELECTOR", False):
+        covid_page: TopicPage = get_covid_page_only()
+        area_selector_orchestrator.process_pages(pages=[covid_page])
 
     duration: float = default_timer() - start
     logging.info("Finished refreshing of cache in %s seconds", round(duration, 2))

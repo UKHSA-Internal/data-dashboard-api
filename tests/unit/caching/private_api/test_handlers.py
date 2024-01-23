@@ -7,9 +7,9 @@ from caching.private_api.handlers import (
     check_cache_for_all_pages,
     collect_all_pages,
     crawl_all_pages,
-    extract_topic_pages_from_all_pages,
     force_cache_refresh_for_all_pages,
     get_all_downloads,
+    get_covid_page_only,
 )
 from caching.private_api.management import CacheManagement
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
@@ -187,27 +187,25 @@ class TestCollectAllPages:
         assert unpublished_page not in collected_pages
 
 
-class TestExtractTopicPagesFromAllPages:
-    def test_returns_for_topic_pages_only(self):
+class TestGetCovidPageOnly:
+    def test_returns_covid_page_only(self):
         """
-        Given a list of pages of different types
-            including a `TopicPage`
-        When `extract_topic_pages_from_all_pages()` is called
-        Then only the `TopicPage` models are returned
+        Given a `TopicPageManager`
+        When `get_covid_page_only()` is called
+        Then only the COVID-19 `TopicPage` model is returned
         """
         # Given
-        topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
-        other_pages = [
-            FakeHomePageFactory.build_blank_page(slug="dashboard"),
-            FakeWhatsNewParentPageFactory.build_page_from_template(live=True),
-        ]
-        all_pages = other_pages + [topic_page]
+        covid_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+        influenza_page = FakeTopicPageFactory.build_influenza_page_from_template()
+        fake_topic_page_manager = FakeTopicPageManager(
+            pages=[covid_page, influenza_page]
+        )
 
         # When
-        topic_pages = extract_topic_pages_from_all_pages(all_pages=all_pages)
+        topic_pages = get_covid_page_only(topic_page_manager=fake_topic_page_manager)
 
         # Then
-        assert topic_pages == [topic_page]
+        assert topic_pages == covid_page
 
 
 class TestCrawlAllPages:
@@ -239,12 +237,12 @@ class TestCrawlAllPages:
         # And then those pages are passed to be processed
         spy_crawler.process_pages.assert_called_once_with(pages=collected_pages)
 
-    @mock.patch(f"{MODULE_PATH}.extract_topic_pages_from_all_pages")
+    @mock.patch(f"{MODULE_PATH}.get_covid_page_only")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_delegates_calls_successfully_when_area_selector_is_activated(
         self,
         spy_collect_all_pages: mock.MagicMock,
-        spy_extract_topic_pages_from_all_pages: mock.MagicMock,
+        spy_get_covid_page_only: mock.MagicMock,
         monkeypatch,
     ):
         """
@@ -257,9 +255,8 @@ class TestCrawlAllPages:
         Patches:
             `spy_collect_all_pages`: To isolate the collected pages
                 and pass to the assertion on `spy_crawl_pages`
-            `spy_extract_topic_pages_from_all_pages`: To extract the
-                topic pages from the previously retrieved pages
-
+            `spy_get_covid_page_only`: To check the COVID-19 page only
+                is extracted and passed to the `AreaSelectorOrchestrator`
         """
         # Given
         spy_private_api_crawler = mock.Mock()
@@ -281,13 +278,12 @@ class TestCrawlAllPages:
             pages=all_collected_pages
         )
 
-        # Check that the topic pages are extracted
-        spy_extract_topic_pages_from_all_pages.assert_called_once_with(
-            all_pages=all_collected_pages
-        )
-        # And then those topic pages are passed to the `AreaSelectorOrchestrator`
+        # Check that the COVID-19 page is extracted
+        spy_get_covid_page_only.assert_called_once()
+        # And then the COVID-19 topic page is passed
+        # to the `AreaSelectorOrchestrator` as a list of 1 page
         spy_area_selector_orchestrator.process_pages.assert_called_once_with(
-            pages=spy_extract_topic_pages_from_all_pages.return_value
+            pages=[spy_get_covid_page_only.return_value]
         )
 
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")

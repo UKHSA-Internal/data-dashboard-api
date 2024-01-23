@@ -14,3 +14,9 @@ class FakeTopicPageManager(TopicPageManager):
 
     def get_live_pages(self) -> list[FakeTopicPage]:
         return [page for page in self.pages if page.live]
+
+    def get_covid_page(self) -> FakeTopicPage | None:
+        try:
+            return next(x for x in self.get_live_pages() if x.title == "COVID-19")
+        except StopIteration:
+            return None
