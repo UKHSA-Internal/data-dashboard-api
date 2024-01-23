@@ -7,7 +7,7 @@ import django
 django.setup()
 # File descriptors & db connections are not copied from the parent
 # as they are when `forking` instead of `spawning`.
-# So `django.setup()` is required prior any models being imported
+# So `django.setup()` is required prior to any models being imported
 # This is because we spawn multiple processes when crawling the private API
 # for all the available geography combinations.
 
