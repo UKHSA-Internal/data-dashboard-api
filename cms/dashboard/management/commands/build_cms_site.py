@@ -10,6 +10,7 @@ from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
+from cms.composite.models import CompositePage, CompositeRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
@@ -130,6 +131,29 @@ def _create_common_page(name: str, parent_page: Page) -> CommonPage:
     return page
 
 
+def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
+    data = open_example_page_response(page_name=name)
+
+    page = CompositePage(
+        body=data["body"],
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        date_posted=data["meta"]["first_published_at"].split("T")[0],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _create_related_links(
+        related_link_class=CompositeRelatedLink,
+        response_data=data,
+        page=page,
+    )
+
+    return page
+
+
 def _create_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParentPage:
     data = open_example_page_response(page_name=name)
 
@@ -218,6 +242,8 @@ class Command(BaseCommand):
         whats_new_parent_page = _create_whats_new_parent_page(
             name="whats_new", parent_page=root_page
         )
+
+        _create_composite_page(name="bulk_downloads", parent_page=root_page)
 
         _create_whats_new_child_entry(
             name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",

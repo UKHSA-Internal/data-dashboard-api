@@ -1,4 +1,5 @@
 from wagtail import blocks
+from wagtail.snippets.blocks import SnippetChooserBlock
 
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.components import (
@@ -37,3 +38,16 @@ class MetricNumberBlockTypes(blocks.StructBlock):
 
 class MetricNumberBlock(blocks.StreamBlock):
     column = MetricNumberBlockTypes()
+
+
+class ButtonChooserBlock(SnippetChooserBlock):
+    def get_api_representation(self, value, context=None) -> dict | None:
+        if value:
+            return {
+                "text": value.text,
+                "loading_text": value.loading_text,
+                "endpoint": value.endpoint,
+                "method": value.method,
+                "button_type": value.button_type,
+            }
+        return None
