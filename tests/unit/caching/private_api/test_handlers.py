@@ -4,9 +4,10 @@ from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.handlers import (
-    _crawl_all_pages,
     check_cache_for_all_pages,
     collect_all_pages,
+    crawl_all_pages,
+    extract_topic_pages_from_all_pages,
     force_cache_refresh_for_all_pages,
     get_all_downloads,
 )
@@ -186,12 +187,35 @@ class TestCollectAllPages:
         assert unpublished_page not in collected_pages
 
 
+class TestExtractTopicPagesFromAllPages:
+    def test_returns_for_topic_pages_only(self):
+        """
+        Given a list of pages of different types
+            including a `TopicPage`
+        When `extract_topic_pages_from_all_pages()` is called
+        Then only the `TopicPage` models are returned
+        """
+        # Given
+        topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+        other_pages = [
+            FakeHomePageFactory.build_blank_page(slug="dashboard"),
+            FakeWhatsNewParentPageFactory.build_page_from_template(live=True),
+        ]
+        all_pages = other_pages + [topic_page]
+
+        # When
+        topic_pages = extract_topic_pages_from_all_pages(all_pages=all_pages)
+
+        # Then
+        assert topic_pages == [topic_page]
+
+
 class TestCrawlAllPages:
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
         """
         Given a mocked `Crawler` object
-        When `_crawl_all_pages()` is called
+        When `crawl_all_pages()` is called
         Then calls are delegated to `collect_all_pages()`
         And to the `process_pages()` method on the `Crawler` object
 
@@ -203,7 +227,7 @@ class TestCrawlAllPages:
         spy_crawler = mock.Mock()
 
         # When
-        _crawl_all_pages(crawler=spy_crawler)
+        crawl_all_pages(private_api_crawler=spy_crawler)
 
         # Then
         # Check that all pages are collected
@@ -221,7 +245,7 @@ class TestCrawlAllPages:
     ):
         """
         Given no pages to be cached
-        When `_crawl_all_pages()` is called
+        When `crawl_all_pages()` is called
         Then the correct log statements are made
 
         Patches:
@@ -233,7 +257,7 @@ class TestCrawlAllPages:
         mocked_collect_all_pages.return_value = []
 
         # When
-        _crawl_all_pages(crawler=mocked_crawler)
+        crawl_all_pages(private_api_crawler=mocked_crawler)
 
         # Then
         assert "Commencing refresh of cache" in caplog.text
@@ -241,7 +265,7 @@ class TestCrawlAllPages:
 
 
 class TestCheckCacheForAllPages:
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
     def test_delegates_calls_successfully(
         self,
@@ -251,7 +275,7 @@ class TestCheckCacheForAllPages:
         """
         Given no input
         When `check_cache_for_all_pages()` is called
-        Then the correct crawler is passed to `_crawl_all_pages()`
+        Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
             `spy_create_crawler_for_cache_checking_only`: To assert that
@@ -265,11 +289,13 @@ class TestCheckCacheForAllPages:
         # Then
         spy_create_crawler_for_cache_checking_only.assert_called_once()
         expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
-        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+        spy_crawl_all_pages.assert_called_once_with(
+            private_api_crawler=expected_crawler
+        )
 
 
-class TestHydrateCacheForAllPages:
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+class TestForceCacheRefreshForAllPages:
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
     def test_delegates_calls_successfully(
         self,
@@ -279,7 +305,7 @@ class TestHydrateCacheForAllPages:
         """
         Given no input
         When `force_cache_refresh_for_all_pages()` is called
-        Then the correct crawler is passed to `_crawl_all_pages()`
+        Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
             `spy_create_crawler_for_force_cache_refresh`: To assert that
@@ -293,22 +319,24 @@ class TestHydrateCacheForAllPages:
         # Then
         spy_create_crawler_for_force_cache_refresh.assert_called_once()
         expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
-        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+        spy_crawl_all_pages.assert_called_once_with(
+            private_api_crawler=expected_crawler
+        )
 
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(CacheManagement, "clear")
     def test_clears_cache_prior_to_crawler(
         self,
         spy_cache_management_clear: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
-        mocked_created_crawler: mock.MagicMock,
+        mocked_created_private_api_crawler: mock.MagicMock,
     ):
         """
         Given no input
         When `check_cache_for_all_pages()` is called
         Then `clear()` is called from a `CacheManagement` object
-            before the call is made to `_crawl_all_pages()`
+            before the call is made to `crawl_all_pages()`
         """
         # Given
         spy_manager = mock.Mock()
@@ -325,11 +353,13 @@ class TestHydrateCacheForAllPages:
         # The cache should flushed before crawling the pages
         expected_calls = [
             mock.call.cache_management_clear(),
-            mock.call.crawl_all_pages(crawler=mocked_created_crawler.return_value),
+            mock.call.crawl_all_pages(
+                private_api_crawler=mocked_created_private_api_crawler.return_value
+            ),
         ]
         spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
 
-        # `_crawl_all_pages()` should only have been called once
+        # `crawl_all_pages()` should only have been called once
         spy_crawl_all_pages.assert_called_once()
 
 
