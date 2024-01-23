@@ -67,25 +67,6 @@ class TestChartsInterface:
             == spy_generate_line_with_shaded_section_chart.return_value
         )
 
-    def test_generate_chart_figure_raises_error_for_waffle_chart_selection(
-        self, fake_plots_collection: PlotsCollection
-    ):
-        """
-        Given a requirement for a `waffle` chart
-        When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
-        Then a `NotImplementedError` is raised
-        """
-        # Given
-        fake_plots_collection.plots[0].chart_type = ChartTypes.waffle.value
-        charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
-        )
-
-        # When
-        with pytest.raises(NotImplementedError):
-            charts_interface.generate_chart_figure()
-
     @mock.patch.object(ChartsInterface, "generate_bar_chart")
     def test_generate_chart_figure_delegates_call_for_bar(
         self,
