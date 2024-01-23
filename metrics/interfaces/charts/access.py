@@ -10,7 +10,6 @@ from metrics.domain.charts import (
     bar,
     line_multi_coloured,
     line_with_shaded_section,
-    waffle,
 )
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.utils import ChartTypes
