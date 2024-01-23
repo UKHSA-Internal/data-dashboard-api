@@ -38,7 +38,6 @@ class ChartTypes(Enum):
 
         """
         selectable = (
-            cls.waffle,
             cls.line_multi_coloured,
             cls.bar,
             cls.line_with_shaded_section,
