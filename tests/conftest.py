@@ -74,13 +74,14 @@ def fake_plot_data() -> PlotData:
         x_axis="metric",
         y_axis="date",
     )
-    x_values = [1, 2, 4, 5, 5, 2, 1]
+    y_axis_values = [1, 2, 4, 5, 5, 2, 1]
     return PlotData(
         parameters=plot_params,
         x_axis_values=[
-            datetime.date(year=2023, month=1, day=i + 1) for i in range(len(x_values))
+            datetime.date(year=2023, month=1, day=i + 1)
+            for i in range(len(y_axis_values))
         ],
-        y_axis_values=[1, 2, 4, 5, 5, 2, 1],
+        y_axis_values=y_axis_values,
     )
 
 
