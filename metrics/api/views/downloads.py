@@ -100,7 +100,7 @@ class BulkDownloadsView(APIView):
         parameters=[BulkDownloadsSerializer],
         tags=[DOWNLOADS_API_TAG],
     )
-    def get(self, request, *args, **kargs):
+    def get(self, request, *args, **kwargs):
         """This endpoint can be used to get all downloads from the current dashboard and return them in a zip file
 
         Note this endpoint will return a zipfile containing a collection of folders based on page names, each
