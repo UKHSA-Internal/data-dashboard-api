@@ -140,7 +140,7 @@ There are a number of different options available for this setting:
 - `"PRIVATE_API"` - Deployment of the private API, which will only be used by the front end application.
 - `"PUBLIC_API"` - Deploying the hyperlinked browsable public API.
 - `"FEEDBACK_API"` - Deployment of the feedback API, which will only be used by the front end application for submitting user suggestion feedback.`
-- `"BACKEND_UTILITY_WORKER"` - Deployment of the backend workload in its entirety. Used for tasks like flushing the private API cache.
+- `"UTILITY_WORKER"` - Deployment of the backend workload in its entirety. Used for tasks like flushing the private API cache.
 
 Note that the same image is used to deploy each of these services. 
 The `APP_MODE` environment variable is used to toggle certain groups of endpoints off depending on the value being set.
