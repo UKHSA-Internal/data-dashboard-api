@@ -2,18 +2,34 @@ import logging
 import re
 from typing import Self
 
-from caching.internal_api_client import InternalAPIClient
-from caching.private_api.crawler.cms_blocks import CMSBlockParser
-from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
-from caching.private_api.crawler.geographies_crawler import GeographiesAPICrawler
-from caching.private_api.crawler.headless_cms_api import HeadlessCMSAPICrawler
-from caching.private_api.crawler.type_hints import (
+import django
+
+django.setup()
+# File descriptors & db connections are not copied from the parent
+# as they are when `forking` instead of `spawning`.
+# So `django.setup()` is required prior to any models being imported
+# This is because we spawn multiple processes when crawling the private API
+# for all the available geography combinations.
+
+from caching.internal_api_client import InternalAPIClient  # noqa: E402
+from caching.private_api.crawler.cms_blocks import CMSBlockParser  # noqa: E402
+from caching.private_api.crawler.dynamic_block_crawler import (  # noqa: E402
+    DynamicContentBlockCrawler,
+)
+from caching.private_api.crawler.geographies_crawler import (  # noqa: E402
+    GeographiesAPICrawler,
+    GeographyData,
+)
+from caching.private_api.crawler.headless_cms_api import (  # noqa: E402
+    HeadlessCMSAPICrawler,
+)
+from caching.private_api.crawler.type_hints import (  # noqa: E402
     CHART_DOWNLOAD,
     CMS_COMPONENT_BLOCK_TYPE,
 )
-from cms.common.models import CommonPage
-from cms.home.models import HomePage
-from cms.topic.models import TopicPage
+from cms.common.models import CommonPage  # noqa: E402
+from cms.home.models import HomePage  # noqa: E402
+from cms.topic.models import TopicPage  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
@@ -38,10 +54,10 @@ class PrivateAPICrawler:
         dynamic_content_block_crawler: DynamicContentBlockCrawler | None = None,
     ):
         self._internal_api_client = internal_api_client or InternalAPIClient()
-        self._cms_block_parser = cms_block_parser or CMSBlockParser()
-        self._geography_api_crawler = GeographiesAPICrawler(
+        self.geography_api_crawler = GeographiesAPICrawler(
             internal_api_client=self._internal_api_client
         )
+        self._cms_block_parser = cms_block_parser or CMSBlockParser()
         self._headless_cms_api_crawler = HeadlessCMSAPICrawler(
             internal_api_client=self._internal_api_client
         )
@@ -95,7 +111,7 @@ class PrivateAPICrawler:
         )
         logger.info("Completed processing of headless CMS API")
 
-        self._geography_api_crawler.process_geographies_api()
+        self.geography_api_crawler.process_geographies_api()
         logger.info(
             "Completed processing of geographies API, now handling content blocks"
         )
@@ -116,25 +132,39 @@ class PrivateAPICrawler:
 
     # Process sections
 
-    def process_all_sections_in_page(self, page: HomePage | TopicPage) -> None:
+    def process_all_sections_in_page(
+        self, page: HomePage | TopicPage, geography_data: GeographyData | None = None
+    ) -> None:
         """Makes requests to each individual content item within each section of the given `page`
 
         Args:
             page: The `Page` instance to be processed
+            geography_data: The `GeographyData` describing
+                the geography to apply to the given `page`
+                If provided as None, then the original blocks
+                throughout the `page` will be processed
 
         Returns:
             None
 
         """
         for section in page.body.raw_data:
-            self.process_section(section=section)
+            self.process_section(section=section, geography_data=geography_data)
 
-    def process_section(self, section: dict[list[CMS_COMPONENT_BLOCK_TYPE]]) -> None:
+    def process_section(
+        self,
+        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
+        geography_data: GeographyData | None = None,
+    ) -> None:
         """Makes requests to each individual content item within the given `section`
 
         Args:
             section: The `dict containing the CMS information
                 about the section contents
+            geography_data: The `GeographyData` describing
+                the geography to apply to the given `section`
+                If provided as None, then the original blocks
+                in the `section` will be processed
 
         Returns:
             None
@@ -150,9 +180,12 @@ class PrivateAPICrawler:
         )
 
         # Gather all chart blocks in this section of the page
-        chart_blocks = self._cms_block_parser.get_all_chart_blocks_from_section(
-            section=section
+        chart_blocks = (
+            self._cms_block_parser.get_all_chart_blocks_from_section_for_geography(
+                section=section, geography_data=geography_data
+            )
         )
+
         # Process each of the chart blocks which were gathered
         self._dynamic_content_block_crawler.process_all_chart_blocks(
             chart_blocks=chart_blocks

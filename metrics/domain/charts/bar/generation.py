@@ -55,15 +55,15 @@ def generate_chart_figure(
     primary_plot_x_axis_values = chart_plots_data[0].x_axis_values
 
     settings = chart_settings.ChartSettings(
-        width=chart_width, height=chart_height, plots_data=primary_plot_x_axis_values
+        width=chart_width, height=chart_height, plots_data=chart_plots_data
     )
 
     layout_args = settings.get_bar_chart_config()
     figure.update_layout(**layout_args)
 
-    # Set x axis tick type depending on what sort of data we are showing
+    # Set x-axis tick type depending on what sort of data we are showing
     if type(primary_plot_x_axis_values[0]) is date:
-        figure.update_xaxes(**settings.get_x_axis_date_type(figure=figure))
+        figure.update_xaxes(**settings.get_x_axis_date_type())
         figure.update_layout(**settings.get_margin_for_charts_with_dates())
     else:
         figure.update_xaxes(**settings.get_x_axis_text_type())

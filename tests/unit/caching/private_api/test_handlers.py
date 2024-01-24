@@ -4,9 +4,10 @@ from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.handlers import (
-    _crawl_all_pages,
     check_cache_for_all_pages,
     collect_all_pages,
+    crawl_all_pages,
+    extract_topic_pages_from_all_pages,
     force_cache_refresh_for_all_pages,
     get_all_downloads,
 )
@@ -186,12 +187,35 @@ class TestCollectAllPages:
         assert unpublished_page not in collected_pages
 
 
+class TestExtractTopicPagesFromAllPages:
+    def test_returns_for_topic_pages_only(self):
+        """
+        Given a list of pages of different types
+            including a `TopicPage`
+        When `extract_topic_pages_from_all_pages()` is called
+        Then only the `TopicPage` models are returned
+        """
+        # Given
+        topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+        other_pages = [
+            FakeHomePageFactory.build_blank_page(slug="dashboard"),
+            FakeWhatsNewParentPageFactory.build_page_from_template(live=True),
+        ]
+        all_pages = other_pages + [topic_page]
+
+        # When
+        topic_pages = extract_topic_pages_from_all_pages(all_pages=all_pages)
+
+        # Then
+        assert topic_pages == [topic_page]
+
+
 class TestCrawlAllPages:
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_delegates_calls_successfully(self, spy_collect_all_pages: mock.MagicMock):
         """
         Given a mocked `Crawler` object
-        When `_crawl_all_pages()` is called
+        When `crawl_all_pages()` is called
         Then calls are delegated to `collect_all_pages()`
         And to the `process_pages()` method on the `Crawler` object
 
@@ -203,7 +227,9 @@ class TestCrawlAllPages:
         spy_crawler = mock.Mock()
 
         # When
-        _crawl_all_pages(crawler=spy_crawler)
+        crawl_all_pages(
+            private_api_crawler=spy_crawler, area_selector_orchestrator=mock.Mock()
+        )
 
         # Then
         # Check that all pages are collected
@@ -213,6 +239,57 @@ class TestCrawlAllPages:
         # And then those pages are passed to be processed
         spy_crawler.process_pages.assert_called_once_with(pages=collected_pages)
 
+    @mock.patch(f"{MODULE_PATH}.extract_topic_pages_from_all_pages")
+    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    def test_delegates_calls_successfully_when_area_selector_is_activated(
+        self,
+        spy_collect_all_pages: mock.MagicMock,
+        spy_extract_topic_pages_from_all_pages: mock.MagicMock,
+        monkeypatch,
+    ):
+        """
+        Given a mocked `Crawler` object
+        When `crawl_all_pages()` is called
+        Then calls are delegated to `collect_all_pages()`
+        And to the `process_pages()` method on the `Crawler` object
+        And to the `process_pages()` method on the `AreaSelectorOrchestrator` object
+
+        Patches:
+            `spy_collect_all_pages`: To isolate the collected pages
+                and pass to the assertion on `spy_crawl_pages`
+            `spy_extract_topic_pages_from_all_pages`: To extract the
+                topic pages from the previously retrieved pages
+
+        """
+        # Given
+        spy_private_api_crawler = mock.Mock()
+        spy_area_selector_orchestrator = mock.Mock()
+        monkeypatch.setenv(name="ENABLE_AREA_SELECTOR", value=True)
+
+        # When
+        crawl_all_pages(
+            private_api_crawler=spy_private_api_crawler,
+            area_selector_orchestrator=spy_area_selector_orchestrator,
+        )
+
+        # Then
+        # Check that all pages are collected
+        spy_collect_all_pages.assert_called_once()
+        all_collected_pages = spy_collect_all_pages.return_value
+        # And then those pages are passed to be processed
+        spy_private_api_crawler.process_pages.assert_called_once_with(
+            pages=all_collected_pages
+        )
+
+        # Check that the topic pages are extracted
+        spy_extract_topic_pages_from_all_pages.assert_called_once_with(
+            all_pages=all_collected_pages
+        )
+        # And then those topic pages are passed to the `AreaSelectorOrchestrator`
+        spy_area_selector_orchestrator.process_pages.assert_called_once_with(
+            pages=spy_extract_topic_pages_from_all_pages.return_value
+        )
+
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_correct_logs_are_made(
         self,
@@ -221,7 +298,7 @@ class TestCrawlAllPages:
     ):
         """
         Given no pages to be cached
-        When `_crawl_all_pages()` is called
+        When `crawl_all_pages()` is called
         Then the correct log statements are made
 
         Patches:
@@ -233,7 +310,9 @@ class TestCrawlAllPages:
         mocked_collect_all_pages.return_value = []
 
         # When
-        _crawl_all_pages(crawler=mocked_crawler)
+        crawl_all_pages(
+            private_api_crawler=mocked_crawler, area_selector_orchestrator=mock.Mock()
+        )
 
         # Then
         assert "Commencing refresh of cache" in caplog.text
@@ -241,51 +320,74 @@ class TestCrawlAllPages:
 
 
 class TestCheckCacheForAllPages:
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
+    @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     def test_delegates_calls_successfully(
         self,
+        spy_area_selector_orchestrator_class: mock.MagicMock,
         spy_create_crawler_for_cache_checking_only: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
     ):
         """
         Given no input
         When `check_cache_for_all_pages()` is called
-        Then the correct crawler is passed to `_crawl_all_pages()`
+        Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
             `spy_create_crawler_for_cache_checking_only`: To assert that
                 the correct crawler is initialized i.e. the one
                 which can be used purely for checking purposes
             `spy_crawl_all_pages`: For the main assertion
+            `spy_area_selector_orchestrator_class`: To check the
+                area selector orchestrator is passed to the
+                `crawl_all_pages()` function
         """
         # Given / When
         check_cache_for_all_pages()
 
         # Then
+        # Check the `PrivateAPICrawler` is initialized via the correct class constructor method
         spy_create_crawler_for_cache_checking_only.assert_called_once()
-        expected_crawler = spy_create_crawler_for_cache_checking_only.return_value
-        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+        expected_private_crawler = (
+            spy_create_crawler_for_cache_checking_only.return_value
+        )
+
+        # Check the `AreaSelectorOrchestrator` object is initialized
+        spy_area_selector_orchestrator_class.assert_called_once_with(
+            geographies_api_crawler=expected_private_crawler.geography_api_crawler
+        )
+        # Check both the `PrivateAPICrawler` and the `AreaSelectorOrchestrator`
+        # are passed to the `crawl_all_pages()` call
+        spy_crawl_all_pages.assert_called_once_with(
+            private_api_crawler=expected_private_crawler,
+            area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
+        )
 
 
-class TestHydrateCacheForAllPages:
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+class TestForceCacheRefreshForAllPages:
+    @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
     def test_delegates_calls_successfully(
         self,
         spy_create_crawler_for_force_cache_refresh: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
+        spy_area_selector_orchestrator_class: mock.MagicMock,
     ):
         """
         Given no input
         When `force_cache_refresh_for_all_pages()` is called
-        Then the correct crawler is passed to `_crawl_all_pages()`
+        Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
             `spy_create_crawler_for_force_cache_refresh`: To assert that
                 the correct crawler is initialized i.e. the one
                 which can be used to forcibly refresh the cache
             `spy_crawl_all_pages`: For the main assertion
+            `spy_area_selector_orchestrator_class`: To check the
+                area selector orchestrator is passed to the
+                `crawl_all_pages()` function
         """
         # Given / When
         force_cache_refresh_for_all_pages()
@@ -293,22 +395,27 @@ class TestHydrateCacheForAllPages:
         # Then
         spy_create_crawler_for_force_cache_refresh.assert_called_once()
         expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
-        spy_crawl_all_pages.assert_called_once_with(crawler=expected_crawler)
+        spy_crawl_all_pages.assert_called_once_with(
+            private_api_crawler=expected_crawler,
+            area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
+        )
 
     @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
-    @mock.patch(f"{MODULE_PATH}._crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
+    @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch.object(CacheManagement, "clear")
     def test_clears_cache_prior_to_crawler(
         self,
         spy_cache_management_clear: mock.MagicMock,
+        spy_area_selector_orchestrator_class: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
-        mocked_created_crawler: mock.MagicMock,
+        mocked_created_private_api_crawler: mock.MagicMock,
     ):
         """
         Given no input
         When `check_cache_for_all_pages()` is called
         Then `clear()` is called from a `CacheManagement` object
-            before the call is made to `_crawl_all_pages()`
+            before the call is made to `crawl_all_pages()`
         """
         # Given
         spy_manager = mock.Mock()
@@ -325,11 +432,14 @@ class TestHydrateCacheForAllPages:
         # The cache should flushed before crawling the pages
         expected_calls = [
             mock.call.cache_management_clear(),
-            mock.call.crawl_all_pages(crawler=mocked_created_crawler.return_value),
+            mock.call.crawl_all_pages(
+                private_api_crawler=mocked_created_private_api_crawler.return_value,
+                area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
+            ),
         ]
         spy_manager.assert_has_calls(calls=expected_calls, any_order=False)
 
-        # `_crawl_all_pages()` should only have been called once
+        # `crawl_all_pages()` should only have been called once
         spy_crawl_all_pages.assert_called_once()
 
 

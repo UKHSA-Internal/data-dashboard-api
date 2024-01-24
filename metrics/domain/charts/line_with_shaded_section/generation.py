@@ -6,9 +6,11 @@ import plotly
 from metrics.domain.charts import chart_settings, colour_scheme
 from metrics.domain.charts.line_with_shaded_section import information
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
+from metrics.domain.models import PlotData
 
 
 def create_line_chart_with_shaded_section(
+    plots_data: list[PlotData],
     chart_height: int,
     chart_width: int,
     x_axis_values: list[Any],
@@ -22,6 +24,7 @@ def create_line_chart_with_shaded_section(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
+        plots_data: The list of enriched `PlotData` models
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
         x_axis_values: The values for the x-axis
@@ -78,14 +81,14 @@ def create_line_chart_with_shaded_section(
 
     # Apply the typical stylings for timeseries charts
     settings = chart_settings.ChartSettings(
-        width=chart_width, height=chart_height, plots_data=x_axis_values
+        width=chart_width, height=chart_height, plots_data=plots_data
     )
     layout_args = settings.get_line_with_shaded_section_chart_config()
     figure.update_layout(**layout_args)
 
     # Set x axis tick type depending on what sort of data we are showing
     if type(x_axis_values[0]) is date:
-        figure.update_xaxes(**settings.get_x_axis_date_type(figure=figure))
+        figure.update_xaxes(**settings.get_x_axis_date_type())
         figure.update_layout(**settings.get_margin_for_charts_with_dates())
     else:
         figure.update_xaxes(**settings.get_x_axis_text_type())
@@ -137,6 +140,7 @@ def _create_shaded_section_plot(
 
 
 def generate_chart_figure(
+    plots_data: list[PlotData],
     chart_height: int,
     chart_width: int,
     x_axis_values: list[Any],
@@ -149,6 +153,7 @@ def generate_chart_figure(
     """Creates a `Figure` object for the given `values` as a line graph with a shaded region.
 
     Args:
+        plots_data: The list of enriched `PlotData` models
         chart_height: The chart height in pixels
         chart_width: The chart width in pixels
         x_axis_values: The values for the x-axis
@@ -174,12 +179,14 @@ def generate_chart_figure(
         `ValueError`: If the metric_name is not supported.
 
     """
+
     line_colour, fill_colour = information.determine_line_and_fill_colours(
         change_in_metric_value=change_in_metric_value,
         metric_name=metric_name,
     )
 
     return create_line_chart_with_shaded_section(
+        plots_data=plots_data,
         chart_height=chart_height,
         chart_width=chart_width,
         x_axis_values=x_axis_values,

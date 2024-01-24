@@ -10,11 +10,11 @@ MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 
 
 @pytest.fixture()
-def fake_chart_settings(fake_chart_plots_data: PlotData) -> ChartSettings:
+def fake_chart_settings(fake_plot_data: PlotData) -> ChartSettings:
     return ChartSettings(
         width=930,
         height=220,
-        plots_data=fake_chart_plots_data,
+        plots_data=[fake_plot_data],
     )
 
 
@@ -122,29 +122,7 @@ class TestChartSettings:
 
         assert base_chart_config == expected_base_chart_config
 
-    def test_get_simple_line_chart_config(self, fake_chart_settings: ChartSettings):
-        """
-        Given an instance of `ChartSettings`
-        When `get_simple_line_chart_config()` is called
-        Then the correct configuration for simple line charts is returned as a dict
-        """
-        # Given
-        chart_settings = fake_chart_settings
-
-        # When
-        simple_line_chart_config = chart_settings.get_simple_line_chart_config()
-
-        # Then
-        expected_line_chart_config = {
-            "xaxis": {"visible": False},
-            "yaxis": {"visible": False},
-            "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
-            "width": chart_settings.width,
-            "height": chart_settings.height,
-        }
-        assert simple_line_chart_config == expected_line_chart_config
-
-    def test_chart_settings_width(self, fake_chart_plots_data: PlotData):
+    def test_chart_settings_width(self, fake_plot_data: PlotData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -155,7 +133,7 @@ class TestChartSettings:
         chart_settings = ChartSettings(
             width=width,
             height=220,
-            plots_data=fake_chart_plots_data,
+            plots_data=[fake_plot_data],
         )
 
         # When
@@ -164,7 +142,7 @@ class TestChartSettings:
         # Then
         assert chart_width == width
 
-    def test_chart_settings_height(self, fake_chart_plots_data: PlotData):
+    def test_chart_settings_height(self, fake_plot_data: PlotData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -173,7 +151,7 @@ class TestChartSettings:
         # Given
         height = 220
         chart_settings = ChartSettings(
-            width=930, height=height, plots_data=fake_chart_plots_data
+            width=930, height=height, plots_data=[fake_plot_data]
         )
 
         # When
@@ -182,7 +160,7 @@ class TestChartSettings:
         # Then
         assert chart_height == height
 
-    def test_waffle_chart_config(self, fake_chart_plots_data: PlotData):
+    def test_waffle_chart_config(self, fake_plot_data: PlotData):
         """
         Given an instance of `ChartSettings`
         When `get_waffle_chart_config()` is called
@@ -191,7 +169,7 @@ class TestChartSettings:
         # Given
         width = height = 400
         chart_settings = ChartSettings(
-            width=width, height=height, plots_data=fake_chart_plots_data
+            width=width, height=height, plots_data=[fake_plot_data]
         )
 
         # When
@@ -217,12 +195,7 @@ class TestChartSettings:
         }
         assert waffle_chart_config == expected_chart_config
 
-    @mock.patch(f"{MODULE_PATH}.get_x_axis_range", return_value=(1, 2))
-    def test_get_x_axis_date_type(
-        self,
-        mocked_get_x_axis_range: mock.MagicMock,
-        fake_chart_settings: ChartSettings,
-    ):
+    def test_get_x_axis_date_type(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
         When `get_x_axis_date_type()` is called
@@ -236,77 +209,59 @@ class TestChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        x_axis_date_type = chart_settings.get_x_axis_date_type(
-            figure=mock.Mock()  # Stubbed
-        )
+        x_axis_date_type = chart_settings.get_x_axis_date_type()
 
         # Then
         assert x_axis_date_type["type"] == "date"
         assert x_axis_date_type["dtick"] == "M1"
         assert x_axis_date_type["tickformat"] == "%b %Y"
 
-    @mock.patch(f"{MODULE_PATH}.get_x_axis_range")
     def test_get_x_axis_date_type_calls_get_x_axis_range(
-        self, spy_get_x_axis_range: mock.MagicMock, fake_chart_settings: ChartSettings
+        self, fake_plot_data: PlotData
     ):
         """
         Given an instance of `ChartSettings`
         When `get_x_axis_date_type()` is called
-        Then `get_x_axis_range()` is called correctly
-
-        Patches:
-            `spy_get_x_axis_range`: To check the `range` field is
-                built by delegating the call to `get_x_axis_range()`
+        Then the correct config is returned
         """
         # Given
-        chart_settings = fake_chart_settings
-        spy_get_x_axis_range.return_value = mock.Mock(), mock.Mock()
-        mocked_figure = mock.Mock()
+        chart_settings = ChartSettings(
+            width=435, height=220, plots_data=[fake_plot_data]
+        )
 
         # When
-        x_axis_date_type = chart_settings.get_x_axis_date_type(figure=mocked_figure)
+        x_axis_date_type = chart_settings.get_x_axis_date_type()
 
         # Then
-        spy_get_x_axis_range.assert_called_once_with(figure=mocked_figure)
+        min_date, _ = chart_settings.get_min_and_max_x_axis_values()
+        month_end_of_max_date = "2023-01-31"
+
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
-            "tickformat": "%b %Y",
-            "range": list(spy_get_x_axis_range.return_value),
+            "tickformat": "%b<br>%Y",
+            "range": [min_date, month_end_of_max_date],
         }
         assert x_axis_date_type == expected_axis_config
 
-    @mock.patch(f"{MODULE_PATH}.get_x_axis_range", return_value=(1, 2))
     def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
-        self,
-        mocked_get_x_axis_range: mock.MagicMock,
-        fake_chart_settings: ChartSettings,
+        self, fake_plot_data: PlotData
     ):
         """
         Given an instance of `ChartSettings` with a narrow `width`
         When `get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
-
-        Patches:
-            `mocked_get_x_axis_range`: To remove the need
-                 to supply a valid plotly figure object to the test
         """
         # Given
-        chart_settings = ChartSettings(width=435, height=220, plots_data=mock.Mock())
-
-        # When
-        x_axis_date_type = chart_settings.get_x_axis_date_type(
-            figure=mock.Mock()  # Stubbed
+        chart_settings = ChartSettings(
+            width=435, height=220, plots_data=[fake_plot_data]
         )
 
+        # When
+        x_axis_date_type = chart_settings.get_x_axis_date_type()
+
         # Then
-        expected_axis_config = {
-            "type": "date",
-            "dtick": "M1",
-            "tickformat": "%b<br>%Y",
-            "range": list(mocked_get_x_axis_range.return_value),
-        }
-        assert x_axis_date_type == expected_axis_config
+        assert x_axis_date_type["tickformat"] == "%b<br>%Y"
 
     def test_get_x_axis_text_type(self, fake_chart_settings: ChartSettings):
         """
@@ -505,6 +460,22 @@ class TestChartSettings:
 
         # Then
         assert returned_date_tick_format == expected_date_tick_format
+
+    def test_get_min_and_max_x_axis_values(self, fake_chart_settings: ChartSettings):
+        """
+        Given an instance of `ChartSettings`
+        When `get_min_and_max_x_axis_values()` is called
+        Then the correct dates are returned
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        # When
+        min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
+
+        # Then
+        assert min_date == chart_settings.plots_data[0].x_axis_values[0]
+        assert max_date == chart_settings.plots_data[0].x_axis_values[-1]
 
 
 class TestGetNewMaxDate:

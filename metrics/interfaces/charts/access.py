@@ -8,10 +8,8 @@ from scour import scour
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.charts import (
     bar,
-    line,
     line_multi_coloured,
     line_with_shaded_section,
-    waffle,
 )
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.utils import ChartTypes
@@ -55,9 +53,6 @@ class ChartsInterface:
         if self.chart_type == ChartTypes.waffle.value:
             raise NotImplementedError
 
-        if self.chart_type == ChartTypes.simple_line.value:
-            return self.generate_simple_line_chart()
-
         if self.chart_type == ChartTypes.bar.value:
             return self.generate_bar_chart()
 
@@ -79,28 +74,6 @@ class ChartsInterface:
             metric_name=plot_parameters.metric_name,
         )
         return waffle.generate_chart_figure([value])
-
-    def generate_simple_line_chart(self) -> plotly.graph_objects.Figure:
-        """Creates a simple line chart figure for the requested chart plot
-
-        Returns:
-            A plotly `Figure` object for the created simple line chart
-
-        Raises:
-            `DataNotFoundForAnyPlotError`: If no plots
-                returned any data from the underlying queries
-
-        """
-        chart_height = self.chart_plots.chart_height
-        chart_width = self.chart_plots.chart_width
-
-        plots_data: list[PlotData] = self.build_chart_plots_data()
-        plot_data: PlotData = plots_data[0]
-        return line.generate_chart_figure(
-            chart_height=chart_height,
-            chart_width=chart_width,
-            y_axis_values=plot_data.y_axis_values,
-        )
 
     def generate_bar_chart(self) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot
@@ -164,8 +137,7 @@ class ChartsInterface:
                 returned any data from the underlying queries
         """
         plots_data: list[PlotData] = self.build_chart_plots_data()
-        plot_data: PlotData = plots_data[0]
-        params = self.param_builder_for_line_with_shaded_section(plot_data=plot_data)
+        params = self.param_builder_for_line_with_shaded_section(plots_data=plots_data)
 
         return line_with_shaded_section.generate_chart_figure(**params)
 
@@ -217,7 +189,8 @@ class ChartsInterface:
 
         self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
 
-    def param_builder_for_line_with_shaded_section(self, plot_data: PlotData):
+    def param_builder_for_line_with_shaded_section(self, plots_data: list[PlotData]):
+        plot_data = plots_data[0]
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
         x_axis_values = plot_data.x_axis_values
@@ -225,6 +198,7 @@ class ChartsInterface:
         metric_name = plot_data.parameters.metric_name
 
         return {
+            "plots_data": plots_data,
             "chart_height": chart_height,
             "chart_width": chart_width,
             "x_axis_values": x_axis_values,

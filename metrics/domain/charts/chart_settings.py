@@ -1,7 +1,5 @@
 from datetime import datetime
 
-import plotly
-
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
@@ -69,16 +67,6 @@ class ChartSettings:
             "width": self.width,
         }
 
-    def get_simple_line_chart_config(self) -> dict[str, dict[str, bool]]:
-        set_axes_to_be_invisible = {"visible": False}
-        return {
-            "xaxis": set_axes_to_be_invisible,
-            "yaxis": set_axes_to_be_invisible,
-            "plot_bgcolor": colour_scheme.RGBAColours.LINE_LIGHT_GREY.stringified,
-            "width": self.width,
-            "height": self.height,
-        }
-
     def get_waffle_chart_config(self):
         x_axis_args = {
             "showgrid": False,
@@ -118,11 +106,22 @@ class ChartSettings:
     def _get_date_tick_format(self) -> str:
         return "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
 
-    def get_x_axis_date_type(
-        self, figure: plotly.graph_objs.Figure
-    ) -> DICT_OF_STR_ONLY:
+    def get_min_and_max_x_axis_values(self) -> tuple[str, str]:
+        possible_minimums = []
+        possible_maximums = []
+
+        for plot_data in self.plots_data:
+            possible_minimums.append(plot_data.x_axis_values[0])
+            possible_maximums.append(plot_data.x_axis_values[-1])
+
+        return min(possible_minimums), max(possible_maximums)
+
+    def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         tick_format = self._get_date_tick_format()
-        min_date, max_date = get_x_axis_range(figure=figure)
+
+        min_date, max_date = self.get_min_and_max_x_axis_values()
+        max_date = get_new_max_date(existing_dt=max_date)
+
         return {
             "type": "date",
             "dtick": "M1",
@@ -172,24 +171,7 @@ class ChartSettings:
         }
 
 
-def get_existing_chart_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
-    """Extract the x axis range from a chart figure
-
-    Args:
-        figure: The chart figure
-
-    Returns:
-        The minimum and maximum x axis date range which Plotly has calculated
-    """
-
-    full_figure = figure.full_figure_for_development(warn=False)
-
-    min_date, max_date = full_figure.layout.xaxis.range
-
-    return min_date, max_date
-
-
-def get_new_max_date(existing_dt: str) -> str:
+def get_new_max_date(existing_dt: str | datetime) -> str:
     """Return the last day of the month for the supplied date
 
     Args:
@@ -198,26 +180,8 @@ def get_new_max_date(existing_dt: str) -> str:
     Returns:
         The last day of the month for the given date
     """
+    existing_dt = str(existing_dt)
     new_date: datetime.date = get_last_day_of_month(
         date=datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
     )
     return new_date.strftime("%Y-%m-%d")
-
-
-def get_x_axis_range(figure: plotly.graph_objs.Figure) -> tuple[str, str]:
-    """Adjust the right-hand side of the charts' x-axis to display a label for every tick
-
-    Args:
-        figure: The chart figure
-
-    Returns:
-        The current minimum and the new maximum dates to use for the x axis range
-        Note: If the max_date was already the last day of the month then nothing gets changed
-    """
-
-    min_date, max_date = get_existing_chart_range(figure)
-
-    # Go to the last day of the month to give label the best chance of being displayed
-    max_date = get_new_max_date(max_date)
-
-    return min_date, max_date

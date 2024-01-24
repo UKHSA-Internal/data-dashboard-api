@@ -86,7 +86,6 @@ target-version = "py312"
                                                           # This infringement is due to
                                                           # swagger-facing docstrings/documentation
 "metrics/api/views/charts.py"   = ["SIM115"]              # Ignore context handler for opening file
-"**/waffle/pre_processing.py"   = ["E203"]                # Ignore whitespace before `:` conflicting with Black
 "**/help_texts.py"              = ["W291"]                # Ignore trailing whitespace for help texts
 "**/build_cms_site.py"          = ["W605"]                # Ignore escape sequences used in regex calls
 "ingestion/file_ingestion.py"   = ["BLE001"]              # Ignore blind exception catch for file ingestion function
@@ -126,7 +125,7 @@ omit = [
 ]
 skip_covered = true                     # Only list files which do not have 100% test coverage in the report
 show_missing = true                     # Report lines which were not hit
-fail_under = 99.0                       # Test coverage report will fail for total coverage under this threshold value
+fail_under = 99.25                      # Test coverage report will fail for total coverage under this threshold value
 exclude_lines = ["__str__"]
 
 ########################################################################################################################

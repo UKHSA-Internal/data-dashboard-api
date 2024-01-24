@@ -20,7 +20,7 @@ class TablePlotSerializer(plots.PlotSerializer):
         help_text=help_texts.CHART_TYPE_FIELD,
         choices=ChartTypes.choices(),
         required=False,
-        default="simple_line",
+        default=ChartTypes.line_multi_coloured.value,
     )
 
     label = serializers.CharField(

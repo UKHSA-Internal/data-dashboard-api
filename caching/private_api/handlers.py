@@ -1,9 +1,13 @@
 import logging
+import os
 from timeit import default_timer
 
 from django.db.models import Manager
 
 from caching.private_api.crawler import PrivateAPICrawler
+from caching.private_api.crawler.area_selector.orchestration import (
+    AreaSelectorOrchestrator,
+)
 from caching.private_api.management import CacheManagement
 from cms.common.models import CommonPage
 from cms.home.models import HomePage
@@ -62,7 +66,26 @@ def collect_all_pages(
     return pages
 
 
-def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
+def extract_topic_pages_from_all_pages(
+    all_pages: ALL_PAGE_TYPES,
+) -> list[TopicPage]:
+    """Builds a new list containing only the `TopicPage` models from the given `all_pages` iterable
+
+    Args:
+        all_pages: Iterable of a mixture of page types
+
+    Returns:
+        List of `TopicPage` models contained
+        within the given `all_pages` iterable
+
+    """
+    return [page for page in all_pages if isinstance(page, TopicPage)]
+
+
+def crawl_all_pages(
+    private_api_crawler: PrivateAPICrawler,
+    area_selector_orchestrator: AreaSelectorOrchestrator,
+) -> None:
     """Parses the CMS blocks for all pages with the given `crawler`
 
     Notes:
@@ -71,8 +94,12 @@ def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
         - All live/published topic pages
 
     Args:
-        crawler: A `Crawler` object which will be used to
-            orchestrate the various calls required to parse each page
+        private_api_crawler: A `PrivateAPICrawler` object which will be used
+            to process and crawl the various CMS blocks
+            which are required to parse each page
+        area_selector_orchestrator: An `AreaSelectorOrchestrator` object
+            which is used to orchestrate parallel `PrivateAPICrawler` objects
+            as workers to process geography/page combinations
 
     Returns:
         None
@@ -81,8 +108,14 @@ def _crawl_all_pages(crawler: PrivateAPICrawler) -> None:
     start: float = default_timer()
     logging.info("Commencing refresh of cache")
 
-    pages: ALL_PAGE_TYPES = collect_all_pages()
-    crawler.process_pages(pages=pages)
+    all_pages: ALL_PAGE_TYPES = collect_all_pages()
+    private_api_crawler.process_pages(pages=all_pages)
+
+    if os.environ.get("ENABLE_AREA_SELECTOR"):
+        topic_pages: list[TopicPage] = extract_topic_pages_from_all_pages(
+            all_pages=all_pages
+        )
+        area_selector_orchestrator.process_pages(pages=topic_pages)
 
     duration: float = default_timer() - start
     logging.info("Finished refreshing of cache in %s seconds", round(duration, 2))
@@ -104,8 +137,15 @@ def check_cache_for_all_pages() -> None:
             Note that this will error at the 1st cache miss.
 
     """
-    crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
-    _crawl_all_pages(crawler=crawler)
+    private_api_crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
+    area_selector_orchestrator = AreaSelectorOrchestrator(
+        geographies_api_crawler=private_api_crawler.geography_api_crawler
+    )
+
+    crawl_all_pages(
+        private_api_crawler=private_api_crawler,
+        area_selector_orchestrator=area_selector_orchestrator,
+    )
 
 
 def force_cache_refresh_for_all_pages() -> None:
@@ -128,8 +168,14 @@ def force_cache_refresh_for_all_pages() -> None:
     cache_management = CacheManagement(in_memory=False)
     cache_management.clear()
 
-    crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
-    _crawl_all_pages(crawler=crawler)
+    private_api_crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
+    area_selector_orchestrator = AreaSelectorOrchestrator(
+        geographies_api_crawler=private_api_crawler.geography_api_crawler
+    )
+    crawl_all_pages(
+        private_api_crawler=private_api_crawler,
+        area_selector_orchestrator=area_selector_orchestrator,
+    )
 
 
 def get_all_downloads(file_format: str = "csv") -> list[dict[str, str]]:

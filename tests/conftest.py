@@ -57,7 +57,7 @@ def valid_plot_parameters() -> PlotParameters:
     return PlotParameters(
         metric="COVID-19_deaths_ONSByDay",
         topic="COVID-19",
-        chart_type=ChartTypes.simple_line.value,
+        chart_type=ChartTypes.line_multi_coloured.value,
         date_from="2023-01-01",
         date_to="2023-12-31",
         x_axis="date",
@@ -66,7 +66,7 @@ def valid_plot_parameters() -> PlotParameters:
 
 
 @pytest.fixture
-def fake_chart_plots_data() -> PlotData:
+def fake_plot_data() -> PlotData:
     plot_params = PlotParameters(
         chart_type="line_multi_coloured",
         topic="COVID-19",
@@ -77,10 +77,10 @@ def fake_chart_plots_data() -> PlotData:
     x_values = [1, 2, 4, 5, 5, 2, 1]
     return PlotData(
         parameters=plot_params,
-        x_axis_values=[1, 2, 4, 5, 5, 2, 1],
-        y_axis_values=[
+        x_axis_values=[
             datetime.date(year=2023, month=1, day=i + 1) for i in range(len(x_values))
         ],
+        y_axis_values=[1, 2, 4, 5, 5, 2, 1],
     )
 
 
