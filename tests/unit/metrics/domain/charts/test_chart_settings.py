@@ -200,41 +200,6 @@ class TestChartSettings:
         # Then
         assert chart_height == height
 
-    def test_waffle_chart_config(self, fake_plot_data: PlotData):
-        """
-        Given an instance of `ChartSettings`
-        When `get_waffle_chart_config()` is called
-        Then the correct configuration for waffle charts is returned as a dict
-        """
-        # Given
-        width = height = 400
-        chart_settings = ChartSettings(
-            width=width, height=height, plots_data=[fake_plot_data]
-        )
-
-        # When
-        waffle_chart_config = chart_settings.get_waffle_chart_config()
-
-        # Then
-        x_axis_args = {
-            "showgrid": False,
-            "ticks": None,
-            "showticklabels": False,
-        }
-        y_axis_args = x_axis_args | {"scaleratio": 1, "scaleanchor": "x"}
-
-        expected_chart_config = {
-            "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
-            "showlegend": False,
-            "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
-            "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
-            "xaxis": x_axis_args,
-            "yaxis": y_axis_args,
-            "width": width,
-            "height": height,
-        }
-        assert waffle_chart_config == expected_chart_config
-
     def test_get_x_axis_date_type(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`

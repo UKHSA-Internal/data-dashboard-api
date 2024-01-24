@@ -87,25 +87,6 @@ class ChartSettings:
 
         return base_chart_config
 
-    def get_waffle_chart_config(self):
-        x_axis_args = {
-            "showgrid": False,
-            "ticks": None,
-            "showticklabels": False,
-        }
-        y_axis_args = x_axis_args | {"scaleratio": 1, "scaleanchor": "x"}
-
-        return {
-            "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
-            "showlegend": False,
-            "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
-            "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
-            "xaxis": x_axis_args,
-            "yaxis": y_axis_args,
-            "width": self.width,
-            "height": self.height,
-        }
-
     def get_line_with_shaded_section_chart_config(self):
         chart_config = self.get_base_chart_config()
         chart_config["showlegend"] = False
