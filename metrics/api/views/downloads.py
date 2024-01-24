@@ -93,8 +93,6 @@ class DownloadsView(APIView):
                 return self._handle_json(queryset=queryset)
             case "csv":
                 return self._handle_csv(queryset=queryset)
-            case _:
-                return None
 
 
 class BulkDownloadsView(APIView):
