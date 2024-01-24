@@ -1,4 +1,3 @@
-from datetime import date
 from typing import Any
 
 import plotly
@@ -65,13 +64,6 @@ def create_multi_coloured_line_chart(
     )
     layout_args = settings.get_line_multi_coloured_chart_config()
     figure.update_layout(**layout_args)
-
-    # Set x axis tick type depending on what sort of data we are showing
-    if type(chart_plots_data[0].x_axis_values[0]) is date:
-        figure.update_xaxes(**settings.get_x_axis_date_type())
-        figure.update_layout(**settings.get_margin_for_charts_with_dates())
-    else:
-        figure.update_xaxes(**settings.get_x_axis_text_type())
 
     return figure
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
@@ -30,8 +30,12 @@ class ChartSettings:
             "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
         }
 
+    @property
+    def is_date_type_x_axis(self) -> bool:
+        return isinstance(self.plots_data[0].x_axis_values[0], datetime.date)
+
     def get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
-        return {
+        base_x_axis_config = {
             "showgrid": False,
             "zeroline": False,
             "showline": False,
@@ -43,6 +47,14 @@ class ChartSettings:
             "tickfont": self.get_tick_font_config(),
         }
 
+        x_axis_type_config = (
+            self.get_x_axis_date_type()
+            if self.is_date_type_x_axis
+            else self.get_x_axis_text_type()
+        )
+
+        return {**base_x_axis_config, **x_axis_type_config}
+
     def get_y_axis_config(self) -> dict[str, bool | DICT_OF_STR_ONLY]:
         return {
             "showgrid": False,
@@ -51,7 +63,7 @@ class ChartSettings:
         }
 
     def get_base_chart_config(self):
-        return {
+        base_chart_config = {
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "margin": {
@@ -67,24 +79,13 @@ class ChartSettings:
             "width": self.width,
         }
 
-    def get_waffle_chart_config(self):
-        x_axis_args = {
-            "showgrid": False,
-            "ticks": None,
-            "showticklabels": False,
-        }
-        y_axis_args = x_axis_args | {"scaleratio": 1, "scaleanchor": "x"}
+        if self.is_date_type_x_axis:
+            base_chart_config = {
+                **base_chart_config,
+                **self.get_margin_for_charts_with_dates(),
+            }
 
-        return {
-            "margin": {"l": 0, "r": 0, "t": 0, "b": 0},
-            "showlegend": False,
-            "plot_bgcolor": colour_scheme.RGBAColours.LIGHT_GREY.stringified,
-            "paper_bgcolor": colour_scheme.RGBAColours.WAFFLE_WHITE.stringified,
-            "xaxis": x_axis_args,
-            "yaxis": y_axis_args,
-            "width": self.width,
-            "height": self.height,
-        }
+        return base_chart_config
 
     def get_line_with_shaded_section_chart_config(self):
         chart_config = self.get_base_chart_config()
@@ -171,7 +172,7 @@ class ChartSettings:
         }
 
 
-def get_new_max_date(existing_dt: str | datetime) -> str:
+def get_new_max_date(existing_dt: str | datetime.datetime) -> str:
     """Return the last day of the month for the supplied date
 
     Args:
@@ -182,6 +183,6 @@ def get_new_max_date(existing_dt: str | datetime) -> str:
     """
     existing_dt = str(existing_dt)
     new_date: datetime.date = get_last_day_of_month(
-        date=datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
+        date=datetime.datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
     )
     return new_date.strftime("%Y-%m-%d")

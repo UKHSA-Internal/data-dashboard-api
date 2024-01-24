@@ -14,5 +14,5 @@ match config.APP_MODE:
         from .private_api import *
     case "FEEDBACK_API":
         from .feedback_api import *
-    case "BACKEND_UTILITY_WORKER":
+    case "UTILITY_WORKER":
         from .backend_utility_worker import *

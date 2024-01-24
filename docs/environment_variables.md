@@ -68,7 +68,7 @@ For example, `localhost:8000/api/swagger` will take you to the swagger docs of t
 This primarily consists of the ingestion service which is configured to ingest messages and populate the
 database with the latest metrics data
 
-##### `APP_MODE=BACKEND_UTILITY_WORKER`
+##### `APP_MODE=UTILITY_WORKER`
 
 - All endpoints are accessible.
 And this workload will be connected to the Redis cache used by the `PRIVATE_API`.
