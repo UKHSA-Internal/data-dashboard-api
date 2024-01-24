@@ -93,11 +93,6 @@ class DownloadsView(APIView):
                 return self._handle_json(queryset=queryset)
             case "csv":
                 return self._handle_csv(queryset=queryset)
-            case _:
-                return Response(
-                    status=HTTPStatus.BAD_REQUEST,
-                    data={"error_message": "Requested file format not supported"},
-                )
 
 
 class BulkDownloadsView(APIView):
