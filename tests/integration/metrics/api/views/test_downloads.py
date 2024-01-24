@@ -212,7 +212,7 @@ class TestDownloadsView:
         assert response.status_code == HTTPStatus.BAD_REQUEST
 
     @pytest.mark.django_db
-    def test_returns_bad_request_response_for_unuspported_file_format(self):
+    def test_returns_bad_request_response_for_unsupported_file_format(self):
         """
         Given a payload to request a download for an unsupported file_format
         When the `POST /api/downloads/v2/` endpoint is hit
