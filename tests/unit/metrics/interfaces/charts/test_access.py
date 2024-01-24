@@ -185,6 +185,67 @@ class TestChartsInterface:
         )
 
     @mock.patch.object(ChartsInterface, "_set_latest_date_from_plots_data")
+    @mock.patch(f"{MODULE_PATH}.line_with_shaded_section.generate_chart_figure")
+    def test_generate_line_with_shaded_section_chart(
+        self,
+        spy_line_with_shaded_section_generate_chart_figure: mock.MagicMock,
+        mocked_set_latest_date_from_plots_data: mock.MagicMock,
+        valid_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a valid `PlotParameters` for a `line_with_shaded_section` chart
+        When `generate_line_with_shaded_section_chart()` is called
+            from an instance of the `ChartsInterface`
+        Then the call is delegated to the `generate_chart_figure()`
+            from the `line_with_shaded_section` module with the correct args
+
+        Patches:
+            `spy_line_with_shaded_section_generate_chart_figure`: For the
+                main assertion.
+            `mocked_set_latest_date_from_plots_data`: To isolate
+                date conversion logic away from the scope of the test
+        """
+        # Given
+        valid_plot_parameters.chart_type = ChartTypes.line_with_shaded_section.value
+        fake_core_time_series_collection = self._setup_fake_time_series_for_plot(
+            chart_plot_parameters=valid_plot_parameters
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            fake_core_time_series_collection
+        )
+        plots_collection = PlotsCollection(
+            plots=[valid_plot_parameters],
+            file_format="svg",
+            chart_width=123,
+            chart_height=456,
+            x_axis="date",
+            y_axis="metric",
+        )
+
+        charts_interface = ChartsInterface(
+            chart_plots=plots_collection,
+            core_time_series_manager=fake_core_time_series_manager,
+        )
+
+        # When
+        line_with_shaded_section_chart = (
+            charts_interface.generate_line_with_shaded_section_chart()
+        )
+
+        # Then
+        plots_data = charts_interface.build_chart_plots_data()
+        expected_params = charts_interface.param_builder_for_line_with_shaded_section(
+            plots_data=plots_data
+        )
+        spy_line_with_shaded_section_generate_chart_figure.assert_called_once_with(
+            **expected_params
+        )
+        assert (
+            line_with_shaded_section_chart
+            == spy_line_with_shaded_section_generate_chart_figure.return_value
+        )
+
+    @mock.patch.object(ChartsInterface, "_set_latest_date_from_plots_data")
     def test_build_chart_plots_data_delegates_to_plots_interface(
         self,
         spy_set_latest_date_from_plots_data: mock.MagicMock,
