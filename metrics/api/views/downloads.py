@@ -95,7 +95,8 @@ class DownloadsView(APIView):
                 return self._handle_csv(queryset=queryset)
             case _:
                 return Response(
-                    status=HTTPStatus.BAD_REQUEST, data={"error_message": "Requested file format not supported"}
+                    status=HTTPStatus.BAD_REQUEST,
+                    data={"error_message": "Requested file format not supported"},
                 )
 
 
