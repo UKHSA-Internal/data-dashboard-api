@@ -38,9 +38,12 @@ class TestChartSettings:
         }
         assert tick_font_config == expected_tick_font_config
 
-    def test_get_x_axes_setting(self, fake_chart_settings: ChartSettings):
+    def test_get_x_axes_setting_for_date_based_x_axis(
+        self, fake_chart_settings: ChartSettings
+    ):
         """
         Given an instance of `ChartSettings`
+            with date-based x axes values
         When `get_x_axis_config()` is called
         Then the correct X axis configuration is returned as a dict
         """
@@ -60,6 +63,43 @@ class TestChartSettings:
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b %Y",
+            "tickfont": chart_settings.get_tick_font_config(),
+        }
+        expected_x_axis_config = {
+            **expected_x_axis_config,
+            **chart_settings.get_x_axis_date_type(),
+        }
+        assert x_axis_config == expected_x_axis_config
+
+    def test_get_x_axes_setting_for_text_based_x_axis(
+        self, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+            with text-based x axes values
+        When `get_x_axis_config()` is called
+        Then the correct X axis configuration is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+        original_values = chart_settings.plots_data[0].x_axis_values
+        chart_settings.plots_data[0].x_axis_values = [
+            f"P-{i}" for i in range(len(original_values))
+        ]
+
+        # When
+        x_axis_config = chart_settings.get_x_axis_config()
+
+        # Then
+        expected_x_axis_config = {
+            "showgrid": False,
+            "zeroline": False,
+            "showline": False,
+            "ticks": "outside",
+            "tickson": "boundaries",
+            "type": "-",
+            "dtick": None,
+            "tickformat": None,
             "tickfont": chart_settings.get_tick_font_config(),
         }
         assert x_axis_config == expected_x_axis_config
@@ -108,8 +148,8 @@ class TestChartSettings:
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "margin": {
-                "l": 0,
-                "r": 0,
+                "l": 15,  # Margin expected for date-based x-axes
+                "r": 15,
                 "b": 0,
                 "t": 0,
             },
