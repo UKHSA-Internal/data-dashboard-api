@@ -22,6 +22,8 @@ class TopicPage(Page):
     body = ALLOWABLE_BODY_CONTENT
     date_posted = models.DateField()
 
+    enable_area_selector = models.BooleanField(default=False)
+
     sidebar_content_panels = [
         InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
@@ -46,6 +48,7 @@ class TopicPage(Page):
         APIField("last_published_at"),
         APIField("seo_title"),
         APIField("search_description"),
+        APIField("enable_area_selector"),
     ]
 
     # Tabs to position at the top of the view
