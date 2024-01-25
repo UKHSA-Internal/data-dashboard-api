@@ -82,7 +82,7 @@ class TrendsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        hardcoded_trends_data = trends_data = {
+        hardcoded_trends_data = {
             "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
             "metric_value": 31,
             "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
