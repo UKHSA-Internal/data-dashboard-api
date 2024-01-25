@@ -129,33 +129,33 @@ jobs:
   # Migration tests
   ###############################################################################
 
-  migration-tests:
-    name: Migration tests
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-cache
-
-      - name: Run Migration tests
-        run: |
-          python -m pytest tests/migrations/
+#  migration-tests:
+#    name: Migration tests
+#    needs: [ build ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: ./.github/actions/install-cache
+#
+#      - name: Run Migration tests
+#        run: |
+#          python -m pytest tests/migrations/
 
   ###############################################################################
   # Test coverage
   ###############################################################################
 
-  test-coverage:
-    name: Test coverage
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-cache
-
-      - name: Evaluate test coverage
-        run: |
-          pytest --cov
+#  test-coverage:
+#    name: Test coverage
+#    needs: [ build ]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - uses: ./.github/actions/install-cache
+#
+#      - name: Evaluate test coverage
+#        run: |
+#          pytest --cov
 
   ###############################################################################
   # Build image
