@@ -88,16 +88,8 @@ class TrendsView(APIView):
                 "metric_value": 31,
                 "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
                 "percentage_metric_value": 17.1,
-            }
-        if (
-            serialized_model.percentage_metric_name
-            == "COVID-19_headline_ONSdeaths_7DayPercentChange"
-        ):
-            trends_data = {
-                "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
-                "metric_value": 31,
-                "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
-                "percentage_metric_value": 17.1,
+                "direction": "up",
+                "colour": "red"
             }
 
         return Response(trends_data)
