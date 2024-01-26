@@ -1,5 +1,5 @@
-from caching.private_api.crawler.cms_blocks import CMSBlockParser
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
+from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 
 
 class TestCMSBlockParserExtractionOfSelectedTopics:
