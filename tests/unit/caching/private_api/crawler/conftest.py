@@ -33,6 +33,17 @@ def example_headline_number_block() -> dict[str, str]:
 
 
 @pytest.fixture
+def example_headline_cms_block(
+    example_headline_number_block: dict[str, str],
+) -> dict[str, str | dict[str, str]]:
+    return {
+        "type": "headline_number",
+        "value": example_headline_number_block,
+        "id": "eff08341-7bfa-4a3b-b013-527e7b954ce8",
+    }
+
+
+@pytest.fixture
 def example_trend_number_block() -> dict[str, str]:
     return {
         "topic": "COVID-19",
