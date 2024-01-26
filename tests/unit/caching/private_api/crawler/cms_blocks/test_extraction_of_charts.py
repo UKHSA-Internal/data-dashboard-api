@@ -150,3 +150,67 @@ class TestCMSBlockParserExtractionOfCharts:
             rebuilt_chart_block["chart"][0]["value"]["geography_type"]
             == geography_data.geography_type_name
         )
+
+    def test_get_chart_blocks_from_chart_row_cards(self, example_chart_row_cards):
+        """
+        Given a list of example chart row cards
+        When `get_chart_blocks_from_chart_row_cards()` is called
+            from the `CMSBlockParser` class
+        Then the correct chart blocks are extracted and returned
+        """
+        # Given
+        chart_row_cards = example_chart_row_cards
+
+        # When
+        chart_blocks = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
+            chart_row_cards=chart_row_cards
+        )
+
+        # Then
+        expected_chart_blocks = [
+            chart_row_cards[0]["value"]["columns"][0]["value"],
+            chart_row_cards[0]["value"]["columns"][1]["value"],
+        ]
+        assert chart_blocks == expected_chart_blocks
+
+    def test_get_chart_blocks_from_chart_row_cards_returns_empty_list_for_no_cards(
+        self,
+    ):
+        """
+        Given an empty list of chart row cards
+        When `get_chart_cards_from_chart_row_cards()`
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        no_chart_row_cards = []
+
+        # When
+        chart_blocks = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
+            chart_row_cards=no_chart_row_cards
+        )
+
+        # Then
+        assert chart_blocks == []
+
+    def test_get_chart_blocks_from_chart_row_cards_returns_empty_list_for_incorrect_cards(
+        self,
+    ):
+        """
+        Given a list of incorrect headline number row cards
+        When `get_chart_blocks_from_chart_row_cards()` is called
+            from the `CMSBlockParser` class
+        Then an empty list is returned
+        """
+        # Given
+        incorrect_chart_cards = [
+            {"type": "chart_row_card", "value": {"incorrect_key": []}}
+        ]
+
+        # When
+        chart_blocks = CMSBlockParser.get_chart_blocks_from_chart_row_cards(
+            chart_row_cards=incorrect_chart_cards
+        )
+
+        # Then
+        assert chart_blocks == []
