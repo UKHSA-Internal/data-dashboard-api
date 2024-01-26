@@ -609,7 +609,7 @@ def example_chart_blocks():
 
 
 @pytest.fixture
-def example_chart_row_cards() -> list[dict[str, str | list[dict]]]:
+def example_dummy_chart_row_cards() -> list[dict[str, str | list[dict]]]:
     return [
         {
             "type": "chart_row_card",
