@@ -5,7 +5,32 @@ from caching.private_api.crawler.geographies_crawler import GeographyData
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 
-class TestCMSBlockParserGetAllChartBlocksFromSectionForGeography:
+class TestCMSBlockParserExtractionOfCharts:
+    def test_get_all_chart_blocks_from_section(
+        self, example_section_with_headline_card_and_chart_card
+    ):
+        """
+        Given a section containing chart blocks within chart cards
+        When `get_all_chart_blocks_from_section()` is called
+            from the `CMSBlockParser` class
+        Then the correct chart blocks are returned
+        """
+        # Given
+        section = example_section_with_headline_card_and_chart_card
+
+        # When
+        chart_blocks = CMSBlockParser.get_all_chart_blocks_from_section(section=section)
+
+        # Then
+        expected_chart_blocks = [
+            # The 1st content card is a headline numbers row card, so nothing to extract there
+            section["value"]["content"][1]["value"]["columns"][0]["value"],
+            section["value"]["content"][1]["value"]["columns"][1]["value"],
+            # The 2nd content card is a chart row card which contains 1 chart in each of the 2 rows.
+            # So we expect to extract 2 chart blocks to be extracted
+        ]
+        assert chart_blocks == expected_chart_blocks
+
     @pytest.mark.parametrize(
         "geography_data",
         [
@@ -15,7 +40,7 @@ class TestCMSBlockParserGetAllChartBlocksFromSectionForGeography:
             GeographyData(name="Wales", geography_type_name="Nation"),
         ],
     )
-    def test_returns_correct_chart_blocks_when_geography_data_is_provided(
+    def test_get_all_chart_blocks_from_section_for_geography_when_geography_data_is_provided(
         self,
         geography_data: GeographyData,
         example_section_with_headline_card_and_chart_card: CMS_COMPONENT_BLOCK_TYPE,
@@ -49,7 +74,7 @@ class TestCMSBlockParserGetAllChartBlocksFromSectionForGeography:
             == geography_data.geography_type_name
         )
 
-    def test_returns_base_chart_blocks_when_geography_data_not_provided(
+    def test_get_all_chart_blocks_from_section_for_geography_when_geography_data_not_provided(
         self,
         example_section_with_headline_card_and_chart_card: CMS_COMPONENT_BLOCK_TYPE,
     ):
@@ -86,4 +111,42 @@ class TestCMSBlockParserGetAllChartBlocksFromSectionForGeography:
         assert (
             chart_blocks[1]["chart"][0]["value"]["geography_type"]
             == expected_base_geography_type
+        )
+
+    @pytest.mark.parametrize(
+        "geography_data",
+        [
+            GeographyData(
+                name="Reading", geography_type_name="Lower Tier Local Authority"
+            ),
+            GeographyData(name="Wales", geography_type_name="Nation"),
+        ],
+    )
+    def test_rebuild_chart_block_for_geography(
+        self,
+        geography_data: GeographyData,
+        example_chart_block: CMS_COMPONENT_BLOCK_TYPE,
+    ):
+        """
+        Given a chart block and an enriched `GeographyData` model
+        When `rebuild_chart_block_for_geography()` is called
+            from the `CMSBlockParser` class
+        Then a copy of the chart block is returned
+            with the geography data injected into the chart plots
+        """
+        # Given
+        base_chart_block = example_chart_block
+
+        # When
+        rebuilt_chart_block = CMSBlockParser.rebuild_chart_block_for_geography(
+            chart_block=base_chart_block, geography_data=geography_data
+        )
+
+        # Then
+        assert (
+            rebuilt_chart_block["chart"][0]["value"]["geography"] == geography_data.name
+        )
+        assert (
+            rebuilt_chart_block["chart"][0]["value"]["geography_type"]
+            == geography_data.geography_type_name
         )
