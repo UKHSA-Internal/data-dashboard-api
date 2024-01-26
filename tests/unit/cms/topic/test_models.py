@@ -168,6 +168,7 @@ class TestTemplateCOVID19Page:
             "seo_title",
             "search_description",
             "enable_area_selector",
+            "selected_topics",
         ],
     )
     def test_api_fields(self, expected_api_field: str):

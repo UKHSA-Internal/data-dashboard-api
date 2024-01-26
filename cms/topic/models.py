@@ -50,6 +50,7 @@ class TopicPage(Page):
         APIField("seo_title"),
         APIField("search_description"),
         APIField("enable_area_selector"),
+        APIField("selected_topics"),
     ]
 
     # Tabs to position at the top of the view
