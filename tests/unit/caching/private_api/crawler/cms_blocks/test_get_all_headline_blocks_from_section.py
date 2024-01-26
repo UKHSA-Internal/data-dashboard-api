@@ -190,7 +190,7 @@ EXAMPLE_SECTION = {
 
 
 class TestCMSBlockParserGetAllHeadlineBlocksFromSection:
-    def test_returns_correct_headline_blocks(self, example_headline_number_block):
+    def test_returns_correct_headline_blocks(self):
         """
         Given a section containing headline blocks
             in a mixture of headline number row cards
