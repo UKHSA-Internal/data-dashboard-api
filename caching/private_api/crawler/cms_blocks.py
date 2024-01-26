@@ -157,6 +157,25 @@ class CMSBlockParser:
         return headline_blocks
 
     @classmethod
+    def get_all_selected_topics_from_headline_blocks(
+        cls, headline_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> set[str]:
+        """Extracts a set of topics from the given `headline_blocks`
+
+        Args:
+            headline_blocks: List of headline number blocks
+                from which to extract the unique
+                selected topics
+
+        Returns:
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `headline_blocks`
+
+        """
+        return {block["value"]["topic"] for block in headline_blocks}
+
+    @classmethod
     def get_content_cards_from_section(
         cls,
         section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
