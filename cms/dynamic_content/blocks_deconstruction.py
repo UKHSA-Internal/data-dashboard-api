@@ -1,7 +1,6 @@
 import copy
 
-from caching.private_api.crawler.geographies_crawler import GeographyData
-from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
+CMS_COMPONENT_BLOCK_TYPE = dict[str, str | dict[str, str] | list[dict[str, str]]]
 
 
 class CMSBlockParser:
@@ -25,7 +24,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_all_chart_blocks_from_section_for_geography(
-        cls, section: CMS_COMPONENT_BLOCK_TYPE, geography_data: GeographyData | None
+        cls, section: CMS_COMPONENT_BLOCK_TYPE, geography_data
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts a list of all chart cards from the given `section` for the specific `geography_data`
 
@@ -98,7 +97,7 @@ class CMSBlockParser:
 
     @classmethod
     def rebuild_chart_block_for_geography(
-        cls, chart_block: CMS_COMPONENT_BLOCK_TYPE, geography_data: GeographyData
+        cls, chart_block: CMS_COMPONENT_BLOCK_TYPE, geography_data: "GeographyData"
     ) -> CMS_COMPONENT_BLOCK_TYPE:
         """Builds a copy of the given `chart_block` with the `geography_data` applied
 
