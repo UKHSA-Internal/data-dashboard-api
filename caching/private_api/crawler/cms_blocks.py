@@ -309,13 +309,15 @@ class CMSBlockParser:
         )
         selected_topics_from_chart_blocks: set[
             str
-        ] = cls.get_all_selected_topics_in_chart_blocks_from_sections(sections=sections)
+        ] = cls._get_all_selected_topics_in_chart_blocks_from_sections(
+            sections=sections
+        )
         return selected_topics_from_chart_blocks.union(
             selected_topics_from_headline_blocks
         )
 
     @classmethod
-    def get_all_selected_topics_in_chart_blocks_from_sections(
+    def _get_all_selected_topics_in_chart_blocks_from_sections(
         cls, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
     ) -> set[str]:
         """Extracts a set of topics from all chart blocks in the given `sections`
