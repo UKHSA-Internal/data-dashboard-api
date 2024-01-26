@@ -116,7 +116,7 @@ class TestPlotParameters:
             "geography_name": fake_chart_plot_parameters.geography_name,
             "geography_type_name": fake_chart_plot_parameters.geography_type_name,
             "sex": fake_chart_plot_parameters.sex,
-            "age": fake_chart_plot_parameters.age,
+            "age": fake_chart_plot_parameters.age_name,
             "date_from": fake_chart_plot_parameters.date_from_value,
             "date_to": fake_chart_plot_parameters.date_to_value,
             "x_axis": ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
