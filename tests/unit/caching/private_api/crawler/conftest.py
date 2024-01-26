@@ -4,6 +4,7 @@ import pytest
 
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
+from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 
 @pytest.fixture
@@ -165,7 +166,7 @@ def example_headline_number_row_cards():
 
 
 @pytest.fixture
-def example_section_with_headline_card_and_chart_card():
+def example_section_with_headline_card_and_chart_card() -> CMS_COMPONENT_BLOCK_TYPE:
     return {
         "type": "section",
         "value": {
@@ -296,7 +297,7 @@ def example_section_with_headline_card_and_chart_card():
 
 
 @pytest.fixture
-def example_section_with_headline_chart_and_text_cards():
+def example_section_with_headline_chart_and_text_cards() -> CMS_COMPONENT_BLOCK_TYPE:
     return {
         "type": "section",
         "value": {
@@ -487,7 +488,7 @@ def example_section_with_headline_chart_and_text_cards():
 
 
 @pytest.fixture
-def example_chart_blocks():
+def example_chart_blocks() -> list[CMS_COMPONENT_BLOCK_TYPE]:
     return [
         {
             "title": "Cases",

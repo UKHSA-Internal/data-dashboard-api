@@ -7,7 +7,8 @@ from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 class TestCMSBlockParserExtractionOfCharts:
     def test_get_all_chart_blocks_from_section(
-        self, example_section_with_headline_card_and_chart_card
+        self,
+        example_section_with_headline_card_and_chart_card: CMS_COMPONENT_BLOCK_TYPE,
     ):
         """
         Given a section containing chart blocks within chart cards

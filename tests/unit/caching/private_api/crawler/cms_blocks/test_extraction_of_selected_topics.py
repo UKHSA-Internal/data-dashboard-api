@@ -1,4 +1,5 @@
 from caching.private_api.crawler.cms_blocks import CMSBlockParser
+from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 
 class TestCMSBlockParserExtractionOfSelectedTopics:
@@ -43,7 +44,8 @@ class TestCMSBlockParserExtractionOfSelectedTopics:
         assert topics == {"COVID-19"}
 
     def test_get_all_applied_topics_from_sections(
-        self, example_section_with_headline_chart_and_text_cards
+        self,
+        example_section_with_headline_chart_and_text_cards: CMS_COMPONENT_BLOCK_TYPE,
     ):
         """
         Given a list of section CMS components
