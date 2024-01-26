@@ -304,7 +304,7 @@ class CMSBlockParser:
         """
         selected_topics_from_headline_blocks: set[
             str
-        ] = cls.get_all_selected_topics_in_headline_blocks_from_sections(
+        ] = cls._get_all_selected_topics_in_headline_blocks_from_sections(
             sections=sections
         )
         selected_topics_from_chart_blocks: set[
@@ -337,7 +337,7 @@ class CMSBlockParser:
         return cls.get_all_selected_topics_from_chart_blocks(chart_blocks=chart_blocks)
 
     @classmethod
-    def get_all_selected_topics_in_headline_blocks_from_sections(
+    def _get_all_selected_topics_in_headline_blocks_from_sections(
         cls, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
     ) -> set[str]:
         """Extracts a set of topics from all headline blocks in the given `sections`
