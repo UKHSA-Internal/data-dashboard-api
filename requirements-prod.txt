@@ -62,7 +62,7 @@ platformdirs==3.11.0
 plotly==5.18.0
 pluggy==1.4.0
 psycopg2==2.9.9
-Pygments==2.16.1
+Pygments==2.17.2
 pyparsing==3.1.1
 pyrsistent==0.20.0
 python-dateutil==2.8.2
@@ -70,7 +70,7 @@ pytz==2022.7.1
 PyYAML==6.0.1
 redis==5.0.1
 requests==2.31.0
-rich==13.6.0
+rich==13.7.0
 ruamel.yaml==0.18.5
 ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.22

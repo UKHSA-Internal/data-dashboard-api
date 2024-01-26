@@ -1,3 +1,5 @@
+import pytest
+
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.utils import ChartTypes
@@ -102,6 +104,54 @@ class TestTemplateCOVID19Page:
 
         # Then
         assert not page_is_previewable
+
+    def test_enable_area_selector_returns_false_by_default(self):
+        """
+        Given a `TopicPage` created with a template for the `covid-19` page
+        When the `enable_area_selector` field is called
+        Then False is returned
+        """
+        # Given
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
+        )
+
+        # When
+        enable_area_selector_for_page: bool = (
+            template_covid_19_page.enable_area_selector
+        )
+
+        # Then
+        assert not enable_area_selector_for_page
+
+    @pytest.mark.parametrize(
+        "expected_api_field",
+        [
+            "page_description",
+            "body",
+            "related_links",
+            "last_published_at",
+            "seo_title",
+            "search_description",
+            "enable_area_selector",
+        ],
+    )
+    def test_api_fields(self, expected_api_field: str):
+        """
+        Given an expected API field
+        When the `api_fields` attribute is accessed
+        Then the field is in the returned list
+        """
+        # Given
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
+        )
+
+        # Then
+        api_fields = template_covid_19_page.api_fields
+        api_field_names: list[str] = [api_field.name for api_field in api_fields]
+
+        assert expected_api_field in api_field_names
 
 
 class TestTemplateInfluenzaPage:
