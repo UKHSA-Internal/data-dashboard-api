@@ -16,3 +16,5 @@ match config.APP_MODE:
         from .feedback_api import *
     case "UTILITY_WORKER":
         from .backend_utility_worker import *
+    case "CMS_ADMIN":
+        from .cms_admin import *
