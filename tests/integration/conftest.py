@@ -40,12 +40,12 @@ def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
     topic = Topic.objects.create(name="COVID-19")
     metric_group = MetricGroup.objects.create(name="headline", topic=topic)
     metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7DayChange",
+        name="COVID-19_headline_cases_7DayChange",
         metric_group=metric_group,
         topic=topic,
     )
     percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_ONSdeaths_7DayPercentChange",
+        name="COVID-19_headline_cases_7DayPercentChange",
         metric_group=metric_group,
         topic=topic,
     )
