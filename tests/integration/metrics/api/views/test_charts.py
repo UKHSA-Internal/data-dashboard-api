@@ -147,8 +147,9 @@ class TestChartsView:
         assert response_data["last_updated"] == str(latest_date)
 
     @pytest.mark.django_db
+    @pytest.mark.parametrize("endpoint", ["/api/charts/v2/", "/api/charts/v3/"])
     def test_returns_bad_request_response_when_queried_data_does_not_exist(
-        self, core_timeseries_example: list[CoreTimeSeries]
+        self, endpoint: str, core_timeseries_example: list[CoreTimeSeries]
     ):
         """
         Given a payload for which there is no corresponding data
@@ -168,7 +169,7 @@ class TestChartsView:
                 }
             ],
         }
-        path = "/api/charts/v3/"
+        path = endpoint
 
         # When
         response: Response = client.post(
