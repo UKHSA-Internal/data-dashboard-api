@@ -35,7 +35,8 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         epiweek: int = 1,
     ) -> FakeCoreTimeSeries:
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
-            metric_name=metric_name, topic_name=topic_name
+            metric_name=metric_name,
+            topic_name=topic_name,
         )
 
         geography = FakeGeographyFactory.build_example(
@@ -45,6 +46,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         stratum: FakeStratum = FakeStratumFactory.build_example(
             stratum_name=stratum_name,
         )
+
         age = FakeAge(name=age_name)
 
         return cls.build(

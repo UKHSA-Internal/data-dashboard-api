@@ -36,7 +36,11 @@ class DownloadsView(APIView):
     def _handle_json(self, queryset: CoreTimeSeriesQuerySet) -> Response:
         # Return the requested data in json format
         serializer = self.serializer_class(queryset, many=True)
-        return Response(serializer.data)
+
+        response = Response(serializer.data)
+        response["Content-Type"] = "application/json"
+        response["Content-Disposition"] = "attachment; filename=chart_download.json"
+        return response
 
     def _handle_csv(self, queryset: CoreTimeSeriesQuerySet) -> io.StringIO:
         # Return the requested data in csv format
