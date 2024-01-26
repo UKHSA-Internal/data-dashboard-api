@@ -289,7 +289,7 @@ class CMSBlockParser:
     # Extraction of selected topics
 
     @classmethod
-    def get_all_applied_topics_from_sections(cls, sections) -> set[str]:
+    def get_all_selected_topics_from_sections(cls, sections) -> set[str]:
         """Extracts a set of topics from all headline & chart blocks in the given `sections`
 
         Args:
