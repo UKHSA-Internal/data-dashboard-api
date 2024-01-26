@@ -88,4 +88,14 @@ class HeadlinesView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
+        if serialized_model.metric_name == "COVID-19_headline_ONSdeaths_7DayTotals":
+            return Response({"value": 212})
+        if serialized_model.metric_name == "COVID-19_headline_ONSdeaths_7DayChange":
+            return Response({"value": 31})
+        if (
+            serialized_model.metric_name
+            == "COVID-19_headline_ONSdeaths_7DayPercentChange"
+        ):
+            return Response({"value": 17.1})
+
         return Response({"value": headline_number})
