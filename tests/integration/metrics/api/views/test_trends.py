@@ -12,7 +12,6 @@ class TestTrendsView:
     def path(self) -> str:
         return "/api/trends/v3/"
 
-    @pytest.mark.skip("Temp fix")
     @pytest.mark.django_db
     def test_get_returns_correct_response(
         self,
