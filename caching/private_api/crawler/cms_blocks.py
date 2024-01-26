@@ -53,6 +53,27 @@ class CMSBlockParser:
         ]
 
     @classmethod
+    def get_all_selected_topics_from_chart_blocks(
+        cls, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> set[str]:
+        """Extracts a set of topics from the given `chart_blocks`
+
+        Args:
+            chart_blocks: List of chart blocks
+                from which to extract the unique
+                selected topics
+
+        Returns:
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `chart_blocks`
+
+        """
+        return {
+            plot["value"]["topic"] for block in chart_blocks for plot in block["chart"]
+        }
+
+    @classmethod
     def rebuild_chart_block_for_geography(
         cls, chart_block: CMS_COMPONENT_BLOCK_TYPE, geography_data: GeographyData
     ) -> CMS_COMPONENT_BLOCK_TYPE:
