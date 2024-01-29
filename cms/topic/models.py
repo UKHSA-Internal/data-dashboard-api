@@ -9,6 +9,7 @@ from wagtail.search import index
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
+from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.topic.managers import TopicPageManager
 
 
@@ -49,6 +50,7 @@ class TopicPage(Page):
         APIField("seo_title"),
         APIField("search_description"),
         APIField("enable_area_selector"),
+        APIField("selected_topics"),
     ]
 
     # Tabs to position at the top of the view
@@ -65,6 +67,20 @@ class TopicPage(Page):
     def is_previewable(self) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""
         return False
+
+    @property
+    def selected_topics(self) -> set[str]:
+        """Extracts a set of the selected topics from all the headline & chart blocks in the `body`
+
+        Returns:
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the body of the page
+
+        """
+        return CMSBlockParser.get_all_selected_topics_from_sections(
+            sections=self.body.raw_data
+        )
 
 
 class TopicPageRelatedLink(Orderable):

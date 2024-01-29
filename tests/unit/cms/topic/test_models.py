@@ -124,6 +124,40 @@ class TestTemplateCOVID19Page:
         # Then
         assert not enable_area_selector_for_page
 
+    def test_selected_topics_for_covid_template_page(self):
+        """
+        Given a `TopicPage` created with a template for the `COVID-19` page
+        When the `selected_topics` property is called
+        Then a set containing the selected topics is returned
+        """
+        # Given
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
+        )
+
+        # When
+        selected_topics: bool = template_covid_19_page.selected_topics
+
+        # Then
+        assert selected_topics == {"COVID-19"}
+
+    def test_selected_topics_for_influenza_template_page(self):
+        """
+        Given a `TopicPage` created with a template for the `Influenza` page
+        When the `selected_topics` property is called
+        Then a set containing the selected topics is returned
+        """
+        # Given
+        template_influenza_page = (
+            FakeTopicPageFactory.build_influenza_page_from_template()
+        )
+
+        # When
+        selected_topics: bool = template_influenza_page.selected_topics
+
+        # Then
+        assert selected_topics == {"Influenza"}
+
     @pytest.mark.parametrize(
         "expected_api_field",
         [
@@ -134,6 +168,7 @@ class TestTemplateCOVID19Page:
             "seo_title",
             "search_description",
             "enable_area_selector",
+            "selected_topics",
         ],
     )
     def test_api_fields(self, expected_api_field: str):
