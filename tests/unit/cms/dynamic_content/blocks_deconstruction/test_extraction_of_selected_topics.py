@@ -43,13 +43,13 @@ class TestCMSBlockParserExtractionOfSelectedTopics:
         # Then
         assert topics == {"COVID-19"}
 
-    def test_get_all_applied_topics_from_sections(
+    def test_get_all_selected_topics_from_sections(
         self,
         example_section_with_headline_chart_and_text_cards: CMS_COMPONENT_BLOCK_TYPE,
     ):
         """
         Given a list of section CMS components
-        When `get_all_applied_topics_from_sections()` is called
+        When `get_all_selected_topics_from_sections()` is called
             from the `CMSBlockParser` class
         Then a set containing only the selected topic
             i.e. COVID-19 is returned
@@ -58,7 +58,7 @@ class TestCMSBlockParserExtractionOfSelectedTopics:
         sections = [example_section_with_headline_chart_and_text_cards]
 
         # When
-        topics = CMSBlockParser.get_all_applied_topics_from_sections(sections=sections)
+        topics = CMSBlockParser.get_all_selected_topics_from_sections(sections=sections)
 
         # Then
         assert topics == {"COVID-19"}
