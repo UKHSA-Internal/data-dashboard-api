@@ -1,8 +1,12 @@
 from drf_spectacular.utils import extend_schema
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.geographies import (
+    GEOGRAPHY_TYPE_RESULT,
+    GeographiesSerializer,
     GeographyTypesDetailSerializer,
     GeographyTypesSerializer,
 )
@@ -29,3 +33,17 @@ class GeographyTypesViewSet(ReadOnlyModelViewSet):
     @cache_response()
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+
+@extend_schema(tags=[GEOGRAPHIES_API_TAG])
+class GeographiesView(APIView):
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs) -> Response:
+        payload = {"topic": self.kwargs["topic"]}
+        serializer = GeographiesSerializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+
+        results: list[GEOGRAPHY_TYPE_RESULT] = serializer.get_results()
+
+        return Response(results)
