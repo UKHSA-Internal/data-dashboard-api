@@ -12,7 +12,6 @@ django.setup()
 # for all the available geography combinations.
 
 from caching.internal_api_client import InternalAPIClient  # noqa: E402
-from caching.private_api.crawler.cms_blocks import CMSBlockParser  # noqa: E402
 from caching.private_api.crawler.dynamic_block_crawler import (  # noqa: E402
     DynamicContentBlockCrawler,
 )
@@ -28,6 +27,7 @@ from caching.private_api.crawler.type_hints import (  # noqa: E402
     CMS_COMPONENT_BLOCK_TYPE,
 )
 from cms.common.models import CommonPage  # noqa: E402
+from cms.dynamic_content.blocks_deconstruction import CMSBlockParser  # noqa: E402
 from cms.home.models import HomePage  # noqa: E402
 from cms.topic.models import TopicPage  # noqa: E402
 

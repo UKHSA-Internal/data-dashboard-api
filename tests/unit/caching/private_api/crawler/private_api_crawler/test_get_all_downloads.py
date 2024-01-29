@@ -4,8 +4,8 @@ from unittest import mock
 from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
-from caching.private_api.crawler.cms_blocks import CMSBlockParser
 from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
+from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 

@@ -1,6 +1,6 @@
 from unittest import mock
 
-from caching.private_api.crawler.cms_blocks import CMSBlockParser
+from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 
 
 class TestCMSBlockParser:
