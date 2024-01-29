@@ -73,7 +73,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         self,
         spy_get_downloads_from_chart_row_columns: mock.MagicMock,
         private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
-        example_chart_row_cards: list[dict[str, str | list[dict]]],
+        example_dummy_chart_row_cards,
     ):
         """
         Given a chart_row_card containing two columns
@@ -81,7 +81,7 @@ class TestPrivateAPICrawlerGetAllDownloads:
         Then a single call to get_downloads_from_chart_row_columns() is made
         """
         # Given
-        mocked_row_cards = example_chart_row_cards
+        mocked_row_cards = example_dummy_chart_row_cards
 
         # When
         private_api_crawler_with_mocked_internal_api_client.get_downloads_from_chart_cards(

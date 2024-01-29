@@ -21,6 +21,8 @@ class CMSBlockParser:
 
     """
 
+    # Extraction of charts
+
     @classmethod
     def get_all_chart_blocks_from_section_for_geography(
         cls, section: CMS_COMPONENT_BLOCK_TYPE, geography_data: GeographyData | None
@@ -53,6 +55,48 @@ class CMSBlockParser:
         ]
 
     @classmethod
+    def get_chart_blocks_from_chart_row_cards(
+        cls, chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts all chart blocks from the given list of `chart_row_cards`
+
+        Args:
+            chart_row_cards: List of all chart row cards on the page
+
+        Returns:
+            List of chart blocks which can then be crawled accordingly
+            Note that these blocks may still also contain headline
+            blocks within them.
+
+        """
+        try:
+            return [
+                chart_card["value"]
+                for chart_row_card in chart_row_cards
+                for chart_card in chart_row_card["value"]["columns"]
+            ]
+        except KeyError:
+            return []
+
+    @classmethod
+    def get_all_chart_blocks_from_section(
+        cls, section: CMS_COMPONENT_BLOCK_TYPE
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts a list of all chart cards from the given `section`
+
+        Args:
+            section: The section component from the CMS
+
+        Returns:
+            A list of chart block dictionaries
+
+        """
+        chart_row_cards = cls.get_chart_row_cards_from_page_section(section=section)
+        return cls.get_chart_blocks_from_chart_row_cards(
+            chart_row_cards=chart_row_cards
+        )
+
+    @classmethod
     def rebuild_chart_block_for_geography(
         cls, chart_block: CMS_COMPONENT_BLOCK_TYPE, geography_data: GeographyData
     ) -> CMS_COMPONENT_BLOCK_TYPE:
@@ -81,23 +125,7 @@ class CMSBlockParser:
 
         return chart_block_with_geography
 
-    @classmethod
-    def get_all_chart_blocks_from_section(
-        cls, section: CMS_COMPONENT_BLOCK_TYPE
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Extracts a list of all chart cards from the given `section`
-
-        Args:
-            section: The section component from the CMS
-
-        Returns:
-            A list of chart block dictionaries
-
-        """
-        chart_row_cards = cls.get_chart_row_cards_from_page_section(section=section)
-        return cls.get_chart_blocks_from_chart_row_cards(
-            chart_row_cards=chart_row_cards
-        )
+    # Extraction of headline number blocks
 
     @classmethod
     def get_all_headline_blocks_from_section(
@@ -173,6 +201,45 @@ class CMSBlockParser:
         ]
 
     @classmethod
+    def get_chart_row_cards_from_page_section(
+        cls,
+        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Get chart row cards from page section.
+
+        Args:
+            section: a page section to be processed for chart card data
+
+        Returns:
+            A list of dictionaries containing chart row cards from page section,
+        """
+        content_cards = cls.get_content_cards_from_section(section=section)
+        return cls.get_chart_row_cards_from_content_cards(content_cards=content_cards)
+
+    @classmethod
+    def get_headline_blocks_from_chart_blocks(
+        cls, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Extracts all headline number blocks from the given list of `chart_blocks`
+
+        Args:
+            chart_blocks: List of all chart blocks on the page
+
+        Returns:
+            List of headline number blocks which can then be crawled accordingly
+
+        """
+        headline_number_blocks = []
+
+        for chart_block in chart_blocks:
+            headline_number_blocks_in_chart_block = chart_block.get(
+                "headline_number_columns", []
+            )
+            headline_number_blocks += headline_number_blocks_in_chart_block
+
+        return headline_number_blocks
+
+    @classmethod
     def get_headline_numbers_row_cards_from_content_cards(
         cls,
         content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
@@ -193,22 +260,6 @@ class CMSBlockParser:
             for content_card in content_cards
             if content_card["type"] == "headline_numbers_row_card"
         ]
-
-    @classmethod
-    def get_chart_row_cards_from_page_section(
-        cls,
-        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Get chart row cards from page section.
-
-        Args:
-            section: a page section to be processed for chart card data
-
-        Returns:
-            A list of dictionaries containing chart row cards from page section,
-        """
-        content_cards = cls.get_content_cards_from_section(section=section)
-        return cls.get_chart_row_cards_from_content_cards(content_cards=content_cards)
 
     @classmethod
     def get_headline_blocks_from_headline_number_row_cards(
@@ -235,49 +286,118 @@ class CMSBlockParser:
         except KeyError:
             return []
 
+    # Extraction of selected topics
+
     @classmethod
-    def get_chart_blocks_from_chart_row_cards(
-        cls, chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Extracts all chart blocks from the given list of `chart_row_cards`
+    def get_all_selected_topics_from_sections(cls, sections) -> set[str]:
+        """Extracts a set of topics from all headline & chart blocks in the given `sections`
 
         Args:
-            chart_row_cards: List of all chart row cards on the page
+            sections: List of all CMS section components
+                from the target page
 
         Returns:
-            List of chart blocks which can then be crawled accordingly
-            Note that these blocks may still also contain headline
-            blocks within them.
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `sections`
 
         """
-        try:
-            return [
-                chart_card["value"]
-                for chart_row_card in chart_row_cards
-                for chart_card in chart_row_card["value"]["columns"]
-            ]
-        except KeyError:
-            return []
+        selected_topics_from_headline_blocks: set[
+            str
+        ] = cls._get_all_selected_topics_in_headline_blocks_from_sections(
+            sections=sections
+        )
+        selected_topics_from_chart_blocks: set[
+            str
+        ] = cls._get_all_selected_topics_in_chart_blocks_from_sections(
+            sections=sections
+        )
+        return selected_topics_from_chart_blocks.union(
+            selected_topics_from_headline_blocks
+        )
 
     @classmethod
-    def get_headline_blocks_from_chart_blocks(
+    def _get_all_selected_topics_in_chart_blocks_from_sections(
+        cls, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
+    ) -> set[str]:
+        """Extracts a set of topics from all chart blocks in the given `sections`
+
+        Args:
+            sections: List of all CMS section components
+                from the target page
+
+        Returns:
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `sections`
+
+        """
+        chart_blocks = []
+        for section in sections:
+            chart_blocks += cls.get_all_chart_blocks_from_section(section=section)
+
+        return cls.get_all_selected_topics_from_chart_blocks(chart_blocks=chart_blocks)
+
+    @classmethod
+    def _get_all_selected_topics_in_headline_blocks_from_sections(
+        cls, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
+    ) -> set[str]:
+        """Extracts a set of topics from all headline blocks in the given `sections`
+
+        Args:
+            sections: List of all CMS section components
+                from the target page
+
+        Returns:
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `sections`
+
+        """
+        headline_blocks = []
+        for section in sections:
+            headline_blocks += cls.get_all_headline_blocks_from_section(section=section)
+
+        return cls.get_all_selected_topics_from_headline_blocks(
+            headline_blocks=headline_blocks
+        )
+
+    @classmethod
+    def get_all_selected_topics_from_chart_blocks(
         cls, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
-    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
-        """Extracts all headline number blocks from the given list of `chart_blocks`
+    ) -> set[str]:
+        """Extracts a set of topics from the given `chart_blocks`
 
         Args:
-            chart_blocks: List of all chart blocks on the page
+            chart_blocks: List of chart blocks
+                from which to extract the unique
+                selected topics
 
         Returns:
-            List of headline number blocks which can then be crawled accordingly
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `chart_blocks`
 
         """
-        headline_number_blocks = []
+        return {
+            plot["value"]["topic"] for block in chart_blocks for plot in block["chart"]
+        }
 
-        for chart_block in chart_blocks:
-            headline_number_blocks_in_chart_block = chart_block.get(
-                "headline_number_columns", []
-            )
-            headline_number_blocks += headline_number_blocks_in_chart_block
+    @classmethod
+    def get_all_selected_topics_from_headline_blocks(
+        cls, headline_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> set[str]:
+        """Extracts a set of topics from the given `headline_blocks`
 
-        return headline_number_blocks
+        Args:
+            headline_blocks: List of headline number blocks
+                from which to extract the unique
+                selected topics
+
+        Returns:
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `headline_blocks`
+
+        """
+        return {block["value"]["topic"] for block in headline_blocks}
