@@ -78,7 +78,7 @@ class TopicPage(Page):
             once in the body of the page
 
         """
-        return CMSBlockParser.get_all_applied_topics_from_sections(
+        return CMSBlockParser.get_all_selected_topics_from_sections(
             sections=self.body.raw_data
         )
 
