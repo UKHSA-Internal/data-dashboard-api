@@ -4,8 +4,7 @@ from caching.errors import CDNAuthKeyNotProvidedError
 from caching.public_api.crawler import PublicAPICrawler
 
 
-class PublicAPIURLNotProvidedError(Exception):
-    ...
+class PublicAPIURLNotProvidedError(Exception): ...
 
 
 def _get_public_api_url() -> str:

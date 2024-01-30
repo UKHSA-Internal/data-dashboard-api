@@ -166,9 +166,9 @@ class TestAPITimeSeriesRequestSerializer:
         )
 
         # When
-        timeseries_dto_slice: list[
-            APITimeSeriesDTO
-        ] = serializer.build_timeseries_dto_slice()
+        timeseries_dto_slice: list[APITimeSeriesDTO] = (
+            serializer.build_timeseries_dto_slice()
+        )
 
         # Then
         serialized_api_timeseries_dto = timeseries_dto_slice[0]
@@ -212,9 +212,9 @@ class TestAPITimeSeriesRequestSerializer:
         )
 
         # When
-        timeseries_dto_slice: list[
-            APITimeSeriesDTO
-        ] = serializer.build_timeseries_dto_slice()
+        timeseries_dto_slice: list[APITimeSeriesDTO] = (
+            serializer.build_timeseries_dto_slice()
+        )
 
         # Then
         serialized_api_timeseries_dto = timeseries_dto_slice[0]
@@ -260,9 +260,9 @@ class TestAPITimeSeriesRequestSerializer:
         )
 
         # When
-        timeseries_dto_slice: list[
-            APITimeSeriesDTO
-        ] = serializer.build_timeseries_dto_slice()
+        timeseries_dto_slice: list[APITimeSeriesDTO] = (
+            serializer.build_timeseries_dto_slice()
+        )
 
         # Then
         serialized_api_timeseries_dto = timeseries_dto_slice[0]

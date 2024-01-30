@@ -10,8 +10,7 @@ from caching.internal_api_client import (
 from caching.private_api.management import CacheManagement, CacheMissError
 
 
-class CacheCheckResultedInMissError(Exception):
-    ...
+class CacheCheckResultedInMissError(Exception): ...
 
 
 def cache_response():
