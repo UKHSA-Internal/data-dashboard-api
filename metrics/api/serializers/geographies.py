@@ -3,7 +3,7 @@ from collections import defaultdict
 from rest_framework import serializers
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
-from metrics.data.models.core_models import CoreTimeSeries, Geography, GeographyType
+from metrics.data.models.core_models import CoreTimeSeries, Geography, GeographyType, Topic
 
 
 class GeographySerializer(serializers.ModelSerializer):
@@ -31,6 +31,20 @@ GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
 class GeographiesSerializer(serializers.Serializer):
     topic = serializers.CharField()
+
+    def validate_topic(self, value):
+        if not self.topic_manager.does_topic_exist(topic=value):
+            raise serializers.ValidationError({"name": "Please enter a valid topic name."})
+
+        return value
+
+    @property
+    def topic_manager(self):
+        """
+        Fetch the topic manager from the context if available.
+        If not get the Manager which has been declared on the `Topic` model.
+        """
+        return self.context.get("topic_manager", Topic.objects)
 
     @property
     def core_time_series_manager(self):

@@ -15,6 +15,7 @@ from tests.fakes.factories.metrics.geography_type_factory import (
     FakeGeographyTypeFactory,
 )
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
+from tests.fakes.managers.topic_manager import FakeTopicManager
 
 
 class TestGeographySerializer:
@@ -99,8 +100,12 @@ class TestGeographiesSerializer:
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
             time_series=[bexley, hackney, england, irrelavant_leeds_geography]
         )
+        fake_topic_manager = FakeTopicManager(topics=["COVID-19", "Influenza"])
         serializer = GeographiesSerializer(
-            context={"core_time_series_manager": fake_core_time_series_manager},
+            context={
+                "core_time_series_manager": fake_core_time_series_manager,
+                "topic_manager": fake_topic_manager,
+            },
             data={"topic": "COVID-19"},
         )
 
@@ -123,6 +128,50 @@ class TestGeographiesSerializer:
             },
         ]
         assert results == expected_results
+
+    def test_topic_validation_fails(self):
+        """
+        Given an invalid topic name
+        When the `GeographiesSerializer` is initialised
+        Then `serializer.is_valid()` will return False
+        """
+        # Given
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+        fake_topic_manager = FakeTopicManager(topics=["COVID-19", "Influenza"])
+
+        # When
+        serializer = GeographiesSerializer(
+            context={
+                "core_time_series_manager": fake_core_time_series_manager,
+                "topic_manager": fake_topic_manager,
+            },
+            data={"topic": "invalid-topic"},
+        )
+
+        # Then
+        assert serializer.is_valid() is False
+
+    def test_topic_validation_succeeds(self):
+        """
+        Given a valid topic name
+        When the `GeographiesSerializer` is initialised
+        Then `serializer.is_valid()` will return True
+        """
+        # Given
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+        fake_topic_manager = FakeTopicManager(topics=["COVID-19", "Influenza"])
+
+        # When
+        serializer = GeographiesSerializer(
+            context={
+                "core_time_series_manager": fake_core_time_series_manager,
+                "topic_manager": fake_topic_manager,
+            },
+            data={"topic": "COVID-19"},
+        )
+
+        # Then
+        assert serializer.is_valid()
 
 
 class TestSerializeQuerySet:
