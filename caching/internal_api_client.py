@@ -1,3 +1,5 @@
+from urllib.parse import urljoin
+
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
@@ -8,7 +10,7 @@ TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v3/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
 DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
-GEOGRAPHIES_ENDPOINT_PATH = f"{API_PREFIX}geographies/v1/types/"
+GEOGRAPHIES_ENDPOINT_PATH = f"{API_PREFIX}geographies/v2/"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
@@ -155,15 +157,15 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
-    def hit_geographies_list_endpoint(self) -> Response:
+    def hit_geographies_list_endpoint(self, topic: str) -> Response:
         """Sends a `GET` request to the list `geographies/` endpoint
 
         Returns:
             `Response` from the `geographies/` endpoint
 
         """
-        path = self.geographies_endpoint_path
-        headers = self.build_headers()
+        path: str = urljoin(base=self.geographies_endpoint_path, url=topic)
+        headers: dict[str, bool] = self.build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 
     def hit_geographies_detail_endpoint(self, geography_type_id: int) -> Response:
