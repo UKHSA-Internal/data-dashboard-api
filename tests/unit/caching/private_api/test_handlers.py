@@ -7,7 +7,7 @@ from caching.private_api.handlers import (
     check_cache_for_all_pages,
     collect_all_pages,
     crawl_all_pages,
-    extract_topic_pages_from_all_pages,
+    extract_area_selectable_pages,
     force_cache_refresh_for_all_pages,
     get_all_downloads,
 )
@@ -187,27 +187,49 @@ class TestCollectAllPages:
         assert unpublished_page not in collected_pages
 
 
-class TestExtractTopicPagesFromAllPages:
+class TestExtractAreaSelectablePages:
     def test_returns_for_topic_pages_only(self):
         """
         Given a list of pages of different types
-            including a `TopicPage`
-        When `extract_topic_pages_from_all_pages()` is called
-        Then only the `TopicPage` models are returned
+            including a `TopicPage` which is valid for the area selector
+        When `extract_area_selectable_pages()` is called
+        Then only the valid `TopicPage` model is returned
         """
         # Given
-        topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+        valid_topic_page = FakeTopicPageFactory.build_covid_19_page_from_template()
+        valid_topic_page.enable_area_selector = True
+
+        # The topic page was not selected so should be excluded
+        unselected_topic_page = (
+            FakeTopicPageFactory.build_influenza_page_from_template()
+        )
+        unselected_topic_page.enable_area_selector = False
+
+        # Although the build other viruses page was selected
+        # It contains more than 1 topic and therefore is not included
+        invalid_topic_page = (
+            FakeTopicPageFactory.build_other_respiratory_viruses_page_from_template()
+        )
+        invalid_topic_page.enable_area_selector = True
+
+        # Other page types do not implement the `is_valid_for_area_selector`
+        # property and therefore should return False by default
+        # and will be excluded
         other_pages = [
             FakeHomePageFactory.build_blank_page(slug="dashboard"),
             FakeWhatsNewParentPageFactory.build_page_from_template(live=True),
         ]
-        all_pages = other_pages + [topic_page]
+        all_pages = other_pages + [
+            valid_topic_page,
+            unselected_topic_page,
+            invalid_topic_page,
+        ]
 
         # When
-        topic_pages = extract_topic_pages_from_all_pages(all_pages=all_pages)
+        area_selectable_pages = extract_area_selectable_pages(all_pages=all_pages)
 
         # Then
-        assert topic_pages == [topic_page]
+        assert area_selectable_pages == [valid_topic_page]
 
 
 class TestCrawlAllPages:
@@ -239,12 +261,12 @@ class TestCrawlAllPages:
         # And then those pages are passed to be processed
         spy_crawler.process_pages.assert_called_once_with(pages=collected_pages)
 
-    @mock.patch(f"{MODULE_PATH}.extract_topic_pages_from_all_pages")
+    @mock.patch(f"{MODULE_PATH}.extract_area_selectable_pages")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
     def test_delegates_calls_successfully_when_area_selector_is_activated(
         self,
         spy_collect_all_pages: mock.MagicMock,
-        spy_extract_topic_pages_from_all_pages: mock.MagicMock,
+        spy_extract_area_selectable_pages: mock.MagicMock,
         monkeypatch,
     ):
         """
@@ -282,12 +304,12 @@ class TestCrawlAllPages:
         )
 
         # Check that the topic pages are extracted
-        spy_extract_topic_pages_from_all_pages.assert_called_once_with(
+        spy_extract_area_selectable_pages.assert_called_once_with(
             all_pages=all_collected_pages
         )
         # And then those topic pages are passed to the `AreaSelectorOrchestrator`
         spy_area_selector_orchestrator.process_pages.assert_called_once_with(
-            pages=spy_extract_topic_pages_from_all_pages.return_value
+            pages=spy_extract_area_selectable_pages.return_value
         )
 
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
