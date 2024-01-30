@@ -205,9 +205,9 @@ class TestHeadlinesQuerySerializer:
         )
 
         # Then
-        expected_geography_type_names: list[
-            str
-        ] = geography_type_manager.get_all_names()
+        expected_geography_type_names: list[str] = (
+            geography_type_manager.get_all_names()
+        )
         assert (
             list(serializer.fields["geography_type"].choices)
             == expected_geography_type_names

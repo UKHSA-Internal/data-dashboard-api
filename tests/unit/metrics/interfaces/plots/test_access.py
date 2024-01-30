@@ -113,9 +113,9 @@ class TestPlotsInterface:
             x_axis="date",
             y_axis="metric",
         )
-        fake_core_time_series_records: list[
-            FakeCoreTimeSeries
-        ] = self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
+        fake_core_time_series_records: list[FakeCoreTimeSeries] = (
+            self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
+        )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
             time_series=fake_core_time_series_records
         )
@@ -243,9 +243,9 @@ class TestPlotsInterface:
             x_axis="date",
             y_axis="metric",
         )
-        fake_core_time_series_records: list[
-            FakeCoreTimeSeries
-        ] = self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
+        fake_core_time_series_records: list[FakeCoreTimeSeries] = (
+            self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
+        )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
             time_series=fake_core_time_series_records
         )
@@ -256,9 +256,9 @@ class TestPlotsInterface:
         )
 
         # When
-        plots_data: list[
-            CompletePlotData
-        ] = plots_interface.build_plots_data_for_full_queryset()
+        plots_data: list[CompletePlotData] = (
+            plots_interface.build_plots_data_for_full_queryset()
+        )
 
         # Then
         # Check that only 1 enriched `CompletePlotData` model is returned
@@ -307,10 +307,10 @@ class TestPlotsInterface:
             x_axis="date",
             y_axis="metric",
         )
-        fake_core_time_series_for_plot: list[
-            FakeCoreTimeSeries
-        ] = self._setup_fake_time_series_for_plot(
-            plot_parameters=fake_chart_plot_parameters
+        fake_core_time_series_for_plot: list[FakeCoreTimeSeries] = (
+            self._setup_fake_time_series_for_plot(
+                plot_parameters=fake_chart_plot_parameters
+            )
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
             time_series=fake_core_time_series_for_plot

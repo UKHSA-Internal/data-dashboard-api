@@ -40,9 +40,9 @@ class TestAreaSelectorOrchestrator:
         )
 
         # When
-        all_geography_combinations: list[
-            GeographyData
-        ] = area_selector_orchestrator.get_all_geography_combinations()
+        all_geography_combinations: list[GeographyData] = (
+            area_selector_orchestrator.get_all_geography_combinations()
+        )
 
         # Then
         lower_tier_local_authority = "Lower Tier Local Authority"

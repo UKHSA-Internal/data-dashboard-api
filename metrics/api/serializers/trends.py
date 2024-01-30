@@ -14,9 +14,9 @@ class TrendsQuerySerializer(HeadlinesQuerySerializer):
 
     def populate_choices(self):
         super().populate_choices()
-        self.fields[
-            "percentage_metric"
-        ].choices = self.metric_manager.get_all_unique_percent_change_type_names()
+        self.fields["percentage_metric"].choices = (
+            self.metric_manager.get_all_unique_percent_change_type_names()
+        )
 
     def to_models(self) -> TrendsParameters:
         return TrendsParameters(**self.validated_data)

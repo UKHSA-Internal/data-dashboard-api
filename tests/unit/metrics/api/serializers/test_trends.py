@@ -173,9 +173,9 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_metric_names: list[
-            str
-        ] = metric_manager.get_all_unique_percent_change_type_names()
+        expected_metric_names: list[str] = (
+            metric_manager.get_all_unique_percent_change_type_names()
+        )
         assert (
             list(serializer.fields["percentage_metric"].choices)
             == expected_metric_names
@@ -273,9 +273,9 @@ class TestTrendsQuerySerializer:
         )
 
         # Then
-        expected_geography_type_names: list[
-            str
-        ] = geography_type_manager.get_all_names()
+        expected_geography_type_names: list[str] = (
+            geography_type_manager.get_all_names()
+        )
         assert (
             list(serializer.fields["geography_type"].choices)
             == expected_geography_type_names

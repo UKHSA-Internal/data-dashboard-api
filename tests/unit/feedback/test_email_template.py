@@ -81,9 +81,9 @@ class TestEnrichSuggestionsWithLongFormQuestions:
         suggestions[question.name] = answer
 
         # When
-        enriched_suggestions: dict[
-            str, str
-        ] = _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
+        enriched_suggestions: dict[str, str] = (
+            _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
+        )
 
         # Then
         assert enriched_suggestions[question.value] == answer
@@ -100,9 +100,9 @@ class TestEnrichSuggestionsWithLongFormQuestions:
         suggestions.pop("did_you_find_everything")
 
         # When
-        enriched_suggestions: dict[
-            str, str
-        ] = _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
+        enriched_suggestions: dict[str, str] = (
+            _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
+        )
 
         # Then
         for question in FeedbackQuestion.string_based_questions():
@@ -125,14 +125,14 @@ class TestEnrichSuggestionsWithLongFormQuestions:
         """
         # Given
         suggestions = self._build_base_suggestions()
-        suggestions[
-            FeedbackQuestion.did_you_find_everything.name
-        ] = did_you_find_everything_value
+        suggestions[FeedbackQuestion.did_you_find_everything.name] = (
+            did_you_find_everything_value
+        )
 
         # When
-        enriched_suggestions: dict[
-            str, str
-        ] = _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
+        enriched_suggestions: dict[str, str] = (
+            _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
+        )
 
         # Then
         for question in FeedbackQuestion.string_based_questions():

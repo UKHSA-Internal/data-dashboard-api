@@ -8,8 +8,7 @@ from rest_framework.response import Response
 from caching.private_api.client import CacheClient, InMemoryCacheClient
 
 
-class CacheMissError(Exception):
-    ...
+class CacheMissError(Exception): ...
 
 
 class CacheManagement:

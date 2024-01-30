@@ -104,9 +104,9 @@ class TestPlotParameters:
         fake_chart_plot_parameters.age = age
 
         # When
-        dict_used_for_query: dict[
-            str, str
-        ] = fake_chart_plot_parameters.to_dict_for_query()
+        dict_used_for_query: dict[str, str] = (
+            fake_chart_plot_parameters.to_dict_for_query()
+        )
 
         # Then
         expected_dict_used_for_query = {

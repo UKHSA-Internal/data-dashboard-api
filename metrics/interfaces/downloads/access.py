@@ -29,9 +29,9 @@ class DownloadsInterface:
         )
 
     def build_downloads_data_from_plots_data(self) -> list[CompletePlotData]:
-        complete_plots: list[
-            CompletePlotData
-        ] = self.plots_interface.build_plots_data_for_full_queryset()
+        complete_plots: list[CompletePlotData] = (
+            self.plots_interface.build_plots_data_for_full_queryset()
+        )
         return merge_and_process_querysets(complete_plots=complete_plots)
 
 

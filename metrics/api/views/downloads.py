@@ -130,7 +130,7 @@ class BulkDownloadsView(APIView):
         response = HttpResponse(
             compressed_downloads["zip_file_data"], content_type="application/zip"
         )
-        response[
-            "Content-Disposition"
-        ] = f"attachment; filename={compressed_downloads['zip_file_name']}"
+        response["Content-Disposition"] = (
+            f"attachment; filename={compressed_downloads['zip_file_name']}"
+        )
         return response

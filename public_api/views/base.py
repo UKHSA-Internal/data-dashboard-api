@@ -34,9 +34,9 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         serializer: APITimeSeriesRequestSerializer = self._build_request_serializer(
             request=request
         )
-        timeseries_dto_slice: list[
-            APITimeSeriesDTO
-        ] = serializer.build_timeseries_dto_slice()
+        timeseries_dto_slice: list[APITimeSeriesDTO] = (
+            serializer.build_timeseries_dto_slice()
+        )
 
         serializer = self.get_serializer(timeseries_dto_slice, many=True)
         return Response(serializer.data)
