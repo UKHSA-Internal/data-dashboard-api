@@ -82,6 +82,23 @@ class TopicPage(Page):
             sections=self.body.raw_data
         )
 
+    @property
+    def is_valid_for_area_selector(self) -> bool:
+        """Determines whether this `TopicPage` is available and valid for the area selector
+
+        Notes:
+            The criteria for being valid for the area selector
+            are as follows:
+                1) The `enable_area_selector` field must be True
+                2) The `selected_topics` field must have a length of 1
+
+        Returns:
+            True if this `TopicPage` can be processed
+            by the area selector. False otherwise.
+
+        """
+        return len(self.selected_topics) == 1 and self.enable_area_selector
+
 
 class TopicPageRelatedLink(Orderable):
     page = ParentalKey(

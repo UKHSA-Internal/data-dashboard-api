@@ -141,22 +141,29 @@ class TestTemplateCOVID19Page:
         # Then
         assert selected_topics == {"COVID-19"}
 
-    def test_selected_topics_for_influenza_template_page(self):
+    @pytest.mark.parametrize("enable_area_selector", [True, False])
+    def test_is_valid_for_area_selector_for_covid_template_page(
+        self, enable_area_selector: bool
+    ):
         """
-        Given a `TopicPage` created with a template for the `Influenza` page
-        When the `selected_topics` property is called
-        Then a set containing the selected topics is returned
+        Given a `TopicPage` created with a template for the `COVID-19` page
+        And the `enable_area_selector` field switched on or off
+        When the `is_valid_for_area_selector` property is called
+        Then the correct boolean is returned
         """
         # Given
-        template_influenza_page = (
-            FakeTopicPageFactory.build_influenza_page_from_template()
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
         )
+        template_covid_19_page.enable_area_selector = enable_area_selector
 
         # When
-        selected_topics: bool = template_influenza_page.selected_topics
+        is_valid_for_area_selector: bool = (
+            template_covid_19_page.is_valid_for_area_selector
+        )
 
         # Then
-        assert selected_topics == {"Influenza"}
+        assert is_valid_for_area_selector == enable_area_selector
 
     @pytest.mark.parametrize(
         "expected_api_field",
@@ -364,3 +371,50 @@ class TestTemplateInfluenzaPage:
             plot_65_plus_years_value["line_colour"] == RGBAChartLineColours.ORANGE.name
         )
         assert plot_65_plus_years_value["line_type"] == ChartLineTypes.SOLID.name
+
+    def test_selected_topics_for_influenza_template_page(self):
+        """
+        Given a `TopicPage` created with a template for the `Influenza` page
+        When the `selected_topics` property is called
+        Then a set containing the selected topics is returned
+        """
+        # Given
+        template_influenza_page = (
+            FakeTopicPageFactory.build_influenza_page_from_template()
+        )
+
+        # When
+        selected_topics: bool = template_influenza_page.selected_topics
+
+        # Then
+        assert selected_topics == {"Influenza"}
+
+
+class TestTemplateOtherRespiratoryVirusesPage:
+    @pytest.mark.parametrize("enable_area_selector", [True, False])
+    def test_is_valid_for_area_selector_returns_false_due_to_multiple_selected_topics(
+        self, enable_area_selector: bool
+    ):
+        """
+        Given a `TopicPage` created with a template
+            for the `Other Respiratory Viruses` page
+        And the `enable_area_selector` field switched on or off
+        When the `is_valid_for_area_selector` property is called
+        Then False is returned because of the
+            multiple selected topics on the page
+        """
+        # Given
+        template_other_respiratory_viruses_page = (
+            FakeTopicPageFactory.build_other_respiratory_viruses_page_from_template()
+        )
+        template_other_respiratory_viruses_page.enable_area_selector = (
+            enable_area_selector
+        )
+
+        # When
+        is_valid_for_area_selector: bool = (
+            template_other_respiratory_viruses_page.is_valid_for_area_selector
+        )
+
+        # Then
+        assert not is_valid_for_area_selector
