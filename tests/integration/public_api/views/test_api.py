@@ -138,15 +138,15 @@ class TestPublicAPINestedLinkViews:
         )
 
         # When
-        expected_response_fields: list[
-            tuple[str, str, str, str]
-        ] = self._build_expected_response_fields(
-            theme_name=theme_name,
-            sub_theme_name=sub_theme_name,
-            topic_name=topic_name,
-            geography_type_name=geography_type_name,
-            geography_name=geography_name,
-            metric_name=metric_name,
+        expected_response_fields: list[tuple[str, str, str, str]] = (
+            self._build_expected_response_fields(
+                theme_name=theme_name,
+                sub_theme_name=sub_theme_name,
+                topic_name=topic_name,
+                geography_type_name=geography_type_name,
+                geography_name=geography_name,
+                metric_name=metric_name,
+            )
         )
 
         path = f"{self.path}themes/"
