@@ -4,8 +4,7 @@ from caching.frontend.crawler import FrontEndCrawler
 from caching.public_api.handlers import get_cdn_auth_key
 
 
-class FrontEndURLNotProvidedError(Exception):
-    ...
+class FrontEndURLNotProvidedError(Exception): ...
 
 
 def _get_frontend_base_url() -> str:

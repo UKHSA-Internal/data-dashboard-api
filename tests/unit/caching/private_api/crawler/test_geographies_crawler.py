@@ -68,9 +68,9 @@ class TestGeographiesAPICrawler:
         )
 
         # When
-        geography_type_data_models: list[
-            GeographyTypeData
-        ] = geographies_api_crawler.hit_list_endpoint_for_topic(topic=topic)
+        geography_type_data_models: list[GeographyTypeData] = (
+            geographies_api_crawler.hit_list_endpoint_for_topic(topic=topic)
+        )
 
         # Then
         geography_type_data_model = geography_type_data_models[0]

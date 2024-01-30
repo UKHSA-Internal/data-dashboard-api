@@ -17,16 +17,13 @@ from metrics.interfaces.plots.validation import (
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
-class DataNotFoundForPlotError(Exception):
-    ...
+class DataNotFoundForPlotError(Exception): ...
 
 
-class DataNotFoundForAnyPlotError(Exception):
-    ...
+class DataNotFoundForAnyPlotError(Exception): ...
 
 
-class InvalidPlotParametersError(Exception):
-    ...
+class InvalidPlotParametersError(Exception): ...
 
 
 class QuerySetResult(BaseModel):

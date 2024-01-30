@@ -49,9 +49,9 @@ class TestChartsInterface:
             `spy_generate_line_with_shaded_section_chart`: For the main assertion.
         """
         # Given
-        fake_plots_collection.plots[
-            0
-        ].chart_type = ChartTypes.line_with_shaded_section.value
+        fake_plots_collection.plots[0].chart_type = (
+            ChartTypes.line_with_shaded_section.value
+        )
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
             core_time_series_manager=mock.Mock(),
