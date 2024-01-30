@@ -1,7 +1,10 @@
 import datetime
 
+from django.db import models
+
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 from tests.fakes.models.queryset import FakeQuerySet
+from tests.fakes.models.row import FakeRow
 
 
 class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
@@ -110,6 +113,17 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def exists(self) -> bool:
         return bool(self.time_series)
+
+    def get_available_geographies(self, topic: str) -> models.QuerySet:
+        rows = [
+            FakeRow(
+                geography__name=obj.geography.name,
+                geography__geography_type__name=obj.geography.geography_type.name,
+            )
+            for obj in self.time_series
+            if obj.metric.topic.name == topic
+        ]
+        return FakeQuerySet(instances=rows)
 
 
 def _convert_string_to_date(date_string: str | datetime.datetime) -> datetime.date:

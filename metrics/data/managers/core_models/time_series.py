@@ -273,6 +273,25 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         """
         return self.values_list("sex", flat=True).distinct()
 
+    def get_available_geographies(self, topic: str) -> models.QuerySet:
+        """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
+
+        Returns:
+            QuerySet: A queryset of the geography types and the corresponding geographies
+                Examples:
+                    `<CoreTimeSeriesQuerySet
+                        [Row(geography__name='England', geography__geography_type__name='Nation')]>`
+
+        """
+        return (
+            self.filter(metric__topic__name=topic)
+            .values_list(
+                "geography__name", "geography__geography_type__name", named=True
+            )
+            .order_by("geography__geography_type")
+            .distinct()
+        )
+
 
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
@@ -378,3 +397,15 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().get_all_sex_names()
+
+    def get_available_geographies(self, topic: str) -> models.QuerySet:
+        """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
+
+        Returns:
+            QuerySet: A queryset of the geography types and the corresponding geographies
+                Examples:
+                    `<CoreTimeSeriesQuerySet
+                        [Row(geography__name='England', geography__geography_type__name='Nation')]>`
+
+        """
+        return self.get_queryset().get_available_geographies(topic=topic)
