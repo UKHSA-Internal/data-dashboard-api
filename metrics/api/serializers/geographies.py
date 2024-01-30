@@ -40,7 +40,7 @@ class GeographiesSerializer(serializers.Serializer):
         """
         return self.context.get("core_time_series_manager", CoreTimeSeries.objects)
 
-    def get_results(self) -> list[GEOGRAPHY_TYPE_RESULT]:
+    def data(self) -> list[GEOGRAPHY_TYPE_RESULT]:
         """Finds available geography types as list of dicts, where each dict represents a geography_type
 
         Examples:

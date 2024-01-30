@@ -106,7 +106,7 @@ class TestGeographiesSerializer:
 
         # When
         serializer.is_valid(raise_exception=True)
-        results = serializer.get_results()
+        results = serializer.data()
 
         # Then
         expected_results = [

@@ -44,6 +44,6 @@ class GeographiesView(APIView):
         serializer = GeographiesSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
 
-        results: list[GEOGRAPHY_TYPE_RESULT] = serializer.get_results()
+        data: list[GEOGRAPHY_TYPE_RESULT] = serializer.data()
 
-        return Response(results)
+        return Response(data)
