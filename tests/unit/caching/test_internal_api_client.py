@@ -23,7 +23,7 @@ class TestInternalAPIClient:
                 ("charts_endpoint_path", "/api/charts/v3/"),
                 ("tables_endpoint_path", "/api/tables/v4/"),
                 ("downloads_endpoint_path", "/api/downloads/v2/"),
-                ("geographies_endpoint_path", "/api/geographies/v1/types/"),
+                ("geographies_endpoint_path", "/api/geographies/v2/"),
             ]
         ),
     )
@@ -308,22 +308,27 @@ class TestInternalAPIClient:
 
     def test_hit_geographies_list_endpoint_delegates_call_correctly(self):
         """
-        Given a client and mocked request data
+        Given a client and a topic
         When `hit_geographies_list_endpoint()` is called
             from an instance of the `InternalAPIClient`
         Then the call is delegated to the `client` object
         """
         # Given
+        topic = "COVID-19"
         mocked_client = mock.Mock()
         internal_api_client = InternalAPIClient(client=mocked_client)
 
         # When
-        response = internal_api_client.hit_geographies_list_endpoint()
+        response = internal_api_client.hit_geographies_list_endpoint(
+            topic=topic,
+        )
 
         # Then
         assert response == internal_api_client._client.get.return_value
+        expected_path = f"{internal_api_client.geographies_endpoint_path}{topic}"
+
         mocked_client.get.assert_called_once_with(
-            path=internal_api_client.geographies_endpoint_path,
+            path=expected_path,
             headers=internal_api_client.build_headers(),
             format="json",
         )
