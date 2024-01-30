@@ -66,20 +66,23 @@ def collect_all_pages(
     return pages
 
 
-def extract_topic_pages_from_all_pages(
+def extract_area_selectable_pages(
     all_pages: ALL_PAGE_TYPES,
 ) -> list[TopicPage]:
-    """Builds a new list containing only the `TopicPage` models from the given `all_pages` iterable
+    """Builds a new list containing only the pages which are deemed suitable for the area selector
 
     Args:
         all_pages: Iterable of a mixture of page types
 
     Returns:
-        List of `TopicPage` models contained
-        within the given `all_pages` iterable
+        List of pages which are deemed suitable for
+        the area selector from within the given
+        `all_pages` iterable
 
     """
-    return [page for page in all_pages if isinstance(page, TopicPage)]
+    return [
+        page for page in all_pages if getattr(page, "is_valid_for_area_selector", False)
+    ]
 
 
 def crawl_all_pages(
@@ -112,7 +115,7 @@ def crawl_all_pages(
     private_api_crawler.process_pages(pages=all_pages)
 
     if os.environ.get("ENABLE_AREA_SELECTOR"):
-        topic_pages: list[TopicPage] = extract_topic_pages_from_all_pages(
+        topic_pages: list[TopicPage] = extract_area_selectable_pages(
             all_pages=all_pages
         )
         area_selector_orchestrator.process_pages(pages=topic_pages)
