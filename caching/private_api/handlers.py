@@ -1,5 +1,4 @@
 import logging
-import os
 from timeit import default_timer
 
 from django.db.models import Manager
@@ -114,11 +113,10 @@ def crawl_all_pages(
     all_pages: ALL_PAGE_TYPES = collect_all_pages()
     private_api_crawler.process_pages(pages=all_pages)
 
-    if os.environ.get("ENABLE_AREA_SELECTOR"):
-        topic_pages: list[TopicPage] = extract_area_selectable_pages(
-            all_pages=all_pages
-        )
-        area_selector_orchestrator.process_pages(pages=topic_pages)
+    topic_pages: list[TopicPage] = extract_area_selectable_pages(
+        all_pages=all_pages
+    )
+    area_selector_orchestrator.process_pages(pages=topic_pages)
 
     duration: float = default_timer() - start
     logging.info("Finished refreshing of cache in %s seconds", round(duration, 2))
