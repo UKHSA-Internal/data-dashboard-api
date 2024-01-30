@@ -6,7 +6,6 @@ from caching.private_api.crawler.area_selector.orchestration import (
 )
 from caching.private_api.crawler.geographies_crawler import (
     GeographyData,
-    GeographyTypeData,
 )
 from cms.topic.models import TopicPage
 
@@ -14,60 +13,13 @@ MODULE_PATH = "caching.private_api.crawler.area_selector.orchestration"
 
 
 class TestAreaSelectorOrchestrator:
-    def test_get_all_geography_combinations(self):
-        """
-        Given a `GeographiesAPICrawler` which returns
-            a list of enriched `GeographyTypeData` models
-        When `get_all_geography_combinations()` is called
-            from an instance of the `AreaSelectorOrchestrator`
-        Then the correct enriched `GeographyData` models are returned
-        """
-        # Given
-        geography_type_data_models = [
-            GeographyTypeData(name="Nation", geography_names=["England"]),
-            GeographyTypeData(
-                name="Lower Tier Local Authority",
-                geography_names=["Birmingham", "Leeds"],
-            ),
-        ]
-        mocked_geographies_api_crawler = mock.Mock()
-        mocked_geographies_api_crawler.process_geographies_api.return_value = (
-            geography_type_data_models
-        )
-
-        area_selector_orchestrator = AreaSelectorOrchestrator(
-            geographies_api_crawler=mocked_geographies_api_crawler
-        )
-
-        # When
-        all_geography_combinations: list[
-            GeographyData
-        ] = area_selector_orchestrator.get_all_geography_combinations()
-
-        # Then
-        lower_tier_local_authority = "Lower Tier Local Authority"
-        assert (
-            GeographyData(
-                name="Birmingham", geography_type_name=lower_tier_local_authority
-            )
-            in all_geography_combinations
-        )
-        assert (
-            GeographyData(name="Leeds", geography_type_name=lower_tier_local_authority)
-            in all_geography_combinations
-        )
-        assert (
-            GeographyData(name="England", geography_type_name="Nation")
-            in all_geography_combinations
-        )
-
     @mock.patch.object(
         AreaSelectorOrchestrator, "parallel_process_all_geography_combinations_for_page"
     )
-    @mock.patch.object(AreaSelectorOrchestrator, "get_all_geography_combinations")
+    @mock.patch.object(AreaSelectorOrchestrator, "get_geography_combinations_for_page")
     def test_process_pages(
         self,
-        mocked_get_all_geography_combinations: mock.MagicMock,
+        mocked_get_geography_combinations_for_page: mock.MagicMock,
         spy_parallel_process_all_geography_combinations_for_page: mock.MagicMock,
     ):
         """
@@ -79,7 +31,7 @@ class TestAreaSelectorOrchestrator:
             method is called with the correct args
 
         Patches:
-            `mocked_get_all_geography_combinations`: To patch the enriched
+            `mocked_get_geography_combinations_for_page`: To patch the enriched
                 `GeographyData` models into place without having to hit
                 the geographies API
             `spy_parallel_process_all_geography_combinations_for_page`: For the
@@ -95,7 +47,7 @@ class TestAreaSelectorOrchestrator:
                 name="City of London", geography_type_name="Lower Tier Local Authority"
             ),
         ]
-        mocked_get_all_geography_combinations.return_value = geography_combinations
+        mocked_get_geography_combinations_for_page.return_value = geography_combinations
         area_selector_orchestrator = AreaSelectorOrchestrator(
             geographies_api_crawler=mock.Mock()
         )
