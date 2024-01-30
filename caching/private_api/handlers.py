@@ -113,9 +113,7 @@ def crawl_all_pages(
     all_pages: ALL_PAGE_TYPES = collect_all_pages()
     private_api_crawler.process_pages(pages=all_pages)
 
-    topic_pages: list[TopicPage] = extract_area_selectable_pages(
-        all_pages=all_pages
-    )
+    topic_pages: list[TopicPage] = extract_area_selectable_pages(all_pages=all_pages)
     area_selector_orchestrator.process_pages(pages=topic_pages)
 
     duration: float = default_timer() - start
