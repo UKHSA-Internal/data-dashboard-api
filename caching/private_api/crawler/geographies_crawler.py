@@ -79,10 +79,10 @@ class GeographiesAPICrawler:
         """
         data = []
         for geography_type_data in response_data:
-            geography_names: list[
-                str
-            ] = self.get_associated_geography_names_for_geography_type(
-                geography_type_id=geography_type_data["id"]
+            geography_names: list[str] = (
+                self.get_associated_geography_names_for_geography_type(
+                    geography_type_id=geography_type_data["id"]
+                )
             )
 
             geography_type_data = GeographyTypeData(

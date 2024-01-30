@@ -287,10 +287,10 @@ class TestPublicAPICrawler:
         response_data = [{"link": valid_link, "information": invalid_value}]
 
         # When
-        extracted_links: list[
-            str
-        ] = fake_public_api_crawler.get_links_from_response_data(
-            response_data=response_data
+        extracted_links: list[str] = (
+            fake_public_api_crawler.get_links_from_response_data(
+                response_data=response_data
+            )
         )
 
         # Then
