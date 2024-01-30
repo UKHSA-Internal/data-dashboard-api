@@ -34,6 +34,14 @@ class AreaSelectorOrchestrator:
             for geography_data in geography_type_data.export_all_geography_combinations()
         ]
 
+    def get_geography_combinations_for_page(
+        self, page: TopicPage
+    ) -> list[GeographyData]:
+        # At this point we will grab the `selected_topic`
+        # And then we can pass this into the `GeographiesAPICrawler`
+        # to get the topic-specific geographies
+        return self.get_all_geography_combinations()
+
     def process_pages(self, pages: list[TopicPage]) -> None:
         """Delegates each valid geography/page combination to a dedicated `PrivateAPICrawler` to be processed
 
@@ -44,11 +52,13 @@ class AreaSelectorOrchestrator:
             None
 
         """
-        all_geography_combinations = self.get_all_geography_combinations()
-
         for page in pages:
+            geographies_for_page: list[GeographyData] = (
+                self.get_geography_combinations_for_page(page=page)
+            )
+
             self.parallel_process_all_geography_combinations_for_page(
-                geography_combinations=all_geography_combinations,
+                geography_combinations=geographies_for_page,
                 page=page,
             )
 
