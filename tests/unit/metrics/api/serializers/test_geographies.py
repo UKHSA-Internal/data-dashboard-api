@@ -111,14 +111,14 @@ class TestGeographiesSerializer:
         # Then
         expected_results = [
             {
-                "geography_type": bexley.geography.geography_type.name,
+                "geography_type": ltla,
                 "geographies": [
                     {"name": bexley.geography.name},
                     {"name": hackney.geography.name},
                 ],
             },
             {
-                "geography_type": england.geography.geography_type.name,
+                "geography_type": nation,
                 "geographies": [{"name": england.geography.name}],
             },
         ]
