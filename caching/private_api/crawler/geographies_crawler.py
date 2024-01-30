@@ -88,18 +88,6 @@ class GeographiesAPICrawler:
             geography_type_data = GeographyTypeData(
                 name=geography_type_data["name"], geography_names=geography_names
             )
-            data.append(geography_type_data)
-
-        return data
-
-    def get_associated_geography_names_for_geography_type(
-        self, geography_type_id: int
-    ) -> list[str]:
-        """Fetches the returned names associated with each geography from the detail endpoint`
-
-        Returns:
-            List of geography names associated with
-            the given `geography_type_id`
 
         Raises:
             `KeyError`: If no geographies are returned

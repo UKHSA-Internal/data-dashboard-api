@@ -152,7 +152,9 @@ class TestGeographiesAPICrawler:
         assert geography_data_model.name == fake_response_data[0]["name"]
         assert geography_data_model.geography_names == fake_geography_names
 
-    def test_get_associated_geography_names_for_geography_type(self):
+    def test_logs_are_recorded_for_completion_of_geographies_api(
+        self, caplog: LogCaptureFixture
+    ):
         """
         Given a mocked response containing georgraphy names
         When `get_associated_geography_names_for_geography_type()` is called
