@@ -279,8 +279,9 @@ class TestCrawlAllPages:
         Patches:
             `spy_collect_all_pages`: To isolate the collected pages
                 and pass to the assertion on `spy_crawl_pages`
-            `spy_extract_topic_pages_from_all_pages`: To extract the
-                topic pages from the previously retrieved pages
+            `spy_extract_area_selectable_pages`: To extract the
+                topic pages which are deemed suitable
+                from the previously retrieved pages
 
         """
         # Given
