@@ -11,8 +11,14 @@ from metrics.data.models.core_models import GeographyType
 GEOGRAPHIES_API_TAG = "geographies"
 
 
-@extend_schema(tags=[GEOGRAPHIES_API_TAG])
+@extend_schema(tags=[GEOGRAPHIES_API_TAG], deprecated=True)
 class GeographyTypesViewSet(ReadOnlyModelViewSet):
+    """
+    Note: This ViewSet and the `geographies/v1` endpoint have been deprecated.
+        This will be replaced by a new `API_VIEW` and v2 endpoint that retrieves geographies
+        data based on a selected topic.
+    """
+
     permission_classes = []
     queryset = GeographyType.objects.all().order_by("name")
     serializer_class = GeographyTypesSerializer
