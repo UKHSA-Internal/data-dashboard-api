@@ -16,6 +16,7 @@ from tests.fakes.factories.metrics.geography_type_factory import (
 )
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
+from tests.fakes.models.metrics.topic import FakeTopic
 
 
 class TestGeographySerializer:
@@ -100,7 +101,12 @@ class TestGeographiesSerializer:
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
             time_series=[bexley, hackney, england, irrelavant_leeds_geography]
         )
-        fake_topic_manager = FakeTopicManager(topics=["COVID-19", "Influenza"])
+        fake_topic_manager = FakeTopicManager(
+            topics=[
+                FakeTopic(name="COVID-19"),
+                FakeTopic(name="Influenza"),
+            ]
+        )
         serializer = GeographiesSerializer(
             context={
                 "core_time_series_manager": fake_core_time_series_manager,
@@ -136,13 +142,16 @@ class TestGeographiesSerializer:
         Then `serializer.is_valid()` will return False
         """
         # Given
-        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
-        fake_topic_manager = FakeTopicManager(topics=["COVID-19", "Influenza"])
+        fake_topic_manager = FakeTopicManager(
+            topics=[
+                FakeTopic(name="COVID-19"),
+                FakeTopic(name="Influenza"),
+            ]
+        )
 
         # When
         serializer = GeographiesSerializer(
             context={
-                "core_time_series_manager": fake_core_time_series_manager,
                 "topic_manager": fake_topic_manager,
             },
             data={"topic": "invalid-topic"},
@@ -158,13 +167,16 @@ class TestGeographiesSerializer:
         Then `serializer.is_valid()` will return True
         """
         # Given
-        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
-        fake_topic_manager = FakeTopicManager(topics=["COVID-19", "Influenza"])
+        fake_topic_manager = FakeTopicManager(
+            topics=[
+                FakeTopic(name="COVID-19"),
+                FakeTopic(name="Influenza"),
+            ]
+        )
 
         # When
         serializer = GeographiesSerializer(
             context={
-                "core_time_series_manager": fake_core_time_series_manager,
                 "topic_manager": fake_topic_manager,
             },
             data={"topic": "COVID-19"},

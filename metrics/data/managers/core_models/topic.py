@@ -46,4 +46,4 @@ class TopicManager(models.Manager):
         Returns:
             Bool: True or False based on the provided topic name existing in the db.
         """
-        return self.get_queryset().get_all_names().filter(name=topic).exists()
+        return self.get_all_names().filter(name=topic).exists()

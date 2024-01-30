@@ -14,5 +14,5 @@ class FakeTopicManager(TopicManager):
     def get_all_names(self) -> list[str]:
         return [topic.name for topic in self.topics]
 
-    def does_topic_exist(self, topic) -> bool:
-        return topic in self.topics
+    def does_topic_exist(self, topic: str) -> bool:
+        return topic in self.get_all_names()
