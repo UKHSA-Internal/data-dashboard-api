@@ -6,6 +6,7 @@ from caching.private_api.crawler.area_selector.orchestration import (
 )
 from caching.private_api.crawler.geographies_crawler import (
     GeographyData,
+    GeographyTypeData,
 )
 from cms.topic.models import TopicPage
 
@@ -152,3 +153,53 @@ class TestAreaSelectorOrchestrator:
         spy_private_api_crawler.process_all_sections_in_page(
             page=page_model, geography_data=geography_data
         )
+
+    def test_get_geography_combinations_for_page(self):
+        """
+        Given a topic and mocked return `GeographyTypeData` models
+        When `get_geography_combinations_for_page()` is called
+            from an instance of the `AreaSelectorOrchestrator`
+        Then the correct list of `GeographyData` models are returned
+        """
+        # Given
+        ltha = "Lower Tier Local Authority"
+        spy_geographies_api_crawler = mock.Mock()
+        geography_type_data_models = [
+            GeographyTypeData(
+                name=ltha, geography_names=["Bexley", "Hackney", "Tower Hamlets"]
+            )
+        ]
+        spy_geographies_api_crawler.hit_list_endpoint_for_topic.return_value = (
+            geography_type_data_models
+        )
+
+        topic = "COVID-19"
+        mocked_page = mock.Mock(selected_topics={topic})
+        area_selector_orchestrator = AreaSelectorOrchestrator(
+            geographies_api_crawler=spy_geographies_api_crawler
+        )
+
+        # When
+        geography_combinations: list[
+            GeographyData
+        ] = area_selector_orchestrator.get_geography_combinations_for_page(
+            page=mocked_page
+        )
+
+        # Then
+        # Check the `GeographiesAPICrawler` is used correctly to
+        # fetch the correct geographies for the given topic
+        spy_geographies_api_crawler.hit_list_endpoint_for_topic.assert_called_once_with(
+            topic=topic
+        )
+
+        # Check the returned `GeographyData` models are correct
+        assert len(geography_combinations) == 3
+        assert geography_combinations[0].geography_type_name
+        assert geography_combinations[0].name == "Bexley"
+
+        assert geography_combinations[1].geography_type_name
+        assert geography_combinations[1].name == "Hackney"
+
+        assert geography_combinations[2].geography_type_name
+        assert geography_combinations[2].name == "Tower Hamlets"
