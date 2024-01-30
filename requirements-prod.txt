@@ -39,7 +39,7 @@ jsonschema==4.19.1
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.5
+Markdown==3.5.2
 markdown-it-py==2.2.0
 MarkupSafe==2.1.4
 mdurl==0.1.2
@@ -73,7 +73,7 @@ requests==2.31.0
 rich==13.7.0
 ruamel.yaml==0.18.5
 ruamel.yaml.clib==0.2.8
-SQLAlchemy==2.0.22
+SQLAlchemy==2.0.25
 scour==0.38.2
 setuptools==69.0.3
 simplejson==3.19.2
