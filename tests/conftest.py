@@ -181,6 +181,8 @@ def dashboard_root_page() -> HomePage:
     root_page = HomePage(
         title="UKHSA Dashboard Root",
         slug="ukhsa-dashboard-root",
+        path="ukhsa-dashboard-root",
+        depth=1,
     )
 
     wagtail_root_page = Page.get_first_root_node()
