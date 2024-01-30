@@ -80,7 +80,6 @@ def extract_area_selectable_pages(
         `all_pages` iterable
 
     """
-    return [page for page in all_pages if isinstance(page, TopicPage)]
     return [
         page for page in all_pages if getattr(page, "is_valid_for_area_selector", False)
     ]
