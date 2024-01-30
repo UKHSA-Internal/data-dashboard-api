@@ -64,9 +64,9 @@ class HeadlinesQuerySerializer(serializers.Serializer):
         self.fields["topic"].choices = self.topic_manager.get_all_names()
         self.fields["metric"].choices = self.metric_manager.get_all_headline_names()
         self.fields["geography"].choices = self.geography_manager.get_all_names()
-        self.fields[
-            "geography_type"
-        ].choices = self.geography_type_manager.get_all_names()
+        self.fields["geography_type"].choices = (
+            self.geography_type_manager.get_all_names()
+        )
         self.fields["stratum"].choices = self.stratum_manager.get_all_names()
         self.fields["age"].choices = self.age_manager.get_all_names()
 

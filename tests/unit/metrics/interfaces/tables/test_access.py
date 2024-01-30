@@ -87,9 +87,9 @@ class TestTablesInterface:
         )
 
         # When
-        table_plots: list[
-            dict[str, str]
-        ] = tables_interface.generate_full_plots_for_table()
+        table_plots: list[dict[str, str]] = (
+            tables_interface.generate_full_plots_for_table()
+        )
 
         # Then
         spy_create_tabular_plots.assert_called_once()

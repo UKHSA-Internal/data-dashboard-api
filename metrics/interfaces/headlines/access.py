@@ -38,16 +38,16 @@ class HeadlinesInterface:
             `HeadlineNumberDataNotFoundError`: If the query returned no records.
 
         """
-        latest_metric_value: [
-            Decimal | None
-        ] = self.core_headline_manager.get_latest_metric_value(
-            topic_name=self.topic_name,
-            metric_name=self.metric_name,
-            geography_name=self.geography_name,
-            geography_type_name=self.geography_type_name,
-            age=self.age,
-            stratum_name=self.stratum_name,
-            sex=self.sex,
+        latest_metric_value: [Decimal | None] = (
+            self.core_headline_manager.get_latest_metric_value(
+                topic_name=self.topic_name,
+                metric_name=self.metric_name,
+                geography_name=self.geography_name,
+                geography_type_name=self.geography_type_name,
+                age=self.age,
+                stratum_name=self.stratum_name,
+                sex=self.sex,
+            )
         )
 
         if latest_metric_value is None:
@@ -56,8 +56,7 @@ class HeadlinesInterface:
         return latest_metric_value
 
 
-class BaseInvalidHeadlinesRequestError(Exception):
-    ...
+class BaseInvalidHeadlinesRequestError(Exception): ...
 
 
 class HeadlineNumberDataNotFoundError(BaseInvalidHeadlinesRequestError):

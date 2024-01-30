@@ -141,10 +141,10 @@ class TestGeographiesAPICrawler:
         )
 
         # When
-        geography_data_models: list[
-            GeographyTypeData
-        ] = geographies_api_crawler.hit_detail_endpoint_for_each_geography_type(
-            response_data=fake_response_data
+        geography_data_models: list[GeographyTypeData] = (
+            geographies_api_crawler.hit_detail_endpoint_for_each_geography_type(
+                response_data=fake_response_data
+            )
         )
 
         # Then

@@ -78,9 +78,9 @@ class TestMetricsDocumentationChildEntry:
         )
 
         # When
-        content_panels: list[
-            FieldPanel
-        ] = fake_metrics_documentation_child_entry_page.content_panels
+        content_panels: list[FieldPanel] = (
+            fake_metrics_documentation_child_entry_page.content_panels
+        )
 
         # Then
         content_panel_names: set[str] = (
