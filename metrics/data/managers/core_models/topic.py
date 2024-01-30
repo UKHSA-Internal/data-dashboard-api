@@ -40,7 +40,7 @@ class TopicManager(models.Manager):
         """
         return self.get_queryset().get_all_names()
 
-    def does_topic_exist(self, topic) -> bool:
+    def does_topic_exist(self, topic: str) -> bool:
         """Given a topic name, checks this against the existing topic names.
 
         Returns:
