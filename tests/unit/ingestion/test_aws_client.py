@@ -173,9 +173,9 @@ class TestAWSClient:
         mocked_boto3_client.list_objects_v2.return_value = fake_returned_bucket_objects
 
         # When
-        keys: list[
-            str
-        ] = aws_client_with_mocked_boto_client.list_item_keys_of_in_folder()
+        keys: list[str] = (
+            aws_client_with_mocked_boto_client.list_item_keys_of_in_folder()
+        )
 
         # Then
         assert keys == [expected_key]
@@ -220,9 +220,9 @@ class TestAWSClient:
         mocked_boto3_client.list_objects_v2.return_value = fake_returned_bucket_objects
 
         # When
-        keys: list[
-            str
-        ] = aws_client_with_mocked_boto_client.list_item_keys_of_in_folder()
+        keys: list[str] = (
+            aws_client_with_mocked_boto_client.list_item_keys_of_in_folder()
+        )
 
         # Then
         assert key_for_json_file in keys

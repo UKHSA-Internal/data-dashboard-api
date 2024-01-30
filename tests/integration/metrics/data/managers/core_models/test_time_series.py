@@ -372,3 +372,49 @@ class TestCoreTimeSeriesManager:
         assert retrieved_records[2] == self._build_record_representation_in_queryset(
             record=live_core_time_series_records[2]
         )
+
+    @pytest.mark.django_db
+    def test_get_available_geographies(self):
+        """
+        Given a `topic` and a number of `CoreTimeSeries` records
+        When `get_available_geographies()` is called
+            from an instance of the `CoreTimeSeriesManager`
+        Then the returned results contain the correct geographies
+        """
+        # Given
+        topic = "COVID-19"
+        CoreTimeSeriesFactory.create_record(
+            geography_type_name="Lower Tier Local Authority",
+            geography_name="Hackney",
+            topic_name=topic,
+        )
+        CoreTimeSeriesFactory.create_record(
+            geography_type_name="Nation",
+            geography_name="England",
+            topic_name=topic,
+        )
+
+        CoreTimeSeriesFactory.create_record(
+            geography_type_name="Lower Tier Local Authority",
+            geography_name="Birmingham",
+            topic_name="Influenza",
+            metric_name="influenza_testing_positivityByWeek",
+        )
+
+        # When
+        available_geographies = CoreTimeSeries.objects.get_available_geographies(
+            topic=topic
+        )
+
+        # Then
+        assert len(available_geographies) == 2
+
+        # The order is important, we expect the results to be ordered by geography type
+        assert available_geographies[0].geography__name == "Hackney"
+        assert (
+            available_geographies[0].geography__geography_type__name
+            == "Lower Tier Local Authority"
+        )
+
+        assert available_geographies[1].geography__name == "England"
+        assert available_geographies[1].geography__geography_type__name == "Nation"

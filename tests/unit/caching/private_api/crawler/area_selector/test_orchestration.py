@@ -180,10 +180,10 @@ class TestAreaSelectorOrchestrator:
         )
 
         # When
-        geography_combinations: list[
-            GeographyData
-        ] = area_selector_orchestrator.get_geography_combinations_for_page(
-            page=mocked_page
+        geography_combinations: list[GeographyData] = (
+            area_selector_orchestrator.get_geography_combinations_for_page(
+                page=mocked_page
+            )
         )
 
         # Then

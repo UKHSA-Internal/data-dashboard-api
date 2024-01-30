@@ -40,9 +40,9 @@ class CMSBlockParser:
             A list of chart card dictionaries
 
         """
-        all_chart_blocks_from_section: list[
-            CMS_COMPONENT_BLOCK_TYPE
-        ] = cls.get_all_chart_blocks_from_section(section=section)
+        all_chart_blocks_from_section: list[CMS_COMPONENT_BLOCK_TYPE] = (
+            cls.get_all_chart_blocks_from_section(section=section)
+        )
         if not geography_data:
             return all_chart_blocks_from_section
 
@@ -301,15 +301,15 @@ class CMSBlockParser:
             once in the list of given `sections`
 
         """
-        selected_topics_from_headline_blocks: set[
-            str
-        ] = cls._get_all_selected_topics_in_headline_blocks_from_sections(
-            sections=sections
+        selected_topics_from_headline_blocks: set[str] = (
+            cls._get_all_selected_topics_in_headline_blocks_from_sections(
+                sections=sections
+            )
         )
-        selected_topics_from_chart_blocks: set[
-            str
-        ] = cls._get_all_selected_topics_in_chart_blocks_from_sections(
-            sections=sections
+        selected_topics_from_chart_blocks: set[str] = (
+            cls._get_all_selected_topics_in_chart_blocks_from_sections(
+                sections=sections
+            )
         )
         return selected_topics_from_chart_blocks.union(
             selected_topics_from_headline_blocks

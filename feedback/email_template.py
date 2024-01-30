@@ -66,9 +66,9 @@ def _enrich_suggestions_with_long_form_questions(
         suggestions.get(did_you_find_everything_enum.name, "")
         or FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER
     )
-    long_form_suggestions[
-        did_you_find_everything_enum.value
-    ] = did_you_find_everything_answer
+    long_form_suggestions[did_you_find_everything_enum.value] = (
+        did_you_find_everything_answer
+    )
 
     return long_form_suggestions
 

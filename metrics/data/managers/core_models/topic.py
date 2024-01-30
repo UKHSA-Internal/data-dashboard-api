@@ -4,6 +4,7 @@ This file contains the custom QuerySet and Manager classes associated with the `
 Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
+
 from django.db import models
 
 
@@ -38,3 +39,11 @@ class TopicManager(models.Manager):
 
         """
         return self.get_queryset().get_all_names()
+
+    def does_topic_exist(self, topic: str) -> bool:
+        """Given a topic name, checks this against the existing topic names.
+
+        Returns:
+            Bool: True or False based on the provided topic name existing in the db.
+        """
+        return self.get_all_names().filter(name=topic).exists()

@@ -19,9 +19,9 @@ class TestWhatsNewChildEntry:
         )
 
         # When
-        allowable_parent_page_types: list[
-            str
-        ] = fake_whats_new_child_entry.parent_page_type
+        allowable_parent_page_types: list[str] = (
+            fake_whats_new_child_entry.parent_page_type
+        )
 
         # Then
         assert allowable_parent_page_types == ["whats_new.WhatsNewParentPage"]

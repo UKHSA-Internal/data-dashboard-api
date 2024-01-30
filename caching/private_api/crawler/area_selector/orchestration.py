@@ -33,10 +33,10 @@ class AreaSelectorOrchestrator:
 
         """
         selected_topic: str = page.selected_topics.pop()
-        geography_type_data_models: list[
-            GeographyTypeData
-        ] = self._geographies_api_crawler.hit_list_endpoint_for_topic(
-            topic=selected_topic
+        geography_type_data_models: list[GeographyTypeData] = (
+            self._geographies_api_crawler.hit_list_endpoint_for_topic(
+                topic=selected_topic
+            )
         )
 
         return [
@@ -56,9 +56,9 @@ class AreaSelectorOrchestrator:
 
         """
         for page in pages:
-            geographies_for_page: list[
-                GeographyData
-            ] = self.get_geography_combinations_for_page(page=page)
+            geographies_for_page: list[GeographyData] = (
+                self.get_geography_combinations_for_page(page=page)
+            )
 
             self.parallel_process_all_geography_combinations_for_page(
                 geography_combinations=geographies_for_page,
