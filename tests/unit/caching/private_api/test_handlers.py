@@ -263,11 +263,10 @@ class TestCrawlAllPages:
 
     @mock.patch(f"{MODULE_PATH}.extract_area_selectable_pages")
     @mock.patch(f"{MODULE_PATH}.collect_all_pages")
-    def test_delegates_calls_successfully_when_area_selector_is_activated(
+    def test_delegates_calls_successfully_for_area_selector_orchestrator(
         self,
         spy_collect_all_pages: mock.MagicMock,
         spy_extract_area_selectable_pages: mock.MagicMock,
-        monkeypatch,
     ):
         """
         Given a mocked `Crawler` object
@@ -287,7 +286,6 @@ class TestCrawlAllPages:
         # Given
         spy_private_api_crawler = mock.Mock()
         spy_area_selector_orchestrator = mock.Mock()
-        monkeypatch.setenv(name="ENABLE_AREA_SELECTOR", value=True)
 
         # When
         crawl_all_pages(

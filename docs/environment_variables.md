@@ -180,10 +180,6 @@ This is the URL of the deployed frontend application which is being crawled.
 
 This is the URL of the deployed public API application which is being crawled.
 
-#### `ENABLE_AREA_SELECTOR`
-
-This increases the scope of the private API crawler to include crawling for all geography/topic page combinations.
-
 ---
 
 ### Ingestion configuration
