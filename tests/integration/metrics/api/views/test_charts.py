@@ -1,3 +1,4 @@
+import datetime
 from http import HTTPStatus
 
 import pytest
@@ -17,6 +18,8 @@ class TestChartsView:
                     "topic": core_timeseries.metric.metric_group.topic.name,
                     "metric": core_timeseries.metric.name,
                     "chart_type": "bar",
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
                 }
             ],
         }
