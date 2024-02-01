@@ -1,4 +1,5 @@
 import csv
+import datetime
 import io
 from collections import OrderedDict
 from http import HTTPStatus
@@ -41,6 +42,8 @@ class TestDownloadsView:
                     "sex": self.core_timeseries_data["sex"],
                     "geography": self.core_timeseries_data["geography"],
                     "geography_type": self.core_timeseries_data["geography_type"],
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
                 }
             ],
         }
