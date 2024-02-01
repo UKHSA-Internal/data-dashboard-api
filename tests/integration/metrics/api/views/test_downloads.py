@@ -242,7 +242,7 @@ class TestDownloadsView:
 
         attack_payload = self._build_valid_payload()
         table_name: str = Geography._meta.db_table
-        sql_injection_attack_value = f"'; DELETE FROM {table_name}"
+        sql_injection_attack_value = f"'; DELETE FROM {table_name}"  # noqa: S608
         attack_payload["plots"][0]["geography"] = sql_injection_attack_value
 
         # When
