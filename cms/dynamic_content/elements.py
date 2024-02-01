@@ -33,31 +33,31 @@ class BaseMetricsElement(blocks.StructBlock):
         help_text=help_texts.METRIC_FIELD,
     )
     geography = blocks.ChoiceBlock(
-        required=False,
+        required=True,
         choices=get_all_geography_names,
         default=DEFAULT_GEOGRAPHY,
         help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = blocks.ChoiceBlock(
-        required=False,
+        required=True,
         choices=get_all_geography_type_names,
         default=DEFAULT_GEOGRAPHY_TYPE,
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     sex = blocks.ChoiceBlock(
-        required=False,
+        required=True,
         choices=get_all_sex_names,
         default=DEFAULT_SEX,
         help_text=help_texts.SEX_FIELD,
     )
     age = blocks.ChoiceBlock(
-        required=False,
+        required=True,
         choices=get_all_age_names,
         default=DEFAULT_AGE,
         help_text=help_texts.AGE_FIELD,
     )
     stratum = blocks.ChoiceBlock(
-        required=False,
+        required=True,
         choices=get_all_stratum_names,
         default=DEFAULT_STRATUM,
         help_text=help_texts.STRATUM_FIELD,
