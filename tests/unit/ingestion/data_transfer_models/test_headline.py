@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -107,25 +109,43 @@ class TestInboundHeadlineSpecificFields:
                 metric_value=123,
             )
 
-    def test_raises_error_when_date_passed_to_embargo(self):
+    def test_validates_date_passed_to_embargo(self):
         """
         Given a payload containing a date string for `embargo`
+            without a specified timestamp
         When the `InboundHeadlineSpecificFields` model is initialized
-        Then a `ValidationError` is raised
+        Then the model is deemed valid
+        And the embargo is cast on the correct date
+            with a timestamp of midnight
         """
         # Given
         fake_period_start = "2023-11-20"
         fake_period_end = "2023-11-27"
         fake_embargo = "2023-11-30"
 
-        # When / Then
-        with pytest.raises(ValidationError):
-            InboundHeadlineSpecificFields(
-                period_start=fake_period_start,
-                period_end=fake_period_end,
-                embargo=fake_embargo,
-                metric_value=123,
-            )
+        # When
+        inbound_headline_specific_fields_validation = InboundHeadlineSpecificFields(
+            period_start=fake_period_start,
+            period_end=fake_period_end,
+            embargo=fake_embargo,
+            metric_value=123,
+        )
+
+        # Then
+        inbound_headline_specific_fields_validation.model_validate(
+            inbound_headline_specific_fields_validation,
+            strict=True,
+        )
+
+        validated_embargo: datetime.datetime = (
+            inbound_headline_specific_fields_validation.embargo
+        )
+        assert validated_embargo.year == 2023
+        assert validated_embargo.month == 11
+        assert validated_embargo.day == 30
+        assert validated_embargo.hour == 0
+        assert validated_embargo.minute == 0
+        assert validated_embargo.second == 0
 
 
 class TestHeadlineDTO:
