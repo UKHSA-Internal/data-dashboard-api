@@ -241,7 +241,8 @@ class TestDownloadsView:
         self._create_example_core_time_series()
 
         attack_payload = self._build_valid_payload()
-        sql_injection_attack_value = "'; DELETE FROM data_geography"
+        table_name: str = Geography.objects.model._meta.db_table
+        sql_injection_attack_value = f"'; DELETE FROM {table_name}"
         attack_payload["plots"][0]["geography"] = sql_injection_attack_value
 
         # When
