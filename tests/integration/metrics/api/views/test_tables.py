@@ -1,3 +1,4 @@
+import datetime
 from http import HTTPStatus
 
 import pytest
@@ -37,6 +38,8 @@ class TestTablesView:
                     "chart_type": "waffle",
                     "chart_height": 220,
                     "chart_width": 435,
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
                 }
             ],
         }
@@ -75,6 +78,8 @@ class TestTablesView:
                     "chart_type": "waffle",
                     "chart_height": 220,
                     "chart_width": 435,
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
                 }
             ],
         }
@@ -115,6 +120,8 @@ class TestTablesView:
                     "chart_type": "waffle",
                     "chart_height": 220,
                     "chart_width": 435,
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
                 }
             ],
         }
@@ -170,12 +177,16 @@ class TestTablesView:
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "waffle",
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
                 },
                 {
                     "topic": topic_name,
                     "metric": metric_name,
                     "chart_type": "waffle",
                     "label": "plot_label",
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
                 },
             ],
         }
