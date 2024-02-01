@@ -8,7 +8,12 @@ function set_up_django() {
     python manage.py collectstatic --noinput
 
     echo "Starting server"
-    gunicorn --workers=3 --bind=0.0.0.0:80 metrics.api.wsgi:application --timeout=120
+    gunicorn metrics.api.wsgi:application \
+      --workers=3 \
+      --threads=3 \
+      --worker-class=gthread \
+      --timeout=120 \
+      --bind=0.0.0.0:80
 }
 
 set_up_django
