@@ -8,6 +8,7 @@ from caching.private_api.crawler.area_selector.concurrency import (
 from caching.private_api.crawler.geographies_crawler import (
     GeographiesAPICrawler,
     GeographyData,
+    GeographyTypeData,
 )
 from cms.topic.models import TopicPage
 
@@ -20,27 +21,29 @@ class AreaSelectorOrchestrator:
     def __init__(self, geographies_api_crawler: GeographiesAPICrawler):
         self._geographies_api_crawler = geographies_api_crawler
 
-    def get_all_geography_combinations(self) -> list[GeographyData]:
-        """Returns all the available geographies as enriched `GeographyData` models
+    def get_geography_combinations_for_page(
+        self, page: TopicPage
+    ) -> list[GeographyData]:
+        """Returns all available geographies for the given `topic` as enriched `GeographyData` models
 
         Returns:
             List of `GeographyData` containing the name
             and corresponding geography type name for each geography
+            which are valid for the given `page`
 
         """
+        selected_topic: str = page.selected_topics.pop()
+        geography_type_data_models: list[GeographyTypeData] = (
+            self._geographies_api_crawler.hit_list_endpoint_for_topic(
+                topic=selected_topic
+            )
+        )
+
         return [
             geography_data
-            for geography_type_data in self._geographies_api_crawler.process_geographies_api()
+            for geography_type_data in geography_type_data_models
             for geography_data in geography_type_data.export_all_geography_combinations()
         ]
-
-    def get_geography_combinations_for_page(
-        self, page: TopicPage
-    ) -> list[GeographyData]:
-        # At this point we will grab the `selected_topic`
-        # And then we can pass this into the `GeographiesAPICrawler`
-        # to get the topic-specific geographies
-        return self.get_all_geography_combinations()
 
     def process_pages(self, pages: list[TopicPage]) -> None:
         """Delegates each valid geography/page combination to a dedicated `PrivateAPICrawler` to be processed

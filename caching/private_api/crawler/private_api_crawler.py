@@ -111,11 +111,6 @@ class PrivateAPICrawler:
         )
         logger.info("Completed processing of headless CMS API")
 
-        self.geography_api_crawler.process_geographies_api()
-        logger.info(
-            "Completed processing of geographies API, now handling content blocks"
-        )
-
         pages_count = len(pages)
 
         for index, page in enumerate(pages, 1):

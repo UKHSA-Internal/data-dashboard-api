@@ -89,9 +89,6 @@ class TestDownloadsView:
         # Then
         assert response.status_code == HTTPStatus.OK
 
-    @pytest.mark.skip(
-        "JSON download structure needs to be revisited now `CoreTimeSeries` are being used"
-    )
     @pytest.mark.django_db
     def test_json_download_returns_correct_response(self):
         """
@@ -101,7 +98,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        self._create_example_core_time_series()
+        core_time_series = self._create_example_core_time_series()
         valid_payload = self._build_valid_payload()
         valid_payload["file_format"] = "json"
 
@@ -122,7 +119,24 @@ class TestDownloadsView:
         assert isinstance(response.data[0], OrderedDict)
 
         # Check the output itself is as expected
-        assert response.data[0] == self.core_timeseries_data
+        returned_obj = response.data[0]
+        expected_data = OrderedDict(
+            [
+                ("theme", core_time_series.metric.topic.sub_theme.theme.name),
+                ("sub_theme", core_time_series.metric.topic.sub_theme.name),
+                ("topic", core_time_series.metric.topic.name),
+                ("geography_type", core_time_series.geography.geography_type.name),
+                ("geography", core_time_series.geography.name),
+                ("metric", core_time_series.metric.name),
+                ("age", core_time_series.age.name),
+                ("stratum", core_time_series.stratum.name),
+                ("sex", core_time_series.sex),
+                ("year", core_time_series.year),
+                ("date", core_time_series.date),
+                ("metric_value", f"{core_time_series.metric_value:.4f}"),
+            ]
+        )
+        assert returned_obj == expected_data
 
     @pytest.mark.django_db
     def test_csv_download_returns_correct_response(self):
