@@ -8,7 +8,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreTimeSeries, Geography
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 
@@ -227,3 +227,30 @@ class TestDownloadsView:
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
+
+    @pytest.mark.django_db
+    def test_returns_bad_request_response_for_sql_injection_input(self):
+        """
+        Given a payload containing a SQL injection attack
+        When the `POST /api/downloads/v2/` endpoint is hit
+        Then an HTTP 400 BAD REQUEST response is returned
+        And the underlying SQL query is escaped and rendered harmless
+        """
+        # Given
+        client = APIClient()
+        self._create_example_core_time_series()
+
+        attack_payload = self._build_valid_payload()
+        sql_injection_attack_value = "'; DELETE FROM data_geography"
+        attack_payload["plots"][0]["geography"] = sql_injection_attack_value
+
+        # When
+        response: Response = client.post(
+            path=self.path,
+            data=attack_payload,
+            format="json",
+        )
+
+        # Then
+        assert response.status_code == HTTPStatus.BAD_REQUEST
+        assert Geography.objects.exists()
