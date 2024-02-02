@@ -98,7 +98,7 @@
                                                     "chart_type": "line_multi_coloured",
                                                     "date_from": null,
                                                     "date_to": null,
-                                                    "stratum": "",
+                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
