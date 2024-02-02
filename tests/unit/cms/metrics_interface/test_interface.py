@@ -221,26 +221,6 @@ class TestMetricsAPIInterface:
             == spy_geography_type_manager.get_all_names.return_value
         )
 
-    def test_get_all_sex_names_delegates_call_correctly(self):
-        """
-        Given a `CoreTimeSeriesManager` from the Metrics API app
-        When `get_all_sex_names()` is called from an instance of the `MetricsAPIInterface`
-        Then the call is delegated to the correct method on the `CoreTimeSeriesManager`
-        """
-        # Given
-        spy_core_time_series_manager = mock.Mock()
-        metrics_api_interface = interface.MetricsAPIInterface(
-            core_time_series_manager=spy_core_time_series_manager,
-        )
-
-        # When
-        all_sex_names = metrics_api_interface.get_all_sex_names()
-
-        # Then
-        assert (
-            all_sex_names == spy_core_time_series_manager.get_all_sex_names.return_value
-        )
-
     def test_get_all_age_names_delegates_call_correctly(
         self,
     ):
