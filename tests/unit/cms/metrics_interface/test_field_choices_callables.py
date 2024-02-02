@@ -286,7 +286,7 @@ class TestGetAllSexNames:
         Then the sex names are returned as a list of 2-item tuples
         """
         # Given
-        retrieved_sex_names = ["M", "F", "ALL"]
+        retrieved_sex_names = ["all", "f", "m"]
         mocked_get_all_sex_names.return_value = retrieved_sex_names
 
         # When

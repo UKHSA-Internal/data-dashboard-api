@@ -37,6 +37,7 @@ class TopicPage(Page):
     # Editor panels configuration
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
+        FieldPanel("enable_area_selector"),
         FieldPanel("page_description"),
         FieldPanel("body"),
     ]
