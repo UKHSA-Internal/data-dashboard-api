@@ -111,22 +111,35 @@ class TestInboundTimeSeriesSpecificFields:
     def test_raises_error_when_date_passed_to_embargo(self):
         """
         Given a payload containing a date string for `embargo`
+            without a specified timestamp
         When the `InboundTimeSeriesSpecificFields` model is initialized
-        Then a `ValidationError` is raised
+        Then the model is deemed valid
+        And the embargo is cast on the correct date
+            with a timestamp of midnight
         """
         # Given
         fake_date = "2023-11-20"
         fake_epiweek = 46
         fake_embargo = "2023-11-30"
 
-        # When / Then
-        with pytest.raises(ValidationError):
+        # When
+        inbound_time_series_specific_fields_validation = (
             InboundTimeSeriesSpecificFields(
                 date=fake_date,
                 epiweek=fake_epiweek,
                 embargo=fake_embargo,
                 metric_value=123,
             )
+        )
+
+        # Then
+        validated_embargo = inbound_time_series_specific_fields_validation.embargo
+        assert validated_embargo.year == 2023
+        assert validated_embargo.month == 11
+        assert validated_embargo.day == 30
+        assert validated_embargo.hour == 0
+        assert validated_embargo.minute == 0
+        assert validated_embargo.second == 0
 
 
 class TestTimeSeriesDTO:

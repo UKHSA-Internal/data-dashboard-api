@@ -426,7 +426,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
-                                                    "age": "",
+                                                    "age": "75+",
                                                     "label": "Number of vaccinations",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -515,7 +515,7 @@
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
-                                                    "age": "",
+                                                    "age": "50+",
                                                     "label": "Number of vaccinations",
                                                     "line_colour": "",
                                                     "line_type": ""

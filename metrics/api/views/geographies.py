@@ -45,6 +45,7 @@ class GeographyTypesViewSet(ReadOnlyModelViewSet):
 class GeographiesView(APIView):
     permission_classes = []
 
+    @cache_response()
     def get(self, request, *args, **kwargs) -> Response:
         payload = {"topic": self.kwargs["topic"]}
         serializer = GeographiesSerializer(data=payload)

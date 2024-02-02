@@ -195,6 +195,34 @@ class TestTemplateCOVID19Page:
 
         assert expected_api_field in api_field_names
 
+    @pytest.mark.parametrize(
+        "expected_content_panel_name",
+        [
+            "date_posted",
+            "enable_area_selector",
+            "page_description",
+            "body",
+        ],
+    )
+    def test_content_panels(self, expected_content_panel_name: str):
+        """
+        Given an expected content panel
+        When the `content_panels` attribute is accessed
+        Then the field is in the returned list
+        """
+        # Given
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
+        )
+
+        # Then
+        content_panels = template_covid_19_page.content_panels
+        content_panel_names: list[str] = [
+            content_panel.field_name for content_panel in content_panels
+        ]
+
+        assert expected_content_panel_name in content_panel_names
+
 
 class TestTemplateInfluenzaPage:
     @property
