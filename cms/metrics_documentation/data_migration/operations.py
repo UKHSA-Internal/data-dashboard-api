@@ -123,7 +123,7 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
     parent_page = get_or_create_metrics_documentation_parent_page()
 
     for entry in entries:
-        metrics_child = MetricsDocumentationChildEntry(**entry)
+        metrics_child = _build_metrics_documentation_child_entry(**entry)
         try:
             add_page_as_subpage_to_parent(
                 subpage=metrics_child, parent_page=parent_page
@@ -140,6 +140,12 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
                 "Because the corresponding `Metric` was not created beforehand",
                 entry["metric"],
             )
+
+
+def _build_metrics_documentation_child_entry(
+    **kwargs,
+) -> MetricsDocumentationChildEntry:
+    return MetricsDocumentationChildEntry(**kwargs)
 
 
 def remove_metrics_documentation_child_entries() -> None:
