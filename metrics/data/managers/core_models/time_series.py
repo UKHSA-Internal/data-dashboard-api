@@ -261,18 +261,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
 
-    def get_all_sex_names(self) -> models.QuerySet:
-        """Gets all available sex names as a flat list queryset.
-
-        Returns:
-            QuerySet: A queryset of the individual sex names
-                ordered in descending ordering starting from A -> Z:
-                Examples:
-                    `<CoreTimeSeriesQuerySet ['ALL', 'F', 'M']>`
-
-        """
-        return self.values_list("sex", flat=True).distinct()
-
     def get_available_geographies(self, topic: str) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
@@ -385,18 +373,6 @@ class CoreTimeSeriesManager(models.Manager):
             sex=sex,
             age=age,
         )
-
-    def get_all_sex_names(self) -> models.QuerySet:
-        """Gets all available sex names as a flat list queryset.
-
-        Returns:
-            QuerySet: A queryset of the individual sex names
-                ordered in descending ordering starting from A -> Z:
-                Examples:
-                    `<CoreTimeSeriesQuerySet [('ALL'), ('F'), ('M')]>`
-
-        """
-        return self.get_queryset().get_all_sex_names()
 
     def get_available_geographies(self, topic: str) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
