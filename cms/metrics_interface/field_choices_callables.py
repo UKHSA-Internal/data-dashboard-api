@@ -292,8 +292,8 @@ def get_all_sex_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
             [("M", "M"), ("F", "F"), ...]
 
     """
-    metrics_interface = MetricsAPIInterface()
-    return _build_two_item_tuple_choices(metrics_interface.get_all_sex_names())
+    names = ["all", "f", "m"]
+    return _build_two_item_tuple_choices(names)
 
 
 def get_all_age_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
