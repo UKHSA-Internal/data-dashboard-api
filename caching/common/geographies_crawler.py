@@ -20,18 +20,6 @@ class GeographyData:
             and self.geography_type_name == other.geography_type_name
         )
 
-    @property
-    def url_friendly_name(self) -> str:
-        return _convert_to_url_friendly_name(self.name)
-
-    @property
-    def url_friendly_geography_type_name(self) -> str:
-        return _convert_to_url_friendly_name(self.geography_type_name)
-
-
-def _convert_to_url_friendly_name(name: str) -> str:
-    return name.replace(" ", "+")
-
 
 @dataclass
 class GeographyTypeData:
