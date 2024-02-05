@@ -333,32 +333,6 @@ class TestInternalAPIClient:
             format="json",
         )
 
-    def test_hit_geographies_detail_endpoint_delegates_call_correctly(self):
-        """
-        Given a client and mocked request data
-        When `hit_geographies_detail_endpoint()` is called
-            from an instance of the `InternalAPIClient`
-        Then the call is delegated to the `client` object
-        """
-        # Given
-        mocked_client = mock.Mock()
-        internal_api_client = InternalAPIClient(client=mocked_client)
-        fake_id = 123
-
-        # When
-        response = internal_api_client.hit_geographies_detail_endpoint(
-            geography_type_id=fake_id
-        )
-
-        # Then
-        assert response == internal_api_client._client.get.return_value
-        expected_path = f"{internal_api_client.geographies_endpoint_path}{fake_id}/"
-        mocked_client.get.assert_called_once_with(
-            path=expected_path,
-            headers=internal_api_client.build_headers(),
-            format="json",
-        )
-
     def test_hit_pages_list_endpoint_delegates_call_correctly(self):
         """
         Given a client
