@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from rest_framework.response import Response
 
 from caching.internal_api_client import InternalAPIClient
+from cms.topic.models import TopicPage
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +19,18 @@ class GeographyData:
             self.name == other.name
             and self.geography_type_name == other.geography_type_name
         )
+
+    @property
+    def url_friendly_name(self) -> str:
+        return _convert_to_url_friendly_name(self.name)
+
+    @property
+    def url_friendly_geography_type_name(self) -> str:
+        return _convert_to_url_friendly_name(self.geography_type_name)
+
+
+def _convert_to_url_friendly_name(name: str) -> str:
+    return name.replace(" ", "+")
 
 
 @dataclass
@@ -35,8 +48,8 @@ class GeographyTypeData:
 class GeographiesAPICrawler:
     """Crawls the `geographies/types` endpoints for all possible combinations"""
 
-    def __init__(self, internal_api_client: InternalAPIClient):
-        self._internal_api_client = internal_api_client
+    def __init__(self, internal_api_client: InternalAPIClient | None = None):
+        self._internal_api_client = internal_api_client or InternalAPIClient()
 
     def hit_list_endpoint_for_topic(self, topic: str) -> list[GeographyTypeData]:
         """Hits the endpoint for the given `topic` to fetch the associated available geographies
@@ -83,3 +96,30 @@ class GeographiesAPICrawler:
 
             geography_type_data_models.append(geography_type)
         return geography_type_data_models
+
+    def get_geography_combinations_for_page(
+        self, page: TopicPage
+    ) -> list[GeographyData]:
+        """Returns all available geographies for the given `topic` as enriched `GeographyData` models
+
+        Args:
+            page: The page model for which to retrieve
+                geographies which are relevant for
+                the selected topics on that page
+
+        Returns:
+            List of `GeographyData` containing the name
+            and corresponding geography type name for each geography
+            which are valid for the given `page`
+
+        """
+        selected_topic: str = page.selected_topics.pop()
+        geography_type_data_models: list[GeographyTypeData] = (
+            self.hit_list_endpoint_for_topic(topic=selected_topic)
+        )
+
+        return [
+            geography_data
+            for geography_type_data in geography_type_data_models
+            for geography_data in geography_type_data.export_all_geography_combinations()
+        ]
