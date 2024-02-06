@@ -151,3 +151,31 @@ class FrontEndCrawler:
             url=self._url_builder.build_url_for_feedback_confirmation_page()
         )
         logger.info("Finished processing all pages for the frontend")
+
+    def process_geography_page_combination(
+        self, geography_data: GeographyData, page: TopicPage
+    ) -> None:
+        """Hits the frontend URL for the given `geography_data` and `page` combination
+
+        Args:
+            geography_data: An enriched model containing the
+                `geography_type_name` and `name` of the geography
+            page: The area selector-enabled page to be crawled
+                for the given `geography_data`
+
+        Returns:
+            None
+
+        """
+        url: str = self._url_builder.build_url_for_topic_page(slug=page.slug)
+        params = self._url_builder.build_query_params_for_area_selector_page(
+            geography_type_name=geography_data.geography_type_name,
+            geography_name=geography_data.name,
+        )
+        logger.info(
+            "Hitting area selector URL for `%s` for %s:%s",
+            url,
+            geography_data.geography_type_name,
+            geography_data.name,
+        )
+        self.hit_frontend_page(url=url, params=params)
