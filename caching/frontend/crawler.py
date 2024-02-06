@@ -201,7 +201,13 @@ class FrontEndCrawler:
                 geography_name=geography_data.name,
             )
         )
-        self.hit_frontend_page(url=url, params=params)
+        try:
+            self.hit_frontend_page(url=url, params=params)
+        except Exception:  # noqa: BLE001
+            # Broad exception to fail silently
+            # because we run this method in a pool of threads
+            # we expect to see flakiness in requests being made over network
+            logger.warning("`%s` with params of `%s` could not be hit", url, params)
 
     def process_geography_page_combinations(self, page: TopicPage) -> None:
         """Crawls the given `page` for all the relevant geography combinations
