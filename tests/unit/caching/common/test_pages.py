@@ -1,4 +1,10 @@
-from caching.common.pages import collect_all_pages, extract_area_selectable_pages
+from unittest import mock
+
+from caching.common.pages import (
+    collect_all_pages,
+    extract_area_selectable_pages,
+    get_pages_for_area_selector,
+)
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
@@ -17,6 +23,8 @@ from tests.fakes.managers.cms.whats_new_child_entry_manager import (
 from tests.fakes.managers.cms.whats_new_parent_page_manager import (
     FakeWhatsNewParentPageManager,
 )
+
+MODULE_PATH = "caching.common.pages"
 
 
 class TestCollectAllPages:
@@ -215,3 +223,33 @@ class TestExtractAreaSelectablePages:
 
         # Then
         assert area_selectable_pages == [valid_topic_page]
+
+
+class TestGetPagesForAreaSelector:
+    @mock.patch(f"{MODULE_PATH}.collect_all_pages")
+    def test_returns_correct_pages(self, spy_collect_all_pages: mock.MagicMock):
+        """
+        Given the `collect_all_pages()` function
+            which returns a list of pages
+        When `get_pages_for_area_selector()` is called
+        Then
+        """
+        # Given
+        mocked_valid_pages = [mock.Mock(is_valid_for_area_selector=True)] * 4
+        # To simulate valid topic pages
+        invalid_pages = [mock.Mock(is_valid_for_area_selector=False)] * 2
+        # To simulate invalid topic pages
+
+        fake_home_page = FakeHomePageFactory.build_blank_page()
+        invalid_pages.append(fake_home_page)
+        # To simulate invalid pages which
+        # do not implement the `is_valid_for_area_selector` property
+
+        all_pages = mocked_valid_pages + invalid_pages
+        spy_collect_all_pages.return_value = all_pages
+
+        # When
+        pages = get_pages_for_area_selector()
+
+        # Then
+        assert set(pages) == set(mocked_valid_pages)
