@@ -232,7 +232,13 @@ class TestGetPagesForAreaSelector:
         Given the `collect_all_pages()` function
             which returns a list of pages
         When `get_pages_for_area_selector()` is called
-        Then
+        Then the correct pages are returned
+
+        Patches:
+            `spy_collect_all_pages`: To remove the
+                side effect of having to hit the db
+                to retrieve pages
+
         """
         # Given
         mocked_valid_pages = [mock.Mock(is_valid_for_area_selector=True)] * 4
