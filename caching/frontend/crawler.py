@@ -172,9 +172,11 @@ class FrontEndCrawler:
 
         """
         url: str = self._url_builder.build_url_for_topic_page(slug=page.slug)
-        params = self._url_builder.build_query_params_for_area_selector_page(
-            geography_type_name=geography_data.geography_type_name,
-            geography_name=geography_data.name,
+        params: dict[str, str] = (
+            self._url_builder.build_query_params_for_area_selector_page(
+                geography_type_name=geography_data.geography_type_name,
+                geography_name=geography_data.name,
+            )
         )
         logger.info(
             "Hitting area selector URL for `%s` for %s:%s",
