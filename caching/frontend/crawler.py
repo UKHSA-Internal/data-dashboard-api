@@ -8,6 +8,7 @@ from caching.common.geographies_crawler import (
     GeographiesAPICrawler,
     GeographyData,
 )
+from caching.common.pages import get_pages_for_area_selector
 from caching.frontend.threading import call_with_star_map_multithreading
 from caching.frontend.urls import FrontEndURLBuilder
 from caching.internal_api_client import InternalAPIClient
@@ -233,3 +234,20 @@ class FrontEndCrawler:
             items=args,
             thread_count=100,
         )
+
+    def process_all_valid_area_selector_pages(self) -> None:
+        """Crawls all valid area selector-enables pages for corresponding geography combinations
+
+        Notes:
+            This method will crawl the geography combinations
+            for each of the valid pages with a pool of threads
+
+        Returns:
+            None
+
+        """
+        logger.info("Crawling for area selector URLs")
+
+        area_selector_pages: list[TopicPage] = get_pages_for_area_selector()
+        for area_selector_page in area_selector_pages:
+            self.process_geography_page_combinations(page=area_selector_page)
