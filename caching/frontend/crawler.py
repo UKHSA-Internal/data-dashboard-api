@@ -56,7 +56,9 @@ class FrontEndCrawler:
 
     # Frontend requests
 
-    def hit_frontend_page(self, url: str) -> Response:
+    def hit_frontend_page(
+        self, url: str, params: dict[str, str] | None = None
+    ) -> Response:
         """Hits the frontend page for the given `url`
 
         Notes:
@@ -65,6 +67,7 @@ class FrontEndCrawler:
 
         Args:
             url: The full URL of the page to hit
+            params: Optional dict of query parameters
 
         Returns:
             None
@@ -75,6 +78,7 @@ class FrontEndCrawler:
             url=url,
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": cdn_auth_key},
+            params=params,
         )
         logger.info("Processed `%s`", url)
 

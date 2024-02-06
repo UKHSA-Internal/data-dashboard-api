@@ -74,9 +74,41 @@ class TestFrontEndCrawler:
             url=url,
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": expected_cdn_auth_key},
+            params=None,
         )
 
         assert f"Processed `{url}`" in caplog.text
+
+    @mock.patch(f"{MODULE_PATH}.requests")
+    def test_hit_frontend_page_with_query_params(
+        self,
+        spy_requests: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given a URL and a dict for the query parameters
+        When `hit_frontend_page()` is called from an instance of `FrontEndCrawler`
+        Then a GET request is sent to the URL with the correct headers
+        """
+        # Given
+        url = "https://fake-url.com"
+        query_params = {"areaType": "Lower Tier Local Authority", "areaName": "London"}
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.hit_frontend_page(
+            url=url, params=query_params
+        )
+
+        # Then
+        expected_cdn_auth_key = (
+            f'"{frontend_crawler_with_mocked_internal_api_client._cdn_auth_key}"'
+        )
+        spy_requests.get.assert_called_once_with(
+            url=url,
+            timeout=DEFAULT_REQUEST_TIMEOUT,
+            headers={"x-cdn-auth": expected_cdn_auth_key},
+            params=query_params,
+        )
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
     def test_process_page_for_home_page(
