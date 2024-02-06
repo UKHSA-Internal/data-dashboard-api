@@ -107,7 +107,7 @@ class FrontEndCrawler:
             headers={"x-cdn-auth": cdn_auth_key},
             params=params,
         )
-        logger.info("Processed `%s`", url)
+        logger.info("Processed `%s` for params: %s", url, params)
 
     def process_page(self, page_item: dict) -> None:
         """Hit the URL for the corresponding `page_item`
