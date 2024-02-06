@@ -4,7 +4,6 @@ import requests
 from rest_framework.response import Response
 
 from caching.common.geographies_crawler import (
-    GeographiesAPICrawler,
     GeographyData,
 )
 from caching.frontend.urls import FrontEndURLBuilder
