@@ -242,8 +242,8 @@ class TestGetPagesForAreaSelector:
 
         fake_home_page = FakeHomePageFactory.build_blank_page()
         invalid_pages.append(fake_home_page)
-        # To simulate invalid pages which
-        # do not implement the `is_valid_for_area_selector` property
+        # To simulate an invalid page which
+        # does not implement the `is_valid_for_area_selector` property
 
         all_pages = mocked_valid_pages + invalid_pages
         spy_collect_all_pages.return_value = all_pages
