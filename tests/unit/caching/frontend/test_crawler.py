@@ -454,7 +454,6 @@ class TestFrontEndCrawler:
         self,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-        caplog: LogCaptureFixture,
     ):
         """
         Given a page slug and an enriched `GeographyData` model
@@ -490,13 +489,6 @@ class TestFrontEndCrawler:
             url=expected_url,
             params=expected_params,
         )
-
-        expected_log = (
-            f"Hitting area selector URL for "
-            f"`{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/{slug}` "
-            f"for {geography_data.geography_type_name}:{geography_data.name}"
-        )
-        assert expected_log in caplog.text
 
     @mock.patch(f"{MODULE_PATH}.call_with_star_map_multithreading")
     def test_process_geography_page_combinations(

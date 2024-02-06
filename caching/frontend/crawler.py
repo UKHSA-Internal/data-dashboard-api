@@ -201,12 +201,6 @@ class FrontEndCrawler:
                 geography_name=geography_data.name,
             )
         )
-        logger.info(
-            "Hitting area selector URL for `%s` for %s:%s",
-            url,
-            geography_data.geography_type_name,
-            geography_data.name,
-        )
         self.hit_frontend_page(url=url, params=params)
 
     def process_geography_page_combinations(self, page: TopicPage) -> None:
