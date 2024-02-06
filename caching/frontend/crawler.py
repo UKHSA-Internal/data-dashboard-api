@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 
 import requests
 from rest_framework.response import Response
@@ -13,6 +14,20 @@ from cms.topic.models import TopicPage
 DEFAULT_REQUEST_TIMEOUT = 60
 
 logger = logging.getLogger(__name__)
+
+
+class CMSPageTypes(Enum):
+    home_page = "home.HomePage"
+    topic_page = "topic.TopicPage"
+    common_page = "common.CommonPage"
+    whats_new_parent_page = "whats_new.WhatsNewParentPage"
+    whats_new_child_entry = "whats_new.WhatsNewChildEntry"
+    metrics_documentation_parent_page = (
+        "metrics_documentation.MetricsDocumentationParentPage"
+    )
+    metrics_documentation_child_entry = (
+        "metrics_documentation.MetricsDocumentationChildEntry"
+    )
 
 
 class FrontEndCrawler:
@@ -110,25 +125,25 @@ class FrontEndCrawler:
         page_type: str = page_item["type"]
 
         match page_type:
-            case "home.HomePage":
+            case CMSPageTypes.home_page.value:
                 url = self._url_builder.build_url_for_home_page()
-            case "topic.TopicPage":
+            case CMSPageTypes.topic_page.value:
                 url = self._url_builder.build_url_for_topic_page(slug=page_item["slug"])
-            case "common.CommonPage":
+            case CMSPageTypes.common_page.value:
                 url = self._url_builder.build_url_for_common_page(
                     slug=page_item["slug"]
                 )
-            case "whats_new.WhatsNewParentPage":
+            case CMSPageTypes.whats_new_parent_page.value:
                 url = self._url_builder.build_url_for_whats_new_parent_page()
-            case "whats_new.WhatsNewChildEntry":
+            case CMSPageTypes.whats_new_child_entry.value:
                 url = self._url_builder.build_url_for_whats_new_child_entry(
                     slug=page_item["slug"]
                 )
-            case "metrics_documentation.MetricsDocumentationParentPage":
+            case CMSPageTypes.metrics_documentation_parent_page.value:
                 url = (
                     self._url_builder.build_url_for_metrics_documentation_parent_page()
                 )
-            case "metrics_documentation.MetricsDocumentationChildEntry":
+            case CMSPageTypes.metrics_documentation_child_entry.value:
                 url = self._url_builder.build_url_for_metrics_documentation_child_entry(
                     slug=page_item["slug"]
                 )
