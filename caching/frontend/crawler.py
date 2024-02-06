@@ -206,8 +206,8 @@ class FrontEndCrawler:
         except Exception:  # noqa: BLE001
             # Broad exception to fail silently
             # because we run this method in a pool of threads
-            # we expect to see flakiness in requests being made over network
-            # and if we cannot crawl the odd page/geography combo here and there
+            # we expect to see flakiness in requests being made over network.
+            # If we cannot crawl the odd page/geography combo here and there
             # it is not the end of the world as that
             # request from the user will just go to redis
             logger.warning("`%s` with params of `%s` could not be hit", url, params)
