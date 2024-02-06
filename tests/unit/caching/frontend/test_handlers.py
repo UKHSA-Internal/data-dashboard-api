@@ -42,9 +42,13 @@ class TestGetFrontendBaseURL:
 
 
 class TestCrawlFrontEnd:
+    @mock.patch.object(FrontEndCrawler, "process_all_valid_area_selector_pages")
     @mock.patch.object(FrontEndCrawler, "process_all_pages")
     def test_delegates_call_to_frontend_crawler(
-        self, spy_process_all_pages: mock.MagicMock, monkeypatch
+        self,
+        spy_process_all_pages: mock.MagicMock,
+        spy_process_all_valid_area_selector_pages: mock.MagicMock,
+        monkeypatch,
     ):
         """
         Given `FRONTEND_URL` & `CDN_AUTH_KEY` environment variables
@@ -53,6 +57,8 @@ class TestCrawlFrontEnd:
 
         Patches:
             `spy_process_all_pages`: For the main assertion
+            `spy_process_all_valid_area_selector_pages`: For the main assertion
+
         """
         # Given
         monkeypatch.setenv("FRONTEND_URL", "fake-url")
@@ -63,3 +69,4 @@ class TestCrawlFrontEnd:
 
         # Then
         spy_process_all_pages.assert_called_once()
+        spy_process_all_valid_area_selector_pages.assert_called_once()
