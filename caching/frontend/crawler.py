@@ -177,7 +177,7 @@ class FrontEndCrawler:
         self.hit_frontend_page(
             url=self._url_builder.build_url_for_feedback_confirmation_page()
         )
-        logger.info("Finished processing all pages for the frontend")
+        logger.info("Finished processing all regular pages for the frontend")
 
     def process_geography_page_combination(
         self, geography_data: GeographyData, page: TopicPage
