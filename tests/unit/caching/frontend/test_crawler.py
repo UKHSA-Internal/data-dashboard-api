@@ -497,3 +497,55 @@ class TestFrontEndCrawler:
             f"for {geography_data.geography_type_name}:{geography_data.name}"
         )
         assert expected_log in caplog.text
+
+    @mock.patch(f"{MODULE_PATH}.call_with_star_map_multithreading")
+    def test_process_geography_page_combinations(
+        self,
+        spy_call_with_star_map_multithreading: mock.MagicMock,
+    ):
+        """
+        Given a `GeographiesAPICrawler` which returns
+            a list of enriched `GeographyData` models
+        When `process_geography_page_combinations()` is called
+            from an instance of the `FrontEndCrawler`
+        Then the call is delegated to `call_with_star_map_multithreading()`
+            with the correct arguments
+
+        Patches:
+            `spy_call_with_star_map_multithreading`: For the main assertion
+
+        """
+        # Given
+        geography_combinations = [
+            GeographyData(
+                name="London", geography_type_name="Lower Tier Local Authority"
+            ),
+            GeographyData(name="England", geography_type_name="Nation"),
+        ]
+        mocked_page = mock.Mock()
+        mocked_geographies_api_crawler = mock.Mock()
+        mocked_geographies_api_crawler.get_geography_combinations_for_page.return_value = (
+            geography_combinations
+        )
+        frontend_crawler = FrontEndCrawler(
+            geographies_api_crawler=mocked_geographies_api_crawler,
+            frontend_base_url=mock.Mock(),
+            cdn_auth_key=mock.Mock(),
+        )
+
+        # When
+        frontend_crawler.process_geography_page_combinations(page=mocked_page)
+
+        # Then
+        mocked_geographies_api_crawler.get_geography_combinations_for_page.assert_called_once_with(
+            page=mocked_page
+        )
+
+        expected_args = [
+            (geography_data, mocked_page) for geography_data in geography_combinations
+        ]
+        spy_call_with_star_map_multithreading.assert_called_once_with(
+            func=frontend_crawler.process_geography_page_combination,
+            items=expected_args,
+            thread_count=100,
+        )
