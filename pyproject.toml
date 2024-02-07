@@ -125,7 +125,7 @@ omit = [
 ]
 skip_covered = true                     # Only list files which do not have 100% test coverage in the report
 show_missing = true                     # Report lines which were not hit
-fail_under = 99.85                      # Test coverage report will fail for total coverage under this threshold value
+fail_under = 100.00                     # Test coverage report will fail for total coverage under this threshold value
 exclude_lines = ["__str__"]
 
 ########################################################################################################################
