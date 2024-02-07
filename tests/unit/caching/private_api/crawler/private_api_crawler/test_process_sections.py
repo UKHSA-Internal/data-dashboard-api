@@ -1,7 +1,7 @@
 from unittest import mock
 
+from caching.common.geographies_crawler import GeographyData
 from caching.private_api.crawler import PrivateAPICrawler
-from caching.private_api.crawler.geographies_crawler import GeographyData
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 

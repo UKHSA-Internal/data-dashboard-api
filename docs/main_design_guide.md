@@ -46,6 +46,7 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
 
 ```
 |- caching/
+    |- common/                  # Functionality used by multiple crawlers e.g. the need to hit the geographies API 
     |- frontend/
         crawler.py              # The class used to send requests to the designated frontend URLs.
         handlers.py             # Handler used by the interface i.e. the Django management command.
