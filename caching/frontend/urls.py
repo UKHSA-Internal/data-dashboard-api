@@ -1,4 +1,4 @@
-from urllib.parse import urljoin
+from urllib.parse import quote_plus, urljoin
 
 
 class FrontEndURLBuilder:
@@ -90,3 +90,23 @@ class FrontEndURLBuilder:
 
         """
         return urljoin(self._base_url, "/feedback/confirmation")
+
+    @staticmethod
+    def build_query_params_for_area_selector_page(
+        geography_type_name: str, geography_name: str
+    ) -> dict[str, str]:
+        """Creates a dict of query parameters of URL quoted params
+
+        Args:
+            geography_type_name: The name of the
+                geography type/area type
+            geography_name:  The name of the geography/area
+
+        Returns:
+            Dict representing the query parameters
+            which can then be passed to the request
+
+        """
+        geography_name: str = quote_plus(string=geography_name)
+        geography_type_name: str = quote_plus(string=geography_type_name)
+        return {"areaType": geography_type_name, "areaName": geography_name}

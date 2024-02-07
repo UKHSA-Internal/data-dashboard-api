@@ -3,6 +3,7 @@ from unittest import mock
 import pytest
 from _pytest.logging import LogCaptureFixture
 
+from caching.common.geographies_crawler import GeographyData
 from caching.frontend.crawler import DEFAULT_REQUEST_TIMEOUT, FrontEndCrawler
 
 MODULE_PATH = "caching.frontend.crawler"
@@ -74,9 +75,41 @@ class TestFrontEndCrawler:
             url=url,
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": expected_cdn_auth_key},
+            params=None,
         )
 
         assert f"Processed `{url}`" in caplog.text
+
+    @mock.patch(f"{MODULE_PATH}.requests")
+    def test_hit_frontend_page_with_query_params(
+        self,
+        spy_requests: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given a URL and a dict for the query parameters
+        When `hit_frontend_page()` is called from an instance of `FrontEndCrawler`
+        Then a GET request is sent to the URL with the correct headers
+        """
+        # Given
+        url = "https://fake-url.com"
+        query_params = {"areaType": "Lower Tier Local Authority", "areaName": "London"}
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.hit_frontend_page(
+            url=url, params=query_params
+        )
+
+        # Then
+        expected_cdn_auth_key = (
+            f'"{frontend_crawler_with_mocked_internal_api_client._cdn_auth_key}"'
+        )
+        spy_requests.get.assert_called_once_with(
+            url=url,
+            timeout=DEFAULT_REQUEST_TIMEOUT,
+            headers={"x-cdn-auth": expected_cdn_auth_key},
+            params=query_params,
+        )
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
     def test_process_page_for_home_page(
@@ -415,3 +448,52 @@ class TestFrontEndCrawler:
         # Then
         expected_url = frontend_url_builder.build_url_for_feedback_confirmation_page()
         spy_hit_frontend_page.assert_called_with(url=expected_url)
+
+    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
+    def test_process_geography_page_combination(
+        self,
+        spy_hit_frontend_page: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a page slug and an enriched `GeographyData` model
+        When `process_geography_page_combination()` is called
+            from an instance of the `FrontEndCrawler`
+        Then the call is delegated to the `hit_frontend_page()` method
+            with the correct URL and query parameters dict
+
+        Patches:
+            `spy_hit_frontend_page`: For the main assertion
+
+        """
+        # Given
+        slug = "covid-19"
+        mocked_page = mock.Mock(slug=slug)
+        geography_data = GeographyData(
+            name="London", geography_type_name="Lower Tier Local Authority"
+        )
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.process_geography_page_combination(
+            geography_data=geography_data,
+            page=mocked_page,
+        )
+
+        # Then
+        expected_url = f"{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/{slug}"
+        expected_params = {
+            "areaType": "Lower+Tier+Local+Authority",
+            "areaName": "London",
+        }
+        spy_hit_frontend_page.assert_called_once_with(
+            url=expected_url,
+            params=expected_params,
+        )
+
+        expected_log = (
+            f"Hitting area selector URL for "
+            f"`{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/{slug}` "
+            f"for {geography_data.geography_type_name}:{geography_data.name}"
+        )
+        assert expected_log in caplog.text

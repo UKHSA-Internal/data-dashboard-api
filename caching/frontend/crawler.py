@@ -1,14 +1,33 @@
 import logging
+from enum import Enum
 
 import requests
 from rest_framework.response import Response
 
+from caching.common.geographies_crawler import (
+    GeographyData,
+)
 from caching.frontend.urls import FrontEndURLBuilder
 from caching.internal_api_client import InternalAPIClient
+from cms.topic.models import TopicPage
 
 DEFAULT_REQUEST_TIMEOUT = 60
 
 logger = logging.getLogger(__name__)
+
+
+class CMSPageTypes(Enum):
+    home_page = "home.HomePage"
+    topic_page = "topic.TopicPage"
+    common_page = "common.CommonPage"
+    whats_new_parent_page = "whats_new.WhatsNewParentPage"
+    whats_new_child_entry = "whats_new.WhatsNewChildEntry"
+    metrics_documentation_parent_page = (
+        "metrics_documentation.MetricsDocumentationParentPage"
+    )
+    metrics_documentation_child_entry = (
+        "metrics_documentation.MetricsDocumentationChildEntry"
+    )
 
 
 class FrontEndCrawler:
@@ -56,7 +75,9 @@ class FrontEndCrawler:
 
     # Frontend requests
 
-    def hit_frontend_page(self, url: str) -> Response:
+    def hit_frontend_page(
+        self, url: str, params: dict[str, str] | None = None
+    ) -> Response:
         """Hits the frontend page for the given `url`
 
         Notes:
@@ -65,6 +86,7 @@ class FrontEndCrawler:
 
         Args:
             url: The full URL of the page to hit
+            params: Optional dict of query parameters
 
         Returns:
             None
@@ -75,6 +97,7 @@ class FrontEndCrawler:
             url=url,
             timeout=DEFAULT_REQUEST_TIMEOUT,
             headers={"x-cdn-auth": cdn_auth_key},
+            params=params,
         )
         logger.info("Processed `%s`", url)
 
@@ -102,25 +125,25 @@ class FrontEndCrawler:
         page_type: str = page_item["type"]
 
         match page_type:
-            case "home.HomePage":
+            case CMSPageTypes.home_page.value:
                 url = self._url_builder.build_url_for_home_page()
-            case "topic.TopicPage":
+            case CMSPageTypes.topic_page.value:
                 url = self._url_builder.build_url_for_topic_page(slug=page_item["slug"])
-            case "common.CommonPage":
+            case CMSPageTypes.common_page.value:
                 url = self._url_builder.build_url_for_common_page(
                     slug=page_item["slug"]
                 )
-            case "whats_new.WhatsNewParentPage":
+            case CMSPageTypes.whats_new_parent_page.value:
                 url = self._url_builder.build_url_for_whats_new_parent_page()
-            case "whats_new.WhatsNewChildEntry":
+            case CMSPageTypes.whats_new_child_entry.value:
                 url = self._url_builder.build_url_for_whats_new_child_entry(
                     slug=page_item["slug"]
                 )
-            case "metrics_documentation.MetricsDocumentationParentPage":
+            case CMSPageTypes.metrics_documentation_parent_page.value:
                 url = (
                     self._url_builder.build_url_for_metrics_documentation_parent_page()
                 )
-            case "metrics_documentation.MetricsDocumentationChildEntry":
+            case CMSPageTypes.metrics_documentation_child_entry.value:
                 url = self._url_builder.build_url_for_metrics_documentation_child_entry(
                     slug=page_item["slug"]
                 )
@@ -147,3 +170,33 @@ class FrontEndCrawler:
             url=self._url_builder.build_url_for_feedback_confirmation_page()
         )
         logger.info("Finished processing all pages for the frontend")
+
+    def process_geography_page_combination(
+        self, geography_data: GeographyData, page: TopicPage
+    ) -> None:
+        """Hits the frontend URL for the given `geography_data` and `page` combination
+
+        Args:
+            geography_data: An enriched model containing the
+                `geography_type_name` and `name` of the geography
+            page: The area selector-enabled page to be crawled
+                for the given `geography_data`
+
+        Returns:
+            None
+
+        """
+        url: str = self._url_builder.build_url_for_topic_page(slug=page.slug)
+        params: dict[str, str] = (
+            self._url_builder.build_query_params_for_area_selector_page(
+                geography_type_name=geography_data.geography_type_name,
+                geography_name=geography_data.name,
+            )
+        )
+        logger.info(
+            "Hitting area selector URL for `%s` for %s:%s",
+            url,
+            geography_data.geography_type_name,
+            geography_data.name,
+        )
+        self.hit_frontend_page(url=url, params=params)
