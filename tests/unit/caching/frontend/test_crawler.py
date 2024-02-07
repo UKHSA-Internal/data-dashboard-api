@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 from _pytest.logging import LogCaptureFixture
+from requests.exceptions import ChunkedEncodingError
 
 from caching.common.geographies_crawler import GeographyData
 from caching.frontend.crawler import DEFAULT_REQUEST_TIMEOUT, FrontEndCrawler
@@ -454,7 +455,6 @@ class TestFrontEndCrawler:
         self,
         spy_hit_frontend_page: mock.MagicMock,
         frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-        caplog: LogCaptureFixture,
     ):
         """
         Given a page slug and an enriched `GeographyData` model
@@ -490,13 +490,6 @@ class TestFrontEndCrawler:
             url=expected_url,
             params=expected_params,
         )
-
-        expected_log = (
-            f"Hitting area selector URL for "
-            f"`{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/{slug}` "
-            f"for {geography_data.geography_type_name}:{geography_data.name}"
-        )
-        assert expected_log in caplog.text
 
     @mock.patch(f"{MODULE_PATH}.call_with_star_map_multithreading")
     def test_process_geography_page_combinations(
@@ -549,6 +542,49 @@ class TestFrontEndCrawler:
             items=expected_args,
             thread_count=100,
         )
+
+    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
+    def test_process_geography_page_combination_logs_for_failed_request(
+        self,
+        mocked_hit_frontend_page: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a page slug and an enriched `GeographyData` model
+        When `process_geography_page_combination()` is called
+            from an instance of the `FrontEndCrawler`
+        Then the call is delegated to the `hit_frontend_page()` method
+            with the correct URL and query parameters dict
+
+        Patches:
+            `mocked_hit_frontend_page`: To simulate
+                a flaky network request error
+
+        """
+        # Given
+        slug = "covid-19"
+        mocked_page = mock.Mock(slug=slug)
+        geography_data = GeographyData(name="London", geography_type_name="Nation")
+        mocked_hit_frontend_page.side_effect = ChunkedEncodingError
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.process_geography_page_combination(
+            geography_data=geography_data,
+            page=mocked_page,
+        )
+
+        # Then
+        expected_url = f"{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/{slug}"
+        expected_params = {
+            "areaType": "Nation",
+            "areaName": "London",
+        }
+
+        expected_log = (
+            f"`{expected_url}` with params of `{expected_params}` could not be hit"
+        )
+        assert expected_log in caplog.text
 
     @mock.patch.object(FrontEndCrawler, "process_geography_page_combinations")
     @mock.patch(f"{MODULE_PATH}.get_pages_for_area_selector")

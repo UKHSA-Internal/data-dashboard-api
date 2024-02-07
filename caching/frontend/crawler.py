@@ -107,7 +107,7 @@ class FrontEndCrawler:
             headers={"x-cdn-auth": cdn_auth_key},
             params=params,
         )
-        logger.info("Processed `%s`", url)
+        logger.info("Processed `%s` for params: %s", url, params)
 
     def process_page(self, page_item: dict) -> None:
         """Hit the URL for the corresponding `page_item`
@@ -177,7 +177,7 @@ class FrontEndCrawler:
         self.hit_frontend_page(
             url=self._url_builder.build_url_for_feedback_confirmation_page()
         )
-        logger.info("Finished processing all pages for the frontend")
+        logger.info("Finished processing all regular pages for the frontend")
 
     def process_geography_page_combination(
         self, geography_data: GeographyData, page: TopicPage
@@ -201,13 +201,16 @@ class FrontEndCrawler:
                 geography_name=geography_data.name,
             )
         )
-        logger.info(
-            "Hitting area selector URL for `%s` for %s:%s",
-            url,
-            geography_data.geography_type_name,
-            geography_data.name,
-        )
-        self.hit_frontend_page(url=url, params=params)
+        try:
+            self.hit_frontend_page(url=url, params=params)
+        except Exception:  # noqa: BLE001
+            # Broad exception to fail silently
+            # because we run this method in a pool of threads
+            # we expect to see flakiness in requests being made over network.
+            # If we cannot crawl the odd page/geography combo here and there
+            # it is not the end of the world as that
+            # request from the user will just go to redis
+            logger.warning("`%s` with params of `%s` could not be hit", url, params)
 
     def process_geography_page_combinations(self, page: TopicPage) -> None:
         """Crawls the given `page` for all the relevant geography combinations

@@ -42,3 +42,4 @@ def crawl_front_end() -> None:
         frontend_base_url=frontend_base_url, cdn_auth_key=cdn_auth_key
     )
     frontend_crawler.process_all_pages()
+    frontend_crawler.process_all_valid_area_selector_pages()
