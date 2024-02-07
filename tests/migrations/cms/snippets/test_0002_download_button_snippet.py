@@ -36,3 +36,4 @@ class Test0002DownloadButtonSnippet(MigrationTests):
         # Then
         download_button = self.get_model("button")
         assert not download_button.objects.exists()
+        self.migrate_forward()
