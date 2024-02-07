@@ -106,6 +106,8 @@ class GeographiesAPICrawler:
             self.hit_list_endpoint_for_topic(topic=selected_topic)
         )
 
+        logger.info("Retrieved geography combinations for `%s`", page.title)
+
         return [
             geography_data
             for geography_type_data in geography_type_data_models

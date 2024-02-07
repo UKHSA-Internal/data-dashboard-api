@@ -497,3 +497,95 @@ class TestFrontEndCrawler:
             f"for {geography_data.geography_type_name}:{geography_data.name}"
         )
         assert expected_log in caplog.text
+
+    @mock.patch(f"{MODULE_PATH}.call_with_star_map_multithreading")
+    def test_process_geography_page_combinations(
+        self,
+        spy_call_with_star_map_multithreading: mock.MagicMock,
+    ):
+        """
+        Given a `GeographiesAPICrawler` which returns
+            a list of enriched `GeographyData` models
+        When `process_geography_page_combinations()` is called
+            from an instance of the `FrontEndCrawler`
+        Then the call is delegated to `call_with_star_map_multithreading()`
+            with the correct arguments
+
+        Patches:
+            `spy_call_with_star_map_multithreading`: For the main assertion
+
+        """
+        # Given
+        geography_combinations = [
+            GeographyData(
+                name="London", geography_type_name="Lower Tier Local Authority"
+            ),
+            GeographyData(name="England", geography_type_name="Nation"),
+        ]
+        mocked_page = mock.Mock()
+        mocked_geographies_api_crawler = mock.Mock()
+        mocked_geographies_api_crawler.get_geography_combinations_for_page.return_value = (
+            geography_combinations
+        )
+        frontend_crawler = FrontEndCrawler(
+            geographies_api_crawler=mocked_geographies_api_crawler,
+            frontend_base_url=mock.Mock(),
+            cdn_auth_key=mock.Mock(),
+        )
+
+        # When
+        frontend_crawler.process_geography_page_combinations(page=mocked_page)
+
+        # Then
+        mocked_geographies_api_crawler.get_geography_combinations_for_page.assert_called_once_with(
+            page=mocked_page
+        )
+
+        expected_args = [
+            (geography_data, mocked_page) for geography_data in geography_combinations
+        ]
+        spy_call_with_star_map_multithreading.assert_called_once_with(
+            func=frontend_crawler.process_geography_page_combination,
+            items=expected_args,
+            thread_count=100,
+        )
+
+    @mock.patch.object(FrontEndCrawler, "process_geography_page_combinations")
+    @mock.patch(f"{MODULE_PATH}.get_pages_for_area_selector")
+    def test_process_all_valid_area_selector_pages(
+        self,
+        spy_get_pages_for_area_selector: mock.MagicMock,
+        spy_process_geography_page_combinations: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given `get_pages_for_area_selector()`
+            which returns a list of pages
+        When `process_all_valid_area_selector_pages()` is called
+            from an instance of the `FrontEndCrawler`
+        Then the `process_geography_page_combinations()` method
+            is called for each page
+
+        Patches:
+            `spy_get_pages_for_area_selector`: To remove the
+                side effect of having to hit the db
+                to fetch area selector-enabled pages
+            `spy_process_geography_page_combinations`: For the
+                main assertion, checking each page was sent
+                for processing
+
+        """
+        # Given
+        mocked_pages = [mock.Mock()] * 3
+        spy_get_pages_for_area_selector.return_value = mocked_pages
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.process_all_valid_area_selector_pages()
+
+        # Then
+        spy_get_pages_for_area_selector.assert_called_once()
+
+        expected_calls = [mock.call(page=mocked_page) for mocked_page in mocked_pages]
+        spy_process_geography_page_combinations.assert_has_calls(
+            calls=expected_calls, any_order=True
+        )

@@ -71,3 +71,15 @@ def extract_area_selectable_pages(
     return [
         page for page in all_pages if getattr(page, "is_valid_for_area_selector", False)
     ]
+
+
+def get_pages_for_area_selector() -> list[TopicPage]:
+    """Builds a list of pages which are deemed suitable for the area selector
+
+    Returns:
+        List of pages which are deemed suitable for
+        the area selector
+
+    """
+    all_pages: ALL_PAGE_TYPES = collect_all_pages()
+    return extract_area_selectable_pages(all_pages=all_pages)

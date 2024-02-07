@@ -5,8 +5,11 @@ import requests
 from rest_framework.response import Response
 
 from caching.common.geographies_crawler import (
+    GeographiesAPICrawler,
     GeographyData,
 )
+from caching.common.pages import get_pages_for_area_selector
+from caching.frontend.threading import call_with_star_map_multithreading
 from caching.frontend.urls import FrontEndURLBuilder
 from caching.internal_api_client import InternalAPIClient
 from cms.topic.models import TopicPage
@@ -47,12 +50,17 @@ class FrontEndCrawler:
         cdn_auth_key: str,
         internal_api_client: InternalAPIClient | None = None,
         frontend_url_builder: FrontEndURLBuilder | None = None,
+        geographies_api_crawler: GeographiesAPICrawler | None = None,
     ):
         self._frontend_base_url = frontend_base_url
         self._cdn_auth_key = cdn_auth_key
         self._internal_api_client = internal_api_client or InternalAPIClient()
         self._url_builder = frontend_url_builder or FrontEndURLBuilder(
             base_url=self._frontend_base_url
+        )
+        self._geographies_api_crawler = (
+            geographies_api_crawler
+            or GeographiesAPICrawler(internal_api_client=self._internal_api_client)
         )
 
     @classmethod
@@ -200,3 +208,46 @@ class FrontEndCrawler:
             geography_data.name,
         )
         self.hit_frontend_page(url=url, params=params)
+
+    def process_geography_page_combinations(self, page: TopicPage) -> None:
+        """Crawls the given `page` for all the relevant geography combinations
+
+        Notes:
+            This method will crawl the geography combinations
+            for the page with a pool of threads
+
+        Args:
+            page: The area selector-enabled page
+                to be processed
+
+        Returns:
+            None
+
+        """
+        geography_combinations: list[GeographyData] = (
+            self._geographies_api_crawler.get_geography_combinations_for_page(page=page)
+        )
+
+        args = [(geography_data, page) for geography_data in geography_combinations]
+        call_with_star_map_multithreading(
+            func=self.process_geography_page_combination,
+            items=args,
+            thread_count=100,
+        )
+
+    def process_all_valid_area_selector_pages(self) -> None:
+        """Crawls all valid area selector-enables pages for corresponding geography combinations
+
+        Notes:
+            This method will crawl the geography combinations
+            for each of the valid pages with a pool of threads
+
+        Returns:
+            None
+
+        """
+        logger.info("Crawling for area selector URLs")
+
+        area_selector_pages: list[TopicPage] = get_pages_for_area_selector()
+        for area_selector_page in area_selector_pages:
+            self.process_geography_page_combinations(page=area_selector_page)
