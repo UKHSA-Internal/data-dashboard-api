@@ -293,3 +293,94 @@ class TestAPITimeSeriesQuerySet:
             for embargoed_record in embargoed_api_time_series_records
             if embargoed_record in retrieved_records
         )
+
+    @pytest.mark.django_db
+    def test_records_with_different_latest_refresh_dates(self):
+        """
+        Given a number of `APITimeSeries` records
+            whereby each age-group has a different
+            latest refresh date associated with the age group
+        When `filter_for_list_view()` is called
+            from an instance of `APITimeSeriesQueryset`
+        Then the latest refreshed value for each age group
+            is returned independent of the latest refresh date
+            when compare to other age groupings
+        """
+        # Given
+        metric = "influenza_healthcare_ICUHDUadmissionRateByWeek"
+        current_0_to_4_record = APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="00-04",
+            metric_value=0.3,
+            refresh_date="2024-02-01",
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="00-04",
+            metric_value=0.31,
+            refresh_date="2024-01-24",
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="00-04",
+            metric_value=0.35,
+            refresh_date="2024-01-18",
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="00-04",
+            metric_value=0.37,
+            refresh_date="2024-01-11",
+        )
+        current_5_to_14_record = APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="05-14",
+            metric_value=0.07,
+            refresh_date="2024-01-18",
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="05-14",
+            metric_value=0.08,
+            refresh_date="2024-01-11",
+        )
+        current_55_to_64_record = APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="55-64",
+            metric_value=0.16,
+            refresh_date="2024-02-01",
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="55-64",
+            metric_value=0.17,
+            refresh_date="2024-01-18",
+        )
+
+        # When
+        retrieved_records = APITimeSeries.objects.get_queryset().filter_for_list_view(
+            theme_name=current_0_to_4_record.theme,
+            sub_theme_name=current_0_to_4_record.sub_theme,
+            topic_name=current_0_to_4_record.topic,
+            geography_type_name=current_0_to_4_record.geography_type,
+            geography_name=current_0_to_4_record.geography,
+            metric_name=metric,
+        )
+
+        # Then
+        # Our database will look like the following:
+        # |            |                    refresh_date                   |                  |
+        # |----------------------------------------------------------------|                  |
+        # |    age     | 2023-02-01 | 2023-01-24 | 2023-01-18 | 2023-01-11 | expected results |
+        # |----------------------------------------------------------------|------------------|
+        # |   00-04    | 4th round  | 3rd round  | 2nd round  | 1st round  |    4th round     |
+        # |   05-14    |    N/A     |    N/A     | 2nd round  | 1st round  |    2nd round     |
+        # |   55-64    | 2nd round  |    N/A     | 1st round  |    N/A     |    2nd round     |
+        # |----------------------------------------------------------------|------------------|
+        # We expect the latest record associated with each age-grouping to be returned
+        # Not the records associated with the overall latest refresh date
+
+        assert retrieved_records.count() == 3
+        assert current_0_to_4_record in retrieved_records
+        assert current_55_to_64_record in retrieved_records
+        assert current_5_to_14_record in retrieved_records
