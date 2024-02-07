@@ -82,22 +82,4 @@ class TrendsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        hardcoded_trends_data = {
-            "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
-            "metric_value": 31,
-            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
-            "percentage_metric_value": 17.1,
-            "direction": "up",
-            "colour": "red",
-        }
-
-        if serialized_model.metric_name == "COVID-19_headline_ONSdeaths_7DayChange":
-            trends_data = hardcoded_trends_data
-
-        if (
-            serialized_model.percentage_metric_name
-            == "COVID-19_headline_ONSdeaths_7DayPercentChange"
-        ):
-            trends_data = hardcoded_trends_data
-
         return Response(trends_data)
