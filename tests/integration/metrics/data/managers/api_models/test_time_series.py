@@ -338,7 +338,7 @@ class TestAPITimeSeriesQuerySet:
         # |(first date) |   05-14    |    N/A     |    N/A     | 2nd round  | 1st round  |    2nd round     |
         # |             |   55-64    | 2nd round  |    N/A     | 1st round  |    N/A     |    2nd round     |
         # |------------------------------------------------------------------------------|------------------|
-        # |  2024-01-01 |   00-04    | 3rd round  | 2nd round  |    N/A     | 1st round  |    3rd round     |
+        # |  2024-01-02 |   00-04    | 3rd round  | 2nd round  |    N/A     | 1st round  |    3rd round     |
         # |(second date)|   05-14    |    N/A     | 2nd round  |    N/A     | 1st round  |    2nd round     |
         # |             |   55-64    |    N/A     |    N/A     |    N/A     |  N/A       |       N/A        |
         # |------------------------------------------------------------------------------|------------------|
