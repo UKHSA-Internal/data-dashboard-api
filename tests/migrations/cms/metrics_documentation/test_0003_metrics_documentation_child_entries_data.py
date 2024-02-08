@@ -84,3 +84,4 @@ class Test0003MetricsDocumentationChildEntriesData(MigrationTests):
             self.metrics_documentation_child_entry
         )
         assert not metrics_documentation_child_entry.objects.exists()
+        self.migrate_forward()
