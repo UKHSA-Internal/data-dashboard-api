@@ -308,79 +308,152 @@ class TestAPITimeSeriesQuerySet:
         """
         # Given
         metric = "influenza_healthcare_ICUHDUadmissionRateByWeek"
-        current_0_to_4_record = APITimeSeriesFactory.create_record(
+        first_date = "2024-01-01"
+        second_date = "2024-01-02"
+        expected_current_records: list[APITimeSeries] = (
+            self._create_api_timeseries_with_mixed_age_date_refresh_dates(
+                metric=metric,
+                first_date=first_date,
+                second_date=second_date,
+            )
+        )
+
+        # When
+        retrieved_records = APITimeSeries.objects.get_queryset().filter_for_list_view(
+            theme_name=expected_current_records[0].theme,
+            sub_theme_name=expected_current_records[0].sub_theme,
+            topic_name=expected_current_records[0].topic,
+            geography_type_name=expected_current_records[0].geography_type,
+            geography_name=expected_current_records[0].geography,
+            metric_name=metric,
+        )
+
+        # Then
+        # Our database will look like the following:
+        #                            |                      refresh_date                 |                  |
+        # |------------------------------------------------------------------------------|------------------|
+        # |     date    |    age     | 2024-02-01 | 2024-01-24 | 2024-01-18 | 2024-01-11 | expected results |
+        # |------------------------------------------------------------------------------|------------------|
+        # |  2024-01-01 |   00-04    | 4th round  | 3rd round  | 2nd round  | 1st round  |    4th round     |
+        # |(first date) |   05-14    |    N/A     |    N/A     | 2nd round  | 1st round  |    2nd round     |
+        # |             |   55-64    | 2nd round  |    N/A     | 1st round  |    N/A     |    2nd round     |
+        # |------------------------------------------------------------------------------|------------------|
+        # |  2024-01-01 |   00-04    | 3rd round  | 2nd round  |    N/A     | 1st round  |    3rd round     |
+        # |(second date)|   05-14    |    N/A     | 2nd round  |    N/A     | 1st round  |    2nd round     |
+        # |             |   55-64    |    N/A     |    N/A     |    N/A     |  N/A       |       N/A        |
+        # |------------------------------------------------------------------------------|------------------|
+
+        # We expect the latest record associated with each age-group on a date-by-date basis to be returned
+        # Not the records associated with the overall latest refresh date for each date as a whole
+        assert retrieved_records.count() == len(expected_current_records)
+        assert all(
+            expected_current_record in retrieved_records
+            for expected_current_record in expected_current_records
+        )
+
+    @staticmethod
+    def _create_api_timeseries_with_mixed_age_date_refresh_dates(
+        metric: str, first_date: str, second_date: str
+    ) -> list[APITimeSeries]:
+        current_0_to_4_record_first_date = APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="00-04",
             metric_value=0.3,
             refresh_date="2024-02-01",
+            date=first_date,
         )
         APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="00-04",
             metric_value=0.31,
             refresh_date="2024-01-24",
+            date=first_date,
         )
         APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="00-04",
             metric_value=0.35,
             refresh_date="2024-01-18",
+            date=first_date,
         )
         APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="00-04",
             metric_value=0.37,
             refresh_date="2024-01-11",
+            date=first_date,
         )
-        current_5_to_14_record = APITimeSeriesFactory.create_record(
+        current_5_to_14_record_first_date = APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="05-14",
             metric_value=0.07,
             refresh_date="2024-01-18",
+            date=first_date,
         )
         APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="05-14",
             metric_value=0.08,
             refresh_date="2024-01-11",
+            date=first_date,
         )
-        current_55_to_64_record = APITimeSeriesFactory.create_record(
+        current_55_to_64_record_first_date = APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="55-64",
             metric_value=0.16,
             refresh_date="2024-02-01",
+            date=first_date,
         )
         APITimeSeriesFactory.create_record(
             metric_name=metric,
             age_name="55-64",
             metric_value=0.17,
             refresh_date="2024-01-18",
+            date=first_date,
         )
 
-        # When
-        retrieved_records = APITimeSeries.objects.get_queryset().filter_for_list_view(
-            theme_name=current_0_to_4_record.theme,
-            sub_theme_name=current_0_to_4_record.sub_theme,
-            topic_name=current_0_to_4_record.topic,
-            geography_type_name=current_0_to_4_record.geography_type,
-            geography_name=current_0_to_4_record.geography,
+        current_0_to_4_record_second_date = APITimeSeriesFactory.create_record(
             metric_name=metric,
+            age_name="00-04",
+            metric_value=0.24,
+            refresh_date="2024-02-01",
+            date=second_date,
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="00-04",
+            metric_value=0.13,
+            refresh_date="2024-01-24",
+            date=second_date,
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="00-04",
+            metric_value=0.11,
+            refresh_date="2024-01-11",
+            date=second_date,
+        )
+        current_5_to_14_record_second_date = APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="05-14",
+            metric_value=0.09,
+            refresh_date="2024-01-24",
+            date=second_date,
+        )
+        APITimeSeriesFactory.create_record(
+            metric_name=metric,
+            age_name="05-14",
+            metric_value=0.02,
+            refresh_date="2024-01-11",
+            date=second_date,
         )
 
-        # Then
-        # Our database will look like the following:
-        # |            |                    refresh_date                   |                  |
-        # |----------------------------------------------------------------|                  |
-        # |    age     | 2023-02-01 | 2023-01-24 | 2023-01-18 | 2023-01-11 | expected results |
-        # |----------------------------------------------------------------|------------------|
-        # |   00-04    | 4th round  | 3rd round  | 2nd round  | 1st round  |    4th round     |
-        # |   05-14    |    N/A     |    N/A     | 2nd round  | 1st round  |    2nd round     |
-        # |   55-64    | 2nd round  |    N/A     | 1st round  |    N/A     |    2nd round     |
-        # |----------------------------------------------------------------|------------------|
-        # We expect the latest record associated with each age-grouping to be returned
-        # Not the records associated with the overall latest refresh date
-
-        assert retrieved_records.count() == 3
-        assert current_0_to_4_record in retrieved_records
-        assert current_55_to_64_record in retrieved_records
-        assert current_5_to_14_record in retrieved_records
+        return [
+            # 2nd date records
+            current_0_to_4_record_first_date,
+            current_5_to_14_record_first_date,
+            current_55_to_64_record_first_date,
+            # 1st date records
+            current_0_to_4_record_second_date,
+            current_5_to_14_record_second_date,
+        ]
