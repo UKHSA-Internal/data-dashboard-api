@@ -5,9 +5,10 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
-import datetime
+from typing import Self
 
 from django.db import models
+from django.db.models.functions.window import Rank
 from django.utils import timezone
 
 
@@ -39,7 +40,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         geography_type_name: str,
         geography_name: str,
         metric_name: str,
-    ) -> "APITimeSeriesQuerySet":
+    ) -> Self:
         """Filters by the given fields to provide a slice of the timeseries data as per the fields.
 
         Args:
@@ -84,10 +85,8 @@ class APITimeSeriesQuerySet(models.QuerySet):
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
 
-    @staticmethod
-    def filter_for_latest_refresh_date_records(
-        queryset: models.QuerySet,
-    ) -> models.QuerySet:
+    @classmethod
+    def filter_for_latest_refresh_date_records(cls, queryset: Self) -> Self:
         """Filters the given `queryset` to ensure the latest record is returned for each individual date
 
         Notes:
@@ -116,31 +115,43 @@ class APITimeSeriesQuerySet(models.QuerySet):
             only the latest records for each date
 
         """
-        # Build a queryset labelled with the latest `refresh_date` for each `date`
-        latest_refresh_dates_associated_with_dates: APITimeSeriesQuerySet = (
-            queryset.values("date").annotate(latest_refresh=models.Max("refresh_date"))
+        partition_fields = ["age", "sex", "stratum", "date"]
+        return cls.get_latest_refresh_date_records_per_window(
+            queryset=queryset, partition_fields=partition_fields
         )
 
-        # Store the latest records for each day so that they can be mapped easily
-        # Note that this currently incurs execution of an additional db query
-        # The alternative was to possibly use `DISTINCT ON` instead
-        # but that is specific to the postgresql backend and would
-        # mean we would no longer be agnostic to the underlying database engine.
-        # Given the level of caching in the system, the performance penalty incurred
-        # here is not noticeable.
-        latest_records_map: dict[datetime.datetime.date, datetime.datetime.date] = {
-            record["date"]: record["latest_refresh"]
-            for record in latest_refresh_dates_associated_with_dates
-        }
+    @classmethod
+    def get_latest_refresh_date_records_per_window(
+        cls, queryset: Self, partition_fields: list[str]
+    ) -> Self:
+        """Partitions the `queryset` and returns records with the latest `refresh_date` from each window
 
-        # Filter the IDs for the records in memory to get the latest ones partitioned by each date
-        resulting_ids: list[int] = [
-            record.id
-            for record in queryset
-            if record.refresh_date == latest_records_map.get(record.date)
-        ]
+        Args:
+            queryset: The queryset to split and assess
+                for the latest refreshed data within each partition
+            partition_fields: List of field names from which
+                to create the partitions with.
 
-        return queryset.filter(pk__in=resulting_ids)
+        Returns:
+            An `APITimeSeriesQuerySet` which contains
+            only the latest refreshed data within each partition
+
+        """
+        # Use the window function to annotate
+        # the rank of each record within its partition
+        window = models.Window(
+            expression=Rank(),
+            partition_by=partition_fields,
+            order_by=models.F("refresh_date").desc(),
+        )
+
+        # Annotate each record with a calculated ranking.
+        # Whereby the `refresh_ranking` is determined by the latest `refresh_date`
+        queryset = queryset.annotate(refresh_ranking=window)
+
+        # Filter the queryset to get records with a ranking of 1.
+        # This will return the records with the latest `refresh_date` within each partition
+        return queryset.filter(refresh_ranking=1)
 
     @staticmethod
     def _exclude_data_under_embargo(queryset: models.QuerySet) -> models.QuerySet:
