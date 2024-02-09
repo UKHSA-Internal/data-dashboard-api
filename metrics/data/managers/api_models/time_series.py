@@ -5,7 +5,7 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
-import datetime
+from typing import Self
 
 from django.db import models
 from django.utils import timezone
@@ -39,7 +39,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         geography_type_name: str,
         geography_name: str,
         metric_name: str,
-    ) -> "APITimeSeriesQuerySet":
+    ) -> Self:
         """Filters by the given fields to provide a slice of the timeseries data as per the fields.
 
         Args:
@@ -88,6 +88,8 @@ class APITimeSeriesQuerySet(models.QuerySet):
     def filter_for_latest_refresh_date_records(
         queryset: models.QuerySet,
     ) -> models.QuerySet:
+        queryset: Self,
+    ) -> Self:
         """Filters the given `queryset` to ensure the latest record is returned for each individual date
 
         Notes:
