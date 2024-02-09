@@ -342,9 +342,8 @@ class TestAPITimeSeriesQuerySet:
         # |(second date)|   05-14    |    N/A     | 2nd round  |    N/A     | 1st round  |    2nd round     |
         # |             |   55-64    |    N/A     |    N/A     |    N/A     |  N/A       |       N/A        |
         # |------------------------------------------------------------------------------|------------------|
+        # We expect the latest record associated with each age/sex/stratum group on a date-by-date basis to be returned
 
-        # We expect the latest record associated with each age-group on a date-by-date basis to be returned
-        # Not the records associated with the overall latest refresh date for each date as a whole
         assert retrieved_records.count() == len(expected_current_records)
         assert all(
             expected_current_record in retrieved_records
@@ -449,11 +448,11 @@ class TestAPITimeSeriesQuerySet:
         )
 
         return [
-            # 2nd date records
+            # 1st date records
             current_0_to_4_record_first_date,
             current_5_to_14_record_first_date,
             current_55_to_64_record_first_date,
-            # 1st date records
+            # 2nd date records
             current_0_to_4_record_second_date,
             current_5_to_14_record_second_date,
         ]
