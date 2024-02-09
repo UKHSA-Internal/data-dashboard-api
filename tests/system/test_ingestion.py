@@ -109,7 +109,9 @@ class TestIngestion:
 
         # When / Then
         # Check that the 2nd file is ingested
-        second_refresh_date = datetime.date(year=2023, month=10, day=30)
+        second_refresh_date = datetime.datetime(
+            year=2023, month=10, day=30, hour=0, minute=0, second=0, tzinfo=datetime.UTC
+        )
         second_data_with_no_functional_updates = (
             self._rebuild_data_with_updated_refresh_date_only(
                 data=example_time_series_data,
@@ -137,7 +139,9 @@ class TestIngestion:
 
         # When / Then
         # Check that the 3rd file is ingested
-        final_refresh_date = datetime.date(year=2023, month=12, day=1)
+        final_refresh_date = datetime.datetime(
+            year=2023, month=12, day=1, hour=0, minute=0, second=0, tzinfo=datetime.UTC
+        )
         updated_metric_value = 99.0000
         third_data_with_retrospective_updates = (
             self._rebuild_data_with_single_retrospective_update(
@@ -213,7 +217,9 @@ class TestIngestion:
 
         # The 2nd file is ingested but we don't expect any changes
         # because it contains no functional updates
-        second_refresh_date = datetime.date(year=2023, month=10, day=30)
+        second_refresh_date = datetime.datetime(
+            year=2023, month=10, day=30, hour=0, minute=0, second=0, tzinfo=datetime.UTC
+        )
         second_data_file_with_no_functional_updates = (
             self._rebuild_data_with_updated_refresh_date_only(
                 data=example_time_series_data,
@@ -236,7 +242,9 @@ class TestIngestion:
 
         # The 3rd file is ingested for which we expect 1 new record
         # whilst the other data point is de-duplicated since it contained no functional update
-        final_refresh_date = datetime.date(year=2023, month=11, day=30)
+        final_refresh_date = datetime.datetime(
+            year=2023, month=11, day=30, hour=0, minute=0, second=0, tzinfo=datetime.UTC
+        )
         updated_metric_value = 99.0000
         third_data_file_with_retrospective_updates = (
             self._rebuild_data_with_single_retrospective_update(

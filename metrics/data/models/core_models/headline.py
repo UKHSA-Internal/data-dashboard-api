@@ -39,7 +39,7 @@ class CoreHeadline(models.Model):
         help_text=help_texts.SEX,
     )
 
-    refresh_date = models.DateField(help_text=help_texts.REFRESH_DATE)
+    refresh_date = models.DateTimeField(help_text=help_texts.REFRESH_DATE)
     embargo = models.DateTimeField(help_text=help_texts.EMBARGO, null=True)
 
     period_start = models.DateField(help_text=help_texts.PERIOD_START)

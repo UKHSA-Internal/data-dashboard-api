@@ -30,7 +30,7 @@ class APITimeSeries(models.Model):
     year = models.PositiveSmallIntegerField()
     epiweek = models.PositiveSmallIntegerField()
 
-    refresh_date = models.DateField(null=True)
+    refresh_date = models.DateTimeField(null=True)
     embargo = models.DateTimeField(null=True)
 
     date = models.DateField()
