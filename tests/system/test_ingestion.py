@@ -1,3 +1,4 @@
+import copy
 import datetime
 from collections import OrderedDict
 from decimal import Decimal
@@ -6,9 +7,10 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
+from caching.internal_api_client import CACHE_FORCE_REFRESH_HEADER_KEY
 from ingestion.file_ingestion import data_ingester
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 
 FAKE_FILE_NAME = "COVID-19_deaths_ONSByDay.json"
 DATE_FORMAT = "%Y-%m-%d"
@@ -278,6 +280,82 @@ class TestIngestion:
         ]
         assert expected_first_metric_value in returned_metric_values
         assert f"{updated_metric_value:.4f}" in returned_metric_values
+
+    @pytest.mark.django_db
+    def test_multiple_data_points_with_sequential_refresh_dates_can_be_ingested(
+        self, example_headline_data: INCOMING_DATA_TYPE
+    ):
+        """
+        Given 3 headline data points with sequential `refresh_dates`
+        When the files are uploaded via the `data_ingester()`
+        Then the headlines/ endpoint will always return the latest-functional data
+        """
+        # The fixture comes bundled with 2 data points.
+        # To keep things simple we get rid of the 2nd data point
+        example_headline_data["data"].pop(1)
+
+        headlines_endpoint_payload = {
+            "topic": example_headline_data["topic"],
+            "metric": example_headline_data["metric"],
+            "geography": example_headline_data["geography"],
+            "geography_type": example_headline_data["geography_type"],
+        }
+
+        # Given
+        first_metric_value = 123
+        first_refresh_date = "2023-12-01"
+        first_headline_data = copy.deepcopy(example_headline_data)
+        first_headline_data["refresh_date"] = first_refresh_date
+        first_headline_data["data"][0]["metric_value"] = first_metric_value
+        data_ingester(data=first_headline_data)
+        assert CoreHeadline.objects.all().count() == 1
+
+        # When / Then
+        current_headline_from_api = self._fetch_latest_headline_from_endpoint(
+            payload=headlines_endpoint_payload
+        )
+        assert current_headline_from_api == {"value": first_metric_value}
+
+        # Given
+        second_metric_value = 456
+        second_refresh_date = "2023-12-01 13:00:00"
+        second_headline_data = copy.deepcopy(example_headline_data)
+        second_headline_data["refresh_date"] = second_refresh_date
+        second_headline_data["data"][0]["metric_value"] = second_metric_value
+        data_ingester(data=second_headline_data)
+        assert CoreHeadline.objects.all().count() == 2
+
+        # When / Then
+        current_headline_from_api = self._fetch_latest_headline_from_endpoint(
+            payload=headlines_endpoint_payload
+        )
+        assert current_headline_from_api == {"value": second_metric_value}
+
+        # Given
+        third_metric_value = 789
+        third_refresh_date = "2023-12-01 13:01:00"
+        third_headline_data = copy.deepcopy(example_headline_data)
+        third_headline_data["refresh_date"] = third_refresh_date
+        third_headline_data["data"][0]["metric_value"] = third_metric_value
+        data_ingester(data=third_headline_data)
+        assert CoreHeadline.objects.all().count() == 3
+
+        # When / Then
+        current_headline_from_api = self._fetch_latest_headline_from_endpoint(
+            payload=headlines_endpoint_payload
+        )
+        assert current_headline_from_api == {"value": third_metric_value}
+
+    @staticmethod
+    def _fetch_latest_headline_from_endpoint(
+        payload: dict[str, str]
+    ) -> dict[str, int | float]:
+        path = "/api/headlines/v3/"
+        client = APIClient()
+        response: Response = client.get(
+            path=path, data=payload, headers={CACHE_FORCE_REFRESH_HEADER_KEY: True}
+        )
+        return response.data
 
     @staticmethod
     def _rebuild_data_with_updated_refresh_date_only(
