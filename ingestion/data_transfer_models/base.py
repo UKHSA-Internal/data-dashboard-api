@@ -25,7 +25,7 @@ class IncomingBaseDataModel(BaseModel):
     age: str
     sex: str
     stratum: str
-    refresh_date: datetime.date
+    refresh_date: datetime.datetime
 
     model_config = ConfigDict(use_enum_values=True)
 

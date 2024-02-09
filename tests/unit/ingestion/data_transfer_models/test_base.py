@@ -15,7 +15,8 @@ VALID_GEOGRAPHY_CODE = "E92000001"
 VALID_AGE = "all"
 VALID_SEX = "all"
 VALID_STRATUM = "default"
-VALID_REFRESH_DATE = "2023-11-20"
+VALID_REFRESH_DATE_IN_DATE_FORMAT = "2023-11-20"
+VALID_REFRESH_DATE_IN_DATETIME_FORMAT = "2024-01-01 14:20:03"
 
 
 class TestIncomingBaseValidation:
@@ -38,7 +39,7 @@ class TestIncomingBaseValidation:
             age=VALID_AGE,
             sex=VALID_SEX,
             stratum=VALID_STRATUM,
-            refresh_date=VALID_REFRESH_DATE,
+            refresh_date=VALID_REFRESH_DATE_IN_DATE_FORMAT,
         )
 
         # Then
@@ -80,7 +81,7 @@ class TestIncomingBaseValidation:
             age=VALID_AGE,
             sex=payload_sex_value,
             stratum=VALID_STRATUM,
-            refresh_date=VALID_REFRESH_DATE,
+            refresh_date=VALID_REFRESH_DATE_IN_DATE_FORMAT,
         )
 
         # Then
@@ -89,6 +90,79 @@ class TestIncomingBaseValidation:
             strict=True,
         )
         assert incoming_base_validation.sex == expected_output_sex_value
+
+    def test_refresh_date_as_date_defaults_to_midnight(self):
+        """
+        Given a payload containing valid values
+        And a `refresh_date` provided as a date
+        When the `IncomingHeadlineValidation` model is initialized
+        Then model is deemed valid
+        And the `refresh_date` is set to midnight of that date
+        """
+        # Given
+        refresh_date = VALID_REFRESH_DATE_IN_DATE_FORMAT
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(
+            parent_theme=VALID_PARENT_THEME,
+            child_theme=VALID_CHILD_THEME,
+            topic=VALID_TOPIC,
+            metric_group=VALID_METRIC_GROUP,
+            metric=VALID_METRIC,
+            geography_type=VALID_GEOGRAPHY_TYPE,
+            geography=VALID_GEOGRAPHY,
+            geography_code=VALID_GEOGRAPHY_CODE,
+            age=VALID_AGE,
+            sex=VALID_SEX,
+            stratum=VALID_STRATUM,
+            refresh_date=refresh_date,
+        )
+
+        # Then
+        incoming_base_validation.model_validate(
+            incoming_base_validation,
+            strict=True,
+        )
+
+        assert (
+            str(incoming_base_validation.refresh_date)
+            == f"{refresh_date} 00:00:00+00:00"
+        )
+
+    def test_refresh_date_as_timestamp_is_validated(self):
+        """
+        Given a payload containing valid values
+        And a `refresh_date` provided as a timestamp
+        When the `IncomingHeadlineValidation` model is initialized
+        Then model is deemed valid
+        And the `refresh_date` is set to the correct timestamp
+        """
+        # Given
+        refresh_date = VALID_REFRESH_DATE_IN_DATETIME_FORMAT
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(
+            parent_theme=VALID_PARENT_THEME,
+            child_theme=VALID_CHILD_THEME,
+            topic=VALID_TOPIC,
+            metric_group=VALID_METRIC_GROUP,
+            metric=VALID_METRIC,
+            geography_type=VALID_GEOGRAPHY_TYPE,
+            geography=VALID_GEOGRAPHY,
+            geography_code=VALID_GEOGRAPHY_CODE,
+            age=VALID_AGE,
+            sex=VALID_SEX,
+            stratum=VALID_STRATUM,
+            refresh_date=refresh_date,
+        )
+
+        # Then
+        incoming_base_validation.model_validate(
+            incoming_base_validation,
+            strict=True,
+        )
+
+        assert str(incoming_base_validation.refresh_date) == refresh_date
 
     def test_raises_error_when_metric_group_not_recognized(self):
         """
@@ -114,7 +188,7 @@ class TestIncomingBaseValidation:
                 age=VALID_AGE,
                 sex=VALID_SEX,
                 stratum=VALID_STRATUM,
-                refresh_date=VALID_REFRESH_DATE,
+                refresh_date=VALID_REFRESH_DATE_IN_DATE_FORMAT,
             )
 
     @pytest.mark.parametrize(
@@ -146,5 +220,5 @@ class TestIncomingBaseValidation:
                 age=VALID_AGE,
                 sex=VALID_SEX,
                 stratum=VALID_STRATUM,
-                refresh_date=VALID_REFRESH_DATE,
+                refresh_date=VALID_REFRESH_DATE_IN_DATE_FORMAT,
             )
