@@ -3,7 +3,7 @@ black==24.1.1
 coverage==7.4.1
 django-factory-boy==1.0.0
 factory-boy==3.3.0
-Faker==22.6.0
+Faker==23.1.0
 gitdb==4.0.11
 GitPython==3.1.41
 import-linter==2.0
@@ -16,4 +16,4 @@ pytest==8.0.0
 pytest-cov==4.1.0
 pytest-django==4.8.0
 pytest-random-order==1.1.1
-ruff==0.1.13
+ruff==0.2.1

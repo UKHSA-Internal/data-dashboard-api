@@ -2,7 +2,7 @@ from unittest import mock
 
 from _pytest.logging import LogCaptureFixture
 
-from caching.private_api.crawler.geographies_crawler import (
+from caching.common.geographies_crawler import (
     GeographiesAPICrawler,
     GeographyData,
     GeographyTypeData,
@@ -101,3 +101,54 @@ class TestGeographiesAPICrawler:
         # Then
         expected_log = f"Completed processing of geographies API for `{topic}` page"
         assert expected_log in caplog.text
+
+    @mock.patch.object(GeographiesAPICrawler, "hit_list_endpoint_for_topic")
+    def test_get_geography_combinations_for_page(
+        self, spy_hit_list_endpoint_for_topic: mock.MagicMock
+    ):
+        """
+        Given a topic and mocked return `GeographyTypeData` models
+        When `get_geography_combinations_for_page()` is called
+            from an instance of the `GeographiesAPICrawler`
+        Then the correct list of `GeographyData` models are returned
+
+        Patches:
+            `spy_hit_list_endpoint_for_topic`: To remove the side effect
+                of hitting the geographies API and making db queries
+
+        """
+        # Given
+        ltha = "Lower Tier Local Authority"
+        geography_type_data_models = [
+            GeographyTypeData(
+                name=ltha, geography_names=["Bexley", "Hackney", "Tower Hamlets"]
+            )
+        ]
+        spy_hit_list_endpoint_for_topic.return_value = geography_type_data_models
+
+        topic = "COVID-19"
+        mocked_page = mock.Mock(selected_topics={topic})
+        geographies_api_crawler = GeographiesAPICrawler()
+
+        # When
+        geography_combinations: list[GeographyData] = (
+            geographies_api_crawler.get_geography_combinations_for_page(
+                page=mocked_page
+            )
+        )
+
+        # Then
+        # Check the `GeographiesAPICrawler` is used correctly to
+        # fetch the correct geographies for the given topic
+        spy_hit_list_endpoint_for_topic.assert_called_once_with(topic=topic)
+
+        # Check the returned `GeographyData` models are correct
+        assert len(geography_combinations) == 3
+        assert geography_combinations[0].geography_type_name
+        assert geography_combinations[0].name == "Bexley"
+
+        assert geography_combinations[1].geography_type_name
+        assert geography_combinations[1].name == "Hackney"
+
+        assert geography_combinations[2].geography_type_name
+        assert geography_combinations[2].name == "Tower Hamlets"

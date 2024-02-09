@@ -1,14 +1,13 @@
 import logging
 import time
 
+from caching.common.geographies_crawler import (
+    GeographiesAPICrawler,
+    GeographyData,
+)
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.crawler.area_selector.concurrency import (
     call_with_star_map_multiprocessing,
-)
-from caching.private_api.crawler.geographies_crawler import (
-    GeographiesAPICrawler,
-    GeographyData,
-    GeographyTypeData,
 )
 from cms.topic.models import TopicPage
 
@@ -18,32 +17,10 @@ logger = logging.getLogger(__name__)
 class AreaSelectorOrchestrator:
     """Responsible for spinning up instances of the `PrivateAPICrawler` to process geography/page combinations"""
 
-    def __init__(self, geographies_api_crawler: GeographiesAPICrawler):
-        self._geographies_api_crawler = geographies_api_crawler
-
-    def get_geography_combinations_for_page(
-        self, page: TopicPage
-    ) -> list[GeographyData]:
-        """Returns all available geographies for the given `topic` as enriched `GeographyData` models
-
-        Returns:
-            List of `GeographyData` containing the name
-            and corresponding geography type name for each geography
-            which are valid for the given `page`
-
-        """
-        selected_topic: str = page.selected_topics.pop()
-        geography_type_data_models: list[GeographyTypeData] = (
-            self._geographies_api_crawler.hit_list_endpoint_for_topic(
-                topic=selected_topic
-            )
+    def __init__(self, geographies_api_crawler: GeographiesAPICrawler | None = None):
+        self._geographies_api_crawler = (
+            geographies_api_crawler or GeographiesAPICrawler()
         )
-
-        return [
-            geography_data
-            for geography_type_data in geography_type_data_models
-            for geography_data in geography_type_data.export_all_geography_combinations()
-        ]
 
     def process_pages(self, pages: list[TopicPage]) -> None:
         """Delegates each valid geography/page combination to a dedicated `PrivateAPICrawler` to be processed
@@ -57,7 +34,9 @@ class AreaSelectorOrchestrator:
         """
         for page in pages:
             geographies_for_page: list[GeographyData] = (
-                self.get_geography_combinations_for_page(page=page)
+                self._geographies_api_crawler.get_geography_combinations_for_page(
+                    page=page
+                )
             )
 
             self.parallel_process_all_geography_combinations_for_page(

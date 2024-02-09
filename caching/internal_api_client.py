@@ -168,17 +168,6 @@ class InternalAPIClient:
         headers: dict[str, bool] = self.build_headers()
         return self._client.get(path=path, headers=headers, format="json")
 
-    def hit_geographies_detail_endpoint(self, geography_type_id: int) -> Response:
-        """Sends a `GET` request to the detail `geographies/` endpoint for the given `geography_type_id`
-
-        Returns:
-            `Response` from the `geographies/` endpoint
-
-        """
-        path = f"{self.geographies_endpoint_path}{geography_type_id}/"
-        headers = self.build_headers()
-        return self._client.get(path=path, headers=headers, format="json")
-
     def hit_pages_list_endpoint(self) -> Response:
         """Sends a `GET` request to the list `pages/` endpoint.
 

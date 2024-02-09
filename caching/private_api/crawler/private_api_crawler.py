@@ -11,13 +11,13 @@ django.setup()
 # This is because we spawn multiple processes when crawling the private API
 # for all the available geography combinations.
 
+from caching.common.geographies_crawler import (  # noqa: E402
+    GeographiesAPICrawler,
+    GeographyData,
+)
 from caching.internal_api_client import InternalAPIClient  # noqa: E402
 from caching.private_api.crawler.dynamic_block_crawler import (  # noqa: E402
     DynamicContentBlockCrawler,
-)
-from caching.private_api.crawler.geographies_crawler import (  # noqa: E402
-    GeographiesAPICrawler,
-    GeographyData,
 )
 from caching.private_api.crawler.headless_cms_api import (  # noqa: E402
     HeadlessCMSAPICrawler,
