@@ -16,7 +16,7 @@ django-db-connection-pool==1.2.4
 django-filter==23.5
 django-modelcluster==6.2.1
 django-permissionedforms==0.1
-django-taggit==3.1.0
+django-taggit==5.0.0
 django-treebeard==4.7.1
 djangorestframework==3.14.0
 draftjs-exporter==2.1.7
@@ -90,7 +90,7 @@ typing_extensions==4.9.0
 uritemplate==4.1.1
 urllib3==2.0.7
 virtualenv==20.24.6
-wagtail==5.2.3
+wagtail==6.0
 wagtail_trash==3.0.0
 wagtail_modeladmin==2.0.0
 webencodings==0.5.1
