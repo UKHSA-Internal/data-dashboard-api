@@ -1,5 +1,5 @@
 bandit==1.7.7
-black==24.1.1
+black==24.2.0
 coverage==7.4.1
 django-factory-boy==1.0.0
 factory-boy==3.3.0
