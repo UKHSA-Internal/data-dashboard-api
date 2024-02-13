@@ -1,9 +1,11 @@
-class MockButtonSnippet:
+class FakeButtonSnippet:
     """
     A fake version of the button snippet model for tests.
     """
 
-    def __init__(self, text, loading_text, endpoint, method, button_type):
+    def __init__(
+        self, text: str, loading_text: str, endpoint: str, method: str, button_type: str
+    ):
         self.text = text
         self.loading_text = loading_text
         self.endpoint = endpoint

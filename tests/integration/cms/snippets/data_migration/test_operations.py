@@ -44,6 +44,11 @@ class TestButtonSnippetOperations:
 
         # When
         create_download_button_snippet()
+        button_snippet = Button.objects.first()
 
         # Then
-        assert Button.objects.exists()
+        assert button_snippet.text == "download (zip)"
+        assert button_snippet.loading_text == ""
+        assert button_snippet.endpoint == "/api/bulkdownloads/v1"
+        assert button_snippet.method == "POST"
+        assert button_snippet.button_type == "DOWNLOAD"

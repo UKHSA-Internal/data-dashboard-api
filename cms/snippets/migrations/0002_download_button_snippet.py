@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
-            code=create_download_button_snippet, reverse_code=remove_buttons_snippets
+            code=create_download_button_snippet,
+            reverse_code=remove_buttons_snippets,
         )
     ]

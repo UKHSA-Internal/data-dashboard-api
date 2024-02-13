@@ -7,12 +7,12 @@ def create_download_button_snippet(*args, **kwargs) -> None:
     Returns:
         None
     """
-    Button.objects.create(
+    Button.objects.get_or_create(
         text="download (zip)",
         loading_text="",
         endpoint="/api/bulkdownloads/v1",
-        method=Methods.POST,
-        button_type=ButtonTypes.DOWNLOAD,
+        method=Methods.POST.value,
+        button_type=ButtonTypes.DOWNLOAD.value,
     )
 
 

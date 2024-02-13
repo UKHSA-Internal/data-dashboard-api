@@ -1,5 +1,5 @@
 from cms.dynamic_content.blocks import ButtonChooserBlock
-from tests.fakes.models.cms.button_snippet import MockButtonSnippet
+from tests.fakes.models.cms.button_snippet import FakeButtonSnippet
 
 
 class TestButtonChooser:
@@ -26,7 +26,7 @@ class TestButtonChooser:
         """
         Given `mock_target_app`, mock data and a `ButtonChooserBlock()` instance
         When the `ButtonChooserBlock.get_api_representation()` is called with
-            a `MockSnippet()` instance
+            a `FakeSnippet()` instance
         Then `get_api_representation()` method will return the snippet instance fields
             mock_snippet_data.
         """
@@ -39,7 +39,7 @@ class TestButtonChooser:
             "method": "POST",
             "button_type": "DOWNLOAD",
         }
-        snippet_instance = MockButtonSnippet(**mock_snippet_data)
+        snippet_instance = FakeButtonSnippet(**mock_snippet_data)
         button_chooser_block = ButtonChooserBlock(target_model=mock_target_model)
 
         # When
