@@ -148,8 +148,8 @@ class TestChartSettings:
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "margin": {
-                "l": 15,  # Margin expected for date-based x-axes
-                "r": 15,
+                "l": 0,
+                "r": 0,
                 "b": 0,
                 "t": 0,
             },
@@ -238,14 +238,12 @@ class TestChartSettings:
         x_axis_date_type = chart_settings.get_x_axis_date_type()
 
         # Then
-        min_date, _ = chart_settings.get_min_and_max_x_axis_values()
-        month_end_of_max_date = "2023-01-31"
-
+        min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b<br>%Y",
-            "range": [min_date, month_end_of_max_date],
+            "range": (min_date, max_date),
         }
         assert x_axis_date_type == expected_axis_config
 
@@ -310,29 +308,6 @@ class TestChartSettings:
         expected_chart_config["showlegend"] = False
 
         assert line_with_shaded_section_chart_config == expected_chart_config
-
-    def test_get_margin_for_charts_with_dates(self, fake_chart_settings: ChartSettings):
-        """
-        Given an instance of `ChartSettings`
-        When `get_margin_for_charts_with_dates()` is called
-        Then the correct configuration for margins is returned as a dict
-        """
-        # Given
-        chart_settings = fake_chart_settings
-
-        # When
-        margin_config = chart_settings.get_margin_for_charts_with_dates()
-
-        # Then
-        expected_margin_config = {
-            "margin": {
-                "l": 15,
-                "r": 15,
-                "b": 0,
-                "t": 0,
-            }
-        }
-        assert margin_config == expected_margin_config
 
     def test_get_bar_chart_config(self, fake_chart_settings: ChartSettings):
         """

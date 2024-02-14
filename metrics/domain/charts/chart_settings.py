@@ -63,7 +63,7 @@ class ChartSettings:
         }
 
     def get_base_chart_config(self):
-        base_chart_config = {
+        return {
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "margin": {
@@ -78,14 +78,6 @@ class ChartSettings:
             "height": self.height,
             "width": self.width,
         }
-
-        if self.is_date_type_x_axis:
-            base_chart_config = {
-                **base_chart_config,
-                **self.get_margin_for_charts_with_dates(),
-            }
-
-        return base_chart_config
 
     def get_line_with_shaded_section_chart_config(self):
         chart_config = self.get_base_chart_config()
@@ -118,16 +110,11 @@ class ChartSettings:
         return min(possible_minimums), max(possible_maximums)
 
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
-        tick_format = self._get_date_tick_format()
-
-        min_date, max_date = self.get_min_and_max_x_axis_values()
-        max_date = get_new_max_date(existing_dt=max_date)
-
         return {
             "type": "date",
             "dtick": "M1",
-            "tickformat": tick_format,
-            "range": [min_date, max_date],
+            "tickformat": self._get_date_tick_format(),
+            "range": self.get_min_and_max_x_axis_values(),
         }
 
     @staticmethod
@@ -136,17 +123,6 @@ class ChartSettings:
             "type": "-",
             "dtick": None,
             "tickformat": None,
-        }
-
-    @staticmethod
-    def get_margin_for_charts_with_dates():
-        return {
-            "margin": {
-                "l": 15,
-                "r": 15,
-                "b": 0,
-                "t": 0,
-            }
         }
 
     @staticmethod

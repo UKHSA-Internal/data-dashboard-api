@@ -58,9 +58,8 @@ class TestBarCharts:
         assert main_layout.height == HEIGHT
         assert main_layout.width == WIDTH
 
-        # Check left and right margins are both 15
-        assert main_layout.margin.l == 15
-        assert main_layout.margin.r == 15
+        # Check left and right margins are both 0
+        assert main_layout.margin.l == main_layout.margin.r == 0
 
     def test_main_bar_plot(self, mocked_plot_data: mock.Mock):
         """
