@@ -1,9 +1,13 @@
+import datetime
 from unittest import mock
 
 import pytest
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.chart_settings import ChartSettings, get_new_max_date
+from metrics.domain.charts.chart_settings import (
+    ChartSettings,
+    get_max_date_for_current_month,
+)
 from metrics.domain.models import PlotData
 
 MODULE_PATH: str = "metrics.domain.charts.chart_settings"
@@ -148,8 +152,8 @@ class TestChartSettings:
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "margin": {
-                "l": 15,  # Margin expected for date-based x-axes
-                "r": 15,
+                "l": 0,
+                "r": 0,
                 "b": 0,
                 "t": 0,
             },
@@ -238,14 +242,14 @@ class TestChartSettings:
         x_axis_date_type = chart_settings.get_x_axis_date_type()
 
         # Then
-        min_date, _ = chart_settings.get_min_and_max_x_axis_values()
-        month_end_of_max_date = "2023-01-31"
+        min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
+        max_date = get_max_date_for_current_month(existing_dt=max_date)
 
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b<br>%Y",
-            "range": [min_date, month_end_of_max_date],
+            "range": [min_date, max_date],
         }
         assert x_axis_date_type == expected_axis_config
 
@@ -310,29 +314,6 @@ class TestChartSettings:
         expected_chart_config["showlegend"] = False
 
         assert line_with_shaded_section_chart_config == expected_chart_config
-
-    def test_get_margin_for_charts_with_dates(self, fake_chart_settings: ChartSettings):
-        """
-        Given an instance of `ChartSettings`
-        When `get_margin_for_charts_with_dates()` is called
-        Then the correct configuration for margins is returned as a dict
-        """
-        # Given
-        chart_settings = fake_chart_settings
-
-        # When
-        margin_config = chart_settings.get_margin_for_charts_with_dates()
-
-        # Then
-        expected_margin_config = {
-            "margin": {
-                "l": 15,
-                "r": 15,
-                "b": 0,
-                "t": 0,
-            }
-        }
-        assert margin_config == expected_margin_config
 
     def test_get_bar_chart_config(self, fake_chart_settings: ChartSettings):
         """
@@ -483,35 +464,63 @@ class TestChartSettings:
         assert max_date == chart_settings.plots_data[0].x_axis_values[-1]
 
 
-class TestGetNewMaxDate:
-    def test_get_new_max_date(self):
+class TestGetMaxDateForCurrentMonth:
+    @pytest.mark.parametrize(
+        "input_date",
+        [
+            "2024-02-01 12:00",
+            "2024-02-02 12:00:98",
+            "2024-02-03 19:07",
+            "2024-02-04 23:20",
+            "2024-02-05 12:09",
+            "2024-02-06",
+            "2024-02-07 11:59",
+            "2024-02-08 14:30",
+            "2024-02-09 16:00",
+            "2024-02-10 00:00",
+        ],
+    )
+    def test_returns_10th_if_current_day_less_than_10th(self, input_date: str):
         """
-        Given a date as a string
-        When `get_new_max_date()` is called
-        Then the end of the month date is returned as a string
+        Given an input date which is earlier
+            than the 10th of that month
+        When `get_max_date_for_current_month()` is called
+        Then the 10th of that month is returned
         """
-        # Given
-        input_date = "2024-02-15 12:00"
-        expected_date = "2024-02-29"
-
-        # When
-        actual_date = get_new_max_date(input_date)
+        # Given / When
+        actual_date: datetime.date = get_max_date_for_current_month(
+            existing_dt=input_date
+        )
 
         # Then
-        assert expected_date == actual_date
+        assert actual_date == datetime.date(year=2024, month=2, day=10)
 
-    def test_date_is_already_the_last_day(self):
+    @pytest.mark.parametrize(
+        "input_date, expected_date",
+        [
+            ("2024-02-10 12:00", datetime.date(year=2024, month=2, day=10)),
+            ("2024-02-12 12:00:98", datetime.date(year=2024, month=2, day=12)),
+            ("2024-02-13 19:07", datetime.date(year=2024, month=2, day=13)),
+            ("2024-02-19 23:20", datetime.date(year=2024, month=2, day=19)),
+            ("2024-02-22 12:09", datetime.date(year=2024, month=2, day=22)),
+            ("2024-02-25", datetime.date(year=2024, month=2, day=25)),
+            ("2024-02-26 16:00", datetime.date(year=2024, month=2, day=26)),
+            ("2024-02-28 00:00", datetime.date(year=2024, month=2, day=28)),
+        ],
+    )
+    def test_returns_current_date_if_greater_than_10th(
+        self, input_date: str, expected_date: datetime.date
+    ):
         """
-        Given a date as a string that is the end of the month
-        When `get_new_max_date()` is called
-        Then the same date is returned
+        Given an input date which is older
+            than the 10th of that month
+        When `get_max_date_for_current_month()` is called
+        Then the provided date is returned
         """
-        # Given
-        input_date = "2024-02-29 12:00"
-        expected_date = "2024-02-29"
-
-        # When
-        actual_date = get_new_max_date(input_date)
+        # Given / When
+        actual_date: datetime.date = get_max_date_for_current_month(
+            existing_dt=input_date
+        )
 
         # Then
-        assert expected_date == actual_date
+        assert actual_date == expected_date

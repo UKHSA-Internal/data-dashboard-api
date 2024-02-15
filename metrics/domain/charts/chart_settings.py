@@ -4,7 +4,7 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.models import PlotData
-from metrics.domain.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
+from metrics.domain.utils import DEFAULT_CHART_WIDTH
 
 
 class ChartSettings:
@@ -63,7 +63,7 @@ class ChartSettings:
         }
 
     def get_base_chart_config(self):
-        base_chart_config = {
+        return {
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "margin": {
@@ -78,14 +78,6 @@ class ChartSettings:
             "height": self.height,
             "width": self.width,
         }
-
-        if self.is_date_type_x_axis:
-            base_chart_config = {
-                **base_chart_config,
-                **self.get_margin_for_charts_with_dates(),
-            }
-
-        return base_chart_config
 
     def get_line_with_shaded_section_chart_config(self):
         chart_config = self.get_base_chart_config()
@@ -118,15 +110,13 @@ class ChartSettings:
         return min(possible_minimums), max(possible_maximums)
 
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
-        tick_format = self._get_date_tick_format()
-
         min_date, max_date = self.get_min_and_max_x_axis_values()
-        max_date = get_new_max_date(existing_dt=max_date)
+        max_date = get_max_date_for_current_month(existing_dt=max_date)
 
         return {
             "type": "date",
             "dtick": "M1",
-            "tickformat": tick_format,
+            "tickformat": self._get_date_tick_format(),
             "range": [min_date, max_date],
         }
 
@@ -136,17 +126,6 @@ class ChartSettings:
             "type": "-",
             "dtick": None,
             "tickformat": None,
-        }
-
-    @staticmethod
-    def get_margin_for_charts_with_dates():
-        return {
-            "margin": {
-                "l": 15,
-                "r": 15,
-                "b": 0,
-                "t": 0,
-            }
         }
 
     @staticmethod
@@ -172,17 +151,27 @@ class ChartSettings:
         }
 
 
-def get_new_max_date(existing_dt: str | datetime.datetime) -> str:
-    """Return the last day of the month for the supplied date
+def get_max_date_for_current_month(
+    existing_dt: str | datetime.datetime,
+) -> datetime.date:
+    """Returns the 10th of the given `existing_dt` or the `existing_dt`
 
     Args:
-        existing_dt: The date we want the last day of the month for
+        existing_dt: The date we want to get the max date for
 
     Returns:
-        The last day of the month for the given date
+        The max allowable date for the current month
+
     """
     existing_dt = str(existing_dt)
-    new_date: datetime.date = get_last_day_of_month(
-        date=datetime.datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
-    )
-    return new_date.strftime("%Y-%m-%d")
+    try:
+        datestamp, _ = existing_dt.split()
+    except ValueError:
+        # Thrown when a date i.e. `2024-02-15` is provided
+        # instead of a datetime i.e. `2024-02-15 13:52:00`
+        datestamp = existing_dt
+
+    year, month, day = datestamp.split("-")
+    day = max([10, int(day)])
+
+    return datetime.date(year=int(year), month=int(month), day=day)
