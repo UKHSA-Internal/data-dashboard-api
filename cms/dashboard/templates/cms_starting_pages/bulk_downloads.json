@@ -27,10 +27,6 @@
             "type": "text",
             "value": "<p data-block-key=\"0bwbt\">You can download all the data from the UKHSA data dashboard charts on this page by clicking the Download button. </p><p data-block-key=\"cdkfu\">This is useful if you want to analyse the data using your own tools. </p><p data-block-key=\"1e96e\">The data is available in a zip file format, which has a size of about 70 kB so it should be quick to download even on slower internet connections.</p>",
             "id": "5064bb23-10e8-4b6a-a009-1b9e1f9fc358"
-        },
-        {
-            "type": "button",
-            "value": null
         }
     ],
     "last_published_at": "2024-01-23T13:31:22.057399Z",

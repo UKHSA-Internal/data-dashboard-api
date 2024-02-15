@@ -1,19 +1,21 @@
 from cms.snippets.models import Button, ButtonTypes, Methods
 
 
-def create_download_button_snippet(*args, **kwargs) -> None:
+def get_or_create_download_button_snippet(*args, **kwargs) -> None:
     """Creates a download button snippet.
 
     Returns:
         None
     """
-    Button.objects.get_or_create(
+    obj, _ = Button.objects.get_or_create(
         text="download (zip)",
         loading_text="",
         endpoint="/api/bulkdownloads/v1",
         method=Methods.POST.value,
         button_type=ButtonTypes.DOWNLOAD.value,
     )
+
+    return obj
 
 
 def remove_buttons_snippets(*args, **kwargs) -> None:
