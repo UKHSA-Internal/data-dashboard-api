@@ -157,7 +157,11 @@ class TestConsumer:
             source_data["sex"].lower()
         )
         assert model.stratum.name == source_data["stratum"]
-        assert str(model.refresh_date) == source_data["refresh_date"]
+        assert (
+            str(model.refresh_date) == f"{source_data['refresh_date']} 00:00:00+00:00"
+        )
+        # When the source data provides just a date for the `refresh_date`
+        # then we set the `refresh_date` on the model to midnight of that same date
 
     def _assert_core_headline_model_has_correct_values(
         self,
