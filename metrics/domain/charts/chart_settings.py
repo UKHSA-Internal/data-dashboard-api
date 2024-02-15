@@ -4,7 +4,7 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.models import PlotData
-from metrics.domain.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
+from metrics.domain.utils import DEFAULT_CHART_WIDTH
 
 
 class ChartSettings:
@@ -110,11 +110,14 @@ class ChartSettings:
         return min(possible_minimums), max(possible_maximums)
 
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
+        min_date, max_date = self.get_min_and_max_x_axis_values()
+        max_date = get_max_date_for_current_month(existing_dt=max_date)
+
         return {
             "type": "date",
             "dtick": "M1",
             "tickformat": self._get_date_tick_format(),
-            "range": self.get_min_and_max_x_axis_values(),
+            "range": [min_date, max_date],
         }
 
     @staticmethod
@@ -148,17 +151,27 @@ class ChartSettings:
         }
 
 
-def get_new_max_date(existing_dt: str | datetime.datetime) -> str:
-    """Return the last day of the month for the supplied date
+def get_max_date_for_current_month(
+    existing_dt: str | datetime.datetime,
+) -> datetime.date:
+    """Returns the 10th of the given `existing_dt` or the `existing_dt`
 
     Args:
-        existing_dt: The date we want the last day of the month for
+        existing_dt: The date we want to get the max date for
 
     Returns:
-        The last day of the month for the given date
+        The max allowable date for the current month
+
     """
     existing_dt = str(existing_dt)
-    new_date: datetime.date = get_last_day_of_month(
-        date=datetime.datetime.strptime(existing_dt.split()[0], "%Y-%m-%d").date()
-    )
-    return new_date.strftime("%Y-%m-%d")
+    try:
+        datestamp, _ = existing_dt.split()
+    except ValueError:
+        # Thrown when a date i.e. `2024-02-15` is provided
+        # instead of a datetime i.e. `2024-02-15 13:52:00`
+        datestamp = existing_dt
+
+    year, month, day = datestamp.split("-")
+    day = max([10, int(day)])
+
+    return datetime.date(year=int(year), month=int(month), day=day)
