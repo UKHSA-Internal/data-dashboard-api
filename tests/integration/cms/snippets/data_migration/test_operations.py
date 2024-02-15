@@ -1,7 +1,7 @@
 import pytest
 
 from cms.snippets.data_migrations.operations import (
-    create_download_button_snippet,
+    get_or_create_download_button_snippet,
     remove_buttons_snippets,
 )
 from cms.snippets.models import Button, ButtonTypes, Methods
@@ -43,8 +43,7 @@ class TestButtonSnippetOperations:
         assert not Button.objects.exists()
 
         # When
-        create_download_button_snippet()
-        button_snippet = Button.objects.first()
+        button_snippet = get_or_create_download_button_snippet()
 
         # Then
         assert button_snippet.text == "download (zip)"
