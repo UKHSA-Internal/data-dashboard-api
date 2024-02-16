@@ -2,7 +2,7 @@
 # Ruff configuration
 ########################################################################################################################
 [tool.ruff]
-select = [
+lint.select = [
     "C90",      # mccabe
     "E",        # pycodestyle
     "W",        # pycodestyle
@@ -45,14 +45,14 @@ select = [
 ]
 
 # Ignore rules
-ignore = [
+lint.ignore = [
     "F821",     # Undefined class names - currently used to bypass circular imports in type hints
     "ISC001",   # Implicitly concatenated strings on a single line - conflicts with the ruff formatter
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
-fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
-unfixable = []
+lint.fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+lint.unfixable = []
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -71,12 +71,12 @@ exclude = [
 line-length = 120
 
 # Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Assume Python 3.12
 target-version = "py312"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "**/{tests}/*"                  = [
                                     "E501",               # Ignore line length in test files
                                     "S101",               # Ignore use of `assert` statement in tests
@@ -95,7 +95,7 @@ target-version = "py312"
 "caching/public_api/crawler.py" = ["PERF401"]             # Ignore list comprehension which would reduce readibility
 "manage.py"                     = ["TRY003"]              # Ignore long message on exception from Django boilerplate
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
