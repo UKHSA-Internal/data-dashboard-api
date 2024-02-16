@@ -152,7 +152,7 @@ class ChartSettings:
 
 
 def get_max_date_for_current_month(
-    existing_dt: str | datetime.datetime,
+    existing_dt: str | datetime.datetime | datetime.date,
 ) -> datetime.date:
     """Returns the 10th of the given `existing_dt` or the last day of the month
 
