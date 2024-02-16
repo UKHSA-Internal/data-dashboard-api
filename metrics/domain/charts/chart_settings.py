@@ -4,7 +4,7 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.models import PlotData
-from metrics.domain.utils import DEFAULT_CHART_WIDTH
+from metrics.domain.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 
 
 class ChartSettings:
@@ -154,7 +154,7 @@ class ChartSettings:
 def get_max_date_for_current_month(
     existing_dt: str | datetime.datetime,
 ) -> datetime.date:
-    """Returns the 10th of the given `existing_dt` or the `existing_dt`
+    """Returns the 10th of the given `existing_dt` or the last day of the month
 
     Args:
         existing_dt: The date we want to get the max date for
@@ -171,7 +171,8 @@ def get_max_date_for_current_month(
         # instead of a datetime i.e. `2024-02-15 13:52:00`
         datestamp = existing_dt
 
-    year, month, day = datestamp.split("-")
-    day = max([10, int(day)])
+    year, month, day = map(int, datestamp.split("-"))
 
-    return datetime.date(year=int(year), month=int(month), day=day)
+    if day <= 10:
+        return datetime.date(year=year, month=month, day=10)
+    return get_last_day_of_month(date=datetime.date(year=year, month=month, day=day))

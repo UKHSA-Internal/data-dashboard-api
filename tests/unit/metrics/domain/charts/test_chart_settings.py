@@ -498,14 +498,14 @@ class TestGetMaxDateForCurrentMonth:
     @pytest.mark.parametrize(
         "input_date, expected_date",
         [
-            ("2024-02-10 12:00", datetime.date(year=2024, month=2, day=10)),
-            ("2024-02-12 12:00:98", datetime.date(year=2024, month=2, day=12)),
-            ("2024-02-13 19:07", datetime.date(year=2024, month=2, day=13)),
-            ("2024-02-19 23:20", datetime.date(year=2024, month=2, day=19)),
-            ("2024-02-22 12:09", datetime.date(year=2024, month=2, day=22)),
-            ("2024-02-25", datetime.date(year=2024, month=2, day=25)),
-            ("2024-02-26 16:00", datetime.date(year=2024, month=2, day=26)),
-            ("2024-02-28 00:00", datetime.date(year=2024, month=2, day=28)),
+            ("2024-02-11 12:00", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-12 12:00:98", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-13 19:07", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-19 23:20", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-22 12:09", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-25", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-26 16:00", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-28 00:00", datetime.date(year=2024, month=2, day=29)),
         ],
     )
     def test_returns_current_date_if_greater_than_10th(
