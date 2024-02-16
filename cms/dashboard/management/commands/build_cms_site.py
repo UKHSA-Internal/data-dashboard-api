@@ -15,6 +15,9 @@ from cms.home.models import HomePage, HomePageRelatedLink
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
 )
+from cms.snippets.data_migrations.operations import (
+    get_or_create_download_button_snippet,
+)
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
 from cms.whats_new.models.parent import WhatsNewParentPageRelatedLink
@@ -131,11 +134,38 @@ def _create_common_page(name: str, parent_page: Page) -> CommonPage:
     return page
 
 
+def _remove_comment_from_body(body: dict[list[dict]]) -> dict[list[dict]]:
+    for i in range(len(body)):
+        if "_comment" in body[i]:
+            del body[i]
+
+    return body
+
+
+def _get_or_create_button_id():
+    button_snippet = get_or_create_download_button_snippet()
+    return button_snippet.id
+
+
+def _add_download_button_to_composite_body(body: dict[list[dict]]) -> dict[list[dict]]:
+    body.append(
+        {
+            "type": "button",
+            "value": _get_or_create_button_id(),
+            "id": "1431bc99-d4f9-4c80-880b-e96c5ad098db",
+        }
+    )
+    return body
+
+
 def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
     data = open_example_page_response(page_name=name)
 
+    data["body"] = _remove_comment_from_body(data["body"])
+    composite_body = _add_download_button_to_composite_body(data["body"])
+
     page = CompositePage(
-        body=data["body"],
+        body=composite_body,
         title=data["title"],
         slug=data["meta"]["slug"],
         date_posted=data["meta"]["first_published_at"].split("T")[0],
@@ -143,6 +173,7 @@ def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
         search_description=data["meta"]["search_description"],
         show_in_menus=data["meta"]["show_in_menus"],
     )
+
     _add_page_to_parent(page=page, parent_page=parent_page)
 
     _create_related_links(
