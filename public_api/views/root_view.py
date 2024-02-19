@@ -8,13 +8,6 @@ from public_api.views.base import PUBLIC_API_TAG
 
 class PublicAPIRootView(APIView):
     """
-
-    ```
-    We are currently experiencing technical issues with our API. Normal service will resume as soon as possible.
-    ```
-
-    ---
-
     **Using the API**
 
     Use the API to extract and save data from the UKHSA data dashboard.
