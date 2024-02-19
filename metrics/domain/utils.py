@@ -1,7 +1,13 @@
+import datetime
 from enum import Enum
 
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 515
+
+
+def get_last_day_of_month(date: datetime.datetime.date) -> datetime.datetime.date:
+    next_month = date.replace(day=28) + datetime.timedelta(days=4)
+    return next_month - datetime.timedelta(days=next_month.day)
 
 
 def _check_for_substring_match(
