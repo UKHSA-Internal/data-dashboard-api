@@ -7,6 +7,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import MAXIMUM_URL_FIELD_LENGTH
+from cms.composite.managers import CompositePageManager
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 
 
@@ -46,6 +47,8 @@ class CompositePage(Page):
             ObjectList(Page.promote_panels, heading="Promote"),
         ]
     )
+
+    objects = CompositePageManager()
 
     def is_previewable(self) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""
