@@ -1,7 +1,7 @@
 from cms.snippets.models import Button, ButtonTypes, Methods
 
 
-def get_or_create_download_button_snippet(*args, **kwargs) -> None:
+def get_or_create_download_button_snippet(*args, **kwargs) -> dict[str, str]:
     """Creates a download button snippet.
 
     Returns:

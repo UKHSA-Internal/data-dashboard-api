@@ -135,14 +135,10 @@ def _create_common_page(name: str, parent_page: Page) -> CommonPage:
 
 
 def _remove_comment_from_body(body: dict[list[dict]]) -> dict[list[dict]]:
-    for i in range(len(body)):
-        if "_comment" in body[i]:
-            del body[i]
-
-    return body
+    return [item for item in body if "_comment" not in item]
 
 
-def _get_or_create_button_id():
+def _get_or_create_button_id() -> int:
     button_snippet = get_or_create_download_button_snippet()
     return button_snippet.id
 
@@ -161,8 +157,8 @@ def _add_download_button_to_composite_body(body: dict[list[dict]]) -> dict[list[
 def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
     data = open_example_page_response(page_name=name)
 
-    data["body"] = _remove_comment_from_body(data["body"])
-    composite_body = _add_download_button_to_composite_body(data["body"])
+    body = _remove_comment_from_body(body=data["body"])
+    composite_body = _add_download_button_to_composite_body(body=body)
 
     page = CompositePage(
         body=composite_body,
