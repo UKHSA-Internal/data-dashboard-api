@@ -478,14 +478,19 @@ class TestGetMaxDateForCurrentMonth:
             "2024-02-08 14:30",
             "2024-02-09 16:00",
             "2024-02-10 00:00",
+            "2024-02-11 16:00",
+            "2024-02-12 00:00",
+            "2024-02-13 14:30",
+            "2024-02-14 16:00",
+            "2024-02-15 11:00",
         ],
     )
-    def test_returns_10th_if_current_day_less_than_10th(self, input_date: str):
+    def test_returns_15th_if_current_day_less_than_10th(self, input_date: str):
         """
         Given an input date which is earlier
-            than the 10th of that month
+            than the 15th of that month
         When `get_max_date_for_current_month()` is called
-        Then the 10th of that month is returned
+        Then the 15th of that month is returned
         """
         # Given / When
         actual_date: datetime.date = get_max_date_for_current_month(
@@ -493,14 +498,14 @@ class TestGetMaxDateForCurrentMonth:
         )
 
         # Then
-        assert actual_date == datetime.date(year=2024, month=2, day=10)
+        assert actual_date == datetime.date(year=2024, month=2, day=15)
 
     @pytest.mark.parametrize(
         "input_date, expected_date",
         [
-            ("2024-02-11 12:00", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-12 12:00:98", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-13 19:07", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-16 12:00", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-17 12:00:98", datetime.date(year=2024, month=2, day=29)),
+            ("2024-02-18 19:07", datetime.date(year=2024, month=2, day=29)),
             ("2024-02-19 23:20", datetime.date(year=2024, month=2, day=29)),
             ("2024-02-22 12:09", datetime.date(year=2024, month=2, day=29)),
             ("2024-02-25", datetime.date(year=2024, month=2, day=29)),
