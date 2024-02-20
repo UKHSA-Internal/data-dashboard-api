@@ -1,0 +1,42 @@
+{
+  "id": 73,
+  "meta": {
+    "seo_title": "",
+    "search_description": "",
+    "type": "composite.CompositePage",
+    "detail_url": "http://localhost/api/pages/73/",
+    "html_url": null,
+    "slug": "access-our-data",
+    "show_in_menus": false,
+    "first_published_at": "2024-02-20T11:28:22.863250Z",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "Access our data",
+  "date_posted": "2024-02-20",
+  "body": [
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"78wuq\">Welcome to the Developers Guide for the UKHSA data dashboard API.</p><p data-block-key=\"60ng4\"></p><p data-block-key=\"24iv8\">Please see below for instructions initially on how to interact and use our API, as well as swagger API documentation detailing information about each endpoint including parameters and example responses.</p>",
+      "id": "377ca312-e903-4ffd-9d0a-55e4f23935f3"
+    }
+  ],
+  "last_published_at": "2024-02-20T11:36:39.338986Z",
+  "related_links": [
+    {
+      "id": 1,
+      "meta": { "type": "composite.CompositeRelatedLink" },
+      "title": "view swagger documentation",
+      "url": "https://api.dev.ukhsa-dashboard.data.gov.uk/api/swagger/",
+      "body": ""
+    }
+  ]
+}

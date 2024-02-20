@@ -11,6 +11,16 @@ from cms.dynamic_content.components import (
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
 
+languages = [
+    ("Javascript", "Javascript"),
+]
+
+
+def get_languages():
+    """Callable used to populate language choices without updating migrations when adding languages"""
+
+    return languages
+
 
 class HeadlineNumberBlockTypes(blocks.StreamBlock):
     headline_number = HeadlineNumberComponent(help_text=help_texts.HEADLINE_BLOCK_FIELD)
@@ -51,3 +61,12 @@ class ButtonChooserBlock(SnippetChooserBlock):
                 "button_type": value.button_type,
             }
         return None
+
+
+class CodeSnippet(blocks.StructBlock):
+    language = blocks.ChoiceBlock(choices=get_languages, default=languages[0])
+    code = blocks.TextBlock(form_classname="codeblock_monospace")
+
+
+class CodeBlock(blocks.StreamBlock):
+    code_snippet = CodeSnippet()

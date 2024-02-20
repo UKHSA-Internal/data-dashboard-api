@@ -64,7 +64,7 @@ class CompositeRelatedLink(Orderable):
     )
     title = models.CharField(max_length=255)
     url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
-    body = RichTextField(features=[])
+    body = RichTextField(features=[], blank=True)
 
     # Sets which panels to show on the editing view
     panels = [

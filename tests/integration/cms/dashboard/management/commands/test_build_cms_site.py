@@ -303,3 +303,95 @@ class TestBuildCMSSite:
         assert response_button_snippet["endpoint"] == button_snippet.endpoint
         assert response_button_snippet["method"] == button_snippet.method
         assert response_button_snippet["button_type"] == button_snippet.button_type
+
+    @pytest.mark.django_db
+    def test_command_builds_access_our_data_parent_page(self):
+        """
+        Given a CMS site which has been created via the `build_cms_site` management command
+        And the ID of the `CompositePae` page for `Access our data parent.
+        When a GET request is made to `/api/pages/{}` detail endpoint
+        Then the response contains the expected data
+        """
+        # Given
+        call_command("build_cms_site")
+        access_our_data_parent_page = CompositePage.objects.get(slug="access-our-data")
+        parent_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        api_client = APIClient()
+
+        # When
+        response = api_client.get(path=f"/api/pages/{access_our_data_parent_page.id}/")
+        access_our_data_parent_page_template = open_example_page_response(
+            page_name="access_our_data_parent_page"
+        )
+
+        # Then
+        assert response.data["title"] == access_our_data_parent_page_template["title"]
+        assert (
+            response.data["meta"]["seo_title"]
+            == access_our_data_parent_page_template["meta"]["seo_title"]
+        )
+        assert (
+            response.data["meta"]["search_description"]
+            == access_our_data_parent_page_template["meta"]["search_description"]
+        )
+        assert (
+            response.data["meta"]["show_in_menus"]
+            == access_our_data_parent_page_template["meta"]["show_in_menus"]
+        )
+        assert response.data["meta"]["parent"]["id"] == parent_page.id
+        assert response.data["meta"]["parent"]["title"] == parent_page.title
+
+        assert (
+            response.data["body"][0] == access_our_data_parent_page_template["body"][0]
+        )
+
+    @pytest.mark.django_db
+    def test_command_builds_access_our_data_getting_started(self):
+        """
+        Given a CMS site which has been created via the `build_cms_site` management command
+        And the ID of the `CompositePae` page for `Access our data getting started page.
+        When a GET request is made to `/api/pages/{}` detail endpoint
+        Then the response contains the expected data
+        """
+        # Given
+        call_command("build_cms_site")
+        access_our_data_getting_started_page = CompositePage.objects.get(
+            slug="getting-started"
+        )
+        parent_page = CompositePage.objects.get(title="Access our data")
+        api_client = APIClient()
+
+        # When
+        response = api_client.get(
+            path=f"/api/pages/{access_our_data_getting_started_page.id}/"
+        )
+        access_our_data_getting_started_page_template = open_example_page_response(
+            page_name="access_our_data_getting_started"
+        )
+
+        # Then
+        assert (
+            response.data["title"]
+            == access_our_data_getting_started_page_template["title"]
+        )
+        assert (
+            response.data["meta"]["seo_title"]
+            == access_our_data_getting_started_page_template["meta"]["seo_title"]
+        )
+        assert (
+            response.data["meta"]["search_description"]
+            == access_our_data_getting_started_page_template["meta"][
+                "search_description"
+            ]
+        )
+        assert (
+            response.data["meta"]["show_in_menus"]
+            == access_our_data_getting_started_page_template["meta"]["show_in_menus"]
+        )
+        assert response.data["meta"]["parent"]["id"] == parent_page.id
+        assert response.data["meta"]["parent"]["title"] == parent_page.title
+
+        assert (
+            response.data["body"][0]
+            == access_our_data_getting_started_page_template["body"][0]
+        )
