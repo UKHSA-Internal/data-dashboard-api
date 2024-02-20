@@ -145,23 +145,13 @@ ROOT_LEVEL_BASE_DIR = BASE_DIR.parent
 
 DATABASES = {
     "default": {
-        "ENGINE": "dj_db_conn_pool.backends.postgresql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": config.POSTGRES_DB,
         "USER": config.POSTGRES_USER,
         "PASSWORD": config.POSTGRES_PASSWORD,
         "HOST": config.POSTGRES_HOST,
         "PORT": config.POSTGRES_PORT,
-        "POOL_OPTIONS": {
-            "POOL_SIZE": 10,
-            # Number of connections to be persisted at all times
-            "MAX_OVERFLOW": 10,
-            # Additional connections to be created at peak loads
-            "RECYCLE": 24 * 60 * 60,
-            # Time to close and replace connections
-            "TIMEOUT": 60 * 10,
-            # Period of time to wait for a connection to become available
-            # during peak loads when all overflow slots are occupied
-        },
+        "CONN_MAX_AGE": 60 * 60 * 1,
     }
 }
 
