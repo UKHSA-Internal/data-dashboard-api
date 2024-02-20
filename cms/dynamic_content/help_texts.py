@@ -178,3 +178,7 @@ CHART_Y_AXIS: str = """
 An optional choice of what to display along the y-axis of the chart.
 If nothing is provided, `metric value` will be used by default.
 """
+
+CODEEXAMPLE: str = """
+A required section that can be used to add code examples to a composite page type.
+"""
