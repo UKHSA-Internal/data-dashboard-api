@@ -1,5 +1,6 @@
 from unittest import mock
 
+import botocore.client
 import pytest
 from _pytest.logging import LogCaptureFixture
 
@@ -473,6 +474,33 @@ class TestAWSClient:
             Key=spy_build_processed_key.return_value,
         )
 
+    def test_copy_file_to_processed_records_log_when_client_error_occurs(
+        self,
+        aws_client_with_mocked_boto_client: AWSClient,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a key for a file
+        And a `botocore` client which will throw a `ClientError`
+        When `_copy_file_to_processed()` is called
+            from an instance of `AWSClient`
+        Then the error is swallowed and logged
+        """
+        # Given
+        key: str = FAKE_KEY
+        boto_client: mock.Mock = aws_client_with_mocked_boto_client._client
+        boto_client.copy.side_effect = botocore.client.ClientError(
+            error_response=mock.MagicMock(), operation_name=mock.MagicMock()
+        )
+
+        # When
+        aws_client_with_mocked_boto_client._copy_file_to_processed(key=key)
+
+        # Then
+        processed_folder: str = aws_client_with_mocked_boto_client._processed_folder
+        expected_log = f"Failed to move `{key}` to `{processed_folder}` folder"
+        assert expected_log in caplog.text
+
     @mock.patch.object(AWSClient, "_build_failed_key")
     def test_copy_file_to_failed(
         self,
@@ -509,6 +537,62 @@ class TestAWSClient:
             Bucket=bucket_name,
             Key=spy_build_failed_key.return_value,
         )
+
+    def test_copy_file_to_failed_records_log_when_client_error_occurs(
+        self,
+        aws_client_with_mocked_boto_client: AWSClient,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a key for a file
+        And a `botocore` client which will throw a `ClientError`
+        When `_copy_file_to_failed()` is called
+            from an instance of `AWSClient`
+        Then the error is swallowed and logged
+        """
+        # Given
+        key: str = FAKE_KEY
+        boto_client: mock.Mock = aws_client_with_mocked_boto_client._client
+        boto_client.copy.side_effect = botocore.client.ClientError(
+            error_response=mock.MagicMock(), operation_name=mock.MagicMock()
+        )
+
+        # When
+        aws_client_with_mocked_boto_client._copy_file_to_failed(key=key)
+
+        # Then
+        failed_folder: str = aws_client_with_mocked_boto_client._failed_folder
+        expected_log = f"Failed to move `{key}` to `{failed_folder}` folder"
+        assert expected_log in caplog.text
+
+    # Tests for `_delete_file_from_inbound`
+
+    def test_delete_file_from_inbound_records_log_when_client_error_occurs(
+        self,
+        aws_client_with_mocked_boto_client: AWSClient,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a key for a file
+        And a `botocore` client which will throw a `ClientError`
+        When `_delete_file_from_inbound()` is called
+            from an instance of `AWSClient`
+        Then the error is swallowed and logged
+        """
+        # Given
+        key: str = FAKE_KEY
+        boto_client: mock.Mock = aws_client_with_mocked_boto_client._client
+        boto_client.delete_object.side_effect = botocore.client.ClientError(
+            error_response=mock.MagicMock(), operation_name=mock.MagicMock()
+        )
+
+        # When
+        aws_client_with_mocked_boto_client._delete_file_from_inbound(key=key)
+
+        # Then
+        inbound_folder: str = aws_client_with_mocked_boto_client._inbound_folder
+        expected_log = f"Failed to delete `{key}` from `{inbound_folder}` folder"
+        assert expected_log in caplog.text
 
     # Tests for utility methods
 
