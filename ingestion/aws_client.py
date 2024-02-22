@@ -133,6 +133,14 @@ class AWSClient:
     def _copy_file_to_processed(self, key: str) -> None:
         """Copies the file matching the given `key` into the processed folder within the s3 bucket
 
+        Notes:
+            If more than 1 client is consuming a file,
+            then we can run into race conditions,
+            whereby a client is trying to move a file
+            which has already been moved.
+            In this case, the `ClientError`
+            will be swallowed and logged.
+
         Args:
             key: The key of the item to be moved
 
@@ -140,15 +148,28 @@ class AWSClient:
             None
 
         """
-        self._client.copy(
-            CopySource={"Bucket": self._bucket_name, "Key": key},
-            Bucket=self._bucket_name,
-            Key=self._build_processed_key(key=key),
-        )
+        try:
+            self._client.copy(
+                CopySource={"Bucket": self._bucket_name, "Key": key},
+                Bucket=self._bucket_name,
+                Key=self._build_processed_key(key=key),
+            )
+        except botocore.client.ClientError:
+            logger.warning(
+                "Failed to move `%s` to `%s` folder", key, self._processed_folder
+            )
 
     def _copy_file_to_failed(self, key: str) -> None:
         """Copies the file matching the given `key` into the failed folder within the s3 bucket
 
+        Notes:
+            If more than 1 client is consuming a file,
+            then we can run into race conditions,
+            whereby a client is trying to move a file
+            which has already been moved.
+            In this case, the `ClientError`
+            will be swallowed and logged.
+
         Args:
             key: The key of the item to be moved
 
@@ -156,15 +177,28 @@ class AWSClient:
             None
 
         """
-        self._client.copy(
-            CopySource={"Bucket": self._bucket_name, "Key": key},
-            Bucket=self._bucket_name,
-            Key=self._build_failed_key(key=key),
-        )
+        try:
+            self._client.copy(
+                CopySource={"Bucket": self._bucket_name, "Key": key},
+                Bucket=self._bucket_name,
+                Key=self._build_failed_key(key=key),
+            )
+        except botocore.client.ClientError:
+            logger.warning(
+                "Failed to move `%s` to `%s` folder", key, self._failed_folder
+            )
 
     def _delete_file_from_inbound(self, key: str) -> None:
         """Deletes the file matching the given `key` from the inbound folder within the s3 bucket
 
+        Notes:
+            If more than 1 client is consuming a file,
+            then we can run into race conditions,
+            whereby a client is trying to delete a file
+            which has already been moved.
+            In this case, the `ClientError`
+            will be swallowed and logged.
+
         Args:
             key: The key of the item to be moved
 
@@ -172,7 +206,12 @@ class AWSClient:
             None
 
         """
-        self._client.delete_object(Bucket=self._bucket_name, Key=key)
+        try:
+            self._client.delete_object(Bucket=self._bucket_name, Key=key)
+        except botocore.client.ClientError:
+            logger.warning(
+                "Failed to delete `%s` from `%s` folder", key, self._inbound_folder
+            )
 
     def _get_filename_from_key(self, key: str) -> str:
         """Extracts the filename from the `key`
