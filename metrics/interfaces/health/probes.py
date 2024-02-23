@@ -129,6 +129,18 @@ class HealthProbeManagement:
             to the database fails for any reason
 
         """
-        db_is_usable: bool = self._database_connection.is_usable()
-        if not db_is_usable:
+        try:
+            row: tuple[int] = self._fetch_row_from_db()
+        except Exception as error:  # noqa: BLE001
+            raise HealthProbeForDatabaseFailedError from error
+
+        if not row:
             raise HealthProbeForDatabaseFailedError
+
+    def _fetch_row_from_db(self) -> tuple[int]:
+        # Unfortunately the `is_usable()` method
+        # on the django postgresql wrapper begins with a closed connection
+        # so it is easier to just simply re-implement here with a valid connection
+        with self._database_connection.cursor() as cursor:
+            cursor.execute("SELECT 1;")
+            return cursor.fetchone()

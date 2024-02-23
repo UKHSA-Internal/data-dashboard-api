@@ -110,33 +110,39 @@ class TestHealthProbeManagement:
         assert spy_ping_database.call_count == db_ping_count
         assert spy_cache_database.call_count == cache_ping_count
 
-    @mock.patch.object(HealthProbeManagement, "_get_redis_client")
+    @mock.patch.object(HealthProbeManagement, "ping_database")
+    @mock.patch.object(HealthProbeManagement, "ping_cache")
     @pytest.mark.parametrize(
-        "current_app_mode, db_ping_is_healthy, cache_ping_is_healthy",
+        "current_app_mode, db_ping_thrown_error, cache_ping_thrown_error",
         (
             # The `PRIVATE_API` needs both the db and cache to be healthy at once
-            [enums.AppMode.PRIVATE_API.value, True, True],
+            [enums.AppMode.PRIVATE_API.value, None, None],
             # The `PUBLIC_API` only needs the db, the cache is irrelevant
-            [enums.AppMode.PUBLIC_API.value, True, True],
-            [enums.AppMode.PUBLIC_API.value, True, False],
+            [enums.AppMode.PUBLIC_API.value, None, None],
+            [enums.AppMode.PUBLIC_API.value, None, HealthProbeForCacheFailedError],
             # The `CMS_ADMIN` only needs the db, the cache is irrelevant
-            [enums.AppMode.CMS_ADMIN.value, True, True],
-            [enums.AppMode.CMS_ADMIN.value, True, False],
+            [enums.AppMode.CMS_ADMIN.value, None, None],
+            [enums.AppMode.CMS_ADMIN.value, None, HealthProbeForCacheFailedError],
             # The `INGESTION` only needs the db, the cache is irrelevant
-            [enums.AppMode.INGESTION.value, True, True],
-            [enums.AppMode.INGESTION.value, True, False],
+            [enums.AppMode.INGESTION.value, None, None],
+            [enums.AppMode.INGESTION.value, None, HealthProbeForCacheFailedError],
             # The `FEEDBACK_API` does not need the db or the cache
-            [enums.AppMode.FEEDBACK_API.value, True, True],
-            [enums.AppMode.FEEDBACK_API.value, True, False],
-            [enums.AppMode.FEEDBACK_API.value, False, False],
+            [enums.AppMode.FEEDBACK_API.value, None, None],
+            [enums.AppMode.FEEDBACK_API.value, None, HealthProbeForCacheFailedError],
+            [
+                enums.AppMode.FEEDBACK_API.value,
+                HealthProbeForCacheFailedError,
+                HealthProbeForCacheFailedError,
+            ],
         ),
     )
     def test_returns_true_if_relevant_probes_are_healthy_for_selected_app_mode(
         self,
-        mocked_get_redis_client: mock.MagicMock,
+        mocked_ping_cache: mock.MagicMock,
+        mocked_ping_database: mock.MagicMock,
         current_app_mode: str,
-        db_ping_is_healthy: bool,
-        cache_ping_is_healthy: bool,
+        db_ping_thrown_error: HealthProbeForDatabaseFailedError | None,
+        cache_ping_thrown_error: HealthProbeForCacheFailedError | None,
         monkeypatch,
     ):
         """
@@ -145,19 +151,20 @@ class TestHealthProbeManagement:
         When `perform_health_check()` is called
             from an instance of `HealthProbeManagement`
         Then True is returned
+
+        Patches:
+            `mocked_ping_cache`: To simulate the
+                result of the ping being made to the cache
+            `mocked_ping_database`: To simulate the
+                result of the ping being made to the db
+
         """
         # Given
         monkeypatch.setenv(name="APP_MODE", value=current_app_mode)
+        mocked_ping_database.side_effect = db_ping_thrown_error
+        mocked_ping_cache.side_effect = cache_ping_thrown_error
 
-        mocked_db_connection = mock.Mock()
-        mocked_db_connection.is_usable.return_value = db_ping_is_healthy
-        mocked_redis_client = mock.Mock()
-        mocked_redis_client.ping.return_value = cache_ping_is_healthy
-        mocked_get_redis_client.return_value = mocked_redis_client
-
-        health_probe_management = HealthProbeManagement(
-            database_connection=mocked_db_connection
-        )
+        health_probe_management = HealthProbeManagement()
 
         # When
         is_healthy: bool = health_probe_management.perform_health_check()
@@ -165,33 +172,55 @@ class TestHealthProbeManagement:
         # Then
         assert is_healthy
 
-    @mock.patch.object(HealthProbeManagement, "_get_redis_client")
+    @mock.patch.object(HealthProbeManagement, "ping_database")
+    @mock.patch.object(HealthProbeManagement, "ping_cache")
     @pytest.mark.parametrize(
-        "current_app_mode, db_ping_is_healthy, cache_ping_is_healthy",
+        "current_app_mode, db_ping_thrown_error, cache_ping_thrown_error",
         (
             # The `PRIVATE_API` needs both the db and cache to be healthy at once
-            [enums.AppMode.PRIVATE_API.value, False, True],
-            [enums.AppMode.PRIVATE_API.value, True, False],
-            [enums.AppMode.PRIVATE_API.value, False, False],
+            [
+                enums.AppMode.PRIVATE_API.value,
+                HealthProbeForDatabaseFailedError,
+                HealthProbeForCacheFailedError,
+            ],
+            [enums.AppMode.PRIVATE_API.value, None, HealthProbeForCacheFailedError],
+            [
+                enums.AppMode.PRIVATE_API.value,
+                HealthProbeForDatabaseFailedError,
+                HealthProbeForCacheFailedError,
+            ],
             # The `PUBLIC_API` always needs the db, the cache is irrelevant
-            [enums.AppMode.PUBLIC_API.value, False, True],
-            [enums.AppMode.PUBLIC_API.value, False, False],
+            [enums.AppMode.PUBLIC_API.value, HealthProbeForDatabaseFailedError, None],
+            [
+                enums.AppMode.PUBLIC_API.value,
+                HealthProbeForDatabaseFailedError,
+                HealthProbeForCacheFailedError,
+            ],
             # The `CMS_ADMIN` always needs the db, the cache is irrelevant
-            [enums.AppMode.CMS_ADMIN.value, False, True],
-            [enums.AppMode.CMS_ADMIN.value, False, False],
+            [enums.AppMode.CMS_ADMIN.value, HealthProbeForDatabaseFailedError, None],
+            [
+                enums.AppMode.CMS_ADMIN.value,
+                HealthProbeForDatabaseFailedError,
+                HealthProbeForCacheFailedError,
+            ],
             # The `INGESTION` only needs the db, the cache is irrelevant
-            [enums.AppMode.INGESTION.value, False, True],
-            [enums.AppMode.INGESTION.value, False, False],
+            [enums.AppMode.INGESTION.value, HealthProbeForDatabaseFailedError, None],
+            [
+                enums.AppMode.INGESTION.value,
+                HealthProbeForDatabaseFailedError,
+                HealthProbeForCacheFailedError,
+            ],
             # The `FEEDBACK_API` does not need the db or the cache
             # and as such will not return an unhealthy ping so is omitted
         ),
     )
     def test_returns_false_if_relevant_probes_are_unhealthy_for_selected_app_mode(
         self,
-        mocked_get_redis_client: mock.MagicMock,
+        mocked_ping_cache: mock.MagicMock,
+        mocked_ping_database: mock.MagicMock,
         current_app_mode: str,
-        db_ping_is_healthy: bool,
-        cache_ping_is_healthy: bool,
+        db_ping_thrown_error: HealthProbeForDatabaseFailedError | None,
+        cache_ping_thrown_error: HealthProbeForCacheFailedError | None,
         monkeypatch,
     ):
         """
@@ -200,19 +229,20 @@ class TestHealthProbeManagement:
         When `perform_health_check()` is called
             from an instance of `HealthProbeManagement`
         Then False is returned
+
+        Patches:
+            `mocked_ping_cache`: To simulate the
+                result of the ping being made to the cache
+            `mocked_ping_database`: To simulate the
+                result of the ping being made to the db
+
         """
         # Given
         monkeypatch.setenv(name="APP_MODE", value=current_app_mode)
+        mocked_ping_database.side_effect = db_ping_thrown_error
+        mocked_ping_cache.side_effect = cache_ping_thrown_error
 
-        mocked_db_connection = mock.Mock()
-        mocked_db_connection.is_usable.return_value = db_ping_is_healthy
-        mocked_redis_client = mock.Mock()
-        mocked_redis_client.ping.return_value = cache_ping_is_healthy
-        mocked_get_redis_client.return_value = mocked_redis_client
-
-        health_probe_management = HealthProbeManagement(
-            database_connection=mocked_db_connection,
-        )
+        health_probe_management = HealthProbeManagement()
 
         # When
         is_healthy: bool = health_probe_management.perform_health_check()
@@ -302,7 +332,10 @@ class TestHealthProbeManagement:
 
     # Tests for the database probe
 
-    def test_ping_database_does_not_raise_error_if_healthy(self):
+    @mock.patch.object(HealthProbeManagement, "_fetch_row_from_db")
+    def test_ping_database_does_not_raise_error_if_healthy(
+        self, mocked_fetch_row_from_db: mock.MagicMock
+    ):
         """
         Given a database connection
             which returns True from the `is_useable()` method
@@ -311,11 +344,8 @@ class TestHealthProbeManagement:
         Then None is returned and no error is raised
         """
         # Given
-        mocked_database_connection = mock.Mock()
-        mocked_database_connection.is_usable.return_value = True
-        health_probe_management = HealthProbeManagement(
-            cache_connection=mock.Mock(), database_connection=mocked_database_connection
-        )
+        mocked_fetch_row_from_db.return_value = (1,)
+        health_probe_management = HealthProbeManagement(cache_connection=mock.Mock())
 
         # When
         db_ping = health_probe_management.ping_database()
@@ -323,7 +353,10 @@ class TestHealthProbeManagement:
         # Then
         assert db_ping is None
 
-    def test_ping_database_raises_error_if_unhealthy(self):
+    @mock.patch.object(HealthProbeManagement, "_fetch_row_from_db")
+    def test_ping_database_raises_error_if_unhealthy(
+        self, mocked_fetch_row_from_db: mock.MagicMock
+    ):
         """
         Given a database connection
             which returns False from the `is_useable()` method
@@ -332,11 +365,8 @@ class TestHealthProbeManagement:
         Then a `HealthProbeForDatabaseFailedError` is raised
         """
         # Given
-        mocked_database_connection = mock.Mock()
-        mocked_database_connection.is_usable.return_value = False
-        health_probe_management = HealthProbeManagement(
-            cache_connection=mock.Mock(), database_connection=mocked_database_connection
-        )
+        mocked_fetch_row_from_db.return_value = None
+        health_probe_management = HealthProbeManagement(cache_connection=mock.Mock())
 
         # When / Then
         with pytest.raises(HealthProbeForDatabaseFailedError):
