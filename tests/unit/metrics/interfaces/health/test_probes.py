@@ -338,7 +338,7 @@ class TestHealthProbeManagement:
     ):
         """
         Given a database connection
-            which returns True from the `is_useable()` method
+            which returns a valid row
         When `ping_database()` is called from
             an instance of `HealthProbeManagement`
         Then None is returned and no error is raised
@@ -359,13 +359,32 @@ class TestHealthProbeManagement:
     ):
         """
         Given a database connection
-            which returns False from the `is_useable()` method
+            which returns None when fetching a row
         When `ping_database()` is called from
             an instance of `HealthProbeManagement`
         Then a `HealthProbeForDatabaseFailedError` is raised
         """
         # Given
         mocked_fetch_row_from_db.return_value = None
+        health_probe_management = HealthProbeManagement(cache_connection=mock.Mock())
+
+        # When / Then
+        with pytest.raises(HealthProbeForDatabaseFailedError):
+            health_probe_management.ping_database()
+
+    @mock.patch.object(HealthProbeManagement, "_fetch_row_from_db")
+    def test_ping_database_raises_error_if_ping_throws_error(
+        self, mocked_fetch_row_from_db: mock.MagicMock
+    ):
+        """
+        Given a database connection
+            which throws an error when fetching a row
+        When `ping_database()` is called from
+            an instance of `HealthProbeManagement`
+        Then a `HealthProbeForDatabaseFailedError` is raised
+        """
+        # Given
+        mocked_fetch_row_from_db.side_effect = ConnectionError
         health_probe_management = HealthProbeManagement(cache_connection=mock.Mock())
 
         # When / Then
