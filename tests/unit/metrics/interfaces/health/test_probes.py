@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 import redis
+from django import db
 
 from metrics.api import enums
 from metrics.interfaces.health.probes import (
@@ -373,8 +374,24 @@ class TestHealthProbeManagement:
             health_probe_management.ping_database()
 
     @mock.patch.object(HealthProbeManagement, "_fetch_row_from_db")
+    @pytest.mark.parametrize(
+        "exception",
+        (
+            [
+                ConnectionError,
+                db.DatabaseError,
+                db.DataError,
+                db.OperationalError,
+                db.IntegrityError,
+                db.InternalError,
+                db.InterfaceError,
+            ]
+        ),
+    )
     def test_ping_database_raises_error_if_ping_throws_error(
-        self, mocked_fetch_row_from_db: mock.MagicMock
+        self,
+        mocked_fetch_row_from_db: mock.MagicMock,
+        exception: Exception,
     ):
         """
         Given a database connection
@@ -384,7 +401,7 @@ class TestHealthProbeManagement:
         Then a `HealthProbeForDatabaseFailedError` is raised
         """
         # Given
-        mocked_fetch_row_from_db.side_effect = ConnectionError
+        mocked_fetch_row_from_db.side_effect = exception
         health_probe_management = HealthProbeManagement(cache_connection=mock.Mock())
 
         # When / Then
