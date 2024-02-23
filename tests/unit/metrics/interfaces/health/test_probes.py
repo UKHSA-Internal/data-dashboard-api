@@ -331,6 +331,29 @@ class TestHealthProbeManagement:
         with pytest.raises(HealthProbeForCacheFailedError):
             health_probe_management.ping_cache()
 
+    def test_get_redis_client(self):
+        """
+        Given a mocked django db connection proxy
+        When `_get_redis_client()` is called from
+            an instance of `HealthProbeManagement`
+        Then the `RedisClient` is extracted correctly
+        """
+        # Given
+        mocked_django_cache_proxy = mock.Mock()
+        health_probe_management = HealthProbeManagement()
+
+        # When
+        redis_client = health_probe_management._get_redis_client(
+            django_cache_proxy=mocked_django_cache_proxy
+        )
+
+        # Then
+        mocked_django_cache_proxy._cache.get_client.assert_called_once_with(
+            key=None,
+            write=False,
+        )
+        assert redis_client == mocked_django_cache_proxy._cache.get_client.return_value
+
     # Tests for the database probe
 
     @mock.patch.object(HealthProbeManagement, "_fetch_row_from_db")
