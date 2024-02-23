@@ -430,3 +430,27 @@ class TestHealthProbeManagement:
         # When / Then
         with pytest.raises(HealthProbeForDatabaseFailedError):
             health_probe_management.ping_database()
+
+    def test_fetch_row_from_db(self):
+        """
+        Given a mocked database connection
+        When `_fetch_row_from_db()` is called
+            from an instance of `HealthProbeManagement`
+        Then a db cursor is used to fetch a row
+        """
+        # Given
+        mocked_db_connection = mock.MagicMock()
+        health_probe_management = HealthProbeManagement(
+            database_connection=mocked_db_connection
+        )
+
+        # When
+        row = health_probe_management._fetch_row_from_db()
+
+        # Then
+        cursor_in_context_manager = (
+            mocked_db_connection.cursor.return_value.__enter__.return_value
+        )
+        cursor_in_context_manager.execute.assert_called_once_with("SELECT 1;")
+
+        assert row == cursor_in_context_manager.fetchone.return_value
