@@ -162,6 +162,15 @@ class AppMode(Enum):
     FEEDBACK_API = "FEEDBACK_API"
     INGESTION = "INGESTION"
 
+    @classmethod
+    def dependent_on_db(cls) -> list[str]:
+        return [
+            cls.CMS_ADMIN.value,
+            cls.PRIVATE_API.value,
+            cls.PUBLIC_API.value,
+            cls.INGESTION.value,
+        ]
+
 
 def construct_urlpatterns(
     app_mode: str | None,
