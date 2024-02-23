@@ -3,8 +3,10 @@ from django.core.management import call_command
 from rest_framework.test import APIClient
 
 from cms.common.models import CommonPage
+from cms.composite.models import CompositePage
 from cms.dashboard.management.commands.build_cms_site import open_example_page_response
 from cms.home.models import HomePage
+from cms.snippets.models import Button
 from cms.topic.models import TopicPage
 from cms.whats_new.models import WhatsNewParentPage
 
@@ -257,3 +259,47 @@ class TestBuildCMSSite:
             assert related_link["title"] == related_links_from_template[index]["title"]
             assert related_link["url"] == related_links_from_template[index]["url"]
             assert related_link["body"] == related_links_from_template[index]["body"]
+
+    @pytest.mark.django_db
+    def test_command_builds_bulk_download_page(self):
+        """
+        Given a CMS site which has been created via the `build_cms_site` management command
+        And the ID of the `bulkdownloads` page
+        When a GET request is made to `/api/pages/{}` detail endpoint
+        Then the response contains the expected data
+        """
+        # Given
+        call_command("build_cms_site")
+        bulk_downloads = CompositePage.objects.get(slug="bulk-downloads")
+        parent_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        api_client = APIClient()
+
+        # When
+        response = api_client.get(path=f"/api/pages/{bulk_downloads.id}/")
+        response_button_snippet = response.data["body"][1]["value"]
+        bulk_downloads_template = open_example_page_response("bulk_downloads")
+        button_snippet = Button.objects.get(text="download (zip)")
+
+        # Then
+        assert response.data["title"] == bulk_downloads_template["title"]
+        assert (
+            response.data["meta"]["seo_title"]
+            == bulk_downloads_template["meta"]["seo_title"]
+        )
+        assert (
+            response.data["meta"]["search_description"]
+            == bulk_downloads_template["meta"]["search_description"]
+        )
+        assert (
+            response.data["meta"]["show_in_menus"]
+            == bulk_downloads_template["meta"]["show_in_menus"]
+        )
+        assert response.data["meta"]["parent"]["id"] == parent_page.id
+        assert response.data["meta"]["parent"]["title"] == parent_page.title
+
+        assert response.data["body"][0] == bulk_downloads_template["body"][0]
+        assert response_button_snippet["text"] == button_snippet.text
+        assert response_button_snippet["loading_text"] == button_snippet.loading_text
+        assert response_button_snippet["endpoint"] == button_snippet.endpoint
+        assert response_button_snippet["method"] == button_snippet.method
+        assert response_button_snippet["button_type"] == button_snippet.button_type

@@ -2,6 +2,7 @@ import datetime
 
 import pytest
 from wagtail.models import Page
+from wagtail.models.i18n import Locale
 
 from cms.home.models import HomePage
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
@@ -176,14 +177,19 @@ def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def dashboard_root_page() -> HomePage:
     root_page = HomePage(
         title="UKHSA Dashboard Root",
         slug="ukhsa-dashboard-root",
+        path="ukhsa-dashboard-root",
+        depth=1,
     )
+    Locale.objects.get_or_create(language_code="en")
 
-    wagtail_root_page = Page.get_first_root_node()
+    wagtail_root_page = Page.get_first_root_node() or Page.add_root(
+        title="Root", slug="root"
+    )
     root_page = wagtail_root_page.add_child(instance=root_page)
     wagtail_root_page.save_revision().publish()
 

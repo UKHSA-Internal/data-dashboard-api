@@ -10,9 +10,13 @@ from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
+from cms.composite.models import CompositePage, CompositeRelatedLink
 from cms.home.models import HomePage, HomePageRelatedLink
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
+)
+from cms.snippets.data_migrations.operations import (
+    get_or_create_download_button_snippet,
 )
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
@@ -130,6 +134,53 @@ def _create_common_page(name: str, parent_page: Page) -> CommonPage:
     return page
 
 
+def _remove_comment_from_body(body: dict[list[dict]]) -> dict[list[dict]]:
+    return [item for item in body if "_comment" not in item]
+
+
+def _get_or_create_button_id() -> int:
+    button_snippet = get_or_create_download_button_snippet()
+    return button_snippet.id
+
+
+def _add_download_button_to_composite_body(body: dict[list[dict]]) -> dict[list[dict]]:
+    body.append(
+        {
+            "type": "button",
+            "value": _get_or_create_button_id(),
+            "id": "1431bc99-d4f9-4c80-880b-e96c5ad098db",
+        }
+    )
+    return body
+
+
+def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
+    data = open_example_page_response(page_name=name)
+
+    body = _remove_comment_from_body(body=data["body"])
+    composite_body = _add_download_button_to_composite_body(body=body)
+
+    page = CompositePage(
+        body=composite_body,
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        date_posted=data["meta"]["first_published_at"].split("T")[0],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
+    )
+
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _create_related_links(
+        related_link_class=CompositeRelatedLink,
+        response_data=data,
+        page=page,
+    )
+
+    return page
+
+
 def _create_whats_new_parent_page(name: str, parent_page: Page) -> WhatsNewParentPage:
     data = open_example_page_response(page_name=name)
 
@@ -218,6 +269,8 @@ class Command(BaseCommand):
         whats_new_parent_page = _create_whats_new_parent_page(
             name="whats_new", parent_page=root_page
         )
+
+        _create_composite_page(name="bulk_downloads", parent_page=root_page)
 
         _create_whats_new_child_entry(
             name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
