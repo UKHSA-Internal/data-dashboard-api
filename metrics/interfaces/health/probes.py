@@ -22,9 +22,7 @@ class HealthProbeManagement:
         cache_connection: OPTIONAL_CONNECTION_PROXY = None,
         database_connection: OPTIONAL_CONNECTION_PROXY = None,
     ):
-        self._cache_connection = cache_connection or self._get_redis_client(
-            django_cache_proxy=django_cache_proxy
-        )
+        self._cache_connection = cache_connection or django_cache_proxy
         self._database_connection = database_connection or django_db_proxy
 
     def perform_health_check(self) -> bool:
@@ -77,8 +75,12 @@ class HealthProbeManagement:
             ping to the cache fails for any reason
 
         """
+        redis_client: redis.Redis = self._get_redis_client(
+            django_cache_proxy=self._cache_connection
+        )
+
         try:
-            cache_is_pingable: bool = self._cache_connection.ping()
+            cache_is_pingable: bool = redis_client.ping()
         except redis.exceptions.RedisError as error:
             raise HealthProbeForCacheFailedError from error
 

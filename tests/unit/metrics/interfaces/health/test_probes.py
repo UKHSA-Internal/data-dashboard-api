@@ -50,7 +50,7 @@ class TestHealthProbeManagement:
             is given by default to the `_cache_connection` attribute
 
         Patches:
-            `spy_django_db_connection`: For the main assertion
+            `spy_django_cache_proxy`: For the main assertion
                 to check that the Django cache connection proxy
                 is given to the `__init__()` method if not
                 explicitly provided
@@ -59,8 +59,7 @@ class TestHealthProbeManagement:
         health_probe_management = HealthProbeManagement()
 
         # Then
-        expected_cache_client = spy_django_cache_proxy._cache.get_client.return_value
-        assert health_probe_management._cache_connection == expected_cache_client
+        assert health_probe_management._cache_connection == spy_django_cache_proxy
 
     # Tests for the main entrypoint health probe
 
@@ -111,6 +110,7 @@ class TestHealthProbeManagement:
         assert spy_ping_database.call_count == db_ping_count
         assert spy_cache_database.call_count == cache_ping_count
 
+    @mock.patch.object(HealthProbeManagement, "_get_redis_client")
     @pytest.mark.parametrize(
         "current_app_mode, db_ping_is_healthy, cache_ping_is_healthy",
         (
@@ -133,6 +133,7 @@ class TestHealthProbeManagement:
     )
     def test_returns_true_if_relevant_probes_are_healthy_for_selected_app_mode(
         self,
+        mocked_get_redis_client: mock.MagicMock,
         current_app_mode: str,
         db_ping_is_healthy: bool,
         cache_ping_is_healthy: bool,
@@ -150,11 +151,12 @@ class TestHealthProbeManagement:
 
         mocked_db_connection = mock.Mock()
         mocked_db_connection.is_usable.return_value = db_ping_is_healthy
-        mocked_cache_connection = mock.Mock()
-        mocked_cache_connection.ping.return_value = cache_ping_is_healthy
+        mocked_redis_client = mock.Mock()
+        mocked_redis_client.ping.return_value = cache_ping_is_healthy
+        mocked_get_redis_client.return_value = mocked_redis_client
+
         health_probe_management = HealthProbeManagement(
-            cache_connection=mocked_cache_connection,
-            database_connection=mocked_db_connection,
+            database_connection=mocked_db_connection
         )
 
         # When
@@ -163,6 +165,7 @@ class TestHealthProbeManagement:
         # Then
         assert is_healthy
 
+    @mock.patch.object(HealthProbeManagement, "_get_redis_client")
     @pytest.mark.parametrize(
         "current_app_mode, db_ping_is_healthy, cache_ping_is_healthy",
         (
@@ -185,6 +188,7 @@ class TestHealthProbeManagement:
     )
     def test_returns_false_if_relevant_probes_are_unhealthy_for_selected_app_mode(
         self,
+        mocked_get_redis_client: mock.MagicMock,
         current_app_mode: str,
         db_ping_is_healthy: bool,
         cache_ping_is_healthy: bool,
@@ -202,10 +206,11 @@ class TestHealthProbeManagement:
 
         mocked_db_connection = mock.Mock()
         mocked_db_connection.is_usable.return_value = db_ping_is_healthy
-        mocked_cache_connection = mock.Mock()
-        mocked_cache_connection.ping.return_value = cache_ping_is_healthy
+        mocked_redis_client = mock.Mock()
+        mocked_redis_client.ping.return_value = cache_ping_is_healthy
+        mocked_get_redis_client.return_value = mocked_redis_client
+
         health_probe_management = HealthProbeManagement(
-            cache_connection=mocked_cache_connection,
             database_connection=mocked_db_connection,
         )
 
@@ -217,7 +222,10 @@ class TestHealthProbeManagement:
 
     # Tests for the cache probe
 
-    def test_ping_cache_returns_true_if_ping_returns_healthy_true(self):
+    @mock.patch.object(HealthProbeManagement, "_get_redis_client")
+    def test_ping_cache_returns_true_if_ping_returns_healthy_true(
+        self, mocked_get_redis_client: mock.MagicMock
+    ):
         """
         Given a cache connection
             which returns True from the `ping()` method
@@ -226,11 +234,10 @@ class TestHealthProbeManagement:
         Then None is returned and no error is raised
         """
         # Given
-        mocked_cache_connection = mock.Mock()
-        mocked_cache_connection.ping.return_value = True
-        health_probe_management = HealthProbeManagement(
-            cache_connection=mocked_cache_connection
-        )
+        mocked_redis_client = mock.Mock()
+        mocked_redis_client.ping.return_value = True
+        mocked_get_redis_client.return_value = mocked_redis_client
+        health_probe_management = HealthProbeManagement()
 
         # When
         cache_ping = health_probe_management.ping_cache()
@@ -238,7 +245,10 @@ class TestHealthProbeManagement:
         # Then
         assert cache_ping is None
 
-    def test_ping_cache_raises_error_if_ping_returns_unhealthy_false(self):
+    @mock.patch.object(HealthProbeManagement, "_get_redis_client")
+    def test_ping_cache_raises_error_if_ping_returns_unhealthy_false(
+        self, mocked_get_redis_client: mock.MagicMock
+    ):
         """
         Given a cache connection
             which returns False from the `ping()` method
@@ -249,14 +259,14 @@ class TestHealthProbeManagement:
         # Given
         mocked_cache_connection = mock.Mock()
         mocked_cache_connection.ping.return_value = False
-        health_probe_management = HealthProbeManagement(
-            cache_connection=mocked_cache_connection
-        )
+        mocked_get_redis_client.return_value = mocked_cache_connection
+        health_probe_management = HealthProbeManagement()
 
         # When / Then
         with pytest.raises(HealthProbeForCacheFailedError):
             health_probe_management.ping_cache()
 
+    @mock.patch.object(HealthProbeManagement, "_get_redis_client")
     @pytest.mark.parametrize(
         "exception",
         (
@@ -270,7 +280,9 @@ class TestHealthProbeManagement:
             ]
         ),
     )
-    def test_ping_cache_raises_error_if_ping_throws_error(self, exception: Exception):
+    def test_ping_cache_raises_error_if_ping_throws_error(
+        self, mocked_get_redis_client: mock.MagicMock, exception: Exception
+    ):
         """
         Given a cache connection
             which raises an error from the `ping()` method
@@ -279,11 +291,10 @@ class TestHealthProbeManagement:
         Then a `HealthProbeForCacheFailedError` is raised
         """
         # Given
-        mocked_cache_connection = mock.Mock()
-        mocked_cache_connection.ping.side_effect = exception
-        health_probe_management = HealthProbeManagement(
-            cache_connection=mocked_cache_connection
-        )
+        mocked_redis_client = mock.Mock()
+        mocked_redis_client.ping.side_effect = exception
+        mocked_get_redis_client.return_value = mocked_redis_client
+        health_probe_management = HealthProbeManagement()
 
         # When / Then
         with pytest.raises(HealthProbeForCacheFailedError):
