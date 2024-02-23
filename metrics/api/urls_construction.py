@@ -171,6 +171,10 @@ class AppMode(Enum):
             cls.INGESTION.value,
         ]
 
+    @classmethod
+    def dependent_on_cache(cls) -> list[str]:
+        return [cls.PRIVATE_API.value]
+
 
 def construct_urlpatterns(
     app_mode: str | None,
