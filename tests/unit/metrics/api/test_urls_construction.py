@@ -3,9 +3,9 @@ from unittest import mock
 import pytest
 from django.urls.resolvers import URLResolver
 
+from metrics.api import enums
 from metrics.api.urls_construction import (
     DEFAULT_PUBLIC_API_PREFIX,
-    AppMode,
     construct_cms_admin_urlpatterns,
     construct_public_api_urlpatterns,
     construct_urlpatterns,
@@ -56,7 +56,7 @@ class TestConstructCMSAdminUrlpatterns:
         Then the urlpatterns returned sets the cms admin URL at the root
         """
         # Given
-        app_mode = AppMode.CMS_ADMIN.value
+        app_mode = enums.AppMode.CMS_ADMIN.value
 
         # When
         urlpatterns = construct_cms_admin_urlpatterns(app_mode=app_mode)
@@ -104,7 +104,7 @@ class TestConstructPublicAPIUrlpatterns:
             to `construct_urlpatterns_for_public_api()
         """
         # Given
-        app_mode = AppMode.PUBLIC_API.value
+        app_mode = enums.AppMode.PUBLIC_API.value
 
         # When
         urlpatterns = construct_public_api_urlpatterns(app_mode=app_mode)
@@ -162,7 +162,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the private API endpoints
         """
         # Given
-        app_mode = AppMode.PRIVATE_API.value
+        app_mode = enums.AppMode.PRIVATE_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -182,7 +182,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the headless CMS pages endpoints
         """
         # Given
-        app_mode = AppMode.PRIVATE_API.value
+        app_mode = enums.AppMode.PRIVATE_API.value
 
         # When
         private_api_urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -211,7 +211,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = AppMode.PRIVATE_API.value
+        app_mode = enums.AppMode.PRIVATE_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -231,7 +231,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the public API endpoints
         """
         # Given
-        app_mode = AppMode.PUBLIC_API.value
+        app_mode = enums.AppMode.PUBLIC_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -254,7 +254,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = AppMode.PUBLIC_API.value
+        app_mode = enums.AppMode.PUBLIC_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -271,7 +271,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the CMS admin endpoints
         """
         # Given
-        app_mode = AppMode.CMS_ADMIN.value
+        app_mode = enums.AppMode.CMS_ADMIN.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -294,7 +294,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = AppMode.CMS_ADMIN.value
+        app_mode = enums.AppMode.CMS_ADMIN.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -311,7 +311,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned contain the feedback API endpoints
         """
         # Given
-        app_mode = AppMode.FEEDBACK_API.value
+        app_mode = enums.AppMode.FEEDBACK_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -334,7 +334,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = AppMode.FEEDBACK_API.value
+        app_mode = enums.AppMode.FEEDBACK_API.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -360,7 +360,7 @@ class TestConstructUrlpatterns:
         Then the urlpatterns returned do not contain URLs for the other APIs
         """
         # Given
-        app_mode = AppMode.INGESTION.value
+        app_mode = enums.AppMode.INGESTION.value
 
         # When
         urlpatterns = construct_urlpatterns(app_mode=app_mode)
@@ -395,11 +395,11 @@ class TestConstructUrlpatterns:
     @pytest.mark.parametrize(
         "app_mode",
         [
-            AppMode.CMS_ADMIN.value,
-            AppMode.PUBLIC_API.value,
-            AppMode.PRIVATE_API.value,
-            AppMode.FEEDBACK_API.value,
-            AppMode.INGESTION.value,
+            enums.AppMode.CMS_ADMIN.value,
+            enums.AppMode.PUBLIC_API.value,
+            enums.AppMode.PRIVATE_API.value,
+            enums.AppMode.FEEDBACK_API.value,
+            enums.AppMode.INGESTION.value,
             None,
             "",
             "COMPLETE_APP",
@@ -423,31 +423,3 @@ class TestConstructUrlpatterns:
 
         # Then
         assert any(common_endpoint_path in str(x.pattern) for x in urlpatterns)
-
-
-class TestAppMode:
-    def test_dependent_on_db(self):
-        """
-        Given the `AppMode` Enum class
-        When the `dependent_on_db()` method is called
-        Then the correct values are returned
-        """
-        # Given / When
-        app_modes_dependant_on_db = AppMode.dependent_on_db()
-
-        # Then
-        expected_values = {"CMS_ADMIN", "PRIVATE_API", "PUBLIC_API", "INGESTION"}
-        assert set(app_modes_dependant_on_db) == expected_values
-
-    def test_dependent_on_cache(self):
-        """
-        Given the `AppMode` Enum class
-        When the `dependent_on_cache()` method is called
-        Then the correct values are returned
-        """
-        # Given / When
-        app_modes_dependent_on_cache = AppMode.dependent_on_cache()
-
-        # Then
-        expected_values = {"PRIVATE_API"}
-        assert set(app_modes_dependent_on_cache) == expected_values

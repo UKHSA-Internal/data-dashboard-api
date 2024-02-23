@@ -1,5 +1,3 @@
-from enum import Enum
-
 from django.contrib import admin
 from django.urls import include, path, re_path, resolvers
 from django.views.static import serve
@@ -14,7 +12,7 @@ from wagtail.api.v2.router import WagtailAPIRouter
 
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from feedback.api.urls import construct_urlpatterns_for_feedback
-from metrics.api import settings
+from metrics.api import enums, settings
 from metrics.api.views import (
     BulkDownloadsView,
     ChartsView,
@@ -69,7 +67,7 @@ def construct_cms_admin_urlpatterns(
         via `urlpatterns` in `urls.py`
 
     """
-    prefix: str = "" if app_mode == AppMode.CMS_ADMIN.value else "cms-admin/"
+    prefix: str = "" if app_mode == enums.AppMode.CMS_ADMIN.value else "cms-admin/"
 
     return [path(prefix, include(wagtailadmin_urls))]
 
@@ -100,7 +98,7 @@ def construct_public_api_urlpatterns(
 
     """
     prefix: str = (
-        "" if app_mode == AppMode.PUBLIC_API.value else DEFAULT_PUBLIC_API_PREFIX
+        "" if app_mode == enums.AppMode.PUBLIC_API.value else DEFAULT_PUBLIC_API_PREFIX
     )
 
     return construct_urlpatterns_for_public_api(prefix=prefix)
@@ -155,27 +153,6 @@ django_admin_urlpatterns = [
 ]
 
 
-class AppMode(Enum):
-    CMS_ADMIN = "CMS_ADMIN"
-    PRIVATE_API = "PRIVATE_API"
-    PUBLIC_API = "PUBLIC_API"
-    FEEDBACK_API = "FEEDBACK_API"
-    INGESTION = "INGESTION"
-
-    @classmethod
-    def dependent_on_db(cls) -> list[str]:
-        return [
-            cls.CMS_ADMIN.value,
-            cls.PRIVATE_API.value,
-            cls.PUBLIC_API.value,
-            cls.INGESTION.value,
-        ]
-
-    @classmethod
-    def dependent_on_cache(cls) -> list[str]:
-        return [cls.PRIVATE_API.value]
-
-
 def construct_urlpatterns(
     app_mode: str | None,
 ) -> list[resolvers.URLResolver, resolvers.URLPattern]:
@@ -206,20 +183,20 @@ def construct_urlpatterns(
     )
 
     match app_mode:
-        case AppMode.CMS_ADMIN.value:
+        case enums.AppMode.CMS_ADMIN.value:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
             )
             constructed_url_patterns += django_admin_urlpatterns
-        case AppMode.PUBLIC_API.value:
+        case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
                 app_mode=app_mode
             )
-        case AppMode.PRIVATE_API.value:
+        case enums.AppMode.PRIVATE_API.value:
             constructed_url_patterns += private_api_urlpatterns
-        case AppMode.FEEDBACK_API.value:
+        case enums.AppMode.FEEDBACK_API.value:
             constructed_url_patterns += feedback_urlpatterns
-        case AppMode.INGESTION.value:
+        case enums.AppMode.INGESTION.value:
             # Ingestion mode does not expose any endpoints
             return constructed_url_patterns
         case _:

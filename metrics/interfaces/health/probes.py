@@ -5,7 +5,7 @@ from django.core.cache import cache as django_cache_proxy
 from django.db import connection as django_db_proxy
 from django.utils.connection import ConnectionProxy
 
-from metrics.api.urls_construction import AppMode
+from metrics.api import enums
 
 OPTIONAL_CONNECTION_PROXY = ConnectionProxy | None
 
@@ -50,13 +50,13 @@ class HealthProbeManagement:
         """
         current_app_mode: str = os.environ.get("APP_MODE")
 
-        if current_app_mode in AppMode.dependent_on_db():
+        if current_app_mode in enums.AppMode.dependent_on_db():
             try:
                 self.ping_database()
             except HealthProbeForDatabaseFailedError:
                 return False
 
-        if current_app_mode in AppMode.dependent_on_cache():
+        if current_app_mode in enums.AppMode.dependent_on_cache():
             try:
                 self.ping_cache()
             except HealthProbeForCacheFailedError:

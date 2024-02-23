@@ -3,7 +3,7 @@ from unittest import mock
 import pytest
 import redis
 
-from metrics.api.urls_construction import AppMode
+from metrics.api import enums
 from metrics.interfaces.health.probes import (
     HealthProbeForCacheFailedError,
     HealthProbeForDatabaseFailedError,
@@ -69,11 +69,11 @@ class TestHealthProbeManagement:
     @pytest.mark.parametrize(
         "current_app_mode, db_ping_count, cache_ping_count",
         (
-            [AppMode.PRIVATE_API.value, 1, 1],
-            [AppMode.PUBLIC_API.value, 1, 0],
-            [AppMode.CMS_ADMIN.value, 1, 0],
-            [AppMode.INGESTION.value, 1, 0],
-            [AppMode.FEEDBACK_API.value, 0, 0],
+            [enums.AppMode.PRIVATE_API.value, 1, 1],
+            [enums.AppMode.PUBLIC_API.value, 1, 0],
+            [enums.AppMode.CMS_ADMIN.value, 1, 0],
+            [enums.AppMode.INGESTION.value, 1, 0],
+            [enums.AppMode.FEEDBACK_API.value, 0, 0],
         ),
     )
     def test_perform_health_pings_dependant_services_according_to_app_mode(
@@ -115,20 +115,20 @@ class TestHealthProbeManagement:
         "current_app_mode, db_ping_is_healthy, cache_ping_is_healthy",
         (
             # The `PRIVATE_API` needs both the db and cache to be healthy at once
-            [AppMode.PRIVATE_API.value, True, True],
+            [enums.AppMode.PRIVATE_API.value, True, True],
             # The `PUBLIC_API` only needs the db, the cache is irrelevant
-            [AppMode.PUBLIC_API.value, True, True],
-            [AppMode.PUBLIC_API.value, True, False],
+            [enums.AppMode.PUBLIC_API.value, True, True],
+            [enums.AppMode.PUBLIC_API.value, True, False],
             # The `CMS_ADMIN` only needs the db, the cache is irrelevant
-            [AppMode.CMS_ADMIN.value, True, True],
-            [AppMode.CMS_ADMIN.value, True, False],
+            [enums.AppMode.CMS_ADMIN.value, True, True],
+            [enums.AppMode.CMS_ADMIN.value, True, False],
             # The `INGESTION` only needs the db, the cache is irrelevant
-            [AppMode.INGESTION.value, True, True],
-            [AppMode.INGESTION.value, True, False],
+            [enums.AppMode.INGESTION.value, True, True],
+            [enums.AppMode.INGESTION.value, True, False],
             # The `FEEDBACK_API` does not need the db or the cache
-            [AppMode.FEEDBACK_API.value, True, True],
-            [AppMode.FEEDBACK_API.value, True, False],
-            [AppMode.FEEDBACK_API.value, False, False],
+            [enums.AppMode.FEEDBACK_API.value, True, True],
+            [enums.AppMode.FEEDBACK_API.value, True, False],
+            [enums.AppMode.FEEDBACK_API.value, False, False],
         ),
     )
     def test_returns_true_if_relevant_probes_are_healthy_for_selected_app_mode(
@@ -167,18 +167,18 @@ class TestHealthProbeManagement:
         "current_app_mode, db_ping_is_healthy, cache_ping_is_healthy",
         (
             # The `PRIVATE_API` needs both the db and cache to be healthy at once
-            [AppMode.PRIVATE_API.value, False, True],
-            [AppMode.PRIVATE_API.value, True, False],
-            [AppMode.PRIVATE_API.value, False, False],
+            [enums.AppMode.PRIVATE_API.value, False, True],
+            [enums.AppMode.PRIVATE_API.value, True, False],
+            [enums.AppMode.PRIVATE_API.value, False, False],
             # The `PUBLIC_API` always needs the db, the cache is irrelevant
-            [AppMode.PUBLIC_API.value, False, True],
-            [AppMode.PUBLIC_API.value, False, False],
+            [enums.AppMode.PUBLIC_API.value, False, True],
+            [enums.AppMode.PUBLIC_API.value, False, False],
             # The `CMS_ADMIN` always needs the db, the cache is irrelevant
-            [AppMode.CMS_ADMIN.value, False, True],
-            [AppMode.CMS_ADMIN.value, False, False],
+            [enums.AppMode.CMS_ADMIN.value, False, True],
+            [enums.AppMode.CMS_ADMIN.value, False, False],
             # The `INGESTION` only needs the db, the cache is irrelevant
-            [AppMode.INGESTION.value, False, True],
-            [AppMode.INGESTION.value, False, False],
+            [enums.AppMode.INGESTION.value, False, True],
+            [enums.AppMode.INGESTION.value, False, False],
             # The `FEEDBACK_API` does not need the db or the cache
             # and as such will not return an unhealthy ping so is omitted
         ),
