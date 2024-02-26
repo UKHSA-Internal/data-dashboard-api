@@ -1,3 +1,4 @@
+from django.db import models
 from wagtail import blocks
 from wagtail.snippets.blocks import SnippetChooserBlock
 
@@ -10,16 +11,6 @@ from cms.dynamic_content.components import (
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
-
-languages = [
-    ("Javascript", "Javascript"),
-]
-
-
-def get_languages():
-    """Callable used to populate language choices without updating migrations when adding languages"""
-
-    return languages
 
 
 class HeadlineNumberBlockTypes(blocks.StreamBlock):
@@ -63,8 +54,19 @@ class ButtonChooserBlock(SnippetChooserBlock):
         return None
 
 
+class ProgrammingLanguages(models.TextChoices):
+    JAVASCRIPT = "Javascript"
+
+    @classmethod
+    def get_programming_languages(cls):
+        return ((language.value, language.value) for language in cls)
+
+
 class CodeSnippet(blocks.StructBlock):
-    language = blocks.ChoiceBlock(choices=get_languages, default=languages[0])
+    language = blocks.ChoiceBlock(
+        choices=ProgrammingLanguages.get_programming_languages,
+        default=ProgrammingLanguages.JAVASCRIPT.value,
+    )
     code = blocks.TextBlock(form_classname="codeblock_monospace")
 
 
