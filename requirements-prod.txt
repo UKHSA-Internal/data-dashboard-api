@@ -6,7 +6,6 @@ certifi==2024.2.2
 cfgv==3.4.0
 charset-normalizer==3.3.2
 click==8.1.7
-colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
 cyclonedx-python-lib==6.4.1
