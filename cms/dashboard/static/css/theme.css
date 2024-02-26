@@ -18,3 +18,7 @@
 .img.login-logo-img {
   height: complex;
 }
+
+.codeblock_monospace {
+  font-family: monospace;
+}
