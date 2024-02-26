@@ -27,3 +27,4 @@ rich==13.7.0
 ruff==0.2.2
 stevedore==5.2.0
 toml==0.10.2
+tomli==2.0.1
