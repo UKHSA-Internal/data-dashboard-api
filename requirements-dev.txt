@@ -14,6 +14,7 @@ Markdown==3.5.2
 markdown-it-py==2.2.0
 mdurl==0.1.2
 Pygments==2.17.2
+pbr==6.0.0
 pip_audit==2.7.1
 pre-commit==3.6.2
 pylint==3.0.3
