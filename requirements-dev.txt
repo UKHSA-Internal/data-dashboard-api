@@ -25,3 +25,4 @@ pytest-django==4.8.0
 pytest-random-order==1.1.1
 rich==13.7.0
 ruff==0.2.2
+stevedore==5.2.0
