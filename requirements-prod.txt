@@ -51,7 +51,6 @@ pandas==2.2.1
 pathspec==0.12.1
 Pillow==10.2.0
 pip-api==0.0.33
-pip-requirements-parser==32.0.1
 platformdirs==3.11.0
 plotly==5.19.0
 pluggy==1.4.0
