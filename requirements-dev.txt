@@ -1,6 +1,6 @@
 bandit==1.7.7
 black==24.2.0
-coverage==7.4.2
+coverage==7.4.3
 django-factory-boy==1.0.0
 factory-boy==3.3.0
 Faker==23.2.1
