@@ -9,7 +9,7 @@ from tests.fakes.factories.cms.composite_page_factory import FakeCompositePageFa
 
 class TestCompositePage:
     @staticmethod
-    def _retrieve_code_example_from_page_response(body) -> tuple[list]:
+    def _retrieve_code_example_from_page_response(body) -> dict[str, str]:
         code_example = body[1].value
         code_snippet = code_example["content"][0].value
 
@@ -19,7 +19,7 @@ class TestCompositePage:
         }
 
     @staticmethod
-    def _retrieve_code_example_from_page_template(body) -> tuple[list]:
+    def _retrieve_code_example_from_page_template(body) -> dict[str, str]:
         code_example = body[1]["value"]
         code_snippet = body[1]["value"]["content"][0]["value"]
 
@@ -119,10 +119,14 @@ class TestCompositePage:
         Then the `CompositePage` code example has been set correctly.
         """
         # Given
-        template_page = "access_our_data_getting_started"
-        access_our_data_child_page = open_example_page_response(page_name=template_page)
+        template_page_name = "access_our_data_getting_started"
+        access_our_data_child_page = open_example_page_response(
+            page_name=template_page_name
+        )
         fake_access_our_data_child_page = (
-            FakeCompositePageFactory.build_page_from_template(page_name=template_page)
+            FakeCompositePageFactory.build_page_from_template(
+                page_name=template_page_name
+            )
         )
 
         # When
