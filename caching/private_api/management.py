@@ -151,11 +151,7 @@ class CacheManagement:
             case "POST":
                 data = request.data
             case "GET":
-                data = {
-                    k: v
-                    for k, v in request.query_params.dict().items()
-                    if k.lower() != "body"
-                }
+                data = request.query_params.dict()
             case _:
                 raise ValueError
 
