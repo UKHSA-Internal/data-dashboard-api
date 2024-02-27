@@ -1,5 +1,6 @@
 from unittest import mock
 
+import botocore.client
 import pytest
 from _pytest.logging import LogCaptureFixture
 
@@ -136,153 +137,6 @@ class TestAWSClient:
         # Then
         spy_boto3.setup_default_session.assert_not_called()
         assert boto3_client == spy_boto3.client.return_value
-
-    # Tests for the `list_item_keys_of_in_folder()` method
-
-    def test_list_item_keys_of_in_folder(
-        self, aws_client_with_mocked_boto_client: AWSClient
-    ):
-        """
-        Given a response from listing objects in a s3 bucket
-        When `list_item_keys_of_in_folder()` is called
-            from an instance of `AWSClient`
-        Then the correct list of object keys is returned
-        """
-        # Given
-        expected_key = "in/influenza_healthcare_ICUHDUadmissionRateByWeek.json"
-        fake_returned_bucket_objects = {
-            "ResponseMetadata": {
-                "RequestId": "K8NQXPBZ44GF4HP2",
-                "HTTPStatusCode": 200,
-            },
-            "Contents": [
-                {
-                    "Key": "in/",
-                    "Size": 0,
-                },
-                {
-                    "Key": expected_key,
-                    "Size": 199104,
-                },
-            ],
-            "Name": "uhd-d06bcac6-ingest",
-            "Prefix": "in/",
-            "MaxKeys": 1000,
-        }
-        mocked_boto3_client = aws_client_with_mocked_boto_client._client
-        mocked_boto3_client.list_objects_v2.return_value = fake_returned_bucket_objects
-
-        # When
-        keys: list[str] = (
-            aws_client_with_mocked_boto_client.list_item_keys_of_in_folder()
-        )
-
-        # Then
-        assert keys == [expected_key]
-
-    def test_list_item_keys_of_in_folder_only_includes_json_files(
-        self, aws_client_with_mocked_boto_client: AWSClient
-    ):
-        """
-        Given a response from listing objects in a s3 bucket which contains
-            a mixture of json & csv files
-        When `list_item_keys_of_in_folder()` is called
-            from an instance of `AWSClient`
-        Then only the keys of json files are returned
-        """
-        # Given
-        key_for_json_file = "in/influenza_healthcare_ICUHDUadmissionRateByWeek.json"
-        key_for_csv_file = "in/influenza_healthcare_ICUHDUadmissionRateByWeek.csv"
-        fake_returned_bucket_objects = {
-            "ResponseMetadata": {
-                "RequestId": "K8NQXPBZ44GF4HP2",
-                "HTTPStatusCode": 200,
-            },
-            "Contents": [
-                {
-                    "Key": "in/",
-                    "Size": 0,
-                },
-                {
-                    "Key": key_for_json_file,
-                    "Size": 199104,
-                },
-                {
-                    "Key": key_for_csv_file,
-                    "Size": 199104,
-                },
-            ],
-            "Name": "uhd-d06bcac6-ingest",
-            "Prefix": "in/",
-            "MaxKeys": 1000,
-        }
-        mocked_boto3_client = aws_client_with_mocked_boto_client._client
-        mocked_boto3_client.list_objects_v2.return_value = fake_returned_bucket_objects
-
-        # When
-        keys: list[str] = (
-            aws_client_with_mocked_boto_client.list_item_keys_of_in_folder()
-        )
-
-        # Then
-        assert key_for_json_file in keys
-        assert key_for_csv_file not in keys
-
-    # Tests for the `download_item()` method
-
-    @mock.patch.object(AWSClient, "_get_filename_from_key")
-    def test_download_item(
-        self,
-        spy_get_filename_from_key: mock.MagicMock,
-        aws_client_with_mocked_boto_client: AWSClient,
-    ):
-        """
-        Given a fake key for an item
-        When `download_item()` is called from an instance of `AWSClient`
-        Then the call is delegated to `download_file()`
-            on the underlying client
-
-        Patches:
-            `spy_get_filename_from_key`: To isolate the extracted
-                filename and check that is being passed to the
-                `download_file()` method call of the underlying client
-
-        """
-        # Given
-        fake_key: str = FAKE_KEY
-        spy_client = aws_client_with_mocked_boto_client._client
-
-        # When
-        filename: str = aws_client_with_mocked_boto_client.download_item(key=fake_key)
-
-        # Then
-        expected_filename = spy_get_filename_from_key.return_value
-        spy_client.download_file.assert_called_once_with(
-            Bucket=aws_client_with_mocked_boto_client._bucket_name,
-            Key=fake_key,
-            Filename=expected_filename,
-        )
-        assert filename == expected_filename
-
-    def test_download_item_records_correct_log(
-        self, caplog: LogCaptureFixture, aws_client_with_mocked_boto_client: AWSClient
-    ):
-        """
-        Given a fake key for an item
-        When `download_item()` is called from an instance of `AWSClient`
-        Then the expected log is recorded
-        """
-        # Given
-        fake_key: str = FAKE_KEY
-
-        # When
-        aws_client_with_mocked_boto_client.download_item(key=fake_key)
-
-        # Then
-        expected_filename = aws_client_with_mocked_boto_client._get_filename_from_key(
-            key=fake_key
-        )
-        assert f"Downloading {expected_filename} from s3" in caplog.text
 
     # Tests for the `move_file_to_processed_folder()` method
 
@@ -473,6 +327,33 @@ class TestAWSClient:
             Key=spy_build_processed_key.return_value,
         )
 
+    def test_copy_file_to_processed_records_log_when_client_error_occurs(
+        self,
+        aws_client_with_mocked_boto_client: AWSClient,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a key for a file
+        And a `botocore` client which will throw a `ClientError`
+        When `_copy_file_to_processed()` is called
+            from an instance of `AWSClient`
+        Then the error is swallowed and logged
+        """
+        # Given
+        key: str = FAKE_KEY
+        boto_client: mock.Mock = aws_client_with_mocked_boto_client._client
+        boto_client.copy.side_effect = botocore.client.ClientError(
+            error_response=mock.MagicMock(), operation_name=mock.MagicMock()
+        )
+
+        # When
+        aws_client_with_mocked_boto_client._copy_file_to_processed(key=key)
+
+        # Then
+        processed_folder: str = aws_client_with_mocked_boto_client._processed_folder
+        expected_log = f"Failed to move `{key}` to `{processed_folder}` folder"
+        assert expected_log in caplog.text
+
     @mock.patch.object(AWSClient, "_build_failed_key")
     def test_copy_file_to_failed(
         self,
@@ -509,6 +390,62 @@ class TestAWSClient:
             Bucket=bucket_name,
             Key=spy_build_failed_key.return_value,
         )
+
+    def test_copy_file_to_failed_records_log_when_client_error_occurs(
+        self,
+        aws_client_with_mocked_boto_client: AWSClient,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a key for a file
+        And a `botocore` client which will throw a `ClientError`
+        When `_copy_file_to_failed()` is called
+            from an instance of `AWSClient`
+        Then the error is swallowed and logged
+        """
+        # Given
+        key: str = FAKE_KEY
+        boto_client: mock.Mock = aws_client_with_mocked_boto_client._client
+        boto_client.copy.side_effect = botocore.client.ClientError(
+            error_response=mock.MagicMock(), operation_name=mock.MagicMock()
+        )
+
+        # When
+        aws_client_with_mocked_boto_client._copy_file_to_failed(key=key)
+
+        # Then
+        failed_folder: str = aws_client_with_mocked_boto_client._failed_folder
+        expected_log = f"Failed to move `{key}` to `{failed_folder}` folder"
+        assert expected_log in caplog.text
+
+    # Tests for `_delete_file_from_inbound`
+
+    def test_delete_file_from_inbound_records_log_when_client_error_occurs(
+        self,
+        aws_client_with_mocked_boto_client: AWSClient,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a key for a file
+        And a `botocore` client which will throw a `ClientError`
+        When `_delete_file_from_inbound()` is called
+            from an instance of `AWSClient`
+        Then the error is swallowed and logged
+        """
+        # Given
+        key: str = FAKE_KEY
+        boto_client: mock.Mock = aws_client_with_mocked_boto_client._client
+        boto_client.delete_object.side_effect = botocore.client.ClientError(
+            error_response=mock.MagicMock(), operation_name=mock.MagicMock()
+        )
+
+        # When
+        aws_client_with_mocked_boto_client._delete_file_from_inbound(key=key)
+
+        # Then
+        inbound_folder: str = aws_client_with_mocked_boto_client._inbound_folder
+        expected_log = f"Failed to delete `{key}` from `{inbound_folder}` folder"
+        assert expected_log in caplog.text
 
     # Tests for utility methods
 

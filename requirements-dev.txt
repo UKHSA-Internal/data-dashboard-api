@@ -1,6 +1,6 @@
 bandit==1.7.7
 black==24.2.0
-coverage==7.4.2
+coverage==7.4.3
 django-factory-boy==1.0.0
 factory-boy==3.3.0
 Faker==23.2.1
@@ -10,7 +10,7 @@ import-linter==2.0
 isort==5.13.2
 pip_audit==2.7.1
 pre-commit==3.6.2
-pylint==3.0.3
+pylint==3.1.0
 pylint-django==2.5.5
 pytest==8.0.1
 pytest-cov==4.1.0

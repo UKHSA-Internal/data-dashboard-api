@@ -562,36 +562,6 @@ class TestCacheManagement:
             endpoint_path=mocked_request.path, data=mocked_request.query_params.dict()
         )
 
-    @mock.patch.object(CacheManagement, "build_cache_entry_key_for_data")
-    def test_build_cache_entry_key_for_request_get_which_filters_out_body_key_value_pair(
-        self,
-        spy_build_cache_entry_key_for_data: mock.MagicMock,
-        cache_management_with_in_memory_cache: CacheManagement,
-    ):
-        """
-        Given a mocked GET request which includes a query param for `body`
-        When `build_cache_entry_key_for_request()` is called
-            from an instance of `CacheManagement`
-        Then the call is delegated to `build_cache_entry_key_for_data()`
-            with the correct args
-        """
-        # Given
-        mocked_request = mock.MagicMock(method="GET")
-        mocked_request.query_params.dict.return_value = {
-            "param_a": "query_a",
-            "body": "some string",
-        }
-
-        # When
-        cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-            request=mocked_request
-        )
-
-        # Then
-        spy_build_cache_entry_key_for_data.assert_called_once_with(
-            endpoint_path=mocked_request.path, data={"param_a": "query_a"}
-        )
-
     @pytest.mark.parametrize(
         "invalid_http_method",
         (
