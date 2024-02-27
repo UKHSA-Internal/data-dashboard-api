@@ -10,7 +10,6 @@ gitdb==4.0.11
 GitPython==3.1.42
 import-linter==2.0
 isort==5.13.2
-mdurl==0.1.2
 pip-api==0.0.33
 pip_audit==2.7.1
 pip-requirements-parser==32.0.1
