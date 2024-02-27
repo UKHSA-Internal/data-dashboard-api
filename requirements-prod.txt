@@ -37,6 +37,8 @@ jsonschema==4.21.1
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
+Markdown==3.5.2
+markdown-it-py==2.2.0
 MarkupSafe==2.1.5
 msgpack==1.0.7
 mypy-extensions==1.0.0
