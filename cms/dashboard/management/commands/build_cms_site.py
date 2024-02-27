@@ -154,7 +154,7 @@ def _add_download_button_to_composite_body(body: dict[list[dict]]) -> dict[list[
     return body
 
 
-def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
+def _create_bulk_downloads_page(name: str, parent_page: Page) -> CompositePage:
     data = open_example_page_response(page_name=name)
 
     body = _remove_comment_from_body(body=data["body"])
@@ -181,7 +181,7 @@ def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
     return page
 
 
-def _create_access_our_data_page(name: str, parent_page: Page) -> CompositePage:
+def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
     data = open_example_page_response(page_name=name)
 
     page = CompositePage(
@@ -294,13 +294,13 @@ class Command(BaseCommand):
             name="whats_new", parent_page=root_page
         )
 
-        _create_composite_page(name="bulk_downloads", parent_page=root_page)
+        _create_bulk_downloads_page(name="bulk_downloads", parent_page=root_page)
 
         # Create access our data parent and child page
-        access_our_data_parent_page = _create_access_our_data_page(
+        access_our_data_parent_page = _create_composite_page(
             name="access_our_data_parent_page", parent_page=root_page
         )
-        _create_access_our_data_page(
+        _create_composite_page(
             name="access_our_data_getting_started",
             parent_page=access_our_data_parent_page,
         )
