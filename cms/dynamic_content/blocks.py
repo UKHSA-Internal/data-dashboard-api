@@ -58,8 +58,8 @@ class ProgrammingLanguages(models.TextChoices):
     JAVASCRIPT = "Javascript"
 
     @classmethod
-    def get_programming_languages(cls):
-        return ((language.value, language.value) for language in cls)
+    def get_programming_languages(cls) -> tuple[str, str]:
+        return tuple((language.value, language.value) for language in cls)
 
 
 class CodeSnippet(blocks.StructBlock):

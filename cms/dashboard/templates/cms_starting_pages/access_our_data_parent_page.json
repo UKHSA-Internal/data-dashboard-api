@@ -30,13 +30,5 @@
     }
   ],
   "last_published_at": "2024-02-20T11:36:39.338986Z",
-  "related_links": [
-    {
-      "id": 1,
-      "meta": { "type": "composite.CompositeRelatedLink" },
-      "title": "view swagger documentation",
-      "url": "https://api.dev.ukhsa-dashboard.data.gov.uk/api/swagger/",
-      "body": ""
-    }
-  ]
+  "related_links": []
 }
