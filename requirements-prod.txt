@@ -51,6 +51,7 @@ packageurl-python==0.13.4
 packaging==23.2
 pandas==2.2.1
 pathspec==0.12.1
+pbr==6.0.0
 Pillow==10.2.0
 platformdirs==3.11.0
 plotly==5.19.0
