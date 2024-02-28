@@ -1,0 +1,51 @@
+{
+  "id": 74,
+  "meta": {
+    "seo_title": "Getting Started | UKHSA data dashboard",
+    "search_description": "Access our data provides guidance for use of UKHSA data dashboard public api.",
+    "type": "composite.CompositePage",
+    "detail_url": "http://localhost/api/pages/74/",
+    "html_url": null,
+    "slug": "getting-started",
+    "show_in_menus": false,
+    "first_published_at": "2024-02-20T11:42:50.144483Z",
+    "alias_of": null,
+    "parent": {
+      "id": 73,
+      "meta": {
+        "type": "composite.CompositePage",
+        "detail_url": "http://localhost/api/pages/73/",
+        "html_url": null
+      },
+      "title": "Access our data"
+    }
+  },
+  "title": "Getting started",
+  "date_posted": "2024-02-20",
+  "body": [
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"o4rj9\">This API is useful for applications that incorporate content from the UKHSA data dasbhoard, and for keeping that content up to date. It provides a more accessible and predictable interface that what can be achieved through scraping HTML pages.</p>",
+      "id": "a2826574-5e4a-48f1-b17e-c8eca675a167"
+    },
+    {
+      "type": "code_block",
+      "value": {
+        "heading": "Setup your first UKHSA data dashboard API call",
+        "content": [
+          {
+            "type": "code_snippet",
+            "value": {
+              "language": "Javascript",
+              "code": "const endpoint =\r\n  \"https://api.coronavirus.data.gov.uk/v1/data?\" +\r\n  \"filters=areaType=nation;areaName=england&\" +\r\n  'structure={\"date\":\"date\", \"newCases\":\"newCaseByPublishDate\"}';\r\n\r\nconst getData = async (url) => {\r\n  const { data, status, statusText } = await get(url, { timeout: 1000 });\r\n\r\n  if (status >= 400) throw new Error(statusText);\r\n\r\n  return data;\r\n};\r\n\r\nconst main = async () => {\r\n    const result = await getData(endpoint);\r\n    console.log(result)\r\n};\r\n\r\nmain().catch(err => {\r\n    console.log(err);\r\n    ProcessingInstruction.exitCode = 1;\r\n})"
+            },
+            "id": "c9e86706-7326-4938-a0ea-3c3d0190457c"
+          }
+        ]
+      },
+      "id": "9be80d27-8055-4877-ba21-d66662ee545d"
+    }
+  ],
+  "last_published_at": "2024-02-20T11:42:50.144483Z",
+  "related_links": []
+}

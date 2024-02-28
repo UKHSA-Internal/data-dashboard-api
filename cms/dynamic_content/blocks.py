@@ -1,3 +1,4 @@
+from django.db import models
 from wagtail import blocks
 from wagtail.snippets.blocks import SnippetChooserBlock
 
@@ -51,3 +52,23 @@ class ButtonChooserBlock(SnippetChooserBlock):
                 "button_type": value.button_type,
             }
         return None
+
+
+class ProgrammingLanguages(models.TextChoices):
+    JAVASCRIPT = "Javascript"
+
+    @classmethod
+    def get_programming_languages(cls) -> tuple[tuple[str, str]]:
+        return tuple((language.value, language.value) for language in cls)
+
+
+class CodeSnippet(blocks.StructBlock):
+    language = blocks.ChoiceBlock(
+        choices=ProgrammingLanguages.get_programming_languages,
+        default=ProgrammingLanguages.JAVASCRIPT.value,
+    )
+    code = blocks.TextBlock(form_classname="codeblock_monospace")
+
+
+class CodeBlock(blocks.StreamBlock):
+    code_snippet = CodeSnippet()

@@ -1,8 +1,8 @@
 {
     "id": 121,
     "meta": {
-        "seo_title": "",
-        "search_description": "",
+        "seo_title": "Bulk downloads | UKHSA data dashboard",
+        "search_description": "Download of all current chart data published on the UKHSA dashboard",
         "type": "composite.CompositePage",
         "detail_url": "http://localhost/api/pages/121/",
         "html_url": null,

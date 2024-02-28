@@ -1,6 +1,11 @@
-from wagtail.blocks import RichTextBlock, StreamBlock, StructBlock, TextBlock
+from wagtail.blocks import (
+    RichTextBlock,
+    StreamBlock,
+    StructBlock,
+    TextBlock,
+)
 
-from cms.dynamic_content import cards, help_texts
+from cms.dynamic_content import blocks, cards, help_texts
 
 
 class ContentCards(StreamBlock):
@@ -20,3 +25,11 @@ class Section(StructBlock):
 class TextSection(StructBlock):
     title = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
     body = RichTextBlock(help_text=help_texts.REQUIRED_BODY_FIELD, required=True)
+
+
+class CodeExample(StructBlock):
+    heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=False)
+    content = blocks.CodeBlock(help_text=help_texts.CODE_EXAMPLE, required=True)
+
+    class Meta:
+        icon = "code"
