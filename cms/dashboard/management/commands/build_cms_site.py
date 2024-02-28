@@ -154,7 +154,7 @@ def _add_download_button_to_composite_body(body: dict[list[dict]]) -> dict[list[
     return body
 
 
-def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
+def _create_bulk_downloads_page(name: str, parent_page: Page) -> CompositePage:
     data = open_example_page_response(page_name=name)
 
     body = _remove_comment_from_body(body=data["body"])
@@ -162,6 +162,30 @@ def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
 
     page = CompositePage(
         body=composite_body,
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        date_posted=data["meta"]["first_published_at"].split("T")[0],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        show_in_menus=data["meta"]["show_in_menus"],
+    )
+
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _create_related_links(
+        related_link_class=CompositeRelatedLink,
+        response_data=data,
+        page=page,
+    )
+
+    return page
+
+
+def _create_composite_page(name: str, parent_page: Page) -> CompositePage:
+    data = open_example_page_response(page_name=name)
+
+    page = CompositePage(
+        body=data["body"],
         title=data["title"],
         slug=data["meta"]["slug"],
         date_posted=data["meta"]["first_published_at"].split("T")[0],
@@ -270,7 +294,16 @@ class Command(BaseCommand):
             name="whats_new", parent_page=root_page
         )
 
-        _create_composite_page(name="bulk_downloads", parent_page=root_page)
+        _create_bulk_downloads_page(name="bulk_downloads", parent_page=root_page)
+
+        # Create access our data parent and child page
+        access_our_data_parent_page = _create_composite_page(
+            name="access_our_data_parent_page", parent_page=root_page
+        )
+        _create_composite_page(
+            name="access_our_data_getting_started",
+            parent_page=access_our_data_parent_page,
+        )
 
         _create_whats_new_child_entry(
             name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
