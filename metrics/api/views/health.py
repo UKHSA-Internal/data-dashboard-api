@@ -11,6 +11,8 @@ class HealthView(APIView):
 
     @staticmethod
     def get(*args, **kwargs):
+        """This health probe can be used to determine whether the service is ready."""
+        return HttpResponse(status=HTTPStatus.OK.value)
 
 
 class InternalHealthView(APIView):

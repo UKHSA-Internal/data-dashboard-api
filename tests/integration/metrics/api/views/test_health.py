@@ -35,7 +35,7 @@ class TestHealthView:
         client = APIClient()
 
         # When
-        response = client.post(path="/health/")
+        response = client.post(path=self.path)
 
         # Then
         assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
