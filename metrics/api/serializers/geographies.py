@@ -106,3 +106,24 @@ def _serialize_queryset(
         {"geography_type": geography_type, "geographies": geographies}
         for geography_type, geographies in merged_geographies.items()
     ]
+
+
+class GeographiesRequestSerializer(serializers.Serializer):
+    topic = serializers.CharField()
+
+
+class GeographiesResponseGeographiesSerializer(serializers.Serializer):
+    name = serializers.CharField()
+
+
+class GeographiesResponseGeographiesListSerializer(serializers.ListSerializer):
+    child = GeographiesResponseGeographiesSerializer()
+
+
+class GeographiesResponseListSerializer(serializers.Serializer):
+    geography_type = serializers.CharField()
+    geographies = GeographiesResponseGeographiesListSerializer()
+
+
+class GeographiesResponseSerializer(serializers.ListSerializer):
+    child = GeographiesResponseListSerializer()
