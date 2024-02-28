@@ -5,7 +5,7 @@ from metrics.domain.utils import _check_for_substring_match
 URL_PATTERN_HINT = tuple[str, str, str, Callable]
 
 
-PATHS_TO_HIDE_FROM_SWAGGER: tuple[str] = ("cms-admin",)
+PATHS_TO_HIDE_FROM_SWAGGER: tuple[str] = ("cms-admin", "endpoint_to_exclude")
 
 
 def pre_processing_endpoint_filter_hook(
