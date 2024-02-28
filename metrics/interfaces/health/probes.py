@@ -5,7 +5,7 @@ from django.core.cache import cache as django_cache_proxy
 from django.db import connection as django_db_proxy
 from django.utils.connection import ConnectionProxy
 
-from metrics.api.urls_construction import AppMode
+from metrics.api import enums
 
 OPTIONAL_CONNECTION_PROXY = ConnectionProxy | None
 
@@ -22,9 +22,7 @@ class HealthProbeManagement:
         cache_connection: OPTIONAL_CONNECTION_PROXY = None,
         database_connection: OPTIONAL_CONNECTION_PROXY = None,
     ):
-        self._cache_connection = cache_connection or self._get_redis_client(
-            django_cache_proxy=django_cache_proxy
-        )
+        self._cache_connection = cache_connection or django_cache_proxy
         self._database_connection = database_connection or django_db_proxy
 
     def perform_health_check(self) -> bool:
@@ -50,13 +48,13 @@ class HealthProbeManagement:
         """
         current_app_mode: str = os.environ.get("APP_MODE")
 
-        if current_app_mode in AppMode.dependent_on_db():
+        if current_app_mode in enums.AppMode.dependent_on_db():
             try:
                 self.ping_database()
             except HealthProbeForDatabaseFailedError:
                 return False
 
-        if current_app_mode in AppMode.dependent_on_cache():
+        if current_app_mode in enums.AppMode.dependent_on_cache():
             try:
                 self.ping_cache()
             except HealthProbeForCacheFailedError:
@@ -77,8 +75,12 @@ class HealthProbeManagement:
             ping to the cache fails for any reason
 
         """
+        redis_client: redis.Redis = self._get_redis_client(
+            django_cache_proxy=self._cache_connection
+        )
+
         try:
-            cache_is_pingable: bool = self._cache_connection.ping()
+            cache_is_pingable: bool = redis_client.ping()
         except redis.exceptions.RedisError as error:
             raise HealthProbeForCacheFailedError from error
 
@@ -127,6 +129,18 @@ class HealthProbeManagement:
             to the database fails for any reason
 
         """
-        db_is_usable: bool = self._database_connection.is_usable()
-        if not db_is_usable:
+        try:
+            row: tuple[int] = self._fetch_row_from_db()
+        except Exception as error:  # noqa: BLE001
+            raise HealthProbeForDatabaseFailedError from error
+
+        if not row:
             raise HealthProbeForDatabaseFailedError
+
+    def _fetch_row_from_db(self) -> tuple[int]:
+        # Unfortunately the `is_usable()` method
+        # on the django postgresql wrapper begins with a closed connection
+        # so it is easier to just simply re-implement here with a valid connection
+        with self._database_connection.cursor() as cursor:
+            cursor.execute("SELECT 1;")
+            return cursor.fetchone()

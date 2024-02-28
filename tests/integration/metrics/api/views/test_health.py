@@ -10,10 +10,9 @@ class TestHealthView:
     def path(self) -> str:
         return "/health/"
 
-    def test_returns_200_if_check_cache_for_all_pages_succeeds(self):
+    def test_returns_200_if_healthy(self):
         """
-        Given the `check_cache_for_all_pages()` function
-            which will run successfully
+        Given an `APIClient`
         When a `GET` request is made to the `/health/` endpoint
         Then an HTTP 200 OK response is returned
         """
