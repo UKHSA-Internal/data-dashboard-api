@@ -11,13 +11,35 @@ class TestHealthView:
     def path(self) -> str:
         return "/health/"
 
+    def test_returns_200_ok(self):
+        """
+        Given an `APIClient`
+        When a `GET` request is made to the `/health/` endpoint
+        Then an HTTP 200 OK response is returned
+        """
+        # Given
+        client = APIClient()
+
+        # When
+        response = client.get(path=self.path)
+
+        # Then
+        assert response.status_code == HTTPStatus.OK.value
+
+
+class TestInternalHealthView:
+    @property
+    def path(self) -> str:
+        return "/.well-known/health-check/"
+
     @mock.patch.object(HealthProbeManagement, "perform_health_check")
     def test_returns_200_if_healthy(self, mocked_perform_health_check: mock.MagicMock):
         """
         Given an `APIClient`
         And the underlying health probe which returns True
             indicating a healthy probe
-        When a `GET` request is made to the `/health/` endpoint
+        When a `GET` request is made
+            to the `/.well-known/health-check/` endpoint
         Then an HTTP 200 OK response is returned
         """
         # Given
@@ -38,7 +60,8 @@ class TestHealthView:
         Given an `APIClient`
         And the underlying health probe which returns False
             indicating an unhealthy probe
-        When a `GET` request is made to the `/health/` endpoint
+        When a `GET` request is made
+            to the /.well-known/health-check/` endpoint
         Then an HTTP 503 SERVICE UNAVAILABLE response is returned
         """
         # Given
