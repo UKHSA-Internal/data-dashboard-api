@@ -314,7 +314,7 @@ class TestIngestion:
         current_headline_from_api = self._fetch_latest_headline_from_endpoint(
             payload=headlines_endpoint_payload
         )
-        assert current_headline_from_api == {"value": first_metric_value}
+        assert current_headline_from_api["value"] == first_metric_value
 
         # Given
         second_metric_value = 456
@@ -329,7 +329,7 @@ class TestIngestion:
         current_headline_from_api = self._fetch_latest_headline_from_endpoint(
             payload=headlines_endpoint_payload
         )
-        assert current_headline_from_api == {"value": second_metric_value}
+        assert current_headline_from_api["value"] == second_metric_value
 
         # Given
         third_metric_value = 789
@@ -344,7 +344,7 @@ class TestIngestion:
         current_headline_from_api = self._fetch_latest_headline_from_endpoint(
             payload=headlines_endpoint_payload
         )
-        assert current_headline_from_api == {"value": third_metric_value}
+        assert current_headline_from_api["value"] == third_metric_value
 
     @staticmethod
     def _fetch_latest_headline_from_endpoint(

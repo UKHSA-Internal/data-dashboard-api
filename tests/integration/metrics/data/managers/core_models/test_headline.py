@@ -100,8 +100,11 @@ class TestCoreHeadlineManager:
         )
 
         # Then
-        assert core_headline_live.metric_value in returned_queryset
-        assert core_headline_under_embargo.metric_value not in returned_queryset
+        returned_metric_values = returned_queryset.values_list(
+            "metric_value", flat=True
+        )
+        assert core_headline_live.metric_value in returned_metric_values
+        assert core_headline_under_embargo.metric_value not in returned_metric_values
 
     @pytest.mark.django_db
     def test_data_with_no_embargo_set_is_returned(self):
