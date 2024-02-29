@@ -99,10 +99,13 @@ class CoreHeadlineQuerySet(models.QuerySet):
                 E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
-            An ordered queryset from oldest -> newest
-                of the individual metric_value numbers only:
+            An ordered queryset from oldest -> newest:
                 Examples:
-                    `<CoreHeadlineQuerySet [ Decimal('2.0'), Decimal('9.0')]>`
+                    `<CoreHeadlineQuerySet [
+                        <CoreHeadline: Core Headline Data for 2023-09-30 23:00:00+00:00,
+                         metric 'COVID-19_headline_positivity_latest',
+                         value: 99.0000>
+                        ]>`
 
         """
         queryset = self.filter(
