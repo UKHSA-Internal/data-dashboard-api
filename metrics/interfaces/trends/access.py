@@ -138,8 +138,10 @@ def generate_trend_numbers(
                 {
                   "metric_name": "new_cases_7days_change",
                   "metric_value": -692,
+                  "metric_period_end": "2024-02-29",
                   "percentage_metric_name": "new_deaths_7days_change_percentage",
                   "percentage_metric_value": 3.1,
+                  "percentage_metric_period_end": "2024-02-29",
                   "direction": "down",
                   "colour": "green"
                 }
