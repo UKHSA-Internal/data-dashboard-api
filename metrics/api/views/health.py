@@ -11,6 +11,15 @@ class HealthView(APIView):
 
     @staticmethod
     def get(*args, **kwargs):
+        """This health probe can be used to determine whether the service is ready."""
+        return HttpResponse(status=HTTPStatus.OK.value)
+
+
+class InternalHealthView(APIView):
+    permission_classes = []
+
+    @staticmethod
+    def get(*args, **kwargs):
         """This health probe can be used to determine whether the service is ready.
 
         If any upstream services are not available then an `HTTP 503 SERVICE UNAVAILABLE` response will be returned.

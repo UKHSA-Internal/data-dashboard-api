@@ -24,6 +24,7 @@ from metrics.api.views import (
     TrendsView,
 )
 from metrics.api.views.geographies import GeographiesView
+from metrics.api.views.health import InternalHealthView
 from public_api import construct_urlpatterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -143,6 +144,8 @@ static_urlpatterns = [
 common_urlpatterns = [
     # Health probe
     path("health/", HealthView.as_view()),
+    # Internal health probe
+    path(".well-known/health-check/", InternalHealthView.as_view()),
     # Static files
     path("", include(static_urlpatterns)),
 ]
