@@ -4,6 +4,7 @@ import pytest
 from django.utils import timezone
 
 from metrics.data.models.core_models import CoreHeadline
+from metrics.domain.models import get_date_n_months_ago_from_timestamp
 from tests.factories.metrics.headline import CoreHeadlineFactory
 
 
@@ -77,10 +78,9 @@ class TestCoreHeadlineManager:
         )
 
         current_date = timezone.now()
-        future_embargo_date = datetime.datetime(
-            year=current_date.year + 1,
-            month=current_date.month,
-            day=current_date.day,
+        future_embargo_date = get_date_n_months_ago_from_timestamp(
+            datetime_stamp=current_date,
+            number_of_months=-2,
         )
         embargoed_metric_value = 100
         core_headline_under_embargo = CoreHeadlineFactory.create_record(
