@@ -73,7 +73,7 @@ class TrendsInterface:
         """Creates a `Trend` model which represents the trend block.
 
         Returns:
-            `Trend` model with the associated metric values
+            `Trend` model with the associated metric values, period_end dates
             and inherent colour and direction calculation logic
 
         Raises:
