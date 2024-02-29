@@ -1,3 +1,4 @@
+import datetime
 from http import HTTPStatus
 
 import pytest
@@ -48,8 +49,14 @@ class TestTrendsView:
             "direction": "up",
             "metric_name": metric_name,
             "metric_value": main_record.metric_value,
+            "metric_period_end": datetime.datetime.strptime(
+                main_record.period_end, "%Y-%m-%d"
+            ).date(),
             "percentage_metric_name": percentage_metric_name,
             "percentage_metric_value": percentage_record.metric_value,
+            "percentage_metric_period_end": datetime.datetime.strptime(
+                percentage_record.period_end, "%Y-%m-%d"
+            ).date(),
         }
         assert response.data == expected_response_data
 

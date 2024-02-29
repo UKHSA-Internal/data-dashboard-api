@@ -63,15 +63,19 @@ class TestTrendsInterface:
         metric_name = example_args["metric_name"]
         percentage_metric_name = example_args["percentage_metric_name"]
 
+        period_end = "2024-02-29"
+        params_to_build_headlines = {**example_args, "period_end": period_end}
         (
-            main_core_time_series,
-            percentage_core_time_series,
-        ) = FakeCoreHeadlineFactory.build_example_trend_type_records(**example_args)
+            main_core_headline,
+            percentage_core_headline,
+        ) = FakeCoreHeadlineFactory.build_example_trend_type_records(
+            **params_to_build_headlines
+        )
 
         interface = TrendsInterface(
             **example_args,
             core_headline_manager=FakeCoreHeadlineManager(
-                headlines=[main_core_time_series, percentage_core_time_series]
+                headlines=[main_core_headline, percentage_core_headline]
             ),
         )
 
@@ -85,8 +89,11 @@ class TestTrendsInterface:
 
         # Values match the associated `metric_value` fields on the records
         # fetched via the model manager
-        assert trend.metric_value == main_core_time_series.metric_value
-        assert trend.percentage_metric_value == percentage_core_time_series.metric_value
+        assert trend.metric_value == main_core_headline.metric_value
+        assert trend.percentage_metric_value == percentage_core_headline.metric_value
+
+        assert str(trend.metric_period_end) == period_end
+        assert str(trend.percentage_metric_period_end) == period_end
 
     def test_get_latest_metric_value_raises_error_when_model_manager_returns_no_data(
         self,

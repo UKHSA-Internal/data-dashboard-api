@@ -92,8 +92,10 @@ class TrendsInterface:
         return Trend(
             metric_name=self.metric_name,
             metric_value=core_headline_metric.metric_value,
+            metric_period_end=core_headline_metric.period_end,
             percentage_metric_name=self.percentage_metric_name,
             percentage_metric_value=core_headline_percentage_metric.metric_value,
+            percentage_metric_period_end=core_headline_percentage_metric.period_end,
         )
 
 
