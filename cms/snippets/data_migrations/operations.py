@@ -1,4 +1,4 @@
-from cms.snippets.models import Button, ButtonTypes, Methods
+from cms.snippets.models.internal_button import Button, ButtonTypes, Methods
 
 
 def get_or_create_download_button_snippet(*args, **kwargs) -> dict[str, str]:

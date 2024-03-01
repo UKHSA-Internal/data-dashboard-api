@@ -41,19 +41,6 @@ class MetricNumberBlock(blocks.StreamBlock):
     column = MetricNumberBlockTypes()
 
 
-class ButtonChooserBlock(SnippetChooserBlock):
-    def get_api_representation(self, value, context=None) -> dict | None:
-        if value:
-            return {
-                "text": value.text,
-                "loading_text": value.loading_text,
-                "endpoint": value.endpoint,
-                "method": value.method,
-                "button_type": value.button_type,
-            }
-        return None
-
-
 class ProgrammingLanguages(models.TextChoices):
     JAVASCRIPT = "Javascript"
 
@@ -72,3 +59,28 @@ class CodeSnippet(blocks.StructBlock):
 
 class CodeBlock(blocks.StreamBlock):
     code_snippet = CodeSnippet()
+
+
+class ButtonChooserBlock(SnippetChooserBlock):
+    def get_api_representation(self, value, context=None) -> dict | None:
+        if value:
+            return {
+                "text": value.text,
+                "loading_text": value.loading_text,
+                "endpoint": value.endpoint,
+                "method": value.method,
+                "button_type": value.button_type,
+            }
+        return None
+
+
+class ExternalButtonChooserBlock(SnippetChooserBlock):
+    def get_api_representation(self, value, context=None) -> dict | None:
+        if value:
+            return {
+                "text": value.text,
+                "url": value.url,
+                "button_type": value.button_type,
+                "icon": value.icon,
+            }
+        return None

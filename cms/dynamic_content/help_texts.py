@@ -182,3 +182,12 @@ If nothing is provided, `metric value` will be used by default.
 CODE_EXAMPLE: str = """
 A required section that can be used to add code examples to a composite page type.
 """
+
+BUTTON_TYPE_GDS: str = """
+A required choice of the button type to be used, the options include `Primary`, `Secondary`.
+These align with GDS guidelines.
+"""
+
+BUTTON_ICON: str = """
+A required choice of icon to add to a button, defaults to none.
+"""
