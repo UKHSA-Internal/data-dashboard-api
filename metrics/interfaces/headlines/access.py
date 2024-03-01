@@ -1,8 +1,7 @@
-from decimal import Decimal
-
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreHeadline
+from metrics.domain.headlines.state import Headline
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
@@ -28,18 +27,20 @@ class HeadlinesInterface:
         self.age = age
         self.core_headline_manager = core_headline_manager
 
-    def get_latest_metric_value(self) -> float:
+    def get_latest_metric_value(self) -> Headline:
         """Gets the latest metric_value for the associated headline data.
 
         Returns:
-            The associated `metric_value` as a float
+            An enriched `Headline` model containing:
+                - The individual metric_value number
+                - The date associated with the `period_end` for that number
 
-        Raises:
-            `HeadlineNumberDataNotFoundError`: If the query returned no records.
+            Raises:
+                `HeadlineNumberDataNotFoundError`: If the query returned no records.
 
         """
-        latest_metric_value: [Decimal | None] = (
-            self.core_headline_manager.get_latest_metric_value(
+        core_headline: CoreHeadline | None = (
+            self.core_headline_manager.get_latest_headline(
                 topic_name=self.topic_name,
                 metric_name=self.metric_name,
                 geography_name=self.geography_name,
@@ -50,10 +51,18 @@ class HeadlinesInterface:
             )
         )
 
-        if latest_metric_value is None:
-            raise HeadlineNumberDataNotFoundError
+        try:
+            headline = Headline(
+                metric_value=core_headline.metric_value,
+                period_end=core_headline.period_end,
+            )
+        except AttributeError as error:
+            # If the returned `core_headline` is None
+            # i.e. there is no data available for those parameters
+            # then an `AttributeError` will be thrown
+            raise HeadlineNumberDataNotFoundError from error
 
-        return latest_metric_value
+        return headline
 
 
 class BaseInvalidHeadlinesRequestError(Exception): ...
@@ -73,7 +82,7 @@ def generate_headline_number(
     stratum_name: str,
     sex: str,
     age: str,
-) -> float:
+) -> Headline:
     """Gets the headline number metric_value for the associated `CoreHeadline` record.
 
     Args:
@@ -95,7 +104,9 @@ def generate_headline_number(
             E.g. `0_4` would be used to capture the age of 0-4 years old
 
     Returns:
-        float: The associated `metric_value`
+        An enriched `Headline` model containing:
+            - The individual metric_value number
+            - The date associated with the `period_end` for that number
 
     Raises:
         `HeadlineNumberDataNotFoundError`: If the query returned no records.
@@ -111,9 +122,4 @@ def generate_headline_number(
         age=age,
     )
 
-    metric_value = interface.get_latest_metric_value()
-
-    if metric_value is None:
-        raise HeadlineNumberDataNotFoundError
-
-    return metric_value
+    return interface.get_latest_metric_value()

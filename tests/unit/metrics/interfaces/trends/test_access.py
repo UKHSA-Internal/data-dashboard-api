@@ -47,10 +47,10 @@ class TestTrendsInterface:
         # Then
         expected_args = self.example_args
         expected_args.pop("percentage_metric_name")
-        spy_core_headline_manager.get_latest_metric_value.assert_called_once_with(
+        spy_core_headline_manager.get_latest_headline.assert_called_once_with(
             **expected_args,
         )
-        assert value == spy_core_headline_manager.get_latest_metric_value.return_value
+        assert value == spy_core_headline_manager.get_latest_headline.return_value
 
     def test_get_trend_returns_correct_object(self):
         """

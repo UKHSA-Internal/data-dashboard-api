@@ -47,7 +47,7 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        retrieved_record = CoreHeadline.objects.get_latest_metric_value(
+        retrieved_record = CoreHeadline.objects.get_latest_headline(
             topic_name=expected_round_headline.metric.topic.name,
             metric_name=expected_round_headline.metric.name,
             geography_name=expected_round_headline.geography.name,
@@ -56,7 +56,7 @@ class TestCoreHeadlineManager:
 
         # Then
         assert (
-            retrieved_record
+            retrieved_record.metric_value
             == expected_round_headline.metric_value
             != second_stale_round_headline.metric_value
             != first_stale_round_headline.metric_value
@@ -89,21 +89,22 @@ class TestCoreHeadlineManager:
 
         # When
         core_headline_queryset = CoreHeadline.objects.get_queryset()
-        returned_queryset = (
-            core_headline_queryset.by_topic_metric_ordered_from_newest_to_oldest(
-                topic_name=core_headline_live.metric.topic.name,
-                metric_name=core_headline_live.metric.name,
-                geography_name=core_headline_live.geography.name,
-                geography_type_name=core_headline_live.geography.geography_type.name,
-                stratum_name=core_headline_live.stratum.name,
-                sex=core_headline_live.sex,
-                age=core_headline_live.age.name,
-            )
+        returned_queryset = core_headline_queryset.get_headlines_released_from_embargo(
+            topic_name=core_headline_live.metric.topic.name,
+            metric_name=core_headline_live.metric.name,
+            geography_name=core_headline_live.geography.name,
+            geography_type_name=core_headline_live.geography.geography_type.name,
+            stratum_name=core_headline_live.stratum.name,
+            sex=core_headline_live.sex,
+            age=core_headline_live.age.name,
         )
 
         # Then
-        assert core_headline_live.metric_value in returned_queryset
-        assert core_headline_under_embargo.metric_value not in returned_queryset
+        returned_metric_values = returned_queryset.values_list(
+            "metric_value", flat=True
+        )
+        assert core_headline_live.metric_value in returned_metric_values
+        assert core_headline_under_embargo.metric_value not in returned_metric_values
 
     @pytest.mark.django_db
     def test_data_with_no_embargo_set_is_returned(self):
@@ -133,7 +134,7 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        returned_metric_value = CoreHeadline.objects.get_latest_metric_value(
+        core_headline = CoreHeadline.objects.get_latest_headline(
             topic_name=core_headline_live.metric.topic.name,
             metric_name=core_headline_live.metric.name,
             geography_name=core_headline_live.geography.name,
@@ -144,8 +145,9 @@ class TestCoreHeadlineManager:
         )
 
         # Then
-        assert int(returned_metric_value) == int(
-            core_headline_with_immediate_embargo.metric_value
+        assert (
+            core_headline.metric_value
+            == core_headline_with_immediate_embargo.metric_value
         )
 
     @pytest.mark.django_db
