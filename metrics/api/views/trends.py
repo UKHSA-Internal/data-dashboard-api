@@ -82,4 +82,4 @@ class TrendsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        return Response(trends_data)
+        return Response(data=trends_data)

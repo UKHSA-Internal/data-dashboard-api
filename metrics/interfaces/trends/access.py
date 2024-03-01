@@ -73,7 +73,7 @@ class TrendsInterface:
         """Creates a `Trend` model which represents the trend block.
 
         Returns:
-            `Trend` model with the associated metric values
+            `Trend` model with the associated metric values, period_end dates
             and inherent colour and direction calculation logic
 
         Raises:
@@ -92,8 +92,10 @@ class TrendsInterface:
         return Trend(
             metric_name=self.metric_name,
             metric_value=core_headline_metric.metric_value,
+            metric_period_end=core_headline_metric.period_end,
             percentage_metric_name=self.percentage_metric_name,
             percentage_metric_value=core_headline_percentage_metric.metric_value,
+            percentage_metric_period_end=core_headline_percentage_metric.period_end,
         )
 
 
@@ -136,8 +138,10 @@ def generate_trend_numbers(
                 {
                   "metric_name": "new_cases_7days_change",
                   "metric_value": -692,
+                  "metric_period_end": "2024-02-29",
                   "percentage_metric_name": "new_deaths_7days_change_percentage",
                   "percentage_metric_value": 3.1,
+                  "percentage_metric_period_end": "2024-02-29",
                   "direction": "down",
                   "colour": "green"
                 }
