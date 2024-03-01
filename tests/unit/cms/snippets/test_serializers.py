@@ -1,4 +1,4 @@
-from cms.snippets.serializers import ButtonSerializer
+from cms.snippets.serializers import ButtonSerializer, ExternalButtonSerializer
 
 
 class TestButtonSerializer:
@@ -32,3 +32,32 @@ class TestButtonSerializer:
         assert serializer.validated_data["endpoint"] == endpoint
         assert serializer.validated_data["method"] == method
         assert serializer.validated_data["button_type"] == button_type
+
+
+class TestExternalButtonSerializer:
+    def test_can_serialize_payload(self):
+        """
+        Given a valid external_button model payload
+        When this is serialized with a `ExternalButtonSerializer`
+        Then the correct validated data is returned
+        """
+        text = "Download"
+        url = "https://www.google.com"
+        button_type = "Primary"
+        icon = "Download"
+        data = {
+            "text": text,
+            "url": url,
+            "button_type": button_type,
+            "icon": icon,
+        }
+
+        # When
+        serializer = ExternalButtonSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        # Then
+        assert serializer.validated_data["text"] == text
+        assert serializer.validated_data["url"] == url
+        assert serializer.validated_data["button_type"] == button_type
+        assert serializer.validated_data["icon"] == icon

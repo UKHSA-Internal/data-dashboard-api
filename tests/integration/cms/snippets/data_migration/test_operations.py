@@ -4,7 +4,7 @@ from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_snippet,
     remove_buttons_snippets,
 )
-from cms.snippets.models import Button, ButtonTypes, Methods
+from cms.snippets.models.internal_button import Button, ButtonTypes, Methods
 
 
 class TestButtonSnippetOperations:
