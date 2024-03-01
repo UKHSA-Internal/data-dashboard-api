@@ -1,3 +1,4 @@
+import datetime
 from unittest import mock
 
 import pytest
@@ -10,11 +11,14 @@ MODULE_PATH: str = "metrics.domain.trends.state"
 class TestTrend:
     @staticmethod
     def _create_valid_payload() -> TREND_AS_DICT:
+        period_end = datetime.date(year=2024, month=2, day=29)
         return {
             "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
             "metric_value": 24568,
+            "metric_period_end": str(period_end),
             "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
             "percentage_metric_value": -0.1,
+            "percentage_metric_period_end": str(period_end),
         }
 
     def test_to_dict_returns_correct_data(self):

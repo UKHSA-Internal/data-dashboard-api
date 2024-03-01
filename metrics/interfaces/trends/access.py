@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from django.db.models import Manager
 
 from metrics.data.models.core_models import CoreHeadline
@@ -37,11 +35,13 @@ class TrendsInterface:
         self.age = age
         self.core_headline_manager = core_headline_manager
 
-    def get_latest_metric_value(self, metric_name: str) -> Decimal:
+    def get_latest_metric_value(self, metric_name: str) -> CoreHeadline:
         """Gets the value for the record associated with the given `metric_to_lookup`
 
         Returns:
-            Decimal: The associated `metric_value`
+            The full matching `CoreHeadline` object
+            which is the latest associated record
+            which has also been released from embargo
 
         Raises:
             TrendNumberDataNotFoundError:
@@ -49,8 +49,8 @@ class TrendsInterface:
                 `topic` / `metric` / `percentage_metric`.
 
         """
-        latest_metric_value: Decimal | None = (
-            self.core_headline_manager.get_latest_metric_value(
+        core_headline: CoreHeadline | None = (
+            self.core_headline_manager.get_latest_headline(
                 topic_name=self.topic_name,
                 metric_name=metric_name,
                 geography_name=self.geography_name,
@@ -61,19 +61,19 @@ class TrendsInterface:
             )
         )
 
-        if latest_metric_value is None:
+        if core_headline is None:
             raise TrendNumberDataNotFoundError(
                 topic_name={self.topic_name},
                 metric_name={metric_name},
             )
 
-        return latest_metric_value
+        return core_headline
 
     def get_trend(self) -> Trend:
         """Creates a `Trend` model which represents the trend block.
 
         Returns:
-            `Trend` model with the associated metric values
+            `Trend` model with the associated metric values, period_end dates
             and inherent colour and direction calculation logic
 
         Raises:
@@ -82,18 +82,20 @@ class TrendsInterface:
                 `topic` / `metric` / `percentage_metric`.
 
         """
-        metric_value: Decimal = self.get_latest_metric_value(
+        core_headline_metric: CoreHeadline = self.get_latest_metric_value(
             metric_name=self.metric_name
         )
-        percentage_metric_value: Decimal = self.get_latest_metric_value(
+        core_headline_percentage_metric: CoreHeadline = self.get_latest_metric_value(
             metric_name=self.percentage_metric_name
         )
 
         return Trend(
             metric_name=self.metric_name,
-            metric_value=metric_value,
+            metric_value=core_headline_metric.metric_value,
+            metric_period_end=core_headline_metric.period_end,
             percentage_metric_name=self.percentage_metric_name,
-            percentage_metric_value=percentage_metric_value,
+            percentage_metric_value=core_headline_percentage_metric.metric_value,
+            percentage_metric_period_end=core_headline_percentage_metric.period_end,
         )
 
 
@@ -136,8 +138,10 @@ def generate_trend_numbers(
                 {
                   "metric_name": "new_cases_7days_change",
                   "metric_value": -692,
+                  "metric_period_end": "2024-02-29",
                   "percentage_metric_name": "new_deaths_7days_change_percentage",
                   "percentage_metric_value": 3.1,
+                  "percentage_metric_period_end": "2024-02-29",
                   "direction": "down",
                   "colour": "green"
                 }

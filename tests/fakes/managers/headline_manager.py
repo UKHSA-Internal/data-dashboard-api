@@ -1,3 +1,5 @@
+import datetime
+
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
 
 
@@ -11,7 +13,7 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
         self.headlines = headlines
         super().__init__(**kwargs)
 
-    def get_latest_metric_value(
+    def get_latest_headline(
         self,
         topic_name: str,
         metric_name: str,
@@ -20,7 +22,7 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-    ) -> float | None:
+    ) -> tuple[float, datetime.date] | None:
         filtered_headlines = [
             core_headline
             for core_headline in self.headlines
@@ -52,6 +54,6 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
             filtered_headlines = [x for x in filtered_headlines if x.age.name == age]
 
         try:
-            return filtered_headlines[0].metric_value
+            return filtered_headlines[0]
         except IndexError:
             return None

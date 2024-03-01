@@ -9,6 +9,7 @@ from metrics.api.serializers.headlines import (
     HeadlinesQuerySerializer,
     HeadlinesResponseSerializer,
 )
+from metrics.domain.headlines.state import Headline
 from metrics.domain.models.headline import HeadlineParameters
 from metrics.interfaces.headlines.access import (
     BaseInvalidHeadlinesRequestError,
@@ -74,7 +75,7 @@ class HeadlinesView(APIView):
         serialized_model: HeadlineParameters = query_serializer.to_models()
 
         try:
-            headline_number: float = generate_headline_number(
+            headline: Headline = generate_headline_number(
                 topic_name=serialized_model.topic_name,
                 metric_name=serialized_model.metric_name,
                 geography_type_name=serialized_model.geography_type_name,
@@ -88,4 +89,10 @@ class HeadlinesView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        return Response({"value": headline_number})
+        return Response(
+            data={
+                "value": headline.metric_value,
+                "period_end": headline.period_end,
+            },
+            status=HTTPStatus.OK,
+        )
