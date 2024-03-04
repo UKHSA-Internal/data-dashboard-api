@@ -46,7 +46,7 @@ class PlotsText:
 
     @classmethod
     def _introduce_no_plots(cls) -> str:
-        return "There are no plots available for this chart."
+        return "There is no data being shown for this chart."
 
     @classmethod
     def _introduce_single_plot(cls) -> str:
@@ -85,7 +85,7 @@ class PlotsText:
             )
 
         if plot_parameters.label:
-            description += f"The plot has a label of '{plot_parameters.label}'."
+            description += f"The plot has a label of '{plot_parameters.label}'. "
 
         description += self._describe_plot_parameters(plot_parameters=plot_parameters)
 

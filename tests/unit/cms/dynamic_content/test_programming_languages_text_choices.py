@@ -11,7 +11,7 @@ class TestProgrammingLanguagesTextChoices:
         """
         # Given
         expected_languages = tuple(
-            (item.value, item.value) for item in list(ProgrammingLanguages)
+            (item.value, item.value) for item in ProgrammingLanguages
         )
 
         # When
