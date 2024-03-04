@@ -4,6 +4,7 @@ from metrics.domain.utils import ChartTypes
 
 class PlotsText:
     """This class is used to build alt_text for a chart/ list of enriched `PlotData` models"""
+
     def __init__(self, plots_data: list[PlotData]):
         self.plots_data: list[PlotData] = self._extract_plots_with_valid_data(
             plots_data=plots_data
