@@ -26,7 +26,7 @@ def core_headline_example() -> CoreHeadline:
     geography_type = GeographyType.objects.create(name="Nation")
     geography = Geography.objects.create(name="England", geography_type=geography_type)
     return CoreHeadline.objects.create(
-        metric_value=123,
+        metric_value=123.0000,
         metric=metric,
         geography=geography,
         refresh_date="2023-01-07",

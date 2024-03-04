@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 
 from pydantic.main import BaseModel
@@ -29,8 +30,10 @@ TREND_AS_DICT = dict[str, str | int | float]
 class Trend(BaseModel):
     metric_name: str
     metric_value: int | float
+    metric_period_end: datetime.date | str
     percentage_metric_name: str
     percentage_metric_value: float
+    percentage_metric_period_end: datetime.date | str
 
     def model_dump(self, *args, **kwargs) -> TREND_AS_DICT:
         data = super().model_dump(*args, **kwargs)

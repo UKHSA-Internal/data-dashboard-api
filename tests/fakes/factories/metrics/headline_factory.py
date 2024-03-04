@@ -1,3 +1,4 @@
+import datetime
 import secrets
 
 import factory
@@ -37,6 +38,7 @@ class FakeCoreHeadlineFactory(factory.Factory):
         topic_name: str,
         metric_name: str,
         percentage_metric_name: str,
+        period_end: str | datetime.date,
         geography_name: str | None = None,
         geography_type_name: str | None = None,
         stratum_name: str | None = None,
@@ -76,6 +78,7 @@ class FakeCoreHeadlineFactory(factory.Factory):
             geography=geography,
             stratum=stratum,
             age=age,
+            period_end=period_end,
         )
         headline_records.append(metric_time_series)
 
@@ -86,6 +89,7 @@ class FakeCoreHeadlineFactory(factory.Factory):
             geography=geography,
             stratum=stratum,
             age=age,
+            period_end=period_end,
         )
         headline_records.append(metric_time_series)
 

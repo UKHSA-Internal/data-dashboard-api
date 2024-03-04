@@ -5,8 +5,6 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
-from decimal import Decimal
-
 from django.db import models
 from django.utils import timezone
 
@@ -70,7 +68,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
         return queryset
 
-    def by_topic_metric_ordered_from_newest_to_oldest(
+    def get_headlines_released_from_embargo(
         self,
         topic_name: str,
         metric_name: str,
@@ -101,10 +99,13 @@ class CoreHeadlineQuerySet(models.QuerySet):
                 E.g. `0_4` would be used to capture the age of 0-4 years old
 
         Returns:
-            An ordered queryset from oldest -> newest
-                of the individual metric_value numbers only:
+            An ordered queryset from oldest -> newest:
                 Examples:
-                    `<CoreHeadlineQuerySet [ Decimal('2.0'), Decimal('9.0')]>`
+                    `<CoreHeadlineQuerySet [
+                        <CoreHeadline: Core Headline Data for 2023-09-30 23:00:00+00:00,
+                         metric 'COVID-19_headline_positivity_latest',
+                         value: 99.0000>
+                        ]>`
 
         """
         queryset = self.filter(
@@ -120,8 +121,6 @@ class CoreHeadlineQuerySet(models.QuerySet):
             sex=sex,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
-        queryset = queryset.values_list("metric_value", flat=True)
-
         return self._newest_to_oldest(queryset=queryset)
 
     @staticmethod
@@ -151,7 +150,7 @@ class CoreHeadlineManager(models.Manager):
     def get_queryset(self) -> CoreHeadlineQuerySet:
         return CoreHeadlineQuerySet(model=self.model, using=self.db)
 
-    def get_latest_metric_value(
+    def get_latest_headline(
         self,
         topic_name: str,
         metric_name: str,
@@ -160,7 +159,7 @@ class CoreHeadlineManager(models.Manager):
         stratum_name: str = "",
         sex: str = "",
         age: str = "",
-    ) -> Decimal | None:
+    ) -> "CoreHeadline":
         """Grabs by the latest record by the given `topic_name` and `metric_name`.
 
         Args:
@@ -183,15 +182,15 @@ class CoreHeadlineManager(models.Manager):
 
 
         Returns:
-            The individual metric_value number only.
+            The individual metric_value number and its associated `period_end` date
             Otherwise, None is returned if no record could be found
-            Examples:
-                `2.0`
+            Example:
+                `(Decimal('6276.0000'), datetime.date(2023, 11, 1))`
 
         """
         return (
             self.get_queryset()
-            .by_topic_metric_ordered_from_newest_to_oldest(
+            .get_headlines_released_from_embargo(
                 topic_name=topic_name,
                 metric_name=metric_name,
                 geography_name=geography_name,
