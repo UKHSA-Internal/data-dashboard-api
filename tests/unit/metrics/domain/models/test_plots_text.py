@@ -8,7 +8,7 @@ class TestPlotsText:
         Given an empty list of `PlotData` models
         When `construct_text()` is called
             from an instance of `PlotsText`
-        Then the returned text states there are no plots available.
+        Then the returned text states there is no data available.
         """
         # Given
         empty_plots_data = []
@@ -18,7 +18,7 @@ class TestPlotsText:
         text: str = plots_text.construct_text()
 
         # Then
-        assert text == "There are no plots available for this chart."
+        assert text == "There is no data being shown for this chart."
 
     def test_returns_correct_text_for_plots_with_no_data(
         self, fake_plot_data: PlotData
@@ -27,7 +27,7 @@ class TestPlotsText:
         Given a list of `PlotData` models of which have no data
         When `construct_text()` is called
             from an instance of `PlotsText`
-        Then the returned text states there are no plots available.
+        Then the returned text states there is no data available.
         """
         # Given
         fake_plot_data.x_axis_values = []
@@ -38,7 +38,7 @@ class TestPlotsText:
         text: str = plots_text.construct_text()
 
         # Then
-        assert text == "There are no plots available for this chart."
+        assert text == "There is no data being shown for this chart."
 
     def test_returns_correct_text_for_one_plot(self, fake_plot_data: PlotData):
         """

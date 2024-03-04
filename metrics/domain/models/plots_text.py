@@ -46,7 +46,7 @@ class PlotsText:
 
     @classmethod
     def _introduce_no_plots(cls) -> str:
-        return "There are no plots available for this chart."
+        return "There is no data being shown for this chart."
 
     @classmethod
     def _introduce_single_plot(cls) -> str:
