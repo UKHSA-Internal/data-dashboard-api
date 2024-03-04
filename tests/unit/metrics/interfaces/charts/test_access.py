@@ -7,6 +7,7 @@ import pytest
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts.access import (
+    ChartOutput,
     ChartsInterface,
     InvalidFileFormatError,
     generate_chart_as_file,
@@ -34,10 +35,12 @@ class TestChartsInterface:
             for i in range(10)
         ]
 
+    @mock.patch.object(ChartsInterface, "build_chart_plots_data")
     @mock.patch.object(ChartsInterface, "generate_line_with_shaded_section_chart")
     def test_generate_chart_figure_delegates_call_for_line_with_shaded_section_chart(
         self,
         spy_generate_line_with_shaded_section_chart: mock.MagicMock,
+        mocked_build_chart_plots_data: mock.MagicMock,
         fake_plots_collection: PlotsCollection,
     ):
         """
@@ -47,6 +50,9 @@ class TestChartsInterface:
 
         Patches:
             `spy_generate_line_with_shaded_section_chart`: For the main assertion.
+            `mocked_build_chart_plots_data`: To remove the side effect
+                of having to query the database for data relating to the chart
+
         """
         # Given
         fake_plots_collection.plots[0].chart_type = (
@@ -58,19 +64,24 @@ class TestChartsInterface:
         )
 
         # When
-        generated_chart_figure = charts_interface.generate_chart_figure()
+        generated_chart_output = charts_interface.generate_chart_output()
 
         # Then
-        spy_generate_line_with_shaded_section_chart.assert_called_once()
-        assert (
-            generated_chart_figure
-            == spy_generate_line_with_shaded_section_chart.return_value
+        spy_generate_line_with_shaded_section_chart.assert_called_once_with(
+            plots_data=mocked_build_chart_plots_data.return_value
         )
+        chart_output = ChartOutput(
+            figure=spy_generate_line_with_shaded_section_chart.return_value,
+            description=charts_interface.build_chart_description([]),
+        )
+        assert generated_chart_output == chart_output
 
+    @mock.patch.object(ChartsInterface, "build_chart_plots_data")
     @mock.patch.object(ChartsInterface, "generate_bar_chart")
     def test_generate_chart_figure_delegates_call_for_bar(
         self,
         spy_generate_bar_chart: mock.MagicMock,
+        mocked_build_chart_plots_data: mock.MagicMock,
         fake_plots_collection: PlotsCollection,
     ):
         """
@@ -80,6 +91,9 @@ class TestChartsInterface:
 
         Patches:
             `spy_generate_bar_chart`: For the main assertion.
+            `mocked_build_chart_plots_data`: To remove the side effect
+                of having to query the database for data relating to the chart
+
         """
         # Given
         fake_plots_collection.plots[0].chart_type = ChartTypes.bar.value
@@ -89,26 +103,37 @@ class TestChartsInterface:
         )
 
         # When
-        generated_chart_figure = charts_interface.generate_chart_figure()
+        generated_chart_output = charts_interface.generate_chart_output()
 
         # Then
-        spy_generate_bar_chart.assert_called_once()
-        assert generated_chart_figure == spy_generate_bar_chart.return_value
+        spy_generate_bar_chart.assert_called_once_with(
+            plots_data=mocked_build_chart_plots_data.return_value
+        )
+        chart_output = ChartOutput(
+            figure=spy_generate_bar_chart.return_value,
+            description=charts_interface.build_chart_description([]),
+        )
+        assert generated_chart_output == chart_output
 
+    @mock.patch.object(ChartsInterface, "build_chart_plots_data")
     @mock.patch.object(ChartsInterface, "generate_line_multi_coloured_chart")
     def test_generate_chart_figure_delegates_call_for_line_multi_coloured(
         self,
         spy_generate_line_multi_coloured_chart_method: mock.MagicMock,
+        mocked_build_chart_plots_data: mock.MagicMock,
         fake_plots_collection: PlotsCollection,
     ):
         """
         Given a requirement for a `line_multi_coloured` chart
-        When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
+        When `generate_chart_output()` is called from an instance of the `ChartsInterface`
         Then the call is delegated to the `generate_line_multi_coloured_chart()` method
 
         Patches:
             `spy_generate_line_multi_coloured_chart_method`: For the
                 main assertion.
+            `mocked_build_chart_plots_data`: To remove the side effect
+                of having to query the database for data relating to the chart
+
         """
         # Given
         fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
@@ -118,12 +143,14 @@ class TestChartsInterface:
         )
 
         # When
-        generated_chart_figure = charts_interface.generate_chart_figure()
+        generated_chart_output: ChartOutput = charts_interface.generate_chart_output()
 
         # Then
-        spy_generate_line_multi_coloured_chart_method.assert_called_once()
+        spy_generate_line_multi_coloured_chart_method.assert_called_once_with(
+            plots_data=mocked_build_chart_plots_data.return_value
+        )
         assert (
-            generated_chart_figure
+            generated_chart_output.figure
             == spy_generate_line_multi_coloured_chart_method.return_value
         )
 
@@ -167,17 +194,18 @@ class TestChartsInterface:
             chart_plots=plots_collection,
             core_time_series_manager=fake_core_time_series_manager,
         )
+        plots_data = charts_interface.build_chart_plots_data()
 
         # When
-        line_multi_coloured_chart = (
-            charts_interface.generate_line_multi_coloured_chart()
+        line_multi_coloured_chart = charts_interface.generate_line_multi_coloured_chart(
+            plots_data=plots_data
         )
 
         # Then
         spy_line_multi_coloured_generate_chart_figure.assert_called_once_with(
             chart_height=plots_collection.chart_height,
             chart_width=plots_collection.chart_width,
-            chart_plots_data=charts_interface.build_chart_plots_data(),
+            chart_plots_data=plots_data,
         )
         assert (
             line_multi_coloured_chart
@@ -226,14 +254,16 @@ class TestChartsInterface:
             chart_plots=plots_collection,
             core_time_series_manager=fake_core_time_series_manager,
         )
+        plots_data = charts_interface.build_chart_plots_data()
 
         # When
         line_with_shaded_section_chart = (
-            charts_interface.generate_line_with_shaded_section_chart()
+            charts_interface.generate_line_with_shaded_section_chart(
+                plots_data=plots_data
+            )
         )
 
         # Then
-        plots_data = charts_interface.build_chart_plots_data()
         expected_params = charts_interface.param_builder_for_line_with_shaded_section(
             plots_data=plots_data
         )
@@ -442,7 +472,7 @@ class TestChartsInterface:
 
         # When
         encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
-            figure=mock.Mock()
+            chart_output=mock.Mock()
         )
 
         # Then
@@ -464,11 +494,13 @@ class TestChartsInterface:
         mocked_plots_collection = mock.MagicMock()
         mocked_figure = mock.Mock()
         mocked_figure.to_image.return_value = "abc"
+        chart_output = ChartOutput(figure=mocked_figure, description="")
+
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
 
         # When
         encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
-            figure=mocked_figure
+            chart_output=chart_output
         )
 
         # Then
@@ -519,10 +551,10 @@ class TestGenerateChartAsFile:
             generate_chart_as_file(chart_plots=mocked_plots_collection)
 
     @mock.patch.object(ChartsInterface, "write_figure")
-    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch.object(ChartsInterface, "generate_chart_output")
     def test_delegates_call_for_writing_the_chart(
         self,
-        spy_generate_chart_figure: mock.MagicMock,
+        spy_generate_chart_output: mock.MagicMock,
         spy_write_figure: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
@@ -540,16 +572,16 @@ class TestGenerateChartAsFile:
 
         # Then
         spy_write_figure.assert_called_once_with(
-            figure=spy_generate_chart_figure.return_value,
+            figure=spy_generate_chart_output.return_value.figure,
         )
 
 
 class TestGenerateEncodedChart:
     @mock.patch.object(ChartsInterface, "get_encoded_chart")
-    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch.object(ChartsInterface, "generate_chart_output")
     def test_delegates_call_for_validation(
         self,
-        spy_generate_chart_figure: mock.MagicMock,
+        spy_generate_chart_output: mock.MagicMock,
         mocked_get_encoded_chart: mock.MagicMock,
         fake_plots_collection: PlotsCollection,
     ):
@@ -560,7 +592,7 @@ class TestGenerateEncodedChart:
             from an instance of the `ChartsInterface`
 
         Patches:
-            `spy_generate_chart_figure`: For one of
+            `spy_generate_chart_output`: For one of
                 the main assertions
             `mocked_get_encoded_chart`: To remove the side effects
                 of having to encode the chart figure
@@ -572,25 +604,25 @@ class TestGenerateEncodedChart:
         generate_encoded_chart(chart_plots=fake_chart_plots)
 
         # Then
-        spy_generate_chart_figure.assert_called_once_with()
+        spy_generate_chart_output.assert_called_once()
 
     @mock.patch.object(ChartsInterface, "get_encoded_chart")
-    @mock.patch.object(ChartsInterface, "generate_chart_figure")
+    @mock.patch.object(ChartsInterface, "generate_chart_output")
     def test_delegates_call_to_get_encoded_chart(
         self,
-        mocked_generate_chart_figure: mock.MagicMock,
+        mocked_generate_chart_output: mock.MagicMock,
         spy_get_encoded_chart: mock.MagicMock,
         fake_plots_collection: PlotsCollection,
     ):
         """
         Given a fake `PlotsCollection` model
-        When `generate_encoded_chart()` is called
+        When `generate_chart_output()` is called
         Then the call is delegated to `get_encoded_chart()`
             from an instance of the `ChartsInterface`
 
         Patches:
-            `mocked_generate_chart_figure`: To set the returned figure
-                so that it can encoded more easily
+            `mocked_generate_chart_output`: To set the returned figure
+                so that it can be encoded more easily
                 and so the return value can be
                 passed to the main assertion
             `spy_get_encoded_chart`: For the main assertion
@@ -599,15 +631,14 @@ class TestGenerateEncodedChart:
         fake_chart_plots = fake_plots_collection
         mocked_figure = mock.Mock()
         mocked_figure.to_image.return_value = "abc"
-        mocked_generate_chart_figure.return_value = mocked_figure
+        chart_output = ChartOutput(figure=mocked_figure, description="")
+        mocked_generate_chart_output.return_value = chart_output
 
         # When
         generate_encoded_chart(chart_plots=fake_chart_plots)
 
         # Then
-        spy_get_encoded_chart.assert_called_once_with(
-            figure=mocked_generate_chart_figure.return_value
-        )
+        spy_get_encoded_chart.assert_called_once_with(chart_output=chart_output)
 
 
 class TestMiscMethods:
