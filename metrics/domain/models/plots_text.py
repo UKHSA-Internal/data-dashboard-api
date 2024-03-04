@@ -85,7 +85,7 @@ class PlotsText:
             )
 
         if plot_parameters.label:
-            description += f"The plot has a label of '{plot_parameters.label}'."
+            description += f"The plot has a label of '{plot_parameters.label}'. "
 
         description += self._describe_plot_parameters(plot_parameters=plot_parameters)
 
