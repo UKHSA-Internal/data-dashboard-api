@@ -315,17 +315,22 @@ class ChartsInterface:
         """Creates a dict containing a timestamp for the last data point + encoded string for the chart figure.
 
         Args:
-            figure: Plotly figure or figure dictionary
+            chart_output: An enriched `ChartOutput` model containing:
+                figure - a plotly `Figure` object for the created chart
+                description - a string representation
+                    which summarises the produced chart
 
         Returns:
             A dict containing:
              "last_updated": A timestamp for the last data point
              "chart": An encoded string representing the chart figure
+             "alt_text": A string representation of the chart description
 
         """
         return {
             "last_updated": self._latest_date,
-            "chart": self.encode_figure(figure=figure),
+            "chart": self.encode_figure(figure=chart_output.figure),
+            "alt_text": chart_output.description,
         }
 
 

@@ -506,6 +506,35 @@ class TestChartsInterface:
         # Then
         assert encoded_chart["chart"] == spy_encode_figure.return_value
 
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    def test_get_encoded_chart_returns_description(
+        self, mocked_encode_figure: mock.MagicMock
+    ):
+        """
+        Given a mocked figure
+        When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
+        Then the `chart` field is populated via a call to the `encode_figure()` method
+
+        Patches:
+            `mocked_create_optimized_svg`: To remove the side effect of
+                creating a svg and optimizing it
+
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        fake_description = "abcdef"
+        chart_output = ChartOutput(figure=mock.Mock(), description=fake_description)
+
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # When
+        encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
+            chart_output=chart_output
+        )
+
+        # Then
+        assert encoded_chart["alt_text"] == chart_output.description
+
 
 class TestGenerateChartAsFile:
     def test_raises_error_for_invalid_topic_and_metric_selection(
