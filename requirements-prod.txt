@@ -42,7 +42,7 @@ Markdown==3.5.2
 markdown-it-py==2.2.0
 MarkupSafe==2.1.5
 mdurl==0.1.2
-msgpack==1.0.7
+msgpack==1.0.8
 mypy-extensions==1.0.0
 nodeenv==1.8.0
 numpy==1.26.4
