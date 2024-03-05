@@ -87,7 +87,9 @@ class TestPlotsText:
         When `construct_text()` is called
             from an instance of `PlotsText`
         Then the returned text declares the parameters
-            which were used for the plot
+            which were used for the plot.
+            Including the fallback parameters
+            for line colour and type
         """
         # Given
         fake_plot_data.parameters.line_colour = ""
