@@ -721,6 +721,14 @@ class TestEncodedChartsRequestSerializer:
 
 
 class TestEncodedChartResponseSerializer:
+    @property
+    def valid_payload(self) -> dict[str, str]:
+        return {
+            "last_updated": "has_value",
+            "chart": "has_value",
+            "alt_text": "has_value",
+        }
+
     def test_has_payload(self):
         """
         Given a valid payload passed to a `EncodedChartResponseSerializer` object
@@ -728,25 +736,43 @@ class TestEncodedChartResponseSerializer:
         Then True is returned
         """
         # Given
-        valid_data_payload = {"last_updated": "has_value", "chart": "has_value"}
-        serializer = EncodedChartResponseSerializer(data=valid_data_payload)
+        serializer = EncodedChartResponseSerializer(data=self.valid_payload)
 
         # When
-        is_serializer_valid: bool = serializer.is_valid()
+        is_serializer_valid: bool = serializer.is_valid(raise_exception=True)
 
         # Then
         assert is_serializer_valid
 
-    def test_invalid_payload(self):
+    def test_chart_field_cannot_be_omitted_from_payload(self):
         """
-        Given an invalid payload passed to a `EncodedChartResponseSerializer` object
+        Given a payload passed to a `EncodedChartResponseSerializer` object
+            which does not contain a `"chart"` field
         When `is_valid(raise_exception=True)` is called from the serializer
         Then a `ValidationError` is raised
         """
         # Given
-        invalid_data_payload = {"last_updated": None, "chart": None}
+        payload = self.valid_payload
+        payload.pop("chart")
 
-        serializer = EncodedChartResponseSerializer(data=invalid_data_payload)
+        serializer = EncodedChartResponseSerializer(data=payload)
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            serializer.is_valid(raise_exception=True)
+
+    def test_alt_text_field_cannot_be_omitted_from_payload(self):
+        """
+        Given a payload passed to a `EncodedChartResponseSerializer` object
+            which does not contain an `"alt_text"` field
+        When `is_valid(raise_exception=True)` is called from the serializer
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = self.valid_payload
+        payload.pop("alt_text")
+
+        serializer = EncodedChartResponseSerializer(data=payload)
 
         # When / Then
         with pytest.raises(ValidationError):

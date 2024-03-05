@@ -97,3 +97,6 @@ The specified chart in the requested format as a URI encoded string (default for
 ENCODED_CHARTS_LAST_UPDATED: str = """
 The date that the chart data goes up to
 """
+CHARTS_ALT_TEXT: str = """
+The description text which summarizes the chart and the data that it represents.
+"""
