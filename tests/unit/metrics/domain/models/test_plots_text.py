@@ -1,3 +1,5 @@
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
+from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import PlotData
 from metrics.domain.models.plots_text import PlotsText
 from metrics.domain.utils import ChartTypes
@@ -73,6 +75,34 @@ class TestPlotsText:
             f"for the {fake_plot_data.parameters.geography} area, "
             f"along with the age banding of '{fake_plot_data.parameters.age}' "
             f"for the gender group of {fake_plot_data.parameters.sex}. "
+        )
+        assert expected_text_about_parameters in text
+
+    def test_returns_correct_line_colour_when_not_provided_for_one_plot(
+        self, fake_plot_data: PlotData
+    ):
+        """
+        Given a list of 1 enriched `PlotData` model
+            which does not declare a `line_colour` or `line_type`
+        When `construct_text()` is called
+            from an instance of `PlotsText`
+        Then the returned text declares the parameters
+            which were used for the plot
+        """
+        # Given
+        fake_plot_data.parameters.line_colour = ""
+        fake_plot_data.parameters.line_type = ""
+
+        fake_plot_data.parameters.chart_type = ChartTypes.line_with_shaded_section.value
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        expected_text_about_parameters = (
+            f"This is a {RGBAChartLineColours.BLACK.name.lower()} "
+            f"{ChartLineTypes.SOLID.value.lower()} line plot. "
         )
         assert expected_text_about_parameters in text
 
