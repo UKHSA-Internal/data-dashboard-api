@@ -93,11 +93,13 @@ class PlotsText:
 
     @classmethod
     def _stringify_sex(cls, plot: PlotParameters) -> str:
-        if plot.sex == "f":
-            return "females"
-        if plot.sex == "m":
-            return "males"
-        return "all"
+        match plot.sex:
+            case "f":
+                return "females"
+            case "m":
+                return "males"
+            case _:
+                return "all"
 
     def _describe_plot_parameters(self, plot_parameters: PlotParameters) -> str:
         sex_grouping: str = self._stringify_sex(plot=plot_parameters)
