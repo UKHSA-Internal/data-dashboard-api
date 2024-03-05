@@ -134,3 +134,4 @@ class EncodedChartResponseSerializer(serializers.Serializer):
         allow_blank=True,
     )
     chart = serializers.CharField(help_text=help_texts.ENCODED_CHARTS_RESPONSE)
+    alt_text = serializers.CharField(help_text=help_texts.CHARTS_ALT_TEXT)

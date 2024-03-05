@@ -74,6 +74,11 @@ def fake_plot_data() -> PlotData:
         metric="COVID-19_deaths_ONSByDay",
         x_axis="metric",
         y_axis="date",
+        geography="London",
+        age="all",
+        sex="all",
+        line_colour="BLUE",
+        line_type="SOLID",
     )
     y_axis_values = [1, 2, 4, 5, 5, 2, 1]
     return PlotData(

@@ -43,6 +43,8 @@ class MetricNumberBlock(blocks.StreamBlock):
 
 class ProgrammingLanguages(models.TextChoices):
     JAVASCRIPT = "Javascript"
+    TEXT = "Text"
+    JSON = "JSON"
 
     @classmethod
     def get_programming_languages(cls) -> tuple[tuple[str, str]]:
