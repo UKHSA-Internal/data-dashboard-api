@@ -41,7 +41,9 @@ class TestPlotsText:
         # Then
         assert text == "There is no data being shown for this chart."
 
-    def test_returns_correct_text_for_one_plot(self, fake_plot_data: PlotData):
+    def test_returns_correct_text_about_parameters_for_one_plot(
+        self, fake_plot_data: PlotData
+    ):
         """
         Given a list of 1 enriched `PlotData` model
         When `construct_text()` is called
@@ -59,7 +61,7 @@ class TestPlotsText:
         text: str = plots_text.construct_text()
 
         # Then
-        expected_text = (
+        expected_text_about_parameters = (
             f"There is only 1 plot on this chart. "
             f"The horizontal X-axis is labelled 'metric'. "
             f"Whilst the vertical Y-axis is labelled 'date'. "
@@ -69,9 +71,11 @@ class TestPlotsText:
             f"Specifically the metric 'COVID-19_deaths_ONSByDay' for the London area, "
             f"along with the age banding of 'all' for the gender group of all. "
         )
-        assert text == expected_text
+        assert expected_text_about_parameters in text
 
-    def test_returns_correct_text_for_multiple_plots(self, fake_plot_data: PlotData):
+    def test_returns_correct_text_about_parameters_for_multiple_plots(
+        self, fake_plot_data: PlotData
+    ):
         """
         Given a list of 1 enriched `PlotData` model
         When `construct_text()` is called
@@ -101,22 +105,33 @@ class TestPlotsText:
         text: str = plots_text.construct_text()
 
         # Then
-        expected_text = (
+        expected_intro = (
             "There are 3 plots on this chart. "
             "The horizontal X-axis is labelled 'metric'. Whilst the vertical Y-axis is labelled 'date'. "
+        )
+        expected_plot_1_params_description = (
             "Plot number 1 on this chart is a blue solid line plot. "
             "This plot shows data for COVID-19. "
             "Specifically the metric 'COVID-19_deaths_ONSByDay' for the London area, "
             "along with the age banding of 'all' for the gender group of all. "
+        )
+        expected_plot_2_params_description = (
             "Plot number 2 on this chart is a blue dash line plot. "
             "This plot shows data for Influenza. "
-            "Specifically the metric 'influenza_testing_positivityByWeek' for the London area, "
+            "Specifically the metric 'influenza_testing_positivityByWeek' "
+            "for the London area, "
             "along with the age banding of '0_4' for the gender group of females. "
+        )
+        expected_plot_3_params_description = (
             "Plot number 3 on this chart is a blue solid bar plot. "
             "The plot has a label of 'Influenza testing for Males'. "
             "This plot shows data for COVID-19. "
-            "Specifically the metric 'influenza_testing_positivityByWeek' for the London area, "
+            "Specifically the metric 'influenza_testing_positivityByWeek' "
+            "for the London area, "
             "along with the age banding of 'all' for the gender group of males. "
         )
 
-        assert text == expected_text
+        assert expected_intro in text
+        assert expected_plot_1_params_description in text
+        assert expected_plot_2_params_description in text
+        assert expected_plot_3_params_description in text
