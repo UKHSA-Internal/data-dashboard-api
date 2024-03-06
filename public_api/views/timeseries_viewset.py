@@ -7,12 +7,11 @@ from public_api.serializers.timeseries_serializers import APITimeSeriesListSeria
 from public_api.views.base import PUBLIC_API_TAG
 
 DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 5
-MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE: int = 52
 
 
 class APITimeSeriesPagination(pagination.PageNumberPagination):
     page_size = DEFAULT_API_TIMESERIES_RESPONSE_PAGE_SIZE
-    max_page_size = MAXIMUM_API_TIMESERIES_RESPONSE_PAGE_SIZE
+    max_page_size = None
     page_size_query_param = "page_size"
 
 
