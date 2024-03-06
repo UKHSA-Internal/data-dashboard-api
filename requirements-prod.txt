@@ -61,7 +61,7 @@ pluggy==1.4.0
 pyparsing==3.1.1
 psycopg2==2.9.9
 pyrsistent==0.20.0
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
 pytz==2024.1
 Pygments==2.17.2
 PyYAML==6.0.1
@@ -70,7 +70,7 @@ requests==2.31.0
 rich==13.7.1
 ruamel.yaml==0.18.6
 ruamel.yaml.clib==0.2.8
-SQLAlchemy==2.0.27
+SQLAlchemy==2.0.28
 scour==0.38.2
 setuptools==69.1.1
 simplejson==3.19.2
