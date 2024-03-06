@@ -7,3 +7,10 @@ class ButtonSerializer(serializers.Serializer):
     endpoint = serializers.CharField()
     method = serializers.CharField()
     button_type = serializers.CharField()
+
+
+class ExternalButtonSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    url = serializers.CharField()
+    button_type = serializers.CharField()
+    icon = serializers.CharField()

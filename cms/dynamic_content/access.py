@@ -32,10 +32,23 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
                 required=True,
             ),
         ),
-        ("button", blocks.ButtonChooserBlock("snippets.button", required=False)),
         (
             "code_block",
             sections.CodeExample(),
+        ),
+        (
+            "button",
+            blocks.ButtonChooserBlock(
+                "snippets.button",
+                required=False,
+            ),
+        ),
+        (
+            "external_button",
+            blocks.ExternalButtonChooserBlock(
+                "snippets.externalbutton",
+                required=False,
+            ),
         ),
     ],
     block_counts={"button": {"max_num": 1}},
