@@ -1,10 +1,13 @@
-class FakeExternalButtonSnippet:
+from cms.snippets.models.external_button import ExternalButton
+from tests.fakes.models.fake_model_meta import FakeMeta
+
+
+class FakeExternalButtonSnippet(ExternalButton):
     """
     A fake version of the external button snippet model for tests.
     """
 
-    def __init__(self, text: str, url: str, button_type: str, icon: str):
-        self.text = text
-        self.url = url
-        self.button_type = button_type
-        self.icon = icon
+    Meta = FakeMeta
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)

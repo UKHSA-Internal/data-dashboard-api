@@ -80,7 +80,7 @@ def fake_plot_data() -> PlotData:
         line_colour="BLUE",
         line_type="SOLID",
     )
-    y_axis_values = [1, 2, 4, 5, 5, 2, 1]
+    y_axis_values = [1, 2, 4, 5, 5, 2, 1, 8, 9, 10, 2, 3]
     return PlotData(
         parameters=plot_params,
         x_axis_values=[
