@@ -189,5 +189,5 @@ These align with GDS guidelines.
 """
 
 BUTTON_ICON: str = """
-A required choice of icon to add to a button, defaults to none.
+An optional choice of icon to add to a button, defaults to none.
 """
