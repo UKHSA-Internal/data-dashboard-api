@@ -56,7 +56,10 @@ class CodeSnippet(blocks.StructBlock):
         choices=ProgrammingLanguages.get_programming_languages,
         default=ProgrammingLanguages.JAVASCRIPT.value,
     )
-    code = blocks.TextBlock(form_classname="codeblock_monospace")
+    code = blocks.TextBlock(
+        form_classname="codeblock_monospace",
+        help_text=help_texts.CODE_SNIPPET,
+    )
 
 
 class CodeBlock(blocks.StreamBlock):
