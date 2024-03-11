@@ -28,7 +28,11 @@ class Migration(migrations.Migration):
                 (
                     "button_type",
                     models.CharField(
-                        choices=cms.snippets.models.external_button.ExternalButtonTypes.get_external_button_types,
+                        choices=[
+                            ("Primary", "Primary"),
+                            ("Secondary", "Secondary"),
+                            ("Warning", "Warning"),
+                        ],
                         default="Primary",
                         help_text="\nA required choice of what type of button you want, the options include `Primary`, `Secondary`.\nThese align with GDS guidelines.\n",
                         max_length=255,
@@ -37,7 +41,11 @@ class Migration(migrations.Migration):
                 (
                     "icon",
                     models.CharField(
-                        choices=cms.snippets.models.external_button.ExternalButtonIcons.get_external_button_icons,
+                        choices=[
+                            ("None", "None"),
+                            ("Download", "Download"),
+                            ("Start", "Start"),
+                        ],
                         default="None",
                         help_text="\nA required choice of icon to add to a button, defaults to none.\n",
                         max_length=255,
