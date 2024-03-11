@@ -191,3 +191,7 @@ These align with GDS guidelines.
 BUTTON_ICON: str = """
 An optional choice of icon to add to a button, defaults to none.
 """
+
+CODE_SNIPPET: str = """
+A code snippet to demonstrate the example. Please note that HTML type content is not permitted.
+"""
