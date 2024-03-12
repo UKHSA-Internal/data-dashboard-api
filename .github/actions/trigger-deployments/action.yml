@@ -12,9 +12,9 @@ runs:
   steps:
     - name: Trigger deployment workflow
       run: |
-          curl -L -X POST https://api.github.com/repos/UKHSA-Internal/winter-pressures-infra/dispatches \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ inputs.token }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            -d '{"event_type":"trigger-deployments","client_payload":{"unit":false,"integration":true}}'
+        curl -L -X POST https://api.github.com/repos/UKHSA-Internal/data-dashboard-infra/dispatches \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ inputs.token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          -d '{"event_type":"trigger-deployments","client_payload":{"unit":false,"integration":true}}'
       shell: bash
