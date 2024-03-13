@@ -161,8 +161,8 @@ jobs:
   # Build image
   ###############################################################################
 
-  publish-main-image:
-    name: Publish main image
+  publish-main-image-to-deprecated-ecr:
+    name: Publish main image to deprecated ECR
     needs: [
       quality-checks,
       unit-tests,
@@ -191,6 +191,8 @@ jobs:
 
   publish-ingestion-image:
     name: Publish ingestion image
+  publish-ingestion-image-to-deprecated-ecr:
+    name: Publish ingestion image to deprecated ECR
     needs: [
       quality-checks,
       unit-tests,
