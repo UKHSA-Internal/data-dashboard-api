@@ -1,8 +1,8 @@
-# Winter Pressures API Rolling Design Guide
+# Data Dashboard API Rolling Design Guide
 
 ## Introduction
 
-This guide will outline the current architecture of the winter-pressures API project.
+This guide will outline the current architecture of the data dashboard API project.
 The purpose of this document is to provide the reader with a view of the following:
 
 - The design of the system and its dependencies.
