@@ -191,7 +191,16 @@ jobs:
 
   publish-main-image:
     name: Publish main image to central ECR
-    needs: [ publish-main-image-to-deprecated-ecr ]
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
@@ -236,7 +245,16 @@ jobs:
 
   publish-ingestion-image:
     name: Publish ingestion image to central ECR
-    needs: [ publish-ingestion-image-to-deprecated-ecr ]
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
 
