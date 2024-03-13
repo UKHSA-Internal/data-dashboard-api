@@ -2,6 +2,17 @@ name: 'Publish image to AWS ECR'
 
 description: 'Builds, tags and pushes a Docker image to AWS ECR'
 
+inputs:
+  ecr-repository:
+    description: 'The name of the Amazon ECR repository to push the image to.'
+    required: true
+  build-command:
+    description: 'The command for building the Docker image.'
+    required: true
+  role-to-assume:
+    description: 'The role to assume when publishing the image'
+    required: true
+
 runs:
   using: 'composite'
   steps:
@@ -9,10 +20,9 @@ runs:
       uses: actions/checkout@v4
 
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: arn:aws:iam::518944279943:role/devops_github_actions_wp_api
-        role-session-name: testsession
+        role-to-assume: ${{ inputs.ecr-role-to-assume }}
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Login to Amazon ECR
@@ -22,18 +32,9 @@ runs:
     - name: Build, tag, and push image to AWS ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: ${{ inputs.ecrRepository }}
+        ECR_REPOSITORY: ${{ inputs.ecr-repository }}
         IMAGE_TAG: latest
       run: |
-          ${{ inputs.buildCommand }}
+          ${{ inputs.build-command }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       shell: bash
-
-inputs:
-  ecrRepository:
-    description: 'The name of the Amazon ECR repository to push the image to.'
-    required: true
-
-  buildCommand:
-    description: 'The command for building the Docker image.'
-    required: true
