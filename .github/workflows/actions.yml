@@ -189,8 +189,23 @@ jobs:
             docker build \
               -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
-  publish-ingestion-image:
-    name: Publish ingestion image
+  publish-main-image:
+    name: Publish main image to central ECR
+    needs: [ publish-main-image-to-deprecated-ecr ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: "data-dashboard/api"
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          build-command: |
+            docker build \
+              -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+
   publish-ingestion-image-to-deprecated-ecr:
     name: Publish ingestion image to deprecated ECR
     needs: [
@@ -218,6 +233,23 @@ jobs:
           build-command: |
             docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           # The current self-hosted CI runners are X64 based. Hence, the need to build with AMD 64
+
+  publish-ingestion-image:
+    name: Publish ingestion image to central ECR
+    needs: [ publish-ingestion-image-to-deprecated-ecr ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: "data-dashboard/ingestion"
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          build-command: |
+            docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
   ###############################################################################
   # Deploy
