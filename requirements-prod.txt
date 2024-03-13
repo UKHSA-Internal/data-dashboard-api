@@ -49,7 +49,7 @@ numpy==1.26.4
 openapi-codec==1.3.2
 openpyxl==3.1.2
 orjson==3.9.15
-packageurl-python==0.14.0
+packageurl-python==0.15.0
 packaging==24.0
 pandas==2.2.1
 pathspec==0.12.1
