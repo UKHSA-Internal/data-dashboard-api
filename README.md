@@ -91,9 +91,9 @@ Once your database has been populated, with the `boot.sh` script, you will be ab
 Head to http://localhost:8000/cms-admin/ and use the following credentials:
 
 - Username: **testadmin**
-- Password: <Admin Password>
+- Password: `<Admin Password>`
 
-Where the <Admin Password> is the password you provided to the previous `./scripts/boot.sh` script.
+Where the `<Admin Password>` is the password you provided to the call made to the `./scripts/boot.sh` script.
 
 ---
 
@@ -109,7 +109,7 @@ requirements-prod-ingestion.txt   # <- These are the Production dependencies for
 requirements-dev.txt              # <- These are the Dev dependencies-only. Includes testing/factory libraries
 ```
 
-If you followed the instructions above in [Initial configuration](#initial-configuration) 
+If you followed the instructions above in the [Initial configuration](#initial-configuration) section
 and ran `make setup-venv` then you will have installed the complete set of dependencies, 
 including those needed for local development.
 
