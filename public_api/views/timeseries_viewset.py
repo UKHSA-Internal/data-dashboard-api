@@ -23,7 +23,10 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     There are a set of mandatory URL parameters and optional query parameters:
 
-    Note that by default, results are paginated by a page size of 5.
+    Note that by default, results are paginated by a page size of 5
+
+    This page size can be changed using the *page_size* parameter.
+    The maximum supported page size is **365**.
 
     ---
 

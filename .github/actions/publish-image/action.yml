@@ -6,12 +6,15 @@ inputs:
   ecr-repository:
     description: 'The name of the Amazon ECR repository to push the image to.'
     required: true
-  build-command:
-    description: 'The command for building the Docker image.'
-    required: true
   role-to-assume:
     description: 'The role to assume when publishing the image'
     required: true
+  dockerfile:
+    description: 'The selected dockerfile to build the image from.'
+    default: Dockerfile
+  architecture:
+    description: 'The architecture to use when building the image.'
+    default: amd64
 
 runs:
   using: 'composite'
@@ -35,6 +38,6 @@ runs:
         ECR_REPOSITORY: ${{ inputs.ecr-repository }}
         IMAGE_TAG: latest
       run: |
-          ${{ inputs.build-command }}
+          docker build --platform linux/${{ inputs.architecture }} -f ${{ inputs.dockerfile }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       shell: bash
