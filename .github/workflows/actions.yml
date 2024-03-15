@@ -185,9 +185,6 @@ jobs:
         with:
           ecr-repository: "wp-api"
           role-to-assume: ${{ secrets.AWS_ROLE }}
-          build-command: | 
-            docker build \
-              -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
 
   publish-ingestion-image:
     name: Publish ingestion image
@@ -213,9 +210,7 @@ jobs:
         with:
           ecr-repository: "wp-ingestion"
           role-to-assume: ${{ secrets.AWS_ROLE }}
-          build-command: |
-            docker build --platform linux/amd64 -f Dockerfile-ingestion -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          # The current self-hosted CI runners are X64 based. Hence, the need to build with AMD 64
+          dockerfile: Dockerfile-ingestion
 
   ###############################################################################
   # Deploy
