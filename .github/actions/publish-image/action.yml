@@ -12,6 +12,9 @@ inputs:
   dockerfile:
     description: 'The selected dockerfile to build the image from.'
     default: Dockerfile
+  architecture:
+    description: 'The architecture to use when building the image.'
+    default: amd64
 
 runs:
   using: 'composite'
@@ -35,6 +38,6 @@ runs:
         ECR_REPOSITORY: ${{ inputs.ecr-repository }}
         IMAGE_TAG: latest
       run: |
-          docker build --platform linux/amd64 -f ${{ inputs.dockerfile }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --platform linux/${{ inputs.architecture }} -f ${{ inputs.dockerfile }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       shell: bash
