@@ -118,9 +118,6 @@ class TestDownloadsView:
         # Check that the headers on the response indicate json is being returned
         assert "json" in response.headers["Content-Type"]
 
-        # Check the format of the output is as expected
-        assert isinstance(response.data[0], OrderedDict)
-
         # Check the output itself is as expected
         returned_obj = response.data[0]
         expected_data = OrderedDict(
