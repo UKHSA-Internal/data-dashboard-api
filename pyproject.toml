@@ -15,10 +15,12 @@ lint.select = [
     "C4",       # flake8-comprehensions
     "T10",      # flake8-debugger
     "EXE",      # flake8-executable
+    "EM",       # flake8-errmsg
     "FA",       # flake8-future-annotations
     "ISC",      # flake8-implicit-str-concat
     "ICN",      # flake8-import-conventions
     "G",        # flake8-logging-format
+    "LOG",      # flake8-logging
     "T20",      # flake8-print
     "PYI",      # flake8-pyi
     "Q",        # flake8-quotes
@@ -33,6 +35,7 @@ lint.select = [
     "RET",      # flake8-return
     "SLF",      # flake8-self
     "SIM",      # flake8-simplify
+    "TRIO",     # flake8-trio
     "PERF",     # Perflint
     "ERA",      # eradicate
     "PGH",      # pygrep-hooks
@@ -65,6 +68,7 @@ exclude = [
     "dist",
     "*/migrations/*",
     "*/__init__.py",
+    "manage.py",
 ]
 
 # Allow line lengths of up to 120 characters
@@ -93,7 +97,6 @@ target-version = "py312"
 "public_api/views/root_view.py" = ["A002"]                # Ignore built-in `format` used in arg to extended
                                                           # rest framework API view method
 "caching/public_api/crawler.py" = ["PERF401"]             # Ignore list comprehension which would reduce readibility
-"manage.py"                     = ["TRY003"]              # Ignore long message on exception from Django boilerplate
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
