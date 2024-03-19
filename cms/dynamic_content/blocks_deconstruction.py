@@ -24,7 +24,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_all_chart_blocks_from_section_for_geography(
-        cls, section: CMS_COMPONENT_BLOCK_TYPE, geography_data
+        cls, *, section: CMS_COMPONENT_BLOCK_TYPE, geography_data
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts a list of all chart cards from the given `section` for the specific `geography_data`
 
@@ -55,7 +55,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_chart_blocks_from_chart_row_cards(
-        cls, chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
+        cls, *, chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts all chart blocks from the given list of `chart_row_cards`
 
@@ -79,7 +79,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_all_chart_blocks_from_section(
-        cls, section: CMS_COMPONENT_BLOCK_TYPE
+        cls, *, section: CMS_COMPONENT_BLOCK_TYPE
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts a list of all chart cards from the given `section`
 
@@ -97,7 +97,7 @@ class CMSBlockParser:
 
     @classmethod
     def rebuild_chart_block_for_geography(
-        cls, chart_block: CMS_COMPONENT_BLOCK_TYPE, geography_data: "GeographyData"
+        cls, *, chart_block: CMS_COMPONENT_BLOCK_TYPE, geography_data: "GeographyData"
     ) -> CMS_COMPONENT_BLOCK_TYPE:
         """Builds a copy of the given `chart_block` with the `geography_data` applied
 
@@ -128,7 +128,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_all_headline_blocks_from_section(
-        cls, section: CMS_COMPONENT_BLOCK_TYPE
+        cls, *, section: CMS_COMPONENT_BLOCK_TYPE
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts a list of all headline number blocks from the given `section`
 
@@ -165,6 +165,7 @@ class CMSBlockParser:
     @classmethod
     def get_content_cards_from_section(
         cls,
+        *,
         section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Filters for a list of content cards from the given `section`
@@ -181,6 +182,7 @@ class CMSBlockParser:
     @classmethod
     def get_chart_row_cards_from_content_cards(
         cls,
+        *,
         content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Filters for a list of chart row from the given `content_cards`
@@ -202,6 +204,7 @@ class CMSBlockParser:
     @classmethod
     def get_chart_row_cards_from_page_section(
         cls,
+        *,
         section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Get chart row cards from page section.
@@ -217,7 +220,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_headline_blocks_from_chart_blocks(
-        cls, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+        cls, *, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts all headline number blocks from the given list of `chart_blocks`
 
@@ -241,6 +244,7 @@ class CMSBlockParser:
     @classmethod
     def get_headline_numbers_row_cards_from_content_cards(
         cls,
+        *,
         content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Filters for a list of headliner number row cards from the given `content_cards`
@@ -263,6 +267,7 @@ class CMSBlockParser:
     @classmethod
     def get_headline_blocks_from_headline_number_row_cards(
         cls,
+        *,
         headline_numbers_row_cards: list[CMS_COMPONENT_BLOCK_TYPE],
     ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
         """Extracts all headline number blocks from the given list of `headline_numbers_row_cards`
@@ -288,7 +293,7 @@ class CMSBlockParser:
     # Extraction of selected topics
 
     @classmethod
-    def get_all_selected_topics_from_sections(cls, sections) -> set[str]:
+    def get_all_selected_topics_from_sections(cls, *, sections) -> set[str]:
         """Extracts a set of topics from all headline & chart blocks in the given `sections`
 
         Args:
@@ -317,7 +322,7 @@ class CMSBlockParser:
 
     @classmethod
     def _get_all_selected_topics_in_chart_blocks_from_sections(
-        cls, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
+        cls, *, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
     ) -> set[str]:
         """Extracts a set of topics from all chart blocks in the given `sections`
 
@@ -339,7 +344,7 @@ class CMSBlockParser:
 
     @classmethod
     def _get_all_selected_topics_in_headline_blocks_from_sections(
-        cls, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
+        cls, *, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
     ) -> set[str]:
         """Extracts a set of topics from all headline blocks in the given `sections`
 
@@ -363,7 +368,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_all_selected_topics_from_chart_blocks(
-        cls, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+        cls, *, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> set[str]:
         """Extracts a set of topics from the given `chart_blocks`
 
@@ -384,7 +389,7 @@ class CMSBlockParser:
 
     @classmethod
     def get_all_selected_topics_from_headline_blocks(
-        cls, headline_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+        cls, *, headline_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> set[str]:
         """Extracts a set of topics from the given `headline_blocks`
 

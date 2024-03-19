@@ -1,6 +1,6 @@
 # This is the venv location. Typically this is set as either `.venv` or `venv`.
 # Here it is set as `venv`
-VENV=venv
+VENV=.venv
 
 # Grab the current python version associated with the project (3.12)
 # Note this is currently also used in the CI
