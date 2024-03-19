@@ -11,7 +11,6 @@ function _server_help() {
     echo "  run-production            - start a production grade server"
     echo
     echo "  setup-all                 - run all setup steps, migrations & static files"
-    echo "  setup-migrations          - apply any outstanding database migrations"
     echo "  setup-static-files        - collect static files"
 
     return 0
@@ -25,7 +24,6 @@ function _server() {
         "run-local") _run_local_server  $args ;;
         "run-production") _run_production_server  $args ;;
         "setup-all") _setup_all  $args ;;
-        "setup-migrations") _setup_migrations  $args ;;
         "setup-static-files") _setup_static_files  $args ;;
 
         *) _server_help ;;
@@ -62,15 +60,8 @@ function _run_production_server() {
 }
 
 function _setup_all() {
-    _setup_migrations
+    uhd django migrate
     _setup_static_files
-}
-
-function _setup_migrations() {
-    uhd venv activate
-
-    echo "Collecting static files"
-    python manage.py migrate --noinput
 }
 
 function _setup_static_files() {
