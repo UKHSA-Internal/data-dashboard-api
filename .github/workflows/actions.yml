@@ -260,6 +260,7 @@ jobs:
           ecr-repository: "data-dashboard/ingestion"
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           dockerfile: Dockerfile-ingestion
+          architecture: arm64
 
   ###############################################################################
   # Deploy
