@@ -8,7 +8,10 @@ function _quality_help() {
     echo "  help                      - this help screen"
     echo
     echo "  architecture              - check architectural constraints"
+    echo
     echo "  format                    - run all formatters over codebase"
+    echo "  format-check              - run all formatters over codebase, error if changes are required"
+
 
     return 0
 }
@@ -20,6 +23,7 @@ function _quality() {
     case $verb in
         "architecture") _architecture $args ;;
         "format") _format $args ;;
+        "format-check") _format_check $args ;;
 
         *) _quality_help ;;
     esac
@@ -34,7 +38,6 @@ function _format() {
     uhd venv activate
     _ruff_formatter
     _black_formatter
-
 }
 
 function _ruff_formatter() {
@@ -45,4 +48,18 @@ function _ruff_formatter() {
 function _black_formatter() {
   echo "Running black formatter"
   black .
+}
+
+function _format_check() {
+    uhd quality format
+    changed_files=$(git diff --name-only | grep "\.py" || true)
+
+    if [ -n "${changed_files}"  ]; then
+      echo "Some files appear to be un-formatted. Please rectify by running 'uhd quality format' and committing the changes."
+      echo "${changed_files}"
+      exit 1
+    else
+        echo "No changes, the files are okay to be checked into the repo."
+    fi
+
 }
