@@ -234,6 +234,7 @@ jobs:
           ecr-repository: "wp-ingestion"
           role-to-assume: ${{ secrets.AWS_ROLE }}
           dockerfile: Dockerfile-ingestion
+          architecture: arm64
 
   publish-ingestion-image:
     name: Publish ingestion image to central ECR
