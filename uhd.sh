@@ -25,6 +25,7 @@ function _uhd_commands_help() {
     echo "commands:"
     echo "  help         - this help screen"
     echo
+    echo "  cache         - cache flush tooling commands"
     echo "  bootstrap    - bootstrap environment commands"
     echo "  security     - security tooling commands"
     echo "  server       - running server commands"
@@ -47,6 +48,7 @@ function uhd() {
     cd $root
 
     case $command in
+        "cache") _cache $args ;;
         "bootstrap") _bootstrap $args ;;
         "security") _security $args ;;
         "server") _server $args ;;
