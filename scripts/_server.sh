@@ -10,7 +10,9 @@ function _server_help() {
     echo "  run-local                 - start a local development grade server"
     echo "  run-production            - start a production grade server"
     echo
-    echo "  setup                     - run setup steps, migrations & static files"
+    echo "  setup-all                 - run all setup steps, migrations & static files"
+    echo "  setup-migrations          - apply any outstanding database migrations"
+    echo "  setup-static-files        - collect static files"
 
     return 0
 }
@@ -22,7 +24,9 @@ function _server() {
     case $verb in
         "run-local") _run_local_server  $args ;;
         "run-production") _run_production_server  $args ;;
-        "setup") _server_setup  $args ;;
+        "setup-all") _setup_all  $args ;;
+        "setup-migrations") _setup_migrations  $args ;;
+        "setup-static-files") _setup_static_files  $args ;;
 
         *) _server_help ;;
     esac
@@ -57,11 +61,20 @@ function _run_production_server() {
       --bind=0.0.0.0:${port}
 }
 
-function _server_setup() {
+function _setup_all() {
+    _setup_migrations
+    _setup_static_files
+}
+
+function _setup_migrations() {
     uhd venv activate
 
-    echo "Migrating tables"
+    echo "Collecting static files"
     python manage.py migrate --noinput
+}
+
+function _setup_static_files() {
+    uhd venv activate
 
     echo "Collecting static files"
     python manage.py collectstatic --noinput
