@@ -161,8 +161,8 @@ jobs:
   # Build image
   ###############################################################################
 
-  publish-main-image:
-    name: Publish main image
+  publish-main-image-to-deprecated-ecr:
+    name: Publish main image to deprecated ECR
     needs: [
       quality-checks,
       unit-tests,
@@ -186,8 +186,31 @@ jobs:
           ecr-repository: "wp-api"
           role-to-assume: ${{ secrets.AWS_ROLE }}
 
-  publish-ingestion-image:
-    name: Publish ingestion image
+  publish-main-image:
+    name: Publish main image to central ECR
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: "data-dashboard/api"
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+
+  publish-ingestion-image-to-deprecated-ecr:
+    name: Publish ingestion image to deprecated ECR
     needs: [
       quality-checks,
       unit-tests,
@@ -210,6 +233,32 @@ jobs:
         with:
           ecr-repository: "wp-ingestion"
           role-to-assume: ${{ secrets.AWS_ROLE }}
+          dockerfile: Dockerfile-ingestion
+          architecture: arm64
+
+  publish-ingestion-image:
+    name: Publish ingestion image to central ECR
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: "data-dashboard/ingestion"
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           dockerfile: Dockerfile-ingestion
           architecture: arm64
 
