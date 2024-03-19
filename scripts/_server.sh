@@ -7,8 +7,8 @@ function _server_help() {
     echo "commands:"
     echo "  help                      - this help screen"
     echo
-    echo "  run-local                 - start a local development server"
-    echo "  run-prod                  - start a production server"
+    echo "  run-local                 - start a local development grade server"
+    echo "  run-production            - start a production grade server"
     echo
     echo "  setup                     - run setup steps, migrations & static files"
 
@@ -21,7 +21,7 @@ function _server() {
 
     case $verb in
         "run-local") _run_local_server  $args ;;
-        "run-prod") _run_production_server  $args ;;
+        "run-production") _run_production_server  $args ;;
         "setup") _server_setup  $args ;;
 
         *) _server_help ;;
