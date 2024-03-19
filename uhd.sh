@@ -25,8 +25,9 @@ function _uhd_commands_help() {
     echo "commands:"
     echo "  help         - this help screen"
     echo
-    echo "  cache         - cache flush tooling commands"
+    echo "  django       - django application commands"
     echo "  bootstrap    - bootstrap environment commands"
+    echo "  cache         - cache flush tooling commands"
     echo "  security     - security tooling commands"
     echo "  server       - running server commands"
     echo "  tests        - test suite execution commands"
@@ -48,8 +49,9 @@ function uhd() {
     cd $root
 
     case $command in
-        "cache") _cache $args ;;
         "bootstrap") _bootstrap $args ;;
+        "django") _django $args ;;
+        "cache") _cache $args ;;
         "security") _security $args ;;
         "server") _server $args ;;
         "tests") _tests $args ;;
