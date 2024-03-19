@@ -38,9 +38,11 @@ function _format() {
 }
 
 function _ruff_formatter() {
+  echo "Running ruff formatter"
   ruff check . --preview --fix
 }
 
 function _black_formatter() {
+  echo "Running black formatter"
   black .
 }
