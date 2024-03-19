@@ -6,7 +6,7 @@ from ingestion.utils.enums import DataSourceFileType
 
 
 class MissingFieldError(Exception):
-    def __init__(self, field: str):
+    def __init__(self, *, field: str):
         message = f"`{field}` field is missing from the inbound source data"
         super().__init__(message)
 
@@ -31,7 +31,7 @@ class IncomingBaseDataModel(BaseModel):
 
     @field_validator("sex")
     @classmethod
-    def cast_sex_to_an_expected_value(cls, sex: str):
+    def cast_sex_to_an_expected_value(cls, *, sex: str):
         """Casts the `sex` value to one of the expected values
 
         Notes:
