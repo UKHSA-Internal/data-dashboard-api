@@ -24,7 +24,7 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
         raise NotImplementedError
 
     def _build_request_serializer(
-        self, request: Request
+        self, *, request: Request
     ) -> APITimeSeriesRequestSerializer:
         serializer_context = {"request": request, "lookup_field": self.lookup_field}
         return APITimeSeriesRequestSerializer(context=serializer_context)
