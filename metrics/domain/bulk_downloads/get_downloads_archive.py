@@ -14,7 +14,7 @@ def generate_zip_filename() -> str:
     return f"ukhsa_data_dashboard_downloads_{date}.zip"
 
 
-def get_bulk_downloads_archive(file_format: str) -> dict[str, zip]:
+def get_bulk_downloads_archive(*, file_format: str) -> dict[str, zip]:
     """Collects all current downloads and returns a packaged zip file.
 
     Returns:

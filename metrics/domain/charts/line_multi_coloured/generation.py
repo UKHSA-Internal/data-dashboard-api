@@ -10,6 +10,7 @@ from metrics.domain.models import PlotData
 
 
 def create_multi_coloured_line_chart(
+    *,
     chart_height: int,
     chart_width: int,
     chart_plots_data: list[PlotData],
@@ -69,6 +70,7 @@ def create_multi_coloured_line_chart(
 
 
 def _create_line_plot(
+    *,
     x_axis_values: list[Any],
     y_axis_values: list[Any],
     colour: str,
@@ -92,6 +94,7 @@ def _create_line_plot(
 
 
 def generate_chart_figure(
+    *,
     chart_height: int,
     chart_width: int,
     chart_plots_data: list[PlotData],

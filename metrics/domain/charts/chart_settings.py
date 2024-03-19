@@ -10,7 +10,7 @@ from metrics.domain.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 class ChartSettings:
     narrow_chart_width = DEFAULT_CHART_WIDTH
 
-    def __init__(self, width: int, height: int, plots_data: list[PlotData]):
+    def __init__(self, *, width: int, height: int, plots_data: list[PlotData]):
         self._width = width
         self._height = height
         self.plots_data = plots_data
@@ -152,6 +152,7 @@ class ChartSettings:
 
 
 def get_max_date_for_current_month(
+    *,
     existing_dt: str | datetime.datetime | datetime.date,
 ) -> datetime.date:
     """Returns the 15th of the given `existing_dt` or the last day of the month

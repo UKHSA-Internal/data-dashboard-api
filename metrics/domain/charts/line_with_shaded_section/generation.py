@@ -9,6 +9,7 @@ from metrics.domain.models import PlotData
 
 
 def create_line_chart_with_shaded_section(
+    *,
     plots_data: list[PlotData],
     chart_height: int,
     chart_width: int,
@@ -89,6 +90,7 @@ def create_line_chart_with_shaded_section(
 
 
 def _create_main_line_plot(
+    *,
     x_axis_values: list[Any],
     y_axis_values: list[Any],
     preceding_data_points_count: int,
@@ -108,6 +110,7 @@ def _create_main_line_plot(
 
 
 def _create_shaded_section_plot(
+    *,
     x_axis_values: list[Any],
     y_axis_values: list[Any],
     preceding_data_points_count: int,
@@ -132,6 +135,7 @@ def _create_shaded_section_plot(
 
 
 def generate_chart_figure(
+    *,
     plots_data: list[PlotData],
     chart_height: int,
     chart_width: int,

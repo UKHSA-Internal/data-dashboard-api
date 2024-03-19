@@ -15,38 +15,47 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
 
     @staticmethod
-    def _ascending_order(queryset: models.QuerySet, field_name: str) -> models.QuerySet:
+    def _ascending_order(
+        *, queryset: models.QuerySet, field_name: str
+    ) -> models.QuerySet:
         return queryset.order_by(field_name)
 
     @staticmethod
-    def _filter_by_geography(queryset, geography_name):
+    def _filter_by_geography(
+        *, queryset: models.QuerySet, geography_name: str
+    ) -> models.QuerySet:
         return queryset.filter(geography__name=geography_name)
 
     @staticmethod
-    def _filter_by_geography_type(queryset, geography_type_name):
+    def _filter_by_geography_type(
+        *, queryset: models.QuerySet, geography_type_name: str
+    ) -> models.QuerySet:
         return queryset.filter(geography__geography_type__name=geography_type_name)
 
     @staticmethod
-    def _filter_by_stratum(queryset, stratum_name):
+    def _filter_by_stratum(
+        *, queryset: models.QuerySet, stratum_name: str
+    ) -> models.QuerySet:
         return queryset.filter(stratum__name=stratum_name)
 
     @staticmethod
-    def _filter_by_sex(queryset, sex):
+    def _filter_by_sex(*, queryset: models.QuerySet, sex: str) -> models.QuerySet:
         return queryset.filter(sex=sex)
 
     @staticmethod
-    def _filter_by_age(queryset, age):
+    def _filter_by_age(*, queryset: models.QuerySet, age: str) -> models.QuerySet:
         return queryset.filter(age__name=age)
 
     def _filter_for_any_optional_fields(
         self,
-        queryset,
-        geography_name,
-        geography_type_name,
-        stratum_name,
-        sex,
-        age,
-    ):
+        *,
+        queryset: models.QuerySet,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> models.QuerySet:
         if geography_name:
             queryset = self._filter_by_geography(
                 queryset=queryset, geography_name=geography_name
@@ -72,6 +81,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
     def filter_for_x_and_y_values(
         self,
+        *,
         x_axis: str,
         y_axis: str,
         topic_name: str,
@@ -159,6 +169,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
     @staticmethod
     def filter_for_latest_refresh_date_records(
+        *,
         queryset: models.QuerySet,
     ) -> models.QuerySet:
         """Filters the given `queryset` to ensure the latest record is returned for each individual date
@@ -217,6 +228,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
     @staticmethod
     def _annotate_latest_date_on_queryset(
+        *,
         queryset: models.QuerySet,
     ) -> models.QuerySet:
         """Sets `latest_date` attribute on the given `queryset`
@@ -242,7 +254,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         return queryset
 
     @staticmethod
-    def _exclude_data_under_embargo(queryset: models.QuerySet) -> models.QuerySet:
+    def _exclude_data_under_embargo(*, queryset: models.QuerySet) -> models.QuerySet:
         """Excludes any data which is currently embargoed from the given `queryset`
 
         Notes:
@@ -261,7 +273,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
 
-    def get_available_geographies(self, topic: str) -> models.QuerySet:
+    def get_available_geographies(self, *, topic: str) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
         Returns:
@@ -289,6 +301,7 @@ class CoreTimeSeriesManager(models.Manager):
 
     def filter_for_x_and_y_values(
         self,
+        *,
         x_axis: str,
         y_axis: str,
         topic_name: str,
@@ -374,7 +387,7 @@ class CoreTimeSeriesManager(models.Manager):
             age=age,
         )
 
-    def get_available_geographies(self, topic: str) -> models.QuerySet:
+    def get_available_geographies(self, *, topic: str) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record
 
         Returns:

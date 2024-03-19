@@ -19,6 +19,7 @@ FIELDS = {
 
 
 def write_data_to_csv(
+    *,
     file: io.StringIO,
     core_time_series_queryset,
 ) -> io.StringIO:
@@ -28,7 +29,7 @@ def write_data_to_csv(
 
 
 def _write_to_csv_file(
-    file: io.StringIO, headers: list[str], rows: Iterable
+    *, file: io.StringIO, headers: list[str], rows: Iterable
 ) -> io.StringIO:
     writer = csv.writer(file)
     writer.writerow(headers)

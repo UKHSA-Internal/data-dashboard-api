@@ -47,6 +47,7 @@ cms_admin_urlpatterns = [
 
 
 def construct_cms_admin_urlpatterns(
+    *,
     app_mode: str | None,
 ) -> list[resolvers.URLResolver]:
     """Builds a list of `URLResolver` instances for the cms-admin application module
@@ -77,6 +78,7 @@ DEFAULT_PUBLIC_API_PREFIX = "api/public/timeseries/"
 
 
 def construct_public_api_urlpatterns(
+    *,
     app_mode: str | None,
 ) -> list[resolvers.URLResolver]:
     """Builds a list of `URLResolver` instances for the public API application module
@@ -157,6 +159,7 @@ django_admin_urlpatterns = [
 
 
 def construct_urlpatterns(
+    *,
     app_mode: str | None,
 ) -> list[resolvers.URLResolver, resolvers.URLPattern]:
     """Builds a list of `URLResolver` and `URLPattern` instances for the django app to consume.

@@ -17,6 +17,7 @@ DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 class DownloadsInterface:
     def __init__(
         self,
+        *,
         plots_collection: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         plots_interface: PlotsInterface | None = None,
@@ -36,6 +37,7 @@ class DownloadsInterface:
 
 
 def merge_and_process_querysets(
+    *,
     complete_plots: list[CompletePlotData],
 ) -> CoreTimeSeriesQuerySet:
     """Merges the underlying querysets in the given `complete_plots`, orders and de-duplicates records too.
@@ -56,6 +58,7 @@ def merge_and_process_querysets(
 
 
 def _extract_querysets(
+    *,
     complete_plots: list[CompletePlotData],
 ) -> Iterator[CoreTimeSeriesQuerySet]:
     """Extracts the `queryset` from each individual `complete_plot`
@@ -72,6 +75,7 @@ def _extract_querysets(
 
 
 def merge_querysets(
+    *,
     all_querysets: Iterator[CoreTimeSeriesQuerySet],
 ) -> CoreTimeSeriesQuerySet:
     """Merges `all_querysets` into 1 queryset and removes duplicate records
@@ -89,6 +93,7 @@ def merge_querysets(
 
 
 def cast_queryset_for_desired_fields(
+    *,
     queryset: CoreTimeSeriesQuerySet,
 ) -> CoreTimeSeriesQuerySet:
     """Casts the given `queryset` to the fields required for a downloadable export
@@ -106,6 +111,7 @@ def cast_queryset_for_desired_fields(
 
 
 def sort_queryset_according_to_x_axis(
+    *,
     queryset: CoreTimeSeriesQuerySet,
 ) -> CoreTimeSeriesQuerySet:
     """Sort the `queryset` according to the `x_axis`
@@ -122,7 +128,7 @@ def sort_queryset_according_to_x_axis(
     return queryset.order_by("-date")
 
 
-def get_downloads_data(chart_plots: PlotsCollection) -> CoreTimeSeriesQuerySet:
+def get_downloads_data(*, chart_plots: PlotsCollection) -> CoreTimeSeriesQuerySet:
     """Gets the final queryset for the downloads export associated with the given `chart_plots`
 
     Args:

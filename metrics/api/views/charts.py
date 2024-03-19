@@ -124,7 +124,7 @@ class ChartsView(APIView):
         return self._return_image(filename=filename)
 
     @staticmethod
-    def _return_image(filename: str) -> FileResponse:
+    def _return_image(*, filename: str) -> FileResponse:
         image = open(filename, "rb")
         response = FileResponse(image)
 

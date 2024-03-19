@@ -63,6 +63,7 @@ class GeographiesSerializer(serializers.Serializer):
 
 
 def _serialize_queryset(
+    *,
     queryset: CoreTimeSeriesQuerySet,
 ) -> list[GEOGRAPHY_TYPE_RESULT]:
     """Converts the `queryset` to a list of dicts, where each dict represents a geography_type

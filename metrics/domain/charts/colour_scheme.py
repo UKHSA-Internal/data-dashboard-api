@@ -33,14 +33,14 @@ class RGBAChartLineColours(Enum):
         return tuple((chart_type.name, chart_type.name) for chart_type in cls)
 
     @classmethod
-    def get_colour(cls, colour: str) -> "RGBAChartLineColours":
+    def get_colour(cls, *, colour: str) -> "RGBAChartLineColours":
         try:
             return cls[colour]
         except KeyError:
             return cls.BLACK
 
     @classmethod
-    def get_bar_colour(cls, colour: str) -> "RGBAChartLineColours":
+    def get_bar_colour(cls, *, colour: str) -> "RGBAChartLineColours":
         try:
             return cls[colour]
         except KeyError:

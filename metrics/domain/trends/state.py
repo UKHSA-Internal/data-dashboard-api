@@ -39,7 +39,7 @@ class Trend(BaseModel):
         data = super().model_dump(*args, **kwargs)
         return self._add_arrow_direction_and_colour(data=data)
 
-    def _add_arrow_direction_and_colour(self, data: TREND_AS_DICT) -> TREND_AS_DICT:
+    def _add_arrow_direction_and_colour(self, *, data: TREND_AS_DICT) -> TREND_AS_DICT:
         data["direction"] = self.direction
         data["colour"] = self.colour
         return data

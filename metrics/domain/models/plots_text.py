@@ -15,14 +15,14 @@ READABLE_DATE_FORMAT = "%d %B %Y"
 class PlotsText:
     """This class is used to build alt_text for a chart/ list of enriched `PlotData` models"""
 
-    def __init__(self, plots_data: list[PlotData]):
+    def __init__(self, *, plots_data: list[PlotData]):
         self.plots_data: list[PlotData] = self._extract_plots_with_valid_data(
             plots_data=plots_data
         )
 
     @classmethod
     def _extract_plots_with_valid_data(
-        cls, plots_data: list[PlotData]
+        cls, *, plots_data: list[PlotData]
     ) -> list[PlotData]:
         return [
             plot_data
@@ -135,7 +135,7 @@ class PlotsText:
         return description
 
     def _describe_next_plot_in_multiple_plot_group(
-        self, index: int, plot_data: PlotData
+        self, *, index: int, plot_data: PlotData
     ) -> str:
         """Builds a description of a plot. Assumes there are multiple plots on the chart.
 
@@ -177,7 +177,7 @@ class PlotsText:
     # Data description
 
     def _describe_date_based_plot_data(
-        self, plot_data: PlotData, number_of_parts: int = 6
+        self, *, plot_data: PlotData, number_of_parts: int = 6
     ) -> str:
         """Builds a description of the data for the given plot. Assumes the plot uses `date` along the x-axis
 
@@ -239,6 +239,7 @@ class PlotsText:
 
     def _build_description_for_section_of_data(
         self,
+        *,
         metric_value_part: list[Decimal],
         date_part: list[datetime.date],
         index: int,
@@ -289,7 +290,7 @@ class PlotsText:
     # Utilities
 
     @classmethod
-    def _stringify_chart_type(cls, plot_parameters: PlotData) -> str:
+    def _stringify_chart_type(cls, *, plot_parameters: PlotData) -> str:
         chart_type: str = plot_parameters.chart_type
         match chart_type:
             case ChartTypes.bar.value:
@@ -299,7 +300,7 @@ class PlotsText:
             case ChartTypes.line_with_shaded_section.value:
                 return "line"
 
-    def _describe_plot_type(self, plot_parameters: PlotParameters) -> str:
+    def _describe_plot_type(self, *, plot_parameters: PlotParameters) -> str:
         line_type: str = self._get_line_type_or_default(plot_parameters=plot_parameters)
         line_colour: str = self._get_line_colour_or_default(
             plot_parameters=plot_parameters
@@ -309,7 +310,7 @@ class PlotsText:
         return f"This is a {line_colour} {line_type} {plot_type} plot. "
 
     @classmethod
-    def _stringify_sex(cls, plot: PlotParameters) -> str:
+    def _stringify_sex(cls, *, plot: PlotParameters) -> str:
         match plot.sex:
             case "f":
                 return "females"
@@ -318,7 +319,7 @@ class PlotsText:
             case _:
                 return "all"
 
-    def _describe_plot_parameters(self, plot_parameters: PlotParameters) -> str:
+    def _describe_plot_parameters(self, *, plot_parameters: PlotParameters) -> str:
         sex_grouping: str = self._stringify_sex(plot=plot_parameters)
         return (
             f"This plot shows data for {plot_parameters.topic}. "
@@ -327,7 +328,7 @@ class PlotsText:
         )
 
     @classmethod
-    def _get_line_colour_or_default(cls, plot_parameters: PlotParameters) -> str:
+    def _get_line_colour_or_default(cls, *, plot_parameters: PlotParameters) -> str:
         if plot_parameters.line_colour:
             return plot_parameters.line_colour.lower()
 
@@ -337,14 +338,14 @@ class PlotsText:
         return RGBAChartLineColours.BLACK.name.lower()
 
     @classmethod
-    def _get_line_type_or_default(cls, plot_parameters: PlotParameters) -> str:
+    def _get_line_type_or_default(cls, *, plot_parameters: PlotParameters) -> str:
         if plot_parameters.line_type:
             return plot_parameters.line_type.lower()
 
         return ChartLineTypes.SOLID.value.lower()
 
     @classmethod
-    def _stringify_date(cls, date_obj: datetime.date) -> str:
+    def _stringify_date(cls, *, date_obj: datetime.date) -> str:
         return date_obj.strftime(format=READABLE_DATE_FORMAT)
 
     @classmethod
@@ -355,11 +356,11 @@ class PlotsText:
             return float(metric_value)
 
     @classmethod
-    def _plot_is_date_based(cls, plot_data: PlotData) -> bool:
+    def _plot_is_date_based(cls, *, plot_data: PlotData) -> bool:
         return type(plot_data.x_axis_values[0]) is datetime.date
 
 
-def split_into_n_parts(data: list[Any], n: int) -> Iterator[list[Any]]:
+def split_into_n_parts(*, data: list[Any], n: int) -> Iterator[list[Any]]:
     """Splits the given `data` into `n` number of parts
 
     Args:

@@ -13,38 +13,45 @@ class CoreHeadlineQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreHeadlineManager`"""
 
     @staticmethod
-    def _newest_to_oldest(queryset: models.QuerySet) -> models.QuerySet:
+    def _newest_to_oldest(*, queryset: models.QuerySet) -> models.QuerySet:
         return queryset.order_by("-period_end", "-refresh_date")
 
     @staticmethod
-    def _filter_by_geography(queryset, geography_name):
+    def _filter_by_geography(
+        *, queryset: models.QuerySet, geography_name: str
+    ) -> models.QuerySet:
         return queryset.filter(geography__name=geography_name)
 
     @staticmethod
-    def _filter_by_geography_type(queryset, geography_type_name):
+    def _filter_by_geography_type(
+        *, queryset: models.QuerySet, geography_type_name: str
+    ) -> models.QuerySet:
         return queryset.filter(geography__geography_type__name=geography_type_name)
 
     @staticmethod
-    def _filter_by_stratum(queryset, stratum_name):
+    def _filter_by_stratum(
+        *, queryset: models.QuerySet, stratum_name: str
+    ) -> models.QuerySet:
         return queryset.filter(stratum__name=stratum_name)
 
     @staticmethod
-    def _filter_by_sex(queryset, sex):
+    def _filter_by_sex(*, queryset: models.QuerySet, sex: str) -> models.QuerySet:
         return queryset.filter(sex=sex)
 
     @staticmethod
-    def _filter_by_age(queryset, age):
+    def _filter_by_age(*, queryset: models.QuerySet, age: str) -> models.QuerySet:
         return queryset.filter(age__name=age)
 
     def _filter_for_any_optional_fields(
         self,
-        queryset,
-        geography_name,
-        geography_type_name,
-        stratum_name,
-        sex,
-        age,
-    ):
+        *,
+        queryset: models.QuerySet,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> models.QuerySet:
         if geography_name:
             queryset = self._filter_by_geography(
                 queryset=queryset, geography_name=geography_name
@@ -70,6 +77,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
     def get_headlines_released_from_embargo(
         self,
+        *,
         topic_name: str,
         metric_name: str,
         geography_name: str,
@@ -124,7 +132,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         return self._newest_to_oldest(queryset=queryset)
 
     @staticmethod
-    def _exclude_data_under_embargo(queryset: models.QuerySet) -> models.QuerySet:
+    def _exclude_data_under_embargo(*, queryset: models.QuerySet) -> models.QuerySet:
         """Excludes any data which is currently embargoed from the given `queryset`
 
         Notes:
@@ -152,6 +160,7 @@ class CoreHeadlineManager(models.Manager):
 
     def get_latest_headline(
         self,
+        *,
         topic_name: str,
         metric_name: str,
         geography_name: str = "England",

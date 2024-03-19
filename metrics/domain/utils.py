@@ -5,13 +5,13 @@ DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 515
 
 
-def get_last_day_of_month(date: datetime.datetime.date) -> datetime.datetime.date:
+def get_last_day_of_month(*, date: datetime.datetime.date) -> datetime.datetime.date:
     next_month = date.replace(day=28) + datetime.timedelta(days=4)
     return next_month - datetime.timedelta(days=next_month.day)
 
 
 def _check_for_substring_match(
-    string_to_check: str, substrings: tuple[str, ...]
+    *, string_to_check: str, substrings: tuple[str, ...]
 ) -> bool:
     return any(sub_string in string_to_check.lower() for sub_string in substrings)
 
@@ -71,7 +71,7 @@ class ChartAxisFields(Enum):
         return cls.date
 
     @classmethod
-    def get_x_axis_value(cls, name: str) -> str:
+    def get_x_axis_value(cls, *, name: str) -> str:
         try:
             return cls[name].value
         except KeyError:
@@ -82,7 +82,7 @@ class ChartAxisFields(Enum):
         return cls.metric
 
     @classmethod
-    def get_y_axis_value(cls, name: str) -> str:
+    def get_y_axis_value(cls, *, name: str) -> str:
         try:
             return cls[name].value
         except KeyError:

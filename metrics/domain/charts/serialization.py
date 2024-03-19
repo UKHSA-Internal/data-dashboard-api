@@ -3,7 +3,7 @@ import json
 from plotly.basedatatypes import BaseTraceType
 
 
-def convert_graph_object_to_dict(graph_object: BaseTraceType) -> dict:
+def convert_graph_object_to_dict(*, graph_object: BaseTraceType) -> dict:
     """Converts a plotly graph_object to its corresponding dict representation
 
     Args:

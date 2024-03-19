@@ -36,6 +36,7 @@ class ChartOutput:
 class ChartsInterface:
     def __init__(
         self,
+        *,
         chart_plots: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         plots_interface: PlotsInterface | None = None,
@@ -77,7 +78,7 @@ class ChartsInterface:
         return ChartOutput(figure=figure, description=description)
 
     @classmethod
-    def build_chart_description(cls, plots_data: list[PlotData]) -> str:
+    def build_chart_description(cls, *, plots_data: list[PlotData]) -> str:
         """Creates a description to summarize the contents of the chart.
 
         Args:
@@ -95,7 +96,7 @@ class ChartsInterface:
         return plots_text.construct_text()
 
     def generate_bar_chart(
-        self, plots_data: list[PlotData]
+        self, *, plots_data: list[PlotData]
     ) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot
 
@@ -124,7 +125,7 @@ class ChartsInterface:
         )
 
     def generate_line_multi_coloured_chart(
-        self, plots_data: list[PlotData]
+        self, *, plots_data: list[PlotData]
     ) -> plotly.graph_objects.Figure:
         """Creates a multiple line colour-differentiated chart figure for the requested chart plots
 
@@ -152,7 +153,7 @@ class ChartsInterface:
         )
 
     def generate_line_with_shaded_section_chart(
-        self, plots_data: list[PlotData]
+        self, *, plots_data: list[PlotData]
     ) -> plotly.graph_objects.Figure:
         """Creates a line chart with shaded section figure for the requested chart plot
 
@@ -201,7 +202,7 @@ class ChartsInterface:
         self._set_latest_date_from_plots_data(plots_data=plots_data)
         return plots_data
 
-    def _set_latest_date_from_plots_data(self, plots_data: list[PlotData]) -> None:
+    def _set_latest_date_from_plots_data(self, *, plots_data: list[PlotData]) -> None:
         """Extracts the latest date from the list of given `plots_data`
 
         Notes:
@@ -226,7 +227,7 @@ class ChartsInterface:
 
         self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
 
-    def param_builder_for_line_with_shaded_section(self, plots_data: list[PlotData]):
+    def param_builder_for_line_with_shaded_section(self, *, plots_data: list[PlotData]):
         plot_data = plots_data[0]
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
@@ -250,7 +251,7 @@ class ChartsInterface:
             ),
         }
 
-    def create_optimized_svg(self, figure: plotly.graph_objects.Figure) -> str:
+    def create_optimized_svg(self, *, figure: plotly.graph_objects.Figure) -> str:
         """Convert figure to a `svg` then optimize the size of it
 
         Args:
@@ -262,7 +263,7 @@ class ChartsInterface:
         svg_image = figure.to_image(format=self.chart_plots.file_format, validate=False)
         return scour.scourString(in_string=svg_image)
 
-    def encode_figure(self, figure: plotly.graph_objects.Figure) -> str:
+    def encode_figure(self, *, figure: plotly.graph_objects.Figure) -> str:
         """
         URI Encode the supplied chart figure
 
@@ -282,7 +283,7 @@ class ChartsInterface:
 
         return encoded_chart
 
-    def write_figure(self, figure: plotly.graph_objects.Figure) -> str:
+    def write_figure(self, *, figure: plotly.graph_objects.Figure) -> str:
         """
         Convert a figure to a static image and write to a file in the desired image format
 
@@ -301,7 +302,7 @@ class ChartsInterface:
         return filename
 
     @staticmethod
-    def calculate_change_in_metric_value(values, metric_name) -> int | float:
+    def calculate_change_in_metric_value(*, values, metric_name) -> int | float:
         rolling_period_slice: int = calculations.get_rolling_period_slice_for_metric(
             metric_name=metric_name
         )
@@ -311,7 +312,7 @@ class ChartsInterface:
 
         return calculations.change_between_each_half(values=values)
 
-    def get_encoded_chart(self, chart_output: ChartOutput) -> dict[str, str]:
+    def get_encoded_chart(self, *, chart_output: ChartOutput) -> dict[str, str]:
         """Creates a dict containing a timestamp for the last data point + encoded string for the chart figure.
 
         Args:
@@ -334,7 +335,7 @@ class ChartsInterface:
         }
 
 
-def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
+def generate_chart_as_file(*, chart_plots: PlotsCollection) -> str:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
 
     Args:
@@ -361,7 +362,7 @@ def generate_chart_as_file(chart_plots: PlotsCollection) -> str:
     return charts_interface.write_figure(figure=chart_output.figure)
 
 
-def generate_encoded_chart(chart_plots: PlotsCollection) -> dict[str, str]:
+def generate_encoded_chart(*, chart_plots: PlotsCollection) -> dict[str, str]:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
      Then encodes it, adds the last_updated_date to it and returns the result as a serialized JSON string
 

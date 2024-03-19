@@ -11,6 +11,7 @@ DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 class TablesInterface:
     def __init__(
         self,
+        *,
         plots_collection: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         plots_interface: PlotsInterface | None = None,
@@ -48,6 +49,7 @@ class TablesInterface:
 
 
 def generate_table_for_full_plots(
+    *,
     plots_collection: PlotsCollection,
 ) -> list[dict[str, str]]:
     """Validates and creates tabular output based off the parameters provided within the `plots_collection` model

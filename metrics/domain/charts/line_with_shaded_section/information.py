@@ -4,6 +4,7 @@ from metrics.domain.utils import _check_for_substring_match
 
 
 def _get_line_and_fill_colours(
+    *,
     metric_is_improving: bool,
 ) -> tuple[RGBAColours, RGBAColours]:
     if metric_is_improving:
@@ -12,7 +13,7 @@ def _get_line_and_fill_colours(
 
 
 def determine_line_and_fill_colours(
-    change_in_metric_value: int, metric_name: str
+    *, change_in_metric_value: int, metric_name: str
 ) -> COLOUR_PAIR:
     """Returns colours dependening on whether the `change_in_metric_value` is considered to be good.
 
@@ -58,7 +59,7 @@ class TrendMetricNotSupportedError(Exception):
         super().__init__(message)
 
 
-def is_metric_improving(change_in_metric_value: float, metric_name: str) -> bool:
+def is_metric_improving(*, change_in_metric_value: float, metric_name: str) -> bool:
     """Checks whether a positive or negative `change_in_metric_value` should be considered a good thing.
 
     For example, for cases or deaths, an increase in metric value
