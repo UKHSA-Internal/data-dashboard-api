@@ -2,7 +2,7 @@
 
 function _server_help() {
     echo
-    echo "uhd server <command>"
+    echo "uhd server <command> [options]"
     echo
     echo "commands:"
     echo "  help                      - this help screen"
