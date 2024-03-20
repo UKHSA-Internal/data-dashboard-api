@@ -1,4 +1,5 @@
 import datetime
+from collections.abc import Iterable
 from typing import Any
 
 from django.db.models import Manager, QuerySet
@@ -341,7 +342,7 @@ def get_x_and_y_values(
 
     """
     if plot_parameters.x_axis == ChartAxisFields.age.name:
-        return sort_by_age(queryset=queryset)
+        return sort_by_age(iterable=queryset)
 
     return unzip_values(values=queryset)
 
@@ -361,12 +362,12 @@ def convert_type(*, s: str) -> int | str:
     return int(s) if s.isdigit() else s.lower()
 
 
-def sort_by_age(*, queryset: QuerySet) -> tuple[list[Any], list[Any]]:
+def sort_by_age(*, iterable: Iterable) -> tuple[list[Any], list[Any]]:
     """
     Sorts a list of tuples where age is the first element and return as two separate lists
 
     Args:
-        queryset: A queryset containing a list of tuples where
+        iterable: An iterable containing a list of tuples where
         Age is the first value and the metric value is the second
         E.g. ('15_44', Decimal('0.7'))
 
@@ -374,7 +375,7 @@ def sort_by_age(*, queryset: QuerySet) -> tuple[list[Any], list[Any]]:
         A properly sorted and displayable version broken into two separate lists
 
     """
-    temp_dict = {x[0]: x for x in queryset}
+    temp_dict = {x[0]: x for x in iterable}
 
     # Now sort on the tuple and return the x and y values
     x_values = []
