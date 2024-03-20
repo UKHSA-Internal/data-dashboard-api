@@ -91,7 +91,8 @@ jobs:
 
       - name: Run unit tests
         run: |
-          python -m pytest tests/unit/
+          source uhd.sh
+          uhd tests unit
 
   ###############################################################################
   # Integration tests
@@ -105,9 +106,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run Integration tests
+      - name: Run integration tests
         run: |
-          python -m pytest tests/integration/
+          source uhd.sh
+          uhd tests integration
 
   ###############################################################################
   # System tests
@@ -121,9 +123,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run System tests
+      - name: Run system tests
         run: |
-          python -m pytest tests/system/
+          source uhd.sh
+          uhd tests system
 
   ###############################################################################
   # Migration tests
@@ -137,9 +140,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run Migration tests
+      - name: Run migration tests
         run: |
-          python -m pytest tests/migrations/
+          source uhd.sh
+          uhd tests migration
 
   ###############################################################################
   # Test coverage
@@ -155,7 +159,8 @@ jobs:
 
       - name: Evaluate test coverage
         run: |
-          pytest --cov
+          source uhd.sh
+          uhd tests coverage
 
   ###############################################################################
   # Build image
