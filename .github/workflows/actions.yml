@@ -74,9 +74,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run import-linter
+      - name: Check architectural constraints
         run: |
-          lint-imports
+          source uhd.sh
+          uhd quality architecture
 
   ###############################################################################
   # Unit tests
