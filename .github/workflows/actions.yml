@@ -35,10 +35,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      # Scan dependencies with `pip-audit`
-      - uses: pypa/gh-action-pip-audit@v1.0.8
-        with:
-          inputs: requirements-prod.txt requirements-dev.txt
+      - name: Scan dependencies
+        run: |
+          source uhd.sh
+          uhd security dependencies
 
       # Scan project with `Bandit`
       - name: Run Bandit
