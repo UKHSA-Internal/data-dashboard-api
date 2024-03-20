@@ -57,9 +57,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run ruff & black
+      - name: Run linters
         run: |
-          source .github/workflows/formatting.sh
+          source uhd.sh
+          uhd quality format-check
 
   ###############################################################################
   # Architectural constraints checks
