@@ -5,7 +5,7 @@ from openpyxl import load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 
 
-def build_sections(sections: list[tuple[str, str]]) -> list[dict]:
+def build_sections(*, sections: list[tuple[str, str]]) -> list[dict]:
     """Build metric documentation page sections.
 
     Args:
@@ -27,7 +27,7 @@ def build_sections(sections: list[tuple[str, str]]) -> list[dict]:
     ]
 
 
-def build_entry_from_row_data(row: tuple[str, ...]) -> dict[str, str | list[dict]]:
+def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, str | list[dict]]:
     """Build a metrics documentation page entry.
 
     Args:
@@ -51,7 +51,9 @@ def build_entry_from_row_data(row: tuple[str, ...]) -> dict[str, str | list[dict
     }
 
 
-def gather_sections_and_omit_if_needed(row: tuple[str, ...]) -> list[tuple[str, str]]:
+def gather_sections_and_omit_if_needed(
+    *, row: tuple[str, ...]
+) -> list[tuple[str, str]]:
     """Builds a list of sections which can be parsed by the `build_sections()` function
 
     Notes:
