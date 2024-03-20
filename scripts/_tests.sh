@@ -10,7 +10,7 @@ function _tests_help() {
     echo "  unit                      - run all unit tests"
     echo "  integration               - run all integration tests"
     echo "  system                    - run all system tests"
-    echo "  migration                 - run all migration tests"
+    echo "  migrations                - run all migration tests"
     echo
     echo "  coverage                  - run test coverage"
     echo "  all                       - run all tests regardless of type"
@@ -26,7 +26,7 @@ function _tests() {
         "unit") _unit $args ;;
         "integration") _integration $args ;;
         "system") _system $args ;;
-        "migration") _migration $args ;;
+        "migrations") _migrations $args ;;
         "coverage") _coverage $args ;;
         "all") _all $args ;;
 
@@ -49,9 +49,9 @@ function _system() {
     pytest tests/system
 }
 
-function _migration() {
+function _migrations() {
     uhd venv activate
-    pytest tests/migration
+    pytest tests/migrations
 }
 
 function _coverage() {
@@ -63,5 +63,5 @@ function _all() {
     _unit
     _integration
     _system
-    _migration
+    _migrations
 }
