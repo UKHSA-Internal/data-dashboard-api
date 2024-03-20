@@ -40,10 +40,10 @@ jobs:
         with:
           inputs: requirements-prod.txt requirements-dev.txt
 
-      # Scan project with `Bandit`
       - name: Run Bandit
         run: |
-          bandit -c pyproject.toml -r .
+          source uhd.sh
+          uhd security vulnerabilities
 
   ###############################################################################
   # Code quality checks
