@@ -269,8 +269,8 @@ jobs:
   trigger-deployments:
     name: Trigger deployments
     needs: [
-      publish-main-image,
-      publish-ingestion-image
+      publish-main-image-to-deprecated-ecr,
+      publish-ingestion-image-to-deprecated-ecr
     ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
