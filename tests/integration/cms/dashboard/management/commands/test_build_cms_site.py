@@ -79,7 +79,9 @@ class TestBuildCMSSite:
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        home_page_response_template = open_example_page_response("ukhsa_data_dashboard")
+        home_page_response_template = open_example_page_response(
+            page_name="ukhsa_data_dashboard"
+        )
         assert response_data["title"] == home_page_response_template["title"]
         assert (
             response_data["page_description"]
@@ -133,7 +135,7 @@ class TestBuildCMSSite:
 
         # Compare the response from the endpoint to the template used to build the page
         page_name = slug.replace("-", "_")
-        topic_page_response_template = open_example_page_response(page_name)
+        topic_page_response_template = open_example_page_response(page_name=page_name)
         assert response_data["title"] == topic_page_response_template["title"]
         assert (
             response_data["page_description"]
@@ -185,7 +187,7 @@ class TestBuildCMSSite:
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        about_page_template = open_example_page_response("about")
+        about_page_template = open_example_page_response(page_name="about")
         assert response_data["title"] == about_page_template["title"]
         assert response_data["body"] == about_page_template["body"]
         assert (
@@ -233,7 +235,7 @@ class TestBuildCMSSite:
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        whats_new_page_template = open_example_page_response("whats_new")
+        whats_new_page_template = open_example_page_response(page_name="whats_new")
         assert response_data["title"] == whats_new_page_template["title"]
         assert response_data["body"] == whats_new_page_template["body"]
         assert (
@@ -277,7 +279,7 @@ class TestBuildCMSSite:
         # When
         response = api_client.get(path=f"/api/pages/{bulk_downloads.id}/")
         response_button_snippet = response.data["body"][1]["value"]
-        bulk_downloads_template = open_example_page_response("bulk_downloads")
+        bulk_downloads_template = open_example_page_response(page_name="bulk_downloads")
         button_snippet = Button.objects.get(text="download (zip)")
 
         # Then

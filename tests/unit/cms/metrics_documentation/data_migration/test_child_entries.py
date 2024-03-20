@@ -109,7 +109,7 @@ class TestBuildEntryFromRowData:
         }
 
         # When
-        response = build_entry_from_row_data(fake_row)
+        response = build_entry_from_row_data(row=fake_row)
 
         # Then
         assert response == expected_response
