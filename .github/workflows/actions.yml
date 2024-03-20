@@ -40,10 +40,10 @@ jobs:
           source uhd.sh
           uhd security dependencies
 
-      # Scan project with `Bandit`
-      - name: Run Bandit
+      - name: Scan for vulnerabilities
         run: |
-          bandit -c pyproject.toml -r .
+          source uhd.sh
+          uhd security vulnerabilities
 
   ###############################################################################
   # Code quality checks
