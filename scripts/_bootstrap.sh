@@ -7,7 +7,7 @@ function _bootstrap_help() {
     echo "commands:"
     echo "  help                      - this help screen"
     echo
-    echo "  admin-user                - add an admin superuser"
+    echo "  admin-user <password>     - add an admin superuser"
     echo
     echo "  test-content              - populate the cms with base pages"
     echo "  test-data                 - upload the truncated test dataset"
