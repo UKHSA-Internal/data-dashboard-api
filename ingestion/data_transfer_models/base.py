@@ -31,7 +31,7 @@ class IncomingBaseDataModel(BaseModel):
 
     @field_validator("sex")
     @classmethod
-    def cast_sex_to_an_expected_value(cls, *, sex: str):
+    def cast_sex_to_an_expected_value(cls, sex: str):
         """Casts the `sex` value to one of the expected values
 
         Notes:

@@ -22,7 +22,7 @@ class TimeSeriesDTO(IncomingBaseDataModel):
 
     @field_validator("metric_frequency")
     @classmethod
-    def cast_metric_frequency_to_an_expected_value(cls, *, metric_frequency: str):
+    def cast_metric_frequency_to_an_expected_value(cls, metric_frequency: str):
         """Casts the `metric_frequency` value to one of the expected values
 
         Notes:
