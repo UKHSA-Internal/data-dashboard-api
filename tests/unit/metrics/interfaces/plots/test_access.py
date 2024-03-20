@@ -701,7 +701,7 @@ class TestGetXAndYValues:
 
         # Then
         assert x_and_y_values == spy_sort_by_age.return_value
-        spy_sort_by_age.assert_called_once_with(queryset=mocked_queryset)
+        spy_sort_by_age.assert_called_once_with(iterable=mocked_queryset)
 
     @pytest.mark.parametrize(
         "x_axis",
@@ -777,7 +777,7 @@ class TestSortByAge:
         ]
 
         # When
-        first_list, second_list = sort_by_age(values)
+        first_list, second_list = sort_by_age(iterable=values)
 
         # Then
         assert first_list == ["06 - 17", "18 - 64", "65 - 84", "85+", "all"]
@@ -816,7 +816,7 @@ class TestUnzipValues:
         values = [(1, 2), (3, 4), (5, 6)]
 
         # When
-        unzipped_lists = unzip_values(values)
+        unzipped_lists = unzip_values(values=values)
 
         # Then
         (

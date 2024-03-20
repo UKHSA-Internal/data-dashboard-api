@@ -72,7 +72,7 @@ class TestChartsInterface:
         )
         chart_output = ChartOutput(
             figure=spy_generate_line_with_shaded_section_chart.return_value,
-            description=charts_interface.build_chart_description([]),
+            description=charts_interface.build_chart_description(plots_data=[]),
         )
         assert generated_chart_output == chart_output
 
@@ -111,7 +111,7 @@ class TestChartsInterface:
         )
         chart_output = ChartOutput(
             figure=spy_generate_bar_chart.return_value,
-            description=charts_interface.build_chart_description([]),
+            description=charts_interface.build_chart_description(plots_data=[]),
         )
         assert generated_chart_output == chart_output
 
