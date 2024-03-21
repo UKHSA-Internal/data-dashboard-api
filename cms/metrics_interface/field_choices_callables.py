@@ -15,7 +15,9 @@ from cms.metrics_interface import MetricsAPIInterface
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 
 
-def _build_two_item_tuple_choices(choices: list[str]) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+def _build_two_item_tuple_choices(
+    *, choices: list[str]
+) -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return [(choice, choice) for choice in choices]
 
 
@@ -58,7 +60,7 @@ def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
-        metrics_interface.get_all_unique_metric_names()
+        choices=metrics_interface.get_all_unique_metric_names()
     )
 
 
@@ -140,7 +142,9 @@ def get_all_topic_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     metrics_interface = MetricsAPIInterface()
-    return _build_two_item_tuple_choices(metrics_interface.get_all_topic_names())
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_topic_names()
+    )
 
 
 def get_a_list_of_all_topic_names():
@@ -180,7 +184,7 @@ def get_all_unique_change_type_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
-        metrics_interface.get_all_unique_change_type_metric_names()
+        choices=metrics_interface.get_all_unique_change_type_metric_names()
     )
 
 
@@ -206,7 +210,7 @@ def get_all_unique_percent_change_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
-        metrics_interface.get_all_unique_percent_change_type_names()
+        choices=metrics_interface.get_all_unique_percent_change_type_names()
     )
 
 
@@ -228,7 +232,9 @@ def get_all_stratum_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     metrics_interface = MetricsAPIInterface()
-    return _build_two_item_tuple_choices(metrics_interface.get_all_stratum_names())
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_stratum_names()
+    )
 
 
 def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -249,7 +255,9 @@ def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     metrics_interface = MetricsAPIInterface()
-    return _build_two_item_tuple_choices(metrics_interface.get_all_geography_names())
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_geography_names()
+    )
 
 
 def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -271,7 +279,7 @@ def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(
-        metrics_interface.get_all_geography_type_names()
+        choices=metrics_interface.get_all_geography_type_names()
     )
 
 
@@ -293,7 +301,7 @@ def get_all_sex_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     names = ["all", "f", "m"]
-    return _build_two_item_tuple_choices(names)
+    return _build_two_item_tuple_choices(choices=names)
 
 
 def get_all_age_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -314,4 +322,4 @@ def get_all_age_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     metrics_interface = MetricsAPIInterface()
-    return _build_two_item_tuple_choices(metrics_interface.get_all_age_names())
+    return _build_two_item_tuple_choices(choices=metrics_interface.get_all_age_names())
