@@ -3,7 +3,7 @@ from enum import Enum
 FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER: str = "User provided no input"
 
 
-def build_body_for_email(suggestions: dict[str, str]) -> str:
+def build_body_for_email(*, suggestions: dict[str, str]) -> str:
     """Builds the suggestions email body as a string to be sent to the email server
 
     Args:
@@ -34,7 +34,7 @@ class FeedbackQuestion(Enum):
 
 
 def _enrich_suggestions_with_long_form_questions(
-    suggestions: dict[str, str]
+    *, suggestions: dict[str, str]
 ) -> dict[str, str]:
     """Enriches the question keys in the given `suggestions` with the long form versions
 
@@ -73,7 +73,7 @@ def _enrich_suggestions_with_long_form_questions(
     return long_form_suggestions
 
 
-def _build_body_from_suggestions(suggestions: dict[str, str]) -> str:
+def _build_body_from_suggestions(*, suggestions: dict[str, str]) -> str:
     """Builds the suggestions email body as a string to be sent to the email server
 
     Args:
