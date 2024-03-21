@@ -6,8 +6,7 @@ function set_up_django() {
     uhd django migrate
     uhd server setup-static-files
 
-    local port=80
-    uhd server run-production $port
+    uhd server run-production
 }
 
 set_up_django
