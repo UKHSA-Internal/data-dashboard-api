@@ -38,7 +38,7 @@ def load_metric_documentation_parent_page() -> dict:
         return json.load(file)
 
 
-def add_page_as_subpage_to_parent(subpage: Page, parent_page: HomePage) -> None:
+def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: HomePage) -> None:
     """Adds the given `subpage` as a child to the `parent_page`
 
     Args:
@@ -54,6 +54,7 @@ def add_page_as_subpage_to_parent(subpage: Page, parent_page: HomePage) -> None:
 
 
 def get_or_create_metrics_documentation_parent_page(
+    *,
     metrics_documentation_parent_page_manager: Manager = DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER,
 ) -> MetricsDocumentationParentPage:
     """Creates parent page for data migration if one doesn't exist.

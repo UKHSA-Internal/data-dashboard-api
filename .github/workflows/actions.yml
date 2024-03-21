@@ -35,15 +35,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      # Scan dependencies with `pip-audit`
-      - uses: pypa/gh-action-pip-audit@v1.0.8
-        with:
-          inputs: requirements-prod.txt requirements-dev.txt
-
-      # Scan project with `Bandit`
-      - name: Run Bandit
+      - name: Scan dependencies
         run: |
-          bandit -c pyproject.toml -r .
+          source uhd.sh
+          uhd security dependencies
+
+      - name: Scan for vulnerabilities
+        run: |
+          source uhd.sh
+          uhd security vulnerabilities
 
   ###############################################################################
   # Code quality checks
@@ -57,9 +57,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run ruff & black
+      - name: Run linters
         run: |
-          source .github/workflows/formatting.sh
+          source uhd.sh
+          uhd quality format-check
 
   ###############################################################################
   # Architectural constraints checks
@@ -73,9 +74,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run import-linter
+      - name: Check architectural constraints
         run: |
-          lint-imports
+          source uhd.sh
+          uhd quality architecture
 
   ###############################################################################
   # Unit tests
@@ -91,7 +93,8 @@ jobs:
 
       - name: Run unit tests
         run: |
-          python -m pytest tests/unit/
+          source uhd.sh
+          uhd tests unit
 
   ###############################################################################
   # Integration tests
@@ -105,9 +108,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run Integration tests
+      - name: Run integration tests
         run: |
-          python -m pytest tests/integration/
+          source uhd.sh
+          uhd tests integration
 
   ###############################################################################
   # System tests
@@ -121,9 +125,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run System tests
+      - name: Run system tests
         run: |
-          python -m pytest tests/system/
+          source uhd.sh
+          uhd tests system
 
   ###############################################################################
   # Migration tests
@@ -137,9 +142,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
 
-      - name: Run Migration tests
+      - name: Run migration tests
         run: |
-          python -m pytest tests/migrations/
+          source uhd.sh
+          uhd tests migration
 
   ###############################################################################
   # Test coverage
@@ -155,7 +161,8 @@ jobs:
 
       - name: Evaluate test coverage
         run: |
-          pytest --cov
+          source uhd.sh
+          uhd tests coverage
 
   ###############################################################################
   # Build image
