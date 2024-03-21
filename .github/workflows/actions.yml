@@ -42,7 +42,8 @@ jobs:
 
       - name: Scan for vulnerabilities
         run: |
-          bandit -c pyproject.toml -r .
+          source uhd.sh
+          uhd security vulnerabilities
 
   ###############################################################################
   # Code quality checks
