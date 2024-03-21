@@ -3,7 +3,7 @@ from django.urls import re_path, resolvers
 from feedback.api.views import SuggestionsView
 
 
-def construct_urlpatterns_for_feedback(prefix: str) -> list[resolvers.URLResolver]:
+def construct_urlpatterns_for_feedback(*, prefix: str) -> list[resolvers.URLResolver]:
     """Builds a list of `URLResolver` instances for the feedback application module
 
     Args:
