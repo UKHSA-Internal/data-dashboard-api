@@ -66,10 +66,16 @@ uhd server setup-all
 
 6. Run the server on port 8000:
 ```bash
-uhd server run-local 8000 
+uhd server run-local
 ```
 
 This will run the server locally on port 8000 - http://localhost:8000/
+
+Note that you can also override the port by passing a port number into the command:
+
+```bash
+uhd server run-local 1234
+```
 
 ---
 

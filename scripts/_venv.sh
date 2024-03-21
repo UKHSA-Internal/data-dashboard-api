@@ -31,11 +31,17 @@ function _venv() {
 }
 
 function _activate() {
-    source .venv/bin/activate || echo "Did you forget to create a venv? Please run 'uhd venv create' first"
+    local no_venv_found_message="
+    There is no venv available.
+    If this is for local development,
+    then please run 'uhd venv create' first.
+    If not, the system interpreter will be used.
+    "
+    source .venv/bin/activate || echo ${no_venv_found_message}
 }
 
 function _deactivate() {
-  deactivate
+    deactivate
 }
 
 function _create() {

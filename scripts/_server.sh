@@ -7,8 +7,8 @@ function _server_help() {
     echo "commands:"
     echo "  help                      - this help screen"
     echo
-    echo "  run-local <port>          - start a local development grade server"
-    echo "  run-production <port>     - start a production grade server"
+    echo "  run-local <port>          - start a local development grade server, port defaults to to 8000"
+    echo "  run-production <port>     - start a production grade server, port defaults 80"
     echo
     echo "  setup-all                 - run all setup steps, migrations & static files"
     echo "  setup-static-files        - collect static files"
@@ -33,22 +33,12 @@ function _server() {
 function _run_local_server() {
     local port=$1
 
-    if [[ -z ${port} ]]; then
-        echo "Port is required" >&2
-        return 1
-    fi
-
     uhd venv activate
-    python manage.py runserver localhost:${port}
+    python manage.py runserver localhost:${port:-8000}
 }
 
 function _run_production_server() {
     local port=$1
-
-    if [[ -z ${port} ]]; then
-        echo "Port is required" >&2
-        return 1
-    fi
 
     uhd venv activate
     gunicorn metrics.api.wsgi:application \
@@ -56,7 +46,7 @@ function _run_production_server() {
       --threads=3 \
       --worker-class=gthread \
       --timeout=120 \
-      --bind=0.0.0.0:${port}
+      --bind=0.0.0.0:${port:-80}
 }
 
 function _setup_all() {
