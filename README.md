@@ -19,7 +19,12 @@ brew install postgresql
 
 ## Standard command tooling
 
-To unify commonly used commands for local development, there is a `Makefile` at the root level of the project.
+To unify commonly used commands for local development, there is a script at the root level of the project.
+Source our CLI tool:
+
+```
+source uhd.sh
+```
 
 ## Initial configuration
 
@@ -28,7 +33,7 @@ There are a number of steps to take before getting the environment setup for loc
 1. At the time of writing you will need to ensure that 
 you have [Python version 3.12](https://www.python.org/downloads/) installed on your system.
 If in doubt, please check the `.python-version` file at the root level of the project. 
-This is the Python version used by the Makefile and the CI pipeline.
+This is the Python version used by the CLI tooling and the CI pipeline.
 
 2. Set the `APIENV` environment variable set to `LOCAL`. 
 ```bash
@@ -48,16 +53,22 @@ See the [Django documentation | SECRET_KEY](https://docs.djangoproject.com/en/4.
 
 4. Set up the virtual environment and install the project dependencies via:
 ```bash
-make setup-venv
+uhd venv create
 ```
-This command will create a virtual environment at the `venv/` folder at the root level of the project.
+This command will create a virtual environment at the `.venv/` folder at the root level of the project.
 The version of Python which will be used is dictated by the aforementioned `.python-version` file.
 And finally, the entire project dependencies will be installed within the virtual environment.
 
-5. Apply the database migrations, ensure Django collects static files and run the server.
+5. Apply the database migrations and ensure Django collects all required static files.
 ```bash
-make run-server
+uhd server setup-all
 ```
+
+6. Run the server on port 8000:
+```bash
+uhd server run-local 8000 
+```
+
 This will run the server locally on port 8000 - http://localhost:8000/
 
 ---
@@ -81,19 +92,45 @@ To seed your environment with data, including CMS content, a snapshot of metrics
 you can run the following command:
 
 ```bash
-source scripts/boot.sh <Admin Password>
+uhd bootstrap all <Admin Password>
 ```
 
+Alternatively you can populate those items individually.
+You can determine which commands are available by entering the `bootstrap` module in the CLI:
+
+```bash
+uhd bootstrap
+```
+
+For example, the following command will create the admin user:
+
+```bash
+uhd bootstrap admin-user <Admin Password>
+```
+
+And the following command will populate the database with the base template CMS pages:
+
+```bash
+uhd bootstrap test-content
+```
+
+And finally, the following command will populate the database with the truncated test dataset:
+
+```bash
+uhd bootstrap test-data
+```
 
 ## Logging into the CMS admin application
 
-Once your database has been populated, with the `boot.sh` script, you will be able to log in.
+Once your database has been populated, with the `uhd bootstrap all` or `uhd bootstrap admin-user` commands, 
+you will be able to log in.
 Head to http://localhost:8000/cms-admin/ and use the following credentials:
 
 - Username: **testadmin**
 - Password: `<Admin Password>`
 
-Where the `<Admin Password>` is the password you provided to the call made to the `./scripts/boot.sh` script.
+Where the `<Admin Password>` is the password you provided to the call made 
+to the `uhd bootstrap all` or `uhd bootstrap admin-user` script.
 
 ---
 
@@ -110,7 +147,7 @@ requirements-dev.txt              # <- These are the Dev dependencies-only. Incl
 ```
 
 If you followed the instructions above in the [Initial configuration](#initial-configuration) section
-and ran `make setup-venv` then you will have installed the complete set of dependencies, 
+and ran `uhd server create` then you will have installed the complete set of dependencies, 
 including those needed for local development.
 
 ---
@@ -118,11 +155,22 @@ including those needed for local development.
 ### Running tests
 
 The tests are split by type, `unit`, `integration`, `system` and `migration`.
-
-You can run them separately via the `Makefile` or all at once:
+To see which commands are available for the `tests` module, you should run:
 
 ```bash
-make all-tests
+uhd tests
+```
+
+You can run these groups of tests all at once:
+
+```bash
+uhd tests all
+```
+
+Or you can run them seperately . For example, to run the unit tests:
+
+```bash
+uhd tests unit
 ```
 
 ---
@@ -132,7 +180,7 @@ make all-tests
 You can run the standard formatting tooling over your code with the following command:
 
 ```bash
-make formatting
+uhd quality format
 ```
 
 ---
@@ -140,7 +188,7 @@ make formatting
 Note that if you push code to the remote repository which does not conform to the styling enforced by this tooling, 
 that CI build will fail.
 
-In this case you will need to run `make formatting` and push the code changes to the remote repository.
+In this case you will need to run `uhd quality format` and push the code changes to the remote repository.
 
 > In the future, this will be automated.
 
@@ -150,7 +198,7 @@ In this case you will need to run `make formatting` and push the code changes to
 
 You can check for known vulnerabilities in the codebase with the following command:
 ```bash
-make audit
+uhd security vulnerabilities
 ```
 
 ---
@@ -161,13 +209,10 @@ We use the `import-linter` package to enforce architectural constraints across t
 You can check these by running the following command:
 
 ```bash
-make architecture
+uhd security architecture
 ```
 
 Also note that this will also be enforced by virtue of the CI.
-
->As a helper, it may be easier to use `make check` during development. 
-This will run all formatters, tests and architectural constraint checks in that order.
 
 ---
 
@@ -187,15 +232,12 @@ the following environment variables:
 Note that with the environment variable `APIENV` set to anything other than `LOCAL`, 
 the underlying Django `DEBUG` setting will be set to False.
 
-In turn this will mean you have to run the following management command 
+In turn this will mean you have to run the following command 
 for the app to collect the necessary static files:
 
 ```
-python manage.py collectstatic
+uhd server setup-static-files
 ```
-
-Alternatively, if you are using the `make run-server` command to start your server, 
-then this will be handled for you and you will not need to manually run `python manage.py collectstatic`.
 
 ---
 

@@ -7,8 +7,8 @@ function _server_help() {
     echo "commands:"
     echo "  help                      - this help screen"
     echo
-    echo "  run-local                 - start a local development grade server"
-    echo "  run-production            - start a production grade server"
+    echo "  run-local <port>          - start a local development grade server"
+    echo "  run-production <port>     - start a production grade server"
     echo
     echo "  setup-all                 - run all setup steps, migrations & static files"
     echo "  setup-static-files        - collect static files"
