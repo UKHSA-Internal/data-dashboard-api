@@ -19,7 +19,7 @@ function _security() {
 
     case $verb in
         "dependencies") _dependencies $args ;;
-        "vulnerabilities") _bandit $args ;;
+        "vulnerabilities") _vulnerabilities $args ;;
 
         *) _security_help ;;
     esac

@@ -7,10 +7,12 @@ function _bootstrap_help() {
     echo "commands:"
     echo "  help                      - this help screen"
     echo
-    echo "  admin-user                - add an admin superuser"
+    echo "  admin-user <password>     - add an admin superuser"
     echo
     echo "  test-content              - populate the cms with base pages"
     echo "  test-data                 - upload the truncated test dataset"
+    echo
+    echo "  all                       - runs all bootstrap tasks"
 
     return 0
 }
@@ -20,12 +22,19 @@ function _bootstrap() {
     local args=(${@:2})
 
     case $verb in
+        "all") _all $args ;;
         "admin-user") _admin_user $args ;;
         "test-content") _test_content $args ;;
         "test-data") _test_data $args ;;
 
         *) _bootstrap_help ;;
     esac
+}
+
+function _all() {
+    uhd bootstrap admin-user $1
+    uhd bootstrap test-content
+    uhd bootstrap test-data
 }
 
 function _admin_user() {
