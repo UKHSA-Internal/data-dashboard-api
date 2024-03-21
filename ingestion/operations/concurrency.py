@@ -7,7 +7,7 @@ from collections.abc import Callable
 logger = logging.getLogger(__name__)
 
 
-def run_with_multiple_processes(upload_function: Callable, items: list[str]) -> None:
+def run_with_multiple_processes(*, upload_function: Callable, items: list[str]) -> None:
     """Executes the `upload_function` with the given `items` with a pool of processes
 
     Args:

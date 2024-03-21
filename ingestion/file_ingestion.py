@@ -25,7 +25,7 @@ class FileIngestionFailedError(Exception):
         super().__init__(message)
 
 
-def data_ingester(data: INCOMING_DATA_TYPE) -> None:
+def data_ingester(*, data: INCOMING_DATA_TYPE) -> None:
     """Consumes the data in the given `data` and populates the database
 
     Args:
@@ -45,7 +45,7 @@ def data_ingester(data: INCOMING_DATA_TYPE) -> None:
     return consumer.create_core_and_api_timeseries()
 
 
-def upload_data(key: str, data: INCOMING_DATA_TYPE) -> None:
+def upload_data(*, key: str, data: INCOMING_DATA_TYPE) -> None:
     """Ingests the given `data` and records logs for starting and finishing points
 
     Args:
@@ -67,7 +67,7 @@ def upload_data(key: str, data: INCOMING_DATA_TYPE) -> None:
     logger.info("Completed ingestion of %s", key)
 
 
-def _upload_data_as_file(filepath: Path) -> None:
+def _upload_data_as_file(*, filepath: Path) -> None:
     logger.info("Uploading %s", filepath.name)
 
     with open(filepath, "rb") as file:
@@ -75,6 +75,6 @@ def _upload_data_as_file(filepath: Path) -> None:
         upload_data(key=filepath.name, data=deserialized_data)
 
 
-def _open_data_from_file(file: io.FileIO) -> dict:
+def _open_data_from_file(*, file: io.FileIO) -> dict:
     lines = file.readlines()[0]
     return json.loads(lines)

@@ -37,6 +37,7 @@ class TimeSeriesDTO(IncomingBaseDataModel):
 
 
 def _build_time_series_dto(
+    *,
     source_data: type_hints.INCOMING_DATA_TYPE,
     enriched_specific_fields: list[InboundTimeSeriesSpecificFields],
 ) -> TimeSeriesDTO:
@@ -59,6 +60,7 @@ def _build_time_series_dto(
 
 
 def _build_enriched_time_series_specific_fields(
+    *,
     source_data: type_hints.INCOMING_DATA_TYPE,
 ) -> list[InboundTimeSeriesSpecificFields]:
     return [

@@ -12,7 +12,7 @@ from ingestion.operations.upload import (  # noqa: E402
 )
 
 
-def decode_base64(encoded: bytes) -> str:
+def decode_base64(*, encoded: bytes) -> str:
     """Decodes the base64 encoded bytes-like object with the utf-8 codec
 
     Args:
@@ -27,7 +27,7 @@ def decode_base64(encoded: bytes) -> str:
     return decoded_bytes.decode("utf-8")
 
 
-def deserialize_json(serialized: str) -> dict:
+def deserialize_json(*, serialized: str) -> dict:
     """Deserializes the given JSON string to a Python object
 
     Args:
@@ -41,7 +41,7 @@ def deserialize_json(serialized: str) -> dict:
     return json.loads(serialized)
 
 
-def extract_contents_from_record(record: dict) -> tuple[str, INCOMING_DATA_TYPE]:
+def extract_contents_from_record(*, record: dict) -> tuple[str, INCOMING_DATA_TYPE]:
     """Extracts the "name" and the "data" from the given `record`
 
     Notes:

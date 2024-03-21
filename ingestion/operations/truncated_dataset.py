@@ -79,7 +79,7 @@ def clear_metrics_tables() -> None:
     logger.info("Completed deleting existing metrics records")
 
 
-def upload_truncated_test_data(multiprocessing_enabled: bool = True) -> None:
+def upload_truncated_test_data(*, multiprocessing_enabled: bool = True) -> None:
     """Uploads the truncated test data set to the database after clearing existing metrics records
 
     Args:

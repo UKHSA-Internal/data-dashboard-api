@@ -26,6 +26,7 @@ class AWSClient:
 
     def __init__(
         self,
+        *,
         client: botocore.client.BaseClient | None = None,
         profile_name: str = config.AWS_PROFILE_NAME,
         bucket_name: str = config.INGESTION_BUCKET_NAME,
@@ -40,7 +41,7 @@ class AWSClient:
         self._failed_folder = failed_folder
 
     @classmethod
-    def create_client(cls, profile_name: str) -> botocore.client.BaseClient:
+    def create_client(cls, *, profile_name: str) -> botocore.client.BaseClient:
         """Creates a boto3 client instance connected to s3
 
         Returns:
@@ -51,7 +52,7 @@ class AWSClient:
             boto3.setup_default_session(profile_name=profile_name)
         return boto3.client("s3")
 
-    def move_file_to_processed_folder(self, key: str) -> None:
+    def move_file_to_processed_folder(self, *, key: str) -> None:
         """Moves the file matching the given `key` into the `processed/` folder within the s3 bucket
 
         Args:
@@ -71,7 +72,7 @@ class AWSClient:
         self._copy_file_to_processed(key=key)
         self._delete_file_from_inbound(key=key)
 
-    def move_file_to_failed_folder(self, key: str) -> None:
+    def move_file_to_failed_folder(self, *, key: str) -> None:
         """Moves the file matching the given `key` into the `failed/` folder within the s3 bucket
 
         Args:
@@ -91,7 +92,7 @@ class AWSClient:
         self._copy_file_to_failed(key=key)
         self._delete_file_from_inbound(key=key)
 
-    def _copy_file_to_processed(self, key: str) -> None:
+    def _copy_file_to_processed(self, *, key: str) -> None:
         """Copies the file matching the given `key` into the processed folder within the s3 bucket
 
         Notes:
@@ -120,7 +121,7 @@ class AWSClient:
                 "Failed to move `%s` to `%s` folder", key, self._processed_folder
             )
 
-    def _copy_file_to_failed(self, key: str) -> None:
+    def _copy_file_to_failed(self, *, key: str) -> None:
         """Copies the file matching the given `key` into the failed folder within the s3 bucket
 
         Notes:
@@ -149,7 +150,7 @@ class AWSClient:
                 "Failed to move `%s` to `%s` folder", key, self._failed_folder
             )
 
-    def _delete_file_from_inbound(self, key: str) -> None:
+    def _delete_file_from_inbound(self, *, key: str) -> None:
         """Deletes the file matching the given `key` from the inbound folder within the s3 bucket
 
         Notes:
@@ -174,7 +175,7 @@ class AWSClient:
                 "Failed to delete `%s` from `%s` folder", key, self._inbound_folder
             )
 
-    def _get_filename_from_key(self, key: str) -> str:
+    def _get_filename_from_key(self, *, key: str) -> str:
         """Extracts the filename from the `key`
 
         Examples:
@@ -190,7 +191,7 @@ class AWSClient:
         """
         return key.split(self._inbound_folder)[1]
 
-    def _build_destination_key(self, key: str, folder: str) -> str:
+    def _build_destination_key(self, *, key: str, folder: str) -> str:
         filename: str = self._get_filename_from_key(key=key)
         return f"{folder}{filename}"
 
@@ -210,7 +211,7 @@ class AWSClient:
         """
         return self._build_destination_key(key=key, folder=self._processed_folder)
 
-    def _build_failed_key(self, key: str) -> str:
+    def _build_failed_key(self, *, key: str) -> str:
         """Constructs the full failed `key` of the item
 
         Examples:
