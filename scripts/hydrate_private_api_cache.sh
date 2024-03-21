@@ -3,6 +3,7 @@
 function run_script() {
     echo "Running script to fill cache for private API"
 
+    source uhd.sh
     # This script is intended to be ran within a job
     # Which means the entrypoint of the container is overridden with a call to this script
     # As such, the static files need to be collected within the job process
