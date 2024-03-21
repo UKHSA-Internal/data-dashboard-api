@@ -13,12 +13,13 @@ class MissingSecretsManagerARNError(Exception):
         super().__init__(message)
 
 
-def _extract_password_from_secret(secret: SECRETS_MANAGER_RESPONSE_TYPE) -> str:
+def _extract_password_from_secret(*, secret: SECRETS_MANAGER_RESPONSE_TYPE) -> str:
     deserialized_secret: str = json.loads(secret["SecretString"])
     return deserialized_secret["password"]
 
 
 def _request_secret_from_secrets_manager(
+    *,
     db_credentials_secret_arn: str,
 ) -> SECRETS_MANAGER_RESPONSE_TYPE:
     secrets_manager_client = boto3.client("secretsmanager")

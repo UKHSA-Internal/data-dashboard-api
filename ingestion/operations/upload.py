@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def ingest_data_and_post_process(
-    data: INCOMING_DATA_TYPE, key: str, client: AWSClient | None = None
+    *, data: INCOMING_DATA_TYPE, key: str, client: AWSClient | None = None
 ) -> None:
     """Ingests the data and moves the file of the given `key` to the appropriate outbound folder in the s3 bucket
 
@@ -41,7 +41,7 @@ def ingest_data_and_post_process(
     return client.move_file_to_processed_folder(key=key)
 
 
-def _upload_file_and_remove_local_copy(filepath: str) -> None:
+def _upload_file_and_remove_local_copy(*, filepath: str) -> None:
     """Ingest the file at the given `filepath` and remove from the filesystem after uploading
 
     Notes:

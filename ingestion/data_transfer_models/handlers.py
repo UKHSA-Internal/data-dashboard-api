@@ -15,6 +15,7 @@ from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 
 
 def build_time_series_dto_from_source(
+    *,
     source_data: INCOMING_DATA_TYPE,
 ) -> TimeSeriesDTO:
     """Enriches a `TimeSeriesDTO` with the corresponding fields from the `source_data`
@@ -42,7 +43,7 @@ def build_time_series_dto_from_source(
     )
 
 
-def build_headline_dto_from_source(source_data: INCOMING_DATA_TYPE) -> HeadlineDTO:
+def build_headline_dto_from_source(*, source_data: INCOMING_DATA_TYPE) -> HeadlineDTO:
     """Enriches a `HeadlineDTO` with the corresponding fields from the `source_data`
 
     Args:
@@ -69,6 +70,7 @@ def build_headline_dto_from_source(source_data: INCOMING_DATA_TYPE) -> HeadlineD
 
 
 def _build_dto_from_source(
+    *,
     source_data: INCOMING_DATA_TYPE,
     key_for_specific_fields: str,
     extract_specific_fields_function: Callable,
