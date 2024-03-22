@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def crawl_all_pages(
+    *,
     private_api_crawler: PrivateAPICrawler,
     area_selector_orchestrator: AreaSelectorOrchestrator,
 ) -> None:
@@ -109,7 +110,7 @@ def force_cache_refresh_for_all_pages() -> None:
     )
 
 
-def get_all_downloads(file_format: str = "csv") -> list[dict[str, str]]:
+def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:
     """Get all downloads from chart cards on supported pages
 
     Args:

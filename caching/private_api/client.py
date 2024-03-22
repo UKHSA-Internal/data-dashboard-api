@@ -15,7 +15,7 @@ class CacheClient:
     def __init__(self):
         self._cache = cache
 
-    def get(self, cache_entry_key: str) -> Any | None:
+    def get(self, *, cache_entry_key: str) -> Any | None:
         """Retrieves the cache entry associated with the given `cache_entry_key`
 
         Args:
@@ -28,7 +28,7 @@ class CacheClient:
         """
         return self._cache.get(key=cache_entry_key, default=None)
 
-    def put(self, cache_entry_key: str, value: Any) -> None:
+    def put(self, *, cache_entry_key: str, value: Any) -> None:
         """Persists the entry within the cache
 
         Args:
@@ -70,7 +70,7 @@ class InMemoryCacheClient(CacheClient):
         super().__init__()
         self._cache = {}
 
-    def get(self, cache_entry_key: str) -> Any:
+    def get(self, *, cache_entry_key: str) -> Any:
         """Retrieves the cache entry associated with the given `cache_entry_key`
 
         Args:
@@ -83,7 +83,7 @@ class InMemoryCacheClient(CacheClient):
         """
         return self._cache.get(cache_entry_key, None)
 
-    def put(self, cache_entry_key: str, value: Any) -> None:
+    def put(self, *, cache_entry_key: str, value: Any) -> None:
         """Persists the entry within the cache
 
         Args:

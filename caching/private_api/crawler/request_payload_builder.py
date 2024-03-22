@@ -4,7 +4,7 @@ from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 class RequestPayloadBuilder:
     @classmethod
     def build_headlines_request_data(
-        cls, headline_number_block: dict[str, str]
+        cls, *, headline_number_block: dict[str, str]
     ) -> dict[str, str]:
         """Builds the headlines endpoint request payload from the given `headline_number_block`
 
@@ -29,7 +29,7 @@ class RequestPayloadBuilder:
 
     @classmethod
     def build_trend_request_data(
-        cls, trend_number_block: dict[str, str]
+        cls, *, trend_number_block: dict[str, str]
     ) -> dict[str, str]:
         """Builds the trends endpoint request payload from the given `trend_number_block`
 
@@ -49,7 +49,7 @@ class RequestPayloadBuilder:
         return request_data
 
     def build_chart_request_data(
-        self, chart_block: CMS_COMPONENT_BLOCK_TYPE, chart_is_double_width: bool
+        self, *, chart_block: CMS_COMPONENT_BLOCK_TYPE, chart_is_double_width: bool
     ) -> dict[str, str | int, list[dict[str, str]]]:
         """Builds the charts endpoint request payload from the given `chart_block`
 
@@ -76,7 +76,7 @@ class RequestPayloadBuilder:
         }
 
     @classmethod
-    def _build_plot_data(cls, plot_value: dict[str, str]) -> dict[str, str]:
+    def _build_plot_data(cls, *, plot_value: dict[str, str]) -> dict[str, str]:
         """Builds the individual plot data from the given `plot_value`
 
         Args:
@@ -105,7 +105,7 @@ class RequestPayloadBuilder:
         }
 
     def build_tables_request_data(
-        self, chart_block: CMS_COMPONENT_BLOCK_TYPE
+        self, *, chart_block: CMS_COMPONENT_BLOCK_TYPE
     ) -> dict[str, str | int, list[dict[str, str]]]:
         """Builds the tables endpoint request payload from the given `chart_block`
 
@@ -128,6 +128,7 @@ class RequestPayloadBuilder:
 
     def build_downloads_request_data(
         self,
+        *,
         chart_block: CMS_COMPONENT_BLOCK_TYPE,
         file_format: str,
     ) -> dict[str, str | int, list[dict[str, str]]]:
@@ -151,7 +152,7 @@ class RequestPayloadBuilder:
         }
 
     @classmethod
-    def build_downloads_plot_data(cls, plot_value: dict[str, str]) -> dict[str, str]:
+    def build_downloads_plot_data(cls, *, plot_value: dict[str, str]) -> dict[str, str]:
         """Builds the individual downloadable plot data from the given `plot_value`
 
         Args:

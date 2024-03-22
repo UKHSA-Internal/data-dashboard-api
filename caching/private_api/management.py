@@ -20,11 +20,11 @@ class CacheManagement:
 
     """
 
-    def __init__(self, in_memory: bool, client: CacheClient | None = None):
+    def __init__(self, *, in_memory: bool, client: CacheClient | None = None):
         self._client = client or self._create_cache_client(in_memory=in_memory)
 
     @staticmethod
-    def _create_cache_client(in_memory: bool) -> CacheClient:
+    def _create_cache_client(*, in_memory: bool) -> CacheClient:
         """Creates a client used to interact with the cache component.
 
         Notes:
@@ -45,7 +45,7 @@ class CacheManagement:
             return InMemoryCacheClient()
         return CacheClient()
 
-    def retrieve_item_from_cache(self, cache_entry_key: str) -> Response:
+    def retrieve_item_from_cache(self, *, cache_entry_key: str) -> Response:
         """Retrieves the item from the cache matching the given `cache_entry_key`
 
         Args:
@@ -65,7 +65,7 @@ class CacheManagement:
 
         return retrieved_entry
 
-    def save_item_in_cache(self, cache_entry_key: str, item: Response) -> Response:
+    def save_item_in_cache(self, *, cache_entry_key: str, item: Response) -> Response:
         """Saves the item in the cache with the given `cache_entry_key`
 
         Notes:
@@ -93,14 +93,14 @@ class CacheManagement:
         """
         self._client.clear()
 
-    def _render_response(self, response: Response) -> Response:
+    def _render_response(self, *, response: Response) -> Response:
         if response.headers["Content-Type"] == "text/csv":
             return response
 
         return self._render_json_response(response=response)
 
     @staticmethod
-    def _render_json_response(response: Response) -> Response:
+    def _render_json_response(*, response: Response) -> Response:
         response.accepted_renderer = JSONRenderer()
         response.accepted_media_type = "application/json"
         response.renderer_context = {}
@@ -108,7 +108,7 @@ class CacheManagement:
         return response
 
     def build_cache_entry_key_for_data(
-        self, endpoint_path: str, data: dict[str, str]
+        self, *, endpoint_path: str, data: dict[str, str]
     ) -> str:
         """Builds a hashed cache entry key for the given `endpoint_path` and `data`
 
@@ -125,13 +125,13 @@ class CacheManagement:
         return self.create_hash_for_data(data=data)
 
     @staticmethod
-    def _build_data_dict(endpoint_path: str, data: dict[str, str]):
+    def _build_data_dict(*, endpoint_path: str, data: dict[str, str]):
         endpoint_path: str = endpoint_path.strip("/")
         data = dict(sorted(data.items()))
         data["endpoint_path"] = endpoint_path
         return data
 
-    def build_cache_entry_key_for_request(self, request: Request) -> str:
+    def build_cache_entry_key_for_request(self, *, request: Request) -> str:
         """Builds a hashed cache entry key for a request
 
         Args:
@@ -160,7 +160,7 @@ class CacheManagement:
         )
 
     @staticmethod
-    def create_hash_for_data(data: dict) -> str:
+    def create_hash_for_data(*, data: dict) -> str:
         """Returns an SHA-256 hash of the given `data`
 
         Notes:
