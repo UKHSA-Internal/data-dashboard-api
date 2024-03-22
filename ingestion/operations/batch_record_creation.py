@@ -4,6 +4,7 @@ DEFAULT_BATCH_SIZE = 100
 
 
 def create_records(
+    *,
     model_instances: list[models.Model],
     model_manager: models.Manager,
     batch_size: int = DEFAULT_BATCH_SIZE,

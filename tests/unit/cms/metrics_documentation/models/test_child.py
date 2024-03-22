@@ -199,7 +199,7 @@ class TestMetricsDocumentationChildEntry:
 
         # When
         return_topic = fake_metrics_documentation_child_entry_page.find_topic(
-            fake_topics
+            topics=fake_topics
         )
 
         # Then
@@ -235,4 +235,4 @@ class TestMetricsDocumentationChildEntry:
 
         # When / Then
         with pytest.raises(InvalidTopicForChosenMetricForChildEntryError):
-            fake_metrics_documentation_child_entry_page.find_topic(fake_topics)
+            fake_metrics_documentation_child_entry_page.find_topic(topics=fake_topics)

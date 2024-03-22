@@ -49,6 +49,7 @@ class MetricsAPIInterface:
 
     def __init__(
         self,
+        *,
         topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,

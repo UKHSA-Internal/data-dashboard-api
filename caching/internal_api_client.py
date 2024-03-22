@@ -36,6 +36,7 @@ class InternalAPIClient:
 
     def __init__(
         self,
+        *,
         client: APIClient | None = None,
         force_refresh: bool = False,
         cache_check_only: bool = False,
@@ -79,14 +80,14 @@ class InternalAPIClient:
 
     @staticmethod
     def build_query_params(
-        page_type: str, additional_query_params: dict[str, str] | None = None
+        *, page_type: str, additional_query_params: dict[str, str] | None = None
     ) -> dict[str, str]:
         additional_query_params = additional_query_params or {}
         return {"type": page_type, **additional_query_params}
 
     # Endpoints
 
-    def hit_headlines_endpoint(self, data: dict[str, str]) -> Response:
+    def hit_headlines_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `GET` request to the `headlines/` endpoint with the given `data`
 
         Args:
@@ -100,7 +101,7 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.get(path=path, data=data, headers=headers)
 
-    def hit_trends_endpoint(self, data: dict[str, str]) -> Response:
+    def hit_trends_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `GET` request to the `trends/` endpoint with the given `data`
 
         Args:
@@ -114,7 +115,7 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.get(path=path, data=data, headers=headers)
 
-    def hit_charts_endpoint(self, data: dict[str, str]) -> Response:
+    def hit_charts_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `charts/` endpoint with the given `data`
 
         Args:
@@ -128,7 +129,7 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
-    def hit_tables_endpoint(self, data: dict[str, str]) -> Response:
+    def hit_tables_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `tables/` endpoint with the given `data`
 
         Args:
@@ -143,7 +144,7 @@ class InternalAPIClient:
             path=self.tables_endpoint_path, data=data, headers=headers, format="json"
         )
 
-    def hit_downloads_endpoint(self, data: dict[str, str]) -> Response:
+    def hit_downloads_endpoint(self, *, data: dict[str, str]) -> Response:
         """Sends a `POST` request to the `downloads/` endpoint with the given `data`
 
         Args:
@@ -157,7 +158,7 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
-    def hit_geographies_list_endpoint(self, topic: str) -> Response:
+    def hit_geographies_list_endpoint(self, *, topic: str) -> Response:
         """Sends a `GET` request to the list `geographies/` endpoint
 
         Returns:
@@ -181,6 +182,7 @@ class InternalAPIClient:
 
     def hit_pages_list_endpoint_for_page_type(
         self,
+        *,
         page_type_query_param: str,
         additional_query_params: dict[str, str] | None = None,
     ) -> Response:
@@ -231,7 +233,7 @@ class InternalAPIClient:
             additional_query_params={"fields": "*"},
         )
 
-    def hit_pages_detail_endpoint(self, page_id: int) -> Response:
+    def hit_pages_detail_endpoint(self, *, page_id: int) -> Response:
         """Sends a `GET` request to the detail `pages/` endpoint for the given `page_id`
 
         Returns:

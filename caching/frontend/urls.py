@@ -4,10 +4,10 @@ from urllib.parse import quote_plus, urljoin
 class FrontEndURLBuilder:
     """This is used by the `FrontEndCrawler` to construct URLs to send GET requests to all relevant pages"""
 
-    def __init__(self, base_url: str):
+    def __init__(self, *, base_url: str):
         self._base_url = base_url
 
-    def build_url_for_topic_page(self, slug: str) -> str:
+    def build_url_for_topic_page(self, *, slug: str) -> str:
         """Builds the full URL for the given topic page `slug`
 
         Args:
@@ -19,7 +19,7 @@ class FrontEndURLBuilder:
         """
         return urljoin(self._base_url, f"/topics/{slug}")
 
-    def build_url_for_common_page(self, slug: str) -> str:
+    def build_url_for_common_page(self, *, slug: str) -> str:
         """Builds the full URL for the given common page `slug`
 
         Args:
@@ -49,7 +49,7 @@ class FrontEndURLBuilder:
         """
         return urljoin(self._base_url, "whats-new")
 
-    def build_url_for_whats_new_child_entry(self, slug: str) -> str:
+    def build_url_for_whats_new_child_entry(self, *, slug: str) -> str:
         """Builds the full URL for the single what's new child entry
 
         Args:
@@ -70,7 +70,7 @@ class FrontEndURLBuilder:
         """
         return urljoin(self._base_url, "metrics-documentation")
 
-    def build_url_for_metrics_documentation_child_entry(self, slug: str) -> str:
+    def build_url_for_metrics_documentation_child_entry(self, *, slug: str) -> str:
         """Builds the full URL for the single metrics documentation child entry
 
         Args:
@@ -93,7 +93,7 @@ class FrontEndURLBuilder:
 
     @staticmethod
     def build_query_params_for_area_selector_page(
-        geography_type_name: str, geography_name: str
+        *, geography_type_name: str, geography_name: str
     ) -> dict[str, str]:
         """Creates a dict of query parameters of URL quoted params
 

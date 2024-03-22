@@ -12,6 +12,7 @@ DEFAULT_FEEDBACK_EMAIL_SUBJECT = "Suggestions Feedback for UKHSA data dashboard"
 
 
 def send_email(
+    *,
     suggestions: dict[str, str],
     subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
     recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,
@@ -45,6 +46,7 @@ def send_email(
 
 
 def create_email_message(
+    *,
     suggestions: dict[str, str],
     subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
     recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,

@@ -1,19 +1,12 @@
 #!/bin/bash
 
 function set_up_django() {
-    echo "Migrating tables"
-    python manage.py migrate --noinput
+    source uhd.sh
 
-    echo "Collecting static files"
-    python manage.py collectstatic --noinput
+    uhd django migrate
+    uhd server setup-static-files
 
-    echo "Starting server"
-    gunicorn metrics.api.wsgi:application \
-      --workers=3 \
-      --threads=3 \
-      --worker-class=gthread \
-      --timeout=120 \
-      --bind=0.0.0.0:80
+    uhd server run-production
 }
 
 set_up_django
