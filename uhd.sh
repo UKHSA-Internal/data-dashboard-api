@@ -38,10 +38,6 @@ function _uhd_commands_help() {
 }
 
 function uhd() {
-    if [ $CI ]; then
-        echo $0 $@
-    fi
-
     local current=$(pwd)
     local command=$1
     local args=(${@:2}) 
