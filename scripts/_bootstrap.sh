@@ -23,7 +23,7 @@ function _bootstrap() {
 
     case $verb in
         "all") _bootstrap_all $args ;;
-        "admin-user") __bootstrap_admin_user $args ;;
+        "admin-user") _bootstrap_admin_user $args ;;
         "test-content") _bootstrap_test_content $args ;;
         "test-data") _bootstrap_test_data $args ;;
 
@@ -37,7 +37,7 @@ function _bootstrap_all() {
     uhd bootstrap test-data
 }
 
-function __bootstrap_admin_user() {
+function _bootstrap_admin_user() {
     local admin_password=$1
     if [[ -z ${admin_password} ]]; then
         echo "Password for admin user is required" >&2
