@@ -49,7 +49,7 @@ function uhd() {
     cd $root
 
     case $command in
-        "bootstrap") _bootstrap $args ;;
+        "bootstrap") _bootstrap "${args[@]}" ;;
         "cache") _cache $args ;;
         "django") _django $args ;;
         "security") _security $args ;;
