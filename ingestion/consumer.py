@@ -99,6 +99,7 @@ class Consumer:
 
     def __init__(
         self,
+        *,
         source_data: type_hints.INCOMING_DATA_TYPE,
         dto: HeadlineDTO | TimeSeriesDTO | None = None,
         theme_manager: Manager = DEFAULT_THEME_MANAGER,
@@ -143,7 +144,7 @@ class Consumer:
     # get or create supporting model methods
 
     @staticmethod
-    def _get_or_create_record(model_manager, **kwargs):
+    def _get_or_create_record(*, model_manager, **kwargs):
         """Returns a record for the given `model_manager` and kwargs, creates one if not already available.
 
         Notes:
@@ -175,7 +176,7 @@ class Consumer:
             name=self.dto.parent_theme,
         )
 
-    def get_or_create_sub_theme(self, theme):
+    def get_or_create_sub_theme(self, *, theme):
         """Returns the corresponding `SubTheme` record to be associated with the current `data`
 
         Args:
@@ -192,7 +193,7 @@ class Consumer:
             theme_id=theme.id,
         )
 
-    def get_or_create_topic(self, sub_theme):
+    def get_or_create_topic(self, *, sub_theme):
         """Returns the corresponding `Topic` record to be associated with the current `data`
 
         Args:
@@ -221,7 +222,7 @@ class Consumer:
             name=self.dto.geography_type,
         )
 
-    def get_or_create_geography(self, geography_type):
+    def get_or_create_geography(self, *, geography_type):
         """Returns the corresponding `Geography` record to be associated with the current `data`
 
         Args:
@@ -239,7 +240,7 @@ class Consumer:
             geography_type_id=geography_type.id,
         )
 
-    def get_or_create_metric_group(self, topic):
+    def get_or_create_metric_group(self, *, topic):
         """Returns the corresponding `MetricGroup` record to be associated with the current `data`
 
         Args:
@@ -256,7 +257,7 @@ class Consumer:
             topic_id=topic.id,
         )
 
-    def get_or_create_metric(self, metric_group, topic):
+    def get_or_create_metric(self, *, metric_group, topic):
         """Returns the corresponding `Metric` record to be associated with the current `data`
 
         Args:

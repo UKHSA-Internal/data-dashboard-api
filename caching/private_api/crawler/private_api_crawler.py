@@ -49,6 +49,7 @@ class PrivateAPICrawler:
 
     def __init__(
         self,
+        *,
         internal_api_client: InternalAPIClient | None = None,
         cms_block_parser: CMSBlockParser | None = None,
         dynamic_content_block_crawler: DynamicContentBlockCrawler | None = None,
@@ -89,7 +90,7 @@ class PrivateAPICrawler:
 
     # Process pages for content
 
-    def process_pages(self, pages: list[HomePage, TopicPage, CommonPage]) -> None:
+    def process_pages(self, *, pages: list[HomePage, TopicPage, CommonPage]) -> None:
         """Makes requests to each individual content item within each of the given `pages`
 
         Notes:
@@ -128,7 +129,7 @@ class PrivateAPICrawler:
     # Process sections
 
     def process_all_sections_in_page(
-        self, page: HomePage | TopicPage, geography_data: GeographyData | None = None
+        self, *, page: HomePage | TopicPage, geography_data: GeographyData | None = None
     ) -> None:
         """Makes requests to each individual content item within each section of the given `page`
 
@@ -148,6 +149,7 @@ class PrivateAPICrawler:
 
     def process_section(
         self,
+        *,
         section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
         geography_data: GeographyData | None = None,
     ) -> None:
@@ -189,7 +191,7 @@ class PrivateAPICrawler:
     # process downloads
 
     @staticmethod
-    def format_titles_for_filenames(file_name: str) -> str:
+    def format_titles_for_filenames(*, file_name: str) -> str:
         """Formats a string to be used for filenames and directory names.
 
         Args:
@@ -204,7 +206,7 @@ class PrivateAPICrawler:
 
         return "_".join(formatted_words).lower()
 
-    def create_directory_name_for_downloads(self, file_name: str) -> str:
+    def create_directory_name_for_downloads(self, *, file_name: str) -> str:
         """Creates a directory name for bulk_download
 
         Args:
@@ -214,10 +216,11 @@ class PrivateAPICrawler:
             Formatted directory name.
         """
         file_name = "landing page" if file_name == "UKHSA data dashboard" else file_name
-        return self.format_titles_for_filenames(file_name)
+        return self.format_titles_for_filenames(file_name=file_name)
 
     def create_filename_for_chart_card(
         self,
+        *,
         file_name: str,
         file_format: str,
     ) -> str:
@@ -230,10 +233,11 @@ class PrivateAPICrawler:
         Returns:
             Formatted file name and extension taken from file_format
         """
-        return f"{self.format_titles_for_filenames(file_name)}.{file_format}"
+        return f"{self.format_titles_for_filenames(file_name=file_name)}.{file_format}"
 
     def get_downloads_from_chart_row_columns(
         self,
+        *,
         chart_row_columns: list[CMS_COMPONENT_BLOCK_TYPE],
         file_format: str,
     ) -> list[CHART_DOWNLOAD]:
@@ -267,6 +271,7 @@ class PrivateAPICrawler:
 
     def get_downloads_from_chart_cards(
         self,
+        *,
         chart_row_cards: list[CMS_COMPONENT_BLOCK_TYPE],
         file_format: str,
     ) -> list[CHART_DOWNLOAD]:
@@ -294,6 +299,7 @@ class PrivateAPICrawler:
 
     def get_downloads_from_page_sections(
         self,
+        *,
         sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]],
         file_format: str,
     ) -> list[CHART_DOWNLOAD]:
@@ -328,6 +334,7 @@ class PrivateAPICrawler:
 
     def get_all_downloads(
         self,
+        *,
         pages: [HomePage, TopicPage, CommonPage],
         file_format: str,
     ) -> list[CHART_DOWNLOAD]:
@@ -350,7 +357,7 @@ class PrivateAPICrawler:
                 downloads.append(
                     {
                         "directory_name": self.create_directory_name_for_downloads(
-                            page.title
+                            file_name=page.title
                         ),
                         "downloads": self.get_downloads_from_page_sections(
                             sections=page.body.raw_data, file_format=file_format

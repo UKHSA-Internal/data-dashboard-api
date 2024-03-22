@@ -36,10 +36,10 @@ class GeographyTypeData:
 class GeographiesAPICrawler:
     """Crawls the `geographies/types` endpoints for all possible combinations"""
 
-    def __init__(self, internal_api_client: InternalAPIClient | None = None):
+    def __init__(self, *, internal_api_client: InternalAPIClient | None = None):
         self._internal_api_client = internal_api_client or InternalAPIClient()
 
-    def hit_list_endpoint_for_topic(self, topic: str) -> list[GeographyTypeData]:
+    def hit_list_endpoint_for_topic(self, *, topic: str) -> list[GeographyTypeData]:
         """Hits the endpoint for the given `topic` to fetch the associated available geographies
 
         Returns:
@@ -69,7 +69,7 @@ class GeographiesAPICrawler:
 
     @staticmethod
     def _convert_to_geography_type_models(
-        response_data: dict,
+        *, response_data: dict
     ) -> list[GeographyTypeData]:
         geography_type_data_models = []
 
@@ -86,7 +86,7 @@ class GeographiesAPICrawler:
         return geography_type_data_models
 
     def get_geography_combinations_for_page(
-        self, page: TopicPage
+        self, *, page: TopicPage
     ) -> list[GeographyData]:
         """Returns all available geographies for the given `topic` as enriched `GeographyData` models
 

@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 def call_with_star_map_multithreading(
+    *,
     func: Callable,
     items: list[tuple[Any, Any]],
     thread_count: int,

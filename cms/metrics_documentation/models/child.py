@@ -86,7 +86,7 @@ class MetricsDocumentationChildEntry(Page):
         super().__init__(*args, **kwargs)
         self._meta.get_field("metric").choices = get_all_unique_metric_names()
 
-    def find_topic(self, topics: list[str]) -> str:
+    def find_topic(self, *, topics: list[str]) -> str:
         """Finds the required topic from a list of strings based on the metric name.
 
         Args:
@@ -119,7 +119,7 @@ class MetricsDocumentationChildEntry(Page):
             a topic name as a string
         """
         topics = get_a_list_of_all_topic_names()
-        return self.find_topic(topics)
+        return self.find_topic(topics=topics)
 
     def save(self, *args, **kwargs):
         """Retrieves a topic based on the selected metric

@@ -18,6 +18,7 @@ from public_api.views.timeseries_viewset import APITimeSeriesViewSet
 
 
 def construct_urlpatterns_for_public_api(
+    *,
     prefix: str,
 ) -> list[resolvers.URLResolver]:
     """Builds a list of `URLResolver` instances for the public API application module
