@@ -19,6 +19,7 @@ class PublicAPICrawler:
 
     def __init__(
         self,
+        *,
         public_api_base_url: str,
         cdn_auth_key: str,
         request_timeout: int = DEFAULT_REQUEST_TIMEOUT,
@@ -29,7 +30,7 @@ class PublicAPICrawler:
 
     @classmethod
     def create_crawler_for_cache_refresh(
-        cls, public_api_base_url: str, cdn_auth_key: str
+        cls, *, public_api_base_url: str, cdn_auth_key: str
     ) -> "PublicAPICrawler":
         return cls(public_api_base_url=public_api_base_url, cdn_auth_key=cdn_auth_key)
 
@@ -79,7 +80,7 @@ class PublicAPICrawler:
 
     # Endpoint call methods
 
-    def _hit_endpoint_with_base_headers(self, url: str) -> dict:
+    def _hit_endpoint_with_base_headers(self, *, url: str) -> dict:
         """Makes a `GET` request to the given `url` for a JSON response
 
         Args:
@@ -96,7 +97,7 @@ class PublicAPICrawler:
         )
         return response.json()
 
-    def _hit_endpoint_with_accept_json(self, url: str) -> str:
+    def _hit_endpoint_with_accept_json(self, *, url: str) -> str:
         """Makes a 'GET' request to the given 'url' for a JSON response
 
         Args:
@@ -115,7 +116,7 @@ class PublicAPICrawler:
 
         return response.content
 
-    def _hit_endpoint_with_accept_html(self, url: str) -> str:
+    def _hit_endpoint_with_accept_html(self, *, url: str) -> str:
         """Makes a `GET` request to the given `url` for an HTML response
 
         Args:
@@ -134,7 +135,7 @@ class PublicAPICrawler:
 
         return response.content
 
-    def hit_endpoint(self, url: str) -> dict:
+    def hit_endpoint(self, *, url: str) -> dict:
         """Hit the given `url` for the different response types (JSON & HTML).
 
         Args:
@@ -149,7 +150,7 @@ class PublicAPICrawler:
         return self._hit_endpoint_with_base_headers(url=url)
 
     @staticmethod
-    def _is_url(value: str) -> bool:
+    def _is_url(*, value: str) -> bool:
         """Determines whether the given `value` is a URL
 
         Args:
@@ -163,7 +164,7 @@ class PublicAPICrawler:
 
     # Recursive crawl
 
-    def crawl(self, url: str, crawled_urls: list[str]) -> list[str]:
+    def crawl(self, *, url: str, crawled_urls: list[str]) -> list[str]:
         """Traverses the hyperlinked API by recursively crawling the given `url`
 
         Args:
@@ -190,7 +191,7 @@ class PublicAPICrawler:
 
         return crawled_urls
 
-    def get_links_from_response_data(self, response_data: dict) -> list[str]:
+    def get_links_from_response_data(self, *, response_data: dict) -> list[str]:
         """Extracts all link from the given `response_data`
 
         Args:

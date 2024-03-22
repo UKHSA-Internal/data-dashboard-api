@@ -15,6 +15,7 @@ ALL_PAGE_TYPES = list[HomePage, TopicPage, WhatsNewParentPage, WhatsNewChildEntr
 
 
 def collect_all_pages(
+    *,
     home_page_manager: Manager = DEFAULT_HOME_PAGE_MANAGER,
     topic_page_manager: Manager = DEFAULT_TOPIC_PAGE_MANAGER,
     common_page_manager: Manager = DEFAULT_COMMON_PAGE_MANAGER,
@@ -54,9 +55,7 @@ def collect_all_pages(
     return pages
 
 
-def extract_area_selectable_pages(
-    all_pages: ALL_PAGE_TYPES,
-) -> list[TopicPage]:
+def extract_area_selectable_pages(*, all_pages: ALL_PAGE_TYPES) -> list[TopicPage]:
     """Builds a new list containing only the pages which are deemed suitable for the area selector
 
     Args:

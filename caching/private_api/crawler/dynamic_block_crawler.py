@@ -4,14 +4,14 @@ from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
 
 
 class DynamicContentBlockCrawler:
-    def __init__(self, internal_api_client: InternalAPIClient):
+    def __init__(self, *, internal_api_client: InternalAPIClient):
         self._internal_api_client = internal_api_client
         self._request_payload_builder = RequestPayloadBuilder()
 
     # Process all blocks
 
     def process_all_headline_number_blocks(
-        self, headline_number_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+        self, *, headline_number_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> None:
         """Makes the relevant requests for the given `headline_number_blocks`
 
@@ -36,7 +36,7 @@ class DynamicContentBlockCrawler:
             )
 
     def process_all_chart_blocks(
-        self, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+        self, *, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
     ) -> None:
         """Makes the relevant requests for the given `chart_blocks`
 
@@ -59,7 +59,7 @@ class DynamicContentBlockCrawler:
     # Process individual blocks
 
     def process_any_headline_number_block(
-        self, headline_number_block: CMS_COMPONENT_BLOCK_TYPE
+        self, *, headline_number_block: CMS_COMPONENT_BLOCK_TYPE
     ) -> None:
         """Makes the relevant requests for the given single `headline_number_block`
 
@@ -93,7 +93,7 @@ class DynamicContentBlockCrawler:
             case _:
                 raise ValueError
 
-    def process_chart_block(self, chart_block: CMS_COMPONENT_BLOCK_TYPE) -> None:
+    def process_chart_block(self, *, chart_block: CMS_COMPONENT_BLOCK_TYPE) -> None:
         """Makes the relevant requests for the given single `chart_block`
 
         Notes:
@@ -121,20 +121,20 @@ class DynamicContentBlockCrawler:
 
     # Sub methods for processing charts
 
-    def _process_table_for_chart_block(self, chart_block: dict):
+    def _process_table_for_chart_block(self, *, chart_block: dict):
         tables_data = self._request_payload_builder.build_tables_request_data(
             chart_block=chart_block
         )
         self._internal_api_client.hit_tables_endpoint(data=tables_data)
 
-    def process_download_for_chart_block(self, chart_block: dict, file_format: str):
+    def process_download_for_chart_block(self, *, chart_block: dict, file_format: str):
         downloads_data = self._request_payload_builder.build_downloads_request_data(
             chart_block=chart_block, file_format=file_format
         )
         return self._internal_api_client.hit_downloads_endpoint(data=downloads_data)
 
     def _process_chart_for_both_possible_widths(
-        self, chart_block: CMS_COMPONENT_BLOCK_TYPE
+        self, *, chart_block: CMS_COMPONENT_BLOCK_TYPE
     ) -> None:
         """Makes the relevant requests for the given single `chart_block`
 
@@ -160,7 +160,7 @@ class DynamicContentBlockCrawler:
     # Sub methods for processing headline number blocks
 
     def process_headline_number_block(
-        self, headline_number_block: CMS_COMPONENT_BLOCK_TYPE
+        self, *, headline_number_block: CMS_COMPONENT_BLOCK_TYPE
     ) -> None:
         """Makes the relevant requests for the given single `headline_number_block`
 
@@ -178,7 +178,7 @@ class DynamicContentBlockCrawler:
         self._internal_api_client.hit_headlines_endpoint(data=data)
 
     def process_trend_number_block(
-        self, trend_number_block: CMS_COMPONENT_BLOCK_TYPE
+        self, *, trend_number_block: CMS_COMPONENT_BLOCK_TYPE
     ) -> None:
         """Makes the relevant requests for the given single `trend_number_block`
 

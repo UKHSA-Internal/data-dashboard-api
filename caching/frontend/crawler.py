@@ -46,6 +46,7 @@ class FrontEndCrawler:
 
     def __init__(
         self,
+        *,
         frontend_base_url: str,
         cdn_auth_key: str,
         internal_api_client: InternalAPIClient | None = None,
@@ -65,7 +66,7 @@ class FrontEndCrawler:
 
     @classmethod
     def create_crawler_for_cache_refresh(
-        cls, frontend_base_url: str, cdn_auth_key: str
+        cls, *, frontend_base_url: str, cdn_auth_key: str
     ) -> "FrontEndCrawler":
         return cls(frontend_base_url=frontend_base_url, cdn_auth_key=cdn_auth_key)
 
@@ -84,7 +85,7 @@ class FrontEndCrawler:
     # Frontend requests
 
     def hit_frontend_page(
-        self, url: str, params: dict[str, str] | None = None
+        self, *, url: str, params: dict[str, str] | None = None
     ) -> Response:
         """Hits the frontend page for the given `url`
 
@@ -109,7 +110,7 @@ class FrontEndCrawler:
         )
         logger.info("Processed `%s` for params: %s", url, params)
 
-    def process_page(self, page_item: dict) -> None:
+    def process_page(self, *, page_item: dict) -> None:
         """Hit the URL for the corresponding `page_item`
 
         Notes:
@@ -180,7 +181,7 @@ class FrontEndCrawler:
         logger.info("Finished processing all regular pages for the frontend")
 
     def process_geography_page_combination(
-        self, geography_data: GeographyData, page: TopicPage
+        self, *, geography_data: GeographyData, page: TopicPage
     ) -> None:
         """Hits the frontend URL for the given `geography_data` and `page` combination
 
@@ -212,7 +213,7 @@ class FrontEndCrawler:
             # request from the user will just go to redis
             logger.warning("`%s` with params of `%s` could not be hit", url, params)
 
-    def process_geography_page_combinations(self, page: TopicPage) -> None:
+    def process_geography_page_combinations(self, *, page: TopicPage) -> None:
         """Crawls the given `page` for all the relevant geography combinations
 
         Notes:
