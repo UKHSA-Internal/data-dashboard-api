@@ -60,8 +60,8 @@ function _tests_coverage() {
 }
 
 function _tests_all() {
-    _unit
-    _integration
-    _system
-    _migrations
+    uhd tests unit
+    uhd tests integration
+    uhd tests system
+    uhd tests migrations
 }
