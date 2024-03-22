@@ -49,7 +49,7 @@ class APITimeSeriesRequestSerializer(Serializer):
         """
         return self.context["request"].parser_context["kwargs"]
 
-    def build_timeseries_dto(self, value) -> APITimeSeriesDTO:
+    def build_timeseries_dto(self, *, value: str) -> APITimeSeriesDTO:
         """Builds a simple `APITimeSeriesDTO` from the kwargs of the request and the given `value`
         Also sets the `lookup_field` and `name` attributes on the dto to be the given `value`.
 
@@ -89,4 +89,4 @@ class APITimeSeriesRequestSerializer(Serializer):
 
         """
         queryset = self.get_queryset()
-        return [self.build_timeseries_dto(value) for value in queryset]
+        return [self.build_timeseries_dto(value=value) for value in queryset]
