@@ -23,43 +23,43 @@ function _tests() {
     local args=(${@:2})
 
     case $verb in
-        "unit") _unit $args ;;
-        "integration") _integration $args ;;
-        "system") _system $args ;;
-        "migrations") _migrations $args ;;
-        "coverage") _coverage $args ;;
-        "all") _all $args ;;
+        "unit") _tests_unit $args ;;
+        "integration") _tests_integration $args ;;
+        "system") _tests_system $args ;;
+        "migrations") _tests_migrations $args ;;
+        "coverage") _tests_coverage $args ;;
+        "all") _tests_all $args ;;
 
         *) _tests_help ;;
     esac
 }
 
-function _unit() {
+function _tests_unit() {
     uhd venv activate
     pytest tests/unit
 }
 
-function _integration() {
+function _tests_integration() {
     uhd venv activate
     python -m pytest tests/integration
 }
 
-function _system() {
+function _tests_system() {
     uhd venv activate
     pytest tests/system
 }
 
-function _migrations() {
+function _tests_migrations() {
     uhd venv activate
     pytest tests/migrations
 }
 
-function _coverage() {
+function _tests_coverage() {
     uhd venv activate
     pytest --cov
 }
 
-function _all() {
+function _tests_all() {
     _unit
     _integration
     _system

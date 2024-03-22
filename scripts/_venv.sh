@@ -22,15 +22,15 @@ function _venv() {
     local args=(${@:2})
 
     case $verb in
-        "activate") _activate $args ;;
-        "create") _create $args ;;
-        "deactivate") _deactivate $args ;;
+        "activate") _venv_activate $args ;;
+        "create") _venv_create $args ;;
+        "deactivate") _venv_deactivate $args ;;
 
         *) _venv_help ;;
     esac
 }
 
-function _activate() {
+function _venv_activate() {
     local no_venv_found_message="
     There is no venv available.
     If this is for local development,
@@ -40,11 +40,11 @@ function _activate() {
     source .venv/bin/activate || echo ${no_venv_found_message}
 }
 
-function _deactivate() {
+function _venv_deactivate() {
     deactivate
 }
 
-function _create() {
+function _venv_create() {
     local python_version=`cat .python-version`
     python${python_version} -m venv --upgrade-deps .venv
     _activate

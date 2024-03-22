@@ -22,22 +22,22 @@ function _bootstrap() {
     local args=(${@:2})
 
     case $verb in
-        "all") _all $args ;;
-        "admin-user") _admin_user $args ;;
-        "test-content") _test_content $args ;;
-        "test-data") _test_data $args ;;
+        "all") _bootstrap_all $args ;;
+        "admin-user") __bootstrap_admin_user $args ;;
+        "test-content") _bootstrap_test_content $args ;;
+        "test-data") _bootstrap_test_data $args ;;
 
         *) _bootstrap_help ;;
     esac
 }
 
-function _all() {
+function _bootstrap_all() {
     uhd bootstrap admin-user $1
     uhd bootstrap test-content
     uhd bootstrap test-data
 }
 
-function _admin_user() {
+function __bootstrap_admin_user() {
     local admin_password=$1
     if [[ -z ${admin_password} ]]; then
         echo "Password for admin user is required" >&2
@@ -49,13 +49,13 @@ function _admin_user() {
     python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('testadmin', '', '$admin_password')"
 }
 
-function _test_content() {
+function _bootstrap_test_content() {
     echo "Creating CMS content"
     uhd venv activate
     python manage.py build_cms_site
 }
 
-function _test_data() {
+function _bootstrap_test_data() {
     echo "Uploading truncated test data"
     uhd venv activate
     python manage.py upload_truncated_test_data

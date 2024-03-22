@@ -1,14 +1,13 @@
 #!/bin/bash
+#set -x
 
 function run_script() {
     echo "Running bootstrap script to populate application"
-    local admin_password=$1
+    echo "Argument received: $1"
 
     source uhd.sh
     uhd django migrate
-    uhd bootstrap admin-user $admin_password
-    uhd bootstrap test-data
-    uhd bootstrap test-content
+    uhd bootstrap all "$1" 2>&1
 
     echo "Completed running bootstrap script"
 }
