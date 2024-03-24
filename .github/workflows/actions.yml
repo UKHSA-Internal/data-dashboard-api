@@ -239,6 +239,7 @@ jobs:
           architecture: arm64
           ecr-repository: "data-dashboard/api"
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          image-tag: latest-graviton
 
   publish-ingestion-image-to-deprecated-ecr:
     name: Publish ingestion image to deprecated ECR
