@@ -3,6 +3,12 @@ name: 'Publish image to AWS ECR'
 description: 'Builds, tags and pushes a Docker image to AWS ECR'
 
 inputs:
+  architecture:
+    description: 'The architecture to use when building the image.'
+    default: amd64
+  dockerfile:
+    description: 'The selected dockerfile to build the image from.'
+    default: Dockerfile
   ecr-repository:
     description: 'The name of the Amazon ECR repository to push the image to.'
     required: true
