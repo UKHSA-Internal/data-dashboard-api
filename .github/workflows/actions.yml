@@ -190,8 +190,10 @@ jobs:
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
-          ecr-repository: "wp-api"
+          ecr-repository: wp-api
           role-to-assume: ${{ secrets.AWS_ROLE }}
+          architecture: amd64
+          image-tag: latest
 
   publish-main-image:
     name: Publish main image to central ECR
@@ -215,6 +217,33 @@ jobs:
         with:
           ecr-repository: "data-dashboard/api"
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          architecture: amd64
+          image-tag: latest
+
+  publish-main-image-graviton:
+    name: Publish ARM64 main image to central ECR
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      vulnerabilities,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: data-dashboard/api
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          architecture: arm64
+          image-tag: latest-graviton
 
   publish-ingestion-image-to-deprecated-ecr:
     name: Publish ingestion image to deprecated ECR
@@ -238,10 +267,11 @@ jobs:
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
-          ecr-repository: "wp-ingestion"
+          ecr-repository: wp-ingestion
           role-to-assume: ${{ secrets.AWS_ROLE }}
           dockerfile: Dockerfile-ingestion
           architecture: arm64
+          image-tag: latest
 
   publish-ingestion-image:
     name: Publish ingestion image to central ECR
@@ -264,10 +294,11 @@ jobs:
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
-          ecr-repository: "data-dashboard/ingestion"
+          ecr-repository: data-dashboard/ingestion
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           dockerfile: Dockerfile-ingestion
           architecture: arm64
+          image-tag: latest
 
   ###############################################################################
   # Deploy
