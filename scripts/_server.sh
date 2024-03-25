@@ -21,23 +21,23 @@ function _server() {
     local args=(${@:2})
 
     case $verb in
-        "run-local") _run_local_server  $args ;;
-        "run-production") _run_production_server  $args ;;
-        "setup-all") _setup_all  $args ;;
-        "setup-static-files") _setup_static_files  $args ;;
+        "run-local") _server_run_local  $args ;;
+        "run-production") _server_run_production  $args ;;
+        "setup-all") _server_setup_all  $args ;;
+        "setup-static-files") _server_setup_static_files  $args ;;
 
         *) _server_help ;;
     esac
 }
 
-function _run_local_server() {
+function _server_run_local() {
     local port=$1
 
     uhd venv activate
     python manage.py runserver localhost:${port:-8000}
 }
 
-function _run_production_server() {
+function _server_run_production() {
     local port=$1
 
     uhd venv activate
@@ -49,12 +49,12 @@ function _run_production_server() {
       --bind=0.0.0.0:${port:-80}
 }
 
-function _setup_all() {
+function _server_setup_all() {
     uhd django migrate
     _setup_static_files
 }
 
-function _setup_static_files() {
+function _server_setup_static_files() {
     uhd venv activate
 
     echo "Collecting static files"
