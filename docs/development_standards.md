@@ -306,6 +306,16 @@ Instead, we should prefer:
 get_metrics(geography_type=geography_type, topic=topic)
 ```
 
+Unless there is a very good reason to do so, we should enforce the use of key word arguments by default:
+
+```python
+def get_metrics(*, geography_type: str, topic: str):
+    ...
+```
+
+Note that the star (`*`) operator here forces the calling code 
+to use key word arguments instead of positional arguments.
+
 ### Avoiding assert statements in source code
 
 We shall avoid the use of `assert` statements in source code.
