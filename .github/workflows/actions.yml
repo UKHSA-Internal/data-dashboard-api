@@ -168,33 +168,6 @@ jobs:
   # Build image
   ###############################################################################
 
-  publish-main-image-to-deprecated-ecr:
-    name: Publish main image to deprecated ECR
-    needs: [
-      quality-checks,
-      unit-tests,
-      integration-tests,
-      system-tests,
-      migration-tests,
-      test-coverage,
-      vulnerabilities,
-      architecture-checks
-    ]
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    # Only build if the changes are being pushed to the `main` branch
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Build and publish docker image
-        uses: ./.github/actions/publish-image
-        with:
-          ecr-repository: wp-api
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          architecture: amd64
-          image-tag: latest
-
   publish-main-image:
     name: Publish main image to central ECR
     needs: [
@@ -245,34 +218,6 @@ jobs:
           architecture: arm64
           image-tag: latest-graviton
 
-  publish-ingestion-image-to-deprecated-ecr:
-    name: Publish ingestion image to deprecated ECR
-    needs: [
-      quality-checks,
-      unit-tests,
-      integration-tests,
-      system-tests,
-      migration-tests,
-      test-coverage,
-      vulnerabilities,
-      architecture-checks
-    ]
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    # Only build if the changes are being pushed to the `main` branch
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Build and publish docker image
-        uses: ./.github/actions/publish-image
-        with:
-          ecr-repository: wp-ingestion
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          dockerfile: Dockerfile-ingestion
-          architecture: arm64
-          image-tag: latest
-
   publish-ingestion-image:
     name: Publish ingestion image to central ECR
     needs: [
@@ -307,8 +252,8 @@ jobs:
   trigger-deployments:
     name: Trigger deployments
     needs: [
-      publish-main-image-to-deprecated-ecr,
-      publish-ingestion-image-to-deprecated-ecr
+      publish-main-image,
+      publish-ingestion-image
     ]
     runs-on: ubuntu-latest
     if: ${{ github.ref == 'refs/heads/main' }}
