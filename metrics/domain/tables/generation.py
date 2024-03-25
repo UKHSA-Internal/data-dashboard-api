@@ -6,7 +6,7 @@ from metrics.domain.utils import ChartAxisFields
 
 
 class TabularData:
-    def __init__(self, plots: list[PlotData]):
+    def __init__(self, *, plots: list[PlotData]):
         self.plots = plots
 
         # The list of plot labels
@@ -35,7 +35,7 @@ class TabularData:
         return self.create_multi_plot_output()
 
     def add_plot_data_to_combined_plots(
-        self, plot_data: dict[Any, Any], plot_label: str
+        self, *, plot_data: dict[Any, Any], plot_label: str
     ):
         """Add the values to the combined plots dictionary
 
@@ -83,7 +83,7 @@ class TabularData:
         return self.plots[0].parameters.x_axis == ChartAxisFields.date.name
 
     @staticmethod
-    def _build_plot_data(plot: PlotData) -> dict:
+    def _build_plot_data(*, plot: PlotData) -> dict:
         return dict(zip(plot.x_axis_values, plot.y_axis_values))
 
     def create_multi_plot_output(self) -> list[dict[str, str | list[dict]]]:

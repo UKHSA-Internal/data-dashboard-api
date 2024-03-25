@@ -19,6 +19,7 @@ class HealthProbeForDatabaseFailedError(ConnectionError): ...
 class HealthProbeManagement:
     def __init__(
         self,
+        *,
         cache_connection: OPTIONAL_CONNECTION_PROXY = None,
         database_connection: OPTIONAL_CONNECTION_PROXY = None,
     ):
@@ -46,7 +47,7 @@ class HealthProbeManagement:
             False otherwise.
 
         """
-        current_app_mode: str = os.environ.get("APP_MODE")
+        current_app_mode: str = os.environ.get("APP_MODE", [])
 
         if current_app_mode in enums.AppMode.dependent_on_db():
             try:
@@ -88,7 +89,7 @@ class HealthProbeManagement:
             raise HealthProbeForCacheFailedError
 
     @classmethod
-    def _get_redis_client(cls, django_cache_proxy: ConnectionProxy) -> redis.Redis:
+    def _get_redis_client(cls, *, django_cache_proxy: ConnectionProxy) -> redis.Redis:
         """Retrieves the native Redis client from the django cache proxy
 
         Notes:

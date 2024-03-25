@@ -9,6 +9,7 @@ PATHS_TO_HIDE_FROM_SWAGGER: tuple[str, str] = ("cms-admin", ".well-known/health-
 
 
 def pre_processing_endpoint_filter_hook(
+    *,
     endpoints: list[URL_PATTERN_HINT],
 ) -> list[URL_PATTERN_HINT]:
     """Pre-processing hook used in conjunction with drf-spectacular to hide endpoints from swagger

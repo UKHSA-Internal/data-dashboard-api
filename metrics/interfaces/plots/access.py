@@ -1,4 +1,5 @@
 import datetime
+from collections.abc import Iterable
 from typing import Any
 
 from django.db.models import Manager, QuerySet
@@ -34,6 +35,7 @@ class QuerySetResult(BaseModel):
 class PlotsInterface:
     def __init__(
         self,
+        *,
         plots_collection: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
@@ -67,7 +69,7 @@ class PlotsInterface:
                 raise InvalidPlotParametersError from error
 
     def get_queryset_result_for_plot_parameters(
-        self, plot_parameters: PlotParameters
+        self, *, plot_parameters: PlotParameters
     ) -> QuerySetResult:
         """Returns the timeseries records for the requested plot as an enriched `QuerySetResult` model.
 
@@ -100,6 +102,7 @@ class PlotsInterface:
 
     def get_timeseries(
         self,
+        *,
         x_axis: str,
         y_axis: str,
         topic_name: str,
@@ -172,7 +175,7 @@ class PlotsInterface:
         )
 
     def build_plot_data_from_parameters_with_complete_queryset(
-        self, plot_parameters: PlotParameters
+        self, *, plot_parameters: PlotParameters
     ) -> CompletePlotData:
         """Creates a `CompletePlotData` model which holds the params and full queryset for the given requested plot
 
@@ -203,7 +206,7 @@ class PlotsInterface:
         )
 
     def build_plot_data_from_parameters(
-        self, plot_parameters: PlotParameters
+        self, *, plot_parameters: PlotParameters
     ) -> PlotData:
         """Creates a `PlotData` model which holds the params and corresponding data for the given requested plot
 
@@ -319,7 +322,7 @@ class PlotsInterface:
 
 
 def get_x_and_y_values(
-    plot_parameters: PlotParameters, queryset: QuerySet
+    *, plot_parameters: PlotParameters, queryset: QuerySet
 ) -> tuple[list[Any], list[Any]]:
     """Gets the X and Y values for a given `queryset` based on the `plot_parameters`
 
@@ -339,12 +342,12 @@ def get_x_and_y_values(
 
     """
     if plot_parameters.x_axis == ChartAxisFields.age.name:
-        return sort_by_age(queryset=queryset)
+        return sort_by_age(iterable=queryset)
 
     return unzip_values(values=queryset)
 
 
-def convert_type(s: str) -> int | str:
+def convert_type(*, s: str) -> int | str:
     """
     Convert a string to a number if possible
 
@@ -359,12 +362,12 @@ def convert_type(s: str) -> int | str:
     return int(s) if s.isdigit() else s.lower()
 
 
-def sort_by_age(queryset: QuerySet) -> tuple[list[Any], list[Any]]:
+def sort_by_age(*, iterable: Iterable) -> tuple[list[Any], list[Any]]:
     """
     Sorts a list of tuples where age is the first element and return as two separate lists
 
     Args:
-        queryset: A queryset containing a list of tuples where
+        iterable: An iterable containing a list of tuples where
         Age is the first value and the metric value is the second
         E.g. ('15_44', Decimal('0.7'))
 
@@ -372,7 +375,7 @@ def sort_by_age(queryset: QuerySet) -> tuple[list[Any], list[Any]]:
         A properly sorted and displayable version broken into two separate lists
 
     """
-    temp_dict = {x[0]: x for x in queryset}
+    temp_dict = {x[0]: x for x in iterable}
 
     # Now sort on the tuple and return the x and y values
     x_values = []
@@ -386,11 +389,11 @@ def sort_by_age(queryset: QuerySet) -> tuple[list[Any], list[Any]]:
     return x_values, y_values
 
 
-def _build_age_display_name(value: str) -> str:
+def _build_age_display_name(*, value: str) -> str:
     return value.replace("-", " - ")
 
 
-def unzip_values(values) -> tuple[list[Any], list[Any]]:
+def unzip_values(*, values) -> tuple[list[Any], list[Any]]:
     """
     Take a list and zip it
 

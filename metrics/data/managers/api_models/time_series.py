@@ -34,6 +34,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
 
     def filter_for_list_view(
         self,
+        *,
         theme_name: str,
         sub_theme_name: str,
         topic_name: str,
@@ -86,7 +87,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
 
     @classmethod
-    def filter_for_latest_refresh_date_records(cls, queryset: Self) -> Self:
+    def filter_for_latest_refresh_date_records(cls, *, queryset: Self) -> Self:
         """Filters the given `queryset` to ensure the latest record is returned for each individual date
 
         Notes:
@@ -122,7 +123,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
 
     @classmethod
     def get_latest_refresh_date_records_per_window(
-        cls, queryset: Self, partition_fields: list[str]
+        cls, *, queryset: Self, partition_fields: list[str]
     ) -> Self:
         """Partitions the `queryset` and returns records with the latest `refresh_date` from each window
 
@@ -154,7 +155,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         return queryset.filter(refresh_ranking=1)
 
     @staticmethod
-    def _exclude_data_under_embargo(queryset: models.QuerySet) -> models.QuerySet:
+    def _exclude_data_under_embargo(*, queryset: models.QuerySet) -> models.QuerySet:
         """Excludes any data which is currently embargoed from the given `queryset`
 
         Notes:

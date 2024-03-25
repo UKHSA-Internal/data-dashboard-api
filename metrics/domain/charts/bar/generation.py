@@ -8,6 +8,7 @@ from metrics.domain.models import PlotData
 
 
 def generate_chart_figure(
+    *,
     chart_height: int,
     chart_width: int,
     chart_plots_data: list[PlotData],
@@ -62,6 +63,7 @@ def generate_chart_figure(
 
 
 def _create_bar_plot(
+    *,
     x_axis_values: list[Any],
     y_axis_values: list[Any],
     bar_colour: str,

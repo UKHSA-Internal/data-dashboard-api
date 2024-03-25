@@ -115,7 +115,7 @@ class TestTrendsInterface:
 
         # When / Then
         with pytest.raises(access.TrendNumberDataNotFoundError):
-            headlines_interface.get_latest_metric_value(metric_name)
+            headlines_interface.get_latest_metric_value(metric_name=metric_name)
 
     def test_initializes_with_default_core_headline_manager(self):
         """

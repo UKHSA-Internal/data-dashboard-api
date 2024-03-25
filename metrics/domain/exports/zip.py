@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 def write_directory_to_write_stream(
+    *,
     directory_name: str,
     download_group: list[dict[str, str]],
     zipf: zipfile.ZipFile,
@@ -28,6 +29,7 @@ def write_directory_to_write_stream(
 
 
 def write_data_to_zip(
+    *,
     downloads: list[dict[str, str]],
 ) -> zip:
     """Compress data into a zipfile

@@ -7,7 +7,7 @@ DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class TrendNumberDataNotFoundError(Exception):
-    def __init__(self, topic_name: str, metric_name: str):
+    def __init__(self, *, topic_name: str, metric_name: str):
         message = f"Data for `{topic_name}` and `{metric_name}` could not be found."
         super().__init__(message)
 
@@ -15,6 +15,7 @@ class TrendNumberDataNotFoundError(Exception):
 class TrendsInterface:
     def __init__(
         self,
+        *,
         topic_name: str,
         metric_name: str,
         percentage_metric_name: str,
@@ -35,7 +36,7 @@ class TrendsInterface:
         self.age = age
         self.core_headline_manager = core_headline_manager
 
-    def get_latest_metric_value(self, metric_name: str) -> CoreHeadline:
+    def get_latest_metric_value(self, *, metric_name: str) -> CoreHeadline:
         """Gets the value for the record associated with the given `metric_to_lookup`
 
         Returns:
@@ -100,6 +101,7 @@ class TrendsInterface:
 
 
 def generate_trend_numbers(
+    *,
     topic_name: str,
     metric_name: str,
     percentage_metric_name: str,

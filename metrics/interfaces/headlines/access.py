@@ -9,6 +9,7 @@ DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 class HeadlinesInterface:
     def __init__(
         self,
+        *,
         topic_name: str,
         metric_name: str,
         geography_name: str,
@@ -75,6 +76,7 @@ class HeadlineNumberDataNotFoundError(BaseInvalidHeadlinesRequestError):
 
 
 def generate_headline_number(
+    *,
     topic_name: str,
     metric_name: str,
     geography_name: str,

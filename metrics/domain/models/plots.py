@@ -144,7 +144,7 @@ class CompletePlotData(BaseModel):
 
 
 def get_date_n_months_ago_from_timestamp(
-    datetime_stamp: datetime.datetime, number_of_months: int = 6
+    *, datetime_stamp: datetime.datetime, number_of_months: int = 6
 ) -> datetime.date:
     """
     Get the 1st day of the month x months in the past
@@ -166,7 +166,7 @@ def get_date_n_months_ago_from_timestamp(
     ).date()
 
 
-def make_date_from_string(date_from: str | None) -> datetime.date:
+def make_date_from_string(*, date_from: str | None) -> datetime.date:
     """Parses the `date_from` string into a date object. Defaults to 1 year ago from the current date.
 
     Args:
@@ -187,7 +187,7 @@ def make_date_from_string(date_from: str | None) -> datetime.date:
         )
 
 
-def make_date_to_string(date_to: str | None) -> datetime.date:
+def make_date_to_string(*, date_to: str | None) -> datetime.date:
     """Parse the 'date_to' string into a date object, defaults to today's date.
 
     Args:

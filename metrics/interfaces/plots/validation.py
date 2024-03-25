@@ -2,7 +2,7 @@ from metrics.domain.models import PlotParameters
 
 
 class MetricDoesNotSupportTopicError(Exception):
-    def __init__(self, topic_name: str, metric_name: str):
+    def __init__(self, *, topic_name: str, metric_name: str):
         message = (
             f"`{topic_name}` does not have a corresponding metric of `{metric_name}`"
         )
@@ -10,13 +10,13 @@ class MetricDoesNotSupportTopicError(Exception):
 
 
 class DatesNotInChronologicalOrderError(Exception):
-    def __init__(self, date_from: str, date_to: str):
+    def __init__(self, *, date_from: str, date_to: str):
         message = f"`{date_to}` is not a date later than `{date_from}`"
         super().__init__(message)
 
 
 class PlotValidation:
-    def __init__(self, plot_parameters: PlotParameters):
+    def __init__(self, *, plot_parameters: PlotParameters):
         self.plot_parameters = plot_parameters
 
     def validate(self) -> None:
