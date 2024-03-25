@@ -20,25 +20,25 @@ function _django() {
     local args=(${@:2})
 
     case $verb in
-        "makemigrations") _make_migrations $args ;;
-        "migrate") _migrate $args ;;
-        "shell") _shell $args ;;
+        "makemigrations") _django_make_migrations $args ;;
+        "migrate") _django_migrate $args ;;
+        "shell") _django_shell $args ;;
 
         *) _django_help ;;
     esac
 }
 
-function _make_migrations() {
+function _django_make_migrations() {
     uhd venv activate
     python manage.py makemigrations
 }
 
-function _migrate() {
+function _django_migrate() {
     uhd venv activate
     python manage.py migrate
 }
 
-function _shell() {
+function _django_shell() {
     uhd venv activate
     python manage.py shell
 }

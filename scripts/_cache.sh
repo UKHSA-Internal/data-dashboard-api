@@ -17,13 +17,13 @@ function _cache() {
     local args=(${@:2})
 
     case $verb in
-        "flush-redis") _flush_redis $args ;;
+        "flush-redis") _cache_flush_redis $args ;;
 
         *) _cache_help ;;
     esac
 }
 
-function _flush_redis() {
+function _cache_flush_redis() {
     uhd venv activate
     python manage.py hydrate_private_api_cache
 }
