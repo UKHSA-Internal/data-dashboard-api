@@ -21,20 +21,20 @@ function _quality() {
     local args=(${@:2})
 
     case $verb in
-        "architecture") _architecture $args ;;
-        "format") _format $args ;;
-        "format-check") _format_check $args ;;
+        "architecture") _quality_architecture $args ;;
+        "format") _quality_format $args ;;
+        "format-check") _quality_format_check $args ;;
 
         *) _quality_help ;;
     esac
 }
 
-function _architecture() {
+function _quality_architecture() {
     uhd venv activate
     lint-imports
 }
 
-function _format() {
+function _quality_format() {
     uhd venv activate
     _ruff_formatter
     _black_formatter
@@ -50,7 +50,7 @@ function _black_formatter() {
   black .
 }
 
-function _format_check() {
+function _quality_format_check() {
     uhd quality format
     changed_files=$(git diff --name-only | grep "\.py" || true)
 

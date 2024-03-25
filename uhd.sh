@@ -38,10 +38,6 @@ function _uhd_commands_help() {
 }
 
 function uhd() {
-    if [ $CI ]; then
-        echo $0 $@
-    fi
-
     local current=$(pwd)
     local command=$1
     local args=(${@:2}) 
@@ -49,7 +45,7 @@ function uhd() {
     cd $root
 
     case $command in
-        "bootstrap") _bootstrap $args ;;
+        "bootstrap") _bootstrap "${args[@]}" ;;
         "cache") _cache $args ;;
         "django") _django $args ;;
         "security") _security $args ;;

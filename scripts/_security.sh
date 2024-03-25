@@ -18,19 +18,19 @@ function _security() {
     local args=(${@:2})
 
     case $verb in
-        "dependencies") _dependencies $args ;;
-        "vulnerabilities") _vulnerabilities $args ;;
+        "dependencies") _security_dependencies $args ;;
+        "vulnerabilities") _security_vulnerabilities $args ;;
 
         *) _security_help ;;
     esac
 }
 
-function _dependencies() {
+function _security_dependencies() {
     uhd venv activate
     pip-audit -r requirements.txt
 }
 
-function _vulnerabilities() {
+function _security_vulnerabilities() {
     uhd venv activate
     bandit -c pyproject.toml -r .
 }
