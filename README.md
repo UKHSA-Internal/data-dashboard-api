@@ -22,9 +22,35 @@ brew install postgresql
 To unify commonly used commands for local development, there is a script at the root level of the project.
 Source our CLI tool:
 
-```
+```bash
 source uhd.sh
 ```
+
+The CLI provides a set of high level modules, which you can see by running the following command:
+
+```bash
+uhd
+```
+
+These are grouped by category. 
+You can then select the category by determining which commands are available.
+For example, if we run the following command:
+
+```bash
+uhd bootstrap
+```
+
+We will see a list of commands available for bootstrapping and populating the database.
+
+This CLI tool provides common workflows for local development. 
+This will help you for things such as but not limited to:
+
+- Running the test suite
+- Starting the application server
+- Populating the database with test data
+
+The Continuous Integration (CI) pipeline also uses the same CLI tool for the various CI builds.
+This includes running the test suite and performing static analysis over the codebase.
 
 ## Initial configuration
 
@@ -64,7 +90,7 @@ And finally, the entire project dependencies will be installed within the virtua
 uhd server setup-all
 ```
 
-6. Run the server on port 8000:
+6. Run a development server:
 ```bash
 uhd server run-local
 ```
@@ -81,7 +107,7 @@ uhd server run-local 1234
 
 ## Database
 
-When developing locally, the app will point to a local database:
+When developing locally, the app will point to a local SQLite database:
 
 ```
 |- venv/
@@ -102,7 +128,8 @@ uhd bootstrap all <Admin Password>
 ```
 
 Alternatively you can populate those items individually.
-You can determine which commands are available by entering the `bootstrap` module in the CLI:
+As mentioned previously, you can determine which commands are available 
+by entering the high level `bootstrap` module in the CLI:
 
 ```bash
 uhd bootstrap
@@ -147,7 +174,7 @@ to the `uhd bootstrap all` or `uhd bootstrap admin-user` script.
 The project dependencies are seperated into usage:
 ```
 requirements.txt                  # <- This imports the prod + dev dependencies. This includes all dependencies, regardless of usage.
-requirements-prod.txt             # <- These are the Production-only dependencies. This is ingested by the Dockerfile
+requirements-prod.txt             # <- These are the Production-only dependencies. This is ingested by the main Dockerfile
 requirements-prod-ingestion.txt   # <- These are the Production dependencies for the ingestion image only.
 requirements-dev.txt              # <- These are the Dev dependencies-only. Includes testing/factory libraries
 ```
@@ -160,7 +187,7 @@ including those needed for local development.
 
 ### Running tests
 
-The tests are split by type, `unit`, `integration`, `system` and `migration`.
+The tests are split by type, `unit`, `integration`, `system` and `migrations`.
 To see which commands are available for the `tests` module, you should run:
 
 ```bash
@@ -173,11 +200,22 @@ You can run these groups of tests all at once:
 uhd tests all
 ```
 
-Or you can run them seperately . For example, to run the unit tests:
+Or you can run them separately. For example, to run the unit tests:
 
 ```bash
 uhd tests unit
 ```
+
+We also enforce 100% test coverage across the codebase.
+You can calculate the test coverage with the following command:
+
+```bash
+uhd tests coverage
+```
+
+Please note that test coverage provides a minimum baseline only.
+It is simply a measure of the lines of source code which have been executed throughout the test suite.
+Just because you have 100% test coverage does **not** indicate your development branch or feature is fully/well tested.
 
 ---
 
@@ -218,7 +256,7 @@ You can check these by running the following command:
 uhd security architecture
 ```
 
-Also note that this will also be enforced by virtue of the CI.
+Also note that this is also be enforced by virtue of the CI.
 
 ---
 
