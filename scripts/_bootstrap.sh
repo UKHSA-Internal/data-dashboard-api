@@ -32,6 +32,7 @@ function _bootstrap() {
 }
 
 function _bootstrap_all() {
+    uhd django migrate
     uhd bootstrap admin-user $1
     uhd bootstrap test-data
     uhd bootstrap test-content
