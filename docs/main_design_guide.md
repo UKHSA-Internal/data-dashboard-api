@@ -61,11 +61,15 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     
 |- cms/
     |- common/                  # The wagtail app for the non-topic pages (about page).
+    |- composite/               # The wagtail app for non-topic pages that supports a sortable layout and codeblocks. 
     |- dashboard/               # This is the *main/primary* wagtail app.
-    |- home/                    # The wagtail app for the landing page.
-    |- topic/                   # The wagtal app for the topic pages (diseases e.g. COVID-19)
     |- dynamic_content/         # Contains the primary customised blocks and components used for dynamic content 
+    |- home/                    # The wagtail app for the landing page.
+    |- metrics_documentation/   # The wagtail app for metrics documentation section of the dashboard. 
     |- metrics_interface/       # Contains the funnel abstractions which links the cms <- metrics modules
+    |- snippets/                # The wagtail app for non page models, includes internal and external buttons. 
+    |- topic/                   # The wagtal app for the topic pages (diseases e.g. COVID-19)
+    |- whats_new/               # The wagtail app for what's new section of the dashboard. 
    
 |- feedback/                    # Encapsulates the feedback module, email message construction and sending functionality
     |- serializers/             # Primarily used to validate the correct question answer pairs are in inbound requests
@@ -82,7 +86,9 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     
 |- metrics/
     |- api/                     # This is the *main/primary* django app of the project. The centralised settings can be found within.
-        settings.py             # Settings for the main django app. The CMS apps are wired into place here.
+        /- settings/            # Settings for the main django app broken down into service speicifc files.
+            default.py          # main django app settings the CMS apps are wired into place here. 
+            ...                 # service specific settings including cms, ingestion and feedback api.
         urls.py                 # URLs for the main django app. The CMS routes are wired into place here.
         urls_construction.py    # Where the URLs are configured, grouped and toggled accordingly
         ...                     # views, serializers and viewsets associated with the API layer.
