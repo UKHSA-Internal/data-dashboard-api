@@ -17,10 +17,14 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
     @cache_response()
     def listing_view(self, request: Request) -> Response:
+        """This endpoints returns a list of published pages from the CMS (Wagtail).
+        The payload includes page `title`, `id` and `meta` data about each page.
+        """
         return super().listing_view(request=request)
 
     @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
+        """This end point returns a page from the CMS based on a Page `ID`."""
         return super().detail_view(request=request, pk=pk)
 
 
@@ -30,6 +34,10 @@ class CMSDraftPagesViewSet(PagesAPIViewSet):
     permission_classes = []
 
     def detail_view(self, request: Request, pk: int) -> Response:
+        """This endpoint returns a page including any unpublished changes in its payload.
+
+        **Note:** this only returns `published` pages with `unpublished` changes.
+        """
         instance = self.get_object()
         instance = instance.get_latest_revision_as_object()
         serializer = self.get_serializer(instance)
