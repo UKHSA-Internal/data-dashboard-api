@@ -5,10 +5,7 @@ function run_script() {
     local admin_password=$1
 
     source uhd.sh
-    uhd django migrate
-    uhd bootstrap admin-user $admin_password
-    uhd bootstrap test-data
-    uhd bootstrap test-content
+    uhd bootstrap all $admin_password
 
     echo "Completed running bootstrap script"
 }
