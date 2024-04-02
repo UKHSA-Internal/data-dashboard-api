@@ -10,24 +10,31 @@ The CMS is built on top of [Wagtail](https://docs.wagtail.org/en/stable/).
 
 ## Structure
 
-There are 4 main `wagtail` apps within the project.
+There are 7 main `wagtail` apps within the project.
 
 - `dashboard` - this is the main wagtail app to which the others connect into.
 
 - `common` - this is the wagtail app which handles the non-topic pages e.g. the `About` page.
 - `home` - this is the wagtail app for the landing page.
 - `topic` - this is the wagtail app for the topic pages e.g. the `COVID-19` or the `Influenza` detail pages.
-
+- `composite` - this is the wagtail app which handles non-topic pages that require more customisation e.g `access-our-data` pages.
+- `snippets` - this is the wagtail app for non-page type models including `internal` and `external` buttons. e.g. `bulk_download button` 
+- `whats_new` - this is the wagtail app for `whats new` section of the dashboard, including both `parent` and `child` page types.
+- `metrics_documentation` - this is the wagtail app for `metrics documentation` pages of the dashboard, including `parent` and `child` page types.
+it also includes data migrations for each metric documentation child page.
 ---
 
 ## Data model
 
 The data model is split according to the page types.
-There are currently 3 main page types:
+There are currently 6 main page types:
 
 - `HomePage`
 - `CommonPage`
 - `TopicPage`
+- `CompositePage`
+- `MetricsDocumentationParentPage`
+- `WhatsNewParentPage`
 
 For each type of page there will also be a foreign key 1-to-many relationship out to 
 a corresponding related links type model:
@@ -35,6 +42,9 @@ a corresponding related links type model:
 - `HomePage` (1) -> (many) `HomePageRelatedLink`
 - `CommonPage`(1) -> (many) `CommonPageRelatedLink`
 - `TopicPage`(1) -> (many) `TopicPageRelatedLink`
+- `CompositePage`(1) -> (many) `CompositePageRelatedLink`
+- `MetricsDocumentationParentPage`(1) -> (many) `MetricsDocumentationParentPageRelatedLink`
+- `WhatNewParentPage`(1) -> (many) `WhatNewParentPageParentPageRelatedLink`
 
 As a design choice, each object should have a `title` field as well as a `body` field.
 Note that the `title` field is inherited from the `wagtail` `Page` class.
@@ -90,6 +100,8 @@ All `RichTextField` objects are restricted so that users can only add the follow
 - bullet points
 
 This is achieved by passing the appropriate list of strings to the `features` arg of the `RichTextField` instantiation.
+
+For the `CompositePage` type this list has been extended to include the `code` text type.
 
 ### Related links ordering
 
