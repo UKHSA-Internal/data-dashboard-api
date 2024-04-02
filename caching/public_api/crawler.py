@@ -186,8 +186,12 @@ class PublicAPICrawler:
         for target in targets:
             if target not in crawled_urls:
                 crawled_urls.append(target)
-                logger.info("%s URLs crawled", len(crawled_urls))
-                self.crawl(url=target, crawled_urls=crawled_urls)
+                try:
+                    self.crawl(url=target, crawled_urls=crawled_urls)
+                except requests.exceptions.RequestException as error:
+                    logger.info("`%s` could not be crawled due to: %s", target, error)
+                else:
+                    logger.info("%s URLs crawled", len(crawled_urls))
 
         return crawled_urls
 
