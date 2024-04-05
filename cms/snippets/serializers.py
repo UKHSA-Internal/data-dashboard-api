@@ -1,7 +1,7 @@
 from rest_framework import serializers
+from rest_framework.utils.serializer_helpers import ReturnDict
 
 from cms.snippets.models import GlobalBanner
-from rest_framework.utils.serializer_helpers import ReturnDict
 
 
 class ButtonSerializer(serializers.Serializer):
