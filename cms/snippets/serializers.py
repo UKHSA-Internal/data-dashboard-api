@@ -29,13 +29,13 @@ class GlobalBannerSerializer(serializers.ModelSerializer):
         ]
 
     @property
-    def data(self) -> ReturnDict | None:
+    def data(self) -> ReturnDict[str, str] | None:
         if self.instance is None:
             return None
         return super().data
 
 
-def get_active_global_banner() -> ReturnDict | None:
+def get_active_global_banner() -> ReturnDict[str, str] | None:
     """Gets the currently active global banner information
 
     Returns:
