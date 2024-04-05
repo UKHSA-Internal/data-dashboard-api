@@ -92,3 +92,15 @@ class TestGlobalBannerSerializer:
             "banner_type": global_banner.banner_type,
         }
         assert serializer.data == expected_data
+
+    def test_data_returns_none_if_no_model_instance_is_provided(self):
+        """
+        Given no `GlobalBanner` model instance is provided
+        When this is passed to a `GlobalBannerSerializer`
+        Then the output `data` returns None
+        """
+        # Given / When
+        serializer = GlobalBannerSerializer(instance=None)
+
+        # Then
+        assert serializer.data is None
