@@ -54,6 +54,14 @@ class ChartsView(APIView):
 
         ---
 
+        # Note:
+
+        This endpoint has been superseded on the dashboard by `charts/v3` which returns an `SVG` chart in its response.
+        This endpoint has been kept for diagnostics/testing because it returns a `png`, which can be directly
+        viewed in swagger.
+
+        ---
+
         # Main errors
 
         There are certain combination of `topic / metric / chart_type` which do not make sense.
