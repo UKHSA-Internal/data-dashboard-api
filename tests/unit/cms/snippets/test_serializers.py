@@ -1,4 +1,9 @@
-from cms.snippets.serializers import ButtonSerializer, ExternalButtonSerializer
+from cms.snippets.models.global_banner import BannerTypes, GlobalBanner
+from cms.snippets.serializers import (
+    ButtonSerializer,
+    ExternalButtonSerializer,
+    GlobalBannerSerializer,
+)
 
 
 class TestButtonSerializer:
@@ -61,3 +66,29 @@ class TestExternalButtonSerializer:
         assert serializer.validated_data["url"] == url
         assert serializer.validated_data["button_type"] == button_type
         assert serializer.validated_data["icon"] == icon
+
+
+class TestGlobalBannerSerializer:
+    def test_serializes_model_correctly(self):
+        """
+        Given a `GlobalBanner` model instance
+        When the model is passed to a `GlobalBannerSerializer`
+        Then the output `data` contains the correct fields
+        """
+        # Given
+        global_banner = GlobalBanner(
+            title="abc",
+            body="def",
+            banner_type=BannerTypes.INFORMATION.value,
+        )
+
+        # When
+        serializer = GlobalBannerSerializer(instance=global_banner)
+
+        # Then
+        expected_data = {
+            "title": global_banner.title,
+            "body": global_banner.body,
+            "banner_type": global_banner.banner_type,
+        }
+        assert serializer.data == expected_data
