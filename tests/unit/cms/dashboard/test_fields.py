@@ -2,7 +2,9 @@ from unittest import mock
 
 from wagtail.api.v2.serializers import PageParentField
 
-from cms.dashboard.fields import ListablePageParentField
+from cms.dashboard.fields import GlobalBannerField, ListablePageParentField
+
+MODULE_PATH = "cms.dashboard.fields"
 
 
 class TestListablePageParentField:
@@ -48,3 +50,32 @@ class TestListablePageParentField:
         # Then
         spy_get_attribute.assert_called_once_with(instance=mocked_page_instance)
         assert returned_attribute == spy_get_attribute.return_value
+
+
+class TestGlobalBannerField:
+    @mock.patch(f"{MODULE_PATH}.get_active_global_banner")
+    def test_delegates_to_get_active_global_banner(
+        self, spy_get_active_global_banner: mock.MagicMock
+    ):
+        """
+        Given a page instance
+        When `get_attribute()` is called from an instance
+            of `GlobalBannerField`
+        Then the call is delegated to `get_active_global_banner()`
+
+        Patches:
+            `spy_get_active_global_banner`: For the main assertion
+                to check if the global banner data was fetched correctly
+        """
+        # Given
+        mocked_page_instance = mock.Mock()
+        global_banner_field = GlobalBannerField(read_only=True)
+
+        # When
+        returned_attribute = global_banner_field.get_attribute(
+            instance=mocked_page_instance
+        )
+
+        # Then
+        spy_get_active_global_banner.assert_called_once()
+        assert returned_attribute == spy_get_active_global_banner.return_value
