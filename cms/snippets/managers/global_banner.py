@@ -1,10 +1,9 @@
 from typing import Self
 
 from django.db import models
-from wagtail.query import PageQuerySet
 
 
-class GlobalBannerQuerySet(PageQuerySet):
+class GlobalBannerQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `GlobalBannerManager"""
 
     def get_active_banners(self) -> Self:
