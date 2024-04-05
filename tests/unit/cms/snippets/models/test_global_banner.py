@@ -6,7 +6,7 @@ from cms.snippets.managers.global_banner import GlobalBannerManager
 from cms.snippets.models.global_banner import (
     BannerTypes,
     GlobalBanner,
-    MultipleGlobalBannersEnabledError,
+    MultipleGlobalBannersActiveError,
 )
 
 
@@ -120,7 +120,7 @@ class TestGlobalBanner:
             which says there is already an active banner
         When the `clean()` method is called
             from the `GlobalBanner`
-        Then the `MultipleGlobalBannersEnabledError` is raised
+        Then the `MultipleGlobalBannersActiveError` is raised
         """
         # Given
         mocked_has_active_banner.return_value = True
@@ -131,7 +131,7 @@ class TestGlobalBanner:
         )
 
         # When / Then
-        with pytest.raises(MultipleGlobalBannersEnabledError):
+        with pytest.raises(MultipleGlobalBannersActiveError):
             global_banner.clean()
 
     @mock.patch.object(GlobalBannerManager, "has_active_banner")

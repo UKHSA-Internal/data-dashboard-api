@@ -13,9 +13,9 @@ class BannerTypes(models.TextChoices):
     WARNING = "Warning"
 
 
-class MultipleGlobalBannersEnabledError(ValidationError):
+class MultipleGlobalBannersActiveError(ValidationError):
     def __init__(self):
-        message = "There can only be 1 currently enabled `GlobalBanner`. Disable the first one before commencing."
+        message = "There can only be 1 currently active `GlobalBanner`. Deactivate the first one before commencing."
         super().__init__(message)
 
 
@@ -71,4 +71,4 @@ class GlobalBanner(models.Model):
     def _raise_error_if_trying_to_enable_multiple_global_banners(self) -> None:
         has_active_banner: bool = GlobalBanner.objects.has_active_banner()
         if has_active_banner and self.is_active:
-            raise MultipleGlobalBannersEnabledError
+            raise MultipleGlobalBannersActiveError
