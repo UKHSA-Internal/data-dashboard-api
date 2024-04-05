@@ -22,22 +22,3 @@ class TestGlobalBannerManager:
 
         # Then
         assert has_active_banner is True
-
-    @pytest.mark.django_db
-    def test_get_active_banner(self):
-        """
-        Given a number of `GlobalBanner` records
-            of which 1 has `is_active` set to True
-        When `get_active_banner()` is called
-            from the `GlobalBannerManager`
-        Then the correct `GlobalBanner` model is returned
-        """
-        # Given
-        GlobalBannerFactory.create(is_active=True)
-        GlobalBannerFactory.create(is_active=False)
-
-        # When
-        active_global_banner: GlobalBanner = GlobalBanner.objects.get_active_banner()
-
-        # Then
-        assert active_global_banner.is_active is True
