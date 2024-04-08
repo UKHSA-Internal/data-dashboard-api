@@ -4,7 +4,7 @@ from rest_framework import serializers
 from wagtail.api.v2.views import PageSerializer
 from wagtail.models import Page
 
-from cms.dashboard.fields import GlobalBannerField, ListablePageParentField
+from cms.dashboard.fields import ListablePageParentField
 
 PAGE_HAS_NO_DRAFTS = (
     "Page has no unpublished changes. Use the `api/pages/` for live pages instead."
@@ -39,4 +39,3 @@ class CMSDraftPagesSerializer(PageSerializer):
 
 class ListablePageSerializer(PageSerializer):
     parent = ListablePageParentField(read_only=True)
-    global_banner = GlobalBannerField(read_only=True)
