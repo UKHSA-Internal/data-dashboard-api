@@ -82,11 +82,11 @@ telepath==0.3.1
 tenacity==8.2.2
 toml==0.10.2
 tomli==2.0.1
-typing_extensions==4.10.0
+typing_extensions==4.11.0
 uritemplate==4.1.1
 urllib3==2.0.7
 virtualenv==20.25.1
-wagtail==6.0.1
+wagtail==6.0.2
 wagtail_trash==3.0.0
 wagtail_modeladmin==2.0.0
 webencodings==0.5.1
