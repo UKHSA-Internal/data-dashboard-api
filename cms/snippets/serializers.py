@@ -1,3 +1,4 @@
+from django.db.models import Manager
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import ReturnDict
 
@@ -19,7 +20,7 @@ class ExternalButtonSerializer(serializers.Serializer):
     icon = serializers.CharField()
 
 
-class GlobalBannerSerializer(serializers.ModelSerializer):
+class GlobalBannerResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = GlobalBanner
         fields = [
@@ -35,7 +36,18 @@ class GlobalBannerSerializer(serializers.ModelSerializer):
         return super().data
 
 
-def get_active_global_banner() -> ReturnDict[str, str] | None:
+class GlobalBannerSerializer(serializers.Serializer):
+    @property
+    def global_banner_manager(self) -> Manager:
+        return self.context.get("global_banner_manager", GlobalBanner.objects)
+
+    @property
+    def data(self) -> dict[str, ReturnDict[str, str] | None]:
+        active_global_banner_data: ReturnDict[str, str] | None = (
+            get_active_global_banner(global_banner_manager=self.global_banner_manager)
+        )
+        return {"active_global_banner": active_global_banner_data}
+
 
 def get_active_global_banner(
     global_banner_manager: Manager,
