@@ -1,6 +1,9 @@
+import contextlib
 from unittest import mock
 
 import pytest
+import requests.exceptions
+from _pytest.logging import LogCaptureFixture
 
 from caching.public_api.crawler import PublicAPICrawler
 
@@ -348,3 +351,54 @@ class TestPublicAPICrawler:
 
         # Then
         spy_crawl_public_api_themes_path.assert_called_once()
+
+
+class TestPublicAPICrawlerCrawlMethod:
+    HIT_ENDPOINT_CALL_COUNT = 0
+
+    def mocked_hit_endpoint_side_effect(self, *args, **kwargs):
+        if self.HIT_ENDPOINT_CALL_COUNT == 0:
+            self.HIT_ENDPOINT_CALL_COUNT += 1
+            return mock.Mock()
+        raise requests.exceptions.RequestException
+
+    @mock.patch.object(PublicAPICrawler, "get_links_from_response_data")
+    @mock.patch.object(PublicAPICrawler, "hit_endpoint")
+    def test_crawl_records_log_after_request_throws_error(
+        self,
+        mocked_hit_endpoint: mock.MagicMock,
+        mocked_get_links_from_response_data: mock.MagicMock,
+        fake_public_api_crawler: PublicAPICrawler,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a base root URL and a number of subsequent URLs
+            which will raise an error when hit
+        When the recursive `crawl()` method is called
+            from an instance of the `PublicAPICrawler`
+        Then a log is recorded for the errored URLs
+
+        Patches:
+            `mocked_hit_endpoint`: To simulate the
+                error being thrown when making a request
+                to a given URL
+            `mocked_get_links_from_response_data`: To provide
+                the fake response data to the test
+
+        """
+        # Given
+        url = FAKE_URL
+        subsequent_level_urls = [
+            f"{FAKE_URL}/respiratory",
+            f"{FAKE_URL}/respiratory/sub_themes",
+        ]
+        mocked_hit_endpoint.side_effect = self.mocked_hit_endpoint_side_effect
+        mocked_get_links_from_response_data.return_value = subsequent_level_urls
+
+        # When
+        with contextlib.suppress(requests.exceptions.RequestException):
+            fake_public_api_crawler.crawl(url=url, crawled_urls=[])
+
+        # Then
+        assert f"`{subsequent_level_urls[0]}` could not be crawled" in caplog.text
+        assert f"`{subsequent_level_urls[1]}` could not be crawled" in caplog.text
