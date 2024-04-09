@@ -80,7 +80,7 @@ class TestIncomingBaseValidationForGeographyType:
             ("Government Office Regions", VALID_GOVERNMENT_OFFICE_REGION_CODE),
         ),
     )
-    def test_invalid_geography_type_value_throw_error(
+    def test_invalid_geography_type_value_throws_error(
         self, geography_type: str, geography_code: str
     ):
         """
