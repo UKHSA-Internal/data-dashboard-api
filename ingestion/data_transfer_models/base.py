@@ -19,7 +19,7 @@ class IncomingBaseDataModel(BaseModel):
     topic: enums.Topic
     metric_group: enums.DataSourceFileType
     metric: str
-    geography_type: str
+    geography_type: enums.GeographyType
     geography: str
     geography_code: str = Field(max_length=9, min_length=3)
     age: str
