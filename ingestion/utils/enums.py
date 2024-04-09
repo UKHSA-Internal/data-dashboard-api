@@ -11,3 +11,13 @@ class DataSourceFileType(Enum):
     healthcare = "healthcare"
     testing = "testing"
     vaccinations = "vaccinations"
+
+
+class Topic(Enum):
+    COVID_19 = "COVID-19"
+    INFLUENZA = "Influenza"
+    RSV = "RSV"
+    HMPV = "hMPV"
+    PARAINFLUENZA = "Parainfluenza"
+    RHINOVIRUS = "Rhinovirus"
+    ADENOVIRUS = "Adenovirus"

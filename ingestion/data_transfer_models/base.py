@@ -2,7 +2,7 @@ import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from ingestion.utils.enums import DataSourceFileType
+from ingestion.utils import enums
 
 
 class MissingFieldError(Exception):
@@ -16,8 +16,8 @@ class IncomingBaseDataModel(BaseModel):
 
     parent_theme: str
     child_theme: str
-    topic: str
-    metric_group: DataSourceFileType
+    topic: enums.Topic
+    metric_group: enums.DataSourceFileType
     metric: str
     geography_type: str
     geography: str
