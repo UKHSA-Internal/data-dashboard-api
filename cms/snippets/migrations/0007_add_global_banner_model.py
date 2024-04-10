@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     dependencies = [
         (
             "snippets",
-            "0004_alter_externalbutton_button_type_and_icon_choices_implementation",
+            "0006_data_migration_download_button_internal_button_snippet",
         ),
     ]
 
