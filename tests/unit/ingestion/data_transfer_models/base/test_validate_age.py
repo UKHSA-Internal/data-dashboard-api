@@ -258,6 +258,8 @@ class TestIncomingBaseValidationForAge:
             "0_4",
             "00+04",
             "00±04",
+            "8o+",
+            "oo-04",
         ),
     )
     def test_age_value_with_incorrect_operator_throws_error(self, age: str):
