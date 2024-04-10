@@ -2,8 +2,8 @@ import datetime
 
 from pydantic import BaseModel, field_validator
 
+from ingestion.data_transfer_models import validation
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
-from ingestion.metrics_interface.interface import MetricsAPIInterface
 from ingestion.utils import type_hints
 
 
@@ -31,9 +31,12 @@ class TimeSeriesDTO(IncomingBaseDataModel):
         Returns:
             A string representation of the parsed metric_frequency value
 
+        Raises:
+            `ValidationError`: If the `metric_frequency` does not
+                conform to one of the expected values
+
         """
-        time_period_enum = MetricsAPIInterface.get_time_period_enum()
-        return time_period_enum[metric_frequency.title()].value
+        return validation.validate_metric_frequency(metric_frequency=metric_frequency)
 
 
 def _build_time_series_dto(
