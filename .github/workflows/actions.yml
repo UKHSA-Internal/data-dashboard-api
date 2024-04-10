@@ -145,7 +145,7 @@ jobs:
       - name: Run migration tests
         run: |
           source uhd.sh
-          uhd tests migration
+          uhd tests migrations
 
   ###############################################################################
   # Test coverage
@@ -170,31 +170,6 @@ jobs:
 
   publish-main-image:
     name: Publish main image to central ECR
-    needs: [
-      quality-checks,
-      unit-tests,
-      integration-tests,
-      system-tests,
-      migration-tests,
-      test-coverage,
-      vulnerabilities,
-      architecture-checks
-    ]
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - name: Build and publish docker image
-        uses: ./.github/actions/publish-image
-        with:
-          ecr-repository: "data-dashboard/api"
-          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
-          architecture: amd64
-          image-tag: latest
-
-  publish-main-image-graviton:
-    name: Publish ARM64 main image to central ECR
     needs: [
       quality-checks,
       unit-tests,
