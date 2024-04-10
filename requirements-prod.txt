@@ -23,7 +23,7 @@ drf-nested-routers==0.93.5
 drf-spectacular==0.27.2
 et-xmlfile==1.1.0
 exceptiongroup==1.2.0
-filelock==3.13.3
+filelock==3.13.4
 grimp==3.2
 gunicorn==21.2.0
 html5lib==1.1
