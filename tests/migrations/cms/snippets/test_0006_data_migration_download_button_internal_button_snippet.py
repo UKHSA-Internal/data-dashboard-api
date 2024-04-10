@@ -4,9 +4,11 @@ from tests.migrations.helper import MigrationTests
 
 
 @pytest.mark.django_db(transaction=True)
-class Test0006DownloadInternalButtonSnippet(MigrationTests):
+class Test0006DataMigrationDownloadButtonInternalButtonSnippet(MigrationTests):
     previous_migration_name = "0005_internalbutton_snippet"
-    current_migration_name = "0006_data_migration_download_button_internal_button_snippet"
+    current_migration_name = (
+        "0006_data_migration_download_button_internal_button_snippet"
+    )
     current_django_app = "snippets"
 
     def test_forward_and_then_backward_migration(self):
