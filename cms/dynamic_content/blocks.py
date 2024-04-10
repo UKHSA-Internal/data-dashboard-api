@@ -79,6 +79,18 @@ class ButtonChooserBlock(SnippetChooserBlock):
         return None
 
 
+class InternalButtonChooserBlock(SnippetChooserBlock):
+    def get_api_representation(self, value, context=None) -> dict | None:
+        if value:
+            return {
+                "text": value.text,
+                "button_type": value.button_type,
+                "endpoint": value.endpoint,
+                "method": value.method,
+            }
+        return None
+
+
 class ExternalButtonChooserBlock(SnippetChooserBlock):
     def get_api_representation(self, value, context=None) -> dict | None:
         if value:
