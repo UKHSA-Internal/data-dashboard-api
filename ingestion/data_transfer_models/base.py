@@ -105,3 +105,33 @@ class IncomingBaseDataModel(BaseModel):
             geography_code=geography_code,
             geography_type=input_geography_type,
         )
+
+    @field_validator("metric")
+    @classmethod
+    def validate_metric(cls, metric: str, validation_info: ValidationInfo) -> str:
+        """Validates the `metric` value to check it conforms to an allowable structure
+
+        Notes:
+            The `metric` name must contain
+            the `metric_group` value from the payload
+
+        Args:
+            metric: The `metric` name being validated
+            validation_info: An enriched `ValidationInfo` instance
+                provided by the pydantic model, this gives us
+                the rest of the payload to the model initialization.
+                From this, the `metric_group` is extracted,
+                so it can be used in the validation checks
+
+        Returns:
+            The provided `metric` unchanged if
+            it has passed the validation checks.
+
+        Raises:
+            `ValidationError`: If any of the validation checks fail
+
+        """
+        input_metric_group: str | None = validation_info.data.get("metric_group")
+        return validation.validate_metric(
+            metric=metric, metric_group=input_metric_group
+        )
