@@ -84,9 +84,9 @@ class IncomingBaseDataModel(BaseModel):
         """Validates the `geography_code` value to check it conforms to an allowable structure
 
         Args:
-            `geography_code`: The `geography_code` value
+            geography_code: The `geography_code` value
                 being validated
-            `validation_info`: An enriched `ValidationInfo` instance
+            validation_info: An enriched `ValidationInfo` instance
                 provided by the pydantic model, this gives us
                 the rest of the payload to the model initialization.
                 From this, the `geography_code` is extracted,
