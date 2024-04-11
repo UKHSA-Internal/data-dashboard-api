@@ -100,7 +100,7 @@ class IncomingBaseDataModel(BaseModel):
             `ValidationError`: If any of the validation checks fail
 
         """
-        input_geography_type: str = validation_info.data["geography_type"]
+        input_geography_type: str = validation_info.data.get("geography_type")
         return validation.validate_geography_code(
             geography_code=geography_code,
             geography_type=input_geography_type,
