@@ -9,6 +9,21 @@ GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX = "E12"
 
 
 def validate_geography_code(geography_code: str, geography_type: str) -> str | None:
+    """Validates the `geography_code` value to check it conforms to the accepted format
+
+    Args:
+        geography_code: The associated geography code being validated
+        geography_type: The `geography_type` which was
+            included in the payload alongside the `geography_code`
+
+    Returns:
+        The input `geography_code` unchanged if
+        it has passed the validation checks.
+
+    Raises:
+         `ValueError`: If any of the validation checks fail
+
+    """
     match geography_type:
         case enums.GeographyType.NATION.value:
             return _validate_nation_geography_code(geography_code=geography_code)
