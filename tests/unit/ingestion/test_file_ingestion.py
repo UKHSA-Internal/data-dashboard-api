@@ -45,14 +45,17 @@ class TestDataIngester:
         spy_create_core_and_api_timeseries.assert_not_called()
 
     @pytest.mark.parametrize(
-        "metric_group",
-        [
-            DataSourceFileType.cases.value,
-            DataSourceFileType.deaths.value,
-            DataSourceFileType.healthcare.value,
-            DataSourceFileType.testing.value,
-            DataSourceFileType.vaccinations.value,
-        ],
+        "metric, metric_group",
+        (
+            ("COVID-19_deaths_ONSByDay", DataSourceFileType.deaths.value),
+            ("COVID-19_cases_casesByDay", DataSourceFileType.cases.value),
+            ("RSV_healthcare_admissionRateByWeek", DataSourceFileType.healthcare.value),
+            ("hMPV_testing_positivityByWeek", DataSourceFileType.testing.value),
+            (
+                "COVID-19_vaccinations_autumn22_dosesByDay",
+                DataSourceFileType.vaccinations.value,
+            ),
+        ),
     )
     @mock.patch.object(Consumer, "create_core_headlines")
     @mock.patch.object(Consumer, "create_core_and_api_timeseries")
@@ -60,6 +63,7 @@ class TestDataIngester:
         self,
         spy_create_core_and_api_timeseries: mock.MagicMock,
         spy_create_core_headlines: mock.MagicMock,
+        metric: str,
         metric_group: str,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
     ):
@@ -72,6 +76,7 @@ class TestDataIngester:
         """
         # Given
         fake_data = example_time_series_data
+        fake_data["metric"] = metric
         fake_data["metric_group"] = metric_group
 
         # When
