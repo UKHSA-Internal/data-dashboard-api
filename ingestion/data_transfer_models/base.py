@@ -1,6 +1,7 @@
 import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic_core.core_schema import ValidationInfo
 
 from ingestion.data_transfer_models import validation
 from ingestion.utils import enums
@@ -74,3 +75,33 @@ class IncomingBaseDataModel(BaseModel):
 
         """
         return validation.validate_age(age=age)
+
+    @field_validator("geography_code")
+    @classmethod
+    def validate_geography_code(
+        cls, geography_code: str, validation_info: ValidationInfo
+    ) -> str:
+        """Validates the `geography_code` value to check it conforms to an allowable structure
+
+        Args:
+            `geography_code`: The `geography_code` value
+                being validated
+            `validation_info`: An enriched `ValidationInfo` instance
+                provided by the pydantic model, this gives us
+                the rest of the payload to the model initialization.
+                From this, the `geography_code` is extracted,
+                so it can be used in the validation checks
+
+        Returns:
+            The provided `geography_code` unchanged if
+            it has passed the validation checks.
+
+        Raises:
+            `ValidationError`: If any of the validation checks fail
+
+        """
+        input_geography_type: str = validation_info.data["geography_type"]
+        return validation.validate_geography_code(
+            geography_code=geography_code,
+            geography_type=input_geography_type,
+        )
