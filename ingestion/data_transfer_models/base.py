@@ -135,3 +135,22 @@ class IncomingBaseDataModel(BaseModel):
         return validation.validate_metric(
             metric=metric, metric_group=input_metric_group
         )
+
+    @field_validator("refresh_date")
+    @classmethod
+    def cast_refresh_date_to_uk_timezone(
+        cls, refresh_date: datetime.datetime
+    ) -> datetime.datetime:
+        """Casts the inbound `refresh_date` to the London timezone
+
+        Args:
+            refresh_date: The inbound refresh date
+                datetime object
+
+        Returns:
+            A `datetime` object which has the timezone
+            info set to the declared `TIMEZONE` as per
+            the main django settings
+
+        """
+        return validation.cast_date_to_uk_timezone(date_value=refresh_date)
