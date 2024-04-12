@@ -8,7 +8,7 @@ from ingestion.data_transfer_models.time_series import (
 from metrics.data.enums import TimePeriod
 
 
-class TestIncomingBaseValidationForMetricFrequency:
+class TestTimeSeriesDTOForMetricFrequency:
     @pytest.mark.parametrize(
         "metric_frequency",
         (
