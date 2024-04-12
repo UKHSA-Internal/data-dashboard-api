@@ -2,6 +2,7 @@ import datetime
 
 from pydantic import BaseModel, field_validator
 from pydantic.fields import Field
+from pydantic_core.core_schema import ValidationInfo
 
 from ingestion.data_transfer_models import validation
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
@@ -38,6 +39,48 @@ class TimeSeriesDTO(IncomingBaseDataModel):
 
         """
         return validation.validate_metric_frequency(metric_frequency=metric_frequency)
+
+    @field_validator("time_series")
+    @classmethod
+    def validate_time_series(
+        cls,
+        time_series: list[InboundTimeSeriesSpecificFields],
+        validation_info: ValidationInfo,
+    ) -> list[InboundTimeSeriesSpecificFields]:
+        """Validates the `time_series` value to check it conforms to expected rules
+
+        Notes:
+            If the `metric_frequency` is "D" (daily),
+            then each `time_series` must 1 day apart.
+            If the `metric_frequency` is "W" (weekly),
+            then each `time_series` must be 7 days apart.
+            If the above rules do not hold true where relevant,
+            then the validation checks will fail.
+
+        Args:
+            time_series: List of enriched `InboundTimeSeriesSpecificFields`
+                models containing `date` and metric values
+                for the individual time series records
+           validation_info: An enriched `ValidationInfo` instance
+                provided by the pydantic model, this gives us
+                the rest of the payload to the model initialization.
+                From this, the `metric_frequency` is extracted,
+                so it can be used in the downstream validation checks
+
+        Returns:
+            The list of enriched `InboundTimeSeriesSpecificFields`
+            unchanged if all validation checks passed
+
+        Raises:
+            `ValidationError`: If any of the validation checks fail
+
+        """
+        input_metric_frequency: str | None = validation_info.data.get(
+            "metric_frequency"
+        )
+        return validation.validate_time_series(
+            time_series=time_series, metric_frequency=input_metric_frequency
+        )
 
 
 def _build_time_series_dto(

@@ -98,7 +98,13 @@ class TestBuildModelMethods:
                 "embargo": "2023-11-20 12:00:00",
                 "date": "2023-08-01",
                 "metric_value": 123,
-            }
+            },
+            {
+                "epiweek": 31,
+                "embargo": "2023-11-20 12:00:00",
+                "date": "2023-08-02",
+                "metric_value": 456,
+            },
         ]
 
         consumer = Consumer(source_data=fake_data)
