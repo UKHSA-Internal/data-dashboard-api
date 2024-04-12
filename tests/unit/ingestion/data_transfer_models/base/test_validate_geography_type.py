@@ -31,7 +31,7 @@ class TestIncomingBaseValidationForGeographyType:
     ):
         """
         Given a payload containing a valid `geography_type` value
-        When the `IncomingHeadlineValidation` model is initialized
+        When the `IncomingBaseDataModel` model is initialized
         Then model is deemed valid
         """
         # Given / When
@@ -80,12 +80,12 @@ class TestIncomingBaseValidationForGeographyType:
             ("Government Office Regions", VALID_GOVERNMENT_OFFICE_REGION_CODE),
         ),
     )
-    def test_invalid_geography_type_value_throw_error(
+    def test_invalid_geography_type_value_throws_error(
         self, geography_type: str, geography_code: str
     ):
         """
         Given a payload containing an invalid `geography_type`
-        When the `IncomingHeadlineValidation` model is initialized
+        When the `IncomingBaseDataModel` model is initialized
         Then a `ValidationError` is raised
         """
         # Given

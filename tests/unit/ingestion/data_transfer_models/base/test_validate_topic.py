@@ -22,7 +22,7 @@ class TestIncomingBaseValidationForTopic:
     def test_valid_topic_values_are_deemed_valid(self, topic: str, metric: str):
         """
         Given a payload containing valid `topic` and `metric` values
-        When the `IncomingHeadlineValidation` model is initialized
+        When the `IncomingBaseDataModel` model is initialized
         Then model is deemed valid
         """
         # Given / When
@@ -73,7 +73,7 @@ class TestIncomingBaseValidationForTopic:
     def test_invalid_topic_values_throw_error(self, topic: str, metric: str):
         """
         Given a payload containing an invalid `topic`
-        When the `IncomingHeadlineValidation` model is initialized
+        When the `IncomingBaseDataModel` model is initialized
         Then a `ValidationError` is raised
         """
         # Given
