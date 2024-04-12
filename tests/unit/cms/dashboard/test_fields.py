@@ -4,6 +4,8 @@ from wagtail.api.v2.serializers import PageParentField
 
 from cms.dashboard.fields import ListablePageParentField
 
+MODULE_PATH = "cms.dashboard.fields"
+
 
 class TestListablePageParentField:
     def test_returns_none_when_parent_instance_is_none(self):

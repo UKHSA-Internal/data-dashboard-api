@@ -17,7 +17,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
 
     @cache_response()
     def listing_view(self, request: Request) -> Response:
-        """This endpoints returns a list of published pages from the CMS (Wagtail).
+        """This endpoint returns a list of published pages from the CMS (Wagtail).
         The payload includes page `title`, `id` and `meta` data about each page.
         """
         return super().listing_view(request=request)
