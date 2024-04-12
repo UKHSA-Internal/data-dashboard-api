@@ -2,6 +2,7 @@ import datetime
 
 from pydantic import BaseModel
 from pydantic.functional_validators import field_validator
+from pydantic_core.core_schema import ValidationInfo
 
 from ingestion.data_transfer_models import validation
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
@@ -16,15 +17,11 @@ class InboundHeadlineSpecificFields(BaseModel):
     embargo: datetime.datetime | None
     metric_value: float
 
-
-class HeadlineDTO(IncomingBaseDataModel):
-    data: list[InboundHeadlineSpecificFields]
-
-    @field_validator("data")
+    @field_validator("period_end")
     @classmethod
-    def validate_data(
-        cls, data: list[InboundHeadlineSpecificFields]
-    ) -> list[InboundHeadlineSpecificFields]:
+    def validate_period_dates(
+        cls, period_end: datetime.date, validation_info: ValidationInfo
+    ) -> datetime.date:
         """Validates the `data` field to check it conforms to the expected rules
 
         Notes:
@@ -43,7 +40,16 @@ class HeadlineDTO(IncomingBaseDataModel):
             `ValidationError`: If any of the validation checks fail
 
         """
-        return validation.validate_headline_data(data=data)
+        input_period_start: datetime.date | None = validation_info.data.get(
+            "period_start"
+        )
+        return validation.validate_period_end(
+            period_start=input_period_start, period_end=period_end
+        )
+
+
+class HeadlineDTO(IncomingBaseDataModel):
+    data: list[InboundHeadlineSpecificFields]
 
 
 def _build_headline_dto(
