@@ -1,7 +1,9 @@
 import datetime
 
 from pydantic import BaseModel
+from pydantic.functional_validators import field_validator
 
+from ingestion.data_transfer_models import validation
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
 from ingestion.utils import type_hints
 
@@ -17,6 +19,31 @@ class InboundHeadlineSpecificFields(BaseModel):
 
 class HeadlineDTO(IncomingBaseDataModel):
     data: list[InboundHeadlineSpecificFields]
+
+    @field_validator("data")
+    @classmethod
+    def validate_data(
+        cls, data: list[InboundHeadlineSpecificFields]
+    ) -> list[InboundHeadlineSpecificFields]:
+        """Validates the `data` field to check it conforms to the expected rules
+
+        Notes:
+            There must be only 1 `InboundHeadlineSpecificFields` model.
+            If there is either no data point or multiple data points,
+            then the validation checks will fail.
+
+        Args:
+            data: The `data` field value being validated
+
+        Returns:
+            The input `data` unchanged if
+            it has passed the validation checks.
+
+        Raises:
+            `ValidationError`: If any of the validation checks fail
+
+        """
+        return validation.validate_headline_data(data=data)
 
 
 def _build_headline_dto(
