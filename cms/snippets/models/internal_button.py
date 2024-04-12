@@ -4,59 +4,52 @@ from wagtail.api import APIField
 from wagtail.snippets.models import register_snippet
 
 
-class ButtonTypes(models.Choices):
-    """Enum for button types"""
+class InternalButtonTypes(models.Choices):
+    BULK_DOWNLOAD = "BULK_DOWNLOAD"
 
-    DOWNLOAD = "DOWNLOAD"
-    SUBMIT = "SUBMIT"
-
-
-class Methods(models.Choices):
-    """Enum for method choices"""
-
-    POST = "POST"
-    GET = "GET"
+    @staticmethod
+    def return_button_type_details() -> dict[str, tuple[str, str]]:
+        return {
+            "BULK_DOWNLOAD": ("/api/bulkdownloads/v1", "POST"),
+        }
 
 
 @register_snippet
-class Button(models.Model):
+class InternalButton(models.Model):
     text = models.CharField(max_length=255)
-    loading_text = models.CharField(max_length=255, blank=True)
-    endpoint = models.CharField(max_length=255, blank=True)
-    method = models.CharField(
-        max_length=255,
-        choices=Methods.choices,
-        default=Methods.POST.value,
-        blank=False,
-    )
     button_type = models.CharField(
-        max_length=10,
-        choices=ButtonTypes.choices,
-        default=ButtonTypes.DOWNLOAD.value,
+        max_length=25,
+        choices=InternalButtonTypes.choices,
+        default=InternalButtonTypes.BULK_DOWNLOAD.value,
         blank=False,
     )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["text", "button_type"],
-                name="text and button type combinations should be unique",
-            )
-        ]
+    endpoint = models.CharField(max_length=255, blank=True)
+    method = models.CharField(max_length=255, blank=True)
 
     panels = [
         FieldPanel("text"),
-        FieldPanel("loading_text"),
         FieldPanel("button_type"),
     ]
 
     api_fields = [
         APIField("text"),
-        APIField("loading_text"),
         APIField("button_type"),
         APIField("endpoint"),
         APIField("method"),
     ]
+
+    @staticmethod
+    def get_button_endpoint_details(self, button_type: str) -> str:
+        return InternalButtonTypes.return_button_type_details()[button_type]
+
+    def save(self, *args, **kwargs) -> None:
+        """Populates the endpoint and method properties on saved based on button type"""
+        endpoint, method = self.get_button_endpoint_details(
+            self, button_type=self.button_type
+        )
+        self.endpoint = endpoint
+        self.method = method
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"Text: {self.text} | Type: {self.button_type}"
