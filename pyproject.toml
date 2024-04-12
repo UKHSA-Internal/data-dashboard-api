@@ -165,6 +165,7 @@ ignore_imports = [
     "cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme",
     "cms.metrics_documentation.data_migration.operations -> metrics.api.settings",
     "metrics.api.urls_construction -> cms.dashboard.viewsets",
+    "metrics.api.urls_construction -> cms.snippets.views",
 ]
 
 [[tool.importlinter.contracts]]
