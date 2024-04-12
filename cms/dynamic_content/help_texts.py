@@ -195,3 +195,22 @@ An optional choice of icon to add to a button, defaults to none.
 CODE_SNIPPET: str = """
 A code snippet to demonstrate the example. Please note that HTML type content is not permitted.
 """
+
+GLOBAL_BANNER_TITLE: str = """
+The title to associate with the banner. This must be provided.
+"""
+
+GLOBAL_BANNER_BODY: str = """
+A body of text to be displayed by the banner. There is a limit of 255 characters for this field.
+"""
+
+GLOBAL_BANNER_TYPE: str = """
+The type to associate with the banner. Defaults to `Information`.
+"""
+
+GLOBAL_BANNER_IS_ACTIVE: str = """
+Whether to activate this banner across every page in the dashboard. 
+Note that only 1 global banner can be active at a time.
+To switch from 1 active banner straight to another, 
+you must deactivate the 1st banner and save it before activating and saving the 2nd banner.
+"""

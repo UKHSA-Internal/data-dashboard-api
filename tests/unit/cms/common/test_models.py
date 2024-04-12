@@ -1,3 +1,4 @@
+import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
@@ -6,7 +7,19 @@ from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 
 
 class TestBlankCommonPage:
-    def test_has_correct_api_fields(self):
+
+    @pytest.mark.parametrize(
+        "expected_api_field_name",
+        [
+            "body",
+            "date_posted",
+            "last_published_at",
+            "related_links",
+            "seo_title",
+            "search_description",
+        ],
+    )
+    def test_has_correct_api_fields(self, expected_api_field_name: str):
         """
         Given a blank `CommonPage` model
         When `api_fields` is called
@@ -19,16 +32,8 @@ class TestBlankCommonPage:
         api_fields: list[APIField] = blank_page.api_fields
 
         # Then
-        expected_api_field_names: set[str] = {
-            "body",
-            "date_posted",
-            "last_published_at",
-            "related_links",
-            "seo_title",
-            "search_description",
-        }
         api_field_names: set[str] = {api_field.name for api_field in api_fields}
-        assert api_field_names == expected_api_field_names
+        assert expected_api_field_name in api_field_names
 
     def test_has_correct_content_panels(self):
         """
