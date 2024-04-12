@@ -27,8 +27,6 @@ def validate_period_end(
     """
     if period_start is None:
         raise ValueError
-    if period_end is None:
-        raise ValueError
 
     return _validate_period_dates_in_correct_order(
         period_start=period_start, period_end=period_end
