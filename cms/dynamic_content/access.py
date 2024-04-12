@@ -44,6 +44,13 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
             ),
         ),
         (
+            "internal_button",
+            blocks.InternalButtonChooserBlock(
+                "snippets.internalbutton",
+                required=False,
+            ),
+        ),
+        (
             "external_button",
             blocks.ExternalButtonChooserBlock(
                 "snippets.externalbutton",

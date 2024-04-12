@@ -145,7 +145,7 @@ jobs:
       - name: Run migration tests
         run: |
           source uhd.sh
-          uhd tests migration
+          uhd tests migrations
 
   ###############################################################################
   # Test coverage
