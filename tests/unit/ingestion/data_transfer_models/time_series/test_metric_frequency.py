@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -7,6 +9,8 @@ from ingestion.data_transfer_models.time_series import (
 )
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.enums import TimePeriod
+
+MODULE_PATH = "ingestion.data_transfer_models.time_series"
 
 
 class TestTimeSeriesDTOMetricFrequencyField:
@@ -27,8 +31,10 @@ class TestTimeSeriesDTOMetricFrequencyField:
             ("Annual", TimePeriod.Annual.value),
         ],
     )
+    @mock.patch(f"{MODULE_PATH}.validation.validate_time_series")
     def test_valid_payload_with_metric_frequency_is_cast_to_correct_output(
         self,
+        mocked_validate_time_series: mock.MagicMock,
         input_metric_frequency_value: str,
         expected_metric_frequency_value: str,
         example_time_series_data: INCOMING_DATA_TYPE,
@@ -39,9 +45,17 @@ class TestTimeSeriesDTOMetricFrequencyField:
         When the `TimeSeriesDTO` model is initialized
         Then model is deemed valid
         And the correct value is cast for the output "metric_frequency" field
+
+        Patches:
+            `mocked_validate_time_series`: To bypass
+                the validation check which calculates
+                the intervals between each data point
+                and compares to the selected `metric_frequency`
+
         """
         # Given
         source_data = example_time_series_data
+        mocked_validate_time_series.return_value = []
 
         # When
         lower_level_fields = [

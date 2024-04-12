@@ -106,6 +106,14 @@ class TestBuildTimeSeriesDTOFromSource:
         # Given
         source_data = example_time_series_data
         source_data["time_series"][0]["metric_value"] = None
+        source_data["time_series"].append(
+            {
+                "epiweek": 44,
+                "date": "2022-11-03",
+                "metric_value": 3952.14,
+                "embargo": "2023-11-16 17:30:00",
+            }
+        )
 
         # When
         time_series_dto = build_time_series_dto_from_source(source_data=source_data)

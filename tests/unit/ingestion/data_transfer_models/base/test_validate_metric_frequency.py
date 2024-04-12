@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -6,6 +8,8 @@ from ingestion.data_transfer_models.time_series import (
     TimeSeriesDTO,
 )
 from metrics.data.enums import TimePeriod
+
+MODULE_PATH = "ingestion.data_transfer_models.time_series"
 
 
 class TestTimeSeriesDTOForMetricFrequency:
@@ -20,8 +24,10 @@ class TestTimeSeriesDTOForMetricFrequency:
             TimePeriod.Annual.name,
         ),
     )
+    @mock.patch(f"{MODULE_PATH}.validation.validate_time_series")
     def test_valid_metric_frequency_values_are_deemed_valid(
         self,
+        mocked_validate_time_series: mock.MagicMock,
         metric_frequency: str,
         valid_payload_for_base_model: dict[str, str],
         example_time_series_data,
@@ -30,6 +36,13 @@ class TestTimeSeriesDTOForMetricFrequency:
         Given a payload containing a valid `metric_frequency` value
         When the `TimeSeriesDTO` model is initialized
         Then model is deemed valid
+
+        Patches:
+            `mocked_validate_time_series`: To bypass
+                the validation check which calculates
+                the intervals between each data point
+                and compares to the selected `metric_frequency`
+
         """
         # Given
         payload = valid_payload_for_base_model
