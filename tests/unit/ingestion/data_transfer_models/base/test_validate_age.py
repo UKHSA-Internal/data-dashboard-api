@@ -2,34 +2,23 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
-from ingestion.utils.enums import DataSourceFileType
 
 
 class TestIncomingBaseValidationForAge:
-    def test_all_value_is_deemed_valid(self):
+    def test_all_value_is_deemed_valid(
+        self, valid_payload_for_base_model: dict[str, str]
+    ):
         """
         Given a valid age value of the string "all"
         When the `IncomingBaseDataModel` model is initialized
         Then model is deemed valid
         """
         # Given
-        valid_age = "all"
+        payload = valid_payload_for_base_model
+        payload["age"] = "all"
 
         # When
-        incoming_base_validation = IncomingBaseDataModel(
-            parent_theme="infectious_disease",
-            child_theme="respiratory",
-            topic="COVID-19",
-            metric_group=DataSourceFileType.testing.value,
-            metric="COVID-19_testing_PCRcountByDay",
-            geography_type="Nation",
-            geography="England",
-            geography_code="E92000001",
-            age=valid_age,
-            sex="all",
-            stratum="default",
-            refresh_date="2024-01-01 14:20:03",
-        )
+        incoming_base_validation = IncomingBaseDataModel(**payload)
 
         # Then
         incoming_base_validation.model_validate(
@@ -55,30 +44,20 @@ class TestIncomingBaseValidationForAge:
             "65-74",
         ),
     )
-    def test_age_band_value_is_deemed_valid(self, age: str):
+    def test_age_band_value_is_deemed_valid(
+        self, age: str, valid_payload_for_base_model: dict[str, str]
+    ):
         """
         Given a valid age value of an age banding
         When the `IncomingBaseDataModel` model is initialized
         Then model is deemed valid
         """
         # Given
-        valid_age = age
+        payload = valid_payload_for_base_model
+        payload["age"] = age
 
         # When
-        incoming_base_validation = IncomingBaseDataModel(
-            parent_theme="infectious_disease",
-            child_theme="respiratory",
-            topic="COVID-19",
-            metric_group=DataSourceFileType.testing.value,
-            metric="COVID-19_testing_PCRcountByDay",
-            geography_type="Nation",
-            geography="England",
-            geography_code="E92000001",
-            age=valid_age,
-            sex="all",
-            stratum="default",
-            refresh_date="2024-01-01 14:20:03",
-        )
+        incoming_base_validation = IncomingBaseDataModel(**payload)
 
         # Then
         incoming_base_validation.model_validate(
@@ -97,30 +76,20 @@ class TestIncomingBaseValidationForAge:
             "90+",
         ),
     )
-    def test_age_older_than_value_is_deemed_valid(self, age: str):
+    def test_age_older_than_value_is_deemed_valid(
+        self, age: str, valid_payload_for_base_model: dict[str, str]
+    ):
         """
         Given a valid age value which is older than a particular age
         When the `IncomingBaseDataModel` model is initialized
         Then model is deemed valid
         """
         # Given
-        valid_age = age
+        payload = valid_payload_for_base_model
+        payload["age"] = age
 
         # When
-        incoming_base_validation = IncomingBaseDataModel(
-            parent_theme="infectious_disease",
-            child_theme="respiratory",
-            topic="COVID-19",
-            metric_group=DataSourceFileType.testing.value,
-            metric="COVID-19_testing_PCRcountByDay",
-            geography_type="Nation",
-            geography="England",
-            geography_code="E92000001",
-            age=valid_age,
-            sex="all",
-            stratum="default",
-            refresh_date="2024-01-01 14:20:03",
-        )
+        incoming_base_validation = IncomingBaseDataModel(**payload)
 
         # Then
         incoming_base_validation.model_validate(
@@ -147,7 +116,7 @@ class TestIncomingBaseValidationForAge:
         ),
     )
     def test_older_than_age_bandings_with_lower_number_on_the_right_side_throws_error(
-        self, age: str
+        self, age: str, valid_payload_for_base_model: dict[str, str]
     ):
         """
         Given an age banding value whereby
@@ -157,24 +126,12 @@ class TestIncomingBaseValidationForAge:
         Then a `ValidatorError` is raised
         """
         # Given
-        invalid_age = age
+        payload = valid_payload_for_base_model
+        payload["age"] = age
 
         # When / Then
         with pytest.raises(ValidationError):
-            IncomingBaseDataModel(
-                parent_theme="infectious_disease",
-                child_theme="respiratory",
-                topic="COVID-19",
-                metric_group=DataSourceFileType.testing.value,
-                metric="COVID-19_testing_PCRcountByDay",
-                geography_type="Nation",
-                geography="England",
-                geography_code="E92000001",
-                age=invalid_age,
-                sex="all",
-                stratum="default",
-                refresh_date="2024-01-01 14:20:03",
-            )
+            IncomingBaseDataModel(**payload)
 
     @pytest.mark.parametrize(
         "age",
@@ -185,31 +142,21 @@ class TestIncomingBaseValidationForAge:
             "5-14",
         ),
     )
-    def test_age_bandings_with_single_digit_numbers_throws_error(self, age: str):
+    def test_age_bandings_with_single_digit_numbers_throws_error(
+        self, age: str, valid_payload_for_base_model: dict[str, str]
+    ):
         """
         Given an age banding with at least one single digit number
         When the `IncomingBaseDataModel` model is initialized
         Then a `ValidationError` is raised
         """
         # Given
-        invalid_age = age
+        payload = valid_payload_for_base_model
+        payload["age"] = age
 
         # When / Then
         with pytest.raises(ValidationError):
-            IncomingBaseDataModel(
-                parent_theme="infectious_disease",
-                child_theme="respiratory",
-                topic="COVID-19",
-                metric_group=DataSourceFileType.testing.value,
-                metric="COVID-19_testing_PCRcountByDay",
-                geography_type="Nation",
-                geography="England",
-                geography_code="E92000001",
-                age=invalid_age,
-                sex="all",
-                stratum="default",
-                refresh_date="2024-01-01 14:20:03",
-            )
+            IncomingBaseDataModel(**payload)
 
     @pytest.mark.parametrize(
         "age",
@@ -220,7 +167,9 @@ class TestIncomingBaseValidationForAge:
             "any",
         ),
     )
-    def test_age_strings_with_incorrect_value_throws_error(self, age: str):
+    def test_age_strings_with_incorrect_value_throws_error(
+        self, age: str, valid_payload_for_base_model: dict[str, str]
+    ):
         """
         Given an age alphabetic value
             which is not the literal string "all"
@@ -228,24 +177,12 @@ class TestIncomingBaseValidationForAge:
         Then a `ValidationError` is raised
         """
         # Given
-        invalid_age = age
+        payload = valid_payload_for_base_model
+        payload["age"] = age
 
         # When / Then
         with pytest.raises(ValidationError):
-            IncomingBaseDataModel(
-                parent_theme="infectious_disease",
-                child_theme="respiratory",
-                topic="COVID-19",
-                metric_group=DataSourceFileType.testing.value,
-                metric="COVID-19_testing_PCRcountByDay",
-                geography_type="Nation",
-                geography="England",
-                geography_code="E92000001",
-                age=invalid_age,
-                sex="all",
-                stratum="default",
-                refresh_date="2024-01-01 14:20:03",
-            )
+            IncomingBaseDataModel(**payload)
 
     @pytest.mark.parametrize(
         "age",
@@ -262,28 +199,18 @@ class TestIncomingBaseValidationForAge:
             "oo-04",
         ),
     )
-    def test_age_value_with_incorrect_operator_throws_error(self, age: str):
+    def test_age_value_with_incorrect_operator_throws_error(
+        self, age: str, valid_payload_for_base_model: dict[str, str]
+    ):
         """
         Given an age value with an invalid operator
         When the `IncomingBaseDataModel` model is initialized
         Then a `ValidationError` is raised
         """
         # Given
-        invalid_age = age
+        payload = valid_payload_for_base_model
+        payload["age"] = age
 
         # When / Then
         with pytest.raises(ValidationError):
-            IncomingBaseDataModel(
-                parent_theme="infectious_disease",
-                child_theme="respiratory",
-                topic="COVID-19",
-                metric_group=DataSourceFileType.testing.value,
-                metric="COVID-19_testing_PCRcountByDay",
-                geography_type="Nation",
-                geography="England",
-                geography_code="E92000001",
-                age=invalid_age,
-                sex="all",
-                stratum="default",
-                refresh_date="2024-01-01 14:20:03",
-            )
+            IncomingBaseDataModel(**payload)

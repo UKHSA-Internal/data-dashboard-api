@@ -2,7 +2,6 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
-from ingestion.utils.enums import DataSourceFileType
 
 VALID_NATION_CODE = "E92000001"
 VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE = "E06000059"
@@ -27,28 +26,23 @@ class TestIncomingBaseValidationForGeographyType:
         ),
     )
     def test_valid_geography_type_value_is_deemed_valid(
-        self, geography_type: str, geography_code: str
+        self,
+        geography_type: str,
+        geography_code: str,
+        valid_payload_for_base_model: dict[str, str],
     ):
         """
         Given a payload containing a valid `geography_type` value
         When the `IncomingBaseDataModel` model is initialized
         Then model is deemed valid
         """
-        # Given / When
-        incoming_base_validation = IncomingBaseDataModel(
-            parent_theme="infectious_disease",
-            child_theme="respiratory",
-            topic="COVID-19",
-            metric_group=DataSourceFileType.testing.value,
-            metric="COVID-19_testing_PCRcountByDay",
-            geography_type=geography_type,
-            geography="Fake geography name",
-            geography_code=geography_code,
-            age="all",
-            sex="all",
-            stratum="default",
-            refresh_date="2024-01-01 14:20:03",
-        )
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = geography_type
+        payload["geography_code"] = geography_code
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(**payload)
 
         # Then
         incoming_base_validation.model_validate(
@@ -81,7 +75,10 @@ class TestIncomingBaseValidationForGeographyType:
         ),
     )
     def test_invalid_geography_type_value_throws_error(
-        self, geography_type: str, geography_code: str
+        self,
+        geography_type: str,
+        geography_code: str,
+        valid_payload_for_base_model: dict[str, str],
     ):
         """
         Given a payload containing an invalid `geography_type`
@@ -89,22 +86,10 @@ class TestIncomingBaseValidationForGeographyType:
         Then a `ValidationError` is raised
         """
         # Given
-        invalid_geography_type = geography_type
-        valid_geography_code = geography_code
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = geography_type
+        payload["geography_code"] = geography_code
 
         # When
         with pytest.raises(ValidationError):
-            IncomingBaseDataModel(
-                parent_theme="infectious_disease",
-                child_theme="respiratory",
-                topic="COVID-19",
-                metric_group=DataSourceFileType.testing.value,
-                metric="COVID-19_testing_PCRcountByDay",
-                geography_type=invalid_geography_type,
-                geography="Fake geography name",
-                geography_code=valid_geography_code,
-                age="all",
-                sex="all",
-                stratum="default",
-                refresh_date="2024-01-01 14:20:03",
-            )
+            IncomingBaseDataModel(**payload)
