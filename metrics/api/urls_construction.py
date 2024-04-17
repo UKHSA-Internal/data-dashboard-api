@@ -10,7 +10,8 @@ from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
-from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet, LinkBrowseView
+from cms.dashboard.views import LinkBrowseView
+from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from cms.snippets.views import GlobalBannerView
 from feedback.api.urls import construct_urlpatterns_for_feedback
 from metrics.api import enums, settings
@@ -40,6 +41,7 @@ cms_api_router = WagtailAPIRouter("wagtailapi")
 # The second parameter is the endpoint class that handles the requests
 cms_api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 cms_api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
+
 
 def construct_cms_admin_urlpatterns(
     *,
