@@ -1,6 +1,7 @@
 import datetime
 
 from pydantic import BaseModel, field_validator
+from pydantic.fields import Field
 
 from ingestion.data_transfer_models import validation
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
@@ -10,7 +11,7 @@ from ingestion.utils import type_hints
 class InboundTimeSeriesSpecificFields(BaseModel):
     """Base data validation object for the lower level fields for time series type data"""
 
-    epiweek: int
+    epiweek: int = Field(ge=1, le=53)
     date: datetime.date
     embargo: datetime.datetime | None
     metric_value: float
