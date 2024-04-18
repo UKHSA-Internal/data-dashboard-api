@@ -67,7 +67,8 @@ class CommonPage(Page):
 
     objects = CommonPageManager()
 
-    def is_previewable(self) -> bool:
+    @classmethod
+    def is_previewable(cls) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""
         return False
 

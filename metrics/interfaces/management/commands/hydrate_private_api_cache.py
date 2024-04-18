@@ -4,5 +4,6 @@ from caching.private_api.handlers import force_cache_refresh_for_all_pages
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options) -> None:
+    @classmethod
+    def handle(cls, *args, **options) -> None:
         force_cache_refresh_for_all_pages()

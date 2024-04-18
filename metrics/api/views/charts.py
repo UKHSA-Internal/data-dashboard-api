@@ -144,13 +144,14 @@ class ChartsView(APIView):
 class EncodedChartsView(APIView):
     permission_classes = []
 
+    @classmethod
     @extend_schema(
         request=EncodedChartsRequestSerializer,
         responses={HTTPStatus.OK.value: EncodedChartResponseSerializer},
         tags=[CHARTS_API_TAG],
     )
     @cache_response()
-    def post(self, request, *args, **kwargs):
+    def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
         Multiple plots can be added as an array of objects from the request body.
