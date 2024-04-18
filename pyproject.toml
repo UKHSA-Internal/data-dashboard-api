@@ -69,6 +69,7 @@ exclude = [
     "*/migrations/*",
     "*/__init__.py",
     "manage.py",
+    "tests/*",
 ]
 
 # Allow line lengths of up to 120 characters
