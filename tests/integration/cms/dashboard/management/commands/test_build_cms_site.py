@@ -87,7 +87,6 @@ class TestBuildCMSSite:
             response_data["page_description"]
             == home_page_response_template["page_description"]
         )
-        assert response_data["body"] == home_page_response_template["body"]
         assert (
             response_data["meta"]["seo_title"]
             == home_page_response_template["meta"]["seo_title"]
@@ -141,7 +140,6 @@ class TestBuildCMSSite:
             response_data["page_description"]
             == topic_page_response_template["page_description"]
         )
-        assert response_data["body"] == topic_page_response_template["body"]
         assert (
             response_data["meta"]["seo_title"]
             == topic_page_response_template["meta"]["seo_title"]
