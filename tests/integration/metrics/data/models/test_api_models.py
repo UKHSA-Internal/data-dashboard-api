@@ -4,7 +4,7 @@ import django.db.utils
 import pytest
 
 from metrics.data.models.api_models import APITimeSeries
-from tests.factories.metrics.api_time_series import APITimeSeriesFactory
+from tests.factories.metrics.api_models.time_series import APITimeSeriesFactory
 
 
 class TestAPITimeSeries:
