@@ -55,8 +55,9 @@ class PublicAPIRootView(APIView):
     permission_classes = []
     name = "API"
 
+    @classmethod
     @extend_schema(tags=[PUBLIC_API_TAG])
-    def get(self, request, format=None):
+    def get(cls, request, format=None):
         data = {
             "links": {
                 "themes": reverse("theme-list", request=request, format=format),

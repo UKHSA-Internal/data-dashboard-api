@@ -22,13 +22,14 @@ TRENDS_API_TAG = "trends"
 class TrendsView(APIView):
     permission_classes = []
 
+    @classmethod
     @extend_schema(
         parameters=[TrendsQuerySerializer],
         responses={HTTPStatus.OK.value: TrendsResponseSerializer},
         tags=[TRENDS_API_TAG],
     )
     @cache_response()
-    def get(self, request, *args, **kwargs):
+    def get(cls, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
 
         The response will include data to indicate whether the change should be considered positive.

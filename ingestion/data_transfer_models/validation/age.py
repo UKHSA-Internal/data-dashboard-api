@@ -1,5 +1,9 @@
 AGE_BANDING_DELIMITER = "-"
 AGE_GREATER_THAN_OPERATOR = "+"
+EXPECTED_AGE_GREATER_THAN_LENGTH = 3
+EXPECTED_AGE_BANDING_LENGTH = 5
+EXPECTED_AGE_ALL_VALUE = "all"
+EXPECTED_DOUBLE_DIGIT_LENGTH = 2
 
 
 def validate_age(age: str) -> str:
@@ -38,13 +42,13 @@ def validate_age(age: str) -> str:
 
 
 def _validate_age_is_all_value(age: str) -> str:
-    if age == "all":
+    if age == EXPECTED_AGE_ALL_VALUE:
         return age
     raise ValueError
 
 
 def _validate_age_banding(age: str) -> str:
-    if len(age) != 5:
+    if len(age) != EXPECTED_AGE_BANDING_LENGTH:
         raise ValueError
 
     if age[2] != AGE_BANDING_DELIMITER:
@@ -68,7 +72,7 @@ def _validate_age_older_than(age: str) -> str:
 
 
 def _validate_number_is_double_digit(number: str) -> str:
-    if number.isdigit() and len(number) == 2:
+    if number.isdigit() and len(number) == EXPECTED_DOUBLE_DIGIT_LENGTH:
         return number
     raise ValueError
 
@@ -81,6 +85,9 @@ def _validate_age_banding_is_in_correct_order(
 
 
 def _validate_age_older_than_ends_with_plus_operator(age: str) -> str:
-    if age.endswith(AGE_GREATER_THAN_OPERATOR) and len(age) == 3:
+    if (
+        age.endswith(AGE_GREATER_THAN_OPERATOR)
+        and len(age) == EXPECTED_AGE_GREATER_THAN_LENGTH
+    ):
         return age
     raise ValueError
