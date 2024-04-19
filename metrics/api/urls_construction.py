@@ -10,6 +10,7 @@ from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
+from cms.dashboard.views import LinkBrowseView
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from cms.snippets.views import GlobalBannerView
 from feedback.api.urls import construct_urlpatterns_for_feedback
@@ -41,11 +42,6 @@ cms_api_router = WagtailAPIRouter("wagtailapi")
 cms_api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 cms_api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
 
-cms_admin_urlpatterns = [
-    # Serves the CMS admin view
-    path("cms-admin/", include(wagtailadmin_urls)),
-]
-
 
 def construct_cms_admin_urlpatterns(
     *,
@@ -71,8 +67,10 @@ def construct_cms_admin_urlpatterns(
 
     """
     prefix: str = "" if app_mode == enums.AppMode.CMS_ADMIN.value else "cms-admin/"
-
-    return [path(prefix, include(wagtailadmin_urls))]
+    return [
+        path(prefix, include(wagtailadmin_urls)),
+        path("choose-page/", LinkBrowseView.as_view(), name="wagtailadmin_choose_page"),
+    ]
 
 
 DEFAULT_PUBLIC_API_PREFIX = "api/public/timeseries/"
