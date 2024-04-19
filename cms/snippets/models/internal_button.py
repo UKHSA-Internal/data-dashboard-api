@@ -38,14 +38,14 @@ class InternalButton(models.Model):
         APIField("method"),
     ]
 
-    @staticmethod
-    def get_button_endpoint_details(self, button_type: str) -> str:
+    @classmethod
+    def get_button_endpoint_details(cls, button_type: str) -> str:
         return InternalButtonTypes.return_button_type_details()[button_type]
 
     def save(self, *args, **kwargs) -> None:
         """Populates the endpoint and method properties on saved based on button type"""
         endpoint, method = self.get_button_endpoint_details(
-            self, button_type=self.button_type
+            button_type=self.button_type
         )
         self.endpoint = endpoint
         self.method = method
