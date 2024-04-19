@@ -226,8 +226,8 @@
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "line_with_shaded_section",
-                                                    "date_from": null,
-                                                    "date_to": null,
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -288,8 +288,8 @@
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "line_with_shaded_section",
-                                                    "date_from": null,
-                                                    "date_to": null,
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -443,8 +443,8 @@
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "bar",
-                                                    "date_from": null,
-                                                    "date_to": null,
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""
@@ -505,8 +505,8 @@
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "bar",
-                                                    "date_from": null,
-                                                    "date_to": null,
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
                                                     "line_colour": "",
                                                     "line_type": ""

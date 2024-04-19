@@ -49,26 +49,34 @@ class CoreTimeSeriesSerializer(serializers.ModelSerializer):
             "metric_value",
         ]
 
-    def get_theme(self, obj) -> str:
+    @classmethod
+    def get_theme(cls, obj) -> str:
         return obj.metric__topic__sub_theme__theme__name
 
-    def get_sub_theme(self, obj) -> str:
+    @classmethod
+    def get_sub_theme(cls, obj) -> str:
         return obj.metric__topic__sub_theme__name
 
-    def get_topic(self, obj) -> str:
+    @classmethod
+    def get_topic(cls, obj) -> str:
         return obj.metric__topic__name
 
-    def get_metric(self, obj) -> str:
+    @classmethod
+    def get_metric(cls, obj) -> str:
         return obj.metric__name
 
-    def get_geography(self, obj) -> str:
+    @classmethod
+    def get_geography(cls, obj) -> str:
         return obj.geography__name
 
-    def get_geography_type(self, obj) -> str:
+    @classmethod
+    def get_geography_type(cls, obj) -> str:
         return obj.geography__geography_type__name
 
-    def get_stratum(self, obj) -> str:
+    @classmethod
+    def get_stratum(cls, obj) -> str:
         return obj.stratum__name
 
-    def get_age(self, obj) -> str:
+    @classmethod
+    def get_age(cls, obj) -> str:
         return obj.age__name

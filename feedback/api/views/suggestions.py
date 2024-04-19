@@ -14,8 +14,9 @@ SUGGESTIONS_API_TAG = "suggestions"
 class SuggestionsView(APIView):
     permission_classes = []
 
+    @classmethod
     @extend_schema(tags=[SUGGESTIONS_API_TAG], request=SuggestionsSerializer)
-    def post(self, request: Request, *args, **kwargs) -> HttpResponse:
+    def post(cls, request: Request, *args, **kwargs) -> HttpResponse:
         """This endpoint sends a feedback email to the designated UKHSA recipient account.
 
         Note that the only environments which will have this functionality are:

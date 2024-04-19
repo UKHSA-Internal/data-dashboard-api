@@ -174,6 +174,7 @@ def get_max_date_for_current_month(
 
     year, month, day = map(int, datestamp.split("-"))
 
-    if day <= 15:
-        return datetime.date(year=year, month=month, day=15)
+    middle_of_month = 15
+    if day <= middle_of_month:
+        return datetime.date(year=year, month=month, day=middle_of_month)
     return get_last_day_of_month(date=datetime.date(year=year, month=month, day=day))

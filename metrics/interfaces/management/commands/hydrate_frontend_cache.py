@@ -4,5 +4,6 @@ from caching.frontend.handlers import crawl_front_end
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options) -> None:
+    @classmethod
+    def handle(cls, *args, **options) -> None:
         crawl_front_end()

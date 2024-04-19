@@ -88,7 +88,8 @@ def _validate_government_office_region_geography_code(geography_code: str) -> st
 
 
 def _validate_nhs_trust_geography_code(geography_code: str) -> str:
-    if len(geography_code) not in (3, 5):
+    allowable_nhs_trust_code_lengths = (3, 5)
+    if len(geography_code) not in allowable_nhs_trust_code_lengths:
         raise ValueError
 
     if not geography_code[0].isalpha():
