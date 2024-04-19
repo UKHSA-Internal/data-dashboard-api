@@ -16,6 +16,25 @@ class InboundTimeSeriesSpecificFields(BaseModel):
     embargo: datetime.datetime | None
     metric_value: float
 
+    @field_validator("embargo")
+    @classmethod
+    def cast_embargo_to_uk_timezone(
+        cls, embargo: datetime.datetime
+    ) -> datetime.datetime:
+        """Casts the inbound `embargo` to the London timezone
+
+        Args:
+            embargo: The inbound embargo date
+                datetime object
+
+        Returns:
+            A `datetime` object which has the timezone
+            info set to the declared `TIMEZONE` as per
+            the main django settings
+
+        """
+        return validation.cast_date_to_uk_timezone(date_value=embargo)
+
 
 class TimeSeriesDTO(IncomingBaseDataModel):
     metric_frequency: str

@@ -124,7 +124,10 @@ class TestIncomingBaseValidation:
             strict=True,
         )
 
-        assert str(incoming_base_validation.refresh_date) == f"{refresh_date} 00:00:00"
+        assert (
+            str(incoming_base_validation.refresh_date)
+            == f"{refresh_date} 00:00:00+00:00"
+        )
 
     def test_refresh_date_as_timestamp_is_validated(self):
         """
@@ -159,7 +162,7 @@ class TestIncomingBaseValidation:
             strict=True,
         )
 
-        assert str(incoming_base_validation.refresh_date) == refresh_date
+        assert str(incoming_base_validation.refresh_date) == f"{refresh_date}+00:00"
 
     def test_raises_error_when_metric_group_not_recognized(self):
         """
