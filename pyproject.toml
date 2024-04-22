@@ -197,6 +197,22 @@ layers = [
     metrics.domain.trends
     """,
 ]
+
+[[tool.importlinter.contracts]]
+name = "Metrics API endpoints do not depend on each other."
+type = "layers"
+layers = [
+    """
+    metrics.api.views.charts |
+    metrics.api.views.downloads |
+    metrics.api.views.geographies |
+    metrics.api.views.headlines |
+    metrics.api.views.health |
+    metrics.api.views.tables |
+    metrics.api.views.trends
+    """,
+]
+
 #----------------------------------------------- Public API contracts -------------------------------------------------#
 [[tool.importlinter.contracts]]
 name = "Public API only depends on the APITimeSeries model & corresponding components via the designated interface."
