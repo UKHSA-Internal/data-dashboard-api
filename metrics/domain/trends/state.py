@@ -3,9 +3,7 @@ from enum import Enum
 
 from pydantic.main import BaseModel
 
-from metrics.domain.charts.line_with_shaded_section.information import (
-    is_metric_improving,
-)
+from metrics.domain.common.information import is_metric_improving
 
 
 class Colour(Enum):
