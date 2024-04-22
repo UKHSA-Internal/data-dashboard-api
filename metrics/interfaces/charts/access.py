@@ -12,9 +12,9 @@ from metrics.domain.charts import (
     line_multi_coloured,
     line_with_shaded_section,
 )
+from metrics.domain.common.utils import ChartTypes
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.models.plots_text import PlotsText
-from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
 

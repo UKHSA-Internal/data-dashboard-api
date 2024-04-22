@@ -5,7 +5,7 @@ import pytest
 
 from metrics.domain.models import PlotData, PlotParameters
 from metrics.domain.tables.generation import TabularData
-from metrics.domain.utils import ChartAxisFields
+from metrics.domain.common.utils import ChartAxisFields
 
 TEST_PLOT = "Test Plot"
 

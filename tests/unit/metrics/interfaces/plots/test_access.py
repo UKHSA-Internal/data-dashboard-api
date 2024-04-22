@@ -5,7 +5,7 @@ import pytest
 
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.models.plots import CompletePlotData
-from metrics.domain.utils import ChartAxisFields
+from metrics.domain.common.utils import ChartAxisFields
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     DataNotFoundForPlotError,

@@ -1,6 +1,6 @@
 from collections.abc import Callable
 
-from metrics.domain.utils import _check_for_substring_match
+from metrics.domain.common.utils import _check_for_substring_match
 
 URL_PATTERN_HINT = tuple[str, str, str, Callable]
 

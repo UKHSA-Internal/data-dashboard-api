@@ -8,7 +8,7 @@ from metrics.domain.models.plots import (
     get_date_n_months_ago_from_timestamp,
     make_date_from_string,
 )
-from metrics.domain.utils import ChartAxisFields
+from metrics.domain.common.utils import ChartAxisFields
 
 MODULE_PATH: str = "metrics.domain.models.plots"
 
