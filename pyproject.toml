@@ -184,6 +184,19 @@ layers = [
     "metrics.domain",
     "metrics.data",
 ]
+
+[[tool.importlinter.contracts]]
+name = "Metrics domain siblings do not depend on each other."
+type = "layers"
+layers = [
+    """
+    metrics.domain.bulk_downloads |
+    metrics.domain.charts |
+    metrics.domain.headlines |
+    metrics.domain.tables |
+    metrics.domain.trends
+    """,
+]
 #----------------------------------------------- Public API contracts -------------------------------------------------#
 [[tool.importlinter.contracts]]
 name = "Public API only depends on the APITimeSeries model & corresponding components via the designated interface."
