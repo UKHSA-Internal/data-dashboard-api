@@ -3,7 +3,7 @@ import datetime
 from django.utils import timezone
 
 
-def cast_date_to_uk_timezone(date_value: datetime.datetime) -> datetime.datetime:
+def cast_date_to_uk_timezone(*, date_value: datetime.datetime) -> datetime.datetime:
     """Casts the inbound `date_value` to the London timezone
 
     Args:
