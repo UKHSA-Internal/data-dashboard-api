@@ -168,7 +168,7 @@ class TestCoreTimeSeriesQuerySet:
         And no value for the "y_axis"
         When `filter_for_x_and_y_values()` is called
             from an instance of the `CoreTimeSeriesManager`
-        Then only the the returned queryset contains the full records
+        Then only the returned queryset contains the full records
         """
         # Given
         x_axis = "date"
@@ -178,7 +178,7 @@ class TestCoreTimeSeriesQuerySet:
             CoreTimeSeriesFactory.create_record(
                 metric_value=1,
                 date=date,
-                refresh_date="2023-12-01",
+                refresh_date=datetime.datetime(year=2023, month=12, day=1),
             )
             for date in dates
         ]
