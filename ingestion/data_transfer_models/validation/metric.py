@@ -1,4 +1,4 @@
-def validate_metric(metric: str, metric_group: str) -> str:
+def validate_metric(*, metric: str, metric_group: str) -> str:
     """Validates the `metric` value to check it conforms to the accepted format
 
     Args:
@@ -17,7 +17,7 @@ def validate_metric(metric: str, metric_group: str) -> str:
     return _validate_metric_group_in_metric(metric=metric, metric_group=metric_group)
 
 
-def _validate_metric_group_in_metric(metric: str, metric_group: str) -> str:
+def _validate_metric_group_in_metric(*, metric: str, metric_group: str) -> str:
     try:
         if metric_group in metric:
             return metric
