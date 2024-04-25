@@ -1,9 +1,8 @@
 from ingestion.utils import enums
 
 NATION_GEOGRAPHY_CODE_PREFIX = "E92"
-LOWER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09")
+LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09", "E10")
 NHS_REGION_GEOGRAPHY_CODE_PREFIX = "E40"
-UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIX = "E10"
 UKHSA_REGION_GEOGRAPHY_CODE_PREFIX = "E45"
 GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX = "E12"
 
@@ -28,7 +27,11 @@ def validate_geography_code(*, geography_code: str, geography_type: str) -> str 
         case enums.GeographyType.NATION.value:
             return _validate_nation_geography_code(geography_code=geography_code)
         case enums.GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value:
-            return _validate_upper_tier_local_authority_geography_code(
+            return _validate_local_authority_geography_code(
+                geography_code=geography_code
+            )
+        case enums.GeographyType.LOWER_TIER_LOCAL_AUTHORITY.value:
+            return _validate_local_authority_geography_code(
                 geography_code=geography_code
             )
         case enums.GeographyType.UKHSA_REGION.value:
@@ -37,10 +40,6 @@ def validate_geography_code(*, geography_code: str, geography_type: str) -> str 
             return _validate_nhs_region_geography_code(geography_code=geography_code)
         case enums.GeographyType.GOVERNMENT_OFFICE_REGION.value:
             return _validate_government_office_region_geography_code(
-                geography_code=geography_code
-            )
-        case enums.GeographyType.LOWER_TIER_LOCAL_AUTHORITY.value:
-            return _validate_lower_tier_local_authority_geography_code(
                 geography_code=geography_code
             )
         case enums.GeographyType.NHS_TRUST.value:
@@ -53,16 +52,10 @@ def _validate_nation_geography_code(*, geography_code: str) -> str:
     raise ValueError
 
 
-def _validate_upper_tier_local_authority_geography_code(*, geography_code: str) -> str:
-    if geography_code.startswith(UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIX):
-        return geography_code
-    raise ValueError
-
-
-def _validate_lower_tier_local_authority_geography_code(*, geography_code: str) -> str:
+def _validate_local_authority_geography_code(*, geography_code: str) -> str:
     if any(
         geography_code.startswith(prefix)
-        for prefix in LOWER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES
+        for prefix in LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES
     ):
         return geography_code
 
