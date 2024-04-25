@@ -24,11 +24,11 @@ jobs:
       - uses: ./.github/actions/install-cache
 
   ###############################################################################
-  # Check environment for known vulnerabilities (pip audit & bandit)
+  # Security checks
   ###############################################################################
 
-  vulnerabilities:
-    name: Vulnerabilities
+  dependency-checks:
+    name: Dependency checks
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
@@ -39,6 +39,14 @@ jobs:
         run: |
           source uhd.sh
           uhd security dependencies
+
+  vulnerability-checks:
+    name: Vulnerability checks
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-cache
 
       - name: Scan for vulnerabilities
         run: |
@@ -177,7 +185,8 @@ jobs:
       system-tests,
       migration-tests,
       test-coverage,
-      vulnerabilities,
+      dependency-checks,
+      vulnerability-checks,
       architecture-checks
     ]
     runs-on: ubuntu-latest
@@ -202,7 +211,8 @@ jobs:
       system-tests,
       migration-tests,
       test-coverage,
-      vulnerabilities,
+      dependency-checks,
+      vulnerability-checks,
       architecture-checks
     ]
     runs-on: ubuntu-latest
