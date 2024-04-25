@@ -5,7 +5,7 @@ import plotly.graph_objects
 import pytest
 
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
-from metrics.domain.utils import ChartTypes
+from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import (
     ChartOutput,
     ChartsInterface,

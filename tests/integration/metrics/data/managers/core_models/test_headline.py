@@ -125,7 +125,7 @@ class TestCoreHeadlineManager:
             refresh_date=original_refresh_date,
         )
 
-        updated_refresh_date = datetime.date(year=2023, month=11, day=8)
+        updated_refresh_date = datetime.datetime(year=2023, month=11, day=8)
         embargoed_metric_value = 100
         core_headline_with_immediate_embargo = CoreHeadlineFactory.create_record(
             metric_value=embargoed_metric_value,

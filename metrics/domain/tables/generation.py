@@ -1,8 +1,8 @@
 from collections import defaultdict
 from typing import Any
 
+from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import PlotData
-from metrics.domain.utils import ChartAxisFields
 
 
 class TabularData:

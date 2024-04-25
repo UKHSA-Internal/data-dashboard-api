@@ -6,7 +6,7 @@ EXPECTED_AGE_ALL_VALUE = "all"
 EXPECTED_DOUBLE_DIGIT_LENGTH = 2
 
 
-def validate_age(age: str) -> str:
+def validate_age(*, age: str) -> str:
     """Validates the `age` value to check it conforms to an allowable structure
 
     Notes:
@@ -41,13 +41,13 @@ def validate_age(age: str) -> str:
     raise ValueError
 
 
-def _validate_age_is_all_value(age: str) -> str:
+def _validate_age_is_all_value(*, age: str) -> str:
     if age == EXPECTED_AGE_ALL_VALUE:
         return age
     raise ValueError
 
 
-def _validate_age_banding(age: str) -> str:
+def _validate_age_banding(*, age: str) -> str:
     if len(age) != EXPECTED_AGE_BANDING_LENGTH:
         raise ValueError
 
@@ -65,26 +65,26 @@ def _validate_age_banding(age: str) -> str:
     return age
 
 
-def _validate_age_older_than(age: str) -> str:
+def _validate_age_older_than(*, age: str) -> str:
     age: str = _validate_age_older_than_ends_with_plus_operator(age=age)
     age_number, _ = age.split(AGE_GREATER_THAN_OPERATOR)
     return _validate_number_is_double_digit(number=age_number)
 
 
-def _validate_number_is_double_digit(number: str) -> str:
+def _validate_number_is_double_digit(*, number: str) -> str:
     if number.isdigit() and len(number) == EXPECTED_DOUBLE_DIGIT_LENGTH:
         return number
     raise ValueError
 
 
 def _validate_age_banding_is_in_correct_order(
-    left_side_number: int, right_side_number: int
+    *, left_side_number: int, right_side_number: int
 ) -> None:
     if left_side_number >= right_side_number:
         raise ValueError
 
 
-def _validate_age_older_than_ends_with_plus_operator(age: str) -> str:
+def _validate_age_older_than_ends_with_plus_operator(*, age: str) -> str:
     if (
         age.endswith(AGE_GREATER_THAN_OPERATOR)
         and len(age) == EXPECTED_AGE_GREATER_THAN_LENGTH

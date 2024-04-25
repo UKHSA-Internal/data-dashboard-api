@@ -4,8 +4,7 @@ from django.db.utils import OperationalError
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts, plots
-from metrics.domain.models import PlotsCollection
-from metrics.domain.utils import (
+from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
     DEFAULT_X_AXIS,
@@ -13,6 +12,7 @@ from metrics.domain.utils import (
     ChartAxisFields,
     ChartTypes,
 )
+from metrics.domain.models import PlotsCollection
 
 
 class TablePlotSerializer(plots.PlotSerializer):
