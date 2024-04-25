@@ -3,8 +3,8 @@ import datetime
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
+from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 from metrics.domain.models import PlotData
-from metrics.domain.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 
 
 class ChartSettings:

@@ -3,7 +3,7 @@ from django.db.models import Manager, QuerySet
 from metrics.data.models import core_models
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.domain.utils import ChartAxisFields, ChartTypes
+from metrics.domain.common.utils import ChartAxisFields, ChartTypes
 
 DEFAULT_TOPIC_MANAGER = core_models.Topic.objects
 DEFAULT_METRIC_MANAGER = core_models.Metric.objects

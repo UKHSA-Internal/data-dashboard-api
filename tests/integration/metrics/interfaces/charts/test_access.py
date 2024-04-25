@@ -3,7 +3,7 @@ from unittest import mock
 import plotly
 
 from metrics.domain.models import PlotsCollection
-from metrics.domain.utils import ChartTypes
+from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import ChartsInterface
 
 

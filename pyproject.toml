@@ -167,7 +167,7 @@ modules = [
 ]
 ignore_imports = [
     "cms.metrics_interface.interface -> metrics.data.models.core_models",
-    "cms.metrics_interface.interface -> metrics.domain.utils",
+    "cms.metrics_interface.interface -> metrics.domain.common.utils",
     "cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.properties",
     "cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme",
     "cms.metrics_documentation.data_migration.operations -> metrics.api.settings",
@@ -184,6 +184,35 @@ layers = [
     "metrics.domain",
     "metrics.data",
 ]
+
+[[tool.importlinter.contracts]]
+name = "Metrics domain siblings do not depend on each other."
+type = "layers"
+layers = [
+    """
+    metrics.domain.bulk_downloads |
+    metrics.domain.charts |
+    metrics.domain.headlines |
+    metrics.domain.tables |
+    metrics.domain.trends
+    """,
+]
+
+[[tool.importlinter.contracts]]
+name = "Metrics API endpoints do not depend on each other."
+type = "layers"
+layers = [
+    """
+    metrics.api.views.charts |
+    metrics.api.views.downloads |
+    metrics.api.views.geographies |
+    metrics.api.views.headlines |
+    metrics.api.views.health |
+    metrics.api.views.tables |
+    metrics.api.views.trends
+    """,
+]
+
 #----------------------------------------------- Public API contracts -------------------------------------------------#
 [[tool.importlinter.contracts]]
 name = "Public API only depends on the APITimeSeries model & corresponding components via the designated interface."
