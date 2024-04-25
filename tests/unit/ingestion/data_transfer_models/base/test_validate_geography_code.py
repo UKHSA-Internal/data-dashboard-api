@@ -6,9 +6,9 @@ from ingestion.utils import enums
 
 VALID_NATION_CODE = "E92000001"
 VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE = "E06000059"
+VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE = "E10000024"
 VALID_NHS_REGION_CODE = "E40000003"
 VALID_NHS_TRUST_CODE = "RY6"
-VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE = "E10000024"
 VALID_UKHSA_REGION_CODE = "E45000017"
 VALID_GOVERNMENT_OFFICE_REGION_CODE = "E12000003"
 
@@ -136,6 +136,7 @@ class TestIncomingBaseValidationForLowerTierLocalAuthorityGeographyCode:
             "E08000005",
             "E09000025",
             "E09000009",
+            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
         ),
     )
     def test_valid_geography_code_validates_successfully(
@@ -167,7 +168,6 @@ class TestIncomingBaseValidationForLowerTierLocalAuthorityGeographyCode:
             VALID_NATION_CODE,
             VALID_NHS_TRUST_CODE,
             VALID_NHS_REGION_CODE,
-            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
             VALID_UKHSA_REGION_CODE,
             VALID_GOVERNMENT_OFFICE_REGION_CODE,
         ),
@@ -185,6 +185,74 @@ class TestIncomingBaseValidationForLowerTierLocalAuthorityGeographyCode:
         # Given
         payload = valid_payload_for_base_model
         payload["geography_type"] = enums.GeographyType.LOWER_TIER_LOCAL_AUTHORITY.value
+        payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+
+class TestIncomingBaseValidationForUpperTierLocalAuthorityGeographyCode:
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
+            "E06000024",
+            "E07000090",
+            "E07000127",
+            "E08000025",
+            "E08000005",
+            "E09000025",
+            "E09000009",
+            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
+        ),
+    )
+    def test_valid_geography_code_validates_successfully(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a valid `geography_code` value
+            for a `geography_type` of "Upper Tier Local Authority"
+        When the `IncomingBaseDataModel` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value
+        payload["geography_code"] = geography_code
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(**payload)
+
+        # Then
+        incoming_base_validation.model_validate(
+            incoming_base_validation,
+            strict=True,
+        )
+
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_NATION_CODE,
+            VALID_NHS_TRUST_CODE,
+            VALID_NHS_REGION_CODE,
+            VALID_UKHSA_REGION_CODE,
+            VALID_GOVERNMENT_OFFICE_REGION_CODE,
+        ),
+    )
+    def test_invalid_geography_code_throws_error(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a `geography_code`
+            which is not valid for
+            the "Upper Tier Local Authority" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value
         payload["geography_code"] = geography_code
 
         # When / Then
@@ -362,71 +430,6 @@ class TestIncomingBaseValidationForGovernmentOfficeRegionGeographyCode:
         # Given
         payload = valid_payload_for_base_model
         payload["geography_type"] = enums.GeographyType.GOVERNMENT_OFFICE_REGION.value
-        payload["geography_code"] = geography_code
-
-        # When / Then
-        with pytest.raises(ValidationError):
-            IncomingBaseDataModel(**payload)
-
-
-class TestIncomingBaseValidationForUpperTierLocalAuthorityGeographyCode:
-    @pytest.mark.parametrize(
-        "geography_code",
-        (
-            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
-            "E10000032",
-            "E10000030",
-            "E10000016",
-            "E10000031",
-        ),
-    )
-    def test_valid_geography_code_validates_successfully(
-        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
-    ):
-        """
-        Given a payload containing a valid `geography_code` value
-            for a `geography_type` of "Upper Tier Local Authority"
-        When the `IncomingBaseDataModel` model is initialized
-        Then model is deemed valid
-        """
-        # Given
-        payload = valid_payload_for_base_model
-        payload["geography_type"] = enums.GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value
-        payload["geography_code"] = geography_code
-
-        # When
-        incoming_base_validation = IncomingBaseDataModel(**payload)
-
-        # Then
-        incoming_base_validation.model_validate(
-            incoming_base_validation,
-            strict=True,
-        )
-
-    @pytest.mark.parametrize(
-        "geography_code",
-        (
-            VALID_NATION_CODE,
-            VALID_NHS_TRUST_CODE,
-            VALID_NHS_REGION_CODE,
-            VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
-            VALID_UKHSA_REGION_CODE,
-            VALID_GOVERNMENT_OFFICE_REGION_CODE,
-        ),
-    )
-    def test_invalid_geography_code_throws_error(
-        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
-    ):
-        """
-        Given a payload containing a `geography_code`
-            which is not valid for
-            the "Upper Tier Local Authority" `geography_type`
-        When the `IncomingBaseDataModel` model is initialized
-        Then a `ValidationError` is raised
-        """
-        # Given
-        payload = valid_payload_for_base_model
-        payload["geography_type"] = enums.GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value
         payload["geography_code"] = geography_code
 
         # When / Then
