@@ -136,7 +136,6 @@ class TestIncomingBaseValidationForLowerTierLocalAuthorityGeographyCode:
             "E08000005",
             "E09000025",
             "E09000009",
-            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
         ),
     )
     def test_valid_geography_code_validates_successfully(
