@@ -16,7 +16,7 @@ from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
 )
 from cms.snippets.data_migrations.operations import (
-    get_or_create_download_button_snippet,
+    get_or_create_download_button_internal_button_snippet,
 )
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
@@ -139,8 +139,8 @@ def _remove_comment_from_body(*, body: dict[list[dict]]) -> list[dict]:
 
 
 def _get_or_create_button_id() -> int:
-    button_snippet = get_or_create_download_button_snippet()
-    return button_snippet.id
+    internal_button_snippet = get_or_create_download_button_internal_button_snippet()
+    return internal_button_snippet.id
 
 
 def _add_download_button_to_composite_body(
@@ -148,7 +148,7 @@ def _add_download_button_to_composite_body(
 ) -> dict[list[dict]]:
     body.append(
         {
-            "type": "button",
+            "type": "internal_button",
             "value": _get_or_create_button_id(),
             "id": "1431bc99-d4f9-4c80-880b-e96c5ad098db",
         }
