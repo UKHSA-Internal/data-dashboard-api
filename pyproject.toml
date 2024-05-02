@@ -194,7 +194,8 @@ layers = [
     metrics.domain.charts |
     metrics.domain.headlines |
     metrics.domain.tables |
-    metrics.domain.trends
+    metrics.domain.trends |
+    metrics.domain.weather_health_alerts
     """,
 ]
 
