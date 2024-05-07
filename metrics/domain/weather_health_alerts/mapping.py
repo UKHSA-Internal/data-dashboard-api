@@ -19,7 +19,7 @@ AMBER_LEVEL_BOUNDARY = 15
 
 
 class WeatherHealthAlertsMetricMapping:
-    def __init__(self, metric_value: int):
+    def __init__(self, *, metric_value: int):
         self._metric_value = metric_value
 
     @property
