@@ -56,7 +56,7 @@ class WeatherHealthAlertsMetricMapping:
         return COLD_ALERT_TEXT_LOOKUP.get(self._metric_value, "")
 
     @property
-    def associated_heat_alert_text(self):
+    def associated_heat_alert_text(self) -> str:
         """Fetch the advice text associated with the heat alert
 
         Returns:
