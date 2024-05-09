@@ -18,6 +18,11 @@ YELLOW_LEVEL_BOUNDARY = 11
 AMBER_LEVEL_BOUNDARY = 15
 
 
+class WeatherHealthAlertTopics(Enum):
+    HEAT_ALERT = "Heat-alert"
+    COLD_ALERT = "Cold-alert"
+
+
 class WeatherHealthAlertsMetricMapping:
     def __init__(self, *, metric_value: int):
         self._metric_value = metric_value
