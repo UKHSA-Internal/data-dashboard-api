@@ -32,6 +32,52 @@ class FakeCoreHeadlineFactory(factory.Factory):
         return secrets.randbelow(100)
 
     @classmethod
+    def build_record(
+        cls,
+        topic_name: str,
+        metric_name: str,
+        metric_value: int = None,
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        geography_code: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
+        period_end: str | datetime.date | None = None,
+        period_start: str | datetime.date | None = None,
+        refresh_date: str | datetime.date | None = None,
+    ) -> list[FakeCoreHeadline]:
+        geography: FakeGeography = FakeGeographyFactory.build_example(
+            geography_type_name=geography_type_name,
+            geography_name=geography_name,
+            geography_code=geography_code,
+        )
+
+        stratum: FakeStratum = FakeStratumFactory.build_example(
+            stratum_name=stratum_name
+        )
+        age: FakeAge = FakeAgeFactory.build_example(age_name=age)
+
+        metric: FakeMetric = FakeMetricFactory.build_example_metric(
+            metric_name=metric_name,
+            metric_group_name="headline",
+            topic_name=topic_name,
+        )
+        metric_value: int = metric_value or cls._pick_random_positive_metric_value()
+
+        return cls.build(
+            sex=sex,
+            metric_value=metric_value,
+            metric=metric,
+            geography=geography,
+            stratum=stratum,
+            age=age,
+            period_start=period_start,
+            period_end=period_end,
+            refresh_date=refresh_date,
+        )
+
+    @classmethod
     def build_example_trend_type_records(
         cls,
         topic_name: str,
