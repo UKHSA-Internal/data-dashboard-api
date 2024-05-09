@@ -197,6 +197,8 @@ class TestCoreHeadlineManager:
         metric_name = "COVID-19_headline_7DayAdmissions"
         geography_code = "E92000001"
         current_time = timezone.now()
+
+        # Expired record
         expired_period_end = current_time - datetime.timedelta(days=7)
         expired_core_headline = CoreHeadlineFactory.create_record(
             metric_value=123,
@@ -207,9 +209,21 @@ class TestCoreHeadlineManager:
             metric_name=metric_name,
         )
 
+        # Record which is not expired but has been superseded
+        valid_but_superseded_period_end = current_time + datetime.timedelta(days=3)
+        superseded_core_headline = CoreHeadlineFactory.create_record(
+            metric_value=456,
+            embargo=None,
+            geography_code=geography_code,
+            period_end=valid_but_superseded_period_end,
+            topic_name=topic_name,
+            metric_name=metric_name,
+        )
+
+        # Record which is currently valid
         currently_valid_period_end = current_time + datetime.timedelta(days=7)
         current_core_headline = CoreHeadlineFactory.create_record(
-            metric_value=456,
+            metric_value=789,
             embargo=None,
             geography_code=geography_code,
             period_end=currently_valid_period_end,
@@ -225,4 +239,17 @@ class TestCoreHeadlineManager:
         )
 
         # Then
-        assert result == current_core_headline != expired_core_headline
+        # ----------------------------
+        # | record |   period_end    |
+        # ----------------------------
+        # |    A   | 7 days ago      |
+        # |    B   | 3 days from now |
+        # |    C   | 7 days from now |
+        # ----------------------------
+        # In this case, record C should be returned
+        assert (
+            result
+            == current_core_headline
+            != expired_core_headline
+            != superseded_core_headline
+        )
