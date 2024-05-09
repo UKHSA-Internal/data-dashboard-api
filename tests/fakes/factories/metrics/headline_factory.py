@@ -90,52 +90,25 @@ class FakeCoreHeadlineFactory(factory.Factory):
         sex: str | None = None,
         age: str | None = None,
     ) -> list[FakeCoreHeadline]:
-        headline_records = []
-
-        geography: FakeGeography = FakeGeographyFactory.build_example(
-            geography_type_name=geography_type_name,
-            geography_name=geography_name,
-        )
-
-        stratum: FakeStratum = FakeStratumFactory.build_example(
-            stratum_name=stratum_name
-        )
-        age: FakeAge = FakeAgeFactory.build_example(age_name=age)
-
-        metric: FakeMetric = FakeMetricFactory.build_example_metric(
+        main_metric_headline = cls.build_record(
+            topic_name=topic_name,
             metric_name=metric_name,
-            metric_group_name="headline",
-            topic_name=topic_name,
+            period_end=period_end,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
         )
-        metric_value: int = cls._pick_random_positive_metric_value()
-
-        percentage_metric: FakeMetric = FakeMetricFactory.build_example_metric(
+        percentage_metric_headline = cls.build_record(
+            topic_name=topic_name,
             metric_name=percentage_metric_name,
-            metric_group_name="headline",
-            topic_name=topic_name,
-        )
-        percentage_metric_value: float = cls._pick_random_percentage_value()
-
-        metric_time_series = cls.build(
-            sex=sex,
-            metric_value=metric_value,
-            metric=metric,
-            geography=geography,
-            stratum=stratum,
-            age=age,
             period_end=period_end,
-        )
-        headline_records.append(metric_time_series)
-
-        metric_time_series = cls.build(
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
             sex=sex,
-            metric_value=percentage_metric_value,
-            metric=percentage_metric,
-            geography=geography,
-            stratum=stratum,
             age=age,
-            period_end=period_end,
         )
-        headline_records.append(metric_time_series)
 
-        return headline_records
+        return [main_metric_headline, percentage_metric_headline]
