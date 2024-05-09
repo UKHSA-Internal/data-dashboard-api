@@ -77,7 +77,7 @@ class TestWeatherHealthAlertsMetricMapping:
             [16, cold_alert_text._LEVEL_16_TEXT],
         ),
     )
-    def test_associated_associated_cold_alert_text(
+    def test_associated_text_for_cold_alerts(
         self, metric_value: int, expected_text: str
     ):
         """
@@ -120,7 +120,7 @@ class TestWeatherHealthAlertsMetricMapping:
             [16, heat_alert_text._LEVEL_16_TEXT],
         ),
     )
-    def test_associated_associated_heat_alert_text(
+    def test_associated_text_for_heat_alerts(
         self, metric_value: int, expected_text: str
     ):
         """
@@ -137,7 +137,7 @@ class TestWeatherHealthAlertsMetricMapping:
         )
 
         # When
-        associated_text: str = weather_health_alerts_mapping._associated_heat_alert_text
+        associated_text: str = weather_health_alerts_mapping.associated_text
 
         # Then
         assert associated_text == expected_text
