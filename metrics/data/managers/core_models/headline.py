@@ -5,7 +5,7 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
-from typing import Self
+from typing import Optional, Self
 
 from django.db import models
 from django.utils import timezone
@@ -347,3 +347,59 @@ class CoreHeadlineManager(models.Manager):
             )
             .first()
         )
+
+    def get_latest_headlines_with_current_period_end(
+        self,
+        *,
+        topic_name: str,
+        metric_name: str,
+        geography_codes: list[str],
+        geography_name: str = "",
+        geography_type_name: str = "",
+        stratum_name: str = "",
+        sex: str = "",
+        age: str = "",
+    ) -> dict[str, Optional["CoreHeadline"]]:
+        """Grabs by the latest records by the given `topic_name` and `metric_name` with a current `period_end`
+
+        Args:
+            topic_name: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography being queried.
+                E.g. `England`
+            geography_type_name: The name of the geography
+                type being queried.
+                E.g. `Nation`
+            geography_codes: Codes associated with the geographies being queried.
+                E.g. ["E45000010", "E45000020"]
+            stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `default`, which would be used to capture all strata.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+            Dict keyed by each geography code,
+            with the value being the individual `CoreHeadline` record
+            which has been lifted from embargo
+            and has a `period_end` which is currently valid.
+            Otherwise, the value will be None
+
+        """
+        return {
+            geography_code: self.get_latest_headline_with_current_period_end(
+                topic_name=topic_name,
+                metric_name=metric_name,
+                geography_name=geography_name,
+                geography_type_name=geography_type_name,
+                geography_code=geography_code,
+                stratum_name=stratum_name,
+                sex=sex,
+                age=age,
+            )
+            for geography_code in geography_codes
+        }

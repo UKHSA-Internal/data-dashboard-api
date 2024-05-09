@@ -253,3 +253,88 @@ class TestCoreHeadlineManager:
             != expired_core_headline
             != superseded_core_headline
         )
+
+    @pytest.mark.django_db
+    def test_get_latest_headlines_with_current_period_end(self):
+        """
+        Given a `CoreHeadline` record which has `period_end` of 1 week ago
+        And a `CoreHeadline` record which has `period_end` of 1 week forwards from now
+            for multiple different geographies
+        When `get_latest_headline_with_current_period_end()` is called
+            from an instance of  `CoreHeadlineManager`
+        Then the record with the `period_end` which is in the future is returned
+            for each individual geography code
+        """
+        # Given
+        topic_name = "COVID-19"
+        metric_name = "COVID-19_headline_7DayAdmissions"
+        current_time = timezone.now()
+
+        first_geography_code = "E92000001"
+        # Expired record for 1st geography
+        expired_period_end = current_time - datetime.timedelta(days=7)
+        expired_core_headline_for_first_geography = CoreHeadlineFactory.create_record(
+            metric_value=123,
+            embargo=None,
+            geography_code=first_geography_code,
+            period_end=expired_period_end,
+            topic_name=topic_name,
+            metric_name=metric_name,
+        )
+        # Record which is currently valid for 1st geography
+        currently_valid_period_end = current_time + datetime.timedelta(days=7)
+        current_core_headline_for_first_geography = CoreHeadlineFactory.create_record(
+            metric_value=456,
+            embargo=None,
+            geography_code=first_geography_code,
+            period_end=currently_valid_period_end,
+            topic_name=topic_name,
+            metric_name=metric_name,
+        )
+        # Expired record for 2nd geography
+        second_geography_code = "E92000002"
+        expired_period_end = current_time - datetime.timedelta(days=6)
+        expired_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
+            metric_value=111,
+            embargo=None,
+            geography_name="West Midlands",
+            geography_code=second_geography_code,
+            period_end=expired_period_end,
+            topic_name=topic_name,
+            metric_name=metric_name,
+        )
+        # Record which is currently valid for 2nd geography
+        currently_valid_period_end = current_time + datetime.timedelta(days=5)
+        current_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
+            metric_value=222,
+            embargo=None,
+            geography_name="West Midlands",
+            geography_code=second_geography_code,
+            period_end=currently_valid_period_end,
+            topic_name=topic_name,
+            metric_name=metric_name,
+        )
+
+        # When
+        result = CoreHeadline.objects.get_latest_headlines_with_current_period_end(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_codes=[first_geography_code, second_geography_code],
+        )
+
+        # Then
+        assert result == {
+            first_geography_code: current_core_headline_for_first_geography,
+            second_geography_code: current_core_headline_for_second_geography,
+        }
+
+        assert (
+            result[first_geography_code]
+            == current_core_headline_for_first_geography
+            != expired_core_headline_for_first_geography
+        )
+        assert (
+            result[second_geography_code]
+            == current_core_headline_for_second_geography
+            != expired_core_headline_for_second_geography
+        )
