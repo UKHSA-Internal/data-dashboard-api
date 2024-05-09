@@ -5,6 +5,8 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
+from typing import Self
+
 from django.db import models
 from django.utils import timezone
 
@@ -29,6 +31,12 @@ class CoreHeadlineQuerySet(models.QuerySet):
         return queryset.filter(geography__geography_type__name=geography_type_name)
 
     @staticmethod
+    def _filter_by_geography_code(
+        *, queryset: models.QuerySet, geography_code: str
+    ) -> models.QuerySet:
+        return queryset.filter(geography__geography_code=geography_code)
+
+    @staticmethod
     def _filter_by_stratum(
         *, queryset: models.QuerySet, stratum_name: str
     ) -> models.QuerySet:
@@ -45,13 +53,14 @@ class CoreHeadlineQuerySet(models.QuerySet):
     def _filter_for_any_optional_fields(
         self,
         *,
-        queryset: models.QuerySet,
+        queryset: Self,
         geography_name: str,
         geography_type_name: str,
+        geography_code: str,
         stratum_name: str,
         sex: str,
         age: str,
-    ) -> models.QuerySet:
+    ) -> Self:
         if geography_name:
             queryset = self._filter_by_geography(
                 queryset=queryset, geography_name=geography_name
@@ -60,6 +69,11 @@ class CoreHeadlineQuerySet(models.QuerySet):
         if geography_type_name:
             queryset = self._filter_by_geography_type(
                 queryset=queryset, geography_type_name=geography_type_name
+            )
+
+        if geography_code:
+            queryset = self._filter_by_geography_code(
+                queryset=queryset, geography_code=geography_code
             )
 
         if stratum_name:
@@ -82,10 +96,11 @@ class CoreHeadlineQuerySet(models.QuerySet):
         metric_name: str,
         geography_name: str,
         geography_type_name: str,
+        geography_code: str,
         stratum_name: str,
         sex: str,
         age: str,
-    ) -> models.QuerySet:
+    ) -> Self:
         """Filters by the given `topic_name` and `metric_name`
 
         Args:
@@ -98,6 +113,8 @@ class CoreHeadlineQuerySet(models.QuerySet):
             geography_type_name: The name of the geography
                 type being queried.
                 E.g. `Nation`
+            geography_code: The code associated with the geography being queried.
+                E.g. `E92000001`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
@@ -124,6 +141,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             queryset=queryset,
             geography_type_name=geography_type_name,
             geography_name=geography_name,
+            geography_code=geography_code,
             stratum_name=stratum_name,
             age=age,
             sex=sex,
@@ -140,16 +158,82 @@ class CoreHeadlineQuerySet(models.QuerySet):
             in the returned queryset
 
         Args:
-            queryset: The queryset to exclude emargoed data from
+            queryset: The queryset to exclude embargoed data from
 
         Returns:
-            The filtered queryset which excludes emargoed data
+            The filtered queryset which excludes embargoed data
 
         """
         current_time = timezone.now()
         return queryset.filter(
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
+
+    @classmethod
+    def _exclude_data_with_expired_period_end(cls, queryset: Self) -> Self:
+        current_time = timezone.now()
+        return queryset.filter(models.Q(period_end__gte=current_time))
+
+    def get_latest_headline_with_current_period_end(
+        self,
+        *,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str = "England",
+        geography_type_name: str = "Nation",
+        geography_code: str = "",
+        stratum_name: str = "",
+        sex: str = "",
+        age: str = "",
+    ) -> Self:
+        """Filters by the given `topic_name` and `metric_name` for record which have a current `period_end`
+
+        Notes:
+            This includes matching `CoreHeadline` records which:
+                - Have been lifted from embargo
+                - Have a `period_end` which is greater than the current time
+
+        Args:
+            topic_name: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography being queried.
+                E.g. `England`
+            geography_type_name: The name of the geography
+                type being queried.
+                E.g. `Nation`
+            geography_code: The code associated with the geography being queried.
+                E.g. `E92000001`
+            stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `default`, which would be used to capture all strata.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+            An ordered queryset from oldest -> newest:
+                Examples:
+                    `<CoreHeadlineQuerySet [
+                        <CoreHeadline: Core Headline Data for 2023-09-30 23:00:00+00:00,
+                         metric 'COVID-19_headline_positivity_latest',
+                         value: 99.0000>
+                        ]>`
+
+        """
+        queryset = self.get_headlines_released_from_embargo(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_name=geography_name,
+            geography_code=geography_code,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            age=age,
+            sex=sex,
+        )
+        return self._exclude_data_with_expired_period_end(queryset=queryset)
 
 
 class CoreHeadlineManager(models.Manager):
@@ -189,7 +273,6 @@ class CoreHeadlineManager(models.Manager):
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
 
-
         Returns:
             The individual metric_value number and its associated `period_end` date
             Otherwise, None is returned if no record could be found
@@ -204,6 +287,60 @@ class CoreHeadlineManager(models.Manager):
                 metric_name=metric_name,
                 geography_name=geography_name,
                 geography_type_name=geography_type_name,
+                stratum_name=stratum_name,
+                age=age,
+                sex=sex,
+            )
+            .first()
+        )
+
+    def get_latest_headline_with_current_period_end(
+        self,
+        *,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str = "",
+        geography_type_name: str = "",
+        geography_code: str = "",
+        stratum_name: str = "",
+        sex: str = "",
+        age: str = "",
+    ) -> "CoreHeadline":
+        """Grabs by the latest record by the given `topic_name` and `metric_name` with a current `period_end`
+
+        Args:
+            topic_name: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography being queried.
+                E.g. `England`
+            geography_type_name: The name of the geography
+                type being queried.
+                E.g. `Nation`
+            geography_code: The code associated with the geography being queried.
+                E.g. `E92000001`
+            stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `default`, which would be used to capture all strata.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+            The individual `CoreHeadline` record which has been lifted
+            from embargo and has a `period_end` which is currently valid.
+
+        """
+        return (
+            self.get_queryset()
+            .get_latest_headline_with_current_period_end(
+                topic_name=topic_name,
+                metric_name=metric_name,
+                geography_name=geography_name,
+                geography_type_name=geography_type_name,
+                geography_code=geography_code,
                 stratum_name=stratum_name,
                 age=age,
                 sex=sex,

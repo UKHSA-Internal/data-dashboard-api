@@ -35,6 +35,7 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         metric_name: str = "COVID-19_headline_positivity_latest",
         geography_name: str = "England",
         geography_type_name: str = "Nation",
+        geography_code: str = "E92000001",
         stratum_name: str = "default",
         age_name: str = "all",
         sex: str = "all",
@@ -56,7 +57,9 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
             name=geography_type_name
         )
         geography, _ = Geography.objects.get_or_create(
-            name=geography_name, geography_type_id=geography_type.id
+            name=geography_name,
+            geography_code=geography_code,
+            geography_type_id=geography_type.id,
         )
         age, _ = Age.objects.get_or_create(name=age_name)
         stratum, _ = Stratum.objects.get_or_create(name=stratum_name)

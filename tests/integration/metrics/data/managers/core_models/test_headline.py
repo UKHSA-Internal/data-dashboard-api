@@ -182,3 +182,47 @@ class TestCoreHeadlineManager:
 
         # The embargoed record should not be in the returned queryset
         assert embargoed_core_headline not in filtered_queryset
+
+    @pytest.mark.django_db
+    def test_get_latest_headline_with_current_period_end(self):
+        """
+        Given a `CoreHeadline` record which has `period_end` of 1 week ago
+        And a `CoreHeadline` record which has `period_end` of 1 week forwards from now
+        When `get_latest_headline_with_current_period_end()` is called
+            from an instance of  `CoreHeadlineManager`
+        Then the record with the `period_end` which is in the future is returned
+        """
+        # Given
+        topic_name = "COVID-19"
+        metric_name = "COVID-19_headline_7DayAdmissions"
+        geography_code = "E92000001"
+        current_time = timezone.now()
+        expired_period_end = current_time - datetime.timedelta(days=7)
+        expired_core_headline = CoreHeadlineFactory.create_record(
+            metric_value=123,
+            embargo=None,
+            geography_code=geography_code,
+            period_end=expired_period_end,
+            topic_name=topic_name,
+            metric_name=metric_name,
+        )
+
+        currently_valid_period_end = current_time + datetime.timedelta(days=7)
+        current_core_headline = CoreHeadlineFactory.create_record(
+            metric_value=456,
+            embargo=None,
+            geography_code=geography_code,
+            period_end=currently_valid_period_end,
+            topic_name=topic_name,
+            metric_name=metric_name,
+        )
+
+        # When
+        result = CoreHeadline.objects.get_latest_headline_with_current_period_end(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_code=geography_code,
+        )
+
+        # Then
+        assert result == current_core_headline != expired_core_headline
