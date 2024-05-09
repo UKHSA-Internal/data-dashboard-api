@@ -141,3 +141,23 @@ class TestWeatherHealthAlertsMetricMapping:
 
         # Then
         assert associated_text == expected_text
+
+    def test_associated_text_for_invalid_topic_returns_empty_string(self):
+        """
+        Given an invalid topic name
+        When the `associated_text` property
+            is called from an instance of `WeatherHealthAlertsMetricMapping`
+        Then an empty string is returned
+        """
+        # Given
+        topic_name = "Invalid-topic"
+        weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
+            metric_value=1,
+            topic_name=topic_name,
+        )
+
+        # When
+        associated_text: str = weather_health_alerts_mapping.associated_text
+
+        # Then
+        assert associated_text == ""
