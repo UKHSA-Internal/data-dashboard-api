@@ -235,7 +235,7 @@ class TestCoreHeadlineManager:
         result = CoreHeadline.objects.get_latest_headline_with_current_period_end(
             topic_name=topic_name,
             metric_name=metric_name,
-            geography_code=geography_code,
+            geography_codes=[geography_code],
         )
 
         # Then
