@@ -31,10 +31,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
         return queryset.filter(geography__geography_type__name=geography_type_name)
 
     @staticmethod
-    def _filter_by_geography_codes(
-        *, queryset: models.QuerySet, geography_codes: list[str]
+    def _filter_by_geography_code(
+        *, queryset: models.QuerySet, geography_code: str
     ) -> models.QuerySet:
-        return queryset.filter(geography__geography_code__in=geography_codes)
+        return queryset.filter(geography__geography_code=geography_code)
 
     @staticmethod
     def _filter_by_stratum(
@@ -56,7 +56,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         queryset: Self,
         geography_name: str,
         geography_type_name: str,
-        geography_codes: str,
+        geography_code: str,
         stratum_name: str,
         sex: str,
         age: str,
@@ -71,9 +71,9 @@ class CoreHeadlineQuerySet(models.QuerySet):
                 queryset=queryset, geography_type_name=geography_type_name
             )
 
-        if geography_codes:
-            queryset = self._filter_by_geography_codes(
-                queryset=queryset, geography_codes=geography_codes
+        if geography_code:
+            queryset = self._filter_by_geography_code(
+                queryset=queryset, geography_code=geography_code
             )
 
         if stratum_name:
@@ -96,7 +96,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         metric_name: str,
         geography_name: str,
         geography_type_name: str,
-        geography_codes: list[str],
+        geography_code: str,
         stratum_name: str,
         sex: str,
         age: str,
@@ -113,8 +113,8 @@ class CoreHeadlineQuerySet(models.QuerySet):
             geography_type_name: The name of the geography
                 type being queried.
                 E.g. `Nation`
-            geography_codes: List of codes associated with the possible geographies.
-                E.g. ["E92000001"]
+            geography_code: The code associated with the geography being queried.
+                E.g. `E92000001`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
@@ -141,7 +141,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             queryset=queryset,
             geography_type_name=geography_type_name,
             geography_name=geography_name,
-            geography_codes=geography_codes,
+            geography_code=geography_code,
             stratum_name=stratum_name,
             age=age,
             sex=sex,
@@ -181,7 +181,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         metric_name: str,
         geography_name: str = "England",
         geography_type_name: str = "Nation",
-        geography_codes: list[str] | None = None,
+        geography_code: str = "",
         stratum_name: str = "",
         sex: str = "",
         age: str = "",
@@ -203,8 +203,8 @@ class CoreHeadlineQuerySet(models.QuerySet):
             geography_type_name: The name of the geography
                 type being queried.
                 E.g. `Nation`
-            geography_codes: List of codes associated with the possible geographies.
-                E.g. ["E92000001"]
+            geography_code: The code associated with the geography being queried.
+                E.g. `E92000001`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
@@ -227,7 +227,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             topic_name=topic_name,
             metric_name=metric_name,
             geography_name=geography_name,
-            geography_codes=geography_codes,
+            geography_code=geography_code,
             geography_type_name=geography_type_name,
             stratum_name=stratum_name,
             age=age,
@@ -301,7 +301,7 @@ class CoreHeadlineManager(models.Manager):
         metric_name: str,
         geography_name: str = "",
         geography_type_name: str = "",
-        geography_codes: str = "",
+        geography_code: str = "",
         stratum_name: str = "",
         sex: str = "",
         age: str = "",
@@ -318,8 +318,8 @@ class CoreHeadlineManager(models.Manager):
             geography_type_name: The name of the geography
                 type being queried.
                 E.g. `Nation`
-            geography_codes: List of codes associated with the possible geographies.
-                E.g. ["E92000001"]
+            geography_code: The code associated with the geography being queried.
+                E.g. `E92000001`
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
@@ -340,7 +340,7 @@ class CoreHeadlineManager(models.Manager):
                 metric_name=metric_name,
                 geography_name=geography_name,
                 geography_type_name=geography_type_name,
-                geography_codes=geography_codes,
+                geography_code=geography_code,
                 stratum_name=stratum_name,
                 age=age,
                 sex=sex,
