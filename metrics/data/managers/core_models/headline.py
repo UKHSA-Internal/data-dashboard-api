@@ -96,10 +96,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
         metric_name: str,
         geography_name: str,
         geography_type_name: str,
-        geography_code: str,
         stratum_name: str,
         sex: str,
         age: str,
+        geography_code: str = "",
     ) -> Self:
         """Filters by the given `topic_name` and `metric_name`
 
