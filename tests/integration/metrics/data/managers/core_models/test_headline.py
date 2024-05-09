@@ -188,7 +188,7 @@ class TestCoreHeadlineManager:
         """
         Given a `CoreHeadline` record which has `period_end` of 1 week ago
         And a `CoreHeadline` record which has `period_end` of 1 week forwards from now
-        When `get_latest_headline_with_current_period_end()` is called
+        When `get_latest_headline()` is called
             from an instance of  `CoreHeadlineManager`
         Then the record with the `period_end` which is in the future is returned
         """
@@ -232,7 +232,7 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        result = CoreHeadline.objects.get_latest_headline_with_current_period_end(
+        result = CoreHeadline.objects.get_latest_headline(
             topic_name=topic_name,
             metric_name=metric_name,
             geography_code=geography_code,
@@ -255,12 +255,12 @@ class TestCoreHeadlineManager:
         )
 
     @pytest.mark.django_db
-    def test_get_latest_headlines_with_current_period_end(self):
+    def test_get_latest_headlines_for_geography_codes(self):
         """
         Given a `CoreHeadline` record which has `period_end` of 1 week ago
         And a `CoreHeadline` record which has `period_end` of 1 week forwards from now
             for multiple different geographies
-        When `get_latest_headline_with_current_period_end()` is called
+        When `get_latest_headlines_for_geography_codes()` is called
             from an instance of  `CoreHeadlineManager`
         Then the record with the `period_end` which is in the future is returned
             for each individual geography code
@@ -270,7 +270,7 @@ class TestCoreHeadlineManager:
         metric_name = "COVID-19_headline_7DayAdmissions"
         current_time = timezone.now()
 
-        first_geography_code = "E92000001"
+        first_geography_code = "E08000033"
         # Expired record for 1st geography
         expired_period_end = current_time - datetime.timedelta(days=7)
         expired_core_headline_for_first_geography = CoreHeadlineFactory.create_record(
@@ -298,6 +298,7 @@ class TestCoreHeadlineManager:
             metric_value=111,
             embargo=None,
             geography_name="West Midlands",
+            geography_type_name="",
             geography_code=second_geography_code,
             period_end=expired_period_end,
             topic_name=topic_name,
@@ -309,6 +310,7 @@ class TestCoreHeadlineManager:
             metric_value=222,
             embargo=None,
             geography_name="West Midlands",
+            geography_type_name="",
             geography_code=second_geography_code,
             period_end=currently_valid_period_end,
             topic_name=topic_name,
@@ -316,7 +318,7 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        result = CoreHeadline.objects.get_latest_headlines_with_current_period_end(
+        result = CoreHeadline.objects.get_latest_headlines_for_geography_codes(
             topic_name=topic_name,
             metric_name=metric_name,
             geography_codes=[first_geography_code, second_geography_code],
@@ -327,7 +329,6 @@ class TestCoreHeadlineManager:
             first_geography_code: current_core_headline_for_first_geography,
             second_geography_code: current_core_headline_for_second_geography,
         }
-
         assert (
             result[first_geography_code]
             == current_core_headline_for_first_geography

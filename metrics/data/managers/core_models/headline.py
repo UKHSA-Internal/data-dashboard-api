@@ -183,6 +183,7 @@ class CoreHeadlineManager(models.Manager):
         metric_name: str,
         geography_name: str = "England",
         geography_type_name: str = "Nation",
+        geography_code: str = "",
         stratum_name: str = "",
         sex: str = "",
         age: str = "",
@@ -199,6 +200,8 @@ class CoreHeadlineManager(models.Manager):
             geography_type_name: The name of the geography
                 type being queried.
                 E.g. `Nation`
+            geography_code: Code associated with the geography being queried.
+                E.g. "E45000010"
             stratum_name: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
