@@ -8,7 +8,6 @@ from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
 from tests.fakes.models.metrics.age import FakeAge
-from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.metrics.geography import FakeGeography
 from tests.fakes.models.metrics.headline import FakeCoreHeadline
 from tests.fakes.models.metrics.metric import FakeMetric
@@ -44,7 +43,7 @@ class FakeCoreHeadlineFactory(factory.Factory):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-    ) -> list[FakeCoreTimeSeries]:
+    ) -> list[FakeCoreHeadline]:
         headline_records = []
 
         geography: FakeGeography = FakeGeographyFactory.build_example(
