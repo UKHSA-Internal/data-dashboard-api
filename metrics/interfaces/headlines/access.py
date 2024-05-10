@@ -5,6 +5,7 @@ from metrics.domain.headlines.state import Headline
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
+EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
 class HeadlinesInterface:
     def __init__(
@@ -55,7 +56,7 @@ class HeadlinesInterface:
         try:
             headline = Headline(
                 metric_value=core_headline.metric_value,
-                period_end=core_headline.period_end,
+                period_end=core_headline.period_end.strftime(EXPECTED_DATE_FORMAT),
             )
         except AttributeError as error:
             # If the returned `core_headline` is None
