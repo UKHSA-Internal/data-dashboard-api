@@ -1,6 +1,9 @@
+from unittest import mock
+
 import pytest
 
 from metrics.domain.weather_health_alerts import mapping
+from metrics.domain.weather_health_alerts.mapping import WeatherHealthAlertTopics
 from metrics.domain.weather_health_alerts.text_lookups import (
     cold_alert_text,
     common,
@@ -41,7 +44,8 @@ class TestWeatherHealthAlertsMetricMapping:
         """
         # Given
         weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
-            metric_value=metric_value
+            metric_value=metric_value,
+            topic_name=mock.Mock(),
         )
 
         # When
@@ -73,22 +77,24 @@ class TestWeatherHealthAlertsMetricMapping:
             [16, cold_alert_text._LEVEL_16_TEXT],
         ),
     )
-    def test_associated_associated_cold_alert_text(
+    def test_associated_text_for_cold_alerts(
         self, metric_value: int, expected_text: str
     ):
         """
         Given a metric_value between 1 and 16
-        When the `associated_cold_alert_text` property
+        And a topic of "Cold-alert"
+        When the `associated_text` property
             is called from an instance of `WeatherHealthAlertsMetricMapping`
-        Then the correct text is returned
+        Then the correct text is returned for a cold alert
         """
         # Given
         weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
-            metric_value=metric_value
+            metric_value=metric_value,
+            topic_name=WeatherHealthAlertTopics.COLD_ALERT.value,
         )
 
         # When
-        associated_text: str = weather_health_alerts_mapping.associated_cold_alert_text
+        associated_text: str = weather_health_alerts_mapping.associated_text
 
         # Then
         assert associated_text == expected_text
@@ -114,22 +120,44 @@ class TestWeatherHealthAlertsMetricMapping:
             [16, heat_alert_text._LEVEL_16_TEXT],
         ),
     )
-    def test_associated_associated_heat_alert_text(
+    def test_associated_text_for_heat_alerts(
         self, metric_value: int, expected_text: str
     ):
         """
         Given a metric_value between 1 and 16
-        When the `associated_heat_alert_text` property
+        And a topic of "Heat-alert"
+        When the `associated_text` property
             is called from an instance of `WeatherHealthAlertsMetricMapping`
-        Then the correct text is returned
+        Then the correct text is returned for a heat alert
         """
         # Given
         weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
-            metric_value=metric_value
+            metric_value=metric_value,
+            topic_name=WeatherHealthAlertTopics.HEAT_ALERT.value,
         )
 
         # When
-        associated_text: str = weather_health_alerts_mapping.associated_heat_alert_text
+        associated_text: str = weather_health_alerts_mapping.associated_text
 
         # Then
         assert associated_text == expected_text
+
+    def test_associated_text_for_invalid_topic_returns_empty_string(self):
+        """
+        Given an invalid topic name
+        When the `associated_text` property
+            is called from an instance of `WeatherHealthAlertsMetricMapping`
+        Then an empty string is returned
+        """
+        # Given
+        topic_name = "Invalid-topic"
+        weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
+            metric_value=1,
+            topic_name=topic_name,
+        )
+
+        # When
+        associated_text: str = weather_health_alerts_mapping.associated_text
+
+        # Then
+        assert associated_text == ""
