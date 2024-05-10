@@ -43,8 +43,6 @@ class ChartsInterface:
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
-        self.core_time_series_manager = core_time_series_manager
-
         self.plots_interface = plots_interface or PlotsInterface(
             plots_collection=self.chart_plots,
             core_time_series_manager=core_time_series_manager,

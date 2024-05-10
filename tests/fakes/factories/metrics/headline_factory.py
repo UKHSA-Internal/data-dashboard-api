@@ -8,7 +8,6 @@ from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
 from tests.fakes.models.metrics.age import FakeAge
-from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.metrics.geography import FakeGeography
 from tests.fakes.models.metrics.headline import FakeCoreHeadline
 from tests.fakes.models.metrics.metric import FakeMetric
@@ -33,23 +32,25 @@ class FakeCoreHeadlineFactory(factory.Factory):
         return secrets.randbelow(100)
 
     @classmethod
-    def build_example_trend_type_records(
+    def build_record(
         cls,
         topic_name: str,
         metric_name: str,
-        percentage_metric_name: str,
-        period_end: str | datetime.date,
+        metric_value: int = None,
         geography_name: str | None = None,
         geography_type_name: str | None = None,
+        geography_code: str | None = None,
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-    ) -> list[FakeCoreTimeSeries]:
-        headline_records = []
-
+        period_end: str | datetime.date | None = None,
+        period_start: str | datetime.date | None = None,
+        refresh_date: str | datetime.date | None = None,
+    ) -> list[FakeCoreHeadline]:
         geography: FakeGeography = FakeGeographyFactory.build_example(
             geography_type_name=geography_type_name,
             geography_name=geography_name,
+            geography_code=geography_code,
         )
 
         stratum: FakeStratum = FakeStratumFactory.build_example(
@@ -62,35 +63,52 @@ class FakeCoreHeadlineFactory(factory.Factory):
             metric_group_name="headline",
             topic_name=topic_name,
         )
-        metric_value: int = cls._pick_random_positive_metric_value()
+        metric_value: int = metric_value or cls._pick_random_positive_metric_value()
 
-        percentage_metric: FakeMetric = FakeMetricFactory.build_example_metric(
-            metric_name=percentage_metric_name,
-            metric_group_name="headline",
-            topic_name=topic_name,
-        )
-        percentage_metric_value: float = cls._pick_random_percentage_value()
-
-        metric_time_series = cls.build(
+        return cls.build(
             sex=sex,
             metric_value=metric_value,
             metric=metric,
             geography=geography,
             stratum=stratum,
             age=age,
+            period_start=period_start,
             period_end=period_end,
+            refresh_date=refresh_date,
         )
-        headline_records.append(metric_time_series)
 
-        metric_time_series = cls.build(
+    @classmethod
+    def build_example_trend_type_records(
+        cls,
+        topic_name: str,
+        metric_name: str,
+        percentage_metric_name: str,
+        period_end: str | datetime.date,
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
+    ) -> list[FakeCoreHeadline]:
+        main_metric_headline = cls.build_record(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            period_end=period_end,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
             sex=sex,
-            metric_value=percentage_metric_value,
-            metric=percentage_metric,
-            geography=geography,
-            stratum=stratum,
             age=age,
-            period_end=period_end,
         )
-        headline_records.append(metric_time_series)
+        percentage_metric_headline = cls.build_record(
+            topic_name=topic_name,
+            metric_name=percentage_metric_name,
+            period_end=period_end,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
 
-        return headline_records
+        return [main_metric_headline, percentage_metric_headline]
