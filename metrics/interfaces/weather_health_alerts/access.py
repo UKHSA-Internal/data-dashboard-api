@@ -1,5 +1,4 @@
 import logging
-from dataclasses import dataclass
 
 from django.db.models.manager import Manager
 from django.utils import timezone
@@ -19,8 +18,9 @@ class WeatherHealthAlertsInterface:
         self._core_headline_manager = core_headline_manager
 
     def build_data_for_alert(
+    def build_detailed_data_for_alert(
         self, topic_name: str, metric_name: str, geography_code: str
-    ) -> dict[str, str | None]:
+    ) -> WEATHER_HEALTH_ALERT_DETAILED_DATA:
         """Builds the exported data required for the alert associated with the given `core_headline`
 
         Args:
@@ -43,13 +43,7 @@ class WeatherHealthAlertsInterface:
                 geography_code=geography_code,
             )
         )
-        return {
-            "status": weather_health_alarm_state.associated_status,
-            "text": weather_health_alarm_state.associated_text,
-            "period_start": weather_health_alarm_state.period_start,
-            "period_end": weather_health_alarm_state.period_end,
-            "refresh_date": weather_health_alarm_state.refresh_date,
-        }
+        return weather_health_alarm_state.detailed_data
 
     def _build_current_headline_state(
         self, topic_name: str, metric_name: str, geography_code: str
