@@ -71,43 +71,53 @@ class TestInboundHeadlineSpecificFields:
             strict=True,
         )
 
-    def test_raises_error_when_datetime_passed_to_period_start(self):
+    def test_validates_datetime_passed_to_period_start(self):
         """
         Given a payload containing a datetime string for `period_start`
         When the `InboundHeadlineSpecificFields` model is initialized
-        Then a `ValidationError` is raised
+        Then the model is deemed valid
         """
         # Given
         fake_period_start = VALID_DATETIME
         fake_period_end = "2023-11-27"
 
-        # When / Then
-        with pytest.raises(ValidationError):
-            InboundHeadlineSpecificFields(
-                period_start=fake_period_start,
-                period_end=fake_period_end,
-                embargo=VALID_DATETIME,
-                metric_value=123,
-            )
+        # When
+        inbound_headline_specific_fields_validation = InboundHeadlineSpecificFields(
+            period_start=fake_period_start,
+            period_end=fake_period_end,
+            metric_value=123,
+            embargo=None,
+        )
 
-    def test_raises_error_when_datetime_passed_to_period_end(self):
+        # Then
+        inbound_headline_specific_fields_validation.model_validate(
+            inbound_headline_specific_fields_validation,
+            strict=True,
+        )
+
+    def test_validates_when_datetime_passed_to_period_end(self):
         """
         Given a payload containing a datetime string for `period_end`
         When the `InboundHeadlineSpecificFields` model is initialized
-        Then a `ValidationError` is raised
+        Then the model is deemed valid
         """
         # Given
         fake_period_start = "2023-11-20"
         fake_period_end = VALID_DATETIME
 
-        # When / Then
-        with pytest.raises(ValidationError):
-            InboundHeadlineSpecificFields(
-                period_start=fake_period_start,
-                period_end=fake_period_end,
-                embargo=VALID_DATETIME,
-                metric_value=123,
-            )
+        # When
+        inbound_headline_specific_fields_validation = InboundHeadlineSpecificFields(
+            period_start=fake_period_start,
+            period_end=fake_period_end,
+            metric_value=123,
+            embargo=None,
+        )
+
+        # Then
+        inbound_headline_specific_fields_validation.model_validate(
+            inbound_headline_specific_fields_validation,
+            strict=True,
+        )
 
     def test_validates_date_passed_to_embargo(self):
         """
