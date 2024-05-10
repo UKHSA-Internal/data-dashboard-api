@@ -7,6 +7,8 @@ from rest_framework.test import APIClient
 
 from metrics.data.models.core_models import CoreHeadline, Topic
 
+EXPECTED_DATE_FORMAT = "%Y-%m-%d"
+
 
 class TestHeadlinesView:
     @property
@@ -41,7 +43,9 @@ class TestHeadlinesView:
         response_data = response.data
         assert len(response_data) == 2
         assert response_data["value"] == Decimal(core_headline_example.metric_value)
-        assert str(response_data["period_end"]) == core_headline_example.period_end
+        assert str(
+            response_data["period_end"]
+        ) == core_headline_example.period_end.strftime(EXPECTED_DATE_FORMAT)
 
     @pytest.mark.django_db
     def test_get_returns_error_for_invalid_request(
