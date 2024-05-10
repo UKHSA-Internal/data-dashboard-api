@@ -5,39 +5,13 @@ from django.db.models.manager import Manager
 from django.utils import timezone
 
 from metrics.data.models.core_models import CoreHeadline
-from metrics.domain.weather_health_alerts.mapping import (
-    WeatherHealthAlertsMetricMapping,
-)
+from metrics.domain.weather_health_alerts.state import WeatherHealthAlarmState
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class WeatherHealthAlarmState:
-    metric_value: int
-    topic_name: str
-    period_start: str | None
-    period_end: str | None
-    refresh_date: str | None
-
-    def _build_mapping(self) -> WeatherHealthAlertsMetricMapping:
-        return WeatherHealthAlertsMetricMapping(
-            metric_value=self.metric_value,
-            topic_name=self.topic_name,
-        )
-
-    @property
-    def associated_status(self) -> str:
-        mapping: WeatherHealthAlertsMetricMapping = self._build_mapping()
-        return mapping.associated_status_colour
-
-    @property
-    def associated_text(self) -> str:
-        mapping: WeatherHealthAlertsMetricMapping = self._build_mapping()
-        return mapping.associated_text
+WEATHER_HEALTH_ALERT_DETAILED_DATA = dict[str, str | None]
 
 
 class WeatherHealthAlertsInterface:
