@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class HeadlineState:
+class WeatherHealthAlarmState:
     metric_value: int
     topic_name: str
     period_start: str | None
@@ -62,22 +62,22 @@ class WeatherHealthAlertsInterface:
             represent the alert
 
         """
-        headline_state: HeadlineState = self._build_current_headline_state(
+        weather_health_alarm_state: WeatherHealthAlarmState = self._build_current_headline_state(
             topic_name=topic_name,
             metric_name=metric_name,
             geography_code=geography_code,
         )
         return {
-            "status": headline_state.associated_status,
-            "text": headline_state.associated_text,
-            "period_start": headline_state.period_start,
-            "period_end": headline_state.period_end,
-            "refresh_date": headline_state.refresh_date,
+            "status": weather_health_alarm_state.associated_status,
+            "text": weather_health_alarm_state.associated_text,
+            "period_start": weather_health_alarm_state.period_start,
+            "period_end": weather_health_alarm_state.period_end,
+            "refresh_date": weather_health_alarm_state.refresh_date,
         }
 
     def _build_current_headline_state(
         self, topic_name: str, metric_name: str, geography_code: str
-    ) -> HeadlineState:
+    ) -> WeatherHealthAlarmState:
         core_headline: CoreHeadline | None = (
             self._core_headline_manager.get_latest_headline(
                 topic_name=topic_name,
@@ -89,7 +89,7 @@ class WeatherHealthAlertsInterface:
             # In this case, there has never been an alert for this
             # topic/metric/geography_code combination.
             # So we will default to green/normal with null for the timestamps
-            return HeadlineState(
+            return WeatherHealthAlarmState(
                 metric_value=1,
                 topic_name=topic_name,
                 period_start=None,
@@ -101,7 +101,7 @@ class WeatherHealthAlertsInterface:
             # The last refresh is considered to be when the previous period_end expired
             # In this case, we fall back to the green/normal state of metric_value=1
             refresh_date = core_headline.period_end
-            return HeadlineState(
+            return WeatherHealthAlarmState(
                 metric_value=1,
                 topic_name=topic_name,
                 period_start=core_headline.period_start,
@@ -111,7 +111,7 @@ class WeatherHealthAlertsInterface:
 
         # There is a valid alert which is currently live
         # so we can safely use everything we get from the db record
-        return HeadlineState(
+        return WeatherHealthAlarmState(
             metric_value=core_headline.metric_value,
             topic_name=topic_name,
             period_start=core_headline.period_start,
