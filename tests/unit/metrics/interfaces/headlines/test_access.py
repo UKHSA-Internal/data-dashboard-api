@@ -7,6 +7,8 @@ from metrics.data.models.core_models import CoreHeadline
 from metrics.domain.headlines.state import Headline
 from metrics.interfaces.headlines import access
 
+EXPECTED_DATE_FORMAT = "%Y-%m-%d"
+
 
 @pytest.fixture
 def example_headline_args() -> dict[str, str]:
@@ -68,7 +70,10 @@ class TestHeadlinesInterface:
 
         # Then
         assert headline.metric_value == mocked_core_headline.metric_value
-        assert str(headline.period_end) == mocked_core_headline.period_end
+        assert (
+            headline.period_end.strftime(EXPECTED_DATE_FORMAT)
+            == mocked_core_headline.period_end
+        )
 
         spy_core_headline_manager.get_latest_headline.assert_called_once_with(
             **expected_example_args,
