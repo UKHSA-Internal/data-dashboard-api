@@ -87,6 +87,15 @@ class WeatherHealthAlertsInterface:
                 geography_code=geography_code,
             )
         )
+
+        return self._parse_core_headline_as_alarm_state(
+            topic_name=topic_name, core_headline=core_headline
+        )
+
+    @classmethod
+    def _parse_core_headline_as_alarm_state(
+        cls, topic_name: str, core_headline: CoreHeadline | None
+    ) -> WeatherHealthAlarmState:
         if core_headline is None:
             # In this case, there has never been an alert for this
             # topic/metric/geography_code combination.
