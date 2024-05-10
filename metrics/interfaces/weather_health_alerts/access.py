@@ -62,10 +62,12 @@ class WeatherHealthAlertsInterface:
             represent the alert
 
         """
-        weather_health_alarm_state: WeatherHealthAlarmState = self._build_current_headline_state(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_code=geography_code,
+        weather_health_alarm_state: WeatherHealthAlarmState = (
+            self._build_current_headline_state(
+                topic_name=topic_name,
+                metric_name=metric_name,
+                geography_code=geography_code,
+            )
         )
         return {
             "status": weather_health_alarm_state.associated_status,
