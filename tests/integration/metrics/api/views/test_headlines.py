@@ -43,9 +43,10 @@ class TestHeadlinesView:
         response_data = response.data
         assert len(response_data) == 2
         assert response_data["value"] == Decimal(core_headline_example.metric_value)
-        assert str(
-            response_data["period_end"]
-        ) == core_headline_example.period_end.strftime(EXPECTED_DATE_FORMAT)
+        assert (
+            response_data["period_end"].strftime(EXPECTED_DATE_FORMAT)
+            == core_headline_example.period_end
+        )
 
     @pytest.mark.django_db
     def test_get_returns_error_for_invalid_request(
