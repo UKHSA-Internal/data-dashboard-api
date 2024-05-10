@@ -7,6 +7,7 @@ DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
+
 class HeadlinesInterface:
     def __init__(
         self,
