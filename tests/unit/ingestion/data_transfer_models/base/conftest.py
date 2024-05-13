@@ -8,7 +8,7 @@ def valid_payload_for_base_model() -> dict[str, str]:
     return {
         "parent_theme": "infectious_disease",
         "child_theme": "respiratory",
-        "topic": enums.Topic.COVID_19.value,
+        "topic": enums.Topic.RESPIRATORY.return_list()[0],
         "metric_group": enums.DataSourceFileType.testing.value,
         "metric": "COVID-19_testing_PCRcountByDay",
         "geography_type": enums.GeographyType.NATION.value,
