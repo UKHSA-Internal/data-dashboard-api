@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Iterable
 
 from django.db.models.manager import Manager
 from django.utils import timezone
@@ -134,3 +135,29 @@ class WeatherHealthAlertsInterface:
             period_end=core_headline.period_end,
             refresh_date=core_headline.refresh_date,
         )
+
+
+def get_summary_data_for_alerts(
+    geography_codes: Iterable[str],
+    topic_name: str,
+    metric_name: str,
+) -> list[dict[str, str]]:
+    weather_health_alerts_interface = WeatherHealthAlertsInterface()
+    return weather_health_alerts_interface.build_summary_data_for_alerts(
+        geography_codes=geography_codes,
+        topic_name=topic_name,
+        metric_name=metric_name,
+    )
+
+
+def get_detailed_data_for_alert(
+    geography_code: str,
+    topic_name: str,
+    metric_name: str,
+) -> list[dict[str, str]]:
+    weather_health_alerts_interface = WeatherHealthAlertsInterface()
+    return weather_health_alerts_interface.build_detailed_data_for_alert(
+        geography_code=geography_code,
+        topic_name=topic_name,
+        metric_name=metric_name,
+    )
