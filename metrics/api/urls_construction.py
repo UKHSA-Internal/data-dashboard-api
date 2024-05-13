@@ -43,6 +43,10 @@ cms_api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 cms_api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
 
 
+heat_health_alerts_router = routers.DefaultRouter()
+heat_health_alerts_router.register(r'')
+
+
 def construct_cms_admin_urlpatterns(
     *,
     app_mode: str | None,
