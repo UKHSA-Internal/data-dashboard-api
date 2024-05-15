@@ -85,7 +85,7 @@ tomli==2.0.1
 typing_extensions==4.11.0
 uritemplate==4.1.1
 urllib3==2.0.7
-virtualenv==20.26.1
+virtualenv==20.26.2
 wagtail==6.1
 wagtail_trash==3.0.0
 wagtail_modeladmin==2.0.0
