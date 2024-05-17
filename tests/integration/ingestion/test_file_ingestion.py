@@ -1,9 +1,13 @@
+import zoneinfo
+
 import pytest
 
 from ingestion.file_ingestion import data_ingester
 from ingestion.utils import type_hints
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+
+EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
 
 class TestDataIngester:
@@ -43,8 +47,19 @@ class TestDataIngester:
         assert core_headline.sex == data["sex"]
         assert core_headline.refresh_date.strftime("%Y-%m-%d") == data["refresh_date"]
 
-        assert str(core_headline.period_start) == data["data"][0]["period_start"]
-        assert str(core_headline.period_end) == data["data"][0]["period_end"]
+        london_timezone = zoneinfo.ZoneInfo(key="Europe/London")
+        assert (
+            core_headline.period_start.astimezone(tz=london_timezone).strftime(
+                EXPECTED_DATE_FORMAT
+            )
+            == data["data"][0]["period_start"]
+        )
+        assert (
+            core_headline.period_end.astimezone(tz=london_timezone).strftime(
+                EXPECTED_DATE_FORMAT
+            )
+            == data["data"][0]["period_end"]
+        )
         assert str(round(core_headline.metric_value, 1)) == str(
             data["data"][0]["metric_value"]
         )

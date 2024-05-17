@@ -1,3 +1,5 @@
+import zoneinfo
+
 import pytest
 
 from ingestion.consumer import Consumer
@@ -16,7 +18,8 @@ from metrics.data.models.core_models import (
     Topic,
 )
 
-EXPECTED_EMBARGO_FORMAT = "%Y-%m-%d %H:%M:%S"
+EXPECTED_DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
 
 class TestConsumer:
@@ -32,7 +35,7 @@ class TestConsumer:
         """
         # Given
         consumer = Consumer(source_data=example_headline_data)
-        assert CoreHeadline.objects.all().count() == 0
+        assert not CoreHeadline.objects.exists()
 
         # When
         consumer.create_core_headlines()
@@ -170,15 +173,25 @@ class TestConsumer:
         headline_specific_data: dict[str, str | float],
     ) -> None:
         self._assert_core_model(model=core_headline, source_data=main_headline_data)
-
-        assert str(core_headline.period_start) == headline_specific_data["period_start"]
-        assert str(core_headline.period_end) == headline_specific_data["period_end"]
+        london_timezone = zoneinfo.ZoneInfo(key="Europe/London")
+        assert (
+            core_headline.period_start.astimezone(tz=london_timezone).strftime(
+                EXPECTED_DATE_FORMAT
+            )
+            == headline_specific_data["period_start"]
+        )
+        assert (
+            core_headline.period_end.astimezone(tz=london_timezone).strftime(
+                EXPECTED_DATE_FORMAT
+            )
+            == headline_specific_data["period_end"]
+        )
         assert (
             str(core_headline.metric_value)
             == f"{headline_specific_data['metric_value']:.4f}"
         )
         assert (
-            core_headline.embargo.strftime(EXPECTED_EMBARGO_FORMAT)
+            core_headline.embargo.strftime(EXPECTED_DATETIME_FORMAT)
             == headline_specific_data["embargo"]
         )
 

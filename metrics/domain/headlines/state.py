@@ -6,4 +6,4 @@ from pydantic.main import BaseModel
 
 class Headline(BaseModel):
     metric_value: Decimal
-    period_end: datetime.date
+    period_end: datetime.datetime

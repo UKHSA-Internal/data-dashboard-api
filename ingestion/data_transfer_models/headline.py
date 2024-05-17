@@ -12,8 +12,8 @@ from ingestion.utils import type_hints
 class InboundHeadlineSpecificFields(BaseModel):
     """Base data validation object for the lower level fields for headline type data"""
 
-    period_start: datetime.date
-    period_end: datetime.date
+    period_start: datetime.datetime
+    period_end: datetime.datetime
     embargo: datetime.datetime | None
     metric_value: float
 
@@ -25,7 +25,7 @@ class InboundHeadlineSpecificFields(BaseModel):
         """Casts the inbound `embargo` to the London timezone
 
         Args:
-            embargo: The inbound refresh date
+            embargo: The inbound embargo
                 datetime object
 
         Returns:
@@ -35,6 +35,44 @@ class InboundHeadlineSpecificFields(BaseModel):
 
         """
         return validation.cast_date_to_uk_timezone(date_value=embargo)
+
+    @field_validator("period_start")
+    @classmethod
+    def cast_period_start_to_uk_timezone(
+        cls, period_start: datetime.datetime
+    ) -> datetime.datetime:
+        """Casts the inbound `period_start` to the London timezone
+
+        Args:
+            period_start: The inbound period_start
+                datetime object
+
+        Returns:
+            A `datetime` object which has the timezone
+            info set to the declared `TIMEZONE` as per
+            the main django settings
+
+        """
+        return validation.cast_date_to_uk_timezone(date_value=period_start)
+
+    @field_validator("period_end")
+    @classmethod
+    def cast_period_end_to_uk_timezone(
+        cls, period_end: datetime.datetime
+    ) -> datetime.datetime:
+        """Casts the inbound `period_end` to the London timezone
+
+        Args:
+            period_end: The inbound period_start
+                datetime object
+
+        Returns:
+            A `datetime` object which has the timezone
+            info set to the declared `TIMEZONE` as per
+            the main django settings
+
+        """
+        return validation.cast_date_to_uk_timezone(date_value=period_end)
 
     @field_validator("period_end")
     @classmethod
