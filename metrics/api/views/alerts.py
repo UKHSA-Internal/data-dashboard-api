@@ -65,3 +65,13 @@ class HeatAlertViewSet(BaseAlertViewSet):
     @property
     def metric_name(self) -> str:
         return Alerts.HEAT_METRIC_NAME.value
+
+
+class ColdAlertViewSet(BaseAlertViewSet):
+    @property
+    def topic_name(self) -> str:
+        return Alerts.COLD_TOPIC_NAME.value
+
+    @property
+    def metric_name(self) -> str:
+        return Alerts.COLD_METRIC_NAME.value
