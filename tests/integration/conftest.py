@@ -58,24 +58,28 @@ def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
     geography_type = GeographyType.objects.create(name="Nation")
     geography = Geography.objects.create(name="England", geography_type=geography_type)
 
+    period_end: datetime.datetime = timezone.make_aware(
+        value=datetime.datetime(year=2023, month=1, day=7)
+    )
+
     refresh_date: datetime.datetime = timezone.make_aware(
         value=datetime.datetime(year=2023, month=1, day=7)
     )
     main_timeseries = CoreHeadline.objects.create(
-        metric_value=123,
+        metric_value=123.0,
         metric=metric,
         geography=geography,
         refresh_date=refresh_date,
         period_start="2023-01-01",
-        period_end="2023-01-07",
+        period_end=period_end,
     )
     percentage_timeseries = CoreHeadline.objects.create(
-        metric_value=3,
+        metric_value=3.0,
         metric=percentage_metric,
         geography=geography,
         refresh_date=refresh_date,
         period_start="2023-01-01",
-        period_end="2023-01-07",
+        period_end=period_end,
     )
     return main_timeseries, percentage_timeseries
 

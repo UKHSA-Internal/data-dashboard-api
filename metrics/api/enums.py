@@ -20,3 +20,9 @@ class AppMode(Enum):
     @classmethod
     def dependent_on_cache(cls) -> list[str]:
         return [cls.PRIVATE_API.value]
+
+
+class Alerts(Enum):
+    ALERT_GEOGRAPHY_TYPE_NAME = "Government Office Region"
+    HEAT_TOPIC_NAME = "Heat-alert"
+    HEAT_METRIC_NAME = "heat-alert_headline_matrixNumber"

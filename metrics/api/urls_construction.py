@@ -22,6 +22,7 @@ from metrics.api.views import (
     EncodedChartsView,
     HeadlinesView,
     HealthView,
+    HeatAlertViewSet,
     TablesView,
     TrendsView,
 )
@@ -108,10 +109,19 @@ def construct_public_api_urlpatterns(
 
 API_PREFIX = "api/"
 
+heat_alert_list = HeatAlertViewSet.as_view({"get": "list"})
+heat_alert_detail = HeatAlertViewSet.as_view({"get": "retrieve"})
+
 private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
     path(f"{API_PREFIX}global-banners/v1", GlobalBannerView.as_view()),
+    path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
+    path(
+        f"{API_PREFIX}alerts/v1/heat/<str:geography_code>",
+        heat_alert_detail,
+        name="heat-alerts-detail",
+    ),
     # Metrics/private content endpoints
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
