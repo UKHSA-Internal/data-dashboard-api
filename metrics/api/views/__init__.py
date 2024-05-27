@@ -1,3 +1,4 @@
+from .alerts import HeatAlertViewSet
 from .charts import ChartsView, EncodedChartsView
 from .headlines import HeadlinesView
 from .downloads import DownloadsView, BulkDownloadsView
