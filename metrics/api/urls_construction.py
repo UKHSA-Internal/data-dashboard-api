@@ -18,6 +18,7 @@ from metrics.api import enums, settings
 from metrics.api.views import (
     BulkDownloadsView,
     ChartsView,
+    ColdAlertViewSet,
     DownloadsView,
     EncodedChartsView,
     HeadlinesView,
@@ -111,6 +112,8 @@ API_PREFIX = "api/"
 
 heat_alert_list = HeatAlertViewSet.as_view({"get": "list"})
 heat_alert_detail = HeatAlertViewSet.as_view({"get": "retrieve"})
+cold_alert_list = ColdAlertViewSet.as_view({"get": "list"})
+cold_alert_detail = ColdAlertViewSet.as_view({"get": "retrieve"})
 
 private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
@@ -121,6 +124,12 @@ private_api_urlpatterns = [
         f"{API_PREFIX}alerts/v1/heat/<str:geography_code>",
         heat_alert_detail,
         name="heat-alerts-detail",
+    ),
+    path(f"{API_PREFIX}alerts/v1/cold", cold_alert_list, name="cold-alerts-list"),
+    path(
+        f"{API_PREFIX}alerts/v1/cold/<str:geography_code>",
+        cold_alert_detail,
+        name="cold-alerts-detail",
     ),
     # Metrics/private content endpoints
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),

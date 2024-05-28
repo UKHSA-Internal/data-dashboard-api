@@ -22,7 +22,7 @@ class InvalidTopicExtendedBaseAlertViewSet(BaseAlertViewSet):
         return "metric_name"
 
 
-class TestAlertsView:
+class TestHeatAlertsView:
     @property
     def path(self) -> str:
         return reverse("heat-alerts-list")
@@ -31,7 +31,7 @@ class TestAlertsView:
     def test_list_returns_correct_response(self):
         """
         Given a valid request to the `alerts` endpoint
-        When the `GET /api/alerts/v1` endpoint is hit.
+        When the `GET /api/alerts/v1/heat` endpoint is hit.
         Then the expected response is returned.
         """
         # Given
@@ -52,7 +52,7 @@ class TestAlertsView:
     ):
         """
         Given a valid request `alerts` retrieve action endpoint
-        When the `GET /api/alerts/v1/{geography_code}` endpoint is hit.
+        When the `GET /api/alerts/v1/heat/{geography_code}` endpoint is hit.
         Then the correct response is returned.
         """
         # Given
@@ -74,7 +74,7 @@ class TestAlertsView:
     ):
         """
         Given an invalid request to the `alerts` retrieve action endpoint
-        When the `GET /api/alerts/v1/{geography_code}` endpoint is hit.
+        When the `GET /api/alerts/v1/heat{geography_code}` endpoint is hit.
         Then a 400 Bad Request is returned.
         """
         # Given
@@ -88,7 +88,73 @@ class TestAlertsView:
         assert response.status_code == HTTPStatus.BAD_REQUEST
 
 
-class TestHeatAlertsView:
+class TestColdAlertsView:
+    @property
+    def path(self) -> str:
+        return reverse("cold-alerts-list")
+
+    @pytest.mark.django_db
+    def test_list_returns_correct_response(self):
+        """
+        Given a valid request to the `alerts` endpoint
+        When the `GET /api/alerts/v1/cold` endpoint is hit.
+        Then the expected response is returned.
+        """
+        # Given
+        client = APIClient()
+
+        # When
+        response: Response = client.get(path=self.path)
+
+        # Then
+        assert response.status_code == HTTPStatus.OK
+        assert response.headers["Content-Type"] == "application/json"
+
+    @pytest.mark.django_db
+    @mock.patch.object(GeographiesForAlertsSerializer, "data")
+    @mock.patch.object(GeographiesForAlertsSerializer, "is_valid")
+    def test_retrieve_returns_correct_response(
+        self, mock_is_valid: mock.MagicMock, mock_data: mock.MagicMock
+    ):
+        """
+        Given a valid request `alerts` retrieve action endpoint
+        When the `GET /api/alerts/v1/cold/{geography_code}` endpoint is hit.
+        Then the correct response is returned.
+        """
+        # Given
+        client = APIClient()
+        path = f"{self.path}/E12000001"
+        mock_data.return_value = [("E12000001", "North East")]
+        mock_is_valid.return_value = True
+
+        # When
+        response: Response = client.get(path=path)
+
+        # Then
+        assert response.status_code == HTTPStatus.OK
+        assert response.headers["Content-Type"] == "application/json"
+
+    @pytest.mark.django_db
+    def test_retrieve_returns_400_response(
+        self,
+    ):
+        """
+        Given an invalid request to the `alerts` retrieve action endpoint
+        When the `GET /api/alerts/v1/cold/{geography_code}` endpoint is hit.
+        Then a 400 Bad Request is returned.
+        """
+        # Given
+        client = APIClient()
+        path = f"{self.path}/invalid-code"
+
+        # When
+        response: Response = client.get(path=path)
+
+        # Then
+        assert response.status_code == HTTPStatus.BAD_REQUEST
+
+
+class TestBaseAlertsView:
 
     @pytest.mark.django_db
     def test_raises_error_if_topic_name_not_implemented(self):

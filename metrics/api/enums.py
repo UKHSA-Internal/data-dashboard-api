@@ -26,3 +26,5 @@ class Alerts(Enum):
     ALERT_GEOGRAPHY_TYPE_NAME = "Government Office Region"
     HEAT_TOPIC_NAME = "Heat-alert"
     HEAT_METRIC_NAME = "heat-alert_headline_matrixNumber"
+    COLD_TOPIC_NAME = "Cold-alert"
+    COLD_METRIC_NAME = "cold-alert_headline_matrixNumber"
