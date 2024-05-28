@@ -114,7 +114,7 @@ class TestColdAlertsView:
     @mock.patch.object(GeographiesForAlertsSerializer, "data")
     @mock.patch.object(GeographiesForAlertsSerializer, "is_valid")
     def test_retrieve_returns_correct_response(
-        self, mock_is_valid: mock.Mock(), mock_data: mock.Mock()
+        self, mock_is_valid: mock.MagicMock, mock_data: mock.MagicMock
     ):
         """
         Given a valid request `alerts` retrieve action endpoint
