@@ -42,4 +42,4 @@ class WeatherHealthAlarmState:
 
     def get_associated_text(self) -> str:
         mapping: WeatherHealthAlertsMetricMapping = self._build_mapping()
-        return mapping.associated_text
+        return "".join(mapping.associated_text.split("\n"))

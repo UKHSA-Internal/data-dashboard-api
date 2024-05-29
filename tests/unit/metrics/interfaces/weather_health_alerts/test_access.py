@@ -67,7 +67,9 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         assert (
             detailed_alarm_data["status"] == WeatherHealthAlertStatusColour.GREEN.value
         )
-        assert detailed_alarm_data["text"] == HEAT_ALERT_TEXT_LOOKUP[1]
+        assert detailed_alarm_data["text"] == "".join(
+            HEAT_ALERT_TEXT_LOOKUP[1].split("\n")
+        )
         assert detailed_alarm_data["period_end"] is None
         assert detailed_alarm_data["period_start"] is None
         assert detailed_alarm_data["refresh_date"] is None
@@ -130,7 +132,9 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         assert (
             detailed_alarm_data["status"] == WeatherHealthAlertStatusColour.GREEN.value
         )
-        assert detailed_alarm_data["text"] == HEAT_ALERT_TEXT_LOOKUP[1]
+        assert detailed_alarm_data["text"] == "".join(
+            HEAT_ALERT_TEXT_LOOKUP[1].split("\n")
+        )
         assert detailed_alarm_data["period_end"] is fake_expired_red_alert.period_end
         assert (
             detailed_alarm_data["period_start"] is fake_expired_red_alert.period_start
@@ -190,7 +194,9 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
 
         # Then
         assert detailed_alarm_data["status"] == WeatherHealthAlertStatusColour.RED.value
-        assert detailed_alarm_data["text"] == HEAT_ALERT_TEXT_LOOKUP[16]
+        assert detailed_alarm_data["text"] == "".join(
+            HEAT_ALERT_TEXT_LOOKUP[16].split("\n")
+        )
         assert detailed_alarm_data["period_end"] is fake_expired_red_alert.period_end
         assert (
             detailed_alarm_data["period_start"] is fake_expired_red_alert.period_start
