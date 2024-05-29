@@ -3,6 +3,6 @@ LEVELS_1_TO_4_TEXT = """
 """
 LEVEL_5_TEXT = """
 <p>There is potential for minor impacts across the health and social care sector,
-including:</p><ul><li>increased use of health care services by the vulnerable population</li>
-<li>increase in risk of mortality amongst vulnerable individuals. But not expected.</li></ul>
+including:</p><ul><li>Increased use of health care services by the vulnerable population.</li>
+<li>Increase in risk of mortality amongst vulnerable individuals. But not expected.</li></ul>
 """
