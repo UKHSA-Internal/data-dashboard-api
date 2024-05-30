@@ -68,7 +68,8 @@ def _validate_age_banding(*, age: str) -> str:
 def _validate_age_older_than(*, age: str) -> str:
     age: str = _validate_age_older_than_ends_with_plus_operator(age=age)
     age_number, _ = age.split(AGE_GREATER_THAN_OPERATOR)
-    return _validate_number_is_double_digit(number=age_number)
+    _validate_number_is_double_digit(number=age_number)
+    return age
 
 
 def _validate_number_is_double_digit(*, number: str) -> str:
