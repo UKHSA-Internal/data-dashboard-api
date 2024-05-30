@@ -26,15 +26,20 @@ class TestConsumerProperties:
         assert is_headline_data
 
     @pytest.mark.parametrize(
-        "metric, metric_group",
+        "metric, metric_group, topic",
         (
-            ("COVID-19_deaths_ONSByDay", DataSourceFileType.deaths.value),
-            ("COVID-19_cases_casesByDay", DataSourceFileType.cases.value),
-            ("RSV_healthcare_admissionRateByWeek", DataSourceFileType.healthcare.value),
-            ("hMPV_testing_positivityByWeek", DataSourceFileType.testing.value),
+            ("COVID-19_deaths_ONSByDay", DataSourceFileType.deaths.value, "COVID-19"),
+            ("COVID-19_cases_casesByDay", DataSourceFileType.cases.value, "COVID-19"),
+            (
+                "RSV_healthcare_admissionRateByWeek",
+                DataSourceFileType.healthcare.value,
+                "RSV",
+            ),
+            ("hMPV_testing_positivityByWeek", DataSourceFileType.testing.value, "hMPV"),
             (
                 "COVID-19_vaccinations_autumn22_dosesByDay",
                 DataSourceFileType.vaccinations.value,
+                "COVID-19",
             ),
         ),
     )
@@ -42,6 +47,7 @@ class TestConsumerProperties:
         self,
         metric: str,
         metric_group: str,
+        topic: str,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
     ):
         """
@@ -54,6 +60,7 @@ class TestConsumerProperties:
         fake_data = example_time_series_data
         fake_data["metric_group"] = metric_group
         fake_data["metric"] = metric
+        fake_data["topic"] = topic
         consumer = Consumer(source_data=fake_data)
 
         # When
