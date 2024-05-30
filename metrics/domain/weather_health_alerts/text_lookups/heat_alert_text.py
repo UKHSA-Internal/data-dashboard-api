@@ -32,7 +32,7 @@ risk to vulnerable people living independently in community as well as in care s
 """
 _LEVEL_10_TEXT = """
 <p>Significant impacts are possible across the health and social care sector due to the high temperatures, 
-including:</p><ul></li>Observed increase in mortality across the population likely, 
+including:</p><ul><li>Observed increase in mortality across the population likely, 
 particularly in the 65+ age group or those with health conditions, 
 but impacts may also be seen in younger age groups.</li>
 <li>Increased demand for remote health care services likely.</li>
