@@ -3,7 +3,7 @@ from metrics.domain.weather_health_alerts.text_lookups import common
 _LEVEL_6_TEXT = """
 <p>Minor impacts are possible across the health and social care sector, 
 including:</p><ul><li>Increased use of health care services by the vulnerable population.</li>
-<li>increase in risk of mortality amongst vulnerable individuals. But not expected.</li></ul>
+<li>Increase in risk of mortality amongst vulnerable individuals. But not expected.</li></ul>
 """
 _LEVEL_7_TEXT = """
 <p>Minor impacts are probable across the health and social care sector, 
