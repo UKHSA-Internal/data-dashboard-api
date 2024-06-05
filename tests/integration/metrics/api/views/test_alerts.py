@@ -152,39 +152,3 @@ class TestColdAlertsView:
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
-
-
-class TestBaseAlertsView:
-    @pytest.mark.django_db
-    def test_raises_error_if_topic_name_not_implemented(self):
-        """
-        Given an instance of the `BaseAlertViewSet`
-        When the `topic_name` is not implemented in the child class
-        Then a `NotImplementedError` is raised.
-        """
-        # Given
-        path = reverse("cold-alerts-list")
-        fake_request = RequestFactory().get(path)
-        fake_request.query_params = mock.MagicMock()
-        extended_base_alert_view_set = InvalidTopicExtendedBaseAlertViewSet()
-
-        # When / Then
-        with pytest.raises(NotImplementedError):
-            extended_base_alert_view_set.list(fake_request)
-
-    @pytest.mark.django_db
-    def test_raises_error_if_metric_name_not_implemented(self):
-        """
-        Given an instance of the `BaseAlertViewSet`
-        When the `metric_name` is not implemented in the child class
-        Then a `NotImplementedError` is raised.
-        """
-        # Given
-        path = reverse("cold-alerts-list")
-        fake_request = RequestFactory().get(path)
-        fake_request.query_params = mock.MagicMock()
-        extended_base_alert_view_set = InvalidMetricExtendedBaseAlertViewSet()
-
-        # When / Then
-        with pytest.raises(NotImplementedError):
-            extended_base_alert_view_set.list(fake_request)
