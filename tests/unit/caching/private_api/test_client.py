@@ -51,13 +51,16 @@ class TestCacheClient:
         fake_cache_entry_key = "abc"
         mocked_value = mock.Mock()
         cache_client = CacheClient()
+        timeout = 123
 
         # When
-        cache_client.put(cache_entry_key=fake_cache_entry_key, value=mocked_value)
+        cache_client.put(
+            cache_entry_key=fake_cache_entry_key, value=mocked_value, timeout=timeout
+        )
 
         # Then
         spy_cache.set.assert_called_once_with(
-            key=fake_cache_entry_key, value=mocked_value, timeout=None
+            key=fake_cache_entry_key, value=mocked_value, timeout=timeout
         )
 
     @mock.patch(f"{MODULE_PATH}.cache")

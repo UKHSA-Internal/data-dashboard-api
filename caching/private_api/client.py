@@ -28,7 +28,7 @@ class CacheClient:
         """
         return self._cache.get(key=cache_entry_key, default=None)
 
-    def put(self, *, cache_entry_key: str, value: Any) -> None:
+    def put(self, *, cache_entry_key: str, value: Any, timeout: int | None) -> None:
         """Persists the entry within the cache
 
         Args:
@@ -36,12 +36,14 @@ class CacheClient:
                 identifier for the cache entry
             value: The content being stored in the cache
                 for this entry
+            timeout: The number of seconds after which the response
+                is expired and evicted from the cache
 
         Returns:
             None
 
         """
-        self._cache.set(key=cache_entry_key, value=value, timeout=None)
+        self._cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
     def clear(self) -> None:
         """Deletes all keys in the cache
@@ -83,7 +85,7 @@ class InMemoryCacheClient(CacheClient):
         """
         return self._cache.get(cache_entry_key, None)
 
-    def put(self, *, cache_entry_key: str, value: Any) -> None:
+    def put(self, *, cache_entry_key: str, value: Any, **kwargs) -> None:
         """Persists the entry within the cache
 
         Args:
