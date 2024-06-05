@@ -1,7 +1,4 @@
-from unittest import mock
-import pytest
-
-from metrics.api.views.alerts import BaseAlertViewSet, HeatAlertViewSet
+from metrics.api.views.alerts import BaseAlertViewSet
 
 
 class TestBaseAlertsView:
