@@ -4,7 +4,7 @@ from django.utils import timezone
 
 
 def cast_date_to_uk_timezone(*, date_value: datetime.datetime) -> datetime.datetime:
-    """Casts the inbound `date_value`
+    """Casts the inbound `date_value` to the London timezone
 
     Args:
         date_value: The inbound date
@@ -12,7 +12,8 @@ def cast_date_to_uk_timezone(*, date_value: datetime.datetime) -> datetime.datet
 
     Returns:
         A `datetime` object which has the timezone
-        info set to UTC
+        info set to the declared `TIMEZONE` as per
+        the main django settings
 
     """
     if date_value is None:
