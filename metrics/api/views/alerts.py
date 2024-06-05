@@ -28,18 +28,24 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
 
     @cache_response(timeout=CACHE_TIME_TO_LIVE_IN_SECONDS)
     def list(self, request, *args, **kwargs):
+        topic_name: str = self.topic_name
+        metric_name: str = self.metric_name
+
         serializer = GeographiesForAlertsSerializer()
         geography_data = serializer.data()
         summary_data: list[dict[str, str]] = get_summary_data_for_alerts(
             geography_data=geography_data,
-            topic_name=self.topic_name,
-            metric_name=self.metric_name,
+            topic_name=topic_name,
+            metric_name=metric_name,
         )
 
         return Response(data=summary_data)
 
     @cache_response(timeout=CACHE_TIME_TO_LIVE_IN_SECONDS)
     def retrieve(self, request, *args, **kwargs):
+        topic_name: str = self.topic_name
+        metric_name: str = self.metric_name
+
         serializer = GeographiesForAlertsSerializer()
         geography_data = serializer.data()
 
@@ -54,8 +60,8 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
             geography_code=geography_code,
             geography_name=geography_data[geography_code],
             geography_type_name=Alerts.ALERT_GEOGRAPHY_TYPE_NAME.value,
-            topic_name=self.topic_name,
-            metric_name=self.metric_name,
+            topic_name=topic_name,
+            metric_name=metric_name,
         )
 
         return Response(data=summary_data)
