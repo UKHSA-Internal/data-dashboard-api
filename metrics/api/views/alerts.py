@@ -2,6 +2,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.response import Response
 
+from caching.private_api.decorators import cache_response
 from metrics.api.enums import Alerts
 from metrics.api.serializers.geographies_alerts import GeographiesForAlertsSerializer
 from metrics.interfaces.weather_health_alerts.access import (
@@ -10,6 +11,7 @@ from metrics.interfaces.weather_health_alerts.access import (
 )
 
 ALERTS_API_TAG = "alerts"
+CACHE_TIME_TO_LIVE_IN_SECONDS = 60 * 8
 
 
 @extend_schema(tags=[ALERTS_API_TAG])
@@ -24,6 +26,7 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
     def metric_name(self) -> str:
         raise NotImplementedError
 
+    @cache_response(timeout=CACHE_TIME_TO_LIVE_IN_SECONDS)
     def list(self, request, *args, **kwargs):
         serializer = GeographiesForAlertsSerializer()
         geography_data = serializer.data()
@@ -35,6 +38,7 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(data=summary_data)
 
+    @cache_response(timeout=CACHE_TIME_TO_LIVE_IN_SECONDS)
     def retrieve(self, request, *args, **kwargs):
         serializer = GeographiesForAlertsSerializer()
         geography_data = serializer.data()
