@@ -1,6 +1,6 @@
 import datetime
 
-import pytz
+from django.utils import timezone
 
 
 def cast_date_to_uk_timezone(*, date_value: datetime.datetime) -> datetime.datetime:
@@ -18,9 +18,8 @@ def cast_date_to_uk_timezone(*, date_value: datetime.datetime) -> datetime.datet
     if date_value is None:
         return date_value
 
-    utc_tz = pytz.timezone("UTC")
     try:
-        return utc_tz.localize(dt=date_value).astimezone(tz=pytz.UTC)
+        return timezone.make_aware(value=date_value)
     except ValueError:
         # This is already time zone aware
         return date_value
