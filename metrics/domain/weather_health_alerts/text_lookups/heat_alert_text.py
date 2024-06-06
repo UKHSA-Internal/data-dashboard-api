@@ -1,11 +1,11 @@
 from metrics.domain.weather_health_alerts.text_lookups import common
 
 _LEVEL_6_TEXT = """
-<p>Minor impacts are possible across the health and social care sector, 
-including:</p><ul><li>Increased use of health care services by the vulnerable population.</li>
+<p>Minor impacts are possible across the health and social care sector, including:</p>
+<ul><li>Increased use of health care services by the vulnerable population.</li>
 <li>Increase in risk of mortality amongst vulnerable individuals 
-and increased potential for indoor environments to become very warm. 
-But not expected.</li></ul>
+and increased potential for indoor environments to become very warm.</li>
+<li>But these are not expected.</li></ul>
 """
 _LEVEL_7_TEXT = """
 <p>Minor impacts are probable across the health and social care sector, 
@@ -23,12 +23,12 @@ _LEVEL_9_TEXT = """
 due to the high temperatures, including:</p><ul><li>Observed increase in mortality across the population likely, 
 particularly in the 65+ age group or those with health conditions, 
 but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote health care services likely
-internal temperatures in care settings (hospitals and care homes) may exceed recommended threshold 
+<li>Increased demand for remote health care services likely.</li>
+<li>Internal temperatures in care settings (hospitals and care homes) may exceed recommended threshold 
 for clinical risk assessment.</li>
 <li>Impact on ability of services to be delivered due to heat effects on workforce possible 
-and many indoor environments likely to be overheating, 
-risk to vulnerable people living independently in community as well as in care settings.</li></ul>
+and many indoor environments likely to be overheating.</li>
+<li>Risk to vulnerable people living independently in community as well as in care settings.</li></ul>
 """
 _LEVEL_10_TEXT = """
 <p>Significant impacts are possible across the health and social care sector due to the high temperatures, 
@@ -39,8 +39,8 @@ but impacts may also be seen in younger age groups.</li>
 <li>Internal temperatures in care settings (hospitals and care homes) may exceed recommended threshold 
 for clinical risk assessment.</li>
 <li>Impact on ability of services to be delivered due to heat effects on workforce possible 
-and many indoor environments likely to be overheating, 
-risk to vulnerable people living independently in community as well as in care settings.</li></ul>
+and many indoor environments likely to be overheating.</li>
+<li>Risk to vulnerable people living independently in community as well as in care settings.</li></ul>
 """
 _LEVEL_11_TEXT = """
 <p>There is potential for severe impacts to be observed across the health and social care sector 
@@ -69,16 +69,17 @@ and other sectors starting to be observe impacts (e.g. travel delays).</li></ul>
 """
 _LEVEL_13_TEXT = """
 <p>Significant impacts are expected across the health and social care sector due to the high temperatures, 
-including:</p><ul><li>observed increase in mortality across the population likely, 
+including:</p><ul><li>Observed increase in mortality across the population likely, 
 particularly in the 65+ age group or those with health conditions, 
-but impacts may also be seen in younger age groups</li><li>increased demand for remote health care services likely.</li>
-<li>internal temperatures in care settings (hospitals and care homes) may exceed recommended threshold 
+but impacts may also be seen in younger age groups.</li>
+<li>Increased demand for remote health care services likely.</li>
+<li>Internal temperatures in care settings (hospitals and care homes) may exceed recommended threshold 
 for clinical risk assessment.</li>
-<li>impact on ability of services to be delivered due to heat effects on workforce possible 
-and many indoor environments likely to be overheating, 
-risk to vulnerable people living independently in community as well as in care settings.</li>
-<li>medicines management issues.</li><li>Staffing issues due to external factors (e.g. transport).</li>
-<li>cross system demand for temporary AC capacity being exceeded possible 
+<li>Impact on ability of services to be delivered due to heat effects on workforce possible 
+and many indoor environments likely to be overheating.</li>
+<li>Risk to vulnerable people living independently in community as well as in care settings.</li>
+<li>Medicines management issues.</li><li>Staffing issues due to external factors (e.g. transport).</li>
+<li>Cross system demand for temporary AC capacity being exceeded possible 
 and other sectors starting to be observe impacts (e.g. travel delays).</li></ul>
 """
 _LEVEL_14_TEXT = """
