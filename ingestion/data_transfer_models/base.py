@@ -158,8 +158,11 @@ class IncomingBaseDataModel(BaseModel):
 
         """
         input_metric_group: str | None = validation_info.data.get("metric_group")
+        input_topic: str | None = validation_info.data.get("topic")
         return validation.validate_metric(
-            metric=metric, metric_group=input_metric_group
+            metric=metric,
+            metric_group=input_metric_group,
+            topic=input_topic,
         )
 
     @field_validator("refresh_date")
