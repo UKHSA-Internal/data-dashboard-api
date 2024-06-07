@@ -10,6 +10,7 @@ from rest_framework import routers
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.api.v2.router import WagtailAPIRouter
 
+from cms.dashboard.views import LinkBrowseView
 from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from cms.snippets.views import GlobalBannerView
 from feedback.api.urls import construct_urlpatterns_for_feedback
@@ -17,10 +18,12 @@ from metrics.api import enums, settings
 from metrics.api.views import (
     BulkDownloadsView,
     ChartsView,
+    ColdAlertViewSet,
     DownloadsView,
     EncodedChartsView,
     HeadlinesView,
     HealthView,
+    HeatAlertViewSet,
     TablesView,
     TrendsView,
 )
@@ -40,11 +43,6 @@ cms_api_router = WagtailAPIRouter("wagtailapi")
 # The second parameter is the endpoint class that handles the requests
 cms_api_router.register_endpoint("pages", CMSPagesAPIViewSet)
 cms_api_router.register_endpoint("drafts", CMSDraftPagesViewSet)
-
-cms_admin_urlpatterns = [
-    # Serves the CMS admin view
-    path("cms-admin/", include(wagtailadmin_urls)),
-]
 
 
 def construct_cms_admin_urlpatterns(
@@ -71,8 +69,10 @@ def construct_cms_admin_urlpatterns(
 
     """
     prefix: str = "" if app_mode == enums.AppMode.CMS_ADMIN.value else "cms-admin/"
-
-    return [path(prefix, include(wagtailadmin_urls))]
+    return [
+        path(prefix, include(wagtailadmin_urls)),
+        path("choose-page/", LinkBrowseView.as_view(), name="wagtailadmin_choose_page"),
+    ]
 
 
 DEFAULT_PUBLIC_API_PREFIX = "api/public/timeseries/"
@@ -110,10 +110,27 @@ def construct_public_api_urlpatterns(
 
 API_PREFIX = "api/"
 
+heat_alert_list = HeatAlertViewSet.as_view({"get": "list"})
+heat_alert_detail = HeatAlertViewSet.as_view({"get": "retrieve"})
+cold_alert_list = ColdAlertViewSet.as_view({"get": "list"})
+cold_alert_detail = ColdAlertViewSet.as_view({"get": "retrieve"})
+
 private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
     path(f"{API_PREFIX}global-banners/v1", GlobalBannerView.as_view()),
+    path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
+    path(
+        f"{API_PREFIX}alerts/v1/heat/<str:geography_code>",
+        heat_alert_detail,
+        name="heat-alerts-detail",
+    ),
+    path(f"{API_PREFIX}alerts/v1/cold", cold_alert_list, name="cold-alerts-list"),
+    path(
+        f"{API_PREFIX}alerts/v1/cold/<str:geography_code>",
+        cold_alert_detail,
+        name="cold-alerts-detail",
+    ),
     # Metrics/private content endpoints
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),

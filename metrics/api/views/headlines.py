@@ -22,13 +22,14 @@ HEADLINES_API_TAG = "headlines"
 class HeadlinesView(APIView):
     permission_classes = []
 
+    @classmethod
     @extend_schema(
         parameters=[HeadlinesQuerySerializer],
         responses={HTTPStatus.OK.value: HeadlinesResponseSerializer},
         tags=[HEADLINES_API_TAG],
     )
     @cache_response()
-    def get(self, request, *args, **kwargs):
+    def get(cls, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers.
 
         ---

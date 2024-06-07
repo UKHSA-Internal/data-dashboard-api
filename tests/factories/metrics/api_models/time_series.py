@@ -1,7 +1,8 @@
+import contextlib
 import datetime
 
 import factory
-
+from django.utils import timezone
 from metrics.data.models.api_models import APITimeSeries
 
 
@@ -30,10 +31,18 @@ class APITimeSeriesFactory(factory.django.DjangoModelFactory):
         sex: str = "all",
         year: int = 2023,
         epiweek: int = 1,
-        refresh_date: str | datetime.date = "2023-08-10",
+        refresh_date: str | datetime.datetime = datetime.datetime(2023, 8, 10),
         date: str | datetime.date = "2023-01-01",
+        embargo: str | datetime.datetime = datetime.datetime(2024, 4, 10),
         **kwargs
     ):
+        refresh_date: datetime.datetime = cls._make_datetime_timezone_aware(
+            datetime_obj=refresh_date
+        )
+        embargo: datetime.datetime = cls._make_datetime_timezone_aware(
+            datetime_obj=embargo
+        )
+
         return cls.create(
             metric_value=metric_value,
             metric_frequency=metric_frequency,
@@ -48,8 +57,28 @@ class APITimeSeriesFactory(factory.django.DjangoModelFactory):
             age=age_name,
             sex=sex,
             year=year,
+            month=1,
             epiweek=epiweek,
             date=date,
             refresh_date=refresh_date,
+            embargo=embargo,
             **kwargs
         )
+
+    @classmethod
+    def _make_datetime_timezone_aware(
+        cls, datetime_obj: str | datetime.datetime | None
+    ) -> datetime.datetime:
+
+        if datetime_obj is None:
+            return datetime_obj
+
+        with contextlib.suppress(TypeError):
+            # If it is already a datetime object then suppress the resulting TypeError
+            datetime_obj = datetime.datetime.strptime(datetime_obj, "%Y-%m-%d")
+
+        try:
+            return timezone.make_aware(value=datetime_obj)
+        except ValueError:
+            # The object is already timezone aware
+            return datetime_obj

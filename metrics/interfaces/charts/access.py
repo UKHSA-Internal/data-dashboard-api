@@ -12,9 +12,9 @@ from metrics.domain.charts import (
     line_multi_coloured,
     line_with_shaded_section,
 )
+from metrics.domain.common.utils import ChartTypes
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.models.plots_text import PlotsText
-from metrics.domain.utils import ChartTypes
 from metrics.interfaces.charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
 
@@ -43,8 +43,6 @@ class ChartsInterface:
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
-        self.core_time_series_manager = core_time_series_manager
-
         self.plots_interface = plots_interface or PlotsInterface(
             plots_collection=self.chart_plots,
             core_time_series_manager=core_time_series_manager,

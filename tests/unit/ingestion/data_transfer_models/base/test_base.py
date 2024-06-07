@@ -124,7 +124,10 @@ class TestIncomingBaseValidation:
             strict=True,
         )
 
-        assert str(incoming_base_validation.refresh_date) == f"{refresh_date} 00:00:00"
+        assert (
+            str(incoming_base_validation.refresh_date)
+            == f"{refresh_date} 00:00:00+00:00"
+        )
 
     def test_refresh_date_as_timestamp_is_validated(self):
         """
@@ -159,7 +162,34 @@ class TestIncomingBaseValidation:
             strict=True,
         )
 
-        assert str(incoming_base_validation.refresh_date) == refresh_date
+        assert str(incoming_base_validation.refresh_date) == f"{refresh_date}+00:00"
+
+    def test_raises_error_when_parent_theme_not_recognized(self):
+        """
+        Given an otherwise valid payload containing
+            an invalid `parent_theme` value
+        When the `IncomingTimeSeriesValidation` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        fake_parent_theme = "non-existent-parent-theme"
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(
+                parent_theme=fake_parent_theme,
+                child_theme=VALID_CHILD_THEME,
+                topic=VALID_TOPIC,
+                metric_group=VALID_METRIC_GROUP,
+                metric=VALID_METRIC,
+                geography_type=VALID_GEOGRAPHY_TYPE,
+                geography=VALID_GEOGRAPHY,
+                geography_code=VALID_GEOGRAPHY_CODE,
+                age=VALID_AGE,
+                sex=VALID_SEX,
+                stratum=VALID_STRATUM,
+                refresh_date=VALID_REFRESH_DATE_IN_DATE_FORMAT,
+            )
 
     def test_raises_error_when_metric_group_not_recognized(self):
         """

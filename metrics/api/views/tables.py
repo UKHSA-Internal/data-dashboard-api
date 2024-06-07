@@ -18,13 +18,14 @@ TABLES_API_TAG = "tables"
 class TablesView(APIView):
     permission_classes = []
 
+    @classmethod
     @extend_schema(
         request=TablesSerializer,
         responses={HTTPStatus.OK.value: TablesResponseSerializer},
         tags=[TABLES_API_TAG],
     )
     @cache_response()
-    def post(self, request, *args, **kwargs):
+    def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate chart data in tabular format.
 
         Multiple plots can be added as an array of objects from the request body.

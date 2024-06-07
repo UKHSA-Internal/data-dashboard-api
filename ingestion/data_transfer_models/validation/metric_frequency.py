@@ -1,7 +1,7 @@
 from ingestion.metrics_interface.interface import MetricsAPIInterface
 
 
-def validate_metric_frequency(metric_frequency: str) -> str:
+def validate_metric_frequency(*, metric_frequency: str) -> str:
     """Casts the `metric_frequency` value to one of the expected values
 
     Notes:

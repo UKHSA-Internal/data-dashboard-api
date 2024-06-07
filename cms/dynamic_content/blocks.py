@@ -67,7 +67,8 @@ class CodeBlock(blocks.StreamBlock):
 
 
 class ButtonChooserBlock(SnippetChooserBlock):
-    def get_api_representation(self, value, context=None) -> dict | None:
+    @classmethod
+    def get_api_representation(cls, value, context=None) -> dict | None:
         if value:
             return {
                 "text": value.text,
@@ -80,7 +81,8 @@ class ButtonChooserBlock(SnippetChooserBlock):
 
 
 class InternalButtonChooserBlock(SnippetChooserBlock):
-    def get_api_representation(self, value, context=None) -> dict | None:
+    @classmethod
+    def get_api_representation(cls, value, context=None) -> dict | None:
         if value:
             return {
                 "text": value.text,
@@ -92,7 +94,8 @@ class InternalButtonChooserBlock(SnippetChooserBlock):
 
 
 class ExternalButtonChooserBlock(SnippetChooserBlock):
-    def get_api_representation(self, value, context=None) -> dict | None:
+    @classmethod
+    def get_api_representation(cls, value, context=None) -> dict | None:
         if value:
             return {
                 "text": value.text,

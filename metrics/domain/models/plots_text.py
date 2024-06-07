@@ -6,8 +6,8 @@ from typing import Any
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
+from metrics.domain.common.utils import ChartTypes
 from metrics.domain.models import PlotData, PlotParameters
-from metrics.domain.utils import ChartTypes
 
 READABLE_DATE_FORMAT = "%d %B %Y"
 

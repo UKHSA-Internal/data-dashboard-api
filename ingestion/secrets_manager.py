@@ -14,7 +14,7 @@ class MissingSecretsManagerARNError(Exception):
 
 
 def _extract_password_from_secret(*, secret: SECRETS_MANAGER_RESPONSE_TYPE) -> str:
-    deserialized_secret: str = json.loads(secret["SecretString"])
+    deserialized_secret: dict[str, str] = json.loads(secret["SecretString"])
     return deserialized_secret["password"]
 
 

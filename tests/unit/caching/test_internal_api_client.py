@@ -188,7 +188,7 @@ class TestInternalAPIClient:
         # Then
         assert constructed_query_params["type"] == page_type
         for key, value in additional_query_parameters.items():
-            assert additional_query_parameters[key] == value
+            assert constructed_query_params[key] == value
 
     # Endpoint calls tests
 

@@ -10,7 +10,7 @@ from metrics.api.serializers.charts import (
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.models import PlotParameters, PlotsCollection
-from metrics.domain.utils import (
+from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
     DEFAULT_X_AXIS,

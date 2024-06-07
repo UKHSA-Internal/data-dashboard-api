@@ -186,7 +186,7 @@ class TestAPITimeSeriesQuerySet:
             for date in dates
         ]
 
-        updated_refresh_date = datetime.date(year=2023, month=11, day=8)
+        updated_refresh_date = datetime.datetime(year=2023, month=11, day=8)
         immediately_unembargoed_metric_value = 2
         embargoed_api_time_series_records = [
             APITimeSeriesFactory.create_record(

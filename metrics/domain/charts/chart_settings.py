@@ -3,8 +3,8 @@ import datetime
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
+from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 from metrics.domain.models import PlotData
-from metrics.domain.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 
 
 class ChartSettings:
@@ -174,6 +174,7 @@ def get_max_date_for_current_month(
 
     year, month, day = map(int, datestamp.split("-"))
 
-    if day <= 15:
-        return datetime.date(year=year, month=month, day=15)
+    middle_of_month = 15
+    if day <= middle_of_month:
+        return datetime.date(year=year, month=month, day=middle_of_month)
     return get_last_day_of_month(date=datetime.date(year=year, month=month, day=day))

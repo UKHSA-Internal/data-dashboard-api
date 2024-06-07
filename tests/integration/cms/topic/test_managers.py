@@ -1,6 +1,9 @@
+import datetime
+
 import pytest
 
 from cms.topic.models import TopicPage
+from django.utils import timezone
 
 
 class TestTopicPageManager:
@@ -12,11 +15,22 @@ class TestTopicPageManager:
         Then the correct `TopicPage` record is returned
         """
         # Given
+        date_posted: datetime.datetime = timezone.make_aware(
+            value=datetime.datetime(year=2023, month=1, day=1)
+        )
         live_page = TopicPage.objects.create(
-            path="abc", depth=1, title="abc", date_posted="2023-01-01", live=True
+            path="abc",
+            depth=1,
+            title="abc",
+            date_posted=date_posted,
+            live=True,
         )
         unpublished_page = TopicPage.objects.create(
-            path="def", depth=1, title="def", date_posted="2023-01-01", live=False
+            path="def",
+            depth=1,
+            title="def",
+            date_posted=date_posted,
+            live=False,
         )
 
         # When

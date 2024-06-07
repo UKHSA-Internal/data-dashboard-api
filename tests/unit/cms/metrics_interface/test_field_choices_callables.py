@@ -3,7 +3,7 @@ from unittest import mock
 from cms.metrics_interface import field_choices_callables, interface
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.domain.utils import ChartAxisFields
+from metrics.domain.common.utils import ChartAxisFields
 from metrics.interfaces.charts.access import ChartTypes
 from tests.fakes.models.queryset import FakeQuerySet
 

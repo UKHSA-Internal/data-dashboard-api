@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 
 from metrics.domain.models import PlotParameters
-from metrics.domain.utils import ChartTypes
+from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.plots import validation
 from metrics.interfaces.plots.validation import (
     MetricDoesNotSupportTopicError,

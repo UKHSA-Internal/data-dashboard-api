@@ -2,7 +2,7 @@ import pytest
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.domain.utils import ChartTypes
+from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 
 

@@ -4,7 +4,7 @@ from typing import Literal
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.utils import ChartAxisFields
+from metrics.domain.common.utils import ChartAxisFields
 
 
 class PlotParameters(BaseModel):

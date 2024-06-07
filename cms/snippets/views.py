@@ -14,10 +14,11 @@ from cms.snippets.serializers import (
 class GlobalBannerView(APIView):
     permission_classes = []
 
+    @classmethod
     @extend_schema(
         tags=["cms"], responses={HTTPStatus.OK: GlobalBannerResponseSerializer}
     )
-    def get(self, request, *args, **kwargs) -> Response:
+    def get(cls, request, *args, **kwargs) -> Response:
         """
         This endpoint returns data associated with the currently active global banner
 

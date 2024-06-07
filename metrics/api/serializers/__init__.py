@@ -6,3 +6,4 @@ from .downloads import (
     BulkDownloadsSerializer,
 )
 from .timeseries import CoreTimeSeriesSerializer
+from .geographies_alerts import GeographiesForAlertsSerializer

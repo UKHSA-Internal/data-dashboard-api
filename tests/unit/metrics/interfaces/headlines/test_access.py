@@ -1,3 +1,4 @@
+import datetime
 from unittest import mock
 
 import pytest
@@ -6,6 +7,8 @@ from metrics.data.managers.core_models.headline import CoreHeadlineManager
 from metrics.data.models.core_models import CoreHeadline
 from metrics.domain.headlines.state import Headline
 from metrics.interfaces.headlines import access
+
+EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
 
 @pytest.fixture
@@ -52,7 +55,9 @@ class TestHeadlinesInterface:
         """
         # Given
         expected_example_args = example_headline_args
-        mocked_core_headline = mock.Mock(metric_value=123, period_end="2024-02-29")
+        mocked_core_headline = mock.Mock(
+            metric_value=123, period_end=datetime.date(year=2024, month=2, day=29)
+        )
         spy_core_headline_manager = mock.Mock()
         spy_core_headline_manager.get_latest_headline.return_value = (
             mocked_core_headline
@@ -68,7 +73,9 @@ class TestHeadlinesInterface:
 
         # Then
         assert headline.metric_value == mocked_core_headline.metric_value
-        assert str(headline.period_end) == mocked_core_headline.period_end
+        assert headline.period_end.strftime(EXPECTED_DATE_FORMAT) == str(
+            mocked_core_headline.period_end
+        )
 
         spy_core_headline_manager.get_latest_headline.assert_called_once_with(
             **expected_example_args,

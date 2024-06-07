@@ -15,10 +15,12 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
 
     def get_latest_headline(
         self,
+        *,
         topic_name: str,
         metric_name: str,
         geography_name: str | None = None,
         geography_type_name: str | None = None,
+        geography_code: str | None = None,
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
@@ -33,6 +35,13 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
         if geography_name:
             filtered_headlines = [
                 x for x in filtered_headlines if x.geography.name == geography_name
+            ]
+
+        if geography_code:
+            filtered_headlines = [
+                x
+                for x in filtered_headlines
+                if x.geography.geography_code == geography_code
             ]
 
         if geography_type_name:

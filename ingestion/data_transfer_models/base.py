@@ -1,6 +1,13 @@
 import datetime
+from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_validator,
+    model_validator,
+)
 from pydantic_core.core_schema import ValidationInfo
 
 from ingestion.data_transfer_models import validation
@@ -16,9 +23,9 @@ class MissingFieldError(Exception):
 class IncomingBaseDataModel(BaseModel):
     """Base data validation object for the upper level/common fields"""
 
-    parent_theme: str
+    parent_theme: enums.ParentTheme
     child_theme: str
-    topic: enums.Topic
+    topic: str
     metric_group: enums.DataSourceFileType
     metric: str
     geography_type: enums.GeographyType
@@ -30,6 +37,25 @@ class IncomingBaseDataModel(BaseModel):
     refresh_date: datetime.datetime
 
     model_config = ConfigDict(use_enum_values=True)
+
+    @model_validator(mode="after")
+    def validate_child_theme_belongs_to_primary_theme(self) -> Self:
+        """Validates the `child_theme` against the provided `parent_theme`"""
+
+        validation.validate_child_theme(
+            child_theme=self.child_theme,
+            parent_theme=self.parent_theme,
+        )
+
+        return self
+
+    @model_validator(mode="after")
+    def validate_topic_against_child_theme(self) -> Self:
+        """Validates the `topic` against the provided `child_theme`"""
+
+        validation.validate_topic(topic=self.topic, child_theme=self.child_theme)
+
+        return Self
 
     @field_validator("sex")
     @classmethod
@@ -132,6 +158,28 @@ class IncomingBaseDataModel(BaseModel):
 
         """
         input_metric_group: str | None = validation_info.data.get("metric_group")
+        input_topic: str | None = validation_info.data.get("topic")
         return validation.validate_metric(
-            metric=metric, metric_group=input_metric_group
+            metric=metric,
+            metric_group=input_metric_group,
+            topic=input_topic,
         )
+
+    @field_validator("refresh_date")
+    @classmethod
+    def cast_refresh_date_to_uk_timezone(
+        cls, refresh_date: datetime.datetime
+    ) -> datetime.datetime:
+        """Casts the inbound `refresh_date` to the London timezone
+
+        Args:
+            refresh_date: The inbound refresh date
+                datetime object
+
+        Returns:
+            A `datetime` object which has the timezone
+            info set to the declared `TIMEZONE` as per
+            the main django settings
+
+        """
+        return validation.cast_date_to_uk_timezone(date_value=refresh_date)

@@ -4,5 +4,6 @@ from caching.public_api.handlers import crawl_public_api
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options) -> None:
+    @classmethod
+    def handle(cls, *args, **options) -> None:
         crawl_public_api()

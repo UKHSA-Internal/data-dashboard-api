@@ -2,7 +2,7 @@ import datetime
 
 import pytest
 
-from metrics.domain.utils import (
+from metrics.domain.common.utils import (
     ChartAxisFields,
     ChartTypes,
     _check_for_substring_match,

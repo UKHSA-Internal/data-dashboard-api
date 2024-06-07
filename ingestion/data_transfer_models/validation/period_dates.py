@@ -2,7 +2,7 @@ import datetime
 
 
 def validate_period_end(
-    period_start: datetime.datetime, period_end: datetime.datetime
+    *, period_start: datetime.datetime, period_end: datetime.datetime
 ) -> datetime.date:
     """Validates the `period_start` and `period_end` fields to check they conform to the expected rules
 
@@ -34,6 +34,7 @@ def validate_period_end(
 
 
 def _validate_period_dates_in_correct_order(
+    *,
     period_start: datetime.date,
     period_end: datetime.date,
 ) -> datetime.date:

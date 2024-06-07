@@ -6,7 +6,7 @@ from wagtail.models.i18n import Locale
 
 from cms.home.models import HomePage
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
-from metrics.domain.utils import ChartTypes
+from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager

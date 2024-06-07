@@ -17,6 +17,11 @@ class FakeGeographyFactory(factory.Factory):
         cls,
         geography_name: str = "England",
         geography_type_name: str = "Nation",
+        geography_code: str = "E92000001",
     ) -> FakeGeography:
         geography_type = FakeGeographyType(name=geography_type_name)
-        return cls.build(name=geography_name, geography_type=geography_type)
+        return cls.build(
+            name=geography_name,
+            geography_code=geography_code,
+            geography_type=geography_type,
+        )

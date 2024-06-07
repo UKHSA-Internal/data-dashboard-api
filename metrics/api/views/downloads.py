@@ -42,7 +42,8 @@ class DownloadsView(APIView):
         response["Content-Disposition"] = "attachment; filename=chart_download.json"
         return response
 
-    def _handle_csv(self, *, queryset: CoreTimeSeriesQuerySet) -> io.StringIO:
+    @classmethod
+    def _handle_csv(cls, *, queryset: CoreTimeSeriesQuerySet) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
@@ -100,11 +101,12 @@ class DownloadsView(APIView):
 
 
 class BulkDownloadsView(APIView):
+    @classmethod
     @extend_schema(
         parameters=[BulkDownloadsSerializer],
         tags=[DOWNLOADS_API_TAG],
     )
-    def get(self, request, *args, **kwargs):
+    def get(cls, request, *args, **kwargs):
         """This endpoint can be used to get all downloads from the current dashboard and return them in a zip file
 
         Note this endpoint will return a zipfile containing a collection of folders based on page names, each

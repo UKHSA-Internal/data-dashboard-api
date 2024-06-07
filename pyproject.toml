@@ -45,12 +45,16 @@ lint.select = [
     "I",        # isort
     "TRY",      # tryceratops
     "UP",       # pyupgrade
+    "PL",       # pylint
 ]
 
 # Ignore rules
 lint.ignore = [
     "F821",     # Undefined class names - currently used to bypass circular imports in type hints
     "ISC001",   # Implicitly concatenated strings on a single line - conflicts with the ruff formatter
+    "PLR0913",  # Too many arguments - temporarily ignored whilst dev work underway to pass config objects
+                    # into components which have numerous dependencies during initialization
+    "PLR0911",  # Too many return statements
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -69,6 +73,7 @@ exclude = [
     "*/migrations/*",
     "*/__init__.py",
     "manage.py",
+    "tests/*",
 ]
 
 # Allow line lengths of up to 120 characters
@@ -81,21 +86,23 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 target-version = "py312"
 
 [tool.ruff.lint.per-file-ignores]
-"**/{tests}/*"                  = [
-                                    "E501",               # Ignore line length in test files
-                                    "S101",               # Ignore use of `assert` statement in tests
-                                    "SLF001"              # Ignore access of private methods/attributes in tests
-                                  ]
-"metrics/api/views/*"           = ["E501"]                # Ignore line length in API views.
-                                                          # This infringement is due to
-                                                          # swagger-facing docstrings/documentation
-"metrics/api/views/charts.py"   = ["SIM115"]              # Ignore context handler for opening file
-"**/help_texts.py"              = ["W291"]                # Ignore trailing whitespace for help texts
-"**/build_cms_site.py"          = ["W605"]                # Ignore escape sequences used in regex calls
-"ingestion/file_ingestion.py"   = ["BLE001"]              # Ignore blind exception catch for file ingestion function
-"public_api/views/root_view.py" = ["A002"]                # Ignore built-in `format` used in arg to extended
-                                                          # rest framework API view method
-"caching/public_api/crawler.py" = ["PERF401"]             # Ignore list comprehension which would reduce readibility
+"**/{tests}/*"                          = [
+                                            "E501",              # Ignore line length in test files
+                                            "S101",              # Ignore use of `assert` statement in tests
+                                            "SLF001"             # Ignore access of private methods/attributes in tests
+                                          ]
+"metrics/api/views/*"                   = ["E501"]               # Ignore line length in API views.
+                                                                 # This infringement is due to
+                                                                   # swagger-facing docstrings/documentation
+"metrics/api/views/charts.py"           = ["SIM115"]             # Ignore context handler for opening file
+"**/help_texts.py"                      = ["W291"]               # Ignore trailing whitespace for help texts
+"**/build_cms_site.py"                  = ["W605"]               # Ignore escape sequences used in regex calls
+"ingestion/file_ingestion.py"           = ["BLE001"]             # Ignore blind exception catch for file ingestion function
+"public_api/views/root_view.py"         = ["A002"]               # Ignore built-in `format` used in arg to extended
+                                                                   # rest framework API view method
+"caching/public_api/crawler.py"         = ["PERF401"]            # Ignore list comprehension which would reduce readibility
+"caching/common/geographies_crawler.py" = ["PLW1641"]            # Ignore requirement of `__hash__` implementation
+"metrics/domain/weather_health_alerts/text_lookups/*" = ["W291"] # Ignore trailing whitespace for weather alert text lookups
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
@@ -160,11 +167,12 @@ modules = [
 ]
 ignore_imports = [
     "cms.metrics_interface.interface -> metrics.data.models.core_models",
-    "cms.metrics_interface.interface -> metrics.domain.utils",
+    "cms.metrics_interface.interface -> metrics.domain.common.utils",
     "cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.properties",
     "cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme",
     "cms.metrics_documentation.data_migration.operations -> metrics.api.settings",
     "metrics.api.urls_construction -> cms.dashboard.viewsets",
+    "metrics.api.urls_construction -> cms.dashboard.views",
     "metrics.api.urls_construction -> cms.snippets.views",
 ]
 
@@ -176,6 +184,36 @@ layers = [
     "metrics.domain",
     "metrics.data",
 ]
+
+[[tool.importlinter.contracts]]
+name = "Metrics domain siblings do not depend on each other."
+type = "layers"
+layers = [
+    """
+    metrics.domain.bulk_downloads |
+    metrics.domain.charts |
+    metrics.domain.headlines |
+    metrics.domain.tables |
+    metrics.domain.trends |
+    metrics.domain.weather_health_alerts
+    """,
+]
+
+[[tool.importlinter.contracts]]
+name = "Metrics API endpoints do not depend on each other."
+type = "layers"
+layers = [
+    """
+    metrics.api.views.charts |
+    metrics.api.views.downloads |
+    metrics.api.views.geographies |
+    metrics.api.views.headlines |
+    metrics.api.views.health |
+    metrics.api.views.tables |
+    metrics.api.views.trends
+    """,
+]
+
 #----------------------------------------------- Public API contracts -------------------------------------------------#
 [[tool.importlinter.contracts]]
 name = "Public API only depends on the APITimeSeries model & corresponding components via the designated interface."
