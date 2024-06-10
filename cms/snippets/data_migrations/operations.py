@@ -1,23 +1,25 @@
-from cms.snippets.models.button import Button, ButtonTypes, Methods
+import logging
+
 from cms.snippets.models.internal_button import InternalButton, InternalButtonTypes
 
+logger = logging.getLogger(__name__)
 
-def get_or_create_download_button_snippet(*args, **kwargs) -> Button:
+
+def get_or_create_download_button_snippet(*args, **kwargs) -> None:
     """Creates a download button snippet.
 
     Returns:
        a bulk download button, used to download all chart data from the dashboard.
        Is an instance of `Button` snippet.
-    """
-    obj, _ = Button.objects.get_or_create(
-        text="download (zip)",
-        loading_text="",
-        endpoint="/api/bulkdownloads/v1",
-        method=Methods.POST.value,
-        button_type=ButtonTypes.DOWNLOAD.value,
-    )
 
-    return obj
+    Notes:
+        This function has been deprecated due to a move from `Button` to `InternalButton` snippet
+        it was left to avoid manually editing the migration files and order and its logic replaced
+        with a log message.
+    """
+    logger.info(
+        "Button snippet has been removed and replaced by InternalButton snippet."
+    )
 
 
 def remove_buttons_snippets(*args, **kwargs) -> None:
@@ -25,8 +27,15 @@ def remove_buttons_snippets(*args, **kwargs) -> None:
 
     Returns:
         None
+
+    Notes:
+        This function has been deprecated due to a move from `Button` to `InternalButton` snippet
+        it was left to avoid manually editing the migration files and order and its logic replaced
+        with a log message.
     """
-    Button.objects.all().delete()
+    logger.info(
+        "Button snippet has been removed and replaced by InternalButton snippet."
+    )
 
 
 def get_or_create_download_button_internal_button_snippet(

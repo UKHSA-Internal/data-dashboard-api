@@ -37,13 +37,6 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
             sections.CodeExample(),
         ),
         (
-            "button",
-            blocks.ButtonChooserBlock(
-                "snippets.button",
-                required=False,
-            ),
-        ),
-        (
             "internal_button",
             blocks.InternalButtonChooserBlock(
                 "snippets.internalbutton",

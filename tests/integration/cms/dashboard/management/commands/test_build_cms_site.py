@@ -6,7 +6,7 @@ from cms.common.models import CommonPage
 from cms.composite.models import CompositePage
 from cms.dashboard.management.commands.build_cms_site import open_example_page_response
 from cms.home.models import HomePage
-from cms.snippets.models import Button
+from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
 from cms.whats_new.models import WhatsNewParentPage
 
@@ -278,7 +278,7 @@ class TestBuildCMSSite:
         response = api_client.get(path=f"/api/pages/{bulk_downloads.id}/")
         response_button_snippet = response.data["body"][1]["value"]
         bulk_downloads_template = open_example_page_response(page_name="bulk_downloads")
-        button_snippet = Button.objects.get(text="download (zip)")
+        button_snippet = InternalButton.objects.get(text="download (zip)")
 
         # Then
         assert response.data["title"] == bulk_downloads_template["title"]
@@ -299,7 +299,6 @@ class TestBuildCMSSite:
 
         assert response.data["body"][0] == bulk_downloads_template["body"][0]
         assert response_button_snippet["text"] == button_snippet.text
-        assert response_button_snippet["loading_text"] == button_snippet.loading_text
         assert response_button_snippet["endpoint"] == button_snippet.endpoint
         assert response_button_snippet["method"] == button_snippet.method
         assert response_button_snippet["button_type"] == button_snippet.button_type
