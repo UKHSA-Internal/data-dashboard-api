@@ -37,17 +37,23 @@ class APITimeSeriesRequestSerializer(Serializer):
             "api_time_series_manager", api_time_series_model.objects
         )
 
-    def get_kwargs_from_request(self) -> dict[str, str]:
+    def get_formatted_kwargs_from_request(self) -> dict[str, str]:
         """Gets the kwargs from the request passed into the context by the view object.
-        Note that the `kwargs` are provided by the caller in the form of the URL parameters.
+        Note: that the `kwargs` are provided by the caller in the form of URL parameters
+        The parameters have been formatted to replace spaces with `+` to avoid
+        the being encoded as `%20` to make the url more readable. The `+` symbols are
+        removed before the kwargs are returned.
 
         Returns:
             Dict[str, str]: kwargs dict of the URL parameters and their values.
             Examples:
-                `{"theme": "infectious_disease"}
-
+                `{"theme": "infectious_disease", "geography_type": "Government Office Region}
         """
-        return self.context["request"].parser_context["kwargs"]
+
+        return {
+            key: " ".join(value.split("+"))
+            for key, value in self.context["request"].parser_context["kwargs"].items()
+        }
 
     def build_timeseries_dto(self, *, value: str) -> APITimeSeriesDTO:
         """Builds a simple `APITimeSeriesDTO` from the kwargs of the request and the given `value`
@@ -60,10 +66,10 @@ class APITimeSeriesRequestSerializer(Serializer):
             `APITimeSeriesDTO`: The created data transfer object
 
         """
-        request_kwargs = self.get_kwargs_from_request()
-        api_timeseries_dto = APITimeSeriesDTO(**request_kwargs)
+        request_kwargs = self.context["request"].parser_context["kwargs"]
 
-        api_timeseries_dto.name = value
+        api_timeseries_dto = APITimeSeriesDTO(**request_kwargs)
+        api_timeseries_dto.name = " ".join(value.split("+"))
         setattr(api_timeseries_dto, self.lookup_field, value)
         return api_timeseries_dto
 
@@ -76,7 +82,7 @@ class APITimeSeriesRequestSerializer(Serializer):
                 `<APITimeSeriesQuerySet ['infectious_disease']>`
 
         """
-        kwargs: dict[str, str] = self.get_kwargs_from_request()
+        kwargs: dict[str, str] = self.get_formatted_kwargs_from_request()
         return self.api_time_series_manager.get_distinct_column_values_with_filters(
             lookup_field=self.lookup_field, **kwargs
         )
@@ -89,4 +95,7 @@ class APITimeSeriesRequestSerializer(Serializer):
 
         """
         queryset = self.get_queryset()
-        return [self.build_timeseries_dto(value=value) for value in queryset]
+        return [
+            self.build_timeseries_dto(value="+".join(value.split(" ")))
+            for value in queryset
+        ]

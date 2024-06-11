@@ -86,11 +86,15 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
 
+        formatted_kwargs = {
+            key: " ".join(value.split("+")) for key, value in self.kwargs.items()
+        }
+
         return queryset.filter_for_list_view(
-            theme_name=self.kwargs["theme"],
-            sub_theme_name=self.kwargs["sub_theme"],
-            topic_name=self.kwargs["topic"],
-            geography_type_name=self.kwargs["geography_type"],
-            geography_name=self.kwargs["geography"],
-            metric_name=self.kwargs["metric"],
+            theme_name=formatted_kwargs["theme"],
+            sub_theme_name=formatted_kwargs["sub_theme"],
+            topic_name=formatted_kwargs["topic"],
+            geography_type_name=formatted_kwargs["geography_type"],
+            geography_name=formatted_kwargs["geography"],
+            metric_name=formatted_kwargs["metric"],
         )
