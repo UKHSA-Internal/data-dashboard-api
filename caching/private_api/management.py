@@ -65,7 +65,9 @@ class CacheManagement:
 
         return retrieved_entry
 
-    def save_item_in_cache(self, *, cache_entry_key: str, item: Response) -> Response:
+    def save_item_in_cache(
+        self, *, cache_entry_key: str, item: Response, timeout: int | None
+    ) -> Response:
         """Saves the item in the cache with the given `cache_entry_key`
 
         Notes:
@@ -75,13 +77,15 @@ class CacheManagement:
         Args:
             cache_entry_key: The key of the item in the cache
             item: The item to be saved into the cache
+            timeout: The number of seconds after which the response
+                is expired and evicted from the cache
 
         Returns:
             The item which was just saved in the cache
 
         """
         item = self._render_response(response=item)
-        self._client.put(cache_entry_key=cache_entry_key, value=item)
+        self._client.put(cache_entry_key=cache_entry_key, value=item, timeout=timeout)
         return item
 
     def clear(self) -> None:

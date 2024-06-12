@@ -163,7 +163,7 @@ class TestCacheManagement:
 
         # When
         saved_response = cache_management.save_item_in_cache(
-            cache_entry_key=fake_cache_entry_key, item=mocked_response
+            cache_entry_key=fake_cache_entry_key, item=mocked_response, timeout=123
         )
 
         # Then
@@ -174,6 +174,7 @@ class TestCacheManagement:
             mock.call(
                 cache_entry_key=fake_cache_entry_key,
                 value=spy_render_response.return_value,
+                timeout=123,
             )
         ]
         assert mocked_cache_client.put.mock_calls == expected_calls
@@ -193,7 +194,7 @@ class TestCacheManagement:
 
         # When
         cache_management_with_in_memory_cache.save_item_in_cache(
-            cache_entry_key=fake_cache_entry_key, item=mocked_response
+            cache_entry_key=fake_cache_entry_key, item=mocked_response, timeout=None
         )
 
         # Then
@@ -282,7 +283,7 @@ class TestCacheManagement:
 
         # When
         cache_management_with_in_memory_cache.save_item_in_cache(
-            cache_entry_key=fake_cache_entry_key, item=mocked_item
+            cache_entry_key=fake_cache_entry_key, item=mocked_item, timeout=None
         )
 
         # Then

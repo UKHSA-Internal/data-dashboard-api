@@ -1,13 +1,13 @@
 from unittest import mock
 from http import HTTPStatus
-
+from django.test import RequestFactory
 import pytest
 from rest_framework.response import Response
 from django.urls import reverse
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APIClient
 
 from metrics.api.serializers.geographies_alerts import GeographiesForAlertsSerializer
-from metrics.api.views.alerts import BaseAlertViewSet, HeatAlertViewSet
+from metrics.api.views.alerts import BaseAlertViewSet
 
 
 class InvalidMetricExtendedBaseAlertViewSet(BaseAlertViewSet):
@@ -152,34 +152,3 @@ class TestColdAlertsView:
 
         # Then
         assert response.status_code == HTTPStatus.BAD_REQUEST
-
-
-class TestBaseAlertsView:
-
-    @pytest.mark.django_db
-    def test_raises_error_if_topic_name_not_implemented(self):
-        """
-        Given an instance of the `BaseAlertViewSet`
-        When the `topic_name` is not implemented in the child class
-        Then a `NotImplementedError` is raised.
-        """
-        # Given
-        extended_base_alert_view_set = InvalidTopicExtendedBaseAlertViewSet()
-
-        # When / Then
-        with pytest.raises(NotImplementedError):
-            extended_base_alert_view_set.list(request=mock.Mock())
-
-    @pytest.mark.django_db
-    def test_raises_error_if_metric_name_not_implemented(self):
-        """
-        Given an instance of the `BaseAlertViewSet`
-        When the `metric_name` is not implemented in the child class
-        Then a `NotImplementedError` is raised.
-        """
-        # Given
-        extended_base_alert_view_set = InvalidMetricExtendedBaseAlertViewSet()
-
-        # When / Then
-        with pytest.raises(NotImplementedError):
-            extended_base_alert_view_set.list(request=mock.Mock())

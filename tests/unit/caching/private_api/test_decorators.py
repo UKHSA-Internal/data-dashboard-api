@@ -34,6 +34,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         # When
         retrieved_response = _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
+            None,  # timeout
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -66,6 +67,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         # When
         _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
+            None,  # timeout
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -101,7 +103,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
 
         # When
         retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mocked_view_function, *mocked_args, **mocked_kwargs  # view_function
+            mocked_view_function, None, *mocked_args, **mocked_kwargs
         )
 
         # Then
@@ -110,6 +112,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         )
         spy_calculate_response_and_save_in_cache.assert_called_with(
             mocked_view_function,
+            None,  # timeout
             mocked_cache_management,
             expected_cache_entry_key,
             *mocked_args,
@@ -144,6 +147,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         # When
         retrieved_response = _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
+            None,  # timeout
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -179,6 +183,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         # When
         retrieved_response = _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
+            None,  # timeout
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -209,6 +214,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         with pytest.raises(CacheCheckResultedInMissError):
             _retrieve_response_from_cache_or_calculate(
                 mock.Mock(),  # view_function
+                None,  # timeout
                 mock.Mock(),
                 mocked_request,
                 cache_management=mocked_cache_management,
@@ -239,6 +245,7 @@ class TestCalculateResponseAndSaveInCache:
         # When
         response = _calculate_response_and_save_in_cache(
             mocked_view_function,
+            None,  # timeout
             spy_cache_management,
             fake_cache_entry_key,
             *mocked_args,
@@ -277,6 +284,7 @@ class TestCalculateResponseAndSaveInCache:
         # When
         _calculate_response_and_save_in_cache(
             mocked_view_function,
+            123,  # timeout
             spy_cache_management,
             fake_cache_entry_key,
             *mocked_args,
@@ -286,5 +294,7 @@ class TestCalculateResponseAndSaveInCache:
         # Then
         expected_calculated_response = spy_calculate_response_from_view.return_value
         spy_cache_management.save_item_in_cache.assert_called_once_with(
-            cache_entry_key=fake_cache_entry_key, item=expected_calculated_response
+            cache_entry_key=fake_cache_entry_key,
+            item=expected_calculated_response,
+            timeout=123,
         )

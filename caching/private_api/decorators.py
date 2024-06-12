@@ -13,7 +13,7 @@ from caching.private_api.management import CacheManagement, CacheMissError
 class CacheCheckResultedInMissError(Exception): ...
 
 
-def cache_response():
+def cache_response(timeout: int | None = None):
     """Decorator to wrap API views to use a previously cached response. Otherwise, calculate and save on the way out.
 
     Notes:
@@ -28,6 +28,10 @@ def cache_response():
         Since, the out-of-the-box cache decorators do not implement the ability
         to cache `POST` endpoints.
 
+    Args:
+        timeout: The number of seconds after which the response is expired
+            and evicted from the cache
+
     Returns:
         The response containing the results of the request.
         Note that the results could be retrieved from the cache
@@ -39,7 +43,7 @@ def cache_response():
         @wraps(view_function)
         def wrapped_view(*args, **kwargs) -> Response:
             return _retrieve_response_from_cache_or_calculate(
-                view_function, *args, **kwargs
+                view_function, timeout, *args, **kwargs
             )
 
         return wrapped_view
@@ -48,7 +52,7 @@ def cache_response():
 
 
 def _retrieve_response_from_cache_or_calculate(
-    view_function, *args, **kwargs
+    view_function, timeout, *args, **kwargs
 ) -> Response:
     """Gets the response from the cache, otherwise recalculates from the view
 
@@ -59,6 +63,8 @@ def _retrieve_response_from_cache_or_calculate(
 
     Args:
         view_function: The view associated with the endpoint
+        timeout: The number of seconds after which the response is expired
+            and evicted from the cache
         *args: args provided by the rest framework middleware
         **kwargs: kwargs provided by the rest framework middleware
             Note that `cache_management` can be injected in through the kwargs
@@ -79,7 +85,7 @@ def _retrieve_response_from_cache_or_calculate(
         # If the `Cache-Force-Refresh` is True
         # recalculate & save regardless of whether the item exists in the cache
         return _calculate_response_and_save_in_cache(
-            view_function, cache_management, cache_entry_key, *args, **kwargs
+            view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
         )
 
     try:
@@ -93,15 +99,17 @@ def _retrieve_response_from_cache_or_calculate(
             raise CacheCheckResultedInMissError
 
         return _calculate_response_and_save_in_cache(
-            view_function, cache_management, cache_entry_key, *args, **kwargs
+            view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
         )
 
 
 def _calculate_response_and_save_in_cache(
-    view_function, cache_management, cache_entry_key, *args, **kwargs
+    view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
 ) -> Response:
     response: Response = _calculate_response_from_view(view_function, *args, **kwargs)
-    cache_management.save_item_in_cache(cache_entry_key=cache_entry_key, item=response)
+    cache_management.save_item_in_cache(
+        cache_entry_key=cache_entry_key, item=response, timeout=timeout
+    )
     return response
 
 
