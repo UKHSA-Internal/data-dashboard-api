@@ -7,11 +7,29 @@ from ingestion.utils.enums import DataSourceFileType, Topic
 
 class TestIncomingBaseValidationForChildTheme:
     @pytest.mark.parametrize(
-        "parent_theme, child_theme, topic",
+        "parent_theme, child_theme, topic, metric, metric_group",
         (
-            ("infectious_disease", "respiratory", "COVID-19"),
-            ("infectious_disease", "vaccine_preventable", "Measles"),
-            ("extreme_event", "weather_alert", "Heat-alert"),
+            (
+                "infectious_disease",
+                "respiratory",
+                "COVID-19",
+                "COVID-19_testing_PCRcountByDay",
+                "testing",
+            ),
+            (
+                "infectious_disease",
+                "vaccine_preventable",
+                "Measles",
+                "measles_cases_casesByOnsetWeek",
+                "cases",
+            ),
+            (
+                "extreme_event",
+                "weather_alert",
+                "Heat-alert",
+                "heat-alert_headline_matrixNumber",
+                "headline",
+            ),
         ),
     )
     def test_child_theme_deemed_valid_infectious_disease(
@@ -19,6 +37,8 @@ class TestIncomingBaseValidationForChildTheme:
         parent_theme: str,
         child_theme: str,
         topic: str,
+        metric: str,
+        metric_group: str,
         valid_payload_for_base_model: dict[str, str],
     ):
         """
@@ -32,6 +52,8 @@ class TestIncomingBaseValidationForChildTheme:
         payload["parent_theme"] = parent_theme
         payload["child_theme"] = child_theme
         payload["topic"] = topic
+        payload["metric"] = metric
+        payload["metric_group"] = metric_group
 
         # When
         incoming_base_validation = IncomingBaseDataModel(**payload)
@@ -40,11 +62,29 @@ class TestIncomingBaseValidationForChildTheme:
         incoming_base_validation.model_validate(incoming_base_validation, strict=True)
 
     @pytest.mark.parametrize(
-        "parent_theme, child_theme, topic",
+        "parent_theme, child_theme, topic, metric, metric_group",
         (
-            ("infectious_disease", "weather_alert", "COVID-19"),
-            ("extreme_event", "respiratory", "Measles"),
-            ("extreme_event", "vaccine_preventable", "Heat-alert"),
+            (
+                "infectious_disease",
+                "weather_alert",
+                "COVID-19",
+                "COVID-19_testing_PCRcountByDay",
+                "testing",
+            ),
+            (
+                "extreme_event",
+                "respiratory",
+                "Measles",
+                "measles_cases_casesByOnsetWeek",
+                "cases",
+            ),
+            (
+                "extreme_event",
+                "vaccine_preventable",
+                "Heat-alert",
+                "heat-alert_headline_matrixNumber",
+                "headline",
+            ),
         ),
     )
     def test_raises_error_when_child_theme_invalid_choice_for_parent_theme(
@@ -52,6 +92,8 @@ class TestIncomingBaseValidationForChildTheme:
         parent_theme: str,
         child_theme: str,
         topic: str,
+        metric: str,
+        metric_group: str,
         valid_payload_for_base_model: dict[str, str],
     ):
         """
@@ -65,6 +107,8 @@ class TestIncomingBaseValidationForChildTheme:
         payload["parent_theme"] = parent_theme
         payload["child_theme"] = child_theme
         payload["topic"] = topic
+        payload["metric"] = metric
+        payload["metric_group"] = metric_group
 
         # When / Then
         with pytest.raises(ValidationError):

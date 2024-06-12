@@ -147,6 +147,7 @@ ROOT_LEVEL_BASE_DIR = BASE_DIR.parent
 
 DATABASES = {
     "default": {
+        "TIME_ZONE": "Europe/London",
         "ENGINE": "dj_db_conn_pool.backends.postgresql",
         "NAME": config.POSTGRES_DB,
         "USER": config.POSTGRES_USER,
