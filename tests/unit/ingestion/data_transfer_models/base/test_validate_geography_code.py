@@ -106,6 +106,24 @@ class TestIncomingBaseValidationForNHSTrustGeographyCode:
         with pytest.raises(ValidationError):
             IncomingBaseDataModel(**payload)
 
+    def test_geography_code_must_not_start_with_special_character(
+        self, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a `geography_code` which does not start with a letter or number
+            for the "NHS Trust" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.NHS_TRUST.value
+        payload["geography_code"] = "!M3"
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
 
 class TestIncomingBaseValidationForLowerTierLocalAuthorityGeographyCode:
     @pytest.mark.parametrize(
