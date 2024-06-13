@@ -318,6 +318,16 @@ class Command(BaseCommand):
 
         create_metrics_documentation_parent_page_and_child_entries()
 
+        weather_health_alerts_page = _create_composite_page(
+            name="weather_health_alerts", parent_page=root_page
+        )
+        _create_composite_page(
+            name="heat_health_alerts", parent_page=weather_health_alerts_page
+        )
+        _create_composite_page(
+            name="cold_health_alerts", parent_page=weather_health_alerts_page
+        )
+
     @staticmethod
     def _clear_cms() -> None:
         # Wipe the existing site, pages & badges
