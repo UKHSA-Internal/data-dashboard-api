@@ -55,7 +55,7 @@ class TestBaseAlertsView:
         Then a `NotImplementedError` is raised.
         """
         # Given
-        extended_base_alert_view_set = InvalidTopicExtendedBaseAlertViewSet()
+        extended_base_alert_view_set = InvalidMetricExtendedBaseAlertViewSet()
 
         # When / Then
         with pytest.raises(NotImplementedError):
