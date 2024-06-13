@@ -1,8 +1,3 @@
-from unittest import mock
-from django.urls import reverse
-
-from django.test import RequestFactory
-
 from metrics.api.views.alerts import BaseAlertViewSet
 import pytest
 
