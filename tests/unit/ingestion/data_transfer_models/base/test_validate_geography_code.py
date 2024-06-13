@@ -24,7 +24,7 @@ class TestIncomingBaseValidationForNHSTrustGeographyCode:
             "NRN01",
             "DN703",
             "NMJ0Y",
-            "8CM63"
+            "8CM63",
         ),
     )
     def test_valid_geography_code_validates_successfully(
