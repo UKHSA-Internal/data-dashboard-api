@@ -1,8 +1,3 @@
-from unittest import mock
-from django.urls import reverse
-
-from django.test import RequestFactory
-
 from metrics.api.views.alerts import BaseAlertViewSet
 import pytest
 
@@ -42,14 +37,11 @@ class TestBaseAlertsView:
         Then a `NotImplementedError` is raised.
         """
         # Given
-        path = reverse("cold-alerts-list")
-        fake_request = RequestFactory().get(path)
-        fake_request.query_params = mock.MagicMock()
         extended_base_alert_view_set = InvalidTopicExtendedBaseAlertViewSet()
 
         # When / Then
         with pytest.raises(NotImplementedError):
-            extended_base_alert_view_set.list(fake_request)
+            extended_base_alert_view_set.topic_name
 
     def test_raises_error_if_metric_name_not_implemented(self):
         """
@@ -58,11 +50,8 @@ class TestBaseAlertsView:
         Then a `NotImplementedError` is raised.
         """
         # Given
-        path = reverse("cold-alerts-list")
-        fake_request = RequestFactory().get(path)
-        fake_request.query_params = mock.MagicMock()
         extended_base_alert_view_set = InvalidMetricExtendedBaseAlertViewSet()
 
         # When / Then
         with pytest.raises(NotImplementedError):
-            extended_base_alert_view_set.list(fake_request)
+            extended_base_alert_view_set.metric_name

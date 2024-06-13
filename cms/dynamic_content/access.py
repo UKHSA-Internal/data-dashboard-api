@@ -51,6 +51,5 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
             ),
         ),
     ],
-    block_counts={"button": {"max_num": 1}},
     use_json_field=True,
 )
