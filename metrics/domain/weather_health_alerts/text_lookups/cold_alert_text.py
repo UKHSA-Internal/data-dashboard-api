@@ -2,7 +2,7 @@ from metrics.domain.weather_health_alerts.text_lookups import common
 
 _LEVEL_6_TEXT = """
 <p>Minor impacts are possible across the health and social care sector, 
-including:</p><ul><li>Increased use of health care services by the vulnerable population.</li>
+including:</p><ul><li>Increased use of healthcare services by the vulnerable population.</li>
 <li>Increase in risk of mortality amongst vulnerable individuals. But not expected.</li></ul>
 """
 _LEVEL_7_TEXT = """
@@ -12,7 +12,7 @@ including:</p><ul><li>Increased use of healthcare services by the vulnerable pop
 """
 _LEVEL_8_TEXT = """
 <p>Minor impacts are expected across the health and social care sector, 
-including:</p><ul><li>Increased use of health care services by the vulnerable population.</li>
+including:</p><ul><li>Increased use of healthcare services by the vulnerable population.</li>
 <li>Increase in risk of mortality amongst vulnerable individuals.</li></ul>
 """
 _LEVEL_9_TEXT = """
@@ -20,7 +20,7 @@ _LEVEL_9_TEXT = """
 due to forecast weather conditions, including:</p><ul><li>Observed increase in mortality across the population, 
 particularly in the 65+ age group or those with certain underlying health conditions, 
 but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote health care services likely.</li>
+<li>Increased demand for remote healthcare services likely.</li>
 <li>Impact on ability of services delivered due to effects on workforce possible.</li>
 <li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
 leading to increased risk of vulnerable people.</li></ul>
@@ -30,8 +30,8 @@ _LEVEL_10_TEXT = """
 including:</p><ul><li>Observed increase in mortality across the population, 
 particularly in the 65+ age group or those with certain underlying health conditions, 
 but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote health care services likely.</li>
-<li>Impact on ability of services delivered due to effects on workforce possible</li>
+<li>Increased demand for remote healthcare services likely.</li>
+<li>Impact on ability of services delivered due to effects on workforce possible.</li>
 <li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
 leading to increased risk of vulnerable people.</li></ul>
 """
@@ -50,7 +50,7 @@ _LEVEL_12_TEXT = """
 including:</p><ul><li>Observed increase in mortality across the population, 
 particularly in the 65+ age group or those with certain underlying health conditions, 
 but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote health care services likely.</li>
+<li>Increased demand for remote healthcare services likely.</li>
 <li>Internal temperatures in care settings (e.g. hospitals, care homes and primary care settings) 
 may fall below recommended threshold for clinical risk assessment.</li>
 <li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
@@ -63,7 +63,7 @@ _LEVEL_13_TEXT = """
 including:</p><ul><li>Observed increase in mortality across the population, 
 particularly in the 65+ age group or those with certain underlying health conditions, 
 but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote health care services likely.</li>
+<li>Increased demand for remote healthcare services likely.</li>
 <li>Internal temperatures in care settings (e.g. hospitals, care homes and primary care settings) 
 may fall below recommended threshold for clinical risk assessment.</li>
 <li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
