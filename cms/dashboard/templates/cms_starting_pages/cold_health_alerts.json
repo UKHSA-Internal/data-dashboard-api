@@ -1,0 +1,62 @@
+{
+  "id": 22,
+  "meta": {
+    "seo_title": "",
+    "search_description": "",
+    "type": "composite.CompositePage",
+    "detail_url": "http://localhost/api/pages/22/",
+    "html_url": null,
+    "slug": "cold",
+    "show_in_menus": false,
+    "first_published_at": "2024-06-13T14:46:10.806672+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 20,
+      "meta": {
+        "type": "composite.CompositePage",
+        "detail_url": "http://localhost/api/pages/20/",
+        "html_url": null
+      },
+      "title": "Weather health alerts"
+    }
+  },
+  "title": "Cold health alerts",
+  "date_posted": "2024-06-13",
+  "body": [
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"v7ca2\">The Cold-health alerting systems core alerting seasons runs from 1  November to 31 March each year. However should an episode of cold occur  outside of this core period, an extraordinary alert will be issued. Make  sure you are registered to <a href=\"https://www.gov.uk/guidance/weather-health-alerting-system\">receive the alerts directly by email</a> by completing the registration form.</p>",
+      "id": "d87e7aaf-3ebc-4589-ab17-69ef19a0359f"
+    }
+  ],
+  "last_published_at": "2024-06-13T14:46:10.806672+01:00",
+  "related_links": [
+    {
+      "id": 7,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Cold-Health Alert action card for the voluntary and community sector",
+      "url": "https://www.gov.uk/government/publications/cold-weather-plan-action-cards-for-cold-weather-alert-service/cold-health-alert-action-card-for-the-voluntary-and-community-sector",
+      "body": ""
+    },
+    {
+      "id": 8,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Cold-Health Alert action card for commissioners",
+      "url": "https://www.gov.uk/government/publications/cold-weather-plan-action-cards-for-cold-weather-alert-service/cold-health-alert-action-card-for-commissioners",
+      "body": ""
+    },
+    {
+      "id": 9,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Cold-Health Alert action card for health and social care providers",
+      "url": "https://www.gov.uk/government/publications/cold-weather-plan-action-cards-for-cold-weather-alert-service/cold-health-alert-action-card-for-health-and-social-care-providers",
+      "body": ""
+    }
+  ]
+}

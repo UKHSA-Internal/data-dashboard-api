@@ -1,0 +1,53 @@
+{
+  "id": 20,
+  "meta": {
+    "seo_title": "",
+    "search_description": "",
+    "type": "composite.CompositePage",
+    "detail_url": "http://localhost/api/pages/20/",
+    "html_url": null,
+    "slug": "weather-health-alerts",
+    "show_in_menus": false,
+    "first_published_at": "2024-06-13T12:48:22.921116+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "Weather health alerts",
+  "date_posted": "2024-06-13",
+  "body": [
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"twijc\">The alerting system provides an early warning when adverse temperatures are  likely to impact on the health and wellbeing of the population.</p><p data-block-key=\"dqqeg\">The  Weather health alerting system is provided by the UK Health Security  Agency (UKHSA) in partnership with the Met Office. It&#x27;s intended to  provide early warning to the health and social care sector, the  responder community, the voluntary and community sector and government  departments when adverse temperatures are likely to impact on the health  and wellbeing of the population. The Weather health alerting system is  made up of the Heat-Health Alerts (HHA) and Cold-Health Alerts (CHA).  The Weather health alerting system underpins the Adverse Weather and  Health Plan.</p><p data-block-key=\"4bsqg\">The core alerting season for the  HHA runs from 1 June to 30 September, with the core alerting season for  CHA running from 1 November to 31 March. Should a period of heat or cold  occur that meets alerting criteria outside of the core alerting  periods, an extraordinary alert will be issued.</p>",
+      "id": "900a4ddb-c79f-414f-b496-97b426b240df"
+    }
+  ],
+  "last_published_at": "2024-06-13T14:43:16.909480+01:00",
+  "related_links": [
+    {
+      "id": 1,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Cold weather and Health: supporting vulnerable people",
+      "url": "https://www.gov.uk/government/publications/cold-weather-and-health-supporting-vulnerable-people",
+      "body": ""
+    },
+    {
+      "id": 2,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Hot weather and Health: supporting vulnerable people",
+      "url": "https://www.gov.uk/government/publications/hot-weather-and-health-supporting-vulnerable-people",
+      "body": ""
+    }
+  ]
+}
