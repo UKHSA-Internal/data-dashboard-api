@@ -96,7 +96,7 @@ def _validate_nhs_trust_geography_code(*, geography_code: str) -> str:
     if len(geography_code) not in allowable_nhs_trust_code_lengths:
         raise ValueError
 
-    if not geography_code[0].isalpha():
+    if not geography_code.isalnum():
         raise ValueError
 
     return geography_code

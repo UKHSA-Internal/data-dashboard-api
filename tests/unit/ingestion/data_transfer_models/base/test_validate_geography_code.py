@@ -24,6 +24,7 @@ class TestIncomingBaseValidationForNHSTrustGeographyCode:
             "NRN01",
             "DN703",
             "NMJ0Y",
+            "8CM63",
         ),
     )
     def test_valid_geography_code_validates_successfully(
@@ -105,11 +106,11 @@ class TestIncomingBaseValidationForNHSTrustGeographyCode:
         with pytest.raises(ValidationError):
             IncomingBaseDataModel(**payload)
 
-    def test_geography_code_must_start_with_letter(
+    def test_geography_code_must_not_start_with_special_character(
         self, valid_payload_for_base_model: dict[str, str]
     ):
         """
-        Given a `geography_code` which does not start with a letter
+        Given a `geography_code` which does not start with a letter or number
             for the "NHS Trust" `geography_type`
         When the `IncomingBaseDataModel` model is initialized
         Then a `ValidationError` is raised
@@ -117,7 +118,7 @@ class TestIncomingBaseValidationForNHSTrustGeographyCode:
         # Given
         payload = valid_payload_for_base_model
         payload["geography_type"] = enums.GeographyType.NHS_TRUST.value
-        payload["geography_code"] = "2M3"
+        payload["geography_code"] = "!M3"
 
         # When / Then
         with pytest.raises(ValidationError):
