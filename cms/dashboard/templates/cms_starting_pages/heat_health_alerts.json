@@ -1,0 +1,71 @@
+{
+  "id": 21,
+  "meta": {
+    "seo_title": "",
+    "search_description": "",
+    "type": "composite.CompositePage",
+    "detail_url": "http://localhost/api/pages/21/",
+    "html_url": null,
+    "slug": "heat",
+    "show_in_menus": false,
+    "first_published_at": "2024-06-13T14:45:00.866817+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 20,
+      "meta": {
+        "type": "composite.CompositePage",
+        "detail_url": "http://localhost/api/pages/20/",
+        "html_url": null
+      },
+      "title": "Weather health alerts"
+    }
+  },
+  "title": "Heat health alerts",
+  "date_posted": "2024-06-13",
+  "body": [
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"a2j7a\">The Heat-health alerting systems core alerting seasons runs from 1 June  to 30 September each year. However should an episode of heat occur  outside of this core period, an extraordinary alert will be issued. Make  sure you are registered to <a href=\"https://www.gov.uk/guidance/weather-health-alerting-system\">receive the alerts directly by email</a> by completing the registration form.</p>",
+      "id": "afe12fef-ad3d-4296-a037-c7dec27ae345"
+    }
+  ],
+  "last_published_at": "2024-06-13T14:45:00.866817+01:00",
+  "related_links": [
+    {
+      "id": 3,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Heat-Health Alert action card for the voluntary and community sector",
+      "url": "https://www.gov.uk/government/publications/hot-weather-and-health-action-cards/heat-health-alert-action-card-for-the-voluntary-and-community-sector",
+      "body": ""
+    },
+    {
+      "id": 4,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Heat-Health Alert action card for commissioners",
+      "url": "https://www.gov.uk/government/publications/hot-weather-and-health-action-cards/heat-health-alert-action-card-for-commissioners",
+      "body": ""
+    },
+    {
+      "id": 5,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Heat-Health Alert action card for health and social care providers",
+      "url": "https://www.gov.uk/government/publications/hot-weather-and-health-action-cards/heat-health-alert-action-card-for-providers",
+      "body": ""
+    },
+    {
+      "id": 6,
+      "meta": {
+        "type": "composite.CompositeRelatedLink"
+      },
+      "title": "Heat-Health Alert action card for national government",
+      "url": "https://www.gov.uk/government/publications/hot-weather-and-health-action-cards/heat-health-alert-action-card-for-national-government",
+      "body": ""
+    }
+  ]
+}
