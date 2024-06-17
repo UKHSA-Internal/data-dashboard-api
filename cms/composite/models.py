@@ -15,7 +15,7 @@ class CompositePage(Page):
     date_posted = models.DateField()
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
     page_description = RichTextField(
-        features=AVAILABLE_RICH_TEXT_FEATURES,
+        features=[],
         blank=True,
         null=True,
     )
