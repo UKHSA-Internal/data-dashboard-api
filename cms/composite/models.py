@@ -42,6 +42,7 @@ class CompositePage(Page):
         APIField("seo_title"),
         APIField("search_description"),
         APIField("related_links"),
+        APIField("page_description"),
     ]
 
     # Tabs to position at the top of the view
