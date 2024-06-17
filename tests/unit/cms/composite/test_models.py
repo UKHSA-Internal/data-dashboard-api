@@ -78,7 +78,7 @@ class TestCompositePage:
 
     def test_has_correct_side_panels(self):
         """
-        Given a blank `CompostiePage` model
+        Given a blank `CompositePage` model
         When `sidebar_content_panels` is called
         Then the expected names are on the returned `InlinePanel` objects
         """
