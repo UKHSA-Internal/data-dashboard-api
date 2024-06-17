@@ -214,3 +214,9 @@ Note that only 1 global banner can be active at a time.
 To switch from 1 active banner straight to another, 
 you must deactivate the 1st banner and save it before activating and saving the 2nd banner.
 """
+
+TAG_MANAGER_EVENT_ID_FIELD: str = """
+The ID to associate with this component. 
+This allows for tracking of events when users interact with this component.
+Note that changing this multiple times will result in the recording of different groups of events.
+"""
