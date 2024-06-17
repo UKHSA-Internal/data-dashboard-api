@@ -14,6 +14,11 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 class CompositePage(Page):
     date_posted = models.DateField()
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
+    page_description = RichTextField(
+        features=[],
+        blank=True,
+        null=True,
+    )
 
     search_fields = Page.search_fields + [
         index.SearchField("body"),
@@ -22,6 +27,7 @@ class CompositePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
         FieldPanel("body"),
+        FieldPanel("page_description"),
     ]
 
     sidebar_content_panels = [
@@ -37,6 +43,7 @@ class CompositePage(Page):
         APIField("seo_title"),
         APIField("search_description"),
         APIField("related_links"),
+        APIField("page_description"),
     ]
 
     # Tabs to position at the top of the view
