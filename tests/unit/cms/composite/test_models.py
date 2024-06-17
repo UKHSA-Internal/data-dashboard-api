@@ -55,7 +55,16 @@ class TestCompositePage:
         api_field_names: set[str] = {api_field.name for api_field in api_fields}
         assert expected_api_fields in api_field_names
 
-    def test_has_correct_content_panels(self):
+    @pytest.mark.parametrize(
+        "expected_content_panel",
+        [
+            "body",
+            "date_posted",
+            "title",
+            "page_description",
+        ],
+    )
+    def test_has_correct_content_panels(self, expected_content_panel: str):
         """
         Given a blank `CompositePage` model
         When `content_panels` is called
@@ -68,13 +77,8 @@ class TestCompositePage:
         content_panels: list[FieldPanel] = blank_page.content_panels
 
         # Then
-        expected_content_panel_names: set[str] = {
-            "date_posted",
-            "title",
-            "body",
-        }
         content_panel_names: set[str] = {p.field_name for p in content_panels}
-        assert content_panel_names == expected_content_panel_names
+        assert expected_content_panel in content_panel_names
 
     def test_has_correct_side_panels(self):
         """
