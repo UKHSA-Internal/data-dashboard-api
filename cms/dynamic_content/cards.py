@@ -42,6 +42,11 @@ class HeadlineNumbersRowCard(blocks.StructBlock):
 class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    tag_manager_event_id = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
+        label="Tag manager event ID",
+    )
     x_axis = blocks.ChoiceBlock(
         required=False,
         choices=get_possible_axis_choices,
@@ -69,6 +74,11 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
 class ChartCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    tag_manager_event_id = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
+        label="Tag manager event ID",
+    )
     x_axis = blocks.ChoiceBlock(
         required=False,
         choices=get_possible_axis_choices,
