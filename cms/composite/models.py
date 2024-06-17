@@ -6,7 +6,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 from wagtail.search import index
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.common.models import MAXIMUM_URL_FIELD_LENGTH
 from cms.composite.managers import CompositePageManager
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 
