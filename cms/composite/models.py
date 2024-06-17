@@ -27,6 +27,7 @@ class CompositePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
         FieldPanel("body"),
+        FieldPanel("page_description"),
     ]
 
     sidebar_content_panels = [
