@@ -14,6 +14,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     permission_classes = []
     base_serializer_class = ListablePageSerializer
     listing_default_fields = PagesAPIViewSet.listing_default_fields + ["show_in_menus"]
+    detail_only_fields = []
 
     @cache_response()
     def listing_view(self, request: Request) -> Response:
