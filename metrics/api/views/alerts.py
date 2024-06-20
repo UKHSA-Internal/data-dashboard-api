@@ -2,7 +2,6 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-from caching.private_api.decorators import cache_response
 from metrics.api.enums import Alerts
 from metrics.api.serializers.geographies_alerts import GeographiesForAlertsSerializer
 from metrics.interfaces.weather_health_alerts.access import (
