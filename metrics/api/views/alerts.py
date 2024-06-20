@@ -26,7 +26,6 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
     def metric_name(self) -> str:
         raise NotImplementedError
 
-    @cache_response(timeout=EIGHT_MINUTES_AS_SECONDS)
     def list(self, request, *args, **kwargs):
         topic_name: str = self.topic_name
         metric_name: str = self.metric_name
@@ -41,7 +40,6 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(data=summary_data)
 
-    @cache_response(timeout=EIGHT_MINUTES_AS_SECONDS)
     def retrieve(self, request, *args, **kwargs):
         topic_name: str = self.topic_name
         metric_name: str = self.metric_name
