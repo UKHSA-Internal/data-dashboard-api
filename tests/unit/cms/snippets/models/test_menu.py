@@ -17,7 +17,7 @@ class TestMenu:
     )
     def test_panels(self, expected_panel_name: str):
         """
-        Given a title, body and banner type
+        Given a body, an internal label and an is_active bool
         When a `Menu` instance is created
         Then the correct panels are set
         """
@@ -123,8 +123,8 @@ class TestMenu:
         with pytest.raises(MultipleMenusActiveError):
             menu.clean()
 
-    @mock.patch.object(MenuManager, "has_active_banner")
-    def test_clean_passes_when_current_banner_is_not_being_activated(
+    @mock.patch.object(MenuManager, "has_active_menu")
+    def test_clean_passes_when_current_menu_is_not_being_activated(
         self, mocked_has_active_menu: mock.MagicMock
     ):
         """
@@ -168,13 +168,13 @@ class TestMenu:
         menu.clean()
 
     @mock.patch.object(MenuManager, "has_active_menu")
-    def test_clean_passes_when_there_are_no_active_banners(
+    def test_clean_passes_when_there_is_no_existing_active_menu(
         self, mocked_has_active_menu: mock.MagicMock
     ):
         """
         Given a `Menu` which is not being set to active
         And the `MenuManager`
-            which says there is not already an active banner
+            which says there is not already an active menu
         When the `clean()` method is called
             from the `Menu`
         Then no error is raised
@@ -182,8 +182,8 @@ class TestMenu:
         # Given
         mocked_has_active_menu.return_value = False
         menu = Menu(
-            title="abc",
-            body="def",
+            internal_label="abc",
+            body={},
             is_active=False,
         )
 
