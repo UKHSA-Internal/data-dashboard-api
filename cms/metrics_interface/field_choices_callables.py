@@ -261,7 +261,7 @@ def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     )
 
 
-def get_all_geography_names_and_codes_for_alerts() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+def get_all_geography_names_and_codes_for_alerts() -> list:
     """This field has been stubbed out to prevent the caller from preemptively referencing the `Geography` table"""
     return []
 
