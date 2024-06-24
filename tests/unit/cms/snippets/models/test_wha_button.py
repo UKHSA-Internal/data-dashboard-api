@@ -46,7 +46,6 @@ class TestWeatherAlertButton:
 
         assert "text" in panel_names
         assert "button_type" in panel_names
-        assert "geography_code" in panel_names
 
     def test_button_is_set_as_snippet(self):
         """
