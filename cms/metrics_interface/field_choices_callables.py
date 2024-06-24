@@ -279,10 +279,7 @@ def get_all_geography_names_and_codes_for_alerts() -> LIST_OF_TWO_STRING_ITEM_TU
             [('North East', 'E06000001'), ('North West', 'E06000002')]
 
     """
-    metrics_interface = MetricsAPIInterface()
-    return metrics_interface.get_all_geography_names_and_codes_by_geography_type(
-        geography_type=GEOGRAPHY_TYPE_NAME_FOR_ALERTS,
-    )
+    return []
 
 
 def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:

@@ -33,17 +33,12 @@ class WeatherAlertButton(models.Model):
     panels = [
         FieldPanel("text"),
         FieldPanel("button_type"),
-        FieldPanel("geography_code"),
     ]
 
     api_fields = [
         APIField("text"),
         APIField("button_type"),
-        APIField("geography_code"),
     ]
 
     def __str__(self) -> str:
-        if not self.geography_code:
-            return f"Text: {self.text} | Type: {self.button_type}"
-
-        return f"Text: {self.text} | Type: {self.button_type} | {self.geography_code}"
+        return f"Text: {self.text} | Type: {self.button_type}"
