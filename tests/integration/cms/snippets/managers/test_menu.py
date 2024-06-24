@@ -1,6 +1,6 @@
 import pytest
 
-from cms.snippets.models import Menu
+from cms.snippets.models.menu_builder import Menu
 from tests.factories.cms.snippets.menu import MenuFactory
 
 
