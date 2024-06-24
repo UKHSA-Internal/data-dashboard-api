@@ -262,23 +262,7 @@ def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
 
 def get_all_geography_names_and_codes_for_alerts() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
-    """Callable for the `choices` on the `geography_code` fields of the CMS blocks.
-
-    Notes:
-        This callable wraps the `MetricsAPIInterface`
-        and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new `Geography` is added to that table.
-        Instead, the 1-off migration is pointed at this callable.
-        So Wagtail will pull the choices by invoking this function.
-
-    Returns:
-        A list of 2-item tuples of `geography_name` used for human readable
-        value and the `geography_code` used as the value stored in the db.
-        Examples:
-            [('North East', 'E06000001'), ('North West', 'E06000002')]
-
-    """
+    """This field has been stubbed out to prevent the caller from preemptively referencing the `Geography` table"""
     return []
 
 
