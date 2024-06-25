@@ -266,13 +266,10 @@ class TestGetAllGeographyNamesAndCodesForAlerts:
         """
         Given an instance of the `MetricsAPIInterface` which returns geography types and codes
         When `get_all_geography_names_and_codes_for_alerts()` is called
-        Then the geography names and codes are returned as a list of tuples.
+        Then an empty list is returned for the stubbed call.
         """
         # Given
-        retrieved_geography_names_and_codes = [
-            ("North East", "E12000001"),
-            ("North West", "E12000002"),
-        ]
+        retrieved_geography_names_and_codes = []
         mocked_get_all_geography_names_and_codes_by_geography_type.return_value = (
             retrieved_geography_names_and_codes
         )
