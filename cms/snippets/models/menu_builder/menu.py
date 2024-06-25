@@ -37,6 +37,5 @@ class Menu(models.Model):
         self._raise_error_if_trying_to_enable_multiple_menus()
 
     def _raise_error_if_trying_to_enable_multiple_menus(self) -> None:
-        has_existing_active_menu: bool = Menu.objects.has_active_menu()
-        if has_existing_active_menu and self.is_active:
+        if Menu.objects.is_menu_overriding_currently_active_menu(menu=self):
             raise MultipleMenusActiveError

@@ -43,3 +43,21 @@ class MenuManager(models.Manager):
 
         """
         return self.get_queryset().get_active_menus().first()
+
+    def is_menu_overriding_currently_active_menu(self, menu) -> bool:
+        """Determines if the given `menu` is trying to override an existing active `Menu`
+
+        Args:
+            menu: The current `Menu` object which is being evaluated
+
+        Returns:
+            True if the given `menu` is trying to override
+            an existing active `Menu`. False otherwise.
+
+        """
+        has_existing_active_menu: bool = self.has_active_menu()
+        if not has_existing_active_menu:
+            return False
+
+        active_menu = self.get_active_menu()
+        return bool(menu.is_active and menu != active_menu)

@@ -100,19 +100,18 @@ class TestMenu:
         # Then
         assert str(menu) == f"(Inactive) - {internal_label}"
 
-    @mock.patch.object(MenuManager, "has_active_menu")
-    def test_clean_raises_error_if_active_menu_already_exists(
-        self, mocked_has_active_menu: mock.MagicMock
+    @mock.patch.object(MenuManager, "is_menu_overriding_currently_active_menu")
+    def test_clean_raises_error_is_menu_overriding_currently_active_menu_returns_true(
+        self, mocked_is_menu_overriding_currently_active_menu: mock.MagicMock
     ):
         """
-        Given a `Menu` which is being set to active
-        And the `MenuManager`
-            which says there is already an active menu
+        Given the `is_menu_overriding_currently_active_menu()` call
+            from the `MenuManager` returns True
         When the `clean()` method is called from the `Menu`
         Then the `MultipleMenusActiveError` is raised
         """
         # Given
-        mocked_has_active_menu.return_value = True
+        mocked_is_menu_overriding_currently_active_menu.return_value = True
         menu = Menu(
             internal_label="abc",
             body={},
@@ -123,64 +122,18 @@ class TestMenu:
         with pytest.raises(MultipleMenusActiveError):
             menu.clean()
 
-    @mock.patch.object(MenuManager, "has_active_menu")
-    def test_clean_passes_when_current_menu_is_not_being_activated(
-        self, mocked_has_active_menu: mock.MagicMock
+    @mock.patch.object(MenuManager, "is_menu_overriding_currently_active_menu")
+    def test_clean_passes_when_current_menu_is_menu_overriding_currently_active_menu_returns_false(
+        self, mocked_is_menu_overriding_currently_active_menu: mock.MagicMock
     ):
         """
-        Given a `Menu` which is not being set to active
-        And the `MenuManager`
-            which says there is already an active menu
+        Given the `is_menu_overriding_currently_active_menu()` call
+            from the `MenuManager` returns False
         When the `clean()` method is called from the `Menu`
         Then no error is raised
         """
         # Given
-        mocked_has_active_menu.return_value = True
-        menu = Menu(
-            internal_label="abc",
-            body={},
-            is_active=False,
-        )
-
-        # When / Then
-        menu.clean()
-
-    @mock.patch.object(MenuManager, "has_active_menu")
-    def test_clean_passes_when_current_menu_is_being_activated_as_only_active_menu(
-        self, mocked_has_active_menu: mock.MagicMock
-    ):
-        """
-        Given a `Menu` which is being set to active
-        And the `MenuManager`
-            which says there is not already an active menu
-        When the `clean()` method is called from the `Menu`
-        Then no error is raised
-        """
-        # Given
-        mocked_has_active_menu.return_value = False
-        menu = Menu(
-            internal_label="abc",
-            body={},
-            is_active=True,
-        )
-
-        # When / Then
-        menu.clean()
-
-    @mock.patch.object(MenuManager, "has_active_menu")
-    def test_clean_passes_when_there_is_no_existing_active_menu(
-        self, mocked_has_active_menu: mock.MagicMock
-    ):
-        """
-        Given a `Menu` which is not being set to active
-        And the `MenuManager`
-            which says there is not already an active menu
-        When the `clean()` method is called
-            from the `Menu`
-        Then no error is raised
-        """
-        # Given
-        mocked_has_active_menu.return_value = False
+        mocked_is_menu_overriding_currently_active_menu.return_value = False
         menu = Menu(
             internal_label="abc",
             body={},
