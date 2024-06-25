@@ -60,23 +60,30 @@ class TestAPITimeSeriesRequestSerializer:
         with pytest.raises(NotImplementedError, match=NO_LOOKUP_FIELD_ERROR_MESSAGE):
             serializer.lookup_field
 
-    def test_get_kwargs_from_request(self):
+    def test_get_formatted_kwargs_from_request(self):
         """
         Given a request which contains kwargs from the URL parameters
-        When `get_kwargs_from_request()` is called from an instance of the `APITimeSeriesRequestSerializer`
-        Then the kwargs from the request URL parameters are returned
+        When `get_formatted_kwargs_from_request()` is called from an instance of the `APITimeSeriesRequestSerializer`
+        Then the kwargs from the request URL parameters are returned and any + symbols replaced with spaces.
         """
         # Given
-        fake_request_kwargs = {"theme": "infectious_disease"}
+        fake_request_kwargs = {
+            "theme": "infectious_disease",
+            "geography_type": "Government+Office+Region",
+        }
         fake_parser_context = {"kwargs": fake_request_kwargs}
         mocked_request = mock.Mock(parser_context=fake_parser_context)
         serializer = APITimeSeriesRequestSerializer(context={"request": mocked_request})
 
         # When
-        returned_kwargs_from_request = serializer.get_kwargs_from_request()
+        expected_request_kwargs = {
+            "theme": "infectious_disease",
+            "geography_type": "Government Office Region",
+        }
+        returned_kwargs_from_request = serializer.get_formatted_kwargs_from_request()
 
         # Then
-        assert returned_kwargs_from_request == fake_request_kwargs
+        assert returned_kwargs_from_request == expected_request_kwargs
 
     @pytest.mark.parametrize(
         "request_kwargs, value_returned_from_query, lookup_field",
