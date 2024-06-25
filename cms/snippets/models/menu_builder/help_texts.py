@@ -30,11 +30,13 @@ Add any number of associated links within this menu column.
 """
 
 MENU_COLUMNS: str = """
-Add any number of column within this menu row.
+Add any number of columns within this menu row.
 """
 
 MENU_ROW: str = """
-Add any number of rows within this menu.
+The menu is constructed from a grid system of rows and columns.
+There can be any number of rows and columns.
+But each column should have at least 1 link.
 """
 
 MENU_INTERNAL_LABEL: str = """
