@@ -16,8 +16,6 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 
 class MenuLink(blocks.StructBlock):
     title = blocks.TextBlock(
-        blank=True,
-        null=True,
         required=True,
         help_text=help_texts.MENU_LINK_HELP_TEXT,
     )
