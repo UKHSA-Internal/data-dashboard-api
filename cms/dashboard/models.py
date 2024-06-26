@@ -21,8 +21,7 @@ class UKHSAPage(Page):
     seo_change_frequency = models.IntegerField(
         verbose_name="SEO change frequency",
         help_text=render_markdown(markdown_text=seo.help_texts.SEO_CHANGE_FREQUENCY),
-        blank=True,
-        null=True,
+        default=seo.ChangeFrequency.Monthly,
         choices=seo.ChangeFrequency.choices,
     )
     seo_priority = models.DecimalField(
