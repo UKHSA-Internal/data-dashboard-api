@@ -1,5 +1,6 @@
 MENU_LINK_HELP_TEXT: str = """
 The title to display for this menu item.
+As a general rule of thumb, the title length should be no longer than 60 characters.
 """
 
 MENU_LINK_BODY: str = """
