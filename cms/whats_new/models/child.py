@@ -6,11 +6,12 @@ from wagtail.models import Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
+from cms.dashboard.models import UKHSAPage
 from cms.whats_new.managers.child import WhatsNewChildEntryManager
 from cms.whats_new.serializers import BadgeSerializer
 
 
-class WhatsNewChildEntry(Page):
+class WhatsNewChildEntry(UKHSAPage):
     date_posted = models.DateField(null=False, blank=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     badge = models.ForeignKey(
@@ -53,7 +54,7 @@ class WhatsNewChildEntry(Page):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 
