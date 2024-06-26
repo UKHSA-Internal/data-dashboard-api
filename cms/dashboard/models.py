@@ -1,12 +1,22 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.models import Page
-from django.db import models
 
 from cms import seo
 
 
 class UKHSAPage(Page):
+    """Abstract base class for all page types
+
+    Notes:
+        Since all page types extend from this class,
+        be mindful of changes to fields here.
+        As they will incur db migrations
+        across multiple page types / tables.
+
+    """
+
     seo_change_frequency = models.IntegerField(
         verbose_name="SEO change frequency",
         help_text=seo.help_texts.SEO_CHANGE_FREQUENCY,
