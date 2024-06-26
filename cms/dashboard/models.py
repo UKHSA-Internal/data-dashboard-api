@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework.templatetags.rest_framework import render_markdown
@@ -30,7 +32,7 @@ class UKHSAPage(Page):
         default=0.5,
         max_digits=2,
         decimal_places=1,
-        validators=[MaxValueValidator(1.0), MinValueValidator(0.099)],
+        validators=[MaxValueValidator(Decimal("1.0")), MinValueValidator(Decimal("0.1"))],
     )
 
     class Meta:
