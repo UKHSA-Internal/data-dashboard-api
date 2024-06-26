@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("topic", "0009_alter_topicpage_body"),
+        ("topic", "0008_set_geography_age_sex_stratum_fields_as_required"),
     ]
 
     operations = [
