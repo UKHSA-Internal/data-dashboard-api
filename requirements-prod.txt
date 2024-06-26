@@ -29,7 +29,7 @@ gunicorn==22.0.0
 html5lib==1.1
 identify==2.5.36
 idna==3.7
-importlib-metadata==7.2.1
+importlib-metadata==8.0.0
 inflection==0.5.1
 iniconfig==2.0.0
 itypes==1.2.0
