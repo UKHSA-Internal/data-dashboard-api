@@ -1,3 +1,4 @@
+from cms.dashboard.models import UKHSAPage
 from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.fields import ParentalKey
@@ -25,7 +26,7 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
         super().__init__(message)
 
 
-class MetricsDocumentationParentPage(Page):
+class MetricsDocumentationParentPage(UKHSAPage):
     date_posted = models.DateField(null=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
 
@@ -60,7 +61,7 @@ class MetricsDocumentationParentPage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 

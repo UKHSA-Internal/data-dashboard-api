@@ -1,5 +1,6 @@
 import logging
 
+from cms.dashboard.models import UKHSAPage
 from django.db import models
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
@@ -21,7 +22,7 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
         super().__init__(message)
 
 
-class MetricsDocumentationChildEntry(Page):
+class MetricsDocumentationChildEntry(UKHSAPage):
     date_posted = models.DateField(null=False)
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
@@ -62,7 +63,7 @@ class MetricsDocumentationChildEntry(Page):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 
