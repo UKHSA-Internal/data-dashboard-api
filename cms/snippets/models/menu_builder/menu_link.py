@@ -19,7 +19,6 @@ class MenuLink(blocks.StructBlock):
         blank=True,
         null=True,
         required=True,
-        max_length=50,
         help_text=help_texts.MENU_LINK_HELP_TEXT,
     )
     body = blocks.RichTextBlock(
