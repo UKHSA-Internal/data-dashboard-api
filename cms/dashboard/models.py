@@ -1,5 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from rest_framework.templatetags.rest_framework import render_markdown
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.models import Page
 
@@ -19,7 +20,7 @@ class UKHSAPage(Page):
 
     seo_change_frequency = models.IntegerField(
         verbose_name="SEO change frequency",
-        help_text=seo.help_texts.SEO_CHANGE_FREQUENCY,
+        help_text=render_markdown(markdown_text=seo.help_texts.SEO_CHANGE_FREQUENCY),
         blank=True,
         null=True,
         choices=seo.ChangeFrequency.choices,
