@@ -27,10 +27,9 @@ class UKHSAPage(Page):
     seo_priority = models.DecimalField(
         verbose_name="SEO priority",
         help_text=seo.help_texts.SEO_PRIORITY,
-        null=True,
-        blank=True,
-        max_digits=3,
-        decimal_places=2,
+        default=0.5,
+        max_digits=2,
+        decimal_places=1,
         validators=[MaxValueValidator(1.0), MinValueValidator(0.099)],
     )
 

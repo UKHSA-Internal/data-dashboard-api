@@ -33,11 +33,10 @@ class Migration(migrations.Migration):
             model_name="commonpage",
             name="seo_priority",
             field=models.DecimalField(
-                blank=True,
-                decimal_places=2,
+                decimal_places=1,
+                default=0.5,
                 help_text="\nThis value signals the importance of a page to search engines. \nAssigning accurate priority values to key pages of your site can help search engines understand \nthe structure and hierarchy of your content.\nThis must be a number between 0.1 - 1.0.\n",
-                max_digits=3,
-                null=True,
+                max_digits=2,
                 validators=[
                     django.core.validators.MaxValueValidator(1.0),
                     django.core.validators.MinValueValidator(0.099),
