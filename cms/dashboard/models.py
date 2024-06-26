@@ -21,10 +21,7 @@ class UKHSAPage(Page):
         blank=True,
         max_digits=3,
         decimal_places=2,
-        validators=[
-            MaxValueValidator(1.0),
-            MinValueValidator(0.099)
-        ]
+        validators=[MaxValueValidator(1.0), MinValueValidator(0.099)],
     )
 
     class Meta:
