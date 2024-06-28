@@ -1,6 +1,6 @@
 import logging
 
-from cms.home.models import HomePage
+from cms.home.models import HomePage, UKHSARootPage
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
     remove_metrics_documentation_child_entries,
@@ -27,7 +27,7 @@ def forward_migration_metrics_documentation_models(apps, schema_editor) -> None:
     """
     try:
         return create_metrics_documentation_parent_page_and_child_entries()
-    except HomePage.DoesNotExist:
+    except (HomePage.DoesNotExist, UKHSARootPage.DoesNotExist):
         logger.info("No Root page available to create metrics docs parent page with")
 
 
