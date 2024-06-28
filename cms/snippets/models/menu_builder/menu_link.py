@@ -26,8 +26,6 @@ class MenuLink(blocks.StructBlock):
     )
     page = blocks.PageChooserBlock(
         "wagtailcore.Page",
-        null=True,
-        blank=True,
         related_name="+",
         on_delete=models.CASCADE,
     )
