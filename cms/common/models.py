@@ -7,6 +7,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.managers import CommonPageManager
+from cms.dashboard.models import UKHSAPage
 
 HEADING_2: str = "h2"
 HEADING_3: str = "h3"
@@ -28,7 +29,7 @@ AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
 MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
-class CommonPage(Page):
+class CommonPage(UKHSAPage):
     date_posted = models.DateField()
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
 
@@ -61,7 +62,7 @@ class CommonPage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 
