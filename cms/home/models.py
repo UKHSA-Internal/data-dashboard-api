@@ -6,12 +6,13 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.home.managers import HomePageManager
 
 
-class HomePage(Page):
+class HomePage(UKHSAPage):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -44,7 +45,7 @@ class HomePage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 

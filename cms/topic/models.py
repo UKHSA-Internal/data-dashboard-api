@@ -7,13 +7,14 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.topic.managers import TopicPageManager
 
 
-class TopicPage(Page):
+class TopicPage(UKHSAPage):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -59,7 +60,7 @@ class TopicPage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 
