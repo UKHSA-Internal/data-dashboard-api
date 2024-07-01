@@ -3,6 +3,7 @@ import json
 import logging
 
 from django.core.exceptions import ValidationError
+from django.db.migrations.state import StateApps
 from django.db.models import Manager
 from wagtail.models import Page
 
@@ -22,9 +23,8 @@ from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 logger = logging.getLogger(__name__)
 
 
-DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER = (
-    MetricsDocumentationParentPage.objects
-)
+def _get_historic_model(*, apps: StateApps, model_name: str):
+    return apps.get_model(app_label="metrics_documentation", model_name=model_name)
 
 
 def load_metric_documentation_parent_page() -> dict:
@@ -55,7 +55,8 @@ def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: HomePage) -> No
 
 def get_or_create_metrics_documentation_parent_page(
     *,
-    metrics_documentation_parent_page_manager: Manager = DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER,
+    apps: StateApps,
+    metrics_documentation_parent_page_manager: Manager | None = None,
 ) -> MetricsDocumentationParentPage:
     """Creates parent page for data migration if one doesn't exist.
 
@@ -75,18 +76,28 @@ def get_or_create_metrics_documentation_parent_page(
             is being bootstrapped for the first time
 
     """
+    metrics_documentation_parent_page_model = _get_historic_model(
+        apps=apps, model_name="MetricsDocumentationParentPage"
+    )
+    manager = (
+        metrics_documentation_parent_page_manager
+        or metrics_documentation_parent_page_model.objects
+    )
+
     try:
-        return metrics_documentation_parent_page_manager.get(
-            slug="metrics-documentation"
-        )
-    except MetricsDocumentationParentPage.DoesNotExist:
-        return _create_metrics_documentation_parent_page()
+        return manager.get(slug="metrics-documentation")
+    except metrics_documentation_parent_page_model.DoesNotExist:
+        return _create_metrics_documentation_parent_page(apps=apps)
 
 
-def _create_metrics_documentation_parent_page():
+def _create_metrics_documentation_parent_page(*, apps: StateApps):
     root_page = HomePage.objects.get(slug="ukhsa-dashboard-root")
     parent_page_data = load_metric_documentation_parent_page()
-    metrics_parent = MetricsDocumentationParentPage(
+
+    metrics_documentation_parent_page_model = _get_historic_model(
+        apps=apps, model_name="MetricsDocumentationParentPage"
+    )
+    metrics_parent = metrics_documentation_parent_page_model(
         title=parent_page_data["title"],
         date_posted=datetime.datetime.today(),
         body=parent_page_data["body"],
@@ -96,7 +107,7 @@ def _create_metrics_documentation_parent_page():
     return metrics_parent
 
 
-def create_metrics_documentation_parent_page_and_child_entries() -> None:
+def create_metrics_documentation_parent_page_and_child_entries(*, apps) -> None:
     """Creates the parent page & child entries for the metrics documentation app.
 
     Notes:
@@ -119,12 +130,11 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
 
     """
     entries: list[dict[str | list[dict]]] = get_metrics_definitions()
-    remove_metrics_documentation_child_entries()
-
-    parent_page = get_or_create_metrics_documentation_parent_page()
+    remove_metrics_documentation_child_entries(apps=apps)
+    parent_page = get_or_create_metrics_documentation_parent_page(apps=apps)
 
     for entry in entries:
-        metrics_child = _build_metrics_documentation_child_entry(**entry)
+        metrics_child = _build_metrics_documentation_child_entry(apps=apps, **entry)
         try:
             add_page_as_subpage_to_parent(
                 subpage=metrics_child, parent_page=parent_page
@@ -144,26 +154,37 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
 
 
 def _build_metrics_documentation_child_entry(
+    *,
+    apps,
     **kwargs,
 ) -> MetricsDocumentationChildEntry:
-    return MetricsDocumentationChildEntry(**kwargs)
+    metrics_documentation_child_entry_model = _get_historic_model(
+        apps=apps, model_name="MetricsDocumentationChildEntry"
+    )
+    return metrics_documentation_child_entry_model(**kwargs)
 
 
-def remove_metrics_documentation_child_entries() -> None:
+def remove_metrics_documentation_child_entries(*, apps: StateApps) -> None:
     """Removes all `MetricsDocumentationChildEntry` record from the database
 
     Returns:
         None
 
     """
-    MetricsDocumentationChildEntry.objects.all().delete()
+    metrics_documentation_child_entry_model = _get_historic_model(
+        apps=apps, model_name="MetricsDocumentationChildEntry"
+    )
+    metrics_documentation_child_entry_model.objects.all().delete()
 
 
-def remove_metrics_documentation_parent_page() -> None:
+def remove_metrics_documentation_parent_page(*, apps: StateApps) -> None:
     """Removes the `MetricsDocumentationParentPage` record from the database
 
     Returns:
         None
 
     """
-    MetricsDocumentationParentPage.objects.all().delete()
+    metrics_documentation_parent_page_model = _get_historic_model(
+        apps=apps, model_name="MetricsDocumentationParentPage"
+    )
+    metrics_documentation_parent_page_model.objects.all().delete()

@@ -6,6 +6,7 @@ Only intended for use during development
 import json
 import logging
 
+from django.apps import apps
 from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
 
@@ -316,7 +317,7 @@ class Command(BaseCommand):
             parent_page=whats_new_parent_page,
         )
 
-        create_metrics_documentation_parent_page_and_child_entries()
+        create_metrics_documentation_parent_page_and_child_entries(apps=apps)
 
         weather_health_alerts_page = _create_composite_page(
             name="weather_health_alerts", parent_page=root_page
