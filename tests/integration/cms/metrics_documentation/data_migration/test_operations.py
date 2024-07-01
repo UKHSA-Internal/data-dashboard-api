@@ -2,6 +2,7 @@ import datetime
 
 import pytest
 from django.core.management import call_command
+from django.apps import apps
 
 from cms.home.models import HomePage
 from cms.metrics_documentation.data_migration.child_entries import (
@@ -46,7 +47,7 @@ class TestRemoveMetricsDocumentationChildEntries:
         assert MetricsDocumentationChildEntry.objects.exists()
 
         # When
-        remove_metrics_documentation_child_entries()
+        remove_metrics_documentation_child_entries(apps=apps)
 
         # Then
         assert not MetricsDocumentationChildEntry.objects.exists()
@@ -73,7 +74,7 @@ class TestRemoveMetricsDocumentationParentPage:
         assert MetricsDocumentationParentPage.objects.exists()
 
         # When
-        remove_metrics_documentation_parent_page()
+        remove_metrics_documentation_parent_page(apps=apps)
 
         # Then
         assert not MetricsDocumentationParentPage.objects.exists()
@@ -96,7 +97,7 @@ class TestGetOrCreateMetricsDocumentationParentPage:
 
         # When
         parent_page: MetricsDocumentationParentPage = (
-            get_or_create_metrics_documentation_parent_page()
+            get_or_create_metrics_documentation_parent_page(apps=apps)
         )
 
         # Then
@@ -124,7 +125,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         )
 
         # When
-        create_metrics_documentation_parent_page_and_child_entries()
+        create_metrics_documentation_parent_page_and_child_entries(apps=apps)
 
         # Then
         healthcare_admission_rate_child_entry = (
@@ -175,14 +176,14 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         call_command("upload_truncated_test_data")
         individual_metric_data = get_metrics_definitions()[0]
         parent_page: MetricsDocumentationParentPage = (
-            get_or_create_metrics_documentation_parent_page()
+            get_or_create_metrics_documentation_parent_page(apps=apps)
         )
         child_entry = MetricsDocumentationChildEntry(**individual_metric_data)
 
         add_page_as_subpage_to_parent(subpage=child_entry, parent_page=parent_page)
 
         # When
-        create_metrics_documentation_parent_page_and_child_entries()
+        create_metrics_documentation_parent_page_and_child_entries(apps=apps)
 
         # Then
         assert MetricsDocumentationChildEntry.objects.count() == 55

@@ -56,8 +56,9 @@ class TestGetOrCreateMetricsDocumentationParentPage:
     @mock.patch(f"{MODULE_PATH}._get_historic_model")
     @mock.patch(f"{MODULE_PATH}._create_metrics_documentation_parent_page")
     def test_delegates_call_to_create_metrics_documentation_parent_page_when_not_readily_available(
-        self, spy_create_metrics_documentation_parent_page: mock.MagicMock,
-            mocked_get_historic_model: mock.MagicMock,
+        self,
+        spy_create_metrics_documentation_parent_page: mock.MagicMock,
+        mocked_get_historic_model: mock.MagicMock,
     ):
         """
         Given no existing `MetricsDocumentationParentPage` model
@@ -76,7 +77,9 @@ class TestGetOrCreateMetricsDocumentationParentPage:
             FakeMetricsDocumentationParentPageManager(pages=[])
         )
         mocked_get_historic_model.return_value = MetricsDocumentationParentPage
-        MetricsDocumentationParentPage.objects = fake_metrics_documentation_parent_page_manager
+        MetricsDocumentationParentPage.objects = (
+            fake_metrics_documentation_parent_page_manager
+        )
         mocked_apps = mock.Mock()
 
         # When
