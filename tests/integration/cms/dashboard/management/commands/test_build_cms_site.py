@@ -5,7 +5,7 @@ from rest_framework.test import APIClient
 from cms.common.models import CommonPage
 from cms.composite.models import CompositePage
 from cms.dashboard.management.commands.build_cms_site import open_example_page_response
-from cms.home.models import HomePage
+from cms.home.models import HomePage, UKHSARootPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
 from cms.whats_new.models import WhatsNewParentPage
@@ -175,7 +175,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         about_page = CommonPage.objects.get(slug="about")
-        parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        parent_home_page = UKHSARootPage.objects.get(title="UKHSA Dashboard Root")
         api_client = APIClient()
 
         # When
@@ -223,7 +223,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         whats_new_page = WhatsNewParentPage.objects.get(slug="whats-new")
-        parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        parent_home_page = UKHSARootPage.objects.get(title="UKHSA Dashboard Root")
         api_client = APIClient()
 
         # When
@@ -271,7 +271,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         bulk_downloads = CompositePage.objects.get(slug="bulk-downloads")
-        parent_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        parent_page = UKHSARootPage.objects.get(title="UKHSA Dashboard Root")
         api_client = APIClient()
 
         # When
@@ -314,7 +314,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         access_our_data_parent_page = CompositePage.objects.get(slug="access-our-data")
-        parent_page = HomePage.objects.get(title="UKHSA Dashboard Root")
+        parent_page = UKHSARootPage.objects.get(title="UKHSA Dashboard Root")
         api_client = APIClient()
 
         # When
