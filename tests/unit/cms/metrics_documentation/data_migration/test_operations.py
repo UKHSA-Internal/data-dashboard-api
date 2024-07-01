@@ -7,6 +7,7 @@ from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
     get_or_create_metrics_documentation_parent_page,
 )
+from cms.metrics_documentation.models import MetricsDocumentationParentPage
 from tests.fakes.managers.cms.metrics_documentation_parent_page_manager import (
     FakeMetricsDocumentationParentPageManager,
 )
@@ -52,9 +53,11 @@ class TestGetOrCreateMetricsDocumentationParentPage:
         assert returned_parent_page == parent_page
         spy_create_metrics_documentation_parent_page.assert_not_called()
 
+    @mock.patch(f"{MODULE_PATH}._get_historic_model")
     @mock.patch(f"{MODULE_PATH}._create_metrics_documentation_parent_page")
     def test_delegates_call_to_create_metrics_documentation_parent_page_when_not_readily_available(
-        self, spy_create_metrics_documentation_parent_page: mock.MagicMock
+        self, spy_create_metrics_documentation_parent_page: mock.MagicMock,
+            mocked_get_historic_model: mock.MagicMock,
     ):
         """
         Given no existing `MetricsDocumentationParentPage` model
@@ -72,10 +75,9 @@ class TestGetOrCreateMetricsDocumentationParentPage:
         fake_metrics_documentation_parent_page_manager = (
             FakeMetricsDocumentationParentPageManager(pages=[])
         )
+        mocked_get_historic_model.return_value = MetricsDocumentationParentPage
+        MetricsDocumentationParentPage.objects = fake_metrics_documentation_parent_page_manager
         mocked_apps = mock.Mock()
-        mocked_model = mock.Mock()
-        mocked_model.objects = fake_metrics_documentation_parent_page_manager
-        mocked_apps.get_model.return_value = mocked_model
 
         # When
         returned_parent_page = get_or_create_metrics_documentation_parent_page(

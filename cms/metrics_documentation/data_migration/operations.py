@@ -80,7 +80,7 @@ def get_or_create_metrics_documentation_parent_page(
         return metrics_documentation_parent_page_model.objects.get(
             slug="metrics-documentation"
         )
-    except MetricsDocumentationParentPage.DoesNotExist:
+    except metrics_documentation_parent_page_model.DoesNotExist:
         return _create_metrics_documentation_parent_page(apps=apps)
 
 
