@@ -1,12 +1,12 @@
 import logging
 
-from cms.dashboard.models import UKHSAPage
 from django.db import models
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.models import Page
 from wagtail.search import index
 
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,

@@ -1,4 +1,3 @@
-from cms.dashboard.models import UKHSAPage
 from django.core.exceptions import ValidationError
 from django.db import models
 from modelcluster.fields import ParentalKey
@@ -9,6 +8,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.models import UKHSAPage
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
