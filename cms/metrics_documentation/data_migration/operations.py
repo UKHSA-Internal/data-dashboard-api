@@ -3,7 +3,7 @@ import json
 import logging
 
 from django.core.exceptions import ValidationError
-from django.db.migrations.state import StateApps
+from django.db.models import Manager
 from wagtail.models import Page
 
 from cms.home.models import HomePage
@@ -22,8 +22,9 @@ from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 logger = logging.getLogger(__name__)
 
 
-def _get_historic_model(*, apps: StateApps, model_name: str):
-    return apps.get_model(app_label="metrics_documentation", model_name=model_name)
+DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER = (
+    MetricsDocumentationParentPage.objects
+)
 
 
 def load_metric_documentation_parent_page() -> dict:
@@ -54,13 +55,15 @@ def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: HomePage) -> No
 
 def get_or_create_metrics_documentation_parent_page(
     *,
-    apps: StateApps,
+    metrics_documentation_parent_page_manager: Manager = DEFAULT_METRICS_DOCUMENTATION_PARENT_PAGE_MANAGER,
 ) -> MetricsDocumentationParentPage:
     """Creates parent page for data migration if one doesn't exist.
 
     Args:
-        `apps`: Instance of `django.apps.registry.Apps`
-            containing historical models.
+        `metrics_documentation_parent_page_manager`: The model manager
+            for the `MetricsDocumentationParentPage` model.
+            Defaults to the concrete manager
+            on `MetricsDocumentationParentPage.objects`
 
     Returns:
         The fetched or created `MetricsDocumentationParentPage` model
@@ -72,26 +75,18 @@ def get_or_create_metrics_documentation_parent_page(
             is being bootstrapped for the first time
 
     """
-    metrics_documentation_parent_page_model = _get_historic_model(
-        apps=apps, model_name="MetricsDocumentationParentPage"
-    )
-
     try:
-        return metrics_documentation_parent_page_model.objects.get(
+        return metrics_documentation_parent_page_manager.get(
             slug="metrics-documentation"
         )
-    except metrics_documentation_parent_page_model.DoesNotExist:
-        return _create_metrics_documentation_parent_page(apps=apps)
+    except MetricsDocumentationParentPage.DoesNotExist:
+        return _create_metrics_documentation_parent_page()
 
 
-def _create_metrics_documentation_parent_page(*, apps: StateApps):
+def _create_metrics_documentation_parent_page():
     root_page = HomePage.objects.get(slug="ukhsa-dashboard-root")
     parent_page_data = load_metric_documentation_parent_page()
-
-    metrics_documentation_parent_page_model = _get_historic_model(
-        apps=apps, model_name="MetricsDocumentationParentPage"
-    )
-    metrics_parent = metrics_documentation_parent_page_model(
+    metrics_parent = MetricsDocumentationParentPage(
         title=parent_page_data["title"],
         date_posted=datetime.datetime.today(),
         body=parent_page_data["body"],
@@ -101,7 +96,7 @@ def _create_metrics_documentation_parent_page(*, apps: StateApps):
     return metrics_parent
 
 
-def create_metrics_documentation_parent_page_and_child_entries(*, apps) -> None:
+def create_metrics_documentation_parent_page_and_child_entries() -> None:
     """Creates the parent page & child entries for the metrics documentation app.
 
     Notes:
@@ -111,10 +106,6 @@ def create_metrics_documentation_parent_page_and_child_entries(*, apps) -> None:
         - This will also delete any existing
           `MetricsDocumentationChildEntry` records
           prior to creating the new child entries.
-
-    Args:
-        `apps`: Instance of `django.apps.registry.Apps`
-            containing historical models.
 
     Returns:
         None
@@ -128,11 +119,12 @@ def create_metrics_documentation_parent_page_and_child_entries(*, apps) -> None:
 
     """
     entries: list[dict[str | list[dict]]] = get_metrics_definitions()
-    remove_metrics_documentation_child_entries(apps=apps)
-    parent_page = get_or_create_metrics_documentation_parent_page(apps=apps)
+    remove_metrics_documentation_child_entries()
+
+    parent_page = get_or_create_metrics_documentation_parent_page()
 
     for entry in entries:
-        metrics_child = _build_metrics_documentation_child_entry(apps=apps, **entry)
+        metrics_child = _build_metrics_documentation_child_entry(**entry)
         try:
             add_page_as_subpage_to_parent(
                 subpage=metrics_child, parent_page=parent_page
@@ -152,45 +144,26 @@ def create_metrics_documentation_parent_page_and_child_entries(*, apps) -> None:
 
 
 def _build_metrics_documentation_child_entry(
-    *,
-    apps,
     **kwargs,
 ) -> MetricsDocumentationChildEntry:
-    metrics_documentation_child_entry_model = _get_historic_model(
-        apps=apps, model_name="MetricsDocumentationChildEntry"
-    )
-    return metrics_documentation_child_entry_model(**kwargs)
+    return MetricsDocumentationChildEntry(**kwargs)
 
 
-def remove_metrics_documentation_child_entries(*, apps: StateApps) -> None:
+def remove_metrics_documentation_child_entries() -> None:
     """Removes all `MetricsDocumentationChildEntry` record from the database
 
-    Args:
-        `apps`: Instance of `django.apps.registry.Apps`
-            containing historical models.
-
     Returns:
         None
 
     """
-    metrics_documentation_child_entry_model = _get_historic_model(
-        apps=apps, model_name="MetricsDocumentationChildEntry"
-    )
-    metrics_documentation_child_entry_model.objects.all().delete()
+    MetricsDocumentationChildEntry.objects.all().delete()
 
 
-def remove_metrics_documentation_parent_page(*, apps: StateApps) -> None:
+def remove_metrics_documentation_parent_page() -> None:
     """Removes the `MetricsDocumentationParentPage` record from the database
 
-    Args:
-        `apps`: Instance of `django.apps.registry.Apps`
-            containing historical models.
-
     Returns:
         None
 
     """
-    metrics_documentation_parent_page_model = _get_historic_model(
-        apps=apps, model_name="MetricsDocumentationParentPage"
-    )
-    metrics_documentation_parent_page_model.objects.all().delete()
+    MetricsDocumentationParentPage.objects.all().delete()
