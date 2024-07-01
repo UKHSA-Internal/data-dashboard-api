@@ -4,7 +4,6 @@ import logging
 
 from django.core.exceptions import ValidationError
 from django.db.migrations.state import StateApps
-from django.db.models import Manager
 from wagtail.models import Page
 
 from cms.home.models import HomePage
@@ -56,15 +55,12 @@ def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: HomePage) -> No
 def get_or_create_metrics_documentation_parent_page(
     *,
     apps: StateApps,
-    metrics_documentation_parent_page_manager: Manager | None = None,
 ) -> MetricsDocumentationParentPage:
     """Creates parent page for data migration if one doesn't exist.
 
     Args:
-        `metrics_documentation_parent_page_manager`: The model manager
-            for the `MetricsDocumentationParentPage` model.
-            Defaults to the concrete manager
-            on `MetricsDocumentationParentPage.objects`
+        `apps`: Instance of `django.apps.registry.Apps`
+            containing historical models.
 
     Returns:
         The fetched or created `MetricsDocumentationParentPage` model
@@ -79,14 +75,12 @@ def get_or_create_metrics_documentation_parent_page(
     metrics_documentation_parent_page_model = _get_historic_model(
         apps=apps, model_name="MetricsDocumentationParentPage"
     )
-    manager = (
-        metrics_documentation_parent_page_manager
-        or metrics_documentation_parent_page_model.objects
-    )
 
     try:
-        return manager.get(slug="metrics-documentation")
-    except metrics_documentation_parent_page_model.DoesNotExist:
+        return metrics_documentation_parent_page_model.objects.get(
+            slug="metrics-documentation"
+        )
+    except MetricsDocumentationParentPage.DoesNotExist:
         return _create_metrics_documentation_parent_page(apps=apps)
 
 
@@ -117,6 +111,10 @@ def create_metrics_documentation_parent_page_and_child_entries(*, apps) -> None:
         - This will also delete any existing
           `MetricsDocumentationChildEntry` records
           prior to creating the new child entries.
+
+    Args:
+        `apps`: Instance of `django.apps.registry.Apps`
+            containing historical models.
 
     Returns:
         None
@@ -167,6 +165,10 @@ def _build_metrics_documentation_child_entry(
 def remove_metrics_documentation_child_entries(*, apps: StateApps) -> None:
     """Removes all `MetricsDocumentationChildEntry` record from the database
 
+    Args:
+        `apps`: Instance of `django.apps.registry.Apps`
+            containing historical models.
+
     Returns:
         None
 
@@ -179,6 +181,10 @@ def remove_metrics_documentation_child_entries(*, apps: StateApps) -> None:
 
 def remove_metrics_documentation_parent_page(*, apps: StateApps) -> None:
     """Removes the `MetricsDocumentationParentPage` record from the database
+
+    Args:
+        `apps`: Instance of `django.apps.registry.Apps`
+            containing historical models.
 
     Returns:
         None
