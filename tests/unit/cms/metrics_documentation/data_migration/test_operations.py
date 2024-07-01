@@ -39,10 +39,13 @@ class TestGetOrCreateMetricsDocumentationParentPage:
         fake_metrics_documentation_parent_page_manager = (
             FakeMetricsDocumentationParentPageManager(pages=[parent_page])
         )
+        mocked_apps = mock.Mock()
+        mocked_apps.get_model.return_value = parent_page
+        parent_page.objects = fake_metrics_documentation_parent_page_manager
 
         # When
         returned_parent_page = get_or_create_metrics_documentation_parent_page(
-            metrics_documentation_parent_page_manager=fake_metrics_documentation_parent_page_manager
+            apps=mocked_apps,
         )
 
         # Then
@@ -69,10 +72,14 @@ class TestGetOrCreateMetricsDocumentationParentPage:
         fake_metrics_documentation_parent_page_manager = (
             FakeMetricsDocumentationParentPageManager(pages=[])
         )
+        mocked_apps = mock.Mock()
+        mocked_model = mock.Mock()
+        mocked_model.objects = fake_metrics_documentation_parent_page_manager
+        mocked_apps.get_model.return_value = mocked_model
 
         # When
         returned_parent_page = get_or_create_metrics_documentation_parent_page(
-            metrics_documentation_parent_page_manager=fake_metrics_documentation_parent_page_manager
+            apps=mocked_apps,
         )
 
         # Then
@@ -125,7 +132,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
         mocked_add_page_as_subpage_to_parent.side_effect = ValidationError(fake_metric)
 
         # When
-        create_metrics_documentation_parent_page_and_child_entries()
+        create_metrics_documentation_parent_page_and_child_entries(apps=mock.Mock())
 
         # Then
         expected_log = (
