@@ -32,7 +32,10 @@ class UKHSAPage(Page):
         default=0.5,
         max_digits=2,
         decimal_places=1,
-        validators=[MaxValueValidator(Decimal("1.0")), MinValueValidator(Decimal("0.1"))],
+        validators=[
+            MaxValueValidator(Decimal("1.0")),
+            MinValueValidator(Decimal("0.1")),
+        ],
     )
 
     class Meta:
