@@ -92,6 +92,16 @@ class ChartPlotElement(BaseMetricsElement):
         choices=get_chart_line_types,
         help_text=help_texts.LINE_TYPE_FIELD,
     )
+    use_markers = blocks.BooleanBlock(
+        default=False,
+        required=False,
+        help_text=help_texts.USE_MARKERS,
+    )
+    use_smooth_lines = blocks.BooleanBlock(
+        default=False,
+        required=False,
+        help_text=help_texts.USE_SMOOTH_LINES,
+    )
 
     class Meta:
         icon = "chart_plot"
