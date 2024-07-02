@@ -42,7 +42,7 @@ def create_multi_coloured_line_chart(
         )
 
         line_shape = "spline" if plot_data.parameters.use_smooth_lines else "linear"
-        mode = "lines+markers" if plot_data.parameters.use_markers else "lines+text"
+        mode = "lines+markers" if plot_data.parameters.use_markers else "lines"
 
         line_plot: dict = _create_line_plot(
             x_axis_values=plot_data.x_axis_values,
