@@ -42,12 +42,11 @@ class MetricsDocumentationParentPage(UKHSAPage):
     ]
 
     # Sets which fields to expose on the API
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
         APIField("body"),
         APIField("related_links"),
         APIField("last_published_at"),
-        APIField("seo_title"),
         APIField("search_description"),
     ]
 

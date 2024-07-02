@@ -40,11 +40,10 @@ class WhatsNewChildEntry(UKHSAPage):
     ]
 
     # Sets which fields to expose on the API
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
         APIField("body"),
         APIField("last_published_at"),
-        APIField("seo_title"),
         APIField("search_description"),
         APIField("additional_details"),
         APIField("badge", serializer=BadgeSerializer()),

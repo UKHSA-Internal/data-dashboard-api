@@ -47,7 +47,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     ]
 
     # Sets which fields to expose on the API.
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("title"),
         APIField("date_posted"),
         APIField("metric"),
