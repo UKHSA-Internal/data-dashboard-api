@@ -2,14 +2,6 @@
 Due to the complexity of the Wagtail page tree and programmatic page creation.
 The data migration which these handlers feed into are effectively stubbed out.
 
-<<<<<<< HEAD
-from cms.home.models import HomePage, UKHSARootPage
-from cms.metrics_documentation.data_migration.operations import (
-    create_metrics_documentation_parent_page_and_child_entries,
-    remove_metrics_documentation_child_entries,
-    remove_metrics_documentation_parent_page,
-)
-=======
 In Django migrations, the model is referenced via `apps.get_model()`.
 This returns the model as it was at that point in time.
 The issue is that this model is a frozen version of the model,
