@@ -8,10 +8,11 @@ from wagtail.search import index
 
 from cms.common.models import MAXIMUM_URL_FIELD_LENGTH
 from cms.composite.managers import CompositePageManager
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 
 
-class CompositePage(Page):
+class CompositePage(UKHSAPage):
     date_posted = models.DateField()
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
     page_description = RichTextField(
@@ -35,12 +36,11 @@ class CompositePage(Page):
     ]
 
     # Sets which fields to expose on the API
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
         APIField("body"),
         APIField("last_published_at"),
         APIField("related_links"),
-        APIField("seo_title"),
         APIField("search_description"),
         APIField("related_links"),
         APIField("page_description"),
@@ -51,7 +51,7 @@ class CompositePage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 

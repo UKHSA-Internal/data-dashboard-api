@@ -8,6 +8,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.models import UKHSAPage
 from cms.whats_new.managers.parent import WhatsNewParentPageManager
 
 
@@ -23,7 +24,7 @@ class WhatsNewParentMultipleLivePagesError(ValidationError):
         super().__init__(message)
 
 
-class WhatsNewParentPage(Page):
+class WhatsNewParentPage(UKHSAPage):
     date_posted = models.DateField(null=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
 
@@ -39,12 +40,11 @@ class WhatsNewParentPage(Page):
     ]
 
     # Sets which fields to expose on the API
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
         APIField("body"),
         APIField("related_links"),
         APIField("last_published_at"),
-        APIField("seo_title"),
         APIField("search_description"),
     ]
 
@@ -57,7 +57,7 @@ class WhatsNewParentPage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 
