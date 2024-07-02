@@ -258,6 +258,8 @@ class TestRequestPayloadBuilder:
             "label": "",
             "line_colour": "BLUE",
             "line_type": "",
+            "use_markers": True,
+            "use_smooth_lines": False,
         }
         request_payload_builder = RequestPayloadBuilder()
 
@@ -278,3 +280,5 @@ class TestRequestPayloadBuilder:
         assert plot_data["label"] == plot_value["label"]
         assert plot_data["line_colour"] == plot_value["line_colour"]
         assert plot_data["line_type"] == plot_value["line_type"]
+        assert plot_data["use_markers"] == plot_value["use_markers"]
+        assert plot_data["use_smooth_lines"] == plot_value["use_smooth_lines"]

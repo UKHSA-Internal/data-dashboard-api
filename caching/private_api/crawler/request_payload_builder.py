@@ -102,6 +102,8 @@ class RequestPayloadBuilder:
             "label": plot_value["label"],
             "line_colour": plot_value["line_colour"],
             "line_type": plot_value["line_type"],
+            "use_markers": plot_value["use_markers"],
+            "use_smooth_lines": plot_value["use_smooth_lines"],
         }
 
     def build_tables_request_data(
