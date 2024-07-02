@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("home", "0006_set_geography_age_sex_stratum_fields_as_required"),
+        ("home", "0007_add_seo_change_frequency_and_priority_fields"),
         ("wagtailcore", "0093_uploadedfile"),
     ]
 
