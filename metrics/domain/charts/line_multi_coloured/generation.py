@@ -14,7 +14,6 @@ def create_multi_coloured_line_chart(
     chart_height: int,
     chart_width: int,
     chart_plots_data: list[PlotData],
-    line_shape: str,
     line_width: int = 2,
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
@@ -24,8 +23,6 @@ def create_multi_coloured_line_chart(
         chart_width: The chart width in pixels
         chart_plots_data: List of `PlotData` models,
             where each model represents a requested plot.
-        line_shape: The shape to assign to the line plots.
-            This can be either `linear` or `spline`.
         line_width: The weight to assign to the width of the line plots.
             Defaults to 2.
 
@@ -44,12 +41,16 @@ def create_multi_coloured_line_chart(
             line_type=plot_data.parameters.line_type
         )
 
+        line_shape = "spline" if plot_data.parameters.use_smooth_lines else "linear"
+        mode = "lines+markers" if plot_data.parameters.use_markers else "lines+text"
+
         line_plot: dict = _create_line_plot(
             x_axis_values=plot_data.x_axis_values,
             y_axis_values=plot_data.y_axis_values,
             colour=selected_colour.stringified,
             line_width=line_width,
             line_shape=line_shape,
+            mode=mode,
             legend=plot_data.parameters.label,
             dash=selected_line_type.value,
         )
@@ -78,10 +79,12 @@ def _create_line_plot(
     line_shape: str,
     legend: str,
     dash: str,
+    mode: str,
 ) -> dict:
     scatter = plotly.graph_objects.Scatter(
         x=x_axis_values,
         y=y_axis_values,
+        mode=mode,
         line={
             "width": line_width,
             "color": colour,
@@ -98,7 +101,6 @@ def generate_chart_figure(
     chart_height: int,
     chart_width: int,
     chart_plots_data: list[PlotData],
-    line_shape: str = "spline",
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
@@ -119,5 +121,4 @@ def generate_chart_figure(
         chart_height=chart_height,
         chart_width=chart_width,
         chart_plots_data=chart_plots_data,
-        line_shape=line_shape,
     )
