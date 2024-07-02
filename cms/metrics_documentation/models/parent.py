@@ -8,6 +8,7 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.models import UKHSAPage
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
@@ -25,7 +26,7 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
         super().__init__(message)
 
 
-class MetricsDocumentationParentPage(Page):
+class MetricsDocumentationParentPage(UKHSAPage):
     date_posted = models.DateField(null=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
 
@@ -60,7 +61,7 @@ class MetricsDocumentationParentPage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 
