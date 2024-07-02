@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework.templatetags.rest_framework import render_markdown
 from wagtail.admin.panels.field_panel import FieldPanel
+from wagtail.api import APIField
 from wagtail.models import Page
 
 from cms import seo
@@ -38,10 +39,16 @@ class UKHSAPage(Page):
         ],
     )
 
-    class Meta:
-        abstract = True
+    api_fields = [
+        APIField("seo_change_frequency"),
+        APIField("seo_title"),
+        APIField("seo_priority"),
+    ]
 
     promote_panels = Page.promote_panels + [
         FieldPanel("seo_change_frequency"),
         FieldPanel("seo_priority"),
     ]
+
+    class Meta:
+        abstract = True
