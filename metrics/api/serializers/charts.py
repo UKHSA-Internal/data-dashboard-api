@@ -48,6 +48,13 @@ class ChartPlotSerializer(plots.PlotSerializer):
         default="",
     )
 
+    use_smooth_lines = serializers.BooleanField(
+        default=False, help_text=help_texts.CHART_USE_SMOOTH_LINES
+    )
+    use_markers = serializers.BooleanField(
+        default=False, help_text=help_texts.CHART_USE_MARKERS
+    )
+
     def to_models(self):
         return PlotParameters(**self.data)
 
