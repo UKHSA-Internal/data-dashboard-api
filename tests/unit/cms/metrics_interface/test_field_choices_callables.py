@@ -254,6 +254,35 @@ class TestGetAllGeographyNames:
         assert geographies_names == [(x, x) for x in retrieved_geography_names]
 
 
+class TestGetAllGeographyNamesAndCodesForAlerts:
+    @mock.patch.object(
+        interface.MetricsAPIInterface,
+        "get_all_geography_names_and_codes_by_geography_type",
+    )
+    def test_delegates_call_correctly(
+        self,
+        mocked_get_all_geography_names_and_codes_by_geography_type: mock.MagicMock,
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns geography types and codes
+        When `get_all_geography_names_and_codes_for_alerts()` is called
+        Then an empty list is returned for the stubbed call.
+        """
+        # Given
+        retrieved_geography_names_and_codes = []
+        mocked_get_all_geography_names_and_codes_by_geography_type.return_value = (
+            retrieved_geography_names_and_codes
+        )
+
+        # When
+        geography_names_and_codes = (
+            field_choices_callables.get_all_geography_names_and_codes_for_alerts()
+        )
+
+        # Then
+        assert geography_names_and_codes == retrieved_geography_names_and_codes
+
+
 class TestGetAllGeographyTypeNames:
     @mock.patch.object(interface.MetricsAPIInterface, "get_all_geography_type_names")
     def test_delegates_call_correctly(

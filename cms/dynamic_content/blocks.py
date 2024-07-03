@@ -104,3 +104,15 @@ class ExternalButtonChooserBlock(SnippetChooserBlock):
                 "icon": value.icon,
             }
         return None
+
+
+class WhaButtonChooserBlock(SnippetChooserBlock):
+    @classmethod
+    def get_api_representation(cls, value, context=None) -> dict | None:
+        if value:
+            return {
+                "text": value.text,
+                "button_type": value.button_type,
+                "geography_code": value.geography_code,
+            }
+        return None

@@ -198,6 +198,34 @@ class TestMetricsAPIInterface:
         # Then
         assert all_geography_names == spy_geography_manager.get_all_names.return_value
 
+    def test_get_all_geography_names_and_codes_by_geography_type_delegates_calls_correctly(
+        self,
+    ):
+        """
+        Given a `GeographyManger` from the metrics API app
+        When `get_all_geography_names_and_codes_by_geography_type()` is called from an instance of the
+            `MetricsAPIInterface`
+        Then the call is delegated to the correct method on the `GeographyManager`
+        """
+        # Given
+        spy_geography_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            geography_manager=spy_geography_manager,
+        )
+
+        # When
+        geography_names_and_codes = (
+            metrics_api_interface.get_all_geography_names_and_codes_by_geography_type(
+                geography_type="fake_geography_type_name"
+            )
+        )
+
+        # Then
+        assert (
+            geography_names_and_codes
+            == spy_geography_manager.get_geography_codes_and_names_by_geography_type.return_value
+        )
+
     def test_get_all_geography_type_names_delegates_call_correctly(
         self,
     ):

@@ -7,13 +7,14 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.topic.managers import TopicPageManager
 
 
-class TopicPage(Page):
+class TopicPage(UKHSAPage):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -43,12 +44,11 @@ class TopicPage(Page):
     ]
 
     # Sets which fields to expose on the API
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("page_description"),
         APIField("body"),
         APIField("related_links"),
         APIField("last_published_at"),
-        APIField("seo_title"),
         APIField("search_description"),
         APIField("enable_area_selector"),
         APIField("selected_topics"),
@@ -59,7 +59,7 @@ class TopicPage(Page):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 

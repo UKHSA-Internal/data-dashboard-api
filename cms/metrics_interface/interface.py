@@ -196,6 +196,23 @@ class MetricsAPIInterface:
         """
         return self.geography_manager.get_all_names()
 
+    def get_all_geography_names_and_codes_by_geography_type(
+        self, geography_type: str
+    ) -> QuerySet:
+        """Gets all geography names and codes for a particular geography type, for example `Nation` or
+            `Government Office Region`.
+        Note this is achived by delegating the call to the `GeographyManager` from Metrics API
+
+        Returns
+            QuerySet: A queryset of the geography_code and geography_names fields as a list of tuples.
+                Example:
+                    `<GeographyQuerySet [('North East', 'E06000001'), ('North West', 'E06000002')]>`
+
+        """
+        return self.geography_manager.get_geography_codes_and_names_by_geography_type(
+            geography_type_name=geography_type,
+        )
+
     def get_all_geography_type_names(self) -> QuerySet:
         """Gets all available geography_type names as a flat list queryset.
         Note this is achieved by delegating the call to the `GeographyTypeManager` from the Metrics API

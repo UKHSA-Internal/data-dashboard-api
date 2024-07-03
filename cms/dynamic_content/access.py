@@ -50,6 +50,13 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
                 required=False,
             ),
         ),
+        (
+            "wha_button",
+            blocks.WhaButtonChooserBlock(
+                "snippets.weatheralertbutton",
+                required=False,
+            ),
+        ),
     ],
     use_json_field=True,
 )

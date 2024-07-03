@@ -13,6 +13,7 @@ And allowing the CMS to provide the content creator with access to the `latest` 
 from cms.metrics_interface import MetricsAPIInterface
 
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
+GEOGRAPHY_TYPE_NAME_FOR_ALERTS = "Government Office Region"
 
 
 def _build_two_item_tuple_choices(
@@ -221,7 +222,7 @@ def get_all_stratum_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
         This means that we don't need to create a new migration
-        whenever a new `Topic` is added to that table.
+        whenever a new `Stratum` is added to that table.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
@@ -244,7 +245,7 @@ def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
         This means that we don't need to create a new migration
-        whenever a new `Topic` is added to that table.
+        whenever a new `Geography` is added to that table.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
@@ -260,6 +261,11 @@ def get_all_geography_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     )
 
 
+def get_all_geography_names_and_codes_for_alerts() -> list:
+    """This field has been stubbed out to prevent the caller from preemptively referencing the `Geography` table"""
+    return []
+
+
 def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `geography_type` fields of the CMS blocks.
 
@@ -267,7 +273,7 @@ def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
         This means that we don't need to create a new migration
-        whenever a new `Topic` is added to that table.
+        whenever a new `Geography` is added to that table.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
@@ -286,14 +292,6 @@ def get_all_geography_type_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 def get_all_sex_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `sex` fields of the CMS blocks.
 
-    Notes:
-        This callable wraps the `MetricsAPIInterface`
-        and is passed to a migration for the CMS blocks.
-        This means that we don't need to create a new migration
-        whenever a new `Topic` is added to that table.
-        Instead, the 1-off migration is pointed at this callable.
-        So Wagtail will pull the choices by invoking this function.
-
     Returns:
         A list of 2-item tuples of sex names.
         Examples:
@@ -311,7 +309,7 @@ def get_all_age_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         This callable wraps the `MetricsAPIInterface`
         and is passed to a migration for the CMS blocks.
         This means that we don't need to create a new migration
-        whenever a new `Topic` is added to that table.
+        whenever a new `Age` is added to that table.
         Instead, the 1-off migration is pointed at this callable.
         So Wagtail will pull the choices by invoking this function.
 
