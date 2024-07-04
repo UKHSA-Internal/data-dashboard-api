@@ -12,9 +12,12 @@ class MenuResponseSerializer(serializers.ModelSerializer):
 
     @property
     def data(self) -> dict[str, list[dict]] | None:
-        if self.instance is None:
-            return None
-        return {"body": self.instance.body.get_prep_value()}
+        try:
+            body = self.instance.body.get_prep_value()
+        except AttributeError:
+            body = None
+
+        return {"active_menu": body}
 
 
 class MenuSerializer(serializers.Serializer):
