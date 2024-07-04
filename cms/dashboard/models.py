@@ -78,7 +78,9 @@ class UKHSAPage(Page):
                     e.g. `topics/covid-19`
 
         """
-        possible_sites: tuple[SiteRootPath] = self._get_relevant_site_root_paths(request)
+        possible_sites: tuple[SiteRootPath] = self._get_relevant_site_root_paths(
+            request
+        )
         site: SiteRootPath = possible_sites[0]
 
         root_path: str = site.root_path

@@ -39,5 +39,11 @@ class TestUKHSAPage:
         # Then
         response_data = response.data
         expected_base_url = f"https://{hostname}"
-        assert response_data["items"][1]["meta"]["html_url"] == f"{expected_base_url}/{parent_page.slug}/"
-        assert response_data["items"][2]["meta"]["html_url"] == f"{expected_base_url}/{parent_page.slug}/{child_page.slug}/"
+        assert (
+            response_data["items"][1]["meta"]["html_url"]
+            == f"{expected_base_url}/{parent_page.slug}/"
+        )
+        assert (
+            response_data["items"][2]["meta"]["html_url"]
+            == f"{expected_base_url}/{parent_page.slug}/{child_page.slug}/"
+        )
