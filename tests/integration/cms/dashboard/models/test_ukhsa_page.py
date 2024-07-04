@@ -21,6 +21,7 @@ class TestUKHSAPage:
         wagtail_root_page = Page.get_first_root_node()
         wagtail_root_page.add_child(instance=root_page)
         wagtail_root_page.save_revision().publish()
+        Site.objects.all().delete()
         Site.objects.create(
             hostname=hostname,
             port=443,
