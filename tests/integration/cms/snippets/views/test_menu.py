@@ -60,7 +60,7 @@ class TestMenuView:
         # Then
         assert response.status_code == HTTPStatus.OK
         assert (
-            response.data["body"]
+            response.data["active_menu"]
             == active_menu_body
             != inactive_menu.body.get_prep_value()
         )
