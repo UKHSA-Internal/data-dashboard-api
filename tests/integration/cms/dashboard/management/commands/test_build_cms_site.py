@@ -31,7 +31,7 @@ class TestBuildCMSSite:
         response_data = response.data
         items = response_data["items"]
 
-        expected_slugs = [
+        expected_slugs: set[str] = {
             "dashboard",
             "covid-19",
             "influenza",
@@ -40,12 +40,11 @@ class TestBuildCMSSite:
             "whats-new",
             "whats-coming",
             "cookies",
-        ]
-        created_slugs = [item["meta"]["slug"] for item in items]
-        for expected_slug in expected_slugs:
-            assert expected_slug in created_slugs
+        }
+        created_slugs: set[str] = set(item["meta"]["slug"] for item in items)
+        assert expected_slugs.issubset(created_slugs)
 
-        expected_titles = [
+        expected_titles: set[str] = {
             "UKHSA data dashboard",
             "COVID-19",
             "Influenza",
@@ -54,10 +53,9 @@ class TestBuildCMSSite:
             "What's new",
             "What's coming",
             "Cookies",
-        ]
-        created_titles = [item["title"] for item in items]
-        for expected_title in expected_titles:
-            assert expected_title in created_titles
+        }
+        created_titles: set[str] = {item["title"] for item in items}
+        assert expected_titles.issubset(created_titles)
 
     @pytest.mark.django_db
     def test_command_builds_site_with_correct_home_page(self):
