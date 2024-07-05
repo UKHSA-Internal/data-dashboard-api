@@ -78,7 +78,6 @@ class RGBAColours(Enum):
     WHITE: RGBA_VALUES = 0, 0, 0, 0
     DARK_BLUE_GREY: RGBA_VALUES = 107, 114, 118, 1
 
-
     # --------------------
     # Line chart specific
     # --------------------
