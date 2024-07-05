@@ -65,10 +65,6 @@ class RGBAChartLineColours(Enum):
         except KeyError:
             return cls.COLOUR_1_DARK_BLUE
 
-    @classmethod
-    def get_bar_colour(cls, *, colour: str) -> "RGBAChartLineColours":
-        return cls.get_colour(colour=colour)
-
 
 class RGBAColours(Enum):
     # Used for the line plot
