@@ -98,31 +98,6 @@ class RGBAColours(Enum):
     # Used for the shaded filled region underneath the line plot (in Line charts)
     LINE_DARK_GREY: RGBA_VALUES = 243, 242, 241, 1
 
-    # ----------------------
-    # Waffle chart specific
-    # ----------------------
-
-    # Used for the background paper colour
-    WAFFLE_WHITE: RGBA_VALUES = 255, 255, 255, 0
-
-    # Used for the 1st value
-    LIGHT_GREEN: RGBA_VALUES = 119, 196, 191, 1
-
-    # Used for the 2nd value
-    MIDDLE_GREEN: RGBA_VALUES = 0, 156, 145, 1
-
-    # Used for the 3rd value
-    DARK_GREEN: RGBA_VALUES = 0, 65, 65, 1
-
-    # Used for the neutral cells which do not have a threshold value
-    GREY: RGBA_VALUES = 216, 216, 216, 1
-
-    # Used to draw the tick labels
-    DARK_BLUE_GREY: RGBA_VALUES = 107, 114, 118, 1
-
-    # Used for the background plot colour
-    LIGHT_GREY: RGBA_VALUES = 231, 231, 231, 0
-
     # ----------------------------------------
     # Line with shaded section chart specific
     # ----------------------------------------
