@@ -13,6 +13,11 @@ from cms.whats_new.serializers import BadgeSerializer
 
 class WhatsNewChildEntry(UKHSAPage):
     date_posted = models.DateField(null=False, blank=False)
+    page_description = RichTextField(
+        features=AVAILABLE_RICH_TEXT_FEATURES,
+        blank=True,
+        null=True,
+    )
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     badge = models.ForeignKey(
         "whats_new.badge",
