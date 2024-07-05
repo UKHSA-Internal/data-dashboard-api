@@ -1,7 +1,7 @@
 bandit==1.7.9
 black==24.4.2
 coverage==7.5.4
-cyclonedx-python-lib==7.4.1
+cyclonedx-python-lib==7.5.0
 django-factory-boy==1.0.0
 factory-boy==3.3.0
 Faker==26.0.0
