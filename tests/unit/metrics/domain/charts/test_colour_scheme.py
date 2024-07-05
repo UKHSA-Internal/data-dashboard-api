@@ -21,7 +21,8 @@ class TestRGBAChartLineColours:
         stringified_rgba_value: str = rgba_colour_enum.stringified
 
         # Then
-        assert stringified_rgba_value == f"rgba{rgba_colour_enum.value}"
+        r, g, b = rgba_colour_enum.value
+        assert stringified_rgba_value == f"rgba({r}, {g}, {b}, 1)"
 
     @pytest.mark.parametrize("rgba_enum", RGBAChartLineColours)
     def test_get_colour(self, rgba_enum: RGBAChartLineColours):
@@ -49,7 +50,7 @@ class TestRGBAChartLineColours:
         """
         Given an invalid colour which is not available as a GDS-conforming colour
         When `get_colour()` is called from the `RGBAColours` class
-        Then the `BLACK` enum is defaulted to and returned
+        Then the `COLOUR_1_DARK_BLUE` enum is defaulted to and returned
         """
         # Given
         colour: str = invalid_colour
@@ -59,4 +60,4 @@ class TestRGBAChartLineColours:
 
         # Then
         assert type(retrieved_colour) is RGBAChartLineColours
-        assert retrieved_colour == RGBAChartLineColours.BLACK
+        assert retrieved_colour == RGBAChartLineColours.COLOUR_1_DARK_BLUE
