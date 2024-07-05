@@ -118,8 +118,8 @@ class RequestPayloadBuilder:
 
         """
         plot_data: dict[str, str] = cls._build_plot_data(plot_value=plot_value)
-        plot_data["use_markers"] = plot_value["use_markers"]
-        plot_data["use_smooth_lines"] = plot_value["use_smooth_lines"]
+        plot_data["use_markers"] = plot_value.get("use_markers", False)
+        plot_data["use_smooth_lines"] = plot_value.get("use_smooth_lines", True)
 
         return plot_data
 
