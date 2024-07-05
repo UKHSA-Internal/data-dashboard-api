@@ -38,6 +38,10 @@ class RGBAChartLineColours(Enum):
     LIGHT_GREEN: RGBA_VALUES = 133, 153, 75
     TURQUOISE: RGBA_VALUES = 40, 161, 151
 
+    @property
+    def rgba_value(self) -> tuple[int, int, int, int]:
+        value: tuple[int, int, int] = self.value
+        return value[0], value[1], value[2], 1
 
     @property
     def stringified(self) -> str:
