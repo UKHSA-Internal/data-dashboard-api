@@ -53,7 +53,10 @@ class RGBAChartLineColours(Enum):
 
     @classmethod
     def choices(cls):
-        return tuple((chart_type.name, cls._convert_to_readable_name(chart_type.name)) for chart_type in cls)
+        return tuple(
+            (chart_type.name, cls._convert_to_readable_name(chart_type.name))
+            for chart_type in cls
+        )
 
     @classmethod
     def get_colour(cls, *, colour: str) -> "RGBAChartLineColours":
