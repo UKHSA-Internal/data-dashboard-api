@@ -233,7 +233,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "b0ead98b-4102-48f6-b94e-ff7bcffe1dc4"
                                             }
@@ -298,7 +298,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "d3b521d8-a6bb-4960-9db9-864c3d362976"
                                             }
@@ -456,7 +456,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "c7340640-85c6-4b2e-b3b3-2695576f0355"
                                             }
@@ -521,7 +521,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "f1a643ba-ff7e-4118-a0a8-366288468cb0"
                                             }

@@ -49,7 +49,7 @@ class ChartPlotSerializer(plots.PlotSerializer):
     )
 
     use_smooth_lines = serializers.BooleanField(
-        default=False, help_text=help_texts.CHART_USE_SMOOTH_LINES
+        default=True, help_text=help_texts.CHART_USE_SMOOTH_LINES
     )
     use_markers = serializers.BooleanField(
         default=False, help_text=help_texts.CHART_USE_MARKERS

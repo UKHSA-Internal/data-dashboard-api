@@ -58,7 +58,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "7d8ee647-1e12-4ea5-8051-dacda36d7dc0"
                                             }
@@ -100,7 +100,7 @@
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "691a30aa-2446-4462-8ac1-ebada957baf9"
                                             }
@@ -134,7 +134,7 @@
                                                     "line_colour": "DARK_BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "e1100c59-f3a3-4f4c-b9f5-6268107b69d1"
                                             },
@@ -155,7 +155,7 @@
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "6b7726ab-e3f0-4a2e-99c2-604bf628d24a"
                                             }
@@ -206,7 +206,7 @@
                                                     "line_colour": "BLUE",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "9999386d-261c-4ad8-9cbb-2b7a69c70f90"
                                             }
@@ -240,7 +240,7 @@
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "588acfaa-aa73-417d-b053-574c6a44838b"
                                             }
@@ -291,7 +291,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "d6517ed4-2b64-4aac-ad83-831e086b4cab"
                                             }
@@ -325,7 +325,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "94b90d9c-de53-4848-8c1b-a0d9850c4c55"
                                             }
@@ -376,7 +376,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "49ad7b15-651c-455f-b261-3fd2b53b4ad0"
                                             }
@@ -410,7 +410,7 @@
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "e5830390-1928-4097-9894-b8c5621cfab7"
                                             }
@@ -461,7 +461,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "b83e67d5-0234-40e4-8c3e-cb7a1efb8549"
                                             }
@@ -495,7 +495,7 @@
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "b7293a99-3068-416f-85a4-696e0cf9c402"
                                             },
@@ -516,7 +516,7 @@
                                                     "line_colour": "BLUE",
                                                     "line_type": "DASH",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "6702853c-f150-4096-9ddd-7d6fb4ccfdde"
                                             }
@@ -558,7 +558,7 @@
                                                     "line_colour": "",
                                                     "line_type": "",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "c41bb963-ab1a-4a93-a2f0-fa421b3609a7"
                                             }
@@ -592,7 +592,7 @@
                                                     "line_colour": "GREEN",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "08f53934-870e-46d4-9d11-51e31b414c11"
                                             },
@@ -613,7 +613,7 @@
                                                     "line_colour": "GREEN",
                                                     "line_type": "DASH",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "af3d5181-84eb-4fd0-9cc9-f40e01c4b8df"
                                             },
@@ -634,7 +634,7 @@
                                                     "line_colour": "PURPLE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "f36a94b4-948e-4e25-8ee2-129b789d2724"
                                             },
@@ -655,7 +655,7 @@
                                                     "line_colour": "PURPLE",
                                                     "line_type": "DASH",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "5674822f-6dec-4388-aa6c-2e5366c560ee"
                                             },
@@ -676,7 +676,7 @@
                                                     "line_colour": "ORANGE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "6d033690-25e8-4bdd-bac2-6fe1b714f016"
                                             },
@@ -697,7 +697,7 @@
                                                     "line_colour": "ORANGE",
                                                     "line_type": "DASH",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "da3c0cb9-bd67-426c-a4da-ea6bf692d072"
                                             },
@@ -718,7 +718,7 @@
                                                     "line_colour": "BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "8455d4bf-b105-4062-8751-a9d8ce8290c4"
                                             },
@@ -739,7 +739,7 @@
                                                     "line_colour": "BLUE",
                                                     "line_type": "DASH",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "3e0dbfc9-d580-451c-af02-e25cdd827bf2"
                                             },
@@ -760,7 +760,7 @@
                                                     "line_colour": "RED",
                                                     "line_type": "DASH",
                                                     "use_markers": false,
-                                                    "use_smooth_lines": false
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "760e6dd2-2434-47e4-a31b-be0810b655fa"
                                             }

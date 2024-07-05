@@ -98,7 +98,7 @@ class ChartPlotElement(BaseMetricsElement):
         help_text=help_texts.USE_MARKERS,
     )
     use_smooth_lines = blocks.BooleanBlock(
-        default=False,
+        default=True,
         required=False,
         help_text=help_texts.USE_SMOOTH_LINES,
     )
