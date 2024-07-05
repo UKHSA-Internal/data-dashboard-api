@@ -85,6 +85,7 @@ class ChartPlotElement(BaseMetricsElement):
     line_colour = blocks.ChoiceBlock(
         required=False,
         choices=get_colours,
+        default=get_colours()[0],
         help_text=help_texts.LINE_COLOUR_FIELD,
     )
     line_type = blocks.ChoiceBlock(
