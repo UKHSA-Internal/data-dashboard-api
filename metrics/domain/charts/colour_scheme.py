@@ -43,13 +43,17 @@ class RGBAChartLineColours(Enum):
         value: tuple[int, int, int] = self.value
         return value[0], value[1], value[2], 1
 
+    @classmethod
+    def _convert_to_readable_name(cls, name: str) -> str:
+        return " ".join(name.split("_")).title()
+
     @property
     def stringified(self) -> str:
-        return f"rgba{self.value}"
+        return f"rgba{self.rgba_value}"
 
     @classmethod
     def choices(cls):
-        return tuple((chart_type.name, chart_type.name) for chart_type in cls)
+        return tuple((chart_type.name, cls._convert_to_readable_name(chart_type.name)) for chart_type in cls)
 
     @classmethod
     def get_colour(cls, *, colour: str) -> "RGBAChartLineColours":
