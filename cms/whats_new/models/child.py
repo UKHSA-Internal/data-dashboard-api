@@ -39,6 +39,7 @@ class WhatsNewChildEntry(UKHSAPage):
     # Content panels to render for editing within the CMS application
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
+        FieldPanel("page_description"),
         FieldPanel("body"),
         FieldPanel("additional_details"),
         FieldPanel("badge"),
