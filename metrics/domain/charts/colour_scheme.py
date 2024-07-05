@@ -52,14 +52,11 @@ class RGBAChartLineColours(Enum):
         try:
             return cls[colour]
         except KeyError:
-            return cls.BLACK
+            return cls.COLOUR_1_DARK_BLUE
 
     @classmethod
     def get_bar_colour(cls, *, colour: str) -> "RGBAChartLineColours":
-        try:
-            return cls[colour]
-        except KeyError:
-            return cls.BLUE
+        return cls.get_colour(colour=colour)
 
 
 class RGBAColours(Enum):
