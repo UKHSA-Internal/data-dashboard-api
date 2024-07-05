@@ -48,6 +48,7 @@ class WhatsNewChildEntry(UKHSAPage):
     api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
         APIField("body"),
+        APIField("page_description"),
         APIField("last_published_at"),
         APIField("search_description"),
         APIField("additional_details"),
