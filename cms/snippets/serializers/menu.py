@@ -11,7 +11,7 @@ class MenuResponseSerializer(serializers.ModelSerializer):
         fields = ["body"]
 
     @property
-    def data(self) -> dict[str, list[dict]] | None:
+    def data(self) -> dict[str, list[dict] | None]:
         try:
             body = self.instance.body.get_prep_value()
         except AttributeError:
