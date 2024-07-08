@@ -15,6 +15,7 @@ class InboundTimeSeriesSpecificFields(BaseModel):
     date: datetime.date
     embargo: datetime.datetime | None
     metric_value: float
+    reporting_lag_period: bool | None = None
 
     @field_validator("embargo")
     @classmethod
@@ -92,6 +93,9 @@ def _build_enriched_time_series_specific_fields(
             date=individual_time_series["date"],
             embargo=individual_time_series["embargo"],
             metric_value=individual_time_series["metric_value"],
+            reporting_lag_period=individual_time_series.get(
+                "reporting_lag_period", None
+            ),
         )
         for individual_time_series in source_data["time_series"]
         if individual_time_series["metric_value"] is not None
