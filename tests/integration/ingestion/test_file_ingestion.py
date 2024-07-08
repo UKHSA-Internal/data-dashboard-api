@@ -124,6 +124,10 @@ class TestDataIngester:
             == data["time_series"][0]["embargo"]
         )
 
+        # When no `reporting_lag_period` is provided in the inbound data
+        # then a nullable value is assigned
+        assert core_time_series.reporting_lag_period is None
+
     @pytest.mark.django_db
     def test_creates_api_time_series_from_data(
         self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
