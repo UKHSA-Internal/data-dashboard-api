@@ -34,7 +34,9 @@ class APITimeSeries(models.Model):
     refresh_date = models.DateTimeField(null=True)
     embargo = models.DateTimeField(null=True)
     reporting_lag_period = models.BooleanField(
-        help_text=help_texts.REPORTING_LAG_PERIOD, default=False
+        help_text=help_texts.REPORTING_LAG_PERIOD,
+        null=True,
+        blank=True,
     )
 
     date = models.DateField()
