@@ -29,3 +29,10 @@ Age band of patients.
 SEX = """
 Sex of patients.
 """
+
+# Timeseries specific fields
+REPORTING_LAG_PERIOD = """
+Whether the record falls within the current reporting lag period. 
+If true, then the value is subject to change in a subsequent retrospective update. 
+If false, then the value is considered to be final and static.
+"""
