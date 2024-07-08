@@ -181,7 +181,7 @@ class FrontEndCrawler:
         logger.info("Finished processing all regular pages for the frontend")
 
     def process_geography_page_combination(
-        self, *, geography_data: GeographyData, page: TopicPage
+        self, geography_data: GeographyData, page: TopicPage
     ) -> None:
         """Hits the frontend URL for the given `geography_data` and `page` combination
 
