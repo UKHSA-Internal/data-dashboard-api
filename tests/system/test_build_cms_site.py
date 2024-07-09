@@ -163,7 +163,7 @@ class TestBuildCMSSite:
             assert related_link["body"] == related_links_from_template[index]["body"]
 
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_about_page(self):
+    def test_command_builds_site_with_correct_about_page(self, monkeypatch):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
         And the ID of the `about` page
@@ -171,7 +171,10 @@ class TestBuildCMSSite:
         Then the response contains the expected data
         """
         # Given
+        domain = "my-prefix.dev.ukhsa-data-dashboard.gov.uk"
+        monkeypatch.setenv(name="FRONTEND_URL", value=domain)
         call_command("build_cms_site")
+
         about_page = CommonPage.objects.get(slug="about")
         parent_home_page = HomePage.objects.get(title="UKHSA Dashboard Root")
         api_client = APIClient()
@@ -181,6 +184,9 @@ class TestBuildCMSSite:
 
         # Then
         response_data = response.data
+
+        # Check the `html_url` has been constructed correctly
+        assert response_data["meta"]["html_url"] == f"https://{domain}/about/"
 
         # Compare the response from the endpoint to the template used to build the page
         about_page_template = open_example_page_response(page_name="about")
@@ -343,7 +349,7 @@ class TestBuildCMSSite:
         )
 
     @pytest.mark.django_db
-    def test_command_builds_access_our_data_getting_started(self):
+    def test_command_builds_access_our_data_getting_started(self, monkeypatch):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
         And the ID of the `CompositePae` page for `Access our data getting started page.
@@ -351,7 +357,10 @@ class TestBuildCMSSite:
         Then the response contains the expected data
         """
         # Given
+        domain = "my-prefix.dev.ukhsa-data-dashboard.gov.uk"
+        monkeypatch.setenv(name="FRONTEND_URL", value=domain)
         call_command("build_cms_site")
+
         access_our_data_getting_started_page = CompositePage.objects.get(
             slug="getting-started"
         )
@@ -367,28 +376,32 @@ class TestBuildCMSSite:
         )
 
         # Then
+        response_data = response.data
+        # Check the `html_url` has been constructed correctly
+        assert response_data["meta"]["html_url"] == f"https://{domain}/access-our-data/getting-started/"
+
         assert (
-            response.data["title"]
+            response_data["title"]
             == access_our_data_getting_started_page_template["title"]
         )
         assert (
-            response.data["meta"]["seo_title"]
+            response_data["meta"]["seo_title"]
             == access_our_data_getting_started_page_template["meta"]["seo_title"]
         )
         assert (
-            response.data["meta"]["search_description"]
+            response_data["meta"]["search_description"]
             == access_our_data_getting_started_page_template["meta"][
                 "search_description"
             ]
         )
         assert (
-            response.data["meta"]["show_in_menus"]
+            response_data["meta"]["show_in_menus"]
             == access_our_data_getting_started_page_template["meta"]["show_in_menus"]
         )
-        assert response.data["meta"]["parent"]["id"] == parent_page.id
-        assert response.data["meta"]["parent"]["title"] == parent_page.title
+        assert response_data["meta"]["parent"]["id"] == parent_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_page.title
 
         assert (
-            response.data["body"][0]
+            response_data["body"][0]
             == access_our_data_getting_started_page_template["body"][0]
         )
