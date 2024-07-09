@@ -27,6 +27,7 @@ class TestWriteDataToCSV:
         "year",
         "date",
         "metric_value",
+        "reporting_lag_period",
     ]
 
     def test_for_basic_behaviour(self):
@@ -42,6 +43,7 @@ class TestWriteDataToCSV:
         expected_metric = "COVID-19_deaths_ONSByDay"
         expected_age = "75+"
         expected_sex = "all"
+        expected_reporting_lag_period = False
 
         fake_core_time_series: FakeCoreTimeSeries = (
             FakeCoreTimeSeriesFactory.build_time_series(
@@ -51,6 +53,7 @@ class TestWriteDataToCSV:
                 metric_name=expected_metric,
                 age_name=expected_age,
                 sex=expected_sex,
+                reporting_lag_period=expected_reporting_lag_period,
             )
         )
         queryset = FakeQuerySet(instances=[fake_core_time_series]).values_list(
@@ -83,6 +86,7 @@ class TestWriteDataToCSV:
             str(fake_core_time_series.year),
             str(expected_date),
             str(expected_metric_value),
+            str(expected_reporting_lag_period),
         ]
         assert csv_header == self.expected_csv_header
         assert csv_body == expected_csv_body
