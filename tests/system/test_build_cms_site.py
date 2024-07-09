@@ -378,7 +378,10 @@ class TestBuildCMSSite:
         # Then
         response_data = response.data
         # Check the `html_url` has been constructed correctly
-        assert response_data["meta"]["html_url"] == f"https://{domain}/access-our-data/getting-started/"
+        assert (
+            response_data["meta"]["html_url"]
+            == f"https://{domain}/access-our-data/getting-started/"
+        )
 
         assert (
             response_data["title"]
