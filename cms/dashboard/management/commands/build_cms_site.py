@@ -279,7 +279,7 @@ class Command(BaseCommand):
             hostname=os.environ.get("FRONTEND_URL", "localhost"),
             port=443,
             site_name=WAGTAIL_SITE_NAME,
-            root_page=wagtail_root_page,
+            root_page=root_page,
             is_default_site=True,
         )
 
