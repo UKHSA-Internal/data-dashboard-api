@@ -191,8 +191,6 @@ class TestRequestPayloadBuilder:
                     "label": plot_value["label"],
                     "line_colour": plot_value["line_colour"],
                     "line_type": plot_value["line_type"],
-                    "use_markers": plot_value["use_markers"],
-                    "use_smooth_lines": plot_value["use_smooth_lines"],
                 }
             ],
             "x_axis": chart_block_data["x_axis"],
@@ -284,5 +282,3 @@ class TestRequestPayloadBuilder:
         assert plot_data["label"] == plot_value["label"]
         assert plot_data["line_colour"] == plot_value["line_colour"]
         assert plot_data["line_type"] == plot_value["line_type"]
-        assert plot_data["use_markers"] == plot_value["use_markers"]
-        assert plot_data["use_smooth_lines"] == plot_value["use_smooth_lines"]
