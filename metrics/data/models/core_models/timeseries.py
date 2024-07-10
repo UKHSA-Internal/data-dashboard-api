@@ -77,6 +77,7 @@ class CoreTimeSeries(models.Model):
                     "epiweek",
                     "date",
                     "metric_value",
+                    "in_reporting_lag_period",
                 ),
                 name="The `CoreTimeSeries` record should be unique",
             )
