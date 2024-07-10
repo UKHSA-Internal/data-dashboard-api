@@ -1,45 +1,45 @@
-import logging
+"""
+Due to the complexity of the Wagtail page tree and programmatic page creation.
+The data migration which these handlers feed into are effectively stubbed out.
 
-from cms.home.models import HomePage
-from cms.metrics_documentation.data_migration.operations import (
-    create_metrics_documentation_parent_page_and_child_entries,
-    remove_metrics_documentation_child_entries,
-    remove_metrics_documentation_parent_page,
-)
+In Django migrations, the model is referenced via `apps.get_model()`.
+This returns the model as it was at that point in time.
+The issue is that this model is a frozen version of the model,
+which does not have access to any custom methods.
+
+For plain Django models this is fine, but programmatic Wagtail page creation
+depends on the `save_revision()` and `publish()` methods, which are not then unavailable.
+
+The solution in our context, is to stub out this migration
+and then lean on the `build_cms_site` management command to populate the
+data that would have otherwise come from this data migration.
+
+"""
+
+import logging
 
 logger = logging.getLogger(__name__)
 
 
-def forward_migration_metrics_documentation_models(apps, schema_editor) -> None:
-    """Creates child entries for data migration.
-
-    Notes:
-        This will also create the requisite
-        `MetricsDocumentationParentPage` model
-        if it does not already exist
-
-    Args:
-        apps: instance of `django.apps.registry.Apps` containing historical models.
-        schema_editor: instance of `SchemaEditor`
+def forward_migration_metrics_documentation_models(*args, **kwargs) -> None:
+    """Stubbed out data migration. This is now being achieved via the `build_cms_site` management command
 
     Returns:
         None
+
     """
-    try:
-        return create_metrics_documentation_parent_page_and_child_entries()
-    except HomePage.DoesNotExist:
-        logger.info("No Root page available to create metrics docs parent page with")
+    logger.info(
+        "This migration has been stubbed out and replaced by the `build_cms_site` management command"
+    )
 
 
-def reverse_migration_metrics_documentation_models(apps, schema_editor) -> None:
-    """Reverses the child entries migration by removing all entries.
-
-    Args:
-        apps: instance of `django.apps.registry.Apps` containing historical models.
-        schema_editor: instance of `SchemaEditor`
+def reverse_migration_metrics_documentation_models(*args, **kwargs) -> None:
+    """Stubbed out data migration. This is now being achieved via the `build_cms_site` management command
 
     Returns:
         None
+
     """
-    remove_metrics_documentation_child_entries()
-    remove_metrics_documentation_parent_page()
+    logger.info(
+        "This migration has been stubbed out and replaced by the `build_cms_site` management command"
+    )

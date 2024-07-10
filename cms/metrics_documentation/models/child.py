@@ -6,6 +6,7 @@ from wagtail.api import APIField
 from wagtail.models import Page
 from wagtail.search import index
 
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
@@ -21,7 +22,7 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
         super().__init__(message)
 
 
-class MetricsDocumentationChildEntry(Page):
+class MetricsDocumentationChildEntry(UKHSAPage):
     date_posted = models.DateField(null=False)
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
@@ -46,7 +47,7 @@ class MetricsDocumentationChildEntry(Page):
     ]
 
     # Sets which fields to expose on the API.
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("title"),
         APIField("date_posted"),
         APIField("metric"),
@@ -62,7 +63,7 @@ class MetricsDocumentationChildEntry(Page):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(Page.promote_panels, heading="Promote"),
+            ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
 

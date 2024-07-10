@@ -95,8 +95,14 @@ class TestBarCharts:
         assert main_bar_plot.y == tuple(mocked_plot_data.y_axis_values)
 
         # Bars should be Blue
-        assert main_bar_plot.marker.color == RGBAChartLineColours.BLUE.stringified
-        assert main_bar_plot.marker.line.color == RGBAChartLineColours.BLUE.stringified
+        assert (
+            main_bar_plot.marker.color
+            == RGBAChartLineColours.COLOUR_1_DARK_BLUE.stringified
+        )
+        assert (
+            main_bar_plot.marker.line.color
+            == RGBAChartLineColours.COLOUR_1_DARK_BLUE.stringified
+        )
         assert main_bar_plot.marker.line.width == 1
 
         # Legend is assigned
