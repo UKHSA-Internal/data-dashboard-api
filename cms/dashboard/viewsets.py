@@ -16,6 +16,31 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
     listing_default_fields = PagesAPIViewSet.listing_default_fields + ["show_in_menus"]
     detail_only_fields = []
 
+    def get_queryset(self):
+        """Returns the queryset as per the individual models
+
+        Notes:
+            The base class `UKHSAPage` sits between
+            Wagtail's `Page` and our page models.
+            This includes custom logic for building URLs.
+            To give the list endpoint the know-how to build URLs,
+            the queryset should be returned as per the individual models.
+            Since the models reimplement `get_url_parts()` by virtue
+            of the base abstract class `UKHSAPage`
+
+            The use of `specific()` here is horribly inefficient.
+            But we already cache this endpoint in Redis,
+            so we only pay the penalty once per cache flush.
+
+        Returns:
+            Queryset of each page model.
+            E.g.
+                `<PageQuerySet [<HomePage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>`
+
+        """
+        queryset = super().get_queryset()
+        return queryset.specific()
+
     @cache_response()
     def listing_view(self, request: Request) -> Response:
         """This endpoint returns a list of published pages from the CMS (Wagtail).

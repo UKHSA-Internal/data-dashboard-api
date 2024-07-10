@@ -31,12 +31,11 @@ class HomePage(UKHSAPage):
     ]
 
     # Sets which fields to expose on the API
-    api_fields = [
+    api_fields = UKHSAPage.api_fields + [
         APIField("page_description"),
         APIField("body"),
         APIField("related_links"),
         APIField("last_published_at"),
-        APIField("seo_title"),
         APIField("search_description"),
     ]
 

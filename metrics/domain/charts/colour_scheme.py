@@ -4,47 +4,66 @@ RGBA_VALUES = tuple[int, int, int, int]
 
 
 class RGBAChartLineColours(Enum):
-    RED: RGBA_VALUES = 212, 53, 28, 1
-    YELLOW: RGBA_VALUES = 255, 221, 0, 1
-    GREEN: RGBA_VALUES = 0, 112, 60, 1
-    BLUE: RGBA_VALUES = 29, 112, 184, 1
-    DARK_BLUE: RGBA_VALUES = 0, 48, 120, 1
-    LIGHT_BLUE: RGBA_VALUES = 86, 148, 202, 1
-    PURPLE: RGBA_VALUES = 76, 44, 146, 1
-    BLACK: RGBA_VALUES = 11, 12, 12, 1
-    DARK_GREY: RGBA_VALUES = 80, 90, 95, 1
-    MID_GREY: RGBA_VALUES = 177, 180, 182, 1
-    LIGHT_GREY: RGBA_VALUES = 243, 242, 241, 1
-    LIGHT_PURPLE: RGBA_VALUES = 111, 114, 175, 1
-    BRIGHT_PURPLE: RGBA_VALUES = 145, 43, 136, 1
-    PINK: RGBA_VALUES = 213, 56, 128, 1
-    LIGHT_PINK: RGBA_VALUES = 244, 153, 190, 1
-    ORANGE: RGBA_VALUES = 244, 119, 56, 1
-    BROWN: RGBA_VALUES = 181, 136, 64, 1
-    LIGHT_GREEN: RGBA_VALUES = 133, 153, 75, 1
-    TURQUOISE: RGBA_VALUES = 40, 161, 151, 1
+    COLOUR_1_DARK_BLUE = 18, 67, 109
+    COLOUR_2_TURQUOISE = 40, 161, 151
+    COLOUR_3_DARK_PINK = 128, 22, 80
+    COLOUR_4_ORANGE = 244, 106, 37
+    COLOUR_5_DARK_GREY = 61, 61, 61
+    COLOUR_6_LIGHT_PURPLE = 162, 133, 209
+    COLOUR_7_BURGUNDY = 84, 13, 52
+    COLOUR_8_MUSTARD = 194, 132, 0
+    COLOUR_9_DEEP_PLUM = 51, 25, 77
+    COLOUR_10_PINK = 229, 102, 183
+    COLOUR_11_KHAKI = 71, 71, 0
+    COLOUR_12_BLUE = 0, 157, 214
+
+    # Legacy colors
+    RED: RGBA_VALUES = 212, 53, 28
+    YELLOW: RGBA_VALUES = 255, 221, 0
+    GREEN: RGBA_VALUES = 0, 112, 60
+    BLUE: RGBA_VALUES = 29, 112, 184
+    DARK_BLUE: RGBA_VALUES = 0, 48, 120
+    LIGHT_BLUE: RGBA_VALUES = 86, 148, 202
+    PURPLE: RGBA_VALUES = 76, 44, 146
+    BLACK: RGBA_VALUES = 11, 12, 12
+    DARK_GREY: RGBA_VALUES = 80, 90, 95
+    MID_GREY: RGBA_VALUES = 177, 180, 182
+    LIGHT_GREY: RGBA_VALUES = 243, 242, 241
+    LIGHT_PURPLE: RGBA_VALUES = 111, 114, 175
+    BRIGHT_PURPLE: RGBA_VALUES = 145, 43, 136
+    PINK: RGBA_VALUES = 213, 56, 128
+    LIGHT_PINK: RGBA_VALUES = 244, 153, 190
+    ORANGE: RGBA_VALUES = 244, 119, 56
+    BROWN: RGBA_VALUES = 181, 136, 64
+    LIGHT_GREEN: RGBA_VALUES = 133, 153, 75
+    TURQUOISE: RGBA_VALUES = 40, 161, 151
+
+    @property
+    def rgba_value(self) -> tuple[int, int, int, int]:
+        value: tuple[int, int, int] = self.value
+        return value[0], value[1], value[2], 1
+
+    @classmethod
+    def _convert_to_readable_name(cls, name: str) -> str:
+        return " ".join(name.split("_")).title()
 
     @property
     def stringified(self) -> str:
-        return f"rgba{self.value}"
+        return f"rgba{self.rgba_value}"
 
     @classmethod
     def choices(cls):
-        return tuple((chart_type.name, chart_type.name) for chart_type in cls)
+        return tuple(
+            (chart_type.name, cls._convert_to_readable_name(chart_type.name))
+            for chart_type in cls
+        )
 
     @classmethod
     def get_colour(cls, *, colour: str) -> "RGBAChartLineColours":
         try:
             return cls[colour]
         except KeyError:
-            return cls.BLACK
-
-    @classmethod
-    def get_bar_colour(cls, *, colour: str) -> "RGBAChartLineColours":
-        try:
-            return cls[colour]
-        except KeyError:
-            return cls.BLUE
+            return cls.COLOUR_1_DARK_BLUE
 
 
 class RGBAColours(Enum):
@@ -53,6 +72,7 @@ class RGBAColours(Enum):
 
     # Used for the background
     WHITE: RGBA_VALUES = 0, 0, 0, 0
+    DARK_BLUE_GREY: RGBA_VALUES = 107, 114, 118, 1
 
     # --------------------
     # Line chart specific
@@ -63,31 +83,6 @@ class RGBAColours(Enum):
 
     # Used for the shaded filled region underneath the line plot (in Line charts)
     LINE_DARK_GREY: RGBA_VALUES = 243, 242, 241, 1
-
-    # ----------------------
-    # Waffle chart specific
-    # ----------------------
-
-    # Used for the background paper colour
-    WAFFLE_WHITE: RGBA_VALUES = 255, 255, 255, 0
-
-    # Used for the 1st value
-    LIGHT_GREEN: RGBA_VALUES = 119, 196, 191, 1
-
-    # Used for the 2nd value
-    MIDDLE_GREEN: RGBA_VALUES = 0, 156, 145, 1
-
-    # Used for the 3rd value
-    DARK_GREEN: RGBA_VALUES = 0, 65, 65, 1
-
-    # Used for the neutral cells which do not have a threshold value
-    GREY: RGBA_VALUES = 216, 216, 216, 1
-
-    # Used to draw the tick labels
-    DARK_BLUE_GREY: RGBA_VALUES = 107, 114, 118, 1
-
-    # Used for the background plot colour
-    LIGHT_GREY: RGBA_VALUES = 231, 231, 231, 0
 
     # ----------------------------------------
     # Line with shaded section chart specific
