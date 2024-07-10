@@ -105,7 +105,9 @@ class RequestPayloadBuilder:
         }
 
     @classmethod
-    def _build_plot_data_for_chart(cls, *, plot_value: dict[str, str]) -> dict[str, str]:
+    def _build_plot_data_for_chart(
+        cls, *, plot_value: dict[str, str]
+    ) -> dict[str, str]:
         """Builds the individual plot data from the given `plot_value`
 
         Args:
