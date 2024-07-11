@@ -51,8 +51,7 @@ class CoreTimeSeries(models.Model):
     embargo = models.DateTimeField(help_text=help_texts.EMBARGO, null=True)
     in_reporting_lag_period = models.BooleanField(
         help_text=help_texts.IN_REPORTING_LAG_PERIOD,
-        null=True,
-        blank=True,
+        default=False,
     )
 
     date = models.DateField()
