@@ -83,16 +83,8 @@ def get_or_create_metrics_documentation_parent_page(
         return _create_metrics_documentation_parent_page()
 
 
-def _get_root_page() -> HomePage | UKHSARootPage:
-    slug = "ukhsa-dashboard-root"
-    try:
-        return HomePage.objects.get(slug=slug)
-    except HomePage.DoesNotExist:
-        return UKHSARootPage.objects.get(slug=slug)
-
-
 def _create_metrics_documentation_parent_page():
-    root_page: HomePage | UKHSARootPage = _get_root_page()
+    root_page = UKHSARootPage.objects.get(slug="ukhsa-dashboard-root")
     parent_page_data = load_metric_documentation_parent_page()
     metrics_parent = MetricsDocumentationParentPage(
         title=parent_page_data["title"],
