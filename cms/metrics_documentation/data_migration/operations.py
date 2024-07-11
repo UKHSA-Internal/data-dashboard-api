@@ -69,7 +69,7 @@ def get_or_create_metrics_documentation_parent_page(
         The fetched or created `MetricsDocumentationParentPage` model
 
     Raises:
-        `HomePage.DoesNotExist`: If there is no root page model
+        `UKHSARootPage.DoesNotExist`: If there is no root page model
             with the reserved slug of "ukhsa-dashboard-root".
             This typically happens when the application
             is being bootstrapped for the first time
