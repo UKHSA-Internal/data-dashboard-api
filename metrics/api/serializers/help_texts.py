@@ -100,3 +100,10 @@ The date that the chart data goes up to
 CHARTS_ALT_TEXT: str = """
 The description text which summarizes the chart and the data that it represents.
 """
+CHART_USE_MARKERS: str = """
+Boolean switch to decide whether to draw markers on individual data points.
+"""
+CHART_USE_SMOOTH_LINES: str = """
+Boolean switch to decide whether to draw splines on individual data points.
+If set to false, linear point-to-point lines will be drawn between points.
+"""

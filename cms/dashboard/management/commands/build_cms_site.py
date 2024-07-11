@@ -5,6 +5,7 @@ Only intended for use during development
 
 import json
 import logging
+import os
 
 from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
@@ -275,10 +276,10 @@ class Command(BaseCommand):
         wagtail_root_page.save_revision().publish()
 
         Site.objects.create(
-            hostname="localhost",
-            port="80",
+            hostname=os.environ.get("FRONTEND_URL", "localhost"),
+            port=443,
             site_name=WAGTAIL_SITE_NAME,
-            root_page=wagtail_root_page,
+            root_page=root_page,
             is_default_site=True,
         )
 

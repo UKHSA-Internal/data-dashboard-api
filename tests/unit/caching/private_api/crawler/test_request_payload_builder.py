@@ -142,6 +142,8 @@ class TestRequestPayloadBuilder:
                     "label": plot_value["label"],
                     "line_colour": plot_value["line_colour"],
                     "line_type": plot_value["line_type"],
+                    "use_markers": plot_value["use_markers"],
+                    "use_smooth_lines": plot_value["use_smooth_lines"],
                 }
             ],
             "file_format": "svg",
@@ -258,6 +260,8 @@ class TestRequestPayloadBuilder:
             "label": "",
             "line_colour": "BLUE",
             "line_type": "",
+            "use_markers": True,
+            "use_smooth_lines": False,
         }
         request_payload_builder = RequestPayloadBuilder()
 
