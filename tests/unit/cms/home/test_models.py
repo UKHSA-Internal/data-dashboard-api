@@ -349,9 +349,7 @@ class TestTemplateHomePage:
         chart_plot_value = chart[0].value
         assert chart_plot_value["topic"] == self.covid_19
         assert chart_plot_value["metric"] == "COVID-19_cases_countRollingMean"
-        assert (
-            chart_plot_value["chart_type"] == ChartTypes.line_multi_coloured.value
-        )
+        assert chart_plot_value["chart_type"] == ChartTypes.line_multi_coloured.value
 
     def test_covid_19_section_chart_card_headline_and_trend_number(self):
         """

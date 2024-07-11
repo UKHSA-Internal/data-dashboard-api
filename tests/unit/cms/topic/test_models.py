@@ -271,7 +271,10 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_0_4_years_value["age"] == "00-04"
         assert plot_0_4_years_value["label"] == "0 to 4 years"
-        assert plot_0_4_years_value["line_colour"] == RGBAChartLineColours.COLOUR_1_DARK_BLUE.name
+        assert (
+            plot_0_4_years_value["line_colour"]
+            == RGBAChartLineColours.COLOUR_1_DARK_BLUE.name
+        )
         assert plot_0_4_years_value["line_type"] == ChartLineTypes.SOLID.name
 
     def test_second_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
@@ -301,7 +304,10 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_5_14_years_value["age"] == "05-14"
         assert plot_5_14_years_value["label"] == "5 to 14 years"
-        assert plot_5_14_years_value["line_colour"] == RGBAChartLineColours.COLOUR_2_TURQUOISE.name
+        assert (
+            plot_5_14_years_value["line_colour"]
+            == RGBAChartLineColours.COLOUR_2_TURQUOISE.name
+        )
         assert plot_5_14_years_value["line_type"] == ChartLineTypes.SOLID.name
 
     def test_third_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
@@ -332,7 +338,10 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_15_44_years_value["age"] == "15-44"
         assert plot_15_44_years_value["label"] == "15 to 44 years"
-        assert plot_15_44_years_value["line_colour"] == RGBAChartLineColours.COLOUR_3_DARK_PINK.name
+        assert (
+            plot_15_44_years_value["line_colour"]
+            == RGBAChartLineColours.COLOUR_3_DARK_PINK.name
+        )
         assert plot_15_44_years_value["line_type"] == ChartLineTypes.SOLID.name
 
     def test_fourth_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
@@ -363,7 +372,10 @@ class TestTemplateInfluenzaPage:
         )
         assert plot_45_64_years_value["age"] == "45-64"
         assert plot_45_64_years_value["label"] == "45 to 64 years"
-        assert plot_45_64_years_value["line_colour"] == RGBAChartLineColours.COLOUR_4_ORANGE.name
+        assert (
+            plot_45_64_years_value["line_colour"]
+            == RGBAChartLineColours.COLOUR_4_ORANGE.name
+        )
         assert plot_45_64_years_value["line_type"] == ChartLineTypes.SOLID.name
 
     def test_fifth_line_plot_on_multiple_plot_chart_is_placed_correctly(self):
@@ -396,7 +408,8 @@ class TestTemplateInfluenzaPage:
         assert plot_65_plus_years_value["age"] == "65+"
         assert plot_65_plus_years_value["label"] == "65 years and over"
         assert (
-            plot_65_plus_years_value["line_colour"] == RGBAChartLineColours.COLOUR_5_DARK_GREY.name
+            plot_65_plus_years_value["line_colour"]
+            == RGBAChartLineColours.COLOUR_5_DARK_GREY.name
         )
         assert plot_65_plus_years_value["line_type"] == ChartLineTypes.SOLID.name
 
