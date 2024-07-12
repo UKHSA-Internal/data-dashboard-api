@@ -363,9 +363,8 @@ def convert_type(*, s: str) -> int | str:
     return int(s) if s.isdigit() else s.lower()
 
 
-def sort_by_age(*, iterable: Iterable) -> tuple[list[Any], list[Any]]:
-    """
-    Sorts a list of tuples where age is the first element and return as two separate lists
+def aggregate_results_by_age(*, queryset: QuerySet) -> dict[str, list[str | Decimal]]:
+    """Age values are cast to human-readable strings and aggregated
 
     Args:
         iterable: An iterable containing a list of tuples where
