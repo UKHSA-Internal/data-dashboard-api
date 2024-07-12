@@ -12,6 +12,10 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.home.managers import HomePageManager
 
 
+class UKHSARootPage(Page):
+    max_count = 1
+
+
 class HomePage(UKHSAPage):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,

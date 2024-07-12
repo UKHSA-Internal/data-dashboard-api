@@ -4,23 +4,25 @@
         "seo_title": "Other Respiratory Viruses | UKHSA data dashboard",
         "search_description": "Overall summary of other respiratory viruses in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "http://localhost/api/pages/7/",
-        "html_url": null,
+        "detail_url": "https://localhost/api/pages/7/",
+        "html_url": "https://localhost/dashboard/other-respiratory-viruses/",
         "slug": "other-respiratory-viruses",
         "show_in_menus": true,
-        "first_published_at": "2023-09-14T15:51:50.362032+01:00",
+        "first_published_at": "2024-07-11T14:55:39.280059+01:00",
         "alias_of": null,
         "parent": {
             "id": 4,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/4/",
+                "detail_url": "https://localhost/api/pages/4/",
                 "html_url": null
             },
             "title": "UKHSA data dashboard"
         }
     },
     "title": "Other respiratory viruses",
+    "seo_change_frequency": 5,
+    "seo_priority": "0.5",
     "page_description": "<p data-block-key=\"rjyu9\">Other common respiratory viruses include adenovirus, human metapneumovirus (hMPV), parainfluenza, rhinovirus and respiratory syncytial virus (RSV).</p><p data-block-key=\"47elv\">The healthcare data we have for other respiratory viruses comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the healthcare data is not a count of every person being treated for the respiratory virus in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for other respiratory viruses</a>.</p><p data-block-key=\"3t8e7\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
         {
@@ -37,6 +39,7 @@
                                     "value": {
                                         "title": "Hospital admissions rate per 100,000 people by age - respiratory syncytial virus (RSV)",
                                         "body": "Age breakdown of weekly rates per 100,000 people of patients admitted to hospital (including ICU and HDU) with RSV.",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -45,17 +48,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "00-04",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "0 to 4 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "b594dbf2-1455-4c08-ae52-6f63cf42f5da"
                                             },
@@ -64,17 +69,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "05-14",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "RED",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_2_TURQUOISE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "8b8a739f-af30-4b00-8e76-8425ef7aaf13"
                                             },
@@ -83,17 +90,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "15-44",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "15 to 44 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_3_DARK_PINK",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "4fb2cee7-ba47-4e2b-b4b3-db5dfb521d02"
                                             },
@@ -102,17 +111,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "45-54",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "45 to 54 years",
-                                                    "line_colour": "YELLOW",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_4_ORANGE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "1fde61b4-431d-4807-b3e0-0294e052584e"
                                             },
@@ -121,17 +132,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "55-64",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "55 to 64 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_5_DARK_GREY",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "d016b672-2048-4f34-95ea-fd9aa469190a"
                                             },
@@ -140,17 +153,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "65-74",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "65 to 74 years",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_6_LIGHT_PURPLE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "56e0e796-1c4f-43f0-993b-beb32348d4df"
                                             },
@@ -159,17 +174,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "75-84",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "75 to 84 years",
-                                                    "line_colour": "PINK",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_7_BURGUNDY",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "a4895cec-5999-4126-bacd-065de72dd06e"
                                             },
@@ -178,17 +195,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_healthcare_admissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "85+",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "85 years and over",
-                                                    "line_colour": "TURQUOISE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_8_MUSTARD",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "d29756bc-e04f-4540-aca8-68e9895e4434"
                                             }
@@ -218,6 +237,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test - adenovirus",
                                         "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for adenovirus in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -226,17 +246,19 @@
                                                 "value": {
                                                     "topic": "Adenovirus",
                                                     "metric": "adenovirus_testing_positivityByWeek",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "8cb7d64b-c954-42ee-9fdd-4d1a223ef945"
                                             }
@@ -257,6 +279,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test - human metapneumovirus (hMPV)",
                                         "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for hMPV in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -265,17 +288,19 @@
                                                 "value": {
                                                     "topic": "hMPV",
                                                     "metric": "hMPV_testing_positivityByWeek",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "e669f88a-3ee4-4cbd-b07f-a3afc9a2e837"
                                             }
@@ -296,6 +321,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test - parainfluenza",
                                         "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for parainfluenza in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -304,17 +330,19 @@
                                                 "value": {
                                                     "topic": "Parainfluenza",
                                                     "metric": "parainfluenza_testing_positivityByWeek",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "7c6c22fc-af48-4377-9a30-333d18f927d3"
                                             }
@@ -335,6 +363,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test - rhinovirus",
                                         "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for rhinovirus in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -343,17 +372,19 @@
                                                 "value": {
                                                     "topic": "Rhinovirus",
                                                     "metric": "rhinovirus_testing_positivityByWeek",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "31a1cb1a-69db-4bcd-b4e1-0906a8eacdea"
                                             }
@@ -374,6 +405,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test - RSV",
                                         "body": "The percentage of people who had a PCR test and had at least one positive PCR test result for RSV in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -382,17 +414,19 @@
                                                 "value": {
                                                     "topic": "RSV",
                                                     "metric": "RSV_testing_positivityByWeek",
-                                                    "chart_type": "line_with_shaded_section",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "5f0bb3f1-8d8f-4950-855b-67deba69ece4"
                                             }
@@ -456,5 +490,13 @@
             "body": "<p data-block-key=\"4kyrm\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-09-14T18:39:44.569896+01:00"
+    "last_published_at": "2024-07-11T15:52:06.801790+01:00",
+    "enable_area_selector": false,
+    "selected_topics": [
+        "Adenovirus",
+        "Parainfluenza",
+        "hMPV",
+        "RSV",
+        "Rhinovirus"
+    ]
 }
