@@ -237,10 +237,9 @@ class PlotsInterface:
             plot_parameters=plot_parameters, queryset=queryset_result.queryset
         )
 
-        return PlotData(
+        return PlotData.create_from_parameters(
             parameters=plot_parameters,
-            x_axis_values=aggregated_results[plot_parameters.x_axis_value],
-            y_axis_values=aggregated_results[plot_parameters.y_axis_value],
+            aggregated_results=aggregated_results,
             latest_date=queryset_result.latest_date,
         )
 
