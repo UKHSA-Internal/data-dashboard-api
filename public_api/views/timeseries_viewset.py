@@ -81,6 +81,7 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "year",
         "epiweek",
         "date",
+        "in_reporting_lag_period",
     ]
 
     def get_queryset(self):
