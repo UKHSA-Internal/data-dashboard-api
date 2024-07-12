@@ -4,23 +4,25 @@
         "seo_title": "Influenza | UKHSA data dashboard",
         "search_description": "Detailed summary of Influenza in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "http://localhost/api/pages/6/",
-        "html_url": null,
+        "detail_url": "https://localhost/api/pages/6/",
+        "html_url": "https://localhost/dashboard/influenza/",
         "slug": "influenza",
         "show_in_menus": true,
-        "first_published_at": "2024-07-02T13:04:43.822807+01:00",
+        "first_published_at": "2024-07-11T14:55:39.253862+01:00",
         "alias_of": null,
         "parent": {
             "id": 4,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/4/",
+                "detail_url": "https://localhost/api/pages/4/",
                 "html_url": null
             },
             "title": "UKHSA data dashboard"
         }
     },
     "title": "Influenza",
+    "seo_change_frequency": 5,
+    "seo_priority": "0.5",
     "page_description": "<p data-block-key=\"z3vrp\">Influenza (commonly known as flu) is a respiratory infection.</p><p data-block-key=\"f9pfj\">The healthcare data we have for influenza comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the influenza healthcare data is not a count of every person being treated for influenza in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for influenza</a>.</p><p data-block-key=\"fjsfr\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
         {
@@ -37,7 +39,7 @@
                                     "value": {
                                         "title": "ICU/HDU admission rates per 100,000 population",
                                         "body": "Weekly overall influenza hospital ICU HDU rates per 100,000 trust catchment population.",
-                                        "tag_manager_event_id": null,
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -55,7 +57,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "BLUE",
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -71,7 +73,7 @@
                                     "value": {
                                         "title": "ICU/HDU admissions rate per 100,000 people by age",
                                         "body": "Age breakdown of people admitted to ICU or HDU with influenza each week, shown as the rate per 100,000 trust catchment population.",
-                                        "tag_manager_event_id": null,
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -89,7 +91,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "0 to 4 years",
-                                                    "line_colour": "GREEN",
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -110,7 +112,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "RED",
+                                                    "line_colour": "COLOUR_2_TURQUOISE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -131,7 +133,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "15 to 44 years",
-                                                    "line_colour": "PURPLE",
+                                                    "line_colour": "COLOUR_3_DARK_PINK",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -152,7 +154,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "45 to 54 years",
-                                                    "line_colour": "BLACK",
+                                                    "line_colour": "COLOUR_4_ORANGE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -173,7 +175,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "55 to 64 years",
-                                                    "line_colour": "ORANGE",
+                                                    "line_colour": "COLOUR_5_DARK_GREY",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -194,7 +196,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "65 to 74 years",
-                                                    "line_colour": "YELLOW",
+                                                    "line_colour": "COLOUR_6_LIGHT_PURPLE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -215,7 +217,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "75 to 84 years",
-                                                    "line_colour": "BLUE",
+                                                    "line_colour": "COLOUR_7_BURGUNDY",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -236,7 +238,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "85 years and over",
-                                                    "line_colour": "PINK",
+                                                    "line_colour": "COLOUR_8_MUSTARD",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -269,7 +271,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test",
                                         "body": "The percentage of people who received a PCR and had at least one positive PCR test result for influenza in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
-                                        "tag_manager_event_id": null,
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -287,7 +289,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
                                                     "line_type": "",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -303,7 +305,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test by age",
                                         "body": "The percentage of people who received a PCR and had at least one positive PCR test result for influenza in the same 7 days, by age. Data is shown by specimen date (the date the sample was collected).",
-                                        "tag_manager_event_id": null,
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -321,7 +323,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "0 to 4 years",
-                                                    "line_colour": "GREEN",
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -342,7 +344,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "RED",
+                                                    "line_colour": "COLOUR_2_TURQUOISE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -363,7 +365,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "15 to 44 years",
-                                                    "line_colour": "PURPLE",
+                                                    "line_colour": "COLOUR_3_DARK_PINK",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -384,7 +386,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "45 to 64 years",
-                                                    "line_colour": "BLACK",
+                                                    "line_colour": "COLOUR_4_ORANGE",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": false
@@ -405,7 +407,7 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "65 years and over",
-                                                    "line_colour": "ORANGE",
+                                                    "line_colour": "COLOUR_5_DARK_GREY",
                                                     "line_type": "SOLID",
                                                     "use_markers": false,
                                                     "use_smooth_lines": true
@@ -454,7 +456,7 @@
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2024-07-02T13:04:43.822807+01:00",
+    "last_published_at": "2024-07-11T15:54:04.810830+01:00",
     "enable_area_selector": false,
     "selected_topics": [
         "Influenza"
