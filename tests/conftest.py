@@ -4,7 +4,7 @@ import pytest
 from wagtail.models import Page
 from wagtail.models.i18n import Locale
 
-from cms.home.models import HomePage
+from cms.home.models import UKHSARootPage
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -183,8 +183,8 @@ def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
 
 
 @pytest.fixture()
-def dashboard_root_page() -> HomePage:
-    root_page = HomePage(
+def dashboard_root_page() -> UKHSARootPage:
+    root_page = UKHSARootPage(
         title="UKHSA Dashboard Root",
         slug="ukhsa-dashboard-root",
         path="ukhsa-dashboard-root",
@@ -226,6 +226,8 @@ def example_chart_block() -> dict[str, str | list[dict]]:
                     "label": "Admission rate",
                     "line_colour": "",
                     "line_type": "",
+                    "use_markers": False,
+                    "use_smooth_lines": True,
                 },
                 "id": "791efbf1-8880-4dfa-9f5d-526982ed1539",
             }

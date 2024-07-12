@@ -33,6 +33,8 @@ class TestLineMultiColouredCharts:
         label: str = "",
         line_type: str = "",
         line_colour: str = "",
+        use_markers: bool = False,
+        use_smooth_lines: bool = True,
     ) -> PlotData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
@@ -42,6 +44,8 @@ class TestLineMultiColouredCharts:
             label=label,
             line_type=line_type,
             line_colour=line_colour,
+            use_markers=use_markers,
+            use_smooth_lines=use_smooth_lines,
         )
         return PlotData(
             parameters=plot_params,
@@ -168,6 +172,7 @@ class TestLineMultiColouredCharts:
             label=first_plot_label,
             line_type=first_plot_line_type,
             line_colour=first_plot_colour,
+            use_markers=True,
         )
 
         x_axis_values = DATES_FROM_SEP_TO_JAN
@@ -182,6 +187,7 @@ class TestLineMultiColouredCharts:
             label=second_plot_label,
             line_type=second_plot_line_type,
             line_colour=second_plot_colour,
+            use_smooth_lines=False,
         )
 
         # When
@@ -202,6 +208,8 @@ class TestLineMultiColouredCharts:
         # i.e. `2022-9-5` instead of as datetime objects hence the need for the string conversion
         assert list(first_plot.x) == x_axis_values_as_strings
         assert list(first_plot.y) == first_chart_plots_data.y_axis_values
+        # Check that the `use_markers` boolean is applied correctly
+        assert first_plot.mode == "lines+markers"
 
         # The name of the plot should match the provided custom label
         assert first_plot.name == first_plot_label
@@ -225,12 +233,14 @@ class TestLineMultiColouredCharts:
         assert list(second_plot.x) == x_axis_values_as_strings
         assert list(second_plot.y) == second_chart_plots_data.y_axis_values
 
+        assert second_plot.mode == "lines"
+
         # The name of the plot should match the provided custom label
         assert second_plot.name == second_plot_label
 
-        # Check that the second plotted line is a continuous `spline`
+        # Check that the second plotted line is a `linear` plot
         second_plot_line: plotly.graph_objects.scatter.Line = second_plot.line
-        assert second_plot_line.shape == "spline"
+        assert second_plot_line.shape == "linear"
         assert second_plot_line.width == 2
 
         # Check that the first plotted line has the line type set correctly
