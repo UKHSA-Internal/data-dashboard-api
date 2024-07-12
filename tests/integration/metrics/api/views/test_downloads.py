@@ -64,7 +64,9 @@ class TestDownloadsView:
             year=self.core_timeseries_data["year"],
             epiweek=self.core_timeseries_data["epiweek"],
             date=self.core_timeseries_data["date"],
-            in_reporting_lag_period=self.core_timeseries_data["in_reporting_lag_period"],
+            in_reporting_lag_period=self.core_timeseries_data[
+                "in_reporting_lag_period"
+            ],
         )
 
     @property
