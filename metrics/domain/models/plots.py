@@ -130,6 +130,22 @@ class PlotData(BaseModel):
     additional_values: Any | None = None
     latest_date: Any = None  # noqa: UP007
 
+    @classmethod
+    def create_from_parameters(cls, parameters, aggregated_results, latest_date):
+        keys_to_exclude = [parameters.x_axis_value, parameters.y_axis_value]
+        additional_values = {
+            key: value
+            for key, value in aggregated_results.items()
+            if key not in keys_to_exclude
+        }
+        return cls(
+            parameters=parameters,
+            x_axis_values=aggregated_results[parameters.x_axis_value],
+            y_axis_values=aggregated_results[parameters.y_axis_value],
+            additional_values=additional_values,
+            latest_date=latest_date,
+        )
+
 
 class CompletePlotData(BaseModel):
     """Data model to hold the parameters and the full-enriched queryset
