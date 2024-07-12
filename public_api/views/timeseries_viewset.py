@@ -62,7 +62,8 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     - `date` - The date which this metric value was recorded in the format **YYYY-MM-DD** e.g. **2020-07-20**
 
-    - `in_reporting_lag_period` - A boolean indicating whether the data point is considered to be subject to retrospective updates
+    - `in_reporting_lag_period` - A boolean indicating whether the data point is considered to be subject
+    to retrospective updates.
 
     """
 
