@@ -33,8 +33,9 @@ class APITimeSeries(models.Model):
 
     refresh_date = models.DateTimeField(null=True)
     embargo = models.DateTimeField(null=True)
-    reporting_lag_period = models.BooleanField(
-        help_text=help_texts.REPORTING_LAG_PERIOD, default=False
+    in_reporting_lag_period = models.BooleanField(
+        help_text=help_texts.IN_REPORTING_LAG_PERIOD,
+        default=False,
     )
 
     date = models.DateField()
@@ -61,6 +62,7 @@ class APITimeSeries(models.Model):
                     "epiweek",
                     "date",
                     "metric_value",
+                    "in_reporting_lag_period",
                 ),
                 name="The `APITimeSeries` record should be unique",
             )

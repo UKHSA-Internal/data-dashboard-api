@@ -35,7 +35,6 @@ lint.select = [
     "RET",      # flake8-return
     "SLF",      # flake8-self
     "SIM",      # flake8-simplify
-    "TRIO",     # flake8-trio
     "PERF",     # Perflint
     "ERA",      # eradicate
     "PGH",      # pygrep-hooks

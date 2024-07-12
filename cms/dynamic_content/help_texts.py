@@ -179,6 +179,19 @@ An optional choice of what to display along the y-axis of the chart.
 If nothing is provided, `metric value` will be used by default.
 """
 
+USE_SMOOTH_LINES: str = """
+If set to true, draws the plot as a spline line, resulting in smooth curves between data points.
+If set to false, draws the plot as a linear line, 
+resulting in linear point-to-point lines being drawn between data points.
+This is only applicable to line-type charts.
+"""
+
+USE_MARKERS: str = """
+If set to true, markers are drawn on each individual data point.
+If set to false, markers are not drawn at all.
+This is only applicable to line-type charts.
+"""
+
 CODE_EXAMPLE: str = """
 A required section that can be used to add code examples to a composite page type.
 """

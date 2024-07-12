@@ -24,6 +24,8 @@ class PlotParameters(BaseModel):
     x_axis: str | None = ""
     y_axis: str | None = ""
     override_y_axis_choice_to_none: bool = False
+    use_smooth_lines: bool = True
+    use_markers: bool = False
 
     @property
     def topic_name(self) -> str:
