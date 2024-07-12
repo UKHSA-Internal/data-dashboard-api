@@ -525,7 +525,7 @@ class TestPlotsInterface:
         # Then
         assert timeseries == spy_core_time_series_manager.query_for_data.return_value
         spy_core_time_series_manager.query_for_data.assert_called_once_with(
-            fields_to_export=[mocked_x_axis, mocked_y_axis, "in_reporting_lag_period"],
+            fields_to_export=[mocked_x_axis, mocked_y_axis, "in_reporting_delay_period"],
             field_to_order_by=mocked_x_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
@@ -774,17 +774,17 @@ class TestSortByAge:
                 {
                     "age__name": "00-04",
                     "metric_value": Decimal("1.0"),
-                    "in_reporting_lag_period": False,
+                    "in_reporting_delay_period": False,
                 },
                 {
                     "age__name": "55+",
                     "metric_value": Decimal("2.0"),
-                    "in_reporting_lag_period": False,
+                    "in_reporting_delay_period": False,
                 },
                 {
                     "age__name": "all",
                     "metric_value": Decimal("3.0"),
-                    "in_reporting_lag_period": False,
+                    "in_reporting_delay_period": False,
                 },
             ]
         )

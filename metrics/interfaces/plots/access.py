@@ -162,7 +162,7 @@ class PlotsInterface:
 
         """
         return self.core_time_series_manager.query_for_data(
-            fields_to_export=[x_axis, y_axis, "in_reporting_lag_period"],
+            fields_to_export=[x_axis, y_axis, "in_reporting_delay_period"],
             field_to_order_by=x_axis,
             topic_name=topic_name,
             metric_name=metric_name,
@@ -341,7 +341,7 @@ def get_aggregated_results(
         >>> {
                 "date": [(datetime.date(2022, 10, 10), ...],
                 "metric_value: [Decimal('0.8'), ...],
-                "in_reporting_lag_period": [False, ...]
+                "in_reporting_delay_period": [False, ...]
             }
 
     """
@@ -405,7 +405,7 @@ def aggregate_results(*, values) -> dict[str, list[datetime.date | Decimal | boo
         >>> {
                 "date": [(datetime.date(2022, 10, 10), ...],
                 "metric_value: [Decimal('0.8'), ...],
-                "in_reporting_lag_period": [False, ...]
+                "in_reporting_delay_period": [False, ...]
         }
 
     """
