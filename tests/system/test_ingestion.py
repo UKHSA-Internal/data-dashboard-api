@@ -77,8 +77,7 @@ class TestIngestion:
         # Given
         first_sample_data = example_time_series_data.copy()
         query_payload = {
-            "x_axis": "date",
-            "y_axis": "metric_value",
+            "fields_to_export": ["date", "metric_value"],
             "topic_name": first_sample_data["topic"],
             "metric_name": first_sample_data["metric"],
             "date_from": "2020-01-01",

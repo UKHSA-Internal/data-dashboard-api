@@ -40,12 +40,12 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def query_for_data(
         self,
-        x_axis: str,
-        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        fields_to_export: list[str] | None = None,
         date_to: datetime.date | None = None,
+        field_to_order_by: str = "date",
         geography_name: str | None = None,
         geography_type_name: str | None = None,
         stratum_name: str | None = None,
@@ -86,12 +86,18 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         if age:
             filtered_time_series = [x for x in filtered_time_series if x.age == age]
 
-        queryset = FakeQuerySet(
-            [
-                (getattr(time_series, x_axis), getattr(time_series, y_axis))
-                for time_series in filtered_time_series
-            ]
-        )
+        if fields_to_export:
+            queryset = FakeQuerySet(
+                [
+                    self._export_record(
+                        time_series=time_series, fields_to_export=fields_to_export
+                    )
+                    for time_series in filtered_time_series
+                ]
+            )
+        else:
+            queryset = FakeQuerySet(filtered_time_series)
+
         queryset.latest_date = max(
             (x.refresh_date for x in filtered_time_series), default=""
         )

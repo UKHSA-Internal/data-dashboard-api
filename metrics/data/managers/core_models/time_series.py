@@ -82,27 +82,32 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def query_for_data(
         self,
         *,
-        x_axis: str,
-        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
         date_to: datetime.date | None = None,
+        fields_to_export: list[str] = None,
+        field_to_order_by: str = "date",
         geography_name: str | None = None,
         geography_type_name: str | None = None,
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
     ) -> models.QuerySet:
-        """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
+        """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
+
+        Notes:
+            - Slices all values older than the `date_from` and all values newer than the `date_to`.
+            - If `fields_to_export` is not specified, then the full queryset is returned
 
         Args:
-            x_axis: The field to display along the x-axis.
-                In this case, this will be the first item of each 2-item object
-                E.g. `date` or `stratum`
-            y_axis: The field to display along the y-axis
-                In this case, this will be the second item of each 2-item object
-                E.g. `metric`
+            fields_to_export: List of fields to be exported
+                as part of the underlying `values()` call.
+                If not specified, the full queryset is returned.
+                Typically, this would be a 2 item list.
+                In the case where we wanted to display
+                the date along the x-axis and metric value across the y-axis:
+                >>> ["date", "metric_value"]
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -113,6 +118,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             date_to: The datetime object to end the query at.
                 E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
                 would cut off any records that occurred after that date.
+            field_to_order_by: The name of the field to order
+                the resulting queryset in ascending order by.
+                Defaults to `date`.
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             geography_type_name: The name of the type of geography to apply additional filtering.
@@ -125,15 +133,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
 
-        Notes:
-            If `x_axis` and `y_axis` are not provided
-            then the queryset will be returned for the
-            full records instead of the 2-item values
-            specified by the `x_axis` and `y_axis`
-
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
-                of the (x_axis, y_axis) numbers:
+                of the (fields_to_export) numbers:
                 Examples:
                     `<CoreTimeSeriesQuerySet [
                         (datetime.date(2022, 10, 10), Decimal('0.8')),
@@ -159,11 +161,14 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
         queryset = self._ascending_order(
             queryset=queryset,
-            field_name=x_axis,
+            field_name=field_to_order_by,
         )
 
-        if x_axis and y_axis:
-            queryset = queryset.values_list(x_axis, y_axis)
+        if fields_to_export:
+            fields_to_export = [
+                field for field in fields_to_export if field is not None
+            ]
+            queryset = queryset.values(*fields_to_export)
 
         return self._annotate_latest_date_on_queryset(queryset=queryset)
 
@@ -296,18 +301,15 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 class CoreTimeSeriesManager(models.Manager):
     """Custom model manager class for the `TimeSeries` model."""
 
-    def get_queryset(self) -> CoreTimeSeriesQuerySet:
-        return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
-
-    def filter_for_x_and_y_values(
+    def query_for_data(
         self,
         *,
-        x_axis: str,
-        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        fields_to_export: list[str] | None = None,
         date_to: datetime.date | None = None,
+        field_to_order_by: str = "date",
         geography_name: str | None = None,
         geography_type_name: str | None = None,
         stratum_name: str | None = None,
@@ -317,12 +319,13 @@ class CoreTimeSeriesManager(models.Manager):
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
         Args:
-            x_axis: The field to display along the x-axis.
-                In this case, this will be the first item of each 2-item object
-                E.g. `date` or `stratum`
-            y_axis: The field to display along the y-axis
-                In this case, this will be the second item of each 2-item object
-                E.g. `metric`
+            fields_to_export: List of fields to be exported
+                as part of the underlying `values()` call.
+                If not specified, the full queryset is returned.
+                Typically, this would be a 2 item list.
+                In the case where we wanted to display
+                the date along the x-axis and metric value across the y-axis:
+                >>> ["date", "metric_value"]
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
@@ -333,6 +336,9 @@ class CoreTimeSeriesManager(models.Manager):
             date_to: The datetime object to end the query at.
                 E.g. datetime.datetime(2023, 5, 27, 0, 0, 0, 0)
                 would cut off any records that occurred after that date.
+            field_to_order_by: The name of the field to order
+                the resulting queryset in ascending order by.
+                Defaults to `date`.
             geography_name: The name of the geography to apply additional filtering to.
                 E.g. `England`
             geography_type_name: The name of the type of geography to apply additional filtering.
@@ -373,9 +379,9 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-        return self.get_queryset().filter_for_x_and_y_values(
-            x_axis=x_axis,
-            y_axis=y_axis,
+        return self.get_queryset().query_for_data(
+            fields_to_export=fields_to_export,
+            field_to_order_by=field_to_order_by,
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
@@ -386,6 +392,9 @@ class CoreTimeSeriesManager(models.Manager):
             sex=sex,
             age=age,
         )
+
+    def get_queryset(self) -> CoreTimeSeriesQuerySet:
+        return CoreTimeSeriesQuerySet(model=self.model, using=self.db)
 
     def get_available_geographies(self, *, topic: str) -> models.QuerySet:
         """Gets all available geographies for the given `topic` which have at least 1 `CoreTimeSeries` record

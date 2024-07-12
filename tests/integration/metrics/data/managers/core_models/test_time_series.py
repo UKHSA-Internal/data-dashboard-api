@@ -171,8 +171,6 @@ class TestCoreTimeSeriesQuerySet:
         Then only the returned queryset contains the full records
         """
         # Given
-        x_axis = "date"
-        y_axis = ""
         dates = FAKE_DATES
         core_time_series = [
             CoreTimeSeriesFactory.create_record(
@@ -341,9 +339,8 @@ class TestCoreTimeSeriesManager:
         ]
 
         # When
-            x_axis="date",
-            y_axis="metric_value",
         retrieved_records = CoreTimeSeries.objects.query_for_data(
+            fields_to_export=["date", "metric_value"],
             topic_name=live_core_time_series_records[0].metric.topic.name,
             metric_name=live_core_time_series_records[0].metric.name,
             date_from=dates[0],
