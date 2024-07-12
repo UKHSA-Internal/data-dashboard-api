@@ -429,7 +429,7 @@ class Consumer:
                 year=int(year),
                 month=int(month),
                 metric_value=time_series_data.metric_value,
-                reporting_lag_period=time_series_data.reporting_lag_period,
+                in_reporting_lag_period=time_series_data.in_reporting_lag_period,
             )
             created_core_time_series.append(core_time_series)
 
@@ -487,7 +487,7 @@ class Consumer:
                 embargo=time_series_data.embargo,
                 date=time_series_data.date,
                 metric_value=time_series_data.metric_value,
-                reporting_lag_period=time_series_data.reporting_lag_period,
+                in_reporting_lag_period=time_series_data.in_reporting_lag_period,
             )
             created_api_time_series.append(api_time_series)
 
