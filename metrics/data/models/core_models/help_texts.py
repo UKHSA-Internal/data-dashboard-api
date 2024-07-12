@@ -31,7 +31,7 @@ Sex of patients.
 """
 
 # Timeseries specific fields
-IN_REPORTING_LAG_PERIOD = """
-Whether the record falls within the current reporting lag period. 
+IN_REPORTING_DELAY_PERIOD = """
+Whether the record falls within the current reporting delay period. 
 If true, then the value is subject to change in a subsequent retrospective update.
 """
