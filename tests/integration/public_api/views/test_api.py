@@ -199,7 +199,7 @@ class TestPublicAPINestedLinkViews:
         metric_group = "deaths"
         sex = "ALL"
         age = "ALL"
-        in_reporting_lag_period = False
+        in_reporting_delay_period = False
 
         other_topic_name = "Influenza"
         other_metric_name = "Influenza_testing_7daypositivity"
@@ -220,7 +220,7 @@ class TestPublicAPINestedLinkViews:
                 sex=sex,
                 age=age,
                 day=i + 1,
-                in_reporting_lag_period=in_reporting_lag_period,
+                in_reporting_delay_period=in_reporting_delay_period,
             )
 
         # Records to be filtered out
@@ -277,7 +277,7 @@ class TestPublicAPINestedLinkViews:
             assert result["metric_group"] == metric_group
             assert result["sex"] == sex
             assert result["age"] == age
-            assert result["in_reporting_lag_period"] == in_reporting_lag_period
+            assert result["in_reporting_delay_period"] == in_reporting_delay_period
 
     @pytest.mark.django_db
     def test_returns_correct_data_at_final_view_with_query_parameters(

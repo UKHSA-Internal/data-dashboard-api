@@ -23,5 +23,5 @@ class APITimeSeriesListSerializer(serializers.ModelSerializer):
             "epiweek",
             "date",
             "metric_value",
-            "in_reporting_lag_period",
+            "in_reporting_delay_period",
         ]
