@@ -123,6 +123,7 @@ class TestDataIngester:
             core_time_series.embargo.strftime("%Y-%m-%d %H:%M:%S")
             == data["time_series"][0]["embargo"]
         )
+        assert core_time_series.in_reporting_lag_period is False
 
     @pytest.mark.django_db
     def test_creates_api_time_series_from_data(
@@ -174,3 +175,4 @@ class TestDataIngester:
             core_time_series.embargo.strftime("%Y-%m-%d %H:%M:%S")
             == data["time_series"][0]["embargo"]
         )
+        assert core_time_series.in_reporting_lag_period is False
