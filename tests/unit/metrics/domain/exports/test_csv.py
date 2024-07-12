@@ -27,7 +27,7 @@ class TestWriteDataToCSV:
         "year",
         "date",
         "metric_value",
-        "in_reporting_lag_period",
+        "in_reporting_delay_period",
     ]
 
     def test_for_basic_behaviour(self):
