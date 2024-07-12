@@ -73,6 +73,6 @@ class TestMergeAndProcessQuerysets:
         assert str(first_record[11]) == str(first_record.metric_value) == f"{456:.4f}"
         assert (
             str(first_record[12])
-            == str(first_record.in_reporting_lag_period)
+            == str(first_record.in_reporting_delay_period)
             == str(False)
         )

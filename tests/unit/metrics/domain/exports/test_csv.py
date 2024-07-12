@@ -43,7 +43,7 @@ class TestWriteDataToCSV:
         expected_metric = "COVID-19_deaths_ONSByDay"
         expected_age = "75+"
         expected_sex = "all"
-        expected_in_reporting_lag_period = False
+        expected_in_reporting_delay_period = False
 
         fake_core_time_series: FakeCoreTimeSeries = (
             FakeCoreTimeSeriesFactory.build_time_series(
@@ -53,7 +53,7 @@ class TestWriteDataToCSV:
                 metric_name=expected_metric,
                 age_name=expected_age,
                 sex=expected_sex,
-                in_reporting_lag_period=expected_in_reporting_lag_period,
+                in_reporting_delay_period=expected_in_reporting_delay_period,
             )
         )
         queryset = FakeQuerySet(instances=[fake_core_time_series]).values_list(
@@ -86,7 +86,7 @@ class TestWriteDataToCSV:
             str(fake_core_time_series.year),
             str(expected_date),
             str(expected_metric_value),
-            str(expected_in_reporting_lag_period),
+            str(expected_in_reporting_delay_period),
         ]
         assert csv_header == self.expected_csv_header
         assert csv_body == expected_csv_body

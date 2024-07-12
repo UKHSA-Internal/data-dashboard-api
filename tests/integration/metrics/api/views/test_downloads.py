@@ -28,7 +28,7 @@ class TestDownloadsView:
         "epiweek": 1,
         "date": "2023-01-15",
         "metric_value": 123.45,
-        "in_reporting_lag_period": False,
+        "in_reporting_delay_period": True,
     }
 
     def _build_valid_payload(self) -> dict[str, str | list[dict[str, str]]]:
@@ -64,8 +64,8 @@ class TestDownloadsView:
             year=self.core_timeseries_data["year"],
             epiweek=self.core_timeseries_data["epiweek"],
             date=self.core_timeseries_data["date"],
-            in_reporting_lag_period=self.core_timeseries_data[
-                "in_reporting_lag_period"
+            in_reporting_delay_period=self.core_timeseries_data[
+                "in_reporting_delay_period"
             ],
         )
 
@@ -138,7 +138,10 @@ class TestDownloadsView:
                 ("year", core_time_series.year),
                 ("date", core_time_series.date),
                 ("metric_value", f"{core_time_series.metric_value:.4f}"),
-                ("in_reporting_lag_period", core_time_series.in_reporting_lag_period),
+                (
+                    "in_reporting_delay_period",
+                    core_time_series.in_reporting_delay_period,
+                ),
             ]
         )
         assert returned_obj == expected_data
@@ -186,7 +189,7 @@ class TestDownloadsView:
             "year",
             "date",
             "metric_value",
-            "in_reporting_lag_period",
+            "in_reporting_delay_period",
         ]
         assert csv_headers == expected_csv_headings
 
@@ -204,7 +207,7 @@ class TestDownloadsView:
                 str(core_time_series.year),
                 core_time_series.date,
                 f"{core_time_series.metric_value:.4f}",
-                str(core_time_series.in_reporting_lag_period),
+                str(core_time_series.in_reporting_delay_period),
             ]
         ]
         assert csv_output == expected_csv_content
