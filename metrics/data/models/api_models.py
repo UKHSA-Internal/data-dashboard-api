@@ -8,6 +8,7 @@ from metrics.data.models.constants import (
     METRIC_FREQUENCY_MAX_CHAR_CONSTRAINT,
     SEX_MAX_CHAR_CONSTRAINT,
 )
+from metrics.data.models.core_models import help_texts
 
 
 class APITimeSeries(models.Model):
@@ -32,6 +33,10 @@ class APITimeSeries(models.Model):
 
     refresh_date = models.DateTimeField(null=True)
     embargo = models.DateTimeField(null=True)
+    in_reporting_lag_period = models.BooleanField(
+        help_text=help_texts.IN_REPORTING_LAG_PERIOD,
+        default=False,
+    )
 
     date = models.DateField()
     metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -57,6 +62,7 @@ class APITimeSeries(models.Model):
                     "epiweek",
                     "date",
                     "metric_value",
+                    "in_reporting_lag_period",
                 ),
                 name="The `APITimeSeries` record should be unique",
             )
