@@ -15,7 +15,7 @@ FIELDS = {
     "year": "year",
     "date": "date",
     "metric_value": "metric_value",
-    "reporting_lag_period": "reporting_lag_period",
+    "in_reporting_lag_period": "in_reporting_lag_period",
 }
 
 
