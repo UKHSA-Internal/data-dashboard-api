@@ -38,21 +38,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         ]
         return len(filtered_for_metric_topic_and_date)
 
-    def get_latest_metric_value(
-        self, topic_name: str, metric_name: str
-    ) -> float | None:
-        try:
-            core_time_series = next(
-                core_time_series
-                for core_time_series in self.time_series
-                if core_time_series.metric.metric_group.topic.name == topic_name
-                if core_time_series.metric.name == metric_name
-            )
-        except StopIteration:
-            return None
-        return core_time_series.metric_value
-
-    def filter_for_x_and_y_values(
+    def query_for_data(
         self,
         x_axis: str,
         y_axis: str,

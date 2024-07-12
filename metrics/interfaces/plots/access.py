@@ -163,6 +163,7 @@ class PlotsInterface:
         return self.core_time_series_manager.filter_for_x_and_y_values(
             x_axis=x_axis,
             y_axis=y_axis,
+        return self.core_time_series_manager.query_for_data(
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,

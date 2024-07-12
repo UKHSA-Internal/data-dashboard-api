@@ -79,7 +79,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return queryset
 
-    def filter_for_x_and_y_values(
+    def query_for_data(
         self,
         *,
         x_axis: str,
