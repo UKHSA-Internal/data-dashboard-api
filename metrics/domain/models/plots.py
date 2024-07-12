@@ -127,6 +127,7 @@ class PlotData(BaseModel):
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any
+    additional_values: Any | None = None
     latest_date: Any = None  # noqa: UP007
 
 
