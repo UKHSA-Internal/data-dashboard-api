@@ -525,7 +525,11 @@ class TestPlotsInterface:
         # Then
         assert timeseries == spy_core_time_series_manager.query_for_data.return_value
         spy_core_time_series_manager.query_for_data.assert_called_once_with(
-            fields_to_export=[mocked_x_axis, mocked_y_axis, "in_reporting_delay_period"],
+            fields_to_export=[
+                mocked_x_axis,
+                mocked_y_axis,
+                "in_reporting_delay_period",
+            ],
             field_to_order_by=mocked_x_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
