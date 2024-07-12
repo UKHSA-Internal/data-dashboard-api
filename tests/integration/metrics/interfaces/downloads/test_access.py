@@ -71,4 +71,8 @@ class TestMergeAndProcessQuerysets:
         assert first_record[9] == first_record.year == 2023
         assert str(first_record[10]) == str(first_record.date) == dates[2]
         assert str(first_record[11]) == str(first_record.metric_value) == f"{456:.4f}"
-        assert str(first_record[12]) == str(first_record.in_reporting_lag_period) == str(False)
+        assert (
+            str(first_record[12])
+            == str(first_record.in_reporting_lag_period)
+            == str(False)
+        )
