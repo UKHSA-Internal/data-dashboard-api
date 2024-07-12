@@ -31,7 +31,7 @@ def write_directory_to_write_stream(
 def write_data_to_zip(
     *,
     downloads: list[dict[str, str]],
-) -> zip:
+) -> bytes:
     """Compress data into a zipfile
 
     Args:
