@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 from django.db import models
 
@@ -102,6 +103,13 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             (x.refresh_date for x in filtered_time_series), default=""
         )
         return queryset
+
+    @classmethod
+    def _export_record(cls, time_series, fields_to_export) -> dict[str, Any]:
+        exported_record = {}
+        for field in fields_to_export:
+            exported_record[field] = getattr(time_series, field)
+        return exported_record
 
     def exists(self) -> bool:
         return bool(self.time_series)

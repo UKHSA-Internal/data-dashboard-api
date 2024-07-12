@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from metrics.data.models.core_models import CoreTimeSeries
+from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 
 class TestChartsView:
@@ -113,7 +114,7 @@ class TestChartsView:
     @pytest.mark.django_db
     def test_returns_correct_response_for_v3_age_based_chart(
         self,
-        core_timeseries_example: list[CoreTimeSeries],
+        # core_timeseries_example: list[CoreTimeSeries],
     ):
         """
         Given a valid payload to create an age-based chart
@@ -123,10 +124,37 @@ class TestChartsView:
         """
         # Given
         client = APIClient()
-        valid_payload = self._build_valid_payload_for_existing_timeseries(
-            core_timeseries=core_timeseries_example[0]
-        )
-        valid_payload["x_axis"] = "age"
+        core_timeseries_records = [
+            CoreTimeSeriesFactory.create_record(
+                metric_name="COVID-19_deaths_ONSByDay", age_name="65-84", metric_value=1
+            ),
+            CoreTimeSeriesFactory.create_record(
+                metric_name="COVID-19_deaths_ONSByDay", age_name="06-17", metric_value=2
+            ),
+            CoreTimeSeriesFactory.create_record(
+                metric_name="COVID-19_deaths_ONSByDay", age_name="85+", metric_value=3
+            ),
+            CoreTimeSeriesFactory.create_record(
+                metric_name="COVID-19_deaths_ONSByDay", age_name="18-64", metric_value=4
+            ),
+            CoreTimeSeriesFactory.create_record(
+                metric_name="COVID-19_deaths_ONSByDay", age_name="all", metric_value=5
+            ),
+        ]
+
+        valid_payload = {
+            "file_format": "svg",
+            "x_axis": "age",
+            "plots": [
+                {
+                    "topic": "COVID-19",
+                    "metric": "COVID-19_deaths_ONSByDay",
+                    "chart_type": "bar",
+                    "date_from": "2000-01-01",
+                    "date_to": datetime.date.today(),
+                }
+            ],
+        }
         path = "/api/charts/v3/"
 
         # When
@@ -145,7 +173,7 @@ class TestChartsView:
         # Check that the "last_updated" is returned correctly for the age-based chart
         response_data = response.data
         latest_date = max(
-            core_timeseries.date for core_timeseries in core_timeseries_example
+            core_timeseries.date for core_timeseries in core_timeseries_records
         )
         assert response_data["last_updated"] == str(latest_date)
 

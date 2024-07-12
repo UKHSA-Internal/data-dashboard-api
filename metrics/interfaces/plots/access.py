@@ -1,5 +1,6 @@
 import datetime
-from collections.abc import Iterable
+from collections import defaultdict
+from decimal import Decimal
 from typing import Any
 
 from django.db.models import Manager, QuerySet
@@ -160,10 +161,9 @@ class PlotsInterface:
                     ]>`
 
         """
-        return self.core_time_series_manager.filter_for_x_and_y_values(
-            x_axis=x_axis,
-            y_axis=y_axis,
         return self.core_time_series_manager.query_for_data(
+            fields_to_export=[x_axis, y_axis, "in_reporting_lag_period"],
+            field_to_order_by=x_axis,
             topic_name=topic_name,
             metric_name=metric_name,
             date_from=date_from,
@@ -233,17 +233,14 @@ class PlotsInterface:
             plot_parameters=plot_parameters
         )
 
-        try:
-            x_axis_values, y_axis_values = get_x_and_y_values(
-                plot_parameters=plot_parameters, queryset=queryset_result.queryset
-            )
-        except ValueError as error:
-            raise DataNotFoundForPlotError from error
+        aggregated_results = get_aggregated_results(
+            plot_parameters=plot_parameters, queryset=queryset_result.queryset
+        )
 
         return PlotData(
             parameters=plot_parameters,
-            x_axis_values=list(x_axis_values),
-            y_axis_values=list(y_axis_values),
+            x_axis_values=aggregated_results[plot_parameters.x_axis_value],
+            y_axis_values=aggregated_results[plot_parameters.y_axis_value],
             latest_date=queryset_result.latest_date,
         )
 
@@ -322,10 +319,10 @@ class PlotsInterface:
         return plots_data
 
 
-def get_x_and_y_values(
+def get_aggregated_results(
     *, plot_parameters: PlotParameters, queryset: QuerySet
-) -> tuple[list[Any], list[Any]]:
-    """Gets the X and Y values for a given `queryset` based on the `plot_parameters`
+) -> dict[str, list[datetime.date | Decimal | bool | str]]:
+    """Gets the aggregated results for a given `queryset` based on the `plot_parameters`
 
     Args:
         plot_parameters: A `PlotParameters` model containing
@@ -339,13 +336,24 @@ def get_x_and_y_values(
                     ]>`
 
     Returns:
-        Tuple containing the X and Y values
+        Dict containing the field names valued by the list of results.
+        E.g.
+        >>> {
+                "date": [(datetime.date(2022, 10, 10), ...],
+                "metric_value: [Decimal('0.8'), ...],
+                "in_reporting_lag_period": [False, ...]
+            }
 
     """
     if plot_parameters.x_axis == ChartAxisFields.age.name:
-        return sort_by_age(iterable=queryset)
+        result = aggregate_results_by_age(queryset=queryset)
+    else:
+        result = aggregate_results(values=queryset)
 
-    return unzip_values(values=queryset)
+    if not result:
+        raise DataNotFoundForPlotError
+
+    return result
 
 
 def convert_type(*, s: str) -> int | str:
@@ -367,41 +375,44 @@ def aggregate_results_by_age(*, queryset: QuerySet) -> dict[str, list[str | Deci
     """Age values are cast to human-readable strings and aggregated
 
     Args:
-        iterable: An iterable containing a list of tuples where
-        Age is the first value and the metric value is the second
-        E.g. ('15_44', Decimal('0.7'))
+        queryset: An iterable containing a list of dicts where
+            Age is the first value and the metric value is the second
+            E.g. {"age__name": "15_44", "metric_value": "Decimal('0.7')}
 
     Returns:
         A properly sorted and displayable version broken into two separate lists
 
     """
-    temp_dict = {x[0]: x for x in iterable}
+    for exported_result in queryset:
+        age: str = exported_result[ChartAxisFields.age.value]
+        exported_result[ChartAxisFields.age.value] = _build_age_display_name(value=age)
 
-    # Now sort on the tuple and return the x and y values
-    x_values = []
-    y_values = []
-
-    for x in sorted(temp_dict.keys()):
-        x_value = _build_age_display_name(value=temp_dict[x][0])
-        x_values.append(x_value)
-        y_values.append(temp_dict[x][1])
-
-    return x_values, y_values
+    return aggregate_results(values=queryset)
 
 
 def _build_age_display_name(*, value: str) -> str:
     return value.replace("-", " - ")
 
 
-def unzip_values(*, values) -> tuple[list[Any], list[Any]]:
-    """
-    Take a list and zip it
+def aggregate_results(*, values) -> dict[str, list[datetime.date | Decimal | bool]]:
+    """Aggregates the `values` as a dict of nested lists
 
     Args:
-        The list of things to zip
+        `values`: The list of things to zip
 
     Returns:
-        A zipped version of the `values``
+        An aggregated dict of nested lists
+        >>> {
+                "date": [(datetime.date(2022, 10, 10), ...],
+                "metric_value: [Decimal('0.8'), ...],
+                "in_reporting_lag_period": [False, ...]
+        }
 
     """
-    return zip(*values)
+    aggregated_results = defaultdict(list)
+
+    for row in values:
+        for key, value in row.items():
+            aggregated_results[key].append(value)
+
+    return dict(aggregated_results)

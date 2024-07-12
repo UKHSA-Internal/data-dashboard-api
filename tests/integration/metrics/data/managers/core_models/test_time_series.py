@@ -292,17 +292,17 @@ class TestCoreTimeSeriesManager:
     @staticmethod
     def _build_record_representation_in_queryset(
         record: CoreTimeSeries,
-    ) -> tuple[datetime.date, decimal.Decimal]:
+    ) -> dict[str, datetime.date | decimal.Decimal]:
         year, month, day = record.date.split("-")
 
-        return (
-            datetime.date(
+        return {
+            "date": datetime.date(
                 year=int(year),
                 month=int(month),
                 day=int(day),
             ),
-            decimal.Decimal(record.metric_value),
-        )
+            "metric_value": decimal.Decimal(record.metric_value),
+        }
 
     @pytest.mark.django_db
     def test_query_for_data_excludes_embargoed_data(self):

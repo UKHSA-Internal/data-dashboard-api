@@ -100,13 +100,17 @@ class TestIngestion:
         first_metric_value = example_time_series_data["time_series"][0]["metric_value"]
         second_metric_value = example_time_series_data["time_series"][1]["metric_value"]
         assert (
-            first_date,
-            Decimal(str(first_metric_value)),
-        ) in filtered_core_time_series
+            self._parse_date_and_metric_value_as_expected_output(
+                date_value=first_date, metric_value=Decimal(str(first_metric_value))
+            )
+            in filtered_core_time_series
+        )
         assert (
-            second_date,
-            Decimal(str(second_metric_value)),
-        ) in filtered_core_time_series
+            self._parse_date_and_metric_value_as_expected_output(
+                date_value=second_date, metric_value=Decimal(str(second_metric_value))
+            )
+            in filtered_core_time_series
+        )
 
         # When / Then
         # Check that the 2nd file is ingested
@@ -130,13 +134,17 @@ class TestIngestion:
         )
         # And the returned data remains functionally the same
         assert (
-            first_date,
-            Decimal(str(first_metric_value)),
-        ) in filtered_core_time_series
+            self._parse_date_and_metric_value_as_expected_output(
+                date_value=first_date, metric_value=Decimal(str(first_metric_value))
+            )
+            in filtered_core_time_series
+        )
         assert (
-            second_date,
-            Decimal(str(second_metric_value)),
-        ) in filtered_core_time_series
+            self._parse_date_and_metric_value_as_expected_output(
+                date_value=second_date, metric_value=Decimal(str(second_metric_value))
+            )
+            in filtered_core_time_series
+        )
 
         # When / Then
         # Check that the 3rd file is ingested
@@ -165,11 +173,24 @@ class TestIngestion:
 
         # And the returned data contains the retrospective update
         # as well as the other original data point
-        assert (first_date, Decimal(updated_metric_value)) in filtered_core_time_series
         assert (
-            second_date,
-            Decimal(str(second_metric_value)),
-        ) in filtered_core_time_series
+            self._parse_date_and_metric_value_as_expected_output(
+                date_value=first_date, metric_value=Decimal(str(updated_metric_value))
+            )
+            in filtered_core_time_series
+        )
+        assert (
+            self._parse_date_and_metric_value_as_expected_output(
+                date_value=second_date, metric_value=Decimal(str(second_metric_value))
+            )
+            in filtered_core_time_series
+        )
+
+    @classmethod
+    def _parse_date_and_metric_value_as_expected_output(
+        cls, date_value: datetime.date, metric_value: Decimal
+    ) -> dict[str, datetime.date | Decimal]:
+        return {"date": date_value, "metric_value": metric_value}
 
     @pytest.mark.django_db
     def test_data_is_deduplicated_on_write_to_db_and_return_latest_data_from_apis(
