@@ -74,11 +74,11 @@ class TestCoreTimeSeries:
         assert CoreTimeSeries.objects.count() == 2
 
     @pytest.mark.django_db
-    def test_allows_new_record_with_updated_reporting_lag_period(self):
+    def test_allows_new_record_with_updated_reporting_delay_period(self):
         """
         Given an existing `CoreTimeSeries` record
         When another record is attempted to be created for that same `date`
-            which contains a new `in_reporting_lag_period` value
+            which contains a new `in_reporting_delay_period` value
         Then the record will be created successfully
         """
         # Given
@@ -89,7 +89,7 @@ class TestCoreTimeSeries:
             metric_value=original_metric_value,
             date=date,
             refresh_date=original_refresh_date,
-            in_reporting_lag_period=True,
+            in_reporting_delay_period=True,
         )
 
         # When
@@ -98,7 +98,7 @@ class TestCoreTimeSeries:
             metric_value=original_metric_value,
             date=date,
             refresh_date=subsequent_refresh_date,
-            in_reporting_lag_period=False,
+            in_reporting_delay_period=False,
         )
 
         # Then
