@@ -71,3 +71,35 @@ class TestAPITimeSeries:
 
         # Check that there are now 2 'versions' of that data
         assert APITimeSeries.objects.count() == 2
+
+    @pytest.mark.django_db
+    def test_allows_new_record_with_updated_reporting_lag_period(self):
+        """
+        Given an existing `APITimeSeries` record
+        When another record is attempted to be created for that same `date`
+            which contains a new `in_reporting_lag_period` value
+        Then the record will be created successfully
+        """
+        # Given
+        date = datetime.date.today()
+        metric_value = 123
+        original_refresh_date = datetime.datetime(year=2023, month=10, day=19)
+        APITimeSeriesFactory.create_record(
+            metric_value=metric_value,
+            date=date,
+            refresh_date=original_refresh_date,
+            in_reporting_lag_period=True,
+        )
+
+        # When
+        subsequent_refresh_date = datetime.datetime(year=2023, month=10, day=26)
+        APITimeSeriesFactory.create_record(
+            metric_value=metric_value,
+            date=date,
+            refresh_date=subsequent_refresh_date,
+            in_reporting_lag_period=False,
+        )
+
+        # Then
+        # Check that there are now 2 'versions' of that data
+        assert APITimeSeries.objects.count() == 2

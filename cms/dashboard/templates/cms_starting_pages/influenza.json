@@ -4,23 +4,25 @@
         "seo_title": "Influenza | UKHSA data dashboard",
         "search_description": "Detailed summary of Influenza in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "http://localhost/api/pages/6/",
-        "html_url": null,
+        "detail_url": "https://localhost/api/pages/6/",
+        "html_url": "https://localhost/dashboard/influenza/",
         "slug": "influenza",
         "show_in_menus": true,
-        "first_published_at": "2023-09-14T15:51:50.336431+01:00",
+        "first_published_at": "2024-07-11T14:55:39.253862+01:00",
         "alias_of": null,
         "parent": {
             "id": 4,
             "meta": {
                 "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/4/",
+                "detail_url": "https://localhost/api/pages/4/",
                 "html_url": null
             },
             "title": "UKHSA data dashboard"
         }
     },
     "title": "Influenza",
+    "seo_change_frequency": 5,
+    "seo_priority": "0.5",
     "page_description": "<p data-block-key=\"z3vrp\">Influenza (commonly known as flu) is a respiratory infection.</p><p data-block-key=\"f9pfj\">The healthcare data we have for influenza comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the influenza healthcare data is not a count of every person being treated for influenza in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for influenza</a>.</p><p data-block-key=\"fjsfr\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
         {
@@ -37,6 +39,7 @@
                                     "value": {
                                         "title": "ICU/HDU admission rates per 100,000 population",
                                         "body": "Weekly overall influenza hospital ICU HDU rates per 100,000 trust catchment population.",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -45,17 +48,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "ae088b86-92b0-4687-8b84-813b2d3aa28a"
                                             }
@@ -68,6 +73,7 @@
                                     "value": {
                                         "title": "ICU/HDU admissions rate per 100,000 people by age",
                                         "body": "Age breakdown of people admitted to ICU or HDU with influenza each week, shown as the rate per 100,000 trust catchment population.",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -76,17 +82,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "00-04",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "0 to 4 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "8746d664-b998-4c37-a150-b9a999c87482"
                                             },
@@ -95,17 +103,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "05-14",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "RED",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_2_TURQUOISE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "8e2b63e1-64e4-41f0-8f07-3b234c7a1395"
                                             },
@@ -114,17 +124,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "15-44",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "15 to 44 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_3_DARK_PINK",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "8ba50aa9-8306-4e6f-be58-18dd97dc96c7"
                                             },
@@ -133,17 +145,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "45-54",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "45 to 54 years",
-                                                    "line_colour": "BLACK",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_4_ORANGE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "d50cb8ad-d2ea-4d8b-aa69-bc9550883f0a"
                                             },
@@ -152,17 +166,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "55-64",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "55 to 64 years",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_5_DARK_GREY",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "07d512b9-6dd7-490f-b980-ee05db6a9367"
                                             },
@@ -171,17 +187,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "65-74",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "65 to 74 years",
-                                                    "line_colour": "YELLOW",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_6_LIGHT_PURPLE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "b6befe9b-4631-4b93-98e1-6b10910618df"
                                             },
@@ -190,17 +208,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "75-84",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "75 to 84 years",
-                                                    "line_colour": "BLUE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_7_BURGUNDY",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "39398f23-069a-4b08-b70e-bf7277e8e6d2"
                                             },
@@ -209,17 +229,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_healthcare_ICUHDUadmissionRateByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "85+",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "85 years and over",
-                                                    "line_colour": "PINK",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_8_MUSTARD",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "c1fac52c-d353-4bf7-8b85-9f13e94dff3f"
                                             }
@@ -249,6 +271,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test",
                                         "body": "The percentage of people who received a PCR and had at least one positive PCR test result for influenza in the same 7 days. Data is shown by specimen date (the date the sample was collected).",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -257,17 +280,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_testing_positivityByWeek",
-                                                    "chart_type": "bar",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
+                                                    "stratum": "default",
+                                                    "chart_type": "bar",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "fbb16f8c-19b4-49fe-8c7a-537aa8d1dc46"
                                             }
@@ -280,6 +305,7 @@
                                     "value": {
                                         "title": "Weekly positivity of people receiving a PCR test by age",
                                         "body": "The percentage of people who received a PCR and had at least one positive PCR test result for influenza in the same 7 days, by age. Data is shown by specimen date (the date the sample was collected).",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -288,17 +314,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_testing_positivityByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "00-04",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "0 to 4 years",
-                                                    "line_colour": "GREEN",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "38c5abd9-ad5d-4b6f-b04a-9e5a34747b16"
                                             },
@@ -307,17 +335,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_testing_positivityByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "05-14",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "5 to 14 years",
-                                                    "line_colour": "RED",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_2_TURQUOISE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "380c7572-6b43-4225-9c7b-0b79a55110e2"
                                             },
@@ -326,17 +356,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_testing_positivityByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "15-44",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "15 to 44 years",
-                                                    "line_colour": "PURPLE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_3_DARK_PINK",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "84fbe9f8-3902-4e8d-9868-3a84c74ff707"
                                             },
@@ -345,17 +377,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_testing_positivityByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "45-64",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "45 to 64 years",
-                                                    "line_colour": "BLACK",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_4_ORANGE",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": false
                                                 },
                                                 "id": "4a161076-04a0-4806-862c-8fed057321c9"
                                             },
@@ -364,17 +398,19 @@
                                                 "value": {
                                                     "topic": "Influenza",
                                                     "metric": "influenza_testing_positivityByWeek",
-                                                    "chart_type": "line_multi_coloured",
-                                                    "date_from": "2022-11-01",
-                                                    "date_to": "2023-11-30",
-                                                    "stratum": "default",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "65+",
+                                                    "stratum": "default",
+                                                    "chart_type": "line_multi_coloured",
+                                                    "date_from": "2022-11-01",
+                                                    "date_to": "2023-11-30",
                                                     "label": "65 years and over",
-                                                    "line_colour": "ORANGE",
-                                                    "line_type": "SOLID"
+                                                    "line_colour": "COLOUR_5_DARK_GREY",
+                                                    "line_type": "SOLID",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "4bd07665-b362-40cb-b8f0-d827405bbbaf"
                                             }
@@ -420,5 +456,9 @@
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2023-09-14T18:34:22.148413+01:00"
+    "last_published_at": "2024-07-11T15:54:04.810830+01:00",
+    "enable_area_selector": false,
+    "selected_topics": [
+        "Influenza"
+    ]
 }

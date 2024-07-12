@@ -65,7 +65,7 @@ class RequestPayloadBuilder:
         """
         return {
             "plots": [
-                self._build_plot_data(plot_value=plot["value"])
+                self._build_plot_data_for_chart(plot_value=plot["value"])
                 for plot in chart_block["chart"]
             ],
             "file_format": "svg",
@@ -103,6 +103,27 @@ class RequestPayloadBuilder:
             "line_colour": plot_value["line_colour"],
             "line_type": plot_value["line_type"],
         }
+
+    @classmethod
+    def _build_plot_data_for_chart(
+        cls, *, plot_value: dict[str, str]
+    ) -> dict[str, str]:
+        """Builds the individual plot data from the given `plot_value`
+
+        Args:
+            plot_value: The dict containing the plot data
+
+        Returns:
+            A dict which can be used to represent the individual plot
+            within the `plots` list of the payload
+            to the `charts` or `tables` endpoint
+
+        """
+        plot_data: dict[str, str] = cls._build_plot_data(plot_value=plot_value)
+        plot_data["use_markers"] = plot_value.get("use_markers", False)
+        plot_data["use_smooth_lines"] = plot_value.get("use_smooth_lines", True)
+
+        return plot_data
 
     def build_tables_request_data(
         self, *, chart_block: CMS_COMPONENT_BLOCK_TYPE

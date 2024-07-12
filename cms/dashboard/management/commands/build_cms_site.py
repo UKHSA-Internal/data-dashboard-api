@@ -5,13 +5,14 @@ Only intended for use during development
 
 import json
 import logging
+import os
 
 from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.composite.models import CompositePage, CompositeRelatedLink
-from cms.home.models import HomePage, HomePageRelatedLink
+from cms.home.models import HomePage, HomePageRelatedLink, UKHSARootPage
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
 )
@@ -59,7 +60,7 @@ def _create_related_links(*, related_link_class, response_data, page) -> None:
         related_link_model.save()
 
 
-def _add_page_to_parent(*, page: Page, parent_page: HomePage) -> None:
+def _add_page_to_parent(*, page: Page, parent_page: Page) -> None:
     page = parent_page.add_child(instance=page)
     page.save_revision().publish()
 
@@ -267,7 +268,7 @@ class Command(BaseCommand):
         # Make a new home page
         title = "UKHSA Dashboard Root"
         slug = make_slug(page_title=title)
-        root_page = HomePage(title=title, slug=slug)
+        root_page = UKHSARootPage(title=title, slug=slug)
 
         # Add this new home page onto the root
         wagtail_root_page = Page.get_first_root_node()
@@ -275,10 +276,10 @@ class Command(BaseCommand):
         wagtail_root_page.save_revision().publish()
 
         Site.objects.create(
-            hostname="localhost",
-            port="80",
+            hostname=os.environ.get("FRONTEND_URL", "localhost"),
+            port=443,
             site_name=WAGTAIL_SITE_NAME,
-            root_page=wagtail_root_page,
+            root_page=root_page,
             is_default_site=True,
         )
 

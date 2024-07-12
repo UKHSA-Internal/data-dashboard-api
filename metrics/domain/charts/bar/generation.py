@@ -33,7 +33,7 @@ def generate_chart_figure(
 
     for plot_data in chart_plots_data:
         selected_colour: colour_scheme.RGBAChartLineColours = (
-            colour_scheme.RGBAChartLineColours.get_bar_colour(
+            colour_scheme.RGBAChartLineColours.get_colour(
                 colour=plot_data.parameters.line_colour
             )
         )
