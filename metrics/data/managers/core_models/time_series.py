@@ -162,6 +162,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             field_name=x_axis,
         )
 
+        breakpoint()
+
         if x_axis and y_axis:
             queryset = queryset.values_list(x_axis, y_axis)
 

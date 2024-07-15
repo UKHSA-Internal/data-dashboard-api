@@ -54,6 +54,7 @@ class ChartAxisFields(Enum):
     age = "age__name"
     date = "date"
     metric = "metric_value"
+    geography = "geography__name"
 
     @classmethod
     def choices(cls):

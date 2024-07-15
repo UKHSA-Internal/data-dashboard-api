@@ -32,6 +32,8 @@ def generate_chart_figure(
     figure = plotly.graph_objects.Figure()
 
     for plot_data in chart_plots_data:
+        #breakpoint()
+
         selected_colour: colour_scheme.RGBAChartLineColours = (
             colour_scheme.RGBAChartLineColours.get_bar_colour(
                 colour=plot_data.parameters.line_colour
