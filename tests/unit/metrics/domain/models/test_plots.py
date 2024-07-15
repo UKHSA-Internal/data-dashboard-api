@@ -416,14 +416,10 @@ class TestPlotData:
         Then a `ReportingDelayNotProvidedToPlotsError` is raised
         """
         # Given
-        reporting_delay_period_values = [False] * 5
         plot_data = PlotData(
             parameters=fake_chart_plot_parameters,
             x_axis_values=mock.Mock(),
             y_axis_values=mock.Mock(),
-            additional_values={
-                "in_reporting_delay_period": reporting_delay_period_values
-            },
         )
 
         # When / Then
