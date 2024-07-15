@@ -1,5 +1,5 @@
 import datetime
-from typing import Literal
+from typing import Literal, Self
 
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
@@ -131,7 +131,9 @@ class PlotData(BaseModel):
     latest_date: Any = None  # noqa: UP007
 
     @classmethod
-    def create_from_parameters(cls, parameters, aggregated_results, latest_date):
+    def create_from_parameters(
+        cls, parameters: PlotParameters, aggregated_results: dict, latest_date: str
+    ) -> Self:
         keys_to_exclude = [parameters.x_axis_value, parameters.y_axis_value]
         additional_values = {
             key: value
