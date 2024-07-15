@@ -141,6 +141,11 @@ class TestPlotsInterface:
             x_axis_values=[x.date for x in fake_core_time_series_records],
             y_axis_values=[x.metric_value for x in fake_core_time_series_records],
             latest_date=str(max(x.date for x in fake_core_time_series_records)),
+            additional_values={
+                "in_reporting_delay_period": [
+                    x.in_reporting_delay_period for x in fake_core_time_series_records
+                ]
+            },
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
