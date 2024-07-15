@@ -5,7 +5,7 @@ from typing import Any
 from django.db.models import Manager, QuerySet
 from pydantic import BaseModel
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.models.plots import CompletePlotData
@@ -16,6 +16,7 @@ from metrics.interfaces.plots.validation import (
 )
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class DataNotFoundForPlotError(Exception): ...
@@ -38,9 +39,11 @@ class PlotsInterface:
         *,
         plots_collection: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     ):
         self.plots_collection = plots_collection
         self.core_time_series_manager = core_time_series_manager
+        self.core_headline_manager = core_headline_manager
         self.validate_plot_parameters()
 
     def validate_plot_parameters(self) -> None:
@@ -93,12 +96,71 @@ class PlotsInterface:
 
         """
         plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
-        queryset = self.get_timeseries(**plot_params)
+        # get queryset data - new method that first checks metric group.
+        # makes a call to either `get_timeseries` or `get_headline`.
+        # queryset = self.get_timeseries(**plot_params)
+
+        queryset = self.get_queryset(plot_params=plot_params)
+
+        #breakpoint()
 
         return QuerySetResult(
             queryset=queryset,
-            latest_date=queryset.latest_date,
+            latest_date="2024-11-2",
+            # latest_date=queryset.latest_date,
         )
+
+    def get_queryset(self, plot_params) -> QuerySet:
+        """Returns a queryset based on the metric name
+
+        Args:
+            plot_params:
+
+        Returns:
+
+        """
+        if "headline" in plot_params["metric_name"]:
+            return self.get_headline_data(**plot_params)
+
+        return self.get_timeseries(**plot_params)
+
+    def get_headline_data(
+        self,
+        *,
+        x_axis: str,
+        y_axis: str,
+        topic_name: str,
+        metric_name: str,
+        date_from: datetime.date | str,
+        date_to: datetime.date | None = None,
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
+    ):
+        """Gets the headline data for `metric` and `topic` filtered by `variable`
+
+        RETURN metric_value and x value group by metric_id and x_id ???
+
+        TODO: Review date_to and date_from for headline data
+
+        """
+        result = self.core_headline_manager.filter_for_x_and_y_values(
+            x_axis=x_axis,
+            y_axis=y_axis,
+            topic_name=topic_name,
+            metric_name=metric_name,
+            date_from=date_from,
+            date_to=date_to,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+        #breakpoint()
+        return result
 
     def get_timeseries(
         self,
@@ -228,9 +290,13 @@ class PlotsInterface:
         plot_parameters.x_axis = self.plots_collection.x_axis
         plot_parameters.y_axis = self.plots_collection.y_axis
 
+        # breakpoint()
+
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
             plot_parameters=plot_parameters
         )
+
+        # breakpoint()
 
         try:
             x_axis_values, y_axis_values = get_x_and_y_values(
@@ -238,6 +304,8 @@ class PlotsInterface:
             )
         except ValueError as error:
             raise DataNotFoundForPlotError from error
+
+        # breakpoint()
 
         return PlotData(
             parameters=plot_parameters,

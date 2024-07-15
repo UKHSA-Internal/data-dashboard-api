@@ -6,7 +6,7 @@ import plotly.graph_objects
 from django.db.models import Manager
 from scour import scour
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
 from metrics.domain.charts import (
     bar,
     line_multi_coloured,
@@ -19,6 +19,7 @@ from metrics.interfaces.charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class InvalidFileFormatError(Exception):
@@ -39,13 +40,16 @@ class ChartsInterface:
         *,
         chart_plots: PlotsCollection,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
         plots_interface: PlotsInterface | None = None,
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
+
         self.plots_interface = plots_interface or PlotsInterface(
             plots_collection=self.chart_plots,
             core_time_series_manager=core_time_series_manager,
+            core_headline_manager=core_headline_manager,
         )
 
         self._latest_date: str = ""
@@ -223,7 +227,7 @@ class ChartsInterface:
         except (ValueError, TypeError):
             return
 
-        self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
+        # self._latest_date: str = datetime.strftime(latest_date, "%Y-%m-%d")
 
     def param_builder_for_line_with_shaded_section(self, *, plots_data: list[PlotData]):
         plot_data = plots_data[0]

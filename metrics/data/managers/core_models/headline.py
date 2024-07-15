@@ -48,7 +48,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
     @staticmethod
     def _filter_by_age(*, queryset: models.QuerySet, age: str) -> models.QuerySet:
-        return queryset.filter(age__name=age)
+        result = queryset.filter(age__name=age)
+        #breakpoint()
+        return result
+        # return queryset.filter(age__name=age)
 
     def _filter_for_any_optional_fields(
         self,
@@ -133,10 +136,13 @@ class CoreHeadlineQuerySet(models.QuerySet):
                         ]>`
 
         """
+        #breakpoint()
         queryset = self.filter(
             metric__topic__name=topic_name,
             metric__name=metric_name,
         )
+        # were getting data to this point.
+        #breakpoint()
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
             geography_type_name=geography_type_name,
@@ -146,6 +152,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             age=age,
             sex=sex,
         )
+        #breakpoint()
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self._newest_to_oldest(queryset=queryset)
 
@@ -231,6 +238,49 @@ class CoreHeadlineManager(models.Manager):
             )
             .first()
         )
+
+    def filter_for_x_and_y_values(
+        self,
+        *,
+        x_axis: str,
+        y_axis: str,
+        topic_name: str,
+        metric_name: str,
+        date_from: "",
+        date_to: "",
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
+    ) -> models.QuerySet:
+        """Filters for a 2-item object by the given params.
+
+        Notes:
+            What should happen if the x and y axis aren't provided.
+
+        Returns
+            Queryset: of the (x_axis, y_axis) numbers
+            variable group, eg: age 85+ and metric_value as decimal
+        """
+        queryset = (
+            self.get_queryset()
+            .get_headlines_released_from_embargo(
+                topic_name=topic_name,
+                metric_name=metric_name,
+                geography_name=geography_name,
+                geography_type_name=geography_type_name,
+                geography_code="",
+                stratum_name=stratum_name,
+                age=age,
+                sex=sex,
+            )
+        )
+
+        if x_axis and y_axis:
+            queryset = queryset.values_list(x_axis, y_axis)
+
+        return queryset
 
     def get_latest_headlines_for_geography_codes(
         self,
