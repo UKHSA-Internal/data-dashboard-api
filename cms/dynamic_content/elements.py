@@ -83,14 +83,25 @@ class ChartPlotElement(BaseMetricsElement):
         help_text=help_texts.LABEL_FIELD,
     )
     line_colour = blocks.ChoiceBlock(
-        required=False,
+        required=True,
         choices=get_colours,
+        default=get_colours()[0],
         help_text=help_texts.LINE_COLOUR_FIELD,
     )
     line_type = blocks.ChoiceBlock(
         required=False,
         choices=get_chart_line_types,
         help_text=help_texts.LINE_TYPE_FIELD,
+    )
+    use_markers = blocks.BooleanBlock(
+        default=False,
+        required=False,
+        help_text=help_texts.USE_MARKERS,
+    )
+    use_smooth_lines = blocks.BooleanBlock(
+        default=True,
+        required=False,
+        help_text=help_texts.USE_SMOOTH_LINES,
     )
 
     class Meta:

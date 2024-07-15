@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Manager
 from wagtail.models import Page
 
-from cms.home.models import HomePage
+from cms.home.models import HomePage, UKHSARootPage
 from cms.metrics_documentation.data_migration.child_entries import (
     get_metrics_definitions,
 )
@@ -69,7 +69,7 @@ def get_or_create_metrics_documentation_parent_page(
         The fetched or created `MetricsDocumentationParentPage` model
 
     Raises:
-        `HomePage.DoesNotExist`: If there is no root page model
+        `UKHSARootPage.DoesNotExist`: If there is no root page model
             with the reserved slug of "ukhsa-dashboard-root".
             This typically happens when the application
             is being bootstrapped for the first time
@@ -84,7 +84,7 @@ def get_or_create_metrics_documentation_parent_page(
 
 
 def _create_metrics_documentation_parent_page():
-    root_page = HomePage.objects.get(slug="ukhsa-dashboard-root")
+    root_page = UKHSARootPage.objects.get(slug="ukhsa-dashboard-root")
     parent_page_data = load_metric_documentation_parent_page()
     metrics_parent = MetricsDocumentationParentPage(
         title=parent_page_data["title"],
@@ -116,12 +116,16 @@ def create_metrics_documentation_parent_page_and_child_entries() -> None:
             This typically happens when the migrations
             are being applied to an empty application
             and has not been bootstrapped yet.
+        `UKHSARootPage.DoesNotExist`: If there is no root page model
+            with the reserved slug of "ukhsa-dashboard-root".
 
     """
     entries: list[dict[str | list[dict]]] = get_metrics_definitions()
     remove_metrics_documentation_child_entries()
 
-    parent_page = get_or_create_metrics_documentation_parent_page()
+    parent_page: MetricsDocumentationParentPage = (
+        get_or_create_metrics_documentation_parent_page()
+    )
 
     for entry in entries:
         metrics_child = _build_metrics_documentation_child_entry(**entry)

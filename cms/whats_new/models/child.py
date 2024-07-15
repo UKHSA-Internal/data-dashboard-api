@@ -13,6 +13,11 @@ from cms.whats_new.serializers import BadgeSerializer
 
 class WhatsNewChildEntry(UKHSAPage):
     date_posted = models.DateField(null=False, blank=False)
+    page_description = RichTextField(
+        features=AVAILABLE_RICH_TEXT_FEATURES,
+        blank=True,
+        null=True,
+    )
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     badge = models.ForeignKey(
         "whats_new.badge",
@@ -34,6 +39,7 @@ class WhatsNewChildEntry(UKHSAPage):
     # Content panels to render for editing within the CMS application
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
+        FieldPanel("page_description"),
         FieldPanel("body"),
         FieldPanel("additional_details"),
         FieldPanel("badge"),
@@ -43,6 +49,7 @@ class WhatsNewChildEntry(UKHSAPage):
     api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
         APIField("body"),
+        APIField("page_description"),
         APIField("last_published_at"),
         APIField("search_description"),
         APIField("additional_details"),

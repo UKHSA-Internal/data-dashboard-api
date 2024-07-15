@@ -1,26 +1,28 @@
 {
-    "id": 64,
+    "id": 4,
     "meta": {
         "seo_title": "UKHSA data dashboard",
         "search_description": "Overall summary of the respiratory viruses in circulation within the UK",
         "type": "home.HomePage",
-        "detail_url": "http://localhost/api/pages/64/",
-        "html_url": null,
+        "detail_url": "https://localhost/api/pages/4/",
+        "html_url": "https://localhost/dashboard/",
         "slug": "dashboard",
         "show_in_menus": true,
-        "first_published_at": "2023-09-26T20:12:03.963837+01:00",
+        "first_published_at": "2024-07-11T14:55:39.191891+01:00",
         "alias_of": null,
         "parent": {
-            "id": 63,
+            "id": 3,
             "meta": {
-                "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/63/",
+                "type": "home.UKHSARootPage",
+                "detail_url": "https://localhost/api/pages/3/",
                 "html_url": null
             },
             "title": "UKHSA Dashboard Root"
         }
     },
     "title": "UKHSA data dashboard",
+    "seo_change_frequency": 5,
+    "seo_priority": "0.5",
     "page_description": "<p data-block-key=\"sud2w\">The UKHSA data dashboard shows public health data across England. It builds on the success and is an iteration of the <a href=\"https://coronavirus.data.gov.uk/\">COVID-19 in the UK dashboard</a>.</p><p data-block-key=\"dj8jt\">Initially, the dashboard presents data on respiratory viruses. In the future, it will grow to present a wider range of data on public health topics in line with the remit of the UKHSA. Find out more <a id=\"8\" linktype=\"page\">about the UKHSA data dashboard</a>.</p><p data-block-key=\"21gee\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
         {
@@ -212,6 +214,7 @@
                                     "value": {
                                         "title": "Cases",
                                         "body": "Positive COVID-19 cases reported in England (7-day rolling average)",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -225,12 +228,14 @@
                                                     "sex": "all",
                                                     "age": "all",
                                                     "stratum": "default",
-                                                    "chart_type": "line_with_shaded_section",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "b0ead98b-4102-48f6-b94e-ff7bcffe1dc4"
                                             }
@@ -274,6 +279,7 @@
                                     "value": {
                                         "title": "Deaths",
                                         "body": "Deaths with COVID-19 on the death certificate in England (7-day rolling average)",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -287,12 +293,14 @@
                                                     "sex": "all",
                                                     "age": "all",
                                                     "stratum": "default",
-                                                    "chart_type": "line_with_shaded_section",
+                                                    "chart_type": "line_multi_coloured",
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "d3b521d8-a6bb-4960-9db9-864c3d362976"
                                             }
@@ -429,6 +437,7 @@
                                     "value": {
                                         "title": "Healthcare",
                                         "body": "Weekly hospital admission rates for influenza per 100,000",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -446,8 +455,10 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "c7340640-85c6-4b2e-b3b3-2695576f0355"
                                             }
@@ -491,6 +502,7 @@
                                     "value": {
                                         "title": "Testing",
                                         "body": "Weekly positivity for influenza",
+                                        "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
                                         "chart": [
@@ -508,8 +520,10 @@
                                                     "date_from": "2022-11-01",
                                                     "date_to": "2023-11-30",
                                                     "label": "",
-                                                    "line_colour": "",
-                                                    "line_type": ""
+                                                    "line_colour": "COLOUR_1_DARK_BLUE",
+                                                    "line_type": "",
+                                                    "use_markers": false,
+                                                    "use_smooth_lines": true
                                                 },
                                                 "id": "f1a643ba-ff7e-4118-a0a8-366288468cb0"
                                             }
@@ -529,7 +543,7 @@
     ],
     "related_links": [
         {
-            "id": 21,
+            "id": 1,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -538,7 +552,7 @@
             "body": "<p data-block-key=\"jib2z\">Get NHS advice on COVID-19, including symptoms, treatments, looking after yourself at home, how to avoid catching and spreading the virus, vaccinations and long-term effects.</p>"
         },
         {
-            "id": 22,
+            "id": 2,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -547,7 +561,7 @@
             "body": "<p data-block-key=\"jib2z\">Get NHS advice on influenza (flu), including symptoms, how to treat it at home and when to seek medical advice.</p>"
         },
         {
-            "id": 23,
+            "id": 3,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -556,7 +570,7 @@
             "body": "<p data-block-key=\"cc1q7\">National influenza and COVID-19 report, monitoring COVID-19 activity, seasonal flu and other seasonal respiratory illnesses.</p>"
         },
         {
-            "id": 24,
+            "id": 4,
             "meta": {
                 "type": "home.HomePageRelatedLink"
             },
@@ -565,5 +579,5 @@
             "body": "<p data-block-key=\"jib2z\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2023-09-26T20:12:03.963837+01:00"
+    "last_published_at": "2024-07-11T15:47:00.128049+01:00"
 }
