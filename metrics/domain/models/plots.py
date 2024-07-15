@@ -127,7 +127,7 @@ class PlotData(BaseModel):
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any
-    additional_values: Any | None = None
+    additional_values: dict[str, Any] | None = None
     latest_date: Any = None  # noqa: UP007
 
     @classmethod
