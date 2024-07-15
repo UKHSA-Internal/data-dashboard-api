@@ -7,6 +7,9 @@ from metrics.domain.models.plots import (
     PlotParameters,
     get_date_n_months_ago_from_timestamp,
     make_date_from_string,
+    PlotData,
+    NoReportingDelayPeriodFoundError,
+    ReportingDelayNotProvidedToPlotsError,
 )
 from metrics.domain.common.utils import ChartAxisFields
 
@@ -342,3 +345,87 @@ class TestGetDateNMonthsAgoFromTimestamp:
         assert n_months_ago.month == expected_month
         assert n_months_ago.day == 1
         assert n_months_ago.year == datetime_stamp.year
+
+
+class TestPlotData:
+    def test_start_of_reporting_delay_period_index(
+        self, fake_chart_plot_parameters: PlotParameters
+    ):
+        """
+        Given an enriched `PlotData` model
+            which contains a list of
+            reporting delay period booleans
+        When the `start_of_reporting_delay_period_index`
+            property is called from the `PlotData` model
+        Then index of the first occurrence of `True`
+            is returned
+        """
+        # Given
+        reporting_delay_period_values = [False, False, False, True, True]
+        plot_data = PlotData(
+            parameters=fake_chart_plot_parameters,
+            x_axis_values=mock.Mock(),
+            y_axis_values=mock.Mock(),
+            additional_values={
+                "in_reporting_delay_period": reporting_delay_period_values
+            },
+        )
+
+        # When
+        index: int = plot_data.start_of_reporting_delay_period_index
+
+        # Then
+        assert index == 3
+
+    def test_start_of_reporting_delay_period_index_raises_error_for_no_true_values(
+        self, fake_chart_plot_parameters: PlotParameters
+    ):
+        """
+        Given an enriched `PlotData` model
+            which contains a list of
+            reporting delay period booleans
+            without a single True value
+        When the `start_of_reporting_delay_period_index`
+            property is called from the `PlotData` model
+        Then a `NoReportingDelayPeriodFoundError` is raised
+        """
+        # Given
+        reporting_delay_period_values = [False] * 5
+        plot_data = PlotData(
+            parameters=fake_chart_plot_parameters,
+            x_axis_values=mock.Mock(),
+            y_axis_values=mock.Mock(),
+            additional_values={
+                "in_reporting_delay_period": reporting_delay_period_values
+            },
+        )
+
+        # When / Then
+        with pytest.raises(NoReportingDelayPeriodFoundError):
+            plot_data.start_of_reporting_delay_period_index
+
+    def test_start_of_reporting_delay_period_index_raises_error_when_no_reporting_delay_provided(
+        self, fake_chart_plot_parameters: PlotParameters
+    ):
+        """
+        Given an enriched `PlotData` model
+            which does not contain a list of
+            reporting delay period booleans
+        When the `start_of_reporting_delay_period_index`
+            property is called from the `PlotData` model
+        Then a `ReportingDelayNotProvidedToPlotsError` is raised
+        """
+        # Given
+        reporting_delay_period_values = [False] * 5
+        plot_data = PlotData(
+            parameters=fake_chart_plot_parameters,
+            x_axis_values=mock.Mock(),
+            y_axis_values=mock.Mock(),
+            additional_values={
+                "in_reporting_delay_period": reporting_delay_period_values
+            },
+        )
+
+        # When / Then
+        with pytest.raises(ReportingDelayNotProvidedToPlotsError):
+            plot_data.start_of_reporting_delay_period_index

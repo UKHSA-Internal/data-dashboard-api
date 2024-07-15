@@ -1,9 +1,17 @@
+import logging
+
 import plotly
 
 from metrics.domain.models import PlotData
+from metrics.domain.models.plots import (
+    NoReportingDelayPeriodFoundError,
+    ReportingDelayNotProvidedToPlotsError,
+)
 
 CYAN = "#0090C6"
 LIGHT_BLUE = "#D2E9F1"
+
+logger = logging.getLogger(__name__)
 
 
 def _get_last_x_value_at_end_of_reporting_delay_period(
@@ -16,9 +24,8 @@ def _get_last_x_value_at_end_of_reporting_delay_period(
 def _get_x_value_at_start_of_reporting_delay_period(
     chart_plots_data: list[PlotData],
 ) -> str:
-    # The -4 is a placeholder and should be replaced
-    # with the value passed down from the data itself.
-    return chart_plots_data[0].x_axis_values[-4]
+    index: int = chart_plots_data[0].start_of_reporting_delay_period_index
+    return chart_plots_data[0].x_axis_values[index]
 
 
 def add_reporting_delay_period(
@@ -40,9 +47,16 @@ def add_reporting_delay_period(
             Defaults to #D2E9F1, which is a light blue colour.
 
     """
-    start_x_of_reporting_delay: str = _get_x_value_at_start_of_reporting_delay_period(
-        chart_plots_data=chart_plots_data
-    )
+    try:
+        start_x_of_reporting_delay: str = (
+            _get_x_value_at_start_of_reporting_delay_period(
+                chart_plots_data=chart_plots_data
+            )
+        )
+    except (ReportingDelayNotProvidedToPlotsError, NoReportingDelayPeriodFoundError):
+        logger.info("No reporting delay could be determined for this chart")
+        return
+
     last_x_of_reporting_delay: str = _get_last_x_value_at_end_of_reporting_delay_period(
         figure=figure
     )
