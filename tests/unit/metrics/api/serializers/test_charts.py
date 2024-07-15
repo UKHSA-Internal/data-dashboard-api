@@ -255,7 +255,7 @@ class TestChartPlotSerializer:
         assert is_serializer_valid
         assert serializer.validated_data["line_type"] == line_type
 
-    @pytest.mark.parametrize("valid_chart_type", ChartTypes.choices())
+    @pytest.mark.parametrize("valid_chart_type", ChartTypes.selectable_choices())
     def test_valid_chart_type(
         self,
         valid_chart_type: tuple[str, str],

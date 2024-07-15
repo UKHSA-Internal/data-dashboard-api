@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from unittest import mock
 
 import pytest
@@ -14,15 +15,16 @@ from metrics.interfaces.plots.access import (
     QuerySetResult,
     _build_age_display_name,
     convert_type,
-    get_x_and_y_values,
-    sort_by_age,
-    unzip_values,
+    get_aggregated_results,
+    aggregate_results_by_age,
+    aggregate_results,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
+from tests.fakes.models.queryset import FakeQuerySet
 
 MODULE_PATH = "metrics.interfaces.plots.access"
 
@@ -139,6 +141,11 @@ class TestPlotsInterface:
             x_axis_values=[x.date for x in fake_core_time_series_records],
             y_axis_values=[x.metric_value for x in fake_core_time_series_records],
             latest_date=str(max(x.date for x in fake_core_time_series_records)),
+            additional_values={
+                "in_reporting_delay_period": [
+                    x.in_reporting_delay_period for x in fake_core_time_series_records
+                ]
+            },
         )
         assert plots_data == [expected_plots_data_for_valid_params]
 
@@ -339,23 +346,26 @@ class TestPlotsInterface:
         ]
 
     @mock.patch.object(PlotsInterface, "get_queryset_result_for_plot_parameters")
-    @mock.patch(f"{MODULE_PATH}.get_x_and_y_values")
-    def test_build_plot_data_from_parameters_calls_get_x_and_y_values(
+    @mock.patch(f"{MODULE_PATH}.get_aggregated_results")
+    def test_build_plot_data_from_parameters_calls_get_aggregated_results(
         self,
-        spy_get_x_and_y_values: mock.MagicMock,
+        spy_get_aggregated_results: mock.MagicMock,
         mocked_get_queryset_result_for_plot_parameters: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a set of `ChartParameters` and fake X and Y axis values
         When `build_plot_data_from_parameters()` is called from an instance of `PlotsInterface`
-        Then the call is delegated to `get_x_and_y_values()` to fetch the values
+        Then the call is delegated to `get_aggregated_results()` to fetch the values
         And those values are set on the `x_axis` and `y_axis` on returned model
         """
         # Given
         fake_x_axis_values = [1, 2, 3]
         fake_y_axis_values = ["a", "b", "c"]
-        spy_get_x_and_y_values.return_value = fake_x_axis_values, fake_y_axis_values
+        spy_get_aggregated_results.return_value = {
+            "date": fake_x_axis_values,
+            "metric_value": fake_y_axis_values,
+        }
         plots_interface = PlotsInterface(
             plots_collection=mock.Mock(plots=[]),
             core_time_series_manager=mock.Mock(),
@@ -369,7 +379,7 @@ class TestPlotsInterface:
         )
 
         # Then
-        spy_get_x_and_y_values.assert_called_once_with(
+        spy_get_aggregated_results.assert_called_once_with(
             plot_parameters=fake_chart_plot_parameters,
             queryset=mocked_get_queryset_result_for_plot_parameters.return_value.queryset,
         )
@@ -518,13 +528,14 @@ class TestPlotsInterface:
         )
 
         # Then
-        assert (
-            timeseries
-            == spy_core_time_series_manager.filter_for_x_and_y_values.return_value
-        )
-        spy_core_time_series_manager.filter_for_x_and_y_values.assert_called_once_with(
-            x_axis=mocked_x_axis,
-            y_axis=mocked_y_axis,
+        assert timeseries == spy_core_time_series_manager.query_for_data.return_value
+        spy_core_time_series_manager.query_for_data.assert_called_once_with(
+            fields_to_export=[
+                mocked_x_axis,
+                mocked_y_axis,
+                "in_reporting_delay_period",
+            ],
+            field_to_order_by=mocked_x_axis,
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             date_from=mocked_date_from,
@@ -678,30 +689,30 @@ class TestPlotsInterface:
         spy_validate_plot_parameters.assert_called_once()
 
 
-class TestGetXAndYValues:
-    @mock.patch(f"{MODULE_PATH}.sort_by_age")
-    def test_can_delegate_call_to_sort_by_age(
+class TestGetAggregatedResults:
+    @mock.patch(f"{MODULE_PATH}.aggregate_results_by_age")
+    def test_can_delegate_call_to_aggregate_results_by_age(
         self,
-        spy_sort_by_age: mock.MagicMock,
+        spy_aggregate_results_by_age: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `PlotParameters` model which requests `stratum` along the X-axis
-        When `get_x_and_y_values()` is called
-        Then the call is delegated to `sort_by_age()`
+        When `get_aggregated_results()` is called
+        Then the call is delegated to `aggregate_results_by_age()`
         """
         # Given
         fake_chart_plot_parameters.x_axis = ChartAxisFields.age.name
         mocked_queryset = mock.Mock()
 
         # When
-        x_and_y_values = get_x_and_y_values(
+        aggregated_results = get_aggregated_results(
             plot_parameters=fake_chart_plot_parameters, queryset=mocked_queryset
         )
 
         # Then
-        assert x_and_y_values == spy_sort_by_age.return_value
-        spy_sort_by_age.assert_called_once_with(iterable=mocked_queryset)
+        assert aggregated_results == spy_aggregate_results_by_age.return_value
+        spy_aggregate_results_by_age.assert_called_once_with(queryset=mocked_queryset)
 
     @pytest.mark.parametrize(
         "x_axis",
@@ -710,30 +721,30 @@ class TestGetXAndYValues:
             ChartAxisFields.metric.name,
         ],
     )
-    @mock.patch(f"{MODULE_PATH}.unzip_values")
+    @mock.patch(f"{MODULE_PATH}.aggregate_results")
     def test_delegates_call_to_unzip_values(
         self,
-        spy_unzip_values: mock.MagicMock,
+        spy_aggregate_results: mock.MagicMock,
         x_axis: str,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a `PlotParameters` model which does not request `stratum` along the X-axis
-        When `get_x_and_y_values()` is called
-        Then the call is delegated to `unzip_values()`
+        When `get_aggregated_results()` is called
+        Then the call is delegated to `aggregate_results()`
         """
         # Given
         mocked_queryset = mock.Mock()
         fake_chart_plot_parameters.x_axis = x_axis
 
         # When
-        x_and_y_values = get_x_and_y_values(
+        x_and_y_values = get_aggregated_results(
             plot_parameters=fake_chart_plot_parameters, queryset=mocked_queryset
         )
 
         # Then
-        assert x_and_y_values == spy_unzip_values.return_value
-        spy_unzip_values.assert_called_once_with(values=mocked_queryset)
+        assert x_and_y_values == spy_aggregate_results.return_value
+        spy_aggregate_results.assert_called_once_with(values=mocked_queryset)
 
 
 class TestConvertType:
@@ -759,29 +770,44 @@ class TestConvertType:
 
 
 class TestSortByAge:
-    def test_returns_correct_x_and_y_values(self):
+    def test_returns_correct_results(self):
         """
-        Given a list of 4 * 2-item tuples
+        Given a queryset containing age based results
         When `sort_by_age()` is called
-        Then the result is 2 tuples which contain 4 items each
-        And sorted properly
-        And in display format
+        Then the result is a dictionary of aggregated results
+            with human-readable labels for the age values
         """
         # Given
-        values = [
-            ("65-84", 1),
-            ("06-17", 2),
-            ("85+", 3),
-            ("18-64", 4),
-            ("all", 5),
-        ]
+        fake_queryset = FakeQuerySet(
+            [
+                {
+                    "age__name": "00-04",
+                    "metric_value": Decimal("1.0"),
+                    "in_reporting_delay_period": False,
+                },
+                {
+                    "age__name": "55+",
+                    "metric_value": Decimal("2.0"),
+                    "in_reporting_delay_period": False,
+                },
+                {
+                    "age__name": "all",
+                    "metric_value": Decimal("3.0"),
+                    "in_reporting_delay_period": False,
+                },
+            ]
+        )
 
         # When
-        first_list, second_list = sort_by_age(iterable=values)
+        aggregated_results = aggregate_results_by_age(queryset=fake_queryset)
 
         # Then
-        assert first_list == ["06 - 17", "18 - 64", "65 - 84", "85+", "all"]
-        assert second_list == [2, 4, 1, 3, 5]
+        assert aggregated_results["age__name"] == [
+            "00 - 04",
+            "55+",
+            "all",
+        ]
+        assert aggregated_results["metric_value"] == [1, 2, 3]
 
 
 class TestBuildAgeDisplayName:
@@ -803,26 +829,3 @@ class TestBuildAgeDisplayName:
 
         # Then
         assert cast_value == expected_value
-
-
-class TestUnzipValues:
-    def test_returns_correct_zipped_values(self):
-        """
-        Given a list of 3 * 2-item tuples
-        When `unzip_values()` is called
-        Then the result is 2 tuples which contain 3 items each
-        """
-        # Given
-        values = [(1, 2), (3, 4), (5, 6)]
-
-        # When
-        unzipped_lists = unzip_values(values=values)
-
-        # Then
-        (
-            first_index_item_unzipped_result,
-            second_index_item_unzipped_result,
-        ) = unzipped_lists
-
-        assert first_index_item_unzipped_result == (1, 3, 5)
-        assert second_index_item_unzipped_result == (2, 4, 6)
