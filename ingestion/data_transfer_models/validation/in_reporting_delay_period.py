@@ -16,10 +16,12 @@ def validate_in_reporting_delay_period(
             in the leading section of the list.
 
     """
-    if True not in in_reporting_delay_period_values:
+    try:
+        first_true_index = in_reporting_delay_period_values.index(True)
+    except ValueError:
+        # Raised when there is no `True` value in the list
         return
 
-    first_true_index = in_reporting_delay_period_values.index(True)
     is_valid: bool = all(in_reporting_delay_period_values[first_true_index:])
     if is_valid:
         return
