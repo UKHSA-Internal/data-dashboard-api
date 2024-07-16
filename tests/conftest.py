@@ -171,12 +171,14 @@ def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
                 "date": "2022-11-01",
                 "metric_value": 4141.43,
                 "embargo": "2023-11-16 17:30:00",
+                "in_reporting_delay_period": False,
             },
             {
                 "epiweek": 44,
                 "date": "2022-11-02",
                 "metric_value": 3952.14,
                 "embargo": "2023-11-16 17:30:00",
+                "in_reporting_delay_period": False,
             },
         ],
     }

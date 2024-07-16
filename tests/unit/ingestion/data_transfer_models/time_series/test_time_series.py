@@ -294,3 +294,122 @@ class TestTimeSeriesDTO:
                 refresh_date=source_data["refresh_date"],
                 time_series=lower_level_fields,
             )
+
+    def test_in_reporting_delay_period_with_no_true_values_is_deemed_valid(
+        self, example_time_series_data
+    ):
+        """
+        Given a payload containing only False values
+            for the `in_reporting_delay_period` fields
+        When the `TimeSeriesDTO` model is initialized
+        Then the model is deemed valid
+        """
+        # Given
+        source_data = example_time_series_data
+        time_series_data = source_data["time_series"]
+        for data in time_series_data:
+            data["in_reporting_delay_period"] = False
+
+        lower_level_fields = [
+            InboundTimeSeriesSpecificFields(**individual_source_data)
+            for individual_source_data in time_series_data
+        ]
+
+        # When
+        time_series_dto = TimeSeriesDTO(
+            metric_frequency=source_data["metric_frequency"],
+            parent_theme=source_data["parent_theme"],
+            child_theme=source_data["child_theme"],
+            topic=source_data["topic"],
+            metric_group=source_data["metric_group"],
+            metric=source_data["metric"],
+            geography_type=source_data["geography_type"],
+            geography=source_data["geography"],
+            geography_code=source_data["geography_code"],
+            age=source_data["age"],
+            sex=source_data["sex"],
+            stratum=source_data["stratum"],
+            refresh_date=source_data["refresh_date"],
+            time_series=lower_level_fields,
+        )
+
+        # Then
+        time_series_dto.model_validate(time_series_dto)
+
+    def test_in_reporting_delay_period_with_trailing_section_is_deemed_valid(
+        self, example_time_series_data
+    ):
+        """
+        Given a payload containing False values
+            along with trailing True values
+            for the `in_reporting_delay_period` fields
+        When the `TimeSeriesDTO` model is initialized
+        Then the model is deemed valid
+        """
+        # Given
+        source_data = example_time_series_data
+        time_series_data = source_data["time_series"]
+        time_series_data[-1]["in_reporting_delay_period"] = True
+        lower_level_fields = [
+            InboundTimeSeriesSpecificFields(**individual_source_data)
+            for individual_source_data in time_series_data
+        ]
+
+        # When
+        time_series_dto = TimeSeriesDTO(
+            metric_frequency=source_data["metric_frequency"],
+            parent_theme=source_data["parent_theme"],
+            child_theme=source_data["child_theme"],
+            topic=source_data["topic"],
+            metric_group=source_data["metric_group"],
+            metric=source_data["metric"],
+            geography_type=source_data["geography_type"],
+            geography=source_data["geography"],
+            geography_code=source_data["geography_code"],
+            age=source_data["age"],
+            sex=source_data["sex"],
+            stratum=source_data["stratum"],
+            refresh_date=source_data["refresh_date"],
+            time_series=lower_level_fields,
+        )
+
+        # Then
+        time_series_dto.model_validate(time_series_dto)
+
+    def test_in_reporting_delay_period_with_leading_section_is_deemed_invalid(
+        self, example_time_series_data
+    ):
+        """
+        Given a payload containing False values
+            along with leading True values
+            for the `in_reporting_delay_period` fields
+        When the `TimeSeriesDTO` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        source_data = example_time_series_data
+        time_series_data = source_data["time_series"]
+        time_series_data[0]["in_reporting_delay_period"] = True
+        lower_level_fields = [
+            InboundTimeSeriesSpecificFields(**individual_source_data)
+            for individual_source_data in time_series_data
+        ]
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            TimeSeriesDTO(
+                metric_frequency=source_data["metric_frequency"],
+                parent_theme=source_data["parent_theme"],
+                child_theme=source_data["child_theme"],
+                topic=source_data["topic"],
+                metric_group=source_data["metric_group"],
+                metric=source_data["metric"],
+                geography_type=source_data["geography_type"],
+                geography=source_data["geography"],
+                geography_code=source_data["geography_code"],
+                age=source_data["age"],
+                sex=source_data["sex"],
+                stratum=source_data["stratum"],
+                refresh_date=source_data["refresh_date"],
+                time_series=lower_level_fields,
+            )
