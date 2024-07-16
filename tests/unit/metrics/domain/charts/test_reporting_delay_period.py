@@ -1,8 +1,41 @@
 from unittest import mock
+
+import pytest
+from _pytest.logging import LogCaptureFixture
+
 from metrics.domain.charts import reporting_delay_period
-from metrics.domain.charts.reporting_delay_period import add_reporting_delay_period
+from metrics.domain.models import PlotData
 
 MODULE_PATH = "metrics.domain.charts.reporting_delay_period"
+
+
+class TestGetXValueAtStartOfReportingDelayPeriod:
+    def test_returns_correct_value(self, fake_plot_data: PlotData):
+        """
+        Given an enriched `PlotData` model
+            which holds a list of reporting delay period booleans
+        When `_get_x_value_at_start_of_reporting_delay_period()` is called
+        Then the corresponding x value denoted
+            by the first occurring True value
+            in the reporting delay period is returned
+        """
+        # Given
+        x_axis_value = [0, 1, 2, 3, 4, 5]
+        reporting_delay_period_values = [False, False, False, False, True, True]
+        fake_plot_data.additional_values = {
+            "in_reporting_delay_period": reporting_delay_period_values
+        }
+        fake_plot_data.x_axis_values = x_axis_value
+
+        # When
+        x_value = (
+            reporting_delay_period._get_x_value_at_start_of_reporting_delay_period(
+                chart_plots_data=[fake_plot_data]
+            )
+        )
+
+        # Then
+        assert x_value == x_axis_value[4]
 
 
 class TestGetLastXValueAtEndOfReportingDelayPeriod:
@@ -53,7 +86,9 @@ class TestAddReportingDelayPeriod:
         mocked_get_last_x_value_at_end_of_reporting_delay_period.return_value = end_x
 
         # When
-        add_reporting_delay_period(chart_plots_data=mock.Mock(), figure=mocked_figure)
+        reporting_delay_period.add_reporting_delay_period(
+            chart_plots_data=mock.Mock(), figure=mocked_figure
+        )
 
         # Then
         mocked_figure.add_vrect.assert_called_once_with(
@@ -86,7 +121,9 @@ class TestAddReportingDelayPeriod:
         mocked_get_last_x_value_at_end_of_reporting_delay_period.return_value = end_x
 
         # When
-        add_reporting_delay_period(chart_plots_data=mock.Mock(), figure=mocked_figure)
+        reporting_delay_period.add_reporting_delay_period(
+            chart_plots_data=mock.Mock(), figure=mocked_figure
+        )
 
         # Then
         expected_calls = [
@@ -95,3 +132,63 @@ class TestAddReportingDelayPeriod:
         ]
 
         mocked_figure.add_vline.assert_has_calls(calls=expected_calls, any_order=True)
+
+    @pytest.mark.parametrize("additional_values", [{}, None])
+    def test_records_log_when_no_reporting_delay_period_found(
+        self,
+        fake_plot_data: PlotData,
+        caplog: LogCaptureFixture,
+        additional_values: dict | None,
+    ):
+        """
+        Given an enriched `PlotData` model
+            which contains nothing for its
+            `additional_values`
+        When `add_reporting_delay_period()` is called
+        Then the correct log statement is recorded
+        And the section is not drawn
+        """
+        # Given
+        mocked_figure = mock.Mock()
+        fake_plot_data.additional_values = additional_values
+
+        # When
+        reporting_delay_period.add_reporting_delay_period(
+            chart_plots_data=[fake_plot_data],
+            figure=mocked_figure,
+        )
+
+        # Then
+        expected_log = "No reporting delay could be determined for this chart"
+        assert expected_log in caplog.text
+
+        mocked_figure.add_vrect.assert_not_called()
+        mocked_figure.add_vline.assert_not_called()
+
+    def test_records_log_when_reporting_delay_period_contains_no_valid_start_point(
+        self, fake_plot_data: PlotData, caplog: LogCaptureFixture
+    ):
+        """
+        Given an enriched `PlotData` model
+            which contains a list of reporting delay period values
+            which do not have 1 True value
+        When `add_reporting_delay_period()` is called
+        Then the correct log statement is recorded
+        And the section is not drawn
+        """
+        # Given
+        mocked_figure = mock.Mock()
+        fake_plot_data.additional_values = {"in_reporting_delay_period": [False] * 10}
+
+        # When
+        reporting_delay_period.add_reporting_delay_period(
+            chart_plots_data=[fake_plot_data],
+            figure=mocked_figure,
+        )
+
+        # Then
+        expected_log = "No reporting delay could be determined for this chart"
+        assert expected_log in caplog.text
+
+        mocked_figure.add_vrect.assert_not_called()
+        mocked_figure.add_vline.assert_not_called()
