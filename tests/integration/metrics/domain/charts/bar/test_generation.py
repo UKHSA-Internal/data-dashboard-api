@@ -81,9 +81,11 @@ class TestBarCharts:
         )
 
         # Then
-        assert len(figure.data) == 1
+        # There should be 1 plot for the bar plot
+        # and another dummy plot for the reporting delay period
+        assert len(figure.data) == 2
 
-        # ---Main line plot checks---
+        # ---Main bar plot checks---
         main_bar_plot: plotly.graph_objects.Bar = figure.data[0]
 
         # Check it is a Bar chart
