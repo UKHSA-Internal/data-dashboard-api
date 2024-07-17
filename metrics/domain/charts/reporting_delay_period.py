@@ -1,6 +1,7 @@
 import logging
 
 import plotly
+from plotly.graph_objs import Scatter
 
 from metrics.domain.models import PlotData
 from metrics.domain.models.plots import (
@@ -61,12 +62,13 @@ def add_reporting_delay_period(
         figure=figure
     )
 
+    fill_opacity = 0.6
     # Draw the shaded section of the reporting delay period
     figure.add_vrect(
         x0=start_x_of_reporting_delay,
         x1=last_x_of_reporting_delay,
         fillcolor=fill_colour,
-        opacity=0.6,
+        opacity=fill_opacity,
         line_width=0,
     )
 
@@ -76,4 +78,22 @@ def add_reporting_delay_period(
     )
     figure.add_vline(
         x=last_x_of_reporting_delay, line_color=boundary_colour, line_width=2
+    )
+
+    # Add a dummy trace to include the reporting delay period
+    # in the rendered legend
+    figure.add_trace(
+        trace=Scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            marker={
+                "color": fill_colour,
+                "opacity": fill_opacity,
+                "symbol": "square",
+                "size": 15,
+                "line": {"color": boundary_colour, "width": 2},
+            },
+            name="Reporting delay",
+        )
     )
