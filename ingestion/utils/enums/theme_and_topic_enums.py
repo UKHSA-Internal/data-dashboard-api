@@ -4,6 +4,8 @@ from enum import Enum
 class _InfectiousDiseaseChildTheme(Enum):
     VACCINE_PREVENTABLE = "vaccine_preventable"
     RESPIRATORY = "respiratory"
+    BLOODSTREAM_INFECTION = "bloodstream_infection"
+    GASTROINTESTINAL = "gastrointestinal"
 
 
 class _ExtremeEventChildTheme(Enum):
@@ -19,7 +21,7 @@ class _WeatherAlertTopic(Enum):
     COLD_ALERT = "Cold-alert"
 
 
-class _RespiartoryTopic(Enum):
+class _RespiratoryTopic(Enum):
     COVID_19 = "COVID-19"
     INFLUENZA = "Influenza"
     RSV = "RSV"
@@ -27,6 +29,18 @@ class _RespiartoryTopic(Enum):
     PARAINFLUENZA = "Parainfluenza"
     RHINOVIRUS = "Rhinovirus"
     ADENOVIRUS = "Adenovirus"
+
+
+class _BloodstreamInfectionTopic(Enum):
+    MRSA = "MRSA"
+    MSSA = "MSSA"
+    E_COLI = "E-coli"
+    KLEBSIELLA_SPP = "Klebsiella-spp"
+    PSEUDOMONAS_AERUGINOSA = "Pseudomonas-aeruginosa"
+
+
+class _GastrointestinalTopic(Enum):
+    C_DIFFICILE = "C-difficile"
 
 
 class BaseEnum(Enum):
@@ -47,4 +61,6 @@ class ChildTheme(BaseEnum):
 class Topic(BaseEnum):
     WEATHER_ALERT = _WeatherAlertTopic
     VACCINE_PREVENTABLE = _VaccinePreventableTopic
-    RESPIRATORY = _RespiartoryTopic
+    RESPIRATORY = _RespiratoryTopic
+    BLOODSTREAM_INFECTION = _BloodstreamInfectionTopic
+    GASTROINTESTINAL = _GastrointestinalTopic

@@ -2,7 +2,6 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
-from ingestion.utils.enums import DataSourceFileType, Topic
 
 
 class TestIncomingBaseValidationForChildTheme:
@@ -21,6 +20,20 @@ class TestIncomingBaseValidationForChildTheme:
                 "vaccine_preventable",
                 "Measles",
                 "measles_cases_casesByOnsetWeek",
+                "cases",
+            ),
+            (
+                "infectious_disease",
+                "bloodstream_infection",
+                "E-coli",
+                "e-coli_cases_countsByOnsetLocation",
+                "cases",
+            ),
+            (
+                "infectious_disease",
+                "gastrointestinal",
+                "C-difficile",
+                "c-difficile_cases_countsByOnsetLocation",
                 "cases",
             ),
             (
