@@ -1,7 +1,5 @@
 from enum import Enum
 
-from metrics.domain.models import PlotData
-
 
 class ChartLineTypes(Enum):
     SOLID = "solid"
