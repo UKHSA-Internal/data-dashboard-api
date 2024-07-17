@@ -47,7 +47,6 @@ def generate_chart_figure(
             y_axis_values=plot_data.y_axis_values,
             bar_colour=selected_colour.stringified,
             legend=plot_label,
-            showlegend=bool(plot_label),
         )
 
         # Add plot to graph
@@ -75,7 +74,6 @@ def _create_bar_plot(
     y_axis_values: list[Any],
     bar_colour: str,
     legend: str,
-    showlegend: bool = False,
 ) -> dict:
     """Create a Bar plot to add to the chart (via the add_trace method)
 
@@ -84,9 +82,6 @@ def _create_bar_plot(
         y_axis_values: The values to display along the y-axis
         bar_colour: The colour to assign to the bars.
         legend: Legend to display for this plot.
-        showlegend: Whether to display the associated legend for this plot
-            Note: showlegend in BAR_CHART_LAYOUT_ARGS constant has to be True
-            for this setting to have any effect
 
     Returns:
         Dictionary representation of the graph object
@@ -104,6 +99,6 @@ def _create_bar_plot(
             },
         },
         name=legend,
-        showlegend=showlegend,
+        showlegend=bool(legend),
     )
     return convert_graph_object_to_dict(graph_object=bar)
