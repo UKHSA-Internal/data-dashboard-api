@@ -162,7 +162,7 @@ class TestChartSettings:
             "yaxis": mocked_get_y_axis_config.return_value,
             "width": chart_settings.width,
             "height": chart_settings.height,
-            "showlegend": True
+            "showlegend": True,
         }
 
         assert base_chart_config == expected_base_chart_config
