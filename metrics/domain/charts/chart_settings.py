@@ -1,7 +1,6 @@
 import datetime
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.line_multi_coloured.properties import is_legend_required
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 from metrics.domain.models import PlotData
@@ -91,9 +90,6 @@ class ChartSettings:
 
     def get_line_multi_coloured_chart_config(self):
         chart_config = self.get_base_chart_config()
-        chart_config["showlegend"] = is_legend_required(
-            chart_plots_data=self.plots_data
-        )
         return {**chart_config, **self._get_legend_top_centre_config()}
 
     def _get_date_tick_format(self) -> str:
