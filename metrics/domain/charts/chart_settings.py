@@ -76,6 +76,7 @@ class ChartSettings:
             "yaxis": self.get_y_axis_config(),
             "height": self.height,
             "width": self.width,
+            "showlegend": True,
         }
 
     def get_line_with_shaded_section_chart_config(self):
