@@ -45,6 +45,14 @@ def validate_geography_code(*, geography_code: str, geography_type: str) -> str 
             )
         case enums.GeographyType.NHS_TRUST.value:
             return _validate_nhs_trust_geography_code(geography_code=geography_code)
+        case enums.GeographyType.INTEGRATED_CARE_BOARD.value:
+            return _validate_integrated_care_board_geography_code(
+                geography_code=geography_code
+            )
+        case enums.GeographyType.SUB_INTEGRATED_CARE_BOARD.value:
+            return _validate_sub_integrated_care_board_geography_code(
+                geography_code=geography_code
+            )
 
 
 def _validate_nation_geography_code(*, geography_code: str) -> str:
@@ -97,6 +105,46 @@ def _validate_nhs_trust_geography_code(*, geography_code: str) -> str:
         raise ValueError
 
     if not geography_code.isalnum():
+        raise ValueError
+
+    return geography_code
+
+
+def _validate_integrated_care_board_geography_code(
+    *, geography_code: str, allowable_length: int = 3
+) -> str:
+    if len(geography_code) != allowable_length:
+        raise ValueError
+
+    first_character = geography_code[0]
+    if not first_character.isalpha():
+        raise ValueError
+
+    remaining_characters = geography_code[1:]
+    if not remaining_characters.isalnum():
+        raise ValueError
+
+    return geography_code
+
+
+def _validate_sub_integrated_care_board_geography_code(*, geography_code: str) -> str:
+    small_code_allowance = 3
+    large_code_allowance = 5
+    if len(geography_code) not in {small_code_allowance, large_code_allowance}:
+        raise ValueError
+
+    if len(geography_code) == large_code_allowance:
+        return _validate_integrated_care_board_geography_code(
+            geography_code=geography_code,
+            allowable_length=5,
+        )
+
+    first_character = geography_code[0]
+    if not first_character.isdigit():
+        raise ValueError
+
+    remaining_characters = geography_code[1:]
+    if not remaining_characters.isalnum():
         raise ValueError
 
     return geography_code
