@@ -6,6 +6,7 @@ import pytest
 
 from metrics.domain.charts.bar.generation import generate_chart_figure
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
+from metrics.domain.models.plots import NoReportingDelayPeriodFoundError
 
 HEIGHT = 300
 WIDTH = 400
@@ -39,6 +40,7 @@ class TestBarCharts:
         """
         # Given
         chart_plots_data = [mocked_plot_data]
+        mocked_plot_data.start_of_reporting_delay_period_index = 1
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
@@ -69,6 +71,7 @@ class TestBarCharts:
         """
         # Given
         chart_plots_data = [mocked_plot_data]
+        mocked_plot_data.start_of_reporting_delay_period_index = 1
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
@@ -143,6 +146,7 @@ class TestBarCharts:
         x_axis_values = ["0-4", "5-8", "9-29"]
         mocked_plot_data.x_axis_values = x_axis_values
         chart_plots_data = [mocked_plot_data]
+        mocked_plot_data.start_of_reporting_delay_period_index = 1
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
