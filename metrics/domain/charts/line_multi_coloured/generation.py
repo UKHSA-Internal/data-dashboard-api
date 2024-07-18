@@ -5,6 +5,7 @@ import plotly
 from metrics.domain.charts import chart_settings
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
+from metrics.domain.charts.reporting_delay_period import add_reporting_delay_period
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
 from metrics.domain.models import PlotData
 
@@ -67,6 +68,12 @@ def create_multi_coloured_line_chart(
     layout_args = settings.get_line_multi_coloured_chart_config()
     figure.update_layout(**layout_args)
 
+    if settings.is_date_type_x_axis:
+        add_reporting_delay_period(
+            chart_plots_data=chart_plots_data,
+            figure=figure,
+        )
+
     return figure
 
 
@@ -92,6 +99,7 @@ def _create_line_plot(
         },
         line_shape=line_shape,
         name=legend,
+        showlegend=bool(legend),
     )
     return convert_graph_object_to_dict(graph_object=scatter)
 

@@ -429,6 +429,7 @@ class Consumer:
                 year=int(year),
                 month=int(month),
                 metric_value=time_series_data.metric_value,
+                in_reporting_delay_period=time_series_data.in_reporting_delay_period,
             )
             created_core_time_series.append(core_time_series)
 
@@ -486,6 +487,7 @@ class Consumer:
                 embargo=time_series_data.embargo,
                 date=time_series_data.date,
                 metric_value=time_series_data.metric_value,
+                in_reporting_delay_period=time_series_data.in_reporting_delay_period,
             )
             created_api_time_series.append(api_time_series)
 

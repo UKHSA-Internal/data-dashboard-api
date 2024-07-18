@@ -1,4 +1,5 @@
 import datetime
+from typing import Any
 
 from django.db import models
 
@@ -38,28 +39,14 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         ]
         return len(filtered_for_metric_topic_and_date)
 
-    def get_latest_metric_value(
-        self, topic_name: str, metric_name: str
-    ) -> float | None:
-        try:
-            core_time_series = next(
-                core_time_series
-                for core_time_series in self.time_series
-                if core_time_series.metric.metric_group.topic.name == topic_name
-                if core_time_series.metric.name == metric_name
-            )
-        except StopIteration:
-            return None
-        return core_time_series.metric_value
-
-    def filter_for_x_and_y_values(
+    def query_for_data(
         self,
-        x_axis: str,
-        y_axis: str,
         topic_name: str,
         metric_name: str,
         date_from: datetime.date,
+        fields_to_export: list[str] | None = None,
         date_to: datetime.date | None = None,
+        field_to_order_by: str = "date",
         geography_name: str | None = None,
         geography_type_name: str | None = None,
         stratum_name: str | None = None,
@@ -100,16 +87,29 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         if age:
             filtered_time_series = [x for x in filtered_time_series if x.age == age]
 
-        queryset = FakeQuerySet(
-            [
-                (getattr(time_series, x_axis), getattr(time_series, y_axis))
-                for time_series in filtered_time_series
-            ]
-        )
+        if fields_to_export:
+            queryset = FakeQuerySet(
+                [
+                    self._export_record(
+                        time_series=time_series, fields_to_export=fields_to_export
+                    )
+                    for time_series in filtered_time_series
+                ]
+            )
+        else:
+            queryset = FakeQuerySet(filtered_time_series)
+
         queryset.latest_date = max(
             (x.refresh_date for x in filtered_time_series), default=""
         )
         return queryset
+
+    @classmethod
+    def _export_record(cls, time_series, fields_to_export) -> dict[str, Any]:
+        exported_record = {}
+        for field in fields_to_export:
+            exported_record[field] = getattr(time_series, field)
+        return exported_record
 
     def exists(self) -> bool:
         return bool(self.time_series)
