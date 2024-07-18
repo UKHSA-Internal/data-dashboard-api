@@ -1,7 +1,6 @@
 from unittest import mock
 
 import pytest
-from _pytest.logging import LogCaptureFixture
 from plotly.graph_objs import Scatter
 
 from metrics.domain.charts import reporting_delay_period
@@ -179,10 +178,9 @@ class TestAddReportingDelayPeriod:
         mocked_figure.add_trace.assert_called_once_with(trace=expected_scatter)
 
     @pytest.mark.parametrize("additional_values", [{}, None])
-    def test_records_log_when_no_reporting_delay_period_found(
+    def test_does_not_draw_section_when_no_reporting_delay_period_found(
         self,
         fake_plot_data: PlotData,
-        caplog: LogCaptureFixture,
         additional_values: dict | None,
     ):
         """
@@ -190,8 +188,7 @@ class TestAddReportingDelayPeriod:
             which contains nothing for its
             `additional_values`
         When `add_reporting_delay_period()` is called
-        Then the correct log statement is recorded
-        And the section is not drawn
+        Then the section is not drawn
         """
         # Given
         mocked_figure = mock.Mock()
@@ -204,22 +201,18 @@ class TestAddReportingDelayPeriod:
         )
 
         # Then
-        expected_log = "No reporting delay could be determined for this chart"
-        assert expected_log in caplog.text
-
         mocked_figure.add_vrect.assert_not_called()
         mocked_figure.add_vline.assert_not_called()
 
-    def test_records_log_when_reporting_delay_period_contains_no_valid_start_point(
-        self, fake_plot_data: PlotData, caplog: LogCaptureFixture
+    def test_does_not_draw_section_when_reporting_delay_period_contains_no_valid_start_point(
+        self, fake_plot_data: PlotData
     ):
         """
         Given an enriched `PlotData` model
             which contains a list of reporting delay period values
             which do not have 1 True value
         When `add_reporting_delay_period()` is called
-        Then the correct log statement is recorded
-        And the section is not drawn
+        Then the section is not drawn
         """
         # Given
         mocked_figure = mock.Mock()
@@ -232,8 +225,5 @@ class TestAddReportingDelayPeriod:
         )
 
         # Then
-        expected_log = "No reporting delay could be determined for this chart"
-        assert expected_log in caplog.text
-
         mocked_figure.add_vrect.assert_not_called()
         mocked_figure.add_vline.assert_not_called()

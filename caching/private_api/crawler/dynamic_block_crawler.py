@@ -113,10 +113,6 @@ class DynamicContentBlockCrawler:
 
         """
         self._process_table_for_chart_block(chart_block=chart_block)
-        self.process_download_for_chart_block(
-            chart_block=chart_block, file_format="csv"
-        )
-
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
 
     # Sub methods for processing charts
