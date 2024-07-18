@@ -11,6 +11,8 @@ VALID_NHS_REGION_CODE = "E40000003"
 VALID_NHS_TRUST_CODE = "RY6"
 VALID_UKHSA_REGION_CODE = "E45000017"
 VALID_GOVERNMENT_OFFICE_REGION_CODE = "E12000003"
+VALID_INTEGRATED_CARE_BOARD_CODE = "QT6"
+VALID_SUB_INTEGRATED_CARE_BOARD_CODE = "02G"
 
 
 class TestIncomingBaseValidationForNHSTrustGeographyCode:
@@ -500,6 +502,255 @@ class TestIncomingBaseValidationForUKHSARegionGeographyCode:
         payload = valid_payload_for_base_model
         payload["geography_type"] = enums.GeographyType.UKHSA_REGION.value
         payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+
+# @pytest.mark.skip
+class TestIncomingBaseValidationForIntegratedCareBoardCode:
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_INTEGRATED_CARE_BOARD_CODE,
+            "RTE",
+            "R0A",
+            "AD2",
+        ),
+    )
+    def test_valid_geography_code_validates_successfully(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a valid `geography_code` value
+            for a `geography_type` of "Integrated Care Board"
+        When the `IncomingBaseDataModel` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = geography_code
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(**payload)
+
+        # Then
+        incoming_base_validation.model_validate(
+            incoming_base_validation,
+            strict=True,
+        )
+
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_NATION_CODE,
+            VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_NHS_REGION_CODE,
+            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_UKHSA_REGION_CODE,
+            VALID_GOVERNMENT_OFFICE_REGION_CODE,
+            "1AB",
+            "42N",
+            "L2£",
+        ),
+    )
+    def test_invalid_geography_code_throws_error(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a `geography_code`
+            which is not valid for the "Integrated Care Board" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            "R7",
+            "R",
+            "RV56",
+            "RV5678",
+        ),
+    )
+    def test_geography_code_of_unsuitable_length_throws_error(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a `geography_code` which is not 3 or 5 characters long
+            for the "Integrated Care Board" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+    def test_geography_code_must_not_start_with_number(
+        self, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a `geography_code` which does not start with a letter or number
+            for the "Integrated Care Board" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = "3M2"
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+
+class TestIncomingBaseValidationForSubIntegratedCareBoardCode:
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_SUB_INTEGRATED_CARE_BOARD_CODE,
+            "3TE",
+            "78A",
+            "1D2",
+            "H189A",
+            "AD1B9",
+            "AH1BD",
+        ),
+    )
+    def test_valid_geography_code_validates_successfully(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a valid `geography_code` value
+            for a `geography_type` of "Sub-Integrated Care Board"
+        When the `IncomingBaseDataModel` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.SUB_INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = geography_code
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(**payload)
+
+        # Then
+        incoming_base_validation.model_validate(
+            incoming_base_validation,
+            strict=True,
+        )
+
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_NATION_CODE,
+            VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_NHS_REGION_CODE,
+            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_UKHSA_REGION_CODE,
+            VALID_GOVERNMENT_OFFICE_REGION_CODE,
+            "SAB",
+            "A2N",
+            "32%",
+            "72A3N",
+            "921DN",
+            "U21D$",
+        ),
+    )
+    def test_invalid_geography_code_throws_error(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a `geography_code`
+            which is not valid for the "Sub-Integrated Care Board" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.SUB_INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            "R7",
+            "R",
+            "RV56",
+            "RV5678",
+        ),
+    )
+    def test_geography_code_of_unsuitable_length_throws_error(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a `geography_code` which is not 3 or 5 characters long
+            for the "Sub-Integrated Care Board" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.SUB_INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+    def test_three_length_geography_code_must_not_start_with_letter(
+        self, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a 3-character length `geography_code`
+            which starts with a letter
+            for the "Sub-Integrated Care Board" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.SUB_INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = "AM2"
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+    def test_five_length_geography_code_must_not_start_with_number(
+        self, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a 5-character length `geography_code`
+            which starts with a number
+            for the "Sub-Integrated Care Board" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.SUB_INTEGRATED_CARE_BOARD.value
+        payload["geography_code"] = "2ASA6"
 
         # When / Then
         with pytest.raises(ValidationError):

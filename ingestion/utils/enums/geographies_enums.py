@@ -9,3 +9,5 @@ class GeographyType(Enum):
     UPPER_TIER_LOCAL_AUTHORITY = "Upper Tier Local Authority"
     UKHSA_REGION = "UKHSA Region"
     GOVERNMENT_OFFICE_REGION = "Government Office Region"
+    INTEGRATED_CARE_BOARD = "Integrated Care Board"
+    SUB_INTEGRATED_CARE_BOARD = "Sub-Integrated Care Board"
