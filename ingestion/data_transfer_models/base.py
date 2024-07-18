@@ -102,35 +102,22 @@ class IncomingBaseDataModel(BaseModel):
         """
         return validation.validate_age(age=age)
 
-    @field_validator("geography_code")
-    @classmethod
-    def validate_geography_code(
-        cls, geography_code: str, validation_info: ValidationInfo
-    ) -> str:
+    @model_validator(mode="after")
+    def validate_geography_code(self) -> Self:
         """Validates the `geography_code` value to check it conforms to an allowable structure
 
-        Args:
-            geography_code: The `geography_code` value
-                being validated
-            validation_info: An enriched `ValidationInfo` instance
-                provided by the pydantic model, this gives us
-                the rest of the payload to the model initialization.
-                From this, the `geography_code` is extracted,
-                so it can be used in the validation checks
-
         Returns:
-            The provided `geography_code` unchanged if
-            it has passed the validation checks.
+            The current model instance
 
         Raises:
             `ValidationError`: If any of the validation checks fail
 
         """
-        input_geography_type: str | None = validation_info.data.get("geography_type")
-        return validation.validate_geography_code(
-            geography_code=geography_code,
-            geography_type=input_geography_type,
+        validation.validate_geography_code(
+            geography_code=self.geography_code,
+            geography_type=self.geography_type,
         )
+        return self
 
     @field_validator("metric")
     @classmethod
