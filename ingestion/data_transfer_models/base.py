@@ -55,7 +55,7 @@ class IncomingBaseDataModel(BaseModel):
 
         validation.validate_topic(topic=self.topic, child_theme=self.child_theme)
 
-        return Self
+        return self
 
     @field_validator("sex")
     @classmethod
