@@ -37,7 +37,7 @@ class TestMergeAndProcessQuerysets:
 
         # Then
         # Check that the first 2 results in the queryset are for the latest date only
-        # And that the resulting queryset is in choronological order
+        # And that the resulting queryset is in chronological order
         first_record = merged_queryset[0]
         assert str(first_record.date) == str(merged_queryset[1].date) == dates[2]
         assert str(merged_queryset[2].date) == str(merged_queryset[3].date) == dates[1]
@@ -46,7 +46,7 @@ class TestMergeAndProcessQuerysets:
         # Check that the sample first record taken from the results
         # has all the correct fields in the correct index position of the tuple
         # and they can be reached via the dunder notation
-        assert len(first_record) == 12
+        assert len(first_record) == 13
         assert (
             first_record[0]
             == first_record.metric__topic__sub_theme__theme__name
@@ -71,3 +71,8 @@ class TestMergeAndProcessQuerysets:
         assert first_record[9] == first_record.year == 2023
         assert str(first_record[10]) == str(first_record.date) == dates[2]
         assert str(first_record[11]) == str(first_record.metric_value) == f"{456:.4f}"
+        assert (
+            str(first_record[12])
+            == str(first_record.in_reporting_delay_period)
+            == str(False)
+        )

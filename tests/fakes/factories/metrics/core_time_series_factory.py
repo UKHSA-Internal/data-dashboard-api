@@ -33,6 +33,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         stratum_name: str = "default",
         metric_value: float = 1,
         epiweek: int = 1,
+        in_reporting_delay_period: bool = False,
     ) -> FakeCoreTimeSeries:
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
             metric_name=metric_name,
@@ -61,6 +62,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             sex=sex,
             epiweek=epiweek,
             refresh_date=str(date),
+            in_reporting_delay_period=in_reporting_delay_period,
         )
 
     @classmethod
