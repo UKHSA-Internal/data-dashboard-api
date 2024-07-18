@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 from _pytest.logging import LogCaptureFixture
+from plotly.graph_objs import Scatter
 
 from metrics.domain.charts import reporting_delay_period
 from metrics.domain.models import PlotData
@@ -132,6 +133,50 @@ class TestAddReportingDelayPeriod:
         ]
 
         mocked_figure.add_vline.assert_has_calls(calls=expected_calls, any_order=True)
+
+    @mock.patch(f"{MODULE_PATH}._get_last_x_value_at_end_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}._get_x_value_at_start_of_reporting_delay_period")
+    def test_adds_trace_for_legend(
+        self,
+        mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
+        mocked_get_last_x_value_at_end_of_reporting_delay_period: mock.MagicMock,
+    ):
+        """
+        Given a figure
+        When `add_reporting_delay_period()` is called
+        Then the `add_trace()` method is called
+            on the plotly figure with the correct args
+            for the dummy trace required to render
+            the reporting delay period on the legend
+        """
+        # Given
+        mocked_figure = mock.Mock()
+        start_x = "2024-01-01"
+        end_x = "2024-02-01"
+        mocked_get_x_value_at_start_of_reporting_delay_period.return_value = start_x
+        mocked_get_last_x_value_at_end_of_reporting_delay_period.return_value = end_x
+
+        # When
+        reporting_delay_period.add_reporting_delay_period(
+            chart_plots_data=mock.Mock(), figure=mocked_figure
+        )
+
+        # Then
+        expected_scatter = Scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            marker={
+                "color": reporting_delay_period.LIGHT_BLUE,
+                "opacity": 0.6,
+                "symbol": "square",
+                "size": 15,
+                "line": {"color": reporting_delay_period.CYAN, "width": 2},
+            },
+            name="Reporting delay",
+        )
+
+        mocked_figure.add_trace.assert_called_once_with(trace=expected_scatter)
 
     @pytest.mark.parametrize("additional_values", [{}, None])
     def test_records_log_when_no_reporting_delay_period_found(

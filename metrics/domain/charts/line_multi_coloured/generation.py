@@ -99,6 +99,7 @@ def _create_line_plot(
         },
         line_shape=line_shape,
         name=legend,
+        showlegend=bool(legend),
     )
     return convert_graph_object_to_dict(graph_object=scatter)
 
