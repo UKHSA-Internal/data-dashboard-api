@@ -667,7 +667,7 @@ class TestIncomingBaseValidationForSubIntegratedCareBoardCode:
             VALID_GOVERNMENT_OFFICE_REGION_CODE,
             "SAB",
             "A2N",
-            "A2%",
+            "32%",
             "72A3N",
             "921DN",
             "U21D$",
