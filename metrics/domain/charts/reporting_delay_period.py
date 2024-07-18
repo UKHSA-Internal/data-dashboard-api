@@ -34,7 +34,7 @@ def add_reporting_delay_period(
     figure: plotly.graph_objects.Figure,
     boundary_colour: str = CYAN,
     fill_colour: str = LIGHT_BLUE,
-):
+) -> None:
     """Adds a filled region representing the reporting delay period on the figure
 
     Args:
@@ -55,7 +55,6 @@ def add_reporting_delay_period(
             )
         )
     except (ReportingDelayNotProvidedToPlotsError, NoReportingDelayPeriodFoundError):
-        logger.info("No reporting delay could be determined for this chart")
         return
 
     last_x_of_reporting_delay: str = _get_last_x_value_at_end_of_reporting_delay_period(
