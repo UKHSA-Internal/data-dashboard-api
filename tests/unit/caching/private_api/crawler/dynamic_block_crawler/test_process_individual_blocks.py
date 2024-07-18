@@ -3,6 +3,7 @@ from unittest import mock
 import pytest
 
 from caching.private_api.crawler.dynamic_block_crawler import DynamicContentBlockCrawler
+from caching.private_api.crawler.request_payload_builder import RequestPayloadBuilder
 
 
 class TestDynamicContentBlockCrawlerProcessBlocks:
@@ -280,4 +281,37 @@ class TestCrawlerProcessIndividualBlocks:
         ]
         spy_internal_api_client.hit_charts_endpoint.assert_has_calls(
             calls=expected_calls, any_order=True
+        )
+
+    def test_process_download_for_chart_block_delegates_calls_successfully(
+        self,
+        example_chart_block: dict[str, str | list[dict]],
+        dynamic_content_block_crawler_with_mocked_internal_api_client: DynamicContentBlockCrawler,
+    ):
+        """
+        Given a chart block
+        When the `process_download_for_chart_block()` is called
+            from an instance of the `DynamicContentBlockCrawler`
+        Then the call is delegated to the `hit_downloads_endpoint()`
+            on the `InternalAPIClient`
+        """
+        # Given
+        chart_block = example_chart_block
+        file_format = "json"
+        spy_internal_api_client: mock.Mock = (
+            dynamic_content_block_crawler_with_mocked_internal_api_client._internal_api_client
+        )
+        request_payload_builder = RequestPayloadBuilder()
+
+        # When
+        dynamic_content_block_crawler_with_mocked_internal_api_client.process_download_for_chart_block(
+            chart_block=chart_block, file_format=file_format
+        )
+
+        # Then
+        expected_data: dict = request_payload_builder.build_downloads_request_data(
+            chart_block=chart_block, file_format=file_format
+        )
+        spy_internal_api_client.hit_downloads_endpoint.assert_called_once_with(
+            data=expected_data
         )
