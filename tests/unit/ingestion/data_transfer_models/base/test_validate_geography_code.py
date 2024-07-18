@@ -553,6 +553,7 @@ class TestIncomingBaseValidationForIntegratedCareBoardCode:
             VALID_GOVERNMENT_OFFICE_REGION_CODE,
             "1AB",
             "42N",
+            "L2£",
         ),
     )
     def test_invalid_geography_code_throws_error(
@@ -668,6 +669,7 @@ class TestIncomingBaseValidationForSubIntegratedCareBoardCode:
             "A2N",
             "72A3N",
             "921DN",
+            "U21D$",
         ),
     )
     def test_invalid_geography_code_throws_error(
