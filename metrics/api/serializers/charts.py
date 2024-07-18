@@ -20,7 +20,7 @@ from metrics.domain.models import PlotParameters, PlotsCollection
 class ChartPlotSerializer(plots.PlotSerializer):
     chart_type = serializers.ChoiceField(
         help_text=help_texts.CHART_TYPE_FIELD,
-        choices=ChartTypes.choices(),
+        choices=ChartTypes.selectable_choices(),
         required=True,
     )
 

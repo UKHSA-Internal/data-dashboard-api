@@ -1,5 +1,5 @@
 import datetime
-from typing import Literal
+from typing import Literal, Self
 
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
@@ -123,11 +123,72 @@ class PlotsCollection(BaseModel):
     y_axis: str
 
 
+class NoReportingDelayPeriodFoundError(Exception): ...
+
+
+class ReportingDelayNotProvidedToPlotsError(Exception): ...
+
+
 class PlotData(BaseModel):
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any
+    additional_values: dict[str, Any] | None = None
     latest_date: Any = None  # noqa: UP007
+
+    @classmethod
+    def create_from_parameters(
+        cls, parameters: PlotParameters, aggregated_results: dict, latest_date: str
+    ) -> Self:
+        keys_to_exclude = [parameters.x_axis_value, parameters.y_axis_value]
+        additional_values = {
+            key: value
+            for key, value in aggregated_results.items()
+            if key not in keys_to_exclude
+        }
+        return cls(
+            parameters=parameters,
+            x_axis_values=aggregated_results[parameters.x_axis_value],
+            y_axis_values=aggregated_results[parameters.y_axis_value],
+            additional_values=additional_values,
+            latest_date=latest_date,
+        )
+
+    @property
+    def start_of_reporting_delay_period_index(self) -> int:
+        """Fetches the index of the start of the reporting delay period
+
+        Raises:
+            `ReportingDelayNotProvidedToPlotsError`: If the
+                reporting delay period was never provided
+                to the `PlotsData` model
+            `NoReportingDelayPeriodFoundError`: If there
+                is no detectable reporting delay period.
+                This can happen when all the booleans
+                are returned as False.
+                i.e. When a dataset does not yet
+                support a reporting delay period.
+
+        Returns:
+            An integer representing the index of the
+            first occurrence of `True` in the reporting
+            delay periods. This can be used to draw the
+            reporting delay period on charts.
+
+        """
+        try:
+            reporting_delay_period_values = self.additional_values[
+                "in_reporting_delay_period"
+            ]
+        except (KeyError, TypeError) as error:
+            raise ReportingDelayNotProvidedToPlotsError from error
+
+        for index, in_reporting_delay_period in enumerate(
+            reporting_delay_period_values
+        ):
+            if in_reporting_delay_period is True:
+                return index
+        raise NoReportingDelayPeriodFoundError
 
 
 class CompletePlotData(BaseModel):

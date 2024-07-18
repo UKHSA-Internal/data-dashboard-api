@@ -15,6 +15,7 @@ class InboundTimeSeriesSpecificFields(BaseModel):
     date: datetime.date
     embargo: datetime.datetime | None
     metric_value: float
+    in_reporting_delay_period: bool = False
 
     @field_validator("embargo")
     @classmethod
@@ -58,6 +59,22 @@ class TimeSeriesDTO(IncomingBaseDataModel):
         """
         return validation.validate_metric_frequency(metric_frequency=metric_frequency)
 
+    @field_validator("time_series")
+    @classmethod
+    def validate_in_reporting_delay_period_has_trailing_section_only(
+        cls, time_series: list[InboundTimeSeriesSpecificFields]
+    ) -> list[InboundTimeSeriesSpecificFields]:
+        """Validates the `in_reporting_delay_period` values only contain a trailing section."""
+        in_reporting_delay_period_values: list[bool] = [
+            model.in_reporting_delay_period for model in time_series
+        ]
+
+        validation.validate_in_reporting_delay_period(
+            in_reporting_delay_period_values=in_reporting_delay_period_values
+        )
+
+        return time_series
+
 
 def _build_time_series_dto(
     *,
@@ -92,6 +109,9 @@ def _build_enriched_time_series_specific_fields(
             date=individual_time_series["date"],
             embargo=individual_time_series["embargo"],
             metric_value=individual_time_series["metric_value"],
+            in_reporting_delay_period=individual_time_series.get(
+                "in_reporting_delay_period", False
+            ),
         )
         for individual_time_series in source_data["time_series"]
         if individual_time_series["metric_value"] is not None

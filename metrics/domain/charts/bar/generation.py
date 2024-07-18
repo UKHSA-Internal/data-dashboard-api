@@ -3,6 +3,7 @@ from typing import Any
 import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme
+from metrics.domain.charts.reporting_delay_period import add_reporting_delay_period
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
 from metrics.domain.models import PlotData
 
@@ -46,7 +47,6 @@ def generate_chart_figure(
             y_axis_values=plot_data.y_axis_values,
             bar_colour=selected_colour.stringified,
             legend=plot_label,
-            showlegend=bool(plot_label),
         )
 
         # Add plot to graph
@@ -59,6 +59,12 @@ def generate_chart_figure(
     layout_args = settings.get_bar_chart_config()
     figure.update_layout(**layout_args)
 
+    if settings.is_date_type_x_axis:
+        add_reporting_delay_period(
+            chart_plots_data=chart_plots_data,
+            figure=figure,
+        )
+
     return figure
 
 
@@ -68,7 +74,6 @@ def _create_bar_plot(
     y_axis_values: list[Any],
     bar_colour: str,
     legend: str,
-    showlegend: bool = False,
 ) -> dict:
     """Create a Bar plot to add to the chart (via the add_trace method)
 
@@ -77,9 +82,6 @@ def _create_bar_plot(
         y_axis_values: The values to display along the y-axis
         bar_colour: The colour to assign to the bars.
         legend: Legend to display for this plot.
-        showlegend: Whether to display the associated legend for this plot
-            Note: showlegend in BAR_CHART_LAYOUT_ARGS constant has to be True
-            for this setting to have any effect
 
     Returns:
         Dictionary representation of the graph object
@@ -97,6 +99,6 @@ def _create_bar_plot(
             },
         },
         name=legend,
-        showlegend=showlegend,
+        showlegend=bool(legend),
     )
     return convert_graph_object_to_dict(graph_object=bar)
