@@ -139,6 +139,7 @@ class TestTablesView:
                     {
                         "label": "Plot1",
                         "value": "123.0000",
+                        "in_reporting_delay_period": False,
                     },
                 ],
             },
@@ -148,6 +149,7 @@ class TestTablesView:
                     {
                         "label": "Plot1",
                         "value": "123.0000",
+                        "in_reporting_delay_period": False,
                     },
                 ],
             },
@@ -170,6 +172,8 @@ class TestTablesView:
         core_timeseries: CoreTimeSeries = core_timeseries_example[0]
         topic_name: str = core_timeseries.metric.metric_group.topic.name
         metric_name: str = core_timeseries.metric.name
+        core_timeseries_example[-1].in_reporting_delay_period = True
+        core_timeseries_example[-1].save(update_fields=["in_reporting_delay_period"])
         valid_payload = {
             "file_format": "svg",
             "plots": [
@@ -201,15 +205,31 @@ class TestTablesView:
             {
                 "reference": "2023-01-02",
                 "values": [
-                    {"label": "Plot1", "value": "123.0000"},
-                    {"label": "plot_label", "value": "123.0000"},
+                    {
+                        "label": "Plot1",
+                        "value": "123.0000",
+                        "in_reporting_delay_period": True,
+                    },
+                    {
+                        "label": "plot_label",
+                        "value": "123.0000",
+                        "in_reporting_delay_period": True,
+                    },
                 ],
             },
             {
                 "reference": "2023-01-01",
                 "values": [
-                    {"label": "Plot1", "value": "123.0000"},
-                    {"label": "plot_label", "value": "123.0000"},
+                    {
+                        "label": "Plot1",
+                        "value": "123.0000",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "plot_label",
+                        "value": "123.0000",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
         ]
