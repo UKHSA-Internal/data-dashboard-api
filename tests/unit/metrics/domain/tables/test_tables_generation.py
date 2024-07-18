@@ -148,6 +148,9 @@ class TestTabularData:
             parameters=valid_plot_parameters,
             x_axis_values=earlier_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
+            additional_values={
+                "in_reporting_delay_period": [False for _ in range(len(y_axis_values))]
+            },
         )
 
         y_axis_values = [10, 20, 30, 40]
@@ -161,6 +164,9 @@ class TestTabularData:
             parameters=valid_plot_parameters,
             x_axis_values=later_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
+            additional_values={
+                "in_reporting_delay_period": [False for _ in range(len(y_axis_values))]
+            },
         )
         tabular_data = TabularData(plots=[earlier_plot_data, later_plot_data])
 
@@ -172,29 +178,61 @@ class TestTabularData:
             {
                 "reference": "2023-08-30",
                 "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "40"},
+                    {
+                        "label": "Plot1",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "40",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "reference": "2023-08-20",
                 "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "30"},
+                    {
+                        "label": "Plot1",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "30",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "reference": "2023-01-15",
                 "values": [
-                    {"label": "Plot1", "value": "2"},
-                    {"label": "Plot2", "value": "20"},
+                    {
+                        "label": "Plot1",
+                        "value": "2",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "20",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "reference": "2023-01-01",
                 "values": [
-                    {"label": "Plot1", "value": "1"},
-                    {"label": "Plot2", "value": "10"},
+                    {
+                        "label": "Plot1",
+                        "value": "1",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "10",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
         ]
@@ -245,36 +283,76 @@ class TestTabularData:
             {
                 "reference": "2023-12-31",
                 "values": [
-                    {"label": "Plot1", "value": "2"},
-                    {"label": "Plot2", "value": "50"},
+                    {
+                        "label": "Plot1",
+                        "value": "2",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "50",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "reference": "2023-08-30",
                 "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "40"},
+                    {
+                        "label": "Plot1",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "40",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "reference": "2023-08-20",
                 "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "30"},
+                    {
+                        "label": "Plot1",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "30",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "reference": "2023-01-15",
                 "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "20"},
+                    {
+                        "label": "Plot1",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "20",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "reference": "2023-01-01",
                 "values": [
-                    {"label": "Plot1", "value": "1"},
-                    {"label": "Plot2", "value": "10"},
+                    {
+                        "label": "Plot1",
+                        "value": "1",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "10",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
         ]
@@ -293,13 +371,12 @@ class TestAddPlotDataToCombinedPlots:
         first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
 
         expected_combined_plots = {
-            "0-4": {PLOT_1_LABEL: "10"},
-            "5-8": {PLOT_1_LABEL: "22"},
+            "0-4": {PLOT_1_LABEL: "10", "in_reporting_delay_period": False},
+            "5-8": {PLOT_1_LABEL: "22", "in_reporting_delay_period": False},
         }
 
         # When
         tabular_data = TabularData(plots=[])
-
         tabular_data.add_plot_data_to_combined_plots(
             plot_data=first_chart_plots_data,
             plot_label=PLOT_1_LABEL,
@@ -319,8 +396,16 @@ class TestAddPlotDataToCombinedPlots:
         second_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_2_VALUES))
 
         expected_combined_plots = {
-            "0-4": {PLOT_1_LABEL: "10", PLOT_2_LABEL: "20"},
-            "5-8": {PLOT_1_LABEL: "22", PLOT_2_LABEL: "45"},
+            "0-4": {
+                PLOT_1_LABEL: "10",
+                PLOT_2_LABEL: "20",
+                "in_reporting_delay_period": False,
+            },
+            "5-8": {
+                PLOT_1_LABEL: "22",
+                PLOT_2_LABEL: "45",
+                "in_reporting_delay_period": False,
+            },
         }
 
         # When
@@ -370,10 +455,22 @@ class TestCombineAllPlots:
 
         # Check combined plot output is as expected
         combined_plots = tabular_data.combined_plots
-        assert combined_plots["2023-09-01"] == {PLOT_1_LABEL: str(10)}
-        assert combined_plots["2023-09-02"] == {PLOT_1_LABEL: str(66)}
-        assert combined_plots["2023-09-03"] == {PLOT_1_LABEL: str(22)}
-        assert combined_plots["2023-09-04"] == {PLOT_1_LABEL: str(26)}
+        assert combined_plots["2023-09-01"] == {
+            PLOT_1_LABEL: str(10),
+            "in_reporting_delay_period": False,
+        }
+        assert combined_plots["2023-09-02"] == {
+            PLOT_1_LABEL: str(66),
+            "in_reporting_delay_period": False,
+        }
+        assert combined_plots["2023-09-03"] == {
+            PLOT_1_LABEL: str(22),
+            "in_reporting_delay_period": False,
+        }
+        assert combined_plots["2023-09-04"] == {
+            PLOT_1_LABEL: str(26),
+            "in_reporting_delay_period": False,
+        }
 
 
 class TestCreateMultiPlotOutput:
@@ -396,22 +493,46 @@ class TestCreateMultiPlotOutput:
             {
                 "date": "2022-09-19",
                 "values": [
-                    {"label": "Plot1", "value": "22"},
-                    {"label": "Plot2", "value": "33"},
+                    {
+                        "label": "Plot1",
+                        "value": "22",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "33",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "date": "2022-09-06",
                 "values": [
-                    {"label": "Plot1", "value": "06"},
-                    {"label": "Plot2", "value": "63"},
+                    {
+                        "label": "Plot1",
+                        "value": "06",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "63",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "date": "2022-09-05",
                 "values": [
-                    {"label": "Plot1", "value": "10"},
-                    {"label": "Plot2", "value": "11"},
+                    {
+                        "label": "Plot1",
+                        "value": "10",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "11",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
         ]
@@ -445,29 +566,61 @@ class TestCreateMultiPlotOutput:
             {
                 "date": "2022-09-25",
                 "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "44"},
+                    {
+                        "label": "Plot1",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "44",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "date": "2022-09-19",
                 "values": [
-                    {"label": "Plot1", "value": "22"},
-                    {"label": "Plot2", "value": "33"},
+                    {
+                        "label": "Plot1",
+                        "value": "22",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "33",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "date": "2022-09-06",
                 "values": [
-                    {"label": "Plot1", "value": None},
-                    {"label": "Plot2", "value": "06"},
+                    {
+                        "label": "Plot1",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": "06",
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
             {
                 "date": "2022-09-05",
                 "values": [
-                    {"label": "Plot1", "value": "10"},
-                    {"label": "Plot2", "value": None},
+                    {
+                        "label": "Plot1",
+                        "value": "10",
+                        "in_reporting_delay_period": False,
+                    },
+                    {
+                        "label": "Plot2",
+                        "value": None,
+                        "in_reporting_delay_period": False,
+                    },
                 ],
             },
         ]
