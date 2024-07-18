@@ -393,10 +393,15 @@ class TestTablesResponseValueSerializer:
         # Given
         label = "Label 1"
         value = "123"
+        in_reporting_delay_period = True
 
         # When
         serializer = TablesResponseValueSerializer(
-            data={"label": label, "value": value}
+            data={
+                "label": label,
+                "value": value,
+                "in_reporting_delay_period": in_reporting_delay_period,
+            }
         )
         serializer.is_valid(raise_exception=True)
 
@@ -404,6 +409,7 @@ class TestTablesResponseValueSerializer:
         validated_data = serializer.validated_data
         assert validated_data["label"] == label
         assert validated_data["value"] == value
+        assert validated_data["in_reporting_delay_period"] == in_reporting_delay_period
 
 
 class TestTablesResponseValuesListSerializer:
@@ -416,8 +422,8 @@ class TestTablesResponseValuesListSerializer:
         """
         # Given
         valid_payload = [
-            {"label": "Label 1", "value": "123"},
-            {"label": "Label 2", "value": "456"},
+            {"label": "Label 1", "value": "123", "in_reporting_delay_period": False},
+            {"label": "Label 2", "value": "456", "in_reporting_delay_period": False},
         ]
 
         # When
@@ -439,8 +445,8 @@ class TestTablesResponsePlotsListSerializer:
         """
         # Given
         values_payload = [
-            {"label": "Label 1", "value": "123"},
-            {"label": "Label 2", "value": "456"},
+            {"label": "Label 1", "value": "123", "in_reporting_delay_period": False},
+            {"label": "Label 2", "value": "456", "in_reporting_delay_period": False},
         ]
         valid_payload = {
             "reference": "2023-01-01",
@@ -466,8 +472,8 @@ class TestTablesResponseSerializer:
         """
         # Given
         values_payload = [
-            {"label": "Label 1", "value": "123"},
-            {"label": "Label 2", "value": "456"},
+            {"label": "Label 1", "value": "123", "in_reporting_delay_period": False},
+            {"label": "Label 2", "value": "456", "in_reporting_delay_period": True},
         ]
         valid_payload = [
             {
