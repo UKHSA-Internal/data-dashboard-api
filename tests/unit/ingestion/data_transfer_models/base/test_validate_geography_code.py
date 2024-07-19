@@ -508,7 +508,6 @@ class TestIncomingBaseValidationForUKHSARegionGeographyCode:
             IncomingBaseDataModel(**payload)
 
 
-# @pytest.mark.skip
 class TestIncomingBaseValidationForIntegratedCareBoardCode:
     @pytest.mark.parametrize(
         "geography_code",
