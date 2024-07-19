@@ -7,7 +7,7 @@ from typing import Any
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.charts.reporting_delay_period import (
-    _get_x_value_at_start_of_reporting_delay_period,
+    get_x_value_at_start_of_reporting_delay_period,
 )
 from metrics.domain.common.utils import ChartTypes
 from metrics.domain.models import PlotData, PlotParameters
@@ -371,7 +371,7 @@ class PlotsText:
     def _describe_reporting_delay_period(self) -> str:
         try:
             start_of_reporting_delay_period: datetime.date = (
-                _get_x_value_at_start_of_reporting_delay_period(
+                get_x_value_at_start_of_reporting_delay_period(
                     chart_plots_data=self.plots_data
                 )
             )

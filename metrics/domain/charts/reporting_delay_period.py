@@ -22,7 +22,7 @@ def _get_last_x_value_at_end_of_reporting_delay_period(
     return max(latest_dates)
 
 
-def _get_x_value_at_start_of_reporting_delay_period(
+def get_x_value_at_start_of_reporting_delay_period(
     chart_plots_data: list[PlotData],
 ) -> str:
     index: int = chart_plots_data[0].start_of_reporting_delay_period_index
@@ -50,7 +50,7 @@ def add_reporting_delay_period(
     """
     try:
         start_x_of_reporting_delay: str = (
-            _get_x_value_at_start_of_reporting_delay_period(
+            get_x_value_at_start_of_reporting_delay_period(
                 chart_plots_data=chart_plots_data
             )
         )

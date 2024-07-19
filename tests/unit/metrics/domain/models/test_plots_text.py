@@ -263,7 +263,7 @@ class TestPlotsText:
         assert expected_plot_1_data_summary in text
         assert expected_plot_2_data_summary in text
 
-    @mock.patch(f"{MODULE_PATH}._get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
     def test_returns_correct_text_about_valid_reporting_delay_period(
         self,
         mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
@@ -299,7 +299,7 @@ class TestPlotsText:
         "error",
         [NoReportingDelayPeriodFoundError, ReportingDelayNotProvidedToPlotsError],
     )
-    @mock.patch(f"{MODULE_PATH}._get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
     def test_returns_correct_text_about_no_reporting_delay_period(
         self,
         mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
