@@ -14,7 +14,7 @@ class TestGetXValueAtStartOfReportingDelayPeriod:
         """
         Given an enriched `PlotData` model
             which holds a list of reporting delay period booleans
-        When `_get_x_value_at_start_of_reporting_delay_period()` is called
+        When `get_x_value_at_start_of_reporting_delay_period()` is called
         Then the corresponding x value denoted
             by the first occurring True value
             in the reporting delay period is returned
@@ -28,10 +28,8 @@ class TestGetXValueAtStartOfReportingDelayPeriod:
         fake_plot_data.x_axis_values = x_axis_value
 
         # When
-        x_value = (
-            reporting_delay_period._get_x_value_at_start_of_reporting_delay_period(
-                chart_plots_data=[fake_plot_data]
-            )
+        x_value = reporting_delay_period.get_x_value_at_start_of_reporting_delay_period(
+            chart_plots_data=[fake_plot_data]
         )
 
         # Then
@@ -66,10 +64,10 @@ class TestGetLastXValueAtEndOfReportingDelayPeriod:
 
 class TestAddReportingDelayPeriod:
     @mock.patch(f"{MODULE_PATH}._get_last_x_value_at_end_of_reporting_delay_period")
-    @mock.patch(f"{MODULE_PATH}._get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
     def test_draws_vertical_filled_region(
         self,
-        mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
+        mockedget_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
         mocked_get_last_x_value_at_end_of_reporting_delay_period: mock.MagicMock,
     ):
         """
@@ -82,7 +80,7 @@ class TestAddReportingDelayPeriod:
         mocked_figure = mock.Mock()
         start_x = "2024-01-01"
         end_x = "2024-02-01"
-        mocked_get_x_value_at_start_of_reporting_delay_period.return_value = start_x
+        mockedget_x_value_at_start_of_reporting_delay_period.return_value = start_x
         mocked_get_last_x_value_at_end_of_reporting_delay_period.return_value = end_x
 
         # When
@@ -100,10 +98,10 @@ class TestAddReportingDelayPeriod:
         )
 
     @mock.patch(f"{MODULE_PATH}._get_last_x_value_at_end_of_reporting_delay_period")
-    @mock.patch(f"{MODULE_PATH}._get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
     def test_draws_vertical_boundaries(
         self,
-        mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
+        mockedget_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
         mocked_get_last_x_value_at_end_of_reporting_delay_period: mock.MagicMock,
     ):
         """
@@ -117,7 +115,7 @@ class TestAddReportingDelayPeriod:
         mocked_figure = mock.Mock()
         start_x = "2024-01-01"
         end_x = "2024-02-01"
-        mocked_get_x_value_at_start_of_reporting_delay_period.return_value = start_x
+        mockedget_x_value_at_start_of_reporting_delay_period.return_value = start_x
         mocked_get_last_x_value_at_end_of_reporting_delay_period.return_value = end_x
 
         # When
@@ -134,10 +132,10 @@ class TestAddReportingDelayPeriod:
         mocked_figure.add_vline.assert_has_calls(calls=expected_calls, any_order=True)
 
     @mock.patch(f"{MODULE_PATH}._get_last_x_value_at_end_of_reporting_delay_period")
-    @mock.patch(f"{MODULE_PATH}._get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
     def test_adds_trace_for_legend(
         self,
-        mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
+        mockedget_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
         mocked_get_last_x_value_at_end_of_reporting_delay_period: mock.MagicMock,
     ):
         """
@@ -152,7 +150,7 @@ class TestAddReportingDelayPeriod:
         mocked_figure = mock.Mock()
         start_x = "2024-01-01"
         end_x = "2024-02-01"
-        mocked_get_x_value_at_start_of_reporting_delay_period.return_value = start_x
+        mockedget_x_value_at_start_of_reporting_delay_period.return_value = start_x
         mocked_get_last_x_value_at_end_of_reporting_delay_period.return_value = end_x
 
         # When
