@@ -67,7 +67,7 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
-        home_page = HomePage.objects.get(slug="dashboard")
+        home_page = HomePage.objects.get(slug="topics")
         api_client = APIClient()
 
         # When
