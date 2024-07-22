@@ -17,6 +17,7 @@ class UKHSARootPage(Page):
 
 
 class HomePage(UKHSAPage):
+    max_count = 1
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
