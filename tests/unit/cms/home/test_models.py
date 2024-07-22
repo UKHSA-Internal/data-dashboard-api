@@ -116,13 +116,15 @@ class TestBlankHomePage:
         expected_site_id = 123
         root_url = "https://my-prefix.dev.ukhsa-data-dashboard.gov.uk"
         page_path = "topics"
-        mocked_super_get_url_parts.return_value = (expected_site_id, root_url, page_path)
+        mocked_super_get_url_parts.return_value = (
+            expected_site_id,
+            root_url,
+            page_path,
+        )
         blank_page = FakeHomePageFactory.build_blank_page()
 
         # When
-        url_parts: tuple[int, str, str] = blank_page.get_url_parts(
-            request=mock.Mock()
-        )
+        url_parts: tuple[int, str, str] = blank_page.get_url_parts(request=mock.Mock())
 
         # Then
         assert url_parts[0] == expected_site_id
