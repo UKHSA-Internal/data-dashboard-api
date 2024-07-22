@@ -32,7 +32,7 @@ class TestBuildCMSSite:
         items = response_data["items"]
 
         expected_slugs: set[str] = {
-            "dashboard",
+            "topics",
             "covid-19",
             "influenza",
             "location-based-data",
