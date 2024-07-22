@@ -4,7 +4,9 @@ from rest_framework.test import APIClient
 
 from cms.common.models import CommonPage
 from cms.composite.models import CompositePage
-from cms.dashboard.management.commands.build_cms_site import open_example_page_response
+from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
+    open_example_page_response,
+)
 from cms.home.models import HomePage, UKHSARootPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage

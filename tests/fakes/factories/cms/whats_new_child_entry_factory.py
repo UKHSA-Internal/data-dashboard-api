@@ -1,6 +1,8 @@
 import factory
 
-from cms.dashboard.management.commands.build_cms_site import open_example_page_response
+from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
+    open_example_page_response,
+)
 from cms.whats_new.models import Badge
 from tests.fakes.models.cms.whats_new_child import FakeWhatsNewChildEntry
 
