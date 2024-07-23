@@ -4,7 +4,9 @@ from rest_framework.test import APIClient
 
 from cms.common.models import CommonPage
 from cms.composite.models import CompositePage
-from cms.dashboard.management.commands.build_cms_site import open_example_page_response
+from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
+    open_example_page_response,
+)
 from cms.home.models import HomePage, UKHSARootPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
@@ -32,7 +34,7 @@ class TestBuildCMSSite:
         items = response_data["items"]
 
         expected_slugs: set[str] = {
-            "dashboard",
+            "topics",
             "covid-19",
             "influenza",
             "location-based-data",
@@ -67,7 +69,7 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
-        home_page = HomePage.objects.get(slug="dashboard")
+        home_page = HomePage.objects.get(slug="topics")
         api_client = APIClient()
 
         # When

@@ -5,7 +5,7 @@
         "search_description": "Overall summary of COVID-19 in circulation within the UK",
         "type": "topic.TopicPage",
         "detail_url": "https://localhost/api/pages/5/",
-        "html_url": "https://localhost/dashboard/covid-19/",
+        "html_url": "https://localhost/topics/covid-19/",
         "slug": "covid-19",
         "show_in_menus": true,
         "first_published_at": "2024-07-11T14:55:39.220846+01:00",
