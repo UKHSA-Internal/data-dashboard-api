@@ -108,7 +108,7 @@ class TestPlotParameters:
 
         # When
         dict_used_for_query: dict[str, str] = (
-            fake_chart_plot_parameters.to_dict_for_query()
+            fake_chart_plot_parameters.to_dict_for_query(metric_type="timeseries")
         )
 
         # Then

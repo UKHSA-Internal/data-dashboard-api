@@ -49,7 +49,7 @@ class TestTablesInterface:
         created_plots_interface = tables_interface.plots_interface
         assert created_plots_interface.plots_collection == mocked_plots_collection
         assert (
-            created_plots_interface.core_time_series_manager
+            created_plots_interface.core_model_manager
             == mocked_core_time_series_manager
         )
 

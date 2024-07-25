@@ -19,7 +19,6 @@ class TestChartsInterface:
         fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
         )
 
         figure = plotly.graph_objs.Figure()
@@ -46,7 +45,6 @@ class TestChartsInterface:
         fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
         )
 
         figure = plotly.graph_objs.Figure()

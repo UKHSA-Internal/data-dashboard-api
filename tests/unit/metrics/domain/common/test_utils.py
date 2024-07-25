@@ -156,7 +156,15 @@ class TestChartAxisFields:
         values = ChartAxisFields.values()
 
         # Then
-        expected_values = ("stratum__name", "age__name", "date", "metric_value")
+        expected_values = (
+            "stratum__name",
+            "age__name",
+            "date",
+            "metric_value",
+            "geography__name",
+            "geography__geography_type__name",
+            "sex",
+        )
         assert values == expected_values
 
 

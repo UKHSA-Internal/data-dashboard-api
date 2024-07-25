@@ -54,6 +54,9 @@ class ChartAxisFields(Enum):
     age = "age__name"
     date = "date"
     metric = "metric_value"
+    geography = "geography__name"
+    geography_type = "geography__geography_type__name"
+    sex = "sex"
 
     @classmethod
     def choices(cls):
@@ -91,3 +94,8 @@ class ChartAxisFields(Enum):
 
 DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
 DEFAULT_Y_AXIS = ChartAxisFields.get_default_y_axis().name
+
+
+class MetricTypes(Enum):
+    HEADLINE = "headline"
+    TIMESERIES = "timeseries"
