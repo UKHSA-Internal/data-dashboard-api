@@ -69,7 +69,7 @@ class TestPlotsInterface:
 
         data_slice_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
+            core_model_manager=mock.Mock(),
         )
 
         # When
@@ -124,7 +124,7 @@ class TestPlotsInterface:
 
         plots_interface = PlotsInterface(
             plots_collection=plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When
@@ -163,7 +163,7 @@ class TestPlotsInterface:
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
         plots_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When / Then
@@ -200,7 +200,7 @@ class TestPlotsInterface:
 
         data_slice_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
+            core_model_manager=mock.Mock(),
         )
 
         # When
@@ -259,7 +259,7 @@ class TestPlotsInterface:
 
         plots_interface = PlotsInterface(
             plots_collection=plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When
@@ -289,7 +289,7 @@ class TestPlotsInterface:
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
         plots_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When / Then
@@ -325,7 +325,7 @@ class TestPlotsInterface:
 
         plots_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When
@@ -368,7 +368,7 @@ class TestPlotsInterface:
         }
         plots_interface = PlotsInterface(
             plots_collection=mock.Mock(plots=[]),
-            core_time_series_manager=mock.Mock(),
+            core_model_manager=mock.Mock(),
         )
 
         # When
@@ -410,7 +410,7 @@ class TestPlotsInterface:
 
         plots_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When / Then
@@ -435,7 +435,7 @@ class TestPlotsInterface:
         # Given
         plots_interface = PlotsInterface(
             plots_collection=mock.Mock(plots=[]),
-            core_time_series_manager=mock.Mock(),
+            core_model_manager=mock.Mock(),
         )
 
         # When
@@ -478,7 +478,7 @@ class TestPlotsInterface:
 
         plots_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When / Then
@@ -486,6 +486,60 @@ class TestPlotsInterface:
             plots_interface.build_plot_data_from_parameters_with_complete_queryset(
                 plot_parameters=fake_chart_plot_parameters
             )
+
+    def test_get_headline_data_calls_core_headline_manager_with_correct_args(self):
+        """
+        Given a `CoreHeadlineManager`
+        When `get_headline_data` is called from an instance of `PlotsInterface`
+        Then the correct method is called from `CoreHeadlineManager` to retrieve headline data.
+        """
+        # Given
+        spy_core_headline_manager = mock.Mock()
+        mocked_x_axis = mock.Mock()
+        mocked_y_axis = mock.Mock()
+        mocked_topic = mock.Mock()
+        mocked_metric = mock.Mock()
+        mocked_geography = mock.Mock()
+        mocked_geography_type = mock.Mock()
+        mocked_stratum = mock.Mock()
+        mocked_sex = mock.Mock()
+        mocked_age = mock.Mock()
+
+        plots_interface = PlotsInterface(
+            plots_collection=mock.MagicMock(),
+            core_model_manager=spy_core_headline_manager,
+        )
+
+        # When
+        headline_data = plots_interface.get_headline_data(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
+            geography_name=mocked_geography,
+            geography_type_name=mocked_geography_type,
+            stratum_name=mocked_stratum,
+            sex=mocked_sex,
+            age=mocked_age,
+        )
+
+        # Then
+        assert (
+            headline_data
+            == spy_core_headline_manager.filter_for_x_and_y_values.return_value
+        )
+        spy_core_headline_manager.filter_for_x_and_y_values.assert_called_once_with(
+            x_axis=mocked_x_axis,
+            y_axis=mocked_y_axis,
+            topic_name=mocked_topic,
+            metric_name=mocked_metric,
+            geography_name=mocked_geography,
+            geography_type_name=mocked_geography_type,
+            geography_code="",
+            stratum_name=mocked_stratum,
+            sex=mocked_sex,
+            age=mocked_age,
+        )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
         """
@@ -509,7 +563,7 @@ class TestPlotsInterface:
 
         plots_interface = PlotsInterface(
             plots_collection=mock.MagicMock(),
-            core_time_series_manager=spy_core_time_series_manager,
+            core_model_manager=spy_core_time_series_manager,
         )
 
         # When
@@ -565,7 +619,7 @@ class TestPlotsInterface:
         fake_plots_collection = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            plots_collection=fake_plots_collection, core_time_series_manager=mock.Mock()
+            plots_collection=fake_plots_collection, core_model_manager=mock.Mock()
         )
 
         # When
@@ -586,7 +640,40 @@ class TestPlotsInterface:
         # The dict representation of the `PlotParameters` model
         # is unpacked into the `get_timeseries` method
         mocked_get_timeseries.assert_called_once_with(
-            **fake_chart_plot_parameters.to_dict_for_query(),
+            **fake_chart_plot_parameters.to_dict_for_query(metric_type="timeseries")
+        )
+
+    @mock.patch.object(PlotsInterface, "get_headline_data")
+    def test_get_queryset_result_for_headline_plot_parameters_delegates_call_with_correct_args(
+        self,
+        mocked_get_headline_data: mock.MagicMock,
+        fake_chart_plot_parameters_headline_data: PlotParameters,
+    ):
+        """
+        Given a `PlotParameters` model with defined X and Y axis
+        When `get_queryset_result_for_plot_parameters()` is called
+        Then the call is delegated to the `get_headline_data()` method with the correct args
+        """
+        # Given
+        fake_plots_collection = mock.MagicMock()
+        plots_interface = PlotsInterface(
+            plots_collection=fake_plots_collection,
+            metric_type="headline",
+            core_model_manager=mock.MagicMock(),
+        )
+
+        # When
+        queryset_result: QuerySetResult = (
+            plots_interface.get_queryset_result_for_plot_parameters(
+                plot_parameters=fake_plots_collection
+            )
+        )
+
+        # Then
+        assert queryset_result.queryset == mocked_get_headline_data.return_value
+        assert (
+            queryset_result.latest_date
+            == mocked_get_headline_data.return_value.latest_date
         )
 
     @mock.patch(f"{MODULE_PATH}.PlotValidation")

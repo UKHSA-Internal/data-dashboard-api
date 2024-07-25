@@ -176,6 +176,74 @@ class CoreHeadlineManager(models.Manager):
     def get_queryset(self) -> CoreHeadlineQuerySet:
         return CoreHeadlineQuerySet(model=self.model, using=self.db)
 
+    def filter_for_x_and_y_values(
+        self,
+        *,
+        x_axis: str,
+        y_axis: str,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str = "England",
+        geography_type_name: str = "Nation",
+        geography_code: str = "",
+        stratum_name: str = "",
+        sex: str = "",
+        age: str = "",
+    ):
+        """Filters for a 2-item object by the given params.
+
+        Args:
+            x_axis: The field to display along the x-axis.
+                In this case, this will be the first item of each 2-item object
+                E.g. `date` or `stratum`
+            y_axis: The field to display along the y-axis
+                In this case, this will be the second item of each 2-item object
+                E.g. `metric`
+            topic_name: The name of the disease being queried.
+                E.g. `COVID-19`
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography being queried.
+                E.g. `England`
+            geography_type_name: The name of the geography
+                type being queried.
+                E.g. `Nation`
+            geography_code: Code associated with the geography being queried.
+                E.g. "E45000010"
+            stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `default`, which would be used to capture all strata.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+           Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
+           Eg: `85+` where age range is the headline variable of the chart and the y_axis
+           is the metric value. A `latest_date` attribute is added to the queryset, which is
+           take from the `period_end` of the selected headline metric.
+           Examples:
+               <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
+        """
+        queryset = self.get_queryset().get_headlines_released_from_embargo(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            geography_code=geography_code,
+            stratum_name=stratum_name,
+            age=age,
+            sex=sex,
+        )[:1]
+
+        if x_axis and y_axis:
+            queryset = queryset.values(x_axis, y_axis)
+
+        queryset.latest_date = queryset.values_list("period_end", flat=True).first()
+
+        return queryset
+
     def get_latest_headline(
         self,
         *,

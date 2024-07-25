@@ -4,7 +4,7 @@ from typing import Literal, Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.common.utils import ChartAxisFields
+from metrics.domain.common.utils import ChartAxisFields, MetricTypes
 
 
 class PlotParameters(BaseModel):
@@ -84,7 +84,7 @@ class PlotParameters(BaseModel):
             return None
         return ChartAxisFields.get_y_axis_value(name=self.y_axis)
 
-    def to_dict_for_query(self) -> dict[str, str]:
+    def to_dict_for_query(self, metric_type: str) -> dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.
 
         Notes:
@@ -99,7 +99,7 @@ class PlotParameters(BaseModel):
                     >>> {"topic_name": "COVID-19", ...}
 
         """
-        return {
+        params = {
             "metric_name": self.metric_name or "",
             "topic_name": self.topic_name or "",
             "stratum_name": self.stratum_name or "",
@@ -107,11 +107,15 @@ class PlotParameters(BaseModel):
             "geography_type_name": self.geography_type_name or "",
             "sex": self.sex or "",
             "age": self.age or "",
-            "date_from": self.date_from_value,
-            "date_to": self.date_to_value,
             "x_axis": self.x_axis_value,
             "y_axis": self.y_axis_value,
         }
+
+        if metric_type == MetricTypes.TIMESERIES.value:
+            params["date_from"] = self.date_from_value
+            params["date_to"] = self.date_to_value
+
+        return params
 
 
 class PlotsCollection(BaseModel):
