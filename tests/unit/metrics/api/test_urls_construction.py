@@ -1,7 +1,7 @@
 from unittest import mock
 
 import pytest
-from django.urls.resolvers import URLResolver
+from django.urls.resolvers import URLResolver, URLPattern
 
 from metrics.api import enums
 from metrics.api.urls_construction import (
@@ -46,6 +46,32 @@ COMMON_ENDPOINT_PATHS = [
     "static",
     "health",
 ]
+
+VERSIONED_APP_NAMES = [
+    "public_api",
+]
+
+
+def _flatten_urls(*, urlpatterns) -> list[URLPattern]:
+    """Takes a list of URLPatterns and URLResolvers and returns
+        a list where each URLPattern belonging to a URLResolver
+        from a `versioned` set of URLs has been added to the top
+        level of the list.
+
+    Args:
+        urlpatterns: list[URLPattern, URLResolver]
+
+    Returns:
+        list[URLPattern
+    """
+    flattened_urls = []
+    for item in urlpatterns:
+        if type(item) == URLResolver and item.app_name in VERSIONED_APP_NAMES:
+            flattened_urls.extend(item.url_patterns)
+        else:
+            flattened_urls.append(item)
+
+    return flattened_urls
 
 
 class TestConstructCMSAdminUrlpatterns:
@@ -93,9 +119,9 @@ class TestConstructCMSAdminUrlpatterns:
 
 
 class TestConstructPublicAPIUrlpatterns:
-    @mock.patch(f"{MODULE_PATH}.construct_urlpatterns_for_public_api")
+    @mock.patch(f"{MODULE_PATH}.construct_versioned_urlpatterns_for_public_api")
     def test_public_api_app_mode_uses_root_as_prefix(
-        self, spy_construct_urlpatterns_for_public_api: mock.MagicMock
+        self, spy_construct_versioned_urlpatterns_for_public_api: mock.MagicMock
     ):
         """
         Given an `app_mode` of "PUBLIC_API"
@@ -110,8 +136,13 @@ class TestConstructPublicAPIUrlpatterns:
         urlpatterns = construct_public_api_urlpatterns(app_mode=app_mode)
 
         # Then
-        spy_construct_urlpatterns_for_public_api.assert_called_once_with(prefix="")
-        assert urlpatterns == spy_construct_urlpatterns_for_public_api.return_value
+        spy_construct_versioned_urlpatterns_for_public_api.assert_called_once_with(
+            prefix=""
+        )
+        assert (
+            urlpatterns
+            == spy_construct_versioned_urlpatterns_for_public_api.return_value
+        )
 
     @pytest.mark.parametrize(
         "app_mode",
@@ -121,10 +152,10 @@ class TestConstructPublicAPIUrlpatterns:
             "COMPLETE_APP",
         ],
     )
-    @mock.patch(f"{MODULE_PATH}.construct_urlpatterns_for_public_api")
+    @mock.patch(f"{MODULE_PATH}.construct_versioned_urlpatterns_for_public_api")
     def test_public_api_app_mode_returns_at_designated_path(
         self,
-        spy_construct_urlpatterns_for_public_api: mock.MagicMock,
+        spy_construct_versioned_urlpatterns_for_public_api: mock.MagicMock,
         app_mode: str | None,
     ):
         """
@@ -140,10 +171,13 @@ class TestConstructPublicAPIUrlpatterns:
         urlpatterns = construct_public_api_urlpatterns(app_mode=provided_app_mode)
 
         # Then
-        spy_construct_urlpatterns_for_public_api.assert_called_once_with(
+        spy_construct_versioned_urlpatterns_for_public_api.assert_called_once_with(
             prefix=DEFAULT_PUBLIC_API_PREFIX
         )
-        assert urlpatterns == spy_construct_urlpatterns_for_public_api.return_value
+        assert (
+            urlpatterns
+            == spy_construct_versioned_urlpatterns_for_public_api.return_value
+        )
 
 
 class TestConstructUrlpatterns:
@@ -234,10 +268,12 @@ class TestConstructUrlpatterns:
         app_mode = enums.AppMode.PUBLIC_API.value
 
         # When
-        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+        flattened_urls = _flatten_urls(
+            urlpatterns=construct_urlpatterns(app_mode=app_mode)
+        )
 
         # Then
-        assert any(public_api_endpoint_path in str(x.pattern) for x in urlpatterns)
+        assert any(public_api_endpoint_path in str(x.pattern) for x in flattened_urls)
 
     @pytest.mark.parametrize(
         "excluded_endpoint_path",
@@ -257,10 +293,12 @@ class TestConstructUrlpatterns:
         app_mode = enums.AppMode.PUBLIC_API.value
 
         # When
-        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+        flattened_urls = _flatten_urls(
+            urlpatterns=construct_urlpatterns(app_mode=app_mode)
+        )
 
         # Then
-        assert not any(excluded_endpoint_path in str(x.pattern) for x in urlpatterns)
+        assert not any(excluded_endpoint_path in str(x.pattern) for x in flattened_urls)
 
     # Tests for APP_MODE = "CMS_ADMIN"
 
@@ -387,10 +425,12 @@ class TestConstructUrlpatterns:
         app_mode = None
 
         # When
-        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+        flattened_urls = _flatten_urls(
+            urlpatterns=construct_urlpatterns(app_mode=app_mode)
+        )
 
         # Then
-        assert any(endpoint_path in str(x.pattern) for x in urlpatterns)
+        assert any(endpoint_path in str(x.pattern) for x in flattened_urls)
 
     @pytest.mark.parametrize(
         "app_mode",

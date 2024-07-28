@@ -29,7 +29,7 @@ from metrics.api.views import (
 )
 from metrics.api.views.geographies import GeographiesView
 from metrics.api.views.health import InternalHealthView
-from public_api import construct_urlpatterns_for_public_api
+from public_api import construct_versioned_urlpatterns_for_public_api
 
 router = routers.DefaultRouter()
 
@@ -105,7 +105,7 @@ def construct_public_api_urlpatterns(
         "" if app_mode == enums.AppMode.PUBLIC_API.value else DEFAULT_PUBLIC_API_PREFIX
     )
 
-    return construct_urlpatterns_for_public_api(prefix=prefix)
+    return construct_versioned_urlpatterns_for_public_api(prefix=prefix)
 
 
 API_PREFIX = "api/"
