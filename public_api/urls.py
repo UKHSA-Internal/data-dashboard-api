@@ -21,7 +21,7 @@ def construct_versioned_urlpatterns_for_public_api(
     *,
     prefix: str,
 ) -> list[resolvers.URLResolver]:
-    """Returns a version set of URLResolvers for `public_api endpoints
+    """Returns a versioned set of URLResolvers for `public_api` endpoints
 
     Args:
         prefix: The prefix to add to the start of the url paths
@@ -35,7 +35,7 @@ def construct_versioned_urlpatterns_for_public_api(
     return [
         path(prefix, include(_construct_urlpatterns_for_public_api(), namespace="v1")),
         path(
-            f"{prefix}/v2",
+            f"{prefix}v2/",
             include(_construct_urlpatterns_for_public_api(), namespace="v2"),
         ),
     ]

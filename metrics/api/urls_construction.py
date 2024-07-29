@@ -148,15 +148,33 @@ feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
 docs_urlspatterns = [
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     # JSON schema view
-    path("api/schema/", SpectacularJSONAPIView.as_view(), name="schema"),
+    path("api/schema", SpectacularJSONAPIView.as_view(api_version="v1"), name="schema"),
+    path(
+        "api/schema/v2",
+        SpectacularJSONAPIView.as_view(api_version="v2"),
+        name="schema/v2",
+    ),
     # Swagger docs UI schema view:
     path(
         "api/swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
+    path(
+        "api/swagger",
+        SpectacularSwaggerView.as_view(url_name="schema"),
+        name="swagger-ui",
+    ),
+    path(
+        "api/swagger/v2",
+        SpectacularSwaggerView.as_view(url_name="schema/v2"),
+        name="swagger-ui",
+    ),
     # Redoc schema view
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path(
+        "api/redoc/v2", SpectacularRedocView.as_view(url_name="schema/v2"), name="redoc"
+    ),
 ]
 
 static_urlpatterns = [

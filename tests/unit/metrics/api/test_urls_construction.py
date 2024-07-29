@@ -52,7 +52,7 @@ VERSIONED_APP_NAMES = [
 ]
 
 
-def _flatten_urls(*, urlpatterns) -> list[URLPattern]:
+def _flatten_urls(*, urlpatterns: list[URLPattern | URLResolver]) -> list[URLPattern]:
     """Takes a list of URLPatterns and URLResolvers and returns
         a list where each URLPattern belonging to a URLResolver
         from a `versioned` set of URLs has been added to the top
