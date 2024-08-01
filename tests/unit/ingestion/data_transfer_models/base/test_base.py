@@ -249,3 +249,34 @@ class TestIncomingBaseValidation:
                 stratum=VALID_STRATUM,
                 refresh_date=VALID_REFRESH_DATE_IN_DATE_FORMAT,
             )
+
+    def test_raises_error_for_deprecated_geography(self):
+        """
+        Given an otherwise valid payload
+            containing a deprecated geography
+        When the `IncomingTimeSeriesValidation` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        deprecated_geography_name = (
+            "St Helens and Knowsley Teaching Hospitals NHS Trust"
+        )
+        geography_type = "NHS Trust"
+        geography_code = "E40000001"
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(
+                parent_theme=VALID_PARENT_THEME,
+                child_theme=VALID_CHILD_THEME,
+                topic=VALID_TOPIC,
+                metric_group=VALID_METRIC_GROUP,
+                metric=VALID_METRIC,
+                geography_type=geography_type,
+                geography=deprecated_geography_name,
+                geography_code=geography_code,
+                age=VALID_AGE,
+                sex=VALID_SEX,
+                stratum=VALID_STRATUM,
+                refresh_date=VALID_REFRESH_DATE_IN_DATE_FORMAT,
+            )
