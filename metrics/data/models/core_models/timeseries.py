@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from metrics.data.enums import TimePeriod
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
@@ -59,6 +60,7 @@ class CoreTimeSeries(models.Model):
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
     )
+    force_write = models.BooleanField(default=False)
 
     objects = CoreTimeSeriesManager()
 
@@ -78,7 +80,8 @@ class CoreTimeSeries(models.Model):
                     "metric_value",
                     "in_reporting_delay_period",
                 ),
-                name="The `CoreTimeSeries` record should be unique",
+                name="The `CoreTimeSeries` record should be unique if `force_write` is False",
+                condition=Q(force_write=False)
             )
         ]
 
