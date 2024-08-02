@@ -4,7 +4,7 @@ coverage==7.6.0
 cyclonedx-python-lib==7.5.1
 django-factory-boy==1.0.0
 factory-boy==3.3.0
-Faker==26.0.0
+Faker==26.1.0
 gitdb==4.0.11
 GitPython==3.1.43
 import-linter==2.0
