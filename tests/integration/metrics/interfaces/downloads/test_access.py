@@ -18,8 +18,8 @@ class TestMergeAndProcessQuerysets:
         # Given
         dates = ("2023-01-01", "2023-01-02", "2023-01-03")
         for date in dates:
-            CoreTimeSeriesFactory.create_record(date=date, sex="m", metric_value=123)
             CoreTimeSeriesFactory.create_record(date=date, sex="f", metric_value=456)
+            CoreTimeSeriesFactory.create_record(date=date, sex="m", metric_value=123)
 
         male_queryset = CoreTimeSeries.objects.filter(sex="m").all()
         female_queryset = CoreTimeSeries.objects.filter(sex="f").all()
