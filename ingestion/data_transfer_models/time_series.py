@@ -113,9 +113,7 @@ def _build_enriched_time_series_specific_fields(
             in_reporting_delay_period=individual_time_series.get(
                 "in_reporting_delay_period", False
             ),
-            force_write=individual_time_series.get(
-                "force_write", False
-            )
+            force_write=individual_time_series.get("force_write", False),
         )
         for individual_time_series in source_data["time_series"]
         if individual_time_series["metric_value"] is not None

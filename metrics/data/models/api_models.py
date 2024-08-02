@@ -67,7 +67,7 @@ class APITimeSeries(models.Model):
                     "in_reporting_delay_period",
                 ),
                 name="The `APITimeSeries` record should be unique if `force_write` is False",
-                condition=Q(force_write=False)
+                condition=Q(force_write=False),
             )
         ]
 

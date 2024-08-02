@@ -32,7 +32,7 @@ class TestInboundTimeSeriesSpecificFields:
                 date=fake_date,
                 embargo=fake_embargo,
                 metric_value=fake_metric_value,
-                force_write=fake_force_write_value
+                force_write=fake_force_write_value,
             )
         )
 

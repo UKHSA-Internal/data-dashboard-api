@@ -81,7 +81,7 @@ class CoreTimeSeries(models.Model):
                     "in_reporting_delay_period",
                 ),
                 name="The `CoreTimeSeries` record should be unique if `force_write` is False",
-                condition=Q(force_write=False)
+                condition=Q(force_write=False),
             )
         ]
 
