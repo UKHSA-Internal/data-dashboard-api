@@ -1,3 +1,4 @@
+import copy
 import zoneinfo
 
 import pytest
@@ -232,3 +233,80 @@ class TestConsumer:
         assert str(core_timeseries.year) == year
         assert str(core_timeseries.month) == month
         assert str(core_timeseries.epiweek) == str(timeseries_specific_data["epiweek"])
+
+    @pytest.mark.django_db
+    def test_can_ingest_duplicated_data_with_force_write_flag(self):
+        """
+        Given an original core time series
+        And 2 further updates, the 1st of which sets a new value
+            whilst the last update resets the original value
+        When `create_core_time_series()` is called
+            from an instance of `Consumer`
+        Then `CoreTimeSeries` records are created with the correct values
+        And the final update can be written with the `force_write` flag
+        """
+        # Given
+        original_source_data = {
+            "parent_theme": "infectious_disease",
+            "child_theme": "vaccine_preventable",
+            "topic": "Measles",
+            "metric_group": "cases",
+            "metric": "measles_cases_casesByOnsetWeek",
+            "geography_type": "Nation",
+            "geography": "England",
+            "geography_code": "E92000001",
+            "age": "all",
+            "sex": "all",
+            "stratum": "default",
+            "metric_frequency": "weekly",
+            "refresh_date": "2024-07-16 08:00:00",
+            "time_series": [
+                {
+                    "epiweek": 25,
+                    "date": "2024-06-17",
+                    "metric_value": 71,
+                    "embargo": "2024-07-16 09:30:00",
+                }
+            ],
+        }
+
+        consumer = Consumer(source_data=original_source_data)
+        assert CoreTimeSeries.objects.all().count() == 0
+
+        # When
+        consumer.create_core_time_series()
+
+        # Then
+        # Check that the 1st `CoreTimeSeries` record is created
+        core_timeseries_one = CoreTimeSeries.objects.last()
+        original_metric_value = original_source_data["time_series"][0]["metric_value"]
+        assert str(core_timeseries_one.metric_value) == f"{original_metric_value:.4f}"
+
+        # When
+        # Ingest the 2nd record with a completely new `metric_value`
+        second_data_with_new_metric_value = copy.deepcopy(original_source_data)
+        second_data_with_new_metric_value["time_series"][0]["metric_value"] = 74
+        second_data_with_new_metric_value["refresh_date"] = "2024-07-23 08:00:00"
+        consumer = Consumer(source_data=second_data_with_new_metric_value)
+        consumer.create_core_time_series()
+
+        # Then
+        assert CoreTimeSeries.objects.count() == 2
+        core_timeseries_two = CoreTimeSeries.objects.last()
+        updated_metric_value = second_data_with_new_metric_value["time_series"][0][
+            "metric_value"
+        ]
+        assert str(core_timeseries_two.metric_value) == f"{updated_metric_value:.4f}"
+
+        # When
+        # Ingest the last record which resets the `metric_value` to the original value
+        final_data_with_reset_metric_value = copy.deepcopy(original_source_data)
+        final_data_with_reset_metric_value["refresh_date"] = "2024-07-30 08:00:00"
+        final_data_with_reset_metric_value["time_series"][0]["force_write"] = True
+        consumer = Consumer(source_data=final_data_with_reset_metric_value)
+        consumer.create_core_time_series()
+
+        # Then
+        assert CoreTimeSeries.objects.count() == 3
+        core_timeseries_final = CoreTimeSeries.objects.last()
+        assert str(core_timeseries_final.metric_value) == f"{original_metric_value:.4f}"
