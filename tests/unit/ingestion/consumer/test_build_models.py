@@ -98,6 +98,7 @@ class TestBuildModelMethods:
                 "embargo": "2023-11-20 12:00:00",
                 "date": "2023-08-01",
                 "metric_value": 123,
+                "force_write": True,
             }
         ]
 
@@ -150,6 +151,7 @@ class TestBuildModelMethods:
             built_core_time_series_instance.metric_value
             == fake_data["time_series"][0]["metric_value"]
         )
+        assert built_core_time_series_instance.force_write is True
 
     def test_build_api_time_series(
         self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
@@ -217,3 +219,4 @@ class TestBuildModelMethods:
                 api_time_series_model_instance.embargo.strftime(DATETIME_FORMAT)
                 == fake_data["time_series"][index]["embargo"]
             )
+            assert api_time_series_model_instance.force_write is False

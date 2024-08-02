@@ -16,6 +16,7 @@ class InboundTimeSeriesSpecificFields(BaseModel):
     embargo: datetime.datetime | None
     metric_value: float
     in_reporting_delay_period: bool = False
+    force_write: bool = False
 
     @field_validator("embargo")
     @classmethod
@@ -112,6 +113,9 @@ def _build_enriched_time_series_specific_fields(
             in_reporting_delay_period=individual_time_series.get(
                 "in_reporting_delay_period", False
             ),
+            force_write=individual_time_series.get(
+                "force_write", False
+            )
         )
         for individual_time_series in source_data["time_series"]
         if individual_time_series["metric_value"] is not None
