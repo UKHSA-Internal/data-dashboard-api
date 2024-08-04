@@ -11,7 +11,7 @@ from tests.factories.metrics.headline import CoreHeadlineFactory
 class TestCoreHeadlineManager:
 
     @pytest.mark.django_db
-    def test_filter_for_x_and_y_values_returns_expected_results(
+    def test_query_for_data_returns_expected_results(
         self,
     ):
         """
@@ -31,9 +31,8 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        retrieved_record_queryset = CoreHeadline.objects.filter_for_x_and_y_values(
-            x_axis="age",
-            y_axis="metric_value",
+        retrieved_record_queryset = CoreHeadline.objects.query_for_data(
+            fields_to_export=["age", "metric_value"],
             topic_name=expected_record_headline.metric.topic.name,
             metric_name=expected_record_headline.metric.name,
             geography_name=expected_record_headline.geography.name,

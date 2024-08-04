@@ -4,7 +4,7 @@ from typing import Literal, Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.common.utils import ChartAxisFields, MetricTypes
+from metrics.domain.common.utils import ChartAxisFields, DataSourceFileType
 
 
 class PlotParameters(BaseModel):
@@ -34,6 +34,10 @@ class PlotParameters(BaseModel):
     @property
     def metric_name(self) -> str:
         return self.metric
+
+    @property
+    def metric_group(self) -> str:
+        return self.metric.split("_")[1]
 
     @property
     def geography_name(self) -> str | None:
@@ -84,12 +88,13 @@ class PlotParameters(BaseModel):
             return None
         return ChartAxisFields.get_y_axis_value(name=self.y_axis)
 
-    def to_dict_for_query(self, metric_type: str) -> dict[str, str]:
+    def to_dict_for_query(self) -> dict[str, str]:
         """Returns a dict representation of the model used for the corresponding query.
 
         Notes:
             A number of fields are ommitted which would not be needed
             for a database query related to this plot.
+            x_axis and y_axis fields are combined into `fields_to_export` list.
 
         Returns:
             Dict[str, str]: A dict representation of the model.
@@ -100,6 +105,7 @@ class PlotParameters(BaseModel):
 
         """
         params = {
+            "fields_to_export": [self.x_axis_value, self.y_axis_value],
             "metric_name": self.metric_name or "",
             "topic_name": self.topic_name or "",
             "stratum_name": self.stratum_name or "",
@@ -107,13 +113,16 @@ class PlotParameters(BaseModel):
             "geography_type_name": self.geography_type_name or "",
             "sex": self.sex or "",
             "age": self.age or "",
-            "x_axis": self.x_axis_value,
-            "y_axis": self.y_axis_value,
         }
 
-        if metric_type == MetricTypes.TIMESERIES.value:
+        if DataSourceFileType[self.metric_group].is_headline:
+            params["geography_code"] = ""
+
+        if DataSourceFileType[self.metric_group].is_timeseries:
+            params["fields_to_export"].append("in_reporting_delay_period")
             params["date_from"] = self.date_from_value
             params["date_to"] = self.date_to_value
+            params["field_to_order_by"] = self.x_axis_value
 
         return params
 

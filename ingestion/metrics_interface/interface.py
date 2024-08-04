@@ -1,5 +1,6 @@
 from metrics.data.enums import TimePeriod
 from metrics.data.models import api_models, core_models
+from metrics.domain.common.utils import DataSourceFileType
 
 
 class MetricsAPIInterface:
@@ -66,3 +67,7 @@ class MetricsAPIInterface:
     @staticmethod
     def get_api_timeseries():
         return api_models.APITimeSeries
+
+    @staticmethod
+    def get_datasource_enum() -> DataSourceFileType:
+        return DataSourceFileType

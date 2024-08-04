@@ -101,8 +101,8 @@ class TestPlotsInterface:
         """
         # Given
         plot_parameters_with_no_supporting_data = PlotParameters(
-            metric="non_existent_topic_cases_abc",
-            topic="non_existent_topic",
+            metric="non_cases_topic_cases_abc",
+            topic="non_cases_topic",
             chart_type="line",
             date_from="2023-01-01",
             date_to="2023-12-31",
@@ -236,8 +236,8 @@ class TestPlotsInterface:
         """
         # Given
         plot_parameters_with_no_supporting_data = PlotParameters(
-            metric="non_existent_topic_cases_abc",
-            topic="non_existent_topic",
+            metric="non_cases_topic_cases_abc",
+            topic="non_cases_topic",
             chart_type="line",
             date_from="2023-01-01",
             date_to="2023-12-31",
@@ -511,26 +511,23 @@ class TestPlotsInterface:
         )
 
         # When
-        headline_data = plots_interface.get_headline_data(
-            x_axis=mocked_x_axis,
-            y_axis=mocked_y_axis,
-            topic_name=mocked_topic,
-            metric_name=mocked_metric,
-            geography_name=mocked_geography,
-            geography_type_name=mocked_geography_type,
-            stratum_name=mocked_stratum,
-            sex=mocked_sex,
-            age=mocked_age,
-        )
+        plots_params = {
+            "fields_to_export": [mocked_x_axis, mocked_y_axis],
+            "topic_name": mocked_topic,
+            "metric_name": mocked_metric,
+            "geography_name": mocked_geography,
+            "geography_type_name": mocked_geography_type,
+            "geography_code": "",
+            "stratum_name": mocked_stratum,
+            "sex": mocked_sex,
+            "age": mocked_age,
+        }
+        headline_data = plots_interface.get_core_api_data(plot_params=plots_params)
 
         # Then
-        assert (
-            headline_data
-            == spy_core_headline_manager.filter_for_x_and_y_values.return_value
-        )
-        spy_core_headline_manager.filter_for_x_and_y_values.assert_called_once_with(
-            x_axis=mocked_x_axis,
-            y_axis=mocked_y_axis,
+        assert headline_data == spy_core_headline_manager.query_for_data.return_value
+        spy_core_headline_manager.query_for_data.assert_called_once_with(
+            fields_to_export=[mocked_x_axis, mocked_y_axis],
             topic_name=mocked_topic,
             metric_name=mocked_metric,
             geography_name=mocked_geography,
@@ -567,19 +564,24 @@ class TestPlotsInterface:
         )
 
         # When
-        timeseries = plots_interface.get_timeseries(
-            x_axis=mocked_x_axis,
-            y_axis=mocked_y_axis,
-            topic_name=mocked_topic,
-            metric_name=mocked_metric,
-            date_from=mocked_date_from,
-            date_to=mocked_date_to,
-            geography_name=mocked_geography,
-            geography_type_name=mocked_geography_type,
-            stratum_name=mocked_stratum,
-            sex=mocked_sex,
-            age=mocked_age,
-        )
+        plot_params = {
+            "fields_to_export": [
+                mocked_x_axis,
+                mocked_y_axis,
+                "in_reporting_delay_period",
+            ],
+            "field_to_order_by": mocked_x_axis,
+            "topic_name": mocked_topic,
+            "metric_name": mocked_metric,
+            "date_from": mocked_date_from,
+            "date_to": mocked_date_to,
+            "geography_name": mocked_geography,
+            "geography_type_name": mocked_geography_type,
+            "stratum_name": mocked_stratum,
+            "sex": mocked_sex,
+            "age": mocked_age,
+        }
+        timeseries = plots_interface.get_core_api_data(plot_params=plot_params)
 
         # Then
         assert timeseries == spy_core_time_series_manager.query_for_data.return_value
@@ -601,10 +603,10 @@ class TestPlotsInterface:
             age=mocked_age,
         )
 
-    @mock.patch.object(PlotsInterface, "get_timeseries")
+    @mock.patch.object(PlotsInterface, "get_core_api_data")
     def test_get_queryset_result_for_plot_parameters_delegates_call_with_correct_args(
         self,
-        mocked_get_timeseries: mock.MagicMock,
+        mocked_get_core_api_data: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -631,22 +633,22 @@ class TestPlotsInterface:
 
         # Then
         # The returned `QuerySetResult` is enriched via the `get_timeseries` method
-        assert queryset_result.queryset == mocked_get_timeseries.return_value
+        assert queryset_result.queryset == mocked_get_core_api_data.return_value
         assert (
             queryset_result.latest_date
-            == mocked_get_timeseries.return_value.latest_date
+            == mocked_get_core_api_data.return_value.latest_date
         )
 
         # The dict representation of the `PlotParameters` model
         # is unpacked into the `get_timeseries` method
-        mocked_get_timeseries.assert_called_once_with(
-            **fake_chart_plot_parameters.to_dict_for_query(metric_type="timeseries")
+        mocked_get_core_api_data.assert_called_once_with(
+            plot_params=fake_chart_plot_parameters.to_dict_for_query()
         )
 
-    @mock.patch.object(PlotsInterface, "get_headline_data")
+    @mock.patch.object(PlotsInterface, "get_core_api_data")
     def test_get_queryset_result_for_headline_plot_parameters_delegates_call_with_correct_args(
         self,
-        mocked_get_headline_data: mock.MagicMock,
+        mocked_get_core_api_data: mock.MagicMock,
         fake_chart_plot_parameters_headline_data: PlotParameters,
     ):
         """
@@ -658,7 +660,6 @@ class TestPlotsInterface:
         fake_plots_collection = mock.MagicMock()
         plots_interface = PlotsInterface(
             plots_collection=fake_plots_collection,
-            metric_type="headline",
             core_model_manager=mock.MagicMock(),
         )
 
@@ -670,10 +671,10 @@ class TestPlotsInterface:
         )
 
         # Then
-        assert queryset_result.queryset == mocked_get_headline_data.return_value
+        assert queryset_result.queryset == mocked_get_core_api_data.return_value
         assert (
             queryset_result.latest_date
-            == mocked_get_headline_data.return_value.latest_date
+            == mocked_get_core_api_data.return_value.latest_date
         )
 
     @mock.patch(f"{MODULE_PATH}.PlotValidation")

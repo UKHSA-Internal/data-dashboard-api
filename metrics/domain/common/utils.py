@@ -96,6 +96,21 @@ DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
 DEFAULT_Y_AXIS = ChartAxisFields.get_default_y_axis().name
 
 
-class MetricTypes(Enum):
-    HEADLINE = "headline"
-    TIMESERIES = "timeseries"
+class DataSourceFileType(Enum):
+    # Headline types
+    headline = "headline"
+
+    # Timeseries types
+    cases = "cases"
+    deaths = "deaths"
+    healthcare = "healthcare"
+    testing = "testing"
+    vaccinations = "vaccinations"
+
+    @property
+    def is_headline(self) -> bool:
+        return self.value == "headline"
+
+    @property
+    def is_timeseries(self) -> bool:
+        return self.value != "headline"
