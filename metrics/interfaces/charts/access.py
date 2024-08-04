@@ -12,7 +12,7 @@ from metrics.domain.charts import (
     line_multi_coloured,
     line_with_shaded_section,
 )
-from metrics.domain.common.utils import ChartTypes, MetricTypes
+from metrics.domain.common.utils import ChartTypes, DataSourceFileType
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.models.plots_text import PlotsText
 from metrics.interfaces.charts import calculations
@@ -44,12 +44,11 @@ class ChartsInterface:
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
-        self.metric_type = self._return_metric_type_from_metric()
+        self.metric_group = self.chart_plots.plots[0].metric.split("_")[1]
         self.core_model_manager = core_model_manager or self._set_core_model_manager()
 
         self.plots_interface = plots_interface or PlotsInterface(
             plots_collection=self.chart_plots,
-            metric_type=self.metric_type,
             core_model_manager=self.core_model_manager,
         )
 
@@ -68,27 +67,10 @@ class ChartsInterface:
         Returns:
             Manager: either `CoreTimeseries` or `CoreHeadline`
         """
-        if self.metric_type == MetricTypes.TIMESERIES.value or None:
+        if DataSourceFileType[self.metric_group].is_timeseries:
             return DEFAULT_CORE_TIME_SERIES_MANAGER
 
         return DEFAULT_CORE_HEADLINE_MANAGER
-
-    def _return_metric_type_from_metric(self) -> str:
-        """Returns the metric type of the chart as a string
-
-        Notes:
-            The charts interface can be used to generate charts
-            of either `Core timeseries` or `Core headline` data.
-            this function returns the type based on the provided
-            metric.
-
-        Returns:
-            a string of the metric type either `headline` or `timeseries`.
-        """
-        if self.chart_plots.plots[0].metric.split("_")[1] == MetricTypes.HEADLINE.value:
-            return MetricTypes.HEADLINE.value
-
-        return MetricTypes.TIMESERIES.value
 
     def generate_chart_output(self) -> ChartOutput:
         """Generates a `plotly` chart figure and a corresponding description

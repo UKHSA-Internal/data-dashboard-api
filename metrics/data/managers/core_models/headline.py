@@ -176,13 +176,12 @@ class CoreHeadlineManager(models.Manager):
     def get_queryset(self) -> CoreHeadlineQuerySet:
         return CoreHeadlineQuerySet(model=self.model, using=self.db)
 
-    def filter_for_x_and_y_values(
+    def query_for_data(
         self,
         *,
-        x_axis: str,
-        y_axis: str,
         topic_name: str,
         metric_name: str,
+        fields_to_export: list[str],
         geography_name: str = "England",
         geography_type_name: str = "Nation",
         geography_code: str = "",
@@ -190,19 +189,20 @@ class CoreHeadlineManager(models.Manager):
         sex: str = "",
         age: str = "",
     ):
-        """Filters for a 2-item object by the given params.
+        """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
         Args:
-            x_axis: The field to display along the x-axis.
-                In this case, this will be the first item of each 2-item object
-                E.g. `date` or `stratum`
-            y_axis: The field to display along the y-axis
-                In this case, this will be the second item of each 2-item object
-                E.g. `metric`
             topic_name: The name of the disease being queried.
                 E.g. `COVID-19`
             metric_name: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
+            fields_to_export: List of fields to be exported
+                as part of the underlying `values()` call.
+                If not specified, the full queryset is returned.
+                Typically, this would be a 2 item list.
+                In the case where we wanted to display
+                the date along the x-axis and metric value across the y-axis:
+                >>> ["date", "metric_value"]
             geography_name: The name of the geography being queried.
                 E.g. `England`
             geography_type_name: The name of the geography
@@ -237,8 +237,11 @@ class CoreHeadlineManager(models.Manager):
             sex=sex,
         )[:1]
 
-        if x_axis and y_axis:
-            queryset = queryset.values(x_axis, y_axis)
+        if fields_to_export:
+            fields_to_export = [
+                field for field in fields_to_export if field is not None
+            ]
+            queryset = queryset.values(*fields_to_export)
 
         queryset.latest_date = queryset.values_list("period_end", flat=True).first()
 

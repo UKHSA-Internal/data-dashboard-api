@@ -7,7 +7,7 @@ from django.db.models import Manager, QuerySet
 from pydantic import BaseModel
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.common.utils import ChartAxisFields, MetricTypes
+from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.models.plots import CompletePlotData
 from metrics.interfaces.plots.validation import (
@@ -38,11 +38,9 @@ class PlotsInterface:
         self,
         *,
         plots_collection: PlotsCollection,
-        metric_type: str = MetricTypes.TIMESERIES.value,
         core_model_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.plots_collection = plots_collection
-        self.metric_type = metric_type
         self.core_model_manager = core_model_manager
         self.validate_plot_parameters()
 
@@ -98,60 +96,19 @@ class PlotsInterface:
                         ]>`
                 b) The latest refresh date associated with the resulting data
         """
-        plot_params: dict[str, str] = plot_parameters.to_dict_for_query(
-            metric_type=self.metric_type
-        )
-
-        if self.metric_type == MetricTypes.HEADLINE.value:
-            queryset = self.get_headline_data(**plot_params)
-        else:
-            queryset = self.get_timeseries(**plot_params)
+        plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
+        queryset = self.get_core_api_data(plot_params=plot_params)
 
         return QuerySetResult(queryset=queryset, latest_date=queryset.latest_date)
 
-    def get_headline_data(
+    def get_core_api_data(
         self,
-        *,
-        x_axis: str,
-        y_axis: str,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
-        sex: str | None = None,
-        age: str | None = None,
+        plot_params: dict[str, str],
     ):
-        """Gets headline data for the `variable` and `metric_value` of that variable.
-
-        Notes:
-            variables include:
-            - age
-            - sex
-            - geography
-            - geography_type
-            - Stratum
+        """Gets headline or timeseries data based on the `core_model_manager`
 
         Args:
-            x_axis: The field to display along the x-axis
-                E.g. `date` or `stratum`
-            y_axis: The field to display along the y-axis
-                E.g. `metric`
-            topic_name: The name of the disease being queried.
-                E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
-                E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography to apply additional filtering to.
-                E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
-                E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
-                E.g. `default`, which would be used to capture all strata
-            sex: The gender to apply additional filtering to.
-                E.g. `F`, would be used to capture Females.
-                Note that options are `M`, `F`, or `ALL`.
-            age: The age range to apply additional filtering to.
-                E.g. `0_4` would be used to capture the age of 0-4 years old
+            plot_params: Dictionary of plot parameters based on the metric type
 
         Returns:
             QuerySet: Of the latest headline number including..
@@ -161,92 +118,7 @@ class PlotsInterface:
                     ('05-10', Decimal('9.0'))
                 ]>`
         """
-        return self.core_model_manager.filter_for_x_and_y_values(
-            x_axis=x_axis,
-            y_axis=y_axis,
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            geography_code="",
-            stratum_name=stratum_name,
-            sex=sex,
-            age=age,
-        )
-
-    def get_timeseries(
-        self,
-        *,
-        x_axis: str,
-        y_axis: str,
-        topic_name: str,
-        metric_name: str,
-        date_from: datetime.date | str,
-        date_to: datetime.date | None = None,
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
-        sex: str | None = None,
-        age: str | None = None,
-    ):
-        """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
-
-        Notes:
-            Additional filtering is available via the following optional params:
-             - `geography_name`
-             - `geography_type_name`
-             - `stratum_name`
-             - `sex`
-
-        Args:
-            x_axis: The field to display along the x-axis
-                E.g. `date` or `stratum`
-            y_axis: The field to display along the y-axis
-                E.g. `metric`
-            topic_name: The name of the disease being queried.
-                E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
-                E.g. `COVID-19_deaths_ONSByDay`
-            date_from: The datetime object or string to begin the query from.
-                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0) or "2023-03-27"
-                would strip off any records which occurred before that date.
-            date_to: The datetime object or string to end the query at.
-                E.g. datetime.datetime(2023, 6, 28, 0, 0, 0, 0) or "2023-06-28"
-            geography_name: The name of the geography to apply additional filtering to.
-                E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
-                E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
-                E.g. `default`, which would be used to capture all strata
-            sex: The gender to apply additional filtering to.
-                E.g. `F`, would be used to capture Females.
-                Note that options are `M`, `F`, or `ALL`.
-            age: The age range to apply additional filtering to.
-                E.g. `0_4` would be used to capture the age of 0-4 years old
-
-        Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers:
-                Examples:
-                    `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('8.0')),
-                        (datetime.date(2022, 10, 17), Decimal('9.0'))
-                    ]>`
-
-        """
-        return self.core_model_manager.query_for_data(
-            fields_to_export=[x_axis, y_axis, "in_reporting_delay_period"],
-            field_to_order_by=x_axis,
-            topic_name=topic_name,
-            metric_name=metric_name,
-            date_from=date_from,
-            date_to=date_to,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
-            sex=sex,
-            age=age,
-        )
+        return self.core_model_manager.query_for_data(**plot_params)
 
     def build_plot_data_from_parameters_with_complete_queryset(
         self, *, plot_parameters: PlotParameters

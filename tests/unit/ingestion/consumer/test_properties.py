@@ -2,7 +2,7 @@ import pytest
 
 from ingestion.consumer import Consumer
 from ingestion.utils import type_hints
-from ingestion.utils.enums import DataSourceFileType
+from ingestion.metrics_interface.interface import DataSourceFileType
 
 
 class TestConsumerProperties:

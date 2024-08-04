@@ -13,7 +13,7 @@ from ingestion.file_ingestion import (
     upload_data,
 )
 from ingestion.utils import type_hints
-from ingestion.utils.enums import DataSourceFileType
+from ingestion.metrics_interface.interface import DataSourceFileType
 
 MODULE_PATH = "ingestion.file_ingestion"
 
