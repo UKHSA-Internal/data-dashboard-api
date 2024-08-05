@@ -183,7 +183,7 @@ def _revert_updates_to_nhs_trust(*, apps: StateApps) -> None:
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0026_rename_in_reporting_lag_period_to_in_reporting_delay_period"),
+        ("data", "0027_add_force_write_flag_to_bypass_uniqe_constraints_for_timeseries"),
     ]
 
     operations = [
