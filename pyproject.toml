@@ -130,7 +130,7 @@ omit = [
     "metrics/api/settings/*",           # Configuration paackage
     "config.py",                        # Configuration file
     "manage.py",                        # Application server entrypoint
-    "metrics/domain/charts/reporting_delay_period.py" # temporarily bypassed
+    "*/migrations/*"                    # Database migrations
 ]
 skip_covered = true                     # Only list files which do not have 100% test coverage in the report
 show_missing = true                     # Report lines which were not hit
