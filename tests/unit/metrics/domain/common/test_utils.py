@@ -7,6 +7,8 @@ from metrics.domain.common.utils import (
     ChartTypes,
     _check_for_substring_match,
     get_last_day_of_month,
+    DataSourceFileType,
+    extract_metric_group_from_metric,
 )
 
 
@@ -352,3 +354,106 @@ class TestCheckForSubstringMatch:
 
         # Then
         assert substrings_are_matching
+
+
+class TestDataSourceFileType:
+    @pytest.mark.parametrize(
+        "metric_group, expected_return_value",
+        (
+            [
+                ("headline", True),
+                ("cases", False),
+                ("deaths", False),
+                ("healthcare", False),
+                ("testing", False),
+                ("vaccinations", False),
+            ]
+        ),
+    )
+    def test_is_headline_returns_the_correct_response(
+        self,
+        metric_group: str,
+        expected_return_value: bool,
+    ):
+        """
+        Given a valid metric with either a `Headline` or `Timeseries`
+            metric group
+        When the `is_headline` property is called
+        Then the expected response is returned
+        """
+        # Given
+        expected_metric_group = expected_return_value
+
+        # When
+        returned_metric_group = DataSourceFileType[metric_group].is_headline
+
+        # Then
+        assert returned_metric_group == expected_metric_group
+
+    @pytest.mark.parametrize(
+        "metric_group, expected_return_value",
+        (
+            [
+                ("headline", False),
+                ("cases", True),
+                ("deaths", True),
+                ("testing", True),
+                ("healthcare", True),
+                ("vaccinations", True),
+            ]
+        ),
+    )
+    def test_is_timeseries_returns_the_correct_response(
+        self,
+        metric_group: str,
+        expected_return_value: bool,
+    ):
+        """
+        Given a valid metric with either a `Headline` or `Timeseries`
+            metric group
+        When the `is_timeseries` property is called
+        Then the expected response is returned
+        """
+        # Given
+        expected_metric_group = expected_return_value
+
+        # When
+        returned_metric_group = DataSourceFileType[metric_group].is_timeseries
+
+        # Then
+        assert returned_metric_group == expected_metric_group
+
+
+class TestExtractMetricGroup:
+    @pytest.mark.parametrize(
+        "metric, metric_group",
+        (
+            [
+                ("COVID-19_headline_vaccines_spring24Uptake", "headline"),
+                ("COVID-19_headline_cases_7DayPercentChange", "headline"),
+                ("COVID-19_cases_casesByDay", "cases"),
+                ("RSV_testing_positivityByWeek", "testing"),
+                ("COVID-19_deaths_ONSRegByWeek", "deaths"),
+                ("COVID-19_healthcare_occupiedBedsRollingMean", "healthcare"),
+                ("COVID-19_vaccinations_autumn23_uptakeByDay", "vaccinations"),
+                ("non-existent-metric", None),
+            ]
+        ),
+    )
+    def test_extract_metric_returns_correct_metric_group(
+        self, metric: str, metric_group: str
+    ):
+        """
+        Given a valid metric string
+        When the `extract_metric_group_from_metric()` is called
+            with the metric value as its parameter
+        Then the expected metric_group is returned
+        """
+        # Given
+        expected_metric_group = metric_group
+
+        # When
+        returned_metric_group = extract_metric_group_from_metric(metric)
+
+        # Then
+        assert returned_metric_group == expected_metric_group

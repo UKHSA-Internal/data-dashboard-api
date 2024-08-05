@@ -12,11 +12,16 @@ from metrics.domain.charts import (
     line_multi_coloured,
     line_with_shaded_section,
 )
-from metrics.domain.common.utils import ChartTypes, DataSourceFileType
+from metrics.domain.common.utils import (
+    ChartTypes,
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.models.plots_text import PlotsText
 from metrics.interfaces.charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
+from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
@@ -39,12 +44,14 @@ class ChartsInterface:
         self,
         *,
         chart_plots: PlotsCollection,
-        core_model_manager: Manager | None = None,
+        core_model_manager: CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
-        self.metric_group = self.chart_plots.plots[0].metric.split("_")[1]
+        self.metric_group = extract_metric_group_from_metric(
+            self.chart_plots.plots[0].metric
+        )
         self.core_model_manager = core_model_manager or self._set_core_model_manager()
 
         self.plots_interface = plots_interface or PlotsInterface(

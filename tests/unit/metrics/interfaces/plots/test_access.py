@@ -522,7 +522,9 @@ class TestPlotsInterface:
             "sex": mocked_sex,
             "age": mocked_age,
         }
-        headline_data = plots_interface.get_core_api_data(plot_params=plots_params)
+        headline_data = plots_interface.get_queryset_from_core_model_manager(
+            plot_params=plots_params
+        )
 
         # Then
         assert headline_data == spy_core_headline_manager.query_for_data.return_value
@@ -581,7 +583,9 @@ class TestPlotsInterface:
             "sex": mocked_sex,
             "age": mocked_age,
         }
-        timeseries = plots_interface.get_core_api_data(plot_params=plot_params)
+        timeseries = plots_interface.get_queryset_from_core_model_manager(
+            plot_params=plot_params
+        )
 
         # Then
         assert timeseries == spy_core_time_series_manager.query_for_data.return_value
@@ -603,10 +607,10 @@ class TestPlotsInterface:
             age=mocked_age,
         )
 
-    @mock.patch.object(PlotsInterface, "get_core_api_data")
+    @mock.patch.object(PlotsInterface, "get_queryset_from_core_model_manager")
     def test_get_queryset_result_for_plot_parameters_delegates_call_with_correct_args(
         self,
-        mocked_get_core_api_data: mock.MagicMock,
+        mocked_get_queryset_from_core_model_manager: mock.MagicMock,
         fake_chart_plot_parameters: PlotParameters,
     ):
         """
@@ -633,22 +637,25 @@ class TestPlotsInterface:
 
         # Then
         # The returned `QuerySetResult` is enriched via the `get_timeseries` method
-        assert queryset_result.queryset == mocked_get_core_api_data.return_value
+        assert (
+            queryset_result.queryset
+            == mocked_get_queryset_from_core_model_manager.return_value
+        )
         assert (
             queryset_result.latest_date
-            == mocked_get_core_api_data.return_value.latest_date
+            == mocked_get_queryset_from_core_model_manager.return_value.latest_date
         )
 
         # The dict representation of the `PlotParameters` model
         # is unpacked into the `get_timeseries` method
-        mocked_get_core_api_data.assert_called_once_with(
+        mocked_get_queryset_from_core_model_manager.assert_called_once_with(
             plot_params=fake_chart_plot_parameters.to_dict_for_query()
         )
 
-    @mock.patch.object(PlotsInterface, "get_core_api_data")
+    @mock.patch.object(PlotsInterface, "get_queryset_from_core_model_manager")
     def test_get_queryset_result_for_headline_plot_parameters_delegates_call_with_correct_args(
         self,
-        mocked_get_core_api_data: mock.MagicMock,
+        mocked_get_queryset_from_core_model_manager: mock.MagicMock,
         fake_chart_plot_parameters_headline_data: PlotParameters,
     ):
         """
@@ -671,10 +678,13 @@ class TestPlotsInterface:
         )
 
         # Then
-        assert queryset_result.queryset == mocked_get_core_api_data.return_value
+        assert (
+            queryset_result.queryset
+            == mocked_get_queryset_from_core_model_manager.return_value
+        )
         assert (
             queryset_result.latest_date
-            == mocked_get_core_api_data.return_value.latest_date
+            == mocked_get_queryset_from_core_model_manager.return_value.latest_date
         )
 
     @mock.patch(f"{MODULE_PATH}.PlotValidation")
