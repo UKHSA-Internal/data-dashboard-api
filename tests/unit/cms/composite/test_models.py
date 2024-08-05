@@ -3,7 +3,9 @@ from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
 
-from cms.dashboard.management.commands.build_cms_site import open_example_page_response
+from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
+    open_example_page_response,
+)
 from tests.fakes.factories.cms.composite_page_factory import FakeCompositePageFactory
 
 

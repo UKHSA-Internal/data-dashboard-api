@@ -1,8 +1,11 @@
+from unittest import mock
+
 import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
 
+from cms.dashboard.models import UKHSAPage
 from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 
@@ -100,6 +103,33 @@ class TestBlankHomePage:
 
         # Then
         assert not page_is_previewable
+
+    @mock.patch.object(UKHSAPage, "get_url_parts")
+    def test_get_url_parts(self, mocked_super_get_url_parts: mock.MagicMock):
+        """
+        Given a `HomePage` model
+        When `get_url_parts()` is called
+        Then the url parts are returned with
+            an empty string representing the page path
+        """
+        # Given
+        expected_site_id = 123
+        root_url = "https://my-prefix.dev.ukhsa-data-dashboard.gov.uk"
+        page_path = "topics"
+        mocked_super_get_url_parts.return_value = (
+            expected_site_id,
+            root_url,
+            page_path,
+        )
+        blank_page = FakeHomePageFactory.build_blank_page()
+
+        # When
+        url_parts: tuple[int, str, str] = blank_page.get_url_parts(request=mock.Mock())
+
+        # Then
+        assert url_parts[0] == expected_site_id
+        assert url_parts[1] == root_url
+        assert url_parts[2] == "" != page_path
 
 
 class TestTemplateHomePage:

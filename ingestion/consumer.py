@@ -430,6 +430,7 @@ class Consumer:
                 month=int(month),
                 metric_value=time_series_data.metric_value,
                 in_reporting_delay_period=time_series_data.in_reporting_delay_period,
+                force_write=time_series_data.force_write,
             )
             created_core_time_series.append(core_time_series)
 
@@ -488,6 +489,7 @@ class Consumer:
                 date=time_series_data.date,
                 metric_value=time_series_data.metric_value,
                 in_reporting_delay_period=time_series_data.in_reporting_delay_period,
+                force_write=time_series_data.force_write,
             )
             created_api_time_series.append(api_time_series)
 

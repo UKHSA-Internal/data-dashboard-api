@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from metrics.data.managers.api_models.time_series import APITimeSeriesManager
 from metrics.data.models.constants import (
@@ -39,6 +40,7 @@ class APITimeSeries(models.Model):
     )
 
     date = models.DateField()
+    force_write = models.BooleanField(default=False)
     metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
     objects = APITimeSeriesManager()
@@ -64,7 +66,8 @@ class APITimeSeries(models.Model):
                     "metric_value",
                     "in_reporting_delay_period",
                 ),
-                name="The `APITimeSeries` record should be unique",
+                name="The `APITimeSeries` record should be unique if `force_write` is False",
+                condition=Q(force_write=False),
             )
         ]
 

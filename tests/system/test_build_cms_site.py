@@ -4,7 +4,9 @@ from rest_framework.test import APIClient
 
 from cms.common.models import CommonPage
 from cms.composite.models import CompositePage
-from cms.dashboard.management.commands.build_cms_site import open_example_page_response
+from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
+    open_example_page_response,
+)
 from cms.home.models import HomePage, UKHSARootPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
@@ -32,7 +34,7 @@ class TestBuildCMSSite:
         items = response_data["items"]
 
         expected_slugs: set[str] = {
-            "dashboard",
+            "topics",
             "covid-19",
             "influenza",
             "location-based-data",
@@ -67,7 +69,7 @@ class TestBuildCMSSite:
         """
         # Given
         call_command("build_cms_site")
-        home_page = HomePage.objects.get(slug="dashboard")
+        home_page = HomePage.objects.get(slug="topics")
         api_client = APIClient()
 
         # When
@@ -407,4 +409,89 @@ class TestBuildCMSSite:
         assert (
             response_data["body"][0]
             == access_our_data_getting_started_page_template["body"][0]
+        )
+
+    @pytest.mark.django_db
+    def test_command_creates_menu_snippet(self):
+        """
+        Given a CMS site which has been created via the `build_cms_site` management command
+        When a GET request is made to `/api/menus/v1` list endpoint
+        Then the response contains the expected data
+        """
+        # Given
+        call_command("build_cms_site")
+
+        api_client = APIClient()
+
+        # When
+        response = api_client.get(path="/api/menus/v1")
+
+        # Then
+        menu_data = response.data["active_menu"]
+        # There should be 7 rows in the menu
+        assert len(menu_data) == 7
+
+        def extract_primary_link_info(row_index, column_index) -> dict:
+            return menu_data[row_index]["value"]["columns"][column_index]["value"][
+                "links"
+            ]["primary_link"]
+
+        def extract_secondary_link_info(
+            row_index, column_index, secondary_link_index
+        ) -> dict:
+            return menu_data[row_index]["value"]["columns"][column_index]["value"][
+                "links"
+            ]["secondary_links"][secondary_link_index]["value"]
+
+        home_page = HomePage.objects.last()
+        home_page_data = extract_primary_link_info(row_index=0, column_index=0)
+        assert home_page_data["title"] == "Homepage"
+        assert home_page_data["page"] == home_page.id
+        assert home_page_data["html_url"] == home_page.full_url
+
+        covid_page = TopicPage.objects.get(slug="covid-19")
+        covid_page_data = extract_secondary_link_info(
+            row_index=0, column_index=0, secondary_link_index=0
+        )
+        assert covid_page_data["title"] == "COVID-19"
+        assert covid_page_data["page"] == covid_page.id
+        assert covid_page_data["html_url"] == covid_page.full_url
+
+        flu_page = TopicPage.objects.get(slug="influenza")
+        flu_page_data = extract_secondary_link_info(
+            row_index=0, column_index=0, secondary_link_index=1
+        )
+        assert flu_page_data["title"] == "Influenza"
+        assert flu_page_data["page"] == flu_page.id
+        assert flu_page_data["html_url"] == flu_page.full_url
+
+        other_respiratory_viruses_page = TopicPage.objects.get(
+            slug="other-respiratory-viruses"
+        )
+        other_respiratory_viruses_page_data = extract_secondary_link_info(
+            row_index=0, column_index=0, secondary_link_index=2
+        )
+        assert (
+            other_respiratory_viruses_page_data["title"] == "Other respiratory viruses"
+        )
+        assert (
+            other_respiratory_viruses_page_data["page"]
+            == other_respiratory_viruses_page.id
+        )
+        assert (
+            other_respiratory_viruses_page_data["html_url"]
+            == other_respiratory_viruses_page.full_url
+        )
+
+        weather_health_alerts_page = CompositePage.objects.get(
+            slug="weather-health-alerts"
+        )
+        weather_health_alerts_page_data = extract_primary_link_info(
+            row_index=1, column_index=0
+        )
+        assert weather_health_alerts_page_data["title"] == "Weather health alerts"
+        assert weather_health_alerts_page_data["page"] == weather_health_alerts_page.id
+        assert (
+            weather_health_alerts_page_data["html_url"]
+            == weather_health_alerts_page.full_url
         )

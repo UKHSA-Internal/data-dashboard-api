@@ -17,6 +17,7 @@ class UKHSARootPage(Page):
 
 
 class HomePage(UKHSAPage):
+    max_count = 1
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -58,6 +59,38 @@ class HomePage(UKHSAPage):
     def is_previewable(cls) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""
         return False
+
+    def get_url_parts(self, request=None) -> tuple[int, str, str]:
+        """Builds the full URL for the home page
+
+         Notes:
+             Page url parts are returned as a tuple of
+                (site_id, site_root_url, page_url_relative_to_site_root)
+            The base implementation of this method assumes Wagtail
+            is running in full app mode i.e not in headless,
+            because the building of page paths is handed off to
+            the `wagtail-serve` route which does not exist in headless mode.
+            Hence, the need to override and provide the url here.
+
+        Args:
+            `request`: Optional request object which is not to
+                be used for our implementation.
+
+        Returns:
+            Tuple containing the URL parts:
+                1) ID of the corresponding `Site` record
+                2) The root URL of the site
+                    e.g. `https://ukhsa-dashboard.data.gov.uk`
+                3) The path of the current page.
+                    This always returns an empty string
+                    e.g. `""`
+                    This is because the homepage is assumed
+                    to be at the root of the visible page tree.
+
+        """
+        site_id, root_url, page_path = super().get_url_parts(request=request)
+        page_path = ""
+        return site_id, root_url, page_path
 
 
 class HomePageRelatedLink(Orderable):

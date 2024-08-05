@@ -1,8 +1,20 @@
+import datetime
+from unittest import mock
+
+import pytest
+
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.models import PlotData
+from metrics.domain.models.plots import (
+    NoReportingDelayPeriodFoundError,
+    ReportingDelayNotProvidedToPlotsError,
+)
 from metrics.domain.models.plots_text import PlotsText
 from metrics.domain.common.utils import ChartTypes
+
+
+MODULE_PATH = "metrics.domain.models.plots_text"
 
 
 class TestPlotsText:
@@ -250,3 +262,66 @@ class TestPlotsText:
 
         assert expected_plot_1_data_summary in text
         assert expected_plot_2_data_summary in text
+
+    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
+    def test_returns_correct_text_about_valid_reporting_delay_period(
+        self,
+        mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
+        fake_plot_data: PlotData,
+    ):
+        """
+        Given a list of 1 enriched `PlotData` model
+            which will have an associated
+            reporting delay period
+        When `construct_text()` is called
+            from an instance of `PlotsText`
+        Then the returned text provides commentary
+            about the associated reporting delay period
+        """
+        # Given
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+        fake_date = datetime.date(year=2024, month=7, day=19)
+        mocked_get_x_value_at_start_of_reporting_delay_period.return_value = fake_date
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        expected_text_about_reporting_delay_period = (
+            "Data from 19 July 2024 onwards "
+            "falls under the reporting delay period. "
+            "This means those figures are still subject to retrospective updates "
+            "and should therefore not be considered to be final. "
+        )
+        assert expected_text_about_reporting_delay_period in text
+
+    @pytest.mark.parametrize(
+        "error",
+        [NoReportingDelayPeriodFoundError, ReportingDelayNotProvidedToPlotsError],
+    )
+    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
+    def test_returns_correct_text_about_no_reporting_delay_period(
+        self,
+        mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
+        error: Exception,
+        fake_plot_data: PlotData,
+    ):
+        """
+        Given a list of 1 enriched `PlotData` model
+            which will not have an associated
+            reporting delay period
+        When `construct_text()` is called
+            from an instance of `PlotsText`
+        Then the returned text provides commentary
+            about having no reporting delay period
+        """
+        # Given
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+        mocked_get_x_value_at_start_of_reporting_delay_period.side_effect = error
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        expected_text_about_reporting_delay_period = "There is no reporting delay period being tracked for the data on this chart. "
+        assert expected_text_about_reporting_delay_period in text

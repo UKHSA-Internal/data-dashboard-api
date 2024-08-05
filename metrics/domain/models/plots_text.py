@@ -6,8 +6,15 @@ from typing import Any
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
+from metrics.domain.charts.reporting_delay_period import (
+    get_x_value_at_start_of_reporting_delay_period,
+)
 from metrics.domain.common.utils import ChartTypes
 from metrics.domain.models import PlotData, PlotParameters
+from metrics.domain.models.plots import (
+    NoReportingDelayPeriodFoundError,
+    ReportingDelayNotProvidedToPlotsError,
+)
 
 READABLE_DATE_FORMAT = "%d %B %Y"
 
@@ -47,10 +54,12 @@ class PlotsText:
                 text += self._introduce_single_plot()
                 text += self._describe_axes()
                 text += self._describe_only_plot()
+                text += self._describe_reporting_delay_period()
             case _:
                 text += self._introduce_multiple_plots()
                 text += self._describe_axes()
                 text += self._describe_all_plots()
+                text += self._describe_reporting_delay_period()
 
         return text
 
@@ -358,6 +367,26 @@ class PlotsText:
     @classmethod
     def _plot_is_date_based(cls, *, plot_data: PlotData) -> bool:
         return type(plot_data.x_axis_values[0]) is datetime.date
+
+    def _describe_reporting_delay_period(self) -> str:
+        try:
+            start_of_reporting_delay_period: datetime.date = (
+                get_x_value_at_start_of_reporting_delay_period(
+                    chart_plots_data=self.plots_data
+                )
+            )
+        except (
+            NoReportingDelayPeriodFoundError,
+            ReportingDelayNotProvidedToPlotsError,
+        ):
+            return "There is no reporting delay period being tracked for the data on this chart. "
+
+        return (
+            f"Data from {self._stringify_date(date_obj=start_of_reporting_delay_period)} onwards "
+            f"falls under the reporting delay period. "
+            f"This means those figures are still subject to retrospective updates "
+            f"and should therefore not be considered to be final. "
+        )
 
 
 def split_into_n_parts(*, data: list[Any], n: int) -> Iterator[list[Any]]:
