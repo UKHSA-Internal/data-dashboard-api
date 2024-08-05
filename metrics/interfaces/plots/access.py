@@ -3,7 +3,7 @@ from collections import defaultdict
 from decimal import Decimal
 from typing import Any
 
-from django.db.models import Manager, QuerySet
+from django.db.models import QuerySet
 from pydantic import BaseModel
 
 from metrics.data.models.core_models import CoreTimeSeries
@@ -15,6 +15,7 @@ from metrics.interfaces.plots.validation import (
     MetricDoesNotSupportTopicError,
     PlotValidation,
 )
+from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -38,7 +39,7 @@ class PlotsInterface:
         self,
         *,
         plots_collection: PlotsCollection,
-        core_model_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_model_manager: CORE_MODEL_MANAGER_TYPE = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.plots_collection = plots_collection
         self.core_model_manager = core_model_manager
@@ -73,7 +74,7 @@ class PlotsInterface:
         self,
         *,
         plot_parameters: PlotParameters,
-    ):
+    ) -> QuerySetResult:
         """Returns the timeseries or headline records for the requested plot as an enriched `QuerySetResult` model.
 
         Notes:
@@ -97,11 +98,11 @@ class PlotsInterface:
                 b) The latest refresh date associated with the resulting data
         """
         plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
-        queryset = self.get_core_api_data(plot_params=plot_params)
+        queryset = self.get_queryset_from_core_model_manager(plot_params=plot_params)
 
         return QuerySetResult(queryset=queryset, latest_date=queryset.latest_date)
 
-    def get_core_api_data(
+    def get_queryset_from_core_model_manager(
         self,
         plot_params: dict[str, str],
     ):

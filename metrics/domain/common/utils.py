@@ -114,3 +114,23 @@ class DataSourceFileType(Enum):
     @property
     def is_timeseries(self) -> bool:
         return self.value != "headline"
+
+
+def extract_metric_group_from_metric(metric: str) -> str | None:
+    """Returns the metric group based on the provided metric
+
+    Args:
+        metric: string representation a metric
+
+    Returns:
+        string of the metric group the provided metric belongs to
+        if no matching metric group is found then `None` is returned.
+    """
+    if DataSourceFileType.headline.value in metric:
+        return DataSourceFileType.headline.value
+
+    for metric_group in DataSourceFileType:
+        if metric_group.value in metric:
+            return metric_group.value
+
+    return None

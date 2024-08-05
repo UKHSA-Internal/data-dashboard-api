@@ -16,7 +16,7 @@ class TestCoreHeadlineManager:
     ):
         """
         Given a `CoreHeadline` record is live
-        When `filter_for_x_and_y_values()` is called
+        When `query_for_data()` is called
         Then then a queryset is returned with the correct x and y values
             and the `period_end` of the record is added to the queryset as
             `latest_date`

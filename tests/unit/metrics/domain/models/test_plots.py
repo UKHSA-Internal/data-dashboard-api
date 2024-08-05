@@ -179,7 +179,6 @@ class TestPlotParameters:
             "stratum_name": fake_chart_plot_parameters.stratum_name,
             "geography_name": fake_chart_plot_parameters.geography_name,
             "geography_type_name": fake_chart_plot_parameters.geography_type_name,
-            "geography_code": "",
             "sex": fake_chart_plot_parameters.sex,
             "age": fake_chart_plot_parameters.age_name,
         }

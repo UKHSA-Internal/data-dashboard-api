@@ -4,7 +4,11 @@ from typing import Literal, Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.common.utils import ChartAxisFields, DataSourceFileType
+from metrics.domain.common.utils import (
+    ChartAxisFields,
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 
 
 class PlotParameters(BaseModel):
@@ -37,7 +41,7 @@ class PlotParameters(BaseModel):
 
     @property
     def metric_group(self) -> str:
-        return self.metric.split("_")[1]
+        return extract_metric_group_from_metric(self.metric)
 
     @property
     def geography_name(self) -> str | None:
@@ -114,9 +118,6 @@ class PlotParameters(BaseModel):
             "sex": self.sex or "",
             "age": self.age or "",
         }
-
-        if DataSourceFileType[self.metric_group].is_headline:
-            params["geography_code"] = ""
 
         if DataSourceFileType[self.metric_group].is_timeseries:
             params["fields_to_export"].append("in_reporting_delay_period")

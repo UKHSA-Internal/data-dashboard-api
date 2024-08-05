@@ -11,7 +11,7 @@ from pydantic import (
 from pydantic_core.core_schema import ValidationInfo
 
 from ingestion.data_transfer_models import validation
-from ingestion.metrics_interface.interface import DataSourceFileType
+from ingestion.metrics_interface.interface import MetricsAPIInterface
 from ingestion.utils import enums
 
 
@@ -27,7 +27,7 @@ class IncomingBaseDataModel(BaseModel):
     parent_theme: enums.ParentTheme
     child_theme: str
     topic: str
-    metric_group: DataSourceFileType
+    metric_group: MetricsAPIInterface.get_datasource_enum()
     metric: str
     geography_type: enums.GeographyType
     geography: str
