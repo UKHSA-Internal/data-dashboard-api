@@ -119,6 +119,24 @@ class IncomingBaseDataModel(BaseModel):
         )
         return self
 
+    @model_validator(mode="after")
+    def validate_deprecated_geography(self) -> Self:
+        """Validates the geography to check it has not been deprecated
+
+        Returns:
+            The current model instance
+
+        Raises:
+            `ValidationError`: If any of the validation checks fail
+
+        """
+        validation.validate_deprecated_geographies(
+            geography_code=self.geography_code,
+            geography_type=self.geography_type,
+            geography_name=self.geography,
+        )
+        return self
+
     @field_validator("metric")
     @classmethod
     def validate_metric(cls, metric: str, validation_info: ValidationInfo) -> str:
