@@ -9,11 +9,11 @@ MERSEY_NHS_TRUST = "Mersey and West Lancashire Teaching Hospitals NHS Trust"
 
 
 @pytest.mark.django_db(transaction=True)
-class Test0027DataMigrationForUpdatedNHSGeographies(MigrationTests):
+class Test0028DataMigrationForUpdatedNHSGeographies(MigrationTests):
     previous_migration_name = (
-        "0026_rename_in_reporting_lag_period_to_in_reporting_delay_period"
+        "0027_add_force_write_flag_to_bypass_uniqe_constraints_for_timeseries"
     )
-    current_migration_name = "0027_data_migration_for_updated_nhs_geographies"
+    current_migration_name = "0028_data_migration_for_updated_nhs_geographies"
     current_django_app = "data"
 
     def test_forward_and_then_backward_migration(self):
