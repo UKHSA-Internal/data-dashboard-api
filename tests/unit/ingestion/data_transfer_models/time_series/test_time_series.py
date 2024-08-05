@@ -23,6 +23,7 @@ class TestInboundTimeSeriesSpecificFields:
         fake_date = "2023-11-01"
         fake_embargo = VALID_DATETIME
         fake_metric_value = 123
+        fake_force_write_value = True
 
         # When
         imbound_time_series_specific_fields_validation = (
@@ -31,6 +32,7 @@ class TestInboundTimeSeriesSpecificFields:
                 date=fake_date,
                 embargo=fake_embargo,
                 metric_value=fake_metric_value,
+                force_write=fake_force_write_value,
             )
         )
 
