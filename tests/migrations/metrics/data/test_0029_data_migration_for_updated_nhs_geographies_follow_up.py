@@ -18,11 +18,12 @@ class Test0029DataMigrationForUpdatedNHSGeographiesFollowUp(MigrationTests):
 
     def test_forward_and_then_backward_migration(self):
         """
-        Given the database contains existing `Geography` records.
+        Given the database contains existing `Geography` records
+            for both St Helens and Mersey
+        And related dependencies from headline and timeseries
         When the new migration is applied
-        Then the `Geography` records are updated
-        When the migration is rolled back
-        Then the changes to the `Geography` records are reverted
+        Then the dependencies point to Mersey record
+        And the St Helens `Geography` record is deleted
         """
         # Given
         self.migrate_backward()
