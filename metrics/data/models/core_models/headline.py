@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
 from metrics.data.models.constants import (
@@ -48,6 +49,7 @@ class CoreHeadline(models.Model):
         max_digits=METRIC_VALUE_MAX_DIGITS,
         decimal_places=METRIC_VALUE_DECIMAL_PLACES,
     )
+    force_write = models.BooleanField(default=False)
 
     objects = CoreHeadlineManager()
 
@@ -64,7 +66,8 @@ class CoreHeadline(models.Model):
                     "period_end",
                     "metric_value",
                 ),
-                name="The `CoreHeadline` record should be unique",
+                name="The `CoreHeadline` record should be unique if `force_write` is False",
+                condition=Q(force_write=False),
             )
         ]
 
