@@ -52,7 +52,7 @@ def migrate_api_timeseries_forwards(*, apps: StateApps):
         geography_type="NHS Trust",
         geography_code="RBN",
     )
-    st_helens_api_time_series.update(geography=NHS_TRUST_UPDATE_LOOKUP["new_name"])
+    st_helens_api_time_series.update(geography=NHS_TRUST_UPDATE_LOOKUP["new_name"], force_write=True)
 
 
 def migrate_api_timeseries_backwards(*, apps: StateApps):
@@ -132,7 +132,7 @@ def migrate_st_helens_core_models_forwards(*, apps: StateApps):
     st_helens_core_time_series = CoreTimeSeries.objects.filter(
         geography_id=st_helens_trust.id
     )
-    st_helens_core_time_series.update(geography_id=mersey_trust.id)
+    st_helens_core_time_series.update(geography_id=mersey_trust.id, force_write=True)
 
     logger.info(
         "Migrating all `CoreHeadline` records from St Helens to Mersey and West Lancashire Trust"
@@ -141,12 +141,12 @@ def migrate_st_helens_core_models_forwards(*, apps: StateApps):
     st_helens_core_headline = CoreHeadline.objects.filter(
         geography_id=st_helens_trust.id
     )
-    st_helens_core_headline.update(geography_id=mersey_trust.id)
+    st_helens_core_headline.update(geography_id=mersey_trust.id, force_write=True)
 
     st_helens_trust.delete()
 
 
-def migrate_mersey_core_models_forwards(*, apps: StateApps):
+def migrate_mersey_core_models_backwards(*, apps: StateApps):
     GeographyType = apps.get_model("data", "GeographyType")
     try:
         nhs_trust = GeographyType.objects.get(name="NHS Trust")
@@ -199,7 +199,7 @@ def forwards_migration(apps: StateApps, schema_editor: DatabaseSchemaEditor) -> 
 
 def backwards_migration(apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
     migrate_api_timeseries_backwards(apps=apps)
-    migrate_mersey_core_models_forwards(apps=apps)
+    migrate_mersey_core_models_backwards(apps=apps)
 
 
 class Migration(migrations.Migration):
