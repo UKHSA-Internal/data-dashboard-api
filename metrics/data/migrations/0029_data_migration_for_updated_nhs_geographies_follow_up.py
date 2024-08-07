@@ -52,7 +52,9 @@ def migrate_api_timeseries_forwards(*, apps: StateApps):
         geography_type="NHS Trust",
         geography_code="RBN",
     )
-    st_helens_api_time_series.update(geography=NHS_TRUST_UPDATE_LOOKUP["new_name"], force_write=True)
+    st_helens_api_time_series.update(
+        geography=NHS_TRUST_UPDATE_LOOKUP["new_name"], force_write=True
+    )
 
 
 def migrate_api_timeseries_backwards(*, apps: StateApps):
