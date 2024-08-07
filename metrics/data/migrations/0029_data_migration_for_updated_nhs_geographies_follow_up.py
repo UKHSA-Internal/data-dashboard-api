@@ -136,17 +136,6 @@ def migrate_st_helens_core_models_forwards(*, apps: StateApps):
     )
     st_helens_core_time_series.update(geography_id=mersey_trust.id, force_write=True)
 
-    logger.info(
-        "Migrating all `CoreHeadline` records from St Helens to Mersey and West Lancashire Trust"
-    )
-    CoreHeadline = apps.get_model("data", "CoreHeadline")
-    st_helens_core_headline = CoreHeadline.objects.filter(
-        geography_id=st_helens_trust.id
-    )
-    st_helens_core_headline.update(geography_id=mersey_trust.id, force_write=True)
-
-    st_helens_trust.delete()
-
 
 def migrate_mersey_core_models_backwards(*, apps: StateApps):
     GeographyType = apps.get_model("data", "GeographyType")
@@ -185,13 +174,6 @@ def migrate_mersey_core_models_backwards(*, apps: StateApps):
         geography_id=mersey_trust.id
     )
     mersey_core_time_series.update(geography_id=st_helens_trust.id)
-
-    logger.info(
-        "Migrating all `CoreHeadline` records from Mersey and West Lancashire Trust to St Helens"
-    )
-    CoreHeadline = apps.get_model("data", "CoreHeadline")
-    mersey_core_headline = CoreHeadline.objects.filter(geography_id=mersey_trust.id)
-    mersey_core_headline.update(geography_id=st_helens_trust.id)
 
 
 def forwards_migration(apps: StateApps, schema_editor: DatabaseSchemaEditor) -> None:
