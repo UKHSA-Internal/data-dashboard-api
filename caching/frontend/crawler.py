@@ -9,7 +9,7 @@ from caching.common.geographies_crawler import (
     GeographyData,
 )
 from caching.common.pages import get_pages_for_area_selector
-from caching.frontend.threading import call_with_star_map_multithreading
+from caching.frontend.multi_threading import call_with_star_map_multithreading
 from caching.frontend.urls import FrontEndURLBuilder
 from caching.internal_api_client import InternalAPIClient
 from cms.topic.models import TopicPage

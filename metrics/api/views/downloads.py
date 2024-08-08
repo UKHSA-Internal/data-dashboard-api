@@ -18,7 +18,7 @@ from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.domain.bulk_downloads.get_downloads_archive import (
     get_bulk_downloads_archive,
 )
-from metrics.domain.exports.csv import write_data_to_csv
+from metrics.domain.exports.csv_output import write_data_to_csv
 from metrics.interfaces.downloads import access
 from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
 
