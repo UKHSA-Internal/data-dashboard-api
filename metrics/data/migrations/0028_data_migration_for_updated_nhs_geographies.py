@@ -96,6 +96,13 @@ def _update_nhs_trust(*, apps: StateApps) -> None:
         )
         return
 
+    if Geography.objects.filter(name=NHS_TRUST_UPDATE_LOOKUP["new_name"]).exists():
+        logger.info(
+            "Mersey and West Lancashire Teaching Hospitals NHS Trust `Geography` already exists. "
+            "Must migrate dependencies of St Helens seperately."
+        )
+        return
+
     st_helens_trust.name = NHS_TRUST_UPDATE_LOOKUP["new_name"]
     st_helens_trust.save()
 
