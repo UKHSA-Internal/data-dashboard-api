@@ -1,5 +1,6 @@
 from ingestion.metrics_interface import interface
 from metrics.data.enums import TimePeriod
+from metrics.domain.common.utils import DataSourceFileType
 from metrics.data.models.api_models import APITimeSeries
 from metrics.data.models.core_models import (
     Age,
@@ -241,3 +242,18 @@ class TestMetricsAPIInterface:
 
         # Then
         assert time_period_enum is TimePeriod
+
+    def test_get_datasource_enum(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_datasource_enum()` is called from that object
+        Then the `DataSourceFileType` enum is returned
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        data_source_enum = metrics_api_interface.get_datasource_enum()
+
+        # Then
+        assert data_source_enum is DataSourceFileType

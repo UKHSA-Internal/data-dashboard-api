@@ -4,6 +4,8 @@ from unittest import mock
 import plotly.graph_objects
 import pytest
 
+from metrics.data.managers.core_models.headline import CoreHeadlineManager
+from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import (
@@ -60,7 +62,6 @@ class TestChartsInterface:
         )
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
         )
 
         # When
@@ -99,7 +100,6 @@ class TestChartsInterface:
         fake_plots_collection.plots[0].chart_type = ChartTypes.bar.value
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
         )
 
         # When
@@ -139,7 +139,6 @@ class TestChartsInterface:
         fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
         )
 
         # When
@@ -192,7 +191,7 @@ class TestChartsInterface:
 
         charts_interface = ChartsInterface(
             chart_plots=plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
         plots_data = charts_interface.build_chart_plots_data()
 
@@ -252,7 +251,7 @@ class TestChartsInterface:
 
         charts_interface = ChartsInterface(
             chart_plots=plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
         plots_data = charts_interface.build_chart_plots_data()
 
@@ -301,7 +300,6 @@ class TestChartsInterface:
 
         charts_interface = ChartsInterface(
             chart_plots=fake_chart_plots,
-            core_time_series_manager=mock.Mock(),
             plots_interface=spy_plots_interface,
         )
 
@@ -338,7 +336,6 @@ class TestChartsInterface:
         original_latest_date_value = mock.Mock()
         charts_interface = ChartsInterface(
             chart_plots=plots_data,
-            core_time_series_manager=mock.Mock(),
         )
         charts_interface._latest_date = original_latest_date_value
 
@@ -391,7 +388,6 @@ class TestChartsInterface:
 
         charts_interface = ChartsInterface(
             chart_plots=fake_chart_plots,
-            core_time_series_manager=mock.Mock(),
         )
 
         # When
@@ -423,7 +419,10 @@ class TestChartsInterface:
             metric_name=metric
         )
 
-    def test_plots_interface_is_created_with_correct_args_by_default(self):
+    def test_plots_interface_is_created_with_correct_args_by_default(
+        self,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
         """
         Given a `PlotsCollection` and a `CoreTimeSeriesManager`
         When an instance of the `ChartsInterface` is created
@@ -432,26 +431,61 @@ class TestChartsInterface:
         """
         # Given
         mocked_plots_collection = mock.MagicMock()
-        mocked_core_time_series_manager = mock.Mock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
 
         # When
         charts_interface = ChartsInterface(
             chart_plots=mocked_plots_collection,
-            core_time_series_manager=mocked_core_time_series_manager,
         )
 
         # Then
         created_plots_interface = charts_interface.plots_interface
         assert created_plots_interface.plots_collection == mocked_plots_collection
-        assert (
-            created_plots_interface.core_time_series_manager
-            == mocked_core_time_series_manager
-        )
+
+    def test_charts_interface_initialises_core_model_manager_with_headline_manager(
+        self,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a valid `PlotsCollection` that contains a headline metric
+        When an instance the `ChartsInterface` is created
+        Then then the `core_model_manager` will be an instance of the `CoreHeadlineManager`.
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        fake_chart_plot_parameters.metric = "COVID-19_headline_vaccines_spring24Uptake"
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
+
+        # When
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # Then
+        assert isinstance(charts_interface.core_model_manager, CoreHeadlineManager)
+
+    def test_charts_interface_initialises_core_model_manager_with_timeseries_manager(
+        self,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a valid `PlotsCollection` that contains a timeseries metric
+        When an instance the `ChartsInterface` is created
+        Then then the `core_model_manager` will be an instance of the `CoreTimeSeriesManager`.
+        """
+        # Given
+        mocked_plots_collection = mock.MagicMock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
+
+        # When
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # Then
+        assert isinstance(charts_interface.core_model_manager, CoreTimeSeriesManager)
 
     @mock.patch.object(ChartsInterface, "create_optimized_svg", return_value="abc")
     def test_get_encoded_chart_delegates_call_to_get_last_updated(
         self,
         mocked_create_optimized_svg: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a mocked figure which returns
@@ -467,6 +501,7 @@ class TestChartsInterface:
         # Given
         mocked_latest_date = mock.Mock()
         mocked_plots_collection = mock.MagicMock(file_format="svg")
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
         charts_interface._latest_date = mocked_latest_date
 
@@ -480,7 +515,9 @@ class TestChartsInterface:
 
     @mock.patch.object(ChartsInterface, "encode_figure")
     def test_get_encoded_chart_delegates_call_to_encode_figure(
-        self, spy_encode_figure: mock.MagicMock
+        self,
+        spy_encode_figure: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a mocked figure
@@ -492,6 +529,7 @@ class TestChartsInterface:
         """
         # Given
         mocked_plots_collection = mock.MagicMock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
         mocked_figure = mock.Mock()
         mocked_figure.to_image.return_value = "abc"
         chart_output = ChartOutput(figure=mocked_figure, description="")
@@ -508,7 +546,9 @@ class TestChartsInterface:
 
     @mock.patch.object(ChartsInterface, "encode_figure")
     def test_get_encoded_chart_returns_description(
-        self, mocked_encode_figure: mock.MagicMock
+        self,
+        mocked_encode_figure: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
     ):
         """
         Given a mocked figure
@@ -522,6 +562,7 @@ class TestChartsInterface:
         """
         # Given
         mocked_plots_collection = mock.MagicMock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
         fake_description = "abcdef"
         chart_output = ChartOutput(figure=mock.Mock(), description=fake_description)
 
@@ -691,7 +732,6 @@ class TestMiscMethods:
         fake_plots_collection.file_format = file_format
         charts_interface = ChartsInterface(
             chart_plots=fake_plots_collection,
-            core_time_series_manager=mock.Mock(),
         )
 
         figure = plotly.graph_objs.Figure()

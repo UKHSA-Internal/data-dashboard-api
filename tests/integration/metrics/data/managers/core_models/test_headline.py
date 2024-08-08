@@ -9,6 +9,51 @@ from tests.factories.metrics.headline import CoreHeadlineFactory
 
 
 class TestCoreHeadlineManager:
+
+    @pytest.mark.django_db
+    def test_query_for_data_returns_expected_results(
+        self,
+    ):
+        """
+        Given a `CoreHeadline` record is live
+        When `query_for_data()` is called
+        Then then a queryset is returned with the correct x and y values
+            and the `period_end` of the record is added to the queryset as
+            `latest_date`
+        """
+        # Given
+        expected_record_period_start = "2024-01-01"
+        expected_record_period_end = "2024-01-02"
+        expected_record_headline = CoreHeadlineFactory.create_record(
+            metric_value=3,
+            period_start=expected_record_period_start,
+            period_end=expected_record_period_end,
+        )
+
+        # When
+        retrieved_record_queryset = CoreHeadline.objects.query_for_data(
+            fields_to_export=["age", "metric_value"],
+            topic_name=expected_record_headline.metric.topic.name,
+            metric_name=expected_record_headline.metric.name,
+            geography_name=expected_record_headline.geography.name,
+        )
+
+        retrieved_record_values = retrieved_record_queryset.values(
+            "age", "metric_value"
+        )
+
+        # Then
+        assert len(retrieved_record_queryset[0]) == 2
+        assert (
+            retrieved_record_queryset[0]["metric_value"]
+            == retrieved_record_values[0]["metric_value"]
+        )
+        assert retrieved_record_queryset[0]["age"] == retrieved_record_values[0]["age"]
+        assert (
+            retrieved_record_queryset.latest_date.strftime("%Y-%m-%d")
+            == expected_record_period_end
+        )
+
     @pytest.mark.django_db
     def test_get_latest_metric_value_returns_latest_metric_value_for_multiple_versions(
         self,
