@@ -1,1 +1,1 @@
-from .email import send_email
+from .email_server import send_email
