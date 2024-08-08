@@ -19,7 +19,7 @@ class GlobalBannerView(APIView):
     @extend_schema(
         tags=["cms"], responses={HTTPStatus.OK: GlobalBannerResponseSerializer}
     )
-    @cache_response
+    @cache_response()
     def get(cls, request, *args, **kwargs) -> Response:
         """
         This endpoint returns data associated with the currently active global banner

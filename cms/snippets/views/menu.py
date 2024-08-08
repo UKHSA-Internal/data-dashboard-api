@@ -16,7 +16,7 @@ class MenuView(APIView):
 
     @classmethod
     @extend_schema(tags=["cms"], responses={HTTPStatus.OK: MenuResponseSerializer})
-    @cache_response
+    @cache_response()
     def get(cls, request, *args, **kwargs) -> Response:
         """
         This endpoint returns the state of the currently active `Menu`
