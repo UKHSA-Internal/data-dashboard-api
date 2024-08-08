@@ -3,6 +3,7 @@ from enum import Enum
 
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 515
+DEFAULT_VALUE_ERROR_MESSAGE = "The metric provided doesn't appear to be valid."
 
 
 def get_last_day_of_month(*, date: datetime.datetime.date) -> datetime.datetime.date:
@@ -124,7 +125,8 @@ def extract_metric_group_from_metric(metric: str) -> str | None:
 
     Returns:
         string of the metric group the provided metric belongs to
-        if no matching metric group is found then `None` is returned.
+        if no matching metric group is found then a `ValueError` is
+        raised due to an invalid metric value.
     """
     if DataSourceFileType.headline.value in metric:
         return DataSourceFileType.headline.value
@@ -133,4 +135,4 @@ def extract_metric_group_from_metric(metric: str) -> str | None:
         if metric_group.value in metric:
             return metric_group.value
 
-    return None
+    raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE)

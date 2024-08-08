@@ -50,7 +50,7 @@ class ChartsInterface:
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
         self.metric_group = extract_metric_group_from_metric(
-            self.chart_plots.plots[0].metric
+            metric=self.chart_plots.plots[0].metric
         )
         self.core_model_manager = core_model_manager or self._set_core_model_manager()
 

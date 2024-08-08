@@ -382,13 +382,13 @@ class TestDataSourceFileType:
         Then the expected response is returned
         """
         # Given
-        expected_metric_group = expected_return_value
+        expected_is_headline_value = expected_return_value
 
         # When
-        returned_metric_group = DataSourceFileType[metric_group].is_headline
+        is_headline_value = DataSourceFileType[metric_group].is_headline
 
         # Then
-        assert returned_metric_group == expected_metric_group
+        assert is_headline_value == expected_is_headline_value
 
     @pytest.mark.parametrize(
         "metric_group, expected_return_value",
@@ -415,13 +415,13 @@ class TestDataSourceFileType:
         Then the expected response is returned
         """
         # Given
-        expected_metric_group = expected_return_value
+        expected_is_timeseries_value = expected_return_value
 
         # When
-        returned_metric_group = DataSourceFileType[metric_group].is_timeseries
+        is_timeseries_value = DataSourceFileType[metric_group].is_timeseries
 
         # Then
-        assert returned_metric_group == expected_metric_group
+        assert is_timeseries_value == expected_is_timeseries_value
 
 
 class TestExtractMetricGroup:
@@ -436,7 +436,6 @@ class TestExtractMetricGroup:
                 ("COVID-19_deaths_ONSRegByWeek", "deaths"),
                 ("COVID-19_healthcare_occupiedBedsRollingMean", "healthcare"),
                 ("COVID-19_vaccinations_autumn23_uptakeByDay", "vaccinations"),
-                ("non-existent-metric", None),
             ]
         ),
     )
@@ -453,7 +452,30 @@ class TestExtractMetricGroup:
         expected_metric_group = metric_group
 
         # When
-        returned_metric_group = extract_metric_group_from_metric(metric)
+        returned_metric_group = extract_metric_group_from_metric(metric=metric)
 
         # Then
         assert returned_metric_group == expected_metric_group
+
+    @pytest.mark.parametrize(
+        "metric",
+        (
+            [
+                "none-existent-metric-value",
+                "COVID-19_invalid_metric",
+            ]
+        ),
+    )
+    def test_extract_metric_raises_error(self, metric: str):
+        """
+        Given an invalid metric
+        When the `extract_metric_group_from_metric()` is called
+            with the metric value as its parameter
+        Then a `ValueError` is raised.
+        """
+        # Given
+        invalid_metric = metric
+
+        # When / Then
+        with pytest.raises(ValueError):
+            extract_metric_group_from_metric(metric=invalid_metric)
