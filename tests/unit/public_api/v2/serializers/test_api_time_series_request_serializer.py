@@ -19,7 +19,7 @@ from tests.fakes.managers.api_time_series_manager import FakeAPITimeSeriesManage
 from tests.fakes.models.metrics.api_time_series import FakeAPITimeSeries
 
 
-class TestAPIETimeSeriesRequestSerializerV2:
+class TestAPITimeSeriesRequestSerializerV2:
     @staticmethod
     def _setup_fake_api_time_series() -> list[FakeAPITimeSeries]:
         # Multiple `APITimeSeries` objects with 2 distinct `theme` values
