@@ -12,7 +12,7 @@ coreschema==0.0.4
 distlib==0.3.8
 django-cors-headers==4.4.0
 django-db-connection-pool==1.2.5
-django-filter==23.5
+django-filter==24.3
 django-modelcluster==6.3
 django-permissionedforms==0.1
 django-taggit==5.0.0
