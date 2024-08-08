@@ -2,13 +2,13 @@ from unittest import mock
 
 from django.core.mail.message import EmailMessage
 
-from feedback.email import (
+from feedback.email_server import (
     DEFAULT_FEEDBACK_EMAIL_SUBJECT,
     create_email_message,
     send_email,
 )
 
-MODULE_PATH = "feedback.email"
+MODULE_PATH = "feedback.email_server"
 
 
 class TestCreateEmailMessage:

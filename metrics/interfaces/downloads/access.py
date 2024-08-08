@@ -6,7 +6,7 @@ from django.db.models import Manager
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.exports.csv import FIELDS
+from metrics.domain.exports.csv_output import FIELDS
 from metrics.domain.models import PlotsCollection
 from metrics.domain.models.plots import CompletePlotData
 from metrics.interfaces.plots.access import PlotsInterface
