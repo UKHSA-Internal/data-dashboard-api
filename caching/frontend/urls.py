@@ -91,6 +91,15 @@ class FrontEndURLBuilder:
         """
         return urljoin(self._base_url, "/feedback/confirmation")
 
+    def build_url_for_sitemap(self) -> str:
+        """Builds the full URL for the sitemap page
+
+        Returns:
+            The full URL which can be passed to requests
+
+        """
+        return urljoin(self._base_url, "/sitemap.xml")
+
     @staticmethod
     def build_query_params_for_area_selector_page(
         *, geography_type_name: str, geography_name: str
