@@ -424,7 +424,10 @@ class TestBuildCMSSite:
         api_client = APIClient()
 
         # When
-        response = api_client.get(path="/api/menus/v1")
+        response = api_client.get(
+            path="/api/menus/v1",
+            headers={"CACHE_FORCE_REFRESH_HEADER_KEY": True},
+        )
 
         # Then
         menu_data = response.data["active_menu"]
