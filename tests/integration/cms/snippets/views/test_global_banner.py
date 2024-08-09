@@ -31,7 +31,11 @@ class TestGlobalBannerView:
         active_global_banner = GlobalBannerFactory.create(**active_banner_info)
 
         # When
-        response: Response = client.get(path=self.path, format="json")
+        response: Response = client.get(
+            path=self.path,
+            format="json",
+            headers={"CACHE_FORCE_REFRESH_HEADER_KEY": True},
+        )
 
         # Then
         assert response.status_code == HTTPStatus.OK
