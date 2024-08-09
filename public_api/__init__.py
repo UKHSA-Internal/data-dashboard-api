@@ -1,1 +1,1 @@
-from .urls import construct_urlpatterns_for_public_api
+from .urls import construct_versioned_urlpatterns_for_public_api

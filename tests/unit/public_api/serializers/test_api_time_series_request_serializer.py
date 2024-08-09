@@ -8,6 +8,8 @@ from public_api.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
     APITimeSeriesRequestSerializer,
 )
+from public_api.common.utils import return_request_serializer
+
 from tests.fakes.factories.metrics.api_time_series_factory import (
     FakeAPITimeSeriesFactory,
 )

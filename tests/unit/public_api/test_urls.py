@@ -1,6 +1,6 @@
 import pytest
 
-from public_api import construct_urlpatterns_for_public_api
+from public_api import construct_versioned_urlpatterns_for_public_api
 
 
 class TestConstructUrlPatternsForPublicAPI:
@@ -17,7 +17,7 @@ class TestConstructUrlPatternsForPublicAPI:
         api_prefix = prefix
 
         # When
-        urlpatterns = construct_urlpatterns_for_public_api(prefix=api_prefix)
+        urlpatterns = construct_versioned_urlpatterns_for_public_api(prefix=api_prefix)
 
         # Then
         assert all(
