@@ -55,7 +55,11 @@ class TestMenuView:
         )
 
         # When
-        response: Response = client.get(path=self.path, format="json")
+        response: Response = client.get(
+            path=self.path,
+            format="json",
+            headers={"Cache-Force-Refresh": True},
+        )
 
         # Then
         assert response.status_code == HTTPStatus.OK
