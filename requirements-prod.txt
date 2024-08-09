@@ -64,7 +64,7 @@ pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
 pytz==2024.1
 Pygments==2.18.0
-PyYAML==6.0.1
+PyYAML==6.0.2
 redis==5.0.8
 requests==2.32.3
 rich==13.7.1
