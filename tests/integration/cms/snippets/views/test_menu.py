@@ -58,7 +58,7 @@ class TestMenuView:
         response: Response = client.get(
             path=self.path,
             format="json",
-            headers={"CACHE_FORCE_REFRESH_HEADER_KEY": True},
+            headers={"Cache-Force-Refresh": True},
         )
 
         # Then

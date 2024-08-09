@@ -426,7 +426,7 @@ class TestBuildCMSSite:
         # When
         response = api_client.get(
             path="/api/menus/v1",
-            headers={"CACHE_FORCE_REFRESH_HEADER_KEY": True},
+            headers={"Cache-Force-Refresh": True},
         )
 
         # Then
