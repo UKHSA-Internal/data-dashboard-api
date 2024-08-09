@@ -175,10 +175,14 @@ class FrontEndCrawler:
         for page_item in all_page_items:
             self.process_page(page_item=page_item["meta"])
 
+        self._hit_ancillary_pages()
+        logger.info("Finished processing all regular pages for the frontend")
+
+    def _hit_ancillary_pages(self):
         self.hit_frontend_page(
             url=self._url_builder.build_url_for_feedback_confirmation_page()
         )
-        logger.info("Finished processing all regular pages for the frontend")
+        self.hit_frontend_page(url=self._url_builder.build_url_for_sitemap())
 
     def process_geography_page_combination(
         self, geography_data: GeographyData, page: TopicPage
