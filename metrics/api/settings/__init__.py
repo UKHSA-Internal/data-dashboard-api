@@ -10,6 +10,8 @@ match config.APIENV:
 match config.APP_MODE:
     case "INGESTION":
         from .ingestion import *
+    case "PUBLIC_API":
+        from .public_api import *
     case "PRIVATE_API":
         from .private_api import *
     case "FEEDBACK_API":
