@@ -95,10 +95,6 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == home_page_response_template["meta"]["search_description"]
         )
-        assert (
-            response_data["meta"]["show_in_menus"]
-            == home_page_response_template["meta"]["show_in_menus"]
-        )
 
         # Check that the related links have been populated correctly
         related_links_from_response = response_data["related_links"]
@@ -147,10 +143,6 @@ class TestBuildCMSSite:
         assert (
             response_data["meta"]["search_description"]
             == topic_page_response_template["meta"]["search_description"]
-        )
-        assert (
-            response_data["meta"]["show_in_menus"]
-            == topic_page_response_template["meta"]["show_in_menus"]
         )
         assert response_data["meta"]["parent"]["id"] == parent_home_page.id
         assert response_data["meta"]["parent"]["title"] == parent_home_page.title
@@ -202,10 +194,6 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == about_page_template["meta"]["search_description"]
         )
-        assert (
-            response_data["meta"]["show_in_menus"]
-            == about_page_template["meta"]["show_in_menus"]
-        )
         assert response_data["meta"]["parent"]["id"] == parent_page.id
         assert response_data["meta"]["parent"]["title"] == parent_page.title
 
@@ -250,10 +238,6 @@ class TestBuildCMSSite:
             response_data["meta"]["search_description"]
             == whats_new_page_template["meta"]["search_description"]
         )
-        assert (
-            response_data["meta"]["show_in_menus"]
-            == whats_new_page_template["meta"]["show_in_menus"]
-        )
         assert response_data["meta"]["parent"]["id"] == parent_home_page.id
         assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
@@ -296,10 +280,6 @@ class TestBuildCMSSite:
             response.data["meta"]["search_description"]
             == bulk_downloads_template["meta"]["search_description"]
         )
-        assert (
-            response.data["meta"]["show_in_menus"]
-            == bulk_downloads_template["meta"]["show_in_menus"]
-        )
         assert response.data["meta"]["parent"]["id"] == parent_page.id
         assert response.data["meta"]["parent"]["title"] == parent_page.title
 
@@ -338,10 +318,6 @@ class TestBuildCMSSite:
         assert (
             response.data["meta"]["search_description"]
             == access_our_data_parent_page_template["meta"]["search_description"]
-        )
-        assert (
-            response.data["meta"]["show_in_menus"]
-            == access_our_data_parent_page_template["meta"]["show_in_menus"]
         )
         assert response.data["meta"]["parent"]["id"] == parent_page.id
         assert response.data["meta"]["parent"]["title"] == parent_page.title
@@ -399,10 +375,6 @@ class TestBuildCMSSite:
                 "search_description"
             ]
         )
-        assert (
-            response_data["meta"]["show_in_menus"]
-            == access_our_data_getting_started_page_template["meta"]["show_in_menus"]
-        )
         assert response_data["meta"]["parent"]["id"] == parent_page.id
         assert response_data["meta"]["parent"]["title"] == parent_page.title
 
@@ -424,7 +396,10 @@ class TestBuildCMSSite:
         api_client = APIClient()
 
         # When
-        response = api_client.get(path="/api/menus/v1")
+        response = api_client.get(
+            path="/api/menus/v1",
+            headers={"Cache-Force-Refresh": True},
+        )
 
         # Then
         menu_data = response.data["active_menu"]

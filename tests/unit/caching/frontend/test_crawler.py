@@ -448,7 +448,40 @@ class TestFrontEndCrawler:
 
         # Then
         expected_url = frontend_url_builder.build_url_for_feedback_confirmation_page()
-        spy_hit_frontend_page.assert_called_with(url=expected_url)
+        spy_hit_frontend_page.assert_has_calls(
+            calls=[mock.call(url=expected_url)], any_order=True
+        )
+
+    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
+    def test_process_all_pages_hits_frontend_for_sitemap(
+        self,
+        spy_hit_frontend_page: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given no input
+        When `process_all_pages()` is called from
+            an instance of `FrontEndCrawler`
+        Then `hit_frontend_page()` is called
+            with the URL for the sitemap
+
+        Patches:
+            `spy_hit_frontend_page`: For the main assertion
+
+        """
+        # Given
+        frontend_url_builder = (
+            frontend_crawler_with_mocked_internal_api_client._url_builder
+        )
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.process_all_pages()
+
+        # Then
+        expected_url = frontend_url_builder.build_url_for_sitemap()
+        spy_hit_frontend_page.assert_has_calls(
+            calls=[mock.call(url=expected_url)], any_order=True
+        )
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
     def test_process_geography_page_combination(
