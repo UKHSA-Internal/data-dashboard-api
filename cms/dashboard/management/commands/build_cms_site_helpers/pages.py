@@ -51,7 +51,6 @@ def create_landing_dashboard_page(*, parent_page: Page) -> HomePage:
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        show_in_menus=data["meta"]["show_in_menus"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -75,7 +74,6 @@ def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
         date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        show_in_menus=data["meta"]["show_in_menus"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -98,7 +96,6 @@ def create_common_page(*, name: str, parent_page: Page) -> CommonPage:
         date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        show_in_menus=data["meta"]["show_in_menus"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -146,7 +143,6 @@ def create_bulk_downloads_page(*, name: str, parent_page: Page) -> CompositePage
         date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        show_in_menus=data["meta"]["show_in_menus"],
     )
 
     _add_page_to_parent(page=page, parent_page=parent_page)
@@ -170,7 +166,6 @@ def create_composite_page(*, name: str, parent_page: Page) -> CompositePage:
         date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        show_in_menus=data["meta"]["show_in_menus"],
     )
 
     _add_page_to_parent(page=page, parent_page=parent_page)
@@ -194,7 +189,6 @@ def create_whats_new_parent_page(*, name: str, parent_page: Page) -> WhatsNewPar
         date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        show_in_menus=data["meta"]["show_in_menus"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -220,7 +214,6 @@ def create_whats_new_child_entry(*, name: str, parent_page: Page) -> WhatsNewChi
         date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        show_in_menus=data["meta"]["show_in_menus"],
         additional_details=data["additional_details"],
         badge=badge,
     )
