@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework.templatetags.rest_framework import render_markdown
 from wagtail.admin.panels.field_panel import FieldPanel
+from wagtail.admin.panels.group import MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.models import Page, SiteRootPath
 
@@ -45,9 +46,17 @@ class UKHSAPage(Page):
         APIField("seo_priority"),
     ]
 
-    promote_panels = Page.promote_panels + [
-        FieldPanel("seo_change_frequency"),
-        FieldPanel("seo_priority"),
+    promote_panels = [
+        MultiFieldPanel(
+            children=[
+                FieldPanel("slug"),
+                FieldPanel("seo_title"),
+                FieldPanel("search_description"),
+                FieldPanel("seo_change_frequency"),
+                FieldPanel("seo_priority"),
+            ],
+            heading="For search engines",
+        ),
     ]
 
     class Meta:

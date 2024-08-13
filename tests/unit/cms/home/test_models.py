@@ -89,6 +89,24 @@ class TestBlankHomePage:
         }
         assert sidebar_content_panel_names == expected_sidebar_content_panel_names
 
+    def test_show_in_menus_not_available_in_promote_panel(self):
+        """
+        Given a blank `HomePage` model
+        When `promote_panels` is called
+        Then `show_in_menus` is not available
+        """
+        # Given
+        blank_page = FakeHomePageFactory.build_blank_page()
+
+        # When
+        sidebar_content_panels: list[InlinePanel] = blank_page.sidebar_content_panels
+
+        # Then
+        sidebar_content_panel_names: set[str] = {
+            p.relation_name for p in sidebar_content_panels
+        }
+        assert "show_in_menus" not in sidebar_content_panel_names
+
     def test_is_previewable_returns_false(self):
         """
         Given a blank `HomePage` model
