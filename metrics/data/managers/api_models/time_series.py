@@ -116,28 +116,16 @@ class APITimeSeriesQuerySet(models.QuerySet):
             only the latest records for each date
 
         """
-        partition_fields = ["age", "sex", "stratum", "date"]
-        return cls.get_latest_refresh_date_records_per_window(
-            queryset=queryset, partition_fields=partition_fields
+        # Filter the queryset to get records with a ranking of 1.
+        # This will return the records with the latest `refresh_date` within each partition
+        queryset = self._partition_and_rank_data(
+            queryset=queryset, partition_fields=self.partition_fields
         )
 
     @classmethod
-    def get_latest_refresh_date_records_per_window(
+    def _partition_and_rank_data(
         cls, *, queryset: Self, partition_fields: list[str]
     ) -> Self:
-        """Partitions the `queryset` and returns records with the latest `refresh_date` from each window
-
-        Args:
-            queryset: The queryset to split and assess
-                for the latest refreshed data within each partition
-            partition_fields: List of field names from which
-                to create the partitions with.
-
-        Returns:
-            An `APITimeSeriesQuerySet` which contains
-            only the latest refreshed data within each partition
-
-        """
         # Use the window function to annotate
         # the rank of each record within its partition
         window = models.Window(
@@ -148,11 +136,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
 
         # Annotate each record with a calculated ranking.
         # Whereby the `refresh_ranking` is determined by the latest `refresh_date`
-        queryset = queryset.annotate(refresh_ranking=window)
-
-        # Filter the queryset to get records with a ranking of 1.
-        # This will return the records with the latest `refresh_date` within each partition
-        return queryset.filter(refresh_ranking=1)
+        return queryset.annotate(refresh_ranking=window)
 
     @staticmethod
     def _exclude_data_under_embargo(*, queryset: models.QuerySet) -> models.QuerySet:
