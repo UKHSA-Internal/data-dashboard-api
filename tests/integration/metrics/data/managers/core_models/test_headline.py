@@ -341,7 +341,9 @@ class TestCoreHeadlineManager:
         )
 
     @pytest.mark.django_db
-    def test_query_for_superseded_data_returns_superseded_records_only(self):
+    def test_query_for_superseded_data_returns_superseded_records_only(
+        self, timestamp_2_months_from_now: datetime.datetime
+    ):
         """
         Given a number of `CoreHeadline` records which are stale
         And a `CoreHeadline` records which is live
@@ -353,10 +355,6 @@ class TestCoreHeadlineManager:
             And the embargoed record is also omitted
         """
         # Given
-        future_embargo_date = get_date_n_months_ago_from_timestamp(
-            datetime_stamp=datetime.datetime.now(),
-            number_of_months=-2,
-        )
         first_stale_round_outdated_period_start = "2023-01-01"
         first_stale_round_outdated_period_end = "2023-01-02"
         first_stale_round_headline = CoreHeadlineFactory.create_record(
@@ -387,7 +385,7 @@ class TestCoreHeadlineManager:
             metric_value=4,
             period_start=embargoed_round_period_start,
             period_end=embargoed_round_period_end,
-            embargo=future_embargo_date,
+            embargo=timestamp_2_months_from_now,
         )
 
         # When

@@ -418,6 +418,7 @@ class TestCoreTimeSeriesManager:
     @pytest.mark.django_db
     def test_query_for_superseded_data_returns_stale_records_only(
         self,
+        timestamp_2_months_from_now: datetime.datetime,
     ):
         """
         Given a number of `CoreTimeSeries` records which are stale
@@ -434,10 +435,6 @@ class TestCoreTimeSeriesManager:
         second_round_refresh_date = "2023-08-11"
         third_round_refresh_date = "2023-08-12"
         fourth_round_refresh_date = "2023-08-13"
-        future_embargo_date = get_date_n_months_ago_from_timestamp(
-            datetime_stamp=datetime.datetime.now(),
-            number_of_months=-2,
-        )
 
         # Our first round of records which are all considered outdated
         stale_first_round_records = [
@@ -479,7 +476,7 @@ class TestCoreTimeSeriesManager:
                 metric_value=5,
                 date=first_date,
                 refresh_date=fourth_round_refresh_date,
-                embargo=future_embargo_date,
+                embargo=timestamp_2_months_from_now,
             )
         )
 
