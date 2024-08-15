@@ -174,6 +174,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
     @staticmethod
     def filter_for_latest_refresh_date_records(
+        self,
         *,
         queryset: models.QuerySet,
     ) -> models.QuerySet:
@@ -205,6 +206,13 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             only the latest records for each date
 
         """
+        latest_record_ids: list[int] = self._get_ids_of_latest_records(
+            queryset=queryset
+        )
+        return queryset.filter(pk__in=latest_record_ids)
+
+    @classmethod
+    def _get_ids_of_latest_records(cls, queryset: Self) -> list[int]:
         # Build a queryset labelled with the latest `refresh_date` for each `date`
         latest_refresh_dates_associated_with_dates: CoreTimeSeriesQuerySet = (
             queryset.values("date").annotate(latest_refresh=models.Max("refresh_date"))
@@ -223,13 +231,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         }
 
         # Filter the IDs for the records in memory to get the latest ones partitioned by each date
-        resulting_ids: list[int] = [
+        return [
             record.id
             for record in queryset
             if record.refresh_date == latest_records_map.get(record.date)
         ]
-
-        return queryset.filter(pk__in=resulting_ids)
 
     @staticmethod
     def _annotate_latest_date_on_queryset(
