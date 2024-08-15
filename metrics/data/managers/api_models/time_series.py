@@ -15,6 +15,10 @@ from django.utils import timezone
 class APITimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `APITimeSeriesManager`"""
 
+    @property
+    def partition_fields(self) -> list[str]:
+        return ["age", "sex", "stratum", "date"]
+
     def get_distinct_column_values_with_filters(
         self, lookup_field: str, **kwargs
     ) -> "APITimeSeriesQuerySet":
@@ -86,8 +90,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
 
-    @classmethod
-    def filter_for_latest_refresh_date_records(cls, *, queryset: Self) -> Self:
+    def filter_for_latest_refresh_date_records(self, *, queryset: Self) -> Self:
         """Filters the given `queryset` to ensure the latest record is returned for each individual date
 
         Notes:
@@ -106,7 +109,11 @@ class APITimeSeriesQuerySet(models.QuerySet):
             so that we don't simply return the latest round
             in its entirety but rather the overall result
             which return the most recent record
-            for the individual dates
+            for the individual dates.
+
+            This will partition the `queryset`
+            and returns records with the latest `refresh_date`
+            from each window
 
         Args:
             queryset: The queryset to filter against
@@ -121,6 +128,42 @@ class APITimeSeriesQuerySet(models.QuerySet):
         queryset = self._partition_and_rank_data(
             queryset=queryset, partition_fields=self.partition_fields
         )
+        return queryset.filter(refresh_ranking=1)
+
+    def filter_for_outdated_refresh_date_records(self, *, queryset: Self) -> Self:
+        """Grabs all stale records which are not under embargo
+
+         Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- expected results
+                | 2nd round  |      -     | 2nd round  |
+
+            This will partition the `queryset`
+            and returns records which do not have
+            the latest `refresh_date` from each window
+
+        Args:
+            queryset: The queryset to filter against
+
+        Returns:
+            A new filtered queryset containing
+            only the stale records for each date
+
+        """
+        # Filter the queryset to get records with a ranking of greater than 1.
+        # This will return the records with outdated `refresh_dates` within each partition
+        queryset = self._partition_and_rank_data(
+            queryset=queryset, partition_fields=self.partition_fields
+        )
+        return queryset.filter(refresh_ranking__gt=1)
 
     @classmethod
     def _partition_and_rank_data(
@@ -158,6 +201,64 @@ class APITimeSeriesQuerySet(models.QuerySet):
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
         )
 
+    def query_for_superseded_data(
+        self,
+        *,
+        theme_name: str,
+        sub_theme_name: str,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        geography_code: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> Self:
+        """Grabs all stale records which are not under embargo.
+
+        Args:
+           theme_name: The name of the parent theme being queried.
+               E.g. `infectious_disease`
+           sub_theme_name: The name of the child theme being queried.
+               E.g. `respiratory`
+           topic_name: The name of the threat being queried.
+               E.g. `COVID-19`
+           metric_name: The name of the metric being queried.
+               E.g. `COVID-COVID-19_cases_countRollingMean`
+           geography_name: The name of the geography being queried.
+               E.g. `England`
+           geography_type_name: The name of the geography type being queried.
+               E.g. `Nation`
+           geography_code: Code associated with the geography being queried.
+               E.g. "E45000010"
+           stratum_name: The value of the stratum to apply additional filtering to.
+               E.g. `default`, which would be used to capture all strata.
+           sex: The gender to apply additional filtering to.
+               E.g. `F`, would be used to capture Females.
+               Note that options are `M`, `F`, or `ALL`.
+           age: The age range to apply additional filtering to.
+               E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+           The stale records in their entirety as a queryset
+
+        """
+        queryset = self.filter(
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            metric=metric_name,
+            geography=geography_name,
+            geography_code=geography_code,
+            geography_type=geography_type_name,
+            stratum=stratum_name,
+            age=age,
+            sex=sex,
+        )
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
+        return self.filter_for_outdated_refresh_date_records(queryset=queryset)
+
 
 class APITimeSeriesManager(models.Manager):
     """Custom model manager class for the `APITimeSeries` model."""
@@ -182,4 +283,77 @@ class APITimeSeriesManager(models.Manager):
         """
         return self.get_queryset().get_distinct_column_values_with_filters(
             lookup_field=lookup_field, **kwargs
+        )
+
+    def query_for_superseded_data(
+        self,
+        *,
+        theme_name: str,
+        sub_theme_name: str,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        geography_code: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> APITimeSeriesQuerySet:
+        """Grabs all stale records which are not under embargo.
+
+         Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- expected results
+                | 2nd round  |      -     | 2nd round  |
+
+            This will partition the `queryset`
+            and returns records which do not have
+            the latest `refresh_date` from each window
+
+        Args:
+           theme_name: The name of the parent theme being queried.
+               E.g. `infectious_disease`
+           sub_theme_name: The name of the child theme being queried.
+               E.g. `respiratory`
+           topic_name: The name of the threat being queried.
+               E.g. `COVID-19`
+           metric_name: The name of the metric being queried.
+               E.g. `COVID-COVID-19_cases_countRollingMean`
+           geography_name: The name of the geography being queried.
+               E.g. `England`
+           geography_type_name: The name of the geography type being queried.
+               E.g. `Nation`
+           geography_code: Code associated with the geography being queried.
+               E.g. "E45000010"
+           stratum_name: The value of the stratum to apply additional filtering to.
+               E.g. `default`, which would be used to capture all strata.
+           sex: The gender to apply additional filtering to.
+               E.g. `F`, would be used to capture Females.
+               Note that options are `M`, `F`, or `ALL`.
+           age: The age range to apply additional filtering to.
+               E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+           The stale records in their entirety as a queryset
+
+        """
+        return self.get_queryset().query_for_superseded_data(
+            theme_name=theme_name,
+            sub_theme_name=sub_theme_name,
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            geography_code=geography_code,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
         )
