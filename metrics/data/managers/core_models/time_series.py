@@ -546,3 +546,61 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().get_available_geographies(topic=topic)
+
+    def delete_superseded_data(
+        self,
+        *,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        geography_code: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> None:
+        """Deletes all stale records within each individual date
+
+        Args:
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            geography_type_name: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+           geography_code: Code associated with the geography being queried.
+               E.g. "E45000010"
+           stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+           sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+           age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- expected results
+                | 2nd round  |      -     | 2nd round  |
+
+        Returns:
+            None
+
+        """
+        superseded_records = self.get_queryset().query_for_superseded_data(
+            metric_name=metric_name,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            geography_code=geography_code,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+        superseded_records.delete()
