@@ -210,7 +210,7 @@ class Consumer:
             sub_theme_id=sub_theme.id,
         )
 
-    def get_or_create_geography_type(self):
+    def _get_or_create_geography_type(self):
         """Returns the corresponding `GeographyType` record to be associated with the current `data`
 
         Returns:
@@ -320,7 +320,7 @@ class Consumer:
         sub_theme = self._get_or_create_sub_theme(theme=theme)
         topic = self._get_or_create_topic(sub_theme=sub_theme)
 
-        geography_type = self.get_or_create_geography_type()
+        geography_type = self._get_or_create_geography_type()
         geography = self.get_or_create_geography(geography_type=geography_type)
 
         metric_group = self.get_or_create_metric_group(topic=topic)
