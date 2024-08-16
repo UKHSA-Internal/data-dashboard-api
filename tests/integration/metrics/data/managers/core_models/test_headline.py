@@ -341,18 +341,17 @@ class TestCoreHeadlineManager:
         )
 
     @pytest.mark.django_db
-    def test_query_for_superseded_data_returns_superseded_records_only(
+    def test_delete_superseded_data_deletes_stale_records_only(
         self, timestamp_2_months_from_now: datetime.datetime
     ):
         """
         Given a number of `CoreHeadline` records which are stale
         And a `CoreHeadline` records which is live
         And a `CoreHeadline` records which is under embargo
-        When `query_for_superseded_data()` is called
+        When `delete_superseded_data()` is called
             from an instance of the `CoreHeadlineManager`
-        Then only the stale records are returned
-            And the current live record is omitted
-            And the embargoed record is also omitted
+        Then only the stale records are deleted
+        And the live & embargoed records are still available
         """
         # Given
         first_stale_round_outdated_period_start = "2023-01-01"
@@ -389,7 +388,7 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        superseded_headlines = CoreHeadline.objects.query_for_superseded_data(
+        CoreHeadline.objects.delete_superseded_data(
             topic_name=current_round_headline.metric.topic.name,
             metric_name=current_round_headline.metric.name,
             geography_name=current_round_headline.geography.name,
@@ -399,9 +398,10 @@ class TestCoreHeadlineManager:
             age=current_round_headline.age.name,
             sex=current_round_headline.sex,
         )
+        retrieved_records = CoreHeadline.objects.all()
 
         # Then
-        assert first_stale_round_headline in superseded_headlines
-        assert second_stale_round_headline in superseded_headlines
-        assert current_round_headline not in superseded_headlines
-        assert embargoed_round_headline not in superseded_headlines
+        assert first_stale_round_headline not in retrieved_records
+        assert second_stale_round_headline not in retrieved_records
+        assert current_round_headline in retrieved_records
+        assert embargoed_round_headline in retrieved_records

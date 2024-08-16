@@ -416,7 +416,7 @@ class TestCoreTimeSeriesManager:
         assert available_geographies[1].geography__geography_type__name == "Nation"
 
     @pytest.mark.django_db
-    def test_query_for_superseded_data_returns_stale_records_only(
+    def test_delete_superseded_data_deletes_stale_records_only(
         self,
         timestamp_2_months_from_now: datetime.datetime,
     ):
@@ -425,9 +425,10 @@ class TestCoreTimeSeriesManager:
         And a number of `CoreTimeSeries` records which are live,
             but not grouped linearly.
         And an embargoed record
-        When `query_for_superseded_data()` is called
+        When `delete_superseded_data()` is called
             from an instance of the `CoreTimeSeriesManager`
-        Then only the stale `CoreTimeSeries` records are returned
+        Then only the stale `CoreTimeSeries` records are deleted
+        And the live & embargoed records are still available
         """
         # Given
         dates = FAKE_DATES
@@ -481,7 +482,7 @@ class TestCoreTimeSeriesManager:
         )
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_superseded_data(
+        CoreTimeSeries.objects.delete_superseded_data(
             metric_name=expected_live_fourth_round_for_first_date.metric.name,
             geography_name=expected_live_fourth_round_for_first_date.geography.name,
             geography_code=expected_live_fourth_round_for_first_date.geography.geography_code,
@@ -490,6 +491,7 @@ class TestCoreTimeSeriesManager:
             age=expected_live_fourth_round_for_first_date.age.name,
             sex=expected_live_fourth_round_for_first_date.sex,
         )
+        retrieved_records = CoreTimeSeries.objects.all()
 
         # Then
         # Our database will look like the following:
@@ -500,17 +502,17 @@ class TestCoreTimeSeriesManager:
         # | 4th round  |      -     |     -      |   <- 'head' round with no successors
         # | 5th round  |      -     |     -      |   <- embargo round not yet released
         # ----------------------------------------
-        # | 1st round  | 1st round  | 1st round  |   <- expected results
-        # | 2nd round  |      -     | 2nd round  |   <- expected results
-        assert retrieved_records.count() == 5
+        # | 1st round  | 1st round  | 1st round  |   <- expected records to be deleted
+        # | 2nd round  |      -     | 2nd round  |   <- expected records to be deleted
+        assert retrieved_records.count() == 4
 
         for stale_first_round_record in stale_first_round_records:
-            assert stale_first_round_record in retrieved_records
+            assert stale_first_round_record not in retrieved_records
 
-        assert partially_stale_second_round_versions[0] in retrieved_records
-        assert partially_stale_second_round_versions[2] in retrieved_records
+        assert partially_stale_second_round_versions[0] not in retrieved_records
+        assert partially_stale_second_round_versions[2] not in retrieved_records
 
-        assert expected_live_second_round_for_second_date not in retrieved_records
-        assert expected_live_third_version_for_third_date not in retrieved_records
-        assert expected_live_fourth_round_for_first_date not in retrieved_records
-        assert embargoed_fifth_round_for_first_date not in retrieved_records
+        assert expected_live_second_round_for_second_date in retrieved_records
+        assert expected_live_third_version_for_third_date in retrieved_records
+        assert expected_live_fourth_round_for_first_date in retrieved_records
+        assert embargoed_fifth_round_for_first_date in retrieved_records
