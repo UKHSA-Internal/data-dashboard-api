@@ -456,6 +456,24 @@ class Consumer:
             model_manager=self.core_timeseries_manager, model_instances=core_time_series
         )
 
+    def clear_stale_headlines(self):
+        """Deletes all stale records for the `CoreHeadline` records relevant to the ingested dataset
+
+        Returns:
+            None
+
+        """
+        self.core_headline_manager.delete_superseded_data(
+            topic_name=self.dto.topic,
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
+
     def build_api_time_series(self) -> list[API_TIME_SERIES_MODEL]:
         """Builds `APITimeSeries` model instances from the ingested data
 
@@ -516,3 +534,29 @@ class Consumer:
         """
         self.create_core_time_series()
         self.create_api_time_series()
+
+    def clear_stale_timeseries(self):
+        """Deletes all stale records for both `CoreTimeSeries` and `APITimeSeries` relevant to the ingested dataset
+
+        Returns:
+            None
+
+        """
+        self.core_timeseries_manager.delete_superseded_data(
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
+        self.api_timeseries_manager.delete_superseded_data(
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
