@@ -240,7 +240,7 @@ class Consumer:
             geography_type_id=geography_type.id,
         )
 
-    def get_or_create_metric_group(self, *, topic):
+    def _get_or_create_metric_group(self, *, topic):
         """Returns the corresponding `MetricGroup` record to be associated with the current `data`
 
         Args:
@@ -323,7 +323,7 @@ class Consumer:
         geography_type = self._get_or_create_geography_type()
         geography = self._get_or_create_geography(geography_type=geography_type)
 
-        metric_group = self.get_or_create_metric_group(topic=topic)
+        metric_group = self._get_or_create_metric_group(topic=topic)
         metric = self.get_or_create_metric(metric_group=metric_group, topic=topic)
 
         stratum = self.get_or_create_stratum()
