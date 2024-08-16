@@ -253,7 +253,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_age()` is called
+        When `_get_or_create_age()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `AgeManager` with the correct args
@@ -268,7 +268,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_age()
+        created_model = consumer._get_or_create_age()
 
         # Then
         assert created_model == expected_model
