@@ -25,7 +25,7 @@ def consumer_with_mocked_model_managers() -> Consumer:
 
 
 class TestConsumerUpdateSupportingModels:
-    @mock.patch.object(Consumer, "get_or_create_theme")
+    @mock.patch.object(Consumer, "_get_or_create_theme")
     @mock.patch.object(Consumer, "get_or_create_sub_theme")
     @mock.patch.object(Consumer, "get_or_create_topic")
     def test_updates_theme_sub_theme_and_topic(

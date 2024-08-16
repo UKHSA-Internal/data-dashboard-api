@@ -164,7 +164,7 @@ class Consumer:
         record, _ = model_manager.get_or_create(**kwargs)
         return record
 
-    def get_or_create_theme(self):
+    def _get_or_create_theme(self):
         """Returns the corresponding `Theme` record to be associated with the current `data`
 
         Returns:
@@ -316,7 +316,7 @@ class Consumer:
             when creating the `CoreHeadline` or `CoreTimeSeries` records
 
         """
-        theme = self.get_or_create_theme()
+        theme = self._get_or_create_theme()
         sub_theme = self.get_or_create_sub_theme(theme=theme)
         topic = self.get_or_create_topic(sub_theme=sub_theme)
 

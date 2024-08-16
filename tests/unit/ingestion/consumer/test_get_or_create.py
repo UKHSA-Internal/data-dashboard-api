@@ -25,7 +25,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_theme()
+        created_model = consumer._get_or_create_theme()
 
         # Then
         assert created_model == expected_model
