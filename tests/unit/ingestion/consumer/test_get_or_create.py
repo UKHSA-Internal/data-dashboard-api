@@ -225,7 +225,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_stratum()` is called
+        When `_get_or_create_stratum()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `StratumManager` with the correct args
@@ -240,7 +240,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_stratum()
+        created_model = consumer._get_or_create_stratum()
 
         # Then
         assert created_model == expected_model

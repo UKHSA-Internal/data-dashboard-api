@@ -277,7 +277,7 @@ class Consumer:
             topic_id=topic.id,
         )
 
-    def get_or_create_stratum(self):
+    def _get_or_create_stratum(self):
         """Returns the corresponding `Stratum` record to be associated with the current `data`
 
         Returns:
@@ -326,7 +326,7 @@ class Consumer:
         metric_group = self._get_or_create_metric_group(topic=topic)
         metric = self._get_or_create_metric(metric_group=metric_group, topic=topic)
 
-        stratum = self.get_or_create_stratum()
+        stratum = self._get_or_create_stratum()
         age = self.get_or_create_age()
 
         return SupportingModelsLookup(
