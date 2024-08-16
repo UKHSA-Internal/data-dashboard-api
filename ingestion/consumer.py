@@ -336,6 +336,41 @@ class Consumer:
             age_id=age.id,
         )
 
+    def process_core_headlines(self) -> None:
+        """Creates `CoreHeadline` database records from the ingested data after stale records are deleted ahead of time.
+
+        Notes:
+            Any necessary supporting models will be created
+            as required for the `CoreHeadline` records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Returns:
+            None
+
+        """
+        self.clear_stale_headlines()
+        self.create_core_headlines()
+
+    def process_core_and_api_timeseries(self) -> None:
+        """Creates `APITimeSeries` and `CoreTimeSeries` records from the ingested data after stale records are deleted.
+
+        Any necessary supporting models will be created
+            as required for the records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Returns:
+            None
+
+        """
+        self.clear_stale_timeseries()
+        self.create_core_and_api_timeseries()
+
     # build and create model methods
 
     def build_core_headlines(self) -> list[CORE_HEADLINE_MODEL]:
