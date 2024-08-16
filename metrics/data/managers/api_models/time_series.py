@@ -430,4 +430,10 @@ class APITimeSeriesManager(models.Manager):
             sex=sex,
             age=age,
         )
-        superseded_records.delete()
+        # Note that we cannot call `delete()` on the above queryset.
+        # This is because it uses the `WINDOW` function.
+        # Which is not allowed with a `DELETE` statement.
+        superseded_record_ids = superseded_records.values_list("id", flat=True)
+
+        stale_records = self.get_queryset().filter(pk__in=superseded_record_ids)
+        stale_records.delete()
