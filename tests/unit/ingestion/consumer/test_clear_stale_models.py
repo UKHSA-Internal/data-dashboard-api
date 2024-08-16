@@ -70,7 +70,7 @@ class TestConsumerClearStaleModels:
         )
         spy_api_timeseries_manager.delete_superseded_data.assert_called_once_with(
             theme_name=example_headline_data["parent_theme"],
-            sub_theme=example_headline_data["child_theme"],
+            sub_theme_name=example_headline_data["child_theme"],
             topic_name=example_headline_data["topic"],
             metric_name=example_headline_data["metric"],
             geography_name=example_headline_data["geography"],

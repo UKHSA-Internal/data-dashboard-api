@@ -588,7 +588,7 @@ class Consumer:
         )
         self.api_timeseries_manager.delete_superseded_data(
             theme_name=self.dto.parent_theme,
-            sub_theme=self.dto.child_theme,
+            sub_theme_name=self.dto.child_theme,
             topic_name=self.dto.topic,
             metric_name=self.dto.metric,
             geography_name=self.dto.geography,
