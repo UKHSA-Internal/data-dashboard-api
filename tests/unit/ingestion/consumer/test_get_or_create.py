@@ -126,7 +126,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_geography()` is called
+        When `_get_or_create_geography()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `GeographyManager` with the correct args
@@ -143,7 +143,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_geography(
+        created_model = consumer._get_or_create_geography(
             geography_type=mocked_geography_type
         )
 

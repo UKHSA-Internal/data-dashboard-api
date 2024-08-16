@@ -222,7 +222,7 @@ class Consumer:
             name=self.dto.geography_type,
         )
 
-    def get_or_create_geography(self, *, geography_type):
+    def _get_or_create_geography(self, *, geography_type):
         """Returns the corresponding `Geography` record to be associated with the current `data`
 
         Args:
@@ -321,7 +321,7 @@ class Consumer:
         topic = self._get_or_create_topic(sub_theme=sub_theme)
 
         geography_type = self._get_or_create_geography_type()
-        geography = self.get_or_create_geography(geography_type=geography_type)
+        geography = self._get_or_create_geography(geography_type=geography_type)
 
         metric_group = self.get_or_create_metric_group(topic=topic)
         metric = self.get_or_create_metric(metric_group=metric_group, topic=topic)
