@@ -176,7 +176,7 @@ class Consumer:
             name=self.dto.parent_theme,
         )
 
-    def get_or_create_sub_theme(self, *, theme):
+    def _get_or_create_sub_theme(self, *, theme):
         """Returns the corresponding `SubTheme` record to be associated with the current `data`
 
         Args:
@@ -317,7 +317,7 @@ class Consumer:
 
         """
         theme = self._get_or_create_theme()
-        sub_theme = self.get_or_create_sub_theme(theme=theme)
+        sub_theme = self._get_or_create_sub_theme(theme=theme)
         topic = self.get_or_create_topic(sub_theme=sub_theme)
 
         geography_type = self.get_or_create_geography_type()

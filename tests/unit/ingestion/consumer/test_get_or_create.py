@@ -10,7 +10,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_theme()` is called
+        When `_get_or_create_theme()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `ThemeManager` with the correct args
@@ -38,7 +38,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_sub_theme()` is called
+        When `_get_or_create_sub_theme()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `SubThemeManager` with the correct args
@@ -55,7 +55,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_sub_theme(theme=mocked_theme)
+        created_model = consumer._get_or_create_sub_theme(theme=mocked_theme)
 
         # Then
         assert created_model == expected_model
