@@ -191,7 +191,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_metric()` is called
+        When `_get_or_create_metric()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `MetricManager` with the correct args
@@ -208,7 +208,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_metric(
+        created_model = consumer._get_or_create_metric(
             metric_group=mocked_metric_group, topic=mocked_topic
         )
 
