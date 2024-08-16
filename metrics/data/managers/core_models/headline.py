@@ -284,8 +284,14 @@ class CoreHeadlineManager(models.Manager):
         # Which cannot be done since `OFFSET` and `DELETE` clauses are not allowed.
         # Since we always expect the number of resulting records to be fairly small.
         # We can pay the penalty of making the extra db call.
-        live_headline = queryset.first()
-        return queryset.exclude(id=live_headline.id)
+        try:
+            live_headline_id: int = queryset.first().id
+        except AttributeError:
+            # Thrown when the queryset was empty
+            # And `first()` returned `None`
+            return queryset
+
+        return queryset.exclude(id=live_headline_id)
 
     def get_latest_headlines_for_geography_codes(
         self,
