@@ -67,8 +67,8 @@ class TestConsumerUpdateSupportingModels:
             sub_theme=spy_get_or_create_sub_theme.return_value
         )
 
-    @mock.patch.object(Consumer, "get_or_create_geography_type")
-    @mock.patch.object(Consumer, "get_or_create_geography")
+    @mock.patch.object(Consumer, "_get_or_create_geography_type")
+    @mock.patch.object(Consumer, "_get_or_create_geography")
     def test_updates_geography_and_geography_type(
         self,
         spy_get_or_create_geography: mock.MagicMock,
@@ -101,9 +101,9 @@ class TestConsumerUpdateSupportingModels:
             geography_type=spy_get_or_create_geography_type.return_value
         )
 
-    @mock.patch.object(Consumer, "get_or_create_topic")
-    @mock.patch.object(Consumer, "get_or_create_metric_group")
-    @mock.patch.object(Consumer, "get_or_create_metric")
+    @mock.patch.object(Consumer, "_get_or_create_topic")
+    @mock.patch.object(Consumer, "_get_or_create_metric_group")
+    @mock.patch.object(Consumer, "_get_or_create_metric")
     def test_updates_metric_and_metric_group(
         self,
         spy_get_or_create_metric: mock.MagicMock,
@@ -146,7 +146,7 @@ class TestConsumerUpdateSupportingModels:
             topic=spy_get_or_create_topic.return_value,
         )
 
-    @mock.patch.object(Consumer, "get_or_create_stratum")
+    @mock.patch.object(Consumer, "_get_or_create_stratum")
     def test_updates_stratum(
         self,
         spy_get_or_create_stratum: mock.MagicMock,
@@ -172,7 +172,7 @@ class TestConsumerUpdateSupportingModels:
         # Then
         spy_get_or_create_stratum.assert_called_once()
 
-    @mock.patch.object(Consumer, "get_or_create_age")
+    @mock.patch.object(Consumer, "_get_or_create_age")
     def test_updates_age(
         self,
         spy_get_or_create_age: mock.MagicMock,
@@ -198,10 +198,10 @@ class TestConsumerUpdateSupportingModels:
         # Then
         spy_get_or_create_age.assert_called_once()
 
-    @mock.patch.object(Consumer, "get_or_create_stratum")
-    @mock.patch.object(Consumer, "get_or_create_age")
-    @mock.patch.object(Consumer, "get_or_create_geography")
-    @mock.patch.object(Consumer, "get_or_create_metric")
+    @mock.patch.object(Consumer, "_get_or_create_stratum")
+    @mock.patch.object(Consumer, "_get_or_create_age")
+    @mock.patch.object(Consumer, "_get_or_create_geography")
+    @mock.patch.object(Consumer, "_get_or_create_metric")
     def test_returns_supporting_models_lookup(
         self,
         spy_get_or_create_metric: mock.MagicMock,
