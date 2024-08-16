@@ -193,7 +193,7 @@ class Consumer:
             theme_id=theme.id,
         )
 
-    def get_or_create_topic(self, *, sub_theme):
+    def _get_or_create_topic(self, *, sub_theme):
         """Returns the corresponding `Topic` record to be associated with the current `data`
 
         Args:
@@ -318,7 +318,7 @@ class Consumer:
         """
         theme = self._get_or_create_theme()
         sub_theme = self._get_or_create_sub_theme(theme=theme)
-        topic = self.get_or_create_topic(sub_theme=sub_theme)
+        topic = self._get_or_create_topic(sub_theme=sub_theme)
 
         geography_type = self.get_or_create_geography_type()
         geography = self.get_or_create_geography(geography_type=geography_type)

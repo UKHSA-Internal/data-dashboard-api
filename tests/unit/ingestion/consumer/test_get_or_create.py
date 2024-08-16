@@ -68,7 +68,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_topic()` is called
+        When `_get_or_create_topic()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `TopicManager` with the correct args
@@ -84,7 +84,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_topic(sub_theme=mocked_sub_theme)
+        created_model = consumer._get_or_create_topic(sub_theme=mocked_sub_theme)
 
         # Then
         assert created_model == expected_model
