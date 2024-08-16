@@ -1,13 +1,10 @@
 from unittest import mock
 
-from metrics.data.managers.core_models.headline import (
-    CoreHeadlineQuerySet,
-    CoreHeadlineManager,
-)
+from metrics.data.managers.core_models.headline import CoreHeadlineManager
 
 
 class TestCoreHeadlineManager:
-    @mock.patch.object(CoreHeadlineQuerySet, "query_for_superseded_data")
+    @mock.patch.object(CoreHeadlineManager, "query_for_superseded_data")
     def test_delete_superseded_data(
         self, spy_query_for_superseded_data: mock.MagicMock
     ):
@@ -44,6 +41,7 @@ class TestCoreHeadlineManager:
 
         # Then
         spy_query_for_superseded_data.assert_called_with(
+            topic_name=fake_topic,
             metric_name=fake_metric,
             geography_name=fake_geography,
             geography_type_name=fake_geography_type,

@@ -594,7 +594,7 @@ class CoreTimeSeriesManager(models.Manager):
             None
 
         """
-        superseded_records = self.get_queryset().query_for_superseded_data(
+        superseded_records = self.query_for_superseded_data(
             metric_name=metric_name,
             geography_name=geography_name,
             geography_type_name=geography_type_name,

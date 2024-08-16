@@ -1,13 +1,10 @@
 from unittest import mock
 
-from metrics.data.managers.api_models.time_series import (
-    APITimeSeriesManager,
-    APITimeSeriesQuerySet,
-)
+from metrics.data.managers.api_models.time_series import APITimeSeriesManager
 
 
 class TestAPITimeSeriesManager:
-    @mock.patch.object(APITimeSeriesQuerySet, "query_for_superseded_data")
+    @mock.patch.object(APITimeSeriesManager, "query_for_superseded_data")
     def test_delete_superseded_data(
         self, spy_query_for_superseded_data: mock.MagicMock
     ):

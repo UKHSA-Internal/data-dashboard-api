@@ -418,7 +418,7 @@ class APITimeSeriesManager(models.Manager):
            None
 
         """
-        superseded_records = self.get_queryset().query_for_superseded_data(
+        superseded_records = self.query_for_superseded_data(
             theme_name=theme_name,
             sub_theme_name=sub_theme_name,
             topic_name=topic_name,
