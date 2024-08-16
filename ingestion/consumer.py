@@ -552,6 +552,9 @@ class Consumer:
             age=self.dto.age,
         )
         self.api_timeseries_manager.delete_superseded_data(
+            theme_name=self.dto.parent_theme,
+            sub_theme=self.dto.child_theme,
+            topic_name=self.dto.topic,
             metric_name=self.dto.metric,
             geography_name=self.dto.geography,
             geography_type_name=self.dto.geography_type,
