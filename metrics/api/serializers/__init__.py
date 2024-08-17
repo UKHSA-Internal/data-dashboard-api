@@ -1,5 +1,5 @@
 from .charts import ChartsSerializer
-from .headlines import HeadlinesQuerySerializer
+from .headlines import HeadlinesQuerySerializer, CoreHeadlineSerializer
 from .trends import TrendsQuerySerializer, TrendsResponseSerializer
 from .downloads import (
     DownloadsSerializer,

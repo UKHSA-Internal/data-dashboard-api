@@ -62,7 +62,7 @@ class ChartsInterface:
         self._latest_date: str = ""
 
     def _set_core_model_manager(self) -> Manager:
-        """Returns `core_model_manager` based on the `metric_type`
+        """Returns `core_model_manager` based on the `metric_group`
 
         Notes:
             The charts interface can be used to generate charts for
