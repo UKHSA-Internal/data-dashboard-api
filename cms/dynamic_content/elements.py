@@ -7,6 +7,7 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_geography_type_names,
     get_all_sex_names,
     get_all_stratum_names,
+    get_all_timeseries_metric_names,
     get_all_topic_names,
     get_all_unique_metric_names,
     get_chart_line_types,
@@ -65,6 +66,11 @@ class BaseMetricsElement(blocks.StructBlock):
 
 
 class ChartPlotElement(BaseMetricsElement):
+    metric = blocks.ChoiceBlock(
+        required=True,
+        choices=get_all_timeseries_metric_names,
+        help_text=help_texts.METRIC_FIELD,
+    )
     chart_type = blocks.ChoiceBlock(
         required=True,
         choices=get_chart_types,
