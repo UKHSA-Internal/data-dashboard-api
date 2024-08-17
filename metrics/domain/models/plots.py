@@ -129,6 +129,7 @@ class PlotParameters(BaseModel):
 
 
 class PlotsCollection(BaseModel):
+    metric_group: str | None = None
     plots: list[PlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int

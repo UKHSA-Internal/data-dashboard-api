@@ -2,7 +2,7 @@ import pytest
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models.plots import CompletePlotData, PlotParameters
-from metrics.interfaces.downloads.access import merge_and_process_querysets
+from metrics.interfaces.downloads.access import merge_and_process_timeseries_querysets
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 
@@ -33,7 +33,9 @@ class TestMergeAndProcessQuerysets:
         ]
 
         # When
-        merged_queryset = merge_and_process_querysets(complete_plots=complete_plots)
+        merged_queryset = merge_and_process_timeseries_querysets(
+            complete_plots=complete_plots,
+        )
 
         # Then
         # Check that the first 2 results in the queryset are for the latest date only
