@@ -1,13 +1,28 @@
+from dataclasses import dataclass
+
 from rest_framework.serializers import Serializer
 
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from public_api.serializers.api_time_series_request_serializer import (
-    NO_LOOKUP_FIELD_ERROR_MESSAGE,
-    APITimeSeriesDTO,
+
+
+@dataclass
+class APITimeSeriesDTO:
+    information: str = ""
+    name: str = ""
+    theme: str = ""
+    sub_theme: str = ""
+    topic: str = ""
+    geography_type: str = ""
+    geography: str = ""
+    metric: str = ""
+
+
+NO_LOOKUP_FIELD_ERROR_MESSAGE = (
+    "A `lookup_field` must be provided in the context of the serializer"
 )
 
 
-class APITimeSeriesRequestSerializerV2(Serializer):
+class APITimeSeriesRequestSerializerv2(Serializer):
     @property
     def lookup_field(self):
         try:

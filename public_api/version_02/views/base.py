@@ -4,15 +4,15 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
-from public_api.serializers.api_time_series_request_serializer import (
+from public_api.version_02.serializers.api_time_series_request_serializer import (
     APITimeSeriesDTO,
-    APITimeSeriesRequestSerializer,
+    APITimeSeriesRequestSerializerv2,
 )
 
-PUBLIC_API_TAG = "public-api"
+PUBLIC_API_TAG = "public-api-v2"
 
 
-class BaseNestedAPITimeSeriesView(GenericAPIView):
+class BaseNestedAPITimeSeriesViewV2(GenericAPIView):
     queryset = MetricsPublicAPIInterface.get_api_timeseries_model().objects.all()
 
     @property
@@ -25,13 +25,13 @@ class BaseNestedAPITimeSeriesView(GenericAPIView):
 
     def _build_request_serializer(
         self, *, request: Request
-    ) -> APITimeSeriesRequestSerializer:
+    ) -> APITimeSeriesRequestSerializerv2:
         serializer_context = {"request": request, "lookup_field": self.lookup_field}
-        return APITimeSeriesRequestSerializer(context=serializer_context)
+        return APITimeSeriesRequestSerializerv2(context=serializer_context)
 
     @extend_schema(tags=[PUBLIC_API_TAG])
     def get(self, request: Request, *args, **kwargs) -> Response:
-        serializer: APITimeSeriesRequestSerializer = self._build_request_serializer(
+        serializer: APITimeSeriesRequestSerializerv2 = self._build_request_serializer(
             request=request
         )
         timeseries_dto_slice: list[APITimeSeriesDTO] = (
