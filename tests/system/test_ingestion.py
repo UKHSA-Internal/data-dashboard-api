@@ -386,6 +386,77 @@ class TestIngestion:
         assert second_metric_value in all_headline_metric_values
         assert third_metric_value in all_headline_metric_values
 
+    @pytest.mark.django_db
+    def test_data_point_can_be_updated_and_then_set_to_original_value(
+        self,
+        example_headline_data: INCOMING_DATA_TYPE,
+        timestamp_2_months_from_now: datetime.datetime,
+    ):
+        """
+        Given 3 headline data points with sequential `refresh_dates`
+        Which result in the 1st metric value being set in the final round
+        When the files are uploaded via the `data_ingester()`
+        Then the stale record will be deleted throughout the process
+        """
+        # The fixture comes bundled with 2 data points.
+        # To keep things simple we get rid of the 2nd data point
+        example_headline_data["data"].pop(1)
+
+        # Given
+        first_metric_value = Decimal("123.0000")
+        first_refresh_date = datetime.datetime(
+            year=2023, month=12, day=1, tzinfo=datetime.UTC
+        )
+        first_headline_data = copy.deepcopy(example_headline_data)
+        first_headline_data["refresh_date"] = first_refresh_date
+        first_headline_data["data"][0]["metric_value"] = first_metric_value
+
+        # When
+        data_ingester(data=first_headline_data)
+
+        # Then
+        assert CoreHeadline.objects.all().count() == 1
+
+        # Given
+        second_metric_value = Decimal("456.0000")
+        second_refresh_date = datetime.datetime(
+            year=2023, month=12, day=2, tzinfo=datetime.UTC
+        )
+        second_headline_data = copy.deepcopy(example_headline_data)
+        second_headline_data["refresh_date"] = second_refresh_date
+        second_headline_data["data"][0]["metric_value"] = second_metric_value
+
+        # When
+        data_ingester(data=second_headline_data)
+
+        # Then
+        # At this point the first metric value `123` isn't considered stale
+        assert CoreHeadline.objects.all().count() == 2
+
+        # Given
+        third_refresh_date = datetime.datetime(
+            year=2023, month=12, day=3, tzinfo=datetime.UTC
+        )
+        third_headline_data = copy.deepcopy(example_headline_data)
+        third_headline_data["refresh_date"] = third_refresh_date
+        third_headline_data["data"][0]["metric_value"] = first_metric_value
+
+        # When
+        data_ingester(data=third_headline_data)
+
+        # Then
+        # At this point the first metric value `123` is now considered stale
+        assert CoreHeadline.objects.all().count() == 2
+        all_headline_metric_values = CoreHeadline.objects.all().values_list(
+            "metric_value", "refresh_date"
+        )
+        assert (first_metric_value, third_refresh_date) in all_headline_metric_values
+        assert (second_metric_value, second_refresh_date) in all_headline_metric_values
+        assert (
+            first_metric_value,
+            first_refresh_date,
+        ) not in all_headline_metric_values
+
     @staticmethod
     def _fetch_latest_headline_from_endpoint(
         payload: dict[str, str]
