@@ -303,12 +303,15 @@ class TestIngestion:
 
     @pytest.mark.django_db
     def test_multiple_data_points_with_sequential_refresh_dates_can_be_ingested(
-        self, example_headline_data: INCOMING_DATA_TYPE
+        self,
+        example_headline_data: INCOMING_DATA_TYPE,
+        timestamp_2_months_from_now: datetime.datetime,
     ):
         """
         Given 3 headline data points with sequential `refresh_dates`
         When the files are uploaded via the `data_ingester()`
         Then the headlines/ endpoint will always return the latest-functional data
+        And stale records will be deleted throughout the process
         """
         # The fixture comes bundled with 2 data points.
         # To keep things simple we get rid of the 2nd data point
@@ -352,19 +355,36 @@ class TestIngestion:
         assert current_headline_from_api["value"] == second_metric_value
 
         # Given
-        third_metric_value = 789
+        third_metric_value = 756
         third_refresh_date = "2023-12-01 13:01:00"
         third_headline_data = copy.deepcopy(example_headline_data)
         third_headline_data["refresh_date"] = third_refresh_date
         third_headline_data["data"][0]["metric_value"] = third_metric_value
         data_ingester(data=third_headline_data)
-        assert CoreHeadline.objects.all().count() == 3
 
-        # When / Then
+        # When
         current_headline_from_api = self._fetch_latest_headline_from_endpoint(
             payload=headlines_endpoint_payload
         )
+
+        # Then
+        # The returned live value from the headlines API should be the latest one
         assert current_headline_from_api["value"] == third_metric_value
+
+        assert CoreHeadline.objects.all().count() == 2
+        all_headline_metric_values = CoreHeadline.objects.all().values_list(
+            "metric_value", flat=True
+        )
+
+        # The value associated with the stale record should have been deleted
+        assert first_metric_value not in all_headline_metric_values
+
+        # The live record and the 1 leftover stale record should be in the db.
+        # Because we clear stale records before ingestion,
+        # the leftover stale record would be deleted
+        # before the next hypothetical ingestion round
+        assert second_metric_value in all_headline_metric_values
+        assert third_metric_value in all_headline_metric_values
 
     @staticmethod
     def _fetch_latest_headline_from_endpoint(
