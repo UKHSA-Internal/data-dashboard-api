@@ -6,6 +6,7 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
+from typing import Self
 
 from django.db import models
 from django.utils import timezone
@@ -172,8 +173,83 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return self._annotate_latest_date_on_queryset(queryset=queryset)
 
-    @staticmethod
+    def query_for_superseded_data(
+        self,
+        *,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        geography_code: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> Self:
+        """Grabs all stale records which are not under embargo.
+
+        Args:
+           metric_name: The name of the metric being queried.
+               E.g. `COVID-COVID-19_cases_countRollingMean`
+           geography_name: The name of the geography being queried.
+               E.g. `England`
+           geography_type_name: The name of the geography type being queried.
+               E.g. `Nation`
+           geography_code: Code associated with the geography being queried.
+               E.g. "E45000010"
+           stratum_name: The value of the stratum to apply additional filtering to.
+               E.g. `default`, which would be used to capture all strata.
+           sex: The gender to apply additional filtering to.
+               E.g. `F`, would be used to capture Females.
+               Note that options are `M`, `F`, or `ALL`.
+           age: The age range to apply additional filtering to.
+               E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+           The stale records in their entirety as a queryset
+
+        """
+        queryset = self.filter(
+            metric__name=metric_name,
+            geography__name=geography_name,
+            geography__geography_code=geography_code,
+            geography__geography_type__name=geography_type_name,
+            stratum__name=stratum_name,
+            age__name=age,
+            sex=sex,
+        )
+        queryset = self._exclude_data_under_embargo(queryset=queryset)
+        return self.filter_for_outdated_refresh_date_records(queryset=queryset)
+
+    def filter_for_outdated_refresh_date_records(self, *, queryset: Self) -> Self:
+        """Filters the given `queryset` for the stale records in each individual date
+
+        Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- expected results
+                | 2nd round  |      -     | 2nd round  |
+
+        Args:
+            queryset: The queryset to filter against
+
+        Returns:
+            A new filtered queryset containing
+            only the stale records for each date
+
+        """
+        latest_record_ids: list[int] = self._get_ids_of_latest_records(
+            queryset=queryset
+        )
+        return queryset.exclude(pk__in=latest_record_ids)
+
     def filter_for_latest_refresh_date_records(
+        self,
         *,
         queryset: models.QuerySet,
     ) -> models.QuerySet:
@@ -205,6 +281,13 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             only the latest records for each date
 
         """
+        latest_record_ids: list[int] = self._get_ids_of_latest_records(
+            queryset=queryset
+        )
+        return queryset.filter(pk__in=latest_record_ids)
+
+    @classmethod
+    def _get_ids_of_latest_records(cls, queryset: Self) -> list[int]:
         # Build a queryset labelled with the latest `refresh_date` for each `date`
         latest_refresh_dates_associated_with_dates: CoreTimeSeriesQuerySet = (
             queryset.values("date").annotate(latest_refresh=models.Max("refresh_date"))
@@ -223,13 +306,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         }
 
         # Filter the IDs for the records in memory to get the latest ones partitioned by each date
-        resulting_ids: list[int] = [
+        return [
             record.id
             for record in queryset
             if record.refresh_date == latest_records_map.get(record.date)
         ]
-
-        return queryset.filter(pk__in=resulting_ids)
 
     @staticmethod
     def _annotate_latest_date_on_queryset(
@@ -388,6 +469,64 @@ class CoreTimeSeriesManager(models.Manager):
             date_to=date_to,
             geography_name=geography_name,
             geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+
+    def query_for_superseded_data(
+        self,
+        *,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        geography_code: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> CoreTimeSeriesQuerySet:
+        """Filters the given `queryset` for the stale records in each individual date
+
+        Args:
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            geography_type_name: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+           geography_code: Code associated with the geography being queried.
+               E.g. "E45000010"
+           stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
+           sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+           age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- expected results
+                | 2nd round  |      -     | 2nd round  |
+
+        Returns:
+            A new filtered queryset containing
+            only the stale records for each date
+
+        """
+        return self.get_queryset().query_for_superseded_data(
+            metric_name=metric_name,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            geography_code=geography_code,
             stratum_name=stratum_name,
             sex=sex,
             age=age,

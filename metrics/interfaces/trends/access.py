@@ -37,7 +37,7 @@ class TrendsInterface:
         self.core_headline_manager = core_headline_manager
 
     def get_latest_metric_value(self, *, metric_name: str) -> CoreHeadline:
-        """Gets the value for the record associated with the given `metric_to_lookup`
+        """Gets the value for the record associated with the given `metric_name`
 
         Returns:
             The full matching `CoreHeadline` object
