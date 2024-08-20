@@ -357,3 +357,77 @@ class APITimeSeriesManager(models.Manager):
             sex=sex,
             age=age,
         )
+
+    def delete_superseded_data(
+        self,
+        *,
+        theme_name: str,
+        sub_theme_name: str,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        geography_code: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> APITimeSeriesQuerySet:
+        """Deletes all stale records which are not under embargo.
+
+         Notes:
+            If we have the following input `queryset`:
+                ----------------------------------------
+                | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+                | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded with a final successor
+                |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+                | 4th round  |      -     |     -      |   <- 'head' round with no successors
+                ----------------------------------------
+                | 1st round  | 1st round  | 1st round  |   <- expected results
+                | 2nd round  |      -     | 2nd round  |
+
+            This will partition the `queryset`
+            and deletes all records which do not have
+            the latest `refresh_date` from each window
+
+        Args:
+           theme_name: The name of the parent theme being queried.
+               E.g. `infectious_disease`
+           sub_theme_name: The name of the child theme being queried.
+               E.g. `respiratory`
+           topic_name: The name of the threat being queried.
+               E.g. `COVID-19`
+           metric_name: The name of the metric being queried.
+               E.g. `COVID-COVID-19_cases_countRollingMean`
+           geography_name: The name of the geography being queried.
+               E.g. `England`
+           geography_type_name: The name of the geography type being queried.
+               E.g. `Nation`
+           geography_code: Code associated with the geography being queried.
+               E.g. "E45000010"
+           stratum_name: The value of the stratum to apply additional filtering to.
+               E.g. `default`, which would be used to capture all strata.
+           sex: The gender to apply additional filtering to.
+               E.g. `F`, would be used to capture Females.
+               Note that options are `M`, `F`, or `ALL`.
+           age: The age range to apply additional filtering to.
+               E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+           None
+
+        """
+        superseded_records = self.query_for_superseded_data(
+            theme_name=theme_name,
+            sub_theme_name=sub_theme_name,
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            geography_code=geography_code,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+        superseded_records.delete()
