@@ -164,7 +164,7 @@ class Consumer:
         record, _ = model_manager.get_or_create(**kwargs)
         return record
 
-    def get_or_create_theme(self):
+    def _get_or_create_theme(self):
         """Returns the corresponding `Theme` record to be associated with the current `data`
 
         Returns:
@@ -176,7 +176,7 @@ class Consumer:
             name=self.dto.parent_theme,
         )
 
-    def get_or_create_sub_theme(self, *, theme):
+    def _get_or_create_sub_theme(self, *, theme):
         """Returns the corresponding `SubTheme` record to be associated with the current `data`
 
         Args:
@@ -193,7 +193,7 @@ class Consumer:
             theme_id=theme.id,
         )
 
-    def get_or_create_topic(self, *, sub_theme):
+    def _get_or_create_topic(self, *, sub_theme):
         """Returns the corresponding `Topic` record to be associated with the current `data`
 
         Args:
@@ -210,7 +210,7 @@ class Consumer:
             sub_theme_id=sub_theme.id,
         )
 
-    def get_or_create_geography_type(self):
+    def _get_or_create_geography_type(self):
         """Returns the corresponding `GeographyType` record to be associated with the current `data`
 
         Returns:
@@ -222,7 +222,7 @@ class Consumer:
             name=self.dto.geography_type,
         )
 
-    def get_or_create_geography(self, *, geography_type):
+    def _get_or_create_geography(self, *, geography_type):
         """Returns the corresponding `Geography` record to be associated with the current `data`
 
         Args:
@@ -240,7 +240,7 @@ class Consumer:
             geography_type_id=geography_type.id,
         )
 
-    def get_or_create_metric_group(self, *, topic):
+    def _get_or_create_metric_group(self, *, topic):
         """Returns the corresponding `MetricGroup` record to be associated with the current `data`
 
         Args:
@@ -257,7 +257,7 @@ class Consumer:
             topic_id=topic.id,
         )
 
-    def get_or_create_metric(self, *, metric_group, topic):
+    def _get_or_create_metric(self, *, metric_group, topic):
         """Returns the corresponding `Metric` record to be associated with the current `data`
 
         Args:
@@ -277,7 +277,7 @@ class Consumer:
             topic_id=topic.id,
         )
 
-    def get_or_create_stratum(self):
+    def _get_or_create_stratum(self):
         """Returns the corresponding `Stratum` record to be associated with the current `data`
 
         Returns:
@@ -289,7 +289,7 @@ class Consumer:
             name=self.dto.stratum,
         )
 
-    def get_or_create_age(self):
+    def _get_or_create_age(self):
         """Returns the corresponding `Age` record to be associated with the current `data`
 
         Returns:
@@ -316,18 +316,18 @@ class Consumer:
             when creating the `CoreHeadline` or `CoreTimeSeries` records
 
         """
-        theme = self.get_or_create_theme()
-        sub_theme = self.get_or_create_sub_theme(theme=theme)
-        topic = self.get_or_create_topic(sub_theme=sub_theme)
+        theme = self._get_or_create_theme()
+        sub_theme = self._get_or_create_sub_theme(theme=theme)
+        topic = self._get_or_create_topic(sub_theme=sub_theme)
 
-        geography_type = self.get_or_create_geography_type()
-        geography = self.get_or_create_geography(geography_type=geography_type)
+        geography_type = self._get_or_create_geography_type()
+        geography = self._get_or_create_geography(geography_type=geography_type)
 
-        metric_group = self.get_or_create_metric_group(topic=topic)
-        metric = self.get_or_create_metric(metric_group=metric_group, topic=topic)
+        metric_group = self._get_or_create_metric_group(topic=topic)
+        metric = self._get_or_create_metric(metric_group=metric_group, topic=topic)
 
-        stratum = self.get_or_create_stratum()
-        age = self.get_or_create_age()
+        stratum = self._get_or_create_stratum()
+        age = self._get_or_create_age()
 
         return SupportingModelsLookup(
             metric_id=metric.id,
