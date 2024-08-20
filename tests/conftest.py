@@ -1,6 +1,7 @@
 import datetime
 
 import pytest
+from dateutil.relativedelta import relativedelta
 from wagtail.models import Page
 from wagtail.models.i18n import Locale
 
@@ -262,3 +263,8 @@ def example_trend_number_block() -> dict[str, str]:
         "age": "all",
         "stratum": "default",
     }
+
+
+@pytest.fixture
+def timestamp_2_months_from_now() -> datetime.datetime:
+    return datetime.datetime.now() + relativedelta(months=2)

@@ -10,7 +10,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_theme()` is called
+        When `_get_or_create_theme()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `ThemeManager` with the correct args
@@ -25,7 +25,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_theme()
+        created_model = consumer._get_or_create_theme()
 
         # Then
         assert created_model == expected_model
@@ -38,7 +38,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_sub_theme()` is called
+        When `_get_or_create_sub_theme()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `SubThemeManager` with the correct args
@@ -55,7 +55,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_sub_theme(theme=mocked_theme)
+        created_model = consumer._get_or_create_sub_theme(theme=mocked_theme)
 
         # Then
         assert created_model == expected_model
@@ -68,7 +68,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_topic()` is called
+        When `_get_or_create_topic()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `TopicManager` with the correct args
@@ -84,7 +84,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_topic(sub_theme=mocked_sub_theme)
+        created_model = consumer._get_or_create_topic(sub_theme=mocked_sub_theme)
 
         # Then
         assert created_model == expected_model
@@ -97,7 +97,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_geography_type()` is called
+        When `_get_or_create_geography_type()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `GeographyTypeManager` with the correct args
@@ -113,7 +113,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_geography_type()
+        created_model = consumer._get_or_create_geography_type()
 
         # Then
         assert created_model == expected_model
@@ -126,7 +126,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_geography()` is called
+        When `_get_or_create_geography()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `GeographyManager` with the correct args
@@ -143,7 +143,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_geography(
+        created_model = consumer._get_or_create_geography(
             geography_type=mocked_geography_type
         )
 
@@ -160,7 +160,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_metric_group()` is called
+        When `_get_or_create_metric_group()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `MetricGroupManager` with the correct args
@@ -177,7 +177,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_metric_group(topic=mocked_topic)
+        created_model = consumer._get_or_create_metric_group(topic=mocked_topic)
 
         # Then
         assert created_model == expected_model
@@ -191,7 +191,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_metric()` is called
+        When `_get_or_create_metric()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `MetricManager` with the correct args
@@ -208,7 +208,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_metric(
+        created_model = consumer._get_or_create_metric(
             metric_group=mocked_metric_group, topic=mocked_topic
         )
 
@@ -225,7 +225,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_stratum()` is called
+        When `_get_or_create_stratum()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `StratumManager` with the correct args
@@ -240,7 +240,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_stratum()
+        created_model = consumer._get_or_create_stratum()
 
         # Then
         assert created_model == expected_model
@@ -253,7 +253,7 @@ class TestConsumerGetOrCreateMethods:
     ):
         """
         Given incoming headline data
-        When `get_or_create_age()` is called
+        When `_get_or_create_age()` is called
             from an instance of the `Consumer`
         Then the call is delegated to the
             `AgeManager` with the correct args
@@ -268,7 +268,7 @@ class TestConsumerGetOrCreateMethods:
         )
 
         # When
-        created_model = consumer.get_or_create_age()
+        created_model = consumer._get_or_create_age()
 
         # Then
         assert created_model == expected_model
