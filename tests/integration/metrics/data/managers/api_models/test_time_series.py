@@ -462,7 +462,7 @@ class TestAPITimeSeriesQuerySet:
 
 class TestAPITimeSeriesManager:
     @pytest.mark.django_db
-    def test_query_for_superseded_data_returns_stale_records(
+    def test_delete_superseded_data_deletes_stale_records_only(
         self, timestamp_2_months_from_now: datetime.datetime
     ):
         """
@@ -470,9 +470,10 @@ class TestAPITimeSeriesManager:
         And a number of `APITimeSeries` records which are live,
             but not grouped linearly.
         And a record which is under embargo
-        When `query_for_superseded_data()` is called
+        When `delete_superseded_data()` is called
             from an instance of `APITimeSeriesQueryset`
-        Then only the stale `APITimeSeries` records are returned
+        Then only the stale `APITimeSeries` records are deleted
+        And the live & embargoed records are still available
         """
         # Given
         dates = FAKE_DATES
@@ -518,7 +519,7 @@ class TestAPITimeSeriesManager:
         )
 
         # When
-        retrieved_records = APITimeSeries.objects.query_for_superseded_data(
+        APITimeSeries.objects.delete_superseded_data(
             theme_name=fifth_embargoed_round_for_first_date.theme,
             sub_theme_name=fifth_embargoed_round_for_first_date.sub_theme,
             topic_name=fifth_embargoed_round_for_first_date.topic,
@@ -530,6 +531,7 @@ class TestAPITimeSeriesManager:
             sex=fifth_embargoed_round_for_first_date.sex,
             age=fifth_embargoed_round_for_first_date.age,
         )
+        retrieved_records = APITimeSeries.objects.all()
 
         # Then
         # Our database will look like the following:
@@ -540,34 +542,34 @@ class TestAPITimeSeriesManager:
         # | 4th round  |      -     |     -      |   <- 'head' round with no successors
         # | 5th round  |      -     |     -      |   <- embargo round not yet released
         # ----------------------------------------
-        # | 1st round  | 1st round  | 1st round  |   <- expected results
-        # | 2nd round  |      -     | 2nd round  |   <- expected results
+        # | 1st round  | 1st round  | 1st round  |   <- expected records to be deleted
+        # | 2nd round  |      -     | 2nd round  |   <- expected records to be deleted
 
-        assert retrieved_records.count() == 5
+        assert retrieved_records.count() == 4
 
         # --- Checks for 1st round ---
         # The 1st round was succeeded entirely by the 2nd round
-        # So we expect to see all of them in the returned records
+        # So we expect to see none of them in the remaining records
         for stale_first_version_record in stale_first_round_versions:
-            assert stale_first_version_record in retrieved_records
+            assert stale_first_version_record not in retrieved_records
 
         # --- Checks for 2nd round ---
         stale_first_date_second_version_record = partially_stale_second_round_versions[
             0
         ]
-        assert stale_first_date_second_version_record in retrieved_records
+        assert stale_first_date_second_version_record not in retrieved_records
 
         live_second_date_second_version = partially_stale_second_round_versions[1]
-        assert live_second_date_second_version not in retrieved_records
+        assert live_second_date_second_version in retrieved_records
 
         stale_third_date_second_version = partially_stale_second_round_versions[2]
-        assert stale_third_date_second_version in retrieved_records
+        assert stale_third_date_second_version not in retrieved_records
 
         # --- Checks for 3rd round ---
-        assert live_third_version_for_third_date not in retrieved_records
+        assert live_third_version_for_third_date in retrieved_records
 
         # --- Checks for 4th round ---
-        assert fourth_round_for_first_date not in retrieved_records
+        assert fourth_round_for_first_date in retrieved_records
 
         # --- Checks for 5th round ---
-        assert fifth_embargoed_round_for_first_date not in retrieved_records
+        assert fifth_embargoed_round_for_first_date in retrieved_records

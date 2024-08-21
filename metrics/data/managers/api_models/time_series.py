@@ -257,7 +257,14 @@ class APITimeSeriesQuerySet(models.QuerySet):
             sex=sex,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
-        return self.filter_for_outdated_refresh_date_records(queryset=queryset)
+        queryset = self.filter_for_outdated_refresh_date_records(queryset=queryset)
+
+        # Note that we cannot call `delete()` on the above queryset.
+        # This is because it uses the `WINDOW` function.
+        # Which is not allowed with a `DELETE` statement.
+        # So we need to filter by IDs first.
+        superseded_record_ids = queryset.values_list("id", flat=True)
+        return self.filter(id__in=superseded_record_ids)
 
 
 class APITimeSeriesManager(models.Manager):

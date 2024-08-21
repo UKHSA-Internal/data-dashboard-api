@@ -269,7 +269,7 @@ class CoreHeadlineManager(models.Manager):
            The stale records in their entirety as a queryset
 
         """
-        return self.get_queryset().get_headlines_released_from_embargo(
+        queryset = self.get_queryset().get_headlines_released_from_embargo(
             topic_name=topic_name,
             metric_name=metric_name,
             geography_name=geography_name,
@@ -278,7 +278,20 @@ class CoreHeadlineManager(models.Manager):
             stratum_name=stratum_name,
             age=age,
             sex=sex,
-        )[1:]
+        )
+        # Note that we cannot slice / limit the above queryset.
+        # This is because we will later call `delete()` on this queryset.
+        # Which cannot be done since `OFFSET` and `DELETE` clauses are not allowed.
+        # Since we always expect the number of resulting records to be fairly small.
+        # We can pay the penalty of making the extra db call.
+        try:
+            live_headline_id: int = queryset.first().id
+        except AttributeError:
+            # Thrown when the queryset was empty
+            # And `first()` returned `None`
+            return queryset
+
+        return queryset.exclude(id=live_headline_id)
 
     def get_latest_headlines_for_geography_codes(
         self,

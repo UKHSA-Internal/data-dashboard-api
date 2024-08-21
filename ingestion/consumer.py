@@ -336,6 +336,41 @@ class Consumer:
             age_id=age.id,
         )
 
+    def process_core_headlines(self) -> None:
+        """Creates `CoreHeadline` database records from the ingested data after stale records are deleted ahead of time.
+
+        Notes:
+            Any necessary supporting models will be created
+            as required for the `CoreHeadline` records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Returns:
+            None
+
+        """
+        self.clear_stale_headlines()
+        self.create_core_headlines()
+
+    def process_core_and_api_timeseries(self) -> None:
+        """Creates `APITimeSeries` and `CoreTimeSeries` records from the ingested data after stale records are deleted.
+
+        Any necessary supporting models will be created
+            as required for the records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Returns:
+            None
+
+        """
+        self.clear_stale_timeseries()
+        self.create_core_and_api_timeseries()
+
     # build and create model methods
 
     def build_core_headlines(self) -> list[CORE_HEADLINE_MODEL]:
@@ -456,6 +491,24 @@ class Consumer:
             model_manager=self.core_timeseries_manager, model_instances=core_time_series
         )
 
+    def clear_stale_headlines(self):
+        """Deletes all stale records for the `CoreHeadline` records relevant to the ingested dataset
+
+        Returns:
+            None
+
+        """
+        self.core_headline_manager.delete_superseded_data(
+            topic_name=self.dto.topic,
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
+
     def build_api_time_series(self) -> list[API_TIME_SERIES_MODEL]:
         """Builds `APITimeSeries` model instances from the ingested data
 
@@ -516,3 +569,32 @@ class Consumer:
         """
         self.create_core_time_series()
         self.create_api_time_series()
+
+    def clear_stale_timeseries(self):
+        """Deletes all stale records for both `CoreTimeSeries` and `APITimeSeries` relevant to the ingested dataset
+
+        Returns:
+            None
+
+        """
+        self.core_timeseries_manager.delete_superseded_data(
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
+        self.api_timeseries_manager.delete_superseded_data(
+            theme_name=self.dto.parent_theme,
+            sub_theme_name=self.dto.child_theme,
+            topic_name=self.dto.topic,
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
