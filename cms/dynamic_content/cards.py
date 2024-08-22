@@ -3,7 +3,7 @@ from wagtail import blocks
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import HeadlineNumberBlockTypes, MetricNumberBlock
-from cms.dynamic_content.components import ChartComponent
+from cms.dynamic_content.components import ChartComponent, HeadlineChartComponent
 from cms.metrics_interface.field_choices_callables import get_possible_axis_choices
 
 
@@ -95,8 +95,21 @@ class ChartCard(blocks.StructBlock):
         icon = "standalone_chart"
 
 
+class HeadlineChartCard(ChartCard):
+    x_axis = blocks.ChoiceBlock(
+        required=True,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.REQUIRED_CHART_X_AXIS,
+    )
+    chart = HeadlineChartComponent(help_texts=help_texts.CHART_BLOCK_FIELD)
+
+    class Meta:
+        icon = "standalone_chart"
+
+
 class ChartRowBlockTypes(blocks.StreamBlock):
     chart_card = ChartCard()
+    headline_chart_card = HeadlineChartCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
 
 

@@ -214,6 +214,22 @@ class TestChartTypes:
         # Then
         assert (expected_choice, expected_choice) in choices
 
+    def test_headline_selectable_choices(self):
+        """
+        Given an expected choice
+        When the `selectable_headline_choices()` class method is called
+            from the `ChartTypes` enum
+        Then choice is in the returned selectable choices
+        """
+        # Given
+        expected_choice = "bar"
+
+        # When
+        choices = ChartTypes.selectable_headline_choices()
+
+        # Then
+        assert (expected_choice, expected_choice) in choices
+
     def test_selectable_choices_does_not_return_simple_line(self):
         """
         Given the invalid choice of "simple_line"
