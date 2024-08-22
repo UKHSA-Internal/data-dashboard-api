@@ -12,37 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddIndex(
             model_name="apitimeseries",
-            index=models.Index(fields=["theme"], name="data_apitim_theme_0e8b3b_idx"),
-        ),
-        migrations.AddIndex(
-            model_name="apitimeseries",
-            index=models.Index(
-                fields=["theme", "sub_theme"], name="data_apitim_theme_4ac4c1_idx"
-            ),
-        ),
-        migrations.AddIndex(
-            model_name="apitimeseries",
-            index=models.Index(
-                fields=["theme", "sub_theme", "topic"],
-                name="data_apitim_theme_384495_idx",
-            ),
-        ),
-        migrations.AddIndex(
-            model_name="apitimeseries",
-            index=models.Index(
-                fields=["theme", "sub_theme", "topic", "geography_type"],
-                name="data_apitim_theme_cf6ce3_idx",
-            ),
-        ),
-        migrations.AddIndex(
-            model_name="apitimeseries",
-            index=models.Index(
-                fields=["theme", "sub_theme", "topic", "geography_type", "geography"],
-                name="data_apitim_theme_6b286e_idx",
-            ),
-        ),
-        migrations.AddIndex(
-            model_name="apitimeseries",
             index=models.Index(
                 fields=[
                     "theme",

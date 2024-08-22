@@ -71,13 +71,6 @@ class APITimeSeries(models.Model):
             )
         ]
         indexes = [
-            models.Index(fields=["theme"]),
-            models.Index(fields=["theme", "sub_theme"]),
-            models.Index(fields=["theme", "sub_theme", "topic"]),
-            models.Index(fields=["theme", "sub_theme", "topic", "geography_type"]),
-            models.Index(
-                fields=["theme", "sub_theme", "topic", "geography_type", "geography"]
-            ),
             models.Index(
                 fields=[
                     "theme",
