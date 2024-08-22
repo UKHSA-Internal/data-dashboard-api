@@ -70,6 +70,25 @@ class APITimeSeries(models.Model):
                 condition=Q(force_write=False),
             )
         ]
+        indexes = [
+            models.Index(fields=["theme"]),
+            models.Index(fields=["theme", "sub_theme"]),
+            models.Index(fields=["theme", "sub_theme", "topic"]),
+            models.Index(fields=["theme", "sub_theme", "topic", "geography_type"]),
+            models.Index(
+                fields=["theme", "sub_theme", "topic", "geography_type", "geography"]
+            ),
+            models.Index(
+                fields=[
+                    "theme",
+                    "sub_theme",
+                    "topic",
+                    "geography_type",
+                    "geography",
+                    "metric",
+                ]
+            ),
+        ]
 
     def __str__(self):
         return (
