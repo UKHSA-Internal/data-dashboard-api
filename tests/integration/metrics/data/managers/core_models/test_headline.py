@@ -339,3 +339,69 @@ class TestCoreHeadlineManager:
             == current_core_headline_for_second_geography
             != expired_core_headline_for_second_geography
         )
+
+    @pytest.mark.django_db
+    def test_delete_superseded_data_deletes_stale_records_only(
+        self, timestamp_2_months_from_now: datetime.datetime
+    ):
+        """
+        Given a number of `CoreHeadline` records which are stale
+        And a `CoreHeadline` records which is live
+        And a `CoreHeadline` records which is under embargo
+        When `delete_superseded_data()` is called
+            from an instance of the `CoreHeadlineManager`
+        Then only the stale records are deleted
+        And the live & embargoed records are still available
+        """
+        # Given
+        first_stale_round_outdated_period_start = "2023-01-01"
+        first_stale_round_outdated_period_end = "2023-01-02"
+        first_stale_round_headline = CoreHeadlineFactory.create_record(
+            metric_value=1,
+            period_start=first_stale_round_outdated_period_start,
+            period_end=first_stale_round_outdated_period_end,
+        )
+
+        second_stale_round_outdated_period_start = "2023-01-03"
+        second_stale_round_outdated_period_end = "2023-01-04"
+        second_stale_round_headline = CoreHeadlineFactory.create_record(
+            metric_value=2,
+            period_start=second_stale_round_outdated_period_start,
+            period_end=second_stale_round_outdated_period_end,
+        )
+
+        current_round_period_start = "2023-01-05"
+        current_round_period_end = "2023-01-06"
+        current_round_headline = CoreHeadlineFactory.create_record(
+            metric_value=3,
+            period_start=current_round_period_start,
+            period_end=current_round_period_end,
+        )
+
+        embargoed_round_period_start = "2023-01-07"
+        embargoed_round_period_end = "2023-01-10"
+        embargoed_round_headline = CoreHeadlineFactory.create_record(
+            metric_value=4,
+            period_start=embargoed_round_period_start,
+            period_end=embargoed_round_period_end,
+            embargo=timestamp_2_months_from_now,
+        )
+
+        # When
+        CoreHeadline.objects.delete_superseded_data(
+            topic_name=current_round_headline.metric.topic.name,
+            metric_name=current_round_headline.metric.name,
+            geography_name=current_round_headline.geography.name,
+            geography_code=current_round_headline.geography.geography_code,
+            geography_type_name=current_round_headline.geography.geography_type.name,
+            stratum_name=current_round_headline.stratum.name,
+            age=current_round_headline.age.name,
+            sex=current_round_headline.sex,
+        )
+        retrieved_records = CoreHeadline.objects.all()
+
+        # Then
+        assert first_stale_round_headline not in retrieved_records
+        assert second_stale_round_headline not in retrieved_records
+        assert current_round_headline in retrieved_records
+        assert embargoed_round_headline in retrieved_records

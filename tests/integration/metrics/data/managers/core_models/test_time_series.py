@@ -6,6 +6,7 @@ from django.utils import timezone
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import CoreTimeSeries
+from metrics.domain.models import get_date_n_months_ago_from_timestamp
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 FAKE_DATES = ("2023-01-01", "2023-01-02", "2023-01-03")
@@ -413,3 +414,105 @@ class TestCoreTimeSeriesManager:
 
         assert available_geographies[1].geography__name == "England"
         assert available_geographies[1].geography__geography_type__name == "Nation"
+
+    @pytest.mark.django_db
+    def test_delete_superseded_data_deletes_stale_records_only(
+        self,
+        timestamp_2_months_from_now: datetime.datetime,
+    ):
+        """
+        Given a number of `CoreTimeSeries` records which are stale
+        And a number of `CoreTimeSeries` records which are live,
+            but not grouped linearly.
+        And an embargoed record
+        When `delete_superseded_data()` is called
+            from an instance of the `CoreTimeSeriesManager`
+        Then only the stale `CoreTimeSeries` records are deleted
+        And the live & embargoed records are still available
+        """
+        # Given
+        dates = FAKE_DATES
+        first_round_outdated_refresh_date = "2023-08-10"
+        second_round_refresh_date = "2023-08-11"
+        third_round_refresh_date = "2023-08-12"
+        fourth_round_refresh_date = "2023-08-13"
+
+        # Our first round of records which are all considered outdated
+        stale_first_round_records = [
+            CoreTimeSeriesFactory.create_record(
+                metric_value=1,
+                date=date,
+                refresh_date=first_round_outdated_refresh_date,
+            )
+            for date in dates
+        ]
+        # In this 2nd round we received updates for each of the `dates`
+        partially_stale_second_round_versions: list[CoreTimeSeries] = [
+            CoreTimeSeriesFactory.create_record(
+                metric_value=2, date=date, refresh_date=second_round_refresh_date
+            )
+            for date in dates
+        ]
+        expected_live_second_round_for_second_date: CoreTimeSeries = (
+            partially_stale_second_round_versions[1]
+        )
+        # In this 3rd round we received updates for only the last of the `dates`
+        last_date: str = dates[-1]
+        expected_live_third_version_for_third_date: CoreTimeSeries = (
+            CoreTimeSeriesFactory.create_record(
+                metric_value=3, date=last_date, refresh_date=third_round_refresh_date
+            )
+        )
+        # In the 4th round, we received an update for only the first of the `dates`
+        first_date: str = dates[0]
+        expected_live_fourth_round_for_first_date: CoreTimeSeries = (
+            CoreTimeSeriesFactory.create_record(
+                metric_value=4, date=first_date, refresh_date=fourth_round_refresh_date
+            )
+        )
+        # In the 5th and final round, we received an update for only the first date
+        # but because this is not yet released from embargo, we do not consider it.
+        embargoed_fifth_round_for_first_date: CoreTimeSeries = (
+            CoreTimeSeriesFactory.create_record(
+                metric_value=5,
+                date=first_date,
+                refresh_date=fourth_round_refresh_date,
+                embargo=timestamp_2_months_from_now,
+            )
+        )
+
+        # When
+        CoreTimeSeries.objects.delete_superseded_data(
+            metric_name=expected_live_fourth_round_for_first_date.metric.name,
+            geography_name=expected_live_fourth_round_for_first_date.geography.name,
+            geography_code=expected_live_fourth_round_for_first_date.geography.geography_code,
+            geography_type_name=expected_live_fourth_round_for_first_date.geography.geography_type.name,
+            stratum_name=expected_live_fourth_round_for_first_date.stratum.name,
+            age=expected_live_fourth_round_for_first_date.age.name,
+            sex=expected_live_fourth_round_for_first_date.sex,
+        )
+        retrieved_records = CoreTimeSeries.objects.all()
+
+        # Then
+        # Our database will look like the following:
+        # | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+        # | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+        # | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded
+        # |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+        # | 4th round  |      -     |     -      |   <- 'head' round with no successors
+        # | 5th round  |      -     |     -      |   <- embargo round not yet released
+        # ----------------------------------------
+        # | 1st round  | 1st round  | 1st round  |   <- expected records to be deleted
+        # | 2nd round  |      -     | 2nd round  |   <- expected records to be deleted
+        assert retrieved_records.count() == 4
+
+        for stale_first_round_record in stale_first_round_records:
+            assert stale_first_round_record not in retrieved_records
+
+        assert partially_stale_second_round_versions[0] not in retrieved_records
+        assert partially_stale_second_round_versions[2] not in retrieved_records
+
+        assert expected_live_second_round_for_second_date in retrieved_records
+        assert expected_live_third_version_for_third_date in retrieved_records
+        assert expected_live_fourth_round_for_first_date in retrieved_records
+        assert embargoed_fifth_round_for_first_date in retrieved_records
