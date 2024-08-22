@@ -7,14 +7,6 @@ class ThemeListSerializer(Serializer):
     name = CharField()
     link = HyperlinkedIdentityField(
         read_only=True,
-        view_name="theme-detail",
-        lookup_field="theme",
-    )
-
-
-class ThemeDetailSerializer(Serializer):
-    sub_themes = HyperlinkedIdentityField(
-        read_only=True,
         view_name="sub_theme-list",
         lookup_field="theme",
     )
@@ -23,15 +15,6 @@ class ThemeDetailSerializer(Serializer):
 class SubThemeListSerializer(Serializer):
     name = CharField()
     link = NestedHyperlinkedIdentityField(
-        read_only=True,
-        view_name="sub_theme-detail",
-        lookup_field="sub_theme",
-        parent_lookup_kwargs={"theme": "theme"},
-    )
-
-
-class SubThemeDetailSerializer(Serializer):
-    topics = NestedHyperlinkedIdentityField(
         read_only=True,
         view_name="topic-list",
         lookup_field="sub_theme",
@@ -45,18 +28,6 @@ class SubThemeDetailSerializer(Serializer):
 class TopicListSerializer(Serializer):
     name = CharField()
     link = NestedHyperlinkedIdentityField(
-        read_only=True,
-        view_name="topic-detail",
-        lookup_field="topic",
-        parent_lookup_kwargs={
-            "theme": "theme",
-            "sub_theme": "sub_theme",
-        },
-    )
-
-
-class TopicDetailSerializer(Serializer):
-    geography_types = NestedHyperlinkedIdentityField(
         read_only=True,
         view_name="geography_type-list",
         lookup_field="topic",
@@ -72,19 +43,6 @@ class GeographyTypeListSerializer(Serializer):
     name = CharField()
     link = NestedHyperlinkedIdentityField(
         read_only=True,
-        view_name="geography_type-detail",
-        lookup_field="geography_type",
-        parent_lookup_kwargs={
-            "theme": "theme",
-            "sub_theme": "sub_theme",
-            "topic": "topic",
-        },
-    )
-
-
-class GeographyTypeDetailSerializer(Serializer):
-    geographies = NestedHyperlinkedIdentityField(
-        read_only=True,
         view_name="geography-list",
         lookup_field="geography_type",
         parent_lookup_kwargs={
@@ -99,20 +57,6 @@ class GeographyTypeDetailSerializer(Serializer):
 class GeographyListSerializer(Serializer):
     name = CharField()
     link = NestedHyperlinkedIdentityField(
-        read_only=True,
-        view_name="geography-detail",
-        lookup_field="geography",
-        parent_lookup_kwargs={
-            "theme": "theme",
-            "sub_theme": "sub_theme",
-            "topic": "topic",
-            "geography_type": "geography_type",
-        },
-    )
-
-
-class GeographyDetailSerializer(Serializer):
-    metrics = NestedHyperlinkedIdentityField(
         read_only=True,
         view_name="metric-list",
         lookup_field="geography",
