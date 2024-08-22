@@ -110,6 +110,7 @@ class PrivateAPICrawler:
         self._headless_cms_api_crawler.process_detail_pages_for_headless_cms_api(
             pages=pages
         )
+        self._headless_cms_api_crawler.process_all_snippets()
         logger.info("Completed processing of headless CMS API")
 
         pages_count = len(pages)

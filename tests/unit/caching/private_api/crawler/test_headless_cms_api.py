@@ -140,3 +140,71 @@ class TestHeadlessCMSAPICrawler:
                 f"Hitting GET pages/ endpoint for `{mocked_page.title}` page"
                 in caplog.text
             )
+
+    # Snippets
+
+    @mock.patch.object(
+        HeadlessCMSAPICrawler, "process_global_banners_for_headless_cms_api"
+    )
+    @mock.patch.object(HeadlessCMSAPICrawler, "process_menus_for_headless_cms_api")
+    def test_process_all_snippets(
+        self,
+        spy_process_global_banners_for_headless_cms_api: mock.MagicMock,
+        spy_process_menus_for_headless_cms_api: mock.MagicMock,
+        headless_cms_api_crawler_with_mocked_internal_api_client: HeadlessCMSAPICrawler,
+    ):
+        """
+        Given no input
+        When `process_all_snippets()` is called
+            from an instance of the `HeadlessCMSAPICrawler`
+        Then the call is delegated to each of the methods
+            for the correct snippets
+        """
+        # Given / When
+        headless_cms_api_crawler_with_mocked_internal_api_client.process_all_snippets()
+
+        # Then
+        spy_process_global_banners_for_headless_cms_api.assert_called_once()
+        spy_process_menus_for_headless_cms_api.assert_called_once()
+
+    def test_process_global_banners_for_headless_cms_api_delegates_call_to_api_client(
+        self,
+        headless_cms_api_crawler_with_mocked_internal_api_client: HeadlessCMSAPICrawler,
+    ):
+        """
+        Given no input
+        When `process_global_banners_for_headless_cms_api()`
+            is called from an instance of `HeadlessCMSAPICrawler`
+        Then the call is delegated to the `InternalAPIClient`
+        """
+        # Given
+        spy_internal_api_client: mock.Mock = (
+            headless_cms_api_crawler_with_mocked_internal_api_client._internal_api_client
+        )
+
+        # When
+        headless_cms_api_crawler_with_mocked_internal_api_client.process_global_banners_for_headless_cms_api()
+
+        # Then
+        spy_internal_api_client.hit_global_banners_endpoint.assert_called_once()
+
+    def test_process_menus_for_headless_cms_api_delegates_call_to_api_client(
+        self,
+        headless_cms_api_crawler_with_mocked_internal_api_client: HeadlessCMSAPICrawler,
+    ):
+        """
+        Given no input
+        When `process_menus_for_headless_cms_api()`
+            is called from an instance of `HeadlessCMSAPICrawler`
+        Then the call is delegated to the `InternalAPIClient`
+        """
+        # Given
+        spy_internal_api_client: mock.Mock = (
+            headless_cms_api_crawler_with_mocked_internal_api_client._internal_api_client
+        )
+
+        # When
+        headless_cms_api_crawler_with_mocked_internal_api_client.process_menus_for_headless_cms_api()
+
+        # Then
+        spy_internal_api_client.hit_menus_endpoint.assert_called_once()

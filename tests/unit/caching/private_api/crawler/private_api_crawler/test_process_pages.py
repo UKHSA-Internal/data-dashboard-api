@@ -104,6 +104,36 @@ class TestPrivateAPICrawlerProcessPages:
             pages=fake_pages
         )
 
+    @mock.patch.object(HeadlessCMSAPICrawler, "process_all_snippets")
+    def test_delegates_call_for_processing_all_snippets(
+        self,
+        spy_process_all_snippets: mock.MagicMock,
+        private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
+    ):
+        """
+        Given a list of pages
+        When `process_pages()` is called
+            from an instance of `PrivateAPICrawler`
+        Then the `process_all_snippets()` method is called
+
+        Patches:
+            `spy_process_all_snippets`: For the main assertion
+
+        """
+        # Given
+        fake_pages = [
+            FakeTopicPageFactory._build_page(page_name="covid_19"),
+            FakeTopicPageFactory._build_page(page_name="influenza"),
+        ]
+
+        # When
+        private_api_crawler_with_mocked_internal_api_client.process_pages(
+            pages=fake_pages
+        )
+
+        # Then
+        spy_process_all_snippets.assert_called_once()
+
     def test_logs_when_page_sections_cannot_be_processed_eg_common_pages(
         self,
         private_api_crawler_with_mocked_internal_api_client: PrivateAPICrawler,
