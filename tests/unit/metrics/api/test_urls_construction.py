@@ -119,9 +119,9 @@ class TestConstructCMSAdminUrlpatterns:
 
 
 class TestConstructPublicAPIUrlpatterns:
-    @mock.patch(f"{MODULE_PATH}.construct_versioned_urlpatterns_for_public_api")
+    @mock.patch(f"{MODULE_PATH}.construct_url_patterns_for_public_api")
     def test_public_api_app_mode_uses_root_as_prefix(
-        self, spy_construct_versioned_urlpatterns_for_public_api: mock.MagicMock
+        self, spy_construct_url_patterns_for_public_api: mock.MagicMock
     ):
         """
         Given an `app_mode` of "PUBLIC_API"
@@ -136,13 +136,8 @@ class TestConstructPublicAPIUrlpatterns:
         urlpatterns = construct_public_api_urlpatterns(app_mode=app_mode)
 
         # Then
-        spy_construct_versioned_urlpatterns_for_public_api.assert_called_once_with(
-            prefix=""
-        )
-        assert (
-            urlpatterns
-            == spy_construct_versioned_urlpatterns_for_public_api.return_value
-        )
+        spy_construct_url_patterns_for_public_api.assert_called_once_with(prefix="")
+        assert urlpatterns == spy_construct_url_patterns_for_public_api.return_value
 
     @pytest.mark.parametrize(
         "app_mode",
@@ -152,10 +147,10 @@ class TestConstructPublicAPIUrlpatterns:
             "COMPLETE_APP",
         ],
     )
-    @mock.patch(f"{MODULE_PATH}.construct_versioned_urlpatterns_for_public_api")
+    @mock.patch(f"{MODULE_PATH}.construct_url_patterns_for_public_api")
     def test_public_api_app_mode_returns_at_designated_path(
         self,
-        spy_construct_versioned_urlpatterns_for_public_api: mock.MagicMock,
+        spy_construct_url_patterns_for_public_api: mock.MagicMock,
         app_mode: str | None,
     ):
         """
@@ -171,13 +166,10 @@ class TestConstructPublicAPIUrlpatterns:
         urlpatterns = construct_public_api_urlpatterns(app_mode=provided_app_mode)
 
         # Then
-        spy_construct_versioned_urlpatterns_for_public_api.assert_called_once_with(
+        spy_construct_url_patterns_for_public_api.assert_called_once_with(
             prefix=DEFAULT_PUBLIC_API_PREFIX
         )
-        assert (
-            urlpatterns
-            == spy_construct_versioned_urlpatterns_for_public_api.return_value
-        )
+        assert urlpatterns == spy_construct_url_patterns_for_public_api.return_value
 
 
 class TestConstructUrlpatterns:
