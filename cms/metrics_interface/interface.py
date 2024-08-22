@@ -142,6 +142,18 @@ class MetricsAPIInterface:
         """
         return self.metric_manager.get_all_unique_names()
 
+    def get_all_timeseries_metric_names(self) -> QuerySet:
+        """Gets all unique metric names that belong to a timeseries metric_group as a flat list.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual metric names without repetition:
+                Examples:
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_deaths_ONSByDay']>`
+
+        """
+        return self.metric_manager.get_all_timeseries_names()
+
     def get_all_unique_change_type_metric_names(self) -> QuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change`
         Note this is achieved by delegating the call to the `MetricManager` from the Metrics API

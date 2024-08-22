@@ -29,6 +29,29 @@ class TestGetAllUniqueMetricNames:
         assert unique_metric_names == [(x, x) for x in retrieved_unique_metric_names]
 
 
+class TestGetAlLTimeSeriesMetricNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_timeseries_metric_names")
+    def test_delegates_calls_correctly(
+        self, mocked_get_all_timeseries_metric_names: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns unique timeseries metric names
+        When `get_all_timeseries_metric_names()` is called
+        Then the unique metric names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_unique_metric_names = ["COVID-19_deaths_ONSRollingMean"]
+        mocked_get_all_timeseries_metric_names.return_value = (
+            retrieved_unique_metric_names
+        )
+
+        # When
+        unique_metric_names = field_choices_callables.get_all_timeseries_metric_names()
+
+        # Then
+        assert unique_metric_names == [(x, x) for x in retrieved_unique_metric_names]
+
+
 class TestGetAllUniqueChangeTypeMetricNames:
     @mock.patch.object(
         interface.MetricsAPIInterface, "get_all_unique_change_type_metric_names"

@@ -58,6 +58,19 @@ class MetricQuerySet(models.QuerySet):
         """
         return self.get_all_unique_names().filter(name__icontains="percent")
 
+    def get_all_timeseries_names(self) -> models.QuerySet:
+        """Gets all unique metric names that have a `timeseries` metric_group
+            and returns them as a flat list.
+
+        Returns:
+            QuerySet: A queryset of the individual metric names without repetition
+                ordered in descending ordering starting from A -> Z:
+                    Examples:
+                        `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_testing_PCRcountByDay']>`
+
+        """
+        return self.get_all_unique_names().exclude(metric_group__name="headline")
+
     def get_all_headline_names(self) -> models.QuerySet:
         """Gets all unique headline metric names as a flat list queryset
 
@@ -121,6 +134,16 @@ class MetricManager(models.Manager):
 
         """
         return self.get_queryset().get_all_unique_percent_change_type_names()
+
+    def get_all_timeseries_names(self) -> MetricQuerySet:
+        """Gets all unique timeseries metric names as a flat list queryset
+
+        Returns:
+            QuerySet: A queryset of the individual metric names without repetition
+                Examples:
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_testing_PCRcountByDay']>`
+        """
+        return self.get_queryset().get_all_timeseries_names()
 
     def get_all_headline_names(self) -> MetricQuerySet:
         """Gets all unique headline metric names as a flat list queryset
