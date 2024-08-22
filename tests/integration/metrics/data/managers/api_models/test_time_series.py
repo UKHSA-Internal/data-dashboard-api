@@ -1,10 +1,12 @@
 import datetime
 
 import pytest
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
 from metrics.data.managers.api_models.time_series import APITimeSeriesQuerySet
 from metrics.data.models.api_models import APITimeSeries
+from metrics.domain.models import get_date_n_months_ago_from_timestamp
 from tests.factories.metrics.api_models.time_series import APITimeSeriesFactory
 
 FAKE_DATES = ("2023-01-01", "2023-01-02", "2023-01-03")
@@ -456,3 +458,118 @@ class TestAPITimeSeriesQuerySet:
             current_0_to_4_record_second_date,
             current_5_to_14_record_second_date,
         ]
+
+
+class TestAPITimeSeriesManager:
+    @pytest.mark.django_db
+    def test_delete_superseded_data_deletes_stale_records_only(
+        self, timestamp_2_months_from_now: datetime.datetime
+    ):
+        """
+        Given a number of `APITimeSeries` records which are stale
+        And a number of `APITimeSeries` records which are live,
+            but not grouped linearly.
+        And a record which is under embargo
+        When `delete_superseded_data()` is called
+            from an instance of `APITimeSeriesQueryset`
+        Then only the stale `APITimeSeries` records are deleted
+        And the live & embargoed records are still available
+        """
+        # Given
+        dates = FAKE_DATES
+        first_round_outdated_refresh_date = "2023-08-10"
+        second_round_refresh_date = "2023-08-11"
+        third_round_refresh_date = "2023-08-12"
+        fourth_round_refresh_date = "2023-08-13"
+        fifth_round_refresh_date = "2023-08-14"
+
+        # Our first round of records which are all considered outdated
+        stale_first_round_versions = [
+            APITimeSeriesFactory.create_record(
+                metric_value=1,
+                date=date,
+                refresh_date=first_round_outdated_refresh_date,
+            )
+            for date in dates
+        ]
+        # In this 2nd round we received updates for each of the `dates`
+        partially_stale_second_round_versions = [
+            APITimeSeriesFactory.create_record(
+                metric_value=2, date=date, refresh_date=second_round_refresh_date
+            )
+            for date in dates
+        ]
+        # In this 3rd round we received updates for only the last of the `dates`
+        last_date = dates[-1]
+        live_third_version_for_third_date = APITimeSeriesFactory.create_record(
+            metric_value=3, date=last_date, refresh_date=third_round_refresh_date
+        )
+        # In the 4th round, we received an update for only the first of the `dates`
+        first_date = dates[0]
+        fourth_round_for_first_date = APITimeSeriesFactory.create_record(
+            metric_value=4, date=first_date, refresh_date=fourth_round_refresh_date
+        )
+        # In the 5th and final round, we received an update for only the first date
+        # but because this is not yet released from embargo, we do not consider it.
+        fifth_embargoed_round_for_first_date = APITimeSeriesFactory.create_record(
+            metric_value=5,
+            date=first_date,
+            refresh_date=fifth_round_refresh_date,
+            embargo=timestamp_2_months_from_now,
+        )
+
+        # When
+        APITimeSeries.objects.delete_superseded_data(
+            theme_name=fifth_embargoed_round_for_first_date.theme,
+            sub_theme_name=fifth_embargoed_round_for_first_date.sub_theme,
+            topic_name=fifth_embargoed_round_for_first_date.topic,
+            metric_name=fifth_embargoed_round_for_first_date.metric,
+            geography_name=fifth_embargoed_round_for_first_date.geography,
+            geography_type_name=fifth_embargoed_round_for_first_date.geography_type,
+            geography_code=fifth_embargoed_round_for_first_date.geography_code,
+            stratum_name=fifth_embargoed_round_for_first_date.stratum,
+            sex=fifth_embargoed_round_for_first_date.sex,
+            age=fifth_embargoed_round_for_first_date.age,
+        )
+        retrieved_records = APITimeSeries.objects.all()
+
+        # Then
+        # Our database will look like the following:
+        # | 2023-01-01 | 2023-01-02 | 2023-01-03 |
+        # | 1st round  | 1st round  | 1st round  |   <- entirely superseded
+        # | 2nd round  | 2nd round  | 2nd round  |   <- partially superseded
+        # |     -      |      -     | 3rd round  |   <- contains a final successor but no other updates
+        # | 4th round  |      -     |     -      |   <- 'head' round with no successors
+        # | 5th round  |      -     |     -      |   <- embargo round not yet released
+        # ----------------------------------------
+        # | 1st round  | 1st round  | 1st round  |   <- expected records to be deleted
+        # | 2nd round  |      -     | 2nd round  |   <- expected records to be deleted
+
+        assert retrieved_records.count() == 4
+
+        # --- Checks for 1st round ---
+        # The 1st round was succeeded entirely by the 2nd round
+        # So we expect to see none of them in the remaining records
+        for stale_first_version_record in stale_first_round_versions:
+            assert stale_first_version_record not in retrieved_records
+
+        # --- Checks for 2nd round ---
+        stale_first_date_second_version_record = partially_stale_second_round_versions[
+            0
+        ]
+        assert stale_first_date_second_version_record not in retrieved_records
+
+        live_second_date_second_version = partially_stale_second_round_versions[1]
+        assert live_second_date_second_version in retrieved_records
+
+        stale_third_date_second_version = partially_stale_second_round_versions[2]
+        assert stale_third_date_second_version not in retrieved_records
+
+        # --- Checks for 3rd round ---
+        assert live_third_version_for_third_date in retrieved_records
+
+        # --- Checks for 4th round ---
+        assert fourth_round_for_first_date in retrieved_records
+
+        # --- Checks for 5th round ---
+        assert fifth_embargoed_round_for_first_date in retrieved_records

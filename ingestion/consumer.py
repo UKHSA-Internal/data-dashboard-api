@@ -164,7 +164,7 @@ class Consumer:
         record, _ = model_manager.get_or_create(**kwargs)
         return record
 
-    def get_or_create_theme(self):
+    def _get_or_create_theme(self):
         """Returns the corresponding `Theme` record to be associated with the current `data`
 
         Returns:
@@ -176,7 +176,7 @@ class Consumer:
             name=self.dto.parent_theme,
         )
 
-    def get_or_create_sub_theme(self, *, theme):
+    def _get_or_create_sub_theme(self, *, theme):
         """Returns the corresponding `SubTheme` record to be associated with the current `data`
 
         Args:
@@ -193,7 +193,7 @@ class Consumer:
             theme_id=theme.id,
         )
 
-    def get_or_create_topic(self, *, sub_theme):
+    def _get_or_create_topic(self, *, sub_theme):
         """Returns the corresponding `Topic` record to be associated with the current `data`
 
         Args:
@@ -210,7 +210,7 @@ class Consumer:
             sub_theme_id=sub_theme.id,
         )
 
-    def get_or_create_geography_type(self):
+    def _get_or_create_geography_type(self):
         """Returns the corresponding `GeographyType` record to be associated with the current `data`
 
         Returns:
@@ -222,7 +222,7 @@ class Consumer:
             name=self.dto.geography_type,
         )
 
-    def get_or_create_geography(self, *, geography_type):
+    def _get_or_create_geography(self, *, geography_type):
         """Returns the corresponding `Geography` record to be associated with the current `data`
 
         Args:
@@ -240,7 +240,7 @@ class Consumer:
             geography_type_id=geography_type.id,
         )
 
-    def get_or_create_metric_group(self, *, topic):
+    def _get_or_create_metric_group(self, *, topic):
         """Returns the corresponding `MetricGroup` record to be associated with the current `data`
 
         Args:
@@ -257,7 +257,7 @@ class Consumer:
             topic_id=topic.id,
         )
 
-    def get_or_create_metric(self, *, metric_group, topic):
+    def _get_or_create_metric(self, *, metric_group, topic):
         """Returns the corresponding `Metric` record to be associated with the current `data`
 
         Args:
@@ -277,7 +277,7 @@ class Consumer:
             topic_id=topic.id,
         )
 
-    def get_or_create_stratum(self):
+    def _get_or_create_stratum(self):
         """Returns the corresponding `Stratum` record to be associated with the current `data`
 
         Returns:
@@ -289,7 +289,7 @@ class Consumer:
             name=self.dto.stratum,
         )
 
-    def get_or_create_age(self):
+    def _get_or_create_age(self):
         """Returns the corresponding `Age` record to be associated with the current `data`
 
         Returns:
@@ -316,18 +316,18 @@ class Consumer:
             when creating the `CoreHeadline` or `CoreTimeSeries` records
 
         """
-        theme = self.get_or_create_theme()
-        sub_theme = self.get_or_create_sub_theme(theme=theme)
-        topic = self.get_or_create_topic(sub_theme=sub_theme)
+        theme = self._get_or_create_theme()
+        sub_theme = self._get_or_create_sub_theme(theme=theme)
+        topic = self._get_or_create_topic(sub_theme=sub_theme)
 
-        geography_type = self.get_or_create_geography_type()
-        geography = self.get_or_create_geography(geography_type=geography_type)
+        geography_type = self._get_or_create_geography_type()
+        geography = self._get_or_create_geography(geography_type=geography_type)
 
-        metric_group = self.get_or_create_metric_group(topic=topic)
-        metric = self.get_or_create_metric(metric_group=metric_group, topic=topic)
+        metric_group = self._get_or_create_metric_group(topic=topic)
+        metric = self._get_or_create_metric(metric_group=metric_group, topic=topic)
 
-        stratum = self.get_or_create_stratum()
-        age = self.get_or_create_age()
+        stratum = self._get_or_create_stratum()
+        age = self._get_or_create_age()
 
         return SupportingModelsLookup(
             metric_id=metric.id,
@@ -335,6 +335,41 @@ class Consumer:
             stratum_id=stratum.id,
             age_id=age.id,
         )
+
+    def process_core_headlines(self) -> None:
+        """Creates `CoreHeadline` database records from the ingested data after stale records are deleted ahead of time.
+
+        Notes:
+            Any necessary supporting models will be created
+            as required for the `CoreHeadline` records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Returns:
+            None
+
+        """
+        self.clear_stale_headlines()
+        self.create_core_headlines()
+
+    def process_core_and_api_timeseries(self) -> None:
+        """Creates `APITimeSeries` and `CoreTimeSeries` records from the ingested data after stale records are deleted.
+
+        Any necessary supporting models will be created
+            as required for the records.
+            For example, if the ingested data contains a new value
+            for the `topic` field which is not already available as a `Topic` model,
+            then a new `Topic` model will be created
+            and that record will be inserted into the database.
+
+        Returns:
+            None
+
+        """
+        self.clear_stale_timeseries()
+        self.create_core_and_api_timeseries()
 
     # build and create model methods
 
@@ -456,6 +491,24 @@ class Consumer:
             model_manager=self.core_timeseries_manager, model_instances=core_time_series
         )
 
+    def clear_stale_headlines(self):
+        """Deletes all stale records for the `CoreHeadline` records relevant to the ingested dataset
+
+        Returns:
+            None
+
+        """
+        self.core_headline_manager.delete_superseded_data(
+            topic_name=self.dto.topic,
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
+
     def build_api_time_series(self) -> list[API_TIME_SERIES_MODEL]:
         """Builds `APITimeSeries` model instances from the ingested data
 
@@ -516,3 +569,32 @@ class Consumer:
         """
         self.create_core_time_series()
         self.create_api_time_series()
+
+    def clear_stale_timeseries(self):
+        """Deletes all stale records for both `CoreTimeSeries` and `APITimeSeries` relevant to the ingested dataset
+
+        Returns:
+            None
+
+        """
+        self.core_timeseries_manager.delete_superseded_data(
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
+        self.api_timeseries_manager.delete_superseded_data(
+            theme_name=self.dto.parent_theme,
+            sub_theme_name=self.dto.child_theme,
+            topic_name=self.dto.topic,
+            metric_name=self.dto.metric,
+            geography_name=self.dto.geography,
+            geography_type_name=self.dto.geography_type,
+            geography_code=self.dto.geography_code,
+            stratum_name=self.dto.stratum,
+            sex=self.dto.sex,
+            age=self.dto.age,
+        )
