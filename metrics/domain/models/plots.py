@@ -4,7 +4,11 @@ from typing import Literal, Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
-from metrics.domain.common.utils import ChartAxisFields
+from metrics.domain.common.utils import (
+    ChartAxisFields,
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 
 
 class PlotParameters(BaseModel):
@@ -34,6 +38,10 @@ class PlotParameters(BaseModel):
     @property
     def metric_name(self) -> str:
         return self.metric
+
+    @property
+    def metric_group(self) -> str:
+        return extract_metric_group_from_metric(self.metric)
 
     @property
     def geography_name(self) -> str | None:
@@ -90,6 +98,7 @@ class PlotParameters(BaseModel):
         Notes:
             A number of fields are ommitted which would not be needed
             for a database query related to this plot.
+            x_axis and y_axis fields are combined into `fields_to_export` list.
 
         Returns:
             Dict[str, str]: A dict representation of the model.
@@ -99,7 +108,8 @@ class PlotParameters(BaseModel):
                     >>> {"topic_name": "COVID-19", ...}
 
         """
-        return {
+        params = {
+            "fields_to_export": [self.x_axis_value, self.y_axis_value],
             "metric_name": self.metric_name or "",
             "topic_name": self.topic_name or "",
             "stratum_name": self.stratum_name or "",
@@ -107,11 +117,15 @@ class PlotParameters(BaseModel):
             "geography_type_name": self.geography_type_name or "",
             "sex": self.sex or "",
             "age": self.age or "",
-            "date_from": self.date_from_value,
-            "date_to": self.date_to_value,
-            "x_axis": self.x_axis_value,
-            "y_axis": self.y_axis_value,
         }
+
+        if DataSourceFileType[self.metric_group].is_timeseries:
+            params["fields_to_export"].append("in_reporting_delay_period")
+            params["date_from"] = self.date_from_value
+            params["date_to"] = self.date_to_value
+            params["field_to_order_by"] = self.x_axis_value
+
+        return params
 
 
 class PlotsCollection(BaseModel):

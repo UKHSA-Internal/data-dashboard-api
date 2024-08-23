@@ -20,7 +20,7 @@ class TablesInterface:
 
         self.plots_interface = plots_interface or PlotsInterface(
             plots_collection=self.plots_collection,
-            core_time_series_manager=core_time_series_manager,
+            core_model_manager=core_time_series_manager,
         )
 
     def _build_tabular_data_from_plots_data(self) -> TabularData:

@@ -6,19 +6,25 @@ import plotly.graph_objects
 from django.db.models import Manager
 from scour import scour
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts import (
     bar,
     line_multi_coloured,
     line_with_shaded_section,
 )
-from metrics.domain.common.utils import ChartTypes
+from metrics.domain.common.utils import (
+    ChartTypes,
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 from metrics.domain.models import PlotData, PlotsCollection
 from metrics.domain.models.plots_text import PlotsText
 from metrics.interfaces.charts import calculations
 from metrics.interfaces.plots.access import PlotsInterface
+from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class InvalidFileFormatError(Exception):
@@ -38,17 +44,40 @@ class ChartsInterface:
         self,
         *,
         chart_plots: PlotsCollection,
-        core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_model_manager: CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
         self.chart_plots = chart_plots
         self.chart_type = self.chart_plots.plots[0].chart_type
+        self.metric_group = extract_metric_group_from_metric(
+            metric=self.chart_plots.plots[0].metric
+        )
+        self.core_model_manager = core_model_manager or self._set_core_model_manager()
+
         self.plots_interface = plots_interface or PlotsInterface(
             plots_collection=self.chart_plots,
-            core_time_series_manager=core_time_series_manager,
+            core_model_manager=self.core_model_manager,
         )
 
         self._latest_date: str = ""
+
+    def _set_core_model_manager(self) -> Manager:
+        """Returns `core_model_manager` based on the `metric_type`
+
+        Notes:
+            The charts interface can be used to generate charts for
+            either `CoreTimerseries` or `CoreHeadline` data.
+            this function returns the Django manager to match the
+            `metric_type` provided or defaults to `CoreTimeseries`
+            if the `metric_type` is not provided.
+
+        Returns:
+            Manager: either `CoreTimeseries` or `CoreHeadline`
+        """
+        if DataSourceFileType[self.metric_group].is_timeseries:
+            return DEFAULT_CORE_TIME_SERIES_MANAGER
+
+        return DEFAULT_CORE_HEADLINE_MANAGER
 
     def generate_chart_output(self) -> ChartOutput:
         """Generates a `plotly` chart figure and a corresponding description
@@ -198,6 +227,7 @@ class ChartsInterface:
         """
         plots_data: list[PlotData] = self.plots_interface.build_plots_data()
         self._set_latest_date_from_plots_data(plots_data=plots_data)
+
         return plots_data
 
     def _set_latest_date_from_plots_data(self, *, plots_data: list[PlotData]) -> None:

@@ -77,10 +77,12 @@ class TestPlotParameters:
         # When / Then
         PlotParameters(**self.mandatory_parameters, **optional_parameters)
 
-    def test_to_dict_for_query(self, fake_chart_plot_parameters: PlotParameters):
+    def test_to_dict_for_query_for_timeseries_data(
+        self, fake_chart_plot_parameters: PlotParameters
+    ):
         """
         Given a payload containing optional fields which do not relate
-            directly to the corresponding query filters
+            directly to the corresponding query filters and a metric group of `timeseries`
         When `to_dict_for_query()` is called from an instance of the `PlotParameters` model
         Then the returned dict contains the expected key-value pairs only
         """
@@ -113,6 +115,14 @@ class TestPlotParameters:
 
         # Then
         expected_dict_used_for_query = {
+            "fields_to_export": [
+                ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
+                ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
+                "in_reporting_delay_period",
+            ],
+            "field_to_order_by": ChartAxisFields[
+                fake_chart_plot_parameters.x_axis
+            ].value,
             "topic_name": fake_chart_plot_parameters.topic_name,
             "metric_name": fake_chart_plot_parameters.metric_name,
             "stratum_name": fake_chart_plot_parameters.stratum_name,
@@ -122,8 +132,55 @@ class TestPlotParameters:
             "age": fake_chart_plot_parameters.age_name,
             "date_from": fake_chart_plot_parameters.date_from_value,
             "date_to": fake_chart_plot_parameters.date_to_value,
-            "x_axis": ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
-            "y_axis": ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
+        }
+        # `chart_type`, `label`, `line_colour`, and `line_type` are omitted
+        assert dict_used_for_query == expected_dict_used_for_query
+
+    def test_to_dict_for_query_for_headline_data(
+        self, fake_chart_plot_parameters: PlotParameters
+    ):
+        """
+        Given a payload containing optional fields which do not relate
+            directly to the corresponding query filters and a metric group of `headline`
+        When `to_dict_for_query()` is called from an instance of the `PlotParameters` model
+        Then the returned dict contains the expected key-value pairs only
+        """
+        # Given
+        geography = "London"
+        geography_type = "Nation"
+        sex = "Female"
+        age = "0_4"
+        label = "0 to 4 years old"
+        line_colour = "BLUE"
+
+        fake_chart_plot_parameters.metric = "COVID-19_headline_vaccines_spring24Uptake"
+        fake_chart_plot_parameters.geography = geography
+        fake_chart_plot_parameters.geography_type = geography_type
+        fake_chart_plot_parameters.label = label
+        fake_chart_plot_parameters.line_colour = line_colour
+        fake_chart_plot_parameters.sex = sex
+        fake_chart_plot_parameters.age = age
+        fake_chart_plot_parameters.date_from = None
+        fake_chart_plot_parameters.date_to = None
+
+        # When
+        dict_used_for_query: dict[str, str] = (
+            fake_chart_plot_parameters.to_dict_for_query()
+        )
+
+        # Then
+        expected_dict_used_for_query = {
+            "fields_to_export": [
+                ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
+                ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
+            ],
+            "topic_name": fake_chart_plot_parameters.topic_name,
+            "metric_name": fake_chart_plot_parameters.metric_name,
+            "stratum_name": fake_chart_plot_parameters.stratum_name,
+            "geography_name": fake_chart_plot_parameters.geography_name,
+            "geography_type_name": fake_chart_plot_parameters.geography_type_name,
+            "sex": fake_chart_plot_parameters.sex,
+            "age": fake_chart_plot_parameters.age_name,
         }
         # `chart_type`, `label`, `line_colour`, and `line_type` are omitted
         assert dict_used_for_query == expected_dict_used_for_query

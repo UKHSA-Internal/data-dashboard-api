@@ -3,6 +3,7 @@ from enum import Enum
 
 DEFAULT_CHART_HEIGHT = 220
 DEFAULT_CHART_WIDTH = 515
+DEFAULT_VALUE_ERROR_MESSAGE = "The metric provided doesn't appear to be valid."
 
 
 def get_last_day_of_month(*, date: datetime.datetime.date) -> datetime.datetime.date:
@@ -54,6 +55,9 @@ class ChartAxisFields(Enum):
     age = "age__name"
     date = "date"
     metric = "metric_value"
+    geography = "geography__name"
+    geography_type = "geography__geography_type__name"
+    sex = "sex"
 
     @classmethod
     def choices(cls):
@@ -91,3 +95,44 @@ class ChartAxisFields(Enum):
 
 DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
 DEFAULT_Y_AXIS = ChartAxisFields.get_default_y_axis().name
+
+
+class DataSourceFileType(Enum):
+    # Headline types
+    headline = "headline"
+
+    # Timeseries types
+    cases = "cases"
+    deaths = "deaths"
+    healthcare = "healthcare"
+    testing = "testing"
+    vaccinations = "vaccinations"
+
+    @property
+    def is_headline(self) -> bool:
+        return self.value == "headline"
+
+    @property
+    def is_timeseries(self) -> bool:
+        return self.value != "headline"
+
+
+def extract_metric_group_from_metric(metric: str) -> str | None:
+    """Returns the metric group based on the provided metric
+
+    Args:
+        metric: string representation a metric
+
+    Returns:
+        string of the metric group the provided metric belongs to
+        if no matching metric group is found then a `ValueError` is
+        raised due to an invalid metric value.
+    """
+    if DataSourceFileType.headline.value in metric:
+        return DataSourceFileType.headline.value
+
+    for metric_group in DataSourceFileType:
+        if metric_group.value in metric:
+            return metric_group.value
+
+    raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE)
