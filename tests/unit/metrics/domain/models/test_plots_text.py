@@ -325,3 +325,30 @@ class TestPlotsText:
         # Then
         expected_text_about_reporting_delay_period = "There is no reporting delay period being tracked for the data on this chart. "
         assert expected_text_about_reporting_delay_period in text
+
+    def test_returns_correct_text_for_headline_data(
+        self,
+        fake_plot_data: PlotData,
+    ):
+        """
+        Given a list of 1 enriched `PlotData` model
+            which represents a headline data type
+        When `construct_text()` is called
+            from an instance of `PlotsText`
+        Then the returned text provides commentary
+            about the single headline data plot
+        """
+        # Given
+        fake_plot_data.parameters.metric = "COVID-19_headline_7DayAdmissions"
+        fake_plot_data.parameters.chart_type = "bar"
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        expected_text = (
+            f"This plot shows `{fake_plot_data.x_axis_values[0]}` along the X-axis. "
+            f"And `{fake_plot_data.y_axis_values[0]}` along the Y-axis. "
+        )
+        assert expected_text in text

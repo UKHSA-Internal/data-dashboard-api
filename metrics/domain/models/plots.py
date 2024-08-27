@@ -119,13 +119,21 @@ class PlotParameters(BaseModel):
             "age": self.age or "",
         }
 
-        if DataSourceFileType[self.metric_group].is_timeseries:
+        if self.is_timeseries_data:
             params["fields_to_export"].append("in_reporting_delay_period")
             params["date_from"] = self.date_from_value
             params["date_to"] = self.date_to_value
             params["field_to_order_by"] = self.x_axis_value
 
         return params
+
+    @property
+    def is_headline_data(self) -> bool:
+        return DataSourceFileType[self.metric_group].is_headline
+
+    @property
+    def is_timeseries_data(self) -> bool:
+        return DataSourceFileType[self.metric_group].is_timeseries
 
 
 class PlotsCollection(BaseModel):
