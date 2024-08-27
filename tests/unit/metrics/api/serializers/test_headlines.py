@@ -1,10 +1,14 @@
+import datetime
+from decimal import Decimal
 from unittest import mock
 
 import pytest
 from rest_framework.exceptions import ValidationError
 
+from metrics.data.models.core_models.headline import CoreHeadline
 from metrics.api.serializers.headlines import (
     HeadlinesQuerySerializer,
+    CoreHeadlineSerializer,
 )
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.age_manager import FakeAgeManager
@@ -13,6 +17,25 @@ from tests.fakes.managers.geography_type_manager import FakeGeographyTypeManager
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.stratum_manager import FakeStratumManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
+
+
+@pytest.fixture
+def mock_core_headline_data() -> mock.MagicMock:
+    return mock.MagicMock(
+        spec=CoreHeadline,
+        metric__topic__sub_theme__theme__name="infectious_disease",
+        metric__topic__sub_theme__name="respiratory",
+        metric__topic__name="COVID-19",
+        metric__name="COVID-19_cases_rateRollingMean",
+        geography__name="England",
+        geography__geography_type__name="Nation",
+        stratum__name="default",
+        age__name="all",
+        sex="all",
+        period_start=datetime.datetime(day=1, month=1, year=2024),
+        period_end=datetime.datetime(day=2, month=2, year=2024),
+        metric_value=Decimal("1.000"),
+    )
 
 
 class TestHeadlinesQuerySerializer:
@@ -276,3 +299,99 @@ class TestHeadlinesQuerySerializer:
         # Then
         expected_age_names: list[str] = age_manager.get_all_names()
         assert list(serializer.fields["age"].choices) == expected_age_names
+
+
+class TestCoreHeadlineSerializer:
+    def test_metric_value_is_serialized_correct(
+        self, mock_core_headline_data: mock.MagicMock
+    ):
+        """
+        Given a mocked `CoreHeadline` model object
+        When the mock is passed to the `CoreHeadlineSerializer`
+        Then the `metric_value` field is returned in the expected format.
+        """
+        # Given
+        example_metric_value = Decimal("1.9000")
+        mocked_core_headline_data = mock_core_headline_data
+        mocked_core_headline_data.metric_value = example_metric_value
+
+        # When
+        serializer = CoreHeadlineSerializer(instance=mocked_core_headline_data)
+
+        # Then
+        serialized_metric: str = serializer.data["metric_value"]
+        expected_metric_value = str(mocked_core_headline_data.metric_value)
+        assert serialized_metric == expected_metric_value
+
+    @pytest.mark.parametrize(
+        "related_field_name, serialized_field_name",
+        (
+            [
+                ("metric__topic__sub_theme__theme__name", "theme"),
+                ("metric__topic__sub_theme__name", "sub_theme"),
+                ("metric__topic__name", "topic"),
+                ("metric__name", "metric"),
+                ("geography__name", "geography"),
+                ("geography__geography_type__name", "geography_type"),
+                ("stratum__name", "stratum"),
+                ("age__name", "age"),
+            ]
+        ),
+    )
+    def test_related_fields_map_to_the_correct_serializede_fields(
+        self,
+        related_field_name: str,
+        serialized_field_name: str,
+        mock_core_headline_data: mock.MagicMock,
+    ):
+        """
+        Given a mocked `CoreHeadline` model object
+        When the mock is passed to the `CoreHeadlineSerializer`
+        Then relateed fields from other models are mapped to the correct serialized fields
+        """
+        # Given
+        mocked_core_headline_data = mock_core_headline_data
+
+        # When
+        serializer = CoreHeadlineSerializer(instance=mocked_core_headline_data)
+
+        # Then
+        serialized_field_value = serializer.data[serialized_field_name]
+        model_object_value = str(getattr(mocked_core_headline_data, related_field_name))
+        assert serialized_field_value == model_object_value
+
+    @pytest.mark.parametrize(
+        "expected_field",
+        [
+            "theme",
+            "sub_theme",
+            "topic",
+            "geography_type",
+            "geography",
+            "metric",
+            "age",
+            "stratum",
+            "sex",
+            "period_start",
+            "period_end",
+            "metric_value",
+        ],
+    )
+    def test_expected_fields_are_returned(
+        self,
+        expected_field: str,
+        mock_core_headline_data: mock.MagicMock,
+    ):
+        """
+        Given a mocked `CoreHeadline` model object
+        When the object is passed through the `CoreHeadlineSerializer`
+        Then the expected fields are returned.
+        """
+        # Given
+        mocked_core_headline_data = mock_core_headline_data
+
+        # When
+        serializer = CoreHeadlineSerializer(instance=mocked_core_headline_data)
+
+        # Then
+        assert expected_field in serializer.fields

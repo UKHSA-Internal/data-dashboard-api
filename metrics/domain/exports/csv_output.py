@@ -18,6 +18,21 @@ FIELDS = {
     "in_reporting_delay_period": "in_reporting_delay_period",
 }
 
+HEADLINE_FIELDS = {
+    "theme": "metric__topic__sub_theme__theme__name",
+    "sub_theme": "metric__topic__sub_theme__name",
+    "topic": "metric__topic__name",
+    "geography_type": "geography__geography_type__name",
+    "geography": "geography__name",
+    "metric": "metric__name",
+    "sex": "sex",
+    "age": "age__name",
+    "stratum": "stratum__name",
+    "period_start": "period_start",
+    "period_end": "period_end",
+    "metric_value": "metric_value",
+}
+
 
 def write_data_to_csv(
     *,
@@ -26,6 +41,16 @@ def write_data_to_csv(
 ) -> io.StringIO:
     headers = FIELDS.keys()
     rows = core_time_series_queryset
+    return _write_to_csv_file(file=file, headers=headers, rows=rows)
+
+
+def write_headline_data_to_csv(
+    *,
+    file: io.StringIO,
+    core_headline_queryset,
+) -> io.StringIO:
+    headers = HEADLINE_FIELDS.keys()
+    rows = core_headline_queryset
     return _write_to_csv_file(file=file, headers=headers, rows=rows)
 
 
