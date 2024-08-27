@@ -2,6 +2,8 @@ import datetime
 
 import pytest
 
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 from metrics.domain.common.utils import (
     ChartAxisFields,
     ChartTypes,
