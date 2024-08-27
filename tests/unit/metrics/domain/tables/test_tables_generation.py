@@ -360,7 +360,7 @@ class TestTabularData:
 
 
 class TestAddPlotDataToCombinedPlots:
-    def test_basic_behaviour(self):
+    def test_basic_behaviour(self, valid_plot_parameters: PlotParameters):
         """
         Given a plot which is not by date
         When `add_plot_data_to_combined_plots()` is called
@@ -369,6 +369,11 @@ class TestAddPlotDataToCombinedPlots:
         """
         # Given
         first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
+        plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values="",
+            y_axis_values="",
+        )
 
         expected_combined_plots = {
             "0-4": {PLOT_1_LABEL: "10", "in_reporting_delay_period": False},
@@ -376,7 +381,7 @@ class TestAddPlotDataToCombinedPlots:
         }
 
         # When
-        tabular_data = TabularData(plots=[])
+        tabular_data = TabularData(plots=[plot_data])
         tabular_data.add_plot_data_to_combined_plots(
             plot_data=first_chart_plots_data,
             plot_label=PLOT_1_LABEL,
@@ -385,7 +390,7 @@ class TestAddPlotDataToCombinedPlots:
         # Then
         assert tabular_data.combined_plots == expected_combined_plots
 
-    def test_two_plots(self):
+    def test_two_plots(self, valid_plot_parameters: PlotParameters):
         """
         Given two plot neither of which are by date
         When `add_plot_data_to_combined_plots()` is called
@@ -394,6 +399,11 @@ class TestAddPlotDataToCombinedPlots:
         """
         first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
         second_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_2_VALUES))
+        plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values="",
+            y_axis_values="",
+        )
 
         expected_combined_plots = {
             "0-4": {
@@ -409,7 +419,7 @@ class TestAddPlotDataToCombinedPlots:
         }
 
         # When
-        tabular_data = TabularData(plots=[])
+        tabular_data = TabularData(plots=[plot_data])
 
         tabular_data.add_plot_data_to_combined_plots(
             plot_data=first_chart_plots_data,
@@ -474,7 +484,7 @@ class TestCombineAllPlots:
 
 
 class TestCreateMultiPlotOutput:
-    def test_2_plots(self):
+    def test_2_plots(self, valid_plot_parameters: PlotParameters):
         """
         Given 2 plots with plot labels
         When `create_multi_plot_output()` is called
@@ -536,9 +546,14 @@ class TestCreateMultiPlotOutput:
                 ],
             },
         ]
+        plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values="",
+            y_axis_values="",
+        )
 
         # When
-        tabular_data = TabularData(plots=[])
+        tabular_data = TabularData(plots=[plot_data])
         tabular_data.plot_labels = plot_labels
         tabular_data.combined_plots = combined_plots
         tabular_data.column_heading = "date"
@@ -547,7 +562,7 @@ class TestCreateMultiPlotOutput:
         # Then
         assert actual_output == expected_output
 
-    def test_plots_of_unequal_length(self):
+    def test_plots_of_unequal_length(self, valid_plot_parameters: PlotParameters):
         """
         Given 2 plots which are not the same length as each other
         When `create_multi_plot_output()` is called
@@ -624,12 +639,79 @@ class TestCreateMultiPlotOutput:
                 ],
             },
         ]
+        plot_data = PlotData(
+            parameters=valid_plot_parameters,
+            x_axis_values="",
+            y_axis_values="",
+        )
 
         # When
-        tabular_data = TabularData(plots=[])
+        tabular_data = TabularData(plots=[plot_data])
         tabular_data.plot_labels = plot_labels
         tabular_data.combined_plots = combined_plots
         tabular_data.column_heading = "date"
+        actual_output = tabular_data.create_multi_plot_output()
+
+        # Then
+        assert actual_output == expected_output
+
+    def test_plots_for_headline_data(
+        self, valid_plot_parameters_for_headline_data: PlotParameters
+    ):
+        """
+        Given a series of plots for a headline data chart
+        When `create_multi_plot_output()` is called
+        Then the correct output is returned.
+        """
+        # Given
+        plot_labels = ["01 - 04", "05 - 10", "11 - 14"]
+        combined_plots = {
+            "01 - 04": {"01 - 04": "55"},
+            "05 - 10": {"05 - 10": "65"},
+            "11 - 14": {"11 - 14": "75"},
+        }
+        expected_output = [
+            {
+                "reference": "01 - 04",
+                "values": [
+                    {
+                        "label": "Amount",
+                        "value": "55",
+                        "in_reporting_delay_period": False,
+                    }
+                ],
+            },
+            {
+                "reference": "05 - 10",
+                "values": [
+                    {
+                        "label": "Amount",
+                        "value": "65",
+                        "in_reporting_delay_period": False,
+                    }
+                ],
+            },
+            {
+                "reference": "11 - 14",
+                "values": [
+                    {
+                        "label": "Amount",
+                        "value": "75",
+                        "in_reporting_delay_period": False,
+                    }
+                ],
+            },
+        ]
+        plot_data = PlotData(
+            parameters=valid_plot_parameters_for_headline_data,
+            x_axis_values="",
+            y_axis_values="",
+        )
+
+        # When
+        tabular_data = TabularData(plots=[plot_data])
+        tabular_data.plot_labels = plot_labels
+        tabular_data.combined_plots = combined_plots
         actual_output = tabular_data.create_multi_plot_output()
 
         # Then

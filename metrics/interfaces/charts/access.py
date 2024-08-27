@@ -66,18 +66,18 @@ class ChartsInterface:
 
         Notes:
             The charts interface can be used to generate charts for
-            either `CoreTimerseries` or `CoreHeadline` data.
+            either `CoreTimeSeries` or `CoreHeadline` data.
             this function returns the Django manager to match the
-            `metric_type` provided or defaults to `CoreTimeseries`
-            if the `metric_type` is not provided.
+            current `metric_group` or defaults to `CoreTimeseries`
+            manager
 
         Returns:
             Manager: either `CoreTimeseries` or `CoreHeadline`
         """
-        if DataSourceFileType[self.metric_group].is_timeseries:
-            return DEFAULT_CORE_TIME_SERIES_MANAGER
+        if DataSourceFileType[self.metric_group].is_headline:
+            return DEFAULT_CORE_HEADLINE_MANAGER
 
-        return DEFAULT_CORE_HEADLINE_MANAGER
+        return DEFAULT_CORE_TIME_SERIES_MANAGER
 
     def generate_chart_output(self) -> ChartOutput:
         """Generates a `plotly` chart figure and a corresponding description
