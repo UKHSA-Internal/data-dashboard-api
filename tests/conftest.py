@@ -81,6 +81,19 @@ def valid_plot_parameters() -> PlotParameters:
 
 
 @pytest.fixture
+def valid_plot_parameters_for_headline_data() -> PlotParameters:
+    return PlotParameters(
+        metric="COVID-19_headline_vaccines_spring24Uptake",
+        topic="COVID-19",
+        chart_type=ChartTypes.bar.value,
+        date_from="",
+        date_to="",
+        x_axis="age",
+        y_axis="metric",
+    )
+
+
+@pytest.fixture
 def fake_plot_data() -> PlotData:
     plot_params = PlotParameters(
         chart_type="line_multi_coloured",
