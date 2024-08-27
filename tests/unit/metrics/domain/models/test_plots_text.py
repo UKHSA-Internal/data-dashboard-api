@@ -352,3 +352,42 @@ class TestPlotsText:
             f"And `{fake_plot_data.y_axis_values[0]}` along the Y-axis. "
         )
         assert expected_text in text
+
+    def test_returns_correct_text_for_multiple_headline_data_types(
+        self,
+        fake_plot_data: PlotData,
+    ):
+        """
+        Given a list of 2 enriched `PlotData` model
+            which represents headline data types
+        When `construct_text()` is called
+            from an instance of `PlotsText`
+        Then the returned text provides commentary
+            about the headline data plots
+        """
+        # Given
+        fake_plot_data.parameters.metric = "COVID-19_headline_7DayOccupiedBeds"
+        fake_plot_data.parameters.chart_type = "bar"
+
+        second_plot_data = fake_plot_data.model_copy(deep=True)
+        second_plot_data.parameters.topic = "Influenza"
+        second_plot_data.parameters.metric = (
+            "influenza_headline_ICUHDUadmissionRateLatest"
+        )
+        plots_text = PlotsText(plots_data=[fake_plot_data, second_plot_data])
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        expected_text_for_plot_one = (
+            f"This plot shows `{fake_plot_data.x_axis_values[0]}` along the X-axis. "
+            f"And `{fake_plot_data.y_axis_values[0]}` along the Y-axis. "
+        )
+        assert expected_text_for_plot_one in text
+
+        expected_text_for_plot_one = (
+            f"This plot shows `{second_plot_data.x_axis_values[0]}` along the X-axis. "
+            f"And `{second_plot_data.y_axis_values[0]}` along the Y-axis. "
+        )
+        assert expected_text_for_plot_one in text

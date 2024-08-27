@@ -112,12 +112,12 @@ class PlotsText:
 
         description += self._describe_plot_parameters(plot_parameters=plot_parameters)
 
-        if self._plot_is_date_based(plot_data=plot_data):
-            with contextlib.suppress(Exception):
-                description += self._describe_date_based_plot_data(plot_data=plot_data)
-
         if self._plot_is_headline_data(plot_data=plot_data):
             description += self._describe_headline_plot_data(plot_data=plot_data)
+
+        elif self._plot_is_date_based_timeseries_data(plot_data=plot_data):
+            with contextlib.suppress(Exception):
+                description += self._describe_date_based_plot_data(plot_data=plot_data)
 
         return description
 
@@ -180,13 +180,13 @@ class PlotsText:
 
         description += self._describe_plot_parameters(plot_parameters=plot_parameters)
 
-        if self._plot_is_date_based(plot_data=plot_data):
-            with contextlib.suppress(Exception):
-                description += self._describe_date_based_plot_data(plot_data=plot_data)
-
         if self._plot_is_headline_data(plot_data=plot_data):
             with contextlib.suppress(Exception):
                 description += self._describe_headline_plot_data(plot_data=plot_data)
+
+        elif self._plot_is_date_based_timeseries_data(plot_data=plot_data):
+            with contextlib.suppress(Exception):
+                description += self._describe_date_based_plot_data(plot_data=plot_data)
 
         return description
 
@@ -391,7 +391,7 @@ class PlotsText:
             return float(metric_value)
 
     @classmethod
-    def _plot_is_date_based(cls, *, plot_data: PlotData) -> bool:
+    def _plot_is_date_based_timeseries_data(cls, *, plot_data: PlotData) -> bool:
         return type(plot_data.x_axis_values[0]) is datetime.date
 
     @classmethod
