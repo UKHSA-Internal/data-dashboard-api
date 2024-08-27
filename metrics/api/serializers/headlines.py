@@ -1,4 +1,5 @@
 import contextlib
+from datetime import datetime
 
 from django.db.models import Manager
 from django.db.utils import OperationalError, ProgrammingError
@@ -126,6 +127,8 @@ class CoreHeadlineSerializer(serializers.ModelSerializer):
     metric = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
     stratum = serializers.SerializerMethodField()
+    period_start = serializers.SerializerMethodField()
+    period_end = serializers.SerializerMethodField()
 
     class Meta:
         """
@@ -181,3 +184,11 @@ class CoreHeadlineSerializer(serializers.ModelSerializer):
     @classmethod
     def get_stratum(cls, obj) -> str:
         return obj.stratum__name
+
+    @classmethod
+    def get_period_start(cls, obj) -> str:
+        return datetime.strftime(obj.period_start, "%Y-%m-%d %H:%M:%S")
+
+    @classmethod
+    def get_period_end(cls, obj) -> str:
+        return datetime.strftime(obj.period_end, "%Y-%m-%d %H:%M:%S")
