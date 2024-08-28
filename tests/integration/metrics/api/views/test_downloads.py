@@ -43,8 +43,8 @@ class TestDownloadsView:
         "sex": "",
         "age": "01-04",
         "metric_value": 123.45,
-        "period_start": "2024-01-01 00:00:00+00:00",
-        "period_end": "2024-02-02 00:00:00+00:00",
+        "period_start": "2024-01-01 00:00:00",
+        "period_end": "2024-02-02 00:00:00",
     }
 
     def _build_valid_payload(self) -> dict[str, str | list[dict[str, str]]]:

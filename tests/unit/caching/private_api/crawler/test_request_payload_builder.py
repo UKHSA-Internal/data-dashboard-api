@@ -198,6 +198,46 @@ class TestRequestPayloadBuilder:
         }
         assert tables_request_data == expected_tables_request_data
 
+    def test_build_tables_request_headline_data(
+        self,
+        example_headline_chart_block: dict[str, str | list[dict]],
+    ):
+        """
+        Given a valid headline chart block
+        When `build_tables_request_data()` is called
+        Then the correct div is returned.
+        """
+        # Given
+        chart_block_data = example_headline_chart_block
+        request_payload_builder = RequestPayloadBuilder()
+
+        # When
+        tables_request_data = request_payload_builder.build_tables_request_data(
+            chart_block=example_headline_chart_block,
+        )
+
+        # Then
+        plot_value = chart_block_data["chart"][0]["value"]
+        expected_tables_request_data = {
+            "plots": [
+                {
+                    "topic": plot_value["topic"],
+                    "metric": plot_value["metric"],
+                    "chart_type": plot_value["chart_type"],
+                    "stratum": plot_value["stratum"],
+                    "geography": plot_value["geography"],
+                    "geography_type": plot_value["geography_type"],
+                    "sex": plot_value["sex"],
+                    "age": plot_value["age"],
+                    "label": plot_value["label"],
+                    "line_colour": plot_value["line_colour"],
+                }
+            ],
+            "x_axis": chart_block_data["x_axis"],
+            "y_axis": chart_block_data["y_axis"],
+        }
+        assert tables_request_data == expected_tables_request_data
+
     def test_build_downloads_request_data(
         self,
         example_chart_block: dict[str, str | list[dict]],
@@ -222,12 +262,53 @@ class TestRequestPayloadBuilder:
         plot_value = chart_block_data["chart"][0]["value"]
         expected_downloads_request_data = {
             "file_format": "csv",
+            "x_axis": chart_block_data["x_axis"],
             "plots": [
                 {
                     "topic": plot_value["topic"],
                     "metric": plot_value["metric"],
                     "date_from": plot_value["date_from"],
                     "date_to": plot_value["date_to"],
+                    "stratum": plot_value["stratum"],
+                    "geography": plot_value["geography"],
+                    "geography_type": plot_value["geography_type"],
+                    "sex": plot_value["sex"],
+                    "age": plot_value["age"],
+                }
+            ],
+        }
+        assert downloads_request_data == expected_downloads_request_data
+
+    def test_build_downloads_request_data_for_headline_charts(
+        self,
+        example_headline_chart_block: dict[str, str],
+    ):
+        """
+        Given a chart block with optional fields removed
+            Eg. `date_to` and `date_from`
+        When `build_downloads_request_data()` is called
+            from an instance of `RequestPayloadBuilder`
+        Then the correct dict is returned
+        """
+        # Given
+        chart_block_data = example_headline_chart_block
+        file_format = "csv"
+        request_payload_builder = RequestPayloadBuilder()
+
+        # When
+        downloads_request_data = request_payload_builder.build_downloads_request_data(
+            chart_block=chart_block_data, file_format=file_format
+        )
+
+        # Then
+        plot_value = chart_block_data["chart"][0]["value"]
+        expected_downloads_request_data = {
+            "file_format": "csv",
+            "x_axis": chart_block_data["x_axis"],
+            "plots": [
+                {
+                    "topic": plot_value["topic"],
+                    "metric": plot_value["metric"],
                     "stratum": plot_value["stratum"],
                     "geography": plot_value["geography"],
                     "geography_type": plot_value["geography_type"],
