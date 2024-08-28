@@ -14,7 +14,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.topic.managers import TopicPageManager
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 
 
 class TopicPage(UKHSAPage):
@@ -112,17 +112,29 @@ class TopicPage(UKHSAPage):
             sections=self.body.raw_data
         )
 
-    def find_latest_released_embargo_for_metrics(self) -> datetime.datetime:
+    def find_latest_released_embargo_for_metrics(
+        self,
+    ) -> list[datetime.datetime | None]:
         """Finds the latest `embargo` timestamp which has been released for the selected `metrics` on this page.
 
         Returns:
-            A datetime object representing the latest
-            released embargo timestamp.
+            A list of datetime object representing the latest
+            released embargo timestamp
+            for all time series and headline data on the page
 
         """
-        return self._core_timeseries_manager.find_latest_released_embargo_for_metrics(
-            metrics=self.selected_metrics
+        selected_metrics = self.selected_metrics
+        released_embargo_for_timeseries = (
+            self._core_timeseries_manager.find_latest_released_embargo_for_metrics(
+                metrics=selected_metrics
+            )
         )
+        released_embargo_for_headline = (
+            self._core_headline_manager.find_latest_released_embargo_for_metrics(
+                metrics=selected_metrics
+            )
+        )
+        return [released_embargo_for_timeseries, released_embargo_for_headline]
 
     @property
     def is_valid_for_area_selector(self) -> bool:

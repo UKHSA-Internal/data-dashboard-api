@@ -231,25 +231,36 @@ class TestTemplateCOVID19Page:
         Given an instance of a `TopicPage`
         When `find_latest_released_embargo_for_metrics()` is called
         Then the call is delegated to the `CoreTimeSeriesManager`
-            to fetch the latest released embargo timestamp
+            and the `CoreHeadlineManager` to fetch
+            the latest released embargo timestamp
         """
         # Given
         spy_core_timeseries_manager = mock.Mock()
+        spy_core_headline_manager = mock.Mock()
+
         page = TopicPage(
             core_timeseries_manager=spy_core_timeseries_manager,
+            core_headline_manager=spy_core_headline_manager,
             content_type_id=1,
         )
 
         # When
-        latest_released_embargo = page.find_latest_released_embargo_for_metrics()
+        latest_released_embargoes = page.find_latest_released_embargo_for_metrics()
 
         # Then
         spy_core_timeseries_manager.find_latest_released_embargo_for_metrics.assert_called_once_with(
             metrics=page.selected_metrics
         )
+        spy_core_headline_manager.find_latest_released_embargo_for_metrics.assert_called_once_with(
+            metrics=page.selected_metrics
+        )
         assert (
-            latest_released_embargo
-            == spy_core_timeseries_manager.find_latest_released_embargo_for_metrics.return_value
+            spy_core_timeseries_manager.find_latest_released_embargo_for_metrics.return_value
+            in latest_released_embargoes
+        )
+        assert (
+            spy_core_headline_manager.find_latest_released_embargo_for_metrics.return_value
+            in latest_released_embargoes
         )
 
     def test_selected_metrics(self):
