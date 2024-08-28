@@ -65,6 +65,13 @@ class TopicPage(UKHSAPage):
 
     objects = TopicPageManager()
 
+    def __init__(self, *args, **kwargs):
+        core_timeseries_manager = kwargs.pop(
+            "core_timeseries_manager", CoreTimeSeries.objects
+        )
+        super().__init__(*args, **kwargs)
+        self._core_timeseries_manager = core_timeseries_manager
+
     @classmethod
     def is_previewable(cls) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""
