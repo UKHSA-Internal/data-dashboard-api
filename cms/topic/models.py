@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -12,6 +14,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.topic.managers import TopicPageManager
+from metrics.data.models.core_models import CoreTimeSeries
 
 
 class TopicPage(UKHSAPage):
@@ -89,6 +92,32 @@ class TopicPage(UKHSAPage):
         """
         return CMSBlockParser.get_all_selected_topics_from_sections(
             sections=self.body.raw_data
+        )
+
+    @property
+    def selected_metrics(self) -> set[str]:
+        """Extracts a set of the selected metrics from all the headline & chart blocks in the `body`
+
+        Returns:
+            Set of strings where each string represents
+            a metric which has been selected at least
+            once in the body of the page
+
+        """
+        return CMSBlockParser.get_all_selected_metrics_from_sections(
+            sections=self.body.raw_data
+        )
+
+    def find_latest_released_embargo_for_metrics(self) -> datetime.datetime:
+        """Finds the latest `embargo` timestamp which has been released for the selected `metrics` on this page.
+
+        Returns:
+            A datetime object representing the latest
+            released embargo timestamp.
+
+        """
+        return self._core_timeseries_manager.find_latest_released_embargo_for_metrics(
+            metrics=self.selected_metrics
         )
 
     @property
