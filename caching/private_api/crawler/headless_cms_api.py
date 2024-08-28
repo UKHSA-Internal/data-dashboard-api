@@ -49,3 +49,33 @@ class HeadlessCMSAPICrawler:
         """
         logger.info("Hitting GET pages/ endpoint for `%s` page", page.title)
         self._internal_api_client.hit_pages_detail_endpoint(page_id=page.id)
+
+    def process_all_snippets(self) -> None:
+        """Makes a request to all the requisite snippet endpoints
+
+        Returns:
+            None
+
+        """
+        self.process_global_banners_for_headless_cms_api()
+        self.process_menus_for_headless_cms_api()
+
+    def process_global_banners_for_headless_cms_api(self) -> None:
+        """Makes a request to the headless CMS API `global-banners/` endpoint
+
+        Returns:
+            None
+
+        """
+        logger.info("Hitting GET global-banners/ endpoint")
+        self._internal_api_client.hit_global_banners_endpoint()
+
+    def process_menus_for_headless_cms_api(self) -> None:
+        """Makes a request to the headless CMS API `menus/` endpoint
+
+        Returns:
+            None
+
+        """
+        logger.info("Hitting GET menus/ endpoint")
+        self._internal_api_client.hit_menus_endpoint()
