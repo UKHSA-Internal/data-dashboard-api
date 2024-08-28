@@ -395,3 +395,31 @@ class TestCoreHeadlineSerializer:
 
         # Then
         assert expected_field in serializer.fields
+
+    def test_dates_are_formatted_correct(
+        self,
+        mock_core_headline_data: mock.MagicMock,
+    ):
+        """
+        Given a valid payload with a `period_start` and `period_end` date
+        When the `CoreHeadlineSerializer` is initialised
+        Then the dates returned are in the correct format.
+        """
+        # Given
+        mocked_core_headline_data = mock_core_headline_data
+        mocked_core_headline_data.period_start = datetime.datetime(
+            day=1, month=2, year=2024
+        )
+        mocked_core_headline_data.period_end = datetime.datetime(
+            day=2, month=3, year=2024
+        )
+
+        # When
+        serializer = CoreHeadlineSerializer(instance=mocked_core_headline_data)
+
+        serialized_field_value_period_start = serializer.data["period_start"]
+        serialized_field_value_period_end = serializer.data["period_end"]
+
+        # Then
+        assert serialized_field_value_period_start == "2024-02-01 00:00:00"
+        assert serialized_field_value_period_end == "2024-03-02 00:00:00"
