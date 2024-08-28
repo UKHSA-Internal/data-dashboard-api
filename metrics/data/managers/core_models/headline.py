@@ -5,6 +5,7 @@ Note that the application layer should only call into the `Manager` class.
 The application should not interact directly with the `QuerySet` class.
 """
 
+import datetime
 from typing import Optional, Self
 
 from django.db import models
@@ -167,6 +168,29 @@ class CoreHeadlineQuerySet(models.QuerySet):
         current_time = timezone.now()
         return queryset.filter(
             models.Q(embargo__lte=current_time) | models.Q(embargo=None)
+        )
+
+    def find_latest_released_embargo_for_metrics(
+        self, *, metrics: set[str]
+    ) -> datetime.datetime:
+        """Finds the latest `embargo` timestamp which has been released for the associated `metrics`
+
+        Args:
+            metrics: Iterable of metric names
+                to search the latest `embargo`
+                timestamp against.
+
+        Returns:
+            A datetime object representing the latest
+            embargo timestamp.
+
+        """
+        current_time = timezone.now()
+        return (
+            self.filter(metric__name__in=metrics, embargo__lte=current_time)
+            .values_list("embargo", flat=True)
+            .distinct()
+            .latest("embargo")
         )
 
 
@@ -468,3 +492,22 @@ class CoreHeadlineManager(models.Manager):
             sex=sex,
         )
         superseded_records.delete()
+
+    def find_latest_released_embargo_for_metrics(
+        self, metrics: set[str]
+    ) -> datetime.datetime:
+        """Finds the latest `embargo` timestamp which has been released for the associated `metrics`
+
+        Args:
+            metrics: Iterable of metric names
+                to search the latest `embargo`
+                timestamp against.
+
+        Returns:
+            A datetime object representing the latest
+            embargo timestamp.
+
+        """
+        return self.get_queryset().find_latest_released_embargo_for_metrics(
+            metrics=metrics
+        )
