@@ -2,7 +2,7 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
-from ingestion.utils.enums import DataSourceFileType
+from ingestion.metrics_interface.interface import DataSourceFileType
 
 
 class TestIncomingBaseValidationForMetricProperty:

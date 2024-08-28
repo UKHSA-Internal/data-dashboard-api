@@ -273,6 +273,7 @@ ignore_imports = [
     "ingestion.metrics_interface.interface -> metrics.data.models.core_models",
     "ingestion.metrics_interface.interface -> metrics.data.models.api_models",
     "ingestion.metrics_interface.interface -> metrics.data.enums",
+    "ingestion.metrics_interface.interface -> metrics.domain.common.utils",
     "ingestion.operations.truncated_dataset -> metrics.api.settings",
 ]
 #------------------------------------------ Metrics Domain library contracts ------------------------------------------#

@@ -1,11 +1,17 @@
 from django.db.models import Manager
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+from metrics.domain.common.utils import (
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 from metrics.domain.models import PlotsCollection
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.plots.access import PlotsInterface
+from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
 
 
 class TablesInterface:
@@ -13,15 +19,37 @@ class TablesInterface:
         self,
         *,
         plots_collection: PlotsCollection,
-        core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_model_manager: CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
         self.plots_collection = plots_collection
+        self.metric_group = extract_metric_group_from_metric(
+            metric=self.plots_collection.plots[0].metric
+        )
+        self.core_model_manager = core_model_manager or self._get_core_model_manager()
 
         self.plots_interface = plots_interface or PlotsInterface(
             plots_collection=self.plots_collection,
-            core_time_series_manager=core_time_series_manager,
+            core_model_manager=self.core_model_manager,
         )
+
+    def _get_core_model_manager(self) -> Manager:
+        """Returns `core_model_manager` based on the `metric_type`
+
+        Notes:
+            The tables interface can be used to generate tabular data for
+            either `CoreTimerSeries` or `CoreHeadline` data.
+            this function returns the Django manager to match the
+            current `metric_group` or defaults to `CoreTimeseries`
+            manager
+
+        Returns:
+            Manager: either `CoreTimeseries` or `CoreHeadline`
+        """
+        if DataSourceFileType[self.metric_group].is_headline:
+            return DEFAULT_CORE_HEADLINE_MANAGER
+
+        return DEFAULT_CORE_TIME_SERIES_MANAGER
 
     def _build_tabular_data_from_plots_data(self) -> TabularData:
         plots = self.plots_interface.build_plots_data()
@@ -76,5 +104,7 @@ def generate_table_for_full_plots(
         `DataNotFoundForAnyPlotError`: If no plots
             returned any data from the underlying queries
     """
-    tables_interface = TablesInterface(plots_collection=plots_collection)
+    tables_interface = TablesInterface(
+        plots_collection=plots_collection,
+    )
     return tables_interface.generate_full_plots_for_table()

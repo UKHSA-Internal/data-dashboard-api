@@ -3,7 +3,7 @@ from collections import defaultdict
 from decimal import Decimal
 from typing import Any
 
-from django.db.models import Manager, QuerySet
+from django.db.models import QuerySet
 from pydantic import BaseModel
 
 from metrics.data.models.core_models import CoreTimeSeries
@@ -15,6 +15,7 @@ from metrics.interfaces.plots.validation import (
     MetricDoesNotSupportTopicError,
     PlotValidation,
 )
+from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
@@ -38,10 +39,10 @@ class PlotsInterface:
         self,
         *,
         plots_collection: PlotsCollection,
-        core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_model_manager: CORE_MODEL_MANAGER_TYPE = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
         self.plots_collection = plots_collection
-        self.core_time_series_manager = core_time_series_manager
+        self.core_model_manager = core_model_manager
         self.validate_plot_parameters()
 
     def validate_plot_parameters(self) -> None:
@@ -70,9 +71,11 @@ class PlotsInterface:
                 raise InvalidPlotParametersError from error
 
     def get_queryset_result_for_plot_parameters(
-        self, *, plot_parameters: PlotParameters
+        self,
+        *,
+        plot_parameters: PlotParameters,
     ) -> QuerySetResult:
-        """Returns the timeseries records for the requested plot as an enriched `QuerySetResult` model.
+        """Returns the timeseries or headline records for the requested plot as an enriched `QuerySetResult` model.
 
         Notes:
             If no `date_from` was provided within the `plot_parameters`,
@@ -80,6 +83,8 @@ class PlotsInterface:
 
             A `latest_date` attribute is also set
             on the returned `QuerySetResult` model.
+            for headline data the `latest_date` is the lastest period end of the
+            selected plots.
 
         Returns:
             QuerySetResult: An enriched object containing
@@ -91,89 +96,30 @@ class PlotsInterface:
                             (datetime.date(2022, 10, 17), Decimal('0.9'))
                         ]>`
                 b) The latest refresh date associated with the resulting data
-
         """
         plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
-        queryset = self.get_timeseries(**plot_params)
+        queryset = self.get_queryset_from_core_model_manager(plot_params=plot_params)
 
-        return QuerySetResult(
-            queryset=queryset,
-            latest_date=queryset.latest_date,
-        )
+        return QuerySetResult(queryset=queryset, latest_date=queryset.latest_date)
 
-    def get_timeseries(
+    def get_queryset_from_core_model_manager(
         self,
-        *,
-        x_axis: str,
-        y_axis: str,
-        topic_name: str,
-        metric_name: str,
-        date_from: datetime.date | str,
-        date_to: datetime.date | None = None,
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
-        sex: str | None = None,
-        age: str | None = None,
+        plot_params: dict[str, str],
     ):
-        """Gets the time series for the `metric` and `topic` from the `date_from` stamp.
-
-        Notes:
-            Additional filtering is available via the following optional params:
-             - `geography_name`
-             - `geography_type_name`
-             - `stratum_name`
-             - `sex`
+        """Gets headline or timeseries data based on the `core_model_manager`
 
         Args:
-            x_axis: The field to display along the x-axis
-                E.g. `date` or `stratum`
-            y_axis: The field to display along the y-axis
-                E.g. `metric`
-            topic_name: The name of the disease being queried.
-                E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
-                E.g. `COVID-19_deaths_ONSByDay`
-            date_from: The datetime object or string to begin the query from.
-                E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0) or "2023-03-27"
-                would strip off any records which occurred before that date.
-            date_to: The datetime object or string to end the query at.
-                E.g. datetime.datetime(2023, 6, 28, 0, 0, 0, 0) or "2023-06-28"
-            geography_name: The name of the geography to apply additional filtering to.
-                E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
-                E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
-                E.g. `default`, which would be used to capture all strata
-            sex: The gender to apply additional filtering to.
-                E.g. `F`, would be used to capture Females.
-                Note that options are `M`, `F`, or `ALL`.
-            age: The age range to apply additional filtering to.
-                E.g. `0_4` would be used to capture the age of 0-4 years old
+            plot_params: Dictionary of plot parameters based on the metric type
 
         Returns:
-            QuerySet: An ordered queryset from oldest -> newest
-                of the (dt, metric_value) numbers:
-                Examples:
-                    `<CoreTimeSeriesQuerySet [
-                        (datetime.date(2022, 10, 10), Decimal('8.0')),
-                        (datetime.date(2022, 10, 17), Decimal('9.0'))
-                    ]>`
-
+            QuerySet: Of the latest headline number including..
+            Examples:
+                `<CoreHeadlineSeriesQuerySet [
+                    ('01-04', Decimal('8.0')),
+                    ('05-10', Decimal('9.0'))
+                ]>`
         """
-        return self.core_time_series_manager.query_for_data(
-            fields_to_export=[x_axis, y_axis, "in_reporting_delay_period"],
-            field_to_order_by=x_axis,
-            topic_name=topic_name,
-            metric_name=metric_name,
-            date_from=date_from,
-            date_to=date_to,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
-            sex=sex,
-            age=age,
-        )
+        return self.core_model_manager.query_for_data(**plot_params)
 
     def build_plot_data_from_parameters_with_complete_queryset(
         self, *, plot_parameters: PlotParameters
@@ -230,11 +176,12 @@ class PlotsInterface:
         plot_parameters.y_axis = self.plots_collection.y_axis
 
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
-            plot_parameters=plot_parameters
+            plot_parameters=plot_parameters,
         )
 
         aggregated_results = get_aggregated_results(
-            plot_parameters=plot_parameters, queryset=queryset_result.queryset
+            plot_parameters=plot_parameters,
+            queryset=queryset_result.queryset,
         )
 
         return PlotData.create_from_parameters(
@@ -302,6 +249,7 @@ class PlotsInterface:
 
         """
         plots_data: list[PlotData] = []
+
         for plot_parameters in self.plots_collection.plots:
             try:
                 plot_data: PlotData = self.build_plot_data_from_parameters(

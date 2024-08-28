@@ -44,6 +44,19 @@ def fake_plots_collection(
 
 
 @pytest.fixture
+def fake_chart_plot_parameters_headline_data() -> PlotParameters:
+    return PlotParameters(
+        metric="COVID-19_headline_vaccines_spring24Uptake",
+        topic="COVID-19",
+        chart_type=ChartTypes.bar,
+        x_axis="age",
+        y_axis="metric",
+        date_from=None,
+        date_to=None,
+    )
+
+
+@pytest.fixture
 def fake_chart_plot_parameters_covid_cases() -> PlotParameters:
     return PlotParameters(
         chart_type="line_multi_coloured",
@@ -63,6 +76,19 @@ def valid_plot_parameters() -> PlotParameters:
         date_from="2023-01-01",
         date_to="2023-12-31",
         x_axis="date",
+        y_axis="metric",
+    )
+
+
+@pytest.fixture
+def valid_plot_parameters_for_headline_data() -> PlotParameters:
+    return PlotParameters(
+        metric="COVID-19_headline_vaccines_spring24Uptake",
+        topic="COVID-19",
+        chart_type=ChartTypes.bar.value,
+        date_from="",
+        date_to="",
+        x_axis="age",
         y_axis="metric",
     )
 
