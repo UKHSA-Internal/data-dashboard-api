@@ -470,14 +470,8 @@ class TestCoreHeadlineManager:
         latest_released_embargo = datetime.datetime(
             year=2024, month=2, day=2, hour=1, minute=2, second=2, tzinfo=datetime.UTC
         )
-        last_unreleased_embargo = datetime.datetime(
-            year=2024,
-            month=8,
-            day=28,
-            hour=11,
-            minute=49,
-            second=0,
-            tzinfo=datetime.UTC,
+        last_unreleased_embargo = get_date_n_months_ago_from_timestamp(
+            datetime_stamp=timezone.now(), number_of_months=-1
         )
 
         CoreHeadlineFactory.create_record(
