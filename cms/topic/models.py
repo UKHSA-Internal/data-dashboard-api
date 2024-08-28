@@ -135,7 +135,7 @@ class TopicPage(UKHSAPage):
             by the area selector. False otherwise.
 
         """
-        return len(self.selected_topics) == 1 and self.enable_area_selector
+        return self.enable_area_selector and len(self.selected_topics) == 1
 
 
 class TopicPageRelatedLink(Orderable):
