@@ -72,8 +72,12 @@ class TopicPage(UKHSAPage):
         core_timeseries_manager = kwargs.pop(
             "core_timeseries_manager", CoreTimeSeries.objects
         )
+        core_headline_manager = kwargs.pop(
+            "core_headline_manager", CoreHeadline.objects
+        )
         super().__init__(*args, **kwargs)
         self._core_timeseries_manager = core_timeseries_manager
+        self._core_headline_manager = core_headline_manager
 
     @classmethod
     def is_previewable(cls) -> bool:
