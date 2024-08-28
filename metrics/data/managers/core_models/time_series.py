@@ -393,8 +393,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             embargo timestamp.
 
         """
+        current_time = timezone.now()
         return (
-            self.filter(metric__name__in=metrics, embargo__lte=timezone.now())
+            self.filter(metric__name__in=metrics, embargo__lte=current_time)
             .values_list("embargo", flat=True)
             .distinct()
             .latest("embargo")
