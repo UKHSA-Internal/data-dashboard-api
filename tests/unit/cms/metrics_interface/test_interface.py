@@ -22,6 +22,25 @@ class TestMetricsAPIInterface:
         # Then
         assert selectable_chart_types == ChartTypes.selectable_choices()
 
+    def test_get_headline_chart_type_delegates_call_correctly(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_headline_chart_types()` is called from that object
+        Then the call is delegated to the correct method on the `ChartTypes` enum
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        selectable_headline_chart_types = (
+            metrics_api_interface.get_headline_chart_types()
+        )
+
+        # Then
+        assert (
+            selectable_headline_chart_types == ChartTypes.selectable_headline_choices()
+        )
+
     def test_get_chart_axis_choices_delegates_call_correctly(self):
         """
         Given an instance of the `MetricsAPIInterface`
@@ -130,6 +149,30 @@ class TestMetricsAPIInterface:
         assert (
             all_timeseries_metric_names
             == spy_metric_manager.get_all_timeseries_names.return_value
+        )
+
+    def test_get_all_headline_metric_names(self):
+        """
+        Given a `MetricManager` from the Metrics API app
+        When `get_all_headline_metric_names()` is called from an instance of the `MetricsAPIInterface`
+        Then the call is delegated to the correct method  on the `MetricManager`
+        """
+        # Given
+        spy_metric_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            metric_manager=spy_metric_manager,
+            topic_manager=mock.Mock(),
+        )
+
+        # When
+        all_headline_metric_names = (
+            metrics_api_interface.get_all_headline_metric_names()
+        )
+
+        # Then
+        assert (
+            all_headline_metric_names
+            == spy_metric_manager.get_all_headline_names.return_value
         )
 
     def test_get_all_unique_change_type_metric_names_delegates_call_correctly(self):
