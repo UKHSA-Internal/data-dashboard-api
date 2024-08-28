@@ -172,7 +172,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
     def find_latest_released_embargo_for_metrics(
         self, *, metrics: set[str]
-    ) -> datetime.datetime:
+    ) -> datetime.datetime | None:
         """Finds the latest `embargo` timestamp which has been released for the associated `metrics`
 
         Args:
@@ -182,16 +182,20 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
         Returns:
             A datetime object representing the latest
-            embargo timestamp.
+            embargo timestamp
+            or None if no data could be found.
 
         """
         current_time = timezone.now()
-        return (
-            self.filter(metric__name__in=metrics, embargo__lte=current_time)
-            .values_list("embargo", flat=True)
-            .distinct()
-            .latest("embargo")
-        )
+        try:
+            return (
+                self.filter(metric__name__in=metrics, embargo__lte=current_time)
+                .values_list("embargo", flat=True)
+                .distinct()
+                .latest("embargo")
+            )
+        except self.model.DoesNotExist:
+            return None
 
 
 class CoreHeadlineManager(models.Manager):
@@ -494,8 +498,8 @@ class CoreHeadlineManager(models.Manager):
         superseded_records.delete()
 
     def find_latest_released_embargo_for_metrics(
-        self, metrics: set[str]
-    ) -> datetime.datetime:
+        self, *, metrics: set[str]
+    ) -> datetime.datetime | None:
         """Finds the latest `embargo` timestamp which has been released for the associated `metrics`
 
         Args:
@@ -505,7 +509,8 @@ class CoreHeadlineManager(models.Manager):
 
         Returns:
             A datetime object representing the latest
-            embargo timestamp.
+            embargo timestamp
+            or None if no data could be found.
 
         """
         return self.get_queryset().find_latest_released_embargo_for_metrics(
