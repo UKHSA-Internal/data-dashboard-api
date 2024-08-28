@@ -520,7 +520,7 @@ class TestCoreTimeSeriesManager:
     @pytest.mark.django_db
     def test_find_latest_released_embargo_for_metrics(self):
         """
-        Given a number of `CoreHeadline` records
+        Given a number of `CoreTimeSeries` records
             for different metrics
         When `find_latest_released_embargo_for_metrics()` is called
             from an instance of the `CoreTimeSeriesManager`
@@ -564,4 +564,9 @@ class TestCoreTimeSeriesManager:
         )
 
         # Then
-        assert extracted_embargo == latest_released_embargo
+        assert (
+            extracted_embargo
+            == latest_released_embargo
+            != superseded_embargo
+            != last_unreleased_embargo
+        )
