@@ -49,13 +49,13 @@ class Trend(BaseModel):
         Returns:
             str: The name of the direction.
                 Can be either "up", "neutral" or "down"
-                depending on the `metric_value`
+                depending on the `percentage_metric_value`
 
         """
-        if self.metric_value > 0:
+        if self.percentage_metric_value > 0:
             return ArrowDirection.up.name
 
-        if self.metric_value == 0:
+        if self.percentage_metric_value == 0:
             return ArrowDirection.neutral.name
 
         return ArrowDirection.down.name
@@ -67,14 +67,14 @@ class Trend(BaseModel):
         Returns:
             str: The name of the colour.
                 Can be either "green", "neutral" or "red"
-                depending on the `metric_value`
+                depending on the `percentage_metric_value`
 
         """
-        if self.metric_value == 0:
+        if self.percentage_metric_value == 0:
             return Colour.neutral.name
 
-        metric_is_improving = is_metric_improving(
-            change_in_metric_value=self.metric_value,
+        metric_is_improving: bool = is_metric_improving(
+            change_in_metric_value=self.percentage_metric_value,
             metric_name=self.metric_name,
         )
 
