@@ -263,6 +263,37 @@ def example_chart_block() -> dict[str, str | list[dict]]:
 
 
 @pytest.fixture
+def example_headline_chart_block() -> dict[str, str | list[dict]]:
+    return {
+        "title": "COVID-19 headline cases 7 Days Total",
+        "body": "COVID-19 cases 7 day total by age",
+        "x_axis": "age",
+        "y_axis": "metric",
+        "chart": [
+            {
+                "type": "plot",
+                "value": {
+                    "topic": "COVID-19",
+                    "metric": "COVID-19_headline_cases_7DayTotals",
+                    "chart_type": "bar",
+                    "stratum": "",
+                    "geography": "England",
+                    "geography_type": "Nation",
+                    "sex": "",
+                    "age": "01-04",
+                    "label": "Admission rate",
+                    "line_colour": "",
+                    "line_type": "",
+                    "use_markers": False,
+                    "use_smooth_lines": True,
+                },
+                "id": "791efbf1-8880-4dfa-9f5d-526982ed1539",
+            }
+        ],
+    }
+
+
+@pytest.fixture
 def example_headline_number_block() -> dict[str, str]:
     return {
         "topic": "COVID-19",
