@@ -2,7 +2,6 @@ from unittest import mock
 
 import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
-from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
 
 from cms.dashboard.models import UKHSAPage

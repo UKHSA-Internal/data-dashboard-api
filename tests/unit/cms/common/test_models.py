@@ -1,6 +1,5 @@
 import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
-from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
 
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
