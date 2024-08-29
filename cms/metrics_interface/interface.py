@@ -12,6 +12,7 @@ DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
 DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
 DEFAULT_AGE_MANAGER = core_models.Age.objects
 DEFAULT_CORE_TIME_SERIES_MANAGER = core_models.CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = core_models.CoreHeadline.objects
 
 
 class MetricsAPIInterface:
@@ -44,6 +45,9 @@ class MetricsAPIInterface:
     core_time_series_manager : `CoreTimeSeriesManager`
         The model manager for the `CoreTimeSeries` model belonging to the Metrics API
         Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
+    core_headline_manager : `CoreHeadlineManager`
+        The model manager for the `CoreHeadline` model belonging to the Metrics API
+        Defaults to the concrete `CoreHeadlineManager` via `CoreHeadline.objects`
 
     """
 
@@ -57,6 +61,7 @@ class MetricsAPIInterface:
         geography_type_manager: Manager = DEFAULT_GEOGRAPHY_TYPE_MANAGER,
         age_manager: Manager = DEFAULT_AGE_MANAGER,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     ):
         self.topic_manager = topic_manager
         self.metric_manager = metric_manager
@@ -65,6 +70,7 @@ class MetricsAPIInterface:
         self.geography_type_manager = geography_type_manager
         self.age_manager = age_manager
         self.core_time_series_manager = core_time_series_manager
+        self.core_headline_manager = core_headline_manager
 
     @staticmethod
     def get_chart_types() -> tuple[tuple[str, str], ...]:
