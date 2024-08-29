@@ -55,6 +55,7 @@ class CompositePage(UKHSAPage):
         APIField("last_published_at"),
         APIField("related_links"),
         APIField("search_description"),
+        APIField("related_links_layout"),
         APIField("related_links"),
         APIField("page_description"),
     ]

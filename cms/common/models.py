@@ -64,6 +64,7 @@ class CommonPage(UKHSAPage):
         APIField("date_posted"),
         APIField("body"),
         APIField("last_published_at"),
+        APIField("related_links_layout"),
         APIField("related_links"),
         APIField("search_description"),
         APIField("related_links"),

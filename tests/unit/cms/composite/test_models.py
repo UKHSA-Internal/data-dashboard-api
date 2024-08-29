@@ -36,6 +36,7 @@ class TestCompositePage:
             "body",
             "date_posted",
             "last_published_at",
+            "related_links_layout",
             "related_links",
             "seo_title",
             "search_description",

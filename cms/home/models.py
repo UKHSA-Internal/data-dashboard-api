@@ -51,6 +51,7 @@ class HomePage(UKHSAPage):
     api_fields = UKHSAPage.api_fields + [
         APIField("page_description"),
         APIField("body"),
+        APIField("related_links_layout"),
         APIField("related_links"),
         APIField("last_published_at"),
         APIField("search_description"),
