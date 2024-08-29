@@ -1,4 +1,8 @@
 from caching.private_api.crawler.type_hints import CMS_COMPONENT_BLOCK_TYPE
+from metrics.domain.common.utils import (
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 
 
 class RequestPayloadBuilder:
@@ -88,7 +92,7 @@ class RequestPayloadBuilder:
             to the `charts` or `tables` endpoint
 
         """
-        return {
+        plot_data = {
             "topic": plot_value["topic"],
             "metric": plot_value["metric"],
             "chart_type": plot_value["chart_type"],
@@ -97,12 +101,18 @@ class RequestPayloadBuilder:
             "geography_type": plot_value["geography_type"],
             "sex": plot_value["sex"],
             "age": plot_value["age"],
-            "date_from": plot_value["date_from"],
-            "date_to": plot_value["date_to"],
             "label": plot_value["label"],
             "line_colour": plot_value["line_colour"],
-            "line_type": plot_value["line_type"],
         }
+
+        if DataSourceFileType[
+            extract_metric_group_from_metric(plot_value["metric"])
+        ].is_timeseries:
+            plot_data["date_to"] = plot_value["date_to"]
+            plot_data["date_from"] = plot_value["date_from"]
+            plot_data["line_type"] = plot_value["line_type"]
+
+        return plot_data
 
     @classmethod
     def _build_plot_data_for_chart(
@@ -169,6 +179,7 @@ class RequestPayloadBuilder:
                 self.build_downloads_plot_data(plot_value=plot["value"])
                 for plot in chart_block["chart"]
             ],
+            "x_axis": chart_block["x_axis"],
             "file_format": file_format,
         }
 
@@ -185,14 +196,20 @@ class RequestPayloadBuilder:
             to the `downloads` endpoint only
 
         """
-        return {
+        plot_data = {
             "topic": plot_value["topic"],
             "metric": plot_value["metric"],
-            "date_from": plot_value["date_from"],
-            "date_to": plot_value["date_to"],
             "stratum": plot_value["stratum"],
             "geography": plot_value["geography"],
             "geography_type": plot_value["geography_type"],
             "sex": plot_value["sex"],
             "age": plot_value["age"],
         }
+
+        if DataSourceFileType[
+            extract_metric_group_from_metric(plot_value["metric"])
+        ].is_timeseries:
+            plot_data["date_to"] = plot_value["date_to"]
+            plot_data["date_from"] = plot_value["date_from"]
+
+        return plot_data

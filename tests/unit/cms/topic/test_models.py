@@ -1,5 +1,8 @@
+from unittest import mock
+
 import pytest
 
+from cms.topic.models import TopicPage
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
 from metrics.domain.common.utils import ChartTypes
@@ -224,6 +227,76 @@ class TestTemplateCOVID19Page:
 
         assert expected_content_panel_name in content_panel_names
 
+    def test_find_latest_released_embargo_for_metrics(self):
+        """
+        Given an instance of a `TopicPage`
+        When `find_latest_released_embargo_for_metrics()` is called
+        Then the call is delegated to the `CoreTimeSeriesManager`
+            and the `CoreHeadlineManager` to fetch
+            the latest released embargo timestamp
+        """
+        # Given
+        spy_core_timeseries_manager = mock.Mock()
+        spy_core_headline_manager = mock.Mock()
+
+        page = TopicPage(
+            core_timeseries_manager=spy_core_timeseries_manager,
+            core_headline_manager=spy_core_headline_manager,
+            content_type_id=1,
+        )
+
+        # When
+        latest_released_embargoes = page.find_latest_released_embargo_for_metrics()
+
+        # Then
+        spy_core_timeseries_manager.find_latest_released_embargo_for_metrics.assert_called_once_with(
+            metrics=page.selected_metrics
+        )
+        spy_core_headline_manager.find_latest_released_embargo_for_metrics.assert_called_once_with(
+            metrics=page.selected_metrics
+        )
+        assert (
+            spy_core_timeseries_manager.find_latest_released_embargo_for_metrics.return_value
+            in latest_released_embargoes
+        )
+        assert (
+            spy_core_headline_manager.find_latest_released_embargo_for_metrics.return_value
+            in latest_released_embargoes
+        )
+
+    def test_selected_metrics(self):
+        """
+        Given a `TopicPage` created
+            with a template for the `COVID-19` page
+        When the `selected_metrics` property is called
+        Then the correct metrics are extracted
+        """
+        # Given
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
+        )
+
+        # When
+        selected_metrics: set[str] = template_covid_19_page.selected_metrics
+
+        # Then
+        expected_metrics = {
+            "COVID-19_cases_casesByDay",
+            "COVID-19_cases_countRollingMean",
+            "COVID-19_cases_rateRollingMean",
+            "COVID-19_deaths_ONSByDay",
+            "COVID-19_deaths_ONSRollingMean",
+            "COVID-19_healthcare_admissionByDay",
+            "COVID-19_healthcare_occupiedBedsByDay",
+            "COVID-19_testing_PCRcountByDay",
+            "COVID-19_testing_positivity7DayRolling",
+            "COVID-19_vaccinations_autumn22_dosesByDay",
+            "COVID-19_vaccinations_autumn22_uptakeByDay",
+            "COVID-19_vaccinations_spring23_dosesByDay",
+            "COVID-19_vaccinations_spring23_uptakeByDay",
+        }
+        assert selected_metrics == expected_metrics
+
 
 class TestTemplateInfluenzaPage:
     @property
@@ -431,6 +504,28 @@ class TestTemplateInfluenzaPage:
         # Then
         assert selected_topics == {"Influenza"}
 
+    def test_selected_metrics(self):
+        """
+        Given a `TopicPage` created
+            with a template for the `Influenza` page
+        When the `selected_metrics` property is called
+        Then the correct metrics are extracted
+        """
+        # Given
+        template_influenza_page = (
+            FakeTopicPageFactory.build_influenza_page_from_template()
+        )
+
+        # When
+        selected_metrics: set[str] = template_influenza_page.selected_metrics
+
+        # Then
+        expected_metrics = {
+            "influenza_healthcare_ICUHDUadmissionRateByWeek",
+            "influenza_testing_positivityByWeek",
+        }
+        assert selected_metrics == expected_metrics
+
 
 class TestTemplateOtherRespiratoryVirusesPage:
     @pytest.mark.parametrize("enable_area_selector", [True, False])
@@ -460,3 +555,31 @@ class TestTemplateOtherRespiratoryVirusesPage:
 
         # Then
         assert not is_valid_for_area_selector
+
+    def test_selected_metrics(self):
+        """
+        Given a `TopicPage` created with a template
+            for the `Other Respiratory Viruses` page
+        When the `selected_metrics` property is called
+        Then the correct metrics are extracted
+        """
+        # Given
+        template_other_respiratory_viruses_page = (
+            FakeTopicPageFactory.build_other_respiratory_viruses_page_from_template()
+        )
+
+        # When
+        selected_metrics: set[str] = (
+            template_other_respiratory_viruses_page.selected_metrics
+        )
+
+        # Then
+        expected_metrics = {
+            "RSV_healthcare_admissionRateByWeek",
+            "RSV_testing_positivityByWeek",
+            "adenovirus_testing_positivityByWeek",
+            "hMPV_testing_positivityByWeek",
+            "parainfluenza_testing_positivityByWeek",
+            "rhinovirus_testing_positivityByWeek",
+        }
+        assert selected_metrics == expected_metrics

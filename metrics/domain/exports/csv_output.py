@@ -44,16 +44,6 @@ def write_data_to_csv(
     return _write_to_csv_file(file=file, headers=headers, rows=rows)
 
 
-def write_headline_data_to_csv(
-    *,
-    file: io.StringIO,
-    core_headline_queryset,
-) -> io.StringIO:
-    headers = HEADLINE_FIELDS.keys()
-    rows = core_headline_queryset
-    return _write_to_csv_file(file=file, headers=headers, rows=rows)
-
-
 def _write_to_csv_file(
     *, file: io.StringIO, headers: list[str], rows: Iterable
 ) -> io.StringIO:
@@ -62,5 +52,25 @@ def _write_to_csv_file(
 
     for row in rows:
         writer.writerow(row)
+
+    return file
+
+
+def write_headline_data_to_csv(
+    *,
+    file: io.StringIO,
+    core_headline_data: Iterable,
+) -> io.StringIO:
+    headers = list(HEADLINE_FIELDS.keys())
+    rows = core_headline_data
+    return _write_headline_to_csv_file(file=file, headers=headers, rows=rows)
+
+
+def _write_headline_to_csv_file(
+    *, file: io.StringIO, headers: list[str], rows: Iterable
+) -> io.StringIO:
+    writer = csv.DictWriter(file, fieldnames=headers)
+    writer.writeheader()
+    writer.writerows(rows)
 
     return file

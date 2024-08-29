@@ -78,9 +78,8 @@ class DownloadsView(APIView):
         response["Content-Disposition"] = "attachment; filename=chart_download.json"
         return response
 
-    @classmethod
     def _handle_csv(
-        cls,
+        self,
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
@@ -89,9 +88,13 @@ class DownloadsView(APIView):
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
 
+        serializer = self._get_serializer_class(
+            queryset=queryset, metric_group=metric_group
+        )
+
         if DataSourceFileType[metric_group].is_headline:
             return write_headline_data_to_csv(
-                file=response, core_headline_queryset=queryset
+                file=response, core_headline_data=serializer.data
             )
 
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
