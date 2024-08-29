@@ -66,14 +66,15 @@ class TestBlankCommonPage:
         blank_page = FakeCommonPageFactory.build_blank_page()
 
         # When
-        sidebar_content_panels: list[InlinePanel] = blank_page.sidebar_content_panels
+        sidebar_content_panels = blank_page.sidebar_content_panels
 
         # Then
         expected_sidebar_content_panel_names: set[str] = {
             "related_links",
+            "related_links_layout",
         }
         sidebar_content_panel_names: set[str] = {
-            p.relation_name for p in sidebar_content_panels
+            p.clean_name for p in sidebar_content_panels
         }
         assert sidebar_content_panel_names == expected_sidebar_content_panel_names
 

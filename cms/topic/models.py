@@ -7,6 +7,10 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.enums import (
+    DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+    RelatedLinksLayoutEnum,
+)
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
@@ -25,8 +29,16 @@ class TopicPage(UKHSAPage):
     date_posted = models.DateField()
 
     enable_area_selector = models.BooleanField(default=False)
+    related_links_layout = models.CharField(
+        verbose_name="Layout",
+        help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
+        default=RelatedLinksLayoutEnum.Footer.value,
+        max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+        choices=RelatedLinksLayoutEnum.choices(),
+    )
 
     sidebar_content_panels = [
+        FieldPanel("related_links_layout"),
         InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
