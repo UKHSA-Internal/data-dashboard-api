@@ -24,6 +24,8 @@ class TestInternalAPIClient:
                 ("tables_endpoint_path", "/api/tables/v4/"),
                 ("downloads_endpoint_path", "/api/downloads/v2/"),
                 ("geographies_endpoint_path", "/api/geographies/v2/"),
+                ("global_banners_endpoint_path", "/api/global-banners/v1"),
+                ("menus_endpoint_path", "/api/menus/v1"),
             ]
         ),
     )
@@ -512,3 +514,47 @@ class TestInternalAPIClient:
         ]
 
         mocked_client.get.assert_has_calls(calls=expected_calls, any_order=True)
+
+    def test_hit_global_banners_endpoint_delegates_call_correctly(self):
+        """
+        Given a client and mocked request data
+        When `hit_global_banners_endpoint()` is called
+            from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        response = internal_api_client.hit_global_banners_endpoint()
+
+        # Then
+        assert response == mocked_client.get.return_value
+        mocked_client.get.assert_called_once_with(
+            path=internal_api_client.global_banners_endpoint_path,
+            headers=internal_api_client.build_headers(),
+            format="json",
+        )
+
+    def test_hit_menus_endpoint_delegates_call_correctly(self):
+        """
+        Given a client and mocked request data
+        When `hit_menus_endpoint()` is called
+            from an instance of the `InternalAPIClient`
+        Then the call is delegated to the `client` object
+        """
+        # Given
+        mocked_client = mock.Mock()
+        internal_api_client = InternalAPIClient(client=mocked_client)
+
+        # When
+        response = internal_api_client.hit_menus_endpoint()
+
+        # Then
+        assert response == mocked_client.get.return_value
+        mocked_client.get.assert_called_once_with(
+            path=internal_api_client.menus_endpoint_path,
+            headers=internal_api_client.build_headers(),
+            format="json",
+        )

@@ -52,6 +52,30 @@ class TestGetAlLTimeSeriesMetricNames:
         assert unique_metric_names == [(x, x) for x in retrieved_unique_metric_names]
 
 
+class TestGetAllHeadlineMetricNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_headline_metric_names")
+    def test_delegates_calls_correctly(
+        self, mocked_get_all_headline_metric_names: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns headline metric names
+        When `get_all_headline_metric_names()` is called
+        Then the headline metric names are returned as a list of 2-item tuples
+        """
+        retrieved_headline_metric_names = ["COVID-19_headline_cases_7DayTotals"]
+        mocked_get_all_headline_metric_names.return_value = (
+            retrieved_headline_metric_names
+        )
+
+        # When
+        headline_metric_names = field_choices_callables.get_all_headline_metric_names()
+
+        # Then
+        assert headline_metric_names == [
+            (x, x) for x in retrieved_headline_metric_names
+        ]
+
+
 class TestGetAllUniqueChangeTypeMetricNames:
     @mock.patch.object(
         interface.MetricsAPIInterface, "get_all_unique_change_type_metric_names"
@@ -129,6 +153,27 @@ class TestGetChartTypes:
 
         # Then
         assert chart_types == retrieved_chart_types
+
+
+class TestHeadlineChartTypes:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_headline_chart_types")
+    def test_delegates_call_correctly(
+        self, mocked_get_headline_chart_types: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns headline chart types
+        When `get_headline_chart_types()` is called
+        Then the chart types are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_headline_chart_types = ChartTypes.choices()
+        mocked_get_headline_chart_types.return_value = retrieved_headline_chart_types
+
+        # When
+        headline_chart_types = field_choices_callables.get_headline_chart_types()
+
+        # Then
+        assert headline_chart_types == retrieved_headline_chart_types
 
 
 class TestGetChartAxis:
