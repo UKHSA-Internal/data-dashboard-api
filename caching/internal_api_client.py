@@ -11,6 +11,8 @@ CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
 DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
 GEOGRAPHIES_ENDPOINT_PATH = f"{API_PREFIX}geographies/v2/"
+GLOBAL_BANNERS_ENDPOINT_PATH = f"{API_PREFIX}global-banners/v1"
+MENUS_ENDPOINT_PATH = f"{API_PREFIX}menus/v1"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
@@ -51,6 +53,8 @@ class InternalAPIClient:
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
         self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
         self.geographies_endpoint_path = GEOGRAPHIES_ENDPOINT_PATH
+        self.global_banners_endpoint_path = GLOBAL_BANNERS_ENDPOINT_PATH
+        self.menus_endpoint_path = MENUS_ENDPOINT_PATH
 
         # Header configurations
         self.force_refresh = force_refresh
@@ -244,3 +248,27 @@ class InternalAPIClient:
         headers = self.build_headers()
         self._client.get(path=f"{path}/", headers=headers, format="json")
         return self._client.get(path=path, headers=headers, format="json")
+
+    def hit_global_banners_endpoint(self) -> Response:
+        """Sends a `GET` request to the `global-banners/` endpoint
+
+        Returns:
+            `Response` from the `global-banners/` endpoint
+
+        """
+        headers = self.build_headers()
+        return self._client.get(
+            path=self.global_banners_endpoint_path, headers=headers, format="json"
+        )
+
+    def hit_menus_endpoint(self) -> Response:
+        """Sends a `GET` request to the `menus/` endpoint
+
+        Returns:
+            `Response` from the `menus/` endpoint
+
+        """
+        headers = self.build_headers()
+        return self._client.get(
+            path=self.menus_endpoint_path, headers=headers, format="json"
+        )

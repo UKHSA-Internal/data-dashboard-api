@@ -62,3 +62,31 @@ class TestCMSBlockParserExtractionOfSelectedTopics:
 
         # Then
         assert topics == {"COVID-19"}
+
+    def test_get_all_selected_metrics_from_sections(
+        self,
+        example_section_with_headline_chart_and_text_cards: CMS_COMPONENT_BLOCK_TYPE,
+    ):
+        """
+        Given a list of section CMS components
+        When `get_all_selected_metrics_from_sections()` is called
+            from the `CMSBlockParser` class
+        Then a set containing only the selected metrics
+        """
+        # Given
+        sections = [example_section_with_headline_chart_and_text_cards]
+
+        # When
+        metrics = CMSBlockParser.get_all_selected_metrics_from_sections(
+            sections=sections
+        )
+
+        # Then
+        expected_metrics = {
+            "COVID-19_cases_countRollingMean",
+            "COVID-19_deaths_ONSRollingMean",
+            "COVID-19_headline_cases_7DayChange",
+            "COVID-19_headline_cases_7DayTotals",
+            "COVID-19_headline_positivity_latest",
+        }
+        assert metrics == expected_metrics
