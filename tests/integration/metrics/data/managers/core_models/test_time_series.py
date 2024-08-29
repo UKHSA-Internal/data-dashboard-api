@@ -516,3 +516,74 @@ class TestCoreTimeSeriesManager:
         assert expected_live_third_version_for_third_date in retrieved_records
         assert expected_live_fourth_round_for_first_date in retrieved_records
         assert embargoed_fifth_round_for_first_date in retrieved_records
+
+    @pytest.mark.django_db
+    def test_find_latest_released_embargo_for_metrics(self):
+        """
+        Given a number of `CoreTimeSeries` records
+            for different metrics
+        When `find_latest_released_embargo_for_metrics()` is called
+            from an instance of the `CoreTimeSeriesManager`
+        Then the latest released embargo timestamp is returned
+        """
+        # Given
+        covid_metric = "COVID-19_deaths_ONSByWeek"
+        covid_metric_for_outdated_embargo = "COVID-19_cases_rateRollingMean"
+
+        superseded_embargo = datetime.datetime(
+            year=2024, month=1, day=1, hour=1, minute=1, second=1, tzinfo=datetime.UTC
+        )
+        latest_released_embargo = datetime.datetime(
+            year=2024, month=2, day=2, hour=1, minute=2, second=2, tzinfo=datetime.UTC
+        )
+        last_unreleased_embargo = get_date_n_months_ago_from_timestamp(
+            datetime_stamp=timezone.now(), number_of_months=-1
+        )
+
+        CoreTimeSeriesFactory.create_record(
+            metric_name=covid_metric, embargo=latest_released_embargo
+        )
+        CoreTimeSeriesFactory.create_record(
+            metric_name=covid_metric_for_outdated_embargo, embargo=superseded_embargo
+        )
+        CoreTimeSeriesFactory.create_record(
+            metric_name="hMPV_testing_positivityByWeek", embargo=last_unreleased_embargo
+        )
+
+        # When
+        extracted_embargo = (
+            CoreTimeSeries.objects.find_latest_released_embargo_for_metrics(
+                metrics=[covid_metric, covid_metric_for_outdated_embargo]
+            )
+        )
+
+        # Then
+        assert (
+            extracted_embargo
+            == latest_released_embargo
+            != superseded_embargo
+            != last_unreleased_embargo
+        )
+
+    @pytest.mark.django_db
+    def test_find_latest_released_embargo_for_metrics_returns_none_when_no_data_found(
+        self,
+    ):
+        """
+        Given no existing `CoreTimeSeries` records
+        When `find_latest_released_embargo_for_metrics()` is called
+            from an instance of the `CoreTimeSeriesManager`
+        Then None is returned
+        """
+        # Given
+        covid_metric = "COVID-19_deaths_ONSByWeek"
+
+        # When
+        extracted_embargo = (
+            CoreTimeSeries.objects.find_latest_released_embargo_for_metrics(
+                metrics=[covid_metric]
+            )
+        )
+
+        # Then
+        assert extracted_embargo is None
