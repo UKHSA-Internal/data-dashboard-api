@@ -13,8 +13,11 @@ from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
+from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
-from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
+
+DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
+DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
 class TopicPage(UKHSAPage):
@@ -70,10 +73,10 @@ class TopicPage(UKHSAPage):
 
     def __init__(self, *args, **kwargs):
         core_timeseries_manager = kwargs.pop(
-            "core_timeseries_manager", CoreTimeSeries.objects
+            "core_timeseries_manager", DEFAULT_CORE_TIME_SERIES_MANGER
         )
         core_headline_manager = kwargs.pop(
-            "core_headline_manager", CoreHeadline.objects
+            "core_headline_manager", DEFAULT_CORE_HEADLINE_MANGER
         )
         super().__init__(*args, **kwargs)
         self._core_timeseries_manager = core_timeseries_manager
