@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -26,6 +27,18 @@ class WhatsNewParentPage(UKHSAPage):
         max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
         choices=RelatedLinksLayoutEnum.choices(),
     )
+    show_pagination = models.BooleanField(
+        default=True,
+        help_text=help_texts.SHOW_PAGINATION_FIELD,
+    )
+    pagination_size = models.IntegerField(
+        default=10,
+        help_text=help_texts.PAGINATION_SIZE_FIELD,
+        validators=[
+            MaxValueValidator(50),
+            MinValueValidator(5),
+        ],
+    )
 
     # Fields to index for searching within the CMS application
     search_fields = Page.search_fields + [
@@ -36,6 +49,8 @@ class WhatsNewParentPage(UKHSAPage):
     content_panels = Page.content_panels + [
         FieldPanel("date_posted"),
         FieldPanel("body"),
+        FieldPanel("show_pagination"),
+        FieldPanel("pagination_size"),
     ]
 
     # Sets which fields to expose on the API
@@ -46,6 +61,8 @@ class WhatsNewParentPage(UKHSAPage):
         APIField("related_links"),
         APIField("last_published_at"),
         APIField("search_description"),
+        APIField("show_pagination"),
+        APIField("pagination_size"),
     ]
 
     # Adds inline content panels to be added to the `edit_handler`
