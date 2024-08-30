@@ -237,3 +237,8 @@ The ID to associate with this component.
 This allows for tracking of events when users interact with this component.
 Note that changing this multiple times will result in the recording of different groups of events.
 """
+
+
+RELATED_LINKS_LAYOUT_FIELD: str = """
+This dictates where the related links for this page will be positioned.
+"""

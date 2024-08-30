@@ -2,7 +2,6 @@ from unittest import mock
 
 import pytest
 from wagtail.admin.panels.field_panel import FieldPanel
-from wagtail.admin.panels.inline_panel import InlinePanel
 from wagtail.api.conf import APIField
 
 from cms.dashboard.models import UKHSAPage
@@ -16,6 +15,7 @@ class TestBlankHomePage:
         [
             "page_description",
             "body",
+            "related_links_layout",
             "related_links",
             "last_published_at",
             "seo_title",
@@ -72,20 +72,21 @@ class TestBlankHomePage:
         """
         Given a blank `HomePage` model
         When `sidebar_content_panels` is called
-        Then the expected names are on the returned `InlinePanel` objects
+        Then the expected names are on the returned panels objects
         """
         # Given
         blank_page = FakeHomePageFactory.build_blank_page()
 
         # When
-        sidebar_content_panels: list[InlinePanel] = blank_page.sidebar_content_panels
+        sidebar_content_panels = blank_page.sidebar_content_panels
 
         # Then
         expected_sidebar_content_panel_names: set[str] = {
             "related_links",
+            "related_links_layout",
         }
         sidebar_content_panel_names: set[str] = {
-            p.relation_name for p in sidebar_content_panels
+            p.clean_name for p in sidebar_content_panels
         }
         assert sidebar_content_panel_names == expected_sidebar_content_panel_names
 
@@ -99,11 +100,11 @@ class TestBlankHomePage:
         blank_page = FakeHomePageFactory.build_blank_page()
 
         # When
-        sidebar_content_panels: list[InlinePanel] = blank_page.sidebar_content_panels
+        sidebar_content_panels = blank_page.sidebar_content_panels
 
         # Then
         sidebar_content_panel_names: set[str] = {
-            p.relation_name for p in sidebar_content_panels
+            p.clean_name for p in sidebar_content_panels
         }
         assert "show_in_menus" not in sidebar_content_panel_names
 

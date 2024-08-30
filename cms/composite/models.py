@@ -8,7 +8,12 @@ from wagtail.search import index
 
 from cms.common.models import MAXIMUM_URL_FIELD_LENGTH
 from cms.composite.managers import CompositePageManager
+from cms.dashboard.enums import (
+    DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+    RelatedLinksLayoutEnum,
+)
 from cms.dashboard.models import UKHSAPage
+from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 
 
@@ -19,6 +24,13 @@ class CompositePage(UKHSAPage):
         features=[],
         blank=True,
         null=True,
+    )
+    related_links_layout = models.CharField(
+        verbose_name="Layout",
+        help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
+        default=RelatedLinksLayoutEnum.Sidebar.value,
+        max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+        choices=RelatedLinksLayoutEnum.choices(),
     )
 
     search_fields = Page.search_fields + [
@@ -32,7 +44,8 @@ class CompositePage(UKHSAPage):
     ]
 
     sidebar_content_panels = [
-        InlinePanel("related_links", heading="Related links", label="Related link")
+        FieldPanel("related_links_layout"),
+        InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
     # Sets which fields to expose on the API
@@ -42,6 +55,7 @@ class CompositePage(UKHSAPage):
         APIField("last_published_at"),
         APIField("related_links"),
         APIField("search_description"),
+        APIField("related_links_layout"),
         APIField("related_links"),
         APIField("page_description"),
     ]
