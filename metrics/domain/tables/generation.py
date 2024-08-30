@@ -2,7 +2,11 @@ import datetime
 from collections import defaultdict
 from decimal import Decimal
 
-from metrics.domain.common.utils import ChartAxisFields
+from metrics.domain.common.utils import (
+    ChartAxisFields,
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 from metrics.domain.models import PlotData
 
 IN_REPORTING_DELAY_PERIOD = "in_reporting_delay_period"
@@ -14,6 +18,9 @@ IN_REPORTING_DELAY_PERIOD_LOOKUP_TYPE = dict[datetime.date, bool]
 class TabularData:
     def __init__(self, *, plots: list[PlotData]):
         self.plots = plots
+        self.metric_group = extract_metric_group_from_metric(
+            metric=self.plots[0].parameters.metric
+        )
 
         # The list of plot labels
         self.plot_labels: list[str] = []
@@ -144,7 +151,7 @@ class TabularData:
 
         return dict(zip(plot.x_axis_values, in_report_delay_period_values))
 
-    def create_multi_plot_output(self) -> list[dict[str, str | list[dict]]]:
+    def create_multi_plot_output(self) -> list[dict[str, str] | list[dict]]:
         """Creates the tabular output for the given plots
 
         Notes:
@@ -153,25 +160,77 @@ class TabularData:
 
         Returns:
             A list of dictionaries showing the plots in tabular format
-
         """
         tabular_data = []
 
         for left_column, plot_values in self.combined_plots.items():
             tabular_data.append(
-                {
-                    self.column_heading: left_column,
-                    "values": [
-                        {
-                            "label": plot_label,
-                            "value": plot_values.get(plot_label),
-                            IN_REPORTING_DELAY_PERIOD: plot_values.get(
-                                IN_REPORTING_DELAY_PERIOD, False
-                            ),
-                        }
-                        for plot_label in self.plot_labels
-                    ],
-                }
+                self.create_multi_plot_row(
+                    left_column=left_column,
+                    plot_values=plot_values,
+                )
             )
 
         return tabular_data
+
+    def create_multi_plot_row(
+        self, left_column: str, plot_values: dict[str, str]
+    ) -> dict[str, str | list[dict]]:
+        """Creates a row for tabular data output
+
+        Returns:
+            A dictionary representing the tabular row returned
+            Eg. {"reference": "Age", "values": [{"label": "Amount", "value": 53.00, IN_REPORTING_DELAY_PERIOD: False}]}
+        """
+        row = {self.column_heading: left_column, "values": []}
+
+        if DataSourceFileType[self.metric_group].is_timeseries:
+            row["values"].extend(
+                self.create_timeseries_plot_values(plot_values=plot_values)
+            )
+
+        if DataSourceFileType[self.metric_group].is_headline:
+            row["values"].extend(
+                self.create_headline_plot_values(plot_values=plot_values)
+            )
+
+        return row
+
+    def create_timeseries_plot_values(self, plot_values: dict[str, str]) -> list[dict]:
+        """Creates an array of values for times series tabular data row
+
+        Returns:
+            A list of dictionaries representing a plot and its values
+            Eg. [{label: "Plot1", value: "55", IN_REPORTING_DELAY_PERIOD: False}]
+        """
+        return [
+            {
+                "label": plot_label,
+                "value": plot_values.get(plot_label),
+                IN_REPORTING_DELAY_PERIOD: plot_values.get(
+                    IN_REPORTING_DELAY_PERIOD, False
+                ),
+            }
+            for plot_label in self.plot_labels
+        ]
+
+    def create_headline_plot_values(self, plot_values: dict[str, str]) -> list[dict]:
+        """Creates an array of values for times series tabular data row
+
+        Notes:
+            For headline tabular data the label for each plot
+            is set to `Amount` to keep all values in the same
+
+        Returns:
+            A list of dictionaries representing a plot and its values
+            Eg. [{label: "Amount", value: "55", IN_REPORTING_DELAY_PERIOD: False}]
+        """
+        return [
+            {
+                "label": "Amount",
+                "value": plot_values.get(plot_label),
+                IN_REPORTING_DELAY_PERIOD: False,
+            }
+            for plot_label in self.plot_labels
+            if plot_values.get(plot_label)
+        ]

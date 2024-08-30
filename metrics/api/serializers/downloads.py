@@ -1,7 +1,13 @@
 from rest_framework import serializers
 
 from metrics.api.serializers import help_texts, plots
-from metrics.domain.common.utils import DEFAULT_CHART_HEIGHT, DEFAULT_CHART_WIDTH
+from metrics.domain.common.utils import (
+    DEFAULT_CHART_HEIGHT,
+    DEFAULT_CHART_WIDTH,
+    ChartAxisFields,
+    DataSourceFileType,
+    extract_metric_group_from_metric,
+)
 from metrics.domain.models import PlotsCollection
 
 FILE_FORMAT_CHOICES: list[str] = ["json", "csv"]
@@ -33,14 +39,48 @@ class DownloadsSerializer(serializers.Serializer):
         required=True,
         help_text=help_texts.FILE_DOWNLOAD_FORMAT,
     )
+    x_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_X_AXIS,
+    )
+    y_axis = serializers.ChoiceField(
+        choices=ChartAxisFields.choices(),
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_Y_AXIS,
+    )
 
     plots = DownloadListSerializer()
 
     def to_models(self) -> PlotsCollection:
+        """Creates a `PlotsCollection` from the download
+            request parameters.
+
+        Notes:
+            The download endpoint can return chart data for download
+            from either `CoreHeadline` or `CoreTimeSeries`.
+            The `metric_group` is taken from the metric
+            provided in the request. This is used to adapt the model
+            returned.
+
+        Returns:
+            plots_collection: Instance of `PlotsCollection`
+        """
+        metric_group = extract_metric_group_from_metric(
+            metric=self.data["plots"][0]["metric"]
+        )
+
         for plot in self.data["plots"]:
             plot["chart_type"] = "bar"
+            plot["x_axis"] = self.data.get("x_axis") or ""
+            plot["y_axis"] = self.data.get("y_axis") or ""
 
         plots_collection = PlotsCollection(
+            metric_group=metric_group,
             plots=self.data["plots"],
             file_format="svg",
             chart_height=DEFAULT_CHART_HEIGHT,
@@ -49,8 +89,9 @@ class DownloadsSerializer(serializers.Serializer):
             y_axis="",
         )
 
-        for plot in plots_collection.plots:
-            plot.override_y_axis_choice_to_none = True
+        if DataSourceFileType[metric_group].is_timeseries:
+            for plot in plots_collection.plots:
+                plot.override_y_axis_choice_to_none = True
 
         return plots_collection
 

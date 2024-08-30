@@ -3,13 +3,13 @@ from unittest import mock
 import pytest
 
 from metrics.data.models.api_models import APITimeSeries
-from public_api.serializers.api_time_series_request_serializer import (
+from public_api.version_02.serializers.api_time_series_request_serializer import (
     NO_LOOKUP_FIELD_ERROR_MESSAGE,
     APITimeSeriesDTO,
 )
 
-from public_api.v2.serializers.api_time_series_request_serializer import (
-    APITimeSeriesRequestSerializerV2,
+from public_api.version_02.serializers.api_time_series_request_serializer import (
+    APITimeSeriesRequestSerializerv2,
 )
 
 from tests.fakes.factories.metrics.api_time_series_factory import (
@@ -40,7 +40,7 @@ class TestAPITimeSeriesRequestSerializerV2:
         # Given
         lookup_field = "test_lookup_field"
         context_with_lookup_field = {"lookup_field": lookup_field}
-        serializer = APITimeSeriesRequestSerializerV2(context=context_with_lookup_field)
+        serializer = APITimeSeriesRequestSerializerv2(context=context_with_lookup_field)
 
         # When
         returned_lookup_field = serializer.lookup_field
@@ -56,7 +56,7 @@ class TestAPITimeSeriesRequestSerializerV2:
         """
         # Given
         context_without_lookup_field = {}
-        serializer = APITimeSeriesRequestSerializerV2(
+        serializer = APITimeSeriesRequestSerializerv2(
             context=context_without_lookup_field
         )
 
@@ -77,7 +77,7 @@ class TestAPITimeSeriesRequestSerializerV2:
         }
         fake_parser_context = {"kwargs": fake_request_kwargs}
         mocked_request = mock.Mock(parser_context=fake_parser_context)
-        serializer = APITimeSeriesRequestSerializerV2(
+        serializer = APITimeSeriesRequestSerializerv2(
             context={"request": mocked_request}
         )
 
@@ -111,7 +111,7 @@ class TestAPITimeSeriesRequestSerializerV2:
             time_series=self._setup_fake_api_time_series()
         )
 
-        serializer = APITimeSeriesRequestSerializerV2(
+        serializer = APITimeSeriesRequestSerializerv2(
             context={
                 "request": mocked_request,
                 "lookup_field": fake_lookup_field,

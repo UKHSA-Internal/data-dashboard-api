@@ -99,6 +99,10 @@ class Command(BaseCommand):
             name="access_our_data_getting_started",
             parent_page=access_our_data_parent_page,
         )
+        build_cms_site_helpers.create_composite_page(
+            name="access_our_data_data_structure",
+            parent_page=access_our_data_parent_page,
+        )
 
         build_cms_site_helpers.create_whats_new_child_entry(
             name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",

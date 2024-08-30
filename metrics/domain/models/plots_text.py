@@ -112,7 +112,10 @@ class PlotsText:
 
         description += self._describe_plot_parameters(plot_parameters=plot_parameters)
 
-        if self._plot_is_date_based(plot_data=plot_data):
+        if self._plot_is_headline_data(plot_data=plot_data):
+            description += self._describe_headline_plot_data(plot_data=plot_data)
+
+        elif self._plot_is_date_based_timeseries_data(plot_data=plot_data):
             with contextlib.suppress(Exception):
                 description += self._describe_date_based_plot_data(plot_data=plot_data)
 
@@ -177,13 +180,36 @@ class PlotsText:
 
         description += self._describe_plot_parameters(plot_parameters=plot_parameters)
 
-        if self._plot_is_date_based(plot_data=plot_data):
+        if self._plot_is_headline_data(plot_data=plot_data):
+            with contextlib.suppress(Exception):
+                description += self._describe_headline_plot_data(plot_data=plot_data)
+
+        elif self._plot_is_date_based_timeseries_data(plot_data=plot_data):
             with contextlib.suppress(Exception):
                 description += self._describe_date_based_plot_data(plot_data=plot_data)
 
         return description
 
     # Data description
+
+    @classmethod
+    def _describe_headline_plot_data(cls, *, plot_data: PlotData) -> str:
+        """Builds a description of the data for the given headline data plot.
+
+        Args:
+            plot_data:
+                An enrich `PlotData` model containing
+                all the parameters and associated data
+                which is used to create the plot.
+
+        Returns:
+            String representation of the plot
+
+        """
+        return (
+            f"This plot shows `{plot_data.x_axis_values[0]}` along the X-axis. "
+            f"And `{plot_data.y_axis_values[0]}` along the Y-axis. "
+        )
 
     def _describe_date_based_plot_data(
         self, *, plot_data: PlotData, number_of_parts: int = 6
@@ -365,8 +391,12 @@ class PlotsText:
             return float(metric_value)
 
     @classmethod
-    def _plot_is_date_based(cls, *, plot_data: PlotData) -> bool:
+    def _plot_is_date_based_timeseries_data(cls, *, plot_data: PlotData) -> bool:
         return type(plot_data.x_axis_values[0]) is datetime.date
+
+    @classmethod
+    def _plot_is_headline_data(cls, *, plot_data: PlotData) -> bool:
+        return plot_data.parameters.is_headline_data
 
     def _describe_reporting_delay_period(self) -> str:
         try:

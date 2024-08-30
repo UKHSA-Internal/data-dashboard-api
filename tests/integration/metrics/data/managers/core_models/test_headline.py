@@ -9,6 +9,51 @@ from tests.factories.metrics.headline import CoreHeadlineFactory
 
 
 class TestCoreHeadlineManager:
+
+    @pytest.mark.django_db
+    def test_query_for_data_returns_expected_results(
+        self,
+    ):
+        """
+        Given a `CoreHeadline` record is live
+        When `query_for_data()` is called
+        Then then a queryset is returned with the correct x and y values
+            and the `period_end` of the record is added to the queryset as
+            `latest_date`
+        """
+        # Given
+        expected_record_period_start = "2024-01-01"
+        expected_record_period_end = "2024-01-02"
+        expected_record_headline = CoreHeadlineFactory.create_record(
+            metric_value=3,
+            period_start=expected_record_period_start,
+            period_end=expected_record_period_end,
+        )
+
+        # When
+        retrieved_record_queryset = CoreHeadline.objects.query_for_data(
+            fields_to_export=["age", "metric_value"],
+            topic_name=expected_record_headline.metric.topic.name,
+            metric_name=expected_record_headline.metric.name,
+            geography_name=expected_record_headline.geography.name,
+        )
+
+        retrieved_record_values = retrieved_record_queryset.values(
+            "age", "metric_value"
+        )
+
+        # Then
+        assert len(retrieved_record_queryset[0]) == 2
+        assert (
+            retrieved_record_queryset[0]["metric_value"]
+            == retrieved_record_values[0]["metric_value"]
+        )
+        assert retrieved_record_queryset[0]["age"] == retrieved_record_values[0]["age"]
+        assert (
+            retrieved_record_queryset.latest_date.strftime("%Y-%m-%d")
+            == expected_record_period_end
+        )
+
     @pytest.mark.django_db
     def test_get_latest_metric_value_returns_latest_metric_value_for_multiple_versions(
         self,
@@ -405,3 +450,75 @@ class TestCoreHeadlineManager:
         assert second_stale_round_headline not in retrieved_records
         assert current_round_headline in retrieved_records
         assert embargoed_round_headline in retrieved_records
+
+    @pytest.mark.django_db
+    def test_find_latest_released_embargo_for_metrics(self):
+        """
+        Given a number of `CoreHeadline` records
+            for different metrics
+        When `find_latest_released_embargo_for_metrics()` is called
+            from an instance of the `CoreHeadlineManager`
+        Then the latest released embargo timestamp is returned
+        """
+        # Given
+        covid_metric = "COVID-19_headline_7DayAdmissions"
+        covid_metric_for_outdated_embargo = "COVID-19_headline_7DayOccupiedBeds"
+
+        superseded_embargo = datetime.datetime(
+            year=2024, month=1, day=1, hour=1, minute=1, second=1, tzinfo=datetime.UTC
+        )
+        latest_released_embargo = datetime.datetime(
+            year=2024, month=2, day=2, hour=1, minute=2, second=2, tzinfo=datetime.UTC
+        )
+        last_unreleased_embargo = get_date_n_months_ago_from_timestamp(
+            datetime_stamp=timezone.now(), number_of_months=-1
+        )
+
+        CoreHeadlineFactory.create_record(
+            metric_name=covid_metric, embargo=latest_released_embargo
+        )
+        CoreHeadlineFactory.create_record(
+            metric_name=covid_metric_for_outdated_embargo, embargo=superseded_embargo
+        )
+        CoreHeadlineFactory.create_record(
+            metric_name="adenovirus_headline_positivityLatest",
+            embargo=last_unreleased_embargo,
+        )
+
+        # When
+        extracted_embargo = (
+            CoreHeadline.objects.find_latest_released_embargo_for_metrics(
+                metrics=[covid_metric, covid_metric_for_outdated_embargo]
+            )
+        )
+
+        # Then
+        assert (
+            extracted_embargo
+            == latest_released_embargo
+            != superseded_embargo
+            != last_unreleased_embargo
+        )
+
+    @pytest.mark.django_db
+    def test_find_latest_released_embargo_for_metrics_returns_none_when_no_data_found(
+        self,
+    ):
+        """
+        Given no existing `CoreHeadline` records
+        When `find_latest_released_embargo_for_metrics()` is called
+            from an instance of the `CoreHeadlineManager`
+        Then None is returned
+        """
+        # Given
+        covid_metric = "COVID-19_headline_7DayAdmissions"
+
+        # When
+        extracted_embargo = (
+            CoreHeadline.objects.find_latest_released_embargo_for_metrics(
+                metrics=[covid_metric]
+            )
+        )
+
+        # Then
+        assert extracted_embargo is None

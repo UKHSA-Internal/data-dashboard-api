@@ -1,12 +1,14 @@
 import datetime
 from unittest import mock
 
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.models import PlotParameters, PlotsCollection
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.tables.access import (
     TablesInterface,
     generate_table_for_full_plots,
 )
+from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
@@ -28,7 +30,10 @@ class TestTablesInterface:
             for i in range(10)
         ]
 
-    def test_plots_interface_is_created_with_correct_args_by_default(self):
+    def test_plots_interface_is_created_with_correct_args_by_default(
+        self,
+        fake_plots_collection: PlotsCollection,
+    ):
         """
         Given a `PlotsCollection` and a `CoreTimeSeriesManager`
         When an instance of the `TablesInterface` is created
@@ -36,22 +41,51 @@ class TestTablesInterface:
         Then an instance of the `PlotsInterface` is created with the correct args
         """
         # Given
-        mocked_plots_collection = mock.MagicMock()
+        fake_plots_collection.plots[0].chart_type = (
+            ChartTypes.line_with_shaded_section.value
+        )
         mocked_core_time_series_manager = mock.Mock()
 
         # When
         tables_interface = TablesInterface(
-            plots_collection=mocked_plots_collection,
-            core_time_series_manager=mocked_core_time_series_manager,
+            plots_collection=fake_plots_collection,
+            core_model_manager=mocked_core_time_series_manager,
         )
 
         # Then
         created_plots_interface = tables_interface.plots_interface
-        assert created_plots_interface.plots_collection == mocked_plots_collection
+        assert created_plots_interface.plots_collection == fake_plots_collection
         assert (
-            created_plots_interface.core_time_series_manager
+            created_plots_interface.core_model_manager
             == mocked_core_time_series_manager
         )
+
+    def test_plots_interface_is_created_with_headline_manager_when_provided_a_headline_metric(
+        self,
+        fake_plots_collection: PlotsCollection,
+    ):
+        """
+        Given a `PlotsCollection` and a `headline` metric
+        When an instance of the `TablesInterface` is created
+            without explicitly providing a `PlotsInterface`
+        Then an instance of the `PlotsInterface` is created with the correct args
+            and the `core_model_manager` is set to `CoreHeadline` manager
+        """
+        # Given
+        fake_plots_collection.plots[0].chart_type = (
+            ChartTypes.line_with_shaded_section.value
+        )
+        fake_plots_collection.plots[0].metric = "COVID-19_headline_tests_7DayChange"
+
+        # When
+        tables_interface = TablesInterface(
+            plots_collection=fake_plots_collection,
+        )
+
+        # Then
+        created_plots_interface = tables_interface.plots_interface
+        assert created_plots_interface.plots_collection == fake_plots_collection
+        assert created_plots_interface.core_model_manager == CoreHeadline.objects
 
     @mock.patch.object(TabularData, "create_tabular_plots")
     def test_generate_full_plots_for_table(
@@ -83,7 +117,7 @@ class TestTablesInterface:
 
         tables_interface = TablesInterface(
             plots_collection=plots_collection,
-            core_time_series_manager=fake_core_time_series_manager,
+            core_model_manager=fake_core_time_series_manager,
         )
 
         # When

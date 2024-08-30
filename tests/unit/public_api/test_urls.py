@@ -1,6 +1,6 @@
 import pytest
 
-from public_api import construct_versioned_urlpatterns_for_public_api
+from public_api import construct_url_patterns_for_public_api
 
 
 class TestConstructUrlPatternsForPublicAPI:
@@ -17,7 +17,27 @@ class TestConstructUrlPatternsForPublicAPI:
         api_prefix = prefix
 
         # When
-        urlpatterns = construct_versioned_urlpatterns_for_public_api(prefix=api_prefix)
+        urlpatterns = construct_url_patterns_for_public_api(prefix=api_prefix)
+
+        # Then
+        assert all(
+            prefix in urlpattern.pattern.regex.pattern for urlpattern in urlpatterns
+        )
+
+    @pytest.mark.parametrize(
+        "prefix", ["api/example/prefix/v2", "api/example/v1", "api/public/v2"]
+    )
+    def test_sets_prefix_on_urls(self, prefix: str):
+        """
+        Given a prefix to prepend to the constructed urlpatterns
+        When `construct_urlpatterns_for_public_api()` is called
+        Then the prefix is added to the returned urlpatterns
+        """
+        # Given
+        api_prefix = prefix
+
+        # When
+        urlpatterns = construct_url_patterns_for_public_api(prefix=api_prefix)
 
         # Then
         assert all(

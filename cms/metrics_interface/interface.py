@@ -12,6 +12,7 @@ DEFAULT_GEOGRAPHY_MANAGER = core_models.Geography.objects
 DEFAULT_GEOGRAPHY_TYPE_MANAGER = core_models.GeographyType.objects
 DEFAULT_AGE_MANAGER = core_models.Age.objects
 DEFAULT_CORE_TIME_SERIES_MANAGER = core_models.CoreTimeSeries.objects
+DEFAULT_CORE_HEADLINE_MANAGER = core_models.CoreHeadline.objects
 
 
 class MetricsAPIInterface:
@@ -44,6 +45,9 @@ class MetricsAPIInterface:
     core_time_series_manager : `CoreTimeSeriesManager`
         The model manager for the `CoreTimeSeries` model belonging to the Metrics API
         Defaults to the concrete `CoreTimeSeriesManager` via `CoreTimeSeries.objects`
+    core_headline_manager : `CoreHeadlineManager`
+        The model manager for the `CoreHeadline` model belonging to the Metrics API
+        Defaults to the concrete `CoreHeadlineManager` via `CoreHeadline.objects`
 
     """
 
@@ -57,6 +61,7 @@ class MetricsAPIInterface:
         geography_type_manager: Manager = DEFAULT_GEOGRAPHY_TYPE_MANAGER,
         age_manager: Manager = DEFAULT_AGE_MANAGER,
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     ):
         self.topic_manager = topic_manager
         self.metric_manager = metric_manager
@@ -65,6 +70,7 @@ class MetricsAPIInterface:
         self.geography_type_manager = geography_type_manager
         self.age_manager = age_manager
         self.core_time_series_manager = core_time_series_manager
+        self.core_headline_manager = core_headline_manager
 
     @staticmethod
     def get_chart_types() -> tuple[tuple[str, str], ...]:
@@ -78,6 +84,19 @@ class MetricsAPIInterface:
 
         """
         return ChartTypes.selectable_choices()
+
+    @staticmethod
+    def get_headline_chart_types() -> tuple[tuple[str, str], ...]:
+        """Gets all available chart type choices for headline charts as a nested tuple of 2-item tuples.
+        Note this is achieved by delegating the call to the `ChartTypes` enum from the Metrics API
+
+        Returns:
+            Nested tuples of 2 item tuples as expected by the form blocks.
+            Examples:
+                (("bar", "bar"), ...)
+
+        """
+        return ChartTypes.selectable_headline_choices()
 
     @staticmethod
     def get_chart_axis_choices() -> list[tuple[str, str]]:
@@ -141,6 +160,29 @@ class MetricsAPIInterface:
 
         """
         return self.metric_manager.get_all_unique_names()
+
+    def get_all_timeseries_metric_names(self) -> QuerySet:
+        """Gets all unique metric names that belong to a timeseries metric_group as a flat list.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual metric names without repetition:
+                Examples:
+                    `<MetricQuerySet ['COVID-19_deaths_ONSByDay', 'COVID-19_deaths_ONSByDay']>`
+
+        """
+        return self.metric_manager.get_all_timeseries_names()
+
+    def get_all_headline_metric_names(self) -> QuerySet:
+        """Get all unique metric names that belong to a headline `metric_group` as flat list.
+        Note this is achieved by delegating the call to the `MetricManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual metric names without repetition:
+                Examples:
+                    `<MetricQuerySet ['COVID-19_headline_cases_7DayTotals', 'COVID-19_headline_ONSdeaths_7DayChange']>`
+        """
+        return self.metric_manager.get_all_headline_names()
 
     def get_all_unique_change_type_metric_names(self) -> QuerySet:
         """Gets all unique metric names as a flat list queryset, which contain the word `change`

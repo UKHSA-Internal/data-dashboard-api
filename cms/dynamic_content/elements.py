@@ -5,13 +5,16 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_age_names,
     get_all_geography_names,
     get_all_geography_type_names,
+    get_all_headline_metric_names,
     get_all_sex_names,
     get_all_stratum_names,
+    get_all_timeseries_metric_names,
     get_all_topic_names,
     get_all_unique_metric_names,
     get_chart_line_types,
     get_chart_types,
     get_colours,
+    get_headline_chart_types,
 )
 
 DEFAULT_GEOGRAPHY = "England"
@@ -19,6 +22,7 @@ DEFAULT_GEOGRAPHY_TYPE = "Nation"
 DEFAULT_SEX = "all"
 DEFAULT_AGE = "all"
 DEFAULT_STRATUM = "default"
+DEFAULT_HEADLINE_CHART_TYPE = "bar"
 
 
 class BaseMetricsElement(blocks.StructBlock):
@@ -65,6 +69,11 @@ class BaseMetricsElement(blocks.StructBlock):
 
 
 class ChartPlotElement(BaseMetricsElement):
+    metric = blocks.ChoiceBlock(
+        required=True,
+        choices=get_all_timeseries_metric_names,
+        help_text=help_texts.METRIC_FIELD,
+    )
     chart_type = blocks.ChoiceBlock(
         required=True,
         choices=get_chart_types,
@@ -102,6 +111,33 @@ class ChartPlotElement(BaseMetricsElement):
         default=True,
         required=False,
         help_text=help_texts.USE_SMOOTH_LINES,
+    )
+
+    class Meta:
+        icon = "chart_plot"
+
+
+class HeadlineChartPlotElement(BaseMetricsElement):
+    metric = blocks.ChoiceBlock(
+        required=True,
+        choices=get_all_headline_metric_names,
+        help_text=help_texts.METRIC_FIELD,
+    )
+    chart_type = blocks.ChoiceBlock(
+        required=True,
+        choices=get_headline_chart_types,
+        help_text=help_texts.CHART_TYPE_FIELD,
+        default=DEFAULT_HEADLINE_CHART_TYPE,
+    )
+    line_colour = blocks.ChoiceBlock(
+        required=True,
+        choices=get_colours,
+        default=get_colours()[0],
+        help_text=help_texts.LINE_COLOUR_FIELD,
+    )
+    label = blocks.TextBlock(
+        required=False,
+        help_text=help_texts.LABEL_FIELD,
     )
 
     class Meta:

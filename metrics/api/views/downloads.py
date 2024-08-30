@@ -11,14 +11,20 @@ from rest_framework.views import APIView
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers import (
     BulkDownloadsSerializer,
+    CoreHeadlineSerializer,
     CoreTimeSeriesSerializer,
     DownloadsSerializer,
 )
+from metrics.data.managers.core_models.headline import CoreHeadlineQuerySet
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.domain.bulk_downloads.get_downloads_archive import (
     get_bulk_downloads_archive,
 )
-from metrics.domain.exports.csv_output import write_data_to_csv
+from metrics.domain.common.utils import DataSourceFileType
+from metrics.domain.exports.csv_output import (
+    write_data_to_csv,
+    write_headline_data_to_csv,
+)
 from metrics.interfaces.downloads import access
 from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
 
@@ -26,27 +32,71 @@ DOWNLOADS_API_TAG = "downloads"
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_VALUE_ERROR_MESSAGE = "Invalid metric_group provided"
+
 
 class DownloadsView(APIView):
-    serializer_class = CoreTimeSeriesSerializer
+    timeseries_serializer_class = CoreTimeSeriesSerializer
+    headline_serializer_class = CoreHeadlineSerializer
     permission_classes = []
 
     renderer_classes = (CoreJSONRenderer,)
 
-    def _handle_json(self, *, queryset: CoreTimeSeriesQuerySet) -> Response:
+    def _get_serializer_class(
+        self, queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet, metric_group: str
+    ) -> CoreHeadlineSerializer | CoreTimeSeriesSerializer:
+        """Returns the appropriate serializer class based on the
+            provided metric_group.
+
+        Returns:
+            a serializer based on the provided `metric_group`
+            Eg. `CoreTimeSeriesSerializer` or `CoreHeadlineSerializer`
+        """
+        try:
+            if DataSourceFileType[metric_group].is_headline:
+                return self.headline_serializer_class(queryset, many=True)
+
+            if DataSourceFileType[metric_group].is_timeseries:
+                return self.timeseries_serializer_class(queryset, many=True)
+
+        except KeyError:
+            raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE)
+
+    def _handle_json(
+        self,
+        *,
+        queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
+        metric_group: str,
+    ) -> Response:
         # Return the requested data in json format
-        serializer = self.serializer_class(queryset, many=True)
+        serializer = self._get_serializer_class(
+            queryset=queryset, metric_group=metric_group
+        )
 
         response = Response(serializer.data)
         response["Content-Type"] = "application/json"
         response["Content-Disposition"] = "attachment; filename=chart_download.json"
         return response
 
-    @classmethod
-    def _handle_csv(cls, *, queryset: CoreTimeSeriesQuerySet) -> io.StringIO:
+    def _handle_csv(
+        self,
+        *,
+        queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
+        metric_group: str,
+    ) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
+
+        serializer = self._get_serializer_class(
+            queryset=queryset, metric_group=metric_group
+        )
+
+        if DataSourceFileType[metric_group].is_headline:
+            return write_headline_data_to_csv(
+                file=response, core_headline_data=serializer.data
+            )
+
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
@@ -95,9 +145,13 @@ class DownloadsView(APIView):
 
         match file_format:
             case "json":
-                return self._handle_json(queryset=queryset)
+                return self._handle_json(
+                    queryset=queryset, metric_group=chart_plot_models.metric_group
+                )
             case "csv":
-                return self._handle_csv(queryset=queryset)
+                return self._handle_csv(
+                    queryset=queryset, metric_group=chart_plot_models.metric_group
+                )
 
 
 class BulkDownloadsView(APIView):

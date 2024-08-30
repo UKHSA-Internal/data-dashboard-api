@@ -36,8 +36,8 @@ class TestTrend:
 
         # Then
         expected_trend_data = valid_payload
-        expected_trend_data["direction"] = ArrowDirection.up.name
-        expected_trend_data["colour"] = Colour.red.name
+        expected_trend_data["direction"] = ArrowDirection.down.name
+        expected_trend_data["colour"] = Colour.green.name
         assert trend_data == expected_trend_data
 
     @pytest.mark.parametrize(
@@ -58,7 +58,7 @@ class TestTrend:
         """
         # Given
         valid_payload = self._create_valid_payload()
-        valid_payload["metric_value"] = metric_value
+        valid_payload["percentage_metric_value"] = metric_value
         trend = Trend(**valid_payload)
 
         # When
@@ -75,7 +75,7 @@ class TestTrend:
         """
         # Given
         valid_payload = self._create_valid_payload()
-        valid_payload["metric_value"] = 0
+        valid_payload["percentage_metric_value"] = 0
         trend = Trend(**valid_payload)
 
         # When
@@ -103,7 +103,7 @@ class TestTrend:
 
         # Then
         spy_is_metric_improving.assert_called_once_with(
-            change_in_metric_value=trend.metric_value,
+            change_in_metric_value=trend.percentage_metric_value,
             metric_name=trend.metric_name,
         )
         assert colour == Colour.green.name
@@ -127,7 +127,7 @@ class TestTrend:
 
         # Then
         spy_is_metric_improving.assert_called_once_with(
-            change_in_metric_value=trend.metric_value,
+            change_in_metric_value=trend.percentage_metric_value,
             metric_name=trend.metric_name,
         )
         assert colour == Colour.red.name

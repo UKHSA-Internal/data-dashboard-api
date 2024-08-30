@@ -405,3 +405,119 @@ class CMSBlockParser:
 
         """
         return {block["value"]["topic"] for block in headline_blocks}
+
+    # Extraction of selected topics
+
+    @classmethod
+    def get_all_selected_metrics_from_sections(cls, *, sections) -> set[str]:
+        """Extracts a set of metrics from all headline & chart blocks in the given `sections`
+
+        Args:
+            sections: List of all CMS section components
+                from the target page
+
+        Returns:
+            Set of strings where each string represents
+            a metric which has been selected at least
+            once in the list of given `sections`
+
+        """
+        selected_metrics_from_headline_blocks: set[str] = (
+            cls._get_all_selected_metrics_in_headline_blocks_from_sections(
+                sections=sections
+            )
+        )
+        selected_metrics_from_chart_blocks: set[str] = (
+            cls._get_all_selected_metrics_in_chart_blocks_from_sections(
+                sections=sections
+            )
+        )
+        return selected_metrics_from_chart_blocks.union(
+            selected_metrics_from_headline_blocks
+        )
+
+    @classmethod
+    def _get_all_selected_metrics_in_chart_blocks_from_sections(
+        cls, *, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
+    ) -> set[str]:
+        """Extracts a set of metrics from all chart blocks in the given `sections`
+
+        Args:
+            sections: List of all CMS section components
+                from the target page
+
+        Returns:
+            Set of strings where each string represents
+            a metric which has been selected at least
+            once in the list of given `sections`
+
+        """
+        chart_blocks = []
+        for section in sections:
+            chart_blocks += cls.get_all_chart_blocks_from_section(section=section)
+
+        return cls.get_all_selected_metrics_from_chart_blocks(chart_blocks=chart_blocks)
+
+    @classmethod
+    def _get_all_selected_metrics_in_headline_blocks_from_sections(
+        cls, *, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
+    ) -> set[str]:
+        """Extracts a set of metrics from all headline blocks in the given `sections`
+
+        Args:
+            sections: List of all CMS section components
+                from the target page
+
+        Returns:
+            Set of strings where each string represents
+            a metric which has been selected at least
+            once in the list of given `sections`
+
+        """
+        headline_blocks = []
+        for section in sections:
+            headline_blocks += cls.get_all_headline_blocks_from_section(section=section)
+
+        return cls.get_all_selected_metrics_from_headline_blocks(
+            headline_blocks=headline_blocks
+        )
+
+    @classmethod
+    def get_all_selected_metrics_from_chart_blocks(
+        cls, *, chart_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> set[str]:
+        """Extracts a set of metrics from the given `chart_blocks`
+
+        Args:
+            chart_blocks: List of chart blocks
+                from which to extract the unique
+                selected metrics
+
+        Returns:
+            Set of strings where each string represents
+            a metric which has been selected at least
+            once in the list of given `chart_blocks`
+
+        """
+        return {
+            plot["value"]["metric"] for block in chart_blocks for plot in block["chart"]
+        }
+
+    @classmethod
+    def get_all_selected_metrics_from_headline_blocks(
+        cls, *, headline_blocks: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> set[str]:
+        """Extracts a set of metrics from the given `headline_blocks`
+
+        Args:
+            headline_blocks: List of headline number blocks
+                from which to extract the unique
+                selected metrics
+
+        Returns:
+            Set of strings where each string represents
+            a metric which has been selected at least
+            once in the list of given `headline_blocks`
+
+        """
+        return {block["value"]["metric"] for block in headline_blocks}
