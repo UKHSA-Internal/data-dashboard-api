@@ -40,6 +40,8 @@ class TestCompositePage:
             "related_links",
             "seo_title",
             "search_description",
+            "show_pagination",
+            "pagination_size",
         ],
     )
     def test_has_correct_api_fields(self, expected_api_fields: str):
@@ -65,6 +67,8 @@ class TestCompositePage:
             "date_posted",
             "title",
             "page_description",
+            "show_pagination",
+            "pagination_size",
         ],
     )
     def test_has_correct_content_panels(self, expected_content_panel: str):

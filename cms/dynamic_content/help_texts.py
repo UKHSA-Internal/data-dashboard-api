@@ -242,3 +242,10 @@ Note that changing this multiple times will result in the recording of different
 RELATED_LINKS_LAYOUT_FIELD: str = """
 This dictates where the related links for this page will be positioned.
 """
+
+SHOW_PAGINATION_FIELD: str = """
+This is used to determine whether to render pagination controls or not.
+"""
+PAGINATION_SIZE_FIELD: str = """
+This is used to control the default pagination size used if there are associated children pages.
+"""

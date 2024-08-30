@@ -27,6 +27,8 @@ class TestMetricsDocumentationParentPage:
             "last_published_at",
             "seo_title",
             "search_description",
+            "show_pagination",
+            "pagination_size",
         ],
     )
     def test_has_correct_api_fields(
@@ -56,6 +58,8 @@ class TestMetricsDocumentationParentPage:
             "title",
             "date_posted",
             "body",
+            "show_pagination",
+            "pagination_size",
         ],
     )
     def test_has_the_correct_content_panels(
