@@ -36,6 +36,7 @@ class TestCompositePage:
             "body",
             "date_posted",
             "last_published_at",
+            "related_links_layout",
             "related_links",
             "seo_title",
             "search_description",
@@ -86,7 +87,7 @@ class TestCompositePage:
         """
         Given a blank `CompositePage` model
         When `sidebar_content_panels` is called
-        Then the expected names are on the returned `InlinePanel` objects
+        Then the expected names are on the returned panel objects
         """
         # Given
         blank_page = FakeCompositePageFactory.build_blank_page()
@@ -97,9 +98,10 @@ class TestCompositePage:
         # Then
         expected_sidebar_content_panel_names: set[str] = {
             "related_links",
+            "related_links_layout",
         }
         sidebar_content_panel_names: set[str] = {
-            p.relation_name for p in sidebar_content_panels
+            p.clean_name for p in sidebar_content_panels
         }
         assert sidebar_content_panel_names == expected_sidebar_content_panel_names
 

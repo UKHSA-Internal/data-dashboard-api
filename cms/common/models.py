@@ -7,7 +7,12 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.managers import CommonPageManager
+from cms.dashboard.enums import (
+    DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+    RelatedLinksLayoutEnum,
+)
 from cms.dashboard.models import UKHSAPage
+from cms.dynamic_content import help_texts
 
 HEADING_2: str = "h2"
 HEADING_3: str = "h3"
@@ -32,6 +37,13 @@ MAXIMUM_URL_FIELD_LENGTH: int = 400
 class CommonPage(UKHSAPage):
     date_posted = models.DateField()
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
+    related_links_layout = models.CharField(
+        verbose_name="Layout",
+        help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
+        default=RelatedLinksLayoutEnum.Footer.value,
+        max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+        choices=RelatedLinksLayoutEnum.choices(),
+    )
 
     search_fields = Page.search_fields + [
         index.SearchField("body"),
@@ -43,6 +55,7 @@ class CommonPage(UKHSAPage):
     ]
 
     sidebar_content_panels = [
+        FieldPanel("related_links_layout"),
         InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
@@ -51,6 +64,7 @@ class CommonPage(UKHSAPage):
         APIField("date_posted"),
         APIField("body"),
         APIField("last_published_at"),
+        APIField("related_links_layout"),
         APIField("related_links"),
         APIField("search_description"),
         APIField("related_links"),

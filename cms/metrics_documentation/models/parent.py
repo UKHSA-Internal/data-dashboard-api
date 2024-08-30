@@ -8,7 +8,12 @@ from wagtail.models import Orderable, Page
 from wagtail.search import index
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
+from cms.dashboard.enums import (
+    DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+    RelatedLinksLayoutEnum,
+)
 from cms.dashboard.models import UKHSAPage
+from cms.dynamic_content import help_texts
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
@@ -29,6 +34,13 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
 class MetricsDocumentationParentPage(UKHSAPage):
     date_posted = models.DateField(null=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
+    related_links_layout = models.CharField(
+        verbose_name="Layout",
+        help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
+        default=RelatedLinksLayoutEnum.Footer.value,
+        max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
+        choices=RelatedLinksLayoutEnum.choices(),
+    )
 
     # Fields to index for searching within the CMS application
     search_fields = Page.search_fields + [
@@ -45,6 +57,7 @@ class MetricsDocumentationParentPage(UKHSAPage):
     api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
         APIField("body"),
+        APIField("related_links_layout"),
         APIField("related_links"),
         APIField("last_published_at"),
         APIField("search_description"),
@@ -52,6 +65,7 @@ class MetricsDocumentationParentPage(UKHSAPage):
 
     # Adds inline content panels to be added to the `edit_handler`
     sidebar_content_panels = [
+        FieldPanel("related_links_layout"),
         InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
