@@ -13,6 +13,7 @@ class TestBlankCommonPage:
             "body",
             "date_posted",
             "last_published_at",
+            "last_updated_at",
             "related_links_layout",
             "related_links",
             "seo_title",
