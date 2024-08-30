@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
@@ -32,6 +33,18 @@ class CompositePage(UKHSAPage):
         max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
         choices=RelatedLinksLayoutEnum.choices(),
     )
+    show_pagination = models.BooleanField(
+        default=True,
+        help_text=help_texts.SHOW_PAGINATION_FIELD,
+    )
+    pagination_size = models.IntegerField(
+        default=10,
+        help_text=help_texts.PAGINATION_SIZE_FIELD,
+        validators=[
+            MaxValueValidator(50),
+            MinValueValidator(5),
+        ],
+    )
 
     search_fields = Page.search_fields + [
         index.SearchField("body"),
@@ -41,6 +54,8 @@ class CompositePage(UKHSAPage):
         FieldPanel("date_posted"),
         FieldPanel("body"),
         FieldPanel("page_description"),
+        FieldPanel("show_pagination"),
+        FieldPanel("pagination_size"),
     ]
 
     sidebar_content_panels = [
@@ -58,6 +73,8 @@ class CompositePage(UKHSAPage):
         APIField("related_links_layout"),
         APIField("related_links"),
         APIField("page_description"),
+        APIField("show_pagination"),
+        APIField("pagination_size"),
     ]
 
     # Tabs to position at the top of the view
