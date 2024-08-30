@@ -40,9 +40,9 @@ def data_ingester(*, data: INCOMING_DATA_TYPE) -> None:
     consumer = Consumer(source_data=data)
 
     if consumer.is_headline_data:
-        return consumer.create_core_headlines()
+        return consumer.process_core_headlines()
 
-    return consumer.create_core_and_api_timeseries()
+    return consumer.process_core_and_api_timeseries()
 
 
 def upload_data(*, key: str, data: INCOMING_DATA_TYPE) -> None:
