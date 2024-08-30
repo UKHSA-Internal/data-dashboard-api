@@ -1,3 +1,4 @@
+import datetime
 from unittest import mock
 
 import pytest
@@ -297,6 +298,40 @@ class TestTemplateCOVID19Page:
             "COVID-19_vaccinations_spring23_uptakeByDay",
         }
         assert selected_metrics == expected_metrics
+
+    @mock.patch.object(TopicPage, "find_latest_released_embargo_for_metrics")
+    def test_last_updated_at(
+        self, mocked_find_latest_released_embargo_for_metrics: mock.MagicMock
+    ):
+        """
+        Given an embargoed timestamp which is more recent
+        And a `last_published_at` timestamp which is older
+        When the `last_published_at` property
+            is called from an instance of a `TopicPage`
+        Then the more recent timestamp is returned
+        """
+        # Given
+        expected_timestamp = datetime.datetime(
+            year=2024, month=2, day=2, hour=2, minute=2, second=2
+        )
+        latest_released_embargoes = [expected_timestamp, None]
+        mocked_find_latest_released_embargo_for_metrics.return_value = (
+            latest_released_embargoes
+        )
+        older_timestamp = datetime.datetime(
+            year=2024, month=1, day=1, hour=1, minute=1, second=1
+        )
+
+        template_covid_19_page = (
+            FakeTopicPageFactory.build_covid_19_page_from_template()
+        )
+        template_covid_19_page.last_published_at = older_timestamp
+
+        # When
+        calculated_last_updated_at = template_covid_19_page.last_updated_at
+
+        # Then
+        assert calculated_last_updated_at == expected_timestamp
 
 
 class TestTemplateInfluenzaPage:
