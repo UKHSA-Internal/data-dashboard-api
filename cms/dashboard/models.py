@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -44,6 +45,7 @@ class UKHSAPage(Page):
         APIField("seo_change_frequency"),
         APIField("seo_title"),
         APIField("seo_priority"),
+        APIField("last_updated_at"),
     ]
 
     promote_panels = [
@@ -97,3 +99,7 @@ class UKHSAPage(Page):
         page_path = f"/{page_path}"
 
         return site.site_id, site.root_url, page_path
+
+    @property
+    def last_updated_at(self) -> datetime.datetime:
+        return self.last_published_at

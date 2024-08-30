@@ -25,6 +25,7 @@ class TestMetricsDocumentationChildEntry:
             "metric",
             "metric_group",
             "topic",
+            "last_updated_at",
             "last_published_at",
             "page_description",
         ],

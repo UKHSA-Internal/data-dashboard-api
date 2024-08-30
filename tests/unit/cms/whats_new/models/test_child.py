@@ -31,6 +31,7 @@ class TestWhatsNewChildEntry:
         [
             "date_posted",
             "body",
+            "last_updated_at",
             "last_published_at",
             "seo_title",
             "search_description",

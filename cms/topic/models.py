@@ -169,6 +169,21 @@ class TopicPage(UKHSAPage):
         """
         return self.enable_area_selector and len(self.selected_topics) == 1
 
+    @property
+    def last_updated_at(self) -> datetime.datetime:
+        """Fetches the time for the last content update or data update on the page.
+
+        Returns:
+            datetime object representing the last updated on the page
+
+        """
+        timestamps: list[datetime.datetime | None] = (
+            self.find_latest_released_embargo_for_metrics()
+        )
+        timestamps.append(self.last_published_at)
+        timestamps = [timestamp for timestamp in timestamps if timestamp]
+        return max(timestamps)
+
 
 class TopicPageRelatedLink(Orderable):
     page = ParentalKey(

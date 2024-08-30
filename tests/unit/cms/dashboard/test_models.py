@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 
 from cms.dashboard.models import UKHSAPage
@@ -47,3 +49,34 @@ class TestUKHSAPage:
         multi_field_panel = promote_panels[0]
         panel_names: list[str] = [p.clean_name for p in multi_field_panel.children]
         assert "show_in_menus" not in panel_names
+
+    @pytest.mark.parametrize(
+        "fake_page",
+        [
+            FakeHomePageFactory.build_blank_page(),
+            FakeCommonPageFactory.build_blank_page(),
+            FakeCompositePageFactory.build_page_from_template(
+                page_name="access_our_data_getting_started"
+            ),
+            FakeMetricsDocumentationParentPageFactory.build_page_from_template(),
+            FakeWhatsNewChildEntryFactory.build_page_from_template(),
+            FakeWhatsNewParentPageFactory.build_page_from_template(),
+        ],
+    )
+    def test_last_updated_at_references_last_published_at(self, fake_page: UKHSAPage):
+        """
+        Given a blank page model which inherits from `UKHSAPage`
+            which is **not** a `TopicPage`
+        When the `last_updated_at` property is called
+        Then the `last_published_at` field is referenced
+        """
+        # Given
+        mocked_last_published_at = mock.Mock()
+        child_page = fake_page
+        child_page.last_published_at = mocked_last_published_at
+
+        # When
+        timestamp = child_page.last_updated_at
+
+        # Then
+        assert timestamp == mocked_last_published_at
