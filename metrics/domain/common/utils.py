@@ -72,7 +72,6 @@ class ChartAxisFields(Enum):
     date = "date"
     metric = "metric_value"
     geography = "geography__name"
-    geography_type = "geography__geography_type__name"
     sex = "sex"
 
     @classmethod
