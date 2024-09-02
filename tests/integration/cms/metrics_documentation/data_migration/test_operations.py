@@ -42,6 +42,7 @@ class TestRemoveMetricsDocumentationChildEntries:
             date_posted=datetime.date.today(),
             page_description="xyz",
             metric=metric.name,
+            seo_title="Test",
         )
         assert MetricsDocumentationChildEntry.objects.exists()
 
@@ -69,6 +70,7 @@ class TestRemoveMetricsDocumentationParentPage:
             slug="metrics-documentation",
             date_posted=datetime.date.today(),
             body="xyz",
+            seo_title="Metrics documentation",
         )
         assert MetricsDocumentationParentPage.objects.exists()
 

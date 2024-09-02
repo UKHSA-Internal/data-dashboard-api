@@ -14,10 +14,18 @@ class TestHomePageManager:
         """
         # Given
         landing_page = HomePage.objects.create(
-            path="abc", depth=1, title="abc", slug=EXPECTED_HOME_PAGE_SLUG
+            path="abc",
+            depth=1,
+            title="abc",
+            slug=EXPECTED_HOME_PAGE_SLUG,
+            seo_title="ABC",
         )
         invalid_page = HomePage.objects.create(
-            path="def", depth=1, title="def", slug="invalid_slug"
+            path="def",
+            depth=1,
+            title="def",
+            slug="invalid_slug",
+            seo_title="DEF",
         )
 
         # When

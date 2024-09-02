@@ -41,4 +41,5 @@ def _create_metrics_documentation_child_entry(
         slug=metric_name,
         date_posted=datetime.date.today(),
         page_description="xyz",
+        seo_title=metric_name.replace("_", "").title(),
     )

@@ -22,6 +22,7 @@ class FakeTopicPageFactory(factory.Factory):
             title=data["title"],
             page_description=data["page_description"],
             slug=data["meta"]["slug"],
+            seo_title=data["meta"]["seo_title"],
             **kwargs
         )
 

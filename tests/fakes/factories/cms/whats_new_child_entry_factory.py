@@ -21,11 +21,13 @@ class FakeWhatsNewChildEntryFactory(factory.Factory):
             page_name="whats_new_soft_launch_of_the_ukhsa_data_dashboard"
         )
         badge = Badge(text=data["badge"]["text"], colour=data["badge"]["colour"])
+        seo_title = data["meta"]["seo_title"]
         return cls.build(
             title=data["title"],
             body=data["body"],
             additional_details=data["additional_details"],
             slug=data["meta"]["slug"],
             badge=badge,
+            seo_title=seo_title,
             **kwargs
         )

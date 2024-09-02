@@ -91,6 +91,7 @@ def _create_metrics_documentation_parent_page():
         date_posted=datetime.datetime.today(),
         body=parent_page_data["body"],
         show_in_menus=False,
+        seo_title=parent_page_data["meta"]["seo_title"],
     )
     add_page_as_subpage_to_parent(subpage=metrics_parent, parent_page=root_page)
     return metrics_parent
