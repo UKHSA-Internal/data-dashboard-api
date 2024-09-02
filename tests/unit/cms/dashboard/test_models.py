@@ -1,6 +1,7 @@
 from unittest import mock
 
 import pytest
+from django.core.exceptions import ValidationError
 
 from cms.dashboard.models import UKHSAPage
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
@@ -80,3 +81,33 @@ class TestUKHSAPage:
 
         # Then
         assert timestamp == mocked_last_published_at
+
+    @pytest.mark.parametrize(
+        "fake_page",
+        [
+            FakeHomePageFactory.build_blank_page(),
+            FakeTopicPageFactory.build_influenza_page_from_template(),
+            FakeCommonPageFactory.build_blank_page(),
+            FakeCompositePageFactory.build_page_from_template(
+                page_name="access_our_data_getting_started"
+            ),
+            FakeMetricsDocumentationParentPageFactory.build_page_from_template(),
+            FakeWhatsNewChildEntryFactory.build_page_from_template(),
+            FakeWhatsNewParentPageFactory.build_page_from_template(),
+        ],
+    )
+    def test_seo_title_field_is_required_by_clean_method_call(
+        self, fake_page: UKHSAPage
+    ):
+        """
+        Given a page model which inherits from `UKHSAPage`
+        And no `seo_title` field was set
+        When the `clean()` method is called
+        Then a `ValidationError` is raised
+        """
+        # Given
+        fake_page.seo_title = None
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            fake_page.clean()
