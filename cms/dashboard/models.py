@@ -1,6 +1,7 @@
 import datetime
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework.templatetags.rest_framework import render_markdown
@@ -63,6 +64,11 @@ class UKHSAPage(Page):
 
     class Meta:
         abstract = True
+
+    def clean(self):
+        super().clean()
+        if not self.seo_title:
+            raise ValidationError(message="Search engine title tag is required")
 
     def get_url_parts(self, request=None) -> tuple[int, str, str]:
         """Builds the full URL for this page

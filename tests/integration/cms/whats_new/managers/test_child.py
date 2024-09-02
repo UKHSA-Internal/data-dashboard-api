@@ -19,6 +19,7 @@ class TestWhatsNewChildEntryManager:
             date_posted="2023-01-01",
             body="ghi",
             live=True,
+            seo_title="ABC",
         )
         unpublished_page = WhatsNewChildEntry.objects.create(
             path="def",
@@ -27,6 +28,7 @@ class TestWhatsNewChildEntryManager:
             date_posted="2023-01-01",
             body="ghi",
             live=False,
+            seo_title="DEF",
         )
 
         # When

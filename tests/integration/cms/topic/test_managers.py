@@ -24,6 +24,7 @@ class TestTopicPageManager:
             title="abc",
             date_posted=date_posted,
             live=True,
+            seo_title="ABC",
         )
         unpublished_page = TopicPage.objects.create(
             path="def",
@@ -31,6 +32,7 @@ class TestTopicPageManager:
             title="def",
             date_posted=date_posted,
             live=False,
+            seo_title="DEF",
         )
 
         # When

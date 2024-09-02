@@ -21,6 +21,7 @@ class TestMetricsDocumentationParentPage:
             date_posted="2023-11-01",
             body="lorem ipsum...",
             live=True,
+            seo_title="Metrics documentation",
         )
 
         # When / Then
@@ -33,4 +34,5 @@ class TestMetricsDocumentationParentPage:
                 date_posted="2023-11-02",
                 body="lorem ipsum...",
                 live=True,
+                seo_title="Metrics documentation",
             )

@@ -27,4 +27,12 @@ class FakeWhatsNewParentPageFactory(factory.Factory):
             data["meta"]["slug"] = slug
             kwargs.pop("slug")
 
-        return cls.build(body=data["body"], title=data["title"], slug=slug, **kwargs)
+        seo_title = data["meta"]["seo_title"]
+
+        return cls.build(
+            body=data["body"],
+            title=data["title"],
+            slug=slug,
+            seo_title=seo_title,
+            **kwargs
+        )

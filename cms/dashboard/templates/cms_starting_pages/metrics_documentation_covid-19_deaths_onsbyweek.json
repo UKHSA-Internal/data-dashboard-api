@@ -1,13 +1,13 @@
 {
   "id": 17,
   "meta": {
-    "search_description": "",
+    "seo_title": "Metrics documentation - COVID-19 deaths ONS by week | UKHSA data dashboard",
     "type": "metrics_documentation.MetricsDocumentationChildEntry",
     "detail_url": "http://localhost/api/pages/17/",
     "html_url": null,
     "slug": "covid-19-deaths-ons-by-week",
     "show_in_menus": false,
-    "seo_title": "",
+    "search_description": "",
     "first_published_at": "2023-12-11T18:53:25.857988Z",
     "alias_of": null,
     "parent": {
