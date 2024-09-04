@@ -10,6 +10,7 @@ from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts import (
     bar,
     line_multi_coloured,
+    line_single_simplified,
     line_with_shaded_section,
 )
 from metrics.domain.common.utils import (
@@ -108,6 +109,8 @@ class ChartsInterface:
                 figure = self.generate_bar_chart(plots_data=plots_data)
             case ChartTypes.line_multi_coloured.value:
                 figure = self.generate_line_multi_coloured_chart(plots_data=plots_data)
+            case ChartTypes.line_single_simplified.value:
+                figure = self.generate_line_single_simplified(plots_data=plots_data)
             case _:
                 figure = self.generate_line_with_shaded_section_chart(
                     plots_data=plots_data
@@ -216,6 +219,33 @@ class ChartsInterface:
         params = self.param_builder_for_line_with_shaded_section(plots_data=plots_data)
         return line_with_shaded_section.generate_chart_figure(**params)
 
+    def generate_line_single_simplified(
+        self, *, plots_data: list[PlotData]
+    ) -> plotly.graph_objects.Figure:
+        """Creates a simplified line chart with only 4 tick labels displayed for the first
+            and last values on each axis
+
+        Notes:
+            Only the first requested chart_plot is provided to the
+            simplified chart.
+
+        Args:
+            plots_data: List of `PlotData` models,
+            where each model represents a requested plot.
+            Note that each `PlotData` models is enriched with data
+            with the according x and y values along with
+            requests parameters like colour and plot label.
+
+        Returns:
+            A plotly `Figure` object for the created line chart with shaded section
+
+        Raises:
+            `DataNotFoundForAnyPlotError`: If no plots
+                returned any data from the underlying queries
+        """
+        params = self.param_builder_for_line_single_simplified(plots_data=plots_data)
+        return line_single_simplified.generate_chart_figure(**params)
+
     def build_chart_plots_data(self) -> list[PlotData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
@@ -288,6 +318,33 @@ class ChartsInterface:
             "rolling_period_slice": calculations.get_rolling_period_slice_for_metric(
                 metric_name=metric_name
             ),
+        }
+
+    def param_builder_for_line_single_simplified(self, *, plots_data):
+        """Returns the params required to create a
+            `line_single_simplified` chart.
+
+        Args:
+            plots_data: list of `PlotData` models
+
+        Returns:
+            A dict of chart properties, this line chart
+            only supports a single plot so only the first
+            plots_data item is returned in the `plot_data`
+            list if more than one is supplied.
+        """
+        plot_data = plots_data[0]
+        chart_height = self.chart_plots.chart_height
+        chart_width = self.chart_plots.chart_width
+        x_axis_values = plot_data.x_axis_values
+        y_axis_value = plot_data.y_axis_values
+
+        return {
+            "plot_data": [plot_data],
+            "chart_height": chart_height,
+            "chart_width": chart_width,
+            "x_axis_values": x_axis_values,
+            "y_axis_values": y_axis_value,
         }
 
     def create_optimized_svg(self, *, figure: plotly.graph_objects.Figure) -> str:

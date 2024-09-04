@@ -102,6 +102,41 @@ class ChartSettings:
         chart_config["showlegend"] = False
         return chart_config
 
+    def get_line_single_simplified_chart_config(
+        self,
+        x_axis_tick_values: list[int],
+        x_axis_tick_text: list[str],
+        y_axis_tick_values: list[int],
+        y_axis_tick_text: list[str],
+    ):
+        # Chart Config
+        chart_config = self.get_base_chart_config()
+        chart_config["showlegend"] = False
+        chart_config["margin"]["l"] = 25
+        chart_config["margin"]["r"] = 25
+        chart_config["margin"]["pad"] = 25
+
+        # x_axis config
+        chart_config["xaxis"]["ticks"] = "outside"
+        chart_config["xaxis"]["tickvals"] = x_axis_tick_values
+        chart_config["xaxis"]["ticktext"] = x_axis_tick_text
+        chart_config["xaxis"]["ticklen"] = 0
+        chart_config["xaxis"]["tickfont"][
+            "color"
+        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+
+        # y_axis config
+        chart_config["yaxis"]["zeroline"] = False
+        chart_config["yaxis"]["ticks"] = "outside"
+        chart_config["yaxis"]["tickvals"] = y_axis_tick_values
+        chart_config["yaxis"]["ticktext"] = y_axis_tick_text
+        chart_config["yaxis"]["ticklen"] = 0
+        chart_config["yaxis"]["tickfont"][
+            "color"
+        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+
+        return chart_config
+
     def get_bar_chart_config(self):
         chart_config = self.get_base_chart_config()
         chart_config["barmode"] = "group"

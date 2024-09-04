@@ -84,7 +84,7 @@ class TestMetricsAPIInterface:
         all_chart_types = metrics_api_interface.get_colours()
 
         # Then
-        assert all_chart_types == RGBAChartLineColours.choices()
+        assert all_chart_types == RGBAChartLineColours.selectable_choices()
 
     def test_get_all_topic_names_delegates_call_correctly(self):
         """
