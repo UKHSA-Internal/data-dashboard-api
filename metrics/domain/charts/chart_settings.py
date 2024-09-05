@@ -42,6 +42,7 @@ class ChartSettings:
             "spikemode": "toaxis+across+marker",
             "spikesnap": "cursor",
             "showgrid": True,
+            "showline": False,
             "zeroline": False,
             "fixedrange": True,
             "gridcolor": "rgba(0,0,0,0.05)",
