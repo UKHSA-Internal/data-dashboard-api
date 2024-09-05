@@ -144,6 +144,9 @@ class TestChartSettings:
             "showticklabels": True,
             "fixedrange": True,
             "gridcolor": "#000",
+            "ticks": "outside",
+            "tickson": "boundaries",
+            "tickcolor": "rgba(0,0,0,0)",
             "tickfont": chart_settings.get_tick_font_config(),
         }
         assert y_axis_config == expected_y_axis_config

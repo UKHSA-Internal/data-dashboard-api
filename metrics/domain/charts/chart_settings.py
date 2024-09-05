@@ -65,6 +65,9 @@ class ChartSettings:
 
     def get_y_axis_config(self) -> dict[str, bool | DICT_OF_STR_ONLY]:
         return {
+            "ticks": "outside",
+            "tickson": "boundaries",
+            "tickcolor": "rgba(0,0,0,0)",
             "showgrid": False,
             "showticklabels": True,
             "fixedrange": True,
