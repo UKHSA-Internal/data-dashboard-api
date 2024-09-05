@@ -35,12 +35,20 @@ class ChartSettings:
 
     def get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
         base_x_axis_config = {
-            "showgrid": False,
+            "showspikes": True,
+            "spikecolor": "#b1b4b6",
+            "spikedash": "2px",
+            "spikethickness": 1,
+            "spikemode": "toaxis+across+marker",
+            "spikesnap": "cursor",
+            "showgrid": True,
             "zeroline": False,
-            "showline": False,
+            "fixedrange": True,
+            "gridcolor": "rgba(0,0,0,0.05)",
             "ticks": "outside",
             "tickson": "boundaries",
             "type": "date",
+            "tickcolor": "rgba(0,0,0,0)",
             "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": self.get_tick_font_config(),
@@ -58,6 +66,8 @@ class ChartSettings:
         return {
             "showgrid": False,
             "showticklabels": True,
+            "fixedrange": True,
+            "gridcolor": "#000",
             "tickfont": self.get_tick_font_config(),
         }
 
@@ -65,6 +75,10 @@ class ChartSettings:
         return {
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
+            "hoverlabel": {
+                "align": "left",
+                "bgcolor": "white",
+            },
             "margin": {
                 "l": 0,
                 "r": 0,
