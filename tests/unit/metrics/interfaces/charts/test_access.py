@@ -556,8 +556,6 @@ class TestChartsInterface:
             "plot_data": [fake_plot_data],
             "chart_height": chart_height,
             "chart_width": chart_width,
-            "x_axis_values": mocked_x_axis_values,
-            "y_axis_values": mocked_y_axis_values,
         }
 
         # Then

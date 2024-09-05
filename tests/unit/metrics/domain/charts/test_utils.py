@@ -2,7 +2,7 @@ import pytest
 from unittest import mock
 from decimal import Decimal
 
-from metrics.domain.charts.line_single_simplified.utils import (
+from metrics.domain.charts.utils import (
     return_formatted_max_y_axis_value,
 )
 
@@ -10,9 +10,7 @@ MODULE_PATH = "metrics.domain.charts"
 
 
 class TestReturnFormattedMaxYAxisValue:
-    @mock.patch(
-        f"{MODULE_PATH}.line_single_simplified.utils.convert_large_numbers_to_short_text"
-    )
+    @mock.patch(f"{MODULE_PATH}.utils.convert_large_numbers_to_short_text")
     def test_return_formatted_max_y_axis_value_delegates_calls_correctly(
         self,
         spy_convert_large_numbers_to_short_text: mock.MagicMock,

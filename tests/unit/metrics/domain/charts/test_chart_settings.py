@@ -343,8 +343,10 @@ class TestChartSettings:
 
         assert line_with_shaded_section_chart_config == expected_chart_config
 
+    @mock.patch.object(ChartSettings, "build_line_single_simplified_axis_params")
     def test_get_line_single_simplified_chart_config(
         self,
+        mock_build_line_single_simplified_axis_params: mock.MagicMock,
         fake_chart_settings: ChartSettings,
     ):
         """
@@ -355,19 +357,22 @@ class TestChartSettings:
         """
         # Given
         chart_settings = fake_chart_settings
+
         fake_x_axis_tick_values = [0, 10]
         fake_x_axis_tick_text = ["tick01", "tick02"]
         fake_y_axis_tick_values = [0, 10]
         fake_y_axis_tick_text = ["tick01", "tick02"]
 
+        mock_build_line_single_simplified_axis_params.return_value = {
+            "x_axis_tick_values": fake_x_axis_tick_values,
+            "x_axis_tick_text": fake_x_axis_tick_text,
+            "y_axis_tick_values": fake_y_axis_tick_values,
+            "y_axis_tick_text": fake_y_axis_tick_text,
+        }
+
         # When
         line_single_simplified_chart_config = (
-            chart_settings.get_line_single_simplified_chart_config(
-                x_axis_tick_values=fake_x_axis_tick_values,
-                x_axis_tick_text=fake_x_axis_tick_text,
-                y_axis_tick_values=fake_y_axis_tick_values,
-                y_axis_tick_text=fake_y_axis_tick_text,
-            )
+            chart_settings.get_line_single_simplified_chart_config()
         )
 
         # Then
@@ -379,6 +384,7 @@ class TestChartSettings:
         expected_chart_config["margin"]["pad"] = 25
 
         # x_axis settings
+        expected_chart_config["xaxis"]["showgrid"] = False
         expected_chart_config["xaxis"]["tickvals"] = fake_x_axis_tick_values
         expected_chart_config["xaxis"]["ticktext"] = fake_x_axis_tick_text
         expected_chart_config["xaxis"]["ticklen"] = 0

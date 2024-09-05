@@ -13,6 +13,10 @@ def convert_large_numbers_to_short_text(number: int) -> str:
     Args:
         number: Integer to be formatted as a string
 
+    Raises:
+        `ValueError`: if the number provided is to large
+            for example over 1billion.
+
     Returns:
         A short number string
         Eg: 1000 = 1k, 2500 = 2k, 2690 = 3k, 100,000,000 = 1m

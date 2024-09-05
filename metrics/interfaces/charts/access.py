@@ -320,7 +320,7 @@ class ChartsInterface:
             ),
         }
 
-    def param_builder_for_line_single_simplified(self, *, plots_data):
+    def param_builder_for_line_single_simplified(self, *, plots_data: list[PlotData]):
         """Returns the params required to create a
             `line_single_simplified` chart.
 
@@ -336,15 +336,11 @@ class ChartsInterface:
         plot_data = plots_data[0]
         chart_height = self.chart_plots.chart_height
         chart_width = self.chart_plots.chart_width
-        x_axis_values = plot_data.x_axis_values
-        y_axis_value = plot_data.y_axis_values
 
         return {
             "plot_data": [plot_data],
             "chart_height": chart_height,
             "chart_width": chart_width,
-            "x_axis_values": x_axis_values,
-            "y_axis_values": y_axis_value,
         }
 
     def create_optimized_svg(self, *, figure: plotly.graph_objects.Figure) -> str:

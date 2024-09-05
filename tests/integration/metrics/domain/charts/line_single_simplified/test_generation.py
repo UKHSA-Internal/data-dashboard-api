@@ -26,8 +26,8 @@ class TestLineSingleSimplified:
         Then the figure is drawn with the expected parameters
         """
         # Given
-        x_axis_values = DATES_FROM_SEP_TO_JAN
-        y_axis_values = [1.1, 0.9, 0.8, 0.3]
+        fake_plot_data.x_axis_values = DATES_FROM_SEP_TO_JAN
+        fake_plot_data.y_axis_values = [1.1, 0.9, 0.8, 0.3]
         chart_height = 200
         chart_width = 400
 
@@ -36,8 +36,6 @@ class TestLineSingleSimplified:
             plot_data=[fake_plot_data],
             chart_height=chart_height,
             chart_width=chart_width,
-            x_axis_values=x_axis_values,
-            y_axis_values=y_axis_values,
         )
 
         # Then
@@ -49,13 +47,16 @@ class TestLineSingleSimplified:
 
         assert figure.layout.margin.l == figure.layout.margin.r == 25
 
-        assert figure.layout.xaxis.tickvals == (x_axis_values[0], x_axis_values[-1])
+        assert figure.layout.xaxis.tickvals == (
+            fake_plot_data.x_axis_values[0],
+            fake_plot_data.x_axis_values[-1],
+        )
         assert figure.layout.xaxis.ticktext == (
-            x_axis_values[0].strftime("%b, %Y"),
-            x_axis_values[-1].strftime("%b, %Y"),
+            fake_plot_data.x_axis_values[0].strftime("%b, %Y"),
+            fake_plot_data.x_axis_values[-1].strftime("%b, %Y"),
         )
 
-        assert figure.layout.yaxis.tickvals == (0, max(y_axis_values))
+        assert figure.layout.yaxis.tickvals == (0, max(fake_plot_data.y_axis_values))
         assert figure.layout.yaxis.ticktext == (
             "0",
             "1",

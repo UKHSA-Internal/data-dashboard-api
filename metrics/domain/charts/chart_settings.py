@@ -1,7 +1,9 @@
 import datetime
+from decimal import Decimal
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
+from metrics.domain.charts.utils import return_formatted_max_y_axis_value
 from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 from metrics.domain.models import PlotData
 
@@ -102,13 +104,37 @@ class ChartSettings:
         chart_config["showlegend"] = False
         return chart_config
 
-    def get_line_single_simplified_chart_config(
+    def build_line_single_simplified_axis_params(
         self,
-        x_axis_tick_values: list[int],
-        x_axis_tick_text: list[str],
-        y_axis_tick_values: list[int],
-        y_axis_tick_text: list[str],
-    ):
+    ) -> dict[str, list[str | int | Decimal]]:
+        """Creates the parameters for `get_line_single_simplified_chart_config`
+
+        Returns:
+            dictionary of parameters for charts settings parameters
+        """
+        plot_data = self.plots_data[0]
+        return {
+            "x_axis_tick_values": [
+                plot_data.x_axis_values[0],
+                plot_data.x_axis_values[-1],
+            ],
+            "x_axis_tick_text": [
+                plot_data.x_axis_values[0].strftime("%b, %Y"),
+                plot_data.x_axis_values[-1].strftime("%b, %Y"),
+            ],
+            "y_axis_tick_values": [0, max(plot_data.y_axis_values)],
+            "y_axis_tick_text": [
+                "0",
+                return_formatted_max_y_axis_value(
+                    y_axis_values=plot_data.y_axis_values,
+                ),
+            ],
+        }
+
+    def get_line_single_simplified_chart_config(self):
+
+        axis_params = self.build_line_single_simplified_axis_params()
+
         # Chart Config
         chart_config = self.get_base_chart_config()
         chart_config["showlegend"] = False
@@ -117,9 +143,10 @@ class ChartSettings:
         chart_config["margin"]["pad"] = 25
 
         # x_axis config
+        chart_config["xaxis"]["showgrid"] = False
         chart_config["xaxis"]["ticks"] = "outside"
-        chart_config["xaxis"]["tickvals"] = x_axis_tick_values
-        chart_config["xaxis"]["ticktext"] = x_axis_tick_text
+        chart_config["xaxis"]["tickvals"] = axis_params["x_axis_tick_values"]
+        chart_config["xaxis"]["ticktext"] = axis_params["x_axis_tick_text"]
         chart_config["xaxis"]["ticklen"] = 0
         chart_config["xaxis"]["tickfont"][
             "color"
@@ -128,8 +155,8 @@ class ChartSettings:
         # y_axis config
         chart_config["yaxis"]["zeroline"] = False
         chart_config["yaxis"]["ticks"] = "outside"
-        chart_config["yaxis"]["tickvals"] = y_axis_tick_values
-        chart_config["yaxis"]["ticktext"] = y_axis_tick_text
+        chart_config["yaxis"]["tickvals"] = axis_params["y_axis_tick_values"]
+        chart_config["yaxis"]["ticktext"] = axis_params["y_axis_tick_text"]
         chart_config["yaxis"]["ticklen"] = 0
         chart_config["yaxis"]["tickfont"][
             "color"

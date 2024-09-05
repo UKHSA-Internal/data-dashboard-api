@@ -1,2 +1,1 @@
 from .generation import generate_chart_figure
-from .utils import return_formatted_max_y_axis_value
