@@ -100,6 +100,9 @@ The date that the chart data goes up to
 CHARTS_ALT_TEXT: str = """
 The description text which summarizes the chart and the data that it represents.
 """
+CHARTS_FIGURE_OUTPUT: str = """
+The `plotly` figure object output with overlaid settings specific for interactive charts.
+"""
 CHART_USE_MARKERS: str = """
 Boolean switch to decide whether to draw markers on individual data points.
 """
