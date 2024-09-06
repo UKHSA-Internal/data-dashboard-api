@@ -72,7 +72,7 @@ ruamel.yaml==0.18.6
 ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.34
 scour==0.38.2
-setuptools==74.1.1
+setuptools==74.1.2
 simplejson==3.19.3
 six==1.16.0
 sortedcontainers==2.4.0
