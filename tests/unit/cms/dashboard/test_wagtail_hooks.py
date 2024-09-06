@@ -1,8 +1,16 @@
 from unittest import mock
 
+import pytest
+from draftjs_exporter.dom import DOM
+from wagtail.admin.rich_text.converters.html_to_contentstate import (
+    ExternalLinkElementHandler,
+    PageLinkElementHandler,
+)
 from wagtail.admin.site_summary import SummaryItem
+from wagtail.models import Page
 
 from cms.dashboard import wagtail_hooks
+from cms.dashboard.wagtail_hooks import _build_link_props, link_entity_with_href
 
 MODULE_PATH = "cms.dashboard.wagtail_hooks"
 
@@ -100,3 +108,103 @@ def test_update_summary_items():
     assert len(core_summary_items) == 1
     assert core_summary_items[0].request == mock_request
     assert isinstance(core_summary_items[0], SummaryItem)
+
+
+@mock.patch(f"{MODULE_PATH}.link_entity_with_href")
+def test_register_link_props(spy_link_entity_with_href: mock.MagicMock):
+    """
+    Given no input
+    When the wagtail hook `register_link_props` is called
+    Then the `link_entity_with_href()` function
+        is set on the link entity decorators
+        via the `register_converter_rule()` call
+    """
+    # Given
+    spy_features = mock.Mock()
+
+    # When
+    wagtail_hooks.register_link_props(features=spy_features)
+
+    # Then
+    assert (
+        spy_features.mock_calls[0][1][2]["to_database_format"]["entity_decorators"][
+            "LINK"
+        ]
+        == spy_link_entity_with_href
+    )
+
+
+class TestLinkEntityWithHref:
+    @mock.patch.object(DOM, "create_element")
+    @mock.patch(f"{MODULE_PATH}._build_link_props")
+    def test_delegates_calls(
+        self,
+        spy_build_link_props: mock.MagicMock,
+        spy_dom_create_element: mock.MagicMock,
+    ):
+        """
+        Given props containing a URL and children elements
+        When `link_entity_with_href()` is called
+        Then the call is delegated
+            to `_build_link_props()` to make the initial props
+            which are then passed to `DOM.create_element()`
+        """
+        # Given
+        mocked_children = mock.Mock()
+        fake_props = {"url": "https://abc.com", "children": mocked_children}
+
+        # When
+        link_entity_with_href(props=fake_props)
+
+        # Then
+        spy_build_link_props.assert_called_once_with(props=fake_props)
+        spy_dom_create_element.assert_called_once_with(
+            "a", spy_build_link_props.return_value, mocked_children
+        )
+
+
+class TestBuildLinkProps:
+    @mock.patch.object(Page, "objects")
+    def test_build_link_props_with_valid_page_id(
+        self, mocked_page_model_manager: mock.MagicMock
+    ):
+        """
+        Given a valid ID for a `Page` object
+        When `_build_link_props()` is called
+        Then the returned props
+            also contain the page full URL
+        """
+        # Given
+        page_id = 1
+        expected_url = "https://test-ukhsa-dashboard.com/covid-19"
+        mocked_page = mock.Mock()
+        mocked_page.specific.full_url = expected_url
+        mocked_page_model_manager.get.return_value = mocked_page
+
+        # When
+        link_props = _build_link_props({"id": page_id})
+
+        # Then
+        mocked_page_model_manager.get.assert_called_once_with(id=page_id)
+        expected_props = {"linktype": "page", "id": page_id, "href": expected_url}
+        assert link_props == expected_props
+
+    @mock.patch(f"{MODULE_PATH}.check_url")
+    def test_build_link_props_with_url(self, spy_check_url: mock.MagicMock):
+        """
+        Given a URL for a `Page` object
+        When `_build_link_props()` is called
+        Then the returned props
+            contain only the page URL
+        """
+        # Given
+        url = "https://test-ukhsa-dashboard.com/covid-19"
+        spy_check_url.return_value = url
+
+        # When
+        link_props = _build_link_props(props={"url": url})
+
+        # Then the correct link properties are returned
+        expected_props = {"href": url}
+        assert link_props == expected_props
+        spy_check_url.assert_called_once_with(url_string=url)

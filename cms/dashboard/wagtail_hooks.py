@@ -2,9 +2,16 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.templatetags.static import static
 from django.utils.html import format_html
 from django.utils.safestring import SafeString
+from draftjs_exporter.dom import DOM
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
+from wagtail.admin.rich_text.converters.html_to_contentstate import (
+    ExternalLinkElementHandler,
+    PageLinkElementHandler,
+)
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
+from wagtail.models import Page
+from wagtail.whitelist import check_url
 
 
 @hooks.register("insert_global_admin_css")
@@ -82,3 +89,43 @@ def register_icons(icons: list[str]) -> list[str]:
 
     """
     return icons + ADDITIONAL_CUSTOM_ICONS
+
+
+def link_entity_with_href(props: dict):
+    link_props = _build_link_props(props=props)
+    return DOM.create_element("a", link_props, props["children"])
+
+
+def _build_link_props(props: dict) -> dict[str, str | int]:
+    link_props = {}
+    page_id = props.get("id")
+
+    if page_id is not None:
+        link_props["linktype"] = "page"
+        link_props["id"] = page_id
+
+        # This is the added functionality
+        # on top of the original Wagtail implementation
+        page = Page.objects.get(id=page_id).specific
+        link_props["href"] = page.full_url
+    else:
+        link_props["href"] = check_url(url_string=props.get("url"))
+
+    return link_props
+
+
+@hooks.register("register_rich_text_features", order=1)
+def register_link_props(features):
+    features.register_converter_rule(
+        "contentstate",
+        "link",
+        {
+            "from_database_format": {
+                "a[href]": ExternalLinkElementHandler("LINK"),
+                'a[linktype="page"]': PageLinkElementHandler("LINK"),
+            },
+            "to_database_format": {
+                "entity_decorators": {"LINK": link_entity_with_href}
+            },
+        },
+    )
