@@ -38,6 +38,17 @@ class ChartOutput:
     figure: plotly.graph_objects.Figure
     description: str
 
+    @property
+    def interactive_chart_figure_output(self) -> dict:
+        self._add_settings_for_interactive_charts()
+        return self.figure.to_dict()
+
+    def _add_settings_for_interactive_charts(self):
+        font_css_variable = "var(--font-primary), arial, sans-serif"
+        self.figure.layout.xaxis.tickfont.update(family=font_css_variable)
+        self.figure.layout.yaxis.tickfont.update(family=font_css_variable)
+        self.figure.layout.xaxis.showline = True
+
 
 class ChartsInterface:
     def __init__(
@@ -340,7 +351,7 @@ class ChartsInterface:
 
         return calculations.change_between_each_half(values=values)
 
-    def get_encoded_chart(self, *, chart_output: ChartOutput) -> dict[str, str]:
+    def get_encoded_chart(self, *, chart_output: ChartOutput) -> dict[str, str | dict]:
         """Creates a dict containing a timestamp for the last data point + encoded string for the chart figure.
 
         Args:
@@ -360,6 +371,7 @@ class ChartsInterface:
             "last_updated": self._latest_date,
             "chart": self.encode_figure(figure=chart_output.figure),
             "alt_text": chart_output.description,
+            "figure": chart_output.interactive_chart_figure_output,
         }
 
 

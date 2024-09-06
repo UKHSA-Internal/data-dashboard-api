@@ -62,7 +62,7 @@ class TestLineWithShadedSectionCharts:
         # ___Sep___Oct___Nov___  as opposed to _Sep_Sep_Oct_Oct_Oct_Nov_Nov_
         assert x_axis.dtick == "M1"
 
-        assert not x_axis.showgrid
+        assert x_axis.showgrid
 
         # Tick marks should be on the boundary drawn going outwards of the main frame
         assert x_axis.ticks == "outside"

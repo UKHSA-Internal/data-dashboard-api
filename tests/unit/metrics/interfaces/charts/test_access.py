@@ -3,6 +3,7 @@ from unittest import mock
 
 import plotly.graph_objects
 import pytest
+from plotly.graph_objs import Figure
 
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
@@ -553,7 +554,9 @@ class TestChartsInterface:
         """
         Given a mocked figure
         When `get_encoded_chart()` is called from an instance of the `ChartsInterface`
-        Then the `chart` field is populated via a call to the `encode_figure()` method
+        Then the `alt_text` field is populated
+            via a call to the `description()` property
+            on the `ChartOutput` object
 
         Patches:
             `mocked_create_optimized_svg`: To remove the side effect of
@@ -575,6 +578,42 @@ class TestChartsInterface:
 
         # Then
         assert encoded_chart["alt_text"] == chart_output.description
+
+    @mock.patch.object(ChartsInterface, "encode_figure")
+    def test_get_encoded_chart_returns_figure_output_for_interactive_charts(
+        self,
+        mocked_encode_figure: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given a mocked `ChartOutput` object
+        When `get_encoded_chart()` is called
+            from an instance of the `ChartsInterface`
+        Then the `figure` field is populated
+            via a call to the `interactive_chart_figure_output()` property
+            on the `ChartOutput` object
+
+        Patches:
+            `mocked_create_optimized_svg`: To remove the side effect of
+                creating a svg and optimizing it
+
+        """
+        # Given
+        mocked_chart_output = mock.Mock()
+        mocked_plots_collection = mock.MagicMock()
+        mocked_plots_collection.plots = [fake_chart_plot_parameters]
+        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+
+        # When
+        encoded_chart: dict[str, str | dict] = charts_interface.get_encoded_chart(
+            chart_output=mocked_chart_output
+        )
+
+        # Then
+        assert (
+            encoded_chart["figure"]
+            == mocked_chart_output.interactive_chart_figure_output
+        )
 
 
 class TestGenerateChartAsFile:
@@ -739,3 +778,36 @@ class TestMiscMethods:
         # When / Then
         with pytest.raises(InvalidFileFormatError):
             charts_interface.encode_figure(figure=figure)
+
+
+class TestChartOutput:
+    def test_interactive_chart_figure_output_sets_correct_settings(self):
+        """
+        Given a `plotly` Figure object
+        When the `interactive_chart_figure_output()` is called
+            from an instance of `ChartOutput`
+        Then the returned dict output representation
+            contains the correct settings for interactive charts
+        """
+        # Given
+        fake_figure = Figure()
+        chart_output = ChartOutput(
+            figure=fake_figure,
+            description="abc",
+        )
+
+        # When
+        interactive_chart_output = chart_output.interactive_chart_figure_output
+
+        # Then
+        expected_font_family = "var(--font-primary), arial, sans-serif"
+        assert (
+            interactive_chart_output["layout"]["xaxis"]["tickfont"]["family"]
+            == expected_font_family
+        )
+        assert interactive_chart_output["layout"]["xaxis"]["showline"] is True
+
+        assert (
+            interactive_chart_output["layout"]["yaxis"]["tickfont"]["family"]
+            == expected_font_family
+        )
