@@ -727,6 +727,7 @@ class TestEncodedChartResponseSerializer:
             "last_updated": "has_value",
             "chart": "has_value",
             "alt_text": "has_value",
+            "figure": {},
         }
 
     def test_has_payload(self):

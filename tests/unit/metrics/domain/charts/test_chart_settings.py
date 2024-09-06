@@ -59,9 +59,18 @@ class TestChartSettings:
 
         # Then
         expected_x_axis_config = {
-            "showgrid": False,
-            "zeroline": False,
+            "showspikes": True,
+            "spikecolor": "#b1b4b6",
+            "spikedash": "2px",
+            "spikethickness": 1,
+            "spikemode": "toaxis+across+marker",
+            "spikesnap": "cursor",
             "showline": False,
+            "fixedrange": True,
+            "gridcolor": "rgba(0,0,0,0.05)",
+            "tickcolor": "rgba(0,0,0,0)",
+            "showgrid": True,
+            "zeroline": False,
             "ticks": "outside",
             "tickson": "boundaries",
             "type": "date",
@@ -96,9 +105,18 @@ class TestChartSettings:
 
         # Then
         expected_x_axis_config = {
-            "showgrid": False,
-            "zeroline": False,
+            "showspikes": True,
+            "spikecolor": "#b1b4b6",
+            "spikedash": "2px",
+            "spikethickness": 1,
+            "spikemode": "toaxis+across+marker",
+            "spikesnap": "cursor",
             "showline": False,
+            "showgrid": True,
+            "zeroline": False,
+            "fixedrange": True,
+            "gridcolor": "rgba(0,0,0,0.05)",
+            "tickcolor": "rgba(0,0,0,0)",
             "ticks": "outside",
             "tickson": "boundaries",
             "type": "-",
@@ -124,6 +142,11 @@ class TestChartSettings:
         expected_y_axis_config = {
             "showgrid": False,
             "showticklabels": True,
+            "fixedrange": True,
+            "gridcolor": "#000",
+            "ticks": "outside",
+            "tickson": "boundaries",
+            "tickcolor": "rgba(0,0,0,0)",
             "tickfont": chart_settings.get_tick_font_config(),
         }
         assert y_axis_config == expected_y_axis_config
@@ -156,6 +179,10 @@ class TestChartSettings:
                 "r": 0,
                 "b": 0,
                 "t": 0,
+            },
+            "hoverlabel": {
+                "align": "left",
+                "bgcolor": "white",
             },
             "autosize": False,
             "xaxis": mocked_get_x_axis_config.return_value,
