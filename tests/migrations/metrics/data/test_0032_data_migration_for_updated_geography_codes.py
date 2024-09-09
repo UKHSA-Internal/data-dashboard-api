@@ -23,51 +23,31 @@ class Test0032DataMigrationForUpdatedGeographyCodes(MigrationTests):
     def test_forward_and_then_backward_migration(self):
         """
         Given the database contains existing `Geography` records
-            for both St Helens and Mersey
-        And related dependencies from headline and timeseries
+            for both East of England and North West
+        And related dependencies from timeseries records
         When the new migration is applied
-        Then the dependencies point to Mersey record
-        And the St Helens `Geography` record is deleted
+        Then the dependencies point to the new geography codes
         """
         # Given
         self.migrate_backward()
         self._create_all_pre_existing_models()
-        Geography = self.get_model("geography")
-        CoreTimeSeries = self.get_model("coretimeseries")
-        APITimeSeries = self.get_model("apitimeseries")
 
         # Check that the existing records are as per the original names
-        assert Geography.objects.filter(
-            name=EAST_OF_ENGLAND,
-            geography_code=NHS_REGIONS_UPDATE_LOOKUP[EAST_OF_ENGLAND]["old_code"],
-        ).exists()
-        assert Geography.objects.filter(
-            name=NORTH_WEST,
-            geography_code=NHS_REGIONS_UPDATE_LOOKUP[NORTH_WEST]["old_code"],
-        ).exists()
-        assert CoreTimeSeries.objects.filter(
-            geography__name=EAST_OF_ENGLAND,
-            geography__geography_code=NHS_REGIONS_UPDATE_LOOKUP[EAST_OF_ENGLAND][
-                "old_code"
-            ],
-        ).exists()
-        assert CoreTimeSeries.objects.filter(
-            geography__name=NORTH_WEST,
-            geography__geography_code=NHS_REGIONS_UPDATE_LOOKUP[NORTH_WEST]["old_code"],
-        ).exists()
-        assert APITimeSeries.objects.filter(
-            geography=EAST_OF_ENGLAND,
-            geography_code=NHS_REGIONS_UPDATE_LOOKUP[EAST_OF_ENGLAND]["old_code"],
-        ).exists()
-        assert APITimeSeries.objects.filter(
-            geography=NORTH_WEST,
-            geography_code=NHS_REGIONS_UPDATE_LOOKUP[NORTH_WEST]["old_code"],
-        ).exists()
+        self._assert_models_reference_existing_geography_codes()
 
         # When
         self.migrate_forward()
 
         # Then
+        self._assert_models_reference_new_geography_codes()
+
+        # When
+        self.migrate_backward()
+
+        # Then
+        self._assert_models_reference_existing_geography_codes()
+
+    def _assert_models_reference_new_geography_codes(self):
         Geography = self.get_model("geography")
         CoreTimeSeries = self.get_model("coretimeseries")
         APITimeSeries = self.get_model("apitimeseries")
@@ -129,10 +109,7 @@ class Test0032DataMigrationForUpdatedGeographyCodes(MigrationTests):
             geography_code=NHS_REGIONS_UPDATE_LOOKUP[NORTH_WEST]["new_code"],
         ).exists()
 
-        # When
-        self.migrate_backward()
-
-        # Then
+    def _assert_models_reference_existing_geography_codes(self):
         Geography = self.get_model("geography")
         CoreTimeSeries = self.get_model("coretimeseries")
         APITimeSeries = self.get_model("apitimeseries")
