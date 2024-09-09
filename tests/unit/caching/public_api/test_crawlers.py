@@ -330,20 +330,52 @@ class TestPublicAPICrawler:
             url=expected_initial_root_path, crawled_urls=[]
         )
 
+    @mock.patch.object(PublicAPICrawler, "crawl")
+    def test_crawl_public_api_themes_path_v2(self, spy_crawl: mock.MagicMock):
+        """
+        Given a URL to crawl
+        When `crawl_public_api_themes_path_v2()` is called
+            from an instance of the `PublicAPICrawler`
+        Then the correct URL is passed to the `crawl()` method
+
+        Patches:
+            `spy_crawl`: For the main assertion,
+                to check that the recursive `crawl` method is called
+                for the correct initial root path
+        """
+        # Given
+        base_url = FAKE_URL
+        public_api_crawler = PublicAPICrawler(
+            public_api_base_url=base_url, cdn_auth_key=mock.Mock()
+        )
+
+        # When
+        public_api_crawler.crawl_public_api_themes_path_v2()
+
+        # Then
+        expected_initial_root_path = f"{FAKE_URL}/v2/themes/"
+        spy_crawl.assert_called_once_with(
+            url=expected_initial_root_path, crawled_urls=[]
+        )
+
+    @mock.patch.object(PublicAPICrawler, "crawl_public_api_themes_path_v2")
     @mock.patch.object(PublicAPICrawler, "crawl_public_api_themes_path")
     def test_process_all_routes(
         self,
         spy_crawl_public_api_themes_path: mock.MagicMock,
+        spy_crawl_public_api_themes_path_v2: mock.MagicMock,
         fake_public_api_crawler: PublicAPICrawler,
     ):
         """
         Given no input arguments
         When `process_all_routes()` is called
             from an instance of the `PublicAPICrawler`
-        Then a call is delegated to the `crawl_public_api_themes_path()`
+        Then a call is delegated to the correct methods
 
         Patches:
             `spy_crawl_public_api_themes_path`: For the main assertion
+            `spy_crawl_public_api_themes_path_v2`: For the main assertion
+                to check the v2 API is also being crawled
 
         """
         # Given / When
@@ -351,6 +383,38 @@ class TestPublicAPICrawler:
 
         # Then
         spy_crawl_public_api_themes_path.assert_called_once()
+        spy_crawl_public_api_themes_path_v2.assert_called_once()
+
+    @mock.patch(f"{MODULE_PATH}.ThreadPool")
+    def test_process_all_routes_processes_both_apis_in_seperate_threads(
+        self, spy_thread_pool: mock.MagicMock, fake_public_api_crawler: PublicAPICrawler
+    ):
+        """
+        Given no input arguments
+        When `process_all_routes()` is called
+            from an instance of the `PublicAPICrawler`
+        Then the different API versions are processed
+            within individual threads
+
+        """
+        # Given / When
+        fake_public_api_crawler.process_all_routes()
+
+        # Then
+        spy_thread_pool_in_context_manager = mock.call().__enter__()
+        expected_calls = [
+            spy_thread_pool_in_context_manager,
+            spy_thread_pool_in_context_manager.apply_async(
+                fake_public_api_crawler.crawl_public_api_themes_path
+            ),
+            spy_thread_pool_in_context_manager.apply_async(
+                fake_public_api_crawler.crawl_public_api_themes_path_v2
+            ),
+            spy_thread_pool_in_context_manager.close(),
+            spy_thread_pool_in_context_manager.join(),
+            mock.call().__exit__(None, None, None),
+        ]
+        spy_thread_pool.assert_has_calls(calls=expected_calls, any_order=False)
 
 
 class TestPublicAPICrawlerCrawlMethod:

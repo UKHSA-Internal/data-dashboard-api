@@ -1,4 +1,5 @@
 import logging
+from multiprocessing.dummy import Pool as ThreadPool
 from urllib.parse import urljoin
 
 import requests
@@ -25,6 +26,9 @@ class PublicAPICrawler:
         request_timeout: int = DEFAULT_REQUEST_TIMEOUT,
     ):
         self._public_api_base_url = public_api_base_url
+        self._public_api_base_url_v2 = urljoin(
+            base=self._public_api_base_url, url="v2/"
+        )
         self._cdn_auth_key = cdn_auth_key
         self._request_timeout = request_timeout
 
@@ -229,6 +233,17 @@ class PublicAPICrawler:
         logger.info("Crawling from root URL %s", public_api_themes_root_path)
         self.crawl(url=public_api_themes_root_path, crawled_urls=[])
 
+    def crawl_public_api_themes_path_v2(self) -> None:
+        """Crawls the public API from the root `themes/` path
+
+        Returns:
+            None
+
+        """
+        public_api_themes_root_path = self._build_themes_root_path_v2()
+        logger.info("Crawling from root URL %s", public_api_themes_root_path)
+        self.crawl(url=public_api_themes_root_path, crawled_urls=[])
+
     def _build_themes_root_path(self) -> str:
         """Builds the full URL for the root themes/ path
 
@@ -238,6 +253,16 @@ class PublicAPICrawler:
 
         """
         return urljoin(base=self._public_api_base_url, url="themes/")
+
+    def _build_themes_root_path_v2(self) -> str:
+        """Builds the full URL for the root themes/ path
+
+        Returns:
+            The full URL for the root themes pathx
+            which can be passed to requests
+
+        """
+        return urljoin(base=self._public_api_base_url_v2, url="themes/")
 
     def process_all_routes(self) -> None:
         """Crawls the public API in its entirety
@@ -251,4 +276,8 @@ class PublicAPICrawler:
             None
 
         """
-        self.crawl_public_api_themes_path()
+        with ThreadPool() as pool:
+            pool.apply_async(self.crawl_public_api_themes_path)
+            pool.apply_async(self.crawl_public_api_themes_path_v2)
+            pool.close()
+            pool.join()
