@@ -37,7 +37,7 @@ def _update_nhs_regions_for_api_models(*, apps: StateApps):
         geography_code=NHS_REGIONS_UPDATE_LOOKUP[EAST_OF_ENGLAND]["new_code"]
     )
     logger.info(
-        "Migrated geography code of all `APITimeSeries` East of England NHS Region records"
+        "Migrated geography code of all possible `APITimeSeries` East of England NHS Region records"
     )
 
     north_west = APITimeSeries.objects.filter(
@@ -46,7 +46,7 @@ def _update_nhs_regions_for_api_models(*, apps: StateApps):
     )
     north_west.update(geography_code=NHS_REGIONS_UPDATE_LOOKUP[NORTH_WEST]["new_code"])
     logger.info(
-        "Migrated geography code of all `APITimeSeries` North West NHS Region records"
+        "Migrated geography code of all possible `APITimeSeries` North West NHS Region records"
     )
 
 
