@@ -27,6 +27,10 @@ Within each plot, you will be required to add a set of fields which will be used
 for that plot.
 """
 
+TOPIC_PAGE_FIELD: str = """
+The related topic page you want to link to.
+"""
+
 HEADLINE_BLOCK_FIELD: str = """
 This component will display a key headline number type metric.
 You can also optionally add a body of text to accompany that headline number.
@@ -181,6 +185,10 @@ A required choice of what to display along the x-axis of the chart.
 CHART_Y_AXIS: str = """
 An optional choice of what to display along the y-axis of the chart.
 If nothing is provided, `metric value` will be used by default.
+"""
+
+REQUIRED_CHART_Y_AXIS: str = """
+A required choice of what to display along the y-axis of the chart.
 """
 
 USE_SMOOTH_LINES: str = """

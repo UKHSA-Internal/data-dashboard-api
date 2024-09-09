@@ -3,7 +3,11 @@ from wagtail import blocks
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import HeadlineNumberBlockTypes, MetricNumberBlock
-from cms.dynamic_content.components import ChartComponent, HeadlineChartComponent
+from cms.dynamic_content.components import (
+    ChartComponent,
+    HeadlineChartComponent,
+    SimplifiedChartComponent,
+)
 from cms.metrics_interface.field_choices_callables import get_possible_axis_choices
 
 
@@ -24,6 +28,11 @@ MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT: int = 2
 
 MINIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 1
 MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 2
+
+MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
+
+DEFAULT_SIMPLE_CHART_X_AXIS = "date"
+DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
 
 
 class HeadlineNumbersRowCard(blocks.StructBlock):
@@ -58,6 +67,50 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         help_text=help_texts.CHART_Y_AXIS,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
+    headline_number_columns = HeadlineNumberBlockTypes(
+        required=False,
+        min_num=MINIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT,
+        max_num=MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT,
+        help_text=help_texts.HEADLINE_COLUMNS_IN_CHART_CARD.format(
+            MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT
+        ),
+    )
+
+    class Meta:
+        icon = "chart_with_headline_and_trend_card"
+
+
+class TropicTrendWithHeadlineAndLink(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    tag_manager_event_id = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
+        label="Tag manager event ID",
+    )
+    topic_page = blocks.PageChooserBlock(
+        page_type="topic.TopicPage",
+        required=True,
+        help_text=help_texts.TOPIC_PAGE_FIELD,
+    )
+    x_axis = blocks.ChoiceBlock(
+        required=True,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.REQUIRED_CHART_X_AXIS,
+        default=DEFAULT_SIMPLE_CHART_X_AXIS,
+        ready_only=True,
+    )
+    y_axis = blocks.ChoiceBlock(
+        required=True,
+        choices=get_possible_axis_choices,
+        help_text=help_texts.REQUIRED_CHART_Y_AXIS,
+        default=DEFAULT_SIMPLE_CHART_Y_AXIS,
+    )
+    chart = SimplifiedChartComponent(
+        help_text=help_texts.CHART_BLOCK_FIELD,
+        required=True,
+        max_num=MAXIMUM_TOPIC_TREND_CARD_CHARTS,
+    )
     headline_number_columns = HeadlineNumberBlockTypes(
         required=False,
         min_num=MINIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT,
@@ -111,6 +164,7 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     chart_card = ChartCard()
     headline_chart_card = HeadlineChartCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
+    topic_trend_with_headline_number = TropicTrendWithHeadlineAndLink()
 
 
 class ChartRowCard(blocks.StructBlock):
