@@ -17,6 +17,7 @@ from metrics.domain.models.plots import (
 )
 
 READABLE_DATE_FORMAT = "%d %B %Y"
+TREND_CHART_TYPE = "line_single_simplified"
 
 
 class PlotsText:
@@ -86,7 +87,6 @@ class PlotsText:
         )
 
     # Description for single plot chart
-
     def _describe_only_plot(self) -> str:
         """Builds a description of a plot. Assumes there is only 1 plot on the chart.
 
@@ -334,6 +334,19 @@ class PlotsText:
                 return "line"
             case ChartTypes.line_with_shaded_section.value:
                 return "line"
+            case ChartTypes.line_single_simplified.value:
+                return "line"
+
+    @classmethod
+    def _get_trend_direction(cls, *, plot_parameters: PlotParameters) -> str | None:
+        chart_color: str = plot_parameters.line_colour
+        match chart_color:
+            case RGBAChartLineColours.TREND_LINE_NEGATIVE.name:
+                return "negative"
+            case RGBAChartLineColours.TREND_LINE_POSITIVE.name:
+                return "positive"
+            case _:
+                return None
 
     def _describe_plot_type(self, *, plot_parameters: PlotParameters) -> str:
         line_type: str = self._get_line_type_or_default(plot_parameters=plot_parameters)
@@ -341,6 +354,10 @@ class PlotsText:
             plot_parameters=plot_parameters
         )
         plot_type: str = self._stringify_chart_type(plot_parameters=plot_parameters)
+
+        if self._plot_is_simplified_chart(plot_parameters=plot_parameters):
+            trend_type: str = self._get_trend_direction(plot_parameters=plot_parameters)
+            return f"This is a {line_type} {plot_type} chart, showing a {trend_type} trend in the data. "
 
         return f"This is a {line_colour} {line_type} {plot_type} plot. "
 
@@ -393,6 +410,10 @@ class PlotsText:
     @classmethod
     def _plot_is_date_based_timeseries_data(cls, *, plot_data: PlotData) -> bool:
         return type(plot_data.x_axis_values[0]) is datetime.date
+
+    @classmethod
+    def _plot_is_simplified_chart(cls, *, plot_parameters: PlotParameters) -> bool:
+        return plot_parameters.chart_type == TREND_CHART_TYPE
 
     @classmethod
     def _plot_is_headline_data(cls, *, plot_data: PlotData) -> bool:

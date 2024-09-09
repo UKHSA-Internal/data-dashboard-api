@@ -120,6 +120,36 @@ class TestPlotsText:
         )
         assert expected_text_about_parameters in text
 
+    @pytest.mark.parametrize(
+        "trend_line_colour, trend_type",
+        [
+            ("TREND_LINE_POSITIVE", "positive"),
+            ("TREND_LINE_NEGATIVE", "negative"),
+            ("TREND_LINE_INVALID", None),
+        ],
+    )
+    def test_returns_correct_trend_type_when_line_colour_provided_is_for_trend_line(
+        self, fake_plot_data: PlotData, trend_line_colour: str, trend_type: str
+    ):
+        """
+        Given a valid plot where the `line_colour` is a trend line option
+        When the `construct_text()` method is called
+        Then the correct trend type is returned in the response.
+        """
+        fake_plot_data.parameters.line_colour = trend_line_colour
+        fake_plot_data.parameters.line_type = "SOLID"
+        fake_plot_data.parameters.chart_type = ChartTypes.line_single_simplified.value
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        expected_text_about_parameters = (
+            f"This is a solid line chart, showing a {trend_type} trend in the data."
+        )
+        assert expected_text_about_parameters in text
+
     def test_returns_correct_text_about_parameters_for_multiple_plots(
         self, fake_plot_data: PlotData
     ):
