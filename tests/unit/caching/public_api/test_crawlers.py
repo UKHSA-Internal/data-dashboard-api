@@ -54,7 +54,7 @@ class TestPublicAPICrawler:
         # Given
         mocked_cdn_auth_key = mock.Mock()
         crawler = PublicAPICrawler(
-            public_api_base_url=mock.Mock(), cdn_auth_key=mocked_cdn_auth_key
+            public_api_base_url=FAKE_URL, cdn_auth_key=mocked_cdn_auth_key
         )
 
         # When
@@ -74,7 +74,7 @@ class TestPublicAPICrawler:
         # Given
         mocked_cdn_auth_key = mock.Mock()
         crawler = PublicAPICrawler(
-            public_api_base_url=mock.Mock(), cdn_auth_key=mocked_cdn_auth_key
+            public_api_base_url=FAKE_URL, cdn_auth_key=mocked_cdn_auth_key
         )
 
         # When
@@ -97,7 +97,7 @@ class TestPublicAPICrawler:
         # Given
         mocked_cdn_auth_key = mock.Mock()
         crawler = PublicAPICrawler(
-            public_api_base_url=mock.Mock(), cdn_auth_key=mocked_cdn_auth_key
+            public_api_base_url=FAKE_URL, cdn_auth_key=mocked_cdn_auth_key
         )
 
         # When
