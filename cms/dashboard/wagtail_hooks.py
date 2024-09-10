@@ -5,10 +5,6 @@ from django.utils.safestring import SafeString
 from draftjs_exporter.dom import DOM
 from wagtail import hooks
 from wagtail.admin.menu import MenuItem
-from wagtail.admin.rich_text.converters.html_to_contentstate import (
-    ExternalLinkElementHandler,
-    PageLinkElementHandler,
-)
 from wagtail.admin.site_summary import PagesSummaryItem, SummaryItem
 from wagtail.models import Page
 from wagtail.whitelist import check_url
@@ -116,16 +112,10 @@ def _build_link_props(props: dict) -> dict[str, str | int]:
 
 @hooks.register("register_rich_text_features", order=1)
 def register_link_props(features):
+    rule = features.converter_rules_by_converter["contentstate"]["link"]
+    rule["to_database_format"]["entity_decorators"]["LINK"] = link_entity_with_href
     features.register_converter_rule(
         "contentstate",
         "link",
-        {
-            "from_database_format": {
-                "a[href]": ExternalLinkElementHandler("LINK"),
-                'a[linktype="page"]': PageLinkElementHandler("LINK"),
-            },
-            "to_database_format": {
-                "entity_decorators": {"LINK": link_entity_with_href}
-            },
-        },
+        rule
     )
