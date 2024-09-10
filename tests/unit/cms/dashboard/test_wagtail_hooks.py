@@ -116,9 +116,7 @@ def test_register_link_props(spy_link_entity_with_href: mock.MagicMock):
     """
     # Given
     fake_rule = {"to_database_format": {"entity_decorators": {"LINK": {}}}}
-    fake_converter_rules = {
-        "contentstate": {"link": fake_rule}
-    }
+    fake_converter_rules = {"contentstate": {"link": fake_rule}}
     spy_features = mock.MagicMock()
     spy_features.converter_rules_by_converter = fake_converter_rules
 
@@ -126,7 +124,10 @@ def test_register_link_props(spy_link_entity_with_href: mock.MagicMock):
     wagtail_hooks.register_link_props(features=spy_features)
 
     # Then
-    assert fake_rule["to_database_format"]["entity_decorators"]["LINK"] == spy_link_entity_with_href
+    assert (
+        fake_rule["to_database_format"]["entity_decorators"]["LINK"]
+        == spy_link_entity_with_href
+    )
 
 
 class TestLinkEntityWithHref:
