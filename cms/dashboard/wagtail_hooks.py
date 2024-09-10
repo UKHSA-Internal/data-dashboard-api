@@ -102,20 +102,24 @@ def _build_link_props(props: dict) -> dict[str, str | int]:
 
         # This is the added functionality
         # on top of the original Wagtail implementation
-        page = Page.objects.get(id=page_id).specific
-        link_props["href"] = page.full_url
+        page_url = _get_page_url(page_id=page_id)
+        link_props["href"] = page_url
     else:
         link_props["href"] = check_url(url_string=props.get("url"))
 
     return link_props
 
 
+def _get_page_url(page_id: int) -> str:
+    try:
+        page = Page.objects.get(id=page_id).specific
+    except Page.DoesNotExist:
+        return ""
+    return page.full_url
+
+
 @hooks.register("register_rich_text_features", order=1)
 def register_link_props(features):
     rule = features.converter_rules_by_converter["contentstate"]["link"]
     rule["to_database_format"]["entity_decorators"]["LINK"] = link_entity_with_href
-    features.register_converter_rule(
-        "contentstate",
-        "link",
-        rule
-    )
+    features.register_converter_rule("contentstate", "link", rule)

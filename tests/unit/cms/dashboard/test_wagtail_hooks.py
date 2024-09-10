@@ -1,11 +1,6 @@
 from unittest import mock
 
-import pytest
 from draftjs_exporter.dom import DOM
-from wagtail.admin.rich_text.converters.html_to_contentstate import (
-    ExternalLinkElementHandler,
-    PageLinkElementHandler,
-)
 from wagtail.admin.site_summary import SummaryItem
 from wagtail.models import Page
 
@@ -208,3 +203,23 @@ class TestBuildLinkProps:
         expected_props = {"href": url}
         assert link_props == expected_props
         spy_check_url.assert_called_once_with(url_string=url)
+
+    @mock.patch.object(Page, "objects")
+    def test_build_link_props_for_non_existent_page(
+        self, mocked_page_manager: mock.MagicMock
+    ):
+        """
+        Given a `Page` object which does not exist
+        When `_build_link_props()` is called
+        Then the returned props
+            contains an empty string for the URL
+        """
+        # Given
+        mocked_page_manager.get.side_effect = Page.DoesNotExist
+
+        # When
+        link_props = _build_link_props(props={"id": 123})
+
+        # Then the correct link properties are returned
+        expected_props = {"href": "", "id": 123, "linktype": "page"}
+        assert link_props == expected_props
