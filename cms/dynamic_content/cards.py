@@ -2,7 +2,11 @@ from wagtail import blocks
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.blocks import HeadlineNumberBlockTypes, MetricNumberBlock
+from cms.dynamic_content.blocks import (
+    HeadlineNumberBlockTypes,
+    MetricNumberBlock,
+    TrendNumberBlockType,
+)
 from cms.dynamic_content.components import (
     ChartComponent,
     HeadlineChartComponent,
@@ -30,6 +34,7 @@ MINIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 1
 MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 2
 
 MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
+MAXIMUM_TREND_NUMBER: int = 1
 
 DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
@@ -80,7 +85,7 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         icon = "chart_with_headline_and_trend_card"
 
 
-class TropicTrendWithHeadlineAndLink(blocks.StructBlock):
+class TropicTrendChartAndLink(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
     tag_manager_event_id = blocks.CharBlock(
@@ -111,13 +116,10 @@ class TropicTrendWithHeadlineAndLink(blocks.StructBlock):
         required=True,
         max_num=MAXIMUM_TOPIC_TREND_CARD_CHARTS,
     )
-    headline_number_columns = HeadlineNumberBlockTypes(
-        required=False,
-        min_num=MINIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT,
-        max_num=MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT,
-        help_text=help_texts.HEADLINE_COLUMNS_IN_CHART_CARD.format(
-            MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT
-        ),
+    trend_number = TrendNumberBlockType(
+        required=True,
+        max_num=MAXIMUM_TREND_NUMBER,
+        help_text=help_texts.TREND_BLOCK_FIELD,
     )
 
     class Meta:
@@ -164,7 +166,7 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     chart_card = ChartCard()
     headline_chart_card = HeadlineChartCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
-    topic_trend_with_headline_number = TropicTrendWithHeadlineAndLink()
+    topic_trend_chart_and_link = TropicTrendChartAndLink()
 
 
 class ChartRowCard(blocks.StructBlock):
