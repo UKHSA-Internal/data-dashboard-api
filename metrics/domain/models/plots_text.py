@@ -338,15 +338,15 @@ class PlotsText:
                 return "line"
 
     @classmethod
-    def _get_trend_direction(cls, *, plot_parameters: PlotParameters) -> str | None:
+    def _get_trend_direction(cls, *, plot_parameters: PlotParameters) -> str:
         chart_color: str = plot_parameters.line_colour
         match chart_color:
             case RGBAChartLineColours.TREND_LINE_NEGATIVE.name:
                 return "negative"
             case RGBAChartLineColours.TREND_LINE_POSITIVE.name:
                 return "positive"
-            case _:
-                return None
+            case RGBAChartLineColours.TREND_LINE_NEUTRAL.name:
+                return "neutral"
 
     def _describe_plot_type(self, *, plot_parameters: PlotParameters) -> str:
         line_type: str = self._get_line_type_or_default(plot_parameters=plot_parameters)

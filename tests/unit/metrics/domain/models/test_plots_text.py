@@ -125,7 +125,7 @@ class TestPlotsText:
         [
             ("TREND_LINE_POSITIVE", "positive"),
             ("TREND_LINE_NEGATIVE", "negative"),
-            ("TREND_LINE_INVALID", None),
+            ("TREND_LINE_NEUTRAL", "neutral"),
         ],
     )
     def test_returns_correct_trend_type_when_line_colour_provided_is_for_trend_line(
