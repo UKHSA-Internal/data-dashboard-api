@@ -223,7 +223,7 @@ jobs:
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
-          ecr-repository: data-dashboard/api
+          ecr-repository: ukhsa-data-dashboard/api
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           architecture: arm64
           image-tag: ${{ github.sha }}
@@ -278,7 +278,7 @@ jobs:
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
-          ecr-repository: data-dashboard/ingestion
+          ecr-repository: ukhsa-data-dashboard/ingestion
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           dockerfile: Dockerfile-ingestion
           architecture: arm64
