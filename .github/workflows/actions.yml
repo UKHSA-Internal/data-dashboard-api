@@ -176,6 +176,32 @@ jobs:
   # Build image
   ###############################################################################
 
+  publish-main-image-with-mutable-tag:
+    name: Publish main image with mutable tag to central ECR
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      dependency-checks,
+      vulnerability-checks,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: data-dashboard/api
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          architecture: arm64
+          image-tag: latest-graviton
+
   publish-main-image:
     name: Publish main image to central ECR
     needs: [
@@ -200,7 +226,35 @@ jobs:
           ecr-repository: data-dashboard/api
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           architecture: arm64
-          image-tag: latest-graviton
+          image-tag: ${{ github.sha }}
+
+  publish-ingestion-image-with-mutable-tag:
+    name: Publish ingestion image with mutable tag to central ECR
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      dependency-checks,
+      vulnerability-checks,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image with mutable tag
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: data-dashboard/ingestion
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          dockerfile: Dockerfile-ingestion
+          architecture: arm64
+          image-tag: latest
 
   publish-ingestion-image:
     name: Publish ingestion image to central ECR
@@ -228,7 +282,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           dockerfile: Dockerfile-ingestion
           architecture: arm64
-          image-tag: latest
+          image-tag: ${{ github.sha }}
 
   ###############################################################################
   # Deploy
