@@ -223,7 +223,7 @@ jobs:
       - name: Build and publish docker image
         uses: ./.github/actions/publish-image
         with:
-          ecr-repository: ukhsa-data-dashboard/api
+          ecr-repository: ukhsa-data-dashboard/back-end
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           architecture: arm64
           image-tag: ${{ github.sha }}
