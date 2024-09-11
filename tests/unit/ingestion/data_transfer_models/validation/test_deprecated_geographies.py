@@ -16,6 +16,8 @@ class TestDeprecatedGeographies:
             ),
             ("Midlands", "E40000008", "NHS Region"),
             ("North East and Yorkshire", "E40000009", "NHS Region"),
+            ("East of England", "E40000007", "NHS Region"),
+            ("North West", "E40000010", "NHS Region"),
         ],
     )
     def test_deprecated_geographies(
