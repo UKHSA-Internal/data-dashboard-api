@@ -21,16 +21,19 @@ def validate_deprecated_geographies(
     _validate_st_helens_trust(
         geography_name=geography_name, geography_type=geography_type
     )
-    _validate_midlands_code(
+    _deprecated_geography(
         geography_name=geography_name,
-        geography_code=geography_code,
         geography_type=geography_type,
-    )
-    _validate_northeast_code(
-        geography_name=geography_name,
         geography_code=geography_code,
-        geography_type=geography_type,
     )
+
+
+DEPRECATED_GEOGRAPHIES: set[tuple[str, str, str]] = {
+    ("Midlands", "NHS Region", "E40000008"),
+    ("North East and Yorkshire", "NHS Region", "E40000009"),
+    ("East of England", "NHS Region", "E40000007"),
+    ("North West", "NHS Region", "E40000010"),
+}
 
 
 def _validate_st_helens_trust(*, geography_name: str, geography_type: str) -> None:
@@ -41,23 +44,13 @@ def _validate_st_helens_trust(*, geography_name: str, geography_type: str) -> No
         raise ValueError
 
 
-def _validate_midlands_code(
+def _deprecated_geography(
     *, geography_name: str, geography_type: str, geography_code: str
 ) -> None:
-    if (
-        geography_name == "Midlands"
-        and geography_type == "NHS Region"
-        and geography_code == "E40000008"
-    ):
-        raise ValueError
-
-
-def _validate_northeast_code(
-    *, geography_name: str, geography_type: str, geography_code: str
-) -> None:
-    if (
-        geography_name == "North East and Yorkshire"
-        and geography_type == "NHS Region"
-        and geography_code == "E40000009"
-    ):
+    is_deprecated: bool = (
+        geography_name,
+        geography_type,
+        geography_code,
+    ) in DEPRECATED_GEOGRAPHIES
+    if is_deprecated:
         raise ValueError
