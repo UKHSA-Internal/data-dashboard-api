@@ -26,6 +26,7 @@ class ChartTypes(Enum):
     line_with_shaded_section = "line_with_shaded_section"
     bar = "bar"
     line_multi_coloured = "line_multi_coloured"
+    line_single_simplified = "line_single_simplified"
 
     @classmethod
     def choices(cls) -> tuple[tuple[str, str], ...]:
@@ -45,6 +46,7 @@ class ChartTypes(Enum):
             cls.line_multi_coloured,
             cls.bar,
             cls.line_with_shaded_section,
+            cls.line_single_simplified,
         )
         return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
 

@@ -135,7 +135,7 @@ class MetricsAPIInterface:
                 [("BLUE", "BLUE"), ...]
 
         """
-        return RGBAChartLineColours.choices()
+        return RGBAChartLineColours.selectable_choices()
 
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.

@@ -343,6 +343,67 @@ class TestChartSettings:
 
         assert line_with_shaded_section_chart_config == expected_chart_config
 
+    @mock.patch.object(ChartSettings, "build_line_single_simplified_axis_params")
+    def test_get_line_single_simplified_chart_config(
+        self,
+        mock_build_line_single_simplified_axis_params: mock.MagicMock,
+        fake_chart_settings: ChartSettings,
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `get_line_single_simplified_chart_config()` is called
+        Then the correct configuration for
+            `line_single_simplified` charts is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+
+        fake_x_axis_tick_values = [0, 10]
+        fake_x_axis_tick_text = ["tick01", "tick02"]
+        fake_y_axis_tick_values = [0, 10]
+        fake_y_axis_tick_text = ["tick01", "tick02"]
+
+        mock_build_line_single_simplified_axis_params.return_value = {
+            "x_axis_tick_values": fake_x_axis_tick_values,
+            "x_axis_tick_text": fake_x_axis_tick_text,
+            "y_axis_tick_values": fake_y_axis_tick_values,
+            "y_axis_tick_text": fake_y_axis_tick_text,
+        }
+
+        # When
+        line_single_simplified_chart_config = (
+            chart_settings.get_line_single_simplified_chart_config()
+        )
+
+        # Then
+        expected_chart_config = chart_settings.get_base_chart_config()
+        # Chart settings
+        expected_chart_config["showlegend"] = False
+        expected_chart_config["margin"]["l"] = 25
+        expected_chart_config["margin"]["r"] = 25
+        expected_chart_config["margin"]["pad"] = 25
+
+        # x_axis settings
+        expected_chart_config["xaxis"]["showgrid"] = False
+        expected_chart_config["xaxis"]["tickvals"] = fake_x_axis_tick_values
+        expected_chart_config["xaxis"]["ticktext"] = fake_x_axis_tick_text
+        expected_chart_config["xaxis"]["ticklen"] = 0
+        expected_chart_config["xaxis"]["tickfont"][
+            "color"
+        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+
+        # y_axis settings
+        expected_chart_config["yaxis"]["ticks"] = "outside"
+        expected_chart_config["yaxis"]["zeroline"] = False
+        expected_chart_config["yaxis"]["tickvals"] = fake_y_axis_tick_values
+        expected_chart_config["yaxis"]["ticktext"] = fake_y_axis_tick_text
+        expected_chart_config["yaxis"]["ticklen"] = 0
+        expected_chart_config["yaxis"]["tickfont"][
+            "color"
+        ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+
+        assert line_single_simplified_chart_config == expected_chart_config
+
     def test_get_bar_chart_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`

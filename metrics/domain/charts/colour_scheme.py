@@ -17,6 +17,10 @@ class RGBAChartLineColours(Enum):
     COLOUR_11_KHAKI = 71, 71, 0
     COLOUR_12_BLUE = 0, 157, 214
 
+    # simplified single line chart colours
+    TREND_LINE_POSITIVE = 0, 112, 60
+    TREND_LINE_NEGATIVE = 171, 43, 23
+
     # Legacy colors
     RED: RGBA_VALUES = 212, 53, 28
     YELLOW: RGBA_VALUES = 255, 221, 0
@@ -54,8 +58,34 @@ class RGBAChartLineColours(Enum):
     @classmethod
     def choices(cls):
         return tuple(
-            (chart_type.name, cls._convert_to_readable_name(chart_type.name))
-            for chart_type in cls
+            (
+                chart_line_color.name,
+                cls._convert_to_readable_name(chart_line_color.name),
+            )
+            for chart_line_color in cls
+        )
+
+    @classmethod
+    def selectable_choices(cls):
+        """Returns chart line colours which are selectable from the CMS
+
+        Returns:
+            Nested tuples of 2 item tuples as expected by the CMS forms
+            with the value name and a formatted display version
+            Examples:
+                (("COLOUR_1_DARK_BLUE", "Colour 1 Dark Blue"), ...)
+        """
+        non_selectable = [
+            cls.TREND_LINE_NEGATIVE,
+            cls.TREND_LINE_POSITIVE,
+        ]
+        return tuple(
+            (
+                chart_line_color.name,
+                cls._convert_to_readable_name(chart_line_color.name),
+            )
+            for chart_line_color in cls
+            if chart_line_color not in non_selectable
         )
 
     @classmethod
