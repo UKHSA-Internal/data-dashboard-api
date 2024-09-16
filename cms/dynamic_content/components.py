@@ -21,6 +21,13 @@ class HeadlineChartComponent(blocks.StreamBlock):
         icon = "standalone_chart"
 
 
+class SimplifiedChartComponent(blocks.StreamBlock):
+    plot = elements.SimplifiedChartPlotElement()
+
+    class Meta:
+        icon = "standalone_chart"
+
+
 class HeadlineNumberComponent(elements.BaseMetricsElement):
     body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
 
