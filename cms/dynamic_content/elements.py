@@ -23,6 +23,7 @@ DEFAULT_SEX = "all"
 DEFAULT_AGE = "all"
 DEFAULT_STRATUM = "default"
 DEFAULT_HEADLINE_CHART_TYPE = "bar"
+DEFAULT_SIMPLIFIED_CHART_TYPE = "line_single_simplified"
 
 
 class BaseMetricsElement(blocks.StructBlock):
@@ -142,3 +143,11 @@ class HeadlineChartPlotElement(BaseMetricsElement):
 
     class Meta:
         icon = "chart_plot"
+
+
+class SimplifiedChartPlotElement(BaseMetricsElement):
+    metric = blocks.ChoiceBlock(
+        required=True,
+        choices=get_all_timeseries_metric_names,
+        help_text=help_texts.METRIC_FIELD,
+    )
