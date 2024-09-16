@@ -20,6 +20,7 @@ class RGBAChartLineColours(Enum):
     # simplified single line chart colours
     TREND_LINE_POSITIVE = 0, 112, 60
     TREND_LINE_NEGATIVE = 171, 43, 23
+    TREND_LINE_NEUTRAL = 56, 63, 67
 
     # Legacy colors
     RED: RGBA_VALUES = 212, 53, 28
@@ -78,6 +79,7 @@ class RGBAChartLineColours(Enum):
         non_selectable = [
             cls.TREND_LINE_NEGATIVE,
             cls.TREND_LINE_POSITIVE,
+            cls.TREND_LINE_NEUTRAL,
         ]
         return tuple(
             (
