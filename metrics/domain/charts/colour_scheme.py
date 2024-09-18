@@ -21,6 +21,7 @@ class RGBAChartLineColours(Enum):
     TREND_LINE_POSITIVE = 0, 112, 60
     TREND_LINE_NEGATIVE = 171, 43, 23
     TREND_LINE_NEUTRAL = 56, 63, 67
+    TREND_LINE_NONE = 17, 67, 110
 
     # Legacy colors
     RED: RGBA_VALUES = 212, 53, 28
@@ -80,6 +81,7 @@ class RGBAChartLineColours(Enum):
             cls.TREND_LINE_NEGATIVE,
             cls.TREND_LINE_POSITIVE,
             cls.TREND_LINE_NEUTRAL,
+            cls.TREND_LINE_NONE,
         ]
         return tuple(
             (
