@@ -159,6 +159,10 @@ TITLE_FIELD: str = """
 The title to display for this component. 
 Note that this will be shown in the hex colour #505A5F
 """
+SUB_TITLE_FIELD: str = """
+The sub title to display for this component.
+"""
+
 OPTIONAL_BODY_FIELD: str = """
 An optional body of text to accompany this block.
 """
@@ -256,4 +260,8 @@ This is used to determine whether to render pagination controls or not.
 """
 PAGINATION_SIZE_FIELD: str = """
 This is used to control the default pagination size used if there are associated children pages.
+"""
+
+WHA_ALERT_CHOICE: str = """
+This is used to select the current weather health alert type Eg: Heat or Cold alert season.
 """
