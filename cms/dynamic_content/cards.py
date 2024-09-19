@@ -5,7 +5,6 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
-    TrendNumberBlockType,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -85,7 +84,7 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         icon = "chart_with_headline_and_trend_card"
 
 
-class TropicTrendChartAndLink(blocks.StructBlock):
+class SimplifiedChartWithLink(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
     tag_manager_event_id = blocks.CharBlock(
@@ -116,14 +115,9 @@ class TropicTrendChartAndLink(blocks.StructBlock):
         required=True,
         max_num=MAXIMUM_TOPIC_TREND_CARD_CHARTS,
     )
-    trend_number = TrendNumberBlockType(
-        required=True,
-        max_num=MAXIMUM_TREND_NUMBER,
-        help_text=help_texts.TREND_BLOCK_FIELD,
-    )
 
     class Meta:
-        icon = "chart_with_headline_and_trend_card"
+        icon = "standalone_chart"
 
 
 class ChartCard(blocks.StructBlock):
@@ -166,7 +160,7 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     chart_card = ChartCard()
     headline_chart_card = HeadlineChartCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
-    topic_trend_chart_and_link = TropicTrendChartAndLink()
+    simplified_chart_with_link = SimplifiedChartWithLink()
 
 
 class ChartRowCard(blocks.StructBlock):
