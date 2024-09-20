@@ -23,7 +23,7 @@ drf-nested-routers==0.94.1
 drf-spectacular==0.27.2
 et-xmlfile==1.1.0
 exceptiongroup==1.2.2
-filelock==3.16.0
+filelock==3.16.1
 grimp==3.4.1
 gunicorn==23.0.0
 html5lib==1.1
@@ -55,7 +55,7 @@ pandas==2.2.1
 pathspec==0.12.1
 pbr==6.0.0
 Pillow==10.4.0
-platformdirs==4.3.2
+platformdirs==4.3.6
 plotly==5.24.1
 pluggy==1.5.0
 pyparsing==3.1.4
@@ -70,9 +70,9 @@ requests==2.32.3
 rich==13.8.1
 ruamel.yaml==0.18.6
 ruamel.yaml.clib==0.2.8
-SQLAlchemy==2.0.34
+SQLAlchemy==2.0.35
 scour==0.38.2
-setuptools==75.0.0
+setuptools==75.1.0
 simplejson==3.19.3
 six==1.16.0
 sortedcontainers==2.4.0
@@ -85,7 +85,7 @@ tomli==2.0.1
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.3
-virtualenv==20.26.4
+virtualenv==20.26.5
 wagtail==6.2.1
 wagtail_trash==3.0.0
 wagtail_modeladmin==2.0.0
