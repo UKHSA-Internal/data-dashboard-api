@@ -1,4 +1,5 @@
 from wagtail.blocks import (
+    PageChooserBlock,
     RichTextBlock,
     StreamBlock,
     StructBlock,
@@ -17,6 +18,18 @@ class ContentCards(StreamBlock):
 
 class Section(StructBlock):
     heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
+    content = ContentCards(help_text=help_texts.CONTENT_ROW_CARDS)
+
+    class Meta:
+        icon = "thumbtack"
+
+
+class SectionWithLink(StructBlock):
+    heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
+    page_link = PageChooserBlock(
+        page_type=["composite.CompositePage"],
+        required=False,
+    )
     content = ContentCards(help_text=help_texts.CONTENT_ROW_CARDS)
 
     class Meta:
