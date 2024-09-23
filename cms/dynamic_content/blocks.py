@@ -13,13 +13,6 @@ MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
 
 
-class TrendNumberBlockType(blocks.StreamBlock):
-    trend_number = TrendNumberComponent(help_text=help_texts.TREND_BLOCK_FIELD)
-
-    class Meta:
-        icon = "trend_down"
-
-
 class HeadlineNumberBlockTypes(blocks.StreamBlock):
     headline_number = HeadlineNumberComponent(help_text=help_texts.HEADLINE_BLOCK_FIELD)
     trend_number = TrendNumberComponent(help_text=help_texts.TREND_BLOCK_FIELD)
