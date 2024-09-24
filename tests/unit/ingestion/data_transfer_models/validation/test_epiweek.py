@@ -38,3 +38,32 @@ class TestValidateEpiweek:
 
         # Then
         assert validated_epiweek == input_epiweek
+
+    @pytest.mark.parametrize(
+        "input_epiweek, input_date",
+        (
+            [1, "2022-11-01"],
+            [2, "2022-11-09"],
+            [3, "2022-11-18"],
+            [4, "2022-11-20"],
+            [5, "2022-12-09"],
+            [6, "2022-12-14"],
+            [7, "2022-12-31"],
+            [9, "2023-01-01"],
+            [9, "2023-01-02"],
+            [10, "2023-01-09"],
+        ),
+    )
+    def test_raises_error_for_invalid_date(self, input_epiweek: int, input_date: str):
+        """
+        Given an invalid pairing of epiweek and date
+        When `validate_epiweek()` is called
+        Then a `ValueError` is raised
+        """
+        # Given
+        epiweek = input_epiweek
+        provided_date = datetime.datetime.strptime(input_date, "%Y-%m-%d").date()
+
+        # When / Then
+        with pytest.raises(ValueError):
+            validate_epiweek(input_epiweek=epiweek, input_date=provided_date)
