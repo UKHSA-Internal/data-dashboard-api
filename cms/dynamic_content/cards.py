@@ -6,6 +6,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
+    PageLinkChooserBlock,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -21,7 +22,7 @@ MINIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT: int = 0
 MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT: int = 2
 
 MINIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 1
-MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 2
+MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 3
 
 MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
@@ -40,8 +41,8 @@ class TextCard(blocks.StructBlock):
 
 
 class WHAlerts(models.TextChoices):
-    HEAT = "Heat"
-    COLD = "Cold"
+    HEAT = "heat"
+    COLD = "cold"
 
     @classmethod
     def get_alerts(cls) -> tuple[tuple[str, str]]:
@@ -108,13 +109,13 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
 
 class SimplifiedChartWithLink(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    sub_title = blocks.CharBlock(required=False, help_text=help_texts.SUB_TITLE_FIELD)
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
         label="Tag manager event ID",
     )
-    topic_page = blocks.PageChooserBlock(
+    topic_page = PageLinkChooserBlock(
         page_type="topic.TopicPage",
         required=True,
         help_text=help_texts.TOPIC_PAGE_FIELD,

@@ -57,6 +57,7 @@ class Command(BaseCommand):
             is_default_site=True,
         )
 
+        # Deprecated: to be removed after migration to landing page version two.
         landing_dashboard_page: HomePage = (
             build_cms_site_helpers.create_landing_dashboard_page(parent_page=root_page)
         )
@@ -119,6 +120,11 @@ class Command(BaseCommand):
         )
         build_cms_site_helpers.create_composite_page(
             name="cold_health_alerts", parent_page=weather_health_alerts_page
+        )
+
+        # landing page version two
+        build_cms_site_helpers.create_landing_dashboard_page_version_two(
+            parent_page=root_page
         )
 
         build_cms_site_helpers.create_menu_snippet()

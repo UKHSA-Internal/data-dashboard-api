@@ -23,6 +23,19 @@ class Section(StructBlock):
         icon = "thumbtack"
 
 
+class SectionWithLink(StructBlock):
+    heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
+    page_link = blocks.PageLinkChooserBlock(
+        page_type=["composite.CompositePage"],
+        required=False,
+        help_text=help_texts.INDEX_PAGE_FIELD,
+    )
+    content = ContentCards(help_text=help_texts.CONTENT_ROW_CARDS)
+
+    class Meta:
+        icon = "thumbtack"
+
+
 class TextSection(StructBlock):
     title = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
     body = RichTextBlock(help_text=help_texts.REQUIRED_BODY_FIELD, required=True)

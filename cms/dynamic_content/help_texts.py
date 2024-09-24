@@ -28,7 +28,11 @@ for that plot.
 """
 
 TOPIC_PAGE_FIELD: str = """
-The related topic page you want to link to.
+The related topic page you want to link to. Eg: `COVID-19`
+"""
+
+INDEX_PAGE_FIELD: str = """
+The related index page you want to link to. Eg: `Respiratory viruses` or `Outbreaks`
 """
 
 HEADLINE_BLOCK_FIELD: str = """

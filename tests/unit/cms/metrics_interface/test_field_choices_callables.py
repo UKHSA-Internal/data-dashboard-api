@@ -409,3 +409,24 @@ class TestGetAllAgeNames:
 
         # Then
         assert all_age_names == [(x, x) for x in retrieved_age_names]
+
+
+class TestSimplifiedChartTypes:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_simplified_chart_types")
+    def test_delegates_call_correctly(
+        self, mocked_get_simplified_chart_types: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns simplified chart types
+        When `get_simplified_chart_types()` is called
+        Then the chart types are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_chart_types = ChartTypes.selectable_simplified_chart_choices()
+        mocked_get_simplified_chart_types.return_value = retrieved_chart_types
+
+        # When
+        simplified_chart_types = field_choices_callables.get_simplified_chart_types()
+
+        # Then
+        assert simplified_chart_types == retrieved_chart_types
