@@ -347,6 +347,8 @@ class PlotsText:
                 return "positive"
             case RGBAChartLineColours.TREND_LINE_NEUTRAL.name:
                 return "neutral"
+            case _:
+                return "none"
 
     def _describe_plot_type(self, *, plot_parameters: PlotParameters) -> str:
         line_type: str = self._get_line_type_or_default(plot_parameters=plot_parameters)
@@ -357,7 +359,12 @@ class PlotsText:
 
         if self._plot_is_simplified_chart(plot_parameters=plot_parameters):
             trend_type: str = self._get_trend_direction(plot_parameters=plot_parameters)
-            return f"This is a {line_type} {plot_type} chart, showing a {trend_type} trend in the data. "
+            plot_description = f"This is a {line_type} {plot_type} chart, "
+
+            if trend_type != "none":
+                plot_description += f"showing a {trend_type} trend in the data. "
+
+            return plot_description
 
         return f"This is a {line_colour} {line_type} {plot_type} plot. "
 

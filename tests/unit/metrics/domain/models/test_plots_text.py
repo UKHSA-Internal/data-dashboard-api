@@ -150,6 +150,27 @@ class TestPlotsText:
         )
         assert expected_text_about_parameters in text
 
+    def test_returns_no_trend_type_when_line_colour_is_trend_line_none(
+        self,
+        fake_plot_data: PlotData,
+    ):
+        """
+        Given a valid plot where the `line_colour` that is not a `TREND_LINE` colour
+        When the `construct_text()` method is called
+        Then no trend type is returned in the response.
+        """
+        fake_plot_data.parameters.line_colour = "COLOUR_1_DARK_BLUE"
+        fake_plot_data.parameters.line_type = "SOLID"
+        fake_plot_data.parameters.chart_type = ChartTypes.line_single_simplified.value
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        expected_text_about_parameters = f"This is a solid line chart,"
+        assert expected_text_about_parameters in text
+
     def test_returns_correct_text_about_parameters_for_multiple_plots(
         self, fake_plot_data: PlotData
     ):
