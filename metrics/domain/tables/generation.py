@@ -14,6 +14,8 @@ IN_REPORTING_DELAY_PERIOD = "in_reporting_delay_period"
 PLOT_DATA_LOOKUP_TYPE = dict[datetime.date, Decimal]
 IN_REPORTING_DELAY_PERIOD_LOOKUP_TYPE = dict[datetime.date, bool]
 
+DEFAULT_PLOT_LABEL = "Plot"
+
 
 class TabularData:
     def __init__(self, *, plots: list[PlotData]):
@@ -110,7 +112,7 @@ class TabularData:
 
         """
         for index, plot in enumerate(self.plots, 1):
-            plot_label: str = plot.parameters.label or f"Plot{index}"
+            plot_label: str = plot.parameters.label or f"{DEFAULT_PLOT_LABEL}{index}"
             self.plot_labels.append(plot_label)
 
             plot_data: PLOT_DATA_LOOKUP_TYPE = self._build_plot_data_for_axes_values(
@@ -178,6 +180,11 @@ class TabularData:
     ) -> dict[str, str | list[dict]]:
         """Creates a row for tabular data output
 
+        Notes:
+            When creating a chart based on `CoreHeadline` data
+            if a `plot_label` is provided it should replace `left_column`
+            so that the label is returned in the `reference` field.
+
         Returns:
             A dictionary representing the tabular row returned
             Eg. {"reference": "Age", "values": [{"label": "Amount", "value": 53.00, IN_REPORTING_DELAY_PERIOD: False}]}
@@ -190,6 +197,11 @@ class TabularData:
             )
 
         if DataSourceFileType[self.metric_group].is_headline:
+            current_plot_label = next(iter(plot_values))
+
+            if DEFAULT_PLOT_LABEL not in current_plot_label:
+                row[self.column_heading] = current_plot_label
+
             row["values"].extend(
                 self.create_headline_plot_values(plot_values=plot_values)
             )

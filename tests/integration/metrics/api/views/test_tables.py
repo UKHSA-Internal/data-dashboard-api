@@ -5,7 +5,7 @@ import pytest
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
 
 
 class TestTablesView:
@@ -235,6 +235,58 @@ class TestTablesView:
         ]
         # For the v4 tables endpoint, we expect data to be returned in descending order
         # i.e. the recent data points first going down to the latest data points last
+        assert response.data == expected_response
+
+    @pytest.mark.django_db
+    def test_headline_charts_with_plot_label_uses_plot_label_for_reference(
+        self,
+        core_headline_example: list[CoreHeadline],
+    ):
+        """
+        Given a valid payload to create a headline chart
+        When the `POST /api/tables/v4/` endpoint is hit with
+            a plot that includes a plot label
+        Then the `reference` field in the response contains the plot label.
+        """
+        # Given
+        client = APIClient()
+        core_headline: CoreHeadline = core_headline_example
+        topic_name: str = core_headline.metric.metric_group.topic.name
+        metric_name: str = core_headline.metric.name
+        valid_payload = {
+            "file_format": "svg",
+            "x_axis": "sex",
+            "y_axis": "metric",
+            "plots": [
+                {
+                    "topic": topic_name,
+                    "metric": metric_name,
+                    "chart_type": "bar",
+                    "sex": "f",
+                    "label": "female",
+                }
+            ],
+        }
+
+        # When
+        response: Response = client.post(
+            path=self.path, data=valid_payload, format="json"
+        )
+
+        # Then
+        expected_response = [
+            {
+                "reference": "female",
+                "values": [
+                    {
+                        "label": "Amount",
+                        "value": "123.0000",
+                        "in_reporting_delay_period": False,
+                    }
+                ],
+            }
+        ]
+
         assert response.data == expected_response
 
     @pytest.mark.django_db

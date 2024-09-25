@@ -34,6 +34,7 @@ def core_headline_example() -> CoreHeadline:
         metric_value=123.0000,
         metric=metric,
         geography=geography,
+        sex="f",
         refresh_date=refresh_date,
         period_start="2023-01-01",
         period_end="2023-01-07",
