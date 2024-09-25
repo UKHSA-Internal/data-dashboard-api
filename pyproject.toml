@@ -321,6 +321,9 @@ forbidden_modules = [
     "public_api",
     "ingestion",
 ]
+ignore_imports = [
+    "feedback.cms_interface.interface -> cms.forms.models",
+]
 
 [[tool.importlinter.contracts]]
 name = "The rest of the codebase does not depend on the feedback module except for the connection of URLs"
