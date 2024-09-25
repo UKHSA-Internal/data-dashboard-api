@@ -207,6 +207,39 @@ class TestSuggestionsV2Serializer:
             == payload[form_field.clean_name]
         )
 
+    def test_serializes_for_multiline_form_field(self):
+        """
+        Given form fields returned from the `FormPageManager`
+        When a valid payload is serialized
+            with the `SuggestionsV2Serializer`
+        Then the payload is deemed valid
+        """
+        # Given
+        form_field = FormField(
+            clean_name="how_could_we_improve_your_experience_with_the_dashboard",
+            label="How could we improve your experience with the dashboard?",
+            field_type="multiline",
+            required=False,
+        )
+        mocked_form_page_manager = mock.Mock()
+        mocked_form_page_manager.get_feedback_page_form_fields.return_value = [
+            form_field
+        ]
+
+        payload = {form_field.clean_name: "More data"}
+        serializer = SuggestionsV2Serializer(
+            data=payload, context={"form_page_manager": mocked_form_page_manager}
+        )
+
+        # When
+        serializer.is_valid(raise_exception=True)
+
+        # Then
+        assert (
+            serializer.validated_data[form_field.clean_name]
+            == payload[form_field.clean_name]
+        )
+
     def test_invalidates_against_feedback_page_form_fields(self):
         """
         Given form fields returned from the `FormPageManager`
