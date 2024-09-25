@@ -1,3 +1,4 @@
+from django.db import models
 from wagtail import blocks
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
@@ -13,16 +14,6 @@ from cms.dynamic_content.components import (
 )
 from cms.metrics_interface.field_choices_callables import get_possible_axis_choices
 
-
-class TextCard(blocks.StructBlock):
-    body = blocks.RichTextBlock(
-        features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_CARD
-    )
-
-    class Meta:
-        icon = "text"
-
-
 MINIMUM_HEADLINE_COLUMNS_COUNT: int = 1
 MAXIMUM_HEADLINE_COLUMNS_COUNT: int = 5
 
@@ -37,6 +28,37 @@ MAXIMUM_TREND_NUMBER: int = 1
 
 DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
+
+
+class TextCard(blocks.StructBlock):
+    body = blocks.RichTextBlock(
+        features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_CARD
+    )
+
+    class Meta:
+        icon = "text"
+
+
+class WHAlerts(models.TextChoices):
+    HEAT = "Heat"
+    COLD = "Cold"
+
+    @classmethod
+    def get_alerts(cls) -> tuple[tuple[str, str]]:
+        return tuple((alert.value, alert.value) for alert in cls)
+
+
+class WeatherHealthAlertsCard(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    sub_title = blocks.TextBlock(required=True, help_text=help_texts.SUB_TITLE_FIELD)
+    alert_type = blocks.ChoiceBlock(
+        required=True,
+        choices=WHAlerts.get_alerts,
+        help_text=help_texts.WHA_ALERT_CHOICE,
+    )
+
+    class Meta:
+        icon = "weather"
 
 
 class HeadlineNumbersRowCard(blocks.StructBlock):
