@@ -5,7 +5,7 @@ from wagtail.models import Page
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.composite.models import CompositePage, CompositeRelatedLink
-from cms.feedback.models import FormField, FormPage
+from cms.forms.models import FormField, FormPage
 from cms.home.models import HomePage, HomePageRelatedLink
 from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_internal_button_snippet,

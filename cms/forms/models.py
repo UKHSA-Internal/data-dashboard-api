@@ -14,7 +14,7 @@ from wagtail.fields import RichTextField
 
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dashboard.models import UKHSAPage
-from cms.feedback import help_texts
+from cms.forms import help_texts
 
 
 class AbstractFormUKHSAPage(FormMixin, UKHSAPage):

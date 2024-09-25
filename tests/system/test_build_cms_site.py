@@ -7,7 +7,7 @@ from cms.composite.models import CompositePage
 from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
     open_example_page_response,
 )
-from cms.feedback.models import FormPage
+from cms.forms.models import FormPage
 from cms.home.models import HomePage, UKHSARootPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
