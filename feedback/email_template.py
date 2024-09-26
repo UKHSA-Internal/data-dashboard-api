@@ -2,10 +2,10 @@ from enum import Enum
 
 from django.db.models import Manager
 
-from cms.forms.models import FormPage
+from feedback.cms_interface import CMSInterface
 
 FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER: str = "User provided no input"
-DEFAULT_FORM_PAGE_MANAGER = FormPage.objects
+DEFAULT_FORM_PAGE_MANAGER = CMSInterface().get_form_page_manager()
 
 
 def build_body_for_email(*, suggestions: dict[str, str]) -> str:
