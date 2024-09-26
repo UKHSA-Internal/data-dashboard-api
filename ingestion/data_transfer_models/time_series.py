@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 from pydantic.fields import Field
 
 from ingestion.data_transfer_models import validation
@@ -36,6 +36,22 @@ class InboundTimeSeriesSpecificFields(BaseModel):
 
         """
         return validation.cast_date_to_uk_timezone(date_value=embargo)
+
+    @model_validator(mode="after")
+    def validate_epiweek_is_correct_for_date(self) -> int:
+        """Validates the epiweek against the date
+
+        Returns:
+            The model instance having verified the epiweek
+
+        Raises:
+            `ValidationError`: If the epiweek is not
+                appropriate for the given date.
+
+        """
+        validation.validate_epiweek(input_epiweek=self.epiweek, input_date=self.date)
+
+        return self
 
 
 class TimeSeriesDTO(IncomingBaseDataModel):

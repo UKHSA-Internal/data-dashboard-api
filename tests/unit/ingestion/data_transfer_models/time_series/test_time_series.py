@@ -19,7 +19,7 @@ class TestInboundTimeSeriesSpecificFields:
         Then model is deemed valid
         """
         # Given
-        fake_epiweek = 46
+        fake_epiweek = 44
         fake_date = "2023-11-01"
         fake_embargo = VALID_DATETIME
         fake_metric_value = 123
@@ -50,7 +50,7 @@ class TestInboundTimeSeriesSpecificFields:
         Then model is deemed valid
         """
         # Given
-        fake_epiweek = 46
+        fake_epiweek = 44
         fake_date = "2023-11-01"
         fake_embargo = None
         fake_metric_value = 123
@@ -121,7 +121,7 @@ class TestInboundTimeSeriesSpecificFields:
         """
         # Given
         fake_date = "2023-11-20"
-        fake_epiweek = 46
+        fake_epiweek = 47
         fake_embargo = "2023-11-30"
 
         # When
