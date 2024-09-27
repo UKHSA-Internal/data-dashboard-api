@@ -1,4 +1,4 @@
-from cms.landing_page.models import LandingPage
+from cms.home.models import LandingPage
 from tests.fakes.models.fake_model_meta import FakeMeta
 
 

@@ -3,8 +3,8 @@ from .pages import (
     create_topic_page,
     create_composite_page,
     create_bulk_downloads_page,
-    create_landing_dashboard_page,
-    create_landing_dashboard_page_version_two,
+    create_home_page_dashboard,
+    create_landing_page,
     create_whats_new_parent_page,
     create_whats_new_child_entry,
 )

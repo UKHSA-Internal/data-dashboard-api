@@ -58,17 +58,17 @@ class Command(BaseCommand):
         )
 
         # Deprecated: to be removed after migration to landing page version two.
-        landing_dashboard_page: HomePage = (
-            build_cms_site_helpers.create_landing_dashboard_page(parent_page=root_page)
+        home_page_dashboard: HomePage = (
+            build_cms_site_helpers.create_home_page_dashboard(parent_page=root_page)
         )
         build_cms_site_helpers.create_topic_page(
-            name="covid_19", parent_page=landing_dashboard_page
+            name="covid_19", parent_page=home_page_dashboard
         )
         build_cms_site_helpers.create_topic_page(
-            name="influenza", parent_page=landing_dashboard_page
+            name="influenza", parent_page=home_page_dashboard
         )
         build_cms_site_helpers.create_topic_page(
-            name="other_respiratory_viruses", parent_page=landing_dashboard_page
+            name="other_respiratory_viruses", parent_page=home_page_dashboard
         )
         build_cms_site_helpers.create_common_page(name="about", parent_page=root_page)
         build_cms_site_helpers.create_common_page(
@@ -123,9 +123,7 @@ class Command(BaseCommand):
         )
 
         # landing page version two
-        build_cms_site_helpers.create_landing_dashboard_page_version_two(
-            parent_page=root_page
-        )
+        build_cms_site_helpers.create_landing_page(parent_page=root_page)
 
         build_cms_site_helpers.create_menu_snippet()
 

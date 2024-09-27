@@ -22,7 +22,8 @@ MINIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT: int = 0
 MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT: int = 2
 
 MINIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 1
-MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 3
+MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 2
+MAXIMUM_COLUMNS_CHART_THREE_COLUMNS_COUNT: int = 3
 
 MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
@@ -191,6 +192,17 @@ class ChartRowCard(blocks.StructBlock):
         min_num=MINIMUM_COLUMNS_CHART_COLUMNS_COUNT,
         max_num=MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT,
         help_text=help_texts.CHART_CARD_ROW,
+    )
+
+    class Meta:
+        icon = "chart_row_card"
+
+
+class ChartCardSection(blocks.StructBlock):
+
+    cards = ChartRowBlockTypes(
+        min_num=MINIMUM_COLUMNS_CHART_COLUMNS_COUNT,
+        help_text=help_texts.CHART_ROW_CARD_COLUMN_WIDTH_THREE,
     )
 
     class Meta:

@@ -58,7 +58,6 @@ if config.APP_MODE != "INGESTION":
         "cms.composite",
         "cms.whats_new",
         "cms.metrics_documentation",
-        "cms.landing_page",
         "cms.snippets",
         "wagtail.api.v2",
         "wagtail.contrib.forms",

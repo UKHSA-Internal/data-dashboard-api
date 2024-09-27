@@ -8,8 +8,7 @@ from cms.composite.models import CompositePage, CompositeRelatedLink
 from cms.dashboard.management.commands.build_cms_site_helpers.landing_page import (
     create_landing_page_body_wih_page_links,
 )
-from cms.home.models import HomePage, HomePageRelatedLink
-from cms.landing_page.models import LandingPage
+from cms.home.models import HomePage, HomePageRelatedLink, LandingPage
 from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_internal_button_snippet,
 )
@@ -46,7 +45,7 @@ def _add_page_to_parent(*, page: Page, parent_page: Page) -> None:
 
 
 # Deprecated: to be removed after version two migration.
-def create_landing_dashboard_page(*, parent_page: Page) -> HomePage:
+def create_home_page_dashboard(*, parent_page: Page) -> HomePage:
     data = open_example_page_response(page_name="ukhsa_data_dashboard")
 
     page = HomePage(
@@ -68,7 +67,7 @@ def create_landing_dashboard_page(*, parent_page: Page) -> HomePage:
     return page
 
 
-def create_landing_dashboard_page_version_two(*, parent_page: Page) -> LandingPage:
+def create_landing_page(*, parent_page: Page) -> LandingPage:
     data = open_example_page_response(page_name="landing_page")
 
     landing_page_body = create_landing_page_body_wih_page_links()

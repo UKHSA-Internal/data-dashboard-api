@@ -18,9 +18,9 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                 "page_link": None,
                 "content": [
                     {
-                        "type": "chart_row_card",
+                        "type": "chart_card_section",
                         "value": {
-                            "columns": [
+                            "cards": [
                                 {
                                     "type": "simplified_chart_with_link",
                                     "value": {
