@@ -276,3 +276,11 @@ This is used to control the default pagination size used if there are associated
 WHA_ALERT_CHOICE: str = """
 This is used to select the current weather health alert type Eg: Heat or Cold alert season.
 """
+
+PAGE_LINK_TITLE: str = """
+This is the title of the page you're linking to Eg. COVID-19
+"""
+
+PAGE_LINK_SUB_TITLE: str = """
+This is an optional short description of the page you're linking to.
+"""
