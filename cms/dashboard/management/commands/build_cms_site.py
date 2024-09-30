@@ -122,6 +122,10 @@ class Command(BaseCommand):
             name="cold_health_alerts", parent_page=weather_health_alerts_page
         )
 
+        build_cms_site_helpers.create_index_page(
+            name="respiratory-viruses", parent_page=root_page
+        )
+
         # landing page version two
         build_cms_site_helpers.create_landing_page(parent_page=root_page)
 

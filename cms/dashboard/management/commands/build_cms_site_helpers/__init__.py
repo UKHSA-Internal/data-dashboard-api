@@ -5,6 +5,7 @@ from .pages import (
     create_bulk_downloads_page,
     create_home_page_dashboard,
     create_landing_page,
+    create_index_page,
     create_whats_new_parent_page,
     create_whats_new_child_entry,
 )
