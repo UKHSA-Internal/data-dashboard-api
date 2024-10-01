@@ -156,7 +156,8 @@ def _validate_sub_integrated_care_board_geography_code(*, geography_code: str) -
 
 
 def _validate_ukhsa_super_region_geography_code(*, geography_code: str) -> str:
-    if len(geography_code) != 6:
+    ukhsa_super_region_code_length = 6
+    if len(geography_code) != ukhsa_super_region_code_length:
         raise ValueError
 
     first_five_characters = geography_code[:5]
