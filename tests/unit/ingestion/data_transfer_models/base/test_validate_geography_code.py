@@ -554,6 +554,7 @@ class TestIncomingBaseValidationForUKHSASuperRegionGeographyCode:
             VALID_GOVERNMENT_OFFICE_REGION_CODE,
             "X2500A",
             "X2500@",
+            "X25oo1",
         ),
     )
     def test_invalid_geography_code_throws_error(
