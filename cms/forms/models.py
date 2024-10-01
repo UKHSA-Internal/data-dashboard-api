@@ -15,6 +15,7 @@ from wagtail.fields import RichTextField
 from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dashboard.models import UKHSAPage
 from cms.forms import help_texts
+from cms.forms.managers import FormPageManager
 
 
 class AbstractFormUKHSAPage(FormMixin, UKHSAPage):
@@ -80,3 +81,5 @@ class FormPage(AbstractFormUKHSAPage):
         APIField("confirmation_panel_text"),
         APIField("confirmation_body"),
     ]
+
+    objects = FormPageManager()
