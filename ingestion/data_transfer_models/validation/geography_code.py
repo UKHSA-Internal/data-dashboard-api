@@ -6,6 +6,7 @@ UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09"
 NHS_REGION_GEOGRAPHY_CODE_PREFIX = "E40"
 UKHSA_REGION_GEOGRAPHY_CODE_PREFIX = "E45"
 GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX = "E12"
+UKHSA_SUPER_REGION_PREFIX = "X2500"
 
 
 def validate_geography_code(*, geography_code: str, geography_type: str) -> str | None:
@@ -159,7 +160,7 @@ def _validate_ukhsa_super_region_geography_code(*, geography_code: str) -> str:
         raise ValueError
 
     first_five_characters = geography_code[:5]
-    if first_five_characters != "X2500":
+    if first_five_characters != UKHSA_SUPER_REGION_PREFIX:
         raise ValueError
 
     if not geography_code[-1].isdigit():
