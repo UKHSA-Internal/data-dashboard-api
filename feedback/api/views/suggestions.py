@@ -10,6 +10,7 @@ from feedback.api.serializers.questions import (
     SuggestionsSerializer,
     SuggestionsV2Serializer,
 )
+from feedback.email_server import send_email_v2
 
 SUGGESTIONS_API_TAG = "suggestions"
 
@@ -56,4 +57,5 @@ class SuggestionsV2View(APIView):
         """
         serializer = SuggestionsV2Serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        send_email_v2(suggestions=serializer.validated_data)
         return HttpResponse(HTTPStatus.OK.value)
