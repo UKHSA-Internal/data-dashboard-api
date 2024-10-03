@@ -9,6 +9,7 @@ from cms.dashboard.management.commands.build_cms_site_helpers.landing_page impor
     create_landing_page_body_wih_page_links,
 )
 from cms.home.models import HomePage, HomePageRelatedLink, LandingPage
+from cms.forms.models import FormField, FormPage
 from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_internal_button_snippet,
 )
@@ -242,3 +243,43 @@ def create_whats_new_child_entry(*, name: str, parent_page: Page) -> WhatsNewChi
     _add_page_to_parent(page=entry, parent_page=parent_page)
 
     return entry
+
+
+def _create_form_fields(*, form_field_class, response_data: dict, page: Page) -> None:
+    for form_field_data in response_data["form_fields"]:
+        form_field_model = form_field_class(
+            page=page,
+            clean_name=form_field_data["clean_name"],
+            label=form_field_data["label"],
+            field_type=form_field_data["field_type"],
+            help_text=form_field_data["help_text"],
+            required=form_field_data["required"],
+            choices=form_field_data["choices"],
+            default_value=form_field_data["default_value"],
+        )
+        form_field_model.save()
+
+
+def create_feedback_page(*, name: str, parent_page: Page) -> FormPage:
+    data = open_example_page_response(page_name=name)
+
+    page = FormPage(
+        body=data["body"],
+        title=data["title"],
+        slug=data["meta"]["slug"],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        confirmation_slug=data["confirmation_slug"],
+        confirmation_panel_title=data["confirmation_panel_title"],
+        confirmation_panel_text=data["confirmation_panel_text"],
+        confirmation_body=data["confirmation_body"],
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    _create_form_fields(
+        form_field_class=FormField,
+        response_data=data,
+        page=page,
+    )
+
+    return page

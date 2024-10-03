@@ -3,7 +3,7 @@ import logging
 from django.core.mail import EmailMessage
 
 import config
-from feedback.email_template import build_body_for_email
+from feedback.email_template import build_body_for_email, build_body_for_email_v2
 
 logger = logging.getLogger(__name__)
 
@@ -45,6 +45,40 @@ def send_email(
     return bool(email.send(fail_silently=fail_silently))
 
 
+def send_email_v2(
+    *,
+    suggestions: dict[str, str],
+    subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
+    recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,
+    fail_silently: bool = True,
+) -> bool:
+    """Sends a feedback email to the `recipient_email_address`
+
+    Args:
+        suggestions: Dict of feedback suggestions from the user
+            E.g. {"question": "some question", "answer": "some answer"}
+        subject: The subject line to set on the email message
+            Defaults to "Suggestions Feedback for UKHSA data dashboard"
+        recipient_email_address: The recipient to send the email to
+            Defaults to the environment variable
+                `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
+        fail_silently: Switch to raise an exception
+            if the email failed and was not successfully sent.
+            Defaults to True
+
+    Returns:
+        A boolean to describe whether the email has been sent successfully
+
+    """
+    email = create_email_message_v2(
+        suggestions=suggestions,
+        subject=subject,
+        recipient_email_address=recipient_email_address,
+    )
+
+    return bool(email.send(fail_silently=fail_silently))
+
+
 def create_email_message(
     *,
     suggestions: dict[str, str],
@@ -70,6 +104,39 @@ def create_email_message(
 
     """
     body: str = build_body_for_email(suggestions=suggestions)
+
+    return EmailMessage(
+        subject=subject,
+        body=body,
+        to=[recipient_email_address],
+    )
+
+
+def create_email_message_v2(
+    *,
+    suggestions: dict[str, str],
+    subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
+    recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,
+) -> EmailMessage:
+    """Creates an `EmailMessage` object for a feedback email
+
+    Notes:
+        This returns an `EmailMessage` object which **has not been sent**
+
+    Args:
+        suggestions: Dict of feedback suggestions from the user
+            E.g. {"question": "some question", "answer": "some answer"}
+        subject: The subject line to set on the email message
+            Defaults to "Suggestions Feedback for UKHSA data dashboard"
+        recipient_email_address: The recipient to send the email to
+            Defaults to the environment variable
+                `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
+    Returns:
+        An `EmailMessage` object with the subject, body and recipient
+        set on the object
+
+    """
+    body: str = build_body_for_email_v2(suggestions=suggestions)
 
     return EmailMessage(
         subject=subject,
