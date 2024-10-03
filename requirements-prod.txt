@@ -81,7 +81,7 @@ sqlparams==6.1.0
 telepath==0.3.1
 tenacity==9.0.0
 toml==0.10.2
-tomli==2.0.1
+tomli==2.0.2
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.3
