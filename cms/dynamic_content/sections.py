@@ -12,12 +12,31 @@ class ContentCards(StreamBlock):
     text_card = cards.TextCard()
     chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
+
+
+class ContentCardsSectionWithLink(StreamBlock):
+    text_card = cards.TextCard()
+    chart_card_section = cards.ChartCardSection()
+    headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     weather_health_alert_card = cards.WeatherHealthAlertsCard()
 
 
 class Section(StructBlock):
     heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
     content = ContentCards(help_text=help_texts.CONTENT_ROW_CARDS)
+
+    class Meta:
+        icon = "thumbtack"
+
+
+class SectionWithLink(StructBlock):
+    heading = TextBlock(help_text=help_texts.HEADING_BLOCK, required=True)
+    page_link = blocks.PageLinkChooserBlock(
+        page_type=["composite.CompositePage"],
+        required=False,
+        help_text=help_texts.INDEX_PAGE_FIELD,
+    )
+    content = ContentCardsSectionWithLink(help_text=help_texts.CONTENT_ROW_CARDS)
 
     class Meta:
         icon = "thumbtack"

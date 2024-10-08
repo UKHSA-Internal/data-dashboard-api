@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from wagtail.models import Page
 from wagtail.models.i18n import Locale
 
-from cms.home.models import UKHSARootPage
+from cms.home.models.home_page import UKHSARootPage
 from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
 from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
