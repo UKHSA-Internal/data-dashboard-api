@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Manager
 from wagtail.models import Page
 
-from cms.home.models.homepage import HomePage, UKHSARootPage
+from cms.home.models.home_page import HomePage, UKHSARootPage
 from cms.metrics_documentation.data_migration.child_entries import (
     get_metrics_definitions,
 )

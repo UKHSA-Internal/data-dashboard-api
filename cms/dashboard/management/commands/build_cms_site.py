@@ -129,6 +129,9 @@ class Command(BaseCommand):
         # landing page version two
         build_cms_site_helpers.create_landing_page(parent_page=root_page)
 
+        build_cms_site_helpers.create_feedback_page(
+            name="feedback", parent_page=root_page
+        )
         build_cms_site_helpers.create_menu_snippet()
 
     @staticmethod

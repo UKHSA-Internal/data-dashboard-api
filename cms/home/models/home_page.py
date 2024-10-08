@@ -13,7 +13,7 @@ from cms.dashboard.enums import (
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
-from cms.home.managers.homepage import HomePageManager
+from cms.home.managers import HomePageManager
 
 
 class UKHSARootPage(Page):
