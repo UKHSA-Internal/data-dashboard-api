@@ -64,6 +64,10 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
                 required=False,
             ),
         ),
+        (
+            "internal_page_links",
+            blocks.InternalPageLinks(),
+        ),
     ],
     use_json_field=True,
 )
