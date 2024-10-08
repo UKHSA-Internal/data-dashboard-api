@@ -40,7 +40,7 @@ l18n==2021.3
 lockfile==0.12.2
 Markdown==3.7
 markdown-it-py==2.2.0
-MarkupSafe==2.1.5
+MarkupSafe==3.0.0
 mdurl==0.1.2
 msgpack==1.1.0
 mypy-extensions==1.0.0
