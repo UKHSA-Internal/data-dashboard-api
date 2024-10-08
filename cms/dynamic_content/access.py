@@ -15,6 +15,13 @@ ALLOWABLE_BODY_CONTENT = StreamField(
     use_json_field=True,
 )
 
+ALLOWABLE_BODY_CONTENT_SECTION_LINK = StreamField(
+    [
+        ("section", sections.SectionWithLink()),
+    ],
+    use_json_field=True,
+)
+
 ALLOWABLE_BODY_CONTENT_TEXT_SECTION = StreamField(
     [
         ("section", sections.TextSection()),
@@ -56,6 +63,10 @@ ALLOWABLE_BODY_CONTENT_COMPOSITE = StreamField(
                 "snippets.weatheralertbutton",
                 required=False,
             ),
+        ),
+        (
+            "internal_page_links",
+            blocks.InternalPageLinks(),
         ),
     ],
     use_json_field=True,

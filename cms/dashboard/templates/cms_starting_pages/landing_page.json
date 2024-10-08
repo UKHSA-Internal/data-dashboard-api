@@ -1,0 +1,30 @@
+{
+    "id": 79,
+    "meta": {
+        "search_description": "",
+        "type": "landing_page.LandingPage",
+        "detail_url": "https://http:/api/pages/79/",
+        "html_url": "https://http://localhost:3000/landing-page/",
+        "slug": "landing-page",
+        "show_in_menus": false,
+        "seo_title": "Home | UKHSA data dashboard",
+        "first_published_at": "2024-09-20T13:06:42.106160+01:00",
+        "alias_of": null,
+        "parent": {
+            "id": 3,
+            "meta": {
+                "type": "home.UKHSARootPage",
+                "detail_url": "https://http:/api/pages/3/",
+                "html_url": null
+            },
+            "title": "UKHSA Dashboard Root"
+        }
+    },
+    "title": "Landing page",
+    "sub_title": "showing public health data across England",
+    "body": "",
+    "last_published_at": "2024-09-20T14:04:30.332316+01:00",
+    "last_updated_at": "2024-09-24T16:40:55.228390+01:00",
+    "seo_change_frequency": 5,
+    "seo_priority": "0.5"
+}

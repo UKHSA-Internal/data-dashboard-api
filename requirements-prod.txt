@@ -40,7 +40,7 @@ l18n==2021.3
 lockfile==0.12.2
 Markdown==3.7
 markdown-it-py==2.2.0
-MarkupSafe==2.1.5
+MarkupSafe==3.0.0
 mdurl==0.1.2
 msgpack==1.1.0
 mypy-extensions==1.0.0
@@ -65,9 +65,9 @@ python-dateutil==2.9.0.post0
 pytz==2024.2
 Pygments==2.18.0
 PyYAML==6.0.2
-redis==5.1.0
+redis==5.1.1
 requests==2.32.3
-rich==13.8.1
+rich==13.9.2
 ruamel.yaml==0.18.6
 ruamel.yaml.clib==0.2.8
 SQLAlchemy==2.0.35
@@ -81,7 +81,7 @@ sqlparams==6.1.0
 telepath==0.3.1
 tenacity==9.0.0
 toml==0.10.2
-tomli==2.0.1
+tomli==2.0.2
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.3

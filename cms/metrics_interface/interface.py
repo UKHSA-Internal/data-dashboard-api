@@ -99,6 +99,18 @@ class MetricsAPIInterface:
         return ChartTypes.selectable_headline_choices()
 
     @staticmethod
+    def get_simplified_chart_types() -> tuple[tuple[str, str], ...]:
+        """Gets all available chart type choices for headline charts as a nested tuple of 2-item tuples.
+        Note this is achived by delegating the call to the `ChartTypes` enum from the metrics API
+
+        Returns:
+            Nested tuples of 2 item tuples as expected by the form blocks.
+            Examples:
+                (("line_single_simplified", "line_single_simplified"), ...)
+        """
+        return ChartTypes.selectable_simplified_chart_choices()
+
+    @staticmethod
     def get_chart_axis_choices() -> list[tuple[str, str]]:
         """Gets all available axis choices for a chart as a list of 2-item tuples.
         Note this is achieved by delegating the call to the `ChartAxisFields` enum from the Metrics API

@@ -117,3 +117,31 @@ class WhaButtonChooserBlock(SnippetChooserBlock):
                 "geography_code": value.geography_code,
             }
         return None
+
+
+class PageLinkChooserBlock(blocks.PageChooserBlock):
+    @classmethod
+    def get_api_representation(cls, value, context=None) -> str | None:
+        if value:
+            return value.full_url
+
+        return None
+
+
+class PageLink(blocks.StructBlock):
+    title = blocks.CharBlock(
+        required=True,
+        help_text=help_texts.PAGE_LINK_TITLE,
+    )
+    sub_title = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.PAGE_LINK_SUB_TITLE,
+    )
+    page = PageLinkChooserBlock(target_model=["topic.TopicPage"])
+
+
+class InternalPageLinks(blocks.StreamBlock):
+    page_link = PageLink()
+
+    class Meta:
+        icon = "link"
