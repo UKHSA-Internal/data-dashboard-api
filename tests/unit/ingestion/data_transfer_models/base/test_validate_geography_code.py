@@ -524,7 +524,7 @@ class TestIncomingBaseValidationForUKHSASuperRegionGeographyCode:
     ):
         """
         Given a payload containing a valid `geography_code` value
-            for a `geography_type` of "UKHSA Super Region"
+            for a `geography_type` of "UKHSA Super-Region"
         When the `IncomingBaseDataModel` model is initialized
         Then model is deemed valid
         """
@@ -563,7 +563,7 @@ class TestIncomingBaseValidationForUKHSASuperRegionGeographyCode:
         """
         Given a payload containing a `geography_code`
             which is not valid for
-            the "UKHSA Super Region" `geography_type`
+            the "UKHSA Super-Region" `geography_type`
         When the `IncomingBaseDataModel` model is initialized
         Then a `ValidationError` is raised
         """
