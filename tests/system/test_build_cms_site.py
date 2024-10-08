@@ -7,7 +7,8 @@ from cms.composite.models import CompositePage
 from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
     open_example_page_response,
 )
-from cms.home.models import HomePage, UKHSARootPage, LandingPage
+from cms.home.models import HomePage, UKHSARootPage
+from cms.forms.models import FormPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
 from cms.whats_new.models import WhatsNewParentPage
@@ -382,6 +383,84 @@ class TestBuildCMSSite:
             response_data["body"][0]
             == access_our_data_getting_started_page_template["body"][0]
         )
+
+    @pytest.mark.django_db
+    def test_command_builds_site_with_correct_feedback_page(self):
+        """
+        Given a CMS site which has been created via the `build_cms_site` management command
+        And the ID of the `feedback` page
+        When a GET request is made to `/api/pages/{}` detail endpoint
+        Then the response contains the expected data
+        """
+        # Given
+        call_command("build_cms_site")
+        feedback_page = FormPage.objects.get(slug="feedback")
+        parent_home_page = UKHSARootPage.objects.get(title="UKHSA Dashboard Root")
+        api_client = APIClient()
+
+        # When
+        response = api_client.get(path=f"/api/pages/{feedback_page.id}/")
+
+        # Then
+        response_data = response.data
+
+        # Compare the response from the endpoint to the template used to build the page
+        feedback_page_template = open_example_page_response(page_name="feedback")
+        assert response_data["title"] == feedback_page_template["title"]
+        assert response_data["body"] == feedback_page_template["body"]
+        assert (
+            response_data["meta"]["seo_title"]
+            == feedback_page_template["meta"]["seo_title"]
+        )
+        assert (
+            response_data["meta"]["search_description"]
+            == feedback_page_template["meta"]["search_description"]
+        )
+        assert response_data["meta"]["parent"]["id"] == parent_home_page.id
+        assert response_data["meta"]["parent"]["title"] == parent_home_page.title
+
+        assert (
+            response_data["confirmation_slug"]
+            == feedback_page_template["confirmation_slug"]
+        )
+        assert (
+            response_data["confirmation_panel_title"]
+            == feedback_page_template["confirmation_panel_title"]
+        )
+        assert (
+            response_data["confirmation_panel_text"]
+            == feedback_page_template["confirmation_panel_text"]
+        )
+        assert (
+            response_data["confirmation_body"]
+            == feedback_page_template["confirmation_body"]
+        )
+
+        # Check that the form fields have been populated correctly
+        form_fields_from_response = response_data["form_fields"]
+        form_fields_from_template = feedback_page_template["form_fields"]
+
+        for index, form_field in enumerate(form_fields_from_response):
+            assert (
+                form_field["clean_name"]
+                == form_fields_from_template[index]["clean_name"]
+            )
+            assert form_field["label"] == form_fields_from_template[index]["label"]
+            assert (
+                form_field["field_type"]
+                == form_fields_from_template[index]["field_type"]
+            )
+            assert (
+                form_field["help_text"] == form_fields_from_template[index]["help_text"]
+            )
+            assert (
+                form_field["required"] == form_fields_from_template[index]["required"]
+            )
+            assert form_field["choices"] == form_fields_from_template[index]["choices"]
+            assert (
+                form_field["default_value"]
+                == form_fields_from_template[index]["default_value"]
+            )
 
     @pytest.mark.django_db
     def test_command_creates_menu_snippet(self):
