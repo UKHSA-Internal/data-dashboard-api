@@ -3,6 +3,7 @@ from cms.topic.models import TopicPage
 
 
 def create_landing_page_body_wih_page_links() -> list[dict]:
+    respiratory_viruses_index = CompositePage.objects.get(slug="respiratory-viruses")
     covid_page = TopicPage.objects.get(slug="covid-19")
     influenza_page = TopicPage.objects.get(slug="influenza")
     other_respiratory_viruses_page = TopicPage.objects.get(
@@ -15,7 +16,7 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
             "type": "section",
             "value": {
                 "heading": "Respiratory viruses",
-                "page_link": None,
+                "page_link": respiratory_viruses_index.id,
                 "content": [
                     {
                         "type": "chart_card_section",

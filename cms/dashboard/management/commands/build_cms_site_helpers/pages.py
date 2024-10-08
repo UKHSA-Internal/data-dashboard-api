@@ -5,6 +5,9 @@ from wagtail.models import Page
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.composite.models import CompositePage, CompositeRelatedLink
+from cms.dashboard.management.commands.build_cms_site_helpers.index_pages import (
+    create_respiratory_viruses_index_page,
+)
 from cms.dashboard.management.commands.build_cms_site_helpers.landing_page import (
     create_landing_page_body_wih_page_links,
 )
@@ -80,6 +83,24 @@ def create_landing_page(*, parent_page: Page) -> LandingPage:
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
+    )
+    _add_page_to_parent(page=page, parent_page=parent_page)
+
+    return page
+
+
+def create_index_page(*, name: str, parent_page: Page) -> CompositePage:
+    data = open_example_page_response(page_name=name)
+
+    index_page_body = create_respiratory_viruses_index_page()
+
+    page = CompositePage(
+        title=data["title"],
+        body=index_page_body,
+        slug=data["meta"]["slug"],
+        seo_title=data["meta"]["seo_title"],
+        search_description=data["meta"]["search_description"],
+        date_posted=data["meta"]["first_published_at"].split("T")[0],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
