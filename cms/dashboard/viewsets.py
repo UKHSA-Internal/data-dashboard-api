@@ -41,14 +41,12 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         queryset = super().get_queryset()
         return queryset.specific()
 
-    @cache_response()
     def listing_view(self, request: Request) -> Response:
         """This endpoint returns a list of published pages from the CMS (Wagtail).
         The payload includes page `title`, `id` and `meta` data about each page.
         """
         return super().listing_view(request=request)
 
-    @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
         """This end point returns a page from the CMS based on a Page `ID`."""
         return super().detail_view(request=request, pk=pk)
