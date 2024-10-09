@@ -230,6 +230,21 @@ class TestChartTypes:
         # Then
         assert (expected_choice, expected_choice) in choices
 
+    def test_simplified_chart_selectable_choices(self):
+        """
+        Given an expected chioce
+        When the `selectable_simplified_chart_choices()` class method is called
+        Then choice is in the returned selectable choices
+        """
+        # Given
+        expected_choice = "line_single_simplified"
+
+        # When
+        choices = ChartTypes.selectable_simplified_chart_choices()
+
+        # Then
+        assert (expected_choice, expected_choice) in choices
+
     def test_selectable_choices_does_not_return_simple_line(self):
         """
         Given the invalid choice of "simple_line"

@@ -13,6 +13,13 @@ Here you can add 1 or 2 columns to contain a particular chart card.
 If you add the 1 column, then the chart card will spread across the available width.
 If you add 2 columns, then the cards will be split across 2 columns within the available width.
 """
+
+CHART_ROW_CARD_COLUMN_WIDTH_THREE: str = """
+Here you can add chart cards to a section and the layout will change based on the number of cards added.
+A single card will expand to take up half the row. When 2 or 3 cards are added they will share the width
+of a row equally, creating either a 2 or 3 column layout.
+"""
+
 NUMBERS_ROW_FIELD: str = """
 Here you can add up to {} rows within this column component.
 Each row can be used to add a number block. 
@@ -28,7 +35,11 @@ for that plot.
 """
 
 TOPIC_PAGE_FIELD: str = """
-The related topic page you want to link to.
+The related topic page you want to link to. Eg: `COVID-19`
+"""
+
+INDEX_PAGE_FIELD: str = """
+The related index page you want to link to. Eg: `Respiratory viruses` or `Outbreaks`
 """
 
 HEADLINE_BLOCK_FIELD: str = """
@@ -268,4 +279,12 @@ This is used to control the default pagination size used if there are associated
 
 WHA_ALERT_CHOICE: str = """
 This is used to select the current weather health alert type Eg: Heat or Cold alert season.
+"""
+
+PAGE_LINK_TITLE: str = """
+This is the title of the page you're linking to Eg. COVID-19
+"""
+
+PAGE_LINK_SUB_TITLE: str = """
+This is an optional short description of the page you're linking to.
 """

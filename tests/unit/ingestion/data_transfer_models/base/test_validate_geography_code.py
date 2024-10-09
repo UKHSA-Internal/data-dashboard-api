@@ -10,6 +10,7 @@ VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE = "E10000024"
 VALID_NHS_REGION_CODE = "E40000003"
 VALID_NHS_TRUST_CODE = "RY6"
 VALID_UKHSA_REGION_CODE = "E45000017"
+VALID_UKHSA_SUPER_REGION_CODE = "X25001"
 VALID_GOVERNMENT_OFFICE_REGION_CODE = "E12000003"
 VALID_INTEGRATED_CARE_BOARD_CODE = "QT6"
 VALID_SUB_INTEGRATED_CARE_BOARD_CODE = "02G"
@@ -501,6 +502,74 @@ class TestIncomingBaseValidationForUKHSARegionGeographyCode:
         # Given
         payload = valid_payload_for_base_model
         payload["geography_type"] = enums.GeographyType.UKHSA_REGION.value
+        payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+
+class TestIncomingBaseValidationForUKHSASuperRegionGeographyCode:
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_UKHSA_SUPER_REGION_CODE,
+            "X25002",
+            "X25003",
+            "X25004",
+        ),
+    )
+    def test_valid_geography_code_validates_successfully(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a valid `geography_code` value
+            for a `geography_type` of "UKHSA Super-Region"
+        When the `IncomingBaseDataModel` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.UKHSA_SUPER_REGION.value
+        payload["geography_code"] = geography_code
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(**payload)
+
+        # Then
+        incoming_base_validation.model_validate(
+            incoming_base_validation,
+            strict=True,
+        )
+
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_NATION_CODE,
+            VALID_NHS_TRUST_CODE,
+            VALID_NHS_REGION_CODE,
+            VALID_UKHSA_REGION_CODE,
+            VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_GOVERNMENT_OFFICE_REGION_CODE,
+            "X2500A",
+            "X2500@",
+            "X25oo1",
+        ),
+    )
+    def test_invalid_geography_code_throws_error(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a `geography_code`
+            which is not valid for
+            the "UKHSA Super-Region" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.UKHSA_SUPER_REGION.value
         payload["geography_code"] = geography_code
 
         # When / Then

@@ -54,6 +54,7 @@ lint.ignore = [
     "PLR0913",  # Too many arguments - temporarily ignored whilst dev work underway to pass config objects
                     # into components which have numerous dependencies during initialization
     "PLR0911",  # Too many return statements
+    "C901",     # Considers function to be too complex, due to switch case statements
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
