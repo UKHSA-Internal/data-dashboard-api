@@ -157,3 +157,11 @@ class SimplifiedChartPlotElement(BaseMetricsElement):
         choices=get_simplified_chart_types,
         default=DEFAULT_SIMPLIFIED_CHART_TYPE,
     )
+    date_from = blocks.DateBlock(
+        required=False,
+        help_text=help_texts.DATE_FROM_FIELD,
+    )
+    date_to = blocks.DateBlock(
+        required=False,
+        help_text=help_texts.DATE_TO_FIELD,
+    )
