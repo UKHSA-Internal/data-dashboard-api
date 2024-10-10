@@ -172,6 +172,32 @@ jobs:
           source uhd.sh
           uhd tests coverage
 
+  publish-main-image-test:
+    name: Publish main image to central ECR
+    needs: [
+      quality-checks,
+      unit-tests,
+      integration-tests,
+      system-tests,
+      migration-tests,
+      test-coverage,
+      dependency-checks,
+      vulnerability-checks,
+      architecture-checks
+    ]
+    runs-on: ubuntu-latest
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Build and publish docker image
+        uses: ./.github/actions/publish-image
+        with:
+          ecr-repository: ukhsa-data-dashboard/non-existent-repo
+          role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
+          architecture: arm64
+          image-tag: ${{ github.sha }}
+
   ###############################################################################
   # Build image
   ###############################################################################
