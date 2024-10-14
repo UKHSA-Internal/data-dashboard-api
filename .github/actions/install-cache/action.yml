@@ -15,9 +15,11 @@ runs:
       # So even with dependencies cached, there is still a +1min penalty to pay
       # With this we cache the build and so that each CI job can get straight into what it wants to do
       with:
-        path: ${{ env.pythonLocation }}
-        key: ${{ env.pythonLocation }}-${{ hashFiles('requirements-prod.txt') }}-${{ hashFiles('requirements-dev.txt') }}
+        path: .venv
+        key: venv-${{ hashFiles('requirements-prod.txt') }}-${{ hashFiles('requirements-dev.txt') }}
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
-      run: pip install -r requirements.txt
+      run: |
+        source uhd.sh
+        uhd venv create
       shell: bash
