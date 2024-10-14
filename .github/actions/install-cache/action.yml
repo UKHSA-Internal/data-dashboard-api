@@ -6,9 +6,9 @@ runs:
   using: 'composite'
   steps:
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
     - name: Cache dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: cache
       # Using the native `setup-python` `cache` interface only caches dependencies
       # as opposed to the build itself.
