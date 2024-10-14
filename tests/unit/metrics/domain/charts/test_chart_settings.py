@@ -379,9 +379,7 @@ class TestChartSettings:
         expected_chart_config = chart_settings.get_base_chart_config()
         # Chart settings
         expected_chart_config["showlegend"] = False
-        expected_chart_config["margin"]["l"] = 25
-        expected_chart_config["margin"]["r"] = 25
-        expected_chart_config["margin"]["pad"] = 25
+        expected_chart_config["margin"]["r"] = 23
 
         # x_axis settings
         expected_chart_config["xaxis"]["showgrid"] = False

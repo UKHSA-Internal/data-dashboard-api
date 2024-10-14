@@ -43,6 +43,8 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "line_single_simplified",
+                                                    "date_from": "2022-10-14",
+                                                    "date_to": "2023-10-14",
                                                 },
                                                 "id": "0cb2a953-8737-4978-9886-d3943b76820a",
                                             }
@@ -71,6 +73,8 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "line_single_simplified",
+                                                    "date_from": "2022-10-14",
+                                                    "date_to": "2023-10-14",
                                                 },
                                                 "id": "7423460c-aa0c-482d-8fd5-ab9c62396657",
                                             }
@@ -99,6 +103,8 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "line_single_simplified",
+                                                    "date_from": "2022-10-14",
+                                                    "date_to": "2023-10-14",
                                                 },
                                                 "id": "f9eb94ff-0d92-4265-a88b-d52bf73532a5",
                                             }

@@ -138,9 +138,7 @@ class ChartSettings:
         # Chart Config
         chart_config = self.get_base_chart_config()
         chart_config["showlegend"] = False
-        chart_config["margin"]["l"] = 25
-        chart_config["margin"]["r"] = 25
-        chart_config["margin"]["pad"] = 25
+        chart_config["margin"]["r"] = 23
 
         # x_axis config
         chart_config["xaxis"]["showgrid"] = False
