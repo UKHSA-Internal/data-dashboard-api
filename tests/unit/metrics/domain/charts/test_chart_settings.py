@@ -379,7 +379,9 @@ class TestChartSettings:
         expected_chart_config = chart_settings.get_base_chart_config()
         # Chart settings
         expected_chart_config["showlegend"] = False
-        expected_chart_config["margin"]["r"] = 23
+        expected_chart_config["margin"]["r"] = 35
+        expected_chart_config["margin"]["l"] = 25
+        expected_chart_config["margin"]["pad"] = 25
 
         # x_axis settings
         expected_chart_config["xaxis"]["showgrid"] = False
@@ -395,6 +397,7 @@ class TestChartSettings:
         expected_chart_config["yaxis"]["zeroline"] = False
         expected_chart_config["yaxis"]["tickvals"] = fake_y_axis_tick_values
         expected_chart_config["yaxis"]["ticktext"] = fake_y_axis_tick_text
+        expected_chart_config["yaxis"]["rangemode"] = "tozero"
         expected_chart_config["yaxis"]["ticklen"] = 0
         expected_chart_config["yaxis"]["tickfont"][
             "color"
