@@ -7,18 +7,6 @@ class FrontEndURLBuilder:
     def __init__(self, *, base_url: str):
         self._base_url = base_url
 
-    def build_url_for_topic_page(self, *, slug: str) -> str:
-        """Builds the full URL for the given topic page `slug`
-
-        Args:
-            slug: The slug associated with the Topic page
-
-        Returns:
-            The full URL which can be passed to requests
-
-        """
-        return urljoin(self._base_url, f"/topics/{slug}")
-
     def build_url_for_sitemap(self) -> str:
         """Builds the full URL for the sitemap page
 
