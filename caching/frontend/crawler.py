@@ -1,6 +1,5 @@
 import logging
 from collections.abc import Iterator
-from xml.etree.ElementTree import Element
 
 import requests
 from defusedxml import ElementTree
@@ -61,13 +60,13 @@ class FrontEndCrawler:
         url: str = self.sitemap_url
         return requests.get(url=url, timeout=DEFAULT_REQUEST_TIMEOUT)
 
-    def _parse_sitemap(self) -> Element:
+    def _parse_sitemap(self):
         response: Response = self._hit_sitemap_url()
         xml_response_data: str = response.content.decode("utf-8")
         return ElementTree.fromstring(text=xml_response_data)
 
     def _traverse_sitemap(self) -> Iterator[str]:
-        sitemap_root: Element = self._parse_sitemap()
+        sitemap_root = self._parse_sitemap()
         namespace = {"ns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
         return (
             loc.text

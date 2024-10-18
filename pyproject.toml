@@ -55,7 +55,6 @@ lint.ignore = [
                     # into components which have numerous dependencies during initialization
     "PLR0911",  # Too many return statements
     "C901",     # Considers function to be too complex, due to switch case statements
-    "S405",     # xml.etree - Only being used for the type hint, so can be ignored
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
