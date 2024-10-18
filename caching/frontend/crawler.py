@@ -85,6 +85,7 @@ class FrontEndCrawler:
         urls: Iterator[str] = self._traverse_sitemap()
 
         for url in urls:
+            logger.info("Processing `%s`", url)
             self.hit_frontend_page(url=url)
 
         logger.info("Finished processing all URLs for the frontend")
