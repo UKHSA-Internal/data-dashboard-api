@@ -1,7 +1,8 @@
 import logging
-from enum import Enum
+from collections.abc import Iterator
 
 import requests
+from defusedxml import ElementTree
 from rest_framework.response import Response
 
 from caching.common.geographies_crawler import (
@@ -15,29 +16,16 @@ from caching.internal_api_client import InternalAPIClient
 from cms.topic.models import TopicPage
 
 DEFAULT_REQUEST_TIMEOUT = 60
+PAGE_XML_LOCATOR = ".//ns:loc"
 
 logger = logging.getLogger(__name__)
-
-
-class CMSPageTypes(Enum):
-    home_page = "home.HomePage"
-    topic_page = "topic.TopicPage"
-    common_page = "common.CommonPage"
-    whats_new_parent_page = "whats_new.WhatsNewParentPage"
-    whats_new_child_entry = "whats_new.WhatsNewChildEntry"
-    metrics_documentation_parent_page = (
-        "metrics_documentation.MetricsDocumentationParentPage"
-    )
-    metrics_documentation_child_entry = (
-        "metrics_documentation.MetricsDocumentationChildEntry"
-    )
 
 
 class FrontEndCrawler:
     """This is used to traverse the front end and send GET requests to all relevant pages
 
     Notes:
-        Under the hood, this uses the `InternalAPIClient` to get a list of all pages from the CMS.
+        Under the hood, this gathers all the URLs in the front end from the associated sitemap.xml
         From this point, a simple GET request is made to each page.
         The CDN auth key for the rule on the front end should also be provided.
         If not 403 Forbidden errors will be returned and the cache will not be hydrated.
@@ -64,23 +52,49 @@ class FrontEndCrawler:
             or GeographiesAPICrawler(internal_api_client=self._internal_api_client)
         )
 
+    @property
+    def sitemap_url(self) -> str:
+        return self._url_builder.build_url_for_sitemap()
+
+    def _hit_sitemap_url(self) -> Response:
+        url: str = self.sitemap_url
+        return requests.get(url=url, timeout=DEFAULT_REQUEST_TIMEOUT)
+
+    def _parse_sitemap(self):
+        response: Response = self._hit_sitemap_url()
+        xml_response_data: str = response.content.decode("utf-8")
+        return ElementTree.fromstring(text=xml_response_data)
+
+    def _traverse_sitemap(self) -> Iterator[str]:
+        sitemap_root = self._parse_sitemap()
+        namespace = {"ns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        return (
+            loc.text
+            for loc in sitemap_root.findall(PAGE_XML_LOCATOR, namespaces=namespace)
+        )
+
+    def process_all_page_urls(self) -> None:
+        """Traverse the frontend and make a GET request to all relevant pages
+
+        Returns:
+            None
+
+        """
+        logger.info("Traversing sitemap for URLs")
+
+        urls: Iterator[str] = self._traverse_sitemap()
+
+        for url in urls:
+            logger.info("Processing `%s`", url)
+            self.hit_frontend_page(url=url)
+
+        logger.info("Finished processing all URLs for the frontend")
+
     @classmethod
     def create_crawler_for_cache_refresh(
         cls, *, frontend_base_url: str, cdn_auth_key: str
     ) -> "FrontEndCrawler":
         return cls(frontend_base_url=frontend_base_url, cdn_auth_key=cdn_auth_key)
-
-    # Private API/headless CMS API
-
-    def get_all_page_items_from_api(self) -> list[dict]:
-        """Hits the `pages/` endpoint to list all page items in the CMS
-
-        Returns:
-            List of page items information
-
-        """
-        response: Response = self._internal_api_client.hit_pages_list_endpoint()
-        return response.json()["items"]
 
     # Frontend requests
 
@@ -110,80 +124,6 @@ class FrontEndCrawler:
         )
         logger.info("Processed `%s` for params: %s", url, params)
 
-    def process_page(self, *, page_item: dict) -> None:
-        """Hit the URL for the corresponding `page_item`
-
-        Notes:
-            Only the following page types are supported:
-            - "HomePage"
-            - "TopicPage"
-            - "CommonPage"
-            - "WhatsNewParentPage"
-            - "WhatsNewChildEntry"
-            - "MetricsDocumentationParentPage"
-            - "MetricsDocumentationChildEntry"
-
-        Args:
-            page_item: The individual page information
-                taken from the `pages/` list response
-
-        Returns:
-            None
-
-        """
-        page_type: str = page_item["type"]
-
-        match page_type:
-            case CMSPageTypes.home_page.value:
-                url = self._url_builder.build_url_for_home_page()
-            case CMSPageTypes.topic_page.value:
-                url = self._url_builder.build_url_for_topic_page(slug=page_item["slug"])
-            case CMSPageTypes.common_page.value:
-                url = self._url_builder.build_url_for_common_page(
-                    slug=page_item["slug"]
-                )
-            case CMSPageTypes.whats_new_parent_page.value:
-                url = self._url_builder.build_url_for_whats_new_parent_page()
-            case CMSPageTypes.whats_new_child_entry.value:
-                url = self._url_builder.build_url_for_whats_new_child_entry(
-                    slug=page_item["slug"]
-                )
-            case CMSPageTypes.metrics_documentation_parent_page.value:
-                url = (
-                    self._url_builder.build_url_for_metrics_documentation_parent_page()
-                )
-            case CMSPageTypes.metrics_documentation_child_entry.value:
-                url = self._url_builder.build_url_for_metrics_documentation_child_entry(
-                    slug=page_item["slug"]
-                )
-            case _:
-                # Pass over for root page objects
-                return
-
-        self.hit_frontend_page(url=url)
-
-    def process_all_pages(self) -> None:
-        """Traverse the frontend and make a GET request to all relevant pages
-
-        Returns:
-            None
-
-        """
-        logger.info("Getting all pages from Headless CMS API")
-        all_page_items: list[dict] = self.get_all_page_items_from_api()
-
-        for page_item in all_page_items:
-            self.process_page(page_item=page_item["meta"])
-
-        self._hit_ancillary_pages()
-        logger.info("Finished processing all regular pages for the frontend")
-
-    def _hit_ancillary_pages(self):
-        self.hit_frontend_page(
-            url=self._url_builder.build_url_for_feedback_confirmation_page()
-        )
-        self.hit_frontend_page(url=self._url_builder.build_url_for_sitemap())
-
     def process_geography_page_combination(
         self, geography_data: GeographyData, page: TopicPage
     ) -> None:
@@ -199,7 +139,7 @@ class FrontEndCrawler:
             None
 
         """
-        url: str = self._url_builder.build_url_for_topic_page(slug=page.slug)
+        url: str = page.full_url
         params: dict[str, str] = (
             self._url_builder.build_query_params_for_area_selector_page(
                 geography_type_name=geography_data.geography_type_name,
