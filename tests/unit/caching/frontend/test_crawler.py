@@ -283,10 +283,11 @@ class TestFrontEndCrawler:
         assert sitemap_url == f"{base_url}/sitemap.xml"
 
     @mock.patch.object(FrontEndCrawler, "_hit_sitemap_url")
-    def test_parse_sitemap(self,
-                           mocked_hit_sitemap_url: mock.MagicMock,
-                           frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-                           ):
+    def test_parse_sitemap(
+        self,
+        mocked_hit_sitemap_url: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
         """
         Given fake sitemap XML content
         When `_parse_sitemap()` is called
@@ -299,17 +300,20 @@ class TestFrontEndCrawler:
         mocked_hit_sitemap_url.return_value = mocked_response
 
         # When
-        parsed_sitemap_root = frontend_crawler_with_mocked_internal_api_client._parse_sitemap()
+        parsed_sitemap_root = (
+            frontend_crawler_with_mocked_internal_api_client._parse_sitemap()
+        )
 
         # Then
         assert parsed_sitemap_root.tag == "urlset"
         assert parsed_sitemap_root.find("url/loc").text == "https://example.com/"
 
     @mock.patch.object(FrontEndCrawler, "_parse_sitemap")
-    def test_traverse_sitemap(self,
-                              mocked_parse_sitemap: mock.MagicMock,
-                              frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-                              ):
+    def test_traverse_sitemap(
+        self,
+        mocked_parse_sitemap: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
         """
         Given a fake sitemap
         When `_traverse_sitemap()` is called
@@ -337,10 +341,15 @@ class TestFrontEndCrawler:
         mocked_parse_sitemap.return_value = parsed_sitemap
 
         # When
-        extracted_urls: Iterator[str] = frontend_crawler_with_mocked_internal_api_client._traverse_sitemap()
+        extracted_urls: Iterator[str] = (
+            frontend_crawler_with_mocked_internal_api_client._traverse_sitemap()
+        )
 
         # Then
-        expected_urls: set[str] = {"https://test.ukhsa-dashboard.data.gov.uk/", "https://test.ukhsa-dashboard.data.gov.uk/about/"}
+        expected_urls: set[str] = {
+            "https://test.ukhsa-dashboard.data.gov.uk/",
+            "https://test.ukhsa-dashboard.data.gov.uk/about/",
+        }
         assert set(extracted_urls) == expected_urls
 
     @mock.patch(f"{MODULE_PATH}.requests")
