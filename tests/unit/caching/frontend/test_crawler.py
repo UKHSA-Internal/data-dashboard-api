@@ -1,3 +1,4 @@
+from typing import Iterator
 from unittest import mock
 
 import pytest
@@ -20,34 +21,6 @@ def frontend_crawler_with_mocked_internal_api_client() -> FrontEndCrawler:
 
 
 class TestFrontEndCrawler:
-    # Private API/headless CMS API
-
-    def test_get_all_page_items_from_api(
-        self, frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler
-    ):
-        """
-        Given a mocked `InternalAPIClient`
-        When `get_all_page_items_from_api()` is called from an instance of `FrontEndCrawler`
-        Then the correct page items are returned from the response
-        """
-        # Given
-        expected_mocked_page_items = mock.Mock()
-        page_response_data = {"items": expected_mocked_page_items}
-        mocked_internal_api_client = (
-            frontend_crawler_with_mocked_internal_api_client._internal_api_client
-        )
-        mocked_internal_api_client.hit_pages_list_endpoint.return_value.json.return_value = (
-            page_response_data
-        )
-
-        # When
-        returned_page_items = (
-            frontend_crawler_with_mocked_internal_api_client.get_all_page_items_from_api()
-        )
-
-        # Then
-        assert returned_page_items == expected_mocked_page_items
-
     # Frontend requests
 
     @mock.patch(f"{MODULE_PATH}.requests")
@@ -113,377 +86,6 @@ class TestFrontEndCrawler:
         )
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_home_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type" of value "home.HomePage"
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then `_build_url_for_home_page()` is called
-        And the returned url is passed to the call to `hit_frontend_page()`
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check the request is being made to the correct URL
-        """
-        # Given
-        page_item = {"type": "home.HomePage"}
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        expected_home_page_url: str = frontend_url_builder.build_url_for_home_page()
-        spy_hit_frontend_page.assert_called_once_with(url=expected_home_page_url)
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_topic_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type" of value "topic.TopicPage"
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then `_build_url_for_topic_page()` is called
-        And the returned url is passed to the call to `hit_frontend_page()`
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check the request is being made to the correct URL
-        """
-        # Given
-        page_item = {"type": "topic.TopicPage", "slug": "fake-topic-page-slug"}
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        url_for_topic_page: str = frontend_url_builder.build_url_for_topic_page(
-            slug=page_item["slug"]
-        )
-        spy_hit_frontend_page.assert_called_once_with(url=url_for_topic_page)
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_common_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type" of value "common.CommonPage"
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then `_build_url_for_common_page()` is called
-        And the returned url is passed to the call to `hit_frontend_page()`
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check the request is being made to the correct URL
-        """
-        # Given
-        page_item = {"type": "common.CommonPage", "slug": "fake-common-page-slug"}
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        url_for_common_page: str = frontend_url_builder.build_url_for_common_page(
-            slug=page_item["slug"]
-        )
-        spy_hit_frontend_page.assert_called_once_with(url=url_for_common_page)
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_whats_new_parent_page_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type"
-            of value "whats_new.WhatsNewParentPage"
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then `_build_url_for_whats_new_parent_page()` is called
-        And the returned url is passed to the call to `hit_frontend_page()`
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check the request is being made to the correct URL
-        """
-        # Given
-        page_item = {"type": "whats_new.WhatsNewParentPage"}
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        url_for_whats_new_parent_page: str = (
-            frontend_url_builder.build_url_for_whats_new_parent_page()
-        )
-        spy_hit_frontend_page.assert_called_once_with(url=url_for_whats_new_parent_page)
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_whats_new_child_entry_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type"
-            of value "whats_new.WhatsNewChildEntry"
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then `_build_url_for_whats_new_child_entry()` is called
-        And the returned url is passed to the call to `hit_frontend_page()`
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check the request is being made to the correct URL
-        """
-        # Given
-        slug = "issue-with-vaccination-data"
-        page_item = {"type": "whats_new.WhatsNewChildEntry", "slug": slug}
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        url_for_whats_new_child_entry: str = (
-            frontend_url_builder.build_url_for_whats_new_child_entry(slug=slug)
-        )
-        spy_hit_frontend_page.assert_called_once_with(url=url_for_whats_new_child_entry)
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_metrics_documentation_parent_page_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type"
-            of value "metrics_documentation.MetricsDocumentationParentPage"
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then `build_url_for_metrics_documentation_parent_page()` is called
-        And the returned url is passed to the call to `hit_frontend_page()`
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check the request is being made to the correct URL
-        """
-        # Given
-        page_item = {"type": "metrics_documentation.MetricsDocumentationParentPage"}
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        url_for_metrics_documentation_page: str = (
-            frontend_url_builder.build_url_for_metrics_documentation_parent_page()
-        )
-        spy_hit_frontend_page.assert_called_once_with(
-            url=url_for_metrics_documentation_page
-        )
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_metrics_documentation_child_entry_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type"
-            of value "metrics_documentation.MetricsDocumentationChildEntry"
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then `build_url_for_metrics_documentation_child_entry()` is called
-        And the returned url is passed to the call to `hit_frontend_page()`
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check the request is being made to the correct URL
-        """
-        # Given
-        slug = "issue-with-vaccination-data"
-        page_item = {
-            "type": "metrics_documentation.MetricsDocumentationChildEntry",
-            "slug": slug,
-        }
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        url_for_metrics_documentation_child_entry: str = (
-            frontend_url_builder.build_url_for_metrics_documentation_child_entry(
-                slug=slug
-            )
-        )
-        spy_hit_frontend_page.assert_called_once_with(
-            url=url_for_metrics_documentation_child_entry
-        )
-
-    @pytest.mark.parametrize("page_type", ["", None, "wagtailcore.Page"])
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_page_for_any_other_page_type(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        page_type: str,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given a page item dict with a key "type" of an invalid value
-        When `process_page()` is called from an instance of `FrontEndCrawler`
-        Then the `hit_frontend_page()` call is not made
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion,
-                to check no request is made
-        """
-        # Given
-        page_item = {"type": page_type}
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_page(
-            page_item=page_item
-        )
-
-        # Then
-        spy_hit_frontend_page.assert_not_called()
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    @mock.patch.object(FrontEndCrawler, "process_page")
-    @mock.patch.object(FrontEndCrawler, "get_all_page_items_from_api")
-    def test_process_all_pages(
-        self,
-        mocked_get_all_page_items_from_api: mock.MagicMock,
-        spy_process_page: mock.MagicMock,
-        mocked_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given no input
-        When `process_all_pages()` is called from an instance of `FrontEndCrawler`
-        Then `process_page()` is called for each returned page item
-
-        Patches:
-            `mocked_get_all_page_items_from_api`: To isolate the returned page items
-            `spy_process_page`: For the main assertions
-            `mocked_hit_frontend_page:` To remove the side effects of
-                having to make a network call
-
-        """
-        # Given
-        mocked_page_items = [mock.Mock()] * 3
-        mocked_get_all_page_items_from_api.return_value = [
-            {"meta": p} for p in mocked_page_items
-        ]
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_all_pages()
-
-        # Then
-        expected_calls = [
-            mock.call(page_item=mocked_page_item)
-            for mocked_page_item in mocked_page_items
-        ]
-        spy_process_page.assert_has_calls(calls=expected_calls, any_order=True)
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_all_pages_hits_frontend_for_feedback_confirmation_page(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given no input
-        When `process_all_pages()` is called from an instance of `FrontEndCrawler`
-        Then `hit_frontend_page()` is called
-            with the URL for the feedback confirmation page
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion
-
-        """
-        # Given
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_all_pages()
-
-        # Then
-        expected_url = frontend_url_builder.build_url_for_feedback_confirmation_page()
-        spy_hit_frontend_page.assert_has_calls(
-            calls=[mock.call(url=expected_url)], any_order=True
-        )
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
-    def test_process_all_pages_hits_frontend_for_sitemap(
-        self,
-        spy_hit_frontend_page: mock.MagicMock,
-        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
-    ):
-        """
-        Given no input
-        When `process_all_pages()` is called from
-            an instance of `FrontEndCrawler`
-        Then `hit_frontend_page()` is called
-            with the URL for the sitemap
-
-        Patches:
-            `spy_hit_frontend_page`: For the main assertion
-
-        """
-        # Given
-        frontend_url_builder = (
-            frontend_crawler_with_mocked_internal_api_client._url_builder
-        )
-
-        # When
-        frontend_crawler_with_mocked_internal_api_client.process_all_pages()
-
-        # Then
-        expected_url = frontend_url_builder.build_url_for_sitemap()
-        spy_hit_frontend_page.assert_has_calls(
-            calls=[mock.call(url=expected_url)], any_order=True
-        )
-
-    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
     def test_process_geography_page_combination(
         self,
         spy_hit_frontend_page: mock.MagicMock,
@@ -501,8 +103,9 @@ class TestFrontEndCrawler:
 
         """
         # Given
-        slug = "covid-19"
-        mocked_page = mock.Mock(slug=slug)
+        full_url = f"{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/covid-19"
+        mocked_page = mock.Mock(full_url=full_url)
+
         geography_data = GeographyData(
             name="London", geography_type_name="Lower Tier Local Authority"
         )
@@ -514,13 +117,12 @@ class TestFrontEndCrawler:
         )
 
         # Then
-        expected_url = f"{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/{slug}"
         expected_params = {
             "areaType": "Lower+Tier+Local+Authority",
             "areaName": "London",
         }
         spy_hit_frontend_page.assert_called_once_with(
-            url=expected_url,
+            url=full_url,
             params=expected_params,
         )
 
@@ -596,8 +198,8 @@ class TestFrontEndCrawler:
 
         """
         # Given
-        slug = "covid-19"
-        mocked_page = mock.Mock(slug=slug)
+        full_url = f"{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/covid-19"
+        mocked_page = mock.Mock(full_url=full_url)
         geography_data = GeographyData(name="London", geography_type_name="Nation")
         mocked_hit_frontend_page.side_effect = ChunkedEncodingError
 
@@ -608,14 +210,13 @@ class TestFrontEndCrawler:
         )
 
         # Then
-        expected_url = f"{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/{slug}"
         expected_params = {
             "areaType": "Nation",
             "areaName": "London",
         }
 
         expected_log = (
-            f"`{expected_url}` with params of `{expected_params}` could not be hit"
+            f"`{full_url}` with params of `{expected_params}` could not be hit"
         )
         assert expected_log in caplog.text
 
@@ -658,3 +259,75 @@ class TestFrontEndCrawler:
         spy_process_geography_page_combinations.assert_has_calls(
             calls=expected_calls, any_order=True
         )
+
+    # Sitemap
+
+    def test_sitemap_url(
+        self,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given a base URL
+        When the `sitemap_url` property is called
+            from an instance of the `FrontEndCrawler`
+        Then the correct URL is returned
+        """
+        # Given
+        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
+
+        # When
+        sitemap_url: str = frontend_crawler_with_mocked_internal_api_client.sitemap_url
+
+        # When
+        assert sitemap_url == f"{base_url}/sitemap.xml"
+
+    @mock.patch(f"{MODULE_PATH}.requests")
+    def test_hit_sitemap_url_returns_sitemap_xml(
+        self,
+        spy_requests: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given a base URL
+        When the `_hit_sitemap_url` method is called
+            from an instance of the `FrontEndCrawler`
+        Then a GET request is made to the correct URL
+        """
+        # Given
+        base_url = frontend_crawler_with_mocked_internal_api_client._frontend_base_url
+
+        # When
+        response = frontend_crawler_with_mocked_internal_api_client._hit_sitemap_url()
+
+        # When
+        assert response == spy_requests.get.return_value
+        expected_url = f"{base_url}/sitemap.xml"
+        spy_requests.get.assert_called_once_with(url=expected_url, timeout=60)
+
+    @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
+    @mock.patch.object(FrontEndCrawler, "_traverse_sitemap")
+    def test_process_all_page_urls(
+        self,
+        mocked_traverse_sitemap: mock.MagicMock,
+        spy_hit_frontend_page: mock.MagicMock,
+        frontend_crawler_with_mocked_internal_api_client: FrontEndCrawler,
+    ):
+        """
+        Given a generator of URLs to be traversed
+        When `process_all_page_urls()` is called
+            from an instance of the `FrontEndCrawler`
+        Then the call is delegated to `hit_frontend_page()`
+            for each URL
+        """
+        # Given
+        traversed_urls: Iterator[str] = (
+            x for x in ("https://abc.com", "https://def.com", "https://ghi.com")
+        )
+        mocked_traverse_sitemap.return_value = traversed_urls
+
+        # When
+        frontend_crawler_with_mocked_internal_api_client.process_all_page_urls()
+
+        # Then
+        expected_calls = [mock.call(url=url) for url in traversed_urls]
+        spy_hit_frontend_page.assert_has_calls(calls=expected_calls)
