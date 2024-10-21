@@ -50,6 +50,7 @@ class ChartOutput:
         return "var(--font-primary), arial, sans-serif"
 
     def _add_settings_for_interactive_charts(self):
+        self._unset_width()
         self._apply_font_to_ticks()
         self._apply_x_axis_styling()
 
@@ -58,6 +59,9 @@ class ChartOutput:
         self._apply_hover_label_styling()
         self._disable_clicks_on_legend()
         self._apply_hover_template_to_all_plots()
+
+    def _unset_width(self):
+        self.figure.layout.width = None
 
     def _apply_font_to_ticks(self):
         self.figure.layout.xaxis.tickfont.update(
