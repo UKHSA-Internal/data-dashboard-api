@@ -672,7 +672,7 @@ class TestChartsInterface:
         # Given
         mocked_plots_collection = mock.MagicMock()
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
-        mocked_figure = mock.Mock()
+        mocked_figure = mock.MagicMock()
         mocked_figure.to_image.return_value = "abc"
         chart_output = ChartOutput(figure=mocked_figure, description="")
 
@@ -708,7 +708,9 @@ class TestChartsInterface:
         mocked_plots_collection = mock.MagicMock()
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
         fake_description = "abcdef"
-        chart_output = ChartOutput(figure=mock.Mock(), description=fake_description)
+        chart_output = ChartOutput(
+            figure=mock.MagicMock(), description=fake_description
+        )
 
         charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
 
