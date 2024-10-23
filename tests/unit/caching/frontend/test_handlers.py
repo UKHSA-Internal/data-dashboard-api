@@ -43,10 +43,10 @@ class TestGetFrontendBaseURL:
 
 class TestCrawlFrontEnd:
     @mock.patch.object(FrontEndCrawler, "process_all_valid_area_selector_pages")
-    @mock.patch.object(FrontEndCrawler, "process_all_pages")
+    @mock.patch.object(FrontEndCrawler, "process_all_page_urls")
     def test_delegates_call_to_frontend_crawler(
         self,
-        spy_process_all_pages: mock.MagicMock,
+        spy_process_all_page_urls: mock.MagicMock,
         spy_process_all_valid_area_selector_pages: mock.MagicMock,
         monkeypatch,
     ):
@@ -56,7 +56,7 @@ class TestCrawlFrontEnd:
         Then `process_all_pages()` is called from an instance of `FrontEndCrawler`
 
         Patches:
-            `spy_process_all_pages`: For the main assertion
+            `spy_process_all_page_urls`: For the main assertion
             `spy_process_all_valid_area_selector_pages`: For the main assertion
 
         """
@@ -68,5 +68,5 @@ class TestCrawlFrontEnd:
         crawl_front_end()
 
         # Then
-        spy_process_all_pages.assert_called_once()
+        spy_process_all_page_urls.assert_called_once()
         spy_process_all_valid_area_selector_pages.assert_called_once()

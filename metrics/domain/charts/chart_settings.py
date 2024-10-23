@@ -138,8 +138,8 @@ class ChartSettings:
         # Chart Config
         chart_config = self.get_base_chart_config()
         chart_config["showlegend"] = False
+        chart_config["margin"]["r"] = 35
         chart_config["margin"]["l"] = 25
-        chart_config["margin"]["r"] = 25
         chart_config["margin"]["pad"] = 25
 
         # x_axis config
@@ -157,6 +157,7 @@ class ChartSettings:
         chart_config["yaxis"]["ticks"] = "outside"
         chart_config["yaxis"]["tickvals"] = axis_params["y_axis_tick_values"]
         chart_config["yaxis"]["ticktext"] = axis_params["y_axis_tick_text"]
+        chart_config["yaxis"]["rangemode"] = "tozero"
         chart_config["yaxis"]["ticklen"] = 0
         chart_config["yaxis"]["tickfont"][
             "color"

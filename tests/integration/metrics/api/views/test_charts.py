@@ -112,10 +112,7 @@ class TestChartsView:
         assert response_data["last_updated"] == str(latest_date)
 
     @pytest.mark.django_db
-    def test_returns_correct_response_for_v3_age_based_chart(
-        self,
-        # core_timeseries_example: list[CoreTimeSeries],
-    ):
+    def test_returns_correct_response_for_v3_age_based_chart(self):
         """
         Given a valid payload to create an age-based chart
         When the `POST /api/charts/v3/` endpoint is hit
