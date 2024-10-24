@@ -57,7 +57,7 @@ This includes running the test suite and performing static analysis over the cod
 There are a number of steps to take before getting the environment setup for local development.
 
 1. At the time of writing you will need to ensure that 
-you have [Python version 3.12](https://www.python.org/downloads/) installed on your system.
+you have [Python version 3.12.6](https://www.python.org/downloads/) installed on your system.
 If in doubt, please check the `.python-version` file at the root level of the project. 
 This is the Python version used by the CLI tooling and the CI pipeline.
 

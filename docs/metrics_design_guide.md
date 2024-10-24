@@ -41,12 +41,11 @@ This includes:
 - Waffle charts
 - Bar charts
 
-As of June 2023, the following charts can be generated from this project:
+As of Oct 2024, the following charts can be generated from this project:
 
 - Line graphs (with shaded region)
 - Line graphs with customizable colour and type (dash/solid)
 - Simple line graphs 
-- Waffle charts
 - Bar charts
 
 ---
