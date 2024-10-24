@@ -41,6 +41,26 @@ class TestMetricsAPIInterface:
             selectable_headline_chart_types == ChartTypes.selectable_headline_choices()
         )
 
+    def test_get_simpliied_chart_type_delegates_calls_correctly(self):
+        """
+        Given an instance of the `MetricsAPIInterface`
+        When `get_simplified_chart_types()` is called from that object
+        Then the call is delegated to the correct method on the `ChartTypes` enum
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        selectable_simplified_chart_types = (
+            metrics_api_interface.get_simplified_chart_types()
+        )
+
+        # Then
+        assert (
+            selectable_simplified_chart_types
+            == ChartTypes.selectable_simplified_chart_choices()
+        )
+
     def test_get_chart_axis_choices_delegates_call_correctly(self):
         """
         Given an instance of the `MetricsAPIInterface`

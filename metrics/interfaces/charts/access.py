@@ -26,6 +26,7 @@ from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
+HEX_COLOUR_BLACK = "#0b0c0c"
 
 
 class InvalidFileFormatError(Exception):
@@ -44,11 +45,55 @@ class ChartOutput:
         self._add_settings_for_interactive_charts()
         return self.figure.to_dict()
 
+    @property
+    def _interactive_charts_font_css_var(self):
+        return "var(--font-primary), arial, sans-serif"
+
     def _add_settings_for_interactive_charts(self):
-        font_css_variable = "var(--font-primary), arial, sans-serif"
-        self.figure.layout.xaxis.tickfont.update(family=font_css_variable)
-        self.figure.layout.yaxis.tickfont.update(family=font_css_variable)
+        self._unset_width()
+        self._apply_font_to_ticks()
+        self._apply_x_axis_styling()
+
+        self._apply_autosizing()
+
+        self._apply_hover_label_styling()
+        self._disable_clicks_on_legend()
+        self._apply_hover_template_to_all_plots()
+
+    def _unset_width(self):
+        self.figure.layout.width = None
+
+    def _apply_font_to_ticks(self):
+        self.figure.layout.xaxis.tickfont.update(
+            family=self._interactive_charts_font_css_var
+        )
+        self.figure.layout.yaxis.tickfont.update(
+            family=self._interactive_charts_font_css_var
+        )
+
+    def _apply_x_axis_styling(self):
         self.figure.layout.xaxis.showline = True
+        self.figure.layout.xaxis.showspikes = False
+
+    def _apply_autosizing(self):
+        self.figure.layout.autosize = True
+
+    def _apply_hover_label_styling(self):
+        self.figure.layout.hoverlabel.bgcolor = HEX_COLOUR_BLACK
+        self.figure.layout.hoverlabel.bordercolor = HEX_COLOUR_BLACK
+        self.figure.layout.hoverlabel.font.update(
+            size=16,
+            color="white",
+            family=self._interactive_charts_font_css_var,
+        )
+
+    def _apply_hover_template_to_all_plots(self):
+        for plot in self.figure.data:
+            plot.hovertemplate = "%{y} <extra></extra>"
+
+    def _disable_clicks_on_legend(self):
+        self.figure.layout.legend.itemclick = False
+        self.figure.layout.legend.itemdoubleclick = False
 
 
 class ChartsInterface:

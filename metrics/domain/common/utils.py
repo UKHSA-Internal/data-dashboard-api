@@ -64,6 +64,18 @@ class ChartTypes(Enum):
         return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
 
     @classmethod
+    def selectable_simplified_chart_choices(cls) -> tuple[tuple[str, str], ...]:
+        """Returns chart types which are selectable from the CMS as nested tuple of 2-item tuples.
+
+        Returns:
+            Nested tuples of 2 item tuples as expected by the form blocks.
+            Examples:
+                (("line_single_simplified", "line_single_simplified"), ...)
+        """
+        selectable = (cls.line_single_simplified,)
+        return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
+
+    @classmethod
     def values(cls) -> list[str]:
         return [chart_type.value for chart_type in cls]
 

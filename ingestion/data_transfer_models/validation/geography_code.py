@@ -6,6 +6,7 @@ UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09"
 NHS_REGION_GEOGRAPHY_CODE_PREFIX = "E40"
 UKHSA_REGION_GEOGRAPHY_CODE_PREFIX = "E45"
 GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX = "E12"
+UKHSA_SUPER_REGION_PREFIX = "X2500"
 
 
 def validate_geography_code(*, geography_code: str, geography_type: str) -> str | None:
@@ -51,6 +52,10 @@ def validate_geography_code(*, geography_code: str, geography_type: str) -> str 
             )
         case enums.GeographyType.SUB_INTEGRATED_CARE_BOARD.value:
             return _validate_sub_integrated_care_board_geography_code(
+                geography_code=geography_code
+            )
+        case enums.GeographyType.UKHSA_SUPER_REGION.value:
+            return _validate_ukhsa_super_region_geography_code(
                 geography_code=geography_code
             )
 
@@ -145,6 +150,21 @@ def _validate_sub_integrated_care_board_geography_code(*, geography_code: str) -
 
     remaining_characters = geography_code[1:]
     if not remaining_characters.isalnum():
+        raise ValueError
+
+    return geography_code
+
+
+def _validate_ukhsa_super_region_geography_code(*, geography_code: str) -> str:
+    ukhsa_super_region_code_length = 6
+    if len(geography_code) != ukhsa_super_region_code_length:
+        raise ValueError
+
+    first_five_characters = geography_code[:5]
+    if first_five_characters != UKHSA_SUPER_REGION_PREFIX:
+        raise ValueError
+
+    if not geography_code[-1].isdigit():
         raise ValueError
 
     return geography_code

@@ -15,6 +15,7 @@ from cms.metrics_interface.field_choices_callables import (
     get_chart_types,
     get_colours,
     get_headline_chart_types,
+    get_simplified_chart_types,
 )
 
 DEFAULT_GEOGRAPHY = "England"
@@ -150,4 +151,17 @@ class SimplifiedChartPlotElement(BaseMetricsElement):
         required=True,
         choices=get_all_timeseries_metric_names,
         help_text=help_texts.METRIC_FIELD,
+    )
+    chart_type = blocks.ChoiceBlock(
+        required=True,
+        choices=get_simplified_chart_types,
+        default=DEFAULT_SIMPLIFIED_CHART_TYPE,
+    )
+    date_from = blocks.DateBlock(
+        required=False,
+        help_text=help_texts.DATE_FROM_FIELD,
+    )
+    date_to = blocks.DateBlock(
+        required=False,
+        help_text=help_texts.DATE_TO_FIELD,
     )

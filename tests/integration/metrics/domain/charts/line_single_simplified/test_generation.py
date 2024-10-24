@@ -45,7 +45,9 @@ class TestLineSingleSimplified:
         assert main_layout.height == chart_height
         assert main_layout.width == chart_width
 
-        assert figure.layout.margin.l == figure.layout.margin.r == 25
+        assert figure.layout.margin.l == 25
+        assert figure.layout.margin.r == 35
+        assert figure.layout.margin.pad == 25
 
         assert figure.layout.xaxis.tickvals == (
             fake_plot_data.x_axis_values[0],

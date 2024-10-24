@@ -6,6 +6,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
+    PageLinkChooserBlock,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -22,6 +23,7 @@ MAXIMUM_HEADLINES_IN_CHART_CARD_COLUMN_COUNT: int = 2
 
 MINIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 1
 MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT: int = 2
+MAXIMUM_COLUMNS_CHART_THREE_COLUMNS_COUNT: int = 3
 
 MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
@@ -40,8 +42,8 @@ class TextCard(blocks.StructBlock):
 
 
 class WHAlerts(models.TextChoices):
-    HEAT = "Heat"
-    COLD = "Cold"
+    HEAT = "heat"
+    COLD = "cold"
 
     @classmethod
     def get_alerts(cls) -> tuple[tuple[str, str]]:
@@ -92,6 +94,11 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_Y_AXIS,
     )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
+    )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
     headline_number_columns = HeadlineNumberBlockTypes(
         required=False,
@@ -108,13 +115,13 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
 
 class SimplifiedChartWithLink(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    sub_title = blocks.CharBlock(required=False, help_text=help_texts.SUB_TITLE_FIELD)
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
         label="Tag manager event ID",
     )
-    topic_page = blocks.PageChooserBlock(
+    topic_page = PageLinkChooserBlock(
         page_type="topic.TopicPage",
         required=True,
         help_text=help_texts.TOPIC_PAGE_FIELD,
@@ -160,6 +167,11 @@ class ChartCard(blocks.StructBlock):
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_Y_AXIS,
     )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
+    )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
     class Meta:
@@ -171,6 +183,11 @@ class HeadlineChartCard(ChartCard):
         required=True,
         choices=get_possible_axis_choices,
         help_text=help_texts.REQUIRED_CHART_X_AXIS,
+    )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
     )
     chart = HeadlineChartComponent(help_texts=help_texts.CHART_BLOCK_FIELD)
 
@@ -190,6 +207,17 @@ class ChartRowCard(blocks.StructBlock):
         min_num=MINIMUM_COLUMNS_CHART_COLUMNS_COUNT,
         max_num=MAXIMUM_COLUMNS_CHART_COLUMNS_COUNT,
         help_text=help_texts.CHART_CARD_ROW,
+    )
+
+    class Meta:
+        icon = "chart_row_card"
+
+
+class ChartCardSection(blocks.StructBlock):
+
+    cards = ChartRowBlockTypes(
+        min_num=MINIMUM_COLUMNS_CHART_COLUMNS_COUNT,
+        help_text=help_texts.CHART_ROW_CARD_COLUMN_WIDTH_THREE,
     )
 
     class Meta:
