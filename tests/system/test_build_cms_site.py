@@ -28,16 +28,20 @@ class TestBuildCMSSite:
         api_client = APIClient()
 
         # When
-        response = api_client.get(path="/api/pages/")
+        response = api_client.get(path="/api/pages/", data={"limit": 200})
 
         # Then
         response_data = response.data
         items = response_data["items"]
 
         expected_slugs: set[str] = {
-            "topics",
+            "respiratory-viruses",
             "covid-19",
             "influenza",
+            "other-respiratory-viruses",
+            "access-our-data",
+            "weather-health-alerts",
+            "metrics-documentation",
             "location-based-data",
             "about",
             "whats-new",
@@ -48,9 +52,13 @@ class TestBuildCMSSite:
         assert expected_slugs.issubset(created_slugs)
 
         expected_titles: set[str] = {
-            "UKHSA data dashboard",
+            "Respiratory viruses",
             "COVID-19",
             "Influenza",
+            "Other respiratory viruses",
+            "Access our Data",
+            "Weather health alerts",
+            "Metrics documentation",
             "Location based data",
             "About",
             "What's new",
@@ -120,7 +128,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         topic_page = TopicPage.objects.get(slug=slug)
-        parent_home_page = HomePage.objects.get(title="UKHSA data dashboard")
+        parent_home_page = CompositePage.objects.get(slug="respiratory-viruses")
         api_client = APIClient()
 
         # When

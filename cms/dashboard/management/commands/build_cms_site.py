@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from wagtail.models import Page, Site
 
 from cms.dashboard.management.commands import build_cms_site_helpers
-from cms.home.models import HomePage, UKHSARootPage
+from cms.home.models import UKHSARootPage
 from cms.metrics_documentation.data_migration.operations import (
     create_metrics_documentation_parent_page_and_child_entries,
 )
@@ -62,11 +62,11 @@ class Command(BaseCommand):
         covid_19_page = build_cms_site_helpers.create_topic_page(
             name="covid_19", parent_page=root_page
         )
-        build_cms_site_helpers.create_topic_page(
-            name="influenza", parent_page=home_page_dashboard
+        influenza_page = build_cms_site_helpers.create_topic_page(
+            name="influenza", parent_page=root_page
         )
-        build_cms_site_helpers.create_topic_page(
-            name="other_respiratory_viruses", parent_page=home_page_dashboard
+        other_respiratory_viruses_page = build_cms_site_helpers.create_topic_page(
+            name="other_respiratory_viruses", parent_page=root_page
         )
         build_cms_site_helpers.create_common_page(name="about", parent_page=root_page)
         build_cms_site_helpers.create_common_page(
@@ -120,9 +120,14 @@ class Command(BaseCommand):
             name="cold_health_alerts", parent_page=weather_health_alerts_page
         )
 
-        build_cms_site_helpers.create_index_page(
+        respiratory_viruses_index_page = build_cms_site_helpers.create_index_page(
             name="respiratory-viruses", parent_page=root_page
         )
+        other_respiratory_viruses_page.move(
+            target=respiratory_viruses_index_page, pos="last-child"
+        )
+        influenza_page.move(target=respiratory_viruses_index_page, pos="last-child")
+        covid_19_page.move(target=respiratory_viruses_index_page, pos="last-child")
 
         # landing page version two
         build_cms_site_helpers.create_landing_page(parent_page=root_page)
