@@ -165,6 +165,10 @@ For all other chart types, this field will be ignored.
 Note that if nothing is provided, a default of "SOLID" will be applied.
 E.g. `DASH`
 """
+SHOW_TOOLTIPS_ON_CHARTS_FIELD: str = """
+This is a switch to show tooltips on hover within the chart.
+Defaults to False.
+"""
 
 TITLE_FIELD: str = """
 The title to display for this component. 

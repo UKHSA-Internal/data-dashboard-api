@@ -94,6 +94,11 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_Y_AXIS,
     )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
+    )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
     headline_number_columns = HeadlineNumberBlockTypes(
         required=False,
@@ -162,6 +167,11 @@ class ChartCard(blocks.StructBlock):
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_Y_AXIS,
     )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
+    )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
     class Meta:
@@ -173,6 +183,11 @@ class HeadlineChartCard(ChartCard):
         required=True,
         choices=get_possible_axis_choices,
         help_text=help_texts.REQUIRED_CHART_X_AXIS,
+    )
+    show_tooltips = blocks.BooleanBlock(
+        help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
+        default=False,
+        required=False,
     )
     chart = HeadlineChartComponent(help_texts=help_texts.CHART_BLOCK_FIELD)
 
