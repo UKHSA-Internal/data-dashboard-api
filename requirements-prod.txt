@@ -60,7 +60,7 @@ platformdirs==4.3.6
 plotly==5.24.1
 pluggy==1.5.0
 pyparsing==3.2.0
-psycopg2==2.9.9
+psycopg2==2.9.10
 pyrsistent==0.20.0
 python-dateutil==2.9.0.post0
 pytz==2024.2
@@ -71,7 +71,7 @@ requests==2.32.3
 rich==13.9.2
 ruamel.yaml==0.18.6
 ruamel.yaml.clib==0.2.12
-SQLAlchemy==2.0.35
+SQLAlchemy==2.0.36
 scour==0.38.2
 setuptools==75.2.0
 simplejson==3.19.3
