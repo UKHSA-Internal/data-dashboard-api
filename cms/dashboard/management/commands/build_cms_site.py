@@ -58,11 +58,9 @@ class Command(BaseCommand):
         )
 
         # Deprecated: to be removed after migration to landing page version two.
-        home_page_dashboard: HomePage = (
-            build_cms_site_helpers.create_home_page_dashboard(parent_page=root_page)
-        )
-        build_cms_site_helpers.create_topic_page(
-            name="covid_19", parent_page=home_page_dashboard
+        build_cms_site_helpers.create_home_page_dashboard(parent_page=root_page)
+        covid_19_page = build_cms_site_helpers.create_topic_page(
+            name="covid_19", parent_page=root_page
         )
         build_cms_site_helpers.create_topic_page(
             name="influenza", parent_page=home_page_dashboard
