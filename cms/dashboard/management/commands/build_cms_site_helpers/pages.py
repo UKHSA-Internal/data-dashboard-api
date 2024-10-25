@@ -12,7 +12,7 @@ from cms.dashboard.management.commands.build_cms_site_helpers.landing_page impor
     create_landing_page_body_wih_page_links,
 )
 from cms.forms.models import FormField, FormPage
-from cms.home.models import HomePage, HomePageRelatedLink, LandingPage
+from cms.home.models import LandingPage
 from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_internal_button_snippet,
 )
