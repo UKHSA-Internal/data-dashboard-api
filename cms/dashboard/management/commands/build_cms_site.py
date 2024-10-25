@@ -57,8 +57,6 @@ class Command(BaseCommand):
             is_default_site=True,
         )
 
-        # Deprecated: to be removed after migration to landing page version two.
-        build_cms_site_helpers.create_home_page_dashboard(parent_page=root_page)
         covid_19_page = build_cms_site_helpers.create_topic_page(
             name="covid_19", parent_page=root_page
         )
