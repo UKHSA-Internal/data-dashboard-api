@@ -41,7 +41,7 @@ def _create_menu_data() -> list[dict]:
                             "heading": "",
                             "links": {
                                 "primary_link": {
-                                    "title": "Home page",
+                                    "title": "Homepage",
                                     "body": "",
                                     "page": landing_page.id,
                                     "html_url": landing_page.full_url,
