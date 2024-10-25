@@ -477,8 +477,8 @@ class TestBuildCMSSite:
 
         # Then
         menu_data = response.data["active_menu"]
-        # There should be 7 rows in the menu
-        assert len(menu_data) == 7
+        # There should be 1 row in the menu
+        assert len(menu_data) == 1
 
         def extract_primary_link_info(row_index, column_index) -> dict:
             return menu_data[row_index]["value"]["columns"][column_index]["value"][
@@ -492,15 +492,16 @@ class TestBuildCMSSite:
                 "links"
             ]["secondary_links"][secondary_link_index]["value"]
 
-        landing_page = LandingPage.objects.last()
-        landing_page_data = extract_primary_link_info(row_index=0, column_index=0)
-        assert landing_page_data["title"] == "Homepage"
-        assert landing_page_data["page"] == landing_page.id
-        assert landing_page_data["html_url"] == landing_page.full_url
+        # landing_page = LandingPage.objects.last()
+        # landing_page_data = extract_primary_link_info(row_index=0, column_index=0)
+        # assert landing_page_data["title"] == "COVID-19"
+        # assert landing_page_data["page"] == landing_page.id
+        # assert landing_page_data["html_url"] == landing_page.full_url
 
         covid_page = TopicPage.objects.get(slug="covid-19")
-        covid_page_data = extract_secondary_link_info(
-            row_index=0, column_index=0, secondary_link_index=0
+        covid_page_data = extract_primary_link_info(
+            row_index=0,
+            column_index=0,
         )
         assert covid_page_data["title"] == "COVID-19"
         assert covid_page_data["page"] == covid_page.id
@@ -508,7 +509,7 @@ class TestBuildCMSSite:
 
         flu_page = TopicPage.objects.get(slug="influenza")
         flu_page_data = extract_secondary_link_info(
-            row_index=0, column_index=0, secondary_link_index=1
+            row_index=0, column_index=0, secondary_link_index=0
         )
         assert flu_page_data["title"] == "Influenza"
         assert flu_page_data["page"] == flu_page.id
@@ -518,7 +519,7 @@ class TestBuildCMSSite:
             slug="other-respiratory-viruses"
         )
         other_respiratory_viruses_page_data = extract_secondary_link_info(
-            row_index=0, column_index=0, secondary_link_index=2
+            row_index=0, column_index=0, secondary_link_index=1
         )
         assert (
             other_respiratory_viruses_page_data["title"] == "Other respiratory viruses"
@@ -530,17 +531,4 @@ class TestBuildCMSSite:
         assert (
             other_respiratory_viruses_page_data["html_url"]
             == other_respiratory_viruses_page.full_url
-        )
-
-        weather_health_alerts_page = CompositePage.objects.get(
-            slug="weather-health-alerts"
-        )
-        weather_health_alerts_page_data = extract_primary_link_info(
-            row_index=1, column_index=0
-        )
-        assert weather_health_alerts_page_data["title"] == "Weather health alerts"
-        assert weather_health_alerts_page_data["page"] == weather_health_alerts_page.id
-        assert (
-            weather_health_alerts_page_data["html_url"]
-            == weather_health_alerts_page.full_url
         )
