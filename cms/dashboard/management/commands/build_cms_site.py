@@ -57,15 +57,80 @@ class Command(BaseCommand):
             is_default_site=True,
         )
 
-        covid_19_page = build_cms_site_helpers.create_topic_page(
-            name="covid_19", parent_page=root_page
+        self._build_common_pages(root_page=root_page)
+
+        self._build_access_our_data_section(root_page=root_page)
+        self._build_whats_new_section(root_page=root_page)
+
+        create_metrics_documentation_parent_page_and_child_entries()
+
+        self._build_weather_health_alerts_section(root_page=root_page)
+        self._respiratory_viruses_section(root_page=root_page)
+
+        build_cms_site_helpers.create_landing_page(parent_page=root_page)
+
+        build_cms_site_helpers.create_feedback_page(
+            name="feedback", parent_page=root_page
         )
-        influenza_page = build_cms_site_helpers.create_topic_page(
-            name="influenza", parent_page=root_page
+        build_cms_site_helpers.create_menu_snippet()
+
+    @classmethod
+    def _build_whats_new_section(cls, root_page: UKHSARootPage) -> None:
+        whats_new_parent_page = build_cms_site_helpers.create_whats_new_parent_page(
+            name="whats_new", parent_page=root_page
         )
-        other_respiratory_viruses_page = build_cms_site_helpers.create_topic_page(
-            name="other_respiratory_viruses", parent_page=root_page
+        build_cms_site_helpers.create_whats_new_child_entry(
+            name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
+            parent_page=whats_new_parent_page,
         )
+
+    @classmethod
+    def _build_weather_health_alerts_section(cls, root_page: UKHSARootPage) -> None:
+        weather_health_alerts_page = build_cms_site_helpers.create_composite_page(
+            name="weather_health_alerts", parent_page=root_page
+        )
+        build_cms_site_helpers.create_composite_page(
+            name="heat_health_alerts", parent_page=weather_health_alerts_page
+        )
+        build_cms_site_helpers.create_composite_page(
+            name="cold_health_alerts", parent_page=weather_health_alerts_page
+        )
+
+    @classmethod
+    def _build_access_our_data_section(cls, root_page: UKHSARootPage) -> None:
+        access_our_data_parent_page = build_cms_site_helpers.create_composite_page(
+            name="access_our_data_parent_page", parent_page=root_page
+        )
+        build_cms_site_helpers.create_composite_page(
+            name="access_our_data_getting_started",
+            parent_page=access_our_data_parent_page,
+        )
+        build_cms_site_helpers.create_composite_page(
+            name="access_our_data_data_structure",
+            parent_page=access_our_data_parent_page,
+        )
+        build_cms_site_helpers.create_bulk_downloads_page(
+            name="bulk_downloads", parent_page=root_page
+        )
+
+    @classmethod
+    def _respiratory_viruses_section(cls, root_page: UKHSARootPage) -> None:
+        respiratory_viruses_index_page = build_cms_site_helpers.create_index_page(
+            name="respiratory-viruses", parent_page=root_page
+        )
+
+        build_cms_site_helpers.create_topic_page(
+            name="covid_19", parent_page=respiratory_viruses_index_page
+        )
+        build_cms_site_helpers.create_topic_page(
+            name="influenza", parent_page=respiratory_viruses_index_page
+        )
+        build_cms_site_helpers.create_topic_page(
+            name="other_respiratory_viruses", parent_page=respiratory_viruses_index_page
+        )
+
+    @classmethod
+    def _build_common_pages(cls, root_page: UKHSARootPage) -> None:
         build_cms_site_helpers.create_common_page(name="about", parent_page=root_page)
         build_cms_site_helpers.create_common_page(
             name="location_based_data", parent_page=root_page
@@ -80,60 +145,6 @@ class Command(BaseCommand):
         build_cms_site_helpers.create_common_page(
             name="compliance", parent_page=root_page
         )
-        whats_new_parent_page = build_cms_site_helpers.create_whats_new_parent_page(
-            name="whats_new", parent_page=root_page
-        )
-
-        build_cms_site_helpers.create_bulk_downloads_page(
-            name="bulk_downloads", parent_page=root_page
-        )
-
-        # Create access our data parent and child page
-        access_our_data_parent_page = build_cms_site_helpers.create_composite_page(
-            name="access_our_data_parent_page", parent_page=root_page
-        )
-        build_cms_site_helpers.create_composite_page(
-            name="access_our_data_getting_started",
-            parent_page=access_our_data_parent_page,
-        )
-        build_cms_site_helpers.create_composite_page(
-            name="access_our_data_data_structure",
-            parent_page=access_our_data_parent_page,
-        )
-
-        build_cms_site_helpers.create_whats_new_child_entry(
-            name="whats_new_soft_launch_of_the_ukhsa_data_dashboard",
-            parent_page=whats_new_parent_page,
-        )
-
-        create_metrics_documentation_parent_page_and_child_entries()
-
-        weather_health_alerts_page = build_cms_site_helpers.create_composite_page(
-            name="weather_health_alerts", parent_page=root_page
-        )
-        build_cms_site_helpers.create_composite_page(
-            name="heat_health_alerts", parent_page=weather_health_alerts_page
-        )
-        build_cms_site_helpers.create_composite_page(
-            name="cold_health_alerts", parent_page=weather_health_alerts_page
-        )
-
-        respiratory_viruses_index_page = build_cms_site_helpers.create_index_page(
-            name="respiratory-viruses", parent_page=root_page
-        )
-        other_respiratory_viruses_page.move(
-            target=respiratory_viruses_index_page, pos="last-child"
-        )
-        influenza_page.move(target=respiratory_viruses_index_page, pos="last-child")
-        covid_19_page.move(target=respiratory_viruses_index_page, pos="last-child")
-
-        # landing page version two
-        build_cms_site_helpers.create_landing_page(parent_page=root_page)
-
-        build_cms_site_helpers.create_feedback_page(
-            name="feedback", parent_page=root_page
-        )
-        build_cms_site_helpers.create_menu_snippet()
 
     @staticmethod
     def _clear_cms() -> None:
