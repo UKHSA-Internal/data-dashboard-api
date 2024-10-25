@@ -7,7 +7,7 @@ from cms.composite.models import CompositePage
 from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
     open_example_page_response,
 )
-from cms.home.models import HomePage, UKHSARootPage
+from cms.home.models import UKHSARootPage, LandingPage
 from cms.forms.models import FormPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
@@ -56,9 +56,9 @@ class TestBuildCMSSite:
             "COVID-19",
             "Influenza",
             "Other respiratory viruses",
-            "Access our Data",
+            "Access our data",
             "Weather health alerts",
-            "Metrics documentation",
+            "Metrics Documentation",
             "Location based data",
             "About",
             "What's new",
@@ -69,50 +69,37 @@ class TestBuildCMSSite:
         assert expected_titles.issubset(created_titles)
 
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_home_page(self):
+    def test_command_builds_site_with_correct_landing_page(self):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
-        And the ID of the `respiratory-viruses` page
+        And the ID of the landing page
         When a GET request is made to `/api/pages/{}` detail endpoint
         Then the response contains the expected data
         """
         # Given
         call_command("build_cms_site")
-        home_page = HomePage.objects.get(slug="topics")
+        landing_page = LandingPage.objects.last()
         api_client = APIClient()
 
         # When
-        response = api_client.get(path=f"/api/pages/{home_page.id}/")
+        response = api_client.get(path=f"/api/pages/{landing_page.id}/")
 
         # Then
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        home_page_response_template = open_example_page_response(
-            page_name="ukhsa_data_dashboard"
+        landing_page_response_template = open_example_page_response(
+            page_name="landing_page"
         )
-        assert response_data["title"] == home_page_response_template["title"]
-        assert (
-            response_data["page_description"]
-            == home_page_response_template["page_description"]
-        )
+        assert response_data["title"] == landing_page_response_template["title"]
         assert (
             response_data["meta"]["seo_title"]
-            == home_page_response_template["meta"]["seo_title"]
+            == landing_page_response_template["meta"]["seo_title"]
         )
         assert (
             response_data["meta"]["search_description"]
-            == home_page_response_template["meta"]["search_description"]
+            == landing_page_response_template["meta"]["search_description"]
         )
-
-        # Check that the related links have been populated correctly
-        related_links_from_response = response_data["related_links"]
-        related_links_from_template = home_page_response_template["related_links"]
-
-        for index, related_link in enumerate(related_links_from_response):
-            assert related_link["title"] == related_links_from_template[index]["title"]
-            assert related_link["url"] == related_links_from_template[index]["url"]
-            assert related_link["body"] == related_links_from_template[index]["body"]
 
     @pytest.mark.django_db
     @pytest.mark.parametrize(
@@ -505,11 +492,11 @@ class TestBuildCMSSite:
                 "links"
             ]["secondary_links"][secondary_link_index]["value"]
 
-        home_page = HomePage.objects.last()
-        home_page_data = extract_primary_link_info(row_index=0, column_index=0)
-        assert home_page_data["title"] == "Homepage"
-        assert home_page_data["page"] == home_page.id
-        assert home_page_data["html_url"] == home_page.full_url
+        landing_page = LandingPage.objects.last()
+        landing_page_data = extract_primary_link_info(row_index=0, column_index=0)
+        assert landing_page_data["title"] == "Homepage"
+        assert landing_page_data["page"] == landing_page.id
+        assert landing_page_data["html_url"] == landing_page.full_url
 
         covid_page = TopicPage.objects.get(slug="covid-19")
         covid_page_data = extract_secondary_link_info(
