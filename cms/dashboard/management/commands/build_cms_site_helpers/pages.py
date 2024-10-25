@@ -48,29 +48,6 @@ def _add_page_to_parent(*, page: Page, parent_page: Page) -> None:
     page.save_revision().publish()
 
 
-# Deprecated: to be removed after version two migration.
-def create_home_page_dashboard(*, parent_page: Page) -> HomePage:
-    data = open_example_page_response(page_name="ukhsa_data_dashboard")
-
-    page = HomePage(
-        body=data["body"],
-        title=data["title"],
-        page_description=data["page_description"],
-        slug=data["meta"]["slug"],
-        seo_title=data["meta"]["seo_title"],
-        search_description=data["meta"]["search_description"],
-    )
-    _add_page_to_parent(page=page, parent_page=parent_page)
-
-    _create_related_links(
-        related_link_class=HomePageRelatedLink,
-        response_data=data,
-        page=page,
-    )
-
-    return page
-
-
 def create_landing_page(*, parent_page: Page) -> LandingPage:
     data = open_example_page_response(page_name="landing_page")
 
