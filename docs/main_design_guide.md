@@ -72,8 +72,11 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- whats_new/               # The wagtail app for what's new section of the dashboard. 
    
 |- feedback/                    # Encapsulates the feedback module, email message construction and sending functionality
-    |- serializers/             # Primarily used to validate the correct question answer pairs are in inbound requests
-    |- views/                   # The view associated with the suggestions/ API
+    |- api
+        |- serializers/             # Primarily used to validate the correct question answer pairs are in inbound requests
+        |- views/                   # The view associated with the suggestions/ API
+        |- urls.py              # Contains the handler used to construct the URLs which are then wired into django app
+    |- cms_interfaces/          # Contains the interface class to the cms/ module. Required to pull the `FormPage` model
     |- email.py                 # The functionality for creating email objects and sending them
     |- email_template.py        # Writing the body of the suggestions email
 
@@ -96,7 +99,6 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
         |- models/
             |- api_models.py    # The flat denormalized model which holds everything in the single flat table.
             |- core_models.py   # The normalized models which house a series of FK relationships.
-        |- access/              # Read-like functionality for interacting with the db (via managers ideally).
         |- managers/            # Contains files with custom queryset and model manager classes for the models.
         |- migrations/          # Contains the associated django migrations.
     |- domain/                  # Represents the business logic layer. Currently houses the charts generation module.
@@ -114,15 +116,19 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
     |- fixtures/                # The home for any fixtures/test data for the project.
     |- unit/                    # The home for all unit tests across the project.
     |- integration/             # The home for all integration tests across the project.
+    |- migrations/              # Holds tests against data migrations. Typically we test for forwards and backwards rollback flows in data migrations.
+    |- system/                  # Contains the system wide, e2e type tests
+    |- conftest.py              # Commonly used test fixtures. See the https://docs.pytest.org/en/ for more information.
 
 |- source_data/                 # Holds a number of source test files which are used to populate dev environments.
 
-|- scripts/                     # Utlity type scripts. E.g. bootstrap job.
+|- scripts/                     # Utlity type scripts. E.g. bootstrap job as well as the submodules for the uhd CLI tooling.
     
 |- manage.py                    # The main entrypoint into the Django app.
 |- Dockerfile                   # The multi-stage dockerfile for the application.
 |- Dockerfile-ingestion         # The dockerfile used for the ingestion workload, which is deployed to a serverless lambda function.
 |- pyproject.toml               # The single configuration file used for all of our dev tools.
+|- uhd.sh                       # The entrypoint to the CLI tooling. Provides standardised way of running tests, formatters etc
 
 ```
 
@@ -133,7 +139,7 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
 ## Separately deployable monolith
 
 The various backend components touch the same parts of the database. 
-As such, the codebase is at the time of writing (Jul 2023) is monolithic primarily because of:
+As such, the codebase is at the time of writing (Oct 2024) is monolithic primarily because of:
 
 a) The shared database models/other parts of code.
 b) Ease of use/development speed for our small team.

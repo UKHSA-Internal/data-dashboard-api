@@ -68,7 +68,11 @@ The `geography_code` is validated against the `geography_type` to ensure it foll
 - Upper Tier Local Authority should start with one of the following: `E06`, `E07`, `E08`, `E09`, `E10`
 - NHS Region should start with `E40`
 - UKHSA Region should start with `E45`
+- UKHSA Super-Region should start with `X25`
 - Government office region should start with `E12`
+
+Note that this is not an exhaustive list.
+See the `validate_geography_code()` function for details on the implementation of how we validate geography codes.
 
 ---
 
