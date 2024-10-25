@@ -115,19 +115,27 @@ class Command(BaseCommand):
 
     @classmethod
     def _respiratory_viruses_section(cls, root_page: UKHSARootPage) -> None:
+        covid_19_page = build_cms_site_helpers.create_topic_page(
+            name="covid_19", parent_page=root_page
+        )
+        influenza_page = build_cms_site_helpers.create_topic_page(
+            name="influenza", parent_page=root_page
+        )
+        other_respiratory_viruses_page = build_cms_site_helpers.create_topic_page(
+            name="other_respiratory_viruses", parent_page=root_page
+        )
+        # Because the index page links to these pages
+        # they need to be created first, referenced and then moved under the index page
+
         respiratory_viruses_index_page = build_cms_site_helpers.create_index_page(
             name="respiratory-viruses", parent_page=root_page
         )
 
-        build_cms_site_helpers.create_topic_page(
-            name="covid_19", parent_page=respiratory_viruses_index_page
+        other_respiratory_viruses_page.move(
+            target=respiratory_viruses_index_page, pos="last-child"
         )
-        build_cms_site_helpers.create_topic_page(
-            name="influenza", parent_page=respiratory_viruses_index_page
-        )
-        build_cms_site_helpers.create_topic_page(
-            name="other_respiratory_viruses", parent_page=respiratory_viruses_index_page
-        )
+        influenza_page.move(target=respiratory_viruses_index_page, pos="last-child")
+        covid_19_page.move(target=respiratory_viruses_index_page, pos="last-child")
 
     @classmethod
     def _build_common_pages(cls, root_page: UKHSARootPage) -> None:
