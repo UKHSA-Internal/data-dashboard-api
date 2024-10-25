@@ -1,6 +1,6 @@
 from cms.common.models import CommonPage
 from cms.composite.models import CompositePage
-from cms.home.models import HomePage
+from cms.home.models import LandingPage
 from cms.metrics_documentation.models import MetricsDocumentationParentPage
 from cms.snippets.models import Menu
 from cms.topic.models import TopicPage
@@ -16,7 +16,7 @@ def create_menu_snippet():
 
 
 def _create_menu_data() -> list[dict]:
-    homepage = HomePage.objects.first()
+    landing_page = LandingPage.objects.first()
     covid_page = TopicPage.objects.get(slug="covid-19")
     flu_page = TopicPage.objects.get(slug="influenza")
     other_respiratory_viruses_page = TopicPage.objects.get(
@@ -41,10 +41,10 @@ def _create_menu_data() -> list[dict]:
                             "heading": "",
                             "links": {
                                 "primary_link": {
-                                    "title": "Homepage",
+                                    "title": "Home page",
                                     "body": "",
-                                    "page": homepage.id,
-                                    "html_url": homepage.full_url,
+                                    "page": landing_page.id,
+                                    "html_url": landing_page.full_url,
                                 },
                                 "secondary_links": [
                                     {
