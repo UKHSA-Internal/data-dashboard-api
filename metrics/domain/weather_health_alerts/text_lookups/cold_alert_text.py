@@ -1,103 +1,91 @@
 from metrics.domain.weather_health_alerts.text_lookups import common
 
 _LEVEL_6_TEXT = """
-<p>Minor impacts are possible across the health and social care sector, 
-including:</p><ul><li>Increased use of healthcare services by the vulnerable population.</li>
-<li>Increase in risk of mortality amongst vulnerable individuals. But not expected.</li></ul>
+<p>Minor impacts are possible across health and social services, 
+including:</p><ul><li>increased use of healthcare services by vulnerable people</li>
+<li>greater risk to life of vulnerable people</li></ul>
+<p>But not expected.</p>
 """
 _LEVEL_7_TEXT = """
-<p>Minor impacts are probable across the health and social care sector, 
-including:</p><ul><li>Increased use of healthcare services by the vulnerable population.</li>
-<li>Increase in risk of mortality amongst vulnerable individuals.</li></ul>
+<p>Forecast weather is likely to have minor impacts on health and social care services, 
+including:</p><ul><li>increased use of healthcare services by vulnerable people</li>
+<li>greater risk to life of vulnerable people</li></ul>
 """
 _LEVEL_8_TEXT = """
-<p>Minor impacts are expected across the health and social care sector, 
-including:</p><ul><li>Increased use of healthcare services by the vulnerable population.</li>
-<li>Increase in risk of mortality amongst vulnerable individuals.</li></ul>
+<p>Forecast weather is expected to have minor impacts on health and social care services, 
+including:</p><ul><li>increased use of healthcare services by vulnerable people</li>
+<li>greater risk to life of vulnerable people</li></ul>
 """
 _LEVEL_9_TEXT = """
-<p>There is potential for significant impacts to be observed across the health and social care sector 
-due to forecast weather conditions, including:</p><ul><li>Observed increase in mortality across the population, 
-particularly in the 65+ age group or those with certain underlying health conditions, 
-but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote healthcare services likely.</li>
-<li>Impact on ability of services delivered due to effects on workforce possible.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li></ul>
+<p>There is potential for significant impacts across health and social care services, including:</p>
+<ul><li>a rise in deaths, particularly among those aged 65 and over or with health conditions. 
+We may also see impacts on younger age groups</li>
+<li>a likely increase in demand for health services</li>
+<li>impacts on the workforce affecting delivery of services</li>
+<li>challenges keeping indoor temperatures at the recommended 18°C leading to more risk to vulnerable people</li></ul>
 """
 _LEVEL_10_TEXT = """
-<p>Significant impacts are possible across the health and social care sector due to forecast weather conditions, 
-including:</p><ul><li>Observed increase in mortality across the population, 
-particularly in the 65+ age group or those with certain underlying health conditions, 
-but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote healthcare services likely.</li>
-<li>Impact on ability of services delivered due to effects on workforce possible.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li></ul>
+<p>Significant impacts are possible across health and social care services, 
+including:</p><ul><li>a rise in deaths, particularly among those aged 65 and over or 
+with health conditions. We may also see impacts on younger age groups</li>
+<li>increased demand for remote healthcare services</li>
+<li>impacts on the workforce affecting delivery of services</li>
+<li>challenges keeping indoor temperatures at the recommended 18°C leading to more risk to vulnerable people</li></ul>
 """
 _LEVEL_11_TEXT = """
-<p>There is potential for severe impacts to be observed across the health and social care sector 
-due to forecast weather conditions, including:</p><ul><li>Increased risk of mortality across the whole population 
-with significant mortality observed in older age groups.</li> 
-<li>Significant increased demand on all health and social care services.</li>
-<li>Impact on delivery of services due to poor weather conditions and staff access.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li>
-<li>National critical infrastructure failures – generators, power outages, gas supplies etc.</li></ul>
+<p>Forecast weather has the potential to have severe impacts across health and social care services, including:</p>
+<ul><li>increased risk to life across the whole population, with significant impacts on older people</li> 
+<li>significantly increased demand on all health and social care services</li>
+<li>impact on delivery of services due to poor weather conditions and staff access</li>
+<li>challenges keeping indoor temperatures at the recommended 18°C leading to more risk to vulnerable people</li>
+<li>national critical infrastructure failures, such as generators, power outages and gas supplies</li></ul>
 """
 _LEVEL_12_TEXT = """
-<p>Significant impacts are probable across the health and social care sector due to forecast weather conditions, 
-including:</p><ul><li>Observed increase in mortality across the population, 
-particularly in the 65+ age group or those with certain underlying health conditions, 
-but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote healthcare services likely.</li>
-<li>Internal temperatures in care settings (e.g. hospitals, care homes and primary care settings) 
-may fall below recommended threshold for clinical risk assessment.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li>
-<li>Staffing issues due to external factors (e.g. travel delays).</li>
-<li>Other sectors may start to observe impacts (e.g. transport and energy).</li></ul>
+<p>Forcast weather is likely to cause significant impacts across health and social care services, 
+including:</p><ul><li>a rise in deaths, particularly among those aged 65 and over or with 
+health conditions. We may also see impacts on younger age groups</li>
+<li>a likely increase in demand for health services</li>
+<li>temperatures inside places like hospitals, care homes, and clinics dropping below the levels 
+recommended for assessing health risks</li>
+<li>challenges keeping indoor temperatures at the recommended leading 18°C to more risk to vulnerable people</li>
+<li>staffing issues due to external factors (such as travel delays)</li>
+<li>other sectors starting to observe impacts (such as transport and energy)</li></ul>
 """
 _LEVEL_13_TEXT = """
-<p>Significant impacts are expected across the health and social care sector due to forecast weather conditions, 
-including:</p><ul><li>Observed increase in mortality across the population, 
-particularly in the 65+ age group or those with certain underlying health conditions, 
-but impacts may also be seen in younger age groups.</li>
-<li>Increased demand for remote healthcare services likely.</li>
-<li>Internal temperatures in care settings (e.g. hospitals, care homes and primary care settings) 
-may fall below recommended threshold for clinical risk assessment.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li>
-<li>Staffing issues due to external factors (e.g. travel delays).</li>
-<li>Other sectors starting to observe impacts (e.g. transport and energy).</li>
-<li>Other sectors starting to observe impacts (e.g. transport and energy).</li></ul>
+<p>Forecast weather is expected to have significant impacts across health and social care services, 
+including:</p><ul><li>a rise in deaths, particularly among those aged 65 and over 
+or with health conditions. We may also see impacts on younger age groups</li>
+<li>a likely increase in demand for health services</li>
+<li>temperatures inside places like hospitals, care homes, and clinics dropping below the levels 
+recommended for assessing health risks</li>
+<li>challenges keeping indoor temperatures at the recommended 18°C leading to more risk to vulnerable people</li>
+<li>staffing issues due to external factors (such as travel delays)</li>
+<li>other sectors starting to observe impacts (such as transport and energy)</li></ul>
 """
 _LEVEL_14_TEXT = """
-<p>Severe impacts are possible across the health and social care sector due to forecast weather conditions, 
-including:</p><ul><li>Increased risk of mortality across the whole population with significant mortality 
-observed in older age groups.</li><li>Significant increased demand on all health and social care services.</li>
-<li>Impact on delivery of services due to poor weather conditions and staff access.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li>
-<li>National critical infrastructure failures – generators, power outages, gas supplies etc.</li></ul>
+<p>Severe impacts are possible across health and social care services, 
+including:</p><ul><li>increased risk to life across the whole population, 
+with significant impacts on older people</li><li>significantly increased demand on 
+all health and social care services</li>
+<li>impact on delivery of services due to poor weather conditions and staff access</li>
+<li>challenges keeping indoor temperatures at the recommended 18°C leading to more risk to vulnerable people</li>
+<li>national critical infrastructure failures, such as generators, power outages, and gas supplies</li></ul>
 """
 _LEVEL_15_TEXT = """
-<p>Severe impacts are probable across the health and social care sector due to forecast weather conditions, 
-including:</p><ul><li>Increased risk of mortality across the whole population with significant mortality 
-observed in older age groups.</li><li>Significant increased demand on all health and social care services.</li>
-<li>Impact on delivery of services due to poor weather conditions and staff access.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li> 
-<li>National critical infrastructure failures – generators, power outages, gas supplies etc.</li></ul>
+<p>Forecast weather is likely to cause significant impacts across health and social care services, 
+including:</p><ul><li>increased risk to life across the whole population, with significant impacts on older people</li>
+<li>significantly increased demand on all health and social care services</li>
+<li>impact on delivery of services due to poor weather conditions and staff access</li>
+<li>challenges keeping indoor temperatures at the recommended 18°C leading to more risk to vulnerable people</li> 
+<li>national critical infrastructure failures, such as generators, power outages and gas supplies</li></ul>
 """
 _LEVEL_16_TEXT = """
-<p>Severe impacts are expected across the health and social care sector due to forecast weather conditions, 
-including:</p><ul><li>Increased risk of mortality across the whole population with significant mortality 
-observed in older age groups.</li><li>Significant increased demand on all health and social care services.</li>
-<li>Impact on delivery of services due to poor weather conditions and staff access.</li>
-<li>Maintaining indoor temperatures at recommended 18°c may become challenging for some, 
-leading to increased risk of vulnerable people.</li>
-<li>National critical infrastructure failures – generators, power outages, gas supplies etc.</li></ul>
+<p>Severe impacts are expected across health and social care services due to forecast weather conditions, 
+including:</p><ul><li>increased risk to life across the whole population, with significant impacts on older people
+</li><li>significantly increased demand on all health and social care services</li>
+<li>impact on delivery of services due to poor weather conditions and staff access</li>
+<li>challenges keeping indoor temperatures at the recommended 18°c leading to more risk to vulnerable people</li>
+<li>national critical infrastructure failures, such as generators, power outages and gas supplies</li></ul>
 """
 
 COLD_ALERT_TEXT_LOOKUP: dict[int, str] = {
