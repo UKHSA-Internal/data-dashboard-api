@@ -8,9 +8,28 @@ from rest_framework.templatetags.rest_framework import render_markdown
 from wagtail.admin.panels.field_panel import FieldPanel
 from wagtail.admin.panels.group import MultiFieldPanel
 from wagtail.api import APIField
+from wagtail.fields import RichTextField
 from wagtail.models import Page, SiteRootPath
 
 from cms import seo
+
+HEADING_2: str = "h2"
+HEADING_3: str = "h3"
+HEADING_4: str = "h4"
+BOLD: str = "bold"
+BULLET_POINTS: str = "ul"
+LINKS: str = "link"
+
+AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
+    HEADING_2,
+    HEADING_3,
+    HEADING_4,
+    BOLD,
+    BULLET_POINTS,
+    LINKS,
+]
+
+MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
 class UKHSAPage(Page):
@@ -24,6 +43,7 @@ class UKHSAPage(Page):
 
     """
 
+    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     seo_change_frequency = models.IntegerField(
         verbose_name="SEO change frequency",
         help_text=render_markdown(markdown_text=seo.help_texts.SEO_CHANGE_FREQUENCY),
@@ -43,10 +63,12 @@ class UKHSAPage(Page):
     )
 
     api_fields = [
+        APIField("body"),
         APIField("seo_change_frequency"),
         APIField("seo_title"),
         APIField("seo_priority"),
         APIField("last_updated_at"),
+        APIField("last_published_at"),
     ]
 
     promote_panels = [

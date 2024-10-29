@@ -5,8 +5,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Page
 from wagtail.search import index
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.whats_new.managers.child import WhatsNewChildEntryManager
 from cms.whats_new.serializers import BadgeSerializer
 

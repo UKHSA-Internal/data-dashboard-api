@@ -11,27 +11,8 @@ from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import MAXIMUM_URL_FIELD_LENGTH, UKHSAPage
 from cms.dynamic_content import help_texts
-
-HEADING_2: str = "h2"
-HEADING_3: str = "h3"
-HEADING_4: str = "h4"
-BOLD: str = "bold"
-BULLET_POINTS: str = "ul"
-LINKS: str = "link"
-
-AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
-    HEADING_2,
-    HEADING_3,
-    HEADING_4,
-    BOLD,
-    BULLET_POINTS,
-    LINKS,
-]
-
-
-MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
 class CommonPage(UKHSAPage):
@@ -60,11 +41,9 @@ class CommonPage(UKHSAPage):
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("body"),
-        APIField("last_published_at"),
         APIField("related_links_layout"),
         APIField("related_links"),
         APIField("search_description"),
-        APIField("related_links"),
     ]
 
     # Tabs to position at the top of the view

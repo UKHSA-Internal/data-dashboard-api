@@ -12,8 +12,7 @@ from wagtail.api import APIField
 from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField, FormMixin
 from wagtail.fields import RichTextField
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.forms import help_texts
 from cms.forms.managers import FormPageManager
 
