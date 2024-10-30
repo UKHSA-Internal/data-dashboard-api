@@ -123,13 +123,13 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
         {
             "type": "section",
             "value": {
-                "heading": "Weather health alerts",
+                "heading": "Weather and climate risks",
                 "page_link": weather_health_alerts_page.id,
                 "content": [
                     {
                         "type": "weather_health_alert_card",
                         "value": {
-                            "title": "weather health alerts",
+                            "title": "Heat health alerts",
                             "sub_title": "Across England",
                             "alert_type": "heat",
                         },

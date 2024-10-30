@@ -30,30 +30,35 @@ class TestTemplateCOVID19Page:
         body = template_covid_19_page.body
 
         # Then
-        assert len(body) == 5
-        cases_section = body[0]
-        deaths_section = body[1]
-        healthcare_section = body[2]
-        testing_section = body[3]
-        vaccinations_section = body[4]
+        assert len(body) == 6
+        headlines_section = body[0]
+        cases_section = body[1]
+        deaths_section = body[2]
+        healthcare_section = body[3]
+        testing_section = body[4]
+        vaccinations_section = body[5]
 
-        # Check that the 1st item is a `section` type for `Cases`
+        # Check that the 1st item is a `section` type for `Headlines`
+        assert headlines_section.block_type == "section"
+        assert headlines_section.value["heading"] == "Headlines"
+
+        # Check that the 2nd item is a `section` type for `Cases`
         assert cases_section.block_type == "section"
         assert cases_section.value["heading"] == "Cases"
 
-        # Check that the 2nd item is a `section` type for `Deaths`
+        # Check that the 3rd item is a `section` type for `Deaths`
         assert deaths_section.block_type == "section"
         assert deaths_section.value["heading"] == "Deaths"
 
-        # Check that the 3rd item is a `section` type for `Healthcare`
+        # Check that the 4th item is a `section` type for `Healthcare`
         assert healthcare_section.block_type == "section"
         assert healthcare_section.value["heading"] == "Healthcare"
 
-        # Check that the 4th item is a `section` type for `Testing`
+        # Check that the 5th item is a `section` type for `Testing`
         assert testing_section.block_type == "section"
         assert testing_section.value["heading"] == "Testing"
 
-        # Check that the 5th item is a `section` type for `Vaccinations`
+        # Check that the 6th item is a `section` type for `Vaccinations`
         assert vaccinations_section.block_type == "section"
         assert vaccinations_section.value["heading"] == "Vaccinations"
 
@@ -72,7 +77,7 @@ class TestTemplateCOVID19Page:
         body = template_covid_19_page.body
 
         # Then
-        cases_section = body[0]
+        cases_section = body[1]
         chart_row_card = cases_section.value["content"][0]
         chart_row_card_value = chart_row_card.value
 
@@ -296,6 +301,14 @@ class TestTemplateCOVID19Page:
             "COVID-19_vaccinations_autumn22_uptakeByDay",
             "COVID-19_vaccinations_spring23_dosesByDay",
             "COVID-19_vaccinations_spring23_uptakeByDay",
+            "COVID-19_headline_7DayAdmissions",
+            "COVID-19_headline_7DayAdmissionsChange",
+            "COVID-19_headline_ONSdeaths_7DayChange",
+            "COVID-19_headline_ONSdeaths_7DayTotals",
+            "COVID-19_headline_cases_7DayChange",
+            "COVID-19_headline_cases_7DayTotals",
+            "COVID-19_headline_positivity_latest",
+            "COVID-19_headline_vaccines_autumn23Uptake",
         }
         assert selected_metrics == expected_metrics
 
@@ -345,7 +358,7 @@ class TestTemplateInfluenzaPage:
 
     @staticmethod
     def _retrieve_nested_chart_block(body):
-        testing_section = body[1]
+        testing_section = body[2]
         chart_row_card = testing_section.value["content"][0]
         chart_row_card_value = chart_row_card.value
 
@@ -559,6 +572,9 @@ class TestTemplateInfluenzaPage:
         expected_metrics = {
             "influenza_healthcare_ICUHDUadmissionRateByWeek",
             "influenza_testing_positivityByWeek",
+            "influenza_headline_ICUHDUadmissionRateChange",
+            "influenza_headline_ICUHDUadmissionRateLatest",
+            "influenza_headline_positivityLatest",
         }
         assert selected_metrics == expected_metrics
 
@@ -617,5 +633,9 @@ class TestTemplateOtherRespiratoryVirusesPage:
             "hMPV_testing_positivityByWeek",
             "parainfluenza_testing_positivityByWeek",
             "rhinovirus_testing_positivityByWeek",
+            "adenovirus_headline_positivityLatest",
+            "hMPV_headline_positivityLatest",
+            "parainfluenza_headline_positivityLatest",
+            "rhinovirus_headline_positivityLatest",
         }
         assert selected_metrics == expected_metrics

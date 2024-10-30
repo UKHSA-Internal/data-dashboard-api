@@ -1,30 +1,208 @@
 {
-    "id": 5,
+    "id": 4,
     "meta": {
         "seo_title": "COVID-19 | UKHSA data dashboard",
         "search_description": "Overall summary of COVID-19 in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "https://localhost/api/pages/5/",
-        "html_url": "https://localhost/topics/covid-19/",
+        "detail_url": "https://localhost/api/pages/4/",
+        "html_url": "https://localhost/respiratory-viruses/covid-19/",
         "slug": "covid-19",
-        "show_in_menus": true,
-        "first_published_at": "2024-07-11T14:55:39.220846+01:00",
+        "show_in_menus": false,
+        "first_published_at": "2024-10-25T10:10:50.196959+01:00",
         "alias_of": null,
         "parent": {
-            "id": 4,
+            "id": 78,
             "meta": {
-                "type": "home.HomePage",
-                "detail_url": "https://localhost/api/pages/4/",
+                "type": "composite.CompositePage",
+                "detail_url": "https://localhost/api/pages/78/",
                 "html_url": null
             },
-            "title": "UKHSA data dashboard"
+            "title": "Respiratory viruses"
         }
     },
     "title": "COVID-19",
     "seo_change_frequency": 5,
     "seo_priority": "0.5",
+    "last_updated_at": "2024-10-25T14:05:39.327926+01:00",
     "page_description": "<p data-block-key=\"sud2w\">COVID-19 is a respiratory infection caused by the SARS-CoV-2 virus. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for COVID-19</a>.</p><p data-block-key=\"6nbtl\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
+        {
+            "type": "section",
+            "value": {
+                "heading": "Headlines",
+                "content": [
+                    {
+                        "type": "headline_numbers_row_card",
+                        "value": {
+                            "columns": [
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Cases",
+                                        "rows": [
+                                            {
+                                                "type": "headline_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_cases_7DayTotals",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Weekly"
+                                                },
+                                                "id": "c0e44b81-ce1e-4849-8942-80113dbfda4a"
+                                            },
+                                            {
+                                                "type": "trend_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_cases_7DayChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "7 days",
+                                                    "percentage_metric": "COVID-19_headline_cases_7DayPercentChange"
+                                                },
+                                                "id": "d61cbd89-479e-4494-9bf6-715ce18168a9"
+                                            }
+                                        ]
+                                    },
+                                    "id": "5897a989-0caf-4162-bf66-6448d67aeff3"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Deaths",
+                                        "rows": [
+                                            {
+                                                "type": "headline_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Weekly"
+                                                },
+                                                "id": "462d2334-5f89-4e58-aef0-60768a302fa2"
+                                            },
+                                            {
+                                                "type": "trend_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_ONSdeaths_7DayChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "7 days",
+                                                    "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange"
+                                                },
+                                                "id": "0fa65e06-e3eb-440d-a2db-fd9e32fd55f7"
+                                            }
+                                        ]
+                                    },
+                                    "id": "9362f06a-58ed-488a-bf7e-c1eedfdb09ff"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Healthcare",
+                                        "rows": [
+                                            {
+                                                "type": "headline_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_7DayAdmissions",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Patients admitted"
+                                                },
+                                                "id": "20b42af9-68cc-499d-832d-31991a819c31"
+                                            },
+                                            {
+                                                "type": "trend_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_7DayAdmissionsChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "7 days",
+                                                    "percentage_metric": "COVID-19_headline_7DayAdmissionsPercentChange"
+                                                },
+                                                "id": "a1a8402e-c6f8-40f4-a9de-dc6477b9bdcb"
+                                            }
+                                        ]
+                                    },
+                                    "id": "94da4b1f-ed5d-421c-9db4-00f666c8a8e7"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Vaccines",
+                                        "rows": [
+                                            {
+                                                "type": "percentage_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_vaccines_autumn23Uptake",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "75+",
+                                                    "stratum": "default",
+                                                    "body": "Spring booster uptake"
+                                                },
+                                                "id": "13878e99-2dc8-4bd5-912f-405074f11762"
+                                            }
+                                        ]
+                                    },
+                                    "id": "0806e555-91e8-4739-9391-4020484f85ae"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Testing",
+                                        "rows": [
+                                            {
+                                                "type": "percentage_number",
+                                                "value": {
+                                                    "topic": "COVID-19",
+                                                    "metric": "COVID-19_headline_positivity_latest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Virus tests positivity"
+                                                },
+                                                "id": "5d9d02e1-3f5d-45e8-9991-ad0122bb836d"
+                                            }
+                                        ]
+                                    },
+                                    "id": "34752769-ec63-4ed9-bcb0-521513df6c65"
+                                }
+                            ]
+                        },
+                        "id": "000e07aa-6799-4f50-bb0c-db2218829395"
+                    }
+                ]
+            },
+            "id": "3873a214-6c74-433b-b33b-d0998cab3b5d"
+        },
         {
             "type": "section",
             "value": {
@@ -42,6 +220,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -84,6 +263,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -118,6 +298,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "date",
                                         "y_axis": "metric",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -190,6 +371,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -224,6 +406,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -275,6 +458,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -309,6 +493,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -360,6 +545,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -394,6 +580,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -445,6 +632,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -479,6 +667,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -542,6 +731,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -576,6 +766,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -779,6 +970,7 @@
             "id": "14175b86-36fa-46ee-b0f4-b56dc0a3c70a"
         }
     ],
+    "related_links_layout": "Footer",
     "related_links": [
         {
             "id": 1,
@@ -835,7 +1027,7 @@
             "body": "<p data-block-key=\"wvdly\">Provisional counts of the number of deaths registered in England and Wales (including deaths involving COVID-19), by age, sex and region in the latest weeks for which data is available.</p>"
         }
     ],
-    "last_published_at": "2024-07-11T15:50:32.581888+01:00",
+    "last_published_at": "2024-10-25T14:05:39.327926+01:00",
     "enable_area_selector": false,
     "selected_topics": [
         "COVID-19"

@@ -38,11 +38,48 @@ def _create_menu_data() -> list[dict]:
                     {
                         "type": "column",
                         "value": {
-                            "heading": "",
+                            "heading": "Health topics",
+                            "links": {
+                                "primary_link": {
+                                    "title": "COVID-19",
+                                    "body": '<p data-block-key="o0pz4">COVID-19 respiratory infection statistics</p>',
+                                    "page": covid_page.id,
+                                    "html_url": covid_page.full_url,
+                                },
+                                "secondary_links": [
+                                    {
+                                        "type": "secondary_link",
+                                        "value": {
+                                            "title": "Influenza",
+                                            "body": '<p data-block-key="fnj00">Flu ICU and HDU admissions and other statistics</p>',
+                                            "page": flu_page.id,
+                                            "html_url": flu_page.full_url,
+                                        },
+                                        "id": "0f41af0a-c4b7-4c68-9cf7-eddd18ceecae",
+                                    },
+                                    {
+                                        "type": "secondary_link",
+                                        "value": {
+                                            "title": "Other respiratory viruses",
+                                            "body": '<p data-block-key="fnj00">Other common respiratory viruses including adenovirus, hMPV &amp; parainfluenza</p>',
+                                            "page": other_respiratory_viruses_page.id,
+                                            "html_url": other_respiratory_viruses_page.full_url,
+                                        },
+                                        "id": "acd7c46f-b871-48ae-943f-9e95656bde6e",
+                                    },
+                                ],
+                            },
+                        },
+                        "id": "2758ae51-c976-46d2-8e38-c566bf6661b6",
+                    },
+                    {
+                        "type": "column",
+                        "value": {
+                            "heading": "Services and information",
                             "links": {
                                 "primary_link": {
                                     "title": "Homepage",
-                                    "body": "",
+                                    "body": '<p data-block-key="o0pz4">The UKHSA data dashboard</p>',
                                     "page": landing_page.id,
                                     "html_url": landing_page.full_url,
                                 },
@@ -50,118 +87,48 @@ def _create_menu_data() -> list[dict]:
                                     {
                                         "type": "secondary_link",
                                         "value": {
-                                            "title": "COVID-19",
-                                            "body": "",
-                                            "page": covid_page.id,
-                                            "html_url": covid_page.full_url,
+                                            "title": "Weather health alerts",
+                                            "body": '<p data-block-key="fnj00">Weather health alerting system provided by UKHSA</p>',
+                                            "page": weather_health_alerts_page.id,
+                                            "html_url": weather_health_alerts_page.full_url,
                                         },
-                                        "id": "c14de8da-5852-41b2-80bb-aa7ea92ff9b1",
+                                        "id": "5e595a50-1ef9-48cc-9208-9d02d9ba6006",
                                     },
                                     {
                                         "type": "secondary_link",
                                         "value": {
-                                            "title": "Influenza",
-                                            "body": "",
-                                            "page": flu_page.id,
-                                            "html_url": flu_page.full_url,
+                                            "title": "About",
+                                            "body": '<p data-block-key="fnj00">About the dashboard</p>',
+                                            "page": about_page.id,
+                                            "html_url": about_page.full_url,
                                         },
-                                        "id": "ebe1dcf7-bd06-485c-bd56-6b96ed639ef8",
+                                        "id": "8409731d-c41c-4cba-8e4c-2685fbcdd9de",
                                     },
                                     {
                                         "type": "secondary_link",
                                         "value": {
-                                            "title": "Other respiratory viruses",
-                                            "body": "",
-                                            "page": other_respiratory_viruses_page.id,
-                                            "html_url": other_respiratory_viruses_page.full_url,
+                                            "title": "Metrics documentation",
+                                            "body": '<p data-block-key="fnj00">See all available metrics</p>',
+                                            "page": metrics_docs_page.id,
+                                            "html_url": metrics_docs_page.full_url,
                                         },
-                                        "id": "8f6fa7aa-8283-48ca-bb73-f8fecf059b78",
+                                        "id": "31f49d81-37fe-403b-a169-3f7c89c05db8",
+                                    },
+                                    {
+                                        "type": "secondary_link",
+                                        "value": {
+                                            "title": "Access our data",
+                                            "body": '<p data-block-key="fnj00">API developer&#x27;s guide</p>',
+                                            "page": access_our_data_page.id,
+                                            "html_url": access_our_data_page.full_url,
+                                        },
+                                        "id": "e651e6cb-5de3-412e-90d2-813d88584e44",
                                     },
                                 ],
                             },
                         },
-                        "id": "9b1ea5e1-3a8e-4600-ac19-9a94ed0de509",
-                    }
-                ]
-            },
-            "id": "7c65b301-1226-4db1-8dbd-2a2342f8b523",
-        },
-        {
-            "type": "row",
-            "value": {
-                "columns": [
-                    {
-                        "type": "column",
-                        "value": {
-                            "heading": "",
-                            "links": {
-                                "primary_link": {
-                                    "title": "Weather health alerts",
-                                    "body": "",
-                                    "page": weather_health_alerts_page.id,
-                                    "html_url": weather_health_alerts_page.full_url,
-                                },
-                                "secondary_links": [],
-                            },
-                        },
-                        "id": "17120416-69d7-4ca7-88f4-f9c4752f0933",
-                    }
-                ]
-            },
-            "id": "8fc1b945-0c7d-440d-82df-5135efcd6082",
-        },
-        {
-            "type": "row",
-            "value": {
-                "columns": [
-                    {
-                        "type": "column",
-                        "value": {
-                            "heading": "",
-                            "links": {
-                                "primary_link": {
-                                    "title": "About",
-                                    "body": "",
-                                    "page": about_page.id,
-                                    "html_url": about_page.full_url,
-                                },
-                                "secondary_links": [],
-                            },
-                        },
-                        "id": "0c3514bb-bbe3-4047-a210-1ecd3e5704df",
-                    }
-                ]
-            },
-            "id": "5919756a-b432-4b56-8531-5cd58d00c86d",
-        },
-        {
-            "type": "row",
-            "value": {
-                "columns": [
-                    {
-                        "type": "column",
-                        "value": {
-                            "heading": "",
-                            "links": {
-                                "primary_link": {
-                                    "title": "Metrics documentation",
-                                    "body": "",
-                                    "page": metrics_docs_page.id,
-                                    "html_url": metrics_docs_page.full_url,
-                                },
-                                "secondary_links": [],
-                            },
-                        },
-                        "id": "6718fbcd-1d0f-457f-ba2a-af3db223000f",
-                    }
-                ]
-            },
-            "id": "0c0e6da8-abfe-4141-9145-80c65d1cd427",
-        },
-        {
-            "type": "row",
-            "value": {
-                "columns": [
+                        "id": "f5e762e6-15c6-4058-8913-7a4e4edbff4d",
+                    },
                     {
                         "type": "column",
                         "value": {
@@ -169,65 +136,28 @@ def _create_menu_data() -> list[dict]:
                             "links": {
                                 "primary_link": {
                                     "title": "What's new",
-                                    "body": "",
+                                    "body": '<p data-block-key="o0pz4">Timeline of changes</p>',
                                     "page": whats_new_page.id,
                                     "html_url": whats_new_page.full_url,
                                 },
-                                "secondary_links": [],
+                                "secondary_links": [
+                                    {
+                                        "type": "secondary_link",
+                                        "value": {
+                                            "title": "What's coming",
+                                            "body": "",
+                                            "page": whats_coming_page.id,
+                                            "html_url": whats_coming_page.full_url,
+                                        },
+                                        "id": "110d74f3-3bb3-478a-9385-71e2600a8490",
+                                    }
+                                ],
                             },
                         },
-                        "id": "15a86699-851a-48bd-b28b-7af51ac8d771",
-                    }
+                        "id": "0816b736-312c-46ce-8b6e-98d18a0ce463",
+                    },
                 ]
             },
-            "id": "fbf95d3d-e695-488a-a588-2df83bf789a0",
-        },
-        {
-            "type": "row",
-            "value": {
-                "columns": [
-                    {
-                        "type": "column",
-                        "value": {
-                            "heading": "",
-                            "links": {
-                                "primary_link": {
-                                    "title": "What's coming",
-                                    "body": "",
-                                    "page": whats_coming_page.id,
-                                    "html_url": whats_coming_page.full_url,
-                                },
-                                "secondary_links": [],
-                            },
-                        },
-                        "id": "6feddadb-b1c7-4bbf-8f4d-cafc5e222088",
-                    }
-                ]
-            },
-            "id": "6fded286-2cfc-47c8-91d1-a60995581ec0",
-        },
-        {
-            "type": "row",
-            "value": {
-                "columns": [
-                    {
-                        "type": "column",
-                        "value": {
-                            "heading": "",
-                            "links": {
-                                "primary_link": {
-                                    "title": "Access our data",
-                                    "body": "",
-                                    "page": access_our_data_page.id,
-                                    "html_url": access_our_data_page.full_url,
-                                },
-                                "secondary_links": [],
-                            },
-                        },
-                        "id": "95565e6e-1577-4b4e-a0ec-40b8f416f219",
-                    }
-                ]
-            },
-            "id": "7c6579b2-041d-4ef7-b4ca-d4fbe9d3387e",
-        },
+            "id": "dcd6d76c-a3b3-4b44-8326-8177d609b50b",
+        }
     ]
