@@ -1,15 +1,13 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
+from wagtail.models import Page
 from wagtail.search import index
 
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
-    MAXIMUM_URL_FIELD_LENGTH,
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts

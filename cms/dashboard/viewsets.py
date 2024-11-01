@@ -48,7 +48,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         """
         return super().listing_view(request=request)
 
-    # @cache_response()
+    @cache_response()
     def detail_view(self, request: Request, pk: int) -> Response:
         """This end point returns a page from the CMS based on a Page `ID`."""
         return super().detail_view(request=request, pk=pk)
