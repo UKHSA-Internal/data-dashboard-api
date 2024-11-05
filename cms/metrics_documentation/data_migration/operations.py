@@ -88,6 +88,7 @@ def _create_metrics_documentation_parent_page():
     parent_page_data = load_metric_documentation_parent_page()
     metrics_parent = MetricsDocumentationParentPage(
         title=parent_page_data["title"],
+        date_posted=datetime.datetime.today(),
         body=parent_page_data["body"],
         show_in_menus=False,
         seo_title=parent_page_data["meta"]["seo_title"],

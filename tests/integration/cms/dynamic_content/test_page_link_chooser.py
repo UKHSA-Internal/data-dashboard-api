@@ -24,14 +24,10 @@ class TestPageChooser:
 
         mocked_url_parts.return_value = (1, url_parts[0], url_parts[1])
 
-        date_posted: datetime.datetime = timezone.make_aware(
-            value=datetime.datetime(year=2023, month=1, day=1)
-        )
         TopicPage.objects.create(
             path="abc",
             depth=1,
             title="abc",
-            date_posted=date_posted,
             live=True,
             seo_title="ABC",
         )

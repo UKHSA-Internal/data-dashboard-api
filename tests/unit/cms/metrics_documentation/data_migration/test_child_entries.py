@@ -102,7 +102,6 @@ class TestBuildEntryFromRowData:
             "title": "Fake title",
             "seo_title": "Fake title | UKHSA data dashboard",
             "search_description": "Fake page description",
-            "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
             "page_description": "Fake page description",
             "metric": "Fake_metric_name",
             "body": [],
@@ -153,7 +152,6 @@ class TestGetMetricsDefinitions:
                 "title": "Fake title",
                 "seo_title": "Fake title | UKHSA data dashboard",
                 "search_description": "Fake page description",
-                "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
                 "page_description": "Fake page description",
                 "metric": "Fake_metric_name",
                 "body": [

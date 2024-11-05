@@ -34,7 +34,6 @@ class TestCompositePage:
         "expected_api_fields",
         [
             "body",
-            "date_posted",
             "last_updated_at",
             "last_published_at",
             "related_links_layout",
@@ -65,7 +64,6 @@ class TestCompositePage:
         "expected_content_panel",
         [
             "body",
-            "date_posted",
             "title",
             "page_description",
             "show_pagination",

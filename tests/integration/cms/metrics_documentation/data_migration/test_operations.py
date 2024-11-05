@@ -39,7 +39,6 @@ class TestRemoveMetricsDocumentationChildEntries:
             depth=1,
             title="Test",
             slug="test",
-            date_posted=datetime.date.today(),
             page_description="xyz",
             metric=metric.name,
             seo_title="Test",
