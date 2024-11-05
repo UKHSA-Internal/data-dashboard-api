@@ -3,12 +3,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
-from wagtail.models import Page
 from wagtail.search import index
 
 from cms.dashboard.models import (
-    AVAILABLE_RICH_TEXT_FEATURES,
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
@@ -45,12 +42,12 @@ class MetricsDocumentationParentPage(UKHSAPage):
     )
 
     # Fields to index for searching within the CMS application
-    search_fields = Page.search_fields + [
+    search_fields = UKHSAPage.search_fields + [
         index.SearchField("body"),
     ]
 
     # Editor panels configuration
-    content_panels = Page.content_panels + [
+    content_panels = UKHSAPage.content_panels + [
         FieldPanel("body"),
         FieldPanel("show_pagination"),
         FieldPanel("pagination_size"),

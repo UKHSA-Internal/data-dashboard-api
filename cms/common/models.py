@@ -3,7 +3,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
+from wagtail.models import Orderable
 from wagtail.search import index
 
 from cms.common.managers import CommonPageManager
@@ -25,11 +25,11 @@ class CommonPage(UKHSAPage):
         choices=RelatedLinksLayoutEnum.choices(),
     )
 
-    search_fields = Page.search_fields + [
+    search_fields = UKHSAPage.search_fields + [
         index.SearchField("body"),
     ]
 
-    content_panels = Page.content_panels + [
+    content_panels = UKHSAPage.content_panels + [
         FieldPanel("body"),
     ]
 

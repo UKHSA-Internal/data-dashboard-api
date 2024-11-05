@@ -5,7 +5,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
+from wagtail.models import Orderable
 from wagtail.search import index
 
 from cms.dashboard.enums import (
@@ -51,12 +51,12 @@ class TopicPage(UKHSAPage):
     ]
 
     # Search index configuration
-    search_fields = Page.search_fields + [
+    search_fields = UKHSAPage.search_fields + [
         index.SearchField("title"),
     ]
 
     # Editor panels configuration
-    content_panels = Page.content_panels + [
+    content_panels = UKHSAPage.content_panels + [
         FieldPanel("enable_area_selector"),
         FieldPanel("page_description"),
         FieldPanel("body"),

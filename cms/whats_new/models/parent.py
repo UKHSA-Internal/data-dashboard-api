@@ -2,12 +2,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
-from wagtail.models import Page
 from wagtail.search import index
 
 from cms.dashboard.models import (
-    AVAILABLE_RICH_TEXT_FEATURES,
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
@@ -16,7 +13,6 @@ from cms.whats_new.managers.parent import WhatsNewParentPageManager
 
 class WhatsNewParentPage(UKHSAPage):
     date_posted = models.DateField(null=False)
-    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     show_pagination = models.BooleanField(
         default=True,
         help_text=help_texts.SHOW_PAGINATION_FIELD,
@@ -31,12 +27,12 @@ class WhatsNewParentPage(UKHSAPage):
     )
 
     # Fields to index for searching within the CMS application
-    search_fields = Page.search_fields + [
+    search_fields = UKHSAPage.search_fields + [
         index.SearchField("body"),
     ]
 
     # Content panels to render for editing within the CMS application
-    content_panels = Page.content_panels + [
+    content_panels = UKHSAPage.content_panels + [
         FieldPanel("date_posted"),
         FieldPanel("body"),
         FieldPanel("show_pagination"),
@@ -46,7 +42,6 @@ class WhatsNewParentPage(UKHSAPage):
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
-        APIField("body"),
         APIField("last_published_at"),
         APIField("search_description"),
         APIField("show_pagination"),
