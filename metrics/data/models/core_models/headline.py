@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.db import models
 
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
@@ -70,3 +71,23 @@ class CoreHeadline(models.Model):
 
     def __str__(self):
         return f"Core Headline Data for {self.refresh_date}, metric '{self.metric.name}', value: {self.metric_value}"
+
+
+
+class CoreHeadlineAdmin(admin.ModelAdmin):
+    list_filter = ["metric", "age", "sex"]
+    list_display = [
+        "refresh_date",
+        "metric",
+        "geography",
+        "geography__geography_type",
+        "age",
+        "sex",
+        "stratum",
+        "metric_value",
+        "period_start",
+        "period_end",
+        ]
+
+admin.site.register(CoreHeadline, CoreHeadlineAdmin)
+admin.site.disable_action("delete_selected")
