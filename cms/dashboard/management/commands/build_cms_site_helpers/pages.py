@@ -100,7 +100,6 @@ def create_index_page(*, name: str, parent_page: Page) -> CompositePage:
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        date_posted=data["meta"]["first_published_at"].split("T")[0],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 

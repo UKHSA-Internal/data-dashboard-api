@@ -35,7 +35,6 @@ MAXIMUM_URL_FIELD_LENGTH: int = 400
 
 
 class CommonPage(UKHSAPage):
-    date_posted = models.DateField()
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -50,7 +49,6 @@ class CommonPage(UKHSAPage):
     ]
 
     content_panels = Page.content_panels + [
-        FieldPanel("date_posted"),
         FieldPanel("body"),
     ]
 
@@ -61,7 +59,6 @@ class CommonPage(UKHSAPage):
 
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
-        APIField("date_posted"),
         APIField("body"),
         APIField("last_published_at"),
         APIField("related_links_layout"),
