@@ -67,7 +67,6 @@ class TestRemoveMetricsDocumentationParentPage:
             depth=3,
             title="Test",
             slug="metrics-documentation",
-            date_posted=datetime.date.today(),
             body="xyz",
             seo_title="Metrics documentation",
         )
