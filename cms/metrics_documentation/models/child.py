@@ -23,7 +23,6 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
 
 
 class MetricsDocumentationChildEntry(UKHSAPage):
-    date_posted = models.DateField(null=False)
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
     topic = models.CharField(
@@ -40,7 +39,6 @@ class MetricsDocumentationChildEntry(UKHSAPage):
 
     # Content panels to render for editing within the CMS application.
     content_panels = Page.content_panels + [
-        FieldPanel("date_posted"),
         FieldPanel("page_description"),
         FieldPanel("metric"),
         FieldPanel("body"),
@@ -49,7 +47,6 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     # Sets which fields to expose on the API.
     api_fields = UKHSAPage.api_fields + [
         APIField("title"),
-        APIField("date_posted"),
         APIField("metric"),
         APIField("topic"),
         APIField("metric_group"),
