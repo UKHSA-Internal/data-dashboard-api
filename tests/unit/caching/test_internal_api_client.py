@@ -167,7 +167,7 @@ class TestInternalAPIClient:
 
     @pytest.mark.parametrize(
         "additional_query_parameters",
-        ({"fields": "*"}, {"fields": "date_posted"}),
+        ({"fields": "*"}, {}),
     )
     def test_build_query_params(self, additional_query_parameters: dict[str, str]):
         """
