@@ -1,28 +1,27 @@
 {
-    "id": 12,
-    "meta": {
-        "seo_title": "Cookies | UKHSA data dashboard",
-        "search_description": "UKHSA data dashboard cookie policy",
-        "type": "common.CommonPage",
-        "detail_url": "http://localhost/api/pages/12/",
-        "html_url": null,
-        "slug": "cookies",
-        "show_in_menus": false,
-        "first_published_at": "2023-09-06T17:32:35.177836+01:00",
-        "alias_of": null,
-        "parent": {
-            "id": 3,
-            "meta": {
-                "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/3/",
-                "html_url": null
-            },
-            "title": "UKHSA Dashboard Root"
-        }
-    },
-    "title": "Cookies",
-    "date_posted": "2023-09-06",
-    "body": "<p data-block-key=\"v88vm\"><a href=\"/cookies/?change-settings=1\">Change settings</a></p>",
-    "last_published_at": "2023-09-06T17:32:35.177836+01:00",
-    "related_links": []
+  "id": 12,
+  "meta": {
+    "seo_title": "Cookies | UKHSA data dashboard",
+    "search_description": "UKHSA data dashboard cookie policy",
+    "type": "common.CommonPage",
+    "detail_url": "http://localhost/api/pages/12/",
+    "html_url": null,
+    "slug": "cookies",
+    "show_in_menus": false,
+    "first_published_at": "2023-09-06T17:32:35.177836+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 3,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/3/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "Cookies",
+  "body": "<p data-block-key=\"v88vm\"><a href=\"/cookies/?change-settings=1\">Change settings</a></p>",
+  "last_published_at": "2023-09-06T17:32:35.177836+01:00",
+  "related_links": []
 }

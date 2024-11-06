@@ -19,7 +19,6 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 
 
 class CompositePage(UKHSAPage):
-    date_posted = models.DateField()
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
     page_description = RichTextField(
         features=[],
@@ -51,7 +50,6 @@ class CompositePage(UKHSAPage):
     ]
 
     content_panels = Page.content_panels + [
-        FieldPanel("date_posted"),
         FieldPanel("body"),
         FieldPanel("page_description"),
         FieldPanel("show_pagination"),
@@ -65,7 +63,6 @@ class CompositePage(UKHSAPage):
 
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
-        APIField("date_posted"),
         APIField("body"),
         APIField("last_published_at"),
         APIField("related_links"),

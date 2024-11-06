@@ -11,7 +11,6 @@ class TestBlankCommonPage:
         "expected_api_field_name",
         [
             "body",
-            "date_posted",
             "last_published_at",
             "last_updated_at",
             "related_links_layout",
@@ -51,7 +50,6 @@ class TestBlankCommonPage:
         # Then
         expected_content_panel_names: set[str] = {
             "title",
-            "date_posted",
             "body",
         }
         content_panel_names: set[str] = {p.field_name for p in content_panels}

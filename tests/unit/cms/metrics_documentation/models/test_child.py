@@ -20,7 +20,6 @@ class TestMetricsDocumentationChildEntry:
         "expected_api_field",
         [
             "title",
-            "date_posted",
             "body",
             "metric",
             "metric_group",
@@ -56,7 +55,6 @@ class TestMetricsDocumentationChildEntry:
     @pytest.mark.parametrize(
         "expected_content_panel_name",
         [
-            "date_posted",
             "page_description",
             "metric",
             "body",

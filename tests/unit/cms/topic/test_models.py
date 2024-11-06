@@ -204,7 +204,6 @@ class TestTemplateCOVID19Page:
     @pytest.mark.parametrize(
         "expected_content_panel_name",
         [
-            "date_posted",
             "enable_area_selector",
             "page_description",
             "body",

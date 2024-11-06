@@ -32,7 +32,6 @@ class TopicPage(UKHSAPage):
         help_text=help_texts.PAGE_DESCRIPTION_FIELD,
     )
     body = ALLOWABLE_BODY_CONTENT
-    date_posted = models.DateField()
 
     enable_area_selector = models.BooleanField(default=False)
     related_links_layout = models.CharField(
@@ -55,7 +54,6 @@ class TopicPage(UKHSAPage):
 
     # Editor panels configuration
     content_panels = Page.content_panels + [
-        FieldPanel("date_posted"),
         FieldPanel("enable_area_selector"),
         FieldPanel("page_description"),
         FieldPanel("body"),

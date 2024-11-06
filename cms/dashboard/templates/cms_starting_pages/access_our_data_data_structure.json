@@ -1,81 +1,80 @@
 {
-    "id": 323,
-    "meta": {
-        "seo_title": "Data structure | UKHSA data dashboard",
-        "search_description": "",
+  "id": 323,
+  "meta": {
+    "seo_title": "Data structure | UKHSA data dashboard",
+    "search_description": "",
+    "type": "composite.CompositePage",
+    "detail_url": "https://d06bcac6.dev.ukhsa-dashboard.data.gov.uk/api/pages/323/",
+    "html_url": "https://d06bcac6.dev.ukhsa-dashboard.data.gov.uk/access-our-data/data-structure/",
+    "slug": "data-structure",
+    "show_in_menus": false,
+    "first_published_at": "2024-08-16T11:01:07.251908+01:00",
+    "alias_of": null,
+    "parent": {
+      "id": 261,
+      "meta": {
         "type": "composite.CompositePage",
-        "detail_url": "https://d06bcac6.dev.ukhsa-dashboard.data.gov.uk/api/pages/323/",
-        "html_url": "https://d06bcac6.dev.ukhsa-dashboard.data.gov.uk/access-our-data/data-structure/",
-        "slug": "data-structure",
-        "show_in_menus": false,
-        "first_published_at": "2024-08-16T11:01:07.251908+01:00",
-        "alias_of": null,
-        "parent": {
-            "id": 261,
-            "meta": {
-                "type": "composite.CompositePage",
-                "detail_url": "https://d06bcac6.dev.ukhsa-dashboard.data.gov.uk/api/pages/261/",
-                "html_url": null
-            },
-            "title": "Access our data"
-        }
+        "detail_url": "https://d06bcac6.dev.ukhsa-dashboard.data.gov.uk/api/pages/261/",
+        "html_url": null
+      },
+      "title": "Access our data"
+    }
+  },
+  "title": "Data structure",
+  "seo_change_frequency": 5,
+  "seo_priority": "0.5",
+  "body": [
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"05626\">The full URL is constructed as follows:</p>",
+      "id": "cc4fce85-4691-48d4-a1d0-0628cb503113"
     },
-    "title": "Data structure",
-    "seo_change_frequency": 5,
-    "seo_priority": "0.5",
-    "date_posted": "2024-08-16",
-    "body": [
-        {
-            "type": "text",
-            "value": "<p data-block-key=\"05626\">The full URL is constructed as follows:</p>",
-            "id": "cc4fce85-4691-48d4-a1d0-0628cb503113"
-        },
-        {
-            "type": "code_block",
+    {
+      "type": "code_block",
+      "value": {
+        "heading": "",
+        "content": [
+          {
+            "type": "code_snippet",
             "value": {
-                "heading": "",
-                "content": [
-                    {
-                        "type": "code_snippet",
-                        "value": {
-                            "language": "Text",
-                            "code": "GET /themes/{theme}/sub_themes/{sub_theme}/topics/{topic}/geography_types/{geography_type}/geographies/{geography}/metrics/{metric}"
-                        },
-                        "id": "6685c25d-ad94-4c5b-af5c-16451012923c"
-                    }
-                ]
+              "language": "Text",
+              "code": "GET /themes/{theme}/sub_themes/{sub_theme}/topics/{topic}/geography_types/{geography_type}/geographies/{geography}/metrics/{metric}"
             },
-            "id": "94f018da-7294-421f-a243-d543e51b79d7"
-        },
-        {
-            "type": "text",
-            "value": "<p data-block-key=\"05626\">The following path parameters are required:</p><ul><li data-block-key=\"bpnrh\"><code>theme</code> the largest overall topical subgroup of data for example <code>infectious_disease</code></li><li data-block-key=\"cc0vo\"><code>sub_theme</code> a topical subgroup associated with the parent theme. for example <code>respiratory</code></li><li data-block-key=\"1kter\"><code>topic</code> categorical subgroup associated with the selected <code>theme</code> and <code>sub_theme</code>. For example a <code>topic</code> of <code>COVID-19</code> would only be available for a <code>theme</code> of <code>infectious_disease</code> and a <code>sub_theme</code> of <code>respiratory</code></li><li data-block-key=\"f0h7o\"><code>geography_type</code> the overarching area type for the intended geography for example <code>Nation</code></li><li data-block-key=\"454c6\"><code>geography</code> the selected area under the <code>geography_type</code>. For example <code>England</code></li><li data-block-key=\"fac8f\"><code>metric</code> the type of data being selected. For example <code>COVID-19_testing_PCRcountByDay</code></li></ul><p data-block-key=\"bprcm\">Each intermediate part of the URL will provide a list of entities which are available for the cumulative selections.</p><p data-block-key=\"4gd9m\">For example, to retrieve a list of metrics which are available under the <code>COVID-19</code> dataset for the overall <code>geography</code> of <code>England</code>:</p>",
-            "id": "db968e8e-d2ce-4575-aa16-6532b79875f2"
-        },
-        {
-            "type": "code_block",
+            "id": "6685c25d-ad94-4c5b-af5c-16451012923c"
+          }
+        ]
+      },
+      "id": "94f018da-7294-421f-a243-d543e51b79d7"
+    },
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"05626\">The following path parameters are required:</p><ul><li data-block-key=\"bpnrh\"><code>theme</code> the largest overall topical subgroup of data for example <code>infectious_disease</code></li><li data-block-key=\"cc0vo\"><code>sub_theme</code> a topical subgroup associated with the parent theme. for example <code>respiratory</code></li><li data-block-key=\"1kter\"><code>topic</code> categorical subgroup associated with the selected <code>theme</code> and <code>sub_theme</code>. For example a <code>topic</code> of <code>COVID-19</code> would only be available for a <code>theme</code> of <code>infectious_disease</code> and a <code>sub_theme</code> of <code>respiratory</code></li><li data-block-key=\"f0h7o\"><code>geography_type</code> the overarching area type for the intended geography for example <code>Nation</code></li><li data-block-key=\"454c6\"><code>geography</code> the selected area under the <code>geography_type</code>. For example <code>England</code></li><li data-block-key=\"fac8f\"><code>metric</code> the type of data being selected. For example <code>COVID-19_testing_PCRcountByDay</code></li></ul><p data-block-key=\"bprcm\">Each intermediate part of the URL will provide a list of entities which are available for the cumulative selections.</p><p data-block-key=\"4gd9m\">For example, to retrieve a list of metrics which are available under the <code>COVID-19</code> dataset for the overall <code>geography</code> of <code>England</code>:</p>",
+      "id": "db968e8e-d2ce-4575-aa16-6532b79875f2"
+    },
+    {
+      "type": "code_block",
+      "value": {
+        "heading": "",
+        "content": [
+          {
+            "type": "code_snippet",
             "value": {
-                "heading": "",
-                "content": [
-                    {
-                        "type": "code_snippet",
-                        "value": {
-                            "language": "Text",
-                            "code": "GET /themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/Nation/geographies/England/metrics"
-                        },
-                        "id": "11b8470c-a76b-45c8-825a-acdee0797907"
-                    }
-                ]
+              "language": "Text",
+              "code": "GET /themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/Nation/geographies/England/metrics"
             },
-            "id": "8a0f5b5f-d374-444c-9047-e96b1011a936"
-        },
-        {
-            "type": "text",
-            "value": "<p data-block-key=\"05626\">If you are looking for data associated with a particular metric for a given <code>geography</code>, you will have to traverse the API from the beginning and make the selections by following the hierarchy to determine which entities are available for the intended selections. This is because the returned entities are relevant to the previous selections only.</p><p data-block-key=\"dinra\">For example, a selected <code>topic</code> of <code>Parainfluenza</code> will not have the same <code>geographies</code> available to it as <code>COVID-19</code>.</p><p data-block-key=\"4rr2e\">For more detailed information regarding each <code>metric</code>. Please see the <a href=\"https://ukhsa-dashboard.data.gov.uk/metrics-documentation\">metrics documentation</a>.</p>",
-            "id": "73319ea5-7ecc-4bdd-9934-6b3a7ef49fea"
-        }
-    ],
-    "last_published_at": "2024-08-16T11:01:07.251908+01:00",
-    "related_links": [],
-    "page_description": ""
+            "id": "11b8470c-a76b-45c8-825a-acdee0797907"
+          }
+        ]
+      },
+      "id": "8a0f5b5f-d374-444c-9047-e96b1011a936"
+    },
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"05626\">If you are looking for data associated with a particular metric for a given <code>geography</code>, you will have to traverse the API from the beginning and make the selections by following the hierarchy to determine which entities are available for the intended selections. This is because the returned entities are relevant to the previous selections only.</p><p data-block-key=\"dinra\">For example, a selected <code>topic</code> of <code>Parainfluenza</code> will not have the same <code>geographies</code> available to it as <code>COVID-19</code>.</p><p data-block-key=\"4rr2e\">For more detailed information regarding each <code>metric</code>. Please see the <a href=\"https://ukhsa-dashboard.data.gov.uk/metrics-documentation\">metrics documentation</a>.</p>",
+      "id": "73319ea5-7ecc-4bdd-9934-6b3a7ef49fea"
+    }
+  ],
+  "last_published_at": "2024-08-16T11:01:07.251908+01:00",
+  "related_links": [],
+  "page_description": ""
 }
