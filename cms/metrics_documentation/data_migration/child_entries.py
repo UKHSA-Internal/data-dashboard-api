@@ -1,4 +1,3 @@
-import datetime
 from pathlib import Path
 
 from openpyxl import load_workbook
@@ -44,7 +43,6 @@ def build_entry_from_row_data(*, row: tuple[str, ...]) -> dict[str, str | list[d
         "title": title,
         "seo_title": f"{title} | UKHSA data dashboard",
         "search_description": page_description,
-        "date_posted": datetime.datetime.today().strftime("%Y-%m-%d"),
         "page_description": page_description,
         "metric": metric,
         "body": build_sections(sections=sections),

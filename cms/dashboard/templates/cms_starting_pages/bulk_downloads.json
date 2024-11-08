@@ -1,37 +1,36 @@
 {
-    "id": 121,
-    "meta": {
-        "seo_title": "Bulk downloads | UKHSA data dashboard",
-        "search_description": "Download of all current chart data published on the UKHSA dashboard",
-        "type": "composite.CompositePage",
-        "detail_url": "http://localhost/api/pages/121/",
-        "html_url": null,
-        "slug": "bulk-downloads",
-        "show_in_menus": false,
-        "first_published_at": "2024-02-15T16:37:36.122035Z",
-        "alias_of": null,
-        "parent": {
-            "id": 109,
-            "meta": {
-                "type": "home.HomePage",
-                "detail_url": "http://localhost/api/pages/109/",
-                "html_url": null
-            },
-            "title": "UKHSA Dashboard Root"
-        }
+  "id": 121,
+  "meta": {
+    "seo_title": "Bulk downloads | UKHSA data dashboard",
+    "search_description": "Download of all current chart data published on the UKHSA dashboard",
+    "type": "composite.CompositePage",
+    "detail_url": "http://localhost/api/pages/121/",
+    "html_url": null,
+    "slug": "bulk-downloads",
+    "show_in_menus": false,
+    "first_published_at": "2024-02-15T16:37:36.122035Z",
+    "alias_of": null,
+    "parent": {
+      "id": 109,
+      "meta": {
+        "type": "home.HomePage",
+        "detail_url": "http://localhost/api/pages/109/",
+        "html_url": null
+      },
+      "title": "UKHSA Dashboard Root"
+    }
+  },
+  "title": "Bulk downloads",
+  "body": [
+    {
+      "type": "text",
+      "value": "<p data-block-key=\"0bwbt\">You can download all the data from the UKHSA data dashboard charts on this page by clicking the Download button. </p><p data-block-key=\"cdkfu\">This is useful if you want to analyse the data using your own tools. </p><p data-block-key=\"1e96e\">The data is available in a zip file format, which has a size of about 70 kB so it should be quick to download even on slower internet connections.</p>",
+      "id": "5064bb23-10e8-4b6a-a009-1b9e1f9fc358"
     },
-    "title": "Bulk downloads",
-    "date_posted": "2024-01-23",
-    "body": [
-        {
-            "type": "text",
-            "value": "<p data-block-key=\"0bwbt\">You can download all the data from the UKHSA data dashboard charts on this page by clicking the Download button. </p><p data-block-key=\"cdkfu\">This is useful if you want to analyse the data using your own tools. </p><p data-block-key=\"1e96e\">The data is available in a zip file format, which has a size of about 70 kB so it should be quick to download even on slower internet connections.</p>",
-            "id": "5064bb23-10e8-4b6a-a009-1b9e1f9fc358"
-        },
-        {
-            "_comment": "this object is replaced with a download button snippet during build_cms_site() operation."
-        }
-    ],
-    "last_published_at": "2024-02-15T16:38:36.189309Z",
-    "related_links": []
+    {
+      "_comment": "this object is replaced with a download button snippet during build_cms_site() operation."
+    }
+  ],
+  "last_published_at": "2024-02-15T16:38:36.189309Z",
+  "related_links": []
 }

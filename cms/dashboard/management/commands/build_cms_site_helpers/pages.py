@@ -77,7 +77,6 @@ def create_index_page(*, name: str, parent_page: Page) -> CompositePage:
         slug=data["meta"]["slug"],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
-        date_posted=data["meta"]["first_published_at"].split("T")[0],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
 
@@ -92,7 +91,6 @@ def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
         title=data["title"],
         page_description=data["page_description"],
         slug=data["meta"]["slug"],
-        date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
     )
@@ -114,7 +112,6 @@ def create_common_page(*, name: str, parent_page: Page) -> CommonPage:
         body=data["body"],
         title=data["title"],
         slug=data["meta"]["slug"],
-        date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
     )
@@ -161,7 +158,6 @@ def create_bulk_downloads_page(*, name: str, parent_page: Page) -> CompositePage
         body=composite_body,
         title=data["title"],
         slug=data["meta"]["slug"],
-        date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
     )
@@ -184,7 +180,6 @@ def create_composite_page(*, name: str, parent_page: Page) -> CompositePage:
         body=data["body"],
         title=data["title"],
         slug=data["meta"]["slug"],
-        date_posted=data["meta"]["first_published_at"].split("T")[0],
         seo_title=data["meta"]["seo_title"],
         search_description=data["meta"]["search_description"],
     )

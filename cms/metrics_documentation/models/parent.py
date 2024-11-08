@@ -33,7 +33,6 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
 
 
 class MetricsDocumentationParentPage(UKHSAPage):
-    date_posted = models.DateField(null=False)
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     related_links_layout = models.CharField(
         verbose_name="Layout",
@@ -62,7 +61,6 @@ class MetricsDocumentationParentPage(UKHSAPage):
 
     # Editor panels configuration
     content_panels = Page.content_panels + [
-        FieldPanel("date_posted"),
         FieldPanel("body"),
         FieldPanel("show_pagination"),
         FieldPanel("pagination_size"),
@@ -70,7 +68,6 @@ class MetricsDocumentationParentPage(UKHSAPage):
 
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
-        APIField("date_posted"),
         APIField("body"),
         APIField("related_links_layout"),
         APIField("related_links"),

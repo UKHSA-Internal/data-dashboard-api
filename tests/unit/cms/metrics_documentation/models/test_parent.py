@@ -20,7 +20,6 @@ class TestMetricsDocumentationParentPage:
     @pytest.mark.parametrize(
         "expected_api_field",
         [
-            "date_posted",
             "body",
             "related_links_layout",
             "related_links",
@@ -57,7 +56,6 @@ class TestMetricsDocumentationParentPage:
         "expected_content_panel_name",
         [
             "title",
-            "date_posted",
             "body",
             "show_pagination",
             "pagination_size",

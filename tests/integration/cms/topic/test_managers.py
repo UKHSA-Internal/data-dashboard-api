@@ -15,14 +15,10 @@ class TestTopicPageManager:
         Then the correct `TopicPage` record is returned
         """
         # Given
-        date_posted: datetime.datetime = timezone.make_aware(
-            value=datetime.datetime(year=2023, month=1, day=1)
-        )
         live_page = TopicPage.objects.create(
             path="abc",
             depth=1,
             title="abc",
-            date_posted=date_posted,
             live=True,
             seo_title="ABC",
         )
@@ -30,7 +26,6 @@ class TestTopicPageManager:
             path="def",
             depth=1,
             title="def",
-            date_posted=date_posted,
             live=False,
             seo_title="DEF",
         )

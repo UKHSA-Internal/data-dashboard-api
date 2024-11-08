@@ -21,7 +21,6 @@
     }
   },
   "title": "COVID-19 deaths ons by week",
-  "date_posted": "2023-12-12",
   "metric": "COVID-19_deaths_ONSRollingMean",
   "topic": "COVID-19",
   "metric_group": "deaths",
