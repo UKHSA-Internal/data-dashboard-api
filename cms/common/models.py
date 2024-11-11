@@ -16,7 +16,6 @@ from cms.dynamic_content import help_texts
 
 
 class CommonPage(UKHSAPage):
-    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -40,7 +39,6 @@ class CommonPage(UKHSAPage):
 
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
-        APIField("body"),
         APIField("related_links_layout"),
         APIField("related_links"),
         APIField("search_description"),

@@ -27,7 +27,6 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
 
 
 class MetricsDocumentationParentPage(UKHSAPage):
-    body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     show_pagination = models.BooleanField(
         default=True,
         help_text=help_texts.SHOW_PAGINATION_FIELD,

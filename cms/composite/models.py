@@ -64,7 +64,6 @@ class CompositePage(UKHSAPage):
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("body"),
-        APIField("last_published_at"),
         APIField("related_links"),
         APIField("search_description"),
         APIField("related_links_layout"),
