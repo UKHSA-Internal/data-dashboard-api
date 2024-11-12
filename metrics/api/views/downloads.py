@@ -4,7 +4,7 @@ from http import HTTPStatus
 
 from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema
-from rest_framework.renderers import CoreJSONRenderer
+from rest_framework.renderers import JSONOpenAPIRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -40,7 +40,7 @@ class DownloadsView(APIView):
     headline_serializer_class = CoreHeadlineSerializer
     permission_classes = []
 
-    renderer_classes = (CoreJSONRenderer,)
+    renderer_classes = (JSONOpenAPIRenderer,)
 
     def _get_serializer_class(
         self, queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet, metric_group: str
