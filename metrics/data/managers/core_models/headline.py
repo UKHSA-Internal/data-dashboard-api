@@ -90,6 +90,57 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
         return queryset
 
+    def filter_headlines_for_audit_list(
+        self,
+        *,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> Self:
+        """Filters for a given metric and includes records still under embargo for auditing.
+
+        Args:
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography being queried.
+                E.g. `England`
+            geography_type_name: The name of the geography
+                type being queried.
+                E.g. `Nation`
+            stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `default`, which would be used to capture all strata.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+            An ordered queryset from oldest -> newest:
+                Examples:
+                    `<CoreHeadlineQuerySet [
+                        <CoreHeadline: Core Headline Data for 2023-09-30 23:00:00+00:00,
+                         metric 'COVID-19_headline_positivity_latest',
+                         value: 99.0000>
+                        ]>`
+        """
+        queryset = self.filter(
+            metric__name=metric_name,
+        )
+        queryset = self._filter_for_any_optional_fields(
+            queryset=queryset,
+            geography_type_name=geography_type_name,
+            geography_name=geography_name,
+            geography_code=None,
+            stratum_name=stratum_name,
+            age=age,
+            sex=sex,
+        )
+        return self._newest_to_oldest(queryset=queryset)
+
     def get_headlines_released_from_embargo(
         self,
         *,

@@ -16,6 +16,9 @@ from cms.snippets.views import GlobalBannerView, MenuView
 from feedback.api.urls import construct_urlpatterns_for_feedback
 from metrics.api import enums, settings
 from metrics.api.views import (
+    AuditAPITimeSeriesViewSet,
+    AuditCoreHeadlineViewSet,
+    AuditCoreTimeseriesViewSet,
     BulkDownloadsView,
     ChartsView,
     ColdAlertViewSet,
@@ -143,6 +146,29 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}trends/v3", TrendsView.as_view()),
 ]
 
+# Audit API endpoints
+audit_api_timeseries_list = AuditAPITimeSeriesViewSet.as_view({"get": "list"})
+audit_core_timeseries_list = AuditCoreTimeseriesViewSet.as_view({"get": "list"})
+audit_api_core_headline_list = AuditCoreHeadlineViewSet.as_view({"get": "list"})
+
+audit_api_urlpatterns = [
+    path(
+        f"{API_PREFIX}audit/v1/api-timeseries/<str:metric>/<str:geography_type>/<str:geography>/<str:age>/<str:sex>/<str:stratum>",
+        audit_api_timeseries_list,
+        name="audit-api-timeseries",
+    ),
+    path(
+        f"{API_PREFIX}audit/v1/core-timeseries/<str:metric>/<str:geography_type>/<str:geography>/<str:stratum>/<str:sex>/<str:age>",
+        audit_core_timeseries_list,
+        name="audit-core-timeseries",
+    ),
+    path(
+        f"{API_PREFIX}audit/v1/core-headline/<str:metric>/<str:geography_type>/<str:geography>/<str:stratum>/<str:sex>/<str:age>",
+        audit_api_core_headline_list,
+        name="audit-core-headline",
+    ),
+]
+
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
 
 docs_urlspatterns = [
@@ -225,6 +251,8 @@ def construct_urlpatterns(
         case enums.AppMode.INGESTION.value:
             # Ingestion mode does not expose any endpoints
             return constructed_url_patterns
+        case enums.AppMode.AUDIT_API.value:
+            constructed_url_patterns += audit_api_urlpatterns
         case _:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
@@ -235,5 +263,6 @@ def construct_urlpatterns(
             constructed_url_patterns += django_admin_urlpatterns
             constructed_url_patterns += private_api_urlpatterns
             constructed_url_patterns += feedback_urlpatterns
+            constructed_url_patterns += audit_api_urlpatterns
 
     return constructed_url_patterns

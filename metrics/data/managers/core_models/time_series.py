@@ -80,6 +80,58 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return queryset
 
+    def filter_for_audit_list_view(
+        self,
+        *,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+    ) -> models.QuerySet:
+        """Filters for all records based on the provided arguments including `metric`, `geography_name` etc.
+            returns all records including those under `embargo` or `stale/duplicated` records.
+
+        Args:
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            geography_type_name: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+            stratum_name: The value of the stratum to apply additional filtering to.
+                E.g. `default`, which would be used to capture all strata.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+
+        Returns:
+            QuerySet: A date ordered queryset from oldest -> newest
+            Example:
+                `<CoreTimeSeriesQuerySet [
+                    (datetime.date(2022, 10, 10), Decimal('0.8')),
+                    (datetime.date(2022, 10, 17), Decimal('0.9'))
+                ]>`
+
+        """
+        queryset = self.filter(
+            metric__name=metric_name,
+        )
+
+        queryset = self._filter_for_any_optional_fields(
+            queryset=queryset,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+
+        return self._ascending_order(queryset=queryset, field_name="date")
+
     def query_for_data(
         self,
         *,
