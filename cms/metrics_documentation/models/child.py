@@ -3,7 +3,6 @@ import logging
 from django.db import models
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.models import Page
 from wagtail.search import index
 
 from cms.dashboard.models import UKHSAPage
@@ -32,13 +31,13 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     body = ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 
     # Fields to index for searching within the CMS application.
-    search_fields = Page.search_fields + [
+    search_fields = UKHSAPage.search_fields + [
         index.SearchField("metric"),
         index.SearchField("body"),
     ]
 
     # Content panels to render for editing within the CMS application.
-    content_panels = Page.content_panels + [
+    content_panels = UKHSAPage.content_panels + [
         FieldPanel("page_description"),
         FieldPanel("metric"),
         FieldPanel("body"),

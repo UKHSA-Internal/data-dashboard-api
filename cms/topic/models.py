@@ -5,15 +5,18 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
+from wagtail.models import Orderable
 from wagtail.search import index
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import (
+    AVAILABLE_RICH_TEXT_FEATURES,
+    MAXIMUM_URL_FIELD_LENGTH,
+    UKHSAPage,
+)
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
@@ -48,12 +51,12 @@ class TopicPage(UKHSAPage):
     ]
 
     # Search index configuration
-    search_fields = Page.search_fields + [
+    search_fields = UKHSAPage.search_fields + [
         index.SearchField("title"),
     ]
 
     # Editor panels configuration
-    content_panels = Page.content_panels + [
+    content_panels = UKHSAPage.content_panels + [
         FieldPanel("enable_area_selector"),
         FieldPanel("page_description"),
         FieldPanel("body"),

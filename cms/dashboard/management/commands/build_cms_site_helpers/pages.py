@@ -18,7 +18,6 @@ from cms.snippets.data_migrations.operations import (
 )
 from cms.topic.models import TopicPage, TopicPageRelatedLink
 from cms.whats_new.models import Badge, WhatsNewChildEntry, WhatsNewParentPage
-from cms.whats_new.models.parent import WhatsNewParentPageRelatedLink
 from metrics.api.settings import ROOT_LEVEL_BASE_DIR
 
 logger = logging.getLogger(__name__)
@@ -230,12 +229,6 @@ def create_whats_new_parent_page(*, name: str, parent_page: Page) -> WhatsNewPar
         search_description=data["meta"]["search_description"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
-
-    _create_related_links(
-        related_link_class=WhatsNewParentPageRelatedLink,
-        response_data=data,
-        page=page,
-    )
 
     return page
 

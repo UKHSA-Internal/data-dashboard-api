@@ -242,15 +242,6 @@ class TestBuildCMSSite:
         assert response_data["meta"]["parent"]["id"] == parent_home_page.id
         assert response_data["meta"]["parent"]["title"] == parent_home_page.title
 
-        # Check that the related links have been populated correctly
-        related_links_from_response = response_data["related_links"]
-        related_links_from_template = whats_new_page_template["related_links"]
-
-        for index, related_link in enumerate(related_links_from_response):
-            assert related_link["title"] == related_links_from_template[index]["title"]
-            assert related_link["url"] == related_links_from_template[index]["url"]
-            assert related_link["body"] == related_links_from_template[index]["body"]
-
     @pytest.mark.django_db
     def test_command_builds_bulk_download_page(self):
         """

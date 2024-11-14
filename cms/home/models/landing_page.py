@@ -1,17 +1,9 @@
 from django.db import models
-from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
+from wagtail.models import Page
 
-from cms.common.models import MAXIMUM_URL_FIELD_LENGTH
-from cms.dashboard.enums import (
-    DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
-    RelatedLinksLayoutEnum,
-)
 from cms.dashboard.models import UKHSAPage
-from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_SECTION_LINK
 from cms.home.managers import LandingPageManager
 
@@ -21,27 +13,13 @@ class LandingPage(UKHSAPage):
     max_count = 1
     sub_title = models.CharField(max_length=255)
     body = ALLOWABLE_BODY_CONTENT_SECTION_LINK
-    related_links_layout = models.CharField(
-        verbose_name="Layout",
-        help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
-        default=RelatedLinksLayoutEnum.Footer.value,
-        max_length=DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
-        choices=RelatedLinksLayoutEnum.choices(),
-    )
 
     content_panels = Page.content_panels + [FieldPanel("sub_title"), FieldPanel("body")]
-
-    sidebar_content_panels = [
-        FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
-    ]
 
     api_fields = UKHSAPage.api_fields + [
         APIField("title"),
         APIField("sub_title"),
         APIField("body"),
-        APIField("related_links_layout"),
-        APIField("related_links"),
         APIField("search_description"),
         APIField("last_published_at"),
     ]
@@ -49,7 +27,6 @@ class LandingPage(UKHSAPage):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(sidebar_content_panels, heading="Related Links"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -92,26 +69,3 @@ class LandingPage(UKHSAPage):
         site_id, root_url, page_path = super().get_url_parts(request=request)
         page_path = ""
         return site_id, root_url, page_path
-
-
-class LandingPageRelatedLink(Orderable):
-    page = ParentalKey(
-        LandingPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
-    )
-    title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
-    body = RichTextField(features=[])
-
-    # Sets which panels to show on the editing view
-    panels = [
-        FieldPanel("title"),
-        FieldPanel("url"),
-        FieldPanel("body"),
-    ]
-
-    # Sets which fields to expose on the API
-    api_fields = [
-        APIField("title"),
-        APIField("url"),
-        APIField("body"),
-    ]
