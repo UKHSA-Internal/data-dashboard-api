@@ -41,7 +41,7 @@ _LEVEL_11_TEXT = """
 <li>national critical infrastructure failures, such as generators, power outages and gas supplies</li></ul>
 """
 _LEVEL_12_TEXT = """
-<p>Forcast weather is likely to cause significant impacts across health and social care services, 
+<p>Forecast weather is likely to cause significant impacts across health and social care services, 
 including:</p><ul><li>a rise in deaths, particularly among those aged 65 and over or with 
 health conditions. We may also see impacts on younger age groups</li>
 <li>a likely increase in demand for health services</li>
