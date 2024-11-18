@@ -101,7 +101,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         try:
             return next(topic for topic in topics if extracted_topic == topic.lower())
         except StopIteration as error:
-            logging.info(
+            logger.info(
                 "StopIteration Error: extracted topic not present in the topics list. %s",
                 extracted_topic,
             )
