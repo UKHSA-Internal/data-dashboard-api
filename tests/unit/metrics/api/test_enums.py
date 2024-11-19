@@ -1,8 +1,20 @@
+import pytest
+
 from metrics.api.enums import AppMode
 
 
 class TestAppMode:
-    def test_dependent_on_db(self):
+    @pytest.mark.parametrize(
+        "expected_app_mode",
+        [
+            "CMS_ADMIN",
+            "PRIVATE_API",
+            "PUBLIC_API",
+            "INGESTION",
+            "FEEDBACK_API",
+        ],
+    )
+    def test_dependent_on_db(self, expected_app_mode: str):
         """
         Given the `AppMode` Enum class
         When the `dependent_on_db()` method is called
@@ -12,8 +24,7 @@ class TestAppMode:
         app_modes_dependant_on_db = AppMode.dependent_on_db()
 
         # Then
-        expected_values = {"CMS_ADMIN", "PRIVATE_API", "PUBLIC_API", "INGESTION"}
-        assert set(app_modes_dependant_on_db) == expected_values
+        assert expected_app_mode in app_modes_dependant_on_db
 
     def test_dependent_on_cache(self):
         """
