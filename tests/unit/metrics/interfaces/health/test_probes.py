@@ -73,7 +73,7 @@ class TestHealthProbeManagement:
             [enums.AppMode.PUBLIC_API.value, 1, 0],
             [enums.AppMode.CMS_ADMIN.value, 1, 0],
             [enums.AppMode.INGESTION.value, 1, 0],
-            [enums.AppMode.FEEDBACK_API.value, 0, 0],
+            [enums.AppMode.FEEDBACK_API.value, 1, 0],
         ),
     )
     def test_perform_health_pings_dependant_services_according_to_app_mode(
@@ -127,14 +127,9 @@ class TestHealthProbeManagement:
             # The `INGESTION` only needs the db, the cache is irrelevant
             [enums.AppMode.INGESTION.value, None, None],
             [enums.AppMode.INGESTION.value, None, HealthProbeForCacheFailedError],
-            # The `FEEDBACK_API` does not need the db or the cache
+            # The `FEEDBACK_API` only needs the db, the cache is irrelevant
             [enums.AppMode.FEEDBACK_API.value, None, None],
             [enums.AppMode.FEEDBACK_API.value, None, HealthProbeForCacheFailedError],
-            [
-                enums.AppMode.FEEDBACK_API.value,
-                HealthProbeForCacheFailedError,
-                HealthProbeForCacheFailedError,
-            ],
         ),
     )
     def test_returns_true_if_relevant_probes_are_healthy_for_selected_app_mode(
