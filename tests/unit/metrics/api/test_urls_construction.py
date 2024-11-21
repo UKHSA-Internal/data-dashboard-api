@@ -26,7 +26,7 @@ PRIVATE_API_ENDPOINT_PATHS = [
     "api/geographies/v2/",
 ]
 
-FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v1"]
+FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v1", "api/suggestions/v2"]
 
 PUBLIC_API_ENDPOINT_PATHS = [
     "themes/<str:theme>/",

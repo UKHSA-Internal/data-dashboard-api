@@ -1,7 +1,7 @@
 from django.db import models
 from wagtail import blocks
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
+from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,

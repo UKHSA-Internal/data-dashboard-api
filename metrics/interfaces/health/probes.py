@@ -40,7 +40,7 @@ class HealthProbeManagement:
             | PUBLIC_API   |   Yes    |     No      |
             | CMS_ADMIN    |   Yes    |     No      |
             | INGESTION    |   Yes    |     No      |
-            | FEEDBACK_API |    No    |     No      |
+            | FEEDBACK_API |   Yes    |     No      |
 
         Returns:
             True if all the dependencies are healthy.

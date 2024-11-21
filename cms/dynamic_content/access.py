@@ -1,7 +1,7 @@
 from wagtail.blocks import RichTextBlock
 from wagtail.fields import StreamField
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES
+from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import blocks, help_texts, sections
 
 AVAILABLE_RICH_TEXT_FEATURES_COMPOSITE = AVAILABLE_RICH_TEXT_FEATURES[:]

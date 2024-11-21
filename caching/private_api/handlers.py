@@ -41,7 +41,7 @@ def crawl_all_pages(
 
     """
     start: float = default_timer()
-    logging.info("Commencing refresh of cache")
+    logger.info("Commencing refresh of cache")
 
     all_pages: ALL_PAGE_TYPES = collect_all_pages()
     private_api_crawler.process_pages(pages=all_pages)
@@ -50,7 +50,7 @@ def crawl_all_pages(
     area_selector_orchestrator.process_pages(pages=topic_pages)
 
     duration: float = default_timer() - start
-    logging.info("Finished refreshing of cache in %s seconds", round(duration, 2))
+    logger.info("Finished refreshing of cache in %s seconds", round(duration, 2))
 
 
 def check_cache_for_all_pages() -> None:

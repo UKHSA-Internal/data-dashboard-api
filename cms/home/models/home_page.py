@@ -5,12 +5,15 @@ from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable, Page
 
-from cms.common.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH
 from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import (
+    AVAILABLE_RICH_TEXT_FEATURES,
+    MAXIMUM_URL_FIELD_LENGTH,
+    UKHSAPage,
+)
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.home.managers import HomePageManager

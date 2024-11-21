@@ -4,7 +4,7 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
+from wagtail.models import Orderable
 from wagtail.search import index
 
 from cms.common.models import MAXIMUM_URL_FIELD_LENGTH
@@ -45,11 +45,11 @@ class CompositePage(UKHSAPage):
         ],
     )
 
-    search_fields = Page.search_fields + [
+    search_fields = UKHSAPage.search_fields + [
         index.SearchField("body"),
     ]
 
-    content_panels = Page.content_panels + [
+    content_panels = UKHSAPage.content_panels + [
         FieldPanel("body"),
         FieldPanel("page_description"),
         FieldPanel("show_pagination"),
@@ -64,7 +64,6 @@ class CompositePage(UKHSAPage):
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("body"),
-        APIField("last_published_at"),
         APIField("related_links"),
         APIField("search_description"),
         APIField("related_links_layout"),
