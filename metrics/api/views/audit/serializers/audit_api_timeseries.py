@@ -2,6 +2,7 @@ from datetime import datetime
 
 from rest_framework import serializers
 
+from metrics.api.views.audit.shared import EXPECTED_TIMESTAMP_FORMAT
 from metrics.data.models.api_models import APITimeSeries
 
 
@@ -20,9 +21,9 @@ class AuditAPITimeSeriesSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     @classmethod
-    def get_refresh_date(cls, obj) -> str:
-        return datetime.strftime(obj.refresh_date, "%Y-%m-%d %H:%M:%S")
+    def get_refresh_date(cls, obj: APITimeSeries) -> str:
+        return datetime.strftime(obj.refresh_date, EXPECTED_TIMESTAMP_FORMAT)
 
     @classmethod
-    def get_embargo(cls, obj) -> str:
-        return datetime.strftime(obj.embargo, "%Y-%m-%d %H:%M:%S")
+    def get_embargo(cls, obj: APITimeSeries) -> str:
+        return datetime.strftime(obj.embargo, EXPECTED_TIMESTAMP_FORMAT)
