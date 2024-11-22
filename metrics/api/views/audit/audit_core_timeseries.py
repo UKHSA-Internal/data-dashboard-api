@@ -63,7 +63,7 @@ class AuditCoreTimeseriesViewSet(viewsets.ReadOnlyModelViewSet):
 
     *<topic>* *<metric group>* *<description>*
 
-    A valid metric name for this endpoint should **NOT** include `Headline` as the metric group part of the name.
+    A valid metric name for this endpoint should **NOT** include `headline` as the metric group part of the name.
 
     """
 

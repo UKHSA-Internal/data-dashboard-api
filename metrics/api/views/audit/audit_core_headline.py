@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets
 
-from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
+from metrics.data.managers.core_models.headline import CoreHeadlineQuerySet
 from metrics.data.models.core_models.headline import CoreHeadline
 
 from .serializers import AuditCoreHeadlineSerializer
@@ -62,7 +62,7 @@ class AuditCoreHeadlineViewSet(viewsets.ReadOnlyModelViewSet):
 
     *<topic>* *<metric group>* *<description>*
 
-    A valid metric name for this endpoint should include `Headline` as the metric group part of the name.
+    A valid metric name for this endpoint should include `headline` as the metric group part of the name.
 
     """
 
@@ -72,7 +72,7 @@ class AuditCoreHeadlineViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = AuditEndpointPagination
     filter_backends = [DjangoFilterBackend]
 
-    def get_queryset(self) -> CoreTimeSeriesQuerySet:
+    def get_queryset(self) -> CoreHeadlineQuerySet:
         queryset = super().get_queryset()
 
         return queryset.filter_headlines_for_audit_list(

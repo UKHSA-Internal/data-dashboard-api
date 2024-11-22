@@ -153,7 +153,7 @@ audit_api_core_headline_list = AuditCoreHeadlineViewSet.as_view({"get": "list"})
 
 audit_api_urlpatterns = [
     path(
-        f"{API_PREFIX}audit/v1/api-timeseries/<str:metric>/<str:geography_type>/<str:geography>/<str:age>/<str:sex>/<str:stratum>",
+        f"{API_PREFIX}audit/v1/api-timeseries/<str:metric>/<str:geography_type>/<str:geography>/<str:stratum>/<str:sex>/<str:age>",
         audit_api_timeseries_list,
         name="audit-api-timeseries",
     ),
