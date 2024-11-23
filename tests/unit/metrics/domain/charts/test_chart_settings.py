@@ -140,6 +140,7 @@ class TestChartSettings:
 
         # Then
         expected_y_axis_config = {
+            "rangemode": "tozero",
             "showgrid": False,
             "showticklabels": True,
             "fixedrange": True,
