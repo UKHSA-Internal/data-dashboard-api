@@ -165,3 +165,8 @@ class SimplifiedChartPlotElement(BaseMetricsElement):
         required=False,
         help_text=help_texts.DATE_TO_FIELD,
     )
+    use_smooth_lines = blocks.BooleanBlock(
+        default=False,
+        required=False,
+        help_text=help_texts.USE_SMOOTH_LINES,
+    )
