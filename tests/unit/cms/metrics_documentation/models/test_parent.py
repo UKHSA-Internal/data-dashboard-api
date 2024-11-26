@@ -10,6 +10,7 @@ from cms.metrics_documentation.models.parent import (
     MetricsDocumentationParentPage,
     MetricsDocumentationSlugNotValidError,
 )
+from cms.dashboard.models import UKHSAPage
 from tests.fakes.factories.cms.metrics_documentation_factory import (
     FakeMetricsDocumentationParentPageFactory,
 )
@@ -115,6 +116,7 @@ class TestMetricsDocumentationParentPage:
         search_fields: set[str] = {api_field.field_name for api_field in search_fields}
         assert expected_search_field in search_fields
 
+    @mock.patch.object(UKHSAPage, "_raise_error_if_slug_not_unique")
     @mock.patch.object(
         MetricsDocumentationParentPage, "_raise_error_if_slug_not_metrics_documentation"
     )
@@ -125,6 +127,7 @@ class TestMetricsDocumentationParentPage:
         self,
         spy_raise_error_for_multiple_live_pages: mock.MagicMock,
         spy_raise_error_if_slug_not_metrics_documentation: mock.MagicMock,
+        spy_raise_error_if_slug_not_unique: mock.MagicMock,
     ):
         """
         Given a `MetricsDocumentationParentPage`
@@ -150,6 +153,7 @@ class TestMetricsDocumentationParentPage:
         spy_raise_error_for_multiple_live_pages.assert_called_once()
         spy_raise_error_if_slug_not_metrics_documentation.assert_called_once()
 
+    @mock.patch.object(UKHSAPage, "_raise_error_if_slug_not_unique")
     @mock.patch.object(
         MetricsDocumentationParentPage, "_raise_error_if_slug_not_metrics_documentation"
     )
@@ -160,6 +164,7 @@ class TestMetricsDocumentationParentPage:
         self,
         spy_raise_error_for_multiple_live_pages: mock.MagicMock,
         spy_raise_error_if_slug_not_metrics_documentation: mock.MagicMock,
+        spy_raise_error_if_slug_not_unique: mock.MagicMock,
     ):
         """
         Given a `MetricsDocumentationParentPage` which has slug prefixed with `trash-`.
