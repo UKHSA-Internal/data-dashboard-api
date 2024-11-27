@@ -46,6 +46,7 @@ class FakeCoreHeadlineFactory(factory.Factory):
         period_end: str | datetime.date | None = None,
         period_start: str | datetime.date | None = None,
         refresh_date: str | datetime.date | None = None,
+        embargo: str | datetime.date | None = None,
     ) -> list[FakeCoreHeadline]:
         geography: FakeGeography = FakeGeographyFactory.build_example(
             geography_type_name=geography_type_name,
@@ -75,6 +76,7 @@ class FakeCoreHeadlineFactory(factory.Factory):
             period_start=period_start,
             period_end=period_end,
             refresh_date=refresh_date,
+            embargo=embargo,
         )
 
     @classmethod

@@ -12,68 +12,52 @@ from tests.fakes.factories.metrics.core_time_series_factory import (
 )
 
 
-@pytest.fixture
-def mock_core_times_series() -> mock.MagicMock:
-    return mock.MagicMock(
-        spec=CoreTimeSeries,
-        metric__topic__sub_theme__theme__name="infectious_disease",
-        metric__topic__sub_theme__name="respiratory",
-        metric_topic="COVID-19",
-        metric__name="COVID-19_cases_rateRollingMean",
-        geography__name="England",
-        geography__geography_type__name="Nation",
-        stratum__name="default",
-        age__name="all",
-        sex="all",
-        year=2024,
-        date=datetime.date(day=1, month=1, year=2024),
-        metric_value=Decimal("1.000"),
-        refresh_date=datetime.datetime(day=1, month=1, year=2024),
-        embargo=datetime.datetime(day=2, month=2, year=2024),
-    )
-
-
 class TestCoreTimeSeriesSerializer:
 
-    def test_refresh_date_serializes_correctly(
-        self,
-        mock_core_times_series: mock.MagicMock,
-    ):
+    @staticmethod
+    def _setup_fake_times_series():
+        return FakeCoreTimeSeriesFactory.build_time_series(
+            metric_name="COVID-19_cases_casesByDay",
+            topic_name="COVID-19",
+            metric_value=2,
+            date=datetime.date(day=1, month=1, year=2024),
+            refresh_date=datetime.datetime(day=1, month=1, year=2024),
+            embargo=datetime.datetime(day=5, month=1, year=2024),
+        )
+
+    def test_refresh_date_serializes_correctly(self):
         """
-        Given a mocked `CoreTimeSeries` model object
-        When the mock is passed to the `CoreTimeseriesSerializer`
-        Then the `refresh_date` field is returned in the expected format.
+        Given a fake `CoreTimeSeries` model object
+        When the fake is passed to the `CoreTimeseriesSerializer`
+        Then the `refresh_date` field is returned is the expected format
         """
         # Given
-        mocked_core_times_series = mock_core_times_series
+        fake_core_times_series = self._setup_fake_times_series()
 
         # When
-        serializer = AuditCoreTimeseriesSerializer(instance=mocked_core_times_series)
+        serializer = AuditCoreTimeseriesSerializer(instance=fake_core_times_series)
 
         # Then
         serialized_date: str = serializer.data["refresh_date"]
-        expected_date_value = str(mocked_core_times_series.refresh_date)
+        expected_date_value = str(fake_core_times_series.refresh_date)
 
         assert serialized_date == expected_date_value
 
-    def test_embargo_date_serializes_correctly(
-        self,
-        mock_core_times_series: mock.MagicMock,
-    ):
+    def test_embargo_date_serializes_correctly(self):
         """
-        Given a mocked `CoreTimeSeries` model object
-        When the mock is passed to the `CoreTimeseriesSerializer`
+        Given a fake `CoreTimeSeries` model object
+        When the fake is passed to the `CoreTimeseriesSerializer`
         Then the `embargo` field is returned in the expected format.
         """
         # Given
-        mocked_core_times_series = mock_core_times_series
+        fake_core_time_series = self._setup_fake_times_series()
 
         # When
-        serializer = AuditCoreTimeseriesSerializer(instance=mocked_core_times_series)
+        serializer = AuditCoreTimeseriesSerializer(instance=fake_core_time_series)
 
         # Then
         serialized_date: str = serializer.data["embargo"]
-        expected_date_value = str(mocked_core_times_series.embargo)
+        expected_date_value = str(fake_core_time_series.embargo)
 
         assert serialized_date == expected_date_value
 
@@ -99,19 +83,17 @@ class TestCoreTimeSeriesSerializer:
             "force_write",
         ],
     )
-    def test_expected_fields_are_returned(
-        self, expected_field: str, mock_core_times_series: mock.MagicMock
-    ):
+    def test_expected_fields_are_returned(self, expected_field: str):
         """
-        Given a mocked `CoreTimeseries` model object
+        Given a fake `CoreTimeseries` model object
         When the object is passed through the `CoreTimeSeriesSerializer`
         Then the expected fields are returned.
         """
         # Given
-        mocked_core_timeseries = mock_core_times_series
+        fake_core_time_series = self._setup_fake_times_series()
 
         # When
-        serializer = AuditCoreTimeseriesSerializer(instance=mocked_core_timeseries)
+        serializer = AuditCoreTimeseriesSerializer(instance=fake_core_time_series)
 
         # Then
         assert expected_field in serializer.fields
