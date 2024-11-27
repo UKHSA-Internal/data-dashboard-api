@@ -87,8 +87,26 @@ class UKHSAPage(Page):
     class Meta:
         abstract = True
 
+    def _raise_error_if_slug_not_unique(self) -> None:
+        """Compares the provided slug against all pages to confirm the slug's `uniqueness`
+            this is against all pages and not just siblings, which is the default behavior of wagtail.
+
+        Notes:
+            The Data dashboard's front-end dynamically renders page's based on their slug, which means
+            that validating this field only against siblings could lead to an issue if two or more pages
+            share a slug even outside of the same parent-child relationship.
+        """
+        if Page.objects.live().filter(slug=self.slug).exclude(id=self.id).exists():
+            raise ValidationError(
+                {
+                    "slug": "A page with this slug already exists. Please choose a unique slug."
+                }
+            )
+
     def clean(self):
         super().clean()
+        self._raise_error_if_slug_not_unique()
+
         if not self.seo_title:
             raise ValidationError(message="Search engine title tag is required")
 
