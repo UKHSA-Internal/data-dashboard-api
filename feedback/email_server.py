@@ -76,7 +76,11 @@ def send_email_v2(
         recipient_email_address=recipient_email_address,
     )
 
-    return bool(email.send(fail_silently=fail_silently))
+    email_submitted = bool(email.send(fail_silently=fail_silently))
+    message = "succeeded" if email_submitted else "failed"
+    logger.info("Email submission %s for %s", message, subject)
+
+    return email_submitted
 
 
 def create_email_message(
