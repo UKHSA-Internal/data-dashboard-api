@@ -1,4 +1,4 @@
-bandit==1.7.10
+bandit==1.8.0
 black==24.10.0
 coverage==7.6.8
 cyclonedx-python-lib==7.6.2
@@ -15,7 +15,7 @@ pip-requirements-parser==32.0.1
 pre-commit==4.0.1
 pylint==3.3.2
 pylint-django==2.6.1
-pytest==8.3.3
+pytest==8.3.4
 pytest-cov==6.0.0
 pytest-django==4.9.0
 pytest-random-order==1.1.1
