@@ -26,6 +26,12 @@ PRIVATE_API_ENDPOINT_PATHS = [
     "api/geographies/v2/",
 ]
 
+AUDIT_API_ENDPOINT_PATHS = [
+    "api/audit/v1/api-timeseries",
+    "api/audit/v1/core-timeseries",
+    "api/audit/v1/core-headline",
+]
+
 FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v1", "api/suggestions/v2"]
 
 PUBLIC_API_ENDPOINT_PATHS = [
@@ -398,8 +404,23 @@ class TestConstructUrlpatterns:
         # Then
         assert not any(excluded_endpoint_path in str(x.pattern) for x in urlpatterns)
 
-    # Tests for common/shared endpoints
+    # Tests for audit endpoints
+    def test_audit_api_app_mode_returns_audit_urls(self):
+        """
+        Given an `app_mode` of "AUDIT"
+        When `construct_urlpatterns()` is called
+        Then the urlpatterns returned contain the audit API endpoints
+        """
+        # Given
+        app_mode = enums.AppMode.AUDIT_API.value
 
+        # When
+        urlpatterns = construct_urlpatterns(app_mode=app_mode)
+
+        # Then
+        assert any("audit" in str(x.pattern) for x in urlpatterns)
+
+    # Tests for common/shared endpoints
     @pytest.mark.parametrize(
         "endpoint_path",
         PRIVATE_API_ENDPOINT_PATHS
