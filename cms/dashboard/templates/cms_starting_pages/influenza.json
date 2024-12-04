@@ -1,30 +1,109 @@
 {
-    "id": 6,
+    "id": 5,
     "meta": {
         "seo_title": "Influenza | UKHSA data dashboard",
         "search_description": "Detailed summary of Influenza in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "https://localhost/api/pages/6/",
-        "html_url": "https://localhost/topics/influenza/",
+        "detail_url": "https://localhost/api/pages/5/",
+        "html_url": "https://localhost/respiratory-viruses/influenza/",
         "slug": "influenza",
-        "show_in_menus": true,
-        "first_published_at": "2024-07-11T14:55:39.253862+01:00",
+        "show_in_menus": false,
+        "first_published_at": "2024-10-25T10:10:50.225447+01:00",
         "alias_of": null,
         "parent": {
-            "id": 4,
+            "id": 78,
             "meta": {
-                "type": "home.HomePage",
-                "detail_url": "https://localhost/api/pages/4/",
+                "type": "composite.CompositePage",
+                "detail_url": "https://localhost/api/pages/78/",
                 "html_url": null
             },
-            "title": "UKHSA data dashboard"
+            "title": "Respiratory viruses"
         }
     },
     "title": "Influenza",
     "seo_change_frequency": 5,
     "seo_priority": "0.5",
+    "last_updated_at": "2024-10-25T14:08:47.386252+01:00",
     "page_description": "<p data-block-key=\"z3vrp\">Influenza (commonly known as flu) is a respiratory infection.</p><p data-block-key=\"f9pfj\">The healthcare data we have for influenza comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the influenza healthcare data is not a count of every person being treated for influenza in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for influenza</a>.</p><p data-block-key=\"fjsfr\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
+        {
+            "type": "section",
+            "value": {
+                "heading": "Headlines",
+                "content": [
+                    {
+                        "type": "headline_numbers_row_card",
+                        "value": {
+                            "columns": [
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Testing",
+                                        "rows": [
+                                            {
+                                                "type": "percentage_number",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "influenza_headline_positivityLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Virus tests positivity"
+                                                },
+                                                "id": "89d619d2-fc81-40a8-858a-3d0ed1cfec4b"
+                                            }
+                                        ]
+                                    },
+                                    "id": "446083e9-74ad-406e-80aa-6ff485947ad9"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Healthcare",
+                                        "rows": [
+                                            {
+                                                "type": "headline_number",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Hospital admission rate (per 100,000)"
+                                                },
+                                                "id": "66ca82f6-17ef-4bd2-b262-e946f22a7221"
+                                            },
+                                            {
+                                                "type": "trend_number",
+                                                "value": {
+                                                    "topic": "Influenza",
+                                                    "metric": "influenza_headline_ICUHDUadmissionRateChange",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Last 7 days",
+                                                    "percentage_metric": "influenza_headline_ICUHDUadmissionRatePercentChange"
+                                                },
+                                                "id": "f6de590e-3876-49b9-8e37-039f783a4bde"
+                                            }
+                                        ]
+                                    },
+                                    "id": "9c1909b4-b93b-460d-ba14-ac3945ecff6e"
+                                }
+                            ]
+                        },
+                        "id": "a72b8963-da4d-4900-8258-569b44770911"
+                    }
+                ]
+            },
+            "id": "2708ce3b-1913-4f52-9f55-5b101609a882"
+        },
         {
             "type": "section",
             "value": {
@@ -42,6 +121,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -76,6 +156,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -274,6 +355,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -308,6 +390,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -427,6 +510,7 @@
             "id": "0f9dae99-697b-4d7d-8c92-f977ffbcd622"
         }
     ],
+    "related_links_layout": "Footer",
     "related_links": [
         {
             "id": 7,
@@ -456,7 +540,7 @@
             "body": "<p data-block-key=\"chb3o\">The symptoms, diagnosis, management and epidemiology of human parainfluenza viruses (HPIVs).</p>"
         }
     ],
-    "last_published_at": "2024-07-11T15:54:04.810830+01:00",
+    "last_published_at": "2024-10-25T14:08:47.386252+01:00",
     "enable_area_selector": false,
     "selected_topics": [
         "Influenza"

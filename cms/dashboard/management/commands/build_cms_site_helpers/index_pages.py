@@ -1,7 +1,7 @@
 from cms.topic.models import TopicPage
 
 
-def create_respiratory_viruses_index_page() -> list[dict]:
+def create_respiratory_viruses_index_page_body() -> list[dict]:
     covid_page = TopicPage.objects.get(slug="covid-19")
     influenza_page = TopicPage.objects.get(slug="influenza")
     other_respiratory_viruses_page = TopicPage.objects.get(

@@ -6,13 +6,13 @@ from wagtail.models import Page
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.composite.models import CompositePage, CompositeRelatedLink
 from cms.dashboard.management.commands.build_cms_site_helpers.index_pages import (
-    create_respiratory_viruses_index_page,
+    create_respiratory_viruses_index_page_body,
 )
 from cms.dashboard.management.commands.build_cms_site_helpers.landing_page import (
     create_landing_page_body_wih_page_links,
 )
 from cms.forms.models import FormField, FormPage
-from cms.home.models import HomePage, HomePageRelatedLink, LandingPage
+from cms.home.models import LandingPage
 from cms.snippets.data_migrations.operations import (
     get_or_create_download_button_internal_button_snippet,
 )
@@ -47,29 +47,6 @@ def _add_page_to_parent(*, page: Page, parent_page: Page) -> None:
     page.save_revision().publish()
 
 
-# Deprecated: to be removed after version two migration.
-def create_home_page_dashboard(*, parent_page: Page) -> HomePage:
-    data = open_example_page_response(page_name="ukhsa_data_dashboard")
-
-    page = HomePage(
-        body=data["body"],
-        title=data["title"],
-        page_description=data["page_description"],
-        slug=data["meta"]["slug"],
-        seo_title=data["meta"]["seo_title"],
-        search_description=data["meta"]["search_description"],
-    )
-    _add_page_to_parent(page=page, parent_page=parent_page)
-
-    _create_related_links(
-        related_link_class=HomePageRelatedLink,
-        response_data=data,
-        page=page,
-    )
-
-    return page
-
-
 def create_landing_page(*, parent_page: Page) -> LandingPage:
     data = open_example_page_response(page_name="landing_page")
 
@@ -91,7 +68,7 @@ def create_landing_page(*, parent_page: Page) -> LandingPage:
 def create_index_page(*, name: str, parent_page: Page) -> CompositePage:
     data = open_example_page_response(page_name=name)
 
-    index_page_body = create_respiratory_viruses_index_page()
+    index_page_body: list[dict] = create_respiratory_viruses_index_page_body()
 
     page = CompositePage(
         title=data["title"],

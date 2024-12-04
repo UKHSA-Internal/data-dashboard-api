@@ -55,6 +55,7 @@ lint.ignore = [
                     # into components which have numerous dependencies during initialization
     "PLR0911",  # Too many return statements
     "C901",     # Considers function to be too complex, due to switch case statements
+    "E501",     # Ignore line-length in template for populating CMS menu snippet
 ]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.

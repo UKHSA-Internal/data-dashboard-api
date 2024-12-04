@@ -1,30 +1,140 @@
 {
-    "id": 7,
+    "id": 6,
     "meta": {
         "seo_title": "Other Respiratory Viruses | UKHSA data dashboard",
         "search_description": "Overall summary of other respiratory viruses in circulation within the UK",
         "type": "topic.TopicPage",
-        "detail_url": "https://localhost/api/pages/7/",
-        "html_url": "https://localhost/topics/other-respiratory-viruses/",
+        "detail_url": "https://localhost/api/pages/6/",
+        "html_url": "https://localhost/respiratory-viruses/other-respiratory-viruses/",
         "slug": "other-respiratory-viruses",
-        "show_in_menus": true,
-        "first_published_at": "2024-07-11T14:55:39.280059+01:00",
+        "show_in_menus": false,
+        "first_published_at": "2024-10-25T10:10:50.248963+01:00",
         "alias_of": null,
         "parent": {
-            "id": 4,
+            "id": 78,
             "meta": {
-                "type": "home.HomePage",
-                "detail_url": "https://localhost/api/pages/4/",
+                "type": "composite.CompositePage",
+                "detail_url": "https://localhost/api/pages/78/",
                 "html_url": null
             },
-            "title": "UKHSA data dashboard"
+            "title": "Respiratory viruses"
         }
     },
     "title": "Other respiratory viruses",
     "seo_change_frequency": 5,
     "seo_priority": "0.5",
+    "last_updated_at": "2024-10-25T14:12:46.381960+01:00",
     "page_description": "<p data-block-key=\"rjyu9\">Other common respiratory viruses include adenovirus, human metapneumovirus (hMPV), parainfluenza, rhinovirus and respiratory syncytial virus (RSV).</p><p data-block-key=\"47elv\">The healthcare data we have for other respiratory viruses comes from a sentinel surveillance system (a data collection method used to monitor trends). This means the healthcare data is not a count of every person being treated for the respiratory virus in hospital. Find out more about <a href=\"https://www.gov.uk/government/publications/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses/sources-of-surveillance-data-for-influenza-covid-19-and-other-respiratory-viruses\">data collection for other respiratory viruses</a>.</p><p data-block-key=\"3t8e7\"><b>The UKHSA data dashboard is still undergoing statistical review. For reporting and analytical purposes, use the</b> <a href=\"https://coronavirus.data.gov.uk/\"><b>COVID-19 dashboard</b></a><b> and the</b> <a href=\"https://www.gov.uk/government/statistics/national-flu-and-covid-19-surveillance-reports-2023-to-2024-season\"><b>weekly surveillance report</b></a><b>.</b></p>",
     "body": [
+        {
+            "type": "section",
+            "value": {
+                "heading": "Headlines",
+                "content": [
+                    {
+                        "type": "headline_numbers_row_card",
+                        "value": {
+                            "columns": [
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Adenovirus",
+                                        "rows": [
+                                            {
+                                                "type": "percentage_number",
+                                                "value": {
+                                                    "topic": "Adenovirus",
+                                                    "metric": "adenovirus_headline_positivityLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Weekly positivity"
+                                                },
+                                                "id": "03e456fb-0467-4a3c-80c2-e4b4f1f8c557"
+                                            }
+                                        ]
+                                    },
+                                    "id": "510140fd-1f90-4950-af31-0eb909fc9542"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Human metapneumovirus (hMPV)",
+                                        "rows": [
+                                            {
+                                                "type": "percentage_number",
+                                                "value": {
+                                                    "topic": "hMPV",
+                                                    "metric": "hMPV_headline_positivityLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Weekly positivity"
+                                                },
+                                                "id": "9222e4d3-ca38-49b6-a9f6-e6398bb4cb26"
+                                            }
+                                        ]
+                                    },
+                                    "id": "c90cf91e-4ede-46e7-a915-8f66d41d22e1"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Parainfluenza",
+                                        "rows": [
+                                            {
+                                                "type": "percentage_number",
+                                                "value": {
+                                                    "topic": "Parainfluenza",
+                                                    "metric": "parainfluenza_headline_positivityLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Weekly positivity"
+                                                },
+                                                "id": "624ae7d3-ffad-41d7-adc5-8006a8da0210"
+                                            }
+                                        ]
+                                    },
+                                    "id": "744bb766-f037-4f8a-aff4-db2b4deff4c3"
+                                },
+                                {
+                                    "type": "column",
+                                    "value": {
+                                        "title": "Rhinovirus",
+                                        "rows": [
+                                            {
+                                                "type": "percentage_number",
+                                                "value": {
+                                                    "topic": "Rhinovirus",
+                                                    "metric": "rhinovirus_headline_positivityLatest",
+                                                    "geography": "England",
+                                                    "geography_type": "Nation",
+                                                    "sex": "all",
+                                                    "age": "all",
+                                                    "stratum": "default",
+                                                    "body": "Weekly positivity"
+                                                },
+                                                "id": "dbc6692a-8871-4926-a93a-b60b8780b35a"
+                                            }
+                                        ]
+                                    },
+                                    "id": "9dfcd1f7-57f7-4e0c-8644-a05e424716c5"
+                                }
+                            ]
+                        },
+                        "id": "18364314-a7c9-44b7-aba1-96b4dc07cbda"
+                    }
+                ]
+            },
+            "id": "7bbcf9ff-e7de-4aaa-bb23-616d3826c44e"
+        },
         {
             "type": "section",
             "value": {
@@ -42,6 +152,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -240,6 +351,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -282,6 +394,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -324,6 +437,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -366,6 +480,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -408,6 +523,7 @@
                                         "tag_manager_event_id": "",
                                         "x_axis": "",
                                         "y_axis": "",
+                                        "show_tooltips": false,
                                         "chart": [
                                             {
                                                 "type": "plot",
@@ -443,6 +559,7 @@
             "id": "0086c9ed-1b53-41f6-a6b4-4c2012925ed8"
         }
     ],
+    "related_links_layout": "Footer",
     "related_links": [
         {
             "id": 10,
@@ -490,13 +607,13 @@
             "body": "<p data-block-key=\"4kyrm\">Read more about the sources of data for surveillance systems used to monitor COVID-19, influenza and other seasonal respiratory viruses in England.</p>"
         }
     ],
-    "last_published_at": "2024-07-11T15:52:06.801790+01:00",
+    "last_published_at": "2024-10-25T14:12:46.381960+01:00",
     "enable_area_selector": false,
     "selected_topics": [
         "Adenovirus",
-        "Parainfluenza",
+        "Rhinovirus",
         "hMPV",
-        "RSV",
-        "Rhinovirus"
+        "Parainfluenza",
+        "RSV"
     ]
 }

@@ -7,7 +7,7 @@ from cms.composite.models import CompositePage
 from cms.dashboard.management.commands.build_cms_site_helpers.pages import (
     open_example_page_response,
 )
-from cms.home.models import HomePage, UKHSARootPage
+from cms.home.models import UKHSARootPage, LandingPage
 from cms.forms.models import FormPage
 from cms.snippets.models import InternalButton
 from cms.topic.models import TopicPage
@@ -28,16 +28,20 @@ class TestBuildCMSSite:
         api_client = APIClient()
 
         # When
-        response = api_client.get(path="/api/pages/")
+        response = api_client.get(path="/api/pages/", data={"limit": 200})
 
         # Then
         response_data = response.data
         items = response_data["items"]
 
         expected_slugs: set[str] = {
-            "topics",
+            "respiratory-viruses",
             "covid-19",
             "influenza",
+            "other-respiratory-viruses",
+            "access-our-data",
+            "weather-health-alerts",
+            "metrics-documentation",
             "location-based-data",
             "about",
             "whats-new",
@@ -48,9 +52,13 @@ class TestBuildCMSSite:
         assert expected_slugs.issubset(created_slugs)
 
         expected_titles: set[str] = {
-            "UKHSA data dashboard",
+            "Respiratory viruses",
             "COVID-19",
             "Influenza",
+            "Other respiratory viruses",
+            "Access our data",
+            "Weather health alerts",
+            "Metrics Documentation",
             "Location based data",
             "About",
             "What's new",
@@ -61,50 +69,37 @@ class TestBuildCMSSite:
         assert expected_titles.issubset(created_titles)
 
     @pytest.mark.django_db
-    def test_command_builds_site_with_correct_home_page(self):
+    def test_command_builds_site_with_correct_landing_page(self):
         """
         Given a CMS site which has been created via the `build_cms_site` management command
-        And the ID of the `respiratory-viruses` page
+        And the ID of the landing page
         When a GET request is made to `/api/pages/{}` detail endpoint
         Then the response contains the expected data
         """
         # Given
         call_command("build_cms_site")
-        home_page = HomePage.objects.get(slug="topics")
+        landing_page = LandingPage.objects.last()
         api_client = APIClient()
 
         # When
-        response = api_client.get(path=f"/api/pages/{home_page.id}/")
+        response = api_client.get(path=f"/api/pages/{landing_page.id}/")
 
         # Then
         response_data = response.data
 
         # Compare the response from the endpoint to the template used to build the page
-        home_page_response_template = open_example_page_response(
-            page_name="ukhsa_data_dashboard"
+        landing_page_response_template = open_example_page_response(
+            page_name="landing_page"
         )
-        assert response_data["title"] == home_page_response_template["title"]
-        assert (
-            response_data["page_description"]
-            == home_page_response_template["page_description"]
-        )
+        assert response_data["title"] == landing_page_response_template["title"]
         assert (
             response_data["meta"]["seo_title"]
-            == home_page_response_template["meta"]["seo_title"]
+            == landing_page_response_template["meta"]["seo_title"]
         )
         assert (
             response_data["meta"]["search_description"]
-            == home_page_response_template["meta"]["search_description"]
+            == landing_page_response_template["meta"]["search_description"]
         )
-
-        # Check that the related links have been populated correctly
-        related_links_from_response = response_data["related_links"]
-        related_links_from_template = home_page_response_template["related_links"]
-
-        for index, related_link in enumerate(related_links_from_response):
-            assert related_link["title"] == related_links_from_template[index]["title"]
-            assert related_link["url"] == related_links_from_template[index]["url"]
-            assert related_link["body"] == related_links_from_template[index]["body"]
 
     @pytest.mark.django_db
     @pytest.mark.parametrize(
@@ -120,7 +115,7 @@ class TestBuildCMSSite:
         # Given
         call_command("build_cms_site")
         topic_page = TopicPage.objects.get(slug=slug)
-        parent_home_page = HomePage.objects.get(title="UKHSA data dashboard")
+        parent_home_page = CompositePage.objects.get(slug="respiratory-viruses")
         api_client = APIClient()
 
         # When
@@ -473,8 +468,8 @@ class TestBuildCMSSite:
 
         # Then
         menu_data = response.data["active_menu"]
-        # There should be 7 rows in the menu
-        assert len(menu_data) == 7
+        # There should be 1 row in the menu
+        assert len(menu_data) == 1
 
         def extract_primary_link_info(row_index, column_index) -> dict:
             return menu_data[row_index]["value"]["columns"][column_index]["value"][
@@ -488,15 +483,16 @@ class TestBuildCMSSite:
                 "links"
             ]["secondary_links"][secondary_link_index]["value"]
 
-        home_page = HomePage.objects.last()
-        home_page_data = extract_primary_link_info(row_index=0, column_index=0)
-        assert home_page_data["title"] == "Homepage"
-        assert home_page_data["page"] == home_page.id
-        assert home_page_data["html_url"] == home_page.full_url
+        # landing_page = LandingPage.objects.last()
+        # landing_page_data = extract_primary_link_info(row_index=0, column_index=0)
+        # assert landing_page_data["title"] == "COVID-19"
+        # assert landing_page_data["page"] == landing_page.id
+        # assert landing_page_data["html_url"] == landing_page.full_url
 
         covid_page = TopicPage.objects.get(slug="covid-19")
-        covid_page_data = extract_secondary_link_info(
-            row_index=0, column_index=0, secondary_link_index=0
+        covid_page_data = extract_primary_link_info(
+            row_index=0,
+            column_index=0,
         )
         assert covid_page_data["title"] == "COVID-19"
         assert covid_page_data["page"] == covid_page.id
@@ -504,7 +500,7 @@ class TestBuildCMSSite:
 
         flu_page = TopicPage.objects.get(slug="influenza")
         flu_page_data = extract_secondary_link_info(
-            row_index=0, column_index=0, secondary_link_index=1
+            row_index=0, column_index=0, secondary_link_index=0
         )
         assert flu_page_data["title"] == "Influenza"
         assert flu_page_data["page"] == flu_page.id
@@ -514,7 +510,7 @@ class TestBuildCMSSite:
             slug="other-respiratory-viruses"
         )
         other_respiratory_viruses_page_data = extract_secondary_link_info(
-            row_index=0, column_index=0, secondary_link_index=2
+            row_index=0, column_index=0, secondary_link_index=1
         )
         assert (
             other_respiratory_viruses_page_data["title"] == "Other respiratory viruses"
@@ -526,17 +522,4 @@ class TestBuildCMSSite:
         assert (
             other_respiratory_viruses_page_data["html_url"]
             == other_respiratory_viruses_page.full_url
-        )
-
-        weather_health_alerts_page = CompositePage.objects.get(
-            slug="weather-health-alerts"
-        )
-        weather_health_alerts_page_data = extract_primary_link_info(
-            row_index=1, column_index=0
-        )
-        assert weather_health_alerts_page_data["title"] == "Weather health alerts"
-        assert weather_health_alerts_page_data["page"] == weather_health_alerts_page.id
-        assert (
-            weather_health_alerts_page_data["html_url"]
-            == weather_health_alerts_page.full_url
         )

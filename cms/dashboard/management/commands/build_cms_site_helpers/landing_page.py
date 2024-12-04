@@ -86,7 +86,7 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                     "type": "simplified_chart_with_link",
                                     "value": {
                                         "title": "RSV",
-                                        "sub_title": "Healthcare admission rates",
+                                        "sub_title": "Positivity by week",
                                         "tag_manager_event_id": "",
                                         "topic_page": other_respiratory_viruses_page.id,
                                         "x_axis": "date",
@@ -96,14 +96,14 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
                                                 "type": "plot",
                                                 "value": {
                                                     "topic": "RSV",
-                                                    "metric": "RSV_healthcare_admissionRateByWeek",
+                                                    "metric": "RSV_testing_positivityByWeek",
                                                     "geography": "England",
                                                     "geography_type": "Nation",
                                                     "sex": "all",
                                                     "age": "all",
                                                     "stratum": "default",
                                                     "chart_type": "line_single_simplified",
-                                                    "date_from": "2022-10-14",
+                                                    "date_from": "2022-01-01",
                                                     "date_to": "2023-10-14",
                                                 },
                                                 "id": "f9eb94ff-0d92-4265-a88b-d52bf73532a5",
@@ -123,13 +123,13 @@ def create_landing_page_body_wih_page_links() -> list[dict]:
         {
             "type": "section",
             "value": {
-                "heading": "Weather health alerts",
+                "heading": "Weather and climate risks",
                 "page_link": weather_health_alerts_page.id,
                 "content": [
                     {
                         "type": "weather_health_alert_card",
                         "value": {
-                            "title": "weather health alerts",
+                            "title": "Heat health alerts",
                             "sub_title": "Across England",
                             "alert_type": "heat",
                         },
