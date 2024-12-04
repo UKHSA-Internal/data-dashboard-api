@@ -34,6 +34,8 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         metric_value: float = 1,
         epiweek: int = 1,
         in_reporting_delay_period: bool = False,
+        refresh_date: datetime.datetime | str = str(datetime.date(2023, 2, 10)),
+        embargo: datetime.datetime = datetime.datetime(2024, 4, 10),
     ) -> FakeCoreTimeSeries:
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
             metric_name=metric_name,
@@ -61,8 +63,9 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
             age=age,
             sex=sex,
             epiweek=epiweek,
-            refresh_date=str(date),
+            refresh_date=refresh_date,
             in_reporting_delay_period=in_reporting_delay_period,
+            embargo=embargo,
         )
 
     @classmethod

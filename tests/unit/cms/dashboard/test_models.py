@@ -96,8 +96,11 @@ class TestUKHSAPage:
             FakeWhatsNewParentPageFactory.build_page_from_template(),
         ],
     )
+    @mock.patch.object(UKHSAPage, "_raise_error_if_slug_not_unique")
     def test_seo_title_field_is_required_by_clean_method_call(
-        self, fake_page: UKHSAPage
+        self,
+        spy_raise_error_if_slug_not_unique: mock.MagicMock,
+        fake_page: UKHSAPage,
     ):
         """
         Given a page model which inherits from `UKHSAPage`

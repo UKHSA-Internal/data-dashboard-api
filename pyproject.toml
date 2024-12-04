@@ -105,7 +105,7 @@ target-version = "py312"
 "caching/public_api/crawler.py"             = ["PERF401"]        # Ignore list comprehension which would reduce readibility
 "caching/common/geographies_crawler.py"     = ["PLW1641"]        # Ignore requirement of `__hash__` implementation
 "metrics/domain/weather_health_alerts/text_lookups/*" = ["W291"] # Ignore trailing whitespace for weather alert text lookups
-
+"config.py"                                 = ["PLW1508"]        # Ignore enforcing strings for environment variables
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10

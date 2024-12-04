@@ -36,6 +36,43 @@ class APITimeSeriesQuerySet(models.QuerySet):
         """
         return self.filter(**kwargs).values_list(lookup_field, flat=True).distinct()
 
+    def filter_for_audit_list_view(
+        self,
+        *,
+        metric_name: str,
+        geography_type_name: str,
+        geography_name: str,
+        stratum: str,
+        sex: str,
+        age: str,
+    ) -> "APITimeSeriesQuerySet":
+        """Filters for all records based on the provided arguments including `metric`, `geography_name` etc.
+            returns all records including those under `embargo` or `stale/duplicated` records.
+
+        Args:
+            metric_name: The name of the metric being queried.
+                E.g. `COVID-19_deaths_ONSByDay`
+            geography_name: The name of the geography to apply additional filtering to.
+                E.g. `England`
+            geography_type_name: The name of the type of geography to apply additional filtering.
+                E.g. `Nation`
+            stratum: The value of the stratum to apply additional filtering to.
+                E.g. `default`, which would be used to capture all strata.
+            sex: The gender to apply additional filtering to.
+                E.g. `F`, would be used to capture Females.
+                Note that options are `M`, `F`, or `ALL`.
+            age: The age range to apply additional filtering to.
+                E.g. `0_4` would be used to capture the age of 0-4 years old
+        """
+        return self.filter(
+            metric=metric_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+            stratum=stratum,
+            sex=sex,
+            age=age,
+        )
+
     def filter_for_list_view(
         self,
         *,

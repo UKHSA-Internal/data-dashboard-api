@@ -43,9 +43,9 @@ FRONTEND_URL = os.environ.get("FRONTEND_URL", "")
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
 )
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", True)
+EMAIL_USE_TLS: bool = os.environ.get("EMAIL_USE_TLS", True)
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = os.environ.get("EMAIL_PORT", 587)
+EMAIL_PORT: int = os.environ.get("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 
@@ -68,7 +68,7 @@ POSTGRES_DB = os.environ.get("POSTGRES_DB")
 POSTGRES_USER = os.environ.get("POSTGRES_USER")
 POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
-POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)
+POSTGRES_PORT: int = os.environ.get("POSTGRES_PORT", 5432)
 
 # When the application is running in `INGESTION` mode
 # the password is fetched directly from secretsmanager.

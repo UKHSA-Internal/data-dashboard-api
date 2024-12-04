@@ -75,6 +75,7 @@ class ChartSettings:
             "fixedrange": True,
             "gridcolor": "#000",
             "tickfont": self.get_tick_font_config(),
+            "rangemode": "tozero",
         }
 
     def get_base_chart_config(self):
@@ -157,7 +158,6 @@ class ChartSettings:
         chart_config["yaxis"]["ticks"] = "outside"
         chart_config["yaxis"]["tickvals"] = axis_params["y_axis_tick_values"]
         chart_config["yaxis"]["ticktext"] = axis_params["y_axis_tick_text"]
-        chart_config["yaxis"]["rangemode"] = "tozero"
         chart_config["yaxis"]["ticklen"] = 0
         chart_config["yaxis"]["tickfont"][
             "color"

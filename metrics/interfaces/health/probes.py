@@ -47,7 +47,7 @@ class HealthProbeManagement:
             False otherwise.
 
         """
-        current_app_mode: str = os.environ.get("APP_MODE", [])
+        current_app_mode: str = os.environ.get("APP_MODE", "")
 
         if current_app_mode in enums.AppMode.dependent_on_db():
             try:

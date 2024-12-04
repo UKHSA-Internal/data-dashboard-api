@@ -42,6 +42,7 @@ class CoreTimeSeriesFactory(factory.django.DjangoModelFactory):
         epiweek: int = 1,
         date: str | datetime.date = "2023-01-01",
         refresh_date: str | datetime.datetime = datetime.datetime(2024, 4, 19),
+        embargo: str | datetime.datetime = datetime.datetime(2024, 5, 20),
         **kwargs
     ):
         theme, _ = Theme.objects.get_or_create(name=theme_name)
@@ -78,6 +79,7 @@ class CoreTimeSeriesFactory(factory.django.DjangoModelFactory):
             epiweek=epiweek,
             date=date,
             refresh_date=refresh_date,
+            embargo=embargo,
             **kwargs
         )
 
