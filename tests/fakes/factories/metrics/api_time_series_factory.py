@@ -30,6 +30,8 @@ class FakeAPITimeSeriesFactory(factory.Factory):
             epiweek=10,
             date=datetime.date(year=2023, month=3, day=8),
             metric_value=2364,
+            embargo=datetime.datetime(day=2, month=2, year=2024),
+            refresh_date=datetime.datetime(day=1, month=1, year=2024),
         )
 
     @classmethod
