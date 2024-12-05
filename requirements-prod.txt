@@ -73,7 +73,7 @@ SQLAlchemy==2.0.36
 scour==0.38.2
 setuptools==75.6.0
 simplejson==3.19.3
-six==1.16.0
+six==1.17.0
 sortedcontainers==2.4.0
 soupsieve==2.6
 sqlparams==6.1.0
