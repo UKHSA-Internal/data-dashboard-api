@@ -4,7 +4,6 @@ import pytest
 
 from cms.forms.models import FormField
 from feedback.email_template import (
-    FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER,
     _build_body_from_suggestions,
     build_body_for_email,
     _enrich_suggestions_with_long_form_questions,
@@ -35,26 +34,26 @@ def example_feedback_form_fields() -> list[FormField]:
     return [
         FormField(
             clean_name="how_could_we_improve_your_experience_with_the_dashboard",
-            label="How could we improve your experience with the dashboard?",
+            label=IMPROVE_EXPERIENCE_QUESTION,
             field_type="multiline",
             required=False,
         ),
         FormField(
             clean_name="what_would_you_like_to_see_on_the_dashboard_in_the_future",
-            label="What would you like to see on the dashboard in the future?",
+            label=LIKE_TO_SEE_QUESTION,
             field_type="multiline",
             required=False,
         ),
         FormField(
             clean_name="did_you_find_everything_you_were_looking_for",
-            label="Did you find everything you were looking for?",
+            label=DID_YOU_FIND_EVERYTHING_QUESTION,
             field_type="radio",
             required=False,
             choices="Yes\r\nNo",
         ),
         FormField(
             clean_name="what_was_your_reason_for_visiting_the_dashboard_today",
-            label="What was your reason for visiting the dashboard today?",
+            label=REASON_QUESTION,
             field_type="multiline",
             required=False,
         ),
@@ -144,9 +143,9 @@ class TestBuildBodyFromSuggestions:
 
 
 class TestBuildBodyForEmail:
-    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions_v2")
+    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions")
     def test_returns_correct_string(
-        self, spy_enrich_suggestions_with_long_form_questions_v2: mock.MagicMock
+        self, spy_enrich_suggestions_with_long_form_questions: mock.MagicMock
     ):
         """
         Given a suggestions dict containing question and answers
@@ -161,7 +160,7 @@ class TestBuildBodyForEmail:
             "Did you find everything you were looking for?": DID_YOU_FIND_EVERYTHING_ANSWER,
             "What was your reason for visiting the dashboard today?": REASON_ANSWER,
         }
-        spy_enrich_suggestions_with_long_form_questions_v2.return_value = (
+        spy_enrich_suggestions_with_long_form_questions.return_value = (
             enriched_suggestions
         )
 
@@ -169,7 +168,7 @@ class TestBuildBodyForEmail:
         email_body: str = build_body_for_email(suggestions=mocked_suggestions)
 
         # Then
-        spy_enrich_suggestions_with_long_form_questions_v2.assert_called_once_with(
+        spy_enrich_suggestions_with_long_form_questions.assert_called_once_with(
             suggestions=mocked_suggestions
         )
         expected_email_body = _build_body_from_suggestions(
@@ -178,7 +177,7 @@ class TestBuildBodyForEmail:
         assert email_body == expected_email_body
 
     @mock.patch(f"{MODULE_PATH}._build_body_from_suggestions")
-    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions_v2")
+    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions")
     def test_delegates_calls_correctly(
         self,
         spy_enrich_suggestions_with_long_form_questions: mock.MagicMock,
