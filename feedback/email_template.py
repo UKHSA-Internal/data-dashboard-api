@@ -6,7 +6,7 @@ FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER: str = "User provided no input"
 DEFAULT_FORM_PAGE_MANAGER = CMSInterface().get_form_page_manager()
 
 
-def build_body_for_email_v2(*, suggestions: dict[str, str]) -> str:
+def build_body_for_email(*, suggestions: dict[str, str]) -> str:
     """Builds the suggestions email body as a string to be sent to the email server
 
     Args:
