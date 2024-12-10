@@ -12,6 +12,7 @@ class TestAuditCoreHeadlineViewSet:
     def test_authentication_is_required_when_app_mode_cms_admin(
         self,
         spy_permissions_is_authenticated: mock.MagicMock,
+        monkeypatch,
     ):
         """
         Given the application is running with an APP_MODE of `CMS_ADMIN`
@@ -19,15 +20,15 @@ class TestAuditCoreHeadlineViewSet:
         Then rest_frameworks's `IsAuthenticated()` will be called.
         """
         # Given
-        config.APP_MODE = "CMS_ADMIN"
-        audit_core_headline_viewset = AuditCoreHeadlineViewSet()
+        with monkeypatch.context() as m:
+            m.setattr(target=config, name="APP_MODE", value="CMS_ADMIN")
+            audit_core_headline_viewset = AuditCoreHeadlineViewSet()
 
-        # When
-        audit_core_headline_viewset.get_permissions()
+            # When
+            audit_core_headline_viewset.get_permissions()
 
         # Then
         spy_permissions_is_authenticated.assert_called_once()
-        config.APP_MODE = ""
 
     def test_sets_no_api_key_restrictions(self):
         """
