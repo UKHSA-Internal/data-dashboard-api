@@ -6,11 +6,11 @@ from rest_framework.exceptions import ValidationError
 
 from cms.forms.models import FormField
 from feedback.api.serializers.questions import (
-    SuggestionsV2Serializer,
+    SuggestionsSerializer,
 )
 
 
-class TestSuggestionsV2Serializer:
+class TestSuggestionsSerializer:
     @property
     def example_form_field(self) -> FormField:
         return FormField(
@@ -25,7 +25,7 @@ class TestSuggestionsV2Serializer:
         """
         Given form fields returned from the `FormPageManager`
         When a valid payload is serialized
-            with the `SuggestionsV2Serializer`
+            with the `SuggestionsSerializer`
         Then the payload is deemed valid
         """
         # Given
@@ -36,7 +36,7 @@ class TestSuggestionsV2Serializer:
         ]
 
         payload = {form_field.clean_name: "No"}
-        serializer = SuggestionsV2Serializer(
+        serializer = SuggestionsSerializer(
             data=payload, context={"form_page_manager": mocked_form_page_manager}
         )
 
@@ -53,7 +53,7 @@ class TestSuggestionsV2Serializer:
         """
         Given form fields returned from the `FormPageManager`
         When a valid payload is serialized
-            with the `SuggestionsV2Serializer`
+            with the `SuggestionsSerializer`
         Then the payload is deemed valid
         """
         # Given
@@ -69,7 +69,7 @@ class TestSuggestionsV2Serializer:
         ]
 
         payload = {form_field.clean_name: "More data"}
-        serializer = SuggestionsV2Serializer(
+        serializer = SuggestionsSerializer(
             data=payload, context={"form_page_manager": mocked_form_page_manager}
         )
 
@@ -86,7 +86,7 @@ class TestSuggestionsV2Serializer:
         """
         Given form fields returned from the `FormPageManager`
         When an invalid payload is serialized
-            with the `SuggestionsV2Serializer`
+            with the `SuggestionsSerializer`
         Then a `ValidationError` is raised
         """
         # Given
@@ -97,7 +97,7 @@ class TestSuggestionsV2Serializer:
         ]
 
         payload = {form_field.clean_name: "invalid-answer"}
-        serializer = SuggestionsV2Serializer(
+        serializer = SuggestionsSerializer(
             data=payload, context={"form_page_manager": mocked_form_page_manager}
         )
 
@@ -109,7 +109,7 @@ class TestSuggestionsV2Serializer:
         """
         Given form fields returned from the `FormPageManager`
         When a payload containing no valid keys
-            is serialized with the `SuggestionsV2Serializer`
+            is serialized with the `SuggestionsSerializer`
         Then the validated data strips the invalid keys
         """
         # Given
@@ -123,7 +123,7 @@ class TestSuggestionsV2Serializer:
             "invalid-question": "invalid-answer",
             self.example_form_field.clean_name: "Yes",
         }
-        serializer = SuggestionsV2Serializer(
+        serializer = SuggestionsSerializer(
             data=payload, context={"form_page_manager": mocked_form_page_manager}
         )
 
