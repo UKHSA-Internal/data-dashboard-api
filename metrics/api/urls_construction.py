@@ -240,6 +240,7 @@ def construct_urlpatterns(
                 app_mode=app_mode
             )
             constructed_url_patterns += django_admin_urlpatterns
+            constructed_url_patterns += audit_api_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
                 app_mode=app_mode
@@ -251,8 +252,6 @@ def construct_urlpatterns(
         case enums.AppMode.INGESTION.value:
             # Ingestion mode does not expose any endpoints
             return constructed_url_patterns
-        case enums.AppMode.AUDIT_API.value:
-            constructed_url_patterns += audit_api_urlpatterns
         case _:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode

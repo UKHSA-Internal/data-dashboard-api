@@ -1,11 +1,34 @@
 from unittest import mock
 import pytest
+from rest_framework import permissions
 
+import config
 from metrics.api.views.audit.audit_api_timeseries import AuditAPITimeSeriesViewSet
 from metrics.data.managers.api_models.time_series import APITimeSeriesQuerySet
 
 
 class TestAuditAPITimeseriesViewSet:
+    @mock.patch.object(permissions, "IsAuthenticated")
+    def test_authentication_is_required_when_app_mode_cms(
+        self,
+        spy_permissions_is_authenticated: mock.MagicMock,
+    ):
+        """
+        Given the application is running with an APP_MODE of `CMS_ADMIN`
+        When `get_permissions()` is called from the API timeseries view set
+        Then rest_frameworks's `IsAuthenticated()` will be called.
+        """
+        # Given
+        config.APP_MODE = "CMS_ADMIN"
+        audit_api_timeseries_viewset = AuditAPITimeSeriesViewSet()
+
+        # When
+        audit_api_timeseries_viewset.get_permissions()
+
+        # Then
+        spy_permissions_is_authenticated.assert_called_once()
+        config.APP_MODE = ""
+
     def test_sets_no_api_key_restrictions(self):
         """
         Given an instance of the `AuditAPITimeseriesViewSet`
