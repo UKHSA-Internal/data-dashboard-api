@@ -1,8 +1,10 @@
 from http import HTTPStatus
 
+from botocore.exceptions import ParamValidationError
 from django.http import HttpResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from feedback import send_email
@@ -57,5 +59,9 @@ class SuggestionsV2View(APIView):
         """
         serializer = SuggestionsV2Serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        send_email_v3(suggestions=serializer.validated_data)
-        return HttpResponse(HTTPStatus.OK.value)
+
+        try:
+            send_email_v3(suggestions=serializer.validated_data)
+        except ParamValidationError:
+            return Response(status=HTTPStatus.BAD_REQUEST)
+        return Response(status=HTTPStatus.OK.value)
