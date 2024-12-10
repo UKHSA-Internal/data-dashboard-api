@@ -6,6 +6,7 @@ class _InfectiousDiseaseChildTheme(Enum):
     RESPIRATORY = "respiratory"
     BLOODSTREAM_INFECTION = "bloodstream_infection"
     GASTROINTESTINAL = "gastrointestinal"
+    ANTIMICROBIAL_RESISTANCE = "antimicrobial_resistance"
 
 
 class _ExtremeEventChildTheme(Enum):
@@ -43,6 +44,10 @@ class _GastrointestinalTopic(Enum):
     C_DIFFICILE = "C-difficile"
 
 
+class _AntimicrobialResistanceTopic(Enum):
+    E_COLI = "E-coli"
+
+
 class BaseEnum(Enum):
     def return_list(self):
         return [e.value for e in self.value]
@@ -64,3 +69,4 @@ class Topic(BaseEnum):
     RESPIRATORY = _RespiratoryTopic
     BLOODSTREAM_INFECTION = _BloodstreamInfectionTopic
     GASTROINTESTINAL = _GastrointestinalTopic
+    ANTIMICROBIAL_RESISTANCE = _AntimicrobialResistanceTopic
