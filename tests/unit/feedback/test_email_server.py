@@ -1,6 +1,10 @@
 from unittest import mock
 
-from django.core.mail.message import EmailMessage
+import pytest
+from _pytest.logging import LogCaptureFixture
+from _pytest.monkeypatch import MonkeyPatch
+from botocore.exceptions import ClientError
+from django.core.mail import EmailMessage
 
 from feedback.email_server import (
     DEFAULT_FEEDBACK_EMAIL_SUBJECT,
@@ -8,6 +12,7 @@ from feedback.email_server import (
     send_email,
     create_email_message_v2,
     send_email_v2,
+    send_email_via_ses,
 )
 
 MODULE_PATH = "feedback.email_server"
@@ -381,3 +386,67 @@ class TestSendEmailV2:
         # Then
         email_message = spy_create_email_message.return_value
         email_message.send.assert_called_once_with(fail_silently=fail_silently)
+
+
+class TestSendEmailViaSES:
+    @mock.patch(f"{MODULE_PATH}.ses_client")
+    def test_send_email_success(
+        self,
+        mocked_ses_client: mock.MagicMock,
+        caplog: LogCaptureFixture,
+        monkeypatch: MonkeyPatch,
+    ):
+        """
+        Given a valid `EmailMessage` object
+        When `send_email_via_ses()` is called
+        Then the call is delegated to the SES client
+        And the appropriate logs are written
+        """
+        # Given
+        fake_email_recipient_address = "test-recipient@example.com"
+        fake_sender = "UKHSA data dashboard feedback <test-sender@example.com>"
+        monkeypatch.setenv(
+            "FEEDBACK_EMAIL_RECIPIENT_ADDRESS", fake_email_recipient_address
+        )
+        monkeypatch.setenv("FEEDBACK_EMAIL_SENDER_ADDRESS", "test-sender@example.com")
+        mocked_ses_client.send_email.return_value = {"MessageId": "12345"}
+        fake_email_message = EmailMessage(subject="Test Subject", body="Test Body")
+
+        # When
+        send_email_via_ses(email_message=fake_email_message)
+
+        # Then
+        mocked_ses_client.send_email.assert_called_once_with(
+            Destination={"ToAddresses": [fake_email_recipient_address]},
+            Message={
+                "Body": {"Text": {"Charset": "UTF-8", "Data": fake_email_message.body}},
+                "Subject": {"Charset": "UTF-8", "Data": fake_email_message.subject},
+            },
+            Source=fake_sender,
+        )
+        assert "Sending email" in caplog.text
+        assert "Email sent. Message ID: 12345" in caplog.text
+
+    @mock.patch(f"{MODULE_PATH}.ses_client")
+    def test_send_email_client_error(
+        self, mocked_ses_client: mock.MagicMock, caplog: LogCaptureFixture
+    ):
+        """
+        Given an `EmailMessage` object
+        And the SES client which raises a `ClientError`
+        When `send_email_via_ses()` is called
+        Then the error is logged, and the exception is re-raised
+        """
+        # Given
+        error_message = "An error occurred"
+        mocked_ses_client.send_email.side_effect = ClientError(
+            {"Error": {"Message": error_message}}, "SendEmail"
+        )
+
+        # When
+        with pytest.raises(ClientError):
+            send_email_via_ses(email_message=mock.Mock())
+
+        # Then
+        assert "Sending email" in caplog.text
+        assert error_message in caplog.text
