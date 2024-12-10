@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import os
 
@@ -94,7 +95,7 @@ def send_email_v2(
     subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
     recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,
     fail_silently: bool = True,
-) -> bool:
+) -> None:
     """Sends a feedback email to the `recipient_email_address`
 
     Args:
@@ -110,7 +111,7 @@ def send_email_v2(
             Defaults to True
 
     Returns:
-        A boolean to describe whether the email has been sent successfully
+        None
 
     """
     email = create_email_message_v2(
@@ -123,7 +124,35 @@ def send_email_v2(
     message = "succeeded" if email_submitted else "failed"
     logger.info("Email submission %s for %s", message, subject)
 
-    return email_submitted
+
+def send_email_v3(
+    *,
+    suggestions: dict[str, str],
+    subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
+    recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,
+) -> None:
+    """Sends a feedback email to the `recipient_email_address` via AWS SES
+
+    Args:
+        suggestions: Dict of feedback suggestions from the user
+            E.g. {"question": "some question", "answer": "some answer"}
+        subject: The subject line to set on the email message
+            Defaults to "Suggestions Feedback for UKHSA data dashboard"
+        recipient_email_address: The recipient to send the email to
+            Defaults to the environment variable
+                `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
+
+    Returns:
+        None
+
+    """
+    email_message: EmailMessage = create_email_message_v2(
+        suggestions=suggestions,
+        subject=subject,
+        recipient_email_address=recipient_email_address,
+    )
+    with contextlib.suppress(ClientError):
+        send_email_via_ses(email_message=email_message)
 
 
 def create_email_message(
