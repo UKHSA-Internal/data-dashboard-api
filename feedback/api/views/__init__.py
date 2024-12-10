@@ -1,1 +1,1 @@
-from .suggestions import SuggestionsV2View
+from .suggestions import SuggestionsView

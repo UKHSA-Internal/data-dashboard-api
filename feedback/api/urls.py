@@ -1,6 +1,6 @@
 from django.urls import re_path, resolvers
 
-from feedback.api.views import SuggestionsV2View
+from feedback.api.views import SuggestionsView
 
 
 def construct_urlpatterns_for_feedback(*, prefix: str) -> list[resolvers.URLResolver]:
@@ -16,5 +16,5 @@ def construct_urlpatterns_for_feedback(*, prefix: str) -> list[resolvers.URLReso
 
     """
     return [
-        re_path(f"^{prefix}suggestions/v2", SuggestionsV2View.as_view()),
+        re_path(f"^{prefix}suggestions/v2", SuggestionsView.as_view()),
     ]

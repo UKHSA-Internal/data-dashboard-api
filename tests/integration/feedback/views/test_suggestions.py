@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from unittest import mock
 
 import pytest
 from rest_framework.response import Response
@@ -8,7 +7,7 @@ from rest_framework.test import APIClient
 MODULE_PATH = "feedback.api.views.suggestions"
 
 
-class TestSuggestionsV2View:
+class TestSuggestionsView:
     @pytest.mark.django_db
     def test_post_request_returns_correct_response(self):
         """

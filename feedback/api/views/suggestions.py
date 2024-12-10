@@ -13,7 +13,7 @@ from feedback.email_server import send_email_v2
 SUGGESTIONS_API_TAG = "suggestions"
 
 
-class SuggestionsV2View(APIView):
+class SuggestionsView(APIView):
     permission_classes = []
 
     @classmethod
