@@ -7,7 +7,7 @@ from feedback.email_template import (
     FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER,
     _build_body_from_suggestions,
     build_body_for_email,
-    _enrich_suggestions_with_long_form_questions_v2,
+    _enrich_suggestions_with_long_form_questions,
 )
 
 REASON_QUESTION = "What was your reason for visiting the dashboard today?"
@@ -61,7 +61,7 @@ def example_feedback_form_fields() -> list[FormField]:
     ]
 
 
-class TestEnrichSuggestionsWithLongFormQuestionsV2:
+class TestEnrichSuggestionsWithLongFormQuestions:
 
     @pytest.mark.parametrize(
         "question, answer",
@@ -106,7 +106,7 @@ class TestEnrichSuggestionsWithLongFormQuestionsV2:
 
         # When
         enriched_suggestions: dict[str, str] = (
-            _enrich_suggestions_with_long_form_questions_v2(
+            _enrich_suggestions_with_long_form_questions(
                 suggestions=suggestions,
                 form_page_manager=mocked_form_page_manager,
             )
