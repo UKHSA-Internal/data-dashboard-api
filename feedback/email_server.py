@@ -80,7 +80,7 @@ def send_email_v2(
         None
 
     """
-    email = create_email_message_v2(
+    email = create_email_message(
         suggestions=suggestions,
         subject=subject,
         recipient_email_address=recipient_email_address,
@@ -112,7 +112,7 @@ def send_email_v3(
         None
 
     """
-    email_message: EmailMessage = create_email_message_v2(
+    email_message: EmailMessage = create_email_message(
         suggestions=suggestions,
         subject=subject,
         recipient_email_address=recipient_email_address,
@@ -121,7 +121,7 @@ def send_email_v3(
         send_email_via_ses(email_message=email_message)
 
 
-def create_email_message_v2(
+def create_email_message(
     *,
     suggestions: dict[str, str],
     subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,

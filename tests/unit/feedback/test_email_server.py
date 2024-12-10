@@ -8,7 +8,7 @@ from django.core.mail import EmailMessage
 
 from feedback.email_server import (
     DEFAULT_FEEDBACK_EMAIL_SUBJECT,
-    create_email_message_v2,
+    create_email_message,
     send_email_v2,
     send_email_via_ses,
     send_email_v3,
@@ -18,7 +18,7 @@ MODULE_PATH = "feedback.email_server"
 FAKE_EMAIL_RECIPIENT_ADDRESS = "not.real@test.com"
 
 
-class TestCreateEmailMessageV2:
+class TestCreateEmailMessage:
     @mock.patch(f"{MODULE_PATH}.build_body_for_email_v2")
     def test_returns_email_message(
         self, mocked_build_body_for_email_v2: mock.MagicMock
@@ -33,7 +33,7 @@ class TestCreateEmailMessageV2:
         fake_subject = "Test subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             subject=fake_subject,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
@@ -61,7 +61,7 @@ class TestCreateEmailMessageV2:
         fake_subject = "Test subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             subject=fake_subject,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
@@ -84,7 +84,7 @@ class TestCreateEmailMessageV2:
         mocked_suggestions = mock.MagicMock()
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
         )
@@ -107,7 +107,7 @@ class TestCreateEmailMessageV2:
         fake_non_default_subject = "Specified example subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
             subject=fake_non_default_subject,
@@ -130,7 +130,7 @@ class TestCreateEmailMessageV2:
         fake_non_default_subject = "Specified example subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
             subject=fake_non_default_subject,
@@ -141,7 +141,7 @@ class TestCreateEmailMessageV2:
 
 
 class TestSendEmailV2:
-    @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
+    @mock.patch(f"{MODULE_PATH}.create_email_message")
     def test_delegates_call_to_create_email_message(
         self, spy_create_email_message: mock.MagicMock
     ):
@@ -174,7 +174,7 @@ class TestSendEmailV2:
             recipient_email_address=mocked_recipient_email_address,
         )
 
-    @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
+    @mock.patch(f"{MODULE_PATH}.create_email_message")
     def test_calls_send_on_email_message(
         self, spy_create_email_message: mock.MagicMock
     ):
@@ -271,19 +271,19 @@ class TestSendEmailViaSES:
 
 
 class TestSendEmailV3:
-    @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
+    @mock.patch(f"{MODULE_PATH}.create_email_message")
     @mock.patch(f"{MODULE_PATH}.send_email_via_ses")
     def test_send_email_v3_success(
         self,
         mocked_send_email_via_ses: mock.MagicMock,
-        mocked_create_email_message_v2: mock.MagicMock,
+        mocked_create_email_message: mock.MagicMock,
         caplog: LogCaptureFixture,
         monkeypatch: MonkeyPatch,
     ):
         """
         Given valid suggestions and subject line and recipient
         When `send_email_v3()` is called
-        Then an email is created via `create_email_message_v2()`
+        Then an email is created via `create_email_message()`
         And sent via the `send_email_via_ses()` function
         """
         # Given
@@ -301,22 +301,22 @@ class TestSendEmailV3:
         )
 
         # Then
-        mocked_create_email_message_v2.assert_called_once_with(
+        mocked_create_email_message.assert_called_once_with(
             suggestions=mocked_suggestions,
             subject=fake_subject,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
         )
-        expected_email_message = mocked_create_email_message_v2.return_value
+        expected_email_message = mocked_create_email_message.return_value
         mocked_send_email_via_ses.assert_called_once_with(
             email_message=expected_email_message
         )
 
-    @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
+    @mock.patch(f"{MODULE_PATH}.create_email_message")
     @mock.patch(f"{MODULE_PATH}.send_email_via_ses")
     def test_send_email_v3_suppresses_client_error(
         self,
         mocked_send_email_via_ses: mock.MagicMock,
-        mocked_create_email_message_v2: mock.MagicMock,
+        mocked_create_email_message: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
         """
