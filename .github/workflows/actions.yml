@@ -234,19 +234,19 @@ jobs:
   # Deploy
   ###############################################################################
 
-  trigger-deployments:
-    name: Trigger deployments
-    needs: [
-      publish-main-image,
-      publish-ingestion-image
-    ]
-    runs-on: ubuntu-latest
-    if: ${{ github.ref == 'refs/heads/main' }}
-    # Only deploy if the changes are being pushed to the `main` branch
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-      - uses: ./.github/actions/trigger-deployments
-        with:
-          token: ${{ secrets.DEPLOYMENT_TRIGGER_TOKEN }}
+#  trigger-deployments:
+#    name: Trigger deployments
+#    needs: [
+#      publish-main-image,
+#      publish-ingestion-image
+#    ]
+#    runs-on: ubuntu-latest
+#    if: ${{ github.ref == 'refs/heads/main' }}
+#    # Only deploy if the changes are being pushed to the `main` branch
+#
+#    steps:
+#      - name: Check out code
+#        uses: actions/checkout@v4
+#      - uses: ./.github/actions/trigger-deployments
+#        with:
+#          token: ${{ secrets.DEPLOYMENT_TRIGGER_TOKEN }}
