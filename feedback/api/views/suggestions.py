@@ -64,4 +64,4 @@ class SuggestionsV2View(APIView):
             send_email_v3(suggestions=serializer.validated_data)
         except ParamValidationError:
             return Response(status=HTTPStatus.BAD_REQUEST)
-        return Response(status=HTTPStatus.OK.value)
+        return HttpResponse(HTTPStatus.OK.value)
