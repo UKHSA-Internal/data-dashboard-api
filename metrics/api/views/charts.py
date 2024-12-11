@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from django.http import FileResponse
 from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -23,7 +24,7 @@ CHARTS_API_TAG = "charts"
 
 
 class ChartsView(APIView):
-    permission_classes = []
+    permission_classes = [permissions.IsAuthenticated]
 
     @extend_schema(
         request=ChartsSerializer,

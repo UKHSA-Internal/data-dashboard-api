@@ -16,7 +16,6 @@ MODULE_PATH = "metrics.api.urls_construction"
 HEADLESS_CMS_API_ENDPOINT_PATHS = ["drafts", "pages"]
 
 PRIVATE_API_ENDPOINT_PATHS = [
-    "api/charts/v2",
     "api/charts/v3",
     "api/downloads/v2",
     "api/headlines/v3",
@@ -30,6 +29,7 @@ AUDIT_API_ENDPOINT_PATHS = [
     "api/audit/v1/api-timeseries",
     "api/audit/v1/core-timeseries",
     "api/audit/v1/core-headline",
+    "api/charts/v2",
 ]
 
 FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v1", "api/suggestions/v2"]
