@@ -77,7 +77,7 @@ class AuditAPITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
 
     def get_permissions(self) -> list[type[permissions.BasePermission]]:
-        if AppMode.CMS_ADMIN.value == config.APP_MODE:
+        if config.APP_MODE == AppMode.CMS_ADMIN.value:
             return [permissions.IsAuthenticated()]
 
         return super().get_permissions()
