@@ -4,7 +4,6 @@ from rest_framework import permissions
 
 import config
 from metrics.api.views.audit.audit_core_timeseries import AuditCoreTimeseriesViewSet
-from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 
 
 class TestAuditCoreTimeseriesViewSet:
