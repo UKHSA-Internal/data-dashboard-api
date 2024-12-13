@@ -20,17 +20,17 @@ class TestCompositePage:
         """
         # Given
         root_page = Page.get_first_root_node()
-        build_cms_site_helpers.create_composite_page(
+        parent_page = build_cms_site_helpers.create_composite_page(
             name="access_our_data_parent_page", parent_page=root_page
         )
         # We must refetch the page from the db to get the latest version of the model
-        parent_page = CompositePage.objects.first()
+        parent_page.refresh_from_db()
         original_parent_published_time = parent_page.last_published_at
 
-        build_cms_site_helpers.create_topic_page(
+        child_page = build_cms_site_helpers.create_topic_page(
             name="influenza", parent_page=parent_page
         )
-        child_page = TopicPage.objects.first()
+        child_page.refresh_from_db()
 
         # When
         parent_page_last_updated_at: datetime.datetime = parent_page.last_updated_at
@@ -50,5 +50,5 @@ class TestCompositePage:
 
         # The parent page `last_updated_at` now points to the latest revision
         # i.e. the one on the parent page itself
-        parent_page = CompositePage.objects.first()
+        parent_page.refresh_from_db()
         assert parent_page.last_updated_at > child_page.last_updated_at
