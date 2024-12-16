@@ -1,6 +1,8 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets
+from rest_framework import permissions, viewsets
 
+import config
+from metrics.api.enums import AppMode
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import CoreTimeSeries
 
@@ -71,6 +73,12 @@ class AuditCoreTimeseriesViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CoreTimeSeries.objects.all().order_by("date")
     serializer_class = AuditCoreTimeseriesSerializer
     pagination_class = AuditEndpointPagination
+
+    def get_permissions(self) -> list[type[permissions.BasePermission]]:
+        if AppMode.CMS_ADMIN.value == config.APP_MODE:
+            return [permissions.IsAuthenticated()]
+
+        return super().get_permissions()
 
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
         queryset = super().get_queryset()
