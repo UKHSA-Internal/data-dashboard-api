@@ -3,9 +3,7 @@ import datetime
 import pytest
 from wagtail.models import Page
 
-from cms.composite.models import CompositePage
 from cms.dashboard.management.commands import build_cms_site_helpers
-from cms.topic.models import TopicPage
 
 
 class TestCompositePage:
