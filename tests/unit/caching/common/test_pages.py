@@ -30,16 +30,11 @@ MODULE_PATH = "caching.common.pages"
 class TestCollectAllPages:
     def test_all_pages_collected(self):
         """
-        Given a `HomePage` with a slug of "dashboard"
-        And a number of live `TopicPages` and a `CommonPage`
+        Given a number of live `TopicPages` and a `CommonPage`
         When `collect_all_pages()` is called
         Then the correct pages are returned
         """
         # Given
-        # HomePage of slug "dashboard" which should be collected
-        published_home_page = FakeHomePageFactory.build_blank_page(slug="dashboard")
-        fake_home_page_manager = FakeHomePageManager(pages=[published_home_page])
-
         # Published `TopicPages` which should be collected
         published_covid_page = FakeTopicPageFactory.build_covid_19_page_from_template()
         published_influenza_page = (
@@ -57,7 +52,6 @@ class TestCollectAllPages:
 
         # When
         collected_pages = collect_all_pages(
-            home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=fake_common_page_manager,
             whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
@@ -65,7 +59,6 @@ class TestCollectAllPages:
         )
 
         # Then
-        assert published_home_page in collected_pages
         assert published_covid_page in collected_pages
         assert published_influenza_page in collected_pages
         assert published_about_page in collected_pages
@@ -104,7 +97,6 @@ class TestCollectAllPages:
 
         # When
         collected_pages = collect_all_pages(
-            home_page_manager=FakeHomePageManager(pages=[]),
             topic_page_manager=FakeTopicPageManager(pages=[]),
             common_page_manager=FakeCommonPageManager(pages=[]),
             whats_new_child_entry_manager=fake_whats_new_child_entry_manager,
@@ -116,42 +108,19 @@ class TestCollectAllPages:
         assert published_whats_new_child_entry in collected_pages
         assert unpublished_whats_new_child_entry not in collected_pages
 
-    def test_non_dashboard_home_pages_not_collected(self):
-        """
-        Given a `HomePage` with a slug which is not "dashboard"
-        When `collect_all_pages()` is called
-        Then no pages are returned
-        """
-        # Given
-        # HomePage which has a different slug then "dashboard" which should not be collected
-        non_dashboard_page = FakeHomePageFactory.build_blank_page(
-            slug="respiratory-viruses"
-        )
-        fake_home_page_manager = FakeHomePageManager(pages=[non_dashboard_page])
-        fake_topic_page_manager = FakeTopicPageManager(pages=[])
-
-        # When
-        collected_pages = collect_all_pages(
-            home_page_manager=fake_home_page_manager,
-            topic_page_manager=fake_topic_page_manager,
-            common_page_manager=FakeCommonPageManager(pages=[]),
-            whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
-            whats_new_child_entry_manager=FakeWhatsNewChildEntryManager(pages=[]),
-        )
-
-        # Then
-        assert non_dashboard_page not in collected_pages
-
     def test_unpublished_pages_not_collected(self):
         """
-        Given a `HomePage` with a slug of "dashboard"
+        Given a published `TopicPage`
         And an unpublished `TopicPage`
         When `collect_all_pages()` is called
         Then the correct pages are returned
         """
         # Given
-        published_home_page = FakeHomePageFactory.build_blank_page(slug="dashboard")
-        fake_home_page_manager = FakeHomePageManager(pages=[published_home_page])
+        published_topic_page = (
+            FakeTopicPageFactory.build_other_respiratory_viruses_page_from_template(
+                live=True
+            )
+        )
 
         # A mixture of unpublished and live pages
         # Whereby only the live pages should be collected
@@ -162,12 +131,11 @@ class TestCollectAllPages:
         )
         published_covid_page = FakeTopicPageFactory.build_covid_19_page_from_template()
         fake_topic_page_manager = FakeTopicPageManager(
-            pages=[unpublished_page, published_covid_page]
+            pages=[unpublished_page, published_covid_page, published_topic_page]
         )
 
         # When
         collected_pages = collect_all_pages(
-            home_page_manager=fake_home_page_manager,
             topic_page_manager=fake_topic_page_manager,
             common_page_manager=FakeCommonPageManager(pages=[]),
             whats_new_parent_page_manager=FakeWhatsNewParentPageManager(pages=[]),
@@ -175,7 +143,7 @@ class TestCollectAllPages:
         )
 
         # Then
-        assert published_home_page in collected_pages
+        assert published_topic_page in collected_pages
         assert published_covid_page in collected_pages
         assert unpublished_page not in collected_pages
 
