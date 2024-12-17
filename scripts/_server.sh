@@ -47,6 +47,7 @@ function _server_run_production() {
       --worker-class=gthread \
       --timeout=120 \
       --bind=0.0.0.0:${port:-80}
+      --SERVER=undiclosed
 }
 
 function _server_setup_all() {
