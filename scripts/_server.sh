@@ -42,12 +42,7 @@ function _server_run_production() {
 
     uhd venv activate
     gunicorn metrics.api.wsgi:application \
-      --workers=3 \
-      --threads=3 \
-      --worker-class=gthread \
-      --timeout=120 \
       --bind=0.0.0.0:${port:-80}
-      --SERVER=undiclosed
 }
 
 function _server_setup_all() {
