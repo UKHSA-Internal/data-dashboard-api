@@ -19,12 +19,8 @@ class TestConstructUrlPatternsForFeedback:
         )
 
         # Then
-        assert len(constructed_urlpatterns) == 2
+        assert len(constructed_urlpatterns) == 1
         assert (
             constructed_urlpatterns[0].pattern.regex.pattern
-            == f"^{prefix}suggestions/v1"
-        )
-        assert (
-            constructed_urlpatterns[1].pattern.regex.pattern
             == f"^{prefix}suggestions/v2"
         )
