@@ -13,16 +13,16 @@ class ChartSettings:
     narrow_chart_width = DEFAULT_CHART_WIDTH
 
     def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
-        self._chart_payload = chart_generation_payload
+        self._chart_generation_payload = chart_generation_payload
         self.plots_data: list[PlotGenerationData] = chart_generation_payload.plots
 
     @property
     def width(self) -> int:
-        return self._chart_payload.chart_width
+        return self._chart_generation_payload.chart_width
 
     @property
     def height(self) -> int:
-        return self._chart_payload.chart_height
+        return self._chart_generation_payload.chart_height
 
     @staticmethod
     def get_tick_font_config() -> DICT_OF_STR_ONLY:
