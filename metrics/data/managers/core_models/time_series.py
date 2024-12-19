@@ -426,7 +426,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             .values_list(
                 "geography__name", "geography__geography_type__name", named=True
             )
-            .order_by("geography__geography_type")
+            .order_by("geography__geography_type__name", "geography__name")
             .distinct()
         )
 
