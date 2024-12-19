@@ -18,7 +18,8 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models import PlotData, PlotsCollection
+from metrics.domain.models import (
+    ChartGenerationPayload,
     ChartRequestParams,
     PlotGenerationData,
 )
@@ -149,19 +150,29 @@ class ChartsInterface:
                     which summarises the produced chart
 
         """
-        plots_data: list[PlotData] = self.build_chart_plots_data()
-        description = self.build_chart_description(plots_data=plots_data)
+        chart_generation_payload: ChartGenerationPayload = (
+            self.build_chart_generation_payload()
+        )
+        description = self.build_chart_description(
+            plots_data=chart_generation_payload.plots
+        )
 
         match self.chart_type:
             case ChartTypes.bar.value:
-                figure = self.generate_bar_chart(plots_data=plots_data)
+                figure = self.generate_bar_chart(
+                    chart_generation_payload=chart_generation_payload
+                )
             case ChartTypes.line_multi_coloured.value:
-                figure = self.generate_line_multi_coloured_chart(plots_data=plots_data)
+                figure = self.generate_line_multi_coloured_chart(
+                    chart_generation_payload=chart_generation_payload
+                )
             case ChartTypes.line_single_simplified.value:
-                figure = self.generate_line_single_simplified(plots_data=plots_data)
+                figure = self.generate_line_single_simplified(
+                    chart_generation_payload=chart_generation_payload
+                )
             case _:
                 figure = self.generate_line_with_shaded_section_chart(
-                    plots_data=plots_data
+                    chart_generation_payload=chart_generation_payload
                 )
 
         return ChartOutput(figure=figure, description=description)
@@ -184,8 +195,11 @@ class ChartsInterface:
         plots_text = PlotsText(plots_data=plots_data)
         return plots_text.construct_text()
 
+    @classmethod
     def generate_bar_chart(
-        self, *, plots_data: list[PlotData]
+        cls,
+        *,
+        chart_generation_payload: ChartGenerationPayload,
     ) -> plotly.graph_objects.Figure:
         """Creates a bar chart figure for the requested chart plot
 
@@ -193,11 +207,10 @@ class ChartsInterface:
             This does support **multiple** plots on the same figure
 
         Args:
-            plots_data: List of `PlotData` models,
-                where each model represents a requested plot.
-                Note that each `PlotData` model is enriched with data
-                with the according x and y values along with
-                requests parameters like colour and plot label.
+            chart_generation_payload: An enriched `ChartGenerationPayload` model
+                which holds all the parameters like colour and plot labels
+                 along with the corresponding x and y values
+                 which are needed to be able to generate the chart in full.
 
         Returns:
             A plotly `Figure` object for the created bar chart
@@ -208,13 +221,14 @@ class ChartsInterface:
 
         """
         return bar.generate_chart_figure(
-            chart_height=self.chart_plots.chart_height,
-            chart_width=self.chart_plots.chart_width,
-            chart_plots_data=plots_data,
+            chart_generation_payload=chart_generation_payload
         )
 
+    @classmethod
     def generate_line_multi_coloured_chart(
-        self, *, plots_data: list[PlotData]
+        cls,
+        *,
+        chart_generation_payload: ChartGenerationPayload,
     ) -> plotly.graph_objects.Figure:
         """Creates a multiple line colour-differentiated chart figure for the requested chart plots
 
@@ -222,11 +236,10 @@ class ChartsInterface:
             This does support **multiple** plots on the same figure
 
         Args:
-            plots_data: List of `PlotData` models,
-                where each model represents a requested plot.
-                Note that each `PlotData` model is enriched with data
-                with the according x and y values along with
-                requests parameters like colour and plot label.
+            chart_generation_payload: An enriched `ChartGenerationPayload` model
+                which holds all the parameters like colour and plot labels
+                 along with the corresponding x and y values
+                 which are needed to be able to generate the chart in full.
 
         Returns:
             A plotly `Figure` object for the created multi-coloured line chart
@@ -236,13 +249,13 @@ class ChartsInterface:
                 returned any data from the underlying queries
         """
         return line_multi_coloured.generate_chart_figure(
-            chart_height=self.chart_plots.chart_height,
-            chart_width=self.chart_plots.chart_width,
-            chart_plots_data=plots_data,
+            chart_generation_payload=chart_generation_payload
         )
 
     def generate_line_with_shaded_section_chart(
-        self, *, plots_data: list[PlotData]
+        self,
+        *,
+        chart_generation_payload: ChartGenerationPayload,
     ) -> plotly.graph_objects.Figure:
         """Creates a line chart with shaded section figure for the requested chart plot
 
@@ -251,11 +264,10 @@ class ChartsInterface:
             the remaining plots are not applied to the figure.
 
         Args:
-            plots_data: List of `PlotData` models,
-                where each model represents a requested plot.
-                Note that each `PlotData` model is enriched with data
-                with the according x and y values along with
-                requests parameters like colour and plot label.
+            chart_generation_payload: An enriched `ChartGenerationPayload` model
+                which holds all the parameters like colour and plot labels
+                 along with the corresponding x and y values
+                 which are needed to be able to generate the chart in full.
 
         Returns:
             A plotly `Figure` object for the created line chart with shaded section
@@ -263,12 +275,18 @@ class ChartsInterface:
         Raises:
             `DataNotFoundForAnyPlotError`: If no plots
                 returned any data from the underlying queries
+
         """
-        params = self.param_builder_for_line_with_shaded_section(plots_data=plots_data)
+        params = self.param_builder_for_line_with_shaded_section(
+            plots_data=chart_generation_payload.plots
+        )
         return line_with_shaded_section.generate_chart_figure(**params)
 
+    @classmethod
     def generate_line_single_simplified(
-        self, *, plots_data: list[PlotData]
+        cls,
+        *,
+        chart_generation_payload: ChartGenerationPayload,
     ) -> plotly.graph_objects.Figure:
         """Creates a simplified line chart with only 4 tick labels displayed for the first
             and last values on each axis
@@ -278,11 +296,10 @@ class ChartsInterface:
             simplified chart.
 
         Args:
-            plots_data: List of `PlotData` models,
-            where each model represents a requested plot.
-            Note that each `PlotData` models is enriched with data
-            with the according x and y values along with
-            requests parameters like colour and plot label.
+            chart_generation_payload: An enriched `ChartGenerationPayload` model
+                which holds all the parameters like colour and plot labels
+                 along with the corresponding x and y values
+                 which are needed to be able to generate the chart in full.
 
         Returns:
             A plotly `Figure` object for the created line chart with shaded section
@@ -290,11 +307,23 @@ class ChartsInterface:
         Raises:
             `DataNotFoundForAnyPlotError`: If no plots
                 returned any data from the underlying queries
-        """
-        params = self.param_builder_for_line_single_simplified(plots_data=plots_data)
-        return line_single_simplified.generate_chart_figure(**params)
 
-    def build_chart_plots_data(self) -> list[PlotData]:
+        """
+        return line_single_simplified.generate_chart_figure(
+            chart_generation_payload=chart_generation_payload
+        )
+
+    def build_chart_generation_payload(self) -> ChartGenerationPayload:
+        plots_data: list[PlotGenerationData] = self._build_chart_plots_data()
+        return ChartGenerationPayload(
+            plots=plots_data,
+            x_axis_title=self.chart_request_params.x_axis_title,
+            y_axis_title=self.chart_request_params.y_axis_title,
+            chart_height=self.chart_request_params.chart_height,
+            chart_width=self.chart_request_params.chart_width,
+            file_format=self.chart_request_params.file_format,
+        )
+
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 

@@ -214,6 +214,15 @@ class PlotGenerationData(BaseModel):
         raise NoReportingDelayPeriodFoundError
 
 
+class ChartGenerationPayload(BaseModel):
+    plots: list[PlotGenerationData]
+    file_format: Literal["png", "svg", "jpg", "jpeg"]
+    chart_width: int
+    chart_height: int
+    x_axis_title: str
+    y_axis_title: str
+
+
 class CompletePlotData(BaseModel):
     """Data model to hold the parameters and the full-enriched queryset
 

@@ -7,25 +7,20 @@ from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured import properties
 from metrics.domain.charts.reporting_delay_period import add_reporting_delay_period
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
-from metrics.domain.models import PlotData
+from metrics.domain.models import ChartGenerationPayload, PlotGenerationData
 
 
 def create_multi_coloured_line_chart(
     *,
-    chart_height: int,
-    chart_width: int,
-    chart_plots_data: list[PlotData],
-    line_width: int = 2,
+    chart_generation_payload: ChartGenerationPayload,
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
     Args:
-        chart_height: The chart height in pixels
-        chart_width: The chart width in pixels
-        chart_plots_data: List of `PlotData` models,
-            where each model represents a requested plot.
-        line_width: The weight to assign to the width of the line plots.
-            Defaults to 2.
+        chart_generation_payload: An enriched `ChartGenerationPayload` model
+            which holds all the parameters like colour and plot labels
+             along with the corresponding x and y values
+             which are needed to be able to generate the chart in full.
 
     Returns:
         `Figure`: A `plotly` object which can then be
@@ -33,6 +28,7 @@ def create_multi_coloured_line_chart(
 
     """
     figure = plotly.graph_objects.Figure()
+    chart_plots_data: list[PlotGenerationData] = chart_generation_payload.plots
 
     for plot_data in chart_plots_data:
         selected_colour = RGBAChartLineColours.get_colour(
@@ -49,7 +45,7 @@ def create_multi_coloured_line_chart(
             x_axis_values=plot_data.x_axis_values,
             y_axis_values=plot_data.y_axis_values,
             colour=selected_colour.stringified,
-            line_width=line_width,
+            line_width=2,
             line_shape=line_shape,
             mode=mode,
             legend=plot_data.parameters.label,
@@ -59,11 +55,9 @@ def create_multi_coloured_line_chart(
         # Add line plot to the figure
         figure.add_trace(trace=line_plot)
 
-    # Apply the typical stylings for timeseries charts
+    # Apply the typical styling for timeseries charts
     settings = chart_settings.ChartSettings(
-        width=chart_width,
-        height=chart_height,
-        plots_data=chart_plots_data,
+        chart_generation_payload=chart_generation_payload
     )
     layout_args = settings.get_line_multi_coloured_chart_config()
     figure.update_layout(**layout_args)
@@ -105,20 +99,15 @@ def _create_line_plot(
 
 
 def generate_chart_figure(
-    *,
-    chart_height: int,
-    chart_width: int,
-    chart_plots_data: list[PlotData],
+    *, chart_generation_payload: ChartGenerationPayload
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
     Args:
-        chart_height: The chart height in pixels
-        chart_width: The chart width in pixels
-        chart_plots_data: List of `PlotData` models,
-            where each model represents a requested plot.
-        line_shape: The shape to assign to the line plots.
-            This can be either `linear` or `spline`.
+        chart_generation_payload: An enriched `ChartGenerationPayload`
+            which holds all the parameters like colour and plot labels
+             along with the corresponding x and y values
+             which are needed to be able to generate the chart in full.
 
     Returns:
         `Figure`: A `plotly` object which can then be
@@ -126,7 +115,5 @@ def generate_chart_figure(
 
     """
     return create_multi_coloured_line_chart(
-        chart_height=chart_height,
-        chart_width=chart_width,
-        chart_plots_data=chart_plots_data,
+        chart_generation_payload=chart_generation_payload
     )
