@@ -5,7 +5,7 @@ import pytest
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.plots import (
     NoReportingDelayPeriodFoundError,
     ReportingDelayNotProvidedToPlotsError,
@@ -36,7 +36,7 @@ class TestPlotsText:
         assert text == "There is no data being shown for this chart."
 
     def test_returns_correct_text_for_plots_with_no_data(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of `PlotData` models of which have no data
@@ -56,7 +56,7 @@ class TestPlotsText:
         assert text == "There is no data being shown for this chart."
 
     def test_returns_correct_text_about_parameters_for_one_plot(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of 1 enriched `PlotData` model
@@ -91,7 +91,7 @@ class TestPlotsText:
         assert expected_text_about_parameters in text
 
     def test_returns_correct_line_colour_when_not_provided_for_one_plot(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of 1 enriched `PlotData` model
@@ -129,7 +129,10 @@ class TestPlotsText:
         ],
     )
     def test_returns_correct_trend_type_when_line_colour_provided_is_for_trend_line(
-        self, fake_plot_data: PlotData, trend_line_colour: str, trend_type: str
+        self,
+        fake_plot_data: PlotGenerationData,
+        trend_line_colour: str,
+        trend_type: str,
     ):
         """
         Given a valid plot where the `line_colour` is a trend line option
@@ -152,7 +155,7 @@ class TestPlotsText:
 
     def test_returns_no_trend_type_when_line_colour_is_trend_line_none(
         self,
-        fake_plot_data: PlotData,
+        fake_plot_data: PlotGenerationData,
     ):
         """
         Given a valid plot where the `line_colour` that is not a `TREND_LINE` colour
@@ -172,7 +175,7 @@ class TestPlotsText:
         assert expected_text_about_parameters in text
 
     def test_returns_correct_text_about_parameters_for_multiple_plots(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of 3 enriched `PlotData` models
@@ -238,7 +241,7 @@ class TestPlotsText:
         assert expected_plot_3_params_description in text
 
     def test_returns_correct_text_about_data_for_one_plot(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of 1 enriched `PlotData` model
@@ -267,7 +270,7 @@ class TestPlotsText:
         assert expected_text_about_plot_data in text
 
     def test_returns_correct_text_about_data_for_multiple_plots(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of 2 enriched `PlotData` models
@@ -318,7 +321,7 @@ class TestPlotsText:
     def test_returns_correct_text_about_valid_reporting_delay_period(
         self,
         mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
-        fake_plot_data: PlotData,
+        fake_plot_data: PlotGenerationData,
     ):
         """
         Given a list of 1 enriched `PlotData` model
@@ -355,7 +358,7 @@ class TestPlotsText:
         self,
         mocked_get_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
         error: Exception,
-        fake_plot_data: PlotData,
+        fake_plot_data: PlotGenerationData,
     ):
         """
         Given a list of 1 enriched `PlotData` model
@@ -379,7 +382,7 @@ class TestPlotsText:
 
     def test_returns_correct_text_for_headline_data(
         self,
-        fake_plot_data: PlotData,
+        fake_plot_data: PlotGenerationData,
     ):
         """
         Given a list of 1 enriched `PlotData` model
@@ -406,7 +409,7 @@ class TestPlotsText:
 
     def test_returns_correct_text_for_multiple_headline_data_types(
         self,
-        fake_plot_data: PlotData,
+        fake_plot_data: PlotGenerationData,
     ):
         """
         Given a list of 2 enriched `PlotData` model

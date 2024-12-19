@@ -8,13 +8,13 @@ from metrics.domain.charts.chart_settings import (
     ChartSettings,
     get_max_date_for_current_month,
 )
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
 
 MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 
 
 @pytest.fixture()
-def fake_chart_settings(fake_plot_data: PlotData) -> ChartSettings:
+def fake_chart_settings(fake_plot_data: PlotGenerationData) -> ChartSettings:
     return ChartSettings(
         width=930,
         height=220,
@@ -195,7 +195,7 @@ class TestChartSettings:
 
         assert base_chart_config == expected_base_chart_config
 
-    def test_chart_settings_width(self, fake_plot_data: PlotData):
+    def test_chart_settings_width(self, fake_plot_data: PlotGenerationData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -215,7 +215,7 @@ class TestChartSettings:
         # Then
         assert chart_width == width
 
-    def test_chart_settings_height(self, fake_plot_data: PlotData):
+    def test_chart_settings_height(self, fake_plot_data: PlotGenerationData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -255,7 +255,7 @@ class TestChartSettings:
         assert x_axis_date_type["tickformat"] == "%b %Y"
 
     def test_get_x_axis_date_type_calls_get_x_axis_range(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given an instance of `ChartSettings`
@@ -283,7 +283,7 @@ class TestChartSettings:
         assert x_axis_date_type == expected_axis_config
 
     def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given an instance of `ChartSettings` with a narrow `width`

@@ -136,7 +136,7 @@ class PlotParameters(BaseModel):
         return DataSourceFileType[self.metric_group].is_timeseries
 
 
-class PlotsCollection(BaseModel):
+class ChartRequestParams(BaseModel):
     metric_group: str | None = None
     plots: list[PlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
@@ -152,7 +152,7 @@ class NoReportingDelayPeriodFoundError(Exception): ...
 class ReportingDelayNotProvidedToPlotsError(Exception): ...
 
 
-class PlotData(BaseModel):
+class PlotGenerationData(BaseModel):
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any

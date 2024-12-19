@@ -2,7 +2,7 @@ import datetime
 from unittest import mock
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from metrics.domain.models import PlotParameters, PlotsCollection
+from metrics.domain.models import PlotParameters, ChartRequestParams
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.tables.access import (
     TablesInterface,
@@ -32,7 +32,7 @@ class TestTablesInterface:
 
     def test_plots_interface_is_created_with_correct_args_by_default(
         self,
-        fake_plots_collection: PlotsCollection,
+        fake_plots_collection: ChartRequestParams,
     ):
         """
         Given a `PlotsCollection` and a `CoreTimeSeriesManager`
@@ -54,7 +54,7 @@ class TestTablesInterface:
 
         # Then
         created_plots_interface = tables_interface.plots_interface
-        assert created_plots_interface.plots_collection == fake_plots_collection
+        assert created_plots_interface.chart_request_params == fake_plots_collection
         assert (
             created_plots_interface.core_model_manager
             == mocked_core_time_series_manager
@@ -62,7 +62,7 @@ class TestTablesInterface:
 
     def test_plots_interface_is_created_with_headline_manager_when_provided_a_headline_metric(
         self,
-        fake_plots_collection: PlotsCollection,
+        fake_plots_collection: ChartRequestParams,
     ):
         """
         Given a `PlotsCollection` and a `headline` metric
@@ -84,7 +84,7 @@ class TestTablesInterface:
 
         # Then
         created_plots_interface = tables_interface.plots_interface
-        assert created_plots_interface.plots_collection == fake_plots_collection
+        assert created_plots_interface.chart_request_params == fake_plots_collection
         assert created_plots_interface.core_model_manager == CoreHeadline.objects
 
     @mock.patch.object(TabularData, "create_tabular_plots")
@@ -106,7 +106,7 @@ class TestTablesInterface:
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(fake_core_time_series)
 
-        plots_collection = PlotsCollection(
+        plots_collection = ChartRequestParams(
             plots=[valid_plot_parameters],
             file_format="svg",
             chart_height=123,
@@ -135,7 +135,7 @@ class TestGenerateTableForFullPlots:
     def test_delegates_call_for_producing_table(
         self,
         spy_generate_full_plots_for_table: mock.MagicMock,
-        fake_plots_collection: PlotsCollection,
+        fake_plots_collection: ChartRequestParams,
     ):
         """
         Given a fake `PlotsCollection` model

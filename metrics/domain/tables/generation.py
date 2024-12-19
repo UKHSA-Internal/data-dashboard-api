@@ -7,7 +7,7 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
 
 IN_REPORTING_DELAY_PERIOD = "in_reporting_delay_period"
 
@@ -18,7 +18,7 @@ DEFAULT_PLOT_LABEL = "Plot"
 
 
 class TabularData:
-    def __init__(self, *, plots: list[PlotData]):
+    def __init__(self, *, plots: list[PlotGenerationData]):
         self.plots = plots
         self.metric_group = extract_metric_group_from_metric(
             metric=self.plots[0].parameters.metric
@@ -134,13 +134,13 @@ class TabularData:
 
     @classmethod
     def _build_plot_data_for_axes_values(
-        cls, *, plot: PlotData
+        cls, *, plot: PlotGenerationData
     ) -> PLOT_DATA_LOOKUP_TYPE:
         return dict(zip(plot.x_axis_values, plot.y_axis_values))
 
     @classmethod
     def _build_plot_data_for_in_reporting_delay_period_values(
-        cls, *, plot: PlotData
+        cls, *, plot: PlotGenerationData
     ) -> IN_REPORTING_DELAY_PERIOD_LOOKUP_TYPE:
         try:
             in_report_delay_period_values = plot.additional_values[

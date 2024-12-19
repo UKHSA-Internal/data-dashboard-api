@@ -5,7 +5,7 @@ import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotData, PlotParameters
+from metrics.domain.models import PlotGenerationData, PlotParameters
 
 DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -35,7 +35,7 @@ class TestLineMultiColouredCharts:
         line_colour: str = "",
         use_markers: bool = False,
         use_smooth_lines: bool = True,
-    ) -> PlotData:
+    ) -> PlotGenerationData:
         plot_params = PlotParameters(
             chart_type="line_multi_coloured",
             topic="COVID-19",
@@ -47,7 +47,7 @@ class TestLineMultiColouredCharts:
             use_markers=use_markers,
             use_smooth_lines=use_smooth_lines,
         )
-        return PlotData(
+        return PlotGenerationData(
             parameters=plot_params,
             x_axis_values=x_axis_values,
             y_axis_values=y_axis_values,

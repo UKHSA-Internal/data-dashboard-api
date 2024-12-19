@@ -6,7 +6,11 @@ from wagtail.models import Page
 from wagtail.models.i18n import Locale
 
 from cms.home.models.home_page import UKHSARootPage
-from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
+from metrics.domain.models import (
+    PlotGenerationData,
+    PlotParameters,
+    ChartRequestParams,
+)
 from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
@@ -32,8 +36,8 @@ def fake_chart_plot_parameters() -> PlotParameters:
 @pytest.fixture
 def fake_plots_collection(
     fake_chart_plot_parameters: PlotParameters,
-) -> PlotsCollection:
-    return PlotsCollection(
+) -> ChartRequestParams:
+    return ChartRequestParams(
         plots=[fake_chart_plot_parameters],
         file_format="svg",
         chart_width=930,
@@ -94,7 +98,7 @@ def valid_plot_parameters_for_headline_data() -> PlotParameters:
 
 
 @pytest.fixture
-def fake_plot_data() -> PlotData:
+def fake_plot_data() -> PlotGenerationData:
     plot_params = PlotParameters(
         chart_type="line_multi_coloured",
         topic="COVID-19",
@@ -108,7 +112,7 @@ def fake_plot_data() -> PlotData:
         line_type="SOLID",
     )
     y_axis_values = [1, 2, 4, 5, 5, 2, 1, 8, 9, 10, 2, 3]
-    return PlotData(
+    return PlotGenerationData(
         parameters=plot_params,
         x_axis_values=[
             datetime.date(year=2023, month=1, day=i + 1)

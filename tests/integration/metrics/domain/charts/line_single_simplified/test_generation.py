@@ -5,7 +5,7 @@ import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAColours
 from metrics.domain.charts.line_single_simplified import generation
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
 
 DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -18,7 +18,7 @@ DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
 
 class TestLineSingleSimplified:
     def test_line_single_simplified_figure_is_drawn_with_expected_params(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of dates and values

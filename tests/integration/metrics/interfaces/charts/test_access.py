@@ -2,13 +2,15 @@ from unittest import mock
 
 import plotly
 
-from metrics.domain.models import PlotsCollection
+from metrics.domain.models import ChartRequestParams
 from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import ChartsInterface
 
 
 class TestChartsInterface:
-    def test_svg_passed_to_encode_figure(self, fake_plots_collection: PlotsCollection):
+    def test_svg_passed_to_encode_figure(
+        self, fake_plots_collection: ChartRequestParams
+    ):
         """
         Given the user supplies a file_format of `svg` to pass to encode_figure
         When `encode_figure` is called then no exception is raised as long as
@@ -31,7 +33,9 @@ class TestChartsInterface:
 
     @mock.patch("scour.scour.scourString")
     def test_scour_is_called(
-        self, mocked_scourstring: mock.MagicMock, fake_plots_collection: PlotsCollection
+        self,
+        mocked_scourstring: mock.MagicMock,
+        fake_plots_collection: ChartRequestParams,
     ):
         """
         Given a Plotly Figure

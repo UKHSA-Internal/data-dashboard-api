@@ -5,7 +5,7 @@ import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAColours
 from metrics.domain.charts.line_with_shaded_section import generation
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
 
 DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -20,7 +20,9 @@ WIDTH = 930
 
 
 class TestLineWithShadedSectionCharts:
-    def test_weekly_hospital_admissions_rate_main_plot(self, fake_plot_data: PlotData):
+    def test_weekly_hospital_admissions_rate_main_plot(
+        self, fake_plot_data: PlotGenerationData
+    ):
         """
         Given a list of dates and values
         When `generate_chart_figure()` is called from the `line_with_shaded_section` module
@@ -115,7 +117,7 @@ class TestLineWithShadedSectionCharts:
         assert x_axis.tickformat is None
 
     def test_weekly_hospital_admissions_rate_increasing_plot(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of dates and values indicating an increase in `COVID-19_deaths_ONSByWeek`
@@ -186,7 +188,7 @@ class TestLineWithShadedSectionCharts:
         )
 
     def test_weekly_hospital_admissions_rate_decreasing_plot(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given a list of dates and values indicating a decrease in `COVID-19_deaths_ONSByWeek`
