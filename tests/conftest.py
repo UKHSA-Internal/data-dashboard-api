@@ -34,7 +34,7 @@ def fake_chart_plot_parameters() -> PlotParameters:
 
 
 @pytest.fixture
-def fake_plots_collection(
+def fake_chart_request_params(
     fake_chart_plot_parameters: PlotParameters,
 ) -> ChartRequestParams:
     return ChartRequestParams(

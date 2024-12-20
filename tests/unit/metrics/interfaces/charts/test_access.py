@@ -48,7 +48,7 @@ class TestChartsInterface:
         self,
         spy_generate_line_with_shaded_section_chart: mock.MagicMock,
         mocked_build_chart_plots_data: mock.MagicMock,
-        fake_plots_collection: ChartRequestParams,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a requirement for a `line_with_shaded_section` chart
@@ -62,11 +62,11 @@ class TestChartsInterface:
 
         """
         # Given
-        fake_plots_collection.plots[0].chart_type = (
+        fake_chart_request_params.plots[0].chart_type = (
             ChartTypes.line_with_shaded_section.value
         )
         charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
+            chart_plots=fake_chart_request_params,
         )
 
         # When
@@ -88,7 +88,7 @@ class TestChartsInterface:
         self,
         spy_generate_bar_chart: mock.MagicMock,
         mocked_build_chart_plots_data: mock.MagicMock,
-        fake_plots_collection: ChartRequestParams,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a requirement for a `bar` chart
@@ -102,9 +102,9 @@ class TestChartsInterface:
 
         """
         # Given
-        fake_plots_collection.plots[0].chart_type = ChartTypes.bar.value
+        fake_chart_request_params.plots[0].chart_type = ChartTypes.bar.value
         charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
+            chart_plots=fake_chart_request_params,
         )
 
         # When
@@ -126,7 +126,7 @@ class TestChartsInterface:
         self,
         spy_generate_line_multi_coloured_chart_method: mock.MagicMock,
         mocked_build_chart_plots_data: mock.MagicMock,
-        fake_plots_collection: ChartRequestParams,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a requirement for a `line_multi_coloured` chart
@@ -141,9 +141,11 @@ class TestChartsInterface:
 
         """
         # Given
-        fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
+        fake_chart_request_params.plots[0].chart_type = (
+            ChartTypes.line_multi_coloured.value
+        )
         charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
+            chart_plots=fake_chart_request_params,
         )
 
         # When
@@ -164,7 +166,7 @@ class TestChartsInterface:
         self,
         spy_generate_line_single_simplified: mock.MagicMock,
         mocked_build_chart_plots_data: mock.MagicMock,
-        fake_plots_collection: ChartRequestParams,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a requirement for a `line_single_simplified` chart
@@ -172,11 +174,11 @@ class TestChartsInterface:
         Then the call is delegated to the `generate_line_single_simplified_chart()` method
         """
         # Given
-        fake_plots_collection.plots[0].chart_type = (
+        fake_chart_request_params.plots[0].chart_type = (
             ChartTypes.line_single_simplified.value
         )
         charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
+            chart_plots=fake_chart_request_params,
         )
 
         # When
@@ -839,7 +841,7 @@ class TestGenerateEncodedChart:
         self,
         spy_generate_chart_output: mock.MagicMock,
         mocked_get_encoded_chart: mock.MagicMock,
-        fake_plots_collection: ChartRequestParams,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a fake `PlotsCollection` model
@@ -854,7 +856,7 @@ class TestGenerateEncodedChart:
                 of having to encode the chart figure
         """
         # Given
-        fake_chart_plots = fake_plots_collection
+        fake_chart_plots = fake_chart_request_params
 
         # When
         generate_encoded_chart(chart_plots=fake_chart_plots)
@@ -868,7 +870,7 @@ class TestGenerateEncodedChart:
         self,
         mocked_generate_chart_output: mock.MagicMock,
         spy_get_encoded_chart: mock.MagicMock,
-        fake_plots_collection: ChartRequestParams,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a fake `PlotsCollection` model
@@ -884,7 +886,7 @@ class TestGenerateEncodedChart:
             `spy_get_encoded_chart`: For the main assertion
         """
         # Given
-        fake_chart_plots = fake_plots_collection
+        fake_chart_plots = fake_chart_request_params
         mocked_figure = mock.Mock()
         mocked_figure.to_image.return_value = "abc"
         chart_output = ChartOutput(figure=mocked_figure, description="")
@@ -907,7 +909,7 @@ class TestMiscMethods:
         ],
     )
     def test_invalid_format_passed_to_encode_figure(
-        self, file_format: str, fake_plots_collection: ChartRequestParams
+        self, file_format: str, fake_chart_request_params: ChartRequestParams
     ):
         """
         Given the user supplies an invalid file_format to pass to encode_figure
@@ -915,9 +917,9 @@ class TestMiscMethods:
         Then an `InvalidFileFormatError` is raised
         """
         # Given
-        fake_plots_collection.file_format = file_format
+        fake_chart_request_params.file_format = file_format
         charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
+            chart_plots=fake_chart_request_params,
         )
 
         figure = plotly.graph_objs.Figure()

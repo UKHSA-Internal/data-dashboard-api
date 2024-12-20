@@ -154,7 +154,7 @@ class TestPlotsInterface:
         assert plots_data == [expected_plots_data_for_valid_params]
 
     def test_build_plots_data_raises_error_when_all_plots_return_no_data(
-        self, fake_plots_collection: ChartRequestParams
+        self, fake_chart_request_params: ChartRequestParams
     ):
         """
         Given a request with a `PlotsCollection` model
@@ -166,7 +166,7 @@ class TestPlotsInterface:
         # Given
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            inbound_chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -280,7 +280,7 @@ class TestPlotsInterface:
         assert plots_data[0].parameters == valid_plot_parameters
 
     def test_build_plots_data_for_full_queryset_raises_error_when_all_plots_return_no_data(
-        self, fake_plots_collection: ChartRequestParams
+        self, fake_chart_request_params: ChartRequestParams
     ):
         """
         Given a request with a `PlotsCollection` model
@@ -292,7 +292,7 @@ class TestPlotsInterface:
         # Given
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            inbound_chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -733,7 +733,7 @@ class TestPlotsInterface:
         spy_plot_validation.assert_has_calls(calls=expected_calls, any_order=True)
 
     def test_validate_plot_parameters_raises_error_if_metric_does_not_support_topic(
-        self, fake_plots_collection: ChartRequestParams
+        self, fake_chart_request_params: ChartRequestParams
     ):
         """
         Given a mocked `PlotsCollection` model
@@ -743,18 +743,18 @@ class TestPlotsInterface:
         Then an `InvalidPlotParametersError` is raised
         """
         # Given
-        fake_plots_collection.plots[0].topic = "RSV"
-        fake_plots_collection.plots[0].metric = "COVID-19_testing_PCRcountByDay"
+        fake_chart_request_params.plots[0].topic = "RSV"
+        fake_chart_request_params.plots[0].metric = "COVID-19_testing_PCRcountByDay"
 
         # When / Then
         with pytest.raises(InvalidPlotParametersError):
             plots_interface = PlotsInterface(
-                inbound_chart_request_params=fake_plots_collection
+                inbound_chart_request_params=fake_chart_request_params
             )
             plots_interface.validate_plot_parameters()
 
     def test_validate_plot_parameters_raises_error_if_dates_are_not_in_correct_order(
-        self, fake_plots_collection: ChartRequestParams
+        self, fake_chart_request_params: ChartRequestParams
     ):
         """
         Given a mocked `PlotsCollection` model
@@ -765,13 +765,13 @@ class TestPlotsInterface:
 
         """
         # Given
-        fake_plots_collection.plots[0].date_from = "2023-01-01"
-        fake_plots_collection.plots[0].date_to = "2022-12-31"
+        fake_chart_request_params.plots[0].date_from = "2023-01-01"
+        fake_chart_request_params.plots[0].date_to = "2022-12-31"
 
         # When / Then
         with pytest.raises(InvalidPlotParametersError):
             plots_interface = PlotsInterface(
-                inbound_chart_request_params=fake_plots_collection
+                inbound_chart_request_params=fake_chart_request_params
             )
             plots_interface.validate_plot_parameters()
 
