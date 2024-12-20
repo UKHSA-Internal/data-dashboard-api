@@ -147,7 +147,9 @@ class ChartRequestParams(BaseModel):
     chart_width: int
     chart_height: int
     x_axis: str
+    x_axis_title: str = ""
     y_axis: str
+    y_axis_title: str = ""
 
 
 class NoReportingDelayPeriodFoundError(Exception): ...
@@ -224,7 +226,6 @@ class ChartGenerationPayload(BaseModel):
     """Holds all the information needed to draw a chart in its entirety, including params and data for each plot."""
 
     plots: list[PlotGenerationData]
-    file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
     chart_height: int
     x_axis_title: str
