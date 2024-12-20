@@ -12,6 +12,8 @@ from metrics.domain.common.utils import (
 
 
 class PlotParameters(BaseModel):
+    """Holds all the request information / parameters for an individual plot on a chart."""
+
     chart_type: str
     topic: str
     metric: str
@@ -137,6 +139,8 @@ class PlotParameters(BaseModel):
 
 
 class ChartRequestParams(BaseModel):
+    """Holds all the request information / params for a chart in its entirety."""
+
     metric_group: str | None = None
     plots: list[PlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
@@ -153,6 +157,8 @@ class ReportingDelayNotProvidedToPlotsError(Exception): ...
 
 
 class PlotGenerationData(BaseModel):
+    """Holds all the information needed to draw an individual plot, including the parameters and hydrated data."""
+
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any
@@ -215,6 +221,8 @@ class PlotGenerationData(BaseModel):
 
 
 class ChartGenerationPayload(BaseModel):
+    """Holds all the information needed to draw a chart in its entirety, including params and data for each plot."""
+
     plots: list[PlotGenerationData]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
