@@ -29,7 +29,7 @@ def create_simplified_line_chart(
     chart_plot = chart_generation_payload.plots[0]
 
     selected_colour = RGBAChartLineColours.get_colour(
-        colour=chart_plot[0].parameters.line_colour
+        colour=chart_plot.parameters.line_colour
     )
 
     line_shape = "spline" if chart_plot.parameters.use_smooth_lines else "linear"
