@@ -321,7 +321,6 @@ class ChartsInterface:
             y_axis_title=self.chart_request_params.y_axis_title,
             chart_height=self.chart_request_params.chart_height,
             chart_width=self.chart_request_params.chart_width,
-            file_format=self.chart_request_params.file_format,
         )
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:
