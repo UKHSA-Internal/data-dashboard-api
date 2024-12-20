@@ -108,7 +108,6 @@ def fake_plot_data() -> PlotGenerationData:
         geography="London",
         age="all",
         sex="all",
-        line_colour="BLUE",
         line_type="SOLID",
     )
     y_axis_values = [1, 2, 4, 5, 5, 2, 1, 8, 9, 10, 2, 3]
