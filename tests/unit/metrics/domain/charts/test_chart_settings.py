@@ -19,8 +19,8 @@ def fake_chart_settings(fake_plot_data: PlotGenerationData) -> ChartSettings:
         chart_width=930,
         chart_height=220,
         plots=[fake_plot_data],
-        x_axis_title="",
-        y_axis_title="",
+        x_axis_title="Date",
+        y_axis_title="Cases",
     )
     return ChartSettings(chart_generation_payload=payload)
 
@@ -80,6 +80,10 @@ class TestChartSettings:
             "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": chart_settings.get_tick_font_config(),
+            "title": {
+                "font": chart_settings.get_tick_font_config(),
+                "text": chart_settings._chart_generation_payload.x_axis_title,
+            },
         }
         expected_x_axis_config = {
             **expected_x_axis_config,
@@ -126,6 +130,10 @@ class TestChartSettings:
             "dtick": None,
             "tickformat": None,
             "tickfont": chart_settings.get_tick_font_config(),
+            "title": {
+                "font": chart_settings.get_tick_font_config(),
+                "text": chart_settings._chart_generation_payload.x_axis_title,
+            },
         }
         assert x_axis_config == expected_x_axis_config
 
@@ -152,6 +160,10 @@ class TestChartSettings:
             "tickson": "boundaries",
             "tickcolor": "rgba(0,0,0,0)",
             "tickfont": chart_settings.get_tick_font_config(),
+            "title": {
+                "font": chart_settings.get_tick_font_config(),
+                "text": chart_settings._chart_generation_payload.y_axis_title,
+            },
         }
         assert y_axis_config == expected_y_axis_config
 
