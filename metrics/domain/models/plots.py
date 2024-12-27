@@ -4,8 +4,10 @@ from typing import Literal, Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     ChartAxisFields,
+    ChartTypes,
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
@@ -136,6 +138,16 @@ class PlotParameters(BaseModel):
     @property
     def is_timeseries_data(self) -> bool:
         return DataSourceFileType[self.metric_group].is_timeseries
+
+    @property
+    def line_colour_enum(self) -> RGBAChartLineColours:
+        if self.line_colour:
+            return RGBAChartLineColours.get_colour(colour=self.line_colour)
+
+        if self.chart_type == ChartTypes.bar.value:
+            return RGBAChartLineColours.BLUE
+
+        return RGBAChartLineColours.BLACK
 
 
 class ChartRequestParams(BaseModel):

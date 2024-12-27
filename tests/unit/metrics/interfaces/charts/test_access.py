@@ -11,6 +11,7 @@ from metrics.domain.models import (
     PlotGenerationData,
     PlotParameters,
     ChartRequestParams,
+    ChartGenerationPayload,
 )
 from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import (
@@ -42,12 +43,12 @@ class TestChartsInterface:
             for i in range(10)
         ]
 
-    @mock.patch.object(ChartsInterface, "build_chart_plots_data")
+    @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
     @mock.patch.object(ChartsInterface, "generate_line_with_shaded_section_chart")
     def test_generate_chart_figure_delegates_call_for_line_with_shaded_section_chart(
         self,
         spy_generate_line_with_shaded_section_chart: mock.MagicMock,
-        mocked_build_chart_plots_data: mock.MagicMock,
+        mocked_build_chart_generation_payload: mock.MagicMock,
         fake_chart_request_params: ChartRequestParams,
     ):
         """
@@ -57,7 +58,7 @@ class TestChartsInterface:
 
         Patches:
             `spy_generate_line_with_shaded_section_chart`: For the main assertion.
-            `mocked_build_chart_plots_data`: To remove the side effect
+            `mocked_build_chart_generation_payload`: To remove the side effect
                 of having to query the database for data relating to the chart
 
         """
@@ -66,7 +67,7 @@ class TestChartsInterface:
             ChartTypes.line_with_shaded_section.value
         )
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params,
         )
 
         # When
@@ -74,7 +75,7 @@ class TestChartsInterface:
 
         # Then
         spy_generate_line_with_shaded_section_chart.assert_called_once_with(
-            plots_data=mocked_build_chart_plots_data.return_value
+            chart_generation_payload=mocked_build_chart_generation_payload.return_value
         )
         chart_output = ChartOutput(
             figure=spy_generate_line_with_shaded_section_chart.return_value,
@@ -82,12 +83,12 @@ class TestChartsInterface:
         )
         assert generated_chart_output == chart_output
 
-    @mock.patch.object(ChartsInterface, "build_chart_plots_data")
+    @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
     @mock.patch.object(ChartsInterface, "generate_bar_chart")
     def test_generate_chart_figure_delegates_call_for_bar(
         self,
         spy_generate_bar_chart: mock.MagicMock,
-        mocked_build_chart_plots_data: mock.MagicMock,
+        mocked_build_chart_generation_payload: mock.MagicMock,
         fake_chart_request_params: ChartRequestParams,
     ):
         """
@@ -97,14 +98,14 @@ class TestChartsInterface:
 
         Patches:
             `spy_generate_bar_chart`: For the main assertion.
-            `mocked_build_chart_plots_data`: To remove the side effect
+            `mocked_build_chart_generation_payload`: To remove the side effect
                 of having to query the database for data relating to the chart
 
         """
         # Given
         fake_chart_request_params.plots[0].chart_type = ChartTypes.bar.value
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params
         )
 
         # When
@@ -112,20 +113,20 @@ class TestChartsInterface:
 
         # Then
         spy_generate_bar_chart.assert_called_once_with(
-            plots_data=mocked_build_chart_plots_data.return_value
+            chart_generation_payload=mocked_build_chart_generation_payload.return_value
         )
-        chart_output = ChartOutput(
-            figure=spy_generate_bar_chart.return_value,
-            description=charts_interface.build_chart_description(plots_data=[]),
+        assert generated_chart_output.figure == spy_generate_bar_chart.return_value
+        assert (
+            generated_chart_output.description
+            == charts_interface.build_chart_description(plots_data=[])
         )
-        assert generated_chart_output == chart_output
 
-    @mock.patch.object(ChartsInterface, "build_chart_plots_data")
+    @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
     @mock.patch.object(ChartsInterface, "generate_line_multi_coloured_chart")
     def test_generate_chart_figure_delegates_call_for_line_multi_coloured(
         self,
         spy_generate_line_multi_coloured_chart_method: mock.MagicMock,
-        mocked_build_chart_plots_data: mock.MagicMock,
+        mocked_build_chart_generation_payload: mock.MagicMock,
         fake_chart_request_params: ChartRequestParams,
     ):
         """
@@ -145,7 +146,7 @@ class TestChartsInterface:
             ChartTypes.line_multi_coloured.value
         )
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params
         )
 
         # When
@@ -153,19 +154,19 @@ class TestChartsInterface:
 
         # Then
         spy_generate_line_multi_coloured_chart_method.assert_called_once_with(
-            plots_data=mocked_build_chart_plots_data.return_value
+            chart_generation_payload=mocked_build_chart_generation_payload.return_value
         )
         assert (
             generated_chart_output.figure
             == spy_generate_line_multi_coloured_chart_method.return_value
         )
 
-    @mock.patch.object(ChartsInterface, "build_chart_plots_data")
+    @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
     @mock.patch.object(ChartsInterface, "generate_line_single_simplified")
     def test_generate_chart_figure_delegates_call_for_line_single_simplified_chart(
         self,
         spy_generate_line_single_simplified: mock.MagicMock,
-        mocked_build_chart_plots_data: mock.MagicMock,
+        mocked_build_chart_generation_payload: mock.MagicMock,
         fake_chart_request_params: ChartRequestParams,
     ):
         """
@@ -178,7 +179,7 @@ class TestChartsInterface:
             ChartTypes.line_single_simplified.value
         )
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params
         )
 
         # When
@@ -186,7 +187,7 @@ class TestChartsInterface:
 
         # Then
         spy_generate_line_single_simplified.assert_called_once_with(
-            plots_data=mocked_build_chart_plots_data.return_value
+            chart_generation_payload=mocked_build_chart_generation_payload.return_value
         )
         charts_output = ChartOutput(
             figure=spy_generate_line_single_simplified.return_value,
@@ -221,7 +222,7 @@ class TestChartsInterface:
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
             fake_core_time_series_collection
         )
-        plots_collection = ChartRequestParams(
+        fake_chart_request_params = ChartRequestParams(
             plots=[valid_plot_parameters],
             file_format="svg",
             chart_width=123,
@@ -231,21 +232,26 @@ class TestChartsInterface:
         )
 
         charts_interface = ChartsInterface(
-            chart_plots=plots_collection,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
         plots_data = charts_interface._build_chart_plots_data()
+        payload = ChartGenerationPayload(
+            chart_width=900,
+            chart_height=200,
+            y_axis_title="",
+            x_axis_title="",
+            plots=plots_data,
+        )
 
         # When
         line_multi_coloured_chart = charts_interface.generate_line_multi_coloured_chart(
-            plots_data=plots_data
+            chart_generation_payload=payload
         )
 
         # Then
         spy_line_multi_coloured_generate_chart_figure.assert_called_once_with(
-            chart_height=plots_collection.chart_height,
-            chart_width=plots_collection.chart_width,
-            chart_plots_data=plots_data,
+            chart_generation_payload=payload
         )
         assert (
             line_multi_coloured_chart
@@ -291,15 +297,22 @@ class TestChartsInterface:
         )
 
         charts_interface = ChartsInterface(
-            chart_plots=plots_collection,
+            chart_request_params=plots_collection,
             core_model_manager=fake_core_time_series_manager,
         )
         plots_data = charts_interface._build_chart_plots_data()
+        payload = ChartGenerationPayload(
+            chart_width=900,
+            chart_height=200,
+            y_axis_title="",
+            x_axis_title="",
+            plots=plots_data,
+        )
 
         # When
         line_with_shaded_section_chart = (
             charts_interface.generate_line_with_shaded_section_chart(
-                plots_data=plots_data
+                chart_generation_payload=payload
             )
         )
 
@@ -351,22 +364,26 @@ class TestChartsInterface:
         )
 
         charts_interface = ChartsInterface(
-            chart_plots=plots_collection,
+            chart_request_params=plots_collection,
             core_model_manager=fake_core_time_series_manager,
         )
         plots_data = charts_interface._build_chart_plots_data()
+        payload = ChartGenerationPayload(
+            chart_width=900,
+            chart_height=200,
+            y_axis_title="",
+            x_axis_title="",
+            plots=plots_data,
+        )
 
         # When
         line_single_simplified_chart = charts_interface.generate_line_single_simplified(
-            plots_data=plots_data
+            chart_generation_payload=payload
         )
 
         # Then
-        expected_params = charts_interface.param_builder_for_line_single_simplified(
-            plots_data=plots_data
-        )
         spy_line_single_simplified_generate_chart_figure.assert_called_once_with(
-            **expected_params
+            chart_generation_payload=payload
         )
         assert (
             line_single_simplified_chart
@@ -398,7 +415,7 @@ class TestChartsInterface:
         )
 
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_plots,
+            chart_request_params=fake_chart_plots,
             plots_interface=spy_plots_interface,
         )
 
@@ -434,7 +451,7 @@ class TestChartsInterface:
 
         original_latest_date_value = mock.Mock()
         charts_interface = ChartsInterface(
-            chart_plots=plots_data,
+            chart_request_params=plots_data,
         )
         charts_interface._latest_date = original_latest_date_value
 
@@ -486,7 +503,7 @@ class TestChartsInterface:
         )
 
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_plots,
+            chart_request_params=fake_chart_plots,
         )
 
         # When
@@ -549,7 +566,7 @@ class TestChartsInterface:
         )
 
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_plots,
+            chart_request_params=fake_chart_plots,
         )
 
         params_for_line_single_simplified = (
@@ -583,7 +600,7 @@ class TestChartsInterface:
 
         # When
         charts_interface = ChartsInterface(
-            chart_plots=mocked_plots_collection,
+            chart_request_params=mocked_plots_collection,
         )
 
         # Then
@@ -605,7 +622,7 @@ class TestChartsInterface:
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
 
         # When
-        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
 
         # Then
         assert isinstance(charts_interface.core_model_manager, CoreHeadlineManager)
@@ -617,14 +634,16 @@ class TestChartsInterface:
         """
         Given a valid `PlotsCollection` that contains a timeseries metric
         When an instance the `ChartsInterface` is created
-        Then then the `core_model_manager` will be an instance of the `CoreTimeSeriesManager`.
+        Then the `core_model_manager` will be an instance of the `CoreTimeSeriesManager`.
         """
         # Given
-        mocked_plots_collection = mock.MagicMock()
-        mocked_plots_collection.plots = [fake_chart_plot_parameters]
+        mocked_chart_request_params = mock.MagicMock()
+        mocked_chart_request_params.plots = [fake_chart_plot_parameters]
 
         # When
-        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+        charts_interface = ChartsInterface(
+            chart_request_params=mocked_chart_request_params
+        )
 
         # Then
         assert isinstance(charts_interface.core_model_manager, CoreTimeSeriesManager)
@@ -650,7 +669,7 @@ class TestChartsInterface:
         mocked_latest_date = mock.Mock()
         mocked_plots_collection = mock.MagicMock(file_format="svg")
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
-        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
         charts_interface._latest_date = mocked_latest_date
 
         # When
@@ -682,7 +701,7 @@ class TestChartsInterface:
         mocked_figure.to_image.return_value = "abc"
         chart_output = ChartOutput(figure=mocked_figure, description="")
 
-        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
 
         # When
         encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
@@ -718,7 +737,7 @@ class TestChartsInterface:
             figure=mock.MagicMock(), description=fake_description
         )
 
-        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
 
         # When
         encoded_chart: dict[str, str] = charts_interface.get_encoded_chart(
@@ -751,7 +770,7 @@ class TestChartsInterface:
         mocked_chart_output = mock.Mock()
         mocked_plots_collection = mock.MagicMock()
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
-        charts_interface = ChartsInterface(chart_plots=mocked_plots_collection)
+        charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
 
         # When
         encoded_chart: dict[str, str | dict] = charts_interface.get_encoded_chart(
@@ -785,7 +804,7 @@ class TestGenerateChartAsFile:
 
         # When / Then
         with pytest.raises(InvalidPlotParametersError):
-            generate_chart_as_file(chart_plots=mocked_plots_collection)
+            generate_chart_as_file(chart_request_params=mocked_plots_collection)
 
     def test_raises_error_for_invalid_dates_selection(
         self,
@@ -806,7 +825,7 @@ class TestGenerateChartAsFile:
 
         # When / Then
         with pytest.raises(InvalidPlotParametersError):
-            generate_chart_as_file(chart_plots=mocked_plots_collection)
+            generate_chart_as_file(chart_request_params=mocked_plots_collection)
 
     @mock.patch.object(ChartsInterface, "write_figure")
     @mock.patch.object(ChartsInterface, "generate_chart_output")
@@ -826,7 +845,7 @@ class TestGenerateChartAsFile:
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
 
         # When
-        generate_chart_as_file(chart_plots=mocked_plots_collection)
+        generate_chart_as_file(chart_request_params=mocked_plots_collection)
 
         # Then
         spy_write_figure.assert_called_once_with(
@@ -859,7 +878,7 @@ class TestGenerateEncodedChart:
         fake_chart_plots = fake_chart_request_params
 
         # When
-        generate_encoded_chart(chart_plots=fake_chart_plots)
+        generate_encoded_chart(chart_request_params=fake_chart_plots)
 
         # Then
         spy_generate_chart_output.assert_called_once()
@@ -893,7 +912,7 @@ class TestGenerateEncodedChart:
         mocked_generate_chart_output.return_value = chart_output
 
         # When
-        generate_encoded_chart(chart_plots=fake_chart_plots)
+        generate_encoded_chart(chart_request_params=fake_chart_plots)
 
         # Then
         spy_get_encoded_chart.assert_called_once_with(chart_output=chart_output)
@@ -919,7 +938,7 @@ class TestMiscMethods:
         # Given
         fake_chart_request_params.file_format = file_format
         charts_interface = ChartsInterface(
-            chart_plots=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params,
         )
 
         figure = plotly.graph_objs.Figure()

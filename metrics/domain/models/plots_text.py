@@ -388,13 +388,8 @@ class PlotsText:
 
     @classmethod
     def _get_line_colour_or_default(cls, *, plot_parameters: PlotParameters) -> str:
-        if plot_parameters.line_colour:
-            return plot_parameters.line_colour.lower()
-
-        if plot_parameters.chart_type == ChartTypes.bar.value:
-            return RGBAChartLineColours.BLUE.name.lower()
-
-        return RGBAChartLineColours.BLACK.name.lower()
+        colour: RGBAChartLineColours = plot_parameters.line_colour_enum
+        return colour.presentation_name
 
     @classmethod
     def _get_line_type_or_default(cls, *, plot_parameters: PlotParameters) -> str:

@@ -79,7 +79,7 @@ class TestPlotsText:
             f"There is only 1 plot on this chart. "
             f"The horizontal X-axis is labelled '{fake_plot_data.parameters.x_axis}'. "
             f"Whilst the vertical Y-axis is labelled '{fake_plot_data.parameters.y_axis}'. "
-            f"This is a {fake_plot_data.parameters.line_colour.lower()} "
+            f"This is a {fake_plot_data.parameters.line_colour_enum.presentation_name} "
             f"{fake_plot_data.parameters.line_type.lower()} line plot. "
             f"The plot has a label of '{label}'. "
             f"This plot shows data for {fake_plot_data.parameters.topic}. "
@@ -171,7 +171,7 @@ class TestPlotsText:
         text: str = plots_text.construct_text()
 
         # Then
-        expected_text_about_parameters = f"This is a solid line chart,"
+        expected_text_about_parameters = "This is a solid line chart,"
         assert expected_text_about_parameters in text
 
     def test_returns_correct_text_about_parameters_for_multiple_plots(
@@ -212,14 +212,14 @@ class TestPlotsText:
         )
         expected_plot_1_params_description = (
             "This is plot number 1 on this chart. "
-            "This is a blue solid line plot. "
+            "This is a dark blue solid line plot. "
             "This plot shows data for COVID-19. "
             "Specifically the metric 'COVID-19_deaths_ONSByDay' for the London area, "
             "along with the age banding of 'all' for the gender group of all. "
         )
         expected_plot_2_params_description = (
             "This is plot number 2 on this chart. "
-            "This is a blue dash line plot. "
+            "This is a dark blue dash line plot. "
             "This plot shows data for Influenza. "
             "Specifically the metric 'influenza_testing_positivityByWeek' "
             "for the London area, "
@@ -227,7 +227,7 @@ class TestPlotsText:
         )
         expected_plot_3_params_description = (
             "This is plot number 3 on this chart. "
-            "This is a blue solid bar plot. "
+            "This is a dark blue solid bar plot. "
             "The plot has a label of 'Influenza testing for Males'. "
             "This plot shows data for COVID-19. "
             "Specifically the metric 'influenza_testing_positivityByWeek' "

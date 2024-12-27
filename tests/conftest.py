@@ -109,6 +109,7 @@ def fake_plot_data() -> PlotGenerationData:
         age="all",
         sex="all",
         line_type="SOLID",
+        line_colour="COLOUR_1_DARK_BLUE",
     )
     y_axis_values = [1, 2, 4, 5, 5, 2, 1, 8, 9, 10, 2, 3]
     return PlotGenerationData(
