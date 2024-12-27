@@ -5,7 +5,7 @@ import plotly
 from metrics.domain.charts import chart_settings, colour_scheme
 from metrics.domain.charts.line_with_shaded_section import information
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
-from metrics.domain.models import PlotGenerationData
+from metrics.domain.models import ChartGenerationPayload, PlotGenerationData
 
 
 def create_line_chart_with_shaded_section(
@@ -80,9 +80,14 @@ def create_line_chart_with_shaded_section(
     figure.add_trace(trace=shaded_section_plot)
 
     # Apply the typical stylings for timeseries charts
-    settings = chart_settings.ChartSettings(
-        width=chart_width, height=chart_height, plots_data=plots_data
+    payload = ChartGenerationPayload(
+        chart_width=chart_width,
+        chart_height=chart_height,
+        plots=plots_data,
+        y_axis_title="",
+        x_axis_title="",
     )
+    settings = chart_settings.ChartSettings(chart_generation_payload=payload)
     layout_args = settings.get_line_with_shaded_section_chart_config()
     figure.update_layout(**layout_args)
 
