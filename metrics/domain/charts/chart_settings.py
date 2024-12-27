@@ -36,6 +36,7 @@ class ChartSettings:
         return isinstance(self.plots_data[0].x_axis_values[0], datetime.date)
 
     def get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
+        tick_font = self.get_tick_font_config()
         base_x_axis_config = {
             "showspikes": True,
             "spikecolor": "#b1b4b6",
@@ -57,6 +58,12 @@ class ChartSettings:
             "tickfont": self.get_tick_font_config(),
         }
 
+        if self._chart_generation_payload.x_axis_title:
+            base_x_axis_config["title"] = {
+                "text": self._chart_generation_payload.x_axis_title,
+                "font": tick_font,
+            }
+
         x_axis_type_config = (
             self.get_x_axis_date_type()
             if self.is_date_type_x_axis
@@ -66,7 +73,8 @@ class ChartSettings:
         return {**base_x_axis_config, **x_axis_type_config}
 
     def get_y_axis_config(self) -> dict[str, bool | DICT_OF_STR_ONLY]:
-        return {
+        tick_font = self.get_tick_font_config()
+        base_y_axis_config = {
             "ticks": "outside",
             "tickson": "boundaries",
             "tickcolor": "rgba(0,0,0,0)",
@@ -74,9 +82,17 @@ class ChartSettings:
             "showticklabels": True,
             "fixedrange": True,
             "gridcolor": "#000",
-            "tickfont": self.get_tick_font_config(),
+            "tickfont": tick_font,
             "rangemode": "tozero",
         }
+
+        if self._chart_generation_payload.y_axis_title:
+            base_y_axis_config["title"] = {
+                "text": self._chart_generation_payload.y_axis_title,
+                "font": tick_font,
+            }
+
+        return base_y_axis_config
 
     def get_base_chart_config(self):
         return {
