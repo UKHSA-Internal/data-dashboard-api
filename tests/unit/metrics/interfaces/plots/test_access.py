@@ -62,7 +62,7 @@ class TestPlotsInterface:
             for each individual `PlotParameters` model
         """
         # Given
-        fake_plots_collection = ChartRequestParams(
+        fake_chart_request_params = ChartRequestParams(
             plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
             chart_width=123,
@@ -72,7 +72,7 @@ class TestPlotsInterface:
         )
 
         data_slice_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=mock.Mock(),
         )
 
@@ -111,7 +111,7 @@ class TestPlotsInterface:
             date_from="2023-01-01",
             date_to="2023-12-31",
         )
-        plots_collection = ChartRequestParams(
+        chart_request_params = ChartRequestParams(
             plots=[valid_plot_parameters, plot_parameters_with_no_supporting_data],
             file_format="svg",
             chart_width=123,
@@ -127,7 +127,7 @@ class TestPlotsInterface:
         )
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=plots_collection,
+            chart_request_params=chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -166,7 +166,7 @@ class TestPlotsInterface:
         # Given
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -193,7 +193,7 @@ class TestPlotsInterface:
             for each individual `PlotParameters` model
         """
         # Given
-        fake_plots_collection = ChartRequestParams(
+        fake_chart_request_params = ChartRequestParams(
             plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
             file_format="png",
             chart_width=123,
@@ -202,13 +202,13 @@ class TestPlotsInterface:
             y_axis="metric",
         )
 
-        data_slice_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+        plots_interface = PlotsInterface(
+            chart_request_params=fake_chart_request_params,
             core_model_manager=mock.Mock(),
         )
 
         # When
-        plots_data = data_slice_interface.build_plots_data_for_full_queryset()
+        plots_data = plots_interface.build_plots_data_for_full_queryset()
 
         # Then
         # Check that `build_plot_data_from_parameters_with_complete_queryset()` method
@@ -246,7 +246,7 @@ class TestPlotsInterface:
             date_from="2023-01-01",
             date_to="2023-12-31",
         )
-        plots_collection = ChartRequestParams(
+        fake_chart_request_params = ChartRequestParams(
             plots=[valid_plot_parameters, plot_parameters_with_no_supporting_data],
             file_format="svg",
             chart_width=123,
@@ -262,7 +262,7 @@ class TestPlotsInterface:
         )
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=plots_collection,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -292,7 +292,7 @@ class TestPlotsInterface:
         # Given
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -310,7 +310,7 @@ class TestPlotsInterface:
         And the correct data passed to the `x_axis` and `y_axis`
         """
         # Given
-        fake_plots_collection = ChartRequestParams(
+        fake_chart_request_params = ChartRequestParams(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -328,7 +328,7 @@ class TestPlotsInterface:
         )
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -371,7 +371,7 @@ class TestPlotsInterface:
             "metric_value": fake_y_axis_values,
         }
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=mock.Mock(plots=[]),
+            chart_request_params=mock.Mock(plots=[]),
             core_model_manager=mock.Mock(),
         )
 
@@ -402,7 +402,7 @@ class TestPlotsInterface:
         Then a `DataNotFoundForPlotError` is raised
         """
         # Given
-        fake_plots_collection = ChartRequestParams(
+        fake_chart_request_params = ChartRequestParams(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -413,7 +413,7 @@ class TestPlotsInterface:
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -438,7 +438,7 @@ class TestPlotsInterface:
         """
         # Given
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=mock.Mock(plots=[]),
+            chart_request_params=mock.Mock(plots=[]),
             core_model_manager=mock.Mock(),
         )
 
@@ -470,7 +470,7 @@ class TestPlotsInterface:
         Then a `DataNotFoundForPlotError` is raised
         """
         # Given
-        fake_plots_collection = ChartRequestParams(
+        fake_chart_request_params = ChartRequestParams(
             plots=[fake_chart_plot_parameters],
             file_format="png",
             chart_width=123,
@@ -481,7 +481,7 @@ class TestPlotsInterface:
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -510,7 +510,7 @@ class TestPlotsInterface:
         mocked_age = mock.Mock()
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=mock.MagicMock(),
+            chart_request_params=mock.MagicMock(),
             core_model_manager=spy_core_headline_manager,
         )
 
@@ -565,7 +565,7 @@ class TestPlotsInterface:
         mocked_age = mock.Mock()
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=mock.MagicMock(),
+            chart_request_params=mock.MagicMock(),
             core_model_manager=spy_core_time_series_manager,
         )
 
@@ -626,10 +626,9 @@ class TestPlotsInterface:
         # Given
         date_from: str = "2023-01-01"
         fake_chart_plot_parameters.date_from = date_from
-        fake_plots_collection = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            chart_request_params=mock.MagicMock(),
             core_model_manager=mock.Mock(),
         )
 
@@ -669,16 +668,16 @@ class TestPlotsInterface:
         Then the call is delegated to the `get_headline_data()` method with the correct args
         """
         # Given
-        fake_plots_collection = mock.MagicMock()
+        fake_chart_request_params = mock.MagicMock()
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=fake_plots_collection,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=mock.MagicMock(),
         )
 
         # When
         queryset_result: QuerySetResult = (
             plots_interface.get_queryset_result_for_plot_parameters(
-                plot_parameters=fake_plots_collection
+                plot_parameters=fake_chart_request_params
             )
         )
 
@@ -713,10 +712,10 @@ class TestPlotsInterface:
         """
         # Given
         mocked_plot_parameters = [mock.Mock()] * 3
-        mocked_plots_collection = mock.Mock()
-        mocked_plots_collection.plots = mocked_plot_parameters
+        mocked_chart_request_params = mock.Mock()
+        mocked_chart_request_params.plots = mocked_plot_parameters
         plots_interface = PlotsInterface(
-            inbound_chart_request_params=mocked_plots_collection
+            chart_request_params=mocked_chart_request_params
         )
 
         # When
@@ -749,7 +748,7 @@ class TestPlotsInterface:
         # When / Then
         with pytest.raises(InvalidPlotParametersError):
             plots_interface = PlotsInterface(
-                inbound_chart_request_params=fake_chart_request_params
+                chart_request_params=fake_chart_request_params
             )
             plots_interface.validate_plot_parameters()
 
@@ -771,7 +770,7 @@ class TestPlotsInterface:
         # When / Then
         with pytest.raises(InvalidPlotParametersError):
             plots_interface = PlotsInterface(
-                inbound_chart_request_params=fake_chart_request_params
+                chart_request_params=fake_chart_request_params
             )
             plots_interface.validate_plot_parameters()
 
@@ -789,10 +788,10 @@ class TestPlotsInterface:
 
         """
         # Given
-        mocked_plots_collection = mock.Mock()
+        mocked_chart_request_params = mock.Mock()
 
         # When
-        PlotsInterface(inbound_chart_request_params=mocked_plots_collection)
+        PlotsInterface(chart_request_params=mocked_chart_request_params)
 
         # Then
         spy_validate_plot_parameters.assert_called_once()
