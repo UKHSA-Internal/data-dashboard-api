@@ -94,6 +94,13 @@ class ChartsSerializer(serializers.Serializer):
         help_text=help_texts.CHART_X_AXIS,
         default=DEFAULT_X_AXIS,
     )
+    x_axis_title = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
     y_axis = serializers.ChoiceField(
         choices=ChartAxisFields.choices(),
         required=False,
@@ -101,6 +108,13 @@ class ChartsSerializer(serializers.Serializer):
         allow_null=True,
         help_text=help_texts.CHART_Y_AXIS,
         default=DEFAULT_Y_AXIS,
+    )
+    y_axis_title = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
     )
 
     plots = ChartPlotsListSerializer()
@@ -120,6 +134,8 @@ class ChartsSerializer(serializers.Serializer):
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
             x_axis=x_axis,
             y_axis=y_axis,
+            x_axis_title=self.data.get("x_axis_title", ""),
+            y_axis_title=self.data.get("y_axis_title", ""),
         )
 
 

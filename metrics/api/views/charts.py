@@ -115,6 +115,18 @@ class ChartsView(APIView):
 
         `y_axis` Example: `y_axis: "stratum"`
 
+        ---
+
+        # Choosing what to display as the x and/or y axis titles
+
+        By default, nothing will be displayed on the x axis or y axis titles.
+        If you want to override either/both of these values then you can do so as follows:
+
+        `x_axis_title` Example: `x_axis_title: "Dates"`
+
+        `y_axis_title` Example: `y_axis_title: "Number of cases"`
+
+
         """
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
@@ -228,6 +240,17 @@ class EncodedChartsView(APIView):
         `x_axis` Example: `x_axis: "stratum"`
 
         `y_axis` Example: `y_axis: "stratum"`
+
+        ---
+
+        # Choosing what to display as the x and/or y axis titles
+
+        By default, nothing will be displayed on the x axis or y axis titles.
+        If you want to override either/both of these values then you can do so as follows:
+
+        `x_axis_title` Example: `x_axis_title: "Dates"`
+
+        `y_axis_title` Example: `y_axis_title: "Number of cases"`
 
         """
         request_serializer = EncodedChartsRequestSerializer(data=request.data)
