@@ -5,7 +5,11 @@ import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.charts.line_multi_coloured import generation
-from metrics.domain.models import PlotGenerationData, PlotParameters
+from metrics.domain.models import (
+    PlotGenerationData,
+    PlotParameters,
+    ChartGenerationPayload,
+)
 
 DATES_FROM_SEP_TO_JAN: list[datetime.datetime] = [
     datetime.date(2022, 9, 5),
@@ -67,13 +71,16 @@ class TestLineMultiColouredCharts:
             y_axis_values=y_axis_values,
             label="some_label",
         )
-
-        # When
-        figure = generation.generate_chart_figure(
+        payload = ChartGenerationPayload(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            chart_plots_data=[chart_plots_data],
+            plots=[chart_plots_data],
+            x_axis_title="",
+            y_axis_title="",
         )
+
+        # When
+        figure = generation.generate_chart_figure(chart_generation_payload=payload)
 
         # Then
         # ---Main background checks---
@@ -124,13 +131,16 @@ class TestLineMultiColouredCharts:
             y_axis_values=y_axis_values,
             label="some_label",
         )
-
-        # When
-        figure = generation.generate_chart_figure(
+        payload = ChartGenerationPayload(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            chart_plots_data=[chart_plots_data],
+            plots=[chart_plots_data],
+            x_axis_title="",
+            y_axis_title="",
         )
+
+        # When
+        figure = generation.generate_chart_figure(chart_generation_payload=payload)
 
         # Then
 
@@ -189,13 +199,16 @@ class TestLineMultiColouredCharts:
             line_colour=second_plot_colour,
             use_smooth_lines=False,
         )
-
-        # When
-        figure = generation.generate_chart_figure(
+        payload = ChartGenerationPayload(
             chart_height=HEIGHT,
             chart_width=WIDTH,
-            chart_plots_data=[first_chart_plots_data, second_chart_plots_data],
+            plots=[first_chart_plots_data, second_chart_plots_data],
+            x_axis_title="",
+            y_axis_title="",
         )
+
+        # When
+        figure = generation.generate_chart_figure(chart_generation_payload=payload)
 
         # Then
         # There should be 2 plots on the figure, one for each of the line plots

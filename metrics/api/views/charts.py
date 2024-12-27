@@ -233,11 +233,11 @@ class EncodedChartsView(APIView):
         request_serializer = EncodedChartsRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        chart_plot_models = request_serializer.to_models()
+        chart_request_params = request_serializer.to_models()
 
         try:
             response: dict[str, str] = access.generate_encoded_chart(
-                chart_plots=chart_plot_models,
+                chart_request_params=chart_request_params,
             )
 
             serializer = EncodedChartResponseSerializer(data=response)
