@@ -79,7 +79,7 @@ class TestLineWithShadedSectionCharts:
         assert not y_axis.showgrid
         assert y_axis.showticklabels
 
-    def test_x_axis_type_is_not_date(self):
+    def test_x_axis_type_is_not_date(self, fake_plot_data: PlotGenerationData):
         """
         Given a list of x and y values where x values are NOT dates
         When `generate_chart_figure()` is called from the `line_with_shaded_section` module
@@ -88,10 +88,12 @@ class TestLineWithShadedSectionCharts:
         # Given
         x_axis_values = ["0-4", "5-8", "9-29"]
         y_axis_values = [1.1, 0.9, 0.8, 0.6, 0.3]
+        fake_plot_data.x_axis_values = x_axis_values
+        fake_plot_data.y_axis_values = y_axis_values
 
         # When
         figure: plotly.graph_objects.Figure = generation.generate_chart_figure(
-            plots_data=mock.MagicMock(),  # Stubbed
+            plots_data=[fake_plot_data],
             chart_height=HEIGHT,
             chart_width=WIDTH,
             x_axis_values=x_axis_values,
