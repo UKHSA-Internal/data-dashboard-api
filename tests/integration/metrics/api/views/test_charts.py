@@ -2,6 +2,7 @@ import datetime
 from http import HTTPStatus
 
 import pytest
+from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.test import APIClient
 
@@ -29,6 +30,7 @@ class TestChartsView:
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly_for_v2(
         self,
         core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
     ):
         """
         Given a valid payload to create a chart
@@ -37,6 +39,8 @@ class TestChartsView:
         """
         # Given
         client = APIClient()
+        client.force_authenticate(user=admin_user)
+
         valid_payload = self._build_valid_payload_for_existing_timeseries(
             core_timeseries=core_timeseries_example[0]
         )
@@ -55,6 +59,7 @@ class TestChartsView:
     def test_returns_correct_response_for_v2(
         self,
         core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
     ):
         """
         Given a valid payload to create a chart
@@ -63,6 +68,8 @@ class TestChartsView:
         """
         # Given
         client = APIClient()
+        client.force_authenticate(user=admin_user)
+
         valid_payload = self._build_valid_payload_for_existing_timeseries(
             core_timeseries=core_timeseries_example[0]
         )
@@ -177,7 +184,10 @@ class TestChartsView:
     @pytest.mark.django_db
     @pytest.mark.parametrize("endpoint", ["/api/charts/v2/", "/api/charts/v3/"])
     def test_returns_bad_request_response_when_queried_data_does_not_exist(
-        self, endpoint: str, core_timeseries_example: list[CoreTimeSeries]
+        self,
+        endpoint: str,
+        core_timeseries_example: list[CoreTimeSeries],
+        admin_user: User,
     ):
         """
         Given a payload for which there is no corresponding data
@@ -186,6 +196,8 @@ class TestChartsView:
         """
         # Given
         client = APIClient()
+        client.force_authenticate(user=admin_user)
+        # Note that the authentication is only needed for the v2 endpoint
         valid_payload = {
             "file_format": "svg",
             "plots": [
