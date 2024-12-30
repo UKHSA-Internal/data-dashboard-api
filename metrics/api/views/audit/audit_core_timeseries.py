@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, viewsets
 
@@ -81,7 +83,26 @@ class AuditCoreTimeseriesViewSet(viewsets.ReadOnlyModelViewSet):
         return super().get_permissions()
 
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
-        queryset = super().get_queryset()
+        date_from = (
+            self.request.query_params.get("date_from")
+            if self.request.query_params.get("date_from") is not None
+            else (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+        )
+
+        date_to = (
+            self.request.query_params.get("date_to")
+            if self.request.query_params.get("date_to") is not None
+            else (datetime.now()).strftime("%Y-%m-%d")
+        )
+
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(
+                date__gte=date_from,
+                date__lte=date_to,
+            )
+        )
 
         return queryset.filter_for_audit_list_view(
             metric_name=self.kwargs["metric"],
