@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import permissions, viewsets
 
 import config
@@ -13,7 +14,23 @@ from .serializers import AuditAPITimeSeriesSerializer
 from .shared import AUDIT_API_TAG, AuditEndpointPagination
 
 
-@extend_schema(tags=[AUDIT_API_TAG])
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="date_from",
+            type=OpenApiTypes.STR,
+            description="The date to start your timeseries slice from (defaults to a year ago today)",
+            required=False,
+        ),
+        OpenApiParameter(
+            name="date_to",
+            type=OpenApiTypes.STR,
+            description="The date to end your timeseries slice at (defaults to today's date)",
+            required=False,
+        ),
+    ],
+    tags=[AUDIT_API_TAG],
+)
 class AuditAPITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     """This endpoint can be used to retrieve all `APITimeseries` records based on `metric` including records
         still under embargo.
