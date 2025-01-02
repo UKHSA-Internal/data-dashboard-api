@@ -93,6 +93,26 @@ class AuditCoreTimeseriesViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AuditCoreTimeseriesSerializer
     pagination_class = AuditEndpointPagination
 
+    def get_date_from(self) -> str:
+        """Returns the date from a year ago from today if query param `date_from` is None
+        otherwise it returns the provided `date_from` string
+        """
+        return (
+            self.request.query_params.get("date_from")
+            if self.request.query_params.get("date_from") is not None
+            else (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+        )
+
+    def get_date_to(self) -> str:
+        """Returns today's date as a string if query param `date_to` is None
+        otherwise it returns the provided `date_to` string
+        """
+        return (
+            self.request.query_params.get("date_to")
+            if self.request.query_params.get("date_to") is not None
+            else (datetime.now()).strftime("%Y-%m-%d")
+        )
+
     def get_permissions(self) -> list[type[permissions.BasePermission]]:
         if AppMode.CMS_ADMIN.value == config.APP_MODE:
             return [permissions.IsAuthenticated()]
@@ -100,24 +120,12 @@ class AuditCoreTimeseriesViewSet(viewsets.ReadOnlyModelViewSet):
         return super().get_permissions()
 
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
-        date_from = (
-            self.request.query_params.get("date_from")
-            if self.request.query_params.get("date_from") is not None
-            else (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
-        )
-
-        date_to = (
-            self.request.query_params.get("date_to")
-            if self.request.query_params.get("date_to") is not None
-            else (datetime.now()).strftime("%Y-%m-%d")
-        )
-
         queryset = (
             super()
             .get_queryset()
             .filter(
-                date__gte=date_from,
-                date__lte=date_to,
+                date__gte=self.get_date_from(),
+                date__lte=self.get_date_to(),
             )
         )
 
