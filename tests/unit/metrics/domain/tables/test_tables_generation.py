@@ -3,7 +3,7 @@ from typing import Any
 
 import pytest
 
-from metrics.domain.models import PlotData, PlotParameters
+from metrics.domain.models import PlotGenerationData, PlotParameters
 from metrics.domain.tables.generation import TabularData
 from metrics.domain.common.utils import ChartAxisFields
 
@@ -25,7 +25,7 @@ def _create_plot_data(
     y_axis_values: list[Any],
     label: str = "",
     x_axis: str = "",
-) -> PlotData:
+) -> PlotGenerationData:
     plot_params = PlotParameters(
         chart_type="",
         topic="COVID-19",
@@ -34,7 +34,7 @@ def _create_plot_data(
         label=label,
         x_axis=x_axis,
     )
-    return PlotData(
+    return PlotGenerationData(
         parameters=plot_params,
         x_axis_values=x_axis_values,
         y_axis_values=y_axis_values,
@@ -51,7 +51,7 @@ class TestTabularData:
         ],
     )
     def test_is_date_based_returns_false_for_non_date_based_x_axis(
-        self, x_axis: str, fake_plot_data: PlotData
+        self, x_axis: str, fake_plot_data: PlotGenerationData
     ):
         """
         Given `PlotData` with an `x_axis` parameter which is not `date`
@@ -70,7 +70,7 @@ class TestTabularData:
         assert not is_date_based
 
     def test_is_date_based_returns_true_for_date_based_x_axis(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given `PlotData` with an `x_axis` parameter which is set to `date`
@@ -105,7 +105,7 @@ class TestTabularData:
             datetime.date(year=2023, month=1, day=i + 1)
             for i in range(len(y_axis_values))
         ]
-        original_plot_data = PlotData(
+        original_plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values=dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
@@ -144,7 +144,7 @@ class TestTabularData:
             datetime.date(year=2023, month=1, day=1),
             datetime.date(year=2023, month=1, day=15),
         ]
-        earlier_plot_data = PlotData(
+        earlier_plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values=earlier_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
@@ -160,7 +160,7 @@ class TestTabularData:
             datetime.date(year=2023, month=8, day=20),
             datetime.date(year=2023, month=8, day=30),
         ]
-        later_plot_data = PlotData(
+        later_plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values=later_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
@@ -254,7 +254,7 @@ class TestTabularData:
             datetime.date(year=2023, month=1, day=1),
             datetime.date(year=2023, month=12, day=31),
         ]
-        incomplete_plot_data = PlotData(
+        incomplete_plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values=missing_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
@@ -268,7 +268,7 @@ class TestTabularData:
             datetime.date(year=2023, month=8, day=30),
             datetime.date(year=2023, month=12, day=31),
         ]
-        complete_plot_data = PlotData(
+        complete_plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values=complete_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
@@ -369,7 +369,7 @@ class TestAddPlotDataToCombinedPlots:
         """
         # Given
         first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values="",
             y_axis_values="",
@@ -399,7 +399,7 @@ class TestAddPlotDataToCombinedPlots:
         """
         first_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_1_VALUES))
         second_chart_plots_data = dict(zip(["0-4", "5-8"], Y_AXIS_2_VALUES))
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values="",
             y_axis_values="",
@@ -546,7 +546,7 @@ class TestCreateMultiPlotOutput:
                 ],
             },
         ]
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values="",
             y_axis_values="",
@@ -639,7 +639,7 @@ class TestCreateMultiPlotOutput:
                 ],
             },
         ]
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=valid_plot_parameters,
             x_axis_values="",
             y_axis_values="",
@@ -702,7 +702,7 @@ class TestCreateMultiPlotOutput:
                 ],
             },
         ]
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=valid_plot_parameters_for_headline_data,
             x_axis_values="",
             y_axis_values="",

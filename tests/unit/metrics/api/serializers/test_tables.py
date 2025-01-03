@@ -9,7 +9,7 @@ from metrics.api.serializers.tables import (
     TablesResponseValuesListSerializer,
     TablesSerializer,
 )
-from metrics.domain.models import PlotParameters, PlotsCollection
+from metrics.domain.models import PlotParameters, ChartRequestParams
 
 
 class TestTablePlotSerializer:
@@ -368,11 +368,11 @@ class TestTablesSerializer:
 
         # When
         serializer.is_valid()
-        table_plots_serialized_models: PlotsCollection = serializer.to_models()
+        table_plots_serialized_models: ChartRequestParams = serializer.to_models()
 
         # Then
         table_plot_params_model = PlotParameters(**table_plots[0])
-        expected_table_plots_model = PlotsCollection(
+        expected_table_plots_model = ChartRequestParams(
             plots=[table_plot_params_model],
             file_format=valid_data_payload["file_format"],
             chart_width=valid_data_payload["chart_width"],
