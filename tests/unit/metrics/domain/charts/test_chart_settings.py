@@ -8,18 +8,21 @@ from metrics.domain.charts.chart_settings import (
     ChartSettings,
     get_max_date_for_current_month,
 )
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData, ChartGenerationPayload
 
 MODULE_PATH: str = "metrics.domain.charts.chart_settings"
 
 
 @pytest.fixture()
-def fake_chart_settings(fake_plot_data: PlotData) -> ChartSettings:
-    return ChartSettings(
-        width=930,
-        height=220,
-        plots_data=[fake_plot_data],
+def fake_chart_settings(fake_plot_data: PlotGenerationData) -> ChartSettings:
+    payload = ChartGenerationPayload(
+        chart_width=930,
+        chart_height=220,
+        plots=[fake_plot_data],
+        x_axis_title="",
+        y_axis_title="",
     )
+    return ChartSettings(chart_generation_payload=payload)
 
 
 class TestChartSettings:
@@ -195,7 +198,7 @@ class TestChartSettings:
 
         assert base_chart_config == expected_base_chart_config
 
-    def test_chart_settings_width(self, fake_plot_data: PlotData):
+    def test_chart_settings_width(self, fake_plot_data: PlotGenerationData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -203,11 +206,14 @@ class TestChartSettings:
         """
         # Given
         width = 930
-        chart_settings = ChartSettings(
-            width=width,
-            height=220,
-            plots_data=[fake_plot_data],
+        payload = ChartGenerationPayload(
+            chart_width=width,
+            chart_height=220,
+            plots=[fake_plot_data],
+            x_axis_title="",
+            y_axis_title="",
         )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
 
         # When
         chart_width: int = chart_settings.width
@@ -215,7 +221,7 @@ class TestChartSettings:
         # Then
         assert chart_width == width
 
-    def test_chart_settings_height(self, fake_plot_data: PlotData):
+    def test_chart_settings_height(self, fake_plot_data: PlotGenerationData):
         """
         Given a `width` integer
         When the `width` property is called from an instance of `ChartSettings`
@@ -223,9 +229,14 @@ class TestChartSettings:
         """
         # Given
         height = 220
-        chart_settings = ChartSettings(
-            width=930, height=height, plots_data=[fake_plot_data]
+        payload = ChartGenerationPayload(
+            chart_width=930,
+            chart_height=height,
+            plots=[fake_plot_data],
+            x_axis_title="",
+            y_axis_title="",
         )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
 
         # When
         chart_height: int = chart_settings.height
@@ -255,7 +266,7 @@ class TestChartSettings:
         assert x_axis_date_type["tickformat"] == "%b %Y"
 
     def test_get_x_axis_date_type_calls_get_x_axis_range(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given an instance of `ChartSettings`
@@ -263,9 +274,14 @@ class TestChartSettings:
         Then the correct config is returned
         """
         # Given
-        chart_settings = ChartSettings(
-            width=435, height=220, plots_data=[fake_plot_data]
+        payload = ChartGenerationPayload(
+            chart_width=435,
+            chart_height=220,
+            plots=[fake_plot_data],
+            x_axis_title="",
+            y_axis_title="",
         )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
 
         # When
         x_axis_date_type = chart_settings.get_x_axis_date_type()
@@ -283,7 +299,7 @@ class TestChartSettings:
         assert x_axis_date_type == expected_axis_config
 
     def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given an instance of `ChartSettings` with a narrow `width`
@@ -291,9 +307,14 @@ class TestChartSettings:
         Then the correct configuration for the x-axis is returned as a dict
         """
         # Given
-        chart_settings = ChartSettings(
-            width=435, height=220, plots_data=[fake_plot_data]
+        payload = ChartGenerationPayload(
+            chart_width=435,
+            chart_height=220,
+            plots=[fake_plot_data],
+            x_axis_title="",
+            y_axis_title="",
         )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
 
         # When
         x_axis_date_type = chart_settings.get_x_axis_date_type()
@@ -521,7 +542,7 @@ class TestChartSettings:
         Then the correct string is returned
         """
         # Given
-        fake_chart_settings._width = chart_width
+        fake_chart_settings._chart_generation_payload.chart_width = chart_width
 
         # When
         returned_date_tick_format: str = fake_chart_settings._get_date_tick_format()

@@ -12,7 +12,7 @@ from metrics.domain.common.utils import (
     extract_metric_group_from_metric,
 )
 from metrics.domain.exports.csv_output import FIELDS, HEADLINE_FIELDS
-from metrics.domain.models import PlotsCollection
+from metrics.domain.models import ChartRequestParams
 from metrics.domain.models.plots import CompletePlotData
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
@@ -25,7 +25,7 @@ class DownloadsInterface:
     def __init__(
         self,
         *,
-        plots_collection: PlotsCollection,
+        plots_collection: ChartRequestParams,
         core_model_manager: CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
@@ -36,7 +36,7 @@ class DownloadsInterface:
         self.core_model_manager = core_model_manager or self._get_core_model_manager()
 
         self.plots_interface = plots_interface or PlotsInterface(
-            plots_collection=self.plots_collection,
+            chart_request_params=self.plots_collection,
             core_model_manager=self.core_model_manager,
         )
 
@@ -217,7 +217,7 @@ def sort_queryset_according_to_x_axis(
     return queryset.order_by("-date")
 
 
-def get_downloads_data(*, chart_plots: PlotsCollection) -> CoreTimeSeriesQuerySet:
+def get_downloads_data(*, chart_plots: ChartRequestParams) -> CoreTimeSeriesQuerySet:
     """Gets the final queryset for the downloads export associated with the given `chart_plots`
 
     Args:

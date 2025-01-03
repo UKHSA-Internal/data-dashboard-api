@@ -5,25 +5,21 @@ import plotly.graph_objects
 from metrics.domain.charts import chart_settings, colour_scheme
 from metrics.domain.charts.reporting_delay_period import add_reporting_delay_period
 from metrics.domain.charts.serialization import convert_graph_object_to_dict
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
+from metrics.domain.models.plots import ChartGenerationPayload
 
 
 def generate_chart_figure(
     *,
-    chart_height: int,
-    chart_width: int,
-    chart_plots_data: list[PlotData],
+    chart_generation_payload: ChartGenerationPayload,
 ) -> plotly.graph_objects.Figure:
-    """Creates a `Figure` object for the given `dates` & `values` as a Bar graph.
+    """Creates a `Figure` object for the given chart payload as a Bar graph.
 
     Args:
-        chart_height: The chart height in pixels
-        chart_width: The chart width in pixels
-        chart_plots_data: List of `PlotData` models,
-            where each model represents a requested plot.
-            Note that each `PlotData` model is enriched
-            with the according x and y values along with
-            requests parameters like colour and plot label.
+        chart_generation_payload: An enriched `ChartGenerationPayload` model
+            which holds all the parameters like colour and plot labels
+             along with the corresponding x and y values
+             which are needed to be able to generate the chart in full.
 
     Returns:
         `Figure`: A `plotly` object which can then be
@@ -31,6 +27,8 @@ def generate_chart_figure(
 
     """
     figure = plotly.graph_objects.Figure()
+
+    chart_plots_data: list[PlotGenerationData] = chart_generation_payload.plots
 
     for plot_data in chart_plots_data:
         selected_colour: colour_scheme.RGBAChartLineColours = (
@@ -53,7 +51,7 @@ def generate_chart_figure(
         figure.add_trace(trace=bar_plot)
 
     settings = chart_settings.ChartSettings(
-        width=chart_width, height=chart_height, plots_data=chart_plots_data
+        chart_generation_payload=chart_generation_payload
     )
 
     layout_args = settings.get_bar_chart_config()
