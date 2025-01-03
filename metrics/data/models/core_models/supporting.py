@@ -76,6 +76,9 @@ class MetricGroup(models.Model):
             ),
         ]
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Metric(models.Model):
     name = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)

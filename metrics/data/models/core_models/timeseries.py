@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.db import models
 from django.db.models import Q
 
@@ -89,3 +90,18 @@ class CoreTimeSeries(models.Model):
 
     def __str__(self):
         return f"Core Timeseries Data for {self.date}, metric '{self.metric.name}', value: {self.metric_value}"
+
+
+@admin.register(CoreTimeSeries)
+class CoreTimeseriesAdmin(admin.ModelAdmin):
+    list_filter = ["metric", "age", "sex", "stratum", "geography", "geography__geography_type"]
+    list_display = [
+        "metric",
+        "age",
+        "geography",
+        "embargo",
+    ]
+
+
+# admin.site.register(CoreTimeSeries, CoreTimeseriesAdmin)
+# admin.site.disable_action("delete_selected")
