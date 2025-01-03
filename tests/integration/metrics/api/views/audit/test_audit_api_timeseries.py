@@ -38,6 +38,7 @@ class TestAuditAPITimeSeriesViewSet:
         sex = "all"
         age = "all"
         metric_value = 3
+        date = (datetime.datetime.now()).strftime("%Y-%m-%d")
 
         api_timeseries_records = [
             APITimeSeriesFactory.create_record(metric_value=1),
@@ -45,6 +46,7 @@ class TestAuditAPITimeSeriesViewSet:
             APITimeSeriesFactory.create_record(
                 metric_name=metric,
                 metric_value=metric_value,
+                date=date,
             ),
         ]
 
@@ -77,12 +79,18 @@ class TestAuditAPITimeSeriesViewSet:
         stratum = "default"
         sex = "all"
         age = "all"
+        current_date = (datetime.datetime.now()).strftime("%Y-%m-%d")
+        past_date = (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
+            "%Y-%m-%d"
+        )
 
         future_embargo = datetime.datetime.now() + datetime.timedelta(days=1)
 
         api_timeseries_records = [
-            APITimeSeriesFactory.create_record(metric_value=1, embargo=future_embargo),
-            APITimeSeriesFactory.create_record(metric_value=2),
+            APITimeSeriesFactory.create_record(
+                metric_value=1, embargo=future_embargo, date=current_date
+            ),
+            APITimeSeriesFactory.create_record(metric_value=2, date=past_date),
         ]
 
         # When
