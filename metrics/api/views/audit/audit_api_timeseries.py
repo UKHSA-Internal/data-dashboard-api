@@ -1,7 +1,9 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets
+from rest_framework import permissions, viewsets
 
+import config
+from metrics.api.enums import AppMode
 from metrics.data.managers.api_models.time_series import APITimeSeriesQuerySet
 from metrics.data.models.api_models import APITimeSeries
 
@@ -73,6 +75,12 @@ class AuditAPITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = AuditAPITimeSeriesSerializer
     pagination_class = AuditEndpointPagination
     filter_backends = [DjangoFilterBackend]
+
+    def get_permissions(self) -> list[type[permissions.BasePermission]]:
+        if AppMode.CMS_ADMIN.value == config.APP_MODE:
+            return [permissions.IsAuthenticated()]
+
+        return super().get_permissions()
 
     def get_queryset(self) -> APITimeSeriesQuerySet:
         queryset = super().get_queryset()
