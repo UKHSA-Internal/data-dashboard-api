@@ -1,3 +1,4 @@
+from django.contrib import admin
 from django.db import models
 from django.db.models import Q
 
@@ -92,3 +93,29 @@ class APITimeSeries(models.Model):
             f"stratum '{self.stratum}', "
             f"value: {self.metric_value}"
         )
+
+
+@admin.register(APITimeSeries)
+class APITimeseriesAdmin(admin.ModelAdmin):
+    list_filter = [
+        "metric",
+        "age",
+        "sex",
+        "stratum",
+        "geography",
+        "geography_type",
+    ]
+
+    list_display = [
+        "metric",
+        "age",
+        "geography",
+        "embargo",
+    ]
+
+    # def has_delete_permission(self, request, obj=None):
+    #     return False
+    #
+    # def has_add_permission(self, request):
+    #     return False
+
