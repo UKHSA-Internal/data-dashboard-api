@@ -1,12 +1,18 @@
 import datetime
+import logging
 from decimal import Decimal
 
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
-from metrics.domain.charts.utils import return_formatted_max_y_axis_value
+from metrics.domain.charts.utils import (
+    return_formatted_max_y_axis_value,
+    return_formatted_min_y_axis_value,
+)
 from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
 from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.plots import ChartGenerationPayload
+
+logger = logging.getLogger(__name__)
 
 
 class ChartSettings:
@@ -23,6 +29,14 @@ class ChartSettings:
     @property
     def height(self) -> int:
         return self._chart_generation_payload.chart_height
+
+    @property
+    def y_axis_minimum_value(self) -> int | None:
+        return self._chart_generation_payload.y_axis_minimum_value
+
+    @property
+    def y_axis_maximum_value(self) -> int | None:
+        return self._chart_generation_payload.y_axis_maximum_value
 
     @staticmethod
     def get_tick_font_config() -> DICT_OF_STR_ONLY:
@@ -121,6 +135,53 @@ class ChartSettings:
         chart_config["showlegend"] = False
         return chart_config
 
+    def build_line_single_simplified_y_axis_value_params(
+        self,
+    ) -> dict[str, list[str | int | Decimal]]:
+        """Returns a dictionary containing `y-axis` parameter values
+
+        Notes:
+            if a `y_axis_minimum_value` is provided that is higher than the
+            lowest value in the `y_axis_values` list then the min value of
+            `y_axis_values` is used as the lowest number in the y-axis range.
+
+            if a `y_axis_maximum_value` is provided that is lower than the
+            highest value in the `y_axis_values` list then the max value of
+            `y_axis_values` is used as the highest number in the y-axis range.
+
+        Returns:
+            A dictionary containing the y-axis parameters than make up the
+            y-axis ticks and tick values.
+        """
+        plots_data = self.plots_data[0]
+
+        if self.y_axis_minimum_value < min(plots_data.y_axis_values):
+            min_value = self.y_axis_minimum_value
+        else:
+            min_value = min(plots_data.y_axis_values)
+            logger.info(
+                "The minimum value provided was to high, fallen back to the min value in the data"
+            )
+
+        if self.y_axis_maximum_value and (
+            self.y_axis_maximum_value > max(plots_data.y_axis_values)
+        ):
+            max_value = self.y_axis_maximum_value
+        else:
+            max_value = max(plots_data.y_axis_values)
+            logger.info(
+                "The maximum value provided was to low, fallen back to the max value in the data"
+            )
+
+        return {
+            "y_axis_tick_values": [min_value, max_value],
+            "y_axis_tick_text": [
+                return_formatted_min_y_axis_value(y_axis_values=[min_value]),
+                return_formatted_max_y_axis_value(y_axis_values=[max_value]),
+            ],
+            "range": [min_value, max_value],
+        }
+
     def build_line_single_simplified_axis_params(
         self,
     ) -> dict[str, list[str | int | Decimal]]:
@@ -130,6 +191,9 @@ class ChartSettings:
             dictionary of parameters for charts settings parameters
         """
         plot_data = self.plots_data[0]
+
+        y_axis_params = self.build_line_single_simplified_y_axis_value_params()
+
         return {
             "x_axis_tick_values": [
                 plot_data.x_axis_values[0],
@@ -139,13 +203,12 @@ class ChartSettings:
                 plot_data.x_axis_values[0].strftime("%b, %Y"),
                 plot_data.x_axis_values[-1].strftime("%b, %Y"),
             ],
-            "y_axis_tick_values": [0, max(plot_data.y_axis_values)],
-            "y_axis_tick_text": [
-                "0",
-                return_formatted_max_y_axis_value(
-                    y_axis_values=plot_data.y_axis_values,
-                ),
-            ],
+            "y_axis_tick_values": y_axis_params["y_axis_tick_values"],
+            "y_axis_tick_text": y_axis_params["y_axis_tick_text"],
+            "range": y_axis_params["range"],
+            "rangemode": (
+                "tozero" if y_axis_params["y_axis_tick_values"][0] == 0 else "normal"
+            ),
         }
 
     def get_line_single_simplified_chart_config(self):
@@ -178,6 +241,8 @@ class ChartSettings:
         chart_config["yaxis"]["tickfont"][
             "color"
         ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+        chart_config["yaxis"]["range"] = axis_params["range"]
+        chart_config["yaxis"]["rangemode"] = axis_params["rangemode"]
 
         return chart_config
 

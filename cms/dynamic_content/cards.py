@@ -159,6 +159,15 @@ class SimplifiedChartWithLink(blocks.StructBlock):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
+    y_axis_minimum_value = blocks.IntegerBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.IntegerBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
     chart = SimplifiedChartComponent(
         help_text=help_texts.CHART_BLOCK_FIELD,
         required=True,

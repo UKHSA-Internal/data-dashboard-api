@@ -587,6 +587,8 @@ class TestChartsSerializer:
             "plots": chart_plots,
             "x_axis": None,
             "y_axis": None,
+            "y_axis_minimum_value": 0,
+            "y_axis_maximum_value": None,
         }
         serializer = ChartsSerializer(data=valid_data_payload)
 
@@ -621,6 +623,8 @@ class TestChartsSerializer:
             "chart_height": 300,
             "chart_width": 400,
             "plots": chart_plots,
+            "y_axis_minimum_value": 0,
+            "y_axis_maximum_value": None,
         }
         serializer = ChartsSerializer(data=valid_data_payload)
 
@@ -668,6 +672,8 @@ class TestChartsSerializer:
             "plots": chart_plots,
             "x_axis": x_axis,
             "y_axis": y_axis,
+            "y_axis_minimum_value": 0,
+            "y_axis_maximum_value": None,
         }
         serializer = ChartsSerializer(data=valid_data_payload)
 

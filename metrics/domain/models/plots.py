@@ -162,6 +162,8 @@ class ChartRequestParams(BaseModel):
     x_axis_title: str = ""
     y_axis: str
     y_axis_title: str = ""
+    y_axis_minimum_value: int = 0
+    y_axis_maximum_value: int | None = None
 
 
 class NoReportingDelayPeriodFoundError(Exception): ...
@@ -242,6 +244,8 @@ class ChartGenerationPayload(BaseModel):
     chart_height: int
     x_axis_title: str
     y_axis_title: str
+    y_axis_minimum_value: int = 0
+    y_axis_maximum_value: int | None = None
 
 
 class CompletePlotData(BaseModel):
