@@ -12,7 +12,7 @@ from metrics.domain.common.utils import (
     ChartAxisFields,
     ChartTypes,
 )
-from metrics.domain.models import PlotsCollection
+from metrics.domain.models import ChartRequestParams
 
 
 class TablePlotSerializer(plots.PlotSerializer):
@@ -59,8 +59,8 @@ class TablesSerializer(serializers.Serializer):
         with contextlib.suppress(OperationalError):
             super().__init__(*args, **kwargs)
 
-    def to_models(self) -> PlotsCollection:
-        return PlotsCollection(
+    def to_models(self) -> ChartRequestParams:
+        return ChartRequestParams(
             plots=self.data["plots"],
             file_format="svg",
             chart_height=DEFAULT_CHART_HEIGHT,

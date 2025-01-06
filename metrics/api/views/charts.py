@@ -13,6 +13,7 @@ from metrics.api.serializers.charts import (
     EncodedChartResponseSerializer,
     EncodedChartsRequestSerializer,
 )
+from metrics.domain.models import ChartRequestParams
 from metrics.interfaces.charts import access
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
@@ -118,11 +119,11 @@ class ChartsView(APIView):
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        chart_plot_models = request_serializer.to_models()
+        chart_request_params: ChartRequestParams = request_serializer.to_models()
 
         try:
             filename: str = access.generate_chart_as_file(
-                chart_plots=chart_plot_models,
+                chart_request_params=chart_request_params,
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
@@ -232,11 +233,11 @@ class EncodedChartsView(APIView):
         request_serializer = EncodedChartsRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        chart_plot_models = request_serializer.to_models()
+        chart_request_params = request_serializer.to_models()
 
         try:
             response: dict[str, str] = access.generate_encoded_chart(
-                chart_plots=chart_plot_models,
+                chart_request_params=chart_request_params,
             )
 
             serializer = EncodedChartResponseSerializer(data=response)
