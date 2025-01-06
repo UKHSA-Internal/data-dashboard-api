@@ -6,7 +6,10 @@ import pytest
 
 from metrics.domain.charts.bar.generation import generate_chart_figure
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
-from metrics.domain.models.plots import NoReportingDelayPeriodFoundError
+from metrics.domain.models.plots import (
+    ChartGenerationPayload,
+    PlotGenerationData,
+)
 
 HEIGHT = 300
 WIDTH = 400
@@ -32,21 +35,25 @@ def mocked_plot_data() -> mock.Mock:
 
 
 class TestBarCharts:
-    def test_main_layout(self, mocked_plot_data: mock.Mock):
+    def test_main_layout(self, fake_plot_data: PlotGenerationData):
         """
         Given a list of dates and values for data points
         When `generate_chart_figure()` is called from the `bar` module
         Then the figure is drawn with the expected parameters
         """
         # Given
-        chart_plots_data = [mocked_plot_data]
-        mocked_plot_data.start_of_reporting_delay_period_index = 1
+        chart_plots_data = [fake_plot_data]
+        chart_payload = ChartGenerationPayload(
+            chart_width=WIDTH,
+            chart_height=HEIGHT,
+            plots=chart_plots_data,
+            x_axis_title="",
+            y_axis_title="",
+        )
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
-            chart_height=HEIGHT,
-            chart_width=WIDTH,
-            chart_plots_data=chart_plots_data,
+            chart_generation_payload=chart_payload
         )
 
         # Then
@@ -63,21 +70,28 @@ class TestBarCharts:
         # Check left and right margins are both 0
         assert main_layout.margin.l == main_layout.margin.r == 0
 
-    def test_main_bar_plot(self, mocked_plot_data: mock.Mock):
+    def test_main_bar_plot(self, fake_plot_data: PlotGenerationData):
         """
         Given a list of dates & values
         When `generate_chart_figure()` is called from the `bar` module
         Then the figure is drawn with the expected parameters for the main plot
         """
         # Given
-        chart_plots_data = [mocked_plot_data]
-        mocked_plot_data.start_of_reporting_delay_period_index = 1
+        chart_plots_data = [fake_plot_data]
+        fake_plot_data.additional_values = {
+            "in_reporting_delay_period": [True] * len(fake_plot_data.x_axis_values)
+        }
+        chart_payload = ChartGenerationPayload(
+            chart_width=WIDTH,
+            chart_height=HEIGHT,
+            plots=chart_plots_data,
+            x_axis_title="",
+            y_axis_title="",
+        )
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
-            chart_height=HEIGHT,
-            chart_width=WIDTH,
-            chart_plots_data=chart_plots_data,
+            chart_generation_payload=chart_payload
         )
 
         # Then
@@ -94,10 +108,8 @@ class TestBarCharts:
         # Check x & y values were correctly assigned
         # Note that the dates along the x-axis are returned as strings
         # i.e. `2022-9-5` instead of as datetime objects hence the need for the string conversion
-        assert main_bar_plot.x == tuple(
-            [str(x) for x in mocked_plot_data.x_axis_values]
-        )
-        assert main_bar_plot.y == tuple(mocked_plot_data.y_axis_values)
+        assert main_bar_plot.x == tuple([str(x) for x in fake_plot_data.x_axis_values])
+        assert main_bar_plot.y == tuple(fake_plot_data.y_axis_values)
 
         # Bars should be Blue
         assert (
@@ -111,7 +123,7 @@ class TestBarCharts:
         assert main_bar_plot.marker.line.width == 1
 
         # Legend is assigned
-        assert main_bar_plot.name == mocked_plot_data.parameters.label
+        assert main_bar_plot.name == fake_plot_data.parameters.label
 
         # ---X Axis checks---
         x_axis = figure.layout.xaxis
@@ -138,7 +150,7 @@ class TestBarCharts:
         assert not y_axis.showgrid
         assert y_axis.showticklabels
 
-    def test_x_axis_type_is_not_date(self, mocked_plot_data: mock.Mock):
+    def test_x_axis_type_is_not_date(self, fake_plot_data: PlotGenerationData):
         """
         Given a list of x and y values where x values are NOT dates
         When `generate_chart_figure()` is called from the `bar` module
@@ -146,15 +158,19 @@ class TestBarCharts:
         """
         # Given
         x_axis_values = ["0-4", "5-8", "9-29"]
-        mocked_plot_data.x_axis_values = x_axis_values
-        chart_plots_data = [mocked_plot_data]
-        mocked_plot_data.start_of_reporting_delay_period_index = 1
+        fake_plot_data.x_axis_values = x_axis_values
+        chart_plots_data = [fake_plot_data]
+        chart_payload = ChartGenerationPayload(
+            chart_width=WIDTH,
+            chart_height=HEIGHT,
+            plots=chart_plots_data,
+            x_axis_title="",
+            y_axis_title="",
+        )
 
         # When
         figure: plotly.graph_objects.Figure = generate_chart_figure(
-            chart_height=HEIGHT,
-            chart_width=WIDTH,
-            chart_plots_data=chart_plots_data,
+            chart_generation_payload=chart_payload
         )
 
         # Then

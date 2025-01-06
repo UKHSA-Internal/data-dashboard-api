@@ -10,7 +10,7 @@ from metrics.domain.charts.reporting_delay_period import (
     get_x_value_at_start_of_reporting_delay_period,
 )
 from metrics.domain.common.utils import ChartTypes
-from metrics.domain.models import PlotData, PlotParameters
+from metrics.domain.models import PlotGenerationData, PlotParameters
 from metrics.domain.models.plots import (
     NoReportingDelayPeriodFoundError,
     ReportingDelayNotProvidedToPlotsError,
@@ -23,15 +23,15 @@ TREND_CHART_TYPE = "line_single_simplified"
 class PlotsText:
     """This class is used to build alt_text for a chart/ list of enriched `PlotData` models"""
 
-    def __init__(self, *, plots_data: list[PlotData]):
-        self.plots_data: list[PlotData] = self._extract_plots_with_valid_data(
+    def __init__(self, *, plots_data: list[PlotGenerationData]):
+        self.plots_data: list[PlotGenerationData] = self._extract_plots_with_valid_data(
             plots_data=plots_data
         )
 
     @classmethod
     def _extract_plots_with_valid_data(
-        cls, *, plots_data: list[PlotData]
-    ) -> list[PlotData]:
+        cls, *, plots_data: list[PlotGenerationData]
+    ) -> list[PlotGenerationData]:
         return [
             plot_data
             for plot_data in plots_data
@@ -102,7 +102,7 @@ class PlotsText:
             Describing its parameters and its data if valid.
 
         """
-        plot_data: PlotData = self.plots_data[0]
+        plot_data: PlotGenerationData = self.plots_data[0]
         plot_parameters: PlotParameters = plot_data.parameters
 
         description: str = self._describe_plot_type(plot_parameters=plot_parameters)
@@ -147,7 +147,7 @@ class PlotsText:
         return description
 
     def _describe_next_plot_in_multiple_plot_group(
-        self, *, index: int, plot_data: PlotData
+        self, *, index: int, plot_data: PlotGenerationData
     ) -> str:
         """Builds a description of a plot. Assumes there are multiple plots on the chart.
 
@@ -193,7 +193,7 @@ class PlotsText:
     # Data description
 
     @classmethod
-    def _describe_headline_plot_data(cls, *, plot_data: PlotData) -> str:
+    def _describe_headline_plot_data(cls, *, plot_data: PlotGenerationData) -> str:
         """Builds a description of the data for the given headline data plot.
 
         Args:
@@ -212,7 +212,7 @@ class PlotsText:
         )
 
     def _describe_date_based_plot_data(
-        self, *, plot_data: PlotData, number_of_parts: int = 6
+        self, *, plot_data: PlotGenerationData, number_of_parts: int = 6
     ) -> str:
         """Builds a description of the data for the given plot. Assumes the plot uses `date` along the x-axis
 
@@ -325,7 +325,7 @@ class PlotsText:
     # Utilities
 
     @classmethod
-    def _stringify_chart_type(cls, *, plot_parameters: PlotData) -> str:
+    def _stringify_chart_type(cls, *, plot_parameters: PlotGenerationData) -> str:
         chart_type: str = plot_parameters.chart_type
         match chart_type:
             case ChartTypes.bar.value:
@@ -388,13 +388,8 @@ class PlotsText:
 
     @classmethod
     def _get_line_colour_or_default(cls, *, plot_parameters: PlotParameters) -> str:
-        if plot_parameters.line_colour:
-            return plot_parameters.line_colour.lower()
-
-        if plot_parameters.chart_type == ChartTypes.bar.value:
-            return RGBAChartLineColours.BLUE.name.lower()
-
-        return RGBAChartLineColours.BLACK.name.lower()
+        colour: RGBAChartLineColours = plot_parameters.line_colour_enum
+        return colour.presentation_name
 
     @classmethod
     def _get_line_type_or_default(cls, *, plot_parameters: PlotParameters) -> str:
@@ -415,7 +410,9 @@ class PlotsText:
             return float(metric_value)
 
     @classmethod
-    def _plot_is_date_based_timeseries_data(cls, *, plot_data: PlotData) -> bool:
+    def _plot_is_date_based_timeseries_data(
+        cls, *, plot_data: PlotGenerationData
+    ) -> bool:
         return type(plot_data.x_axis_values[0]) is datetime.date
 
     @classmethod
@@ -423,7 +420,7 @@ class PlotsText:
         return plot_parameters.chart_type == TREND_CHART_TYPE
 
     @classmethod
-    def _plot_is_headline_data(cls, *, plot_data: PlotData) -> bool:
+    def _plot_is_headline_data(cls, *, plot_data: PlotGenerationData) -> bool:
         return plot_data.parameters.is_headline_data
 
     def _describe_reporting_delay_period(self) -> str:
