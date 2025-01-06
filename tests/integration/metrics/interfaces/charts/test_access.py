@@ -2,23 +2,27 @@ from unittest import mock
 
 import plotly
 
-from metrics.domain.models import PlotsCollection
+from metrics.domain.models import ChartRequestParams
 from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import ChartsInterface
 
 
 class TestChartsInterface:
-    def test_svg_passed_to_encode_figure(self, fake_plots_collection: PlotsCollection):
+    def test_svg_passed_to_encode_figure(
+        self, fake_chart_request_params: ChartRequestParams
+    ):
         """
         Given the user supplies a file_format of `svg` to pass to encode_figure
         When `encode_figure` is called then no exception is raised as long as
         the format is supported by the Plotly `to_image` function
         """
         # Given
-        fake_plots_collection.file_format = "svg"
-        fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
+        fake_chart_request_params.file_format = "svg"
+        fake_chart_request_params.plots[0].chart_type = (
+            ChartTypes.line_multi_coloured.value
+        )
         charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
+            chart_request_params=fake_chart_request_params,
         )
 
         figure = plotly.graph_objs.Figure()
@@ -31,7 +35,9 @@ class TestChartsInterface:
 
     @mock.patch("scour.scour.scourString")
     def test_scour_is_called(
-        self, mocked_scourstring: mock.MagicMock, fake_plots_collection: PlotsCollection
+        self,
+        mocked_scourstring: mock.MagicMock,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a Plotly Figure
@@ -41,10 +47,12 @@ class TestChartsInterface:
         """
 
         # Given
-        fake_plots_collection.file_format = "svg"
-        fake_plots_collection.plots[0].chart_type = ChartTypes.line_multi_coloured.value
+        fake_chart_request_params.file_format = "svg"
+        fake_chart_request_params.plots[0].chart_type = (
+            ChartTypes.line_multi_coloured.value
+        )
         charts_interface = ChartsInterface(
-            chart_plots=fake_plots_collection,
+            chart_request_params=fake_chart_request_params,
         )
 
         figure = plotly.graph_objs.Figure()

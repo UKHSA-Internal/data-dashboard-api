@@ -5,24 +5,24 @@ from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.type_hints import DICT_OF_STR_ONLY
 from metrics.domain.charts.utils import return_formatted_max_y_axis_value
 from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
+from metrics.domain.models.plots import ChartGenerationPayload
 
 
 class ChartSettings:
     narrow_chart_width = DEFAULT_CHART_WIDTH
 
-    def __init__(self, *, width: int, height: int, plots_data: list[PlotData]):
-        self._width = width
-        self._height = height
-        self.plots_data = plots_data
+    def __init__(self, *, chart_generation_payload: ChartGenerationPayload):
+        self._chart_generation_payload = chart_generation_payload
+        self.plots_data: list[PlotGenerationData] = chart_generation_payload.plots
 
     @property
     def width(self) -> int:
-        return self._width
+        return self._chart_generation_payload.chart_width
 
     @property
     def height(self) -> int:
-        return self._height
+        return self._chart_generation_payload.chart_height
 
     @staticmethod
     def get_tick_font_config() -> DICT_OF_STR_ONLY:
