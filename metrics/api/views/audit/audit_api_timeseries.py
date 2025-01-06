@@ -95,6 +95,12 @@ class AuditAPITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = AuditEndpointPagination
     filter_backends = [DjangoFilterBackend]
 
+    def get_permissions(self) -> list[type[permissions.BasePermission]]:
+        if AppMode.CMS_ADMIN.value == config.APP_MODE:
+            return [permissions.IsAuthenticated()]
+
+        return super().get_permissions()
+
     def get_date_from(self) -> str:
         """Returns the date for a year ago from today if query param `date_from` is None
         otherwise it returns the provided `date_from` string
@@ -114,12 +120,6 @@ class AuditAPITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
             if self.request.query_params.get("date_to") is not None
             else (datetime.now()).strftime("%Y-%m-%d")
         )
-
-    def get_permissions(self) -> list[type[permissions.BasePermission]]:
-        if AppMode.CMS_ADMIN.value == config.APP_MODE:
-            return [permissions.IsAuthenticated()]
-
-        return super().get_permissions()
 
     def get_queryset(self) -> APITimeSeriesQuerySet:
         queryset = (
