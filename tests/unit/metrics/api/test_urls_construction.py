@@ -32,7 +32,7 @@ AUDIT_API_ENDPOINT_PATHS = [
     "api/charts/v2",
 ]
 
-FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v1", "api/suggestions/v2"]
+FEEDBACK_API_ENDPOINT_PATHS = ["api/suggestions/v2"]
 
 PUBLIC_API_ENDPOINT_PATHS = [
     "themes/<str:theme>/",
