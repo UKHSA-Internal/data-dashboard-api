@@ -136,7 +136,6 @@ private_api_urlpatterns = [
         name="cold-alerts-detail",
     ),
     # Metrics/private content endpoints
-    re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
@@ -167,6 +166,7 @@ audit_api_urlpatterns = [
         audit_api_core_headline_list,
         name="audit-core-headline",
     ),
+    re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
 ]
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)

@@ -8,7 +8,11 @@ from pydantic import BaseModel
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.common.utils import ChartAxisFields
-from metrics.domain.models import PlotData, PlotParameters, PlotsCollection
+from metrics.domain.models import (
+    ChartRequestParams,
+    PlotGenerationData,
+    PlotParameters,
+)
 from metrics.domain.models.plots import CompletePlotData
 from metrics.interfaces.plots.validation import (
     DatesNotInChronologicalOrderError,
@@ -38,10 +42,10 @@ class PlotsInterface:
     def __init__(
         self,
         *,
-        plots_collection: PlotsCollection,
+        chart_request_params: ChartRequestParams,
         core_model_manager: CORE_MODEL_MANAGER_TYPE = DEFAULT_CORE_TIME_SERIES_MANAGER,
     ):
-        self.plots_collection = plots_collection
+        self.chart_request_params = chart_request_params
         self.core_model_manager = core_model_manager
         self.validate_plot_parameters()
 
@@ -60,7 +64,7 @@ class PlotsInterface:
                 the expected chronological order.
 
         """
-        for plot_parameters in self.plots_collection.plots:
+        for plot_parameters in self.chart_request_params.plots:
             validation = PlotValidation(plot_parameters=plot_parameters)
             try:
                 validation.validate()
@@ -154,8 +158,8 @@ class PlotsInterface:
 
     def build_plot_data_from_parameters(
         self, *, plot_parameters: PlotParameters
-    ) -> PlotData:
-        """Creates a `PlotData` model which holds the params and corresponding data for the given requested plot
+    ) -> PlotGenerationData:
+        """Creates a `PlotGenerationData` model which holds the params and data for the given `plot_parameters`
 
         Notes:
             The corresponding timeseries data is used to enrich a
@@ -163,8 +167,9 @@ class PlotsInterface:
             These models can then be passed into the domain libraries.
 
         Returns:
-            PlotData: An individual `PlotData` models f
-                or the requested `plot_parameters`.
+            PlotGenerationData: An individual `PlotGenerationData` model
+                which holds the parameters and the enriched data
+                for the requested individual plot
 
         Raises:
             `DataNotFoundForPlotError`: If no `CoreTimeSeries` data can be found
@@ -172,8 +177,8 @@ class PlotsInterface:
 
         """
         # Set each plot with the selected chart-level x and y-axis choices
-        plot_parameters.x_axis = self.plots_collection.x_axis
-        plot_parameters.y_axis = self.plots_collection.y_axis
+        plot_parameters.x_axis = self.chart_request_params.x_axis
+        plot_parameters.y_axis = self.chart_request_params.y_axis
 
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
             plot_parameters=plot_parameters,
@@ -184,7 +189,7 @@ class PlotsInterface:
             queryset=queryset_result.queryset,
         )
 
-        return PlotData.create_from_parameters(
+        return PlotGenerationData.create_from_parameters(
             parameters=plot_parameters,
             aggregated_results=aggregated_results,
             latest_date=queryset_result.latest_date,
@@ -211,9 +216,9 @@ class PlotsInterface:
 
         """
         plots_data: list[CompletePlotData] = []
-        for plot_parameters in self.plots_collection.plots:
+        for plot_parameters in self.chart_request_params.plots:
             try:
-                plot_data: PlotData = (
+                plot_data: PlotGenerationData = (
                     self.build_plot_data_from_parameters_with_complete_queryset(
                         plot_parameters=plot_parameters
                     )
@@ -228,7 +233,7 @@ class PlotsInterface:
 
         return plots_data
 
-    def build_plots_data(self) -> list[PlotData]:
+    def build_plots_data(self) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -248,11 +253,11 @@ class PlotsInterface:
                 returned any data from the underlying queries
 
         """
-        plots_data: list[PlotData] = []
+        plots_data: list[PlotGenerationData] = []
 
-        for plot_parameters in self.plots_collection.plots:
+        for plot_parameters in self.chart_request_params.plots:
             try:
-                plot_data: PlotData = self.build_plot_data_from_parameters(
+                plot_data: PlotGenerationData = self.build_plot_data_from_parameters(
                     plot_parameters=plot_parameters
                 )
             except DataNotFoundForPlotError:
