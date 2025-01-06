@@ -19,6 +19,7 @@ class TestGeographiesView:
         When a GET request is made to the
             `/api/geographies/v2/{topic}` endpoint
         Then the returned results contain the correct geographies
+            in descending alphabetical order
         """
         # Given
         client = APIClient()
@@ -31,6 +32,12 @@ class TestGeographiesView:
             topic_name=topic,
             geography_type_name=ltla,
             geography_name="Bexley",
+        )
+        arun = CoreTimeSeriesFactory.create_record(
+            metric_name="COVID-19_cases_countRollingMean",
+            topic_name="COVID-19",
+            geography_type_name=ltla,
+            geography_name="Arun",
         )
         hackney = CoreTimeSeriesFactory.create_record(
             metric_name="COVID-19_cases_countRollingMean",
@@ -56,10 +63,12 @@ class TestGeographiesView:
         response: Response = client.get(path=path)
 
         # Then
+        # Geographies are returned in descending alphabetical order
         expected_results = [
             {
                 "geography_type": ltla,
                 "geographies": [
+                    {"name": arun.geography.name},
                     {"name": bexley.geography.name},
                     {"name": hackney.geography.name},
                 ],
