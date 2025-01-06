@@ -8,7 +8,7 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models import PlotsCollection
+from metrics.domain.models import ChartRequestParams
 
 FILE_FORMAT_CHOICES: list[str] = ["json", "csv"]
 
@@ -56,7 +56,7 @@ class DownloadsSerializer(serializers.Serializer):
 
     plots = DownloadListSerializer()
 
-    def to_models(self) -> PlotsCollection:
+    def to_models(self) -> ChartRequestParams:
         """Creates a `PlotsCollection` from the download
             request parameters.
 
@@ -79,7 +79,7 @@ class DownloadsSerializer(serializers.Serializer):
             plot["x_axis"] = self.data.get("x_axis") or ""
             plot["y_axis"] = self.data.get("y_axis") or ""
 
-        plots_collection = PlotsCollection(
+        plots_collection = ChartRequestParams(
             metric_group=metric_group,
             plots=self.data["plots"],
             file_format="svg",

@@ -14,7 +14,7 @@ from metrics.domain.common.utils import (
     ChartAxisFields,
     ChartTypes,
 )
-from metrics.domain.models import PlotParameters, PlotsCollection
+from metrics.domain.models import ChartRequestParams, PlotParameters
 
 
 class ChartPlotSerializer(plots.PlotSerializer):
@@ -105,7 +105,7 @@ class ChartsSerializer(serializers.Serializer):
 
     plots = ChartPlotsListSerializer()
 
-    def to_models(self) -> PlotsCollection:
+    def to_models(self) -> ChartRequestParams:
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
 
@@ -113,7 +113,7 @@ class ChartsSerializer(serializers.Serializer):
             plot["x_axis"] = x_axis
             plot["y_axis"] = y_axis
 
-        return PlotsCollection(
+        return ChartRequestParams(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,

@@ -9,7 +9,7 @@ from metrics.api.serializers.charts import (
 )
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.line_multi_coloured import properties
-from metrics.domain.models import PlotParameters, PlotsCollection
+from metrics.domain.models import PlotParameters, ChartRequestParams
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
@@ -552,7 +552,7 @@ class TestChartsSerializer:
 
         # When
         is_serializer_valid: bool = serializer.is_valid()
-        serialized_model_data: PlotsCollection = serializer.to_models()
+        serialized_model_data: ChartRequestParams = serializer.to_models()
 
         # Then
         assert is_serializer_valid
@@ -592,7 +592,7 @@ class TestChartsSerializer:
 
         # When
         serializer.is_valid()
-        serialized_model_data: PlotsCollection = serializer.to_models()
+        serialized_model_data: ChartRequestParams = serializer.to_models()
 
         # Then
         assert serialized_model_data.plots[0].x_axis == DEFAULT_X_AXIS
@@ -626,11 +626,11 @@ class TestChartsSerializer:
 
         # When
         serializer.is_valid()
-        chart_plots_serialized_models: PlotsCollection = serializer.to_models()
+        chart_plots_serialized_models: ChartRequestParams = serializer.to_models()
 
         # Then
         chart_plot_params_model = PlotParameters(**chart_plots[0])
-        expected_chart_plots_model = PlotsCollection(
+        expected_chart_plots_model = ChartRequestParams(
             plots=[chart_plot_params_model],
             file_format=valid_data_payload["file_format"],
             chart_height=valid_data_payload["chart_height"],
@@ -673,7 +673,7 @@ class TestChartsSerializer:
 
         # When
         serializer.is_valid()
-        serialized_model_data: PlotsCollection = serializer.to_models()
+        serialized_model_data: ChartRequestParams = serializer.to_models()
 
         # Then
         assert serialized_model_data.plots[0].x_axis == x_axis
