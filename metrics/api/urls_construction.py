@@ -34,6 +34,8 @@ from metrics.api.views.geographies import GeographiesView
 from metrics.api.views.health import InternalHealthView
 from public_api import construct_url_patterns_for_public_api
 
+from metrics.api.admin import dashboard_admin_site
+
 router = routers.DefaultRouter()
 
 # Create the router. "wagtailapi" is the URL namespace
@@ -200,7 +202,7 @@ common_urlpatterns = [
 
 django_admin_urlpatterns = [
     # Django admin
-    path("admin/", admin.site.urls),
+    path("admin/", dashboard_admin_site.urls),
 ]
 
 

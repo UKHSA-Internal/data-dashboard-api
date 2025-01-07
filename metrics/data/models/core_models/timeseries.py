@@ -92,25 +92,25 @@ class CoreTimeSeries(models.Model):
         return f"Core Timeseries Data for {self.date}, metric '{self.metric.name}', value: {self.metric_value}"
 
 
-@admin.register(CoreTimeSeries)
-class CoreTimeseriesAdmin(admin.ModelAdmin):
-    list_filter = [
-        "metric",
-        "age",
-        "sex",
-        "stratum",
-        "geography",
-        "geography__geography_type",
-    ]
-    list_display = [
-        "metric",
-        "age",
-        "geography",
-        "embargo",
-    ]
-
-    # def has_delete_permission(self, request, obj=None):
-    #     return False
-    #
-    # def has_add_permission(self, request):
-    #     return False
+# @admin.register(CoreTimeSeries)
+# class CoreTimeseriesAdmin(admin.ModelAdmin):
+#     list_filter = [
+#         "metric",
+#         "age",
+#         "sex",
+#         "stratum",
+#         "geography",
+#         "geography__geography_type",
+#     ]
+#     list_display = [
+#         "metric",
+#         "age",
+#         "geography",
+#         "embargo",
+#     ]
+#
+#     # def has_delete_permission(self, request, obj=None):
+#     #     return False
+#     #
+#     # def has_add_permission(self, request):
+#     #     return False
