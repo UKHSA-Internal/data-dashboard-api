@@ -48,6 +48,16 @@ class RGBAChartLineColours(Enum):
         value: tuple[int, int, int] = self.value
         return value[0], value[1], value[2], 1
 
+    @property
+    def presentation_name(self) -> str:
+        name = (
+            self.name.split(sep="_", maxsplit=2)[2]
+            if self.name.startswith("COLOUR_")
+            else self.name
+        )
+
+        return self._convert_to_readable_name(name=name).lower()
+
     @classmethod
     def _convert_to_readable_name(cls, name: str) -> str:
         return " ".join(name.split("_")).title()

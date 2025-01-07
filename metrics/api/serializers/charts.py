@@ -14,7 +14,7 @@ from metrics.domain.common.utils import (
     ChartAxisFields,
     ChartTypes,
 )
-from metrics.domain.models import PlotParameters, PlotsCollection
+from metrics.domain.models import ChartRequestParams, PlotParameters
 
 
 class ChartPlotSerializer(plots.PlotSerializer):
@@ -94,6 +94,13 @@ class ChartsSerializer(serializers.Serializer):
         help_text=help_texts.CHART_X_AXIS,
         default=DEFAULT_X_AXIS,
     )
+    x_axis_title = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
     y_axis = serializers.ChoiceField(
         choices=ChartAxisFields.choices(),
         required=False,
@@ -102,10 +109,17 @@ class ChartsSerializer(serializers.Serializer):
         help_text=help_texts.CHART_Y_AXIS,
         default=DEFAULT_Y_AXIS,
     )
+    y_axis_title = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
+    )
 
     plots = ChartPlotsListSerializer()
 
-    def to_models(self) -> PlotsCollection:
+    def to_models(self) -> ChartRequestParams:
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
 
@@ -113,13 +127,15 @@ class ChartsSerializer(serializers.Serializer):
             plot["x_axis"] = x_axis
             plot["y_axis"] = y_axis
 
-        return PlotsCollection(
+        return ChartRequestParams(
             plots=self.data["plots"],
             file_format=self.data["file_format"],
             chart_height=self.data["chart_height"] or DEFAULT_CHART_HEIGHT,
             chart_width=self.data["chart_width"] or DEFAULT_CHART_WIDTH,
             x_axis=x_axis,
             y_axis=y_axis,
+            x_axis_title=self.data.get("x_axis_title", ""),
+            y_axis_title=self.data.get("y_axis_title", ""),
         )
 
 

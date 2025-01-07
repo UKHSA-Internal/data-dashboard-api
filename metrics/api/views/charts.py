@@ -3,16 +3,20 @@ from http import HTTPStatus
 
 from django.http import FileResponse
 from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import config
 from caching.private_api.decorators import cache_response
+from metrics.api.enums import AppMode
 from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
     EncodedChartResponseSerializer,
     EncodedChartsRequestSerializer,
 )
+from metrics.domain.models import ChartRequestParams
 from metrics.interfaces.charts import access
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
@@ -24,6 +28,11 @@ CHARTS_API_TAG = "charts"
 
 class ChartsView(APIView):
     permission_classes = []
+
+    def get_permissions(self) -> list[type[permissions.BasePermission]]:
+        if AppMode.CMS_ADMIN.value == config.APP_MODE:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
 
     @extend_schema(
         request=ChartsSerializer,
@@ -114,15 +123,27 @@ class ChartsView(APIView):
 
         `y_axis` Example: `y_axis: "stratum"`
 
+        ---
+
+        # Choosing what to display as the x and/or y axis titles
+
+        By default, nothing will be displayed on the x axis or y axis titles.
+        If you want to override either/both of these values then you can do so as follows:
+
+        `x_axis_title` Example: `x_axis_title: "Dates"`
+
+        `y_axis_title` Example: `y_axis_title: "Number of cases"`
+
+
         """
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        chart_plot_models = request_serializer.to_models()
+        chart_request_params: ChartRequestParams = request_serializer.to_models()
 
         try:
             filename: str = access.generate_chart_as_file(
-                chart_plots=chart_plot_models,
+                chart_request_params=chart_request_params,
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
@@ -228,15 +249,26 @@ class EncodedChartsView(APIView):
 
         `y_axis` Example: `y_axis: "stratum"`
 
+        ---
+
+        # Choosing what to display as the x and/or y axis titles
+
+        By default, nothing will be displayed on the x axis or y axis titles.
+        If you want to override either/both of these values then you can do so as follows:
+
+        `x_axis_title` Example: `x_axis_title: "Dates"`
+
+        `y_axis_title` Example: `y_axis_title: "Number of cases"`
+
         """
         request_serializer = EncodedChartsRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        chart_plot_models = request_serializer.to_models()
+        chart_request_params = request_serializer.to_models()
 
         try:
             response: dict[str, str] = access.generate_encoded_chart(
-                chart_plots=chart_plot_models,
+                chart_request_params=chart_request_params,
             )
 
             serializer = EncodedChartResponseSerializer(data=response)

@@ -7,7 +7,7 @@ from metrics.domain.models.plots import (
     PlotParameters,
     get_date_n_months_ago_from_timestamp,
     make_date_from_string,
-    PlotData,
+    PlotGenerationData,
     NoReportingDelayPeriodFoundError,
     ReportingDelayNotProvidedToPlotsError,
 )
@@ -419,7 +419,7 @@ class TestPlotData:
         """
         # Given
         reporting_delay_period_values = [False, False, False, True, True]
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=fake_chart_plot_parameters,
             x_axis_values=mock.Mock(),
             y_axis_values=mock.Mock(),
@@ -448,7 +448,7 @@ class TestPlotData:
         """
         # Given
         reporting_delay_period_values = [False] * 5
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=fake_chart_plot_parameters,
             x_axis_values=mock.Mock(),
             y_axis_values=mock.Mock(),
@@ -473,7 +473,7 @@ class TestPlotData:
         Then a `ReportingDelayNotProvidedToPlotsError` is raised
         """
         # Given
-        plot_data = PlotData(
+        plot_data = PlotGenerationData(
             parameters=fake_chart_plot_parameters,
             x_axis_values=mock.Mock(),
             y_axis_values=mock.Mock(),
