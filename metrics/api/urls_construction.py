@@ -136,7 +136,6 @@ private_api_urlpatterns = [
         name="cold-alerts-detail",
     ),
     # Metrics/private content endpoints
-    re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
@@ -167,6 +166,7 @@ audit_api_urlpatterns = [
         audit_api_core_headline_list,
         name="audit-core-headline",
     ),
+    re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
 ]
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
@@ -240,6 +240,7 @@ def construct_urlpatterns(
                 app_mode=app_mode
             )
             constructed_url_patterns += django_admin_urlpatterns
+            constructed_url_patterns += audit_api_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
                 app_mode=app_mode
@@ -251,8 +252,6 @@ def construct_urlpatterns(
         case enums.AppMode.INGESTION.value:
             # Ingestion mode does not expose any endpoints
             return constructed_url_patterns
-        case enums.AppMode.AUDIT_API.value:
-            constructed_url_patterns += audit_api_urlpatterns
         case _:
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode

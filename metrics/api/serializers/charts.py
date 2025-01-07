@@ -114,7 +114,7 @@ class ChartsSerializer(serializers.Serializer):
         allow_blank=True,
         allow_null=True,
         default="",
-        help_text=help_texts.CHART_X_AXIS_TITLE,
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
 
     plots = ChartPlotsListSerializer()
