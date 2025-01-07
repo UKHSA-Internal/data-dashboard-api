@@ -7,7 +7,6 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models import ChartRequestParams
 
 IN_REPORTING_DELAY_PERIOD = "in_reporting_delay_period"
 
@@ -22,7 +21,7 @@ class TabularData:
         self,
         *,
         plots: list["PlotGenerationData"],
-        chart_request_params: ChartRequestParams,
+        chart_request_params: "ChartRequestParams",
     ):
         self.chart_request_params = chart_request_params
         self.plots = plots
