@@ -3,10 +3,13 @@ from http import HTTPStatus
 
 from django.http import FileResponse
 from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import config
 from caching.private_api.decorators import cache_response
+from metrics.api.enums import AppMode
 from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
     ChartsResponseSerializer,
@@ -25,6 +28,11 @@ CHARTS_API_TAG = "charts"
 
 class ChartsView(APIView):
     permission_classes = []
+
+    def get_permissions(self) -> list[type[permissions.BasePermission]]:
+        if AppMode.CMS_ADMIN.value == config.APP_MODE:
+            return [permissions.IsAuthenticated()]
+        return super().get_permissions()
 
     @extend_schema(
         request=ChartsSerializer,
