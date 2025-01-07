@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from typing import Literal, Self
 
 from dateutil.relativedelta import relativedelta
@@ -162,8 +163,8 @@ class ChartRequestParams(BaseModel):
     x_axis_title: str = ""
     y_axis: str
     y_axis_title: str = ""
-    y_axis_minimum_value: int = 0
-    y_axis_maximum_value: int | None = None
+    y_axis_minimum_value: Decimal = 0
+    y_axis_maximum_value: Decimal | None = None
 
 
 class NoReportingDelayPeriodFoundError(Exception): ...
@@ -244,8 +245,8 @@ class ChartGenerationPayload(BaseModel):
     chart_height: int
     x_axis_title: str
     y_axis_title: str
-    y_axis_minimum_value: int = 0
-    y_axis_maximum_value: int | None = None
+    y_axis_minimum_value: Decimal = 0
+    y_axis_maximum_value: Decimal | None = None
 
 
 class CompletePlotData(BaseModel):

@@ -31,11 +31,11 @@ class ChartSettings:
         return self._chart_generation_payload.chart_height
 
     @property
-    def y_axis_minimum_value(self) -> int | None:
+    def y_axis_minimum_value(self) -> int | Decimal:
         return self._chart_generation_payload.y_axis_minimum_value
 
     @property
-    def y_axis_maximum_value(self) -> int | None:
+    def y_axis_maximum_value(self) -> int | Decimal | None:
         return self._chart_generation_payload.y_axis_maximum_value
 
     @staticmethod

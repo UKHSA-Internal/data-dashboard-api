@@ -117,17 +117,21 @@ class ChartsSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
-    y_axis_minimum_value = serializers.IntegerField(
+    y_axis_minimum_value = serializers.DecimalField(
         required=False,
         allow_null=True,
         help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
         default=None,
+        max_digits=10,
+        decimal_places=1,
     )
-    y_axis_maximum_value = serializers.IntegerField(
+    y_axis_maximum_value = serializers.DecimalField(
         required=False,
         allow_null=True,
         help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
         default=None,
+        max_digits=10,
+        decimal_places=1,
     )
 
     plots = ChartPlotsListSerializer()
