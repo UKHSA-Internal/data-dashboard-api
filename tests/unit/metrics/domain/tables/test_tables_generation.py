@@ -1,5 +1,6 @@
 import datetime
 from typing import Any
+from unittest import mock
 
 import pytest
 
@@ -61,7 +62,9 @@ class TestTabularData:
         """
         # Given
         fake_plot_data.parameters.x_axis = x_axis
-        tabular_data = TabularData(plots=[fake_plot_data])
+        tabular_data = TabularData(
+            plots=[fake_plot_data], chart_request_params=mock.Mock()
+        )
 
         # When
         is_date_based: bool = tabular_data._is_date_based
@@ -80,7 +83,9 @@ class TestTabularData:
         """
         # Given
         fake_plot_data.parameters.x_axis = ChartAxisFields.date.name
-        tabular_data = TabularData(plots=[fake_plot_data])
+        tabular_data = TabularData(
+            plots=[fake_plot_data], chart_request_params=mock.Mock()
+        )
 
         # When
         is_date_based: bool = tabular_data._is_date_based
@@ -110,7 +115,9 @@ class TestTabularData:
             x_axis_values=dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
         )
-        tabular_data = TabularData(plots=[original_plot_data])
+        tabular_data = TabularData(
+            plots=[original_plot_data], chart_request_params=mock.Mock()
+        )
         plot_data = dict(
             zip(original_plot_data.x_axis_values, original_plot_data.y_axis_values)
         )
@@ -168,7 +175,9 @@ class TestTabularData:
                 "in_reporting_delay_period": [False for _ in range(len(y_axis_values))]
             },
         )
-        tabular_data = TabularData(plots=[earlier_plot_data, later_plot_data])
+        tabular_data = TabularData(
+            plots=[earlier_plot_data, later_plot_data], chart_request_params=mock.Mock()
+        )
 
         # When
         tabular_plots = tabular_data.create_tabular_plots()
@@ -273,7 +282,10 @@ class TestTabularData:
             x_axis_values=complete_dates_x_axis_values_in_ascending_order,
             y_axis_values=y_axis_values,
         )
-        tabular_data = TabularData(plots=[incomplete_plot_data, complete_plot_data])
+        tabular_data = TabularData(
+            plots=[incomplete_plot_data, complete_plot_data],
+            chart_request_params=mock.Mock(),
+        )
 
         # When
         tabular_plots = tabular_data.create_tabular_plots()
@@ -381,7 +393,7 @@ class TestAddPlotDataToCombinedPlots:
         }
 
         # When
-        tabular_data = TabularData(plots=[plot_data])
+        tabular_data = TabularData(plots=[plot_data], chart_request_params=mock.Mock())
         tabular_data.add_plot_data_to_combined_plots(
             plot_data=first_chart_plots_data,
             plot_label=PLOT_1_LABEL,
@@ -419,7 +431,7 @@ class TestAddPlotDataToCombinedPlots:
         }
 
         # When
-        tabular_data = TabularData(plots=[plot_data])
+        tabular_data = TabularData(plots=[plot_data], chart_request_params=mock.Mock())
 
         tabular_data.add_plot_data_to_combined_plots(
             plot_data=first_chart_plots_data,
@@ -455,7 +467,9 @@ class TestCombineAllPlots:
         )
 
         # When
-        tabular_data = TabularData(plots=[first_chart_plots_data])
+        tabular_data = TabularData(
+            plots=[first_chart_plots_data], chart_request_params=mock.Mock()
+        )
         tabular_data.combine_all_plots()
 
         # Then
@@ -553,7 +567,7 @@ class TestCreateMultiPlotOutput:
         )
 
         # When
-        tabular_data = TabularData(plots=[plot_data])
+        tabular_data = TabularData(plots=[plot_data], chart_request_params=mock.Mock())
         tabular_data.plot_labels = plot_labels
         tabular_data.combined_plots = combined_plots
         tabular_data.column_heading = "date"
@@ -646,7 +660,7 @@ class TestCreateMultiPlotOutput:
         )
 
         # When
-        tabular_data = TabularData(plots=[plot_data])
+        tabular_data = TabularData(plots=[plot_data], chart_request_params=mock.Mock())
         tabular_data.plot_labels = plot_labels
         tabular_data.combined_plots = combined_plots
         tabular_data.column_heading = "date"
@@ -709,7 +723,7 @@ class TestCreateMultiPlotOutput:
         )
 
         # When
-        tabular_data = TabularData(plots=[plot_data])
+        tabular_data = TabularData(plots=[plot_data], chart_request_params=mock.Mock())
         tabular_data.plot_labels = plot_labels
         tabular_data.combined_plots = combined_plots
         actual_output = tabular_data.create_multi_plot_output()

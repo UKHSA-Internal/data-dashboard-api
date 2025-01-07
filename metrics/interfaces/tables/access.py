@@ -18,18 +18,18 @@ class TablesInterface:
     def __init__(
         self,
         *,
-        plots_collection: ChartRequestParams,
+        chart_request_params: ChartRequestParams,
         core_model_manager: CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
-        self.plots_collection = plots_collection
+        self.chart_request_params = chart_request_params
         self.metric_group = extract_metric_group_from_metric(
-            metric=self.plots_collection.plots[0].metric
+            metric=self.chart_request_params.plots[0].metric
         )
         self.core_model_manager = core_model_manager or self._get_core_model_manager()
 
         self.plots_interface = plots_interface or PlotsInterface(
-            chart_request_params=self.plots_collection,
+            chart_request_params=self.chart_request_params,
             core_model_manager=self.core_model_manager,
         )
 
@@ -53,7 +53,7 @@ class TablesInterface:
 
     def _build_tabular_data_from_plots_data(self) -> TabularData:
         plots = self.plots_interface.build_plots_data()
-        return TabularData(plots=plots)
+        return TabularData(plots=plots, chart_request_params=self.chart_request_params)
 
     def generate_full_plots_for_table(self) -> list[dict[str, str]]:
         """Create a list of plots from the request
@@ -78,7 +78,7 @@ class TablesInterface:
 
 def generate_table_for_full_plots(
     *,
-    plots_collection: ChartRequestParams,
+    chart_request_params: ChartRequestParams,
 ) -> list[dict[str, str]]:
     """Validates and creates tabular output based off the parameters provided within the `plots_collection` model
 
@@ -88,7 +88,7 @@ def generate_table_for_full_plots(
         then 365 data points will be returned in the output.
 
     Args:
-        plots_collection: The requested table plots parameters
+        chart_request_params: The requested table plots parameters
             encapsulated as a model
 
     Returns:
@@ -105,6 +105,6 @@ def generate_table_for_full_plots(
             returned any data from the underlying queries
     """
     tables_interface = TablesInterface(
-        plots_collection=plots_collection,
+        chart_request_params=chart_request_params,
     )
     return tables_interface.generate_full_plots_for_table()

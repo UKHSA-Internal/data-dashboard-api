@@ -48,7 +48,7 @@ class TestTablesInterface:
 
         # When
         tables_interface = TablesInterface(
-            plots_collection=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params,
             core_model_manager=mocked_core_time_series_manager,
         )
 
@@ -79,7 +79,7 @@ class TestTablesInterface:
 
         # When
         tables_interface = TablesInterface(
-            plots_collection=fake_chart_request_params,
+            chart_request_params=fake_chart_request_params,
         )
 
         # Then
@@ -116,7 +116,7 @@ class TestTablesInterface:
         )
 
         tables_interface = TablesInterface(
-            plots_collection=plots_collection,
+            chart_request_params=plots_collection,
             core_model_manager=fake_core_time_series_manager,
         )
 
@@ -151,7 +151,7 @@ class TestGenerateTableForFullPlots:
         plots_collection = fake_chart_request_params
 
         # When
-        table = generate_table_for_full_plots(plots_collection=plots_collection)
+        table = generate_table_for_full_plots(chart_request_params=plots_collection)
 
         # Then
         assert table == spy_generate_full_plots_for_table.return_value

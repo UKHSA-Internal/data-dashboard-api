@@ -46,6 +46,13 @@ class TablesSerializer(serializers.Serializer):
         help_text=help_texts.CHART_X_AXIS,
         default=DEFAULT_X_AXIS,
     )
+    x_axis_title = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
     y_axis = serializers.ChoiceField(
         choices=ChartAxisFields.choices(),
         required=False,
@@ -53,6 +60,13 @@ class TablesSerializer(serializers.Serializer):
         allow_null=True,
         help_text=help_texts.CHART_Y_AXIS,
         default=DEFAULT_Y_AXIS,
+    )
+    y_axis_title = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
     )
 
     def __init__(self, *args, **kwargs):
@@ -66,7 +80,9 @@ class TablesSerializer(serializers.Serializer):
             chart_height=DEFAULT_CHART_HEIGHT,
             chart_width=DEFAULT_CHART_WIDTH,
             x_axis=self.data.get("x_axis") or DEFAULT_X_AXIS,
+            x_axis_title=self.data.get("x_axis_title", ""),
             y_axis=self.data.get("y_axis") or DEFAULT_Y_AXIS,
+            y_axis_title=self.data.get("y_axis_title", ""),
         )
 
 

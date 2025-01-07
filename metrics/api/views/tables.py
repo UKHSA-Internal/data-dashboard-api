@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.tables import TablesResponseSerializer, TablesSerializer
+from metrics.domain.models import ChartRequestParams
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     InvalidPlotParametersError,
@@ -90,11 +91,11 @@ class TablesView(APIView):
         request_serializer = TablesSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        plots_collection = request_serializer.to_models()
+        chart_request_params: ChartRequestParams = request_serializer.to_models()
 
         try:
             tabular_data: list[dict[str, str]] = access.generate_table_for_full_plots(
-                plots_collection=plots_collection
+                chart_request_params=chart_request_params
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(

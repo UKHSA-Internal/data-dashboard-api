@@ -7,6 +7,7 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
+from metrics.domain.models import ChartRequestParams
 
 IN_REPORTING_DELAY_PERIOD = "in_reporting_delay_period"
 
@@ -17,7 +18,13 @@ DEFAULT_PLOT_LABEL = "Plot"
 
 
 class TabularData:
-    def __init__(self, *, plots: list["PlotGenerationData"]):
+    def __init__(
+        self,
+        *,
+        plots: list["PlotGenerationData"],
+        chart_request_params: ChartRequestParams,
+    ):
+        self.chart_request_params = chart_request_params
         self.plots = plots
         self.metric_group = extract_metric_group_from_metric(
             metric=self.plots[0].parameters.metric
@@ -73,7 +80,8 @@ class TabularData:
         in_reporting_delay_period_lookup = in_reporting_delay_period_lookup or {}
 
         for key, value in plot_data.items():
-            result = {plot_label: str(value)}
+            label = plot_label or self.chart_request_params.x_axis_title
+            result = {label: str(value)}
             in_reporting_delay_period_value = self._fetch_reporting_delay_period(
                 in_reporting_delay_period_lookup=in_reporting_delay_period_lookup,
                 key=key,
