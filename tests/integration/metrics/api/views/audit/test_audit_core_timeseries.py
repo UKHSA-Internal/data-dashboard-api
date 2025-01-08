@@ -37,6 +37,7 @@ class TestAuditCoreTimeSeriesViewSet:
         sex = "all"
         age = "all"
         metric_value = 3
+        current_date = (datetime.datetime.now()).strftime("%Y-%m-%d")
 
         core_timeseries_records = [
             CoreTimeSeriesFactory.create_record(metric_value=1),
@@ -44,6 +45,7 @@ class TestAuditCoreTimeSeriesViewSet:
             CoreTimeSeriesFactory.create_record(
                 metric_name=metric,
                 metric_value=metric_value,
+                date=current_date,
             ),
         ]
 
@@ -76,12 +78,18 @@ class TestAuditCoreTimeSeriesViewSet:
         stratum = "default"
         sex = "all"
         age = "all"
+        current_date = (datetime.datetime.now()).strftime("%Y-%m-%d")
+        past_date = (datetime.datetime.now() - datetime.timedelta(days=2)).strftime(
+            "%Y-%m-%d"
+        )
 
         future_embargo = datetime.datetime.now() + datetime.timedelta(days=1)
 
         core_timeseries_records = [
-            CoreTimeSeriesFactory.create_record(metric_value=1),
-            CoreTimeSeriesFactory.create_record(metric_value=2, embargo=future_embargo),
+            CoreTimeSeriesFactory.create_record(metric_value=1, date=past_date),
+            CoreTimeSeriesFactory.create_record(
+                metric_value=2, embargo=future_embargo, date=current_date
+            ),
         ]
 
         # When

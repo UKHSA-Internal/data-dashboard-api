@@ -4,13 +4,13 @@ import pytest
 from plotly.graph_objs import Scatter
 
 from metrics.domain.charts import reporting_delay_period
-from metrics.domain.models import PlotData
+from metrics.domain.models import PlotGenerationData
 
 MODULE_PATH = "metrics.domain.charts.reporting_delay_period"
 
 
 class TestGetXValueAtStartOfReportingDelayPeriod:
-    def test_returns_correct_value(self, fake_plot_data: PlotData):
+    def test_returns_correct_value(self, fake_plot_data: PlotGenerationData):
         """
         Given an enriched `PlotData` model
             which holds a list of reporting delay period booleans
@@ -178,7 +178,7 @@ class TestAddReportingDelayPeriod:
     @pytest.mark.parametrize("additional_values", [{}, None])
     def test_does_not_draw_section_when_no_reporting_delay_period_found(
         self,
-        fake_plot_data: PlotData,
+        fake_plot_data: PlotGenerationData,
         additional_values: dict | None,
     ):
         """
@@ -203,7 +203,7 @@ class TestAddReportingDelayPeriod:
         mocked_figure.add_vline.assert_not_called()
 
     def test_does_not_draw_section_when_reporting_delay_period_contains_no_valid_start_point(
-        self, fake_plot_data: PlotData
+        self, fake_plot_data: PlotGenerationData
     ):
         """
         Given an enriched `PlotData` model

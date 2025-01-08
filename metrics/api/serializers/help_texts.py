@@ -86,10 +86,16 @@ TABLES_RESPONSE: str = """
 The specified plots in a tabular format
 """
 CHART_X_AXIS: str = """
-The metric to use along the X Axis of the chart
+The metric to use along the X axis of the chart
+"""
+CHART_X_AXIS_TITLE: str = """
+An optional title to display along the X axis of the chart
 """
 CHART_Y_AXIS: str = """
 The metric to use along the Y Axis of the chart
+"""
+CHART_Y_AXIS_TITLE: str = """
+An optional title to display along the Y axis of the chart
 """
 ENCODED_CHARTS_RESPONSE: str = """
 The specified chart in the requested format as a URI encoded string (default format = svg)
