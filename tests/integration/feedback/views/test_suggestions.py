@@ -94,6 +94,8 @@ class TestSuggestionsV2View:
         Then an HTTP 400 BAD REQUEST response is returned
         """
         # Given
+        monkeypatch.delenv("FEEDBACK_EMAIL_RECIPIENT_ADDRESS", raising=False)
+
         valid_payload = {
             "how_could_we_improve_your_experience_with_the_dashboard": "",
             "what_would_you_like_to_see_on_the_dashboard_in_the_future": "",
