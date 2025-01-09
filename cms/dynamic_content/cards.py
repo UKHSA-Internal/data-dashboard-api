@@ -89,10 +89,20 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_X_AXIS,
     )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
     y_axis = blocks.ChoiceBlock(
         required=False,
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_Y_AXIS,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
@@ -133,11 +143,21 @@ class SimplifiedChartWithLink(blocks.StructBlock):
         default=DEFAULT_SIMPLE_CHART_X_AXIS,
         ready_only=True,
     )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
     y_axis = blocks.ChoiceBlock(
         required=True,
         choices=get_possible_axis_choices,
         help_text=help_texts.REQUIRED_CHART_Y_AXIS,
         default=DEFAULT_SIMPLE_CHART_Y_AXIS,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
     chart = SimplifiedChartComponent(
         help_text=help_texts.CHART_BLOCK_FIELD,
@@ -162,10 +182,20 @@ class ChartCard(blocks.StructBlock):
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_X_AXIS,
     )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
     y_axis = blocks.ChoiceBlock(
         required=False,
         choices=get_possible_axis_choices,
         help_text=help_texts.CHART_Y_AXIS,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
@@ -183,6 +213,16 @@ class HeadlineChartCard(ChartCard):
         required=True,
         choices=get_possible_axis_choices,
         help_text=help_texts.REQUIRED_CHART_X_AXIS,
+    )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,

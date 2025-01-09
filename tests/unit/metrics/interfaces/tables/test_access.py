@@ -2,7 +2,7 @@ import datetime
 from unittest import mock
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from metrics.domain.models import PlotParameters, PlotsCollection
+from metrics.domain.models import PlotParameters, ChartRequestParams
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.tables.access import (
     TablesInterface,
@@ -32,7 +32,7 @@ class TestTablesInterface:
 
     def test_plots_interface_is_created_with_correct_args_by_default(
         self,
-        fake_plots_collection: PlotsCollection,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a `PlotsCollection` and a `CoreTimeSeriesManager`
@@ -41,20 +41,20 @@ class TestTablesInterface:
         Then an instance of the `PlotsInterface` is created with the correct args
         """
         # Given
-        fake_plots_collection.plots[0].chart_type = (
+        fake_chart_request_params.plots[0].chart_type = (
             ChartTypes.line_with_shaded_section.value
         )
         mocked_core_time_series_manager = mock.Mock()
 
         # When
         tables_interface = TablesInterface(
-            plots_collection=fake_plots_collection,
+            plots_collection=fake_chart_request_params,
             core_model_manager=mocked_core_time_series_manager,
         )
 
         # Then
         created_plots_interface = tables_interface.plots_interface
-        assert created_plots_interface.plots_collection == fake_plots_collection
+        assert created_plots_interface.chart_request_params == fake_chart_request_params
         assert (
             created_plots_interface.core_model_manager
             == mocked_core_time_series_manager
@@ -62,7 +62,7 @@ class TestTablesInterface:
 
     def test_plots_interface_is_created_with_headline_manager_when_provided_a_headline_metric(
         self,
-        fake_plots_collection: PlotsCollection,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a `PlotsCollection` and a `headline` metric
@@ -72,19 +72,19 @@ class TestTablesInterface:
             and the `core_model_manager` is set to `CoreHeadline` manager
         """
         # Given
-        fake_plots_collection.plots[0].chart_type = (
+        fake_chart_request_params.plots[0].chart_type = (
             ChartTypes.line_with_shaded_section.value
         )
-        fake_plots_collection.plots[0].metric = "COVID-19_headline_tests_7DayChange"
+        fake_chart_request_params.plots[0].metric = "COVID-19_headline_tests_7DayChange"
 
         # When
         tables_interface = TablesInterface(
-            plots_collection=fake_plots_collection,
+            plots_collection=fake_chart_request_params,
         )
 
         # Then
         created_plots_interface = tables_interface.plots_interface
-        assert created_plots_interface.plots_collection == fake_plots_collection
+        assert created_plots_interface.chart_request_params == fake_chart_request_params
         assert created_plots_interface.core_model_manager == CoreHeadline.objects
 
     @mock.patch.object(TabularData, "create_tabular_plots")
@@ -106,7 +106,7 @@ class TestTablesInterface:
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(fake_core_time_series)
 
-        plots_collection = PlotsCollection(
+        plots_collection = ChartRequestParams(
             plots=[valid_plot_parameters],
             file_format="svg",
             chart_height=123,
@@ -135,7 +135,7 @@ class TestGenerateTableForFullPlots:
     def test_delegates_call_for_producing_table(
         self,
         spy_generate_full_plots_for_table: mock.MagicMock,
-        fake_plots_collection: PlotsCollection,
+        fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a fake `PlotsCollection` model
@@ -148,7 +148,7 @@ class TestGenerateTableForFullPlots:
 
         """
         # Given
-        plots_collection = fake_plots_collection
+        plots_collection = fake_chart_request_params
 
         # When
         table = generate_table_for_full_plots(plots_collection=plots_collection)

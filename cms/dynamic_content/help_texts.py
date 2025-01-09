@@ -197,6 +197,20 @@ If nothing is provided, `dates` will be used by default.
 Dates are used by default
 """
 
+CHART_X_AXIS_TITLE: str = """
+An optional title to display along the x-axis of the chart.
+If nothing is provided, then no title will be displayed.
+"""
+
+REQUIRED_CHART_X_AXIS_TITLE: str = """
+A required title to display along the x-axis of the chart.
+"""
+
+CHART_Y_AXIS_TITLE: str = """
+An optional title to display along the y-axis of the chart.
+If nothing is provided, then no title will be displayed.
+"""
+
 REQUIRED_CHART_X_AXIS: str = """
 A required choice of what to display along the x-axis of the chart.
 """

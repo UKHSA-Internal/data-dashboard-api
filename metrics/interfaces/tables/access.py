@@ -5,7 +5,7 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
-from metrics.domain.models import PlotsCollection
+from metrics.domain.models import ChartRequestParams
 from metrics.domain.tables.generation import TabularData
 from metrics.interfaces.plots.access import PlotsInterface
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
@@ -18,7 +18,7 @@ class TablesInterface:
     def __init__(
         self,
         *,
-        plots_collection: PlotsCollection,
+        plots_collection: ChartRequestParams,
         core_model_manager: CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
@@ -29,7 +29,7 @@ class TablesInterface:
         self.core_model_manager = core_model_manager or self._get_core_model_manager()
 
         self.plots_interface = plots_interface or PlotsInterface(
-            plots_collection=self.plots_collection,
+            chart_request_params=self.plots_collection,
             core_model_manager=self.core_model_manager,
         )
 
@@ -78,7 +78,7 @@ class TablesInterface:
 
 def generate_table_for_full_plots(
     *,
-    plots_collection: PlotsCollection,
+    plots_collection: ChartRequestParams,
 ) -> list[dict[str, str]]:
     """Validates and creates tabular output based off the parameters provided within the `plots_collection` model
 

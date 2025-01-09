@@ -4,14 +4,18 @@ from typing import Literal, Self
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
 
+from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
     ChartAxisFields,
+    ChartTypes,
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
 
 
 class PlotParameters(BaseModel):
+    """Holds all the request information / parameters for an individual plot on a chart."""
+
     chart_type: str
     topic: str
     metric: str
@@ -135,15 +139,29 @@ class PlotParameters(BaseModel):
     def is_timeseries_data(self) -> bool:
         return DataSourceFileType[self.metric_group].is_timeseries
 
+    @property
+    def line_colour_enum(self) -> RGBAChartLineColours:
+        if self.line_colour:
+            return RGBAChartLineColours.get_colour(colour=self.line_colour)
 
-class PlotsCollection(BaseModel):
+        if self.chart_type == ChartTypes.bar.value:
+            return RGBAChartLineColours.BLUE
+
+        return RGBAChartLineColours.BLACK
+
+
+class ChartRequestParams(BaseModel):
+    """Holds all the request information / params for a chart in its entirety."""
+
     metric_group: str | None = None
     plots: list[PlotParameters]
     file_format: Literal["png", "svg", "jpg", "jpeg"]
     chart_width: int
     chart_height: int
     x_axis: str
+    x_axis_title: str = ""
     y_axis: str
+    y_axis_title: str = ""
 
 
 class NoReportingDelayPeriodFoundError(Exception): ...
@@ -152,7 +170,9 @@ class NoReportingDelayPeriodFoundError(Exception): ...
 class ReportingDelayNotProvidedToPlotsError(Exception): ...
 
 
-class PlotData(BaseModel):
+class PlotGenerationData(BaseModel):
+    """Holds all the information needed to draw an individual plot, including the parameters and hydrated data."""
+
     parameters: PlotParameters
     x_axis_values: Any
     y_axis_values: Any
@@ -212,6 +232,16 @@ class PlotData(BaseModel):
             if in_reporting_delay_period is True:
                 return index
         raise NoReportingDelayPeriodFoundError
+
+
+class ChartGenerationPayload(BaseModel):
+    """Holds all the information needed to draw a chart in its entirety, including params and data for each plot."""
+
+    plots: list[PlotGenerationData]
+    chart_width: int
+    chart_height: int
+    x_axis_title: str
+    y_axis_title: str
 
 
 class CompletePlotData(BaseModel):
