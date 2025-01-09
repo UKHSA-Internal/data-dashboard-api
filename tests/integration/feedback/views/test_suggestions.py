@@ -112,4 +112,6 @@ class TestSuggestionsV2View:
         )
 
         # Then
-        assert response.status_code == HTTPStatus.BAD_REQUEST.value
+        assert (
+            response.status_code == HTTPStatus.BAD_REQUEST.value
+        ), "Expected HTTP 400 BAD REQUEST when FEEDBACK_EMAIL_RECIPIENT_ADDRESS is not set"
