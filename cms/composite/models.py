@@ -93,6 +93,20 @@ class CompositePage(UKHSAPage):
 
     @property
     def last_updated_at(self) -> datetime.datetime:
+        """Takes the most recent update of this page and any of its children
+
+        Notes:
+            When calculating this timestamp,
+            this property considers the following:
+                - The latest content change of this page
+                - The latest released embargo across all children
+                - The latest content change across all children
+
+        Returns:
+            datetime object representing the last updated on the page
+                across all children as well.
+
+        """
         timestamps = [self.last_published_at]
 
         child_pages = [page.specific for page in self.get_children()]
