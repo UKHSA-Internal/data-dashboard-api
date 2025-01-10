@@ -8,7 +8,7 @@ from django.core.mail import EmailMessage
 
 from feedback.email_server import (
     DEFAULT_FEEDBACK_EMAIL_SUBJECT,
-    create_email_message_v2,
+    create_email_message,
     send_email_via_ses,
     send_email,
 )
@@ -17,7 +17,7 @@ MODULE_PATH = "feedback.email_server"
 FAKE_EMAIL_RECIPIENT_ADDRESS = "not.real@test.com"
 
 
-class TestCreateEmailMessageV2:
+class TestCreateEmailMessage:
     @mock.patch(f"{MODULE_PATH}.build_body_for_email_v2")
     def test_returns_email_message(
         self, mocked_build_body_for_email_v2: mock.MagicMock
@@ -32,7 +32,7 @@ class TestCreateEmailMessageV2:
         fake_subject = "Test subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             subject=fake_subject,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
@@ -60,7 +60,7 @@ class TestCreateEmailMessageV2:
         fake_subject = "Test subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             subject=fake_subject,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
@@ -83,7 +83,7 @@ class TestCreateEmailMessageV2:
         mocked_suggestions = mock.MagicMock()
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
         )
@@ -106,7 +106,7 @@ class TestCreateEmailMessageV2:
         fake_non_default_subject = "Specified example subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
             subject=fake_non_default_subject,
@@ -129,7 +129,7 @@ class TestCreateEmailMessageV2:
         fake_non_default_subject = "Specified example subject"
 
         # When
-        email_message: EmailMessage = create_email_message_v2(
+        email_message: EmailMessage = create_email_message(
             suggestions=mocked_suggestions,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
             subject=fake_non_default_subject,
