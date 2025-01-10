@@ -201,19 +201,19 @@ class TestSendEmailViaSES:
 
 
 class TestSendEmail:
-    @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
+    @mock.patch(f"{MODULE_PATH}.create_email_message")
     @mock.patch(f"{MODULE_PATH}.send_email_via_ses")
     def test_send_email_success(
         self,
         mocked_send_email_via_ses: mock.MagicMock,
-        mocked_create_email_message_v2: mock.MagicMock,
+        mocked_create_email_message: mock.MagicMock,
         caplog: LogCaptureFixture,
         monkeypatch: MonkeyPatch,
     ):
         """
         Given valid suggestions and subject line and recipient
         When `send_email()` is called
-        Then an email is created via `create_email_message_v2()`
+        Then an email is created via `mocked_create_email_message()`
         And sent via the `send_email_via_ses()` function
         """
         # Given
@@ -231,12 +231,12 @@ class TestSendEmail:
         )
 
         # Then
-        mocked_create_email_message_v2.assert_called_once_with(
+        mocked_create_email_message.assert_called_once_with(
             suggestions=mocked_suggestions,
             subject=fake_subject,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
         )
-        expected_email_message = mocked_create_email_message_v2.return_value
+        expected_email_message = mocked_create_email_message.return_value
         mocked_send_email_via_ses.assert_called_once_with(
             email_message=expected_email_message
         )
