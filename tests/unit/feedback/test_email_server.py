@@ -205,7 +205,7 @@ class TestSendEmailViaSES:
 class TestSendEmail:
     @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
     @mock.patch(f"{MODULE_PATH}.send_email_via_ses")
-    def test_send_email_v3_success(
+    def test_send_email_success(
         self,
         mocked_send_email_via_ses: mock.MagicMock,
         mocked_create_email_message_v2: mock.MagicMock,
@@ -214,7 +214,7 @@ class TestSendEmail:
     ):
         """
         Given valid suggestions and subject line and recipient
-        When `send_email_v3()` is called
+        When `send_email()` is called
         Then an email is created via `create_email_message_v2()`
         And sent via the `send_email_via_ses()` function
         """
@@ -254,7 +254,7 @@ class TestSendEmail:
         """
         Given valid suggestions
             but the `send_email_via_ses()` raises a `ClientError`
-        When `send_email_v3()` is called
+        When `send_email()` is called
         Then the error is suppressed but a log is recorded
         """
         # Given
