@@ -4,9 +4,8 @@ import pytest
 
 from cms.forms.models import FormField
 from feedback.email_template import (
-    FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER,
     _build_body_from_suggestions,
-    build_body_for_email_v2,
+    build_body_for_email,
     _enrich_suggestions_with_long_form_questions_v2,
 )
 
@@ -143,7 +142,7 @@ class TestBuildBodyFromSuggestions:
         assert email_body == expected_email_body
 
 
-class TestBuildBodyForEmailV2:
+class TestBuildBodyForEmail:
     @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions_v2")
     def test_returns_correct_string(
         self, spy_enrich_suggestions_with_long_form_questions_v2: mock.MagicMock
@@ -166,7 +165,7 @@ class TestBuildBodyForEmailV2:
         )
 
         # When
-        email_body: str = build_body_for_email_v2(suggestions=mocked_suggestions)
+        email_body: str = build_body_for_email(suggestions=mocked_suggestions)
 
         # Then
         spy_enrich_suggestions_with_long_form_questions_v2.assert_called_once_with(
@@ -201,7 +200,7 @@ class TestBuildBodyForEmailV2:
         mocked_suggestions = mock.Mock()
 
         # When
-        build_body_for_email_v2(suggestions=mocked_suggestions)
+        build_body_for_email(suggestions=mocked_suggestions)
 
         # Then
         spy_enrich_suggestions_with_long_form_questions.assert_called_once_with(

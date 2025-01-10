@@ -7,7 +7,7 @@ from botocore.exceptions import ClientError
 from django.core.mail import EmailMessage
 
 import config
-from feedback.email_template import build_body_for_email_v2
+from feedback.email_template import build_body_for_email
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,7 @@ def create_email_message(
         set on the object
 
     """
-    body: str = build_body_for_email_v2(suggestions=suggestions)
+    body: str = build_body_for_email(suggestions=suggestions)
 
     return EmailMessage(
         subject=subject,
