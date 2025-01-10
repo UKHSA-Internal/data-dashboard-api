@@ -15,10 +15,10 @@ class TestSuggestionsV2View:
         return "/api/suggestions/v2/"
 
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.send_email_v3")
+    @mock.patch(f"{MODULE_PATH}.send_email")
     def test_post_request_returns_correct_response(
         self,
-        mocked_send_email_v3: mock.MagicMock,
+        mocked_send_email: mock.MagicMock,
         monkeypatch: MonkeyPatch,
     ):
         """

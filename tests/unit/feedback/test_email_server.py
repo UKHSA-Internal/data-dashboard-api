@@ -243,12 +243,12 @@ class TestSendEmail:
             email_message=expected_email_message
         )
 
-    @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
+    @mock.patch(f"{MODULE_PATH}.create_email_message")
     @mock.patch(f"{MODULE_PATH}.send_email_via_ses")
-    def test_send_email_v3_suppresses_client_error(
+    def test_send_email_suppresses_client_error(
         self,
         mocked_send_email_via_ses: mock.MagicMock,
-        mocked_create_email_message_v2: mock.MagicMock,
+        mocked_create_email_message: mock.MagicMock,
         caplog: LogCaptureFixture,
     ):
         """
