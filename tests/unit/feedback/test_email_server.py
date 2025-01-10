@@ -9,9 +9,8 @@ from django.core.mail import EmailMessage
 from feedback.email_server import (
     DEFAULT_FEEDBACK_EMAIL_SUBJECT,
     create_email_message_v2,
-    send_email_v2,
     send_email_via_ses,
-    send_email_v3,
+    send_email,
 )
 
 MODULE_PATH = "feedback.email_server"
@@ -203,7 +202,7 @@ class TestSendEmailViaSES:
         assert error_message in caplog.text
 
 
-class TestSendEmailV3:
+class TestSendEmail:
     @mock.patch(f"{MODULE_PATH}.create_email_message_v2")
     @mock.patch(f"{MODULE_PATH}.send_email_via_ses")
     def test_send_email_v3_success(
@@ -227,7 +226,7 @@ class TestSendEmailV3:
         mocked_suggestions = mock.Mock()
 
         # When
-        send_email_v3(
+        send_email(
             subject=fake_subject,
             suggestions=mocked_suggestions,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,
@@ -266,7 +265,7 @@ class TestSendEmailV3:
         fake_subject = "Test subject"
 
         # When
-        send_email_v3(
+        send_email(
             suggestions=mocked_suggestions,
             subject=fake_subject,
             recipient_email_address=FAKE_EMAIL_RECIPIENT_ADDRESS,

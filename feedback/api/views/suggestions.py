@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from feedback.api.serializers.questions import (
     SuggestionsV2Serializer,
 )
-from feedback.email_server import send_email_v3
+from feedback.email_server import send_email
 
 SUGGESTIONS_API_TAG = "suggestions"
 
@@ -36,7 +36,7 @@ class SuggestionsV2View(APIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            send_email_v3(suggestions=serializer.validated_data)
+            send_email(suggestions=serializer.validated_data)
         except ParamValidationError:
             return Response(status=HTTPStatus.BAD_REQUEST)
         return HttpResponse(HTTPStatus.OK.value)
