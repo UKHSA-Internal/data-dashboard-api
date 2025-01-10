@@ -6,7 +6,7 @@ from cms.forms.models import FormField
 from feedback.email_template import (
     _build_body_from_suggestions,
     build_body_for_email,
-    _enrich_suggestions_with_long_form_questions_v2,
+    _enrich_suggestions_with_long_form_questions,
 )
 
 REASON_QUESTION = "What was your reason for visiting the dashboard today?"
@@ -105,7 +105,7 @@ class TestEnrichSuggestionsWithLongFormQuestionsV2:
 
         # When
         enriched_suggestions: dict[str, str] = (
-            _enrich_suggestions_with_long_form_questions_v2(
+            _enrich_suggestions_with_long_form_questions(
                 suggestions=suggestions,
                 form_page_manager=mocked_form_page_manager,
             )
@@ -143,9 +143,9 @@ class TestBuildBodyFromSuggestions:
 
 
 class TestBuildBodyForEmail:
-    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions_v2")
+    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions")
     def test_returns_correct_string(
-        self, spy_enrich_suggestions_with_long_form_questions_v2: mock.MagicMock
+        self, spy_enrich_suggestions_with_long_form_questions: mock.MagicMock
     ):
         """
         Given a suggestions dict containing question and answers
@@ -160,7 +160,7 @@ class TestBuildBodyForEmail:
             "Did you find everything you were looking for?": DID_YOU_FIND_EVERYTHING_ANSWER,
             "What was your reason for visiting the dashboard today?": REASON_ANSWER,
         }
-        spy_enrich_suggestions_with_long_form_questions_v2.return_value = (
+        spy_enrich_suggestions_with_long_form_questions.return_value = (
             enriched_suggestions
         )
 
@@ -168,7 +168,7 @@ class TestBuildBodyForEmail:
         email_body: str = build_body_for_email(suggestions=mocked_suggestions)
 
         # Then
-        spy_enrich_suggestions_with_long_form_questions_v2.assert_called_once_with(
+        spy_enrich_suggestions_with_long_form_questions.assert_called_once_with(
             suggestions=mocked_suggestions
         )
         expected_email_body = _build_body_from_suggestions(
@@ -177,7 +177,7 @@ class TestBuildBodyForEmail:
         assert email_body == expected_email_body
 
     @mock.patch(f"{MODULE_PATH}._build_body_from_suggestions")
-    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions_v2")
+    @mock.patch(f"{MODULE_PATH}._enrich_suggestions_with_long_form_questions")
     def test_delegates_calls_correctly(
         self,
         spy_enrich_suggestions_with_long_form_questions: mock.MagicMock,

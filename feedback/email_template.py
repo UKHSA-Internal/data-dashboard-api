@@ -20,12 +20,12 @@ def build_body_for_email(*, suggestions: dict[str, str]) -> str:
 
     """
     enriched_suggestions: dict[str, str] = (
-        _enrich_suggestions_with_long_form_questions_v2(suggestions=suggestions)
+        _enrich_suggestions_with_long_form_questions(suggestions=suggestions)
     )
     return _build_body_from_suggestions(suggestions=enriched_suggestions)
 
 
-def _enrich_suggestions_with_long_form_questions_v2(
+def _enrich_suggestions_with_long_form_questions(
     *,
     suggestions: dict[str, str],
     form_page_manager: Manager = DEFAULT_FORM_PAGE_MANAGER,
