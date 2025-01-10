@@ -129,6 +129,11 @@ See the [django docs](https://docs.djangoproject.com/en/4.2/ref/settings/#std-se
 
 The email address to send feedback suggestions emails to.
 
+#### `FEEDBACK_EMAIL_SENDER_ADDRESS`
+
+The email address to send feedback suggestions emails from.
+Note that this is expected to be a registered AWS SES domain.
+
 ---
 
 ### Caching configuration
