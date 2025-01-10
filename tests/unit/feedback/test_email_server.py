@@ -18,10 +18,8 @@ FAKE_EMAIL_RECIPIENT_ADDRESS = "not.real@test.com"
 
 
 class TestCreateEmailMessage:
-    @mock.patch(f"{MODULE_PATH}.build_body_for_email_v2")
-    def test_returns_email_message(
-        self, mocked_build_body_for_email_v2: mock.MagicMock
-    ):
+    @mock.patch(f"{MODULE_PATH}.build_body_for_email")
+    def test_returns_email_message(self, mocked_build_body_for_email: mock.MagicMock):
         """
         Given a suggestions dict and a recipient email address
         When `create_email_message()` is called
@@ -41,7 +39,7 @@ class TestCreateEmailMessage:
         # Then
         assert type(email_message) is EmailMessage
 
-    @mock.patch(f"{MODULE_PATH}.build_body_for_email_v2")
+    @mock.patch(f"{MODULE_PATH}.build_body_for_email")
     def test_sets_correct_body_on_email_message(
         self, spy_build_body_for_email: mock.MagicMock
     ):
@@ -70,9 +68,9 @@ class TestCreateEmailMessage:
         spy_build_body_for_email.assert_called_once_with(suggestions=mocked_suggestions)
         assert email_message.body == spy_build_body_for_email.return_value
 
-    @mock.patch(f"{MODULE_PATH}.build_body_for_email_v2")
+    @mock.patch(f"{MODULE_PATH}.build_body_for_email")
     def test_sets_default_subject_on_email_message_when_not_provided(
-        self, mocked_build_body_for_email_v2: mock.MagicMock
+        self, mocked_build_body_for_email: mock.MagicMock
     ):
         """
         Given a suggestions dict and a recipient email address
@@ -91,9 +89,9 @@ class TestCreateEmailMessage:
         # Then
         assert email_message.subject == DEFAULT_FEEDBACK_EMAIL_SUBJECT
 
-    @mock.patch(f"{MODULE_PATH}.build_body_for_email_v2")
+    @mock.patch(f"{MODULE_PATH}.build_body_for_email")
     def test_sets_specified_subject_on_email_message_when_provided(
-        self, mocked_build_body_for_email_v2: mock.MagicMock
+        self, mocked_build_body_for_email: mock.MagicMock
     ):
         """
         Given a suggestions dict and a recipient email address
@@ -115,9 +113,9 @@ class TestCreateEmailMessage:
         # Then
         assert email_message.subject == fake_non_default_subject
 
-    @mock.patch(f"{MODULE_PATH}.build_body_for_email_v2")
+    @mock.patch(f"{MODULE_PATH}.build_body_for_email")
     def test_sets_specified_recipient_on_email_message_when_provided(
-        self, mocked_build_body_for_email_v2: mock.MagicMock
+        self, mocked_build_body_for_email: mock.MagicMock
     ):
         """
         Given a suggestions dict and a specified recipient email address
