@@ -314,3 +314,11 @@ This is the title of the page you're linking to Eg. COVID-19
 PAGE_LINK_SUB_TITLE: str = """
 This is an optional short description of the page you're linking to.
 """
+
+HEADLINE_DATE_PREFIX: str = """
+This is the accompanying text for headline column dates Eg: `Up to` 27 Oct 2024 
+"""
+
+CHART_DATE_PREFIX: str = """
+This is the accompanying text for chart dates Eg: `Up to and including` 21 Oct 2024
+"""
