@@ -10,7 +10,8 @@ import config
 from feedback.email_template import build_body_for_email
 
 logger = logging.getLogger(__name__)
-
+DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS: str = config.FEEDBACK_EMAIL_RECIPIENT_ADDRESS
+DEFAULT_FEEDBACK_EMAIL_SUBJECT: str = "Suggestions Feedback for UKHSA Data Dashboard"
 DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS = config.FEEDBACK_EMAIL_RECIPIENT_ADDRESS
 DEFAULT_FEEDBACK_EMAIL_SUBJECT = "Suggestions Feedback for UKHSA data dashboard"
 
