@@ -11,3 +11,9 @@ DATABASES = {
         "NAME": os.path.join(ROOT_LEVEL_BASE_DIR, "db.sqlite3"),
     }
 }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+    }
+}

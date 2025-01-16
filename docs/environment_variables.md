@@ -16,6 +16,7 @@ This configures the application to run under a set of assumptions.
 
 If this is set to `LOCAL`, then a local sqlite database will be used 
 and the underlying `DEBUG` setting will be set to True.
+The cache is also swapped out in this setting, so **none of the endpoints are cached.**
 
 ##### `APIENV=STANDALONE`
 
