@@ -1,3 +1,5 @@
+import datetime
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
@@ -88,6 +90,30 @@ class CompositePage(UKHSAPage):
     def is_previewable(cls) -> bool:
         """Returns False. Since this is a headless CMS the preview panel is not supported"""
         return False
+
+    @property
+    def last_updated_at(self) -> datetime.datetime:
+        """Takes the most recent update of this page and any of its children
+
+        Notes:
+            When calculating this timestamp,
+            this property considers the following:
+                - The latest content change of this page
+                - The latest released embargo across all children
+                - The latest content change across all children
+
+        Returns:
+            datetime object representing the last updated on the page
+                across all children as well.
+
+        """
+        timestamps = [self.last_published_at]
+
+        child_pages = [page.specific for page in self.get_children()]
+        timestamps += [child_page.last_updated_at for child_page in child_pages]
+
+        timestamps = [timestamp for timestamp in timestamps if timestamp]
+        return max(timestamps)
 
 
 class CompositeRelatedLink(Orderable):
