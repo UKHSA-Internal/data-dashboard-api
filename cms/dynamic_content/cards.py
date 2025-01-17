@@ -111,7 +111,7 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         default=False,
         required=False,
     )
-    chart_date_prefix = blocks.CharBlock(
+    date_prefix = blocks.CharBlock(
         required=True,
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
@@ -218,7 +218,7 @@ class ChartCard(blocks.StructBlock):
         default=False,
         required=False,
     )
-    chart_date_prefix = blocks.CharBlock(
+    date_prefix = blocks.CharBlock(
         required=True,
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
