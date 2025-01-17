@@ -53,7 +53,7 @@ packageurl-python==0.16.0
 packaging==24.2
 pathspec==0.12.1
 pbr==6.0.0
-Pillow==10.4.0
+Pillow==11.1.0
 platformdirs==4.3.6
 plotly==5.24.1
 pluggy==1.5.0
@@ -69,7 +69,7 @@ requests==2.32.3
 rich==13.9.4
 ruamel.yaml==0.18.10
 ruamel.yaml.clib==0.2.12
-SQLAlchemy==2.0.36
+SQLAlchemy==2.0.37
 scour==0.38.2
 setuptools==75.8.0
 simplejson==3.19.3
@@ -84,7 +84,7 @@ tomli==2.2.1
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.3.0
-virtualenv==20.28.1
+virtualenv==20.29.0
 wagtail==6.3.2
 wagtail_trash==3.0.0
 wagtail_modeladmin==2.1.0
