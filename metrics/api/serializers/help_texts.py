@@ -97,6 +97,13 @@ The metric to use along the Y Axis of the chart
 CHART_Y_AXIS_TITLE: str = """
 An optional title to display along the Y axis of the chart
 """
+CHART_Y_AXIS_MINIMUM_VALUE: str = """
+The value used to start the chart's y_axis Eg: 0 will scale the chart to have a 0 as its lowest value.
+"""
+CHART_Y_AXIS_MAXIMUM_VALUE: str = """
+The value used as the chart's highest y_axis value Eg: providing a higher value than appears in the data will
+rescale the chart to that value 
+"""
 ENCODED_CHARTS_RESPONSE: str = """
 The specified chart in the requested format as a URI encoded string (default format = svg)
 """
