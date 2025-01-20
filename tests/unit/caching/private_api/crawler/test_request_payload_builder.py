@@ -151,6 +151,10 @@ class TestRequestPayloadBuilder:
             "chart_height": 260,
             "x_axis": chart_block_data["x_axis"],
             "y_axis": chart_block_data["y_axis"],
+            "x_axis_title": chart_block_data["x_axis_title"],
+            "y_axis_title": chart_block_data["y_axis_title"],
+            "y_axis_minimum_value": chart_block_data.get("y_axis_minimum_value", None),
+            "y_axis_maximum_value": chart_block_data.get("y_axis_maximum_value", None),
         }
         assert chart_request_data == expected_chart_request_data
 
