@@ -13,6 +13,14 @@ class APITimeseriesAdmin(ReadOnlyMixin, admin.ModelAdmin):
         "date",
     ]
 
+    # search_fields = [
+    #     "geography"
+    # ]
+    #
+    # autocomplete_fields = [
+    #     "geography",
+    # ]
+
     list_display = [
         "metric_frequency",
         "age",
