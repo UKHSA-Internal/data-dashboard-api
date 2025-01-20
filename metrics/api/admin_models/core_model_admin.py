@@ -1,8 +1,22 @@
 from django.contrib import admin
 from .mixins import ReadOnlyMixin
+from metrics.data.models.core_models.supporting import Geography
 
 
-class CoreTimeseriesAdmin(ReadOnlyMixin, admin.ModelAdmin):
+class GeographyAdmin(admin.ModelAdmin):
+    search_fields = [
+        "name"
+    ]
+
+    # autocomplete_fields = [
+    #     "name"
+    # ]
+
+
+class CoreTimeseriesAdmin(admin.ModelAdmin):
+    date_hierarchy = "date"
+    # show_facets = admin.ShowFacets.ALWAYS
+
     list_filter = [
         "metric",
         "age",
@@ -11,6 +25,10 @@ class CoreTimeseriesAdmin(ReadOnlyMixin, admin.ModelAdmin):
         "geography",
         "geography__geography_type",
         "date",
+    ]
+
+    search_fields = [
+        "geography__name",
     ]
 
     autocomplete_fields = [
