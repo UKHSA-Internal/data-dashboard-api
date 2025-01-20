@@ -73,3 +73,44 @@ def return_formatted_max_y_axis_value(
     """
     max_value = _extract_max_value(y_axis_values=y_axis_values)
     return convert_large_numbers_to_short_text(number=max_value)
+
+
+def _extract_min_value(
+    y_axis_values: list[Decimal],
+) -> int:
+    """Extracts the lowest `Decimal` value from the `y_axis_values`
+        list and returns an `Int` rounded to the nearest large number
+
+    Notes:
+        `place_value` is the place of the first digit in the number
+        represented by the number of digits to its right.
+        Eg: a number of `1000` has 3 places afer the first digit
+        so `place_value` of = 3
+
+    Args:
+        y_axis_values: list of Decimal values
+
+    Returns:
+        An integer of the highest value from the list rounded to the
+        nearest 10, 100, 1000, ... depending on the number provided.
+    """
+    min_y_axis_value = round(min(y_axis_values))
+    place_value = len(str(min_y_axis_value)) - 1
+    return round(min_y_axis_value, -place_value)
+
+
+def return_formatted_min_y_axis_value(
+    y_axis_values: list[Decimal],
+) -> int:
+    """Returns the lowest value from `y_axis_values` as a formatted string
+
+    Args:
+        y_axis_values: A list of `Decimal` values representing
+        the y_axis values of a `Timeseries` chart.
+
+    Returns:
+        A string of the lowest  value from `y_axis_values` rounded up
+        and formatted as a short string Eg: 1400 becomes 1k
+    """
+    min_value = _extract_min_value(y_axis_values=y_axis_values)
+    return convert_large_numbers_to_short_text(number=min_value)

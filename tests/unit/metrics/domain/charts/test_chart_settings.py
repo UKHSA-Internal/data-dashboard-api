@@ -1,6 +1,7 @@
 import datetime
 from unittest import mock
 
+from _pytest.logging import LogCaptureFixture
 import pytest
 
 from metrics.domain.charts import colour_scheme
@@ -377,6 +378,161 @@ class TestChartSettings:
 
         assert line_with_shaded_section_chart_config == expected_chart_config
 
+    def test_build_line_single_simplified_y_axis_value_params_with_zero_min_value(
+        self,
+        fake_plot_data: PlotGenerationData,
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `build_line_single_simplified_y_axis_value_params` is called with
+            a valid payload where the `y_axis_minimum_value` is omitted
+        Then a dictionary is returned with the expected values including `tick_values`
+            and `range` where the first item in the list is 0
+        """
+        # Given
+        fake_plot_data.y_axis_values = [2000, 2550, 2300, 4000, 3500, 6000, 5480]
+        payload = ChartGenerationPayload(
+            chart_width=435,
+            chart_height=220,
+            plots=[fake_plot_data],
+            y_axis_maximum_value=7000,
+            y_axis_title="",
+            x_axis_title="",
+        )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
+
+        # When
+        returned_y_axis_params = (
+            chart_settings.build_line_single_simplified_y_axis_value_params()
+        )
+        expected_y_axis_params = {
+            "y_axis_tick_values": [0, 7000],
+            "y_axis_tick_text": ["0", "7k"],
+            "range": [0, 7000],
+        }
+
+        # Then
+        assert expected_y_axis_params == returned_y_axis_params
+
+    def test_build_line_single_simplified_y_axis_value_params_with_valid_min_and_max_value(
+        self,
+        fake_plot_data: PlotGenerationData,
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `build_line_single_simplified_y_axis_value_params` is called with
+            a valid payload including a `min` and `max` value to override the `y_axis_values`
+        Then a dictionary is returned with the expected values including `tick_values`
+            and `range` that include the provided min and max values.
+        """
+        # Given
+        fake_plot_data.y_axis_values = [2000, 2550, 2300, 4000, 3500, 6000, 5480]
+        payload = ChartGenerationPayload(
+            chart_width=435,
+            chart_height=220,
+            plots=[fake_plot_data],
+            y_axis_minimum_value=1000,
+            y_axis_maximum_value=7000,
+            y_axis_title="",
+            x_axis_title="",
+        )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
+
+        # When
+        returned_y_axis_params = (
+            chart_settings.build_line_single_simplified_y_axis_value_params()
+        )
+        expected_y_axis_params = {
+            "y_axis_tick_values": [1000, 7000],
+            "y_axis_tick_text": ["1k", "7k"],
+            "range": [1000, 7000],
+        }
+
+        # Then
+        assert expected_y_axis_params == returned_y_axis_params
+
+    def test_build_line_single_simplified_y_axis_value_params_with_invalid_min_value(
+        self,
+        fake_plot_data: PlotGenerationData,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `build_line_single_simplified_y_axis_value_params` is called with
+            an invalid `y_axis_minimum_value` meaning that the value provided is larger
+            than the minimum value found in the data
+        Then the provided value is bypassed and the lowest value from the data is used
+            instead, this override is then logged for transparency
+        """
+        # Given
+        fake_plot_data.y_axis_values = [2000, 2550, 2300, 4000, 3500, 6000, 5480]
+        payload = ChartGenerationPayload(
+            chart_width=435,
+            chart_height=220,
+            plots=[fake_plot_data],
+            y_axis_minimum_value=3000,
+            y_axis_maximum_value=7000,
+            y_axis_title="",
+            x_axis_title="",
+        )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
+
+        # When
+        returned_y_axis_params = (
+            chart_settings.build_line_single_simplified_y_axis_value_params()
+        )
+        expected_y_axis_params = {
+            "y_axis_tick_values": [2000, 7000],
+            "y_axis_tick_text": ["2k", "7k"],
+            "range": [2000, 7000],
+        }
+        expected_log = "The minimum value provided was to high, fallen back to the min value in the data"
+
+        # Then
+        assert expected_y_axis_params == returned_y_axis_params
+        assert expected_log in caplog.text
+
+    def test_build_line_single_simplified_y_axis_value_params_with_invalid_max_value(
+        self,
+        fake_plot_data: PlotGenerationData,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given an instance of `ChartSettings`
+        When `build_line_single_simplified_y_axis_value_params` is called with
+            an invalid `y_axis_maximum_value` meaning that the value provided is lower
+            than the maximum value found in the data
+        Then the provided value is bypassed and the highest value from the data is used
+            instead, this override is then logged for transparency
+        """
+        # Given
+        fake_plot_data.y_axis_values = [2000, 2550, 2300, 4000, 3500, 6000, 5480]
+        payload = ChartGenerationPayload(
+            chart_width=435,
+            chart_height=220,
+            plots=[fake_plot_data],
+            y_axis_minimum_value=1000,
+            y_axis_maximum_value=5000,
+            y_axis_title="",
+            x_axis_title="",
+        )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
+
+        # When
+        returned_y_axis_params = (
+            chart_settings.build_line_single_simplified_y_axis_value_params()
+        )
+        expected_y_axis_params = {
+            "y_axis_tick_values": [1000, 6000],
+            "y_axis_tick_text": ["1k", "6k"],
+            "range": [1000, 6000],
+        }
+        expected_log = "The maximum value provided was to low, fallen back to the max value in the data"
+
+        # Then
+        assert expected_y_axis_params == returned_y_axis_params
+        assert expected_log in caplog.text
+
     @mock.patch.object(ChartSettings, "build_line_single_simplified_axis_params")
     def test_get_line_single_simplified_chart_config(
         self,
@@ -396,12 +552,16 @@ class TestChartSettings:
         fake_x_axis_tick_text = ["tick01", "tick02"]
         fake_y_axis_tick_values = [0, 10]
         fake_y_axis_tick_text = ["tick01", "tick02"]
+        fake_y_axis_range = [0, 10]  # min and max value for manual y-axis input
+        fake_y_axis_rangemode = "tozero"
 
         mock_build_line_single_simplified_axis_params.return_value = {
             "x_axis_tick_values": fake_x_axis_tick_values,
             "x_axis_tick_text": fake_x_axis_tick_text,
             "y_axis_tick_values": fake_y_axis_tick_values,
             "y_axis_tick_text": fake_y_axis_tick_text,
+            "range": fake_y_axis_range,
+            "rangemode": fake_y_axis_rangemode,
         }
 
         # When
@@ -431,11 +591,12 @@ class TestChartSettings:
         expected_chart_config["yaxis"]["zeroline"] = False
         expected_chart_config["yaxis"]["tickvals"] = fake_y_axis_tick_values
         expected_chart_config["yaxis"]["ticktext"] = fake_y_axis_tick_text
-        expected_chart_config["yaxis"]["rangemode"] = "tozero"
         expected_chart_config["yaxis"]["ticklen"] = 0
         expected_chart_config["yaxis"]["tickfont"][
             "color"
         ] = colour_scheme.RGBAColours.LS_DARK_GREY.stringified
+        expected_chart_config["yaxis"]["range"] = fake_y_axis_range
+        expected_chart_config["yaxis"]["rangemode"] = fake_y_axis_rangemode
 
         assert line_single_simplified_chart_config == expected_chart_config
 
