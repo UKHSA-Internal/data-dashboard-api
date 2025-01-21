@@ -2,7 +2,7 @@ import os
 
 import config
 
-if os.environ.get("AUTH_ENABLED"):
+if os.environ.get("AUTH_ENABLED", False):
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.dummy.DummyCache",
