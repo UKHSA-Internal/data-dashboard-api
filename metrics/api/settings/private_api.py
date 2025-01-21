@@ -2,7 +2,9 @@ import os
 
 import config
 
-if os.environ.get("AUTH_ENABLED"):
+AUTH_ENABLED: bool = os.environ.get("AUTH_ENABLED", "").lower() in {"true", "1"}
+
+if AUTH_ENABLED:
     CACHES = {
         "default": {
             "BACKEND": "django.core.cache.backends.dummy.DummyCache",
