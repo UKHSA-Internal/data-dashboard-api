@@ -1,20 +1,30 @@
 from django.contrib import admin
+from django.core.paginator import Paginator
 from .mixins import ReadOnlyMixin
-from metrics.data.models.core_models.supporting import Geography
+from metrics.data.models.core_models.supporting import Geography, Metric
 
 
-class GeographyAdmin(admin.ModelAdmin):
+class NoCountPaginator(Paginator):
+    @property
+    def count(self):
+        return 00000
+
+
+class MetricAdmin(ReadOnlyMixin, admin.ModelAdmin):
+    search_fields = [
+        "name",
+    ]
+
+
+class GeographyAdmin(ReadOnlyMixin, admin.ModelAdmin):
     search_fields = [
         "name"
     ]
 
-    # autocomplete_fields = [
-    #     "name"
-    # ]
 
-
-class CoreTimeseriesAdmin(admin.ModelAdmin):
+class CoreTimeseriesAdmin(ReadOnlyMixin, admin.ModelAdmin):
     date_hierarchy = "date"
+    paginator = NoCountPaginator
     # show_facets = admin.ShowFacets.ALWAYS
 
     list_filter = [
@@ -29,10 +39,7 @@ class CoreTimeseriesAdmin(admin.ModelAdmin):
 
     search_fields = [
         "geography__name",
-    ]
-
-    autocomplete_fields = [
-        "geography",
+        "metric__name",
     ]
 
     list_display = [
@@ -57,6 +64,7 @@ class CoreTimeseriesAdmin(admin.ModelAdmin):
 
 
 class CoreHeadlineAdmin(ReadOnlyMixin, admin.ModelAdmin):
+    paginator = NoCountPaginator
     list_filter = [
         "metric",
         "age",
@@ -64,6 +72,11 @@ class CoreHeadlineAdmin(ReadOnlyMixin, admin.ModelAdmin):
         "stratum",
         "geography",
         "geography__geography_type",
+    ]
+
+    search_fields = [
+        "geography__name",
+        "metric__name",
     ]
 
     list_display = [
