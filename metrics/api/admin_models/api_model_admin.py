@@ -1,8 +1,16 @@
 from django.contrib import admin
+from django.core.paginator import Paginator
 from .mixins import ReadOnlyMixin
 
 
+class NoCountPaginator(Paginator):
+    @property
+    def count(self):
+        return 00000
+
+
 class APITimeseriesAdmin(ReadOnlyMixin, admin.ModelAdmin):
+    paginator = NoCountPaginator
     list_filter = [
         "metric",
         "age",
@@ -13,13 +21,10 @@ class APITimeseriesAdmin(ReadOnlyMixin, admin.ModelAdmin):
         "date",
     ]
 
-    # search_fields = [
-    #     "geography"
-    # ]
-    #
-    # autocomplete_fields = [
-    #     "geography",
-    # ]
+    search_fields = [
+        "metric",
+        "geography",
+    ]
 
     list_display = [
         "metric_frequency",
