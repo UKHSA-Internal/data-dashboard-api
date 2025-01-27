@@ -240,6 +240,8 @@ def example_chart_block() -> dict[str, str | list[dict]]:
         "body": "Age breakdown of people admitted to hospital.",
         "x_axis": "stratum",
         "y_axis": "metric",
+        "x_axis_title": "Age",
+        "y_axis_title": "Admissions",
         "chart": [
             {
                 "type": "plot",

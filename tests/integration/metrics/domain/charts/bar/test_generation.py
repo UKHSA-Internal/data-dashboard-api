@@ -49,6 +49,8 @@ class TestBarCharts:
             plots=chart_plots_data,
             x_axis_title="",
             y_axis_title="",
+            y_axis_minimum_value=0,
+            y_axis_maximum_value=None,
         )
 
         # When
@@ -87,6 +89,8 @@ class TestBarCharts:
             plots=chart_plots_data,
             x_axis_title="",
             y_axis_title="",
+            y_axis_minimum_value=0,
+            y_axis_maximum_value=None,
         )
 
         # When
@@ -166,6 +170,8 @@ class TestBarCharts:
             plots=chart_plots_data,
             x_axis_title="",
             y_axis_title="",
+            y_axis_minimum_value=0,
+            y_axis_maximum_value=None,
         )
 
         # When

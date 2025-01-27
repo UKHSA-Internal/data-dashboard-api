@@ -13,6 +13,7 @@ from metrics.domain.common.utils import (
     DEFAULT_Y_AXIS,
     ChartAxisFields,
     ChartTypes,
+    DEFAULT_Y_AXIS_MINIMUM_VAlUE,
 )
 from metrics.domain.models import ChartRequestParams, PlotParameters
 
@@ -116,6 +117,22 @@ class ChartsSerializer(serializers.Serializer):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
+    y_axis_minimum_value = serializers.DecimalField(
+        required=False,
+        allow_null=True,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+        default=None,
+        max_digits=10,
+        decimal_places=1,
+    )
+    y_axis_maximum_value = serializers.DecimalField(
+        required=False,
+        allow_null=True,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+        default=None,
+        max_digits=10,
+        decimal_places=1,
+    )
 
     plots = ChartPlotsListSerializer()
 
@@ -136,6 +153,9 @@ class ChartsSerializer(serializers.Serializer):
             y_axis=y_axis,
             x_axis_title=self.data.get("x_axis_title", ""),
             y_axis_title=self.data.get("y_axis_title", ""),
+            y_axis_minimum_value=self.data["y_axis_minimum_value"]
+            or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
+            y_axis_maximum_value=self.data["y_axis_maximum_value"],
         )
 
 

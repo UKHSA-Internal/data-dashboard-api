@@ -77,6 +77,10 @@ class RequestPayloadBuilder:
             "chart_height": 260,
             "x_axis": chart_block.get("x_axis", ""),
             "y_axis": chart_block.get("y_axis", ""),
+            "x_axis_title": chart_block.get("x_axis_title", ""),
+            "y_axis_title": chart_block.get("y_axis_title", ""),
+            "y_axis_minimum_value": chart_block.get("y_axis_minimum_value", None),
+            "y_axis_maximum_value": chart_block.get("y_axis_maximum_value", None),
         }
 
     @classmethod

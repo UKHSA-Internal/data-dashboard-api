@@ -124,6 +124,7 @@ class ChartAxisFields(Enum):
 
 DEFAULT_X_AXIS = ChartAxisFields.get_default_x_axis().name
 DEFAULT_Y_AXIS = ChartAxisFields.get_default_y_axis().name
+DEFAULT_Y_AXIS_MINIMUM_VAlUE = 0
 
 
 class DataSourceFileType(Enum):

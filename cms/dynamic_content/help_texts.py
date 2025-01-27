@@ -220,6 +220,18 @@ An optional choice of what to display along the y-axis of the chart.
 If nothing is provided, `metric value` will be used by default.
 """
 
+CHART_Y_AXIS_MINIMUM_VALUE: str = """
+This field allows you to set the first value in the chart's y-axis range. Please
+note that a value provided here, which is higher than the lowest value in the data will
+be overridden and the value from the dataset will be used.
+"""
+
+CHART_Y_AXIS_MAXIMUM_VALUE: str = """
+This field allows you to set the last value in the chart's y-axis range. Please
+note that a value provided here, which is lower than the highest value in the data will
+be overridden and the value from the dataset will be used. 
+"""
+
 REQUIRED_CHART_Y_AXIS: str = """
 A required choice of what to display along the y-axis of the chart.
 """
