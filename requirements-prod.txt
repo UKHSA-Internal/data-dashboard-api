@@ -76,7 +76,7 @@ simplejson==3.19.3
 six==1.17.0
 sortedcontainers==2.4.0
 soupsieve==2.6
-sqlparams==6.1.0
+sqlparams==6.2.0
 telepath==0.3.1
 tenacity==9.0.0
 toml==0.10.2
