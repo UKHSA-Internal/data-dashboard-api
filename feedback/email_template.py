@@ -6,7 +6,7 @@ FALLBACK_DID_YOU_FIND_EVERYTHING_ANSWER: str = "User provided no input"
 DEFAULT_FORM_PAGE_MANAGER = CMSInterface().get_form_page_manager()
 
 
-def build_body_for_email_v2(*, suggestions: dict[str, str]) -> str:
+def build_body_for_email(*, suggestions: dict[str, str]) -> str:
     """Builds the suggestions email body as a string to be sent to the email server
 
     Args:
@@ -19,13 +19,13 @@ def build_body_for_email_v2(*, suggestions: dict[str, str]) -> str:
         the body of the feedback email
 
     """
-    enriched_suggestions: dict[str, str] = (
-        _enrich_suggestions_with_long_form_questions_v2(suggestions=suggestions)
+    enriched_suggestions: dict[str, str] = _enrich_suggestions_with_long_form_questions(
+        suggestions=suggestions
     )
     return _build_body_from_suggestions(suggestions=enriched_suggestions)
 
 
-def _enrich_suggestions_with_long_form_questions_v2(
+def _enrich_suggestions_with_long_form_questions(
     *,
     suggestions: dict[str, str],
     form_page_manager: Manager = DEFAULT_FORM_PAGE_MANAGER,

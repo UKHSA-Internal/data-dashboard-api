@@ -126,35 +126,14 @@ See the [django docs](https://docs.djangoproject.com/en/4.2/ref/settings/#std-se
 
 ### Email configuration
 
-#### `EMAIL_BACKEND`
-
-This represents the backend which is to be used to send emails.
-Defaults to `"smtp.EmailBackend"`.
-
-#### `EMAIL_USE_TLS`
-
-Whether to use a TLS (secure) connection when talking to the SMTP server. 
-Defaults to `True`.
-
-#### `EMAIL_HOST`
-
-The host to use for sending emails. Defaults to `"smtp.gmail.com"`
-
-#### `EMAIL_PORT`
-
-The port to use for the SMTP server. Defaults to `587`.
-
-#### `EMAIL_HOST_USER`
-
-The email address to send emails from.
-
-#### `EMAIL_HOST_PASSWORD`
-
-The password to use to authenticate the `EMAIL_HOST_USER` with the SMTP server.
-
 #### `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
 
 The email address to send feedback suggestions emails to.
+
+#### `FEEDBACK_EMAIL_SENDER_ADDRESS`
+
+The email address to send feedback suggestions emails from.
+Note that this is expected to be a registered AWS SES domain.
 
 ---
 

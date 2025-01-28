@@ -7,10 +7,11 @@ from botocore.exceptions import ClientError
 from django.core.mail import EmailMessage
 
 import config
-from feedback.email_template import build_body_for_email_v2
+from feedback.email_template import build_body_for_email
 
 logger = logging.getLogger(__name__)
-
+DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS: str = config.FEEDBACK_EMAIL_RECIPIENT_ADDRESS
+DEFAULT_FEEDBACK_EMAIL_SUBJECT: str = "Suggestions Feedback for UKHSA Data Dashboard"
 DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS = config.FEEDBACK_EMAIL_RECIPIENT_ADDRESS
 DEFAULT_FEEDBACK_EMAIL_SUBJECT = "Suggestions Feedback for UKHSA data dashboard"
 
@@ -21,8 +22,8 @@ def send_email_via_ses(*, email_message: EmailMessage) -> None:
     """Sends the given `email_message` via AWS SES
 
     Notes:
-        Sends the email from the env var `FEEDBACK_EMAIL_SENDER_ADDRESS`
-        to the recipient address from the env var `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
+        Sends the email to the recipient address from the env var
+        `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
 
     Returns:
         None
@@ -55,43 +56,7 @@ def send_email_via_ses(*, email_message: EmailMessage) -> None:
         logger.info("Email sent. Message ID: %s", response["MessageId"]),
 
 
-def send_email_v2(
-    *,
-    suggestions: dict[str, str],
-    subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
-    recipient_email_address: str = DEFAULT_FEEDBACK_EMAIL_RECIPIENT_ADDRESS,
-    fail_silently: bool = True,
-) -> None:
-    """Sends a feedback email to the `recipient_email_address`
-
-    Args:
-        suggestions: Dict of feedback suggestions from the user
-            E.g. {"question": "some question", "answer": "some answer"}
-        subject: The subject line to set on the email message
-            Defaults to "Suggestions Feedback for UKHSA data dashboard"
-        recipient_email_address: The recipient to send the email to
-            Defaults to the environment variable
-                `FEEDBACK_EMAIL_RECIPIENT_ADDRESS`
-        fail_silently: Switch to raise an exception
-            if the email failed and was not successfully sent.
-            Defaults to True
-
-    Returns:
-        None
-
-    """
-    email = create_email_message_v2(
-        suggestions=suggestions,
-        subject=subject,
-        recipient_email_address=recipient_email_address,
-    )
-
-    email_submitted = bool(email.send(fail_silently=fail_silently))
-    message = "succeeded" if email_submitted else "failed"
-    logger.info("Email submission %s for %s", message, subject)
-
-
-def send_email_v3(
+def send_email(
     *,
     suggestions: dict[str, str],
     subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
@@ -112,7 +77,7 @@ def send_email_v3(
         None
 
     """
-    email_message: EmailMessage = create_email_message_v2(
+    email_message: EmailMessage = create_email_message(
         suggestions=suggestions,
         subject=subject,
         recipient_email_address=recipient_email_address,
@@ -121,7 +86,7 @@ def send_email_v3(
         send_email_via_ses(email_message=email_message)
 
 
-def create_email_message_v2(
+def create_email_message(
     *,
     suggestions: dict[str, str],
     subject: str = DEFAULT_FEEDBACK_EMAIL_SUBJECT,
@@ -145,7 +110,7 @@ def create_email_message_v2(
         set on the object
 
     """
-    body: str = build_body_for_email_v2(suggestions=suggestions)
+    body: str = build_body_for_email(suggestions=suggestions)
 
     return EmailMessage(
         subject=subject,
