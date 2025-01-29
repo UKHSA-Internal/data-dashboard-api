@@ -1,6 +1,7 @@
 import urllib.parse
 from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 
 import plotly.graph_objects
 from django.db.models import Manager
@@ -473,7 +474,7 @@ class ChartsInterface:
             The filename of the image
 
         """
-        filename = f"new_chart.{self.chart_request_params.file_format}"
+        filename = f"tmp/new_chart.{self.chart_request_params.file_format}"
         figure.write_image(
             file=filename,
             format=self.chart_request_params.file_format,
@@ -541,6 +542,7 @@ def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> str:
     charts_interface = ChartsInterface(chart_request_params=chart_request_params)
     chart_output: ChartOutput = charts_interface.generate_chart_output()
 
+    Path("tmp").mkdir(exist_ok=True)
     return charts_interface.write_figure(figure=chart_output.figure)
 
 
