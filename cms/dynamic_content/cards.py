@@ -31,6 +31,8 @@ MAXIMUM_TREND_NUMBER: int = 1
 DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
 
+CHART_CARD_DATE_PREFIX_DEFAULT_TEXT = "Up to and including"
+
 
 class TextCard(blocks.StructBlock):
     body = blocks.RichTextBlock(
@@ -108,6 +110,11 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
         required=False,
+    )
+    date_prefix = blocks.CharBlock(
+        required=True,
+        default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
+        help_text=help_texts.CHART_DATE_PREFIX,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
     headline_number_columns = HeadlineNumberBlockTypes(
@@ -210,6 +217,11 @@ class ChartCard(blocks.StructBlock):
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
         required=False,
+    )
+    date_prefix = blocks.CharBlock(
+        required=True,
+        default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
+        help_text=help_texts.CHART_DATE_PREFIX,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
