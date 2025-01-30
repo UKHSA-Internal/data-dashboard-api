@@ -459,7 +459,7 @@ class TestIngestion:
 
     @staticmethod
     def _fetch_latest_headline_from_endpoint(
-        payload: dict[str, str]
+        payload: dict[str, str],
     ) -> dict[str, int | float]:
         path = "/api/headlines/v3/"
         client = APIClient()
