@@ -1,19 +1,15 @@
 from django.db import models
-"""
--  Create indexes for group_dataset_mapping
-"""
 
 
-class GroupDatasetMapping(models.Model):
+class DatasetGroupMapping(models.Model):
 
     class Meta:
-        db_table = "group_dataset_mappings"
-        unique_together = ("dataset_group", "dataset")
+        db_table = "dataset_group_mappings"
+        unique_together = ('dataset_name', 'group')
 
-    dataset_group = models.ForeignKey("DatasetGroup", on_delete=models.CASCADE)
-    dataset = models.ForeignKey("Dataset", on_delete=models.CASCADE)
+    id = models.BigAutoField(primary_key=True)
+    dataset_name = models.CharField(max_length=255)
+    group = models.ForeignKey("DatasetGroup", on_delete=models.CASCADE, related_name='group_mappings')
 
     def __str__(self):
-        return (f"<GroupDatasetMapping"
-                f"dataset_group={self.dataset_group}"
-                f"dataset={self.dataset} />")
+        return f"(Dataset Name: {self.dataset_name}), (Group: {self.group.name})"

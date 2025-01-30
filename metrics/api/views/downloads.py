@@ -27,6 +27,7 @@ from metrics.domain.exports.csv_output import (
 )
 from metrics.interfaces.downloads import access
 from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.utils.auth import authorised_route
 
 DOWNLOADS_API_TAG = "downloads"
 
@@ -99,6 +100,7 @@ class DownloadsView(APIView):
 
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
+    @authorised_route
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
     def post(self, request, *args, **kwargs):
@@ -128,6 +130,7 @@ class DownloadsView(APIView):
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
 
         """
+        group_id = getattr(request, "group_id", None)
         request_serializer = DownloadsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
