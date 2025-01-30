@@ -44,7 +44,7 @@ class DownloadsView(APIView):
     renderer_classes = (JSONOpenAPIRenderer,)
 
     def _get_serializer_class(
-        self, queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet, metric_group: str
+        self, queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet, metric_group: str, request
     ) -> CoreHeadlineSerializer | CoreTimeSeriesSerializer:
         """Returns the appropriate serializer class based on the
             provided metric_group.
@@ -58,7 +58,7 @@ class DownloadsView(APIView):
                 return self.headline_serializer_class(queryset, many=True)
 
             if DataSourceFileType[metric_group].is_timeseries:
-                return self.timeseries_serializer_class(queryset, many=True)
+                return self.timeseries_serializer_class(queryset, many=True, context={"request": request})
 
         except KeyError:
             raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE)
@@ -68,10 +68,11 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
+            request
     ) -> Response:
         # Return the requested data in json format
         serializer = self._get_serializer_class(
-            queryset=queryset, metric_group=metric_group
+            queryset=queryset, metric_group=metric_group, request=request,
         )
 
         response = Response(serializer.data)
@@ -84,13 +85,14 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
+            request,
     ) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
 
         serializer = self._get_serializer_class(
-            queryset=queryset, metric_group=metric_group
+            queryset=queryset, metric_group=metric_group, request=request,
         )
 
         if DataSourceFileType[metric_group].is_headline:
@@ -100,9 +102,10 @@ class DownloadsView(APIView):
 
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
+
+    # @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
+    # @cache_response()
     @authorised_route
-    @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
-    @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
@@ -130,13 +133,11 @@ class DownloadsView(APIView):
         | `date_to`         | The date to pull the data up until                                        | `2023-01-20`              |
 
         """
-        group_id = getattr(request, "group_id", None)
         request_serializer = DownloadsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
         file_format: str = request_serializer.data["file_format"]
         chart_plot_models = request_serializer.to_models()
-
         try:
             queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
                 chart_plots=chart_plot_models
@@ -149,11 +150,11 @@ class DownloadsView(APIView):
         match file_format:
             case "json":
                 return self._handle_json(
-                    queryset=queryset, metric_group=chart_plot_models.metric_group
+                    queryset=queryset, metric_group=chart_plot_models.metric_group, request=request,
                 )
             case "csv":
                 return self._handle_csv(
-                    queryset=queryset, metric_group=chart_plot_models.metric_group
+                    queryset=queryset, metric_group=chart_plot_models.metric_group, request=request,
                 )
 
 

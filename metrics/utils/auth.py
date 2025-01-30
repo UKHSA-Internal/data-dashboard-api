@@ -1,8 +1,19 @@
+import logging
+from typing import List
 from functools import wraps
+
 from django.http import JsonResponse
+from rest_framework.serializers import Serializer
 import jwt
 
+from metrics.api.models import (
+    DatasetGroup,
+    DatasetGroupMapping,
+)
+
 from config import PRIVATE_API_INSTANCE, API_PUBLIC_KEY
+
+logger = logging.getLogger(__name__)
 
 
 def authorised_route(func):
@@ -15,7 +26,10 @@ def authorised_route(func):
             token = token.split("Bearer ")[1]
             payload = jwt.decode(token, API_PUBLIC_KEY, algorithms=["RS256"])
             group_id = payload["group_id"]
-            request.group_id = group_id
+            query = DatasetGroupMapping.objects.filter(group__name=group_id)
+            dataset_names = query.values_list('dataset_name', flat=True)
+            request.dataset_names = list(dataset_names)
+            print("dataset names ------> ", dataset_names)
             return func(self, request, *args, **kwargs)
         except jwt.ExpiredSignatureError as err:
             return JsonResponse({"error": "Token expired!"})
@@ -28,4 +42,26 @@ def authorised_route(func):
         except Exception as err:
             print(str(err))
             return JsonResponse({"error": "Authorisation error!"})
+
     return wrap
+
+
+def get_allowed_dataset_types(request) -> List[str]:
+    return getattr(request, "dataset_names", [])
+
+
+def serializer_permissions(restricted_fields: List[str]):
+    def decorator(serializer_class):
+        _init = serializer_class.__init__
+
+        @wraps(_init)
+        def init(self, *args, **kwargs):
+            super(serializer_class, self).__init__(*args, **kwargs)
+            request = self.context.get("request", None)
+            dataset_names: List[str] = getattr(request, "dataset_names", [])
+            for field in restricted_fields:
+                if field not in dataset_names:
+                    self.fields.pop(field, None)
+        serializer_class.__init__ = init
+        return serializer_class
+    return decorator
