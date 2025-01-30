@@ -158,7 +158,7 @@ class TestDownloadsView:
         core_time_series = self._create_example_core_time_series()
         valid_payload = self._build_valid_payload()
         valid_payload["file_format"] = "json"
-
+        print("data ------> ", valid_payload)
         # When
         response: Response = client.post(
             path=self.path,
