@@ -250,3 +250,4 @@ fabric.properties
 
 # Static files collected by the Django app
 metrics/static/
+identifier.sqlite
