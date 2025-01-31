@@ -34,9 +34,6 @@ class SubTheme(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["name"], name="`SubTheme` name should be unique"
-            ),
-            models.UniqueConstraint(
                 fields=["name", "theme"],
                 name="`SubTheme` and `Theme` should be a unique combination",
             ),
