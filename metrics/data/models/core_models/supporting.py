@@ -25,6 +25,9 @@ class Theme(models.Model):
             )
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class SubTheme(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -42,6 +45,9 @@ class SubTheme(models.Model):
             ),
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Topic(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -56,6 +62,9 @@ class Topic(models.Model):
             )
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class MetricGroup(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -68,6 +77,7 @@ class MetricGroup(models.Model):
                 name="`MetricGroup` and `Topic` should be a unique combination",
             ),
         ]
+
 
 
 class Metric(models.Model):
@@ -107,6 +117,9 @@ class GeographyType(models.Model):
             )
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Geography(models.Model):
     name = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
@@ -128,8 +141,11 @@ class Geography(models.Model):
                 fields=["name", "geography_type"],
                 name="`Geography` and `GeographyType` should be a unique combination",
             )
+
         ]
 
+    def __str__(self):
+        return self.name
 
 class Stratum(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -143,6 +159,9 @@ class Stratum(models.Model):
             )
         ]
 
+    def __str__(self):
+        return self.name
+
 
 class Age(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
@@ -153,3 +172,6 @@ class Age(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["name"], name="`Age` name should be unique")
         ]
+
+    def __str__(self):
+        return self.name

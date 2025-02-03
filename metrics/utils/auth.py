@@ -7,8 +7,8 @@ from rest_framework.serializers import Serializer
 import jwt
 
 from metrics.api.models import (
-    DatasetGroup,
-    DatasetGroupMapping,
+    ApiGroup,
+    ApiPermission,
 )
 
 from config import PRIVATE_API_INSTANCE, API_PUBLIC_KEY
@@ -26,10 +26,10 @@ def authorised_route(func):
             token = token.split("Bearer ")[1]
             payload = jwt.decode(token, API_PUBLIC_KEY, algorithms=["RS256"])
             group_id = payload["group_id"]
-            query = DatasetGroupMapping.objects.filter(group__name=group_id)
-            dataset_names = query.values_list('dataset_name', flat=True)
-            request.dataset_names = list(dataset_names)
-            print("dataset names ------> ", dataset_names)
+            print("her-------> 1")
+            group = ApiGroup.objects.get(name=group_id)
+            request.group_permissions = list(group.permissions.all())
+            print("group_permissions ------> ", request.group_permissions)
             return func(self, request, *args, **kwargs)
         except jwt.ExpiredSignatureError as err:
             return JsonResponse({"error": "Token expired!"})
@@ -58,10 +58,47 @@ def serializer_permissions(restricted_fields: List[str]):
         def init(self, *args, **kwargs):
             super(serializer_class, self).__init__(*args, **kwargs)
             request = self.context.get("request", None)
-            dataset_names: List[str] = getattr(request, "dataset_names", [])
-            for field in restricted_fields:
-                if field not in dataset_names:
-                    self.fields.pop(field, None)
+            group_permissions: List[ApiPermission] = getattr(request, "group_permissions", [])
+
+            original_to_representation = self.to_representation
+
+            def new_to_representation(instance):
+                data = original_to_representation(instance)
+                # if the group permissions contains a key equal to the current data dict key's value
+                # then check the group permissions
+                data_types = ["theme", "sub_theme", "topic", "geography_type", "geography", "age", "stratum"]
+
+                print("group_permission -----> ", group_permissions[0])
+                ## 1.
+
+                # for restricted_field in restricted_fields:
+                #     field_match = False
+                #     for group_permission in group_permissions:
+
+                        # TODO Monday, add infctions diseases rows in database
+
+                        # 1. check that theme is not None
+                        # 2. go and get the theme object and then only show response JSON for that theme type.
+                        # 3. check that subtheme is not None
+                        # 4. go and check that
+
+                        # for data_type in data_types:
+                        #     matched_data_type = False
+                        #     group_permission_attr = getattr(group_permission, data_type, None)
+                        #     if group_permission_attr:
+                        #         # 5. remove all objects that don't match this data type's name
+                        #         group_permission_attr_name = getattr(group_permission_attr, "name", None)
+                        #         for data_key in data.keys():
+                        #             if data_key == data_type: # e.g theme == theme"
+                        #                 if data[data_key] == group_permission_attr_name:
+                        #                     matched_data_type = True
+                        #         if not matched_data_type:
+                        #             return None
+                return data
+
+            self.to_representation = new_to_representation
+
         serializer_class.__init__ = init
         return serializer_class
+
     return decorator

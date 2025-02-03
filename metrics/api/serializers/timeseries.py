@@ -4,7 +4,7 @@ from metrics.data.models.core_models import CoreTimeSeries
 from metrics.utils.auth import serializer_permissions
 
 
-@serializer_permissions(["theme", "age", "stratum"])
+# @serializer_permissions(["topic"])
 class CoreTimeSeriesSerializer(serializers.ModelSerializer):
     """This serializer returns a set of serialized fields from the `CoreTimesSeries` and related models.
 

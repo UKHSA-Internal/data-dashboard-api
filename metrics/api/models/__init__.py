@@ -1,2 +1,2 @@
-from metrics.api.models.dataset_group import DatasetGroup
-from metrics.api.models.group_dataset_mapping import DatasetGroupMapping
+from metrics.api.models.api_groups import ApiGroup
+from metrics.api.models.api_permissions import ApiPermission
