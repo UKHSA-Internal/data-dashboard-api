@@ -13,6 +13,10 @@ class _ExtremeEventChildTheme(Enum):
     WEATHER_ALERT = "weather_alert"
 
 
+class _NonCommunicableChildTheme(Enum):
+    RESPIRATORY = "respiratory"
+
+
 class _VaccinePreventableTopic(Enum):
     MEASLES = "Measles"
 
@@ -24,12 +28,17 @@ class _WeatherAlertTopic(Enum):
 
 class _RespiratoryTopic(Enum):
     COVID_19 = "COVID-19"
+    COVID_19_LIKE = "COVID-19-like"
     INFLUENZA = "Influenza"
+    INFLUENZA_LIKE = "influenza-like"
     RSV = "RSV"
+    ACUTE_BRONCHIOLITIS = "acute-bronchiolitis"
+    ACUTE_RESPIRATORY_INFECTION = "acute-respiratory-infection"
     HMPV = "hMPV"
     PARAINFLUENZA = "Parainfluenza"
     RHINOVIRUS = "Rhinovirus"
     ADENOVIRUS = "Adenovirus"
+    ASTHMA = "asthma"
 
 
 class _BloodstreamInfectionTopic(Enum):
@@ -56,11 +65,13 @@ class BaseEnum(Enum):
 class ParentTheme(Enum):
     INFECTIOUS_DISEASE = "infectious_disease"
     EXTREME_EVENT = "extreme_event"
+    NON_COMMUNICABLE = "non-communicable"
 
 
 class ChildTheme(BaseEnum):
     INFECTIOUS_DISEASE = _InfectiousDiseaseChildTheme
     EXTREME_EVENT = _ExtremeEventChildTheme
+    NON_COMMUNICABLE = _NonCommunicableChildTheme
 
 
 class Topic(BaseEnum):

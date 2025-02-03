@@ -11,6 +11,7 @@ from cms.dynamic_content.components import (
 
 MINIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 1
 MAXIMUM_ROWS_NUMBER_BLOCK_COUNT: int = 2
+METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
 
 
 class HeadlineNumberBlockTypes(blocks.StreamBlock):
@@ -26,6 +27,11 @@ class HeadlineNumberBlockTypes(blocks.StreamBlock):
 
 class MetricNumberBlockTypes(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    date_prefix = blocks.TextBlock(
+        required=True,
+        default=METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT,
+        help_text=help_texts.HEADLINE_DATE_PREFIX,
+    )
     rows = HeadlineNumberBlockTypes(
         required=True,
         min_num=MINIMUM_ROWS_NUMBER_BLOCK_COUNT,
