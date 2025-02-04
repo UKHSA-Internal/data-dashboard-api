@@ -1,6 +1,6 @@
 anyascii==0.3.2
 attrs==25.1.0
-beautifulsoup4==4.11.2
+beautifulsoup4==4.13.1
 CacheControl==0.14.2
 certifi==2025.1.31
 cfgv==3.4.0
