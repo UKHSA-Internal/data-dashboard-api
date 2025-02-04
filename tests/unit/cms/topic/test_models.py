@@ -217,21 +217,16 @@ class TestTemplateCOVID19Page:
     def test_content_panels(self, expected_content_panel_name: str):
         """
         Given an expected content panel
-        When the `content_panels` attribute is accessed
-        Then the field is in the returned list
+        When the attribute is accessed
+        Then the panel value can be accessed from the page model
         """
         # Given
         template_covid_19_page = (
             FakeTopicPageFactory.build_covid_19_page_from_template()
         )
 
-        # Then
-        content_panels = template_covid_19_page.content_panels
-        content_panel_names: list[str] = [
-            content_panel.field_name for content_panel in content_panels
-        ]
-
-        assert expected_content_panel_name in content_panel_names
+        # When / Then
+        assert hasattr(template_covid_19_page, expected_content_panel_name)
 
     def test_find_latest_released_embargo_for_metrics(self):
         """

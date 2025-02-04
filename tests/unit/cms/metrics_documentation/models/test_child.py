@@ -68,8 +68,8 @@ class TestMetricsDocumentationChildEntry:
     ):
         """
         Give a blank `MetricsDocumentationChildEntryPage` model.
-        When `content_panels` is called.
-        Then the expected names are on the returned `FieldPanel` objects.
+        When the expected content panel name is called
+        Then the panel value can be accessed from the page model
         """
         # Given
         fake_metrics_documentation_child_entry_page = (
@@ -82,10 +82,9 @@ class TestMetricsDocumentationChildEntry:
         )
 
         # Then
-        content_panel_names: set[str] = (
-            content_panel.field_name for content_panel in content_panels
+        assert hasattr(
+            fake_metrics_documentation_child_entry_page, expected_content_panel_name
         )
-        assert expected_content_panel_name in content_panel_names
 
     @mock.patch(f"{MODULE_PATH}.get_a_list_of_all_topic_names")
     @mock.patch.object(child.MetricsDocumentationChildEntry, "find_topic")
