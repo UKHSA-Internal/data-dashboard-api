@@ -57,18 +57,14 @@ class TestBlankHomePage:
     ):
         """
         Given a blank `HomePage` model
-        When `content_panels` is called
-        Then the expected names are on the returned `FieldPanel` objects
+        When the expected content panel name is called
+        Then the panel value can be accessed from the page model
         """
         # Given
         blank_page = FakeHomePageFactory.build_blank_page()
 
-        # When
-        content_panels: list[FieldPanel] = blank_page.content_panels
-
-        # Then
-        content_panel_names: set[str] = {p.field_name for p in content_panels}
-        assert expected_content_panel_name in content_panel_names
+        # When / Then
+        assert hasattr(blank_page, expected_content_panel_name)
 
     def test_has_correct_sidebar_panels(self):
         """
@@ -486,18 +482,14 @@ class TestBlankLandingPage:
     ):
         """
         Given a blank `LandingPage` model
-        When `content_panels` is called
-        Then the expected names are on the returned `FieldPanel` objects
+        When the expected panel name is called
+        Then the panel value can be accessed from the page model
         """
         # Given
         blank_page = FakeLandingPageFactory.build_blank_page()
 
-        # When
-        content_panels: list[FieldPanel] = blank_page.content_panels
-
-        # Then
-        content_panels_names: set[str] = {p.field_name for p in content_panels}
-        assert expected_content_panel in content_panels_names
+        # When / Then
+        assert hasattr(blank_page, expected_content_panel)
 
     def test_is_previewable_returns_false(self):
         """

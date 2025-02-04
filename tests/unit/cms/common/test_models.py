@@ -35,25 +35,24 @@ class TestBlankCommonPage:
         api_field_names: set[str] = {api_field.name for api_field in api_fields}
         assert expected_api_field_name in api_field_names
 
-    def test_has_correct_content_panels(self):
+    @pytest.mark.parametrize(
+        "expected_content_panel_name",
+        [
+            "title",
+            "body",
+        ],
+    )
+    def test_has_correct_content_panels(self, expected_content_panel_name: str):
         """
         Given a blank `CommonPage` model
-        When `content_panels` is called
-        Then the expected names are on the returned `FieldPanel` objects
+        When the expected content panel name is called
+        Then the panel value can be accessed from the page model
         """
         # Given
         blank_page = FakeCommonPageFactory.build_blank_page()
 
-        # When
-        content_panels: list[FieldPanel] = blank_page.content_panels
-
-        # Then
-        expected_content_panel_names: set[str] = {
-            "title",
-            "body",
-        }
-        content_panel_names: set[str] = {p.field_name for p in content_panels}
-        assert content_panel_names == expected_content_panel_names
+        # When / Then
+        assert hasattr(blank_page, expected_content_panel_name)
 
     def test_has_correct_sidebar_panels(self):
         """

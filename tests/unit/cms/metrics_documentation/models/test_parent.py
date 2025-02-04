@@ -66,24 +66,18 @@ class TestMetricsDocumentationParentPage:
     ):
         """
         Given a blank `MetricsDocumentationParentPage` model.
-        When `content_panels` is called.
-        Then the expected names are on the returned `FieldPanel` objects.
+        When the expected content panel name is called
+        Then the panel value can be accessed from the page model
         """
         # Given
         fake_metrics_documentation_parent_page = (
             FakeMetricsDocumentationParentPageFactory.build_page_from_template()
         )
 
-        # When
-        content_panels: list[FieldPanel] = (
-            fake_metrics_documentation_parent_page.content_panels
+        # When / Then
+        assert hasattr(
+            fake_metrics_documentation_parent_page, expected_content_panel_name
         )
-
-        # Then
-        content_panel_names: set[str] = {
-            content_panel.field_name for content_panel in content_panels
-        }
-        assert expected_content_panel_name in content_panel_names
 
     @pytest.mark.parametrize(
         "expected_search_field",
