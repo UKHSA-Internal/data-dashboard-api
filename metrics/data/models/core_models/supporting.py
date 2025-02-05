@@ -49,7 +49,7 @@ class Topic(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["name"], name="`Topic` name should be unique"
+                fields=["name", "subtheme"], name="`Topic` and `SubTheme` should be a unique combinatio"
             )
         ]
 
