@@ -55,11 +55,12 @@ class TestSupportingCoreModels:
         Then an `IntegrityError` is raised
         """
         # Given
-        Topic.objects.create(name="COVID-19")
+        sub_theme = SubTheme.objects.create(name="respiratory")
+        Topic.objects.create(name="COVID-19", sub_theme=sub_theme)
 
         # When / Then
         with pytest.raises(django.db.utils.IntegrityError):
-            Topic.objects.create(name="COVID-19")
+            Topic.objects.create(name="COVID-19", sub_theme=sub_theme)
 
     @pytest.mark.django_db
     def test_metric_group_models_remain_unique(self):
