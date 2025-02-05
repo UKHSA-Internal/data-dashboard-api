@@ -92,8 +92,17 @@ class ChartOutput:
         )
 
     def _apply_hover_template_to_all_plots(self):
+        """
+        Note:
+            the plots hovertemplate property is used by plotly react
+            on the front-end to control hover text formatting.
+
+            To format dates using the hovertemplate you can use
+            `D3-time-format` specifiers. examples can be found at:
+            https://d3js.org/d3-time-format
+        """
         for plot in self.figure.data:
-            plot.hovertemplate = "%{y} <extra></extra>"
+            plot.hovertemplate = "%{y} (%{x|%d %b %Y})<extra></extra>"
 
     def _disable_clicks_on_legend(self):
         self.figure.layout.legend.itemclick = False

@@ -55,11 +55,31 @@ class TestSupportingCoreModels:
         Then an `IntegrityError` is raised
         """
         # Given
-        Topic.objects.create(name="COVID-19")
+        sub_theme = SubTheme.objects.create(name="respiratory")
+        name = "COVID-19"
+        Topic.objects.create(name=name, sub_theme=sub_theme)
 
         # When / Then
         with pytest.raises(django.db.utils.IntegrityError):
-            Topic.objects.create(name="COVID-19")
+            Topic.objects.create(name=name, sub_theme=sub_theme)
+
+    @pytest.mark.django_db
+    def test_topic_models_with_different_sub_themes_are_allowed(self):
+        """
+        Given a name for an existing `Topic` record
+        When another record is attempted to be created with the same name
+            but a different subtheme
+        Then this is allowed
+        """
+        # Given
+        sub_theme_respiratory = SubTheme.objects.create(name="respiratory")
+        sub_theme_cardiovascular = SubTheme.objects.create(name="cardiovascular")
+
+        name = "COVID-19"
+        Topic.objects.create(name=name, sub_theme=sub_theme_respiratory)
+
+        # When / Then
+        Topic.objects.create(name=name, sub_theme=sub_theme_cardiovascular)
 
     @pytest.mark.django_db
     def test_metric_group_models_remain_unique(self):
