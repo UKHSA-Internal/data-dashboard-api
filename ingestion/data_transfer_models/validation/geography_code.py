@@ -1,6 +1,13 @@
 from ingestion.utils import enums
 
 NATION_GEOGRAPHY_CODE_PREFIX = "E92"
+NATION_GEOGRAPHY_CODES = {
+    "England": "E92000001",
+    "Scotland": "S92000003",
+    "Wales": "W92000004",
+    "Northern Ireland": "N92000002",
+}
+
 LOWER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09")
 UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09", "E10")
 NHS_REGION_GEOGRAPHY_CODE_PREFIX = "E40"
@@ -66,10 +73,17 @@ def validate_geography_code(
             )
 
 
-def _validate_nation_geography_code(*, geography_code: str) -> str:
-    if geography_code.startswith(NATION_GEOGRAPHY_CODE_PREFIX):
-        return geography_code
-    raise ValueError
+def _validate_nation_geography_code(*, geography_code: str, geography: str) -> str:
+    try:
+        extracted_geography_code: str = NATION_GEOGRAPHY_CODES[geography]
+    except KeyError as error:
+        error_message = f"Invalid `Nation` geography: {geography}"
+        raise ValueError(error_message) from error
+
+    if geography_code != extracted_geography_code:
+        raise ValueError
+
+    return geography_code
 
 
 def _validate_lower_tier_local_authority_geography_code(*, geography_code: str) -> str:
