@@ -9,13 +9,16 @@ GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX = "E12"
 UKHSA_SUPER_REGION_PREFIX = "X2500"
 
 
-def validate_geography_code(*, geography_code: str, geography_type: str) -> str | None:
+def validate_geography_code(
+    *, geography_code: str, geography_type: str, geography: str
+) -> str | None:
     """Validates the `geography_code` value to check it conforms to the accepted format
 
     Args:
         geography_code: The associated geography code being validated
         geography_type: The `geography_type` which was
             included in the payload alongside the `geography_code`
+        geography: The name of the geography to be validated
 
     Returns:
         The input `geography_code` unchanged if
@@ -27,7 +30,10 @@ def validate_geography_code(*, geography_code: str, geography_type: str) -> str 
     """
     match geography_type:
         case enums.GeographyType.NATION.value:
-            return _validate_nation_geography_code(geography_code=geography_code)
+            return _validate_nation_geography_code(
+                geography_code=geography_code,
+                geography=geography,
+            )
         case enums.GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value:
             return _validate_upper_tier_local_authority_geography_code(
                 geography_code=geography_code
