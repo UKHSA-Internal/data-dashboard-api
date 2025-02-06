@@ -43,9 +43,23 @@ class TestIncomingBaseValidationForChildTheme:
                 "heat-alert_headline_matrixNumber",
                 "headline",
             ),
+            (
+                "infectious_disease",
+                "contact",
+                "mpox-clade-1b",
+                "mpox-clade-1b_cases_countByWeek",
+                "cases",
+            ),
+            (
+                "infectious_disease",
+                "contact",
+                "mpox-clade-1b",
+                "mpox-clade-1b_headline_countTotal",
+                "headline",
+            ),
         ),
     )
-    def test_child_theme_deemed_valid_infectious_disease(
+    def test_child_theme_deemed_valid_for_parent_theme(
         self,
         parent_theme: str,
         child_theme: str,
