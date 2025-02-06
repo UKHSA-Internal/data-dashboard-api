@@ -2,6 +2,9 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
+from ingestion.data_transfer_models.validation.geography_code import (
+    UNITED_KINGDOM_GEOGRAPHY_CODE,
+)
 from ingestion.utils import enums
 
 VALID_NATION_CODE = "E92000001"
@@ -423,6 +426,65 @@ class TestIncomingBaseValidationForNationGeographyCode:
         # Given
         payload = valid_payload_for_base_model
         payload["geography_type"] = enums.GeographyType.NATION.value
+        payload["geography_code"] = geography_code
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
+
+class TestIncomingBaseValidationForUnitedKingdomGeographyCode:
+    def test_valid_geography_code_validates_successfully(
+        self,
+        valid_payload_for_base_model: dict[str, str],
+    ):
+        """
+        Given a payload containing
+            the only valid `geography_code` and `geography`
+            for a `geography_type` of "United Kingdom"
+        When the `IncomingBaseDataModel` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.UNITED_KINGDOM.value
+        payload["geography"] = "United Kingdom"
+        payload["geography_code"] = UNITED_KINGDOM_GEOGRAPHY_CODE
+
+        # When
+        incoming_base_validation = IncomingBaseDataModel(**payload)
+
+        # Then
+        incoming_base_validation.model_validate(
+            incoming_base_validation,
+            strict=True,
+        )
+
+    @pytest.mark.parametrize(
+        "geography_code",
+        (
+            VALID_NATION_CODE,
+            VALID_NHS_REGION_CODE,
+            VALID_NHS_TRUST_CODE,
+            VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
+            VALID_UKHSA_REGION_CODE,
+            VALID_GOVERNMENT_OFFICE_REGION_CODE,
+        ),
+    )
+    def test_invalid_geography_code_throws_error(
+        self, geography_code: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a `geography_code`
+            which is not valid for
+            the "United Kingdom" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.UNITED_KINGDOM.value
         payload["geography_code"] = geography_code
 
         # When / Then

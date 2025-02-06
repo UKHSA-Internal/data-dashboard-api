@@ -2,6 +2,9 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
+from ingestion.data_transfer_models.validation.geography_code import (
+    UNITED_KINGDOM_GEOGRAPHY_CODE,
+)
 
 VALID_ENGLAND_NATION_CODE = "E92000001"
 VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE = "E06000059"
@@ -16,7 +19,7 @@ class TestIncomingBaseValidationForGeographyType:
     @pytest.mark.parametrize(
         "geography_type, geography_code",
         (
-            ("Nation", VALID_NATION_CODE),
+            ("United Kingdom", UNITED_KINGDOM_GEOGRAPHY_CODE),
             ("Nation", VALID_ENGLAND_NATION_CODE),
             ("Lower Tier Local Authority", VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE),
             ("NHS Region", VALID_NHS_REGION_CODE),
@@ -54,10 +57,8 @@ class TestIncomingBaseValidationForGeographyType:
     @pytest.mark.parametrize(
         "geography_type, geography_code",
         (
-            ("nation", VALID_NATION_CODE),
-            ("national", VALID_NATION_CODE),
-            ("NATION", VALID_NATION_CODE),
-            ("NATIONAL", VALID_NATION_CODE),
+            ("united kingdom", UNITED_KINGDOM_GEOGRAPHY_CODE),
+            ("uk", UNITED_KINGDOM_GEOGRAPHY_CODE),
             ("nation", VALID_ENGLAND_NATION_CODE),
             ("national", VALID_ENGLAND_NATION_CODE),
             ("NATION", VALID_ENGLAND_NATION_CODE),

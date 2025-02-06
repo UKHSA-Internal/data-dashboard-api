@@ -1,6 +1,6 @@
 from ingestion.utils import enums
 
-NATION_GEOGRAPHY_CODE_PREFIX = "E92"
+UNITED_KINGDOM_GEOGRAPHY_CODE = "K02000001"
 NATION_GEOGRAPHY_CODES = {
     "England": "E92000001",
     "Scotland": "S92000003",
@@ -69,6 +69,10 @@ def validate_geography_code(
             )
         case enums.GeographyType.UKHSA_SUPER_REGION.value:
             return _validate_ukhsa_super_region_geography_code(
+                geography_code=geography_code
+            )
+        case enums.GeographyType.UNITED_KINGDOM.value:
+            return _validate_united_kingdom_geography_code(
                 geography_code=geography_code
             )
 
@@ -185,6 +189,13 @@ def _validate_ukhsa_super_region_geography_code(*, geography_code: str) -> str:
         raise ValueError
 
     if not geography_code[-1].isdigit():
+        raise ValueError
+
+    return geography_code
+
+
+def _validate_united_kingdom_geography_code(*, geography_code: str):
+    if geography_code != UNITED_KINGDOM_GEOGRAPHY_CODE:
         raise ValueError
 
     return geography_code
