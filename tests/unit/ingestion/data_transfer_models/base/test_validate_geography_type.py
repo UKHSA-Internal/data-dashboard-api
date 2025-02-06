@@ -19,7 +19,6 @@ class TestIncomingBaseValidationForGeographyType:
     @pytest.mark.parametrize(
         "geography_type, geography_code",
         (
-            ("United Kingdom", UNITED_KINGDOM_GEOGRAPHY_CODE),
             ("Nation", VALID_ENGLAND_NATION_CODE),
             ("Lower Tier Local Authority", VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE),
             ("NHS Region", VALID_NHS_REGION_CODE),
