@@ -491,6 +491,34 @@ class TestIncomingBaseValidationForUnitedKingdomGeographyCode:
         with pytest.raises(ValidationError):
             IncomingBaseDataModel(**payload)
 
+    @pytest.mark.parametrize(
+        "geography",
+        (
+            "united kingdom",
+            "UK",
+            "England",
+            "Great Britain",
+        ),
+    )
+    def test_invalid_geography_name_throws_error(
+        self, geography: str, valid_payload_for_base_model: dict[str, str]
+    ):
+        """
+        Given a payload containing a `geography`
+            which is not valid for
+            the "United Kingdom" `geography_type`
+        When the `IncomingBaseDataModel` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = valid_payload_for_base_model
+        payload["geography_type"] = enums.GeographyType.UNITED_KINGDOM.value
+        payload["geography_code"] = UNITED_KINGDOM_GEOGRAPHY_CODE
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            IncomingBaseDataModel(**payload)
+
 
 class TestIncomingBaseValidationForGovernmentOfficeRegionGeographyCode:
     def test_valid_geography_code_validates_successfully(

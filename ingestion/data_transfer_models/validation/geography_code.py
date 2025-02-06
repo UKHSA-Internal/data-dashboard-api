@@ -73,7 +73,8 @@ def validate_geography_code(
             )
         case enums.GeographyType.UNITED_KINGDOM.value:
             return _validate_united_kingdom_geography_code(
-                geography_code=geography_code
+                geography_code=geography_code,
+                geography=geography,
             )
 
 
@@ -194,8 +195,11 @@ def _validate_ukhsa_super_region_geography_code(*, geography_code: str) -> str:
     return geography_code
 
 
-def _validate_united_kingdom_geography_code(*, geography_code: str):
+def _validate_united_kingdom_geography_code(*, geography: str, geography_code: str):
     if geography_code != UNITED_KINGDOM_GEOGRAPHY_CODE:
+        raise ValueError
+
+    if geography != "United Kingdom":
         raise ValueError
 
     return geography_code
