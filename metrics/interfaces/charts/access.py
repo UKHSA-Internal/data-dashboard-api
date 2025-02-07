@@ -43,6 +43,7 @@ class InvalidFileFormatError(Exception):
 class ChartOutput:
     figure: plotly.graph_objects.Figure
     description: str
+    is_headline: bool
 
     @property
     def interactive_chart_figure_output(self) -> dict:
@@ -101,8 +102,13 @@ class ChartOutput:
             `D3-time-format` specifiers. examples can be found at:
             https://d3js.org/d3-time-format
         """
+        hover_template = "%{y} (%{x|%d %b %Y})<extra></extra>"
+
+        if self.is_headline:
+            hover_template = "%{y} (%{x})<extra></extra>"
+
         for plot in self.figure.data:
-            plot.hovertemplate = "%{y} (%{x|%d %b %Y})<extra></extra>"
+            plot.hovertemplate = hover_template
 
     def _disable_clicks_on_legend(self):
         self.figure.layout.legend.itemclick = False
@@ -165,6 +171,7 @@ class ChartsInterface:
         description = self.build_chart_description(
             plots_data=chart_generation_payload.plots
         )
+        is_headline = DataSourceFileType[self.metric_group].is_headline
 
         match self.chart_type:
             case ChartTypes.bar.value:
@@ -184,7 +191,11 @@ class ChartsInterface:
                     chart_generation_payload=chart_generation_payload
                 )
 
-        return ChartOutput(figure=figure, description=description)
+        return ChartOutput(
+            figure=figure,
+            description=description,
+            is_headline=is_headline,
+        )
 
     @classmethod
     def build_chart_description(cls, *, plots_data: list[PlotGenerationData]) -> str:
