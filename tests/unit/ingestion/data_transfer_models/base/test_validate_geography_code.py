@@ -7,7 +7,7 @@ from ingestion.data_transfer_models.validation.geography_code import (
 )
 from ingestion.utils import enums
 
-VALID_NATION_CODE = "E92000001"
+VALID_ENGLAND_NATION_CODE = "E92000001"
 VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE = "E06000059"
 VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE = "E10000024"
 VALID_NHS_REGION_CODE = "E40000003"
@@ -59,7 +59,7 @@ class TestIncomingBaseValidationForNHSTrustGeographyCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
             VALID_NHS_REGION_CODE,
             VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
@@ -171,7 +171,7 @@ class TestIncomingBaseValidationForLowerTierLocalAuthorityGeographyCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_NHS_TRUST_CODE,
             VALID_NHS_REGION_CODE,
             VALID_UKHSA_REGION_CODE,
@@ -239,7 +239,7 @@ class TestIncomingBaseValidationForUpperTierLocalAuthorityGeographyCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_NHS_TRUST_CODE,
             VALID_NHS_REGION_CODE,
             VALID_UKHSA_REGION_CODE,
@@ -305,7 +305,7 @@ class TestIncomingBaseValidationForNHSRegionGeographyCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_NHS_TRUST_CODE,
             VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
             VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
@@ -463,7 +463,7 @@ class TestIncomingBaseValidationForUnitedKingdomGeographyCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_NHS_REGION_CODE,
             VALID_NHS_TRUST_CODE,
             VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
@@ -552,7 +552,7 @@ class TestIncomingBaseValidationForGovernmentOfficeRegionGeographyCode:
             VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
             VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
             VALID_UKHSA_REGION_CODE,
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
         ),
     )
     def test_invalid_geography_code_throws_error(
@@ -616,7 +616,7 @@ class TestIncomingBaseValidationForUKHSARegionGeographyCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_NHS_TRUST_CODE,
             VALID_NHS_REGION_CODE,
             VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
@@ -680,7 +680,7 @@ class TestIncomingBaseValidationForUKHSASuperRegionGeographyCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_NHS_TRUST_CODE,
             VALID_NHS_REGION_CODE,
             VALID_UKHSA_REGION_CODE,
@@ -748,7 +748,7 @@ class TestIncomingBaseValidationForIntegratedCareBoardCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
             VALID_NHS_REGION_CODE,
             VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
@@ -862,7 +862,7 @@ class TestIncomingBaseValidationForSubIntegratedCareBoardCode:
     @pytest.mark.parametrize(
         "geography_code",
         (
-            VALID_NATION_CODE,
+            VALID_ENGLAND_NATION_CODE,
             VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE,
             VALID_NHS_REGION_CODE,
             VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE,
