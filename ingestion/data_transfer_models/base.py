@@ -117,6 +117,7 @@ class IncomingBaseDataModel(BaseModel):
         validation.validate_geography_code(
             geography_code=self.geography_code,
             geography_type=self.geography_type,
+            geography=self.geography,
         )
         return self
 

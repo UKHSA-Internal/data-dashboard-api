@@ -2,8 +2,11 @@ import pytest
 from pydantic_core._pydantic_core import ValidationError
 
 from ingestion.data_transfer_models.base import IncomingBaseDataModel
+from ingestion.data_transfer_models.validation.geography_code import (
+    UNITED_KINGDOM_GEOGRAPHY_CODE,
+)
 
-VALID_NATION_CODE = "E92000001"
+VALID_ENGLAND_NATION_CODE = "E92000001"
 VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE = "E06000059"
 VALID_NHS_REGION_CODE = "E40000003"
 VALID_NHS_TRUST_CODE = "RY6"
@@ -16,7 +19,7 @@ class TestIncomingBaseValidationForGeographyType:
     @pytest.mark.parametrize(
         "geography_type, geography_code",
         (
-            ("Nation", VALID_NATION_CODE),
+            ("Nation", VALID_ENGLAND_NATION_CODE),
             ("Lower Tier Local Authority", VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE),
             ("NHS Region", VALID_NHS_REGION_CODE),
             ("NHS Trust", VALID_NHS_TRUST_CODE),
@@ -53,10 +56,12 @@ class TestIncomingBaseValidationForGeographyType:
     @pytest.mark.parametrize(
         "geography_type, geography_code",
         (
-            ("nation", VALID_NATION_CODE),
-            ("national", VALID_NATION_CODE),
-            ("NATION", VALID_NATION_CODE),
-            ("NATIONAL", VALID_NATION_CODE),
+            ("united kingdom", UNITED_KINGDOM_GEOGRAPHY_CODE),
+            ("uk", UNITED_KINGDOM_GEOGRAPHY_CODE),
+            ("nation", VALID_ENGLAND_NATION_CODE),
+            ("national", VALID_ENGLAND_NATION_CODE),
+            ("NATION", VALID_ENGLAND_NATION_CODE),
+            ("NATIONAL", VALID_ENGLAND_NATION_CODE),
             ("lower tier local authority", VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE),
             ("LTLA", VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE),
             ("ltla", VALID_LOWER_TIER_LOCAL_AUTHORITY_CODE),

@@ -1,6 +1,13 @@
 from ingestion.utils import enums
 
-NATION_GEOGRAPHY_CODE_PREFIX = "E92"
+UNITED_KINGDOM_GEOGRAPHY_CODE = "K02000001"
+NATION_GEOGRAPHY_CODES = {
+    "England": "E92000001",
+    "Scotland": "S92000003",
+    "Wales": "W92000004",
+    "Northern Ireland": "N92000002",
+}
+
 LOWER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09")
 UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09", "E10")
 NHS_REGION_GEOGRAPHY_CODE_PREFIX = "E40"
@@ -9,13 +16,16 @@ GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX = "E12"
 UKHSA_SUPER_REGION_PREFIX = "X2500"
 
 
-def validate_geography_code(*, geography_code: str, geography_type: str) -> str | None:
+def validate_geography_code(
+    *, geography_code: str, geography_type: str, geography: str
+) -> str | None:
     """Validates the `geography_code` value to check it conforms to the accepted format
 
     Args:
         geography_code: The associated geography code being validated
         geography_type: The `geography_type` which was
             included in the payload alongside the `geography_code`
+        geography: The name of the geography to be validated
 
     Returns:
         The input `geography_code` unchanged if
@@ -27,7 +37,10 @@ def validate_geography_code(*, geography_code: str, geography_type: str) -> str 
     """
     match geography_type:
         case enums.GeographyType.NATION.value:
-            return _validate_nation_geography_code(geography_code=geography_code)
+            return _validate_nation_geography_code(
+                geography_code=geography_code,
+                geography=geography,
+            )
         case enums.GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value:
             return _validate_upper_tier_local_authority_geography_code(
                 geography_code=geography_code
@@ -58,12 +71,24 @@ def validate_geography_code(*, geography_code: str, geography_type: str) -> str 
             return _validate_ukhsa_super_region_geography_code(
                 geography_code=geography_code
             )
+        case enums.GeographyType.UNITED_KINGDOM.value:
+            return _validate_united_kingdom_geography_code(
+                geography_code=geography_code,
+                geography=geography,
+            )
 
 
-def _validate_nation_geography_code(*, geography_code: str) -> str:
-    if geography_code.startswith(NATION_GEOGRAPHY_CODE_PREFIX):
-        return geography_code
-    raise ValueError
+def _validate_nation_geography_code(*, geography_code: str, geography: str) -> str:
+    try:
+        extracted_geography_code: str = NATION_GEOGRAPHY_CODES[geography]
+    except KeyError as error:
+        error_message = f"Invalid `Nation` geography: {geography}"
+        raise ValueError(error_message) from error
+
+    if geography_code != extracted_geography_code:
+        raise ValueError
+
+    return geography_code
 
 
 def _validate_lower_tier_local_authority_geography_code(*, geography_code: str) -> str:
@@ -165,6 +190,16 @@ def _validate_ukhsa_super_region_geography_code(*, geography_code: str) -> str:
         raise ValueError
 
     if not geography_code[-1].isdigit():
+        raise ValueError
+
+    return geography_code
+
+
+def _validate_united_kingdom_geography_code(*, geography: str, geography_code: str):
+    if geography_code != UNITED_KINGDOM_GEOGRAPHY_CODE:
+        raise ValueError
+
+    if geography != "United Kingdom":
         raise ValueError
 
     return geography_code
