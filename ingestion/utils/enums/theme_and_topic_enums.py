@@ -7,6 +7,7 @@ class _InfectiousDiseaseChildTheme(Enum):
     BLOODSTREAM_INFECTION = "bloodstream_infection"
     GASTROINTESTINAL = "gastrointestinal"
     ANTIMICROBIAL_RESISTANCE = "antimicrobial_resistance"
+    CONTACT = "contact"
 
 
 class _ExtremeEventChildTheme(Enum):
@@ -19,6 +20,10 @@ class _NonCommunicableChildTheme(Enum):
 
 class _VaccinePreventableTopic(Enum):
     MEASLES = "Measles"
+
+
+class _ContactTopic(Enum):
+    MPOX_CLADE_1B = "mpox-clade-1b"
 
 
 class _WeatherAlertTopic(Enum):
@@ -81,3 +86,4 @@ class Topic(BaseEnum):
     BLOODSTREAM_INFECTION = _BloodstreamInfectionTopic
     GASTROINTESTINAL = _GastrointestinalTopic
     ANTIMICROBIAL_RESISTANCE = _AntimicrobialResistanceTopic
+    CONTACT = _ContactTopic
