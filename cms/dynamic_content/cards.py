@@ -194,7 +194,13 @@ class SimplifiedChartWithLink(blocks.StructBlock):
 class ChartCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+        required=False,
+        help_text=help_texts.OPTIONAL_BODY_FIELD
+    )
+    contextual_urls = ContextUrlBlock(
+        required=False,
+        help_text=help_texts.OPTIONAL_CONTEXT_URL
+    )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
