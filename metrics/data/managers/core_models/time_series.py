@@ -6,11 +6,10 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
-from typing import Self
+from typing import Self, List
 
 from django.db import models
 from django.utils import timezone
-
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""
@@ -146,6 +145,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        is_private: bool = False,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
@@ -475,6 +475,7 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        is_private: bool,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -551,6 +552,7 @@ class CoreTimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+            is_private=is_private,
         )
 
     def query_for_superseded_data(

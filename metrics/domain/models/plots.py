@@ -35,6 +35,7 @@ class PlotParameters(BaseModel):
     override_y_axis_choice_to_none: bool = False
     use_smooth_lines: bool = True
     use_markers: bool = False
+    is_private: bool = False
 
     @property
     def topic_name(self) -> str:
@@ -122,6 +123,7 @@ class PlotParameters(BaseModel):
             "geography_type_name": self.geography_type_name or "",
             "sex": self.sex or "",
             "age": self.age or "",
+            "is_private": self.is_private,
         }
 
         if self.is_timeseries_data:

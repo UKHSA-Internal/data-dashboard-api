@@ -52,6 +52,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        is_private: bool = False,
     ) -> FakeQuerySet:
         date_from = _convert_string_to_date(date_string=date_from)
 

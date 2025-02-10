@@ -14,6 +14,8 @@ from metrics.data.models.core_models.supporting import Age, Geography, Metric, S
 
 
 class CoreTimeSeries(models.Model):
+    is_private = models.BooleanField(default=True)
+
     metric = models.ForeignKey(
         to=Metric,
         on_delete=models.SET_NULL,

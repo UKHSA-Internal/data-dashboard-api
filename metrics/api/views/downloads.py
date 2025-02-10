@@ -74,8 +74,8 @@ class DownloadsView(APIView):
         serializer = self._get_serializer_class(
             queryset=queryset, metric_group=metric_group, request=request,
         )
-
-        response = Response(serializer.data)
+        data = [item for item in serializer.data if item is not None]
+        response = Response(data)
         response["Content-Type"] = "application/json"
         response["Content-Disposition"] = "attachment; filename=chart_download.json"
         return response
@@ -102,10 +102,9 @@ class DownloadsView(APIView):
 
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
-
-    # @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
-    # @cache_response()
     @authorised_route
+    @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
+    @cache_response()
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 

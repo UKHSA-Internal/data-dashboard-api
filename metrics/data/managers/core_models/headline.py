@@ -152,6 +152,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         sex: str,
         age: str,
         geography_code: str = "",
+        is_private: bool = False,
     ) -> Self:
         """Filters by the given `topic_name` and `metric_name`
 
@@ -267,6 +268,7 @@ class CoreHeadlineManager(models.Manager):
         stratum_name: str = "",
         sex: str = "",
         age: str = "",
+        is_private: bool = False,
     ):
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
@@ -314,6 +316,7 @@ class CoreHeadlineManager(models.Manager):
             stratum_name=stratum_name,
             age=age,
             sex=sex,
+            is_private=is_private,
         )[:1]
 
         if fields_to_export:

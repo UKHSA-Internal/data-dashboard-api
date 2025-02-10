@@ -4,6 +4,8 @@ import pytest
 from dateutil.relativedelta import relativedelta
 from wagtail.models import Page
 from wagtail.models.i18n import Locale
+from unittest import mock
+from unittest.mock import patch, MagicMock
 
 from cms.home.models.home_page import UKHSARootPage
 from metrics.domain.models import (
@@ -15,6 +17,14 @@ from metrics.domain.common.utils import ChartTypes
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
+from metrics.api.models import (
+    ApiGroup,
+    ApiPermission,
+)
+from metrics.data.models.core_models import (
+    Theme,
+    SubTheme,
+)
 
 DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
 
@@ -331,3 +341,12 @@ def example_trend_number_block() -> dict[str, str]:
 @pytest.fixture
 def timestamp_2_months_from_now() -> datetime.datetime:
     return datetime.datetime.now() + relativedelta(months=2)
+
+
+@pytest.fixture
+def mock_jwt_decode():
+    with patch("jwt.decode") as mock:
+        def inner(group_id):
+            mock.return_value = {"group_id": group_id}
+            return mock
+        yield inner

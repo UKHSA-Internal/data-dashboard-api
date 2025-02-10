@@ -4,7 +4,7 @@ from metrics.data.models.core_models import CoreTimeSeries
 from metrics.utils.auth import serializer_permissions
 
 
-# @serializer_permissions(["topic"])
+@serializer_permissions()
 class CoreTimeSeriesSerializer(serializers.ModelSerializer):
     """This serializer returns a set of serialized fields from the `CoreTimesSeries` and related models.
 
@@ -50,6 +50,7 @@ class CoreTimeSeriesSerializer(serializers.ModelSerializer):
             "date",
             "metric_value",
             "in_reporting_delay_period",
+            "is_private",
         ]
 
     @classmethod

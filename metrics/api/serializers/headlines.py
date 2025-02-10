@@ -151,6 +151,7 @@ class CoreHeadlineSerializer(serializers.ModelSerializer):
             "period_start",
             "period_end",
             "metric_value",
+            "is_private",
         ]
 
     @classmethod
