@@ -15,7 +15,6 @@ from metrics.domain.charts import (
 )
 from metrics.domain.common.utils import (
     ChartTypes,
-    DataSourceFileType,
     extract_metric_group_from_metric,
 )
 from metrics.domain.models import (
@@ -137,6 +136,10 @@ class ChartsInterface:
 
         self._latest_date: str = ""
 
+    @property
+    def is_headline_data(self) -> bool:
+        return self.chart_request_params.plots[0].is_headline_data
+
     def _set_core_model_manager(self) -> Manager:
         """Returns `core_model_manager` based on the `metric_group`
 
@@ -150,7 +153,7 @@ class ChartsInterface:
         Returns:
             Manager: either `CoreTimeseries` or `CoreHeadline`
         """
-        if DataSourceFileType[self.metric_group].is_headline:
+        if self.is_headline_data:
             return DEFAULT_CORE_HEADLINE_MANAGER
 
         return DEFAULT_CORE_TIME_SERIES_MANAGER
@@ -171,7 +174,6 @@ class ChartsInterface:
         description = self.build_chart_description(
             plots_data=chart_generation_payload.plots
         )
-        is_headline = DataSourceFileType[self.metric_group].is_headline
 
         match self.chart_type:
             case ChartTypes.bar.value:
@@ -194,7 +196,7 @@ class ChartsInterface:
         return ChartOutput(
             figure=figure,
             description=description,
-            is_headline=is_headline,
+            is_headline=self.is_headline_data,
         )
 
     @classmethod
