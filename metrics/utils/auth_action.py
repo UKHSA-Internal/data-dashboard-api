@@ -1,9 +1,6 @@
-from abc import ABC, abstractmethod
-from typing import List, Dict, Any
-
+from typing import Any
 
 from metrics.api.models import (
-    ApiGroup,
     ApiPermission,
 )
 
@@ -12,7 +9,7 @@ def is_wildcard(group_permission: ApiPermission, attr: str) -> bool:
     return not getattr(group_permission, attr)
 
 
-def new_match_dict() -> Dict[str, bool]:
+def new_match_dict() -> dict[str, bool]:
     return {
         "theme": False,
         "sub_theme": False,
@@ -28,7 +25,10 @@ def new_match_dict() -> Dict[str, bool]:
 class MatchThemeSubthemeAction:
 
     def execute(self, data: Any, group_permission: ApiPermission) -> bool:
-        perm_theme_subtheme = [group_permission.theme.name, group_permission.sub_theme.name]
+        perm_theme_subtheme = [
+            group_permission.theme.name,
+            group_permission.sub_theme.name,
+        ]
         data_theme_subtheme = [data["theme"], data["sub_theme"]]
         return perm_theme_subtheme == data_theme_subtheme
 
@@ -54,7 +54,10 @@ class MatchFieldAction:
     def execute(self, data: Any, group_permission: ApiPermission) -> bool:
         permission_stratum = getattr(group_permission, self.field_name, None)
         permission_value = getattr(permission_stratum, "name", None)
-        if is_wildcard(group_permission, self.field_name) or data[self.field_name] == permission_value:
+        if (
+            is_wildcard(group_permission, self.field_name)
+            or data[self.field_name] == permission_value
+        ):
             return True
         return False
 

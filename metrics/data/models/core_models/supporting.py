@@ -76,7 +76,6 @@ class MetricGroup(models.Model):
         ]
 
 
-
 class Metric(models.Model):
     name = models.CharField(max_length=LARGE_CHAR_COLUMN_MAX_CONSTRAINT)
 
@@ -138,11 +137,11 @@ class Geography(models.Model):
                 fields=["name", "geography_type"],
                 name="`Geography` and `GeographyType` should be a unique combination",
             )
-
         ]
 
     def __str__(self):
         return self.name
+
 
 class Stratum(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)

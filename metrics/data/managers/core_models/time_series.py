@@ -6,10 +6,11 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
-from typing import Self, List
+from typing import Self
 
 from django.db import models
 from django.utils import timezone
+
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreTimeSeriesManager`"""

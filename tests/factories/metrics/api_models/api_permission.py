@@ -23,17 +23,17 @@ class ApiPermissionFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def create_record(
-            cls,
-            name: str = "permission1",
-            theme_name: str = "infectious_disease",
-            sub_theme_name: str = "respiratory",
-            topic_name: str = "COVID-19",
-            metric_name: str = "COVID-19_headline_positivity_latest",
-            geography_name: str = "England",
-            geography_type_name: str = "Nation",
-            stratum_name: str = "default",
-            age_name: str = "all",
-            **kwargs,
+        cls,
+        name: str = "permission1",
+        theme_name: str = "infectious_disease",
+        sub_theme_name: str = "respiratory",
+        topic_name: str = "COVID-19",
+        metric_name: str = "COVID-19_headline_positivity_latest",
+        geography_name: str = "England",
+        geography_type_name: str = "Nation",
+        stratum_name: str = "default",
+        age_name: str = "all",
+        **kwargs,
     ):
         sub_theme = None
         topic = None
@@ -57,9 +57,10 @@ class ApiPermissionFactory(factory.django.DjangoModelFactory):
                 name=topic_name, sub_theme_id=sub_theme.id
             )
 
-
         if metric_name:
-            metric, _ = Metric.objects.get_or_create(name=metric_name, topic_id=topic.id)
+            metric, _ = Metric.objects.get_or_create(
+                name=metric_name, topic_id=topic.id
+            )
 
         if geography_type_name:
             geography_type, _ = GeographyType.objects.get_or_create(
@@ -92,12 +93,12 @@ class ApiPermissionFactory(factory.django.DjangoModelFactory):
             geography=geography,
             stratum=stratum,
             age=age,
-            **kwargs
+            **kwargs,
         )
 
     @classmethod
     def _make_datetime_timezone_aware(
-            cls, datetime_obj: str | datetime.datetime | None
+        cls, datetime_obj: str | datetime.datetime | None
     ) -> datetime.datetime:
 
         if datetime_obj is None:

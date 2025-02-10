@@ -44,7 +44,10 @@ class DownloadsView(APIView):
     renderer_classes = (JSONOpenAPIRenderer,)
 
     def _get_serializer_class(
-        self, queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet, metric_group: str, request
+        self,
+        queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
+        metric_group: str,
+        request,
     ) -> CoreHeadlineSerializer | CoreTimeSeriesSerializer:
         """Returns the appropriate serializer class based on the
             provided metric_group.
@@ -58,7 +61,9 @@ class DownloadsView(APIView):
                 return self.headline_serializer_class(queryset, many=True)
 
             if DataSourceFileType[metric_group].is_timeseries:
-                return self.timeseries_serializer_class(queryset, many=True, context={"request": request})
+                return self.timeseries_serializer_class(
+                    queryset, many=True, context={"request": request}
+                )
 
         except KeyError:
             raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE)
@@ -68,11 +73,13 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
-            request
+        request,
     ) -> Response:
         # Return the requested data in json format
         serializer = self._get_serializer_class(
-            queryset=queryset, metric_group=metric_group, request=request,
+            queryset=queryset,
+            metric_group=metric_group,
+            request=request,
         )
         data = [item for item in serializer.data if item is not None]
         response = Response(data)
@@ -85,14 +92,16 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
-            request,
+        request,
     ) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
 
         serializer = self._get_serializer_class(
-            queryset=queryset, metric_group=metric_group, request=request,
+            queryset=queryset,
+            metric_group=metric_group,
+            request=request,
         )
 
         if DataSourceFileType[metric_group].is_headline:
@@ -149,11 +158,15 @@ class DownloadsView(APIView):
         match file_format:
             case "json":
                 return self._handle_json(
-                    queryset=queryset, metric_group=chart_plot_models.metric_group, request=request,
+                    queryset=queryset,
+                    metric_group=chart_plot_models.metric_group,
+                    request=request,
                 )
             case "csv":
                 return self._handle_csv(
-                    queryset=queryset, metric_group=chart_plot_models.metric_group, request=request,
+                    queryset=queryset,
+                    metric_group=chart_plot_models.metric_group,
+                    request=request,
                 )
 
 

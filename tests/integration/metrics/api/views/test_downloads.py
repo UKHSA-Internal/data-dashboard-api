@@ -14,10 +14,15 @@ from metrics.data.models.core_models import CoreTimeSeries, Geography, CoreHeadl
 from metrics.api.models.api_groups import ApiGroup
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
-from tests.factories.metrics.api_models.api_permission import ApiPermission, ApiPermissionFactory
+from tests.factories.metrics.api_models.api_permission import (
+    ApiPermission,
+    ApiPermissionFactory,
+)
 from tests.factories.metrics.api_models.api_group import ApiGroupFactory
 from tests.factories.metrics.api_models.mock_data.api_auth import api_permissions
-from tests.factories.metrics.api_models.mock_data.core_timeseries import core_timeseries_list
+from tests.factories.metrics.api_models.mock_data.core_timeseries import (
+    core_timeseries_list,
+)
 
 
 def create_example_api_permissions(permissions: List[Dict]) -> List[ApiPermission]:
@@ -55,20 +60,17 @@ def create_example_core_time_series_records() -> List[CoreTimeSeries]:
             year=core_timeseries["year"],
             epiweek=core_timeseries["epiweek"],
             date=core_timeseries["date"],
-            in_reporting_delay_period=core_timeseries[
-                "in_reporting_delay_period"
-            ],
+            in_reporting_delay_period=core_timeseries["in_reporting_delay_period"],
             is_private=core_timeseries["is_private"],
         )
         core_timeseries_data.append(record)
     return core_timeseries_data
 
 
-def create_example_api_group_records(name: str, permissions: List[ApiPermission]) -> ApiGroup:
-        return ApiGroupFactory.create_record(
-            name=name,
-            permissions=permissions
-        )
+def create_example_api_group_records(
+    name: str, permissions: List[ApiPermission]
+) -> ApiGroup:
+    return ApiGroupFactory.create_record(name=name, permissions=permissions)
 
 
 class TestDownloadsView:
@@ -131,24 +133,24 @@ class TestDownloadsView:
             "file_format": "csv",
             "plots": [
                 {
-                    "metric":  core_timeseries_list[0]["metric"],
-                    "topic":  core_timeseries_list[0]["topic"],
-                    "stratum":  core_timeseries_list[0]["stratum"],
-                    "age":  core_timeseries_list[0]["age"],
-                    "sex":  core_timeseries_list[0]["sex"],
-                    "geography":  core_timeseries_list[0]["geography"],
-                    "geography_type":  core_timeseries_list[0]["geography_type"],
+                    "metric": core_timeseries_list[0]["metric"],
+                    "topic": core_timeseries_list[0]["topic"],
+                    "stratum": core_timeseries_list[0]["stratum"],
+                    "age": core_timeseries_list[0]["age"],
+                    "sex": core_timeseries_list[0]["sex"],
+                    "geography": core_timeseries_list[0]["geography"],
+                    "geography_type": core_timeseries_list[0]["geography_type"],
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
                 },
                 {
-                    "metric":  core_timeseries_list[1]["metric"],
-                    "topic":  core_timeseries_list[1]["topic"],
-                    "stratum":  core_timeseries_list[1]["stratum"],
-                    "age":  core_timeseries_list[1]["age"],
-                    "sex":  core_timeseries_list[1]["sex"],
-                    "geography":  core_timeseries_list[1]["geography"],
-                    "geography_type":  core_timeseries_list[1]["geography_type"],
+                    "metric": core_timeseries_list[1]["metric"],
+                    "topic": core_timeseries_list[1]["topic"],
+                    "stratum": core_timeseries_list[1]["stratum"],
+                    "age": core_timeseries_list[1]["age"],
+                    "sex": core_timeseries_list[1]["sex"],
+                    "geography": core_timeseries_list[1]["geography"],
+                    "geography_type": core_timeseries_list[1]["geography_type"],
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
                 },
@@ -162,7 +164,7 @@ class TestDownloadsView:
                     "geography_type": core_timeseries_list[2]["geography_type"],
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
-                }
+                },
             ],
         }
 
@@ -511,42 +513,57 @@ class TestDownloadsView:
             ("group7", [api_permissions[6]], ["infectious_disease", "respiratory"], 1),
             ("group8", [api_permissions[7]], ["infectious_disease", "respiratory"], 1),
             ("group9", [api_permissions[8]], ["infectious_disease", "respiratory"], 1),
-            ("group10", [api_permissions[9]],["infectious_disease", "respiratory"], 1),
-            ("group11", [api_permissions[10]], ["infectious_disease", "respiratory"], 1),
+            ("group10", [api_permissions[9]], ["infectious_disease", "respiratory"], 1),
             (
-                    "group12",
-                    [api_permissions[0], api_permissions[1]],
-                    ["non-communicable", "respiratory", "infectious_disease", "respiratory"],
-                    3,
+                "group11",
+                [api_permissions[10]],
+                ["infectious_disease", "respiratory"],
+                1,
             ),
             (
-                    "group13",
-                    [api_permissions[2], api_permissions[3]],
-                    ["non-communicable", "respiratory", "infectious_disease", "respiratory"],
-                    3,
+                "group12",
+                [api_permissions[0], api_permissions[1]],
+                [
+                    "non-communicable",
+                    "respiratory",
+                    "infectious_disease",
+                    "respiratory",
+                ],
+                3,
             ),
             (
-                    "group14",
-                    [api_permissions[0], api_permissions[4]],
-                    ["non-communicable", "respiratory"],
-                    2,
+                "group13",
+                [api_permissions[2], api_permissions[3]],
+                [
+                    "non-communicable",
+                    "respiratory",
+                    "infectious_disease",
+                    "respiratory",
+                ],
+                3,
             ),
             (
-                    "group14",
-                    [api_permissions[1], api_permissions[5]],
-                    ["infectious_disease", "respiratory"],
-                    2,
+                "group14",
+                [api_permissions[0], api_permissions[4]],
+                ["non-communicable", "respiratory"],
+                2,
             ),
-        ]
+            (
+                "group14",
+                [api_permissions[1], api_permissions[5]],
+                ["infectious_disease", "respiratory"],
+                2,
+            ),
+        ],
     )
     @pytest.mark.django_db
     def test_download_timeseries_with_single_auth_group(
-            self,
-            mock_jwt_decode,
-            group_name,
-            permissions,
-            attrs,
-            data_len,
+        self,
+        mock_jwt_decode,
+        group_name,
+        permissions,
+        attrs,
+        data_len,
     ):
         os.environ["PRIVATE_API_INSTANCE"] = "1"
         client = APIClient()

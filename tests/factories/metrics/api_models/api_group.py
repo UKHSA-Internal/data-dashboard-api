@@ -19,10 +19,10 @@ class ApiGroupFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def create_record(
-            cls,
-            name: str = "default",
-            permissions: List[ApiPermission] = [],
-            **kwargs,
+        cls,
+        name: str = "default",
+        permissions: List[ApiPermission] = [],
+        **kwargs,
     ):
 
         group = cls.create(name=name, **kwargs)
@@ -33,7 +33,7 @@ class ApiGroupFactory(factory.django.DjangoModelFactory):
 
     @classmethod
     def _make_datetime_timezone_aware(
-            cls, datetime_obj: str | datetime.datetime | None
+        cls, datetime_obj: str | datetime.datetime | None
     ) -> datetime.datetime:
 
         if datetime_obj is None:

@@ -32,6 +32,7 @@ core_headline_data = {
     "is_private": False,
 }
 
+
 class TestMatchTopLevelFieldsAction:
     @pytest.mark.parametrize(
         "field_name,field_value,expected",
@@ -40,7 +41,7 @@ class TestMatchTopLevelFieldsAction:
             ("theme", "WRONG_VALUE", False),
             ("sub_theme", "respiratory", True),
             ("sub_theme", "WRONG_VALUE", False),
-        ]
+        ],
     )
     @pytest.mark.django_db
     def test_execute(self, field_name, field_value, expected):
@@ -64,7 +65,7 @@ class TestMatchThemeSubthemeAction:
             ("infectious_disease", "respiratory", True),
             ("infectious_disease", "WRONG_VALUE", False),
             ("WRONG_VALUE", "respiratory", False),
-        ]
+        ],
     )
     @pytest.mark.django_db
     def test_execute(self, theme_name, subtheme_name, expected):
@@ -96,7 +97,7 @@ class TestMatchFieldAction:
             ("sub_theme", "WRONG_VALUE", False),
             ("topic", "COVID-19", True),
             ("topic", "WRONG_VALUE", False),
-        ]
+        ],
     )
     @pytest.mark.django_db
     def test_execute(self, field_name, field_value, expected):
@@ -117,18 +118,81 @@ class TestValidationAction:
     @pytest.mark.parametrize(
         "matched_plots,did_match",
         [
-            ([{"theme": False, "sub_theme": False, "topic": False, "geography_type": False, "geography": False}], False),
-            ([{"theme": True, "sub_theme": True, "topic": True, "geography_type": False, "geography": True}], False),
-            ([{"theme": True, "sub_theme": True, "topic": True, "geography_type": True, "geography": True}], True),
-            ([
-                 {"theme": False, "sub_theme": True, "topic": True, "geography_type": True, "geography": True},
-                 {"theme": False, "sub_theme": False, "topic": False, "geography_type": False, "geography": False}
-             ], False),
-            ([
-                 {"theme": True, "sub_theme": True, "topic": True, "geography_type": True, "geography": True},
-                 {"theme": False, "sub_theme": False, "topic": False, "geography_type": False, "geography": False}
-             ], True),
-        ]
+            (
+                [
+                    {
+                        "theme": False,
+                        "sub_theme": False,
+                        "topic": False,
+                        "geography_type": False,
+                        "geography": False,
+                    }
+                ],
+                False,
+            ),
+            (
+                [
+                    {
+                        "theme": True,
+                        "sub_theme": True,
+                        "topic": True,
+                        "geography_type": False,
+                        "geography": True,
+                    }
+                ],
+                False,
+            ),
+            (
+                [
+                    {
+                        "theme": True,
+                        "sub_theme": True,
+                        "topic": True,
+                        "geography_type": True,
+                        "geography": True,
+                    }
+                ],
+                True,
+            ),
+            (
+                [
+                    {
+                        "theme": False,
+                        "sub_theme": True,
+                        "topic": True,
+                        "geography_type": True,
+                        "geography": True,
+                    },
+                    {
+                        "theme": False,
+                        "sub_theme": False,
+                        "topic": False,
+                        "geography_type": False,
+                        "geography": False,
+                    },
+                ],
+                False,
+            ),
+            (
+                [
+                    {
+                        "theme": True,
+                        "sub_theme": True,
+                        "topic": True,
+                        "geography_type": True,
+                        "geography": True,
+                    },
+                    {
+                        "theme": False,
+                        "sub_theme": False,
+                        "topic": False,
+                        "geography_type": False,
+                        "geography": False,
+                    },
+                ],
+                True,
+            ),
+        ],
     )
     def test_execute(self, matched_plots: List[Dict], did_match: bool):
         validated_action = ValidationAction()
@@ -149,6 +213,7 @@ def mock_request():
     mock_req = MagicMock()
     mock_req.group_permissions = [MagicMock()]
     return mock_req
+
 
 @pytest.fixture
 def mock_serializer(mock_request):
@@ -171,29 +236,35 @@ def test_serializer_permissions_non_private_api(mock_serializer):
     "action1,action2,action3,is_private,expected",
     [
         (True, True, True, True, True),
-    ]
+        (False, True, True, True, False),
+        (True, False, True, True, False),
+        (True, True, False, True, False),
+    ],
 )
-def test_serializer_permissions_private_api_with_match(mock_serializer, action1, action2, action3, is_private, expected):
+def test_serializer_permissions_private_api_with_match(
+    mock_serializer, action1, action2, action3, is_private, expected
+):
     with patch.dict(os.environ, {"PRIVATE_API_INSTANCE": "1"}):
         serializer = mock_serializer
-
+        core_headline_data["is_private"] = is_private
         test_data = copy.deepcopy(core_headline_data)
 
-        with patch("metrics.utils.auth_action.MatchThemeSubthemeAction.execute") as mock_theme, \
-            patch("metrics.utils.auth_action.MatchTopLevelFieldsAction.execute") as mock_top, \
-            patch("metrics.utils.auth_action.MatchFieldAction.execute") as mock_field, \
-            patch("metrics.utils.auth_action.ValidationAction.execute") as mock_validation:
+        with patch(
+            "metrics.utils.auth_action.MatchThemeSubthemeAction.execute"
+        ) as mock_theme, patch(
+            "metrics.utils.auth_action.MatchTopLevelFieldsAction.execute"
+        ) as mock_top, patch(
+            "metrics.utils.auth_action.MatchFieldAction.execute"
+        ) as mock_field:
 
             mock_theme.return_value = action1
             mock_top.return_value = action2
             mock_field.return_value = action3
-
-            mock_validation.return_value = None
-            mock_validation.did_match = True
-
             result = serializer.to_representation(test_data)
             if expected:
                 assert result == test_data, "all fields should be returned"
                 assert "is_private" not in result, "is_private should be removed"
             else:
-                assert result is None, "result should be None when permissions do not match"
+                assert (
+                    result is None
+                ), "result should be None when permissions do not match"

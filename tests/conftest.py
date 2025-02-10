@@ -346,7 +346,9 @@ def timestamp_2_months_from_now() -> datetime.datetime:
 @pytest.fixture
 def mock_jwt_decode():
     with patch("jwt.decode") as mock:
+
         def inner(group_id):
             mock.return_value = {"group_id": group_id}
             return mock
+
         yield inner

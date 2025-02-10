@@ -1,24 +1,22 @@
 import logging
 import os
-from typing import List
 from functools import wraps
 
-from django.http import JsonResponse
 import jwt
+from django.http import JsonResponse
 
+from config import API_PUBLIC_KEY
 from metrics.api.models import (
     ApiGroup,
     ApiPermission,
 )
 from metrics.utils.auth_action import (
+    MatchFieldAction,
     MatchThemeSubthemeAction,
     MatchTopLevelFieldsAction,
-    MatchFieldAction,
     ValidationAction,
     new_match_dict,
 )
-
-from config import PRIVATE_API_INSTANCE, API_PUBLIC_KEY
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +24,7 @@ logger = logging.getLogger(__name__)
 def authorised_route(func):
     @wraps(func)
     def wrap(self, request, *args, **kwargs):
-        if os.environ.get("PRIVATE_API_INSTANCE") != '1': # TODO get from config
+        if os.environ.get("PRIVATE_API_INSTANCE") != "1":  # TODO get from config
             return func(self, request, *args, **kwargs)
         try:
             # TODO group_id will come from X-... header
@@ -47,12 +45,12 @@ def authorised_route(func):
             # Check if exception originates from a DRF Serializer
             if getattr(err, "get_full_details", None):
                 return JsonResponse({"error": err.get_full_details()})
-            return JsonResponse({"error": "Invalid token error" })
+            return JsonResponse({"error": "Invalid token error"})
 
     return wrap
 
 
-def get_allowed_dataset_types(request) -> List[str]:
+def get_allowed_dataset_types(request) -> list[str]:
     return getattr(request, "dataset_names", [])
 
 
@@ -64,16 +62,21 @@ def serializer_permissions():
         def init(self, *args, **kwargs):
             super(serializer_class, self).__init__(*args, **kwargs)
             request = self.context.get("request", None)
-            group_permissions: List[ApiPermission] = getattr(request, "group_permissions", [])
+            group_permissions: list[ApiPermission] = getattr(
+                request, "group_permissions", []
+            )
 
             original_to_representation = self.to_representation
 
-            if os.environ.get("PRIVATE_API_INSTANCE") != '1':  # TODO get from config
+            if os.environ.get("PRIVATE_API_INSTANCE") != "1":  # TODO get from config
+
                 def new_to_representation(instance):
                     data = original_to_representation(instance)
                     data.pop("is_private")
                     return data
+
             else:
+
                 def new_to_representation(instance):
                     data = original_to_representation(instance)
                     # Handle non private data
@@ -83,20 +86,38 @@ def serializer_permissions():
                     match_dicts = []
                     for i, group_permission in enumerate(group_permissions):
                         match_dict = new_match_dict()
-                        if not MatchThemeSubthemeAction().execute(data, group_permission):
+                        if not MatchThemeSubthemeAction().execute(
+                            data, group_permission
+                        ):
                             continue
-                        match_dict["theme"] = MatchTopLevelFieldsAction("theme").execute(data, group_permission)
+                        match_dict["theme"] = MatchTopLevelFieldsAction(
+                            "theme"
+                        ).execute(data, group_permission)
                         if not match_dict["theme"]:  # Optimization
                             continue
-                        match_dict["sub_theme"] = MatchTopLevelFieldsAction("sub_theme").execute(data, group_permission)
+                        match_dict["sub_theme"] = MatchTopLevelFieldsAction(
+                            "sub_theme"
+                        ).execute(data, group_permission)
                         if not match_dict["sub_theme"]:  # Optimization
                             continue
-                        match_dict["topic"] = MatchFieldAction("topic").execute(data, group_permission)
-                        match_dict["geography_type"] = MatchFieldAction("geography_type").execute(data, group_permission)
-                        match_dict["geography"] = MatchFieldAction("geography").execute(data, group_permission)
-                        match_dict["metric"] = MatchFieldAction("metric").execute(data, group_permission)
-                        match_dict["age"] = MatchFieldAction("age").execute(data, group_permission)
-                        match_dict["stratum"] = MatchFieldAction("stratum").execute(data, group_permission)
+                        match_dict["topic"] = MatchFieldAction("topic").execute(
+                            data, group_permission
+                        )
+                        match_dict["geography_type"] = MatchFieldAction(
+                            "geography_type"
+                        ).execute(data, group_permission)
+                        match_dict["geography"] = MatchFieldAction("geography").execute(
+                            data, group_permission
+                        )
+                        match_dict["metric"] = MatchFieldAction("metric").execute(
+                            data, group_permission
+                        )
+                        match_dict["age"] = MatchFieldAction("age").execute(
+                            data, group_permission
+                        )
+                        match_dict["stratum"] = MatchFieldAction("stratum").execute(
+                            data, group_permission
+                        )
                         # append results
                         match_dicts.append(match_dict)
                     # \for - validate results
