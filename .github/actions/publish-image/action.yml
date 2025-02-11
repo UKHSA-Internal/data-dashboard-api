@@ -3,9 +3,6 @@ name: 'Publish image to AWS ECR'
 description: 'Builds, tags and pushes a Docker image to AWS ECR'
 
 inputs:
-  architecture:
-    description: 'The architecture to use when building the image.'
-    required: true
   dockerfile:
     description: 'The selected dockerfile to build the image from.'
     default: Dockerfile
@@ -47,6 +44,6 @@ runs:
         ECR_REPOSITORY: ${{ inputs.ecr-repository }}
         IMAGE_TAG: ${{ inputs.image-tag }}
       run: |
-          docker build --platform linux/${{ inputs.architecture }} -f ${{ inputs.dockerfile }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --platform linux/arm64 -f ${{ inputs.dockerfile }} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       shell: bash

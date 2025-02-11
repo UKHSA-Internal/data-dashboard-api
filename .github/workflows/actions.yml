@@ -199,7 +199,6 @@ jobs:
         with:
           ecr-repository: ukhsa-data-dashboard/back-end
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
-          architecture: arm64
           image-tag: ${{ github.sha }}
 
   publish-ingestion-image:
@@ -227,7 +226,6 @@ jobs:
           ecr-repository: ukhsa-data-dashboard/ingestion
           role-to-assume: ${{ secrets.AWS_TOOLS_ACCOUNT_ROLE }}
           dockerfile: Dockerfile-ingestion
-          architecture: arm64
           image-tag: ${{ github.sha }}
 
   ###############################################################################
