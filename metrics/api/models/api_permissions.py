@@ -86,7 +86,16 @@ class ApiPermission(models.Model):
         return model_str
 
     def clean(self):
-        if ApiPermission.objects.filter(
+
+        if self.sub_theme and self.theme:
+            if not self.sub_theme.theme == self.theme:
+                raise ValidationError("The selected sub_theme must belong to the selected theme.")
+
+        if self.sub_theme:
+            if not self.sub_theme.name == self.topic.sub_theme.name:
+                raise ValidationError("The selected sub_theme must have an associated topic.")
+
+        api_permission = ApiPermission.objects.filter(
             theme=self.theme,
             sub_theme=self.sub_theme,
             topic=self.topic,
@@ -95,7 +104,8 @@ class ApiPermission(models.Model):
             geography=self.geography,
             age=self.age,
             stratum=self.stratum,
-        ).exclude(pk=self.pk).exists():
+        ).exclude(pk=self.pk)
+        if api_permission.exists():
             raise ValidationError("A permission with these values already exists.")
 
     def save(self, *args, **kwargs):
