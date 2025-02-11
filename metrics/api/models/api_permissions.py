@@ -86,7 +86,6 @@ class ApiPermission(models.Model):
         return model_str
 
     def clean(self):
-        # Check if a permission with the same combination of fields exists
         if ApiPermission.objects.filter(
             theme=self.theme,
             sub_theme=self.sub_theme,
@@ -100,6 +99,5 @@ class ApiPermission(models.Model):
             raise ValidationError("A permission with these values already exists.")
 
     def save(self, *args, **kwargs):
-        # Run clean() before saving
         self.clean()
         super().save(*args, **kwargs)
