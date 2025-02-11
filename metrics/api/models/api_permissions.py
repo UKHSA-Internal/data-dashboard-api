@@ -1,20 +1,20 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class ApiPermission(models.Model):
 
     class Meta:
         db_table = "api_permissions"
-        unique_together = (
-            "theme",
-            "sub_theme",
-            "topic",
-            "metric",
-            "geography_type",
-            "geography",
-            "age",
-            "stratum",
-        )
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "theme", "sub_theme", "topic", "metric",
+                    "geography_type", "geography", "age", "stratum"
+                ],
+                name="unique_permission_fields"
+            )
+        ]
 
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255, null=False, unique=True)
@@ -84,3 +84,22 @@ class ApiPermission(models.Model):
         if self.stratum is not None:
             model_str += f", stratum={self.stratum.name}"
         return model_str
+
+    def clean(self):
+        # Check if a permission with the same combination of fields exists
+        if ApiPermission.objects.filter(
+            theme=self.theme,
+            sub_theme=self.sub_theme,
+            topic=self.topic,
+            metric=self.metric,
+            geography_type=self.geography_type,
+            geography=self.geography,
+            age=self.age,
+            stratum=self.stratum,
+        ).exclude(pk=self.pk).exists():
+            raise ValidationError("A permission with these values already exists.")
+
+    def save(self, *args, **kwargs):
+        # Run clean() before saving
+        self.clean()
+        super().save(*args, **kwargs)
