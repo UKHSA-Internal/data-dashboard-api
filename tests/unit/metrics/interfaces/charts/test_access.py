@@ -80,6 +80,7 @@ class TestChartsInterface:
         chart_output = ChartOutput(
             figure=spy_generate_line_with_shaded_section_chart.return_value,
             description=charts_interface.build_chart_description(plots_data=[]),
+            is_headline=False,
         )
         assert generated_chart_output == chart_output
 
@@ -192,6 +193,7 @@ class TestChartsInterface:
         charts_output = ChartOutput(
             figure=spy_generate_line_single_simplified.return_value,
             description=charts_interface.build_chart_description(plots_data=[]),
+            is_headline=False,
         )
         assert generated_chart_output == charts_output
 
@@ -699,7 +701,9 @@ class TestChartsInterface:
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
         mocked_figure = mock.MagicMock()
         mocked_figure.to_image.return_value = "abc"
-        chart_output = ChartOutput(figure=mocked_figure, description="")
+        chart_output = ChartOutput(
+            figure=mocked_figure, description="", is_headline=False
+        )
 
         charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
 
@@ -734,7 +738,7 @@ class TestChartsInterface:
         mocked_plots_collection.plots = [fake_chart_plot_parameters]
         fake_description = "abcdef"
         chart_output = ChartOutput(
-            figure=mock.MagicMock(), description=fake_description
+            figure=mock.MagicMock(), description=fake_description, is_headline=False
         )
 
         charts_interface = ChartsInterface(chart_request_params=mocked_plots_collection)
@@ -908,7 +912,9 @@ class TestGenerateEncodedChart:
         fake_chart_plots = fake_chart_request_params
         mocked_figure = mock.Mock()
         mocked_figure.to_image.return_value = "abc"
-        chart_output = ChartOutput(figure=mocked_figure, description="")
+        chart_output = ChartOutput(
+            figure=mocked_figure, description="", is_headline=False
+        )
         mocked_generate_chart_output.return_value = chart_output
 
         # When
@@ -962,6 +968,7 @@ class TestChartOutput:
         chart_output = ChartOutput(
             figure=fake_figure,
             description="abc",
+            is_headline=False,
         )
 
         # When
