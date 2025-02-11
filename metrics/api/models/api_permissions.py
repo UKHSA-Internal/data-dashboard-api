@@ -89,11 +89,14 @@ class ApiPermission(models.Model):
 
         if self.sub_theme and self.theme:
             if not self.sub_theme.theme == self.theme:
-                raise ValidationError("The selected sub_theme must belong to the selected theme.")
+                raise ValidationError("The selected subtheme must belong to the selected theme.")
 
         if self.sub_theme:
-            if not self.sub_theme.name == self.topic.sub_theme.name:
-                raise ValidationError("The selected sub_theme must have an associated topic.")
+            if self.topic:
+                if not self.topic.sub_theme.theme == self.theme:
+                    raise ValidationError("The selected topic's subtheme must have an associated theme.")
+                if not self.sub_theme.name == self.topic.sub_theme.name:
+                    raise ValidationError("The selected subtheme must have an associated topic.")
 
         api_permission = ApiPermission.objects.filter(
             theme=self.theme,
