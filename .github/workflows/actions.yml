@@ -18,7 +18,7 @@ jobs:
 
   build:
     name: Build
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -30,7 +30,7 @@ jobs:
   dependency-checks:
     name: Dependency checks
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -43,7 +43,7 @@ jobs:
   vulnerability-checks:
     name: Vulnerability checks
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -60,7 +60,7 @@ jobs:
   quality-checks:
     name: Linting
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -77,7 +77,7 @@ jobs:
   architecture-checks:
     name: Architecture checks
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -94,7 +94,7 @@ jobs:
   unit-tests:
     name: Unit tests
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -111,7 +111,7 @@ jobs:
   integration-tests:
     name: Integration tests
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -128,7 +128,7 @@ jobs:
   system-tests:
     name: System tests
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -145,7 +145,7 @@ jobs:
   migration-tests:
     name: Migration tests
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -162,7 +162,7 @@ jobs:
   test-coverage:
     name: Test coverage
     needs: [ build ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-cache
@@ -189,7 +189,7 @@ jobs:
       vulnerability-checks,
       architecture-checks
     ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - name: Check out code
@@ -214,7 +214,7 @@ jobs:
       vulnerability-checks,
       architecture-checks
     ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
 
     steps:
@@ -238,7 +238,7 @@ jobs:
       publish-main-image,
       publish-ingestion-image
     ]
-    runs-on: macos-latest
+    runs-on: ubuntu-24.04-arm
     if: ${{ github.ref == 'refs/heads/main' }}
     # Only deploy if the changes are being pushed to the `main` branch
 
