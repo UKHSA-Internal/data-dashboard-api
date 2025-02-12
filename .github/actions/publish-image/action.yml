@@ -23,7 +23,7 @@ runs:
       uses: actions/checkout@v4
 
     - name: Setup Docker
-      uses: docker/setup-docker@v4
+      uses: docker/setup-docker-action@v4
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
