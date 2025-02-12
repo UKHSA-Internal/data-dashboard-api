@@ -1,6 +1,6 @@
 bandit==1.8.2
 black==25.1.0
-coverage==7.6.11
+coverage==7.6.12
 cyclonedx-python-lib==8.7.0
 django-factory-boy==1.0.0
 factory-boy==3.3.3
