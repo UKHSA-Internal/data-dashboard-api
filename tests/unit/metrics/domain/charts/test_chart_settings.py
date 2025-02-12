@@ -302,10 +302,12 @@ class TestChartSettings:
         # Then
         min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
         max_date = get_max_date_for_current_month(existing_dt=max_date)
+        tick0 = min_date.replace(day=1)
 
         expected_axis_config = {
             "type": "date",
             "dtick": "M1",
+            "tick0": tick0,
             "tickformat": "%b<br>%Y",
             "range": [min_date, max_date],
         }
