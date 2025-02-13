@@ -34,6 +34,7 @@ class APITimeSeriesFactory(factory.django.DjangoModelFactory):
         refresh_date: str | datetime.datetime = datetime.datetime(2023, 8, 10),
         date: str | datetime.date = "2023-01-01",
         embargo: str | datetime.datetime = datetime.datetime(2024, 4, 10),
+        is_public: bool = True,
         **kwargs
     ):
         refresh_date: datetime.datetime = cls._make_datetime_timezone_aware(
@@ -62,6 +63,7 @@ class APITimeSeriesFactory(factory.django.DjangoModelFactory):
             date=date,
             refresh_date=refresh_date,
             embargo=embargo,
+            is_public=is_public,
             **kwargs
         )
 
