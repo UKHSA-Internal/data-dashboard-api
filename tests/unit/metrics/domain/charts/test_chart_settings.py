@@ -7,7 +7,6 @@ import pytest
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import (
     ChartSettings,
-    get_max_date_for_current_month,
 )
 from metrics.domain.models import PlotGenerationData, ChartGenerationPayload
 
@@ -278,6 +277,79 @@ class TestChartSettings:
         assert x_axis_date_type["dtick"] == "M1"
         assert x_axis_date_type["tickformat"] == "%b %Y"
 
+    @pytest.mark.parametrize(
+        "x_axis_values, dtick",
+        (
+            [[datetime.date(year=2025, month=1, day=1)], "D7"],
+            [
+                [
+                    datetime.date(year=2025, month=1, day=1),
+                    datetime.date(year=2025, month=2, day=1),
+                    datetime.date(year=2025, month=3, day=1),
+                ],
+                604800000,
+            ],
+            [
+                [
+                    datetime.date(year=2025, month=1, day=1),
+                    datetime.date(year=2025, month=2, day=1),
+                    datetime.date(year=2025, month=3, day=1),
+                    datetime.date(year=2025, month=4, day=1),
+                ],
+                1209600000,
+            ],
+            [
+                [
+                    datetime.date(year=2025, month=1, day=1),
+                    datetime.date(year=2025, month=12, day=1),
+                ],
+                "M1",
+            ],
+            [
+                [
+                    datetime.date(year=2023, month=1, day=1),
+                    datetime.date(year=2025, month=1, day=1),
+                ],
+                "M3",
+            ],
+            [
+                [
+                    datetime.date(year=2022, month=1, day=1),
+                    datetime.date(year=2025, month=1, day=1),
+                ],
+                "M6",
+            ],
+            [
+                [
+                    datetime.date(year=2020, month=1, day=1),
+                    datetime.date(year=2025, month=1, day=1),
+                ],
+                "M12",
+            ],
+        ),
+    )
+    def test_get_x_axis_date_type_returns_correct_dtick(
+        self,
+        x_axis_values: list[datetime],
+        dtick: str,
+        fake_chart_settings,
+    ):
+        """
+        Given a valid date range in `x_axis_values`
+        When `get_x_axis_date_type()` is called
+        Then the correct dtick value is returned for the timeseries
+            x_axis intervals.
+        """
+        # Given
+        fake_chart_settings = fake_chart_settings
+        fake_chart_settings.plots_data[0].x_axis_values = x_axis_values
+
+        # When
+        x_axis_data_type = fake_chart_settings.get_x_axis_date_type()
+
+        # Then
+        assert x_axis_data_type["dtick"] == dtick
+
     def test_get_x_axis_date_type_calls_get_x_axis_range(
         self, fake_plot_data: PlotGenerationData
     ):
@@ -301,7 +373,6 @@ class TestChartSettings:
 
         # Then
         min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
-        max_date = get_max_date_for_current_month(existing_dt=max_date)
         tick0 = min_date.replace(day=1)
 
         expected_axis_config = {
@@ -740,70 +811,3 @@ class TestChartSettings:
         # Then
         assert min_date == chart_settings.plots_data[0].x_axis_values[0]
         assert max_date == chart_settings.plots_data[0].x_axis_values[-1]
-
-
-class TestGetMaxDateForCurrentMonth:
-    @pytest.mark.parametrize(
-        "input_date",
-        [
-            "2024-02-01 12:00",
-            "2024-02-02 12:00:98",
-            "2024-02-03 19:07",
-            "2024-02-04 23:20",
-            "2024-02-05 12:09",
-            "2024-02-06",
-            "2024-02-07 11:59",
-            "2024-02-08 14:30",
-            "2024-02-09 16:00",
-            "2024-02-10 00:00",
-            "2024-02-11 16:00",
-            "2024-02-12 00:00",
-            "2024-02-13 14:30",
-            "2024-02-14 16:00",
-            "2024-02-15 11:00",
-        ],
-    )
-    def test_returns_15th_if_current_day_less_than_10th(self, input_date: str):
-        """
-        Given an input date which is earlier
-            than the 15th of that month
-        When `get_max_date_for_current_month()` is called
-        Then the 15th of that month is returned
-        """
-        # Given / When
-        actual_date: datetime.date = get_max_date_for_current_month(
-            existing_dt=input_date
-        )
-
-        # Then
-        assert actual_date == datetime.date(year=2024, month=2, day=15)
-
-    @pytest.mark.parametrize(
-        "input_date, expected_date",
-        [
-            ("2024-02-16 12:00", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-17 12:00:98", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-18 19:07", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-19 23:20", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-22 12:09", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-25", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-26 16:00", datetime.date(year=2024, month=2, day=29)),
-            ("2024-02-28 00:00", datetime.date(year=2024, month=2, day=29)),
-        ],
-    )
-    def test_returns_current_date_if_greater_than_10th(
-        self, input_date: str, expected_date: datetime.date
-    ):
-        """
-        Given an input date which is older
-            than the 10th of that month
-        When `get_max_date_for_current_month()` is called
-        Then the provided date is returned
-        """
-        # Given / When
-        actual_date: datetime.date = get_max_date_for_current_month(
-            existing_dt=input_date
-        )
-
-        # Then
-        assert actual_date == expected_date

@@ -8,11 +8,18 @@ from metrics.domain.charts.utils import (
     return_formatted_max_y_axis_value,
     return_formatted_min_y_axis_value,
 )
-from metrics.domain.common.utils import DEFAULT_CHART_WIDTH, get_last_day_of_month
+from metrics.domain.common.utils import DEFAULT_CHART_WIDTH
 from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.plots import ChartGenerationPayload
 
 logger = logging.getLogger(__name__)
+
+SEVEN_DAYS = 7
+SIXTY_ONE_DAYS = 61
+NINTY_TWO_DAYS = 92
+TWELVE_MONTHS = 12
+TWENTY_FOUR_MONTHS = 24
+THIRTY_SIX_MONTHS = 36
 
 
 class ChartSettings:
@@ -255,7 +262,10 @@ class ChartSettings:
         chart_config = self.get_base_chart_config()
         return {**chart_config, **self._get_legend_top_centre_config()}
 
-    def _get_date_tick_format(self) -> str:
+    def _get_date_tick_format(self, weekly: bool = False) -> str:
+        if weekly:
+            return "%d %b<br>%Y"
+
         return "%b %Y" if self.width > self.narrow_chart_width else "%b<br>%Y"
 
     def get_min_and_max_x_axis_values(self) -> tuple[str, str]:
@@ -268,15 +278,59 @@ class ChartSettings:
 
         return min(possible_minimums), max(possible_maximums)
 
+    @staticmethod
+    def get_x_axis_interval(days: int, months: int) -> str | int:
+        """Returns the `dtick` used for date intervals based on the number
+        of days and months in the current date range.
+
+        Note:
+            for weekly and `fortnightly` milliseconds were used due to a lack of support
+            for these intervals using a string format such as `M1` for monthly
+            604800000 = weekly
+            1209600000 = fortnightly
+
+        Args:
+            days: Integer representing the number of days
+            months: Integer representing the number of months
+
+        Returns: list of strings | int containing the `dtick` value
+        """
+        if days <= SEVEN_DAYS:
+            return "D7"
+        if days <= SIXTY_ONE_DAYS:
+            return 604800000
+        if days <= NINTY_TWO_DAYS:
+            return 1209600000
+        if months <= TWELVE_MONTHS:
+            return "M1"
+        if months <= TWENTY_FOUR_MONTHS:
+            return "M3"
+        if months <= THIRTY_SIX_MONTHS:
+            return "M6"
+        return "M12"
+
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         min_date, max_date = self.get_min_and_max_x_axis_values()
-        max_date = get_max_date_for_current_month(existing_dt=max_date)
+
+        number_of_days, number_of_months = get_number_of_days_and_months(
+            min_date=min_date, max_date=max_date
+        )
+
+        tick0 = min_date.replace(day=1)
+
+        dtick = self.get_x_axis_interval(
+            days=number_of_days,
+            months=number_of_months,
+        )
+
+        weekly = number_of_days <= NINTY_TWO_DAYS
 
         return {
             "type": "date",
-            "dtick": "M1",
-            "tickformat": self._get_date_tick_format(),
-            "range": [min_date, max_date],
+            "tick0": tick0,
+            "dtick": dtick,
+            "tickformat": self._get_date_tick_format(weekly=weekly),
+            "range": [tick0, max_date],
         }
 
     @staticmethod
@@ -310,30 +364,20 @@ class ChartSettings:
         }
 
 
-def get_max_date_for_current_month(
-    *,
-    existing_dt: str | datetime.datetime | datetime.date,
-) -> datetime.date:
-    """Returns the 15th of the given `existing_dt` or the last day of the month
+def get_number_of_days_and_months(
+    min_date: datetime.date, max_date: datetime.date
+) -> list[int]:
+    """Takes two datetime.date objects and returns the number of days and months in the time frame.
 
     Args:
-        existing_dt: The date we want to get the max date for
+        min_date: datetime.date
+        max_date: datetime.data
 
     Returns:
-        The max allowable date for the current month
-
+        a two integers representing the number of days and months between the two dates provided.
     """
-    existing_dt = str(existing_dt)
-    try:
-        datestamp, _ = existing_dt.split()
-    except ValueError:
-        # Thrown when a date i.e. `2024-02-15` is provided
-        # instead of a datetime i.e. `2024-02-15 13:52:00`
-        datestamp = existing_dt
-
-    year, month, day = map(int, datestamp.split("-"))
-
-    middle_of_month = 15
-    if day <= middle_of_month:
-        return datetime.date(year=year, month=month, day=middle_of_month)
-    return get_last_day_of_month(date=datetime.date(year=year, month=month, day=day))
+    number_of_days = (max_date - min_date).days
+    number_of_months = (max_date.year - min_date.year) * 12 + (
+        max_date.month - min_date.month
+    )
+    return [number_of_days, number_of_months]
