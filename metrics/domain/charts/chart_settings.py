@@ -20,6 +20,8 @@ NINTY_TWO_DAYS = 92
 TWELVE_MONTHS = 12
 TWENTY_FOUR_MONTHS = 24
 THIRTY_SIX_MONTHS = 36
+WEEK_IN_MILLISECONDS = 604800000
+TWO_WEEKS_IN_MILLISECONDS = 1209600000
 
 
 class ChartSettings:
@@ -298,9 +300,9 @@ class ChartSettings:
         if days <= SEVEN_DAYS:
             return "D7"
         if days <= SIXTY_ONE_DAYS:
-            return 604800000
+            return WEEK_IN_MILLISECONDS
         if days <= NINTY_TWO_DAYS:
-            return 1209600000
+            return TWO_WEEKS_IN_MILLISECONDS
         if months <= TWELVE_MONTHS:
             return "M1"
         if months <= TWENTY_FOUR_MONTHS:
@@ -370,11 +372,12 @@ def get_number_of_days_and_months(
     """Takes two datetime.date objects and returns the number of days and months in the time frame.
 
     Args:
-        min_date: datetime.date
-        max_date: datetime.data
+        min_date: represents the earliest date in the time series, this is the first day of the
+            earliest month. Eg: '2025-01-27' will have a `min_date` of '2025-01-01'
+        max_date: The last day in the time series Eg '2025-01-15' will be '2025-01-15'
 
     Returns:
-        a two integers representing the number of days and months between the two dates provided.
+        A list of 2 integers representing the number of days and months between the two dates provided.
     """
     number_of_days = (max_date - min_date).days
     number_of_months = (max_date.year - min_date.year) * 12 + (

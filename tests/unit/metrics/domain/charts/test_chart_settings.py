@@ -7,6 +7,8 @@ import pytest
 from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings import (
     ChartSettings,
+    WEEK_IN_MILLISECONDS,
+    TWO_WEEKS_IN_MILLISECONDS,
 )
 from metrics.domain.models import PlotGenerationData, ChartGenerationPayload
 
@@ -287,7 +289,7 @@ class TestChartSettings:
                     datetime.date(year=2025, month=2, day=1),
                     datetime.date(year=2025, month=3, day=1),
                 ],
-                604800000,
+                WEEK_IN_MILLISECONDS,
             ],
             [
                 [
@@ -296,7 +298,7 @@ class TestChartSettings:
                     datetime.date(year=2025, month=3, day=1),
                     datetime.date(year=2025, month=4, day=1),
                 ],
-                1209600000,
+                TWO_WEEKS_IN_MILLISECONDS,
             ],
             [
                 [
@@ -341,7 +343,6 @@ class TestChartSettings:
             x_axis intervals.
         """
         # Given
-        fake_chart_settings = fake_chart_settings
         fake_chart_settings.plots_data[0].x_axis_values = x_axis_values
 
         # When
