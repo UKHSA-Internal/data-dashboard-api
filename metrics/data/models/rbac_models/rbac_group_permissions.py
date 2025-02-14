@@ -1,15 +1,15 @@
 from django.db import models
 
 
-class ApiGroup(models.Model):
+class RBACGroupPermission(models.Model):
 
     class Meta:
-        db_table = "api_groups"
+        db_table = "rbac_group_permissions"
 
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255, unique=True)
     permissions = models.ManyToManyField(
-        "data.ApiPermission", related_name="api_groups"
+        "RBACPermission", related_name="rbac_group_permissions"
     )
 
     def __str__(self):

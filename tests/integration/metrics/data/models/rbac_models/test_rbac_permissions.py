@@ -1,4 +1,12 @@
 import pytest
+from metrics.data.models.rbac_models import (
+    RBACPermission,
+    RBACGroupPermission,
+    AdminFormDuplicatePermissionError,
+    AdminFormSubthemeAssocThemeError,
+    AdminFormTopicAssocSubthemeError,
+    AdminFormSubthemeAssocTopicError,
+)
 
 from metrics.data.models.core_models import (
     Theme,
@@ -10,16 +18,10 @@ from metrics.data.models.core_models import (
     Age,
     Stratum,
 )
-from metrics.data.models.api_models.api_permissions import (
-    AdminFormSubthemeAssocThemeError,
-    AdminFormTopicAssocSubthemeError,
-    AdminFormSubthemeAssocTopicError,
-    AdminFormDuplicatePermissionError,
-    ApiPermission,
-)
 
 
-class TestApiPermission:
+class TestRBACPermission:
+
     @pytest.fixture(autouse=True)
     def setup(self, db):
         self.theme = Theme.objects.create(name="non-communicable")
@@ -35,7 +37,7 @@ class TestApiPermission:
 
     @pytest.mark.django_db
     def test_create_api_permission(self):
-        permission = ApiPermission.objects.create(
+        permission = RBACPermission.objects.create(
             name="non-communicable_permission",
             theme=self.theme,
             sub_theme=self.sub_theme,
@@ -46,7 +48,7 @@ class TestApiPermission:
             age=self.age,
             stratum=self.stratum,
         )
-        assert ApiPermission.objects.count() == 1
+        assert RBACPermission.objects.count() == 1
         assert str(permission) == (
             "name=non-communicable_permission, "
             "theme=non-communicable, "
@@ -55,7 +57,7 @@ class TestApiPermission:
             "metric=asthma_syndromic_emergencyDepartment_countsByDay, "
             "geography_type=Nation, "
             "geography=England, "
-            "age=England, "
+            "age=all, "
             "stratum=default"
         )
 
@@ -67,7 +69,7 @@ class TestApiPermission:
         )
 
         with pytest.raises(AdminFormSubthemeAssocThemeError):
-            ApiPermission(
+            RBACPermission(
                 name="invalid_permission",
                 theme=self.theme,
                 sub_theme=invalid_sub_theme,
@@ -82,7 +84,7 @@ class TestApiPermission:
         )
 
         with pytest.raises(AdminFormTopicAssocSubthemeError):
-            ApiPermission(
+            RBACPermission(
                 name="invalid_topic_permission",
                 theme=self.theme,
                 sub_theme=self.sub_theme,
@@ -96,7 +98,7 @@ class TestApiPermission:
         )
 
         with pytest.raises(AdminFormSubthemeAssocTopicError):
-            ApiPermission(
+            RBACPermission(
                 name="invalid_subtheme_permission",
                 theme=self.theme,
                 sub_theme=sub_theme_without_topic,
@@ -105,7 +107,7 @@ class TestApiPermission:
 
     @pytest.mark.django_db
     def test_duplicate_permission_not_allowed(self):
-        ApiPermission.objects.create(
+        RBACPermission.objects.create(
             name="unique_permission",
             theme=self.theme,
             sub_theme=self.sub_theme,
@@ -118,7 +120,7 @@ class TestApiPermission:
         )
 
         with pytest.raises(AdminFormDuplicatePermissionError):
-            ApiPermission(
+            RBACPermission(
                 name="duplicate_permission",
                 theme=self.theme,
                 sub_theme=self.sub_theme,
