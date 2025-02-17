@@ -75,3 +75,15 @@ class TestCoreHeadline:
 
         # Check that there are now 2 'versions' of that data
         assert CoreHeadline.objects.count() == 2
+
+    @pytest.mark.django_db
+    def test_can_set_is_public_to_false(self):
+        """
+        Given a `CoreHeadline` record
+        When `is_public` is explicitly set to `False`
+        Then the value should be stored correctly in the database
+        """
+        # Given / When
+        record = CoreHeadlineFactory.create_record(is_public=False)
+        # Then
+        assert record.is_public is False
