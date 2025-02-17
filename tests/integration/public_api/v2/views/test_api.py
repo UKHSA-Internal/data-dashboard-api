@@ -1,10 +1,10 @@
 import datetime
-from collections import OrderedDict
+import os
 from http import HTTPStatus
 
 import pytest
-from rest_framework.response import Response
-from rest_framework.test import APIClient
+from requests.models import Response
+from rest_framework.test import RequestsClient
 
 from metrics.data.models.api_models import APITimeSeries
 
@@ -15,12 +15,12 @@ class TestPublicAPINestedLinkViewsV2:
         return "/api/public/timeseries/v2/"
 
     @property
-    def test_server_base_name(self) -> str:
-        return "http://testserver"
+    def target_domain(self) -> str:
+        return os.environ.get("PUBLIC_API_TEST_DOMAIN", "http://testserver")
 
     @property
     def api_base_path(self) -> str:
-        return f"{self.test_server_base_name}{self.path}"
+        return f"{self.target_domain}{self.path}"
 
     @staticmethod
     def _setup_api_time_series(
@@ -114,13 +114,15 @@ class TestPublicAPINestedLinkViewsV2:
         ]
 
     @pytest.mark.django_db
-    def test_returns_correct_links_to_subsequent_views(self, client: APIClient):
+    def test_returns_correct_links_to_subsequent_views(self):
         """
         Given a valid request and a number of matching `APITimeSeries` records
         When the `GET /api/public/timeseries/` API is used
         Then the response contains links which will direct the caller to the subsequent views
         """
         # Given
+        client = RequestsClient()
+
         theme_name = "infectious_disease"
         sub_theme_name = "respiratory"
         topic_name = "COVID-19"
@@ -150,15 +152,17 @@ class TestPublicAPINestedLinkViewsV2:
         )
 
         path = f"{self.path}themes/"
+        target_url = f"{self.target_domain}{path}"
+
         for (
             metadata_field,
             link_field,
             expected_metadata_field_value,
             expected_link_field_value,
         ) in expected_response_fields:
-            response: Response = client.get(path=path, format="json")
+            response: Response = client.get(target_url)
             assert response.status_code == HTTPStatus.OK
-            response_data: OrderedDict = response.data
+            response_data: list[dict] = response.json()
 
             # Then
             # Check that the metadata field matches up to expected value
@@ -177,10 +181,10 @@ class TestPublicAPINestedLinkViewsV2:
             )
 
             # Point the next request to the link field provided by the previous response
-            path = link_field_from_response
+            target_url = link_field_from_response
 
     @pytest.mark.django_db
-    def test_returns_correct_data_at_final_view(self, client: APIClient):
+    def test_returns_correct_data_at_final_view(self):
         """
         Given a set of `APITimeSeries` records
         And a list of parameters to filter for a subset of those records
@@ -189,6 +193,8 @@ class TestPublicAPINestedLinkViewsV2:
         And the response is paginated as expected
         """
         # Given
+        client = RequestsClient()
+
         theme_name = "infectious_disease"
         sub_theme_name = "respiratory"
         topic_name = "COVID-19"
@@ -240,7 +246,8 @@ class TestPublicAPINestedLinkViewsV2:
             )
 
         # When
-        path = (
+        target_url = (
+            f"{self.target_domain}"
             f"{self.path}themes/"
             f"{theme_name}/sub_themes/"
             f"{sub_theme_name}/topics/"
@@ -249,16 +256,16 @@ class TestPublicAPINestedLinkViewsV2:
             f"{geography_name}/metrics/"
             f"{metric_name}"
         )
-        response: Response = client.get(path=path, format="json")
+        response: Response = client.get(target_url)
 
         # Then
         # Check that the filtering has been applied correctly
         # And that only the requested time series records are returned
-        response_data: OrderedDict = response.data
+        response_data: list[dict] = response.json()
         assert response_data["count"] == expected_matching_time_series_count
 
         # Check that API returns a link to the next page of the paginated data
-        assert response_data["next"] == f"{self.test_server_base_name}{path}?page=2"
+        assert response_data["next"] == f"{target_url}?page=2"
         assert response_data["previous"] is None
 
         # Check that by default, the page size is returned as 5
@@ -280,9 +287,7 @@ class TestPublicAPINestedLinkViewsV2:
             assert result["in_reporting_delay_period"] == in_reporting_delay_period
 
     @pytest.mark.django_db
-    def test_returns_correct_data_at_final_view_with_query_parameters(
-        self, client: APIClient
-    ):
+    def test_returns_correct_data_at_final_view_with_query_parameters(self):
         """
         Given a set of `APITimeSeries` records
         And a list of parameters to filter for a subset of those records
@@ -291,6 +296,8 @@ class TestPublicAPINestedLinkViewsV2:
         Then the response contains the correct filtered `APITimeSeries` records
         """
         # Given
+        client = RequestsClient()
+
         theme_name = "infectious_disease"
         sub_theme_name = "respiratory"
         topic_name = "COVID-19"
@@ -334,7 +341,8 @@ class TestPublicAPINestedLinkViewsV2:
             )
 
         # When
-        path = (
+        target_url = (
+            f"{self.target_domain}"
             f"{self.path}themes/"
             f"{theme_name}/sub_themes/"
             f"{sub_theme_name}/topics/"
@@ -343,14 +351,12 @@ class TestPublicAPINestedLinkViewsV2:
             f"{geography_name}/metrics/"
             f"{metric_name}"
         )
-        response: Response = client.get(
-            path=path, format="json", data={"sex": sex, "age": age}
-        )
+        response: Response = client.get(target_url, params={"sex": sex, "age": age})
 
         # Then
         # Check that the filtering has been applied correctly
         # And that only the requested time series records are returned
-        response_data: OrderedDict = response.data
+        response_data: list[dict] = response.json()
         assert response_data["count"] == expected_matching_time_series_count
 
         # Check that API returns no paginated links
@@ -373,6 +379,7 @@ class TestPublicAPINestedLinkViewsV2:
             assert result["sex"] == sex != other_sex
             assert result["age"] == age != other_age
 
+    @pytest.mark.django_db
     def test_root_view(self):
         """
         Given no existing `APITimeSeries` records
@@ -380,13 +387,13 @@ class TestPublicAPINestedLinkViewsV2:
         Then the correct response is returned
         """
         # Given
-        client = APIClient()
-        path = self.path
+        client = RequestsClient()
+        target_url = self.api_base_path
 
         # When
-        response: Response = client.get(path=path, format="json")
+        response: Response = client.get(target_url)
 
         # Then
         assert response.status_code == 200
         expected_response = {"links": {"themes": f"{self.api_base_path}themes/"}}
-        assert response.data == expected_response
+        assert response.json() == expected_response
