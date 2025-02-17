@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0035_set_topic_and_subtheme_join_to_be_unique"),
+        ("data", "0036_add_is_public_field_to_timeseries_and_headline"),
     ]
 
     operations = [
