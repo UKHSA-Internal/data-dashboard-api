@@ -179,3 +179,12 @@ The ARN of the database credentials secret in AWS SecretsManager.
 
 When running in `INGESTION` mode, the `POSTGRES_PASSWORD` is 
 fetched from SecretsManager directly when the application is initialized.
+
+---
+
+### Tests configuration
+
+#### `PUBLIC_API_TEST_DOMAIN`
+
+The domain of the target public API host to run integration tests against.
+If not specified, this will default to `"http://testserver"` i.e. the local test django server.
