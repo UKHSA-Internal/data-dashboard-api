@@ -22,7 +22,7 @@ from metrics.data.models.core_models import (
 
 class TestRBACPermission:
     @pytest.fixture(autouse=True)
-    def setup(self, db):
+    def setup(self):
         self.non_communicable = Theme.objects.create(name="non-communicable")
         self.respiratory = SubTheme.objects.create(
             name="respiratory", theme=self.non_communicable
@@ -161,14 +161,14 @@ class TestRBACPermission:
             ).clean()
 
     @pytest.mark.django_db
-    def test_subtheme_must_have_associated_topic(self):
+    def test_rbac_permission_rejects_topic_unrelated_to_subtheme(self):
         """
-        Given a subtheme that has no associated topic
-        When an RBACPermission is created referencing this subtheme
-        Then an AdminFormSubthemeAssocTopicError is raised
+        GIVEN a Topic that belongs to a different SubTheme
+        WHEN an RBACPermission is created with that Topic and an unrelated SubTheme
+        THEN an AdminFormSubthemeAssocTopicError is raised
         """
         # Given
-        sub_theme_without_topic = SubTheme.objects.create(
+        sub_theme = SubTheme.objects.create(
             name="mpox-clade-1b", theme=self.non_communicable
         )
 
@@ -177,8 +177,8 @@ class TestRBACPermission:
             RBACPermission(
                 name="invalid_subtheme_permission",
                 theme=self.non_communicable,
-                sub_theme=sub_theme_without_topic,
-                topic=self.asthma,
+                sub_theme=sub_theme,
+                topic=self.asthma,  # asthma belongs to a different sub_theme
             ).clean()
 
     @pytest.mark.django_db

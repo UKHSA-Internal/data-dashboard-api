@@ -61,8 +61,10 @@ class TestRBACGroupPermission:
         Then it should be saved successfully with the correct name
         And should be retrievable from the database
         """
-        # When
+        # Given
         group = RBACGroupPermission.objects.create(name="admin_group")
+
+        # When
         group.permissions.add(self.permission_dose_by_day)
 
         # Then
@@ -93,11 +95,13 @@ class TestRBACGroupPermission:
         """
         # Given
         rbac_group = RBACGroupPermission.objects.create(name="respiratory_admins")
+
+        # When
         rbac_group.permissions.add(
             self.permission_dose_by_day, self.permission_ons_by_week
         )
 
-        # When / Then
+        # Then
         assert rbac_group.permissions.count() == 2
         assert self.permission_dose_by_day in rbac_group.permissions.all()
         assert self.permission_ons_by_week in rbac_group.permissions.all()
