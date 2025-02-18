@@ -4,10 +4,10 @@ from wagtail import blocks
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import (
+    ContextUrlBlock,
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
     PageLinkChooserBlock,
-    ContextUrlBlock
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -55,8 +55,7 @@ class WHAlerts(models.TextChoices):
 
 class WeatherHealthAlertsCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    sub_title = blocks.TextBlock(
-        required=True, help_text=help_texts.SUB_TITLE_FIELD)
+    sub_title = blocks.TextBlock(required=True, help_text=help_texts.SUB_TITLE_FIELD)
     alert_type = blocks.ChoiceBlock(
         required=True,
         choices=WHAlerts.get_alerts,
@@ -82,10 +81,10 @@ class HeadlineNumbersRowCard(blocks.StructBlock):
 
 class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
     contextual_urls = ContextUrlBlock(
-        required=False, help_text=help_texts.OPTIONAL_CONTEXT_URL)
+        required=False, help_text=help_texts.OPTIONAL_CONTEXT_URL
+    )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
@@ -137,8 +136,7 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
 
 class SimplifiedChartWithLink(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    sub_title = blocks.CharBlock(
-        required=False, help_text=help_texts.SUB_TITLE_FIELD)
+    sub_title = blocks.CharBlock(required=False, help_text=help_texts.SUB_TITLE_FIELD)
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
@@ -193,13 +191,9 @@ class SimplifiedChartWithLink(blocks.StructBlock):
 
 class ChartCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    body = blocks.TextBlock(
-        required=False,
-        help_text=help_texts.OPTIONAL_BODY_FIELD
-    )
+    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
     contextual_urls = ContextUrlBlock(
-        required=False,
-        help_text=help_texts.OPTIONAL_CONTEXT_URL
+        required=False, help_text=help_texts.OPTIONAL_CONTEXT_URL
     )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
