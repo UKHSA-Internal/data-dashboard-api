@@ -15,8 +15,7 @@ METRIC_NUMBER_BLOCK_DATE_PREFIX_DEFAULT_TEXT = "Up to"
 
 
 class HeadlineNumberBlockTypes(blocks.StreamBlock):
-    headline_number = HeadlineNumberComponent(
-        help_text=help_texts.HEADLINE_BLOCK_FIELD)
+    headline_number = HeadlineNumberComponent(help_text=help_texts.HEADLINE_BLOCK_FIELD)
     trend_number = TrendNumberComponent(help_text=help_texts.TREND_BLOCK_FIELD)
     percentage_number = PercentageNumberComponent(
         help_text=help_texts.PERCENTAGE_BLOCK_FIELD
@@ -37,8 +36,7 @@ class MetricNumberBlockTypes(blocks.StructBlock):
         required=True,
         min_num=MINIMUM_ROWS_NUMBER_BLOCK_COUNT,
         max_num=MAXIMUM_ROWS_NUMBER_BLOCK_COUNT,
-        help_text=help_texts.NUMBERS_ROW_FIELD.format(
-            MAXIMUM_ROWS_NUMBER_BLOCK_COUNT),
+        help_text=help_texts.NUMBERS_ROW_FIELD.format(MAXIMUM_ROWS_NUMBER_BLOCK_COUNT),
     )
 
     class Meta:
@@ -159,9 +157,7 @@ class RelatedLink(blocks.StructBlock):
     link_display_text = blocks.CharBlock(
         required=False, help_text=help_texts.RELATED_LINK_TEXT
     )
-    link = blocks.CharBlock(
-        required=False, help_text=help_texts.RELATED_LINK_URL
-    )
+    link = blocks.CharBlock(required=False, help_text=help_texts.RELATED_LINK_URL)
 
 
 class RelatedLinkBlock(blocks.StreamBlock):
