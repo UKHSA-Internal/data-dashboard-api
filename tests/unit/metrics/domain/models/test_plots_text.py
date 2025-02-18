@@ -251,6 +251,10 @@ class TestPlotsText:
             about the data being shown by the plot
         """
         # Given
+        fake_plot_data.x_axis_values = [
+            datetime.date(year=2023, month=1, day=i + 1)
+            for i in range(len(fake_plot_data.y_axis_values))
+        ]
         plots_text = PlotsText(plots_data=[fake_plot_data])
 
         # When
@@ -280,6 +284,10 @@ class TestPlotsText:
             which were used for each plot
         """
         # Given
+        fake_plot_data.x_axis_values = [
+            datetime.date(year=2023, month=1, day=i + 1)
+            for i in range(len(fake_plot_data.y_axis_values))
+        ]
         second_plot_data = fake_plot_data.model_copy(deep=True)
         second_plot_data.parameters.topic = "Influenza"
         second_plot_data.parameters.metric = "influenza_testing_positivityByWeek"
