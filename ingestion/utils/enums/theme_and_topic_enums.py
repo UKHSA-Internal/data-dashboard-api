@@ -44,6 +44,8 @@ class _RespiratoryTopic(Enum):
     RHINOVIRUS = "Rhinovirus"
     ADENOVIRUS = "Adenovirus"
     ASTHMA = "asthma"
+    UPPER_RESPIRATORY_TRACT_INFECTION = "upper-respiratory-tract-infection"
+    LOWER_RESPIRATORY_TRACT_INFECTION = "lower-respiratory-tract-infection"
 
 
 class _BloodstreamInfectionTopic(Enum):
