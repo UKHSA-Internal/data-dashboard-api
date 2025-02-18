@@ -183,15 +183,15 @@ An optional body of text to accompany this block.
 This text will be displayed in the about tab.
 """
 
-OPTIONAL_CONTEXT_URL: str = """
+OPTIONAL_RELATED_LINK: str = """
 Provide optional URLs that can provide further contextual information for the data displayed in the chart.
 """
 
-CONTEXT_URL_DISPLAY_TEXT: str = """
+RELATED_LINK_TEXT: str = """
 The Text that will be displayed for the URL.
 """
 
-CONTEXT_URL_DISPLAY_TEXT: str = """
+RELATED_LINK_URL: str = """
 The URL that the user will be navigated to when clicked.
 """
 
