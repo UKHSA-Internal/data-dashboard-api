@@ -1,14 +1,12 @@
 import pytest
+from django.db.utils import IntegrityError
+
+from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from metrics.data.models.rbac_models import RBACGroupPermission, RBACPermission
 from metrics.data.models.core_models import (
     Theme,
     SubTheme,
     Topic,
-    Metric,
-    GeographyType,
-    Geography,
-    Age,
-    Stratum,
 )
 
 
@@ -16,41 +14,43 @@ class TestRBACGroupPermission:
 
     @pytest.fixture(autouse=True)
     def setup(self, db):
-        self.theme = Theme.objects.create(name="non-communicable")
-        self.sub_theme = SubTheme.objects.create(name="respiratory", theme=self.theme)
-        self.topic = Topic.objects.create(name="asthma", sub_theme=self.sub_theme)
-        self.metric1 = Metric.objects.create(
-            name="COVID-19_vaccinations_autumn22_dosesByDay"
+        self.non_communicable = Theme.objects.create(name="non-communicable")
+        self.respiratory = SubTheme.objects.create(
+            name="respiratory", theme=self.non_communicable
         )
-        self.metric2 = Metric.objects.create(name="COVID-19_deaths_ONSByWeek")
+        self.asthma = Topic.objects.create(name="asthma", sub_theme=self.respiratory)
+        self.covid_cases_dose_by_day = CoreTimeSeriesFactory.create_record(
+            theme_name=self.non_communicable.name,
+            sub_theme_name=self.respiratory.name,
+            topic_name=self.asthma.name,
+            metric_name="COVID-19_vaccinations_autumn22_dosesByDay",
+            geography_type_name="Nation",
+            geography_name="England",
+            age_name="all",
+            stratum_name="default",
+        )
 
-        self.geography_type = GeographyType.objects.create(name="Nation")
-        self.geography = Geography.objects.create(name="England")
-        self.age = Age.objects.create(name="all")
-        self.stratum = Stratum.objects.create(name="default")
+        self.covid_cases_ons_by_week = CoreTimeSeriesFactory.create_record(
+            theme_name=self.non_communicable.name,
+            sub_theme_name=self.respiratory.name,
+            topic_name=self.asthma.name,
+            metric_name="COVID-19_deaths_ONSByWeek",
+        )
 
         self.permission_dose_by_day = RBACPermission.objects.create(
             name="asthma_permission_1",
-            theme=self.theme,
-            sub_theme=self.sub_theme,
-            topic=self.topic,
-            metric=self.metric1,
-            geography_type=self.geography_type,
-            geography=self.geography,
-            age=self.age,
-            stratum=self.stratum,
+            theme=self.non_communicable,
+            sub_theme=self.respiratory,
+            topic=self.asthma,
+            metric=self.covid_cases_dose_by_day.metric,
         )
 
         self.permission_ons_by_week = RBACPermission.objects.create(
             name="asthma_permission_2",
-            theme=self.theme,
-            sub_theme=self.sub_theme,
-            topic=self.topic,
-            metric=self.metric2,
-            geography_type=self.geography_type,
-            geography=self.geography,
-            age=self.age,
-            stratum=self.stratum,
+            theme=self.non_communicable,
+            sub_theme=self.respiratory,
+            topic=self.asthma,
+            metric=self.covid_cases_ons_by_week.metric,
         )
 
     @pytest.mark.django_db
@@ -81,7 +81,7 @@ class TestRBACGroupPermission:
         RBACGroupPermission.objects.create(name="duplicate_group")
 
         # When / Then
-        with pytest.raises(Exception):  # Adjust exception type based on DB backend
+        with pytest.raises(IntegrityError):  # Adjust exception type based on DB backend
             RBACGroupPermission.objects.create(name="duplicate_group")
 
     @pytest.mark.django_db
@@ -97,7 +97,7 @@ class TestRBACGroupPermission:
             self.permission_dose_by_day, self.permission_ons_by_week
         )
 
-        # Then ensure both permissions are stored
+        # When / Then
         assert rbac_group.permissions.count() == 2
         assert self.permission_dose_by_day in rbac_group.permissions.all()
         assert self.permission_ons_by_week in rbac_group.permissions.all()

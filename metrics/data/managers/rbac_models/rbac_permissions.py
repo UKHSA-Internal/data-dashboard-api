@@ -13,16 +13,20 @@ class RBACPermissionQuerySet(models.QuerySet):
         Returns:
             RBACPermissionQuerySet: A queryset containing matching permission instances.
         """
-        return self.filter(
-            theme=instance.theme,
-            sub_theme=instance.sub_theme,
-            topic=instance.topic,
-            metric=instance.metric,
-            geography_type=instance.geography_type,
-            geography=instance.geography,
-            age=instance.age,
-            stratum=instance.stratum,
-        ).exclude(pk=instance.pk)
+        return (
+            self.filter(
+                theme=instance.theme,
+                sub_theme=instance.sub_theme,
+                topic=instance.topic,
+                metric=instance.metric,
+                geography_type=instance.geography_type,
+                geography=instance.geography,
+                age=instance.age,
+                stratum=instance.stratum,
+            )
+            .exclude(pk=instance.pk)
+            .distinct()
+        )
 
 
 class RBACPermissionManager(models.Manager):

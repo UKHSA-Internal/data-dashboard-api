@@ -1,7 +1,7 @@
 import pytest
 from metrics.data.models.rbac_models import (
     RBACPermission,
-    AdminFormThemeSubthemeError,
+    AdminFormThemeError,
     AdminFormDuplicatePermissionError,
     AdminFormSubthemeAssocThemeError,
     AdminFormTopicAssocSubthemeError,
@@ -72,19 +72,48 @@ class TestRBACPermission:
         )
 
     @pytest.mark.django_db
-    def test_theme_and_subtheme(self):
+    def test_theme(self):
+        """
+        Given an RBACPermission without a theme
+        When it is validated
+        Then an AdminFormThemeError is raised
+        """
+        # Given / When / Then
+        with pytest.raises(AdminFormThemeError):
+            RBACPermission(name="invalid_permission").clean()
+
+    @pytest.mark.django_db
+    def test_subtheme(self):
         """
         Given an RBACPermission without a theme or subtheme
         When it is validated
-        Then an AdminFormThemeSubthemeError is raised
+        Then an AdminFormSubthemeAssocThemeError is raised
         """
         # Given / When / Then
-        with pytest.raises(AdminFormThemeSubthemeError):
-            RBACPermission(name="invalid_permission").clean()
-
-        with pytest.raises(AdminFormThemeSubthemeError):
+        with pytest.raises(AdminFormSubthemeAssocThemeError):
             RBACPermission(
                 name="invalid_permission", theme=self.non_communicable
+            ).clean()
+
+    @pytest.mark.django_db
+    def test_subtheme(self):
+        """
+        Given an RBACPermission with a sub_theme that does not join to a parent theme
+        When it is validated
+        Then an AdminFormSubthemeAssocThemeError is raised
+        """
+        # Given
+        extreme_event = Theme.objects.create(name="extreme_event")
+        weather_alert = SubTheme.objects.create(
+            name="weather_alert", theme=extreme_event
+        )
+
+        # When / Then
+        with pytest.raises(AdminFormSubthemeAssocThemeError):
+            RBACPermission(
+                name="invalid_permission",
+                theme=self.non_communicable,
+                sub_theme=weather_alert,
             ).clean()
 
     @pytest.mark.django_db

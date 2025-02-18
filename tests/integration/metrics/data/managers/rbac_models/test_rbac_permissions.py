@@ -1,12 +1,13 @@
 import pytest
+
 from metrics.data.models.rbac_models import (
     RBACPermission,
     AdminFormDuplicatePermissionError,
 )
-from tests.factories.metrics.rbac_models.rbac_permission import ApiPermissionFactory
+from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
 
-class TestApiPermissionFactory:
+class TestRBACPermissionFactory:
 
     permissions = {
         "theme_name": "infectious_disease",
@@ -26,13 +27,13 @@ class TestApiPermissionFactory:
         When `create_record` is called,
         Then an `RBACPermission` instance is created with the correct associations.
         """
-        # When creating a permission record
-        permission = ApiPermissionFactory.create_record(**self.permissions)
+        # Given
+        permission = RBACPermissionFactory.create_record(**self.permissions)
 
-        # Then the permission should exist in the database
+        # When
         assert RBACPermission.objects.filter(id=permission.id).exists()
 
-        # And the related objects should be correctly associated
+        # Then
         assert permission.theme.name == "infectious_disease"
         assert permission.sub_theme.name == "respiratory"
         assert permission.topic.name == "COVID-19"
@@ -50,21 +51,20 @@ class TestApiPermissionFactory:
         When `get_existing_permissions()` is called
         Then only the records with matching fields (excluding the given instance) are returned
         """
-        # Given creating an initial permission
-        permission = ApiPermissionFactory.create_record()
+        # Given
+        permission = RBACPermissionFactory.create_record()
 
-        # Create another permission with different `name`, `theme` & `sub_theme` (to ensure uniqueness)
-        _ = ApiPermissionFactory.create_record(
-            name=f"permission_2",
+        _ = RBACPermissionFactory.create_record(
+            name="permission_2",
             theme_name="extreme_event",
             sub_theme_name="weather_alert",
         )
-        # When fetching existing permissions
+        # When
         retrieved_permissions = RBACPermission.objects.get_existing_permissions(
             permission
         )
 
-        # Then it should only return the matching permission, excluding itself
+        # Then
         assert retrieved_permissions.count() == 0
 
     @pytest.mark.django_db
@@ -74,18 +74,17 @@ class TestApiPermissionFactory:
         When another permission with the same fields is created,
         Then an `AdminFormDuplicatePermissionError` should be raised.
         """
-        # Given Create an initial permission
-        ApiPermissionFactory.create_record(
-            name="permission_1",
+        # Given
+        RBACPermissionFactory.create_record(
+            name="all_infectious_respiratory_data",
             theme_name="infectious_disease",
             sub_theme_name="respiratory",
         )
 
-        # When / Then Creating a duplicate permission should raise an error
-        # with different name, but same unique fields
+        # When / Then
         with pytest.raises(AdminFormDuplicatePermissionError):
-            ApiPermissionFactory.create_record(
-                name="permission_2",
+            RBACPermissionFactory.create_record(
+                name="all_infectious_respiratory_data_duplicate",
                 theme_name="infectious_disease",
                 sub_theme_name="respiratory",
             )

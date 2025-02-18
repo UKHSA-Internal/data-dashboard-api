@@ -1,6 +1,6 @@
 from metrics.data.models.rbac_models.rbac_permissions import (
     RBACPermission,
-    AdminFormThemeSubthemeError,
+    AdminFormThemeError,
     AdminFormSubthemeAssocThemeError,
     AdminFormTopicAssocSubthemeError,
     AdminFormSubthemeAssocTopicError,

@@ -15,7 +15,7 @@ from metrics.data.models.core_models import (
 )
 
 
-class ApiPermissionFactory(factory.django.DjangoModelFactory):
+class RBACPermissionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = RBACPermission
@@ -23,7 +23,7 @@ class ApiPermissionFactory(factory.django.DjangoModelFactory):
     @classmethod
     def create_record(
         cls,
-        name: str = "permission1",
+        name: str = "all_infectious_respiratory_data",
         theme_name: str = "infectious_disease",
         sub_theme_name: str = "respiratory",
         topic_name: str = None,

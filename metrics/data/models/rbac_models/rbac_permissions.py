@@ -4,15 +4,15 @@ from django.db import models
 from metrics.data.managers.rbac_models.rbac_permissions import RBACPermissionManager
 
 
-class AdminFormThemeSubthemeError(ValidationError):
+class AdminFormThemeError(ValidationError):
     def __init__(self):
-        message = "You must select a theme & a subtheme."
+        message = "You must select a theme."
         super().__init__(message)
 
 
 class AdminFormSubthemeAssocThemeError(ValidationError):
     def __init__(self):
-        message = "The selected subtheme must belong to the selected theme."
+        message = "You must select a valid subtheme that belongs to the selected theme."
         super().__init__(message)
 
 
@@ -127,15 +127,9 @@ class RBACPermission(models.Model):
 
     def clean(self):
         super().clean()
-        if not getattr(self, "theme", None) or not getattr(self, "sub_theme", None):
-            raise AdminFormThemeSubthemeError
-        if self.sub_theme.theme != self.theme:
-            raise AdminFormSubthemeAssocThemeError
-        if self.topic:
-            if self.topic.sub_theme.theme != self.theme:
-                raise AdminFormTopicAssocSubthemeError
-            if self.sub_theme.name != self.topic.sub_theme.name:
-                raise AdminFormSubthemeAssocTopicError
+        self._validate_theme_selection()
+        self._validate_subtheme_selection()
+        self._validate_topic_selection()
 
         """Validates that there are no duplicate permissions with the same fields."""
         rbac_permissions = RBACPermission.objects.get_existing_permissions(self)
@@ -145,3 +139,20 @@ class RBACPermission(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+    def _validate_theme_selection(self):
+        """Check theme foreign key otherwise Django raises RelatedObjectDoesNotExist"""
+        if not getattr(self, "theme", None):
+            raise AdminFormThemeError
+
+    def _validate_subtheme_selection(self):
+        """Check sub_theme foreign key otherwise Django raises RelatedObjectDoesNotExist"""
+        if not getattr(self, "sub_theme", None) or self.sub_theme.theme != self.theme:
+            raise AdminFormSubthemeAssocThemeError
+
+    def _validate_topic_selection(self):
+        if self.topic:
+            if self.topic.sub_theme.theme != self.theme:
+                raise AdminFormTopicAssocSubthemeError
+            if self.sub_theme.name != self.topic.sub_theme.name:
+                raise AdminFormSubthemeAssocTopicError
