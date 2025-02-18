@@ -43,6 +43,8 @@ class APITimeSeries(models.Model):
     force_write = models.BooleanField(default=False)
     metric_value = models.FloatField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
 
+    is_public = models.BooleanField(default=True, null=False)
+
     objects = APITimeSeriesManager()
 
     class Meta:

@@ -43,6 +43,7 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         period_start: str | datetime.date = "2023-01-01",
         period_end: str | datetime.date = "2023-01-07",
         embargo: str | datetime.datetime = datetime.datetime(2024, 4, 10),
+        is_public: bool = True,
         **kwargs
     ):
         theme, _ = Theme.objects.get_or_create(name=theme_name)
@@ -79,6 +80,7 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
             period_start=period_start,
             period_end=period_end,
             embargo=embargo,
+            is_public=is_public,
             **kwargs
         )
 

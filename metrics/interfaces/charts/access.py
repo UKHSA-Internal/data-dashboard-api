@@ -15,7 +15,6 @@ from metrics.domain.charts import (
 )
 from metrics.domain.common.utils import (
     ChartTypes,
-    DataSourceFileType,
     extract_metric_group_from_metric,
 )
 from metrics.domain.models import (
@@ -43,6 +42,7 @@ class InvalidFileFormatError(Exception):
 class ChartOutput:
     figure: plotly.graph_objects.Figure
     description: str
+    is_headline: bool
 
     @property
     def interactive_chart_figure_output(self) -> dict:
@@ -101,8 +101,13 @@ class ChartOutput:
             `D3-time-format` specifiers. examples can be found at:
             https://d3js.org/d3-time-format
         """
+        hover_template = "%{y} (%{x|%d %b %Y})<extra></extra>"
+
+        if self.is_headline:
+            hover_template = "%{y} (%{x})<extra></extra>"
+
         for plot in self.figure.data:
-            plot.hovertemplate = "%{y} (%{x|%d %b %Y})<extra></extra>"
+            plot.hovertemplate = hover_template
 
     def _disable_clicks_on_legend(self):
         self.figure.layout.legend.itemclick = False
@@ -131,6 +136,10 @@ class ChartsInterface:
 
         self._latest_date: str = ""
 
+    @property
+    def is_headline_data(self) -> bool:
+        return self.chart_request_params.plots[0].is_headline_data
+
     def _set_core_model_manager(self) -> Manager:
         """Returns `core_model_manager` based on the `metric_group`
 
@@ -144,7 +153,7 @@ class ChartsInterface:
         Returns:
             Manager: either `CoreTimeseries` or `CoreHeadline`
         """
-        if DataSourceFileType[self.metric_group].is_headline:
+        if self.is_headline_data:
             return DEFAULT_CORE_HEADLINE_MANAGER
 
         return DEFAULT_CORE_TIME_SERIES_MANAGER
@@ -184,7 +193,11 @@ class ChartsInterface:
                     chart_generation_payload=chart_generation_payload
                 )
 
-        return ChartOutput(figure=figure, description=description)
+        return ChartOutput(
+            figure=figure,
+            description=description,
+            is_headline=self.is_headline_data,
+        )
 
     @classmethod
     def build_chart_description(cls, *, plots_data: list[PlotGenerationData]) -> str:

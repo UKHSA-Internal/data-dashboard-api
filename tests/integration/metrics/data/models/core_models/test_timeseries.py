@@ -104,3 +104,15 @@ class TestCoreTimeSeries:
         # Then
         # Check that there are now 2 'versions' of that data
         assert CoreTimeSeries.objects.count() == 2
+
+    @pytest.mark.django_db
+    def test_can_set_is_public_to_false(self):
+        """
+        Given a `CoreTimeSeries` record
+        When `is_public` is explicitly set to `False`
+        Then the value should be stored correctly in the database
+        """
+        # Given / When
+        record = CoreTimeSeriesFactory.create_record(is_public=False)
+        # Then
+        assert record.is_public is False
