@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from metrics.data.managers.rbac_models import RBACPermissionQuerySet
 from metrics.data.managers.rbac_models.rbac_permissions import RBACPermissionManager
 
 
@@ -131,8 +132,7 @@ class RBACPermission(models.Model):
         self._validate_subtheme_selection()
         self._validate_topic_selection()
 
-        """Validates that there are no duplicate permissions with the same fields."""
-        rbac_permissions = RBACPermission.objects.get_existing_permissions(self)
+        rbac_permissions = self._get_existing_permissions()
         if rbac_permissions.exists():
             raise AdminFormDuplicatePermissionError
 
@@ -156,3 +156,7 @@ class RBACPermission(models.Model):
                 raise AdminFormTopicAssocSubthemeError
             if self.sub_theme.name != self.topic.sub_theme.name:
                 raise AdminFormSubthemeAssocTopicError
+
+    def _get_existing_permissions(self) -> RBACPermissionQuerySet:
+        """Validates that there are no duplicate permissions with the same fields."""
+        return RBACPermission.objects.get_existing_permissions(self)

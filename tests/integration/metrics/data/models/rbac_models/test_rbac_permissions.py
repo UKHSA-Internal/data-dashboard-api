@@ -96,7 +96,7 @@ class TestRBACPermission:
             ).clean()
 
     @pytest.mark.django_db
-    def test_subtheme(self):
+    def test_rbac_permission_validation_raises_error_for_unrelated_subtheme(self):
         """
         Given an RBACPermission with a sub_theme that does not join to a parent theme
         When it is validated
@@ -163,9 +163,9 @@ class TestRBACPermission:
     @pytest.mark.django_db
     def test_rbac_permission_rejects_topic_unrelated_to_subtheme(self):
         """
-        GIVEN a Topic that belongs to a different SubTheme
-        WHEN an RBACPermission is created with that Topic and an unrelated SubTheme
-        THEN an AdminFormSubthemeAssocTopicError is raised
+        Given a Topic that belongs to a different SubTheme
+        When an RBACPermission is created with that Topic and an unrelated SubTheme
+        Then an AdminFormSubthemeAssocTopicError is raised
         """
         # Given
         sub_theme = SubTheme.objects.create(

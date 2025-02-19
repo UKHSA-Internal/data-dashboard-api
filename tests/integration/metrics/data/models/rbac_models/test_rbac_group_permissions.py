@@ -13,7 +13,7 @@ from metrics.data.models.core_models import (
 class TestRBACGroupPermission:
 
     @pytest.fixture(autouse=True)
-    def setup(self, db):
+    def setup(self):
         self.non_communicable = Theme.objects.create(name="non-communicable")
         self.respiratory = SubTheme.objects.create(
             name="respiratory", theme=self.non_communicable
@@ -83,7 +83,7 @@ class TestRBACGroupPermission:
         RBACGroupPermission.objects.create(name="duplicate_group")
 
         # When / Then
-        with pytest.raises(IntegrityError):  # Adjust exception type based on DB backend
+        with pytest.raises(IntegrityError):
             RBACGroupPermission.objects.create(name="duplicate_group")
 
     @pytest.mark.django_db
