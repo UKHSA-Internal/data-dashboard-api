@@ -236,10 +236,10 @@ def construct_urlpatterns(
 
     match app_mode:
         case enums.AppMode.CMS_ADMIN.value:
+            constructed_url_patterns += django_admin_urlpatterns
             constructed_url_patterns += construct_cms_admin_urlpatterns(
                 app_mode=app_mode
             )
-            constructed_url_patterns += django_admin_urlpatterns
             constructed_url_patterns += audit_api_urlpatterns
         case enums.AppMode.PUBLIC_API.value:
             constructed_url_patterns += construct_public_api_urlpatterns(
