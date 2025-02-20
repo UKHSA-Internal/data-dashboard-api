@@ -179,7 +179,11 @@ The sub title to display for this component.
 """
 
 OPTIONAL_BODY_FIELD: str = """
-An optional body of text to accompany this block.
+An optional body of text to accompany this block. This text will be displayed in the about content of the chart.
+"""
+
+OPTIONAL_CHART_SUBTITLE_FIELD: str = """
+An optional body of text to accompany this block. This text will be displayed below the chart title.
 """
 
 REQUIRED_BODY_FIELD: str = """
