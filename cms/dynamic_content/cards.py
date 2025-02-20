@@ -54,7 +54,8 @@ class WHAlerts(models.TextChoices):
 
 class WeatherHealthAlertsCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    sub_title = blocks.TextBlock(required=True, help_text=help_texts.SUB_TITLE_FIELD)
+    sub_title = blocks.TextBlock(
+        required=True, help_text=help_texts.SUB_TITLE_FIELD)
     alert_type = blocks.ChoiceBlock(
         required=True,
         choices=WHAlerts.get_alerts,
@@ -137,7 +138,8 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
 
 class SimplifiedChartWithLink(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    sub_title = blocks.CharBlock(required=False, help_text=help_texts.SUB_TITLE_FIELD)
+    sub_title = blocks.CharBlock(
+        required=False, help_text=help_texts.SUB_TITLE_FIELD)
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
@@ -193,7 +195,7 @@ class SimplifiedChartWithLink(blocks.StructBlock):
 class ChartCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
     sub_title = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_CHART_SUBTITLE_FIELD
+        required=False, default="", help_text=help_texts.OPTIONAL_CHART_SUBTITLE_FIELD
     )
     body = blocks.TextBlock(
         required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="About"
