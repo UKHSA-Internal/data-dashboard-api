@@ -195,7 +195,9 @@ class ChartCard(blocks.StructBlock):
     sub_title = blocks.TextBlock(
         required=False, help_text=help_texts.OPTIONAL_CHART_SUBTITLE_FIELD
     )
-    action = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    body = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="About"
+    )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
