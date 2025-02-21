@@ -115,7 +115,7 @@ def fake_plot_data() -> PlotGenerationData:
     return PlotGenerationData(
         parameters=plot_params,
         x_axis_values=[
-            datetime.date(year=2023, month=1, day=i + 1)
+            datetime.date(year=2023, month=i + 1, day=1)
             for i in range(len(y_axis_values))
         ],
         y_axis_values=y_axis_values,

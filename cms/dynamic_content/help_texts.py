@@ -178,9 +178,12 @@ SUB_TITLE_FIELD: str = """
 The sub title to display for this component.
 """
 
+OPTIONAL_CHART_ABOUT_FIELD: str = """
+An optional body of text to accompany this block. This text will be displayed in the about content of the chart.
+"""
+
 OPTIONAL_BODY_FIELD: str = """
-An optional body of text to accompany this block.
-This text will be displayed in the about tab.
+An optional body of text to accompany this block. This text will be displayed below the chart title.
 """
 
 OPTIONAL_RELATED_LINK: str = """
@@ -193,6 +196,7 @@ The Text that will be displayed for the URL.
 
 RELATED_LINK_URL: str = """
 The URL that the user will be navigated to when clicked.
+An optional body of text to accompany this block. This text will be displayed below the chart title.
 """
 
 REQUIRED_BODY_FIELD: str = """
