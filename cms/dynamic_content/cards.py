@@ -80,11 +80,11 @@ class HeadlineNumbersRowCard(blocks.StructBlock):
 
 class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    sub_title = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_CHART_SUBTITLE_FIELD
-    )
     body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="About"
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    about = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
     )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
@@ -192,11 +192,11 @@ class SimplifiedChartWithLink(blocks.StructBlock):
 
 class ChartCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    About = blocks.TextBlock(
-        required=False, default="", help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
-    )
     body = blocks.TextBlock(
-        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Sub-title"
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    about = blocks.TextBlock(
+        required=False, default="", help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
     )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
