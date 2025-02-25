@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import authorised_route
 from metrics.api.serializers import (
     BulkDownloadsSerializer,
     CoreHeadlineSerializer,
@@ -99,6 +100,7 @@ class DownloadsView(APIView):
 
         return write_data_to_csv(file=response, core_time_series_queryset=queryset)
 
+    @authorised_route
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
     def post(self, request, *args, **kwargs):

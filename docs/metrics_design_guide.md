@@ -20,6 +20,9 @@ As a result, one should expect to find a large amount of replicated values.
 There are a series of foreign key relationships. 
 Although this greatly reduced the amount of data needed to be stored.
 It does mean that querying the core models will incur penalties from joins depending on the query being performed.
+3. RBAC Permission models. This sub-system represents the access control layer of the data. It defines permissions 
+and restrictions on who can access specific metrics based on themes, sub-themes, topics, and other attributes. 
+These models enforce data security by ensuring that only authorized users can retrieve certain records. 
 
 Note that at the point of data ingestion,
 both the **Core models** and **API models** are populated
