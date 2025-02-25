@@ -1,3 +1,4 @@
+from decimal import Decimal
 from typing import Any
 
 import plotly
@@ -15,6 +16,8 @@ def create_line_chart_with_shaded_section(
     chart_width: int,
     x_axis_values: list[Any],
     y_axis_values: list[Any],
+    y_axis_minimum_value: Decimal,
+    y_axis_maximum_value: Decimal,
     shaded_section_fill_colour: colour_scheme.RGBAColours,
     shaded_section_line_colour: colour_scheme.RGBAColours,
     rolling_period_slice: int,
@@ -29,6 +32,8 @@ def create_line_chart_with_shaded_section(
         chart_width: The chart width in pixels
         x_axis_values: The values for the x-axis
         y_axis_values: The values for the y-axis
+        y_axis_minimum_value: The minimum y-axis value for a chart
+        y_axis_maximum_value: The maximum y-axis value for a chart
         shaded_section_fill_colour: The colour to use
             for the fill of the shaded/highlighted section.
         shaded_section_line_colour: The colour to use
@@ -83,6 +88,8 @@ def create_line_chart_with_shaded_section(
     payload = ChartGenerationPayload(
         chart_width=chart_width,
         chart_height=chart_height,
+        y_axis_minimum_value=y_axis_minimum_value,
+        y_axis_maximum_value=y_axis_maximum_value,
         plots=plots_data,
         y_axis_title="",
         x_axis_title="",
@@ -146,6 +153,8 @@ def generate_chart_figure(
     chart_width: int,
     x_axis_values: list[Any],
     y_axis_values: list[Any],
+    y_axis_minimum_value: Decimal,
+    y_axis_maximum_value: Decimal,
     metric_name: str,
     change_in_metric_value: int,
     rolling_period_slice: int = 7,
@@ -159,6 +168,8 @@ def generate_chart_figure(
         chart_width: The chart width in pixels
         x_axis_values: The values for the x-axis
         y_axis_values: The values for the y-axis
+        y_axis_minimum_value: The minimum y-axis value for a chart
+        y_axis_maximum_value: The maximum y-axis value for a chart
         metric_name: The associated metric_name,
             E.g. `new_admissions_daily`
         change_in_metric_value: The change in metric value from the last 7 days
@@ -192,6 +203,8 @@ def generate_chart_figure(
         chart_width=chart_width,
         x_axis_values=x_axis_values,
         y_axis_values=y_axis_values,
+        y_axis_minimum_value=y_axis_minimum_value,
+        y_axis_maximum_value=y_axis_maximum_value,
         rolling_period_slice=rolling_period_slice,
         line_shape=line_shape,
         shaded_section_line_colour=line_colour,
