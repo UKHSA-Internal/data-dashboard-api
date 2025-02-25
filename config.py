@@ -66,3 +66,6 @@ POSTGRES_PORT: int = os.environ.get("POSTGRES_PORT", 5432)
 # easy way to inject secrets into serverless lambda functions
 if APP_MODE == "INGESTION":
     POSTGRES_PASSWORD = get_database_password()
+
+# Enables RBAC group permissions
+AUTH_ENABLED = os.environ.get("AUTH_ENABLED")
