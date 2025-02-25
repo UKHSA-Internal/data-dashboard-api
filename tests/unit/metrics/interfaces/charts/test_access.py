@@ -489,6 +489,8 @@ class TestChartsInterface:
         height = 456
         mocked_x_axis_values = mock.Mock()
         mocked_y_axis_values = mock.Mock()
+        mocked_y_axis_minimum_value = 0
+        mocked_y_axis_maximum_value = None
         fake_plot_data = PlotGenerationData(
             parameters=fake_chart_plot_parameters,
             x_axis_values=mocked_x_axis_values,
@@ -502,6 +504,8 @@ class TestChartsInterface:
             chart_height=height,
             x_axis="date",
             y_axis="metric",
+            y_axis_minimum_value=mocked_y_axis_minimum_value,
+            y_axis_maximum_value=mocked_y_axis_maximum_value,
         )
 
         charts_interface = ChartsInterface(
@@ -523,6 +527,8 @@ class TestChartsInterface:
             "chart_height": height,
             "x_axis_values": mocked_x_axis_values,
             "y_axis_values": mocked_y_axis_values,
+            "y_axis_minimum_value": mocked_y_axis_minimum_value,
+            "y_axis_maximum_value": mocked_y_axis_maximum_value,
             "metric_name": metric,
             "change_in_metric_value": spy_calculate_change_in_metric_value.return_value,
             "rolling_period_slice": spy_get_rolling_period_slice_for_metric.return_value,
