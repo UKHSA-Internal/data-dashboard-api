@@ -1,6 +1,5 @@
 import contextlib
 import datetime
-from typing import List
 
 import factory
 from metrics.data.models.rbac_models import (
@@ -21,7 +20,7 @@ class RBACPermissionGroupFactory(factory.django.DjangoModelFactory):
     def create_record(
         cls,
         name: str = "default",
-        permissions: List[RBACPermission] = [],
+        permissions: list[RBACPermission] = [],
         **kwargs,
     ):
 
