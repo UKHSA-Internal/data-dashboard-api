@@ -20,7 +20,7 @@ class RBACPermissionGroupFactory(factory.django.DjangoModelFactory):
     def create_record(
         cls,
         name: str = "default",
-        permissions: list[RBACPermission] = [],
+        permissions: list[RBACPermission] | None = None,
         **kwargs,
     ):
 
