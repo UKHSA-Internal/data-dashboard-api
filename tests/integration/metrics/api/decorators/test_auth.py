@@ -96,24 +96,25 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    def test_request_fails_with_invalid_group_id(self):
+    @pytest.mark.parametrize("group_id", ["invalid", "1", "", None])
+    def test_request_with_invalid_group_id(self, group_id):
         """
         Given authentication is enabled
         And an invalid `X-Group-id` header is provided
         When a request is made to an authorised route
-        Then the response contains an error message
+        Then the response should contain no permissions
         """
         # Given
         client = APIClient()
-        headers = {f"HTTP_{RBAC_AUTH_X_HEADER}": "invalid"}
+        headers = {f"HTTP_{RBAC_AUTH_X_HEADER}": group_id}
 
         with mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True):
             # When
             response = client.post("/api/mock-downloads/", format="json", **headers)
 
         # Then
-        assert response.status_code == HTTPStatus.FORBIDDEN
+        assert response.status_code == HTTPStatus.OK
         assert response.json() == {
-            "error": "Access Denied",
-            "code": 1115,
+            "message": "Success",
+            "permissions": [],
         }
