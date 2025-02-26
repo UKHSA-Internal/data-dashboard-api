@@ -23,6 +23,7 @@ class RBACPermissionGroupFactory(factory.django.DjangoModelFactory):
         permissions: list[RBACPermission] | None = None,
         **kwargs,
     ):
+        permissions = permissions or []
 
         group = cls.create(name=name, **kwargs)
         # Fetch or create permissions and add them to the group
