@@ -3,11 +3,8 @@
 ########################################################################################################################
 [tool.ruff]
 lint.select = [
-    "C90",      # mccabe
-    "E",        # pycodestyle
-    "W",        # pycodestyle
-    "F",        # Pyflakes
-    "N",        # pep8-naming
+    "AIR",      # airflow
+    "ERA",      # eradicate
     "ASYNC",    # flake8-async
     "S",        # flake8-bandit
     "BLE",      # flake8-blind-except
@@ -17,35 +14,38 @@ lint.select = [
     "T10",      # flake8-debugger
     "EXE",      # flake8-executable
     "EM",       # flake8-errmsg
+    "FIX",      # flake8-fixme
     "FA",       # flake8-future-annotations
+    "INT",      # flake8-gettext
     "ISC",      # flake8-implicit-str-concat
     "ICN",      # flake8-import-conventions
     "G",        # flake8-logging-format
     "LOG",      # flake8-logging
+    "PIE",      # flake8-pie
     "T20",      # flake8-print
     "PYI",      # flake8-pyi
     "Q",        # flake8-quotes
-    "YTT",      # flake8-2020
-    "SLOT",     # flake8-slots
-    "TID",      # flake8-tidy-imports
-    "INT",      # flake8-gettext
-    "PIE",      # flake8-pie
-    "TD",       # flake8-todos
-    "FIX",      # flake8-fixme
     "RSE",      # flake8-raise
     "RET",      # flake8-return
     "SLF",      # flake8-self
     "SIM",      # flake8-simplify
-    "PERF",     # Perflint
-    "ERA",      # eradicate
-    "PGH",      # pygrep-hooks
+    "SLOT",     # flake8-slots
+    "TID",      # flake8-tidy-imports
+    "TD",       # flake8-todos
+    "YTT",      # flake8-2020
     "FLY",      # flynt
-    "AIR",      # airflow
-    "FURB",     # refurb
     "I",        # isort
-    "TRY",      # tryceratops
-    "UP",       # pyupgrade
+    "C90",      # mccabe
+    "PERF",     # Perflint
+    "F",        # Pyflakes
+    "N",        # pep8-naming
+    "E",        # pycodestyle - error
+    "W",        # pycodestyle - warning
+    "PGH",      # pygrep-hooks
     "PL",       # pylint
+    "UP",       # pyupgrade
+    "FURB",     # refurb
+    "TRY",      # tryceratops
 ]
 
 # Ignore rules
