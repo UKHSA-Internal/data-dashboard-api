@@ -59,8 +59,8 @@ class DownloadsView(APIView):
             if DataSourceFileType[metric_group].is_timeseries:
                 return self.timeseries_serializer_class(queryset, many=True)
 
-        except KeyError:
-            raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE)
+        except KeyError as error:
+            raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE) from error
 
     def _handle_json(
         self,

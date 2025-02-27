@@ -65,8 +65,8 @@ def _validate_topic_in_metric(*, metric: str, topic: str) -> None:
     try:
         if topic.lower() not in metric.lower():
             raise ValueError(TOPIC_NAME_VALIDATION_ERROR)
-    except (AttributeError, TypeError):
-        raise ValueError(TOPIC_NAME_VALIDATION_ERROR)
+    except (AttributeError, TypeError) as error:
+        raise ValueError(TOPIC_NAME_VALIDATION_ERROR) from error
 
 
 def _validate_metric_group_in_metric(*, metric: str, metric_group: str) -> None:
@@ -83,5 +83,5 @@ def _validate_metric_group_in_metric(*, metric: str, metric_group: str) -> None:
     try:
         if metric_group not in metric:
             raise ValueError(METRIC_GROUP_VALIDATION_ERROR)
-    except (AttributeError, TypeError):
-        raise ValueError(METRIC_GROUP_VALIDATION_ERROR)
+    except (AttributeError, TypeError) as error:
+        raise ValueError(METRIC_GROUP_VALIDATION_ERROR) from error
