@@ -26,7 +26,7 @@ class RBACGroupPermissionManager(models.Manager):
         """
         Returns the custom queryset for RBACGroupPermission.
 
-        This allows access to custom queryset methods like `get_group()`.
+        This allows access to custom queryset methods.
         """
         return RBACGroupPermissionQuerySet(self.model, using=self._db)
 

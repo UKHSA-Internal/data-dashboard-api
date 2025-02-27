@@ -1,11 +1,12 @@
-import pytest
 from http import HTTPStatus
 from unittest import mock
+
+import pytest
 from django.urls import path
 from rest_framework.test import APIClient
 from rest_framework.views import APIView
 from django.test import override_settings
-from metrics.api.decorators.auth import authorised_route, RBAC_AUTH_X_HEADER
+from metrics.api.decorators.auth import require_authorisation, RBAC_AUTH_X_HEADER
 from django.http import JsonResponse
 
 from tests.factories.metrics.rbac_models.rbac_group_permissions import (
@@ -17,8 +18,8 @@ from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFa
 MODULE_PATH = "metrics.api.decorators.auth"
 
 
-class MockDownloadView(APIView):
-    @authorised_route
+class MockApiView(APIView):
+    @require_authorisation
     def post(self, request, *args, **kwargs):
         permissions = getattr(request, "group_permissions", None)
         if permissions:
@@ -32,14 +33,11 @@ class MockDownloadView(APIView):
 
 
 urlpatterns = [
-    path("api/mock-downloads/", MockDownloadView.as_view(), name="mock-downloads"),
+    path("api/mock-downloads/", MockApiView.as_view(), name="mock-downloads"),
 ]
 
 
 class TestAuthorisedRoute:
-    """
-    Tests for the `authorised_route` decorator.
-    """
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
@@ -77,7 +75,7 @@ class TestAuthorisedRoute:
             theme_name="infectious_disease",
             sub_theme_name="respiratory",
         )
-        _ = RBACPermissionGroupFactory.create_record(
+        RBACPermissionGroupFactory.create_record(
             name="medical",
             permissions=[all_infectious],
         )
@@ -92,7 +90,6 @@ class TestAuthorisedRoute:
             "message": "Success",
             "permissions": [all_infectious.name],
         }
-        # mock_set_rbac.assert_called_once_with(mock.ANY, "medical")
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
@@ -100,7 +97,7 @@ class TestAuthorisedRoute:
     def test_request_with_invalid_group_id(self, group_id):
         """
         Given authentication is enabled
-        And an invalid `X-Group-id` header is provided
+        And an invalid `X-GroupId` header is provided
         When a request is made to an authorised route
         Then the response should contain no permissions
         """
@@ -113,8 +110,6 @@ class TestAuthorisedRoute:
             response = client.post("/api/mock-downloads/", format="json", **headers)
 
         # Then
+        expected = {"message": "Success", "permissions": []}
         assert response.status_code == HTTPStatus.OK
-        assert response.json() == {
-            "message": "Success",
-            "permissions": [],
-        }
+        assert response.json() == expected

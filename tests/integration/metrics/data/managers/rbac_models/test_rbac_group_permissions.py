@@ -40,5 +40,5 @@ class TestRBACGroupPermissionFactory:
         RBACPermissionGroupFactory.create_record(name="admin_group")
 
         # When / Then
-        with pytest.raises(Exception):  # Replace with the actual exception if needed
+        with pytest.raises(Exception):
             RBACPermissionGroupFactory.create_record(name="admin_group")
