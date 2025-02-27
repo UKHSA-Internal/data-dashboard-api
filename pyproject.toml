@@ -88,25 +88,26 @@ lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 target-version = "py312"
 
 [tool.ruff.lint.per-file-ignores]
-"**/{tests}/*"                              = [
-                                                "E501",          # Ignore line length in test files
-                                                "S101",          # Ignore use of `assert` statement in tests
-                                                "SLF001"         # Ignore access of private methods/attributes in tests
-                                              ]
-"metrics/api/views/*"                       = ["E501"]           # Ignore line length in API views.
-                                                                 # This infringement is due to
-                                                                 # swagger-facing docstrings/documentation
-"metrics/api/views/charts.py"               = ["SIM115"]         # Ignore context handler for opening file
-"**/help_texts.py"                          = ["W291"]           # Ignore trailing whitespace for help texts
-"**/build_cms_site.py"                      = ["W605"]           # Ignore escape sequences used in regex calls
-"ingestion/file_ingestion.py"               = ["BLE001"]         # Ignore blind exception catch for file ingestion function
-"public_api/views/root_view.py"             = ["A002"]           # Ignore built-in `format` used in arg to extended
-"public_api/version_02/views/root_view.py"  = ["A002"]           # Ignore built-in `format` used in arg to extended
-                                                                 # rest framework API view method
-"caching/public_api/crawler.py"             = ["PERF401"]        # Ignore list comprehension which would reduce readibility
-"caching/common/geographies_crawler.py"     = ["PLW1641"]        # Ignore requirement of `__hash__` implementation
-"metrics/domain/weather_health_alerts/text_lookups/*" = ["W291"] # Ignore trailing whitespace for weather alert text lookups
-"config.py"                                 = ["PLW1508"]        # Ignore enforcing strings for environment variables
+"**/{tests}/*"                                        = [
+                                                          "E501",          # Ignore line length in test files
+                                                          "S101",          # Ignore use of `assert` statement in tests
+                                                          "SLF001"         # Ignore access of private methods/attributes in tests
+                                                        ]
+"metrics/api/views/*"                                 = ["E501"]           # Ignore line length in API views.
+                                                                                # This infringement is due to
+                                                                                # swagger-facing docstrings/documentation
+"metrics/api/views/charts.py"                         = ["SIM115"]         # Ignore context handler for opening file
+"**/help_texts.py"                                    = ["W291"]           # Ignore trailing whitespace for help texts
+"**/build_cms_site.py"                                = ["W605"]           # Ignore escape sequences used in regex calls
+"ingestion/file_ingestion.py"                         = ["BLE001"]         # Ignore blind exception catch for file ingestion function
+"public_api/views/root_view.py"                       = ["A002"]           # Ignore built-in `format` used in arg to extended
+"public_api/version_02/views/root_view.py"            = ["A002"]           # Ignore built-in `format` used in arg to extended
+                                                                                # rest framework API view method
+"caching/public_api/crawler.py"                       = ["PERF401"]        # Ignore list comprehension which would reduce readibility
+"caching/common/geographies_crawler.py"               = ["PLW1641"]        # Ignore requirement of `__hash__` implementation
+"metrics/domain/weather_health_alerts/text_lookups/*" = ["W291"]           # Ignore trailing whitespace for weather alert text lookups
+"config.py"                                           = ["PLW1508"]        # Ignore enforcing strings for environment variables
+
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
