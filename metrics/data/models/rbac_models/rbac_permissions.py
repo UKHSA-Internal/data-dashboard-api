@@ -131,10 +131,7 @@ class RBACPermission(models.Model):
         self._validate_theme_selection()
         self._validate_subtheme_selection()
         self._validate_topic_selection()
-
-        rbac_permissions = self._get_existing_permissions()
-        if rbac_permissions.exists():
-            raise AdminFormDuplicatePermissionError
+        self._check_rbac_permissions_exist()
 
     def save(self, *args, **kwargs):
         self.clean()
@@ -160,3 +157,8 @@ class RBACPermission(models.Model):
     def _get_existing_permissions(self) -> RBACPermissionQuerySet:
         """Validates that there are no duplicate permissions with the same fields."""
         return RBACPermission.objects.get_existing_permissions(self)
+
+    def _check_rbac_permissions_exist(self):
+        rbac_permissions = self._get_existing_permissions()
+        if rbac_permissions.exists():
+            raise AdminFormDuplicatePermissionError

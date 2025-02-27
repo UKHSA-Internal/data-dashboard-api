@@ -26,12 +26,12 @@ class RBACPermissionFactory(factory.django.DjangoModelFactory):
         name: str = "all_infectious_respiratory_data",
         theme_name: str = "infectious_disease",
         sub_theme_name: str = "respiratory",
-        topic_name: str = None,
-        metric_name: str = None,
-        geography_name: str = None,
-        geography_type_name: str = None,
-        stratum_name: str = None,
-        age_name: str = None,
+        topic_name: str | None = None,
+        metric_name: str | None = None,
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        age_name: str | None = None,
         **kwargs,
     ):
         theme, _ = Theme.objects.get_or_create(name=theme_name)

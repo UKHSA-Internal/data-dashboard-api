@@ -54,7 +54,7 @@ class TestRBACPermissionFactory:
         # Given
         permission = RBACPermissionFactory.create_record()
 
-        _ = RBACPermissionFactory.create_record(
+        RBACPermissionFactory.create_record(
             name="permission_2",
             theme_name="extreme_event",
             sub_theme_name="weather_alert",
