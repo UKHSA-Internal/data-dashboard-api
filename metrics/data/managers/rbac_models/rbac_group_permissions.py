@@ -1,10 +1,12 @@
+from typing import Union
+
 from django.db import models
 
 
 class RBACGroupPermissionQuerySet(models.QuerySet):
     """Custom queryset for the `RBACGroupPermission` model."""
 
-    def get_group(self, name: str) -> "RBACGroupPermission":
+    def get_group(self, name: str) -> Union["RBACGroupPermission", None]:
         """
         Retrieves a single `RBACGroupPermission` instance based on the given name.
 
@@ -26,11 +28,11 @@ class RBACGroupPermissionManager(models.Manager):
         """
         Returns the custom queryset for RBACGroupPermission.
 
-        This allows access to custom queryset methods like `get_group()`.
+        This allows access to custom queryset methods.
         """
         return RBACGroupPermissionQuerySet(self.model, using=self._db)
 
-    def get_group(self, name: str) -> "RBACGroupPermission":
+    def get_group(self, name: str) -> Union["RBACGroupPermission", None]:
         """
         Retrieves a single `RBACGroupPermission` instance by name using the queryset method.
 

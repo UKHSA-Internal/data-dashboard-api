@@ -6,7 +6,7 @@ from tests.factories.metrics.rbac_models.rbac_group_permissions import (
 )
 
 
-class TestRBACGroupPermissionFactory:
+class TestRBACGroupPermissionManager:
     group_permissions = {
         "name": "admin_group",
     }
@@ -40,5 +40,5 @@ class TestRBACGroupPermissionFactory:
         RBACPermissionGroupFactory.create_record(name="admin_group")
 
         # When / Then
-        with pytest.raises(Exception):  # Replace with the actual exception if needed
-            RBACPermissionGroupFactory.create_record(name="admin_group")
+        with pytest.raises(Exception):
+            RBACGroupPermission.objects.create(name="admin_group")
