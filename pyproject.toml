@@ -22,6 +22,7 @@ lint.select = [
     "ICN",      # flake8-import-conventions
     "G",        # flake8-logging-format
     "LOG",      # flake8-logging
+    "INP",      # flake8-no-pep420
     "PIE",      # flake8-pie
     "T20",      # flake8-print
     "PYI",      # flake8-pyi
