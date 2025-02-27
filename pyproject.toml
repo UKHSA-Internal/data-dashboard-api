@@ -41,11 +41,14 @@ lint.select = [
     "C90",      # mccabe
     "PERF",     # Perflint
     "F",        # Pyflakes
+    "PLC",      # Pylint - convention
+    "PLE",      # Pylint - error
+    "PLR",      # Pylint - refactor
+    "PLW",      # Pylint - warning
     "N",        # pep8-naming
     "E",        # pycodestyle - error
     "W",        # pycodestyle - warning
     "PGH",      # pygrep-hooks
-    "PL",       # pylint
     "UP",       # pyupgrade
     "FURB",     # refurb
     "TRY",      # tryceratops
