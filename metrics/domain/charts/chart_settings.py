@@ -264,7 +264,7 @@ class ChartSettings:
         chart_config = self.get_base_chart_config()
         return {**chart_config, **self._get_legend_top_centre_config()}
 
-    def _get_date_tick_format(self, weekly: bool = False) -> str:
+    def _get_date_tick_format(self, *, weekly: bool = False) -> str:
         if weekly:
             return "%d %b<br>%Y"
 
