@@ -135,7 +135,7 @@ class TabularData:
     def _build_plot_data_for_axes_values(
         cls, *, plot: "PlotGenerationData"
     ) -> PLOT_DATA_LOOKUP_TYPE:
-        return dict(zip(plot.x_axis_values, plot.y_axis_values))
+        return dict(zip(plot.x_axis_values, plot.y_axis_values, strict=False))
 
     @classmethod
     def _build_plot_data_for_in_reporting_delay_period_values(
@@ -150,7 +150,9 @@ class TabularData:
                 False for _ in range(len(plot.x_axis_values))
             ]
 
-        return dict(zip(plot.x_axis_values, in_report_delay_period_values))
+        return dict(
+            zip(plot.x_axis_values, in_report_delay_period_values, strict=False)
+        )
 
     def create_multi_plot_output(self) -> list[dict[str, str] | list[dict]]:
         """Creates the tabular output for the given plots

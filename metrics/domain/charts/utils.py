@@ -28,8 +28,8 @@ def convert_large_numbers_to_short_text(number: int) -> str:
                 if E_NOTATION[index] <= number < E_NOTATION[index + 1]:
                     return f"{str(int(number / E_NOTATION[index]))}{SUFFIXES[index]}"
 
-            except IndexError:
-                raise ValueError(CONVERT_LARGE_NUMBERS_VALUE_ERROR)
+            except IndexError as error:
+                raise ValueError(CONVERT_LARGE_NUMBERS_VALUE_ERROR) from error
 
     return str(number)
 

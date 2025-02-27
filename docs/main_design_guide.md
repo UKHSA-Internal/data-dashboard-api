@@ -99,6 +99,7 @@ The codebase itself is *generally* structured as follows, this is not an exhaust
         |- models/
             |- api_models.py    # The flat denormalized model which holds everything in the single flat table.
             |- core_models.py   # The normalized models which house a series of FK relationships.
+            |- rbac_models/     # The models responsible for role-based access control, defining permissions and access restrictions for data.
         |- managers/            # Contains files with custom queryset and model manager classes for the models.
         |- migrations/          # Contains the associated django migrations.
     |- domain/                  # Represents the business logic layer. Currently houses the charts generation module.
