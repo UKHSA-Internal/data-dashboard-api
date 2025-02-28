@@ -407,6 +407,8 @@ class ChartsInterface:
         chart_width = self.chart_request_params.chart_width
         x_axis_values = plot_data.x_axis_values
         y_axis_values = plot_data.y_axis_values
+        y_axis_minimum_value = self.chart_request_params.y_axis_minimum_value
+        y_axis_maximum_value = self.chart_request_params.y_axis_maximum_value
         metric_name = plot_data.parameters.metric_name
 
         return {
@@ -415,6 +417,8 @@ class ChartsInterface:
             "chart_width": chart_width,
             "x_axis_values": x_axis_values,
             "y_axis_values": y_axis_values,
+            "y_axis_minimum_value": y_axis_minimum_value,
+            "y_axis_maximum_value": y_axis_maximum_value,
             "metric_name": metric_name,
             "change_in_metric_value": self.calculate_change_in_metric_value(
                 values=y_axis_values,
