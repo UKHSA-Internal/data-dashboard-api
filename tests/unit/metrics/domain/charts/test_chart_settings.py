@@ -801,7 +801,7 @@ class TestChartSettings:
         self,
         fake_chart_settings: ChartSettings,
         y_axis_min: int,
-        y_axis_max: int,
+        y_axis_max: int | None,
         expected_y_axis_min: int,
         expected_y_axis_max: int,
         y_axis_values: list[int],
