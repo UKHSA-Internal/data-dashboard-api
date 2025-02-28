@@ -139,7 +139,7 @@ class ChartSettings:
             "showlegend": True,
         }
 
-    def _get_minimum_and_maximum_y_axis_values(self):
+    def _get_minimum_and_maximum_y_axis_values(self) -> list[Decimal]:
         """Returns the y-axis minimum and maximum value, which can be either a manual
         value provided in a request or the minimum and maximum value
 
