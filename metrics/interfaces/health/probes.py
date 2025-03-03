@@ -143,5 +143,5 @@ class HealthProbeManagement:
         # on the django postgresql wrapper begins with a closed connection
         # so it is easier to just simply re-implement here with a valid connection
         with self._database_connection.cursor() as cursor:
-            cursor.execute("SELECT 1;")
+            cursor._run_action("SELECT 1;")
             return cursor.fetchone()
