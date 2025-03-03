@@ -15,7 +15,7 @@ pip-requirements-parser==32.0.1
 pre-commit==4.1.0
 pylint==3.3.4
 pylint-django==2.6.1
-pytest==8.3.4
+pytest==8.3.5
 pytest-cov==6.0.0
 pytest-django==4.10.0
 pytest-random-order==1.1.1
