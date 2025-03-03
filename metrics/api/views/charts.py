@@ -2,7 +2,7 @@ import os
 from http import HTTPStatus
 
 from django.http import FileResponse
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -38,6 +38,41 @@ class ChartsView(APIView):
         request=ChartsSerializer,
         responses={HTTPStatus.OK.value: ChartsResponseSerializer},
         tags=[CHARTS_API_TAG],
+        examples=[
+            OpenApiExample(
+                "COVID-19 example",
+                value={
+                    "file_format": "png",
+                    "chart_height": 300,
+                    "chart_width": 900,
+                    "x_axis": "date",
+                    "y_axis": "metric",
+                    "x_axis_title": "",
+                    "y_axis_title": "",
+                    "y_axis_minimum_value": 0,
+                    "y_axis_maximum_value": "",
+                    "plots": [
+                        {
+                            "topic": "COVID-19",
+                            "metric": "COVID-19_cases_casesByDay",
+                            "stratum": "default",
+                            "age": "all",
+                            "geography": "England",
+                            "geography_type": "Nation",
+                            "sex": "all",
+                            "date_from": "2022-01-01",
+                            "date_to": "2023-02-01",
+                            "chart_type": "line_multi_coloured",
+                            "label": "",
+                            "line_colour": "TREND_LINE_NEUTRAL",
+                            "line_type": "SOLID",
+                            "use_smooth_lines": "false",
+                        }
+                    ],
+                },
+                request_only=True,
+            )
+        ],
     )
     def post(self, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
@@ -277,6 +312,26 @@ class EncodedChartsView(APIView):
         `x_axis_title` Example: `x_axis_title: "Dates"`
 
         `y_axis_title` Example: `y_axis_title: "Number of cases"`
+
+        ---
+
+        # Choosing a y-axis minimum and maximum value (y-axis range)
+
+        By default all charts will start with a y-axis minimum value of 0, this means that a chart's y-axis range starts
+        at 0 and ends at the highest value in the data set.
+
+        With the ability to set a manual y-axis minimum and maximum value you can set a custom range for timeseries
+        charts. For example if a chart's lowest value is 10,000 it is now possible to set a value between 0 and 10,000
+        for the chart's y-axis starting value.
+
+        The is also possible for the maximum value, for example a chart where the highest value is 20,000 can have a
+        maximum value of any number above 20,000. This functionality enables charts to be set to the same scale where
+        they will be place alongside one another on the dashboard.
+
+        Please not that if a minimum value is provided that is `higher` than the minimum value in the dataset the
+        `y_axis_minimum_value` will be ignored and the lowest value from the dataset will be used. This is the same
+        for `y_axis_maximum_value` if the value provided is `lower` than the highest value in the dataset
+        the highest value from the dataset will be used.
 
         """
         request_serializer = EncodedChartsRequestSerializer(data=request.data)
