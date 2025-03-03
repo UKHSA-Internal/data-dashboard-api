@@ -84,17 +84,6 @@ class ChartsView(APIView):
 
         ---
 
-        ## Incompatible timeseries type metrics with waffle charts
-
-        In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
-        For example, if a timeseries type metric like `COVID-19_deaths_ONSByDay`
-        is being asked for with a `waffle` chart.
-
-        Then an HTTP 400 BAD REQUEST is returned with the following error message:
-            `COVID-19_deaths_ONSByDay` is not compatible with `waffle` chart types
-
-        ---
-
         ## Selected metric not available for topic
 
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
@@ -103,7 +92,17 @@ class ChartsView(APIView):
 
         Then an HTTP 400 BAD REQUEST is returned with the following error message:
             `Influenza` does not have a corresponding metric of `COVID-19`
+
         ---
+
+        ## Dates not in chronological order
+
+        In cases where a date provided to the `date_from` property is a later date than the one provided to the `date_to`
+        property an HTTP 400 BAD REQUEST with the following error message:
+        Invalid plot parameter provided. Please check the date range and topic provided
+
+        ---
+
         # Changing the size of the graph
 
         If you are not happy with the default width and/or height of the graph you can override the values by setting one or both of them:
@@ -134,6 +133,25 @@ class ChartsView(APIView):
 
         `y_axis_title` Example: `y_axis_title: "Number of cases"`
 
+        ---
+
+        # Choosing a y-axis minimum and maximum value (y-axis range)
+
+        By default all charts will start with a y-axis minimum value of 0, this means that a chart's y-axis range starts
+        at 0 and ends at the highest value in the data set.
+
+        With the ability to set a manual y-axis minimum and maximum value you can set a custom range for timeseries
+        charts. For example if a chart's lowest value is 10,000 it is now possible to set a value between 0 and 10,000
+        for the chart's y-axis starting value.
+
+        The is also possible for the maximum value, for example a chart where the highest value is 20,000 can have a
+        maximum value of any number above 20,000. This functionality enables charts to be set to the same scale where
+        they will be place alongside one another on the dashboard.
+
+        Please not that if a minimum value is provided that is `higher` than the minimum value in the dataset the
+        `y_axis_minimum_value` will be ignored and the lowest value from the dataset will be used. This is the same
+        for `y_axis_maximum_value` if the value provided is `lower` than the highest value in the dataset
+        the highest value from the dataset will be used.
 
         """
         request_serializer = ChartsSerializer(data=request.data)
