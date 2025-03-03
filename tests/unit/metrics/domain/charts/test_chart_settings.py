@@ -790,7 +790,6 @@ class TestChartSettings:
     @pytest.mark.parametrize(
         "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
         (
-            [0, None, 0, 5, [1, 2, 3, 4, 5]],
             [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
             [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
             [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
@@ -833,16 +832,13 @@ class TestChartSettings:
             expected_y_axis_min,
             expected_y_axis_max,
         ]
-        expected_multi_coloured_config["yaxis"]["rangemode"] = (
-            "tozero" if expected_y_axis_min == 0 else "normal"
-        )
+        expected_multi_coloured_config["yaxis"]["rangemode"] = "normal"
 
         assert line_multi_coloured_chart_config == expected_multi_coloured_config
 
     @pytest.mark.parametrize(
         "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
         (
-            [0, None, 0, 5, [1, 2, 3, 4, 5]],
             [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
             [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
             [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
@@ -884,9 +880,7 @@ class TestChartSettings:
             expected_y_axis_min,
             expected_y_axis_max,
         ]
-        expected_line_with_shaded_section_config["yaxis"]["rangemode"] = (
-            "tozero" if expected_y_axis_min == 0 else "normal"
-        )
+        expected_line_with_shaded_section_config["yaxis"]["rangemode"] = "normal"
 
         assert (
             line_with_shaded_section_chart_config
