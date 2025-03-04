@@ -92,11 +92,11 @@ def _retrieve_response_from_cache_or_calculate(
         return cache_management.retrieve_item_from_cache(
             cache_entry_key=cache_entry_key
         )
-    except CacheMissError:
+    except CacheMissError as error:
         # If the `Cache-Check` header is True
         # and there has been 1 cache miss, then error out early
         if request.headers.get(CACHE_CHECK_HEADER_KEY, False):
-            raise CacheCheckResultedInMissError
+            raise CacheCheckResultedInMissError from error
 
         return _calculate_response_and_save_in_cache(
             view_function, timeout, cache_management, cache_entry_key, *args, **kwargs

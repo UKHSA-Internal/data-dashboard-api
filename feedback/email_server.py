@@ -53,7 +53,7 @@ def send_email_via_ses(*, email_message: EmailMessage) -> None:
         logger.info(error.response["Error"]["Message"])
         raise
     else:
-        logger.info("Email sent. Message ID: %s", response["MessageId"]),
+        logger.info("Email sent. Message ID: %s", response["MessageId"])
 
 
 def send_email(
