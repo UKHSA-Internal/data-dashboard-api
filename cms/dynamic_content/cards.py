@@ -7,6 +7,7 @@ from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
     PageLinkChooserBlock,
+    RelatedLinkBlock,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -85,6 +86,9 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     )
     about = blocks.TextBlock(
         required=False, help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
+    )
+    related_links = RelatedLinkBlock(
+        required=False, help_text=help_texts.OPTIONAL_RELATED_LINK
     )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
@@ -197,6 +201,9 @@ class ChartCard(blocks.StructBlock):
     )
     about = blocks.TextBlock(
         required=False, default="", help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
+    )
+    related_links = RelatedLinkBlock(
+        required=False, help_text=help_texts.OPTIONAL_RELATED_LINK
     )
     tag_manager_event_id = blocks.CharBlock(
         required=False,

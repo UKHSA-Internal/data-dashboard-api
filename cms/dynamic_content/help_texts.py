@@ -186,6 +186,19 @@ OPTIONAL_BODY_FIELD: str = """
 An optional body of text to accompany this block. This text will be displayed below the chart title.
 """
 
+OPTIONAL_RELATED_LINK: str = """
+Provide optional URLs that can provide further contextual information for the data displayed in the chart.
+"""
+
+RELATED_LINK_TEXT: str = """
+The Text that will be displayed for the URL.
+"""
+
+RELATED_LINK_URL: str = """
+The URL that the user will be navigated to when clicked.
+An optional body of text to accompany this block. This text will be displayed below the chart title.
+"""
+
 REQUIRED_BODY_FIELD: str = """
 A required body of text to accompany this block.
 """
