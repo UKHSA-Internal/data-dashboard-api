@@ -5,5 +5,33 @@ VALID_PARAMETERS = [
         "COVID-19",
         "COVID-19_deaths_ONSByWeek",
         "deaths",
-    )
+    ),
+    (
+        "infectious_disease",
+        "respiratory",
+        "upper-respiratory-tract-infection",
+        "upper-respiratory-tract-infection_syndromic_GPInHours_rateByDay",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "respiratory",
+        "lower-respiratory-tract-infection",
+        "lower-respiratory-tract-infection_syndromic_GPInHours_baselineRateByDay",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "respiratory",
+        "acute-respiratory-infection",
+        "acute-respiratory-infection_syndromic_NHS111calls_countsByDay",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "contact",
+        "mpox-clade-1b",
+        "mpox-clade-1b_cases_countByWeek",
+        "cases",
+    ),
 ]
