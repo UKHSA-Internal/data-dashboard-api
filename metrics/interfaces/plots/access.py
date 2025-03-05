@@ -24,13 +24,28 @@ from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 
 
-class DataNotFoundForPlotError(Exception): ...
+class DataNotFoundForPlotError(Exception):
+    def __init__(self):
+        message = "No data was found for the plot requested, please review the plot parameters provided."
+        super().__init__(message)
 
 
-class DataNotFoundForAnyPlotError(Exception): ...
+class DataNotFoundForAnyPlotError(Exception):
+    def __init__(self):
+        message = (
+            "No data was found for the plot(s) requested, "
+            "please review the request parameters of each plot provided."
+        )
+        super().__init__(message)
 
 
-class InvalidPlotParametersError(Exception): ...
+class InvalidPlotParametersError(Exception):
+    def __init__(self):
+        message = (
+            "Invalid plot parameter, "
+            "Please check the date range (date_from and date_to) and the topic property provided. "
+        )
+        super().__init__(message)
 
 
 class QuerySetResult(BaseModel):
