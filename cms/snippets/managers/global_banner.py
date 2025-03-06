@@ -42,4 +42,4 @@ class GlobalBannerManager(models.Manager):
             then None is returned.
 
         """
-        return self.get_queryset().get_active_banners().first()
+        return self.get_queryset().get_active_banners()
