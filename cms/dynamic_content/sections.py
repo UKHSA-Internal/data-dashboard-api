@@ -12,10 +12,13 @@ class ContentCards(StreamBlock):
     text_card = cards.TextCard()
     chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
+    table_card = cards.TableCard()
+
 
 
 class ContentCardsSectionWithLink(StreamBlock):
     text_card = cards.TextCard()
+    table_card = cards.TableCard()
     chart_card_section = cards.ChartCardSection()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     weather_health_alert_card = cards.WeatherHealthAlertsCard()

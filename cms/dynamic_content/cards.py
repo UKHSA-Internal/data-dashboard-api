@@ -6,7 +6,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
-    PageLinkChooserBlock,
+    PageLinkChooserBlock, CustomTableBlock,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -38,9 +38,22 @@ class TextCard(blocks.StructBlock):
     body = blocks.RichTextBlock(
         features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_CARD
     )
+    table = CustomTableBlock()
 
     class Meta:
         icon = "text"
+
+
+class TableCard(blocks.StructBlock):
+    title = blocks.CharBlock()
+    body = blocks.RichTextBlock(
+        features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_CARD
+    )
+    table = CustomTableBlock()
+
+    class Meta:
+        icon = "table"
+
 
 
 class WHAlerts(models.TextChoices):

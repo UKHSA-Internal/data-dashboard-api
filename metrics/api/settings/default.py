@@ -63,6 +63,7 @@ if config.APP_MODE != "INGESTION":
         "wagtail.api.v2",
         "wagtail.contrib.forms",
         "wagtail.contrib.redirects",
+        "wagtail.contrib.typed_table_block",
         "wagtail_modeladmin",
         "wagtail.embeds",
         "wagtail.sites",
