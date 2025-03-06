@@ -23,7 +23,7 @@ class GlobalBannerManager(models.Manager):
     def get_queryset(self) -> GlobalBannerQuerySet:
         return GlobalBannerQuerySet(model=self.model, using=self.db)
 
-    def has_active_banner(self) -> bool:
+    def has_active_banners(self) -> bool:
         """Checks if there is already a `GlobalBanner` which is active
 
         Returns:
@@ -33,7 +33,7 @@ class GlobalBannerManager(models.Manager):
         """
         return self.get_queryset().get_active_banners().exists()
 
-    def get_active_banner(self):
+    def get_active_banners(self):
         """Gets the currently active `GlobalBanner`.
 
         Returns:

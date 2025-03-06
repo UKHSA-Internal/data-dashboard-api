@@ -60,4 +60,3 @@ class GlobalBanner(models.Model):
 
     def clean(self) -> None:
         super().clean()
-        self._raise_error_if_trying_to_enable_multiple_global_banners()

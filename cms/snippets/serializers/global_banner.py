@@ -29,9 +29,10 @@ class GlobalBannerSerializer(serializers.Serializer):
     @property
     def data(self) -> dict[str, ReturnDict[str, str] | None]:
         active_global_banner_data: ReturnDict[str, str] | None = (
-            get_active_global_banner(global_banner_manager=self.global_banner_manager)
+            get_active_global_banner(
+                global_banner_manager=self.global_banner_manager)
         )
-        return {"active_global_banner": active_global_banner_data}
+        return {"active_global_banners": active_global_banner_data}
 
 
 def get_active_global_banner(
@@ -48,6 +49,7 @@ def get_active_global_banner(
         If no global banner is active, then None is returned
 
     """
-    global_banner = global_banner_manager.get_active_banner()
-    serializer = GlobalBannerResponseSerializer(instance=global_banner)
+    global_banner = global_banner_manager.get_active_banners()
+    serializer = GlobalBannerResponseSerializer(
+        instance=global_banner, many=True)
     return serializer.data
