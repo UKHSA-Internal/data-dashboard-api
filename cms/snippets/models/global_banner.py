@@ -57,6 +57,3 @@ class GlobalBanner(models.Model):
         if self.is_active:
             return f"Active {self.banner_type.lower()}-level global banner"
         return f"Inactive global banner | {label}"
-
-    def clean(self) -> None:
-        super().clean()
