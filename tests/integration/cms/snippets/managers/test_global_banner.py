@@ -18,7 +18,7 @@ class TestGlobalBannerManager:
         GlobalBannerFactory.create(is_active=True)
 
         # When
-        has_active_banner: bool = GlobalBanner.objects.has_active_banner()
+        has_active_banners: bool = GlobalBanner.objects.has_active_banners()
 
         # Then
-        assert has_active_banner is True
+        assert has_active_banners is True

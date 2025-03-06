@@ -36,9 +36,9 @@ class TestGetActiveGlobalBanner:
         )
 
         # Then
-        assert active_global_banner_info["title"] == active_banner_info["title"]
-        assert active_global_banner_info["body"] == active_banner_info["body"]
+        assert active_global_banner_info[0]["title"] == active_banner_info["title"]
+        assert active_global_banner_info[0]["body"] == active_banner_info["body"]
         assert (
-            active_global_banner_info["banner_type"]
+            active_global_banner_info[0]["banner_type"]
             == active_banner_info["banner_type"]
         )
