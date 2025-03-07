@@ -28,7 +28,6 @@ from caching.private_api.crawler.type_hints import (  # noqa: E402
 )
 from cms.common.models import CommonPage  # noqa: E402
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser  # noqa: E402
-from cms.home.models import HomePage  # noqa: E402
 from cms.topic.models import TopicPage  # noqa: E402
 
 logger = logging.getLogger(__name__)
@@ -90,7 +89,7 @@ class PrivateAPICrawler:
 
     # Process pages for content
 
-    def process_pages(self, *, pages: list[HomePage, TopicPage, CommonPage]) -> None:
+    def process_pages(self, *, pages: list[TopicPage, CommonPage]) -> None:
         """Makes requests to each individual content item within each of the given `pages`
 
         Notes:
@@ -130,7 +129,7 @@ class PrivateAPICrawler:
     # Process sections
 
     def process_all_sections_in_page(
-        self, *, page: HomePage | TopicPage, geography_data: GeographyData | None = None
+        self, *, page: TopicPage, geography_data: GeographyData | None = None
     ) -> None:
         """Makes requests to each individual content item within each section of the given `page`
 
@@ -336,7 +335,7 @@ class PrivateAPICrawler:
     def get_all_downloads(
         self,
         *,
-        pages: [HomePage, TopicPage, CommonPage],
+        pages: [TopicPage, CommonPage],
         file_format: str,
     ) -> list[CHART_DOWNLOAD]:
         """Get all chart downloads from supported pages.
