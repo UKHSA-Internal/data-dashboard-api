@@ -37,7 +37,7 @@ def load_metric_documentation_parent_page() -> dict:
         return json.load(file)
 
 
-def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: Pa) -> None:
+def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: Page) -> None:
     """Adds the given `subpage` as a child to the `parent_page`
 
     Args:
