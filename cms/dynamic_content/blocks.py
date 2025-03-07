@@ -163,161 +163,42 @@ from django import forms
 from wagtail import blocks
 from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
 
-
-class ParameterizedColumnBlock(blocks.StructBlock):
-    """
-    A custom block for creating columns with fixed base parameters
-    and cell-specific overrides.
-    """
-    # First cell block with all base parameters
-    base_params = blocks.StructBlock([
-        ('metric', blocks.ChoiceBlock(
-            choices=[
-                ('ABC', 'Metric ABC'),
-                ('XYZ', 'Metric XYZ'),
-                # Add your actual metrics here
-            ],
-            required=True
-        )),
-        ('topic', blocks.ChoiceBlock(
-            choices=[
-                ('DEF', 'Topic DEF'),
-                ('GHI', 'Topic GHI'),
-                # Add your actual topics here
-            ],
-            required=True
-        )),
-        ('age', blocks.ChoiceBlock(
-            choices=[
-                ('0-4', '0-4 years'),
-                ('5-14', '5-14 years'),
-                ('15-24', '15-24 years'),
-                # Add your age groups
-            ],
-            required=True
-        )),
-        ('stratum', blocks.ChoiceBlock(
-            choices=[
-                ('default', 'Default Stratum'),
-                # Add your strata options
-            ],
-            required=True
-        )),
-        ('geography', blocks.ChoiceBlock(
-            choices=[
-                ('Wales', 'Wales'),
-                ('Scotland', 'Scotland'),
-                ('England', 'England'),
-                # Add other geography options
-            ],
-            required=True
-        ))
-    ], label="Base Parameters for Column")
-
-    # Subsequent cell override block
-    override = blocks.StructBlock([
-        ('parameter', blocks.ChoiceBlock(
-            choices=[
-                ('metric', 'Metric'),
-                ('topic', 'Topic'),
-                ('age', 'Age'),
-                ('stratum', 'Stratum'),
-                ('geography', 'Geography'),
-            ],
-            required=True,
-            help_text="Select which parameter to override"
-        )),
-        ('value', blocks.ChoiceBlock(
-            choices=[],  # This will be dynamically populated
-            required=True,
-            help_text="Select the new value for the overridden parameter"
-        ))
-    ], label="Cell-Specific Override", required=False)
-
-    def get_dynamic_choices(self, parameter):
-        """
-        Dynamically populate choices based on the selected parameter.
-
-        Args:
-            parameter (str): The parameter to get choices for
-
-        Returns:
-            list: A list of tuples containing choices
-        """
-        choices_map = {
-            'metric': [
-                ('ABC', 'Metric ABC'),
-                ('XYZ', 'Metric XYZ'),
-                # Add your actual metrics here
-            ],
-            'topic': [
-                ('DEF', 'Topic DEF'),
-                ('GHI', 'Topic GHI'),
-                # Add your actual topics here
-            ],
-            'age': [
-                ('0-4', '0-4 years'),
-                ('5-14', '5-14 years'),
-                ('15-24', '15-24 years'),
-                # Add your age groups
-            ],
-            'stratum': [
-                ('default', 'Default Stratum'),
-                # Add your strata options
-            ],
-            'geography': [
-                ('Wales', 'Wales'),
-                ('Scotland', 'Scotland'),
-                ('England', 'England'),
-                # Add other geography options
-            ]
-        }
-        return choices_map.get(parameter, [])
-
-    def get_form_class(self):
-        """
-        Customize the form to dynamically update override value choices.
-        """
-
-        class DynamicParameterForm(forms.Form):
-            def __init__(self, *args, **kwargs):
-                super().__init__(*args, **kwargs)
-                # Dynamically set choices for override value
-                override_parameter = self.initial.get('override', {}).get('parameter')
-                if override_parameter:
-                    self.fields['override']['value'].choices = self.block.get_dynamic_choices(override_parameter)
-
-        return DynamicParameterForm
-
-
-class CustomTableBlock(blocks.StreamBlock):
-    """
-    Custom table block with the parameterized column type.
-    """
-    table = TypedTableBlock([
-        ('text', blocks.CharBlock()),  # Original text column type
-        ('parameterized', ParameterizedColumnBlock()),  # New custom column type
-    ])
-
-class CustomTableBlock(blocks.StreamBlock):
-    """
-    Custom table block with the parameterized column type.
-    """
-    table = TypedTableBlock([
-        ('text', blocks.CharBlock()),  # Original text column type
-        ('parameterized', ParameterizedColumnBlock()),  # New custom column type
-    ])
-
-
-
-
+from django import forms
+from django.core.exceptions import ValidationError
 from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
+from wagtail.blocks import StructBlock, ChoiceBlock, CharBlock
+
+
 from wagtail import blocks
-from wagtail.images.blocks import ImageChooserBlock
+from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
+
+class ParameterBlock(blocks.StructBlock):
+    metric = blocks.CharBlock(required=True)
+    topic = blocks.CharBlock(required=True)
+    age = blocks.CharBlock(required=True)
+    stratum = blocks.CharBlock(required=True)
+    geography = blocks.CharBlock(required=True)
+
+class GeographyBlock(blocks.StructBlock):
+    geography = blocks.CharBlock(required=True)
+
 
 
 class CustomTableBlock(blocks.StreamBlock):
     table = TypedTableBlock([
         ('text', blocks.CharBlock()),
-        ('data', ParameterizedColumnBlock())
+        ('parameter_column', blocks.ListBlock(
+            blocks.StructBlock([
+                ('base', ParameterBlock()),  # First cell with all parameters
+                ('overrides', blocks.ListBlock(GeographyBlock(), required=False)),  # Overrides for geography
+            ])
+        )),
     ])
+
+
+
+
+from wagtailtables.blocks import TableBlock
+
+class ContentBlocks(blocks.StreamBlock):
+    table_block = CustomTableBlock()

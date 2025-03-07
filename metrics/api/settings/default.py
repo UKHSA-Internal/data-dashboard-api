@@ -76,6 +76,7 @@ if config.APP_MODE != "INGESTION":
         "wagtail",
         "wagtail_trash",
         "modelcluster",
+        "wagtailtables",
         "taggit",
     ]
 

@@ -1,12 +1,13 @@
 from django.db import models
 from wagtail import blocks
+from wagtailtables.blocks import TableBlock
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
-    PageLinkChooserBlock, CustomTableBlock,
+    PageLinkChooserBlock, CustomTableBlock, ContentBlocks,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -38,7 +39,6 @@ class TextCard(blocks.StructBlock):
     body = blocks.RichTextBlock(
         features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_CARD
     )
-    table = CustomTableBlock()
 
     class Meta:
         icon = "text"
@@ -53,6 +53,18 @@ class TableCard(blocks.StructBlock):
 
     class Meta:
         icon = "table"
+
+
+class TabulationCard(blocks.StructBlock):
+    title = blocks.CharBlock()
+    body = blocks.RichTextBlock(
+        features=AVAILABLE_RICH_TEXT_FEATURES, help_text=help_texts.TEXT_CARD
+    )
+    table = ContentBlocks()
+
+    class Meta:
+        icon = "table"
+
 
 
 

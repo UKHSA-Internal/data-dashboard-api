@@ -10,6 +10,8 @@ from cms.dynamic_content import blocks, cards, help_texts
 
 class ContentCards(StreamBlock):
     text_card = cards.TextCard()
+    tabulation_card = cards.ContentBlocks()
+
     chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     table_card = cards.TableCard()
@@ -19,6 +21,8 @@ class ContentCards(StreamBlock):
 class ContentCardsSectionWithLink(StreamBlock):
     text_card = cards.TextCard()
     table_card = cards.TableCard()
+    tabulation_card = cards.ContentBlocks()
+
     chart_card_section = cards.ChartCardSection()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     weather_health_alert_card = cards.WeatherHealthAlertsCard()
