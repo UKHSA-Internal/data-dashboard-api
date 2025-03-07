@@ -406,6 +406,7 @@ class Consumer:
                 period_start=headline_data.period_start,
                 period_end=headline_data.period_end,
                 metric_value=headline_data.metric_value,
+                is_public=headline_data.is_public,
             )
             for headline_data in self.dto.data
         ]
@@ -468,6 +469,7 @@ class Consumer:
                 metric_value=time_series_data.metric_value,
                 in_reporting_delay_period=time_series_data.in_reporting_delay_period,
                 force_write=time_series_data.force_write,
+                is_public=time_series_data.is_public,
             )
             created_core_time_series.append(core_time_series)
 
@@ -545,6 +547,7 @@ class Consumer:
                 metric_value=time_series_data.metric_value,
                 in_reporting_delay_period=time_series_data.in_reporting_delay_period,
                 force_write=time_series_data.force_write,
+                is_public=time_series_data.is_public,
             )
             created_api_time_series.append(api_time_series)
 
