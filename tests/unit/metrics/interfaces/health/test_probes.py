@@ -446,6 +446,6 @@ class TestHealthProbeManagement:
         cursor_in_context_manager = (
             mocked_db_connection.cursor.return_value.__enter__.return_value
         )
-        cursor_in_context_manager._run_action.assert_called_once_with("SELECT 1;")
+        cursor_in_context_manager.execute.assert_called_once_with("SELECT 1;")
 
         assert row == cursor_in_context_manager.fetchone.return_value

@@ -1,4 +1,6 @@
 import datetime
+import os
+import importlib
 
 import pytest
 from django.utils import timezone
@@ -13,6 +15,8 @@ from metrics.data.models.core_models import (
     MetricGroup,
     Topic,
 )
+
+from metrics.api.settings import private_api
 
 
 @pytest.fixture
@@ -111,3 +115,9 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
         )
         for i in range(2)
     ]
+
+
+@pytest.fixture(autouse=True)
+def patch_auth_enabled():
+    os.environ["AUTH_ENABLED"] = "1"
+    importlib.reload(private_api)

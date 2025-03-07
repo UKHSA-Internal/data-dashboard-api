@@ -5,7 +5,7 @@ from metrics.api.packages.permissions import (
     FluentPermissions,
     FluentPermissionsError,
 )
-from metrics.api.settings.private_api import AUTH_ENABLED
+from metrics.api.settings.private_api import is_auth_enabled
 from metrics.data.models.rbac_models import (
     RBACPermission,
 )
@@ -22,7 +22,7 @@ def filter_by_permissions():
             super(serializer_class, self).__init__(*args, **kwargs)
             original_to_representation = self.to_representation
 
-            if not AUTH_ENABLED:
+            if not is_auth_enabled():
                 new_to_representation = _new_representation_public(
                     self=self,
                     representation=original_to_representation,

@@ -1,7 +1,6 @@
 import csv
 import datetime
 import io
-import os
 from collections import OrderedDict
 from http import HTTPStatus
 
@@ -10,13 +9,8 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from metrics.data.models.core_models import CoreTimeSeries, Geography, CoreHeadline
-from metrics.data.models.rbac_models import RBACPermission, RBACGroupPermission
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from tests.factories.metrics.headline import CoreHeadlineFactory
-from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
-from tests.factories.metrics.rbac_models.rbac_group_permissions import (
-    RBACPermissionGroupFactory,
-)
 
 
 class TestDownloadsView:

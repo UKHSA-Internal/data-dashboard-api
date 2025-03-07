@@ -1,7 +1,8 @@
 import pytest
-import os
 import copy
-
+import os
+import importlib
+from unittest import mock
 from unittest.mock import MagicMock
 
 from metrics.api.decorators import (
@@ -15,6 +16,9 @@ from metrics.data.models.core_models import (
     SubTheme,
     Topic,
 )
+
+
+MODULE_PATH = "metrics.api.settings.private_api"
 
 core_headline_data = {
     "theme": "infectious_disease",
@@ -33,7 +37,7 @@ core_headline_data = {
 }
 
 
-class MockSerializer:
+class FakeSerializer:
     def __init__(self, *args, **kwargs):
         self.context = kwargs.get("context", {})
 
@@ -51,7 +55,7 @@ def mock_request():
 @pytest.fixture
 def fake_serializer(mock_request):
     @filter_by_permissions()
-    class WrappedSerializer(MockSerializer):
+    class WrappedSerializer(FakeSerializer):
         pass
 
     return WrappedSerializer(context={"request": mock_request})
@@ -91,7 +95,7 @@ class TestPermissions:
         )
 
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "0"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", False)
     def test_filter_by_permissions_non_private_api(self, fake_serializer):
         """
         Given `AUTH_ENABLED` is disabled
@@ -118,7 +122,7 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "1"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_theme_sub_theme(
         self, fake_serializer, theme, sub_theme, should_return
     ):
@@ -168,7 +172,7 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "1"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_topic(
         self, fake_serializer, theme, sub_theme, topic, should_return
     ):
@@ -244,7 +248,7 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "1"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_metric(
         self, fake_serializer, theme, sub_theme, topic, metric, should_return
     ):
@@ -296,7 +300,7 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "1"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_geography(
         self, fake_serializer, geography, should_return
     ):
@@ -346,7 +350,7 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "1"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_geography_type(
         self, fake_serializer, geography_type, should_return
     ):
@@ -397,7 +401,7 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "1"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_age(self, fake_serializer, age, should_return):
         """
         Given authentication is enabled
@@ -447,7 +451,7 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @pytest.mark.patch(os.environ, {"AUTH_ENABLED": "1"})
+    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_age(self, fake_serializer, stratum, should_return):
         """
         Given authentication is enabled
