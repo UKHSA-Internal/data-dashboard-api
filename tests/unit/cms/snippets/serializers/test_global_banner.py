@@ -117,8 +117,11 @@ class TestGlobalBannerSerializer:
             is_active=False,
         )
         fake_global_banner_manager = FakeGlobalBannerManager(
-            global_banners=[first_active_global_banner,
-                            second_active_global_banner, inactive_global_banner]
+            global_banners=[
+                first_active_global_banner,
+                second_active_global_banner,
+                inactive_global_banner,
+            ]
         )
 
         # When
@@ -138,7 +141,7 @@ class TestGlobalBannerSerializer:
                     "title": second_active_global_banner.title,
                     "body": second_active_global_banner.body,
                     "banner_type": second_active_global_banner.banner_type,
-                }
+                },
             ]
         }
         assert serializer.data == expected_data
@@ -167,8 +170,7 @@ class TestGlobalBannerSerializer:
             is_active=False,
         )
         fake_global_banner_manager = FakeGlobalBannerManager(
-            global_banners=[first_inactive_global_banner,
-                            second_inactive_global_banner]
+            global_banners=[first_inactive_global_banner, second_inactive_global_banner]
         )
 
         # When

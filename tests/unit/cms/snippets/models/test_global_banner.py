@@ -38,8 +38,7 @@ class TestGlobalBanner:
         )
 
         # Then
-        panel_names: set[str] = {
-            panel.field_name for panel in global_banner.panels}
+        panel_names: set[str] = {panel.field_name for panel in global_banner.panels}
         assert expected_panel_name in panel_names
 
     def test_enabled_set_false_by_default(self):
