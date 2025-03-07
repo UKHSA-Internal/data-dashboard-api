@@ -49,7 +49,7 @@ def get_active_global_banner(
         If no global banner is active, then None is returned
 
     """
-    global_banner = global_banner_manager.get_active_banners()
+    global_banners = global_banner_manager.get_active_banners()
     serializer = GlobalBannerResponseSerializer(
-        instance=global_banner, many=True)
+        instance=global_banners, many=True)
     return serializer.data

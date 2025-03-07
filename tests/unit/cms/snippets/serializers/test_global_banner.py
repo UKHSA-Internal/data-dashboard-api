@@ -78,11 +78,68 @@ class TestGlobalBannerSerializer:
 
         # Then
         expected_data = {
-            "active_global_banner": {
-                "title": active_global_banner.title,
-                "body": active_global_banner.body,
-                "banner_type": active_global_banner.banner_type,
-            }
+            "active_global_banners": [
+                {
+                    "title": active_global_banner.title,
+                    "body": active_global_banner.body,
+                    "banner_type": active_global_banner.banner_type,
+                }
+            ]
+        }
+        assert serializer.data == expected_data
+
+    def test_serialized_data_for_multiple_active_global_banner(self):
+        """
+        Given a `GlobalBanner` model instance which is active
+        And an inactive `GlobalBanner` model instance
+        When `data` is called from an instance
+            of the `GlobalBannerSerializer`
+        Then the output `data` contains info
+            about the currently active global banner
+        """
+        # Given
+        first_active_global_banner = GlobalBanner(
+            title="abc",
+            body="def",
+            banner_type=BannerTypes.INFORMATION.value,
+            is_active=True,
+        )
+        second_active_global_banner = GlobalBanner(
+            title="xyz",
+            body="123",
+            banner_type=BannerTypes.INFORMATION.value,
+            is_active=True,
+        )
+        inactive_global_banner = GlobalBanner(
+            title="123",
+            body="456",
+            banner_type=BannerTypes.INFORMATION.value,
+            is_active=False,
+        )
+        fake_global_banner_manager = FakeGlobalBannerManager(
+            global_banners=[first_active_global_banner,
+                            second_active_global_banner, inactive_global_banner]
+        )
+
+        # When
+        serializer = GlobalBannerSerializer(
+            context={"global_banner_manager": fake_global_banner_manager}
+        )
+
+        # Then
+        expected_data = {
+            "active_global_banners": [
+                {
+                    "title": first_active_global_banner.title,
+                    "body": first_active_global_banner.body,
+                    "banner_type": first_active_global_banner.banner_type,
+                },
+                {
+                    "title": second_active_global_banner.title,
+                    "body": second_active_global_banner.body,
+                    "banner_type": second_active_global_banner.banner_type,
+                }
+            ]
         }
         assert serializer.data == expected_data
 
@@ -110,7 +167,8 @@ class TestGlobalBannerSerializer:
             is_active=False,
         )
         fake_global_banner_manager = FakeGlobalBannerManager(
-            global_banners=[first_inactive_global_banner, second_inactive_global_banner]
+            global_banners=[first_inactive_global_banner,
+                            second_inactive_global_banner]
         )
 
         # When
@@ -119,5 +177,5 @@ class TestGlobalBannerSerializer:
         )
 
         # Then
-        expected_data = {"active_global_banner": None}
+        expected_data = {"active_global_banners": []}
         assert serializer.data == expected_data

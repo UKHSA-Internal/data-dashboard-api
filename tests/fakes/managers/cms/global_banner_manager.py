@@ -12,12 +12,12 @@ class FakeGlobalBannerManager(GlobalBannerManager):
         self.global_banners = global_banners
         super().__init__(**kwargs)
 
-    def get_active_banner(self) -> GlobalBanner | None:
+    def get_active_banners(self) -> GlobalBanner | None:
         try:
-            return next(
+            return [
                 global_banner
                 for global_banner in self.global_banners
                 if global_banner.is_active is True
-            )
+            ]
         except StopIteration:
             return None
