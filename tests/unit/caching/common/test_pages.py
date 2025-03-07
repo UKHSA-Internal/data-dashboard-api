@@ -6,6 +6,7 @@ from caching.common.pages import (
     get_pages_for_area_selector,
 )
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
+from tests.fakes.factories.cms.landing_page_factory import FakeLandingPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from tests.fakes.factories.cms.whats_new_child_entry_factory import (
     FakeWhatsNewChildEntryFactory,
@@ -211,8 +212,8 @@ class TestGetPagesForAreaSelector:
         invalid_pages = [mock.Mock(is_valid_for_area_selector=False)] * 2
         # To simulate invalid topic pages
 
-        fake_home_page = FakeLandingPageFactory.build_blank_page()
-        invalid_pages.append(fake_home_page)
+        fake_landing_page = FakeLandingPageFactory.build_blank_page()
+        invalid_pages.append(fake_landing_page)
         # To simulate an invalid page which
         # does not implement the `is_valid_for_area_selector` property
 
