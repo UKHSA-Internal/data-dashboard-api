@@ -13,4 +13,11 @@ INVALID_PARAMETERS = [
         "ticks_counts_countByYear",
         "counts",
     ),  # Invalid parent theme
+    (
+        "extreme_event",
+        "invasive_bacterial_infections",
+        "iGAS",
+        "iGAS_cases_rateByMonth",
+        "cases",
+    ),  # Invalid parent theme
 ]
