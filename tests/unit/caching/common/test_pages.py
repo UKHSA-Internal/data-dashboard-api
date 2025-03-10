@@ -6,7 +6,7 @@ from caching.common.pages import (
     get_pages_for_area_selector,
 )
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
-from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
+from tests.fakes.factories.cms.landing_page_factory import FakeLandingPageFactory
 from tests.fakes.factories.cms.topic_page_factory import FakeTopicPageFactory
 from tests.fakes.factories.cms.whats_new_child_entry_factory import (
     FakeWhatsNewChildEntryFactory,
@@ -15,7 +15,6 @@ from tests.fakes.factories.cms.whats_new_parent_page_factory import (
     FakeWhatsNewParentPageFactory,
 )
 from tests.fakes.managers.cms.common_page_manager import FakeCommonPageManager
-from tests.fakes.managers.cms.home_page_manager import FakeHomePageManager
 from tests.fakes.managers.cms.topic_page_manager import FakeTopicPageManager
 from tests.fakes.managers.cms.whats_new_child_entry_manager import (
     FakeWhatsNewChildEntryManager,
@@ -177,7 +176,6 @@ class TestExtractAreaSelectablePages:
         # property and therefore should return False by default
         # and will be excluded
         other_pages = [
-            FakeHomePageFactory.build_blank_page(slug="dashboard"),
             FakeWhatsNewParentPageFactory.build_page_from_template(live=True),
         ]
         all_pages = other_pages + [
@@ -214,8 +212,8 @@ class TestGetPagesForAreaSelector:
         invalid_pages = [mock.Mock(is_valid_for_area_selector=False)] * 2
         # To simulate invalid topic pages
 
-        fake_home_page = FakeHomePageFactory.build_blank_page()
-        invalid_pages.append(fake_home_page)
+        fake_landing_page = FakeLandingPageFactory.build_blank_page()
+        invalid_pages.append(fake_landing_page)
         # To simulate an invalid page which
         # does not implement the `is_valid_for_area_selector` property
 
