@@ -18,6 +18,14 @@ class _NonCommunicableChildTheme(Enum):
     RESPIRATORY = "respiratory"
 
 
+class _ClimateAndEnvironmentChildTheme(Enum):
+    VECTORS = "vectors"
+
+
+class _VectorsTopic(Enum):
+    TICKS = "ticks"
+
+
 class _VaccinePreventableTopic(Enum):
     MEASLES = "Measles"
 
@@ -73,12 +81,14 @@ class ParentTheme(Enum):
     INFECTIOUS_DISEASE = "infectious_disease"
     EXTREME_EVENT = "extreme_event"
     NON_COMMUNICABLE = "non-communicable"
+    CLIMATE_AND_ENVIRONMENT = "climate_and_environment"
 
 
 class ChildTheme(BaseEnum):
     INFECTIOUS_DISEASE = _InfectiousDiseaseChildTheme
     EXTREME_EVENT = _ExtremeEventChildTheme
     NON_COMMUNICABLE = _NonCommunicableChildTheme
+    CLIMATE_AND_ENVIRONMENT = _ClimateAndEnvironmentChildTheme
 
 
 class Topic(BaseEnum):
@@ -89,3 +99,4 @@ class Topic(BaseEnum):
     GASTROINTESTINAL = _GastrointestinalTopic
     ANTIMICROBIAL_RESISTANCE = _AntimicrobialResistanceTopic
     CONTACT = _ContactTopic
+    VECTORS = _VectorsTopic
