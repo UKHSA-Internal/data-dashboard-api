@@ -51,7 +51,6 @@ if config.APP_MODE != "INGESTION":
         "drf_spectacular",
         "metrics.api",
         "cms.home",
-        "cms.search",
         "cms.topic",
         "cms.dashboard",
         "cms.common",
