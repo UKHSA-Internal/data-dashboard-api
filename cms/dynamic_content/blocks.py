@@ -151,3 +151,14 @@ class InternalPageLinks(blocks.StreamBlock):
 
     class Meta:
         icon = "link"
+
+
+class RelatedLink(blocks.StructBlock):
+    link_display_text = blocks.CharBlock(
+        required=True, help_text=help_texts.RELATED_LINK_TEXT
+    )
+    link = blocks.CharBlock(required=True, help_text=help_texts.RELATED_LINK_URL)
+
+
+class RelatedLinkBlock(blocks.StreamBlock):
+    related_link = RelatedLink()
