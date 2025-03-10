@@ -185,6 +185,15 @@ class FluentPermissions:
                     self._run_action(field_action, field_name, group_permission)
 
     def _match_theme_sub_theme(self, group_permission: RBACPermission) -> bool:
+        """
+        Checks if the given group permission matches the `theme` and `sub_theme` in `self.data`.
+        Returns False if `theme` or `sub_theme` keys are missing.
+        """
+        theme = self.data.get("theme")
+        sub_theme = self.data.get("sub_theme")
+
+        if theme is None or sub_theme is None:
+            return False
         return [
             group_permission.theme.name,
             group_permission.sub_theme.name,

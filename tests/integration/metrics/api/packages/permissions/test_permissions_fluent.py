@@ -123,15 +123,17 @@ class TestFluentPermissions:
         fluent_permissions = FluentPermissions(
             data=self.data, group_permissions=[fake_rbac_permission]
         )
-        fluent_permissions.add_field("theme").add_field("sub_theme").add_field(
-            "topic"
-        ).add_field("geography_type").add_field("geography").add_field(
-            "metric"
-        ).add_field(
-            "age"
-        ).add_field(
-            "stratum"
-        ).execute()
+        (
+            fluent_permissions.add_field("theme")
+            .add_field("sub_theme")
+            .add_field("topic")
+            .add_field("geography_type")
+            .add_field("geography")
+            .add_field("metric")
+            .add_field("age")
+            .add_field("stratum")
+            .execute()
+        )
         # When/Then
         fluent_permissions.validate()  # Should not raise an exception
 
@@ -154,14 +156,15 @@ class TestFluentPermissions:
         fluent_permissions = FluentPermissions(
             data=self.data, group_permissions=[fake_rbac_permission]
         )
-        fluent_permissions.add_field("theme").add_field("sub_theme").add_field(
-            "topic"
-        ).add_field("geography_type").add_field("geography").add_field(
-            "metric"
-        ).add_field(
-            "age"
-        ).add_field(
-            "stratum"
+        (
+            fluent_permissions.add_field("theme")
+            .add_field("sub_theme")
+            .add_field("topic")
+            .add_field("geography_type")
+            .add_field("geography")
+            .add_field("metric")
+            .add_field("age")
+            .add_field("stratum")
         )
         # When
         fluent_permissions.execute()
@@ -171,3 +174,46 @@ class TestFluentPermissions:
         MockFieldAction.assert_called_once_with(data=self.data)
         mock_theme_action.execute.assert_called()
         mock_field_action.execute.assert_called()
+
+    def test_match_fields_all_property(self):
+        """
+        Given a FluentPermissions instance
+        When match_fields_all is accessed
+        Then it should return the stored _match_fields_all data
+        """
+        # Given
+        fluent_permissions = FluentPermissions(data={}, group_permissions=[])
+        fluent_permissions._match_fields_all = [new_match_dict()]
+
+        # When
+        result = fluent_permissions.match_fields_all
+
+        # Then
+        assert result == [new_match_dict()]
+
+    @pytest.mark.parametrize(
+        "data, expected",
+        [
+            ({"theme": "infectious_disease"}, False),
+            ({"sub_theme": "respiratory"}, False),
+            ({}, False),
+        ],
+    )
+    def test_match_theme_sub_theme_returns_false_when_keys_missing(
+        self, fake_rbac_permission, data, expected
+    ):
+        """
+        Given a FluentPermissions instance
+        When _match_theme_sub_theme() is called with missing theme or sub_theme
+        Then it should return False
+        """
+        # Given
+        fluent_permissions = FluentPermissions(
+            data=data, group_permissions=[fake_rbac_permission]
+        )
+
+        # When
+        result = fluent_permissions._match_theme_sub_theme(fake_rbac_permission)
+
+        # Then
+        assert result is expected

@@ -1,6 +1,7 @@
 import datetime
 import os
 import importlib
+from unittest import mock
 
 import pytest
 from django.utils import timezone
@@ -117,7 +118,11 @@ def core_timeseries_example() -> list[CoreTimeSeries]:
     ]
 
 
-@pytest.fixture(autouse=True)
-def patch_auth_enabled():
-    os.environ["AUTH_ENABLED"] = "1"
-    importlib.reload(private_api)
+@pytest.fixture
+def patch_auth_enabled(monkeypatch):
+    monkeypatch.setenv("AUTH_ENABLED", "1")
+
+
+@pytest.fixture
+def patch_auth_disabled(monkeypatch):
+    monkeypatch.setenv("AUTH_ENABLED", "0")

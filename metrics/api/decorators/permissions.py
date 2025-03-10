@@ -22,18 +22,10 @@ def filter_by_permissions():
             super(serializer_class, self).__init__(*args, **kwargs)
             original_to_representation = self.to_representation
 
-            if not is_auth_enabled():
-                new_to_representation = _new_representation_public(
-                    self=self,
-                    representation=original_to_representation,
-                )
-            else:
-                new_to_representation = _new_to_representation_private(
-                    self=self,
-                    representation=original_to_representation,
-                )
-
-            self.to_representation = new_to_representation
+            self.to_representation = _get_public_or_private_representation(
+                self=self,
+                original_to_representation=original_to_representation,
+            )
 
         serializer_class.__init__ = init
         return serializer_class
@@ -41,10 +33,22 @@ def filter_by_permissions():
     return decorator
 
 
+def _get_public_or_private_representation(*, self, original_to_representation):
+    if not is_auth_enabled():
+        return _new_representation_public(
+            self=self,
+            representation=original_to_representation,
+        )
+    return _new_to_representation_private(
+        self=self,
+        representation=original_to_representation,
+    )
+
+
 def _new_representation_public(*, self, representation):
     def wrapper(instance):
-        data = representation(instance)
-        data.pop("is_public")
+        data = representation(instance) or {}
+        data.pop("is_public", None)
         return data
 
     return wrapper
@@ -52,13 +56,13 @@ def _new_representation_public(*, self, representation):
 
 def _new_to_representation_private(*, self, representation):
     def wrapper(instance):
-        data = representation(instance)
+        data = representation(instance) or {}
 
         # Handle public data
-        if data["is_public"]:
-            data.pop("is_public")
+        if data.get("is_public", None):
+            data.pop("is_public", None)
             return data
-        data.pop("is_public")
+        data.pop("is_public", None)
 
         # Get RBAC permissions from request object
         request = self.context.get("request", None)

@@ -1,14 +1,10 @@
 import pytest
 import copy
-import os
-import importlib
-from unittest import mock
 from unittest.mock import MagicMock
 
 from metrics.api.decorators import (
     filter_by_permissions,
 )
-
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 from metrics.data.models.rbac_models import RBACPermission
 from metrics.data.models.core_models import (
@@ -16,7 +12,6 @@ from metrics.data.models.core_models import (
     SubTheme,
     Topic,
 )
-
 
 MODULE_PATH = "metrics.api.settings.private_api"
 
@@ -95,8 +90,9 @@ class TestPermissions:
         )
 
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", False)
-    def test_filter_by_permissions_non_private_api(self, fake_serializer):
+    def test_filter_by_permissions_non_private_api(
+        self, patch_auth_disabled, fake_serializer
+    ):
         """
         Given `AUTH_ENABLED` is disabled
         When `to_representation()` is called on the serializer
@@ -122,9 +118,8 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_theme_sub_theme(
-        self, fake_serializer, theme, sub_theme, should_return
+        self, patch_auth_enabled, fake_serializer, theme, sub_theme, should_return
     ):
         """
         Given authentication is enabled
@@ -172,9 +167,14 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_topic(
-        self, fake_serializer, theme, sub_theme, topic, should_return
+        self,
+        patch_auth_enabled,
+        fake_serializer,
+        theme,
+        sub_theme,
+        topic,
+        should_return,
     ):
         """
         Given authentication is enabled
@@ -248,9 +248,15 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_metric(
-        self, fake_serializer, theme, sub_theme, topic, metric, should_return
+        self,
+        patch_auth_enabled,
+        fake_serializer,
+        theme,
+        sub_theme,
+        topic,
+        metric,
+        should_return,
     ):
         """
         Given authentication is enabled
@@ -300,9 +306,8 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_geography(
-        self, fake_serializer, geography, should_return
+        self, patch_auth_enabled, fake_serializer, geography, should_return
     ):
         """
         Given authentication is enabled
@@ -350,9 +355,8 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
     def test_filter_by_permissions_geography_type(
-        self, fake_serializer, geography_type, should_return
+        self, patch_auth_enabled, fake_serializer, geography_type, should_return
     ):
         """
         Given authentication is enabled
@@ -401,8 +405,9 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
-    def test_filter_by_permissions_age(self, fake_serializer, age, should_return):
+    def test_filter_by_permissions_age(
+        self, patch_auth_enabled, fake_serializer, age, should_return
+    ):
         """
         Given authentication is enabled
         And the user has RBAC permissions for a specific age group
@@ -451,8 +456,9 @@ class TestPermissions:
         ],
     )
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled", new=True)
-    def test_filter_by_permissions_age(self, fake_serializer, stratum, should_return):
+    def test_filter_by_permissions_age(
+        self, patch_auth_enabled, fake_serializer, stratum, should_return
+    ):
         """
         Given authentication is enabled
         And the user has RBAC permissions for a specific stratum
@@ -494,3 +500,54 @@ class TestPermissions:
             assert "is_public" not in result
         else:
             assert result is None
+
+    @pytest.mark.django_db
+    def test_filter_by_permissions_returns_none_if_no_permissions(
+        self, patch_auth_enabled, fake_serializer
+    ):
+        """
+        Given `request.group_permissions` is empty
+        When `to_representation()` is called on the serializer
+        Then it should return None
+        """
+        # Given
+        serializer = fake_serializer
+        test_data = copy.deepcopy(core_headline_data)
+        test_data["is_public"] = False  # Ensure private data
+
+        # Simulate an empty group_permissions list
+        mock_request = MagicMock()
+        mock_request.group_permissions = []  # No permissions available
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data)
+
+        # Then
+        assert result is None
+
+    @pytest.mark.django_db
+    def test_filter_by_permissions_removes_is_public_if_true(
+        self, patch_auth_enabled, fake_serializer
+    ):
+        """
+        Given an instance where `is_public` is set to True
+        When `to_representation()` is called on the serializer
+        Then it should return the original data with `is_public` removed
+        """
+
+        # Given
+        serializer = fake_serializer
+        test_data = copy.deepcopy(core_headline_data)
+        test_data["is_public"] = True
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [MagicMock()]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data)
+
+        # Then
+        assert result is not None
+        assert "is_public" not in result
