@@ -1,5 +1,3 @@
-from typing import Any
-
 import plotly
 
 from metrics.domain.charts import chart_settings
@@ -13,6 +11,7 @@ from metrics.domain.models import ChartGenerationPayload, PlotGenerationData
 def create_multi_coloured_line_chart(
     *,
     chart_generation_payload: ChartGenerationPayload,
+    figure: plotly.graph_objects.Figure | None = None,
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
@@ -27,30 +26,15 @@ def create_multi_coloured_line_chart(
             written to a file, or shown.
 
     """
-    figure = plotly.graph_objects.Figure()
+    figure = figure or plotly.graph_objects.Figure()
     chart_plots_data: list[PlotGenerationData] = chart_generation_payload.plots
 
     for plot_data in chart_plots_data:
-        selected_colour = RGBAChartLineColours.get_colour(
-            colour=plot_data.parameters.line_colour
-        )
-        selected_line_type = properties.ChartLineTypes.get_chart_line_type(
-            line_type=plot_data.parameters.line_type
-        )
 
-        line_shape = "spline" if plot_data.parameters.use_smooth_lines else "linear"
-        mode = "lines+markers" if plot_data.parameters.use_markers else "lines"
+        if plot_data.parameters.chart_type != "line_multi_coloured":
+            continue
 
-        line_plot: dict = _create_line_plot(
-            x_axis_values=plot_data.x_axis_values,
-            y_axis_values=plot_data.y_axis_values,
-            colour=selected_colour.stringified,
-            line_width=2,
-            line_shape=line_shape,
-            mode=mode,
-            legend=plot_data.parameters.label,
-            dash=selected_line_type.value,
-        )
+        line_plot: dict = create_line_plot(plot_data=plot_data)
 
         # Add line plot to the figure
         figure.add_trace(trace=line_plot)
@@ -71,25 +55,26 @@ def create_multi_coloured_line_chart(
     return figure
 
 
-def _create_line_plot(
-    *,
-    x_axis_values: list[Any],
-    y_axis_values: list[Any],
-    colour: str,
-    line_width: int,
-    line_shape: str,
-    legend: str,
-    dash: str,
-    mode: str,
-) -> dict:
+def create_line_plot(*, plot_data: PlotGenerationData) -> dict:
+
+    selected_colour = RGBAChartLineColours.get_colour(
+        colour=plot_data.parameters.line_colour
+    )
+    selected_line_type = properties.ChartLineTypes.get_chart_line_type(
+        line_type=plot_data.parameters.line_type
+    )
+    line_shape = "spline" if plot_data.parameters.use_smooth_lines else "linear"
+    mode = "lines+markers" if plot_data.parameters.use_markers else "lines"
+    legend = plot_data.parameters.label
+
     scatter = plotly.graph_objects.Scatter(
-        x=x_axis_values,
-        y=y_axis_values,
+        x=plot_data.x_axis_values,
+        y=plot_data.y_axis_values,
         mode=mode,
         line={
-            "width": line_width,
-            "color": colour,
-            "dash": dash,
+            "width": 2,
+            "color": selected_colour.stringified,
+            "dash": selected_line_type.value,
         },
         line_shape=line_shape,
         name=legend,
@@ -99,7 +84,9 @@ def _create_line_plot(
 
 
 def generate_chart_figure(
-    *, chart_generation_payload: ChartGenerationPayload
+    *,
+    chart_generation_payload: ChartGenerationPayload,
+    figure: plotly.graph_objs.Figure | None,
 ) -> plotly.graph_objs.Figure:
     """Creates a `Figure` object for the given `chart_plots_data` as a graph with multiple line plots.
 
@@ -115,5 +102,6 @@ def generate_chart_figure(
 
     """
     return create_multi_coloured_line_chart(
-        chart_generation_payload=chart_generation_payload
+        chart_generation_payload=chart_generation_payload,
+        figure=figure,
     )

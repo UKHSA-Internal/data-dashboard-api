@@ -29,7 +29,7 @@ class TestGetXValueAtStartOfReportingDelayPeriod:
 
         # When
         x_value = reporting_delay_period.get_x_value_at_start_of_reporting_delay_period(
-            chart_plots_data=[fake_plot_data]
+            plot_generation_data=fake_plot_data
         )
 
         # Then

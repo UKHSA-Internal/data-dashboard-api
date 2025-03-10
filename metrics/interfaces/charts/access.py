@@ -12,6 +12,7 @@ from metrics.domain.charts import (
     line_multi_coloured,
     line_single_simplified,
     line_with_shaded_section,
+    main,
 )
 from metrics.domain.common.utils import (
     ChartTypes,
@@ -137,6 +138,17 @@ class ChartsInterface:
         self._latest_date: str = ""
 
     @property
+    def _is_main_chart_types(self) -> bool:
+        all_selected_chart_types: set[str] = {
+            plot.chart_type for plot in self.chart_request_params.plots
+        }
+        if "bar" in all_selected_chart_types:
+            return True
+        if "line_multi_coloured" in all_selected_chart_types:
+            return True
+        return False
+
+    @property
     def is_headline_data(self) -> bool:
         return self.chart_request_params.plots[0].is_headline_data
 
@@ -175,23 +187,21 @@ class ChartsInterface:
             plots_data=chart_generation_payload.plots
         )
 
-        match self.chart_type:
-            case ChartTypes.bar.value:
-                figure = self.generate_bar_chart(
-                    chart_generation_payload=chart_generation_payload
-                )
-            case ChartTypes.line_multi_coloured.value:
-                figure = self.generate_line_multi_coloured_chart(
-                    chart_generation_payload=chart_generation_payload
-                )
-            case ChartTypes.line_single_simplified.value:
-                figure = self.generate_line_single_simplified(
-                    chart_generation_payload=chart_generation_payload
-                )
-            case _:
-                figure = self.generate_line_with_shaded_section_chart(
-                    chart_generation_payload=chart_generation_payload
-                )
+        if self._is_main_chart_types:
+            figure = self.generate_main_chart_type(
+                chart_generation_payload=chart_generation_payload
+            )
+
+        else:
+            match self.chart_type:
+                case ChartTypes.line_single_simplified.value:
+                    figure = self.generate_line_single_simplified(
+                        chart_generation_payload=chart_generation_payload
+                    )
+                case _:
+                    figure = self.generate_line_with_shaded_section_chart(
+                        chart_generation_payload=chart_generation_payload
+                    )
 
         return ChartOutput(
             figure=figure,
@@ -216,6 +226,16 @@ class ChartsInterface:
         """
         plots_text = PlotsText(plots_data=plots_data)
         return plots_text.construct_text()
+
+    @classmethod
+    def generate_main_chart_type(
+        cls,
+        *,
+        chart_generation_payload: ChartGenerationPayload,
+    ) -> plotly.graph_objects.Figure:
+        return main.generate_chart_figure(
+            chart_generation_payload=chart_generation_payload
+        )
 
     @classmethod
     def generate_bar_chart(

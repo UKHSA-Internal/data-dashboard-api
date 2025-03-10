@@ -23,10 +23,10 @@ def _get_last_x_value_at_end_of_reporting_delay_period(
 
 
 def get_x_value_at_start_of_reporting_delay_period(
-    chart_plots_data: list[PlotGenerationData],
+    plot_generation_data: PlotGenerationData,
 ) -> str:
-    index: int = chart_plots_data[0].start_of_reporting_delay_period_index
-    return chart_plots_data[0].x_axis_values[index]
+    index: int = plot_generation_data.start_of_reporting_delay_period_index
+    return plot_generation_data.x_axis_values[index]
 
 
 def add_reporting_delay_period(
@@ -51,7 +51,7 @@ def add_reporting_delay_period(
     try:
         start_x_of_reporting_delay: str = (
             get_x_value_at_start_of_reporting_delay_period(
-                chart_plots_data=chart_plots_data
+                plot_generation_data=chart_plots_data
             )
         )
     except (ReportingDelayNotProvidedToPlotsError, NoReportingDelayPeriodFoundError):

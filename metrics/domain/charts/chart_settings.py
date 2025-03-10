@@ -258,7 +258,7 @@ class ChartSettings:
     def get_bar_chart_config(self):
         chart_config = self.get_base_chart_config()
         chart_config["barmode"] = "group"
-        return {**chart_config, **self._get_legend_bottom_left_config()}
+        return {**chart_config, **self._get_legend_top_centre_config()}
 
     def get_line_multi_coloured_chart_config(self):
         chart_config = self.get_base_chart_config()
@@ -341,16 +341,6 @@ class ChartSettings:
             "type": "-",
             "dtick": None,
             "tickformat": None,
-        }
-
-    @staticmethod
-    def _get_legend_bottom_left_config():
-        return {
-            "legend": {
-                "orientation": "h",
-                "y": -0.25,
-                "x": 0,
-            },
         }
 
     @staticmethod

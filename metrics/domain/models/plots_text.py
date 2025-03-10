@@ -32,6 +32,7 @@ class PlotsText:
     def _extract_plots_with_valid_data(
         cls, *, plots_data: list[PlotGenerationData]
     ) -> list[PlotGenerationData]:
+        print(plots_data)
         return [
             plot_data
             for plot_data in plots_data
@@ -427,7 +428,7 @@ class PlotsText:
         try:
             start_of_reporting_delay_period: datetime.date = (
                 get_x_value_at_start_of_reporting_delay_period(
-                    chart_plots_data=self.plots_data
+                    plot_generation_data=self.plots_data[0]
                 )
             )
         except (

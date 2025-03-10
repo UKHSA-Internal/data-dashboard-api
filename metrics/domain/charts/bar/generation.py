@@ -1,5 +1,3 @@
-from typing import Any
-
 import plotly.graph_objects
 
 from metrics.domain.charts import chart_settings, colour_scheme
@@ -12,6 +10,7 @@ from metrics.domain.models.plots import ChartGenerationPayload
 def generate_chart_figure(
     *,
     chart_generation_payload: ChartGenerationPayload,
+    figure: plotly.graph_objects.Figure | None = None,
 ) -> plotly.graph_objects.Figure:
     """Creates a `Figure` object for the given chart payload as a Bar graph.
 
@@ -26,26 +25,16 @@ def generate_chart_figure(
             written to a file, or shown
 
     """
-    figure = plotly.graph_objects.Figure()
+    figure = figure or plotly.graph_objects.Figure()
 
     chart_plots_data: list[PlotGenerationData] = chart_generation_payload.plots
 
     for plot_data in chart_plots_data:
-        selected_colour: colour_scheme.RGBAChartLineColours = (
-            colour_scheme.RGBAChartLineColours.get_colour(
-                colour=plot_data.parameters.line_colour
-            )
-        )
-
-        plot_label: str = plot_data.parameters.label
+        if plot_data.parameters.chart_type != "bar":
+            continue
 
         # Create Bar plot
-        bar_plot: dict = _create_bar_plot(
-            x_axis_values=plot_data.x_axis_values,
-            y_axis_values=plot_data.y_axis_values,
-            bar_colour=selected_colour.stringified,
-            legend=plot_label,
-        )
+        bar_plot: dict = create_bar_plot(plot_data=plot_data)
 
         # Add plot to graph
         figure.add_trace(trace=bar_plot)
@@ -66,12 +55,9 @@ def generate_chart_figure(
     return figure
 
 
-def _create_bar_plot(
+def create_bar_plot(
     *,
-    x_axis_values: list[Any],
-    y_axis_values: list[Any],
-    bar_colour: str,
-    legend: str,
+    plot_data: PlotGenerationData,
 ) -> dict:
     """Create a Bar plot to add to the chart (via the add_trace method)
 
@@ -86,9 +72,17 @@ def _create_bar_plot(
         which can be added to the figure
 
     """
+    selected_colour: colour_scheme.RGBAChartLineColours = (
+        colour_scheme.RGBAChartLineColours.get_colour(
+            colour=plot_data.parameters.line_colour
+        )
+    )
+    bar_colour: str = selected_colour.stringified
+    legend: str = plot_data.parameters.label
+
     bar = plotly.graph_objects.Bar(
-        x=x_axis_values,
-        y=y_axis_values,
+        x=plot_data.x_axis_values,
+        y=plot_data.y_axis_values,
         marker={
             "color": bar_colour,
             "line": {
@@ -99,4 +93,5 @@ def _create_bar_plot(
         name=legend,
         showlegend=bool(legend),
     )
+
     return convert_graph_object_to_dict(graph_object=bar)
