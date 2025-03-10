@@ -8,6 +8,7 @@ class _InfectiousDiseaseChildTheme(Enum):
     GASTROINTESTINAL = "gastrointestinal"
     ANTIMICROBIAL_RESISTANCE = "antimicrobial_resistance"
     CONTACT = "contact"
+    INVASIVE_BACTERIAL_INFECTIONS = "invasive_bacterial_infections"
 
 
 class _ExtremeEventChildTheme(Enum):
@@ -56,6 +57,10 @@ class _RespiratoryTopic(Enum):
     LOWER_RESPIRATORY_TRACT_INFECTION = "lower-respiratory-tract-infection"
 
 
+class _InvasiveBacterialInfectionsTopic(Enum):
+    IGAS = "iGAS"
+
+
 class _BloodstreamInfectionTopic(Enum):
     MRSA = "MRSA"
     MSSA = "MSSA"
@@ -100,3 +105,4 @@ class Topic(BaseEnum):
     ANTIMICROBIAL_RESISTANCE = _AntimicrobialResistanceTopic
     CONTACT = _ContactTopic
     VECTORS = _VectorsTopic
+    INVASIVE_BACTERIAL_INFECTIONS = _InvasiveBacterialInfectionsTopic

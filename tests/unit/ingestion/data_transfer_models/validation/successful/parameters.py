@@ -13,4 +13,11 @@ VALID_PARAMETERS = [
         "ticks_counts_countByYear",
         "counts",
     ),
+    (
+        "infectious_disease",
+        "invasive_bacterial_infections",
+        "iGAS",
+        "iGAS_cases_rateByMonth",
+        "cases",
+    ),
 ]
