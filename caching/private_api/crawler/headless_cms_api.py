@@ -37,9 +37,7 @@ class HeadlessCMSAPICrawler:
         for page in pages:
             self.process_individual_page_for_headless_cms_api(page=page)
 
-    def process_individual_page_for_headless_cms_api(
-        self, *, page: TopicPage
-    ) -> None:
+    def process_individual_page_for_headless_cms_api(self, *, page: TopicPage) -> None:
         """Makes a request to the headless CMS API detail `pages/` endpoint for the given `page`
 
         Returns:
