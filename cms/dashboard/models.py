@@ -103,12 +103,14 @@ class UKHSAPage(Page):
                 }
             )
 
+    def _raise_error_if_seo_title_tag_not_provided(self) -> None:
+        if not self.seo_title:
+            raise ValidationError(message="Search engine title tag is required")
+
     def clean(self):
         super().clean()
         self._raise_error_if_slug_not_unique()
-
-        if not self.seo_title:
-            raise ValidationError(message="Search engine title tag is required")
+        self._raise_error_if_seo_title_tag_not_provided()
 
     def get_url_parts(self, request=None) -> tuple[int, str, str]:
         """Builds the full URL for this page
