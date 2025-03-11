@@ -125,6 +125,11 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
     )
+    show_timeseries_filter = blocks.BooleanBlock(
+        help_text=help_texts.CHART_TIMESERIES_FILTER,
+        default=False,
+        required=False,
+    )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
     headline_number_columns = HeadlineNumberBlockTypes(
         required=False,
@@ -239,6 +244,11 @@ class ChartCard(blocks.StructBlock):
         required=True,
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
+    )
+    show_timeseries_filter = blocks.BooleanBlock(
+        help_text=help_texts.CHART_TIMESERIES_FILTER,
+        default=False,
+        required=False,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
