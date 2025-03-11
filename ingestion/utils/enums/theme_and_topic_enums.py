@@ -8,6 +8,7 @@ class _InfectiousDiseaseChildTheme(Enum):
     GASTROINTESTINAL = "gastrointestinal"
     ANTIMICROBIAL_RESISTANCE = "antimicrobial_resistance"
     CONTACT = "contact"
+    INVASIVE_BACTERIAL_INFECTIONS = "invasive_bacterial_infections"
 
 
 class _ExtremeEventChildTheme(Enum):
@@ -16,6 +17,14 @@ class _ExtremeEventChildTheme(Enum):
 
 class _NonCommunicableChildTheme(Enum):
     RESPIRATORY = "respiratory"
+
+
+class _ClimateAndEnvironmentChildTheme(Enum):
+    VECTORS = "vectors"
+
+
+class _VectorsTopic(Enum):
+    TICKS = "ticks"
 
 
 class _VaccinePreventableTopic(Enum):
@@ -48,6 +57,10 @@ class _RespiratoryTopic(Enum):
     LOWER_RESPIRATORY_TRACT_INFECTION = "lower-respiratory-tract-infection"
 
 
+class _InvasiveBacterialInfectionsTopic(Enum):
+    IGAS = "iGAS"
+
+
 class _BloodstreamInfectionTopic(Enum):
     MRSA = "MRSA"
     MSSA = "MSSA"
@@ -73,12 +86,14 @@ class ParentTheme(Enum):
     INFECTIOUS_DISEASE = "infectious_disease"
     EXTREME_EVENT = "extreme_event"
     NON_COMMUNICABLE = "non-communicable"
+    CLIMATE_AND_ENVIRONMENT = "climate_and_environment"
 
 
 class ChildTheme(BaseEnum):
     INFECTIOUS_DISEASE = _InfectiousDiseaseChildTheme
     EXTREME_EVENT = _ExtremeEventChildTheme
     NON_COMMUNICABLE = _NonCommunicableChildTheme
+    CLIMATE_AND_ENVIRONMENT = _ClimateAndEnvironmentChildTheme
 
 
 class Topic(BaseEnum):
@@ -89,3 +104,5 @@ class Topic(BaseEnum):
     GASTROINTESTINAL = _GastrointestinalTopic
     ANTIMICROBIAL_RESISTANCE = _AntimicrobialResistanceTopic
     CONTACT = _ContactTopic
+    VECTORS = _VectorsTopic
+    INVASIVE_BACTERIAL_INFECTIONS = _InvasiveBacterialInfectionsTopic

@@ -29,7 +29,7 @@ filelock==3.17.0
 grimp==3.6
 gunicorn==23.0.0
 html5lib==1.1
-identify==2.6.8
+identify==2.6.9
 idna==3.10
 importlib-metadata==8.6.1
 inflection==0.5.1
@@ -71,7 +71,7 @@ ruamel.yaml==0.18.10
 ruamel.yaml.clib==0.2.12
 SQLAlchemy==2.0.38
 scour==0.38.2
-setuptools==75.8.2
+setuptools==76.0.0
 simplejson==3.20.1
 six==1.17.0
 sortedcontainers==2.4.0
