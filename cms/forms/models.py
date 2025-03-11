@@ -9,7 +9,12 @@ from wagtail.admin.panels import (
     TabbedInterface,
 )
 from wagtail.api import APIField
-from wagtail.contrib.forms.models import AbstractEmailForm, AbstractFormField, FormMixin
+from wagtail.contrib.forms.models import (
+    FORM_FIELD_CHOICES,
+    AbstractEmailForm,
+    AbstractFormField,
+    FormMixin,
+)
 from wagtail.fields import RichTextField
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
@@ -24,6 +29,16 @@ class AbstractFormUKHSAPage(FormMixin, UKHSAPage):
 
 class FormField(AbstractFormField):
     page = ParentalKey("FormPage", on_delete=models.CASCADE, related_name="form_fields")
+
+    form_field_choices = [
+        choice for choice in FORM_FIELD_CHOICES if choice[0] != "multiselect"
+    ]
+
+    field_type = models.CharField(
+        verbose_name="field type",
+        max_length=16,
+        choices=form_field_choices,
+    )
 
 
 class FormPage(AbstractFormUKHSAPage):
