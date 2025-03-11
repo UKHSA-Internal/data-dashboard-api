@@ -70,7 +70,7 @@ def get_active_global_banner(
 
 def get_active_global_banners(
     global_banner_manager: Manager,
-) -> ReturnDict[str, str] | None:
+) -> ReturnDict[str, str]:
     """Gets the currently active global banner information
 
     Args:
