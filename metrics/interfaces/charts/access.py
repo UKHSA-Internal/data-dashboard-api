@@ -8,8 +8,6 @@ from scour import scour
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts import (
-    bar,
-    line_multi_coloured,
     line_single_simplified,
     line_with_shaded_section,
     main,
@@ -142,11 +140,11 @@ class ChartsInterface:
         all_selected_chart_types: set[str] = {
             plot.chart_type for plot in self.chart_request_params.plots
         }
-        if "bar" in all_selected_chart_types:
-            return True
-        if "line_multi_coloured" in all_selected_chart_types:
-            return True
-        return False
+        has_bar_plot: bool = "bar" in all_selected_chart_types
+        has_line_multi_coloured_plot: bool = (
+            "line_multi_coloured" in all_selected_chart_types
+        )
+        return has_bar_plot or has_line_multi_coloured_plot
 
     @property
     def is_headline_data(self) -> bool:
@@ -234,63 +232,6 @@ class ChartsInterface:
         chart_generation_payload: ChartGenerationPayload,
     ) -> plotly.graph_objects.Figure:
         return main.generate_chart_figure(
-            chart_generation_payload=chart_generation_payload
-        )
-
-    @classmethod
-    def generate_bar_chart(
-        cls,
-        *,
-        chart_generation_payload: ChartGenerationPayload,
-    ) -> plotly.graph_objects.Figure:
-        """Creates a bar chart figure for the requested chart plot
-
-        Notes
-            This does support **multiple** plots on the same figure
-
-        Args:
-            chart_generation_payload: An enriched `ChartGenerationPayload` model
-                which holds all the parameters like colour and plot labels
-                 along with the corresponding x and y values
-                 which are needed to be able to generate the chart in full.
-
-        Returns:
-            A plotly `Figure` object for the created bar chart
-
-        Raises:
-            `DataNotFoundForAnyPlotError`: If no plots
-                returned any data from the underlying queries
-
-        """
-        return bar.generate_chart_figure(
-            chart_generation_payload=chart_generation_payload
-        )
-
-    @classmethod
-    def generate_line_multi_coloured_chart(
-        cls,
-        *,
-        chart_generation_payload: ChartGenerationPayload,
-    ) -> plotly.graph_objects.Figure:
-        """Creates a multiple line colour-differentiated chart figure for the requested chart plots
-
-        Notes
-            This does support **multiple** plots on the same figure
-
-        Args:
-            chart_generation_payload: An enriched `ChartGenerationPayload` model
-                which holds all the parameters like colour and plot labels
-                 along with the corresponding x and y values
-                 which are needed to be able to generate the chart in full.
-
-        Returns:
-            A plotly `Figure` object for the created multi-coloured line chart
-
-        Raises:
-            `DataNotFoundForAnyPlotError`: If no plots
-                returned any data from the underlying queries
-        """
-        return line_multi_coloured.generate_chart_figure(
             chart_generation_payload=chart_generation_payload
         )
 

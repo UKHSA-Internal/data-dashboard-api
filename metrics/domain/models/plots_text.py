@@ -32,7 +32,6 @@ class PlotsText:
     def _extract_plots_with_valid_data(
         cls, *, plots_data: list[PlotGenerationData]
     ) -> list[PlotGenerationData]:
-        print(plots_data)
         return [
             plot_data
             for plot_data in plots_data

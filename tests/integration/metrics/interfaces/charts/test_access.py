@@ -9,8 +9,7 @@ from metrics.domain.models import (
     PlotParameters,
     ChartGenerationPayload,
 )
-from metrics.domain.charts.line_multi_coloured import generation as line_generation
-from metrics.domain.charts.bar import generation as bar_generation
+from metrics.domain.charts.main import generation
 from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import ChartsInterface, ChartOutput
 
@@ -123,7 +122,7 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = line_generation.generate_chart_figure(chart_generation_payload=payload)
+        figure = generation.generate_chart_figure(chart_generation_payload=payload)
 
         # When
         chart_output = ChartOutput(
@@ -159,7 +158,7 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = bar_generation.generate_chart_figure(chart_generation_payload=payload)
+        figure = generation.generate_chart_figure(chart_generation_payload=payload)
 
         # When
         chart_output = ChartOutput(

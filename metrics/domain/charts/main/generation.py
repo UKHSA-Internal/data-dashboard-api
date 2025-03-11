@@ -34,7 +34,6 @@ def generate_chart_figure(*, chart_generation_payload: ChartGenerationPayload):
                         figure=figure,
                     )
 
-
     layout_args = settings.get_bar_chart_config()
     figure.update_layout(**layout_args)
 

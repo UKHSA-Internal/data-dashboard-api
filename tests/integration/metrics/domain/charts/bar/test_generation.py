@@ -4,7 +4,7 @@ from unittest import mock
 import plotly.graph_objects
 import pytest
 
-from metrics.domain.charts.bar.generation import generate_chart_figure
+from metrics.domain.charts.main.generation import generate_chart_figure
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.models.plots import (
     ChartGenerationPayload,
