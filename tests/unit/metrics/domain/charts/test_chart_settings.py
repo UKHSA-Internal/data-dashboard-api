@@ -38,7 +38,7 @@ class TestChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        tick_font_config = chart_settings.get_tick_font_config()
+        tick_font_config = chart_settings._get_tick_font_config()
 
         # Then
         expected_tick_font_config = {
@@ -60,7 +60,7 @@ class TestChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        x_axis_config = chart_settings.get_x_axis_config()
+        x_axis_config = chart_settings._get_x_axis_config()
 
         # Then
         expected_x_axis_config = {
@@ -81,9 +81,9 @@ class TestChartSettings:
             "type": "date",
             "dtick": "M1",
             "tickformat": "%b %Y",
-            "tickfont": chart_settings.get_tick_font_config(),
+            "tickfont": chart_settings._get_tick_font_config(),
             "title": {
-                "font": chart_settings.get_tick_font_config(),
+                "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
             },
         }
@@ -110,7 +110,7 @@ class TestChartSettings:
         ]
 
         # When
-        x_axis_config = chart_settings.get_x_axis_config()
+        x_axis_config = chart_settings._get_x_axis_config()
 
         # Then
         expected_x_axis_config = {
@@ -131,9 +131,9 @@ class TestChartSettings:
             "type": "-",
             "dtick": None,
             "tickformat": None,
-            "tickfont": chart_settings.get_tick_font_config(),
+            "tickfont": chart_settings._get_tick_font_config(),
             "title": {
-                "font": chart_settings.get_tick_font_config(),
+                "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
             },
         }
@@ -149,7 +149,7 @@ class TestChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        y_axis_config = chart_settings.get_y_axis_config()
+        y_axis_config = chart_settings._get_y_axis_config()
 
         # Then
         expected_y_axis_config = {
@@ -161,16 +161,16 @@ class TestChartSettings:
             "ticks": "outside",
             "tickson": "boundaries",
             "tickcolor": "rgba(0,0,0,0)",
-            "tickfont": chart_settings.get_tick_font_config(),
+            "tickfont": chart_settings._get_tick_font_config(),
             "title": {
-                "font": chart_settings.get_tick_font_config(),
+                "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.y_axis_title,
             },
         }
         assert y_axis_config == expected_y_axis_config
 
-    @mock.patch.object(ChartSettings, "get_y_axis_config")
-    @mock.patch.object(ChartSettings, "get_x_axis_config")
+    @mock.patch.object(ChartSettings, "_get_y_axis_config")
+    @mock.patch.object(ChartSettings, "_get_x_axis_config")
     def test_get_base_chart_config(
         self,
         mocked_get_x_axis_config: mock.MagicMock,
@@ -186,7 +186,7 @@ class TestChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        base_chart_config = chart_settings.get_base_chart_config()
+        base_chart_config = chart_settings._get_base_chart_config()
 
         # Then
         expected_base_chart_config = {
@@ -447,7 +447,13 @@ class TestChartSettings:
         )
 
         # Then
-        expected_chart_config = chart_settings.get_base_chart_config()
+        expected_chart_config = chart_settings._get_base_chart_config()
+        expected_chart_config["yaxis"]["tick0"] = 0
+        expected_chart_config["yaxis"]["range"] = [
+            0,
+            max(chart_settings.plots_data[0].y_axis_values),
+        ]
+        expected_chart_config["yaxis"]["rangemode"] = "tozero"
         expected_chart_config["showlegend"] = False
 
         assert line_with_shaded_section_chart_config == expected_chart_config
@@ -644,7 +650,7 @@ class TestChartSettings:
         )
 
         # Then
-        expected_chart_config = chart_settings.get_base_chart_config()
+        expected_chart_config = chart_settings._get_base_chart_config()
         # Chart settings
         expected_chart_config["showlegend"] = False
         expected_chart_config["margin"]["r"] = 35
@@ -696,7 +702,7 @@ class TestChartSettings:
             },
         }
         expected_bar_chart_config = {
-            **chart_settings.get_base_chart_config(),
+            **chart_settings._get_base_chart_config(),
             **additional_bar_chart_specific_config,
         }
         assert bar_chart_config == expected_bar_chart_config
@@ -765,13 +771,120 @@ class TestChartSettings:
 
         # Then
         expected_line_multi_coloured_chart_config = {
-            **chart_settings.get_base_chart_config(),
+            **chart_settings._get_base_chart_config(),
             **chart_settings._get_legend_top_centre_config(),
             "showlegend": True,
         }
+        expected_line_multi_coloured_chart_config["yaxis"]["tick0"] = 0
+        expected_line_multi_coloured_chart_config["yaxis"]["range"] = [
+            0,
+            max(chart_settings.plots_data[0].y_axis_values),
+        ]
+        expected_line_multi_coloured_chart_config["yaxis"]["rangemode"] = "tozero"
+
         assert (
             line_multi_coloured_chart_config
             == expected_line_multi_coloured_chart_config
+        )
+
+    @pytest.mark.parametrize(
+        "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
+        (
+            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
+            [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
+            [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
+            [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],
+        ),
+    )
+    def test_get_line_multi_coloured_chart_config_returns_correct_y_axis_range(
+        self,
+        fake_chart_settings: ChartSettings,
+        y_axis_min: int,
+        y_axis_max: int | None,
+        expected_y_axis_min: int,
+        expected_y_axis_max: int,
+        y_axis_values: list[int],
+    ):
+        """
+        Given an instance of `chart_settings`
+        When the `get_line_multi_coloured_chart_config()` method is called
+            provided manual y-axis min and max values
+        Then the correct chart settings are returned
+        """
+        # Given
+        fake_chart_settings._chart_generation_payload.y_axis_minimum_value = y_axis_min
+        fake_chart_settings._chart_generation_payload.y_axis_maximum_value = y_axis_max
+        fake_chart_settings.plots_data[0].y_axis_values = y_axis_values
+
+        # When
+        line_multi_coloured_chart_config = (
+            fake_chart_settings.get_line_multi_coloured_chart_config()
+        )
+
+        # Then
+        expected_multi_coloured_config = {
+            **fake_chart_settings._get_base_chart_config(),
+            **fake_chart_settings._get_legend_top_centre_config(),
+            "showlegend": True,
+        }
+        expected_multi_coloured_config["yaxis"]["tick0"] = expected_y_axis_min
+        expected_multi_coloured_config["yaxis"]["range"] = [
+            expected_y_axis_min,
+            expected_y_axis_max,
+        ]
+        expected_multi_coloured_config["yaxis"]["rangemode"] = "normal"
+
+        assert line_multi_coloured_chart_config == expected_multi_coloured_config
+
+    @pytest.mark.parametrize(
+        "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
+        (
+            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
+            [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
+            [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
+            [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],
+        ),
+    )
+    def test_get_line_multi_coloured_chart_config_returns_correct_y_axis_range(
+        self,
+        fake_chart_settings: ChartSettings,
+        y_axis_min: int,
+        y_axis_max: int,
+        expected_y_axis_min: int,
+        expected_y_axis_max: int,
+        y_axis_values: list[int],
+    ):
+        """
+        Given an instance of `chart_settings`
+        When the `get_line_with_shaded_section_chart_config()` method is called
+            provided manual y-axis min and max values
+        Then the correct chart settings are returned
+        """
+        # Given
+        fake_chart_settings._chart_generation_payload.y_axis_minimum_value = y_axis_min
+        fake_chart_settings._chart_generation_payload.y_axis_maximum_value = y_axis_max
+        fake_chart_settings.plots_data[0].y_axis_values = y_axis_values
+
+        # When
+        line_with_shaded_section_chart_config = (
+            fake_chart_settings.get_line_with_shaded_section_chart_config()
+        )
+
+        # Then
+        expected_line_with_shaded_section_config = {
+            **fake_chart_settings._get_base_chart_config(),
+            "showlegend": False,
+        }
+        expected_line_with_shaded_section_config["yaxis"]["tick0"] = expected_y_axis_min
+        expected_line_with_shaded_section_config["yaxis"]["range"] = [
+            expected_y_axis_min,
+            expected_y_axis_max,
+        ]
+        expected_line_with_shaded_section_config["yaxis"]["rangemode"] = "normal"
+
+        assert (
+            line_with_shaded_section_chart_config
+            == expected_line_with_shaded_section_config
         )
 
     @pytest.mark.parametrize(
