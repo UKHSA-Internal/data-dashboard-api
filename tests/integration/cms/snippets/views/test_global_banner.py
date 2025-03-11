@@ -85,12 +85,10 @@ class TestGlobalBannerV1View:
         # Then
         assert response.status_code == HTTPStatus.OK
         assert (
-            response.data["active_global_banner"]["title"]
-            == active_global_banner.title
+            response.data["active_global_banner"]["title"] == active_global_banner.title
         )
         assert (
-            response.data["active_global_banner"]["body"]
-            == active_global_banner.body
+            response.data["active_global_banner"]["body"] == active_global_banner.body
         )
         assert (
             response.data["active_global_banner"]["banner_type"]

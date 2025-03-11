@@ -9,7 +9,7 @@ from caching.private_api.decorators import cache_response
 from cms.snippets.serializers import (
     GlobalBannerResponseSerializer,
     GlobalBannerSerializer,
-    GlobalBannerSerializerV1
+    GlobalBannerSerializerV1,
 )
 
 
