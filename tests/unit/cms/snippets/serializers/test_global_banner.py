@@ -90,12 +90,12 @@ class TestGlobalBannerSerializer:
 
     def test_serialized_data_for_multiple_active_global_banner(self):
         """
-        Given a `GlobalBanner` model instance which is active
+        Given multiple `GlobalBanner` model instance which is active
         And an inactive `GlobalBanner` model instance
         When `data` is called from an instance
             of the `GlobalBannerSerializer`
         Then the output `data` contains info
-            about the currently active global banner
+            about the currently active global banners
         """
         # Given
         first_active_global_banner = GlobalBanner(
@@ -153,7 +153,7 @@ class TestGlobalBannerSerializer:
         When `data` is called from an instance
             of the `GlobalBannerSerializer`
         Then the output `data` states
-            the active global banner as None
+            the active global banner as []
 
         """
         # Given

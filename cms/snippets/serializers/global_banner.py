@@ -61,23 +61,23 @@ def get_active_global_banner(
         If no global banner is active, then None is returned
 
     """
-    global_banners = global_banner_manager.get_active_banners().first()
-    serializer = GlobalBannerResponseSerializer(instance=global_banners)
+    global_banner = global_banner_manager.get_active_banners().first()
+    serializer = GlobalBannerResponseSerializer(instance=global_banner)
     return serializer.data
 
 
 def get_active_global_banners(
     global_banner_manager: Manager,
 ) -> ReturnDict[str, str]:
-    """Gets the currently active global banner information
+    """Gets all currently active global banners
 
     Args:
         `global_banner_manager`: The `GlobalBanner`
             model manager used to query for records
 
     Returns:
-        Dict representation the of the active global banner.
-        If no global banner is active, then None is returned
+        Dict representation of the active global banners.
+        If there are no active global banners, then [] is returned.
 
     """
     global_banners = global_banner_manager.get_active_banners()
