@@ -6,7 +6,7 @@ from tests.factories.cms.snippets.global_banner import GlobalBannerFactory
 
 class TestGlobalBannerManager:
     @pytest.mark.django_db
-    def test_has_active_banner(self):
+    def test_get_active_banners(self):
         """
         Given a number of `GlobalBanner` records
             of which 1 has `is_active` set to True
@@ -18,7 +18,7 @@ class TestGlobalBannerManager:
         GlobalBannerFactory.create(is_active=True)
 
         # When
-        has_active_banners: bool = GlobalBanner.objects.has_active_banners()
+        get_active_banners: GlobalBanner = GlobalBanner.objects.get_active_banners()
 
         # Then
-        assert has_active_banners is True
+        assert get_active_banners is not None
