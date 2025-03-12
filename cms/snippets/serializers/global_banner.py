@@ -27,9 +27,9 @@ class GlobalBannerSerializer(serializers.Serializer):
         return self.context.get("global_banner_manager", GlobalBanner.objects)
 
     @property
-    def data(self) -> dict[str, ReturnDict[str, str] | None]:
-        active_global_banner_data: ReturnDict[str, str] | None = (
-            get_active_global_banners(global_banner_manager=self.global_banner_manager)
+    def data(self) -> dict[str, ReturnDict[str, str]]:
+        active_global_banner_data: ReturnDict[str, str] = get_active_global_banners(
+            global_banner_manager=self.global_banner_manager
         )
         return {"active_global_banners": active_global_banner_data}
 

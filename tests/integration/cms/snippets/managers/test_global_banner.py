@@ -10,9 +10,10 @@ class TestGlobalBannerManager:
         """
         Given a number of `GlobalBanner` records
             of which 1 has `is_active` set to True
-        When `has_active_banner()` is called
+        When `get_active_banners()` is called
             from the `GlobalBannerManager`
-        Then True is returned
+        Then only one active banner should be returned
+            and the active banner should be of type Information.
         """
         # Given
         GlobalBannerFactory.create(is_active=True)
@@ -21,4 +22,5 @@ class TestGlobalBannerManager:
         get_active_banners: GlobalBanner = GlobalBanner.objects.get_active_banners()
 
         # Then
-        assert get_active_banners is not None
+        assert len(get_active_banners) == 1
+        assert get_active_banners[0].banner_type == "Information"

@@ -28,14 +28,12 @@ class GlobalBannerView(APIView):
         Note that if there is no active banner then the response will look like:
 
         ```
-        {"active_global_banner": null}
+        {"active_global_banners": null}
         ```
 
         """
         serializer = GlobalBannerSerializer()
-        serialized_response_data: dict[str, ReturnDict[str, str] | None] = (
-            serializer.data
-        )
+        serialized_response_data: dict[str, ReturnDict[str, str]] = serializer.data
 
         return Response(data=serialized_response_data, status=HTTPStatus.OK)
 
