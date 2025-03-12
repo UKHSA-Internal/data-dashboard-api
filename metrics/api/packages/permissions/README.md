@@ -115,7 +115,7 @@ If an object contains `is_public = True`, the `FluentPermissions` logic is **byp
 
 ### Example:
 ```python
-{ "is_public": True, "theme": "Finance", "sub_theme": "Banking" }
+{ "is_public": True, "theme": "infectious_disease", "sub_theme": "respiratory" }
 ```
 The object above will be accessible to all users regardless of permissions.
 

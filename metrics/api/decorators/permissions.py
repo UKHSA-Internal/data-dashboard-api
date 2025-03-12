@@ -74,23 +74,23 @@ def _new_to_representation_private(*, self, representation):
         if not group_permissions:
             return None
 
+        fluent_permissions = FluentPermissions(
+            group_permissions=group_permissions,
+            data=data,
+        )
+        (
+            fluent_permissions.add_field("theme")
+            .add_field("sub_theme")
+            .add_field("topic")
+            .add_field("geography_type")
+            .add_field("geography")
+            .add_field("metric")
+            .add_field("age")
+            .add_field("stratum")
+            .execute()
+        )
         try:
-            fluent_permissions = FluentPermissions(
-                group_permissions=group_permissions,
-                data=data,
-            )
-            (
-                fluent_permissions.add_field("theme")
-                .add_field("sub_theme")
-                .add_field("topic")
-                .add_field("geography_type")
-                .add_field("geography")
-                .add_field("metric")
-                .add_field("age")
-                .add_field("stratum")
-                .execute()
-                .validate()
-            )
+            fluent_permissions.validate()
         except FluentPermissionsError:
             return None
         return data
