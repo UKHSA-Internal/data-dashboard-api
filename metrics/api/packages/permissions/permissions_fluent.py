@@ -1,5 +1,3 @@
-from typing import Any
-
 from metrics.api.packages.permissions import (
     BaseAction,
     MatchFieldAction,
@@ -30,7 +28,7 @@ class FluentPermissions:
 
     ### Setup:
     1. Instantiate `FluentPermissions` with `data` and `group_permissions`.
-    2. Use `.add_field(field_name)` to define which fields should be checked.
+    2. Use `.add_field(field_name)` to define which fields should be checked. Ensure all required fields are added before executing the validation.
     3. Call `.execute()` to evaluate permissions.
     4. Use `.match_fields_all` to access the results.
     5. Call `.validate()` to ensure at least one valid match exists.
@@ -91,7 +89,9 @@ class FluentPermissions:
     # available for the user or role being evaluated.
     group_permissions: list[RBACPermission]
 
-    def __init__(self, *, data: Any, group_permissions: list[RBACPermission]):
+    def __init__(
+        self, *, data: dict[str, str], group_permissions: list[RBACPermission]
+    ):
         self.data = data
         self.group_permissions = group_permissions
         self.field_names = []
@@ -119,9 +119,7 @@ class FluentPermissions:
 
     def execute(self) -> "FluentPermissions":
         """
-        Given a set of user permissions (`group_permissions`)
-        When `execute()` is called
-        Then it evaluates field matches and stores results in `_match_fields_all`
+        Evaluates permissions for each group, storing match results and skipping irrelevant checks.
 
         This method iterates through each `RBACPermission` in `group_permissions`,
         comparing its fields against the provided `data`. If the `theme` and `sub_theme`

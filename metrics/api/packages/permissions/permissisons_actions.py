@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
 from metrics.data.models.rbac_models import RBACPermission
 
@@ -47,10 +46,10 @@ class BaseAction(ABC):
     Subclasses must implement the `execute()` method.
 
     Attributes:
-        data (Any): The input data against which permissions will be checked.
+        data (Dict[str,str]): The input data against which permissions will be checked.
     """
 
-    def __init__(self, *, data: Any):
+    def __init__(self, *, data: dict[str, str]):
         self.data = data
 
     @abstractmethod

@@ -1,6 +1,9 @@
 import pytest
 import copy
+from typing import Any, Callable
 from unittest.mock import MagicMock
+
+from django.core.serializers.base import Serializer
 
 from metrics.api.decorators import (
     filter_by_permissions,
@@ -76,7 +79,7 @@ class TestPermissions:
         # CoreTimeSeries
         self.core_covid_19 = CoreTimeSeriesFactory.create_record()
 
-        self.cor_asthma = CoreTimeSeriesFactory.create_record(
+        self.core_asthma = CoreTimeSeriesFactory.create_record(
             theme_name=self.non_communicable.name,
             sub_theme_name=self.respiratory_comm.name,
             topic_name=self.asthma.name,
@@ -91,7 +94,9 @@ class TestPermissions:
 
     @pytest.mark.django_db
     def test_filter_by_permissions_non_private_api(
-        self, patch_auth_disabled, fake_serializer
+        self: Any,
+        patch_auth_disabled: Callable[[], None],  # Sets AUTH_ENABLED "0"
+        fake_serializer: Serializer,
     ):
         """
         Given `AUTH_ENABLED` is disabled
@@ -109,17 +114,19 @@ class TestPermissions:
         assert result == core_headline_data, "all fields should be returned"
 
     @pytest.mark.parametrize(
-        "theme,sub_theme,should_return",
+        "theme,sub_theme",
         [
-            ("infectious_disease", "respiratory", True),
-            ("infectious_disease", "vaccine_preventable", False),
-            ("non-communicable", "respiratory", True),
-            ("non-communicable", "respiratory_other", False),
+            ("infectious_disease", "respiratory"),
+            ("non-communicable", "respiratory"),
         ],
     )
     @pytest.mark.django_db
     def test_filter_by_permissions_theme_sub_theme(
-        self, patch_auth_enabled, fake_serializer, theme, sub_theme, should_return
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+        theme: str,
+        sub_theme: str,
     ):
         """
         Given authentication is enabled
@@ -151,30 +158,71 @@ class TestPermissions:
         result = serializer.to_representation(test_data_public)
 
         # Then
-        if should_return:
-            assert result == test_data_public
-            assert "is_public" not in result
-        else:
-            assert result is None
+        assert result == test_data_public
+        assert "is_public" not in result
 
     @pytest.mark.parametrize(
-        "theme,sub_theme,topic,should_return",
+        "theme,sub_theme",
         [
-            ("infectious_disease", "respiratory", "COVID-19", True),
-            ("infectious_disease", "vaccine_preventable", "Measles", False),
-            ("non-communicable", "respiratory", "COVID-19", True),
-            ("non-communicable", "respiratory_other", "COVID-19", False),
+            ("infectious_disease", "vaccine_preventable"),
+            ("non-communicable", "respiratory_other"),
+        ],
+    )
+    @pytest.mark.django_db
+    def test_filter_by_permissions_excludes_non_matching_theme_sub_theme(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+        theme: str,
+        sub_theme: str,
+    ):
+        """
+        Given authentication is enabled
+        And the user has RBAC permissions, but they do not match the provided theme & sub_theme
+        When `to_representation()` is called on the serializer
+        Then the result should be None, as no data matches the user’s permissions
+        """
+        # Given
+        infectious_disease_permission = RBACPermission.objects.create(
+            name="infectious_disease_permission",
+            theme=self.core_covid_19.metric.topic.sub_theme.theme,
+            sub_theme=self.core_covid_19.metric.topic.sub_theme,
+        )
+        serializer = fake_serializer
+
+        test_data_public = copy.deepcopy(core_headline_data)
+        test_data_public["theme"] = theme
+        test_data_public["sub_theme"] = sub_theme
+        test_data_public["is_public"] = False
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [
+            infectious_disease_permission,
+            self.non_communicable_permission,
+        ]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data_public)
+
+        # Then
+        assert result is None
+
+    @pytest.mark.parametrize(
+        "theme,sub_theme,topic",
+        [
+            ("infectious_disease", "respiratory", "COVID-19"),
+            ("non-communicable", "respiratory", "COVID-19"),
         ],
     )
     @pytest.mark.django_db
     def test_filter_by_permissions_topic(
-        self,
-        patch_auth_enabled,
-        fake_serializer,
-        theme,
-        sub_theme,
-        topic,
-        should_return,
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+        theme: str,
+        sub_theme: str,
+        topic: str,
     ):
         """
         Given authentication is enabled
@@ -208,55 +256,85 @@ class TestPermissions:
         result = serializer.to_representation(test_data_public)
 
         # Then
-        if should_return:
-            assert result == test_data_public
-            assert "is_public" not in result
-        else:
-            assert result is None
+        assert result == test_data_public
+        assert "is_public" not in result
 
     @pytest.mark.parametrize(
-        "theme,sub_theme,topic,metric,should_return",
+        "theme,sub_theme,topic",
+        [
+            ("infectious_disease", "vaccine_preventable", "Measles"),
+            ("non-communicable", "respiratory_other", "COVID-19"),
+        ],
+    )
+    @pytest.mark.django_db
+    def test_filter_by_permissions_topic_without_correct_permissions(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+    ):
+        """
+        Given authentication is enabled
+        And the user has RBAC permissions for a specific topic
+        When `to_representation()` is called on the serializer
+        Then the result should be None, as no data matches the user’s permissions
+        """
+        # Given
+        infectious_disease_permission = RBACPermission.objects.create(
+            name="infectious_disease_permission",
+            theme=self.core_covid_19.metric.topic.sub_theme.theme,
+            sub_theme=self.core_covid_19.metric.topic.sub_theme,
+            topic=self.core_covid_19.metric.topic,
+        )
+        serializer = fake_serializer
+
+        test_data_public = copy.deepcopy(core_headline_data)
+        test_data_public["theme"] = theme
+        test_data_public["sub_theme"] = sub_theme
+        test_data_public["topic"] = topic
+        test_data_public["is_public"] = False
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [
+            infectious_disease_permission,
+            self.non_communicable_permission,
+        ]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data_public)
+
+        # Then
+        assert result is None
+
+    @pytest.mark.parametrize(
+        "theme,sub_theme,topic,metric",
         [
             (
                 "infectious_disease",
                 "respiratory",
                 "COVID-19",
                 "COVID-19_cases_casesByDay",
-                True,
-            ),
-            (
-                "infectious_disease",
-                "respiratory",
-                "COVID-19",
-                "COVID-20_cases_casesByDay2",
-                False,
             ),
             (
                 "non-communicable",
                 "respiratory",
                 "COVID-19",
                 "COVID-19_cases_casesByDay",
-                True,
-            ),
-            (
-                "non-communicable",
-                "respiratory_other",
-                "COVID-19",
-                "COVID-19_cases_casesByDay",
-                False,
             ),
         ],
     )
     @pytest.mark.django_db
     def test_filter_by_permissions_metric(
-        self,
-        patch_auth_enabled,
-        fake_serializer,
-        theme,
-        sub_theme,
-        topic,
-        metric,
-        should_return,
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        metric: str,
     ):
         """
         Given authentication is enabled
@@ -292,22 +370,77 @@ class TestPermissions:
         result = serializer.to_representation(test_data_public)
 
         # Then
-        if should_return:
-            assert result == test_data_public
-            assert "is_public" not in result
-        else:
-            assert result is None
+        assert result == test_data_public
+        assert "is_public" not in result
 
     @pytest.mark.parametrize(
-        "geography,should_return",
+        "theme,sub_theme,topic,metric",
         [
-            ("England", True),
-            ("Scotland", False),
+            (
+                "infectious_disease",
+                "respiratory",
+                "COVID-19",
+                "COVID-20_cases_casesByDay2",
+            ),
+            (
+                "non-communicable",
+                "respiratory_other",
+                "COVID-19",
+                "COVID-19_cases_casesByDay",
+            ),
         ],
     )
     @pytest.mark.django_db
+    def test_filter_by_permissions_metric_with_no_matching_permissions(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        metric: str,
+    ):
+        """
+        Given authentication is enabled
+        And the user has RBAC permissions for a specific metric
+        When `to_representation()` is called on the serializer
+        Then the result should be None, as no data matches the user’s permissions
+        """
+        # Given
+        infectious_disease_permission = RBACPermission.objects.create(
+            name="infectious_disease_permission",
+            theme=self.core_covid_19.metric.topic.sub_theme.theme,
+            sub_theme=self.core_covid_19.metric.topic.sub_theme,
+            topic=self.core_covid_19.metric.topic,
+            metric=self.core_covid_19.metric,
+        )
+        serializer = fake_serializer
+
+        test_data_public = copy.deepcopy(core_headline_data)
+        test_data_public["theme"] = theme
+        test_data_public["sub_theme"] = sub_theme
+        test_data_public["topic"] = topic
+        test_data_public["metric"] = metric
+        test_data_public["is_public"] = False
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [
+            infectious_disease_permission,
+            self.non_communicable_permission,
+        ]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data_public)
+
+        # Then
+        assert result == None
+
+    @pytest.mark.django_db
     def test_filter_by_permissions_geography(
-        self, patch_auth_enabled, fake_serializer, geography, should_return
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
     ):
         """
         Given authentication is enabled
@@ -327,7 +460,7 @@ class TestPermissions:
         serializer = fake_serializer
 
         test_data_public = copy.deepcopy(core_headline_data)
-        test_data_public["geography"] = geography
+        test_data_public["geography"] = "England"
         test_data_public["is_public"] = False
 
         mock_request = MagicMock()
@@ -341,22 +474,54 @@ class TestPermissions:
         result = serializer.to_representation(test_data_public)
 
         # Then
-        if should_return:
-            assert result == test_data_public
-            assert "is_public" not in result
-        else:
-            assert result is None
+        assert result == test_data_public
+        assert "is_public" not in result
 
-    @pytest.mark.parametrize(
-        "geography_type,should_return",
-        [
-            ("Nation", True),
-            ("Local", False),
-        ],
-    )
+    @pytest.mark.django_db
+    def test_filter_by_permissions_geography_with_non_matching_permissions(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+    ):
+        """
+        Given authentication is enabled
+        And the user has RBAC permissions for a specific geography
+        When `to_representation()` is called on the serializer
+        Then the result should be None, as no data matches the user’s permissions
+        """
+        # Given
+        infectious_disease_permission = RBACPermission.objects.create(
+            name="infectious_disease_permission",
+            theme=self.core_covid_19.metric.topic.sub_theme.theme,
+            sub_theme=self.core_covid_19.metric.topic.sub_theme,
+            topic=self.core_covid_19.metric.topic,
+            metric=self.core_covid_19.metric,
+            geography=self.core_covid_19.geography,
+        )
+        serializer = fake_serializer
+
+        test_data_public = copy.deepcopy(core_headline_data)
+        test_data_public["geography"] = "Scotland"
+        test_data_public["is_public"] = False
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [
+            infectious_disease_permission,
+            self.non_communicable_permission,
+        ]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data_public)
+
+        # Then
+        assert result is None
+
     @pytest.mark.django_db
     def test_filter_by_permissions_geography_type(
-        self, patch_auth_enabled, fake_serializer, geography_type, should_return
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
     ):
         """
         Given authentication is enabled
@@ -377,7 +542,7 @@ class TestPermissions:
         serializer = fake_serializer
 
         test_data_public = copy.deepcopy(core_headline_data)
-        test_data_public["geography_type"] = geography_type
+        test_data_public["geography_type"] = "Nation"
         test_data_public["is_public"] = False
 
         mock_request = MagicMock()
@@ -391,22 +556,55 @@ class TestPermissions:
         result = serializer.to_representation(test_data_public)
 
         # Then
-        if should_return:
-            assert result == test_data_public
-            assert "is_public" not in result
-        else:
-            assert result is None
+        assert result == test_data_public
+        assert "is_public" not in result
 
-    @pytest.mark.parametrize(
-        "age,should_return",
-        [
-            ("all", True),
-            ("01-04", False),
-        ],
-    )
+    @pytest.mark.django_db
+    def test_filter_by_permissions_geography_type_with_non_matching_permissions(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+    ):
+        """
+        Given authentication is enabled
+        And the user has RBAC permissions for a specific geography type
+        When `to_representation()` is called on the serializer
+        Then the result should be None, as no data matches the user’s permissions
+        """
+        # Given
+        infectious_disease_permission = RBACPermission.objects.create(
+            name="infectious_disease_permission",
+            theme=self.core_covid_19.metric.topic.sub_theme.theme,
+            sub_theme=self.core_covid_19.metric.topic.sub_theme,
+            topic=self.core_covid_19.metric.topic,
+            metric=self.core_covid_19.metric,
+            geography=self.core_covid_19.geography,
+            geography_type=self.core_covid_19.geography.geography_type,
+        )
+        serializer = fake_serializer
+
+        test_data_public = copy.deepcopy(core_headline_data)
+        test_data_public["geography_type"] = "Local"
+        test_data_public["is_public"] = False
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [
+            infectious_disease_permission,
+            self.non_communicable_permission,
+        ]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data_public)
+
+        # Then
+        assert result is None
+
     @pytest.mark.django_db
     def test_filter_by_permissions_age(
-        self, patch_auth_enabled, fake_serializer, age, should_return
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
     ):
         """
         Given authentication is enabled
@@ -428,7 +626,7 @@ class TestPermissions:
         serializer = fake_serializer
 
         test_data_public = copy.deepcopy(core_headline_data)
-        test_data_public["age"] = age
+        test_data_public["age"] = "all"
         test_data_public["is_public"] = False
 
         mock_request = MagicMock()
@@ -442,22 +640,56 @@ class TestPermissions:
         result = serializer.to_representation(test_data_public)
 
         # Then
-        if should_return:
-            assert result == test_data_public
-            assert "is_public" not in result
-        else:
-            assert result is None
+        assert result == test_data_public
+        assert "is_public" not in result
 
-    @pytest.mark.parametrize(
-        "stratum,should_return",
-        [
-            ("default", True),
-            ("other", False),
-        ],
-    )
+    @pytest.mark.django_db
+    def test_filter_by_permissions_age_with_no_matching_permissions(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+    ):
+        """
+        Given authentication is enabled
+        And the user has RBAC permissions for a specific age group
+        When `to_representation()` is called on the serializer
+        Then the result should be None, as no data matches the user’s permissions
+        """
+        # Given
+        infectious_disease_permission = RBACPermission.objects.create(
+            name="infectious_disease_permission",
+            theme=self.core_covid_19.metric.topic.sub_theme.theme,
+            sub_theme=self.core_covid_19.metric.topic.sub_theme,
+            topic=self.core_covid_19.metric.topic,
+            metric=self.core_covid_19.metric,
+            geography=self.core_covid_19.geography,
+            geography_type=self.core_covid_19.geography.geography_type,
+            age=self.core_covid_19.age,
+        )
+        serializer = fake_serializer
+
+        test_data_public = copy.deepcopy(core_headline_data)
+        test_data_public["age"] = "01-04"
+        test_data_public["is_public"] = False
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [
+            infectious_disease_permission,
+            self.non_communicable_permission,
+        ]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data_public)
+
+        # Then
+        assert result is None
+
     @pytest.mark.django_db
     def test_filter_by_permissions_age(
-        self, patch_auth_enabled, fake_serializer, stratum, should_return
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
     ):
         """
         Given authentication is enabled
@@ -481,7 +713,7 @@ class TestPermissions:
         serializer = fake_serializer
 
         test_data_public = copy.deepcopy(core_headline_data)
-        test_data_public["stratum"] = stratum
+        test_data_public["stratum"] = "default"
         test_data_public["is_public"] = False
 
         mock_request = MagicMock()
@@ -495,15 +727,58 @@ class TestPermissions:
         result = serializer.to_representation(test_data_public)
 
         # Then
-        if should_return:
-            assert result == test_data_public
-            assert "is_public" not in result
-        else:
-            assert result is None
+        assert result == test_data_public
+        assert "is_public" not in result
+
+    @pytest.mark.django_db
+    def test_filter_by_permissions_age_with_not_matching_permissions(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
+    ):
+        """
+        Given authentication is enabled
+        And the user has RBAC permissions for a specific stratum
+        When `to_representation()` is called on the serializer
+        Then the result should be None, as no data matches the user’s permissions
+        """
+        # Given
+        infectious_disease_permission = RBACPermission.objects.create(
+            name="infectious_disease_permission",
+            theme=self.core_covid_19.metric.topic.sub_theme.theme,
+            sub_theme=self.core_covid_19.metric.topic.sub_theme,
+            topic=self.core_covid_19.metric.topic,
+            metric=self.core_covid_19.metric,
+            geography=self.core_covid_19.geography,
+            geography_type=self.core_covid_19.geography.geography_type,
+            age=self.core_covid_19.age,
+            stratum=self.core_covid_19.stratum,
+        )
+
+        serializer = fake_serializer
+
+        test_data_public = copy.deepcopy(core_headline_data)
+        test_data_public["stratum"] = "other"
+        test_data_public["is_public"] = False
+
+        mock_request = MagicMock()
+        mock_request.group_permissions = [
+            infectious_disease_permission,
+            self.non_communicable_permission,
+        ]
+        serializer.context = {"request": mock_request}
+
+        # When
+        result = serializer.to_representation(test_data_public)
+
+        # Then
+        assert result is None
 
     @pytest.mark.django_db
     def test_filter_by_permissions_returns_none_if_no_permissions(
-        self, patch_auth_enabled, fake_serializer
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        fake_serializer: Serializer,
     ):
         """
         Given `request.group_permissions` is empty
@@ -527,13 +802,15 @@ class TestPermissions:
         assert result is None
 
     @pytest.mark.django_db
-    def test_filter_by_permissions_removes_is_public_if_true(
-        self, patch_auth_enabled, fake_serializer
+    def test_filter_by_permissions_allows_access_when_public(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Ensures `AUTH_ENABLED=1`
+        fake_serializer: Serializer,
     ):
         """
-        Given an instance where `is_public` is set to True
+        Given `is_public` is `True`
         When `to_representation()` is called on the serializer
-        Then it should return the original data with `is_public` removed
+        Then it should return the data with `is_public` removed (without checking permissions)
         """
 
         # Given
@@ -542,7 +819,7 @@ class TestPermissions:
         test_data["is_public"] = True
 
         mock_request = MagicMock()
-        mock_request.group_permissions = [MagicMock()]
+        mock_request.group_permissions = []
         serializer.context = {"request": mock_request}
 
         # When
@@ -551,3 +828,32 @@ class TestPermissions:
         # Then
         assert result is not None
         assert "is_public" not in result
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("is_public_value", [None, False])
+    def test_filter_by_permissions_requires_permissions_when_not_public(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Ensures `AUTH_ENABLED=1`
+        fake_serializer: Serializer,
+        is_public_value: bool,
+    ):
+        """
+        Given `is_public` is `None` or `False`
+        When `to_representation()` is called on the serializer
+        Then if the user lacks permissions, return None
+        """
+
+        # Given
+        serializer = fake_serializer
+        test_data = copy.deepcopy(core_headline_data)
+        test_data["is_public"] = is_public_value
+
+        mock_request = MagicMock()
+
+        # When
+        mock_request.group_permissions = []
+        serializer.context = {"request": mock_request}
+        result = serializer.to_representation(test_data)
+
+        # Then
+        assert result is None
