@@ -41,12 +41,16 @@ class GlobalBanner(models.Model):
         default=False,
         help_text=help_texts.GLOBAL_BANNER_IS_ACTIVE,
     )
+    created_on = models.DateTimeField(auto_now_add=True, null=True)
+    updated_on = models.DateTimeField(auto_now=True, null=True)
 
     panels = [
         FieldPanel("title"),
         FieldPanel("body"),
         FieldPanel("banner_type"),
         FieldPanel("is_active"),
+        FieldPanel("created_on", read_only=True),
+        FieldPanel("updated_on", read_only=True),
     ]
 
     objects = GlobalBannerManager()
