@@ -6,16 +6,18 @@ from django.utils import timezone
 
 def update_timestamps(apps, schema_editor):
     # Get the historical version of your model
-    GlobalBanner = apps.get_model('snippets', 'GlobalBanner')
+    GlobalBanner = apps.get_model("snippets", "GlobalBanner")
 
     # Update all existing records with the current time
     # Or you can selectively update only records with null timestamps
     GlobalBanner.objects.filter(created_on__isnull=True).update(
-        created_on=timezone.now())
+        created_on=timezone.now()
+    )
     # If you want to update all records regardless of current value:
     # GlobalBanner.objects.all().update(created_on=timezone.now())
     GlobalBanner.objects.filter(updated_on__isnull=True).update(
-        updated_on=timezone.now())
+        updated_on=timezone.now()
+    )
 
 
 class Migration(migrations.Migration):
@@ -24,6 +26,4 @@ class Migration(migrations.Migration):
         ("snippets", "0011_add_created_on_and_updated_on_fields_to_global_banners"),
     ]
 
-    operations = [
-        migrations.RunPython(update_timestamps, migrations.RunPython.noop)
-    ]
+    operations = [migrations.RunPython(update_timestamps, migrations.RunPython.noop)]

@@ -1,5 +1,4 @@
 from django.db import models
-
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
 from wagtail.snippets.models import register_snippet
@@ -42,14 +41,8 @@ class GlobalBanner(models.Model):
         default=False,
         help_text=help_texts.GLOBAL_BANNER_IS_ACTIVE,
     )
-    created_on = models.DateTimeField(
-        auto_now_add=True,
-        null=True
-    )
-    updated_on = models.DateTimeField(
-        auto_now=True,
-        null=True
-    )
+    created_on = models.DateTimeField(auto_now_add=True, null=True)
+    updated_on = models.DateTimeField(auto_now=True, null=True)
 
     panels = [
         FieldPanel("title"),
