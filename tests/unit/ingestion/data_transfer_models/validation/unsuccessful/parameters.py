@@ -24,7 +24,14 @@ INVALID_PARAMETERS = [
         "infectious_disease",
         "respiratory",
         "Scarlet-fever",
-        "scarlet-fever_syndromic_consultationRateByWeek_CTRY_E92000001_all_all_default",
+        "scarlet-fever_syndromic_consultationRateByWeek",
         "syndromic",
     ),  # Invalid child theme
+    (
+        "infectious_disease",
+        "bloodborne",
+        "Scarlet-fever",
+        "hepatitis-c_cases_prevalenceByYearEstimate",
+        "prevention",
+    ),  # Invalid child Topic
 ]

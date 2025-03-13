@@ -24,7 +24,14 @@ VALID_PARAMETERS = [
         "infectious_disease",
         "childhood_illness",
         "Scarlet-fever",
-        "scarlet-fever_syndromic_consultationRateByWeek_CTRY_E92000001_all_all_default",
+        "scarlet-fever_syndromic_consultationRateByWeek",
         "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "bloodborne",
+        "Hepatitis-C",
+        "hepatitis-c_prevention_PWIDproportionNSP",
+        "prevention",
     ),
 ]
