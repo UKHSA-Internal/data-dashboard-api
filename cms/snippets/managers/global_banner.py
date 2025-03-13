@@ -14,7 +14,7 @@ class GlobalBannerQuerySet(models.QuerySet):
                 Examples:
                     `<GlobalBannerQuerySet [<GlobalBanner: Active information-level global banner>]>`
         """
-        return self.filter(is_active=True)
+        return self.filter(is_active=True).order_by("-banner_type")
 
 
 class GlobalBannerManager(models.Manager):
