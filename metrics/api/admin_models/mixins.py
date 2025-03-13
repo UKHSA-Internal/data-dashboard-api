@@ -10,4 +10,3 @@ class ReadOnlyMixin:
     @classmethod
     def has_delete_permission(cls, request):
         return False
-

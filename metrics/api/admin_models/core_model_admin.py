@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.core.paginator import Paginator
+
 from .mixins import ReadOnlyMixin
-from metrics.data.models.core_models.supporting import Geography, Metric
 
 
 class NoCountPaginator(Paginator):

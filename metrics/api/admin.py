@@ -1,21 +1,16 @@
-from datetime import datetime, timedelta
-from django.urls import path
 from django.contrib import admin
 
 from metrics.data.models.api_models import APITimeSeries
+from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.data.models.rbac_models import RBACGroupPermission, RBACPermission
-from metrics.data.models.core_models import CoreTimeSeries, CoreHeadline
-from metrics.data.models.core_models.supporting import Geography, Metric
 
 admin.site.register(APITimeSeries)
 admin.site.register(RBACPermission)
 admin.site.register(RBACGroupPermission)
 from metrics.api.admin_models.api_model_admin import APITimeseriesAdmin
 from metrics.api.admin_models.core_model_admin import (
-    CoreTimeseriesAdmin,
     CoreHeadlineAdmin,
-    GeographyAdmin,
-    MetricAdmin,
+    CoreTimeseriesAdmin,
 )
 
 

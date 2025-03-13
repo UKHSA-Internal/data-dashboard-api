@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import include, path, re_path, resolvers
 from django.views.static import serve
 from drf_spectacular.views import (
@@ -15,6 +14,7 @@ from cms.dashboard.viewsets import CMSDraftPagesViewSet, CMSPagesAPIViewSet
 from cms.snippets.views import GlobalBannerView, MenuView
 from feedback.api.urls import construct_urlpatterns_for_feedback
 from metrics.api import enums, settings
+from metrics.api.admin import dashboard_admin_site
 from metrics.api.views import (
     AuditAPITimeSeriesViewSet,
     AuditCoreHeadlineViewSet,
@@ -33,8 +33,6 @@ from metrics.api.views import (
 from metrics.api.views.geographies import GeographiesView
 from metrics.api.views.health import InternalHealthView
 from public_api import construct_url_patterns_for_public_api
-
-from metrics.api.admin import dashboard_admin_site
 
 router = routers.DefaultRouter()
 

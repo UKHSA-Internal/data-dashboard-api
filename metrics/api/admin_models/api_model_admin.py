@@ -1,16 +1,19 @@
 from django.contrib import admin
 from django.core.paginator import Paginator
+
 from .mixins import ReadOnlyMixin
 
 
 class NoCountPaginator(Paginator):
     @property
     def count(self):
-        return 00000
+        return 999999999
+        # return 0
 
 
 class APITimeseriesAdmin(ReadOnlyMixin, admin.ModelAdmin):
-    paginator = NoCountPaginator
+    date_hierarchy = "date"
+    # paginator = NoCountPaginator
     list_filter = [
         "metric",
         "age",
