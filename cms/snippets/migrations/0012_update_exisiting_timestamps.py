@@ -5,16 +5,12 @@ from django.utils import timezone
 
 
 def update_timestamps(apps, schema_editor):
-    # Get the historical version of your model
     GlobalBanner = apps.get_model("snippets", "GlobalBanner")
 
-    # Update all existing records with the current time
-    # Or you can selectively update only records with null timestamps
+    # Update existing records with the current time
     GlobalBanner.objects.filter(created_on__isnull=True).update(
         created_on=timezone.now()
     )
-    # If you want to update all records regardless of current value:
-    # GlobalBanner.objects.all().update(created_on=timezone.now())
     GlobalBanner.objects.filter(updated_on__isnull=True).update(
         updated_on=timezone.now()
     )
