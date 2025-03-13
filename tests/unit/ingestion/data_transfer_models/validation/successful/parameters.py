@@ -20,4 +20,11 @@ VALID_PARAMETERS = [
         "iGAS_cases_rateByMonth",
         "cases",
     ),
+    (
+        "infectious_disease",
+        "childhood_illness",
+        "Scarlet-fever",
+        "scarlet-fever_syndromic_consultationRateByWeek_CTRY_E92000001_all_all_default",
+        "syndromic",
+    ),
 ]

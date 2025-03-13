@@ -8,6 +8,7 @@ class _InfectiousDiseaseChildTheme(Enum):
     GASTROINTESTINAL = "gastrointestinal"
     ANTIMICROBIAL_RESISTANCE = "antimicrobial_resistance"
     CONTACT = "contact"
+    CHILDHOOD_ILLNESS = "childhood_illness"
     INVASIVE_BACTERIAL_INFECTIONS = "invasive_bacterial_infections"
 
 
@@ -33,6 +34,10 @@ class _VaccinePreventableTopic(Enum):
 
 class _ContactTopic(Enum):
     MPOX_CLADE_1B = "mpox-clade-1b"
+
+
+class _ChildhoodIllnessTopic(Enum):
+    SCARLET_FEVER = "Scarlet-fever"
 
 
 class _WeatherAlertTopic(Enum):
@@ -94,6 +99,7 @@ class ChildTheme(BaseEnum):
     EXTREME_EVENT = _ExtremeEventChildTheme
     NON_COMMUNICABLE = _NonCommunicableChildTheme
     CLIMATE_AND_ENVIRONMENT = _ClimateAndEnvironmentChildTheme
+    CHILDHOOD_ILLNESS = _ChildhoodIllnessTopic
 
 
 class Topic(BaseEnum):
@@ -106,3 +112,4 @@ class Topic(BaseEnum):
     CONTACT = _ContactTopic
     VECTORS = _VectorsTopic
     INVASIVE_BACTERIAL_INFECTIONS = _InvasiveBacterialInfectionsTopic
+    CHILDHOOD_ILLNESS = _ChildhoodIllnessTopic
