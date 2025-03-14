@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField
@@ -11,12 +10,6 @@ from cms.snippets.managers.global_banner import GlobalBannerManager
 class BannerTypes(models.TextChoices):
     INFORMATION = "Information"
     WARNING = "Warning"
-
-
-class MultipleGlobalBannersActiveError(ValidationError):
-    def __init__(self):
-        message = "There can only be 1 currently active `GlobalBanner`. Deactivate the first one before commencing."
-        super().__init__(message)
 
 
 AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
@@ -63,12 +56,3 @@ class GlobalBanner(models.Model):
         if self.is_active:
             return f"Active {self.banner_type.lower()}-level global banner"
         return f"Inactive global banner | {label}"
-
-    def clean(self) -> None:
-        super().clean()
-        self._raise_error_if_trying_to_enable_multiple_global_banners()
-
-    def _raise_error_if_trying_to_enable_multiple_global_banners(self) -> None:
-        has_active_banner: bool = GlobalBanner.objects.has_active_banner()
-        if has_active_banner and self.is_active:
-            raise MultipleGlobalBannersActiveError
