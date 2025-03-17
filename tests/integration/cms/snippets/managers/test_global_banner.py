@@ -2,6 +2,7 @@ import pytest
 from django.utils import timezone
 import datetime
 
+from cms.snippets.managers.global_banner import GlobalBannerQuerySet
 from cms.snippets.models import GlobalBanner
 from tests.factories.cms.snippets.global_banner import GlobalBannerFactory
 
@@ -21,7 +22,7 @@ class TestGlobalBannerManager:
         GlobalBannerFactory.create(is_active=True)
 
         # When
-        get_active_banners: GlobalBanner = GlobalBanner.objects.get_active_banners()
+        get_active_banners: GlobalBannerQuerySet = GlobalBanner.objects.get_active_banners()
 
         # Then
         assert len(get_active_banners) == 1
@@ -44,13 +45,15 @@ class TestGlobalBannerManager:
         """
         # Given
         # Create multiple Information/Warning global banners.
-        info_banner_old = GlobalBannerFactory.create(is_active=True)
+        info_banner_old = GlobalBannerFactory.create(
+            is_active=True, title="old information banner")
         warning_banner_old = GlobalBannerFactory.create(
-            is_active=True, banner_type="Warning"
+            is_active=True, banner_type="Warning", title="old warning banner"
         )
-        info_banner_new = GlobalBannerFactory.create(is_active=True)
+        info_banner_new = GlobalBannerFactory.create(
+            is_active=True, title="new information banner")
         warning_banner_new = GlobalBannerFactory.create(
-            is_active=True, banner_type="Warning"
+            is_active=True, banner_type="Warning", title="new warning banner"
         )
 
         # Update the updated on banners manually as this avoid the save method of the
@@ -67,7 +70,7 @@ class TestGlobalBannerManager:
         )
 
         # When
-        get_active_banners: GlobalBanner = GlobalBanner.objects.get_active_banners()
+        get_active_banners: GlobalBannerQuerySet = GlobalBanner.objects.get_active_banners()
 
         # Then
         assert len(get_active_banners) == 4
@@ -76,7 +79,11 @@ class TestGlobalBannerManager:
         assert get_active_banners[1].banner_type == "Warning"
         # assert that the first banner in the warning array was updated more recently than the second banner.
         assert get_active_banners[0].updated_on >= get_active_banners[1].updated_on
+        assert get_active_banners[0].title == "new warning banner"
+        assert get_active_banners[1].title == "old warning banner"
 
         assert get_active_banners[2].banner_type == "Information"
         assert get_active_banners[3].banner_type == "Information"
         assert get_active_banners[2].updated_on >= get_active_banners[3].updated_on
+        assert get_active_banners[2].title == "new information banner"
+        assert get_active_banners[3].title == "old information banner"
