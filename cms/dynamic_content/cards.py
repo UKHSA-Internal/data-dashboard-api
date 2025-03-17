@@ -115,6 +115,15 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
@@ -234,6 +243,15 @@ class ChartCard(blocks.StructBlock):
         required=False,
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
+    )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
     )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
