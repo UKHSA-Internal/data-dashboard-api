@@ -4,7 +4,7 @@ from rest_framework.fields import Field
 from feedback.cms_interface.interface import CMSInterface
 
 
-class SuggestionsV2Serializer(serializers.Serializer):
+class SuggestionsSerializer(serializers.Serializer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._generate_fields()
