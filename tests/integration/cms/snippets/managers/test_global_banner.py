@@ -22,7 +22,9 @@ class TestGlobalBannerManager:
         GlobalBannerFactory.create(is_active=True)
 
         # When
-        get_active_banners: GlobalBannerQuerySet = GlobalBanner.objects.get_active_banners()
+        get_active_banners: GlobalBannerQuerySet = (
+            GlobalBanner.objects.get_active_banners()
+        )
 
         # Then
         assert len(get_active_banners) == 1
@@ -46,12 +48,14 @@ class TestGlobalBannerManager:
         # Given
         # Create multiple Information/Warning global banners.
         info_banner_old = GlobalBannerFactory.create(
-            is_active=True, title="old information banner")
+            is_active=True, title="old information banner"
+        )
         warning_banner_old = GlobalBannerFactory.create(
             is_active=True, banner_type="Warning", title="old warning banner"
         )
         info_banner_new = GlobalBannerFactory.create(
-            is_active=True, title="new information banner")
+            is_active=True, title="new information banner"
+        )
         warning_banner_new = GlobalBannerFactory.create(
             is_active=True, banner_type="Warning", title="new warning banner"
         )
@@ -70,7 +74,9 @@ class TestGlobalBannerManager:
         )
 
         # When
-        get_active_banners: GlobalBannerQuerySet = GlobalBanner.objects.get_active_banners()
+        get_active_banners: GlobalBannerQuerySet = (
+            GlobalBanner.objects.get_active_banners()
+        )
 
         # Then
         assert len(get_active_banners) == 4
