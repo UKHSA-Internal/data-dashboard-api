@@ -5,6 +5,7 @@ class _InfectiousDiseaseChildTheme(Enum):
     VACCINE_PREVENTABLE = "vaccine_preventable"
     RESPIRATORY = "respiratory"
     BLOODSTREAM_INFECTION = "bloodstream_infection"
+    BLOODBORNE = "bloodborne"
     GASTROINTESTINAL = "gastrointestinal"
     ANTIMICROBIAL_RESISTANCE = "antimicrobial_resistance"
     CONTACT = "contact"
@@ -38,6 +39,10 @@ class _ContactTopic(Enum):
 
 class _ChildhoodIllnessTopic(Enum):
     SCARLET_FEVER = "Scarlet-fever"
+
+
+class _BloodbourneTopic(Enum):
+    HEPATITIS_C = "Hepatitis-C"
 
 
 class _WeatherAlertTopic(Enum):
@@ -107,6 +112,7 @@ class Topic(BaseEnum):
     VACCINE_PREVENTABLE = _VaccinePreventableTopic
     RESPIRATORY = _RespiratoryTopic
     BLOODSTREAM_INFECTION = _BloodstreamInfectionTopic
+    BLOODBORNE = _BloodbourneTopic
     GASTROINTESTINAL = _GastrointestinalTopic
     ANTIMICROBIAL_RESISTANCE = _AntimicrobialResistanceTopic
     CONTACT = _ContactTopic
