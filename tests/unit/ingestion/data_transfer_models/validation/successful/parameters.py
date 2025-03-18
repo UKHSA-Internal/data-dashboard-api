@@ -5,5 +5,33 @@ VALID_PARAMETERS = [
         "COVID-19",
         "COVID-19_deaths_ONSByWeek",
         "deaths",
-    )
+    ),
+    (
+        "climate_and_environment",
+        "vectors",
+        "ticks",
+        "ticks_counts_countByYear",
+        "counts",
+    ),
+    (
+        "infectious_disease",
+        "invasive_bacterial_infections",
+        "iGAS",
+        "iGAS_cases_rateByMonth",
+        "cases",
+    ),
+    (
+        "infectious_disease",
+        "childhood_illness",
+        "Scarlet-fever",
+        "scarlet-fever_syndromic_consultationRateByWeek",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "bloodborne",
+        "Hepatitis-C",
+        "hepatitis-c_prevention_PWIDproportionNSP",
+        "prevention",
+    ),
 ]

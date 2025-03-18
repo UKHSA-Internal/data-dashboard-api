@@ -7,6 +7,7 @@ from cms.dynamic_content.blocks import (
     HeadlineNumberBlockTypes,
     MetricNumberBlock,
     PageLinkChooserBlock,
+    RelatedLinkBlock,
 )
 from cms.dynamic_content.components import (
     ChartComponent,
@@ -80,7 +81,15 @@ class HeadlineNumbersRowCard(blocks.StructBlock):
 
 class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    body = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    about = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
+    )
+    related_links = RelatedLinkBlock(
+        required=False, help_text=help_texts.OPTIONAL_RELATED_LINK
+    )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
@@ -106,6 +115,15 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
@@ -115,6 +133,11 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         required=True,
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
+    )
+    show_timeseries_filter = blocks.BooleanBlock(
+        help_text=help_texts.CHART_TIMESERIES_FILTER,
+        default=False,
+        required=False,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
     headline_number_columns = HeadlineNumberBlockTypes(
@@ -187,7 +210,15 @@ class SimplifiedChartWithLink(blocks.StructBlock):
 
 class ChartCard(blocks.StructBlock):
     title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
-    body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
+    body = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    about = blocks.TextBlock(
+        required=False, default="", help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
+    )
+    related_links = RelatedLinkBlock(
+        required=False, help_text=help_texts.OPTIONAL_RELATED_LINK
+    )
     tag_manager_event_id = blocks.CharBlock(
         required=False,
         help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
@@ -213,6 +244,15 @@ class ChartCard(blocks.StructBlock):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
@@ -222,6 +262,11 @@ class ChartCard(blocks.StructBlock):
         required=True,
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
+    )
+    show_timeseries_filter = blocks.BooleanBlock(
+        help_text=help_texts.CHART_TIMESERIES_FILTER,
+        default=False,
+        required=False,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
