@@ -78,7 +78,6 @@ def get_active_global_banners(
     Returns:
         Dict representation of the active global banners.
         If there are no active global banners, then [] is returned.
-
     """
     global_banners = global_banner_manager.get_active_banners()
     serializer = GlobalBannerResponseSerializer(instance=global_banners, many=True)

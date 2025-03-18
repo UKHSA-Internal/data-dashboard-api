@@ -28,7 +28,7 @@ class GlobalBannerView(APIView):
         Note that if there is no active banner then the response will look like:
 
         ```
-        {"active_global_banners": null}
+        {"active_global_banners": []}
         ```
 
         """
