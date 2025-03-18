@@ -20,4 +20,18 @@ INVALID_PARAMETERS = [
         "iGAS_cases_rateByMonth",
         "cases",
     ),  # Invalid parent theme
+    (
+        "infectious_disease",
+        "respiratory",
+        "Scarlet-fever",
+        "scarlet-fever_syndromic_consultationRateByWeek",
+        "syndromic",
+    ),  # Invalid child theme
+    (
+        "infectious_disease",
+        "bloodborne",
+        "Scarlet-fever",
+        "hepatitis-c_cases_prevalenceByYearEstimate",
+        "prevention",
+    ),  # Invalid child Topic
 ]

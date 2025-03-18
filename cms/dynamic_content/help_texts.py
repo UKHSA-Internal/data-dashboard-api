@@ -338,3 +338,9 @@ This is the accompanying text for headline column dates Eg: `Up to` 27 Oct 2024
 CHART_DATE_PREFIX: str = """
 This is the accompanying text for chart dates Eg: `Up to and including` 21 Oct 2024
 """
+
+CHART_TIMESERIES_FILTER: str = """
+This option enables timeseries filter for this chart.
+The timeseries filter allows a user to change the timeseries range for example between
+1m, 3m, 6m, 1y etc.
+"""

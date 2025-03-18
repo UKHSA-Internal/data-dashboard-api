@@ -20,4 +20,18 @@ VALID_PARAMETERS = [
         "iGAS_cases_rateByMonth",
         "cases",
     ),
+    (
+        "infectious_disease",
+        "childhood_illness",
+        "Scarlet-fever",
+        "scarlet-fever_syndromic_consultationRateByWeek",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "bloodborne",
+        "Hepatitis-C",
+        "hepatitis-c_prevention_PWIDproportionNSP",
+        "prevention",
+    ),
 ]
