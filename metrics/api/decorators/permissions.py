@@ -59,7 +59,7 @@ def _new_to_representation_private(*, self, representation):
         data = representation(instance) or {}
 
         # Handle public data
-        if data.get("is_public", None):
+        if data.get("is_public", None) is True:
             data.pop("is_public", None)
             return data
         data.pop("is_public", None)

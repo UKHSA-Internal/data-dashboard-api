@@ -5,6 +5,7 @@ from django.db.models import Manager
 from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
 
+from metrics.api.decorators.permissions import filter_by_permissions
 from metrics.api.serializers import help_texts
 from metrics.data.models.core_models import (
     Age,
@@ -104,6 +105,7 @@ class HeadlinesResponseSerializer(serializers.Serializer):
     value = serializers.FloatField(help_text=help_texts.HEADLINE_METRIC_VALUE_FIELD)
 
 
+@filter_by_permissions()
 class CoreHeadlineSerializer(serializers.ModelSerializer):
     """This serializer returns a set of serialized fields from the `CoreTimeSeries` and related models.
 
@@ -151,6 +153,7 @@ class CoreHeadlineSerializer(serializers.ModelSerializer):
             "period_start",
             "period_end",
             "metric_value",
+            "is_public",
         ]
 
     @classmethod

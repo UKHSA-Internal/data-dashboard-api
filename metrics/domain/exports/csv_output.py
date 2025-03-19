@@ -16,6 +16,7 @@ FIELDS = {
     "date": "date",
     "metric_value": "metric_value",
     "in_reporting_delay_period": "in_reporting_delay_period",
+    "is_public": "is_public",
 }
 
 HEADLINE_FIELDS = {
@@ -31,16 +32,19 @@ HEADLINE_FIELDS = {
     "period_start": "period_start",
     "period_end": "period_end",
     "metric_value": "metric_value",
+    "is_public": "is_public",
 }
 
 
 def write_data_to_csv(
     *,
     file: io.StringIO,
-    core_time_series_queryset,
+    serialized_core_time_series,
 ) -> io.StringIO:
-    headers = FIELDS.keys()
-    rows = core_time_series_queryset
+    headers = [field for field in FIELDS if field != "is_public"]
+    rows = [
+        [record[field] for field in headers] for record in serialized_core_time_series
+    ]
     return _write_to_csv_file(file=file, headers=headers, rows=rows)
 
 
