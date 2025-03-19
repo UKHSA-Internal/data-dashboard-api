@@ -178,8 +178,25 @@ SUB_TITLE_FIELD: str = """
 The sub title to display for this component.
 """
 
+OPTIONAL_CHART_ABOUT_FIELD: str = """
+An optional body of text to accompany this block. This text will be displayed in the about content of the chart.
+"""
+
 OPTIONAL_BODY_FIELD: str = """
-An optional body of text to accompany this block.
+An optional body of text to accompany this block. This text will be displayed below the chart title.
+"""
+
+OPTIONAL_RELATED_LINK: str = """
+Provide optional URLs that can provide further contextual information for the data displayed in the chart.
+"""
+
+RELATED_LINK_TEXT: str = """
+The Text that will be displayed for the URL.
+"""
+
+RELATED_LINK_URL: str = """
+The URL that the user will be navigated to when clicked.
+An optional body of text to accompany this block. This text will be displayed below the chart title.
 """
 
 REQUIRED_BODY_FIELD: str = """
@@ -321,4 +338,10 @@ This is the accompanying text for headline column dates Eg: `Up to` 27 Oct 2024
 
 CHART_DATE_PREFIX: str = """
 This is the accompanying text for chart dates Eg: `Up to and including` 21 Oct 2024
+"""
+
+CHART_TIMESERIES_FILTER: str = """
+This option enables timeseries filter for this chart.
+The timeseries filter allows a user to change the timeseries range for example between
+1m, 3m, 6m, 1y etc.
 """

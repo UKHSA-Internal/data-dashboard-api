@@ -47,19 +47,19 @@ class ChartSettings:
     def y_axis_maximum_value(self) -> int | Decimal | None:
         return self._chart_generation_payload.y_axis_maximum_value
 
+    @property
+    def is_date_type_x_axis(self) -> bool:
+        return isinstance(self.plots_data[0].x_axis_values[0], datetime.date)
+
     @staticmethod
-    def get_tick_font_config() -> DICT_OF_STR_ONLY:
+    def _get_tick_font_config() -> DICT_OF_STR_ONLY:
         return {
             "family": "Arial",
             "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
         }
 
-    @property
-    def is_date_type_x_axis(self) -> bool:
-        return isinstance(self.plots_data[0].x_axis_values[0], datetime.date)
-
-    def get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
-        tick_font = self.get_tick_font_config()
+    def _get_x_axis_config(self) -> dict[str, str | bool | DICT_OF_STR_ONLY]:
+        tick_font = self._get_tick_font_config()
         base_x_axis_config = {
             "showspikes": True,
             "spikecolor": "#b1b4b6",
@@ -78,7 +78,7 @@ class ChartSettings:
             "tickcolor": "rgba(0,0,0,0)",
             "dtick": "M1",
             "tickformat": "%b %Y",
-            "tickfont": self.get_tick_font_config(),
+            "tickfont": self._get_tick_font_config(),
         }
 
         if self._chart_generation_payload.x_axis_title:
@@ -95,8 +95,8 @@ class ChartSettings:
 
         return {**base_x_axis_config, **x_axis_type_config}
 
-    def get_y_axis_config(self) -> dict[str, bool | DICT_OF_STR_ONLY]:
-        tick_font = self.get_tick_font_config()
+    def _get_y_axis_config(self) -> dict[str, bool | DICT_OF_STR_ONLY]:
+        tick_font = self._get_tick_font_config()
         base_y_axis_config = {
             "ticks": "outside",
             "tickson": "boundaries",
@@ -117,7 +117,7 @@ class ChartSettings:
 
         return base_y_axis_config
 
-    def get_base_chart_config(self):
+    def _get_base_chart_config(self):
         return {
             "paper_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
             "plot_bgcolor": colour_scheme.RGBAColours.WHITE.stringified,
@@ -132,22 +132,16 @@ class ChartSettings:
                 "t": 0,
             },
             "autosize": False,
-            "xaxis": self.get_x_axis_config(),
-            "yaxis": self.get_y_axis_config(),
+            "xaxis": self._get_x_axis_config(),
+            "yaxis": self._get_y_axis_config(),
             "height": self.height,
             "width": self.width,
             "showlegend": True,
         }
 
-    def get_line_with_shaded_section_chart_config(self):
-        chart_config = self.get_base_chart_config()
-        chart_config["showlegend"] = False
-        return chart_config
-
-    def build_line_single_simplified_y_axis_value_params(
-        self,
-    ) -> dict[str, list[str | int | Decimal]]:
-        """Returns a dictionary containing `y-axis` parameter values
+    def _get_minimum_and_maximum_y_axis_values(self) -> list[Decimal]:
+        """Returns the y-axis minimum and maximum value, which can be either a manual
+        value provided in a request or the minimum and maximum value
 
         Notes:
             if a `y_axis_minimum_value` is provided that is higher than the
@@ -159,28 +153,53 @@ class ChartSettings:
             `y_axis_values` is used as the highest number in the y-axis range.
 
         Returns:
-            A dictionary containing the y-axis parameters than make up the
-            y-axis ticks and tick values.
+            A list containing two values the minimum y-axis value
+            and the maximum y-axis value
         """
-        plots_data = self.plots_data[0]
+        y_axis_range = [item for row in self.plots_data for item in row.y_axis_values]
 
-        if self.y_axis_minimum_value < min(plots_data.y_axis_values):
+        if self.y_axis_minimum_value < min(y_axis_range):
             min_value = self.y_axis_minimum_value
         else:
-            min_value = min(plots_data.y_axis_values)
+            min_value = min(y_axis_range)
             logger.info(
                 "The minimum value provided was to high, fallen back to the min value in the data"
             )
 
         if self.y_axis_maximum_value and (
-            self.y_axis_maximum_value > max(plots_data.y_axis_values)
+            self.y_axis_maximum_value > max(y_axis_range)
         ):
             max_value = self.y_axis_maximum_value
         else:
-            max_value = max(plots_data.y_axis_values)
+            max_value = max(y_axis_range)
             logger.info(
                 "The maximum value provided was to low, fallen back to the max value in the data"
             )
+
+        return [min_value, max_value]
+
+    def get_line_with_shaded_section_chart_config(self):
+        chart_config = self._get_base_chart_config()
+
+        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
+
+        chart_config["yaxis"]["tick0"] = y_min_value
+        chart_config["yaxis"]["range"] = [y_min_value, y_max_value]
+        chart_config["yaxis"]["rangemode"] = "tozero" if y_min_value == 0 else "normal"
+        chart_config["showlegend"] = False
+
+        return chart_config
+
+    def build_line_single_simplified_y_axis_value_params(
+        self,
+    ) -> dict[str, list[str | int | Decimal]]:
+        """Returns a dictionary containing `y-axis` parameter values
+
+        Returns:
+            A dictionary containing the y-axis parameters than make up the
+            y-axis ticks and tick values.
+        """
+        min_value, max_value = self._get_minimum_and_maximum_y_axis_values()
 
         return {
             "y_axis_tick_values": [min_value, max_value],
@@ -225,7 +244,7 @@ class ChartSettings:
         axis_params = self.build_line_single_simplified_axis_params()
 
         # Chart Config
-        chart_config = self.get_base_chart_config()
+        chart_config = self._get_base_chart_config()
         chart_config["showlegend"] = False
         chart_config["margin"]["r"] = 35
         chart_config["margin"]["l"] = 25
@@ -256,12 +275,19 @@ class ChartSettings:
         return chart_config
 
     def get_bar_chart_config(self):
-        chart_config = self.get_base_chart_config()
+        chart_config = self._get_base_chart_config()
         chart_config["barmode"] = "group"
         return {**chart_config, **self._get_legend_bottom_left_config()}
 
     def get_line_multi_coloured_chart_config(self):
-        chart_config = self.get_base_chart_config()
+        chart_config = self._get_base_chart_config()
+
+        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
+
+        chart_config["yaxis"]["tick0"] = y_min_value
+        chart_config["yaxis"]["range"] = [y_min_value, y_max_value]
+        chart_config["yaxis"]["rangemode"] = "tozero" if y_min_value == 0 else "normal"
+
         return {**chart_config, **self._get_legend_top_centre_config()}
 
     def _get_date_tick_format(self, *, weekly: bool = False) -> str:
