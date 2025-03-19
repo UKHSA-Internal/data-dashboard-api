@@ -21,6 +21,7 @@ INVALID_PARAMETERS = [
         "cases",
     ),  # Invalid theme
     (
+        "extreme_event",
         "vectors",
         "ticks",
         "ticks_counts_countByYear",
