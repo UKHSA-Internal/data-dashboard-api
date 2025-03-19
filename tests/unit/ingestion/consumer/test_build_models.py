@@ -82,7 +82,7 @@ class TestBuildModelMethods:
         )
 
     @mock.patch.object(Consumer, "update_supporting_models")
-    def test_build_core_headlines_sets_is_public_to_false_when_not_provided(
+    def test_build_core_headlines_sets_is_public_to_true_when_not_provided(
         self,
         mocked_update_supporting_models: mock.MagicMock,
         example_headline_data: type_hints.INCOMING_DATA_TYPE,
@@ -92,7 +92,7 @@ class TestBuildModelMethods:
         When `build_core_headlines()` is called
             from an instance of the `Consumer`
         Then enriched `CoreHeadline` instances
-            set `is_public` to False
+            set `is_public` to True
 
         Patches:
             `mocked_update_supporting_models`: To remove the side effect
@@ -111,7 +111,7 @@ class TestBuildModelMethods:
 
         # Then
         for core_headline_model in core_headline_models:
-            assert core_headline_model.is_public is False
+            assert core_headline_model.is_public is True
 
     @mock.patch.object(Consumer, "update_supporting_models")
     def test_build_core_time_series(
@@ -190,7 +190,7 @@ class TestBuildModelMethods:
         assert built_core_time_series_instance.force_write is True
 
     @mock.patch.object(Consumer, "update_supporting_models")
-    def test_build_core_time_series_sets_is_public_to_false_when_not_provided(
+    def test_build_core_time_series_sets_is_public_to_true_when_not_provided(
         self,
         mocked_update_supporting_models: mock.MagicMock,
         example_time_series_data: type_hints.INCOMING_DATA_TYPE,
@@ -200,7 +200,7 @@ class TestBuildModelMethods:
         When `build_core_time_series()` is called
             from an instance of the `Consumer`
         Then the enriched `CoreTimeSeries` instances
-            set `is_public` to False
+            set `is_public` to True
 
         Patches:
             `mocked_update_supporting_models`: To remove the side effect
@@ -219,7 +219,7 @@ class TestBuildModelMethods:
 
         # Then
         for core_time_series_model in core_time_series_models:
-            assert core_time_series_model.is_public is False
+            assert core_time_series_model.is_public is True
 
     def test_build_api_time_series(
         self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
@@ -293,7 +293,7 @@ class TestBuildModelMethods:
                 == fake_data["time_series"][index]["is_public"]
             )
 
-    def test_build_api_time_series_sets_is_public_to_false_when_not_provided(
+    def test_build_api_time_series_sets_is_public_to_true_when_not_provided(
         self, example_time_series_data: type_hints.INCOMING_DATA_TYPE
     ):
         """
@@ -301,7 +301,7 @@ class TestBuildModelMethods:
         When `build_api_time_series()` is called
             from an instance of the `Consumer`
         Then the enriched `APITimeSeries` instances
-            set `is_public` to False
+            set `is_public` to True
         """
         # Given
         fake_data = example_time_series_data
@@ -315,4 +315,4 @@ class TestBuildModelMethods:
 
         # Then
         for api_time_series_model in api_time_series_models:
-            assert api_time_series_model.is_public is False
+            assert api_time_series_model.is_public is True

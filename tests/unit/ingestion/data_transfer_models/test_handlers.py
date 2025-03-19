@@ -95,14 +95,14 @@ class TestBuildTimeSeriesDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["time_series"]
 
-    def test_defaults_is_public_to_false_when_not_provided(
+    def test_defaults_is_public_to_true_when_not_provided(
         self, example_time_series_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming time series source data
             which omits the `is_public` field
         When `build_time_series_dto_from_source()` is called
-        Then the enriched `TimeSeriesDTO` has set `is_public` to False
+        Then the enriched `TimeSeriesDTO` has set `is_public` to True
         """
         # Given
         source_data = example_time_series_data
@@ -113,8 +113,8 @@ class TestBuildTimeSeriesDTOFromSource:
         time_series_dto = build_time_series_dto_from_source(source_data=source_data)
 
         # Then
-        assert time_series_dto.time_series[0].is_public is False
-        assert time_series_dto.time_series[1].is_public is False
+        assert time_series_dto.time_series[0].is_public is True
+        assert time_series_dto.time_series[1].is_public is True
 
     def test_filters_out_individual_data_points_with_metric_value_of_none(
         self, example_time_series_data: INCOMING_DATA_TYPE
@@ -337,14 +337,14 @@ class TestBuildHeadlineDTOFromSource:
             }
             assert rebuild_specific_fields in source_data["data"]
 
-    def test_defaults_is_public_to_false_when_not_provided(
+    def test_defaults_is_public_to_true_when_not_provided(
         self, example_headline_data: INCOMING_DATA_TYPE
     ):
         """
         Given valid incoming headline source data
             which omits the `is_public` field
         When `build_headline_dto_from_source()` is called
-        Then the enriched `HeadlineDTO` has set `is_public` to False
+        Then the enriched `HeadlineDTO` has set `is_public` to True
         """
         # Given
         source_data = example_headline_data
@@ -355,8 +355,8 @@ class TestBuildHeadlineDTOFromSource:
         headline_dto = build_headline_dto_from_source(source_data=source_data)
 
         # Then
-        assert headline_dto.data[0].is_public is False
-        assert headline_dto.data[1].is_public is False
+        assert headline_dto.data[0].is_public is True
+        assert headline_dto.data[1].is_public is True
 
     def test_filters_out_individual_data_points_with_metric_value_of_none(
         self, example_headline_data: INCOMING_DATA_TYPE
