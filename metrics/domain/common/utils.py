@@ -139,6 +139,7 @@ class DataSourceFileType(Enum):
     vaccinations = "vaccinations"
     syndromic = "syndromic"
     counts = "counts"
+    prevention = "prevention"
 
     @property
     def is_headline(self) -> bool:

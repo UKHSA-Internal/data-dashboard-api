@@ -802,15 +802,15 @@ class TestPermissions:
         assert result is None
 
     @pytest.mark.django_db
-    def test_filter_by_permissions_removes_is_public_if_true(
+    def test_filter_by_permissions_allows_access_when_public(
         self: Any,
-        patch_auth_enabled: Callable[[], None],  # Sets AUTH_ENABLED "1"
+        patch_auth_enabled: Callable[[], None],  # Ensures `AUTH_ENABLED=1`
         fake_serializer: Serializer,
     ):
         """
-        Given an instance where `is_public` is set to True
+        Given `is_public` is `True`
         When `to_representation()` is called on the serializer
-        Then it should return the original data with `is_public` removed
+        Then it should return the data with `is_public` removed (without checking permissions)
         """
 
         # Given
@@ -819,7 +819,7 @@ class TestPermissions:
         test_data["is_public"] = True
 
         mock_request = MagicMock()
-        mock_request.group_permissions = [MagicMock()]
+        mock_request.group_permissions = []
         serializer.context = {"request": mock_request}
 
         # When
@@ -828,3 +828,32 @@ class TestPermissions:
         # Then
         assert result is not None
         assert "is_public" not in result
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("is_public_value", [None, False])
+    def test_filter_by_permissions_requires_permissions_when_not_public(
+        self: Any,
+        patch_auth_enabled: Callable[[], None],  # Ensures `AUTH_ENABLED=1`
+        fake_serializer: Serializer,
+        is_public_value: bool,
+    ):
+        """
+        Given `is_public` is `None` or `False`
+        When `to_representation()` is called on the serializer
+        Then if the user lacks permissions, return None
+        """
+
+        # Given
+        serializer = fake_serializer
+        test_data = copy.deepcopy(core_headline_data)
+        test_data["is_public"] = is_public_value
+
+        mock_request = MagicMock()
+
+        # When
+        mock_request.group_permissions = []
+        serializer.context = {"request": mock_request}
+        result = serializer.to_representation(test_data)
+
+        # Then
+        assert result is None
