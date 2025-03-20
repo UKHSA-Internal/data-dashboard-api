@@ -115,6 +115,15 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
@@ -124,6 +133,11 @@ class ChartWithHeadlineAndTrendCard(blocks.StructBlock):
         required=True,
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
+    )
+    show_timeseries_filter = blocks.BooleanBlock(
+        help_text=help_texts.CHART_TIMESERIES_FILTER,
+        default=False,
+        required=False,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
     headline_number_columns = HeadlineNumberBlockTypes(
@@ -230,6 +244,15 @@ class ChartCard(blocks.StructBlock):
         default="",
         help_text=help_texts.CHART_Y_AXIS_TITLE,
     )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
     show_tooltips = blocks.BooleanBlock(
         help_text=help_texts.SHOW_TOOLTIPS_ON_CHARTS_FIELD,
         default=False,
@@ -239,6 +262,11 @@ class ChartCard(blocks.StructBlock):
         required=True,
         default=CHART_CARD_DATE_PREFIX_DEFAULT_TEXT,
         help_text=help_texts.CHART_DATE_PREFIX,
+    )
+    show_timeseries_filter = blocks.BooleanBlock(
+        help_text=help_texts.CHART_TIMESERIES_FILTER,
+        default=False,
+        required=False,
     )
     chart = ChartComponent(help_text=help_texts.CHART_BLOCK_FIELD)
 
