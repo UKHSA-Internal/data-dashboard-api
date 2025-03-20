@@ -7,14 +7,14 @@ class GlobalBannerQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `GlobalBannerManager"""
 
     def get_active_banners(self) -> Self:
-        """Gets the all currently active `GlobalBanner`.
+        """Gets all currently active `GlobalBanner`.
 
         Returns:
             QuerySet: A queryset of the active banners:
                 Examples:
                     `<GlobalBannerQuerySet [<GlobalBanner: Active information-level global banner>]>`
         """
-        return self.filter(is_active=True)
+        return self.filter(is_active=True).order_by("-banner_type", "-updated_on")
 
 
 class GlobalBannerManager(models.Manager):
@@ -23,23 +23,13 @@ class GlobalBannerManager(models.Manager):
     def get_queryset(self) -> GlobalBannerQuerySet:
         return GlobalBannerQuerySet(model=self.model, using=self.db)
 
-    def has_active_banner(self) -> bool:
-        """Checks if there is already a `GlobalBanner` which is active
-
-        Returns:
-            True if there is a `GlobalBanner` which has `is_active` set to True.
-            False otherwise.
-
-        """
-        return self.get_queryset().get_active_banners().exists()
-
-    def get_active_banner(self):
+    def get_active_banners(self):
         """Gets the currently active `GlobalBanner`.
 
         Returns:
-            The currently active `GlobalBanner` if available.
+            The currently active `GlobalBanner`s if available.
             If there is no `GlobalBanner` with `is_active` set to True,
-            then None is returned.
+            then an empty list ([]) is returned.
 
         """
-        return self.get_queryset().get_active_banners().first()
+        return self.get_queryset().get_active_banners()
