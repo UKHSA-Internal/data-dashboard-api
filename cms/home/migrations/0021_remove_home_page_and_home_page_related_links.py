@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("home", "0018_add_related_links_to_chart_body"),
+        ("home", "0020_add_chart_y_axis_min_and_max"),
     ]
 
     operations = [
