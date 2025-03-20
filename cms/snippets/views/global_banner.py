@@ -32,7 +32,6 @@ class GlobalBannerView(APIView):
 
         """
         serializer = GlobalBannerSerializer()
-        serialized_response_data: dict[str,
-                                       ReturnDict[str, str]] = serializer.data
+        serialized_response_data: dict[str, ReturnDict[str, str]] = serializer.data
 
         return Response(data=serialized_response_data, status=HTTPStatus.OK)
