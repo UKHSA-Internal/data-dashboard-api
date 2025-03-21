@@ -62,4 +62,11 @@ VALID_PARAMETERS = [
         "hepatitis-c_prevention_PWIDproportionNSP",
         "prevention",
     ),
+    (
+        "climate_and_environment",
+        "chemical_exposure",
+        "Lead",
+        "lead_headline_percentByDeprivationLatest",
+        "headline",
+    ),
 ]
