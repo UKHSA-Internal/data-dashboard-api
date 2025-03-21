@@ -121,7 +121,7 @@ cold_alert_detail = ColdAlertViewSet.as_view({"get": "retrieve"})
 private_api_urlpatterns = [
     # Headless CMS API - pages + drafts endpoints
     path(API_PREFIX, cms_api_router.urls),
-    path(f"{API_PREFIX}global-banners/v1", GlobalBannerView.as_view()),
+    path(f"{API_PREFIX}global-banners/v2", GlobalBannerView.as_view()),
     path(f"{API_PREFIX}menus/v1", MenuView.as_view()),
     path(f"{API_PREFIX}alerts/v1/heat", heat_alert_list, name="heat-alerts-list"),
     path(

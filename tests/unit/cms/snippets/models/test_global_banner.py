@@ -6,7 +6,6 @@ from cms.snippets.managers.global_banner import GlobalBannerManager
 from cms.snippets.models.global_banner import (
     BannerTypes,
     GlobalBanner,
-    MultipleGlobalBannersActiveError,
 )
 
 
@@ -108,99 +107,3 @@ class TestGlobalBanner:
         current_active_banner_label = "Active information-level global banner"
         assert current_active_banner_label not in string_representation
         assert "Inactive" in string_representation
-
-    @mock.patch.object(GlobalBannerManager, "has_active_banner")
-    def test_clean_raises_error_if_active_global_banner_already_exists(
-        self, mocked_has_active_banner: mock.MagicMock
-    ):
-        """
-        Given a `GlobalBanner`
-            which is being set to active
-        And the `GlobalBannerManager`
-            which says there is already an active banner
-        When the `clean()` method is called
-            from the `GlobalBanner`
-        Then the `MultipleGlobalBannersActiveError` is raised
-        """
-        # Given
-        mocked_has_active_banner.return_value = True
-        global_banner = GlobalBanner(
-            title="abc",
-            body="def",
-            is_active=True,
-        )
-
-        # When / Then
-        with pytest.raises(MultipleGlobalBannersActiveError):
-            global_banner.clean()
-
-    @mock.patch.object(GlobalBannerManager, "has_active_banner")
-    def test_clean_passes_when_current_banner_is_not_being_activated(
-        self, mocked_has_active_banner: mock.MagicMock
-    ):
-        """
-        Given a `GlobalBanner`
-            which is not being set to active
-        And the `GlobalBannerManager`
-            which says there is already an active banner
-        When the `clean()` method is called
-            from the `GlobalBanner`
-        Then no error is raised
-        """
-        # Given
-        mocked_has_active_banner.return_value = True
-        global_banner = GlobalBanner(
-            title="abc",
-            body="def",
-            is_active=False,
-        )
-
-        # When / Then
-        global_banner.clean()
-
-    @mock.patch.object(GlobalBannerManager, "has_active_banner")
-    def test_clean_passes_when_current_banner_is_being_activated_as_only_active_banner(
-        self, mocked_has_active_banner: mock.MagicMock
-    ):
-        """
-        Given a `GlobalBanner` which is being set to active
-        And the `GlobalBannerManager`
-            which says there is not already an active banner
-        When the `clean()` method is called
-            from the `GlobalBanner`
-        Then no error is raised
-        """
-        # Given
-        mocked_has_active_banner.return_value = False
-        global_banner = GlobalBanner(
-            title="abc",
-            body="def",
-            is_active=True,
-        )
-
-        # When / Then
-        global_banner.clean()
-
-    @mock.patch.object(GlobalBannerManager, "has_active_banner")
-    def test_clean_passes_when_there_are_no_active_banners(
-        self, mocked_has_active_banner: mock.MagicMock
-    ):
-        """
-        Given a `GlobalBanner`
-            which is not being set to active
-        And the `GlobalBannerManager`
-            which says there is not already an active banner
-        When the `clean()` method is called
-            from the `GlobalBanner`
-        Then no error is raised
-        """
-        # Given
-        mocked_has_active_banner.return_value = False
-        global_banner = GlobalBanner(
-            title="abc",
-            body="def",
-            is_active=False,
-        )
-
-        # When / Then
-        global_banner.clean()
