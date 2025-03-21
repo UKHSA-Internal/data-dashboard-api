@@ -35,7 +35,7 @@ class CMSPagesAPIViewSet(PagesAPIViewSet):
         Returns:
             Queryset of each page model.
             E.g.
-                `<PageQuerySet [<HomePage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>`
+                `<PageQuerySet [<LandingPage: UKHSA data dashboard>, <TopicPage: COVID-19>, ...]>`
 
         """
         queryset = super().get_queryset()

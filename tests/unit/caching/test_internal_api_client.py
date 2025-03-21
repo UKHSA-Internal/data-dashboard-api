@@ -358,7 +358,7 @@ class TestInternalAPIClient:
 
     @pytest.mark.parametrize(
         "page_type_query_param",
-        ["common.CommonPage", "topic.TopicPage", "home.HomePage"],
+        ["common.CommonPage", "topic.TopicPage"],
     )
     def test_hit_pages_list_endpoint_for_page_type_delegates_call_correctly(
         self, page_type_query_param: str

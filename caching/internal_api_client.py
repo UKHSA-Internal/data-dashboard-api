@@ -22,7 +22,6 @@ CACHE_CHECK_HEADER_KEY = "Cache-Check"
 PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS = (
     "common.CommonPage",
     "topic.TopicPage",
-    "home.HomePage",
 )
 
 
