@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
+from metrics.api.decorators.permissions import filter_by_permissions
 from metrics.data.models.core_models import CoreTimeSeries
 
 
+@filter_by_permissions()
 class CoreTimeSeriesSerializer(serializers.ModelSerializer):
     """This serializer returns a set of serialized fields from the `CoreTimesSeries` and related models.
 
@@ -48,6 +50,7 @@ class CoreTimeSeriesSerializer(serializers.ModelSerializer):
             "date",
             "metric_value",
             "in_reporting_delay_period",
+            "is_public",
         ]
 
     @classmethod
