@@ -411,7 +411,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_headline_data = self._create_examples_headline_data(True)
+        core_headline_data = self._create_examples_headline_data(is_public=True)
         valid_payload = self._build_valid_headline_payload()
         valid_payload["file_format"] = "json"
 
@@ -498,7 +498,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_headline_data = self._create_examples_headline_data(True)
+        core_headline_data = self._create_examples_headline_data(is_public=True)
         valid_payload = self._build_valid_headline_payload()
 
         # When
@@ -788,7 +788,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_headline_data = self._create_examples_headline_data(False)
+        core_headline_data = self._create_examples_headline_data(is_public=False)
         valid_payload = self._build_valid_headline_payload()
         valid_payload["file_format"] = "json"
         infectious_disease_permission = RBACPermissionFactory.create_record(
@@ -842,7 +842,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_headline_data = self._create_examples_headline_data(False)
+        core_headline_data = self._create_examples_headline_data(is_public=False)
         valid_payload = self._build_valid_headline_payload()
         infectious_disease_permission = RBACPermissionFactory.create_record(
             name="infectious_disease_permission",
