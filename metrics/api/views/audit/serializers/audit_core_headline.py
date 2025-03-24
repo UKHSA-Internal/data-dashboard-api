@@ -83,4 +83,7 @@ class AuditCoreHeadlineSerializer(serializers.ModelSerializer):
 
     @classmethod
     def get_embargo(cls, obj: CoreHeadline) -> str:
-        return datetime.strftime(obj.embargo, EXPECTED_TIMESTAMP_FORMAT)
+        try:
+            return datetime.strftime(obj.embargo, EXPECTED_TIMESTAMP_FORMAT)
+        except TypeError:
+            return ""

@@ -100,6 +100,23 @@ class TestCoreHeadlineSerializer:
 
         assert serialized_date == expected_date_value
 
+    def test_null_embargo_is_serialized_correctly(self):
+        """
+        Given a fake `CoreHeadline` model object and a null embargo timestamp
+        When the fake is passed to the `CoreHeadlineSerializer`
+        Then the `embargo` field is returned in the expected format.
+        """
+        # Given
+        fake_core_headline = self._setup_fake_headline_record()
+        fake_core_headline.embargo = None
+
+        # When
+        serializer = AuditCoreHeadlineSerializer(instance=fake_core_headline)
+
+        # Then
+        serialized_date: str = serializer.data["embargo"]
+        assert serialized_date == ""
+
     @pytest.mark.parametrize(
         "expected_field",
         [
