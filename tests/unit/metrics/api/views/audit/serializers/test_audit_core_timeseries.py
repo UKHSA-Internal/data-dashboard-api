@@ -78,7 +78,6 @@ class TestCoreTimeSeriesSerializer:
         serialized_date: str = serializer.data["embargo"]
         assert serialized_date == ""
 
-
     @pytest.mark.parametrize(
         "expected_field",
         [
