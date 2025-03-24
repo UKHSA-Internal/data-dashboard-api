@@ -13,7 +13,7 @@ pip-api==0.0.34
 pip_audit==2.8.0
 pip-requirements-parser==32.0.1
 pre-commit==4.2.0
-pylint==3.3.4
+pylint==3.3.6
 pylint-django==2.6.1
 pytest==8.3.5
 pytest-cov==6.0.0
