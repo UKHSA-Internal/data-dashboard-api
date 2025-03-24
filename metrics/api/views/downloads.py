@@ -2,7 +2,7 @@ import io
 import logging
 from http import HTTPStatus
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework.renderers import JSONOpenAPIRenderer
 from rest_framework.response import Response
@@ -28,6 +28,7 @@ from metrics.domain.exports.csv_output import (
 )
 from metrics.interfaces.downloads import access
 from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.utils import remove_none_from_serializer_data
 
 DOWNLOADS_API_TAG = "downloads"
 
@@ -47,7 +48,7 @@ class DownloadsView(APIView):
         self,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
-        request,
+        request: HttpRequest,
     ) -> CoreHeadlineSerializer | CoreTimeSeriesSerializer:
         """Returns the appropriate serializer class based on the
             provided metric_group.
@@ -75,7 +76,7 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
-        request,
+        request: HttpRequest,
     ) -> Response:
         # Return the requested data in json format
         serializer = self._get_serializer_class(
@@ -84,7 +85,7 @@ class DownloadsView(APIView):
             request=request,
         )
 
-        data = [item for item in serializer.data if item is not None]
+        data = remove_none_from_serializer_data(serializer=serializer)
         response = Response(data)
         response["Content-Type"] = "application/json"
         response["Content-Disposition"] = "attachment; filename=chart_download.json"
@@ -95,7 +96,7 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
-        request,
+        request: HttpRequest,
     ) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
@@ -107,7 +108,7 @@ class DownloadsView(APIView):
             request=request,
         )
 
-        data = [item for item in serializer.data if item is not None]
+        data = remove_none_from_serializer_data(serializer=serializer)
 
         if DataSourceFileType[metric_group].is_headline:
             return write_headline_data_to_csv(file=response, core_headline_data=data)

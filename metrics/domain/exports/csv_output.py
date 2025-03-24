@@ -1,6 +1,7 @@
 import csv
 import io
 from collections.abc import Iterable
+from typing import Any
 
 FIELDS = {
     "theme": "metric__topic__sub_theme__theme__name",
@@ -39,7 +40,7 @@ HEADLINE_FIELDS = {
 def write_data_to_csv(
     *,
     file: io.StringIO,
-    serialized_core_time_series,
+    serialized_core_time_series: dict[str, Any],
 ) -> io.StringIO:
     headers = [field for field in FIELDS if field != "is_public"]
     rows = [

@@ -287,7 +287,7 @@ class TestDownloadsView:
             ],
         }
 
-    def _create_example_core_time_series(self, is_public: bool) -> CoreTimeSeries:
+    def _create_example_core_time_series(self, *, is_public: bool) -> CoreTimeSeries:
         return CoreTimeSeriesFactory.create_record(
             metric_value=self.core_timeseries_data["metric_value"],
             theme_name=self.core_timeseries_data["theme"],
@@ -338,7 +338,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        self._create_example_core_time_series(True)
+        self._create_example_core_time_series(is_public=True)
         valid_payload = self._build_valid_payload()
         path_without_trailing_forward_slash = "/api/downloads/v2"
 
@@ -361,7 +361,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_time_series = self._create_example_core_time_series(True)
+        core_time_series = self._create_example_core_time_series(is_public=True)
         valid_payload = self._build_valid_payload()
         valid_payload["file_format"] = "json"
 
@@ -432,7 +432,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_time_series = self._create_example_core_time_series(True)
+        core_time_series = self._create_example_core_time_series(is_public=True)
         valid_payload = self._build_valid_payload()
 
         # When
@@ -586,7 +586,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        self._create_example_core_time_series(True)
+        self._create_example_core_time_series(is_public=True)
 
         attack_payload = self._build_valid_payload()
         table_name: str = Geography._meta.db_table
@@ -615,9 +615,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_time_series = self._create_example_core_time_series(False)
-        core_time_series.is_public = False
-        core_time_series.save()
+        core_time_series = self._create_example_core_time_series(is_public=False)
         valid_payload = self._build_valid_payload()
         valid_payload["file_format"] = "json"
 
@@ -648,7 +646,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_time_series = self._create_example_core_time_series(False)
+        core_time_series = self._create_example_core_time_series(is_public=False)
         valid_payload = self._build_valid_payload()
         valid_payload["file_format"] = "json"
 
@@ -711,7 +709,7 @@ class TestDownloadsView:
         """
         # Given
         client = APIClient()
-        core_time_series = self._create_example_core_time_series(False)
+        core_time_series = self._create_example_core_time_series(is_public=False)
         valid_payload = self._build_valid_payload()
         infectious_disease_permission = RBACPermissionFactory.create_record(
             name="infectious_disease_permission",
