@@ -381,8 +381,13 @@ class TestChartSettings:
             "dtick": "M1",
             "tick0": tick0,
             "tickformat": "%b<br>%Y",
-            "range": [min_date, max_date],
+            "range": [
+                # shift first and last date 15 days for monthly intervals
+                tick0 - datetime.timedelta(days=15),
+                max_date + datetime.timedelta(days=15),
+            ],
         }
+
         assert x_axis_date_type == expected_axis_config
 
     def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
