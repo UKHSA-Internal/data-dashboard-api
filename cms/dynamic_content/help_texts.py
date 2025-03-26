@@ -297,9 +297,8 @@ The type to associate with the banner. Defaults to `Information`.
 
 GLOBAL_BANNER_IS_ACTIVE: str = """
 Whether to activate this banner across every page in the dashboard. 
-Note that only 1 global banner can be active at a time.
-To switch from 1 active banner straight to another, 
-you must deactivate the 1st banner and save it before activating and saving the 2nd banner.
+Multiple banners can be active across the dashboard.
+Note: Warning banners are prioritised across the dashboard and will be displayed above information banners.
 """
 
 TAG_MANAGER_EVENT_ID_FIELD: str = """

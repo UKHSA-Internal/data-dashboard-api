@@ -11,6 +11,51 @@ from tests.factories.cms.snippets.global_banner import GlobalBannerFactory
 class TestGlobalBannerView:
     @property
     def path(self) -> str:
+        return "/api/global-banners/v2"
+
+    @pytest.mark.django_db
+    def test_get_request_returns_correct_data(self):
+        """
+        Given an active `GlobalBanner` record
+        When a GET request is made to the `/api/global-banners/v2` endpoint
+        Then the response is a valid HTTP OK with the correct data
+        """
+        # Given
+        client = APIClient()
+        active_banner_info = {
+            "title": "this is the active banner title",
+            "body": "this is the active banner body",
+            "banner_type": BannerTypes.WARNING.value,
+            "is_active": True,
+        }
+        active_global_banner = GlobalBannerFactory.create(**active_banner_info)
+
+        # When
+        response: Response = client.get(
+            path=self.path,
+            format="json",
+            headers={"Cache-Force-Refresh": True},
+        )
+
+        # Then
+        assert response.status_code == HTTPStatus.OK
+        assert (
+            response.data["active_global_banners"][0]["title"]
+            == active_global_banner.title
+        )
+        assert (
+            response.data["active_global_banners"][0]["body"]
+            == active_global_banner.body
+        )
+        assert (
+            response.data["active_global_banners"][0]["banner_type"]
+            == active_global_banner.banner_type
+        )
+
+
+class TestGlobalBannerV1View:
+    @property
+    def path(self) -> str:
         return "/api/global-banners/v1"
 
     @pytest.mark.django_db
