@@ -48,7 +48,7 @@ class TestMergeAndProcessQuerysets:
         # Check that the sample first record taken from the results
         # has all the correct fields in the correct index position of the tuple
         # and they can be reached via the dunder notation
-        assert len(first_record) == 13
+        assert len(first_record) == 14  # allow for the `is_public` field
         assert (
             first_record[0]
             == first_record.metric__topic__sub_theme__theme__name
