@@ -51,11 +51,11 @@ class TablesInterface:
 
         return DEFAULT_CORE_TIME_SERIES_MANAGER
 
-    def _build_tabular_data_from_plots_data(self) -> TabularData:
-        plots = self.plots_interface.build_plots_data()
+    def _build_tabular_data_from_plots_data(self, *, request) -> TabularData:
+        plots = self.plots_interface.build_plots_data(request=request)
         return TabularData(plots=plots)
 
-    def generate_full_plots_for_table(self) -> list[dict[str, str]]:
+    def generate_full_plots_for_table(self, *, request) -> list[dict[str, str]]:
         """Create a list of plots from the request
 
         Notes:
@@ -72,13 +72,13 @@ class TablesInterface:
                 returned any data from the underlying queries
 
         """
-        tabular_data = self._build_tabular_data_from_plots_data()
+        tabular_data = self._build_tabular_data_from_plots_data(request=request)
         return tabular_data.create_tabular_plots()
 
 
 def generate_table_for_full_plots(
     *,
-    plots_collection: ChartRequestParams,
+    plots_collection: ChartRequestParams,request,
 ) -> list[dict[str, str]]:
     """Validates and creates tabular output based off the parameters provided within the `plots_collection` model
 
@@ -107,4 +107,4 @@ def generate_table_for_full_plots(
     tables_interface = TablesInterface(
         plots_collection=plots_collection,
     )
-    return tables_interface.generate_full_plots_for_table()
+    return tables_interface.generate_full_plots_for_table(request=request)

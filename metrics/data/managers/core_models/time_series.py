@@ -217,11 +217,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             field_name=field_to_order_by,
         )
 
-        if fields_to_export:
-            fields_to_export = [
-                field for field in fields_to_export if field is not None
-            ]
-            queryset = queryset.values(*fields_to_export)
+        # if fields_to_export:
+        #     fields_to_export = [
+        #         field for field in fields_to_export if field is not None
+        #     ]
+        #     queryset = queryset.values(*fields_to_export)
 
         return self._annotate_latest_date_on_queryset(queryset=queryset)
 

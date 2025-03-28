@@ -94,7 +94,7 @@ class TablesView(APIView):
 
         try:
             tabular_data: list[dict[str, str]] = access.generate_table_for_full_plots(
-                plots_collection=plots_collection
+                plots_collection=plots_collection, request=request,
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
