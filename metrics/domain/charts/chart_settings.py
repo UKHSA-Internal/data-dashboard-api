@@ -337,6 +337,66 @@ class ChartSettings:
             return "M6"
         return "M12"
 
+    @staticmethod
+    def get_timeseries_margin_days(interval: str | int) -> int:
+        """Returns a number of days as an integer based on the provided interval.
+
+        Note:
+            This value is used to add time to a timeseries chart at both the start
+            and end of the chart, this is used to create more space to avoid any cropping
+            that plotly does for data points at the end of charts.
+
+        Returns:
+            number of days as an integer
+        """
+        if interval == "M1":
+            return 15
+        if interval == "M3":
+            return 45
+        if interval == "M6":
+            return 90
+        if interval == "M12":
+            return 178
+        return 1
+
+    def get_x_axis_range(
+        self, min_date: int, max_date: int, interval
+    ) -> list[datetime.date]:
+        """Returns the first and last date to make up the timeseries date range.
+
+        Note:
+            Plotly can sometimes crop or partially hide the first and last data points
+            in charts. To prevent this rendering issue, we adjust the date range:
+            - Shift the first date backwards by half the current time interval
+            - Shift the last date forwards by half the curren time interval
+            - If timeseries intervals are less than 1 month we shift the dates by 1 day
+
+            Eg:
+            - For 1-year interval, shift by 6 months
+            - For 6-month interval, shift by 3 months
+            - For 1-month interval, shift by 1 day
+
+            This ensures all data points are fully visible and not cut off at the
+            chart's edges.
+
+        Returns:
+            A list containing two dates, the first in the timeseries and the last `list[datetime.date]`
+        """
+        return [
+            (
+                min_date
+                - datetime.timedelta(
+                    days=self.get_timeseries_margin_days(interval=interval)
+                )
+            ),
+            (
+                max_date
+                + datetime.timedelta(
+                    days=self.get_timeseries_margin_days(interval=interval)
+                )
+            ),
+        ]
+
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         min_date, max_date = self.get_min_and_max_x_axis_values()
 
@@ -358,7 +418,9 @@ class ChartSettings:
             "tick0": tick0,
             "dtick": dtick,
             "tickformat": self._get_date_tick_format(weekly=weekly),
-            "range": [tick0, max_date],
+            "range": self.get_x_axis_range(
+                min_date=tick0, max_date=max_date, interval=dtick
+            ),
         }
 
     @staticmethod
