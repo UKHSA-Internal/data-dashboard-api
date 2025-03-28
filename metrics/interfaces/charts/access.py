@@ -158,7 +158,7 @@ class ChartsInterface:
 
         return DEFAULT_CORE_TIME_SERIES_MANAGER
 
-    def generate_chart_output(self) -> ChartOutput:
+    def generate_chart_output(self, *, request) -> ChartOutput:
         """Generates a `plotly` chart figure and a corresponding description
 
         Returns:
@@ -169,7 +169,7 @@ class ChartsInterface:
 
         """
         chart_generation_payload: ChartGenerationPayload = (
-            self.build_chart_generation_payload()
+            self.build_chart_generation_payload(request=request)
         )
         description = self.build_chart_description(
             plots_data=chart_generation_payload.plots
@@ -335,8 +335,8 @@ class ChartsInterface:
             chart_generation_payload=chart_generation_payload
         )
 
-    def build_chart_generation_payload(self) -> ChartGenerationPayload:
-        plots_data: list[PlotGenerationData] = self._build_chart_plots_data()
+    def build_chart_generation_payload(self, *, request) -> ChartGenerationPayload:
+        plots_data: list[PlotGenerationData] = self._build_chart_plots_data(request=request)
         return ChartGenerationPayload(
             plots=plots_data,
             x_axis_title=self.chart_request_params.x_axis_title,
@@ -347,7 +347,7 @@ class ChartsInterface:
             y_axis_maximum_value=self.chart_request_params.y_axis_maximum_value,
         )
 
-    def _build_chart_plots_data(self) -> list[PlotGenerationData]:
+    def _build_chart_plots_data(self, *, request) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -367,7 +367,7 @@ class ChartsInterface:
                 returned any data from the underlying queries
 
         """
-        plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data()
+        plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data(request=request)
         self._set_latest_date_from_plots_data(plots_data=plots_data)
 
         return plots_data
@@ -543,7 +543,7 @@ class ChartsInterface:
         }
 
 
-def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> str:
+def generate_chart_as_file(*, chart_request_params: ChartRequestParams, request) -> str:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
 
     Args:
@@ -565,13 +565,13 @@ def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> str:
 
     """
     charts_interface = ChartsInterface(chart_request_params=chart_request_params)
-    chart_output: ChartOutput = charts_interface.generate_chart_output()
+    chart_output: ChartOutput = charts_interface.generate_chart_output(request=request)
 
     return charts_interface.write_figure(figure=chart_output.figure)
 
 
 def generate_encoded_chart(
-    *, chart_request_params: ChartRequestParams
+    *, chart_request_params: ChartRequestParams, request
 ) -> dict[str, str]:
     """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
      Then encodes it, adds the last_updated_date to it and returns the result as a serialized JSON string
@@ -597,6 +597,6 @@ def generate_encoded_chart(
 
     """
     charts_interface = ChartsInterface(chart_request_params=chart_request_params)
-    chart_output: ChartOutput = charts_interface.generate_chart_output()
+    chart_output: ChartOutput = charts_interface.generate_chart_output(request=request)
 
     return charts_interface.get_encoded_chart(chart_output=chart_output)

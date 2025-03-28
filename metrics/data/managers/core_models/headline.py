@@ -320,7 +320,14 @@ class CoreHeadlineManager(models.Manager):
             fields_to_export = [
                 field for field in fields_to_export if field is not None
             ]
-            queryset = queryset.values(*fields_to_export)
+            queryset = queryset.values(*fields_to_export, *[
+                "metric",
+                "geography",
+                "stratum",
+                "age",
+                "sex",
+                "is_public",
+            ])
 
         queryset.latest_date = queryset.values_list("period_end", flat=True).first()
 
