@@ -1,16 +1,21 @@
 import logging
 
 from django.db import models
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
+from modelcluster.fields import ParentalKey
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
 from wagtail.api import APIField
 from wagtail.search import index
+from wagtail.models import Orderable
+from wagtail.fields import RichTextField
 
-from cms.dashboard.models import UKHSAPage
+from cms.dashboard.models import (UKHSAPage, AVAILABLE_RICH_TEXT_FEATURES)
+from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
     get_all_unique_metric_names,
 )
+from cms.snippets.models.global_banner import BannerTypes
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +48,11 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         FieldPanel("body"),
     ]
 
+    announcement_content_panels = [
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
+    ]
+
     # Sets which fields to expose on the API.
     api_fields = UKHSAPage.api_fields + [
         APIField("title"),
@@ -53,12 +63,14 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),
+        APIField("announcements")
     ]
 
     # Tabs to position at the top of the view.
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
+            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -130,3 +142,55 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
+
+
+class MetricsDocumentationChildPageAnnouncement(Orderable):
+    page = ParentalKey(
+        MetricsDocumentationChildEntry, on_delete=models.SET_NULL, null=True, related_name="announcements"
+    )
+    title = models.CharField(
+        max_length=255,
+        blank=False,
+        help_text=help_texts.GLOBAL_BANNER_TITLE,
+    )
+    badge = models.ForeignKey(
+        "whats_new.badge",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    body = RichTextField(
+        max_length=255,
+        features=AVAILABLE_RICH_TEXT_FEATURES,
+        help_text=help_texts.GLOBAL_BANNER_BODY,
+    )
+    banner_type = models.CharField(
+        max_length=50,
+        choices=BannerTypes.choices,
+        default=BannerTypes.INFORMATION.value,
+        help_text=help_texts.GLOBAL_BANNER_TYPE,
+    )
+
+    is_active = models.BooleanField(
+        default=False,
+        help_text=help_texts.GLOBAL_BANNER_IS_ACTIVE,
+    )
+
+    # Sets which panels to show on the editing view
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("badge"),
+        FieldPanel("body"),
+        FieldPanel("banner_type"),
+        FieldPanel("is_active"),
+    ]
+
+    # Sets which fields to expose on the API
+    api_fields = [
+        APIField("title"),
+        APIField("badge"),
+        APIField("body"),
+        APIField("banner_type"),
+        APIField("is_active"),
+    ]
