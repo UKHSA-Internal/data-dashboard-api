@@ -29,7 +29,6 @@ it also includes data migrations for each metric documentation child page.
 The data model is split according to the page types.
 There are currently 6 main page types:
 
-- `HomePage`
 - `CommonPage`
 - `TopicPage`
 - `CompositePage`
@@ -39,7 +38,6 @@ There are currently 6 main page types:
 For each type of page there will also be a foreign key 1-to-many relationship out to 
 a corresponding related links type model:
 
-- `HomePage` (1) -> (many) `HomePageRelatedLink`
 - `CommonPage`(1) -> (many) `CommonPageRelatedLink`
 - `TopicPage`(1) -> (many) `TopicPageRelatedLink`
 - `CompositePage`(1) -> (many) `CompositePageRelatedLink`

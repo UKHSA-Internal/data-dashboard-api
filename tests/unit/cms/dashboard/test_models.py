@@ -6,7 +6,6 @@ from django.core.exceptions import ValidationError
 from cms.dashboard.models import UKHSAPage
 from tests.fakes.factories.cms.common_page_factory import FakeCommonPageFactory
 from tests.fakes.factories.cms.composite_page_factory import FakeCompositePageFactory
-from tests.fakes.factories.cms.home_page_factory import FakeHomePageFactory
 from tests.fakes.factories.cms.metrics_documentation_factory import (
     FakeMetricsDocumentationParentPageFactory,
 )
@@ -23,7 +22,6 @@ class TestUKHSAPage:
     @pytest.mark.parametrize(
         "fake_page",
         [
-            FakeHomePageFactory.build_blank_page(),
             FakeTopicPageFactory.build_influenza_page_from_template(),
             FakeCommonPageFactory.build_blank_page(),
             FakeCompositePageFactory.build_page_from_template(
@@ -54,7 +52,6 @@ class TestUKHSAPage:
     @pytest.mark.parametrize(
         "fake_page",
         [
-            FakeHomePageFactory.build_blank_page(),
             FakeCommonPageFactory.build_blank_page(),
             FakeCompositePageFactory.build_page_from_template(
                 page_name="access_our_data_getting_started"
@@ -85,7 +82,6 @@ class TestUKHSAPage:
     @pytest.mark.parametrize(
         "fake_page",
         [
-            FakeHomePageFactory.build_blank_page(),
             FakeTopicPageFactory.build_influenza_page_from_template(),
             FakeCommonPageFactory.build_blank_page(),
             FakeCompositePageFactory.build_page_from_template(

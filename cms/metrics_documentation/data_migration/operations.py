@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Manager
 from wagtail.models import Page
 
-from cms.home.models.home_page import HomePage, UKHSARootPage
+from cms.home.models.home_page import UKHSARootPage
 from cms.metrics_documentation.data_migration.child_entries import (
     get_metrics_definitions,
 )
@@ -37,7 +37,7 @@ def load_metric_documentation_parent_page() -> dict:
         return json.load(file)
 
 
-def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: HomePage) -> None:
+def add_page_as_subpage_to_parent(*, subpage: Page, parent_page: Page) -> None:
     """Adds the given `subpage` as a child to the `parent_page`
 
     Args:
