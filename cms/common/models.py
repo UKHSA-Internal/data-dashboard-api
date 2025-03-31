@@ -11,7 +11,7 @@ from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
-from cms.dashboard.models import MAXIMUM_URL_FIELD_LENGTH, UKHSAPage
+from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, MAXIMUM_URL_FIELD_LENGTH, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.snippets.models.global_banner import BannerTypes
 
@@ -92,13 +92,6 @@ class CommonPageRelatedLink(Orderable):
         APIField("url"),
         APIField("body"),
     ]
-
-
-AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
-    "bold",
-    "italic",
-    "link",
-]
 
 
 class CommonPageAnnouncement(Orderable):
