@@ -1,7 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable
@@ -36,6 +36,11 @@ class WhatsNewParentPage(UKHSAPage):
         index.SearchField("body"),
     ]
 
+    announcement_content_panels = [
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
+    ]
+
     # Content panels to render for editing within the CMS application
     content_panels = UKHSAPage.content_panels + [
         FieldPanel("date_posted"),
@@ -51,12 +56,14 @@ class WhatsNewParentPage(UKHSAPage):
         APIField("search_description"),
         APIField("show_pagination"),
         APIField("pagination_size"),
+        APIField("announcements")
     ]
 
     # Tabs to position at the top of the view
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
+            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )

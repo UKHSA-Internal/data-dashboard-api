@@ -1,8 +1,10 @@
 from django.db import models
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
+from modelcluster.fields import ParentalKey
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
+from wagtail.models import Orderable
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
@@ -44,6 +46,11 @@ class WhatsNewChildEntry(UKHSAPage):
         FieldPanel("badge"),
     ]
 
+    announcement_content_panels = [
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
+    ]
+
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
@@ -52,12 +59,14 @@ class WhatsNewChildEntry(UKHSAPage):
         APIField("search_description"),
         APIField("additional_details"),
         APIField("badge", serializer=BadgeSerializer()),
+        APIField("announcements")
     ]
 
     # Tabs to position at the top of the view
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
+            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -69,7 +78,7 @@ class WhatsNewChildEntry(UKHSAPage):
 
 class WhatsNewChildEntryAnnouncement(Orderable):
     page = ParentalKey(
-        WhatsNewParentPage,
+        WhatsNewChildEntry,
         on_delete=models.SET_NULL,
         null=True,
         related_name="announcements",
