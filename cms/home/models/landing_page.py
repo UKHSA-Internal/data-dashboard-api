@@ -1,9 +1,9 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.models import Page, Orderable
 from wagtail.fields import RichTextField
+from wagtail.models import Orderable, Page
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
@@ -18,12 +18,10 @@ class LandingPage(UKHSAPage):
     sub_title = models.CharField(max_length=255)
     body = ALLOWABLE_BODY_CONTENT_SECTION_LINK
 
-    content_panels = Page.content_panels + \
-        [FieldPanel("sub_title"), FieldPanel("body")]
+    content_panels = Page.content_panels + [FieldPanel("sub_title"), FieldPanel("body")]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     api_fields = UKHSAPage.api_fields + [
@@ -32,7 +30,7 @@ class LandingPage(UKHSAPage):
         APIField("body"),
         APIField("search_description"),
         APIField("last_published_at"),
-        APIField("announcements")
+        APIField("announcements"),
     ]
 
     edit_handler = TabbedInterface(

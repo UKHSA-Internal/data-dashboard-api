@@ -2,11 +2,11 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.search import index
-from wagtail.models import Orderable
 from wagtail.fields import RichTextField
+from wagtail.models import Orderable
+from wagtail.search import index
 
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
@@ -58,8 +58,7 @@ class MetricsDocumentationParentPage(UKHSAPage):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Sets which fields to expose on the API
@@ -105,7 +104,10 @@ class MetricsDocumentationParentPage(UKHSAPage):
 
 class MetricsDocumentationParentPageAnnouncement(Orderable):
     page = ParentalKey(
-        MetricsDocumentationParentPage, on_delete=models.SET_NULL, null=True, related_name="announcements"
+        MetricsDocumentationParentPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
     )
     title = models.CharField(
         max_length=255,

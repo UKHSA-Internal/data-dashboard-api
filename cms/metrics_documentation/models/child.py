@@ -2,13 +2,13 @@ import logging
 
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.search import index
-from wagtail.models import Orderable
 from wagtail.fields import RichTextField
+from wagtail.models import Orderable
+from wagtail.search import index
 
-from cms.dashboard.models import (UKHSAPage, AVAILABLE_RICH_TEXT_FEATURES)
+from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.metrics_interface.field_choices_callables import (
@@ -49,8 +49,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Sets which fields to expose on the API.
@@ -63,7 +62,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),
-        APIField("announcements")
+        APIField("announcements"),
     ]
 
     # Tabs to position at the top of the view.
@@ -146,7 +145,10 @@ class MetricsDocumentationChildEntry(UKHSAPage):
 
 class MetricsDocumentationChildPageAnnouncement(Orderable):
     page = ParentalKey(
-        MetricsDocumentationChildEntry, on_delete=models.SET_NULL, null=True, related_name="announcements"
+        MetricsDocumentationChildEntry,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
     )
     title = models.CharField(
         max_length=255,

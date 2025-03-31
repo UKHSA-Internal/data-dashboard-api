@@ -1,11 +1,11 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.search import index
-from wagtail.models import Orderable
 from wagtail.fields import RichTextField
+from wagtail.models import Orderable
+from wagtail.search import index
 
 from cms.dashboard.models import (
     AVAILABLE_RICH_TEXT_FEATURES,
@@ -68,7 +68,10 @@ class WhatsNewParentPage(UKHSAPage):
 
 class WhatsNewParentPageAnnouncement(Orderable):
     page = ParentalKey(
-        WhatsNewParentPage, on_delete=models.SET_NULL, null=True, related_name="announcements"
+        WhatsNewParentPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
     )
     title = models.CharField(
         max_length=255,

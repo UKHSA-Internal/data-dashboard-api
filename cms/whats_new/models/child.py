@@ -66,9 +66,13 @@ class WhatsNewChildEntry(UKHSAPage):
 
     objects = WhatsNewChildEntryManager()
 
+
 class WhatsNewChildEntryAnnouncement(Orderable):
     page = ParentalKey(
-        WhatsNewParentPage, on_delete=models.SET_NULL, null=True, related_name="announcements"
+        WhatsNewParentPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
     )
     title = models.CharField(
         max_length=255,
