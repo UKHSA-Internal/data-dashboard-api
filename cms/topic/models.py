@@ -21,6 +21,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
+from cms.snippets.models.global_banner import BannerTypes
 from cms.topic.managers import TopicPageManager
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
@@ -47,7 +48,13 @@ class TopicPage(UKHSAPage):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
+    ]
+
+    announcement_content_panels = [
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
     ]
 
     # Search index configuration
@@ -72,6 +79,7 @@ class TopicPage(UKHSAPage):
         APIField("search_description"),
         APIField("enable_area_selector"),
         APIField("selected_topics"),
+        APIField("announcements"),
     ]
 
     # Tabs to position at the top of the view
@@ -79,6 +87,7 @@ class TopicPage(UKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
+            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -191,7 +200,8 @@ class TopicPageRelatedLink(Orderable):
         TopicPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL",
+                          max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view
@@ -206,4 +216,56 @@ class TopicPageRelatedLink(Orderable):
         APIField("title"),
         APIField("url"),
         APIField("body"),
+    ]
+
+
+class CommonPageAnnouncement(Orderable):
+    page = ParentalKey(
+        TopicPage, on_delete=models.SET_NULL, null=True, related_name="announcements"
+    )
+    title = models.CharField(
+        max_length=255,
+        blank=False,
+        help_text=help_texts.GLOBAL_BANNER_TITLE,
+    )
+    badge = models.ForeignKey(
+        "whats_new.badge",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    body = RichTextField(
+        max_length=255,
+        features=AVAILABLE_RICH_TEXT_FEATURES,
+        help_text=help_texts.GLOBAL_BANNER_BODY,
+    )
+    banner_type = models.CharField(
+        max_length=50,
+        choices=BannerTypes.choices,
+        default=BannerTypes.INFORMATION.value,
+        help_text=help_texts.GLOBAL_BANNER_TYPE,
+    )
+
+    is_active = models.BooleanField(
+        default=False,
+        help_text=help_texts.GLOBAL_BANNER_IS_ACTIVE,
+    )
+
+    # Sets which panels to show on the editing view
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("badge"),
+        FieldPanel("body"),
+        FieldPanel("banner_type"),
+        FieldPanel("is_active"),
+    ]
+
+    # Sets which fields to expose on the API
+    api_fields = [
+        APIField("title"),
+        APIField("badge"),
+        APIField("body"),
+        APIField("banner_type"),
+        APIField("is_active"),
     ]
