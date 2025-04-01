@@ -7,6 +7,34 @@ VALID_PARAMETERS = [
         "deaths",
     ),
     (
+        "infectious_disease",
+        "respiratory",
+        "upper-respiratory-tract-infection",
+        "upper-respiratory-tract-infection_syndromic_GPInHours_rateByDay",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "respiratory",
+        "lower-respiratory-tract-infection",
+        "lower-respiratory-tract-infection_syndromic_GPInHours_baselineRateByDay",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "respiratory",
+        "acute-respiratory-infection",
+        "acute-respiratory-infection_syndromic_NHS111calls_countsByDay",
+        "syndromic",
+    ),
+    (
+        "infectious_disease",
+        "contact",
+        "mpox-clade-1b",
+        "mpox-clade-1b_cases_countByWeek",
+        "cases",
+    ),
+    (
         "climate_and_environment",
         "vectors",
         "ticks",
@@ -33,5 +61,12 @@ VALID_PARAMETERS = [
         "Hepatitis-C",
         "hepatitis-c_prevention_PWIDproportionNSP",
         "prevention",
+    ),
+    (
+        "climate_and_environment",
+        "chemical_exposure",
+        "Lead",
+        "lead_headline_percentByDeprivationLatest",
+        "headline",
     ),
 ]

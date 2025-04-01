@@ -23,10 +23,15 @@ class _NonCommunicableChildTheme(Enum):
 
 class _ClimateAndEnvironmentChildTheme(Enum):
     VECTORS = "vectors"
+    CHEMICAL_EXPOSURE = "chemical_exposure"
 
 
 class _VectorsTopic(Enum):
     TICKS = "ticks"
+
+
+class _ChemicalExposureTopic(Enum):
+    LEAD = "Lead"
 
 
 class _VaccinePreventableTopic(Enum):
@@ -119,3 +124,4 @@ class Topic(BaseEnum):
     VECTORS = _VectorsTopic
     INVASIVE_BACTERIAL_INFECTIONS = _InvasiveBacterialInfectionsTopic
     CHILDHOOD_ILLNESS = _ChildhoodIllnessTopic
+    CHEMICAL_EXPOSURE = _ChemicalExposureTopic
