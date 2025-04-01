@@ -1,10 +1,10 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface, InlinePanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.search import index
 from wagtail.models import Orderable
+from wagtail.search import index
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
@@ -47,8 +47,7 @@ class WhatsNewChildEntry(UKHSAPage):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Sets which fields to expose on the API
@@ -59,7 +58,7 @@ class WhatsNewChildEntry(UKHSAPage):
         APIField("search_description"),
         APIField("additional_details"),
         APIField("badge", serializer=BadgeSerializer()),
-        APIField("announcements")
+        APIField("announcements"),
     ]
 
     # Tabs to position at the top of the view

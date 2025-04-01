@@ -30,8 +30,7 @@ class AbstractFormUKHSAPage(FormMixin, UKHSAPage):
 
 
 class FormField(AbstractFormField):
-    page = ParentalKey("FormPage", on_delete=models.CASCADE,
-                       related_name="form_fields")
+    page = ParentalKey("FormPage", on_delete=models.CASCADE, related_name="form_fields")
 
     form_field_choices = [
         choice for choice in FORM_FIELD_CHOICES if choice[0] != "multiselect"
@@ -71,8 +70,7 @@ class FormPage(AbstractFormUKHSAPage):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     confirmation_panels = [
@@ -103,7 +101,7 @@ class FormPage(AbstractFormUKHSAPage):
         APIField("confirmation_panel_title"),
         APIField("confirmation_panel_text"),
         APIField("confirmation_body"),
-        APIField("announcements")
+        APIField("announcements"),
     ]
 
     objects = FormPageManager()
