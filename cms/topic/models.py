@@ -48,11 +48,13 @@ class TopicPage(UKHSAPage):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
     ]
 
     # Search index configuration
@@ -198,7 +200,8 @@ class TopicPageRelatedLink(Orderable):
         TopicPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL",
+                          max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view
@@ -223,7 +226,7 @@ class CommonPageAnnouncement(Orderable):
     title = models.CharField(
         max_length=255,
         blank=False,
-        help_text=help_texts.GLOBAL_BANNER_TITLE,
+        help_text=help_texts.ANNOUNCEMENT_BANNER_TITLE,
     )
     badge = models.ForeignKey(
         "whats_new.badge",
@@ -235,18 +238,18 @@ class CommonPageAnnouncement(Orderable):
     body = RichTextField(
         max_length=255,
         features=AVAILABLE_RICH_TEXT_FEATURES,
-        help_text=help_texts.GLOBAL_BANNER_BODY,
+        help_text=help_texts.ANNOUNCEMENT_BANNER_BODY,
     )
     banner_type = models.CharField(
         max_length=50,
         choices=BannerTypes.choices,
         default=BannerTypes.INFORMATION.value,
-        help_text=help_texts.GLOBAL_BANNER_TYPE,
+        help_text=help_texts.ANNOUNCEMENT_BANNER_TYPE,
     )
 
     is_active = models.BooleanField(
         default=False,
-        help_text=help_texts.GLOBAL_BANNER_IS_ACTIVE,
+        help_text=help_texts.ANNOUNCEMENT_BANNER_IS_ACTIVE,
     )
 
     # Sets which panels to show on the editing view

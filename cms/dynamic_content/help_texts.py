@@ -345,3 +345,22 @@ This option enables timeseries filter for this chart.
 The timeseries filter allows a user to change the timeseries range for example between
 1m, 3m, 6m, 1y etc.
 """
+
+ANNOUNCEMENT_BANNER_TITLE: str = """
+The title to associate with the announcement. This must be provided.
+"""
+
+ANNOUNCEMENT_BANNER_BODY: str = """
+A body of text to be displayed by the announcement. There is a limit of 255 characters for this field.
+"""
+
+ANNOUNCEMENT_BANNER_TYPE: str = """
+The type to associate with the announcement. Defaults to `Information`.
+"""
+
+ANNOUNCEMENT_BANNER_IS_ACTIVE: str = """
+Whether to activate this banner only on this individual page. 
+Note that multiple page banners can be active on one page. Consider 
+carefully if you need multiple announcements to be active at once as
+this can have an impact on user experience of the dashboard page.
+"""
