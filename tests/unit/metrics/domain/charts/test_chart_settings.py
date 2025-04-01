@@ -82,6 +82,7 @@ class TestChartSettings:
             "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": chart_settings._get_tick_font_config(),
+            "autotickangles": [0, 90],
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
@@ -132,6 +133,7 @@ class TestChartSettings:
             "dtick": None,
             "tickformat": None,
             "tickfont": chart_settings._get_tick_font_config(),
+            "autotickangles": [0, 90],
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
@@ -398,6 +400,8 @@ class TestChartSettings:
             ["M3", 45],
             ["M6", 90],
             ["M12", 178],
+            [WEEK_IN_MILLISECONDS, 1],
+            [TWO_WEEKS_IN_MILLISECONDS, 1],
         ),
     )
     def test_date_range_is_padding_correctly_based_on_x_axis_interval(
@@ -742,7 +746,7 @@ class TestChartSettings:
             "barmode": "group",
             "legend": {
                 "orientation": "h",
-                "y": -0.25,
+                "y": -0.35,
                 "x": 0,
             },
         }
@@ -768,7 +772,7 @@ class TestChartSettings:
         expected_legend_bottom_left_config = {
             "legend": {
                 "orientation": "h",
-                "y": -0.25,
+                "y": -0.35,
                 "x": 0,
             },
         }

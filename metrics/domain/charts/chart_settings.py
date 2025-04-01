@@ -79,6 +79,7 @@ class ChartSettings:
             "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": self._get_tick_font_config(),
+            "autotickangles": [0, 90],
         }
 
         if self._chart_generation_payload.x_axis_title:
@@ -441,7 +442,7 @@ class ChartSettings:
         return {
             "legend": {
                 "orientation": "h",
-                "y": -0.25,
+                "y": -0.35,
                 "x": 0,
             },
         }
