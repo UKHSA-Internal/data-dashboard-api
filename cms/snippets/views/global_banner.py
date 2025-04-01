@@ -9,7 +9,6 @@ from caching.private_api.decorators import cache_response
 from cms.snippets.serializers import (
     GlobalBannerResponseSerializer,
     GlobalBannerSerializer,
-    GlobalBannerSerializerV1,
 )
 
 
@@ -34,32 +33,5 @@ class GlobalBannerView(APIView):
         """
         serializer = GlobalBannerSerializer()
         serialized_response_data: dict[str, ReturnDict[str, str]] = serializer.data
-
-        return Response(data=serialized_response_data, status=HTTPStatus.OK)
-
-
-class GlobalBannerViewV1(APIView):
-    permission_classes = []
-
-    @classmethod
-    @extend_schema(
-        tags=["cms"], responses={HTTPStatus.OK: GlobalBannerResponseSerializer}
-    )
-    @cache_response()
-    def get(cls, request, *args, **kwargs) -> Response:
-        """
-        This endpoint returns data associated with the currently active global banner
-
-        Note that if there is no active banner then the response will look like:
-
-        ```
-        {"active_global_banner": null}
-        ```
-
-        """
-        serializer = GlobalBannerSerializerV1()
-        serialized_response_data: dict[str, ReturnDict[str, str] | None] = (
-            serializer.data
-        )
 
         return Response(data=serialized_response_data, status=HTTPStatus.OK)
