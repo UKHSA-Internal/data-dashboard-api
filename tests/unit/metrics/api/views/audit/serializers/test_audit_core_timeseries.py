@@ -61,6 +61,23 @@ class TestCoreTimeSeriesSerializer:
 
         assert serialized_date == expected_date_value
 
+    def test_null_embargo_date_serializes_correctly(self):
+        """
+        Given a fake `CoreTimeSeries` model object and a null embargo timestamp
+        When the fake is passed to the `CoreTimeseriesSerializer`
+        Then the `embargo` field is returned in the expected format.
+        """
+        # Given
+        fake_core_time_series = self._setup_fake_times_series()
+        fake_core_time_series.embargo = None
+
+        # When
+        serializer = AuditCoreTimeseriesSerializer(instance=fake_core_time_series)
+
+        # Then
+        serialized_date: str = serializer.data["embargo"]
+        assert serialized_date == ""
+
     @pytest.mark.parametrize(
         "expected_field",
         [
