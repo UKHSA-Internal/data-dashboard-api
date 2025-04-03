@@ -18,5 +18,5 @@ if AUTH_ENABLED:
         "django.contrib.auth.middleware.AuthenticationMiddleware",
         "django.contrib.messages.middleware.MessageMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
-        "public_api.middleware.NoIndexNoFollowMiddleware",
+        "public_api.middleware.NoIndexNoFollowMiddleware",  # Add noindex, nofollow robots-tag middleware for non-public
     ]
