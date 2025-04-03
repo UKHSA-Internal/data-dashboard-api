@@ -2,13 +2,14 @@ import io
 import logging
 from http import HTTPStatus
 
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from drf_spectacular.utils import extend_schema
 from rest_framework.renderers import JSONOpenAPIRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers import (
     BulkDownloadsSerializer,
     CoreHeadlineSerializer,
@@ -27,6 +28,7 @@ from metrics.domain.exports.csv_output import (
 )
 from metrics.interfaces.downloads import access
 from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.utils import remove_none_from_serializer_data
 
 DOWNLOADS_API_TAG = "downloads"
 
@@ -43,7 +45,10 @@ class DownloadsView(APIView):
     renderer_classes = (JSONOpenAPIRenderer,)
 
     def _get_serializer_class(
-        self, queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet, metric_group: str
+        self,
+        queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
+        metric_group: str,
+        request: HttpRequest,
     ) -> CoreHeadlineSerializer | CoreTimeSeriesSerializer:
         """Returns the appropriate serializer class based on the
             provided metric_group.
@@ -54,10 +59,14 @@ class DownloadsView(APIView):
         """
         try:
             if DataSourceFileType[metric_group].is_headline:
-                return self.headline_serializer_class(queryset, many=True)
+                return self.headline_serializer_class(
+                    queryset, many=True, context={"request": request}
+                )
 
             if DataSourceFileType[metric_group].is_timeseries:
-                return self.timeseries_serializer_class(queryset, many=True)
+                return self.timeseries_serializer_class(
+                    queryset, many=True, context={"request": request}
+                )
 
         except KeyError as error:
             raise ValueError(DEFAULT_VALUE_ERROR_MESSAGE) from error
@@ -67,13 +76,17 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
+        request: HttpRequest,
     ) -> Response:
         # Return the requested data in json format
         serializer = self._get_serializer_class(
-            queryset=queryset, metric_group=metric_group
+            queryset=queryset,
+            metric_group=metric_group,
+            request=request,
         )
 
-        response = Response(serializer.data)
+        data = remove_none_from_serializer_data(serializer=serializer)
+        response = Response(data)
         response["Content-Type"] = "application/json"
         response["Content-Disposition"] = "attachment; filename=chart_download.json"
         return response
@@ -83,24 +96,28 @@ class DownloadsView(APIView):
         *,
         queryset: CoreTimeSeriesQuerySet | CoreHeadlineQuerySet,
         metric_group: str,
+        request: HttpRequest,
     ) -> io.StringIO:
         # Return the requested data in csv format
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="mymodel.csv"'
 
         serializer = self._get_serializer_class(
-            queryset=queryset, metric_group=metric_group
+            queryset=queryset,
+            metric_group=metric_group,
+            request=request,
         )
 
-        if DataSourceFileType[metric_group].is_headline:
-            return write_headline_data_to_csv(
-                file=response, core_headline_data=serializer.data
-            )
+        data = remove_none_from_serializer_data(serializer=serializer)
 
-        return write_data_to_csv(file=response, core_time_series_queryset=queryset)
+        if DataSourceFileType[metric_group].is_headline:
+            return write_headline_data_to_csv(file=response, core_headline_data=data)
+
+        return write_data_to_csv(file=response, serialized_core_time_series=data)
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
+    @require_authorisation
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
@@ -146,11 +163,15 @@ class DownloadsView(APIView):
         match file_format:
             case "json":
                 return self._handle_json(
-                    queryset=queryset, metric_group=chart_plot_models.metric_group
+                    queryset=queryset,
+                    metric_group=chart_plot_models.metric_group,
+                    request=request,
                 )
             case "csv":
                 return self._handle_csv(
-                    queryset=queryset, metric_group=chart_plot_models.metric_group
+                    queryset=queryset,
+                    metric_group=chart_plot_models.metric_group,
+                    request=request,
                 )
 
 

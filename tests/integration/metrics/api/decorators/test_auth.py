@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from unittest import mock
+from typing import Callable
 
 import pytest
 from django.urls import path
@@ -41,8 +42,9 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
-    def test_request_succeeds_when_auth_is_disabled(self):
+    def test_request_succeeds_when_auth_is_disabled(
+        self, patch_auth_disabled: Callable[[], None]
+    ):
         """
         Given authentication is disabled
         When a request is made to an authorised route
@@ -60,8 +62,9 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
-    def test_request_succeeds_with_valid_group_id(self):
+    def test_request_succeeds_with_valid_group_id(
+        self, patch_auth_enabled: Callable[[], None]
+    ):
         """
         Given authentication is enabled
         And a valid `X-GroupId` header is provided
@@ -93,9 +96,10 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
     @pytest.mark.parametrize("group_id", ["invalid", "1", "", None])
-    def test_request_with_invalid_group_id(self, group_id):
+    def test_request_with_invalid_group_id(
+        self, group_id, patch_auth_enabled: Callable[[], None]
+    ):
         """
         Given authentication is enabled
         And an invalid `X-GroupId` header is provided
@@ -116,8 +120,9 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
-    def test_request_succeeds_when_group_id_header_is_missing(self):
+    def test_request_succeeds_when_group_id_header_is_missing(
+        self, patch_auth_enabled: Callable[[], None]
+    ):
         """
         Given authentication is enabled
         And no `X-GroupId` header is provided

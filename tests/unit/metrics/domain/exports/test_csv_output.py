@@ -1,12 +1,13 @@
 import datetime
 import io
+from unittest import mock
 
 from metrics.domain.exports.csv_output import FIELDS, write_data_to_csv
+from metrics.api.serializers.timeseries import CoreTimeSeriesSerializer
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
-from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
-from tests.fakes.models.queryset import FakeQuerySet
+from tests.unit.metrics.api.serializers.test_timeseries import mock_core_times_series
 
 
 def _get_line_from_stream(filestream: io.StringIO) -> list[str]:
@@ -30,40 +31,41 @@ class TestWriteDataToCSV:
         "in_reporting_delay_period",
     ]
 
-    def test_for_basic_behaviour(self):
+    def test_for_basic_behaviour(self, mock_core_times_series: mock.MagicMock):
         """
         Given a file and a QuerySet
         When `write_data_to_csv()` is called
         Then the expected output will be returned
         """
         # Given
-        expected_date = datetime.datetime(year=2023, month=3, day=8)
-        expected_metric_value = 2364
+        expected_date = datetime.datetime(year=2024, month=1, day=1)
+        expected_metric_value = 1.0000
         expected_topic = "COVID-19"
-        expected_metric = "COVID-19_deaths_ONSByDay"
-        expected_age = "75+"
+        expected_metric = "COVID-19_cases_rateRollingMean"
+        expected_age = "all"
         expected_sex = "all"
-        expected_in_reporting_delay_period = False
+        expected_in_reporting_delay_period = True
 
-        fake_core_time_series: FakeCoreTimeSeries = (
-            FakeCoreTimeSeriesFactory.build_time_series(
-                date=datetime.datetime(year=2023, month=3, day=8),
-                metric_value=expected_metric_value,
-                topic_name=expected_topic,
-                metric_name=expected_metric,
-                age_name=expected_age,
-                sex=expected_sex,
-                in_reporting_delay_period=expected_in_reporting_delay_period,
-            )
+        fake_core_time_series = FakeCoreTimeSeriesFactory.build_time_series(
+            date=expected_date,
+            metric_name=expected_metric,
+            topic_name=expected_topic,
+            age_name=expected_age,
+            sex=expected_sex,
+            metric_value=expected_metric_value,
+            in_reporting_delay_period=expected_in_reporting_delay_period,
         )
-        queryset = FakeQuerySet(instances=[fake_core_time_series]).values_list(
-            *FIELDS.values()
+        mocked_core_time_series = mock_core_times_series
+        serializer = CoreTimeSeriesSerializer(
+            instance=[mocked_core_time_series], many=True
         )
+        data = serializer.data
 
         # When
         file = io.StringIO()
         csv_file: io.StringIO = write_data_to_csv(
-            file=file, core_time_series_queryset=queryset
+            file=file,
+            serialized_core_time_series=data,
         )
         # Go back to the beginning of stream
         csv_file.seek(0)
@@ -84,8 +86,8 @@ class TestWriteDataToCSV:
             expected_age,
             fake_core_time_series.stratum.name,
             str(fake_core_time_series.year),
-            str(expected_date),
-            str(expected_metric_value),
+            expected_date.strftime("%Y-%m-%d"),
+            f"{expected_metric_value:.4f}",
             str(expected_in_reporting_delay_period),
         ]
         assert csv_header == self.expected_csv_header

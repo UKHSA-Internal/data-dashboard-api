@@ -21,4 +21,5 @@ class TestDownloadsView:
             downloads_view._get_serializer_class(
                 queryset=mock.MagicMock(),
                 metric_group=invalid_metric_group,
+                request=mock.MagicMock(),
             )
