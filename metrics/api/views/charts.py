@@ -22,6 +22,7 @@ from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
     InvalidPlotParametersError,
 )
+from metrics.api.decorators import require_authorisation
 
 CHARTS_API_TAG = "charts"
 
@@ -196,7 +197,7 @@ class ChartsView(APIView):
 
         try:
             filename: str = access.generate_chart_as_file(
-                chart_request_params=chart_request_params,
+                chart_request_params=chart_request_params, request=request,
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
@@ -225,6 +226,7 @@ class EncodedChartsView(APIView):
         tags=[CHARTS_API_TAG],
     )
     @cache_response()
+    @require_authorisation
     def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
@@ -341,7 +343,7 @@ class EncodedChartsView(APIView):
 
         try:
             response: dict[str, str] = access.generate_encoded_chart(
-                chart_request_params=chart_request_params,
+                chart_request_params=chart_request_params, request=request
             )
 
             serializer = EncodedChartResponseSerializer(data=response)

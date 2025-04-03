@@ -27,6 +27,7 @@ from metrics.domain.exports.csv_output import (
 )
 from metrics.interfaces.downloads import access
 from metrics.interfaces.plots.access import DataNotFoundForAnyPlotError
+from metrics.api.decorators import require_authorisation
 
 DOWNLOADS_API_TAG = "downloads"
 
@@ -101,6 +102,7 @@ class DownloadsView(APIView):
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
+    @require_authorisation
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
@@ -136,7 +138,7 @@ class DownloadsView(APIView):
 
         try:
             queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(
-                chart_plots=chart_plot_models
+                chart_plots=chart_plot_models, request=request,
             )
         except DataNotFoundForAnyPlotError as error:
             return Response(

@@ -4,9 +4,10 @@ from decimal import Decimal
 from typing import Any
 
 from django.db.models import QuerySet
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator, Field
 
 from metrics.data.models.core_models import CoreTimeSeries
+from metrics.api.decorators.chart_permissions import filter_queryset
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import (
     ChartRequestParams,
@@ -52,6 +53,11 @@ class QuerySetResult(BaseModel):
     queryset: Any
     latest_date: Any
 
+    @field_validator("queryset", mode="after")
+    @classmethod
+    def filter_queryset(cls, value, info):
+        return filter_queryset(cls, value, info)
+
 
 class PlotsInterface:
     def __init__(
@@ -92,7 +98,7 @@ class PlotsInterface:
     def get_queryset_result_for_plot_parameters(
         self,
         *,
-        plot_parameters: PlotParameters,
+        plot_parameters: PlotParameters, request
     ) -> QuerySetResult:
         """Returns the timeseries or headline records for the requested plot as an enriched `QuerySetResult` model.
 
@@ -119,7 +125,18 @@ class PlotsInterface:
         plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
         queryset = self.get_queryset_from_core_model_manager(plot_params=plot_params)
 
-        return QuerySetResult(queryset=queryset, latest_date=queryset.latest_date)
+        data = {
+            "queryset": queryset,
+            "latest_date": queryset.latest_date,
+
+        }
+        context = {
+            "request": request,
+            "fields_to_export": plot_params["fields_to_export"],
+            "plot_parameters": plot_parameters,
+        }
+        # return QuerySetResult(queryset=queryset, latest_date=queryset.latest_date)
+        return QuerySetResult.model_validate(data, context=context)
 
     def get_queryset_from_core_model_manager(
         self,
@@ -141,7 +158,7 @@ class PlotsInterface:
         return self.core_model_manager.query_for_data(**plot_params)
 
     def build_plot_data_from_parameters_with_complete_queryset(
-        self, *, plot_parameters: PlotParameters
+        self, *, plot_parameters: PlotParameters, request,
     ) -> CompletePlotData:
         """Creates a `CompletePlotData` model which holds the params and full queryset for the given requested plot
 
@@ -160,7 +177,7 @@ class PlotsInterface:
 
         """
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
-            plot_parameters=plot_parameters
+            plot_parameters=plot_parameters, request=request,
         )
 
         if not queryset_result.queryset.exists():
@@ -172,7 +189,7 @@ class PlotsInterface:
         )
 
     def build_plot_data_from_parameters(
-        self, *, plot_parameters: PlotParameters
+        self, *, plot_parameters: PlotParameters, request
     ) -> PlotGenerationData:
         """Creates a `PlotGenerationData` model which holds the params and data for the given `plot_parameters`
 
@@ -196,12 +213,15 @@ class PlotsInterface:
         plot_parameters.y_axis = self.chart_request_params.y_axis
 
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
-            plot_parameters=plot_parameters,
+            plot_parameters=plot_parameters, request=request,
         )
+
+
 
         aggregated_results = get_aggregated_results(
             plot_parameters=plot_parameters,
             queryset=queryset_result.queryset,
+            request=request,
         )
 
         return PlotGenerationData.create_from_parameters(
@@ -210,7 +230,7 @@ class PlotsInterface:
             latest_date=queryset_result.latest_date,
         )
 
-    def build_plots_data_for_full_queryset(self) -> list[CompletePlotData]:
+    def build_plots_data_for_full_queryset(self, *, request) -> list[CompletePlotData]:
         """Creates a list of `CompletePlotData` models which hold the params and corresponding data for the plots
 
         Notes:
@@ -235,7 +255,7 @@ class PlotsInterface:
             try:
                 plot_data: PlotGenerationData = (
                     self.build_plot_data_from_parameters_with_complete_queryset(
-                        plot_parameters=plot_parameters
+                        plot_parameters=plot_parameters, request=request,
                     )
                 )
             except DataNotFoundForPlotError:
@@ -248,7 +268,7 @@ class PlotsInterface:
 
         return plots_data
 
-    def build_plots_data(self) -> list[PlotGenerationData]:
+    def build_plots_data(self, *, request) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
@@ -273,7 +293,7 @@ class PlotsInterface:
         for plot_parameters in self.chart_request_params.plots:
             try:
                 plot_data: PlotGenerationData = self.build_plot_data_from_parameters(
-                    plot_parameters=plot_parameters
+                    plot_parameters=plot_parameters, request=request,
                 )
             except DataNotFoundForPlotError:
                 continue
@@ -287,7 +307,7 @@ class PlotsInterface:
 
 
 def get_aggregated_results(
-    *, plot_parameters: PlotParameters, queryset: QuerySet
+    *, plot_parameters: PlotParameters, queryset: QuerySet, request,
 ) -> dict[str, list[datetime.date | Decimal | bool | str]]:
     """Gets the aggregated results for a given `queryset` based on the `plot_parameters`
 
@@ -312,6 +332,7 @@ def get_aggregated_results(
             }
 
     """
+
     if plot_parameters.x_axis == ChartAxisFields.age.name:
         result = aggregate_results_by_age(queryset=queryset)
     else:
@@ -350,11 +371,13 @@ def aggregate_results_by_age(*, queryset: QuerySet) -> dict[str, list[str | Deci
         A properly sorted and displayable version broken into two separate lists
 
     """
-    for exported_result in queryset:
-        age: str = exported_result[ChartAxisFields.age.value]
-        exported_result[ChartAxisFields.age.value] = _build_age_display_name(value=age)
-
-    return aggregate_results(values=queryset)
+    # aggregate_results(values=queryset) = {'age__name': ['00 - 04'], 'metric_value': [Decimal('1.3000')]}
+    # for exported_result in queryset:
+    #     age: str = exported_result[ChartAxisFields.age.value]
+    #     exported_result[ChartAxisFields.age.value] = _build_age_display_name(value=age)
+    #
+    # return aggregate_results(values=queryset)
+    return queryset
 
 
 def _build_age_display_name(*, value: str) -> str:
@@ -376,10 +399,11 @@ def aggregate_results(*, values) -> dict[str, list[datetime.date | Decimal | boo
         }
 
     """
-    aggregated_results = defaultdict(list)
-
-    for row in values:
-        for key, value in row.items():
-            aggregated_results[key].append(value)
-
-    return dict(aggregated_results)
+    # aggregated_results = defaultdict(list)
+    #
+    # for row in values:
+    #     for key, value in row.items():
+    #         aggregated_results[key].append(value)
+    #
+    # return dict(aggregated_results)
+    return values
