@@ -1,7 +1,7 @@
 from django.urls import path, resolvers
 from django.views.generic import TemplateView
 
-from metrics.api.settings import AUTH_ENABLED
+from metrics.api.settings.auth import AUTH_ENABLED
 from public_api.version_02.views import (
     GeographyDetailViewV2,
     GeographyListViewV2,
