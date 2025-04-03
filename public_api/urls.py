@@ -1,7 +1,7 @@
 from django.urls import path, resolvers
 from django.views.generic import TemplateView
 
-from metrics.api.settings.auth import AUTH_ENABLED
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.version_02.views import (
     GeographyDetailViewV2,
     GeographyListViewV2,
@@ -51,7 +51,7 @@ def construct_url_patterns_for_public_api(
     urls.extend(_construct_version_one_urls(prefix=prefix))
     urls.extend(_construct_version_two_urls(prefix=prefix))
 
-    if AUTH_ENABLED:
+    if MetricsPublicAPIInterface.is_auth_enabled():
         urls.append(
             path(
                 "robots.txt",
