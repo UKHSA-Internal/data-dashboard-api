@@ -125,6 +125,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
             metric=metric_name,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
+        queryset = queryset.filter(is_public=True)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
 
     def filter_for_latest_refresh_date_records(self, *, queryset: Self) -> Self:
