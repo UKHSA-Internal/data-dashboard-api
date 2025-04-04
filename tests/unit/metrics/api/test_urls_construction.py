@@ -10,6 +10,7 @@ from metrics.api.urls_construction import (
     construct_public_api_urlpatterns,
     construct_urlpatterns,
 )
+from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
 MODULE_PATH = "metrics.api.urls_construction"
 
@@ -299,6 +300,56 @@ class TestConstructUrlpatterns:
 
         # Then
         assert not any(excluded_endpoint_path in str(x.pattern) for x in flattened_urls)
+
+    def test_public_api_with_auth_enabled_includes_robots_txt_url(self):
+        """
+        Given `AUTH_ENABLED` is set to True
+        And an `app_mode` of "PUBLIC_API"
+        When `construct_urlpatterns()` is called
+        Then the returned urls patterns
+            does contain `robots.txt`
+        """
+        # Given
+        app_mode = enums.AppMode.PUBLIC_API.value
+
+        # When
+        with mock.patch.object(
+            MetricsPublicAPIInterface,
+            "is_auth_enabled",
+            return_value=True,
+        ):
+            flattened_urls = _flatten_urls(
+                urlpatterns=construct_urlpatterns(app_mode=app_mode)
+            )
+
+        # Then
+        patterns = [str(x.pattern) for x in flattened_urls]
+        assert "robots.txt" in patterns
+
+    def test_public_api_with_auth_disabled_excludes_robots_txt_url(self):
+        """
+        Given `AUTH_ENABLED` is set to False
+        And an `app_mode` of "PUBLIC_API"
+        When `construct_urlpatterns()` is called
+        Then the returned urls patterns
+            do not contain `robots.txt`
+        """
+        # Given
+        app_mode = enums.AppMode.PUBLIC_API.value
+
+        # When
+        with mock.patch.object(
+            MetricsPublicAPIInterface,
+            "is_auth_enabled",
+            return_value=False,
+        ):
+            flattened_urls = _flatten_urls(
+                urlpatterns=construct_urlpatterns(app_mode=app_mode)
+            )
+
+        # Then
+        patterns = [str(x.pattern) for x in flattened_urls]
+        assert "robots.txt" not in patterns
 
     # Tests for APP_MODE = "CMS_ADMIN"
 

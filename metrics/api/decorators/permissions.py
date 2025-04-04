@@ -5,7 +5,7 @@ from metrics.api.packages.permissions import (
     FluentPermissions,
     FluentPermissionsError,
 )
-from metrics.api.settings.private_api import is_auth_enabled
+from metrics.api.settings.auth import is_auth_enabled
 from metrics.data.models.rbac_models import (
     RBACPermission,
 )
