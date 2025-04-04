@@ -217,6 +217,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             field_name=field_to_order_by,
         )
 
+        queryset = queryset.filter(is_public=True)
+
         if fields_to_export:
             fields_to_export = [
                 field for field in fields_to_export if field is not None

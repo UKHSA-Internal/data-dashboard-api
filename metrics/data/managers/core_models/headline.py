@@ -134,7 +134,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             queryset=queryset,
             geography_type_name=geography_type_name,
             geography_name=geography_name,
-            geography_code=None,
+            geography_code="",
             stratum_name=stratum_name,
             age=age,
             sex=sex,
@@ -199,6 +199,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             sex=sex,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
+        queryset = queryset.filter(is_public=True)
         return self._newest_to_oldest(queryset=queryset)
 
     @staticmethod
@@ -300,8 +301,8 @@ class CoreHeadlineManager(models.Manager):
         Returns:
            Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
            Eg: `85+` where age range is the headline variable of the chart and the y_axis
-           is the metric value. A `latest_date` attribute is added to the queryset, which is
-           take from the `period_end` of the selected headline metric.
+           is the metric value. A `latest_date` attribute is added to the queryset,
+           which is taken from the `period_end` of the selected headline metric.
            Examples:
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
