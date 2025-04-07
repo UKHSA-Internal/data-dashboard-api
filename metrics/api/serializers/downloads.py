@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts, plots
 from metrics.domain.common.utils import (
@@ -56,7 +57,7 @@ class DownloadsSerializer(serializers.Serializer):
 
     plots = DownloadListSerializer()
 
-    def to_models(self) -> ChartRequestParams:
+    def to_models(self, request: Request) -> ChartRequestParams:
         """Creates a `PlotsCollection` from the download
             request parameters.
 
@@ -87,6 +88,7 @@ class DownloadsSerializer(serializers.Serializer):
             chart_width=DEFAULT_CHART_WIDTH,
             x_axis="",
             y_axis="",
+            request=request,
         )
 
         if DataSourceFileType[metric_group].is_timeseries:

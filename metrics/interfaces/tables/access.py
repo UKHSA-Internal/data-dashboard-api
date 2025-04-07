@@ -18,11 +18,11 @@ class TablesInterface:
     def __init__(
         self,
         *,
-        plots_collection: ChartRequestParams,
+        request_params: ChartRequestParams,
         core_model_manager: CORE_MODEL_MANAGER_TYPE | None = None,
         plots_interface: PlotsInterface | None = None,
     ):
-        self.plots_collection = plots_collection
+        self.plots_collection = request_params
         self.metric_group = extract_metric_group_from_metric(
             metric=self.plots_collection.plots[0].metric
         )
@@ -78,7 +78,7 @@ class TablesInterface:
 
 def generate_table_for_full_plots(
     *,
-    plots_collection: ChartRequestParams,
+    request_params: ChartRequestParams,
 ) -> list[dict[str, str]]:
     """Validates and creates tabular output based off the parameters provided within the `plots_collection` model
 
@@ -88,7 +88,7 @@ def generate_table_for_full_plots(
         then 365 data points will be returned in the output.
 
     Args:
-        plots_collection: The requested table plots parameters
+        request_params: The requested table plots parameters
             encapsulated as a model
 
     Returns:
@@ -105,6 +105,6 @@ def generate_table_for_full_plots(
             returned any data from the underlying queries
     """
     tables_interface = TablesInterface(
-        plots_collection=plots_collection,
+        request_params=request_params,
     )
     return tables_interface.generate_full_plots_for_table()
