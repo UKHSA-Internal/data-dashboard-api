@@ -30,7 +30,7 @@ def _set_rbac_group_permissions(*, request: HttpRequest, group_id: str) -> None:
         return
 
     group_permissions: RBACGroupPermission = RBACGroupPermission.objects.get_group(
-        name=group_id
+        group_id=group_id
     )
     if group_permissions:
         request.group_permissions = list(group_permissions.permissions.all())
