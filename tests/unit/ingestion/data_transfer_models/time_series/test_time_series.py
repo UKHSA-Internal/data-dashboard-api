@@ -1,3 +1,5 @@
+from unittest import mock
+
 import pytest
 from pydantic_core._pydantic_core import ValidationError
 
@@ -9,9 +11,11 @@ from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 from metrics.data.enums import TimePeriod
 
 VALID_DATETIME = "2023-11-20 12:00:00"
+MODULE_PATH = "ingestion.data_transfer_models.time_series"
 
 
 class TestInboundTimeSeriesSpecificFields:
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
     def test_validates_payload(self):
         """
         Given a payload containing valid values
@@ -33,6 +37,7 @@ class TestInboundTimeSeriesSpecificFields:
                 embargo=fake_embargo,
                 metric_value=fake_metric_value,
                 force_write=fake_force_write_value,
+                is_public=True,
             )
         )
 
@@ -142,6 +147,58 @@ class TestInboundTimeSeriesSpecificFields:
         assert validated_embargo.hour == 0
         assert validated_embargo.minute == 0
         assert validated_embargo.second == 0
+
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
+    def test_raises_error_when_non_public_data_passed_to_public_platform(self):
+        """
+        Given a payload with `is_public` set to False
+        And `AUTH_ENABLED` is set to False
+        When the `InboundTimeSeriesSpecificFields` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            InboundTimeSeriesSpecificFields(
+                epiweek=1,
+                date="2023-11-20",
+                embargo=VALID_DATETIME,
+                metric_value=123,
+                is_public=False,
+            )
+
+    @pytest.mark.parametrize("is_public", [True, False])
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    def test_validates_public_or_private_data_when_auth_enabled_is_true(
+        self, is_public: bool
+    ):
+        """
+        Given a payload containing `is_public` as True or False
+        And `AUTH_ENABLED` is set to True
+        When the `InboundTimeSeriesSpecificFields` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        fake_embargo = VALID_DATETIME
+        fake_metric_value = 123
+
+        # When
+        inbound_time_series_specific_fields_validation = (
+            InboundTimeSeriesSpecificFields(
+                epiweek=46,
+                date="2023-11-01",
+                embargo=fake_embargo,
+                metric_value=fake_metric_value,
+                is_public=is_public,
+            )
+        )
+
+        # Then
+        inbound_time_series_specific_fields_validation.model_validate(
+            inbound_time_series_specific_fields_validation,
+            strict=True,
+        )
 
 
 class TestTimeSeriesDTO:

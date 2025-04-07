@@ -1,12 +1,17 @@
 import datetime
+from typing import Self
 
 from pydantic import BaseModel
-from pydantic.functional_validators import field_validator
+from pydantic.functional_validators import field_validator, model_validator
 from pydantic_core.core_schema import ValidationInfo
 
 from ingestion.data_transfer_models import validation
-from ingestion.data_transfer_models.base import IncomingBaseDataModel
+from ingestion.data_transfer_models.base import (
+    IncomingBaseDataModel,
+    NonPublicDataSentToPublicIngestionError,
+)
 from ingestion.utils import type_hints
+from metrics.api.settings.auth import AUTH_ENABLED
 
 
 class InboundHeadlineSpecificFields(BaseModel):
@@ -104,6 +109,14 @@ class InboundHeadlineSpecificFields(BaseModel):
         return validation.validate_period_end(
             period_start=input_period_start, period_end=period_end
         )
+
+    @model_validator(mode="after")
+    def invalidate_non_public_data_for_public_ingestion(self) -> Self:
+        """Checks that if this is a public instance of the product then `is_public=False` data is invalidated."""
+        if not AUTH_ENABLED and self.is_public is False:
+            raise NonPublicDataSentToPublicIngestionError
+
+        return self
 
 
 class HeadlineDTO(IncomingBaseDataModel):
