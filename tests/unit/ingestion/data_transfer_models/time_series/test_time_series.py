@@ -30,7 +30,7 @@ class TestInboundTimeSeriesSpecificFields:
         fake_force_write_value = True
 
         # When
-        imbound_time_series_specific_fields_validation = (
+        inbound_time_series_specific_fields_validation = (
             InboundTimeSeriesSpecificFields(
                 epiweek=fake_epiweek,
                 date=fake_date,
@@ -42,8 +42,8 @@ class TestInboundTimeSeriesSpecificFields:
         )
 
         # Then
-        imbound_time_series_specific_fields_validation.model_validate(
-            imbound_time_series_specific_fields_validation,
+        inbound_time_series_specific_fields_validation.model_validate(
+            inbound_time_series_specific_fields_validation,
             strict=True,
         )
 

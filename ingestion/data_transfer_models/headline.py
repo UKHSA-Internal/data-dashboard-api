@@ -113,7 +113,7 @@ class InboundHeadlineSpecificFields(BaseModel):
     @model_validator(mode="after")
     def invalidate_non_public_data_for_public_ingestion(self) -> Self:
         """Checks that if this is a public instance of the product then `is_public=False` data is invalidated."""
-        if not AUTH_ENABLED and self.is_public is False:
+        if not AUTH_ENABLED and not self.is_public:
             raise NonPublicDataSentToPublicIngestionError
 
         return self

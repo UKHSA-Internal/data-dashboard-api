@@ -17,7 +17,7 @@ from ingestion.utils import enums
 
 class NonPublicDataSentToPublicIngestionError(ValueError):
     def __init__(self):
-        message = "Inbound data with `is_public=False` cannot be ingested when `AUTH_ENABLED` is true"
+        message = "Inbound data with `is_public=False` cannot be ingested when `AUTH_ENABLED` is false"
         super().__init__(message)
 
 
