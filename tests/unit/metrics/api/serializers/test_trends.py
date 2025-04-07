@@ -372,7 +372,7 @@ class TestTrendsQuerySerializer:
         serializer.is_valid()
 
         # When
-        trends_parameters = serializer.to_models()
+        trends_parameters = serializer.to_models(request=None)
 
         # Then
         assert trends_parameters.topic_name == valid_data_payload["topic"]

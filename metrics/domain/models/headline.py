@@ -1,4 +1,5 @@
 from pydantic.main import BaseModel
+from rest_framework.request import Request
 
 
 class HeadlineParameters(BaseModel):
@@ -9,6 +10,10 @@ class HeadlineParameters(BaseModel):
     geography_type: str | None = ""
     sex: str | None = ""
     age: str | None = ""
+    request: Request | None = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
     @property
     def topic_name(self) -> str:

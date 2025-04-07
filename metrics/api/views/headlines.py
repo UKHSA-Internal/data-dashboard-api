@@ -73,7 +73,9 @@ class HeadlinesView(APIView):
         query_serializer = HeadlinesQuerySerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
-        serialized_model: HeadlineParameters = query_serializer.to_models()
+        serialized_model: HeadlineParameters = query_serializer.to_models(
+            request=request
+        )
 
         try:
             headline: Headline = generate_headline_number(
