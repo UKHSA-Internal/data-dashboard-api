@@ -120,12 +120,12 @@ class TestFluentPermissions:
         with pytest.raises(FluentPermissionsError):
             fluent_permissions.validate()
 
-    def test_validate_raises_error_when_permission_can_be_matched(self):
+    def test_validate_raises_error_when_permission_cannot_be_matched(self):
         """
         Given a FluentPermissions instance
             with a permission for a different dataset
         When validate() is called
-        Then FluentPermissionsError is raised
+        Then a `FluentPermissionsError` is raised
         """
         # Given
         non_matching_permission = FakeRBACPermissionFactory.build_rbac_permission(
@@ -154,6 +154,40 @@ class TestFluentPermissions:
         Then no error is raised
         """
         # Given
+        fluent_permissions = FluentPermissions(
+            data=self.data, group_permissions=[fake_rbac_permission]
+        )
+        (
+            fluent_permissions.add_field("theme")
+            .add_field("sub_theme")
+            .add_field("topic")
+            .add_field("geography_type")
+            .add_field("geography")
+            .add_field("metric")
+            .add_field("age")
+            .add_field("stratum")
+            .execute()
+        )
+        # When/Then
+        fluent_permissions.validate()  # Should not raise an exception
+
+    def test_validate_passes_when_wildcard_permission_matches_requested_dataset(
+        self, fake_rbac_permission: FakeRBACPermission
+    ):
+        """
+        Given a FluentPermissions instance
+            with an `RBACPPermission` which wildcards the dataset
+        When validate() is called
+        Then no error is raised
+        """
+        # Given
+        wildcarded_permission = fake_rbac_permission
+        wildcarded_permission.metric = None
+        wildcarded_permission.topic = None
+        wildcarded_permission.age = None
+        wildcarded_permission.geography = None
+        # Permission wildcards for the selected theme & sub_theme
+
         fluent_permissions = FluentPermissions(
             data=self.data, group_permissions=[fake_rbac_permission]
         )

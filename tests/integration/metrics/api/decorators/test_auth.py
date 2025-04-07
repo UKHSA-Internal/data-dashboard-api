@@ -1,3 +1,4 @@
+import uuid
 from http import HTTPStatus
 from unittest import mock
 
@@ -38,6 +39,9 @@ urlpatterns = [
 
 
 class TestAuthorisedRoute:
+    @property
+    def path(self):
+        return "/api/mock-downloads/"
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
@@ -52,7 +56,7 @@ class TestAuthorisedRoute:
         client = APIClient()
 
         # When
-        response = client.post("/api/mock-downloads/", format="json")
+        response = client.post(path=self.path, format="json")
 
         # Then
         assert response.status_code == HTTPStatus.OK
@@ -69,8 +73,9 @@ class TestAuthorisedRoute:
         Then the response is successful
         """
         # Given
+        group_id = uuid.uuid4()
         client = APIClient()
-        headers = {f"HTTP_{RBAC_AUTH_X_HEADER}": "medical"}
+        headers = {f"HTTP_{RBAC_AUTH_X_HEADER}": group_id}
         all_respiratory_data = RBACPermissionFactory.create_record(
             name="all_infectious_respiratory_data",
             theme_name="infectious_disease",
@@ -79,10 +84,11 @@ class TestAuthorisedRoute:
         RBACPermissionGroupFactory.create_record(
             name="medical",
             permissions=[all_respiratory_data],
+            group_id=group_id,
         )
 
         # When
-        response = client.post("/api/mock-downloads/", format="json", **headers)
+        response = client.post(path=self.path, format="json", **headers)
 
         # Then
         assert response.status_code == HTTPStatus.OK
@@ -107,7 +113,7 @@ class TestAuthorisedRoute:
         headers = {f"HTTP_{RBAC_AUTH_X_HEADER}": group_id}
 
         # When
-        response = client.post("/api/mock-downloads/", format="json", **headers)
+        response = client.post(path=self.path, format="json", **headers)
 
         # Then
         expected = {"message": "Success", "permissions": []}
@@ -130,7 +136,7 @@ class TestAuthorisedRoute:
         headers = {}  # No X-GroupId header
 
         # When
-        response = client.post("/api/mock-downloads/", format="json", **headers)
+        response = client.post(path=self.path, format="json", **headers)
 
         # Then
         expected = {"message": "Success", "permissions": []}

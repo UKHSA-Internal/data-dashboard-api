@@ -17,6 +17,7 @@ class AppMode(Enum):
             cls.PUBLIC_API.value,
             cls.INGESTION.value,
             cls.FEEDBACK_API.value,
+            cls.AUDIT_API.value,
         ]
 
     @classmethod
