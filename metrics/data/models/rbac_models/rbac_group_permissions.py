@@ -25,4 +25,4 @@ class RBACGroupPermission(models.Model):
     objects = RBACGroupPermissionManager()
 
     def __str__(self):
-        return self.name
+        return f"{self.name} : ({self.group_id})"
