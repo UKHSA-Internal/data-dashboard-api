@@ -89,41 +89,6 @@ class TestHeadlinesQuerySerializer:
             FakeStratumManager([fake_stratum]),
         )
 
-    def test_invalidates_when_mandatory_fields_omitted(self):
-        """
-        Given a valid payload passed to the `HeadlinesQuerySerializer` object
-        When `is_valid()` is called from the serializer
-        Then True is returned
-        """
-        # Given
-        (
-            valid_data_payload,
-            metric_manager,
-            topic_manager,
-            geography_manager,
-            geography_type_manager,
-            age_manager,
-            stratum_manager,
-        ) = self._setup_valid_data_payload_and_model_managers()
-
-        serializer = HeadlinesQuerySerializer(
-            data=valid_data_payload,
-            context={
-                "topic_manager": topic_manager,
-                "metric_manager": metric_manager,
-                "geography_manager": geography_manager,
-                "geography_type_manager": geography_type_manager,
-                "age_manager": age_manager,
-                "stratum_manager": stratum_manager,
-            },
-        )
-
-        # When
-        validated: bool = serializer.is_valid(raise_exception=True)
-
-        # Then
-        assert validated
-
     def test_can_validate_successfully(self):
         """
         Given a valid payload passed to the `HeadlinesQuerySerializer` object
@@ -154,7 +119,7 @@ class TestHeadlinesQuerySerializer:
         )
 
         # When
-        validated: bool = serializer.is_valid(raise_exception=True)
+        validated: bool = serializer.is_valid()
 
         # Then
         assert validated
@@ -278,7 +243,6 @@ class TestHeadlinesQuerySerializer:
             age_manager,
             stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
-        geography_manager = FakeGeographyManager(geographies=[mock.Mock()])
 
         # When
         serializer = HeadlinesQuerySerializer(
@@ -314,7 +278,6 @@ class TestHeadlinesQuerySerializer:
             age_manager,
             stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
-        geography_type_manager = FakeGeographyTypeManager(geography_types=[mock.Mock()])
 
         # When
         serializer = HeadlinesQuerySerializer(
@@ -355,7 +318,6 @@ class TestHeadlinesQuerySerializer:
             age_manager,
             stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
-        stratum_manager = FakeStratumManager(strata=[mock.Mock()])
 
         # When
         serializer = HeadlinesQuerySerializer(
@@ -391,7 +353,6 @@ class TestHeadlinesQuerySerializer:
             age_manager,
             stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
-        age_manager = FakeAgeManager(ages=[mock.Mock()])
 
         # When
         serializer = HeadlinesQuerySerializer(
