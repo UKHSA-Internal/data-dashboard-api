@@ -16,9 +16,9 @@ def require_authorisation(func):
         try:
             group_id: str = request.headers[RBAC_AUTH_X_HEADER]
         except KeyError:
-            pass
-        else:
-            _set_rbac_group_permissions(request=request, group_id=group_id)
+            group_id = ""
+
+        _set_rbac_group_permissions(request=request, group_id=group_id)
         return func(self, request, *args, **kwargs)
 
     return wrap
