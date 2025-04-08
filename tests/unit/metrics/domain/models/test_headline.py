@@ -25,7 +25,6 @@ class TestHeadlineParameters:
             "age",
             "topic",
             "metric",
-
         ],
     )
     def test_mandatory_fields_are_enforced(self, field: str):
@@ -36,7 +35,7 @@ class TestHeadlineParameters:
         Then a `ValidationError` is raised
         """
         # Given
-        input_data = self.valid_payload
+        input_data = self.valid_payload.copy()
         input_data.pop(field)
 
         # When / Then
