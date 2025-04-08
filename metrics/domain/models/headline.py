@@ -5,11 +5,11 @@ from rest_framework.request import Request
 class HeadlineParameters(BaseModel):
     topic: str
     metric: str
-    stratum: str | None = ""
-    geography: str | None = ""
-    geography_type: str | None = ""
-    sex: str | None = ""
-    age: str | None = ""
+    stratum: str
+    geography: str
+    geography_type: str
+    sex: str
+    age: str
     request: Request | None = None
 
     class Config:

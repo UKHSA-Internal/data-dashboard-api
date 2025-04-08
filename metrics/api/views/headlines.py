@@ -73,19 +73,13 @@ class HeadlinesView(APIView):
         query_serializer = HeadlinesQuerySerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
-        serialized_model: HeadlineParameters = query_serializer.to_models(
+        headline_parameters: HeadlineParameters = query_serializer.to_models(
             request=request
         )
 
         try:
             headline: Headline = generate_headline_number(
-                topic_name=serialized_model.topic_name,
-                metric_name=serialized_model.metric_name,
-                geography_type_name=serialized_model.geography_type_name,
-                geography_name=serialized_model.geography_name,
-                stratum_name=serialized_model.stratum_name,
-                age=serialized_model.age,
-                sex=serialized_model.sex,
+                headline_parameters=headline_parameters
             )
         except BaseInvalidHeadlinesRequestError as error:
             return Response(

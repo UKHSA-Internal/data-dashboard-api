@@ -1,34 +1,44 @@
 import pytest
+from pydantic_core import ValidationError
 
 from metrics.domain.models.headline import HeadlineParameters
 
 
 class TestHeadlineParameters:
+    valid_payload = {
+        "topic": "COVID-19",
+        "metric": "COVID-19_headline_ONSdeaths_7DayTotals",
+        "geography": "England",
+        "geography_type": "Nation",
+        "stratum": "default",
+        "sex": "all",
+        "age": "all",
+    }
+
     @pytest.mark.parametrize(
-        "optional_field",
+        "field",
         [
             "stratum",
             "geography",
             "geography_type",
             "sex",
             "age",
+            "topic",
+            "metric",
+
         ],
     )
-    def test_optional_fields_default_to_empty_string(self, optional_field: str):
+    def test_mandatory_fields_are_enforced(self, field: str):
         """
-        Given a valid topic and metric
-        And an optional field which has been passed as None
+        Given an otherwise valid payload
+        And a mandatory field which has been omitted
         When the `HeadlineParameters` model is initialized
-        Then an empty string is returned for the optional field
+        Then a `ValidationError` is raised
         """
         # Given
-        topic = "COVID-19"
-        metric = "COVID-19_headline_ONSdeaths_7DayTotals"
+        input_data = self.valid_payload
+        input_data.pop(field)
 
-        # When
-        headline_parameters = HeadlineParameters(topic=topic, metric=metric)
-        setattr(headline_parameters, optional_field, None)
-
-        # Then
-        property_to_get = f"{optional_field}_name"
-        assert getattr(headline_parameters, property_to_get) == ""
+        # When / Then
+        with pytest.raises(ValidationError):
+            HeadlineParameters(**input_data)
