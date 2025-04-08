@@ -132,7 +132,7 @@ class DownloadsView(APIView):
         request_serializer.is_valid(raise_exception=True)
 
         file_format: str = request_serializer.data["file_format"]
-        chart_plot_models = request_serializer.to_models()
+        chart_plot_models = request_serializer.to_models(request=request)
 
         try:
             queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(

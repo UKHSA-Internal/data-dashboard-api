@@ -2,6 +2,7 @@ import contextlib
 
 from django.db.utils import OperationalError
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts, plots
 from metrics.domain.common.utils import (
@@ -59,7 +60,7 @@ class TablesSerializer(serializers.Serializer):
         with contextlib.suppress(OperationalError):
             super().__init__(*args, **kwargs)
 
-    def to_models(self) -> ChartRequestParams:
+    def to_models(self, request: Request) -> ChartRequestParams:
         return ChartRequestParams(
             plots=self.data["plots"],
             file_format="svg",
@@ -67,6 +68,7 @@ class TablesSerializer(serializers.Serializer):
             chart_width=DEFAULT_CHART_WIDTH,
             x_axis=self.data.get("x_axis") or DEFAULT_X_AXIS,
             y_axis=self.data.get("y_axis") or DEFAULT_Y_AXIS,
+            request=request,
         )
 
 
