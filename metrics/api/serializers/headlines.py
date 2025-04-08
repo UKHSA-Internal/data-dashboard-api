@@ -34,27 +34,27 @@ class HeadlinesQuerySerializer(serializers.Serializer):
     )
     geography = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.GEOGRAPHY_FIELD,
     )
     geography_type = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.GEOGRAPHY_TYPE_FIELD,
     )
     stratum = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.STRATUM_FIELD,
     )
     age = serializers.ChoiceField(
         choices=[],
-        required=False,
+        required=True,
         help_text=help_texts.AGE_FIELD,
     )
     sex = serializers.ChoiceField(
         choices=["all", "m", "f"],
-        required=False,
+        required=True,
         help_text=help_texts.SEX_FIELD,
     )
 

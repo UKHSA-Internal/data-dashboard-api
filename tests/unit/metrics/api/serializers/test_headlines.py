@@ -10,7 +10,10 @@ from metrics.api.serializers.headlines import (
     HeadlinesQuerySerializer,
     CoreHeadlineSerializer,
 )
+from tests.fakes.factories.metrics.age_factory import FakeAgeFactory
+from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
+from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
 from tests.fakes.managers.age_manager import FakeAgeManager
 from tests.fakes.managers.geography_manager import FakeGeographyManager
 from tests.fakes.managers.geography_type_manager import FakeGeographyTypeManager
@@ -44,19 +47,82 @@ class TestHeadlinesQuerySerializer:
     @classmethod
     def _setup_valid_data_payload_and_model_managers(
         cls,
-    ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
+    ) -> tuple[
+        DATA_PAYLOAD_HINT,
+        FakeMetricManager,
+        FakeTopicManager,
+        FakeGeographyManager,
+        FakeGeographyTypeManager,
+        FakeAgeManager,
+        FakeStratumManager,
+    ]:
         fake_metric = FakeMetricFactory.build_example_metric(
             metric_name="COVID-19_headline_ONSdeaths_7DayTotals",
             metric_group_name="headline",
         )
         fake_topic = fake_metric.metric_group.topic
+        fake_geography = FakeGeographyFactory.build_example(
+            geography_name="England",
+            geography_type_name="Nation",
+            geography_code="E92000001",
+        )
+        fake_age = FakeAgeFactory.build_example(age_name="all")
+        fake_stratum = FakeStratumFactory.build_example(stratum_name="default")
 
         data: cls.DATA_PAYLOAD_HINT = {
             "topic": fake_topic.name,
             "metric": fake_metric.name,
+            "stratum": fake_stratum.name,
+            "age": fake_age.name,
+            "sex": "all",
+            "geography": fake_geography.name,
+            "geography_type": fake_geography.geography_type.name,
         }
 
-        return data, FakeMetricManager([fake_metric]), FakeTopicManager([fake_topic])
+        return (
+            data,
+            FakeMetricManager([fake_metric]),
+            FakeTopicManager([fake_topic]),
+            FakeGeographyManager([fake_geography]),
+            FakeGeographyTypeManager([fake_geography.geography_type]),
+            FakeAgeManager([fake_age]),
+            FakeStratumManager([fake_stratum]),
+        )
+
+    def test_invalidates_when_mandatory_fields_omitted(self):
+        """
+        Given a valid payload passed to the `HeadlinesQuerySerializer` object
+        When `is_valid()` is called from the serializer
+        Then True is returned
+        """
+        # Given
+        (
+            valid_data_payload,
+            metric_manager,
+            topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
+        ) = self._setup_valid_data_payload_and_model_managers()
+
+        serializer = HeadlinesQuerySerializer(
+            data=valid_data_payload,
+            context={
+                "topic_manager": topic_manager,
+                "metric_manager": metric_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "age_manager": age_manager,
+                "stratum_manager": stratum_manager,
+            },
+        )
+
+        # When
+        validated: bool = serializer.is_valid(raise_exception=True)
+
+        # Then
+        assert validated
 
     def test_can_validate_successfully(self):
         """
@@ -66,21 +132,29 @@ class TestHeadlinesQuerySerializer:
         """
         # Given
         (
-            data_payload,
+            valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
         serializer = HeadlinesQuerySerializer(
-            data=data_payload,
+            data=valid_data_payload,
             context={
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "age_manager": age_manager,
+                "stratum_manager": stratum_manager,
             },
         )
 
         # When
-        validated: bool = serializer.is_valid()
+        validated: bool = serializer.is_valid(raise_exception=True)
 
         # Then
         assert validated
@@ -98,6 +172,10 @@ class TestHeadlinesQuerySerializer:
             data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         data_payload[field_to_be_serialized] = "invalid-value"
 
@@ -106,6 +184,10 @@ class TestHeadlinesQuerySerializer:
             context={
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "age_manager": age_manager,
+                "stratum_manager": stratum_manager,
             },
         )
 
@@ -125,6 +207,10 @@ class TestHeadlinesQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
@@ -133,6 +219,10 @@ class TestHeadlinesQuerySerializer:
             context={
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "age_manager": age_manager,
+                "stratum_manager": stratum_manager,
             },
         )
 
@@ -152,6 +242,10 @@ class TestHeadlinesQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
@@ -179,6 +273,10 @@ class TestHeadlinesQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         geography_manager = FakeGeographyManager(geographies=[mock.Mock()])
 
@@ -189,9 +287,9 @@ class TestHeadlinesQuerySerializer:
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
                 "geography_manager": geography_manager,
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": stratum_manager,
+                "age_manager": age_manager,
             },
         )
 
@@ -211,6 +309,10 @@ class TestHeadlinesQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         geography_type_manager = FakeGeographyTypeManager(geography_types=[mock.Mock()])
 
@@ -220,10 +322,10 @@ class TestHeadlinesQuerySerializer:
             context={
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "geography_manager": geography_manager,
                 "geography_type_manager": geography_type_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "stratum_manager": stratum_manager,
+                "age_manager": age_manager,
             },
         )
 
@@ -248,6 +350,10 @@ class TestHeadlinesQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         stratum_manager = FakeStratumManager(strata=[mock.Mock()])
 
@@ -257,10 +363,10 @@ class TestHeadlinesQuerySerializer:
             context={
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
                 "stratum_manager": stratum_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "age_manager": FakeAgeManager([]),
+                "age_manager": age_manager,
             },
         )
 
@@ -280,6 +386,10 @@ class TestHeadlinesQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         age_manager = FakeAgeManager(ages=[mock.Mock()])
 
@@ -289,10 +399,10 @@ class TestHeadlinesQuerySerializer:
             context={
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": stratum_manager,
                 "age_manager": age_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
             },
         )
 
