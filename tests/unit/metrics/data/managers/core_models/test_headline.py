@@ -30,6 +30,7 @@ class TestCoreHeadlineManager:
         fake_stratum = "default"
         fake_sex = "all"
         fake_age = "all"
+        fake_is_public = True
 
         # When
         CoreHeadlineManager().delete_superseded_data(
@@ -41,6 +42,7 @@ class TestCoreHeadlineManager:
             stratum_name=fake_stratum,
             sex=fake_sex,
             age=fake_age,
+            is_public=fake_is_public,
         )
 
         # Then
@@ -53,14 +55,17 @@ class TestCoreHeadlineManager:
             stratum_name=fake_stratum,
             sex=fake_sex,
             age=fake_age,
+            is_public=fake_is_public,
         )
 
         returned_records = spy_query_for_superseded_data.return_value
         returned_records.delete.assert_called_once()
 
-    @mock.patch.object(CoreHeadlineQuerySet, "get_headlines_released_from_embargo")
+    @mock.patch.object(
+        CoreHeadlineQuerySet, "get_public_only_headlines_released_from_embargo"
+    )
     def test_query_for_superseded_data_returns_empty_queryset_for_no_data(
-        self, mocked_get_headlines_released_from_embargo: mock.MagicMock
+        self, mocked_get_public_only_headlines_released_from_embargo: mock.MagicMock
     ):
         """
         Given a payload containing the required fields
@@ -78,7 +83,7 @@ class TestCoreHeadlineManager:
         fake_stratum = "default"
         fake_sex = "all"
         fake_age = "all"
-        mocked_get_headlines_released_from_embargo.return_value = (
+        mocked_get_public_only_headlines_released_from_embargo.return_value = (
             CoreHeadline.objects.none()
         )
 

@@ -40,7 +40,9 @@ class TestConsumerClearStaleModels:
             mock.call(**expected_params, is_public=True),
             mock.call(**expected_params, is_public=False),
         ]
-        spy_core_headline_manager.delete_superseded_data.assert_has_calls(calls=expected_calls)
+        spy_core_headline_manager.delete_superseded_data.assert_has_calls(
+            calls=expected_calls
+        )
 
     def test_clear_stale_timeseries(self, example_headline_data: dict):
         """
