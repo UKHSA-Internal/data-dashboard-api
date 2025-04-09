@@ -21,6 +21,22 @@ class FluentPermissions:
         self.requested_data_parameters = requested_data_parameters
 
     def check_permission_allows_access(self, rbac_permission: RBACPermission) -> bool:
+        """Checks if the given `rbac_permission` provides access `requested_data_parameters`
+
+        Notes:
+            This provides wildcard matching in accordance with the hierarchy.
+            For example, if the `theme` is matched and the rest of the permission is empty
+            this is considered a wildcard, and will match data parameters.
+
+        Args:
+             `rbac_permission`: The `RBACPermission` model which contains
+                the individual permission details
+
+        Returns:
+            True if the given permission allows access to the requested dataset.
+            False otherwise.
+
+        """
         fields = [
             "theme",
             "sub_theme",
@@ -42,13 +58,3 @@ class FluentPermissions:
                 return False
 
         return True
-
-    def check_rbac_permissions(self, rbac_permissions: list[RBACPermission]) -> bool:
-        for rbac_permission in rbac_permissions:
-            is_access_allowed: bool = self.check_permission_allows_access(
-                rbac_permission=rbac_permission
-            )
-            if is_access_allowed:
-                return True
-
-        return False
