@@ -502,15 +502,23 @@ class Consumer:
             None
 
         """
+        params = {
+            "topic_name": self.dto.topic,
+            "metric_name": self.dto.metric,
+            "geography_name": self.dto.geography,
+            "geography_type_name": self.dto.geography_type,
+            "geography_code": self.dto.geography_code,
+            "stratum_name": self.dto.stratum,
+            "sex": self.dto.sex,
+            "age": self.dto.age,
+        }
         self.core_headline_manager.delete_superseded_data(
-            topic_name=self.dto.topic,
-            metric_name=self.dto.metric,
-            geography_name=self.dto.geography,
-            geography_type_name=self.dto.geography_type,
-            geography_code=self.dto.geography_code,
-            stratum_name=self.dto.stratum,
-            sex=self.dto.sex,
-            age=self.dto.age,
+            **params,
+            is_public=True,
+        )
+        self.core_headline_manager.delete_superseded_data(
+            **params,
+            is_public=False,
         )
 
     def build_api_time_series(self) -> list[API_TIME_SERIES_MODEL]:

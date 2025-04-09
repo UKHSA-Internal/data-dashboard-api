@@ -26,16 +26,21 @@ class TestConsumerClearStaleModels:
         consumer.clear_stale_headlines()
 
         # Then
-        spy_core_headline_manager.delete_superseded_data.assert_called_once_with(
-            topic_name=example_headline_data["topic"],
-            metric_name=example_headline_data["metric"],
-            geography_name=example_headline_data["geography"],
-            geography_type_name=example_headline_data["geography_type"],
-            geography_code=example_headline_data["geography_code"],
-            stratum_name=example_headline_data["stratum"],
-            sex=example_headline_data["sex"],
-            age=example_headline_data["age"],
-        )
+        expected_params = {
+            "topic_name": example_headline_data["topic"],
+            "metric_name": example_headline_data["metric"],
+            "geography_name": example_headline_data["geography"],
+            "geography_type_name": example_headline_data["geography_type"],
+            "geography_code": example_headline_data["geography_code"],
+            "stratum_name": example_headline_data["stratum"],
+            "sex": example_headline_data["sex"],
+            "age": example_headline_data["age"],
+        }
+        expected_calls = [
+            mock.call(**expected_params, is_public=True),
+            mock.call(**expected_params, is_public=False),
+        ]
+        spy_core_headline_manager.delete_superseded_data.assert_has_calls(calls=expected_calls)
 
     def test_clear_stale_timeseries(self, example_headline_data: dict):
         """
