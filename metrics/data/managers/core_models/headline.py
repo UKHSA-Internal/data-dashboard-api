@@ -141,7 +141,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         )
         return self._newest_to_oldest(queryset=queryset)
 
-    def get_headlines_released_from_embargo(
+    def get_all_headlines_released_from_embargo(
         self,
         *,
         topic_name: str,
@@ -153,7 +153,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         age: str,
         geography_code: str = "",
     ) -> Self:
-        """Filters by the given `topic_name` and `metric_name`
+        """Filters by the given parameters, inlcludes public and non-public data
 
         Args:
             topic_name: The name of the disease being queried.
@@ -199,6 +199,56 @@ class CoreHeadlineQuerySet(models.QuerySet):
             sex=sex,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
+        return self._newest_to_oldest(queryset=queryset)
+
+    def get_public_only_headlines_released_from_embargo(
+        self,
+        *,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+        geography_code: str = "",
+    ) -> Self:
+        queryset = self.get_all_headlines_released_from_embargo(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_type_name=geography_type_name,
+            geography_name=geography_name,
+            geography_code=geography_code,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+        queryset.filter(is_public=True)
+        return self._newest_to_oldest(queryset=queryset)
+
+    def get_non_public_only_headlines_released_from_embargo(
+        self,
+        *,
+        topic_name: str,
+        metric_name: str,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
+        sex: str,
+        age: str,
+        geography_code: str = "",
+    ) -> Self:
+        queryset = self.get_all_headlines_released_from_embargo(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            geography_type_name=geography_type_name,
+            geography_name=geography_name,
+            geography_code=geography_code,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+        queryset.filter(is_public=False)
         return self._newest_to_oldest(queryset=queryset)
 
     @staticmethod
@@ -305,7 +355,7 @@ class CoreHeadlineManager(models.Manager):
            Examples:
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
-        queryset = self.get_queryset().get_headlines_released_from_embargo(
+        queryset = self.get_queryset().get_public_only_headlines_released_from_embargo(
             topic_name=topic_name,
             metric_name=metric_name,
             geography_name=geography_name,
@@ -369,7 +419,7 @@ class CoreHeadlineManager(models.Manager):
         """
         return (
             self.get_queryset()
-            .get_headlines_released_from_embargo(
+            .get_all_headlines_released_from_embargo(
                 topic_name=topic_name,
                 metric_name=metric_name,
                 geography_name=geography_name,
@@ -393,6 +443,7 @@ class CoreHeadlineManager(models.Manager):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool = True,
     ) -> CoreHeadlineQuerySet:
         """Grabs all stale records which are not under embargo.
 
@@ -414,21 +465,37 @@ class CoreHeadlineManager(models.Manager):
                Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                E.g. `0_4` would be used to capture the age of 0-4 years old
+           is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
 
         Returns:
            The stale records in their entirety as a queryset
 
         """
-        queryset = self.get_queryset().get_headlines_released_from_embargo(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            geography_code=geography_code,
-            stratum_name=stratum_name,
-            age=age,
-            sex=sex,
-        )
+        if is_public:
+            queryset = (
+                self.get_queryset().get_public_only_headlines_released_from_embargo(
+                    topic_name=topic_name,
+                    metric_name=metric_name,
+                    geography_name=geography_name,
+                    geography_type_name=geography_type_name,
+                    stratum_name=stratum_name,
+                    age=age,
+                    sex=sex,
+                )
+            )
+        else:
+            queryset = (
+                self.get_queryset().get_non_public_only_headlines_released_from_embargo(
+                    topic_name=topic_name,
+                    metric_name=metric_name,
+                    geography_name=geography_name,
+                    geography_type_name=geography_type_name,
+                    stratum_name=stratum_name,
+                    age=age,
+                    sex=sex,
+                )
+            )
         # Note that we cannot slice / limit the above queryset.
         # This is because we will later call `delete()` on this queryset.
         # Which cannot be done since `OFFSET` and `DELETE` clauses are not allowed.
@@ -510,6 +577,7 @@ class CoreHeadlineManager(models.Manager):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool = True,
     ) -> None:
         """Deletes all stale records which are not under embargo.
 
@@ -531,6 +599,8 @@ class CoreHeadlineManager(models.Manager):
                Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                E.g. `0_4` would be used to capture the age of 0-4 years old
+           is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
 
         Returns:
            None
@@ -545,6 +615,7 @@ class CoreHeadlineManager(models.Manager):
             stratum_name=stratum_name,
             age=age,
             sex=sex,
+            is_public=is_public,
         )
         superseded_records.delete()
 
