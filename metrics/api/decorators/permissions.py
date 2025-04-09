@@ -75,7 +75,7 @@ def _new_to_representation_private(*, self, representation):
             return None
 
         fluent_permissions = FluentPermissions(
-            group_permissions=group_permissions,
+            rbac_permissions=group_permissions,
             data=data,
         )
         (
