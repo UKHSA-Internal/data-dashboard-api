@@ -50,14 +50,24 @@ class FluentPermissions:
         ]
 
         for field in fields:
-            supporting_model = getattr(rbac_permission, field)
+            allowed_model = getattr(rbac_permission, field)
             requested_value: str = getattr(self.requested_data_parameters, field)
-            if (
-                supporting_model is not None
-                and requested_value != supporting_model.name
-            ):
+
+            if allowed_model is None:
+                # The field was not specified on the `RBACPermission`.
+                # So we consider this to be a wildcard and skip to the next field.
+                continue
+
+            if requested_value != allowed_model.name:
+                # The field was specified on the `RBACPermission`.
+                # And it has not matched, so we mark the permission as False
+                # i.e. this permission does not allow access to the dataset
                 return False
 
+        # All the fields have been evaluated as either:
+        # - The field was `None` and therefore wildcarded
+        # - The field was a match
+        # In this case we can say the permission does allow access to the dataset
         return True
 
     def check_if_any_permissions_allow_access(
