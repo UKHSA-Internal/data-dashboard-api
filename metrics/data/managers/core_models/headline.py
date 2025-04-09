@@ -153,7 +153,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         age: str,
         geography_code: str = "",
     ) -> Self:
-        """Filters by the given `topic_name` and `metric_name`
+        """Filters by the given parameters, inlcludes public and non-public data
 
         Args:
             topic_name: The name of the disease being queried.
