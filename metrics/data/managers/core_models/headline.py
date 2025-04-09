@@ -141,7 +141,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         )
         return self._newest_to_oldest(queryset=queryset)
 
-    def get_headlines_released_from_embargo(
+    def get_all_headlines_released_from_embargo(
         self,
         *,
         topic_name: str,
