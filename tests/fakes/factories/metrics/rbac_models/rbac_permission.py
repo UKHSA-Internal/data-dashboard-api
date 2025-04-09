@@ -1,12 +1,16 @@
 import factory
 
+from tests.fakes.factories.metrics.age_factory import FakeAgeFactory
 from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
+from tests.fakes.factories.metrics.geography_type_factory import (
+    FakeGeographyTypeFactory,
+)
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
-from tests.fakes.models.metrics.age import FakeAge
-from tests.fakes.models.metrics.metric import FakeMetric
+from tests.fakes.factories.metrics.sub_theme_factory import FakeSubThemeFactory
+from tests.fakes.factories.metrics.theme_factory import FakeThemeFactory
+from tests.fakes.factories.metrics.topic_factory import FakeTopicFactory
 from tests.fakes.models.metrics.rbac_models.rbac_permission import FakeRBACPermission
-from tests.fakes.models.metrics.stratum import FakeStratum
 
 
 class FakeRBACPermissionFactory(factory.Factory):
@@ -20,43 +24,75 @@ class FakeRBACPermissionFactory(factory.Factory):
     @classmethod
     def build_rbac_permission(
         cls,
-        theme: str = "infectious_disease",
-        sub_theme: str = "respiratory",
-        metric: str = "COVID-19_cases_casesByDay",
-        topic: str = "COVID-19",
-        geography: str = "England",
-        geography_type: str = "Nation",
-        age: str = "all",
-        stratum: str = "default",
+        theme: str = "",
+        sub_theme: str = "",
+        metric: str = "",
+        topic: str = "",
+        geography: str = "",
+        geography_type: str = "",
+        age: str = "",
+        stratum: str = "",
     ) -> FakeRBACPermission:
-        metric: FakeMetric = FakeMetricFactory.build_example_metric(
-            metric_name=metric,
-            topic_name=topic,
-            theme_name=theme,
-            sub_theme_name=sub_theme,
-        )
+        if theme:
+            fake_theme = FakeThemeFactory.build_example_theme(name=theme)
+        else:
+            fake_theme = None
 
-        topic = metric.topic
-        sub_theme = topic.sub_theme
-        theme = sub_theme.theme
+        if sub_theme:
+            fake_sub_theme = FakeSubThemeFactory.build_example_sub_theme(
+                name=sub_theme, theme=fake_theme
+            )
+        else:
+            fake_sub_theme = None
 
-        geography = FakeGeographyFactory.build_example(
-            geography_name=geography, geography_type_name=geography_type
-        )
-        geography_type = geography.geography_type
+        if topic:
+            fake_topic = FakeTopicFactory.build_example_topic(
+                name=topic, sub_theme=fake_sub_theme
+            )
+        else:
+            fake_topic = None
 
-        stratum: FakeStratum = FakeStratumFactory.build_example(
-            stratum_name=stratum,
-        )
-        age = FakeAge(name=age)
+        if metric:
+            fake_metric = FakeMetricFactory.build(
+                name=metric,
+                topic=fake_topic,
+            )
+        else:
+            fake_metric = None
+
+        if geography_type:
+            fake_geography_type = FakeGeographyTypeFactory.build_example(
+                geography_type_name=geography_type
+            )
+        else:
+            fake_geography_type = None
+
+        if geography:
+            fake_geography = FakeGeographyFactory.build(
+                name=geography, geography_type=fake_geography_type
+            )
+        else:
+            fake_geography = None
+
+        if stratum:
+            fake_stratum = FakeStratumFactory.build_example(
+                stratum_name=stratum,
+            )
+        else:
+            fake_stratum = None
+
+        if age:
+            fake_age = FakeAgeFactory.build_example(age_name=age)
+        else:
+            fake_age = None
 
         return cls.build(
-            theme=theme,
-            sub_theme=sub_theme,
-            topic=topic,
-            metric=metric,
-            geography_type=geography_type,
-            geography=geography,
-            stratum=stratum,
-            age=age,
+            theme=fake_theme,
+            sub_theme=fake_sub_theme,
+            topic=fake_topic,
+            metric=fake_metric,
+            geography_type=fake_geography_type,
+            geography=fake_geography,
+            stratum=fake_stratum,
+            age=fake_age,
         )
