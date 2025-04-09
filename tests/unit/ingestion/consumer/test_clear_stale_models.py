@@ -66,15 +66,24 @@ class TestConsumerClearStaleModels:
         consumer.clear_stale_timeseries()
 
         # Then
-        spy_core_timeseries_manager.delete_superseded_data.assert_called_once_with(
-            metric_name=example_headline_data["metric"],
-            geography_name=example_headline_data["geography"],
-            geography_type_name=example_headline_data["geography_type"],
-            geography_code=example_headline_data["geography_code"],
-            stratum_name=example_headline_data["stratum"],
-            sex=example_headline_data["sex"],
-            age=example_headline_data["age"],
+        expected_core_headline_params = {
+            "metric_name": example_headline_data["metric"],
+            "geography_name": example_headline_data["geography"],
+            "geography_type_name": example_headline_data["geography_type"],
+            "geography_code": example_headline_data["geography_code"],
+            "stratum_name": example_headline_data["stratum"],
+            "sex": example_headline_data["sex"],
+            "age": example_headline_data["age"],
+        }
+        expected_calls = [
+            mock.call(**expected_core_headline_params, is_public=True),
+            mock.call(**expected_core_headline_params, is_public=False),
+        ]
+        # Check the core time series are treated as slices of public and non-public data
+        spy_core_timeseries_manager.delete_superseded_data.assert_has_calls(
+            calls=expected_calls
         )
+
         spy_api_timeseries_manager.delete_superseded_data.assert_called_once_with(
             theme_name=example_headline_data["parent_theme"],
             sub_theme_name=example_headline_data["child_theme"],

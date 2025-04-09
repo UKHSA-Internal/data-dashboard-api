@@ -490,6 +490,7 @@ class TestCoreTimeSeriesManager:
             stratum_name=expected_live_fourth_round_for_first_date.stratum.name,
             age=expected_live_fourth_round_for_first_date.age.name,
             sex=expected_live_fourth_round_for_first_date.sex,
+            is_public=expected_live_fourth_round_for_first_date.is_public,
         )
         retrieved_records = CoreTimeSeries.objects.all()
 
