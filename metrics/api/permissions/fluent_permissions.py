@@ -84,7 +84,7 @@ class FluentPermissions:
             False otherwise.
 
         """
-        for rbac_permission in rbac_permissions:
-            if self.check_permission_allows_access(rbac_permission=rbac_permission):
-                return True
-        return False
+        return any(
+            self.check_permission_allows_access(rbac_permission=rbac_permission)
+            for rbac_permission in rbac_permissions
+        )
