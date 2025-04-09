@@ -49,11 +49,11 @@ class FluentPermissions:
         ]
 
         for field in fields:
-            rbac_permission_value: str = getattr(rbac_permission, field)
+            supporting_model = getattr(rbac_permission, field)
             requested_value: str = getattr(self.requested_data_parameters, field)
             if (
-                rbac_permission_value is not None
-                and requested_value != rbac_permission_value.name
+                supporting_model is not None
+                and requested_value != supporting_model.name
             ):
                 return False
 
