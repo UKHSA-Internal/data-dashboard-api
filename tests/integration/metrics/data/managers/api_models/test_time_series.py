@@ -530,6 +530,7 @@ class TestAPITimeSeriesManager:
             stratum_name=fifth_embargoed_round_for_first_date.stratum,
             sex=fifth_embargoed_round_for_first_date.sex,
             age=fifth_embargoed_round_for_first_date.age,
+            is_public=fifth_embargoed_round_for_first_date.is_public,
         )
         retrieved_records = APITimeSeries.objects.all()
 

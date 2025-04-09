@@ -619,4 +619,5 @@ class Consumer:
             "sex": self.dto.sex,
             "age": self.dto.age,
         }
-        self.api_timeseries_manager.delete_superseded_data(**params)
+        self.api_timeseries_manager.delete_superseded_data(**params, is_public=True)
+        self.api_timeseries_manager.delete_superseded_data(**params, is_public=False)

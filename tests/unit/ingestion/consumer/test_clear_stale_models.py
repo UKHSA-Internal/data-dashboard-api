@@ -44,7 +44,7 @@ class TestConsumerClearStaleModels:
             calls=expected_calls
         )
 
-    def test_clear_stale_timeseries(self, example_headline_data: dict):
+    def test_clear_stale_timeseries(self, example_time_series_data: dict):
         """
         Given incoming timeseries data
         When `clear_stale_timeseries()` is called
@@ -57,7 +57,7 @@ class TestConsumerClearStaleModels:
         spy_core_timeseries_manager = mock.Mock(spec_set=CoreTimeSeriesManager)
         spy_api_timeseries_manager = mock.Mock(spec_set=APITimeSeriesManager)
         consumer = Consumer(
-            source_data=example_headline_data,
+            source_data=example_time_series_data,
             core_timeseries_manager=spy_core_timeseries_manager,
             api_timeseries_manager=spy_api_timeseries_manager,
         )
@@ -67,13 +67,13 @@ class TestConsumerClearStaleModels:
 
         # Then
         expected_core_headline_params = {
-            "metric_name": example_headline_data["metric"],
-            "geography_name": example_headline_data["geography"],
-            "geography_type_name": example_headline_data["geography_type"],
-            "geography_code": example_headline_data["geography_code"],
-            "stratum_name": example_headline_data["stratum"],
-            "sex": example_headline_data["sex"],
-            "age": example_headline_data["age"],
+            "metric_name": example_time_series_data["metric"],
+            "geography_name": example_time_series_data["geography"],
+            "geography_type_name": example_time_series_data["geography_type"],
+            "geography_code": example_time_series_data["geography_code"],
+            "stratum_name": example_time_series_data["stratum"],
+            "sex": example_time_series_data["sex"],
+            "age": example_time_series_data["age"],
         }
         expected_calls = [
             mock.call(**expected_core_headline_params, is_public=True),
@@ -84,15 +84,23 @@ class TestConsumerClearStaleModels:
             calls=expected_calls
         )
 
-        spy_api_timeseries_manager.delete_superseded_data.assert_called_once_with(
-            theme_name=example_headline_data["parent_theme"],
-            sub_theme_name=example_headline_data["child_theme"],
-            topic_name=example_headline_data["topic"],
-            metric_name=example_headline_data["metric"],
-            geography_name=example_headline_data["geography"],
-            geography_type_name=example_headline_data["geography_type"],
-            geography_code=example_headline_data["geography_code"],
-            stratum_name=example_headline_data["stratum"],
-            sex=example_headline_data["sex"],
-            age=example_headline_data["age"],
+        expected_api_headline_params = {
+            "theme_name": example_time_series_data["parent_theme"],
+            "sub_theme_name": example_time_series_data["child_theme"],
+            "topic_name": example_time_series_data["topic"],
+            "metric_name": example_time_series_data["metric"],
+            "geography_name": example_time_series_data["geography"],
+            "geography_type_name": example_time_series_data["geography_type"],
+            "geography_code": example_time_series_data["geography_code"],
+            "stratum_name": example_time_series_data["stratum"],
+            "sex": example_time_series_data["sex"],
+            "age": example_time_series_data["age"],
+        }
+        expected_calls = [
+            mock.call(**expected_api_headline_params, is_public=True),
+            mock.call(**expected_api_headline_params, is_public=False),
+        ]
+        # Check the api time series are treated as slices of public and non-public data
+        spy_api_timeseries_manager.delete_superseded_data.assert_has_calls(
+            calls=expected_calls
         )
