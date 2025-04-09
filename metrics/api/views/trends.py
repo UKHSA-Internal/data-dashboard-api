@@ -65,7 +65,7 @@ class TrendsView(APIView):
         query_serializer = TrendsQuerySerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
-        serialized_model: TrendsParameters = query_serializer.to_models()
+        serialized_model: TrendsParameters = query_serializer.to_models(request=request)
 
         try:
             trends_data: TREND_AS_DICT = generate_trend_numbers(

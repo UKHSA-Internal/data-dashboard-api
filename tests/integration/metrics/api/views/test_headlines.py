@@ -28,10 +28,13 @@ class TestHeadlinesView:
         # Given
         client = APIClient()
         payload = {
-            "topic": core_headline_example.metric.metric_group.topic.name,
+            "topic": core_headline_example.metric.topic.name,
             "metric": core_headline_example.metric.name,
             "geography": core_headline_example.geography.name,
             "geography_type": core_headline_example.geography.geography_type.name,
+            "age": core_headline_example.age.name,
+            "sex": core_headline_example.sex,
+            "stratum": core_headline_example.stratum.name,
         }
 
         # When
@@ -73,6 +76,9 @@ class TestHeadlinesView:
                 "metric": core_headline_example.metric.name,
                 "geography": core_headline_example.geography.name,
                 "geography_type": core_headline_example.geography.geography_type.name,
+                "age": core_headline_example.age.name,
+                "sex": core_headline_example.sex,
+                "stratum": core_headline_example.stratum.name,
             },
         )
 

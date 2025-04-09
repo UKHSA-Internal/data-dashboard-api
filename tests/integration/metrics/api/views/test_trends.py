@@ -39,6 +39,9 @@ class TestTrendsView:
                 "percentage_metric": percentage_metric_name,
                 "geography": main_record.geography.name,
                 "geography_type": main_record.geography.geography_type.name,
+                "sex": main_record.sex,
+                "age": main_record.age,
+                "stratum": main_record.stratum.name,
             },
         )
 
@@ -84,6 +87,11 @@ class TestTrendsView:
                 "topic": incorrect_topic_name,
                 "metric": metric_name,
                 "percentage_metric": percentage_metric_name,
+                "geography": main_record.geography.name,
+                "geography_type": main_record.geography.geography_type.name,
+                "sex": main_record.sex,
+                "age": main_record.age,
+                "stratum": main_record.stratum.name,
             },
         )
 

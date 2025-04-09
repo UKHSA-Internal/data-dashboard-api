@@ -4,6 +4,7 @@ from datetime import datetime
 from django.db.models import Manager
 from django.db.utils import OperationalError, ProgrammingError
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts
 from metrics.data.models.core_models import (
@@ -72,8 +73,8 @@ class HeadlinesQuerySerializer(serializers.Serializer):
         self.fields["stratum"].choices = self.stratum_manager.get_all_names()
         self.fields["age"].choices = self.age_manager.get_all_names()
 
-    def to_models(self) -> HeadlineParameters:
-        return HeadlineParameters(**self.validated_data)
+    def to_models(self, request: Request) -> HeadlineParameters:
+        return HeadlineParameters(**self.validated_data, request=request)
 
     @property
     def topic_manager(self) -> Manager:

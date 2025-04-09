@@ -1,8 +1,4 @@
 import datetime
-import os
-import importlib
-from unittest import mock
-
 import pytest
 from django.utils import timezone
 
@@ -10,37 +6,30 @@ from metrics.data.models.core_models import (
     Age,
     CoreHeadline,
     CoreTimeSeries,
-    Geography,
-    GeographyType,
     Metric,
     MetricGroup,
     Topic,
 )
 
-from metrics.api.settings import private_api
+from tests.factories.metrics.headline import CoreHeadlineFactory
 
 
 @pytest.fixture
 def core_headline_example() -> CoreHeadline:
-    topic = Topic.objects.create(name="COVID-19")
-    metric_group = MetricGroup.objects.create(name="headline", topic=topic)
-    metric = Metric.objects.create(
-        name="COVID-19_headline_tests_7DayTotals",
-        metric_group=metric_group,
-        topic=topic,
-    )
-    geography_type = GeographyType.objects.create(name="Nation")
-    geography = Geography.objects.create(name="England", geography_type=geography_type)
-
     refresh_date: datetime.datetime = timezone.make_aware(
         value=datetime.datetime(year=2023, month=1, day=7)
     )
-    return CoreHeadline.objects.create(
+    return CoreHeadlineFactory.create_record(
         metric_value=123.0000,
-        metric=metric,
-        geography=geography,
-        sex="f",
+        metric_name="COVID-19_headline_tests_7DayTotals",
+        topic_name="COVID-19",
+        geography_code="E92000001",
+        geography_name="England",
+        geography_type_name="Nation",
+        age_name="default",
         refresh_date=refresh_date,
+        stratum_name="default",
+        sex="f",
         period_start="2023-01-01",
         period_end="2023-01-07",
     )
@@ -48,46 +37,44 @@ def core_headline_example() -> CoreHeadline:
 
 @pytest.fixture
 def core_trend_example() -> tuple[CoreHeadline, CoreHeadline]:
-    topic = Topic.objects.create(name="COVID-19")
-    metric_group = MetricGroup.objects.create(name="headline", topic=topic)
-    metric = Metric.objects.create(
-        name="COVID-19_headline_cases_7DayChange",
-        metric_group=metric_group,
-        topic=topic,
-    )
-    percentage_metric = Metric.objects.create(
-        name="COVID-19_headline_cases_7DayPercentChange",
-        metric_group=metric_group,
-        topic=topic,
-    )
-
-    geography_type = GeographyType.objects.create(name="Nation")
-    geography = Geography.objects.create(name="England", geography_type=geography_type)
-
     period_end: datetime.datetime = timezone.make_aware(
         value=datetime.datetime(year=2023, month=1, day=7)
     )
-
     refresh_date: datetime.datetime = timezone.make_aware(
         value=datetime.datetime(year=2023, month=1, day=7)
     )
-    main_timeseries = CoreHeadline.objects.create(
-        metric_value=123.0,
-        metric=metric,
-        geography=geography,
+
+    main_metric = CoreHeadlineFactory.create_record(
+        metric_value=123.0000,
+        metric_name="COVID-19_headline_cases_7DayChange",
+        topic_name="COVID-19",
+        geography_code="E92000001",
+        geography_name="England",
+        geography_type_name="Nation",
+        age_name="default",
+        stratum_name="default",
+        sex="f",
         refresh_date=refresh_date,
         period_start="2023-01-01",
         period_end=period_end,
     )
-    percentage_timeseries = CoreHeadline.objects.create(
-        metric_value=3.0,
-        metric=percentage_metric,
-        geography=geography,
+
+    percentage_metric = CoreHeadlineFactory.create_record(
+        metric_value=3.0000,
+        metric_name="COVID-19_headline_cases_7DayPercentChange",
+        topic_name="COVID-19",
+        geography_code="E92000001",
+        geography_name="England",
+        geography_type_name="Nation",
+        age_name="default",
+        stratum_name="default",
+        sex="f",
         refresh_date=refresh_date,
         period_start="2023-01-01",
         period_end=period_end,
     )
-    return main_timeseries, percentage_timeseries
+
+    return main_metric, percentage_metric
 
 
 @pytest.fixture
