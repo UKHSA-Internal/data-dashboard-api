@@ -23,22 +23,8 @@ DATA_PARAMETERS = {
 
 
 class TestFluentPermissions:
-    @pytest.fixture
-    def fake_rbac_permission(self) -> FakeRBACPermission:
-        """Creates a fake RBACPermission object"""
-        return FakeRBACPermissionFactory.build_rbac_permission(
-            theme=DATA_PARAMETERS["theme"],
-            sub_theme=DATA_PARAMETERS["sub_theme"],
-            topic=DATA_PARAMETERS["topic"],
-            metric=DATA_PARAMETERS["metric"],
-            geography=DATA_PARAMETERS["geography"],
-            geography_type=DATA_PARAMETERS["geography_type"],
-            age=DATA_PARAMETERS["age"],
-            stratum=DATA_PARAMETERS["stratum"],
-        )
-
     def test_check_permission_allows_access_validates_for_exact_fine_grained_permission(
-        self, fake_rbac_permission: FakeRBACPermission
+        self,
     ):
         """
         Given a requested set of parameters
@@ -52,10 +38,22 @@ class TestFluentPermissions:
         fluent_permissions = FluentPermissions(
             requested_data_parameters=requested_data_parameters
         )
+        fake_exact_matching_rbac_permission = (
+            FakeRBACPermissionFactory.build_rbac_permission(
+                theme=DATA_PARAMETERS["theme"],
+                sub_theme=DATA_PARAMETERS["sub_theme"],
+                topic=DATA_PARAMETERS["topic"],
+                metric=DATA_PARAMETERS["metric"],
+                geography=DATA_PARAMETERS["geography"],
+                geography_type=DATA_PARAMETERS["geography_type"],
+                age=DATA_PARAMETERS["age"],
+                stratum=DATA_PARAMETERS["stratum"],
+            )
+        )
 
         # When
         is_access_allowed: bool = fluent_permissions.check_permission_allows_access(
-            rbac_permission=fake_rbac_permission
+            rbac_permission=fake_exact_matching_rbac_permission
         )
 
         # Then
