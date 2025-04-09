@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from metrics.data.models.rbac_models import RBACPermission
@@ -58,3 +59,22 @@ class FluentPermissions:
                 return False
 
         return True
+
+    def check_if_any_permissions_allow_access(
+        self, rbac_permissions: Iterable[RBACPermission]
+    ) -> bool:
+        """Checks if any of the given `rbac_permissions` provides access to the `requested_data_parameters`
+
+        Args:
+             `rbac_permissions`: The `RBACPermission` models which contain
+                the details for each permission.
+
+        Returns:
+            True if any of the given permissions allows access to the requested dataset.
+            False otherwise.
+
+        """
+        for rbac_permission in rbac_permissions:
+            if self.check_permission_allows_access(rbac_permission=rbac_permission):
+                return True
+        return False

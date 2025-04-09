@@ -37,7 +37,7 @@ class TestFluentPermissions:
             stratum=DATA_PARAMETERS["stratum"],
         )
 
-    def test_validates_for_exact_fine_grained_permission(
+    def test_check_permission_allows_access_validates_for_exact_fine_grained_permission(
         self, fake_rbac_permission: FakeRBACPermission
     ):
         """
@@ -127,7 +127,7 @@ class TestFluentPermissions:
             },
         ),
     )
-    def test_validates_for_wildcard_permissions_with_enough_of_a_match(
+    def test_check_permission_allows_access_validates_for_wildcard_permissions_with_enough_of_a_match(
         self, matching_fields: set[str]
     ):
         """
@@ -226,7 +226,7 @@ class TestFluentPermissions:
             },
         ),
     )
-    def test_invalidates_for_permissions_without_match(
+    def test_check_permission_allows_access_invalidates_for_permissions_without_match(
         self, permission_values: dict[str, str]
     ):
         """
@@ -255,7 +255,9 @@ class TestFluentPermissions:
         # Then
         assert not is_access_allowed
 
-    def test_invalidates_for_non_matching_wildcard_permission(self):
+    def test_check_permission_allows_access_invalidates_for_non_matching_wildcard_permission(
+        self,
+    ):
         """
         Given a requested set of parameters
         And an `RBACPermission` which specifies a different theme and sub_theme
@@ -276,6 +278,76 @@ class TestFluentPermissions:
         # When
         is_access_allowed: bool = fluent_permissions.check_permission_allows_access(
             rbac_permission=fake_rbac_permission
+        )
+
+        # Then
+        assert not is_access_allowed
+
+    def test_check_if_any_permissions_allow_access_validates_correctly(self):
+        """
+        Given a requested set of parameters
+        And a number of `RBACPermission` models
+            one of which provides a match
+        When `check_if_any_permissions_allow_access()` is called
+            from an instance of `FluentPermissions`
+        Then True is returned
+        """
+        # Given
+        requested_data_parameters = RequestedDataParameters(**DATA_PARAMETERS)
+        fluent_permissions = FluentPermissions(
+            requested_data_parameters=requested_data_parameters
+        )
+        non_matching_permission = FakeRBACPermissionFactory.build_rbac_permission(
+            theme="extreme_event",
+            sub_theme="weather_alert",
+        )
+        matching_permission = FakeRBACPermissionFactory.build_rbac_permission(
+            theme=DATA_PARAMETERS["theme"],
+            sub_theme=DATA_PARAMETERS["sub_theme"],
+        )
+
+        # When
+        is_access_allowed: bool = (
+            fluent_permissions.check_if_any_permissions_allow_access(
+                rbac_permissions=[non_matching_permission, matching_permission]
+            )
+        )
+
+        # Then
+        assert is_access_allowed
+
+    def test_check_if_any_permissions_allow_access_invalidates_correctly(self):
+        """
+        Given a requested set of parameters
+        And a number of `RBACPermission` models
+            none of which provide any match
+        When `check_if_any_permissions_allow_access()` is called
+            from an instance of `FluentPermissions`
+        Then False is returned
+        """
+        # Given
+        requested_data_parameters = RequestedDataParameters(**DATA_PARAMETERS)
+        fluent_permissions = FluentPermissions(
+            requested_data_parameters=requested_data_parameters
+        )
+        non_matching_permission = FakeRBACPermissionFactory.build_rbac_permission(
+            theme="extreme_event",
+            sub_theme="weather_alert",
+        )
+        other_non_matching_permission = FakeRBACPermissionFactory.build_rbac_permission(
+            theme=DATA_PARAMETERS["theme"],
+            sub_theme=DATA_PARAMETERS["sub_theme"],
+            topic="RSV",
+        )
+
+        # When
+        is_access_allowed: bool = (
+            fluent_permissions.check_if_any_permissions_allow_access(
+                rbac_permissions=[
+                    non_matching_permission,
+                    other_non_matching_permission,
+                ]
+            )
         )
 
         # Then
