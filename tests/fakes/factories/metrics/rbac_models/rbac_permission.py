@@ -20,20 +20,20 @@ class FakeRBACPermissionFactory(factory.Factory):
     @classmethod
     def build_rbac_permission(
         cls,
-        theme_name: str = "infectious_disease",
-        sub_theme_name: str = "respiratory",
-        metric_name: str = "COVID-19_cases_casesByDay",
-        topic_name: str = "COVID-19",
-        geography_name: str = "England",
-        geography_type_name: str = "Nation",
-        age_name: str = "all",
-        stratum_name: str = "default",
+        theme: str = "infectious_disease",
+        sub_theme: str = "respiratory",
+        metric: str = "COVID-19_cases_casesByDay",
+        topic: str = "COVID-19",
+        geography: str = "England",
+        geography_type: str = "Nation",
+        age: str = "all",
+        stratum: str = "default",
     ) -> FakeRBACPermission:
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
-            metric_name=metric_name,
-            topic_name=topic_name,
-            theme_name=theme_name,
-            sub_theme_name=sub_theme_name,
+            metric_name=metric,
+            topic_name=topic,
+            theme_name=theme,
+            sub_theme_name=sub_theme,
         )
 
         topic = metric.topic
@@ -41,14 +41,14 @@ class FakeRBACPermissionFactory(factory.Factory):
         theme = sub_theme.theme
 
         geography = FakeGeographyFactory.build_example(
-            geography_name=geography_name, geography_type_name=geography_type_name
+            geography_name=geography, geography_type_name=geography_type
         )
         geography_type = geography.geography_type
 
         stratum: FakeStratum = FakeStratumFactory.build_example(
-            stratum_name=stratum_name,
+            stratum_name=stratum,
         )
-        age = FakeAge(name=age_name)
+        age = FakeAge(name=age)
 
         return cls.build(
             theme=theme,
