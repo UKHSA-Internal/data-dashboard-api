@@ -50,14 +50,15 @@ class FluentPermissions:
         ]
 
         for field in fields:
-            allowed_model = getattr(rbac_permission, field)
-            requested_value: str = getattr(self.requested_data_parameters, field)
-
-            if allowed_model is None:
-                # The field was not specified on the `RBACPermission`.
-                # So we consider this to be a wildcard and skip to the next field.
+            allowed_model = getattr(rbac_permission, field, None)
+            # Django throws a `RelatedObjectDoesNotExist` error when the related attr is `None`.
+            # In this case we're happy to just bury the error and handle the returned object as `None`
+            if not allowed_model:
+                # Since the field was not specified on the `RBACPermission`.
+                # We consider this to be a wildcard and skip to the next field for evaluation.
                 continue
 
+            requested_value: str = getattr(self.requested_data_parameters, field)
             if requested_value != allowed_model.name:
                 # The field was specified on the `RBACPermission`.
                 # And it has not matched, so we mark the permission as False
