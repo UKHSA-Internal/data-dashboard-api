@@ -93,6 +93,9 @@ class TestRBACPermission:
             {
                 "stratum",
             },
+            {
+                "age",
+            }
         ),
     )
     def test_selection_validation_passes_successfully(self, included_fields: set[str]):

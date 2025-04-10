@@ -180,12 +180,6 @@ class RBACPermission(models.Model):
     def _get_geography_selection(self) -> type[Model]:
         return self._get_model_selection(model_type="geography")
 
-    def _get_age_selection(self) -> type[Model]:
-        return self._get_model_selection(model_type="age")
-
-    def _get_stratum_selection(self) -> type[Model]:
-        return self._get_model_selection(model_type="stratum")
-
     def _get_model_selection(self, model_type: str) -> type[Model]:
         selected_model = getattr(self, model_type)
         if selected_model is None:
