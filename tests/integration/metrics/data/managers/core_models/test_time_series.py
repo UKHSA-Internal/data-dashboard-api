@@ -161,13 +161,13 @@ class TestCoreTimeSeriesQuerySet:
         )
 
     @pytest.mark.django_db
-    def test_query_for_data_returns_full_records_when_axes_not_provided(
+    def test_query_for_all_data_returns_full_records_when_axes_not_provided(
         self,
     ):
         """
         Given existing `CoreTimeSeries` records
         And no value for the "y_axis"
-        When `query_for_data()` is called
+        When `query_for_all_data()` is called
             from an instance of the `CoreTimeSeriesManager`
         Then only the returned queryset contains the full records
         """
@@ -184,7 +184,7 @@ class TestCoreTimeSeriesQuerySet:
         example_core_time_series = core_time_series[0]
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_data(
+        retrieved_records = CoreTimeSeries.objects.query_for_all_data(
             fields_to_export=[],
             topic_name=core_time_series[0].metric.topic.name,
             metric_name=core_time_series[0].metric.name,
@@ -205,14 +205,14 @@ class TestCoreTimeSeriesQuerySet:
 
 class TestCoreTimeSeriesManager:
     @pytest.mark.django_db
-    def test_query_for_data_returns_latest_records_for_multiple_versions(
+    def test_query_for_all_data_returns_latest_records_for_multiple_versions(
         self,
     ):
         """
         Given a number of `CoreTimeSeries` records which are stale
         And a number of `CoreTimeSeries` records which are live,
             but not grouped linearly.
-        When `query_for_data()` is called
+        When `query_for_all_data()` is called
             from an instance of the `CoreTimeSeriesManager`
         Then only the live group of `CoreTimeSeries` records are returned
         """
@@ -258,7 +258,7 @@ class TestCoreTimeSeriesManager:
         )
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_data(
+        retrieved_records = CoreTimeSeries.objects.query_for_all_data(
             fields_to_export=["date", "metric_value"],
             topic_name=expected_fourth_round_for_first_date.metric.topic.name,
             metric_name=expected_fourth_round_for_first_date.metric.name,
@@ -306,11 +306,11 @@ class TestCoreTimeSeriesManager:
         }
 
     @pytest.mark.django_db
-    def test_query_for_data_excludes_embargoed_data(self):
+    def test_query_for_all_data_excludes_embargoed_data(self):
         """
         Given a number of `CoreTimeSeries` records which are live
         And a number of `CoreTimeSeries` records which are under embargo
-        When `query_for_data()` is called
+        When `query_for_all_data()` is called
             from an instance of the `CoreTimeSeriesManager`
         Then only the live group of `CoreTimeSeries` records are returned
         """
@@ -340,7 +340,7 @@ class TestCoreTimeSeriesManager:
         ]
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_data(
+        retrieved_records = CoreTimeSeries.objects.query_for_all_data(
             fields_to_export=["date", "metric_value"],
             topic_name=live_core_time_series_records[0].metric.topic.name,
             metric_name=live_core_time_series_records[0].metric.name,

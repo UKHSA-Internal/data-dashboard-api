@@ -138,7 +138,7 @@ class PlotsInterface:
                     ('05-10', Decimal('9.0'))
                 ]>`
         """
-        return self.core_model_manager.query_for_data(**plot_params)
+        return self.core_model_manager.query_for_all_data(**plot_params)
 
     def build_plot_data_from_parameters_with_complete_queryset(
         self, *, plot_parameters: PlotParameters

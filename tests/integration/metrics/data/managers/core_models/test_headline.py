@@ -31,7 +31,7 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        retrieved_record_queryset = CoreHeadline.objects.query_for_data(
+        retrieved_record_queryset = CoreHeadline.objects.query_for_all_data(
             fields_to_export=["age", "metric_value"],
             topic_name=expected_record_headline.metric.topic.name,
             metric_name=expected_record_headline.metric.name,

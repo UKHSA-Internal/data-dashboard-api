@@ -132,7 +132,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return self._ascending_order(queryset=queryset, field_name="date")
 
-    def query_for_data(
+    def query_for_all_data(
         self,
         *,
         topic_name: str,
@@ -224,6 +224,37 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             queryset = queryset.values(*fields_to_export)
 
         return self._annotate_latest_date_on_queryset(queryset=queryset)
+
+    def query_for_public_only_data(
+        self,
+        *,
+        topic_name: str,
+        metric_name: str,
+        date_from: datetime.date,
+        date_to: datetime.date | None = None,
+        fields_to_export: list[str] = None,
+        field_to_order_by: str = "date",
+        geography_name: str | None = None,
+        geography_type_name: str | None = None,
+        stratum_name: str | None = None,
+        sex: str | None = None,
+        age: str | None = None,
+    ) -> models.QuerySet:
+        queryset = self.query_for_all_data(
+            topic_name=topic_name,
+            metric_name=metric_name,
+            date_to=date_to,
+            date_from=date_from,
+            fields_to_export=fields_to_export,
+            field_to_order_by=field_to_order_by,
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            stratum_name=stratum_name,
+            sex=sex,
+            age=age,
+        )
+        queryset = queryset.filter(is_public=True)
+        return queryset
 
     def query_for_superseded_data(
         self,
@@ -543,7 +574,7 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-        return self.get_queryset().query_for_data(
+        return self.get_queryset().query_for_all_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
             topic_name=topic_name,
