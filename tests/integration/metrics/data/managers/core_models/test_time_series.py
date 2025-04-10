@@ -202,6 +202,35 @@ class TestCoreTimeSeriesQuerySet:
             retrieved_records[0].metric_value == example_core_time_series.metric_value
         )
 
+    @pytest.mark.django_db
+    def test_query_for_public_only_data_excludes_non_public_records(self):
+        """
+        Given public and non-public `CoreTimeSeries` records
+        When `query_for_public_only_data()` is called
+            from an instance of the `CoreTimeSeriesQueryset`
+        Then only the public record is§ returned
+        """
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=1, date="2023-01-01", is_public=True
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=2, date="2023-01-02", is_public=False
+        )
+
+        # When
+        initial_queryset = CoreTimeSeries.objects.get_queryset()
+        retrieved_records = initial_queryset.query_for_public_only_data(
+            topic_name=public_record.metric.topic.name,
+            metric_name=public_record.metric.name,
+            date_from="2020-01-01",
+            date_to="2025-12-31",
+        )
+
+        # Then
+        assert public_record in retrieved_records
+        assert non_public_record not in retrieved_records
+
 
 class TestCoreTimeSeriesManager:
     @pytest.mark.django_db

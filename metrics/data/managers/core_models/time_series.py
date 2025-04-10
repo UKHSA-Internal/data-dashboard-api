@@ -253,8 +253,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
-        queryset = queryset.filter(is_public=True)
-        return queryset
+        return queryset.filter(is_public=True)
 
     def query_for_superseded_data(
         self,
