@@ -215,7 +215,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             age=age,
         )
         if restrict_to_public:
-            queryset.filter(is_public=True)
+            queryset = queryset.filter(is_public=True)
 
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
