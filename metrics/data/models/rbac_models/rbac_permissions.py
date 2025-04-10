@@ -6,22 +6,28 @@ from metrics.data.managers.rbac_models import RBACPermissionQuerySet
 from metrics.data.managers.rbac_models.rbac_permissions import RBACPermissionManager
 
 
+class NoSelectionMadeError(ValidationError):
+    def __init__(self):
+        message = "You must make some form of selection."
+        super().__init__(message=message)
+
+
 class NoModelSelectedError(ValidationError):
     def __init__(self, category: str):
         message = f"You must select a {category}."
-        super().__init__(message)
+        super().__init__(message=message)
 
 
 class SelectionInvalidWithParentSelectionError(ValidationError):
     def __init__(self, model: type[Model], parent_model: type[Model]):
         message = f"The selection of '{model.name}' for the {model.__class__.__name__} cannot be paired with '{parent_model.name}' for the {parent_model.__class__.__name__} ."
-        super().__init__(message)
+        super().__init__(message=message)
 
 
 class DuplicatePermissionError(ValidationError):
     def __init__(self):
         message = "A permission with these values already exists."
-        super().__init__(message)
+        super().__init__(message=message)
 
 
 class RBACPermission(models.Model):
@@ -105,10 +111,9 @@ class RBACPermission(models.Model):
 
     objects = RBACPermissionManager()
 
-    def __str__(self) -> str:
-        attributes = ["name=" + self.name]
-
-        for attr in [
+    @property
+    def model_types(self) -> list[str]:
+        return [
             "theme",
             "sub_theme",
             "topic",
@@ -117,15 +122,22 @@ class RBACPermission(models.Model):
             "geography",
             "age",
             "stratum",
-        ]:
-            value = getattr(self, attr)
+        ]
+
+    def __str__(self) -> str:
+        attributes = ["name=" + self.name]
+
+        for model_type in self.model_types:
+            value = getattr(self, model_type)
             if value is not None:
-                attributes.append(f"{attr}={value.name}")
+                attributes.append(f"{model_type}={value.name}")
 
         return ", ".join(attributes)
 
     def clean(self):
         super().clean()
+        self._validate_a_selection_has_been_made()
+
         if self.metric:
             self._validate_metric_selection()
 
@@ -143,6 +155,12 @@ class RBACPermission(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
+
+    def _validate_a_selection_has_been_made(self):
+        for model_type in self.model_types:
+            if getattr(self, model_type) is not None:
+                return
+        raise NoSelectionMadeError
 
     def _get_theme_selection(self) -> type[Model]:
         return self._get_model_selection(model_type="theme")

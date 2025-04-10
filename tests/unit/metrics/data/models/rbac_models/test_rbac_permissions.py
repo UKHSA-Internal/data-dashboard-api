@@ -6,6 +6,7 @@ from metrics.data.models import RBACPermission
 from metrics.data.models.rbac_models.rbac_permissions import (
     NoModelSelectedError,
     SelectionInvalidWithParentSelectionError,
+    NoSelectionMadeError,
 )
 from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
@@ -269,4 +270,19 @@ class TestRBACPermission:
 
         # When / Then
         with pytest.raises(NoModelSelectedError):
+            rbac_permission.clean()
+
+    def test_complete_wildcard_selection_is_invalidated(self):
+        """
+        Given no selection i.e. a complete wildcard
+            which would give complete access
+        When `clean()` is called from an instance
+            of `RBACPermission`
+        Then a `NoSelectionMadeError` is raised
+        """
+        # Given
+        rbac_permission = FakeRBACPermissionFactory.build_rbac_permission()
+
+        # When / Then
+        with pytest.raises(NoSelectionMadeError):
             rbac_permission.clean()
