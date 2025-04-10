@@ -486,6 +486,7 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        restrict_to_public: bool = True,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -521,6 +522,9 @@ class CoreTimeSeriesManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            restrict_to_public: Boolean switch to restrict the query
+                to only return public records.
+                If False, then non-public records will be included.
 
         Notes:
             If we have the following input `queryset`:
@@ -562,6 +566,7 @@ class CoreTimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+            restrict_to_public=restrict_to_public,
         )
 
     def query_for_superseded_data(
