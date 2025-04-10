@@ -161,13 +161,13 @@ class TestCoreTimeSeriesQuerySet:
         )
 
     @pytest.mark.django_db
-    def test_query_for_all_data_returns_full_records_when_axes_not_provided(
+    def test_query_for_data_returns_full_records_when_axes_not_provided(
         self,
     ):
         """
         Given existing `CoreTimeSeries` records
         And no value for the "y_axis"
-        When `query_for_all_data()` is called
+        When `query_for_data()` is called
             from an instance of the `CoreTimeSeriesManager`
         Then only the returned queryset contains the full records
         """
@@ -184,7 +184,7 @@ class TestCoreTimeSeriesQuerySet:
         example_core_time_series = core_time_series[0]
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_all_data(
+        retrieved_records = CoreTimeSeries.objects.query_for_data(
             fields_to_export=[],
             topic_name=core_time_series[0].metric.topic.name,
             metric_name=core_time_series[0].metric.name,
@@ -203,12 +203,15 @@ class TestCoreTimeSeriesQuerySet:
         )
 
     @pytest.mark.django_db
-    def test_query_for_public_only_data_excludes_non_public_records(self):
+    def test_query_for_data_excludes_non_public_records_when_restrict_to_public_is_true(
+        self,
+    ):
         """
         Given public and non-public `CoreTimeSeries` records
-        When `query_for_public_only_data()` is called
+        When `query_for_data()` is called
             from an instance of the `CoreTimeSeriesQueryset`
-        Then only the public record is§ returned
+            with `restrict_to_public` given as True
+        Then only the public record is returned
         """
         # Given
         public_record = CoreTimeSeriesFactory.create_record(
@@ -220,28 +223,62 @@ class TestCoreTimeSeriesQuerySet:
 
         # When
         initial_queryset = CoreTimeSeries.objects.get_queryset()
-        retrieved_records = initial_queryset.query_for_public_only_data(
+        retrieved_records = initial_queryset.query_for_data(
             topic_name=public_record.metric.topic.name,
             metric_name=public_record.metric.name,
             date_from="2020-01-01",
             date_to="2025-12-31",
+            restrict_to_public=True,
         )
 
         # Then
         assert public_record in retrieved_records
         assert non_public_record not in retrieved_records
 
+    @pytest.mark.django_db
+    def test_query_for_data_includes_non_public_records_when_restrict_to_public_is_false(
+        self,
+    ):
+        """
+        Given public and non-public `CoreTimeSeries` records
+        When `query_for_data()` is called
+            from an instance of the `CoreTimeSeriesQueryset`
+            with `restrict_to_public` given as False
+        Then the non-public record is also returned
+        """
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=1, date="2023-01-01", is_public=True
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=2, date="2023-01-02", is_public=False
+        )
+
+        # When
+        initial_queryset = CoreTimeSeries.objects.get_queryset()
+        retrieved_records = initial_queryset.query_for_data(
+            topic_name=public_record.metric.topic.name,
+            metric_name=public_record.metric.name,
+            date_from="2020-01-01",
+            date_to="2025-12-31",
+            restrict_to_public=False,
+        )
+
+        # Then
+        assert public_record in retrieved_records
+        assert non_public_record in retrieved_records
+
 
 class TestCoreTimeSeriesManager:
     @pytest.mark.django_db
-    def test_query_for_all_data_returns_latest_records_for_multiple_versions(
+    def test_query_for_data_returns_latest_records_for_multiple_versions(
         self,
     ):
         """
         Given a number of `CoreTimeSeries` records which are stale
         And a number of `CoreTimeSeries` records which are live,
             but not grouped linearly.
-        When `query_for_all_data()` is called
+        When `query_for_data()` is called
             from an instance of the `CoreTimeSeriesManager`
         Then only the live group of `CoreTimeSeries` records are returned
         """
@@ -287,7 +324,7 @@ class TestCoreTimeSeriesManager:
         )
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_all_data(
+        retrieved_records = CoreTimeSeries.objects.query_for_data(
             fields_to_export=["date", "metric_value"],
             topic_name=expected_fourth_round_for_first_date.metric.topic.name,
             metric_name=expected_fourth_round_for_first_date.metric.name,
@@ -335,11 +372,11 @@ class TestCoreTimeSeriesManager:
         }
 
     @pytest.mark.django_db
-    def test_query_for_all_data_excludes_embargoed_data(self):
+    def test_query_for_data_excludes_embargoed_data(self):
         """
         Given a number of `CoreTimeSeries` records which are live
         And a number of `CoreTimeSeries` records which are under embargo
-        When `query_for_all_data()` is called
+        When `query_for_data()` is called
             from an instance of the `CoreTimeSeriesManager`
         Then only the live group of `CoreTimeSeries` records are returned
         """
@@ -369,7 +406,7 @@ class TestCoreTimeSeriesManager:
         ]
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_all_data(
+        retrieved_records = CoreTimeSeries.objects.query_for_data(
             fields_to_export=["date", "metric_value"],
             topic_name=live_core_time_series_records[0].metric.topic.name,
             metric_name=live_core_time_series_records[0].metric.name,

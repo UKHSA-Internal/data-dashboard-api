@@ -86,7 +86,7 @@ class TestIngestion:
         # When / Then
         # Check that the 1st file is ingested properly
         data_ingester(data=first_sample_data)
-        filtered_core_time_series = CoreTimeSeries.objects.query_for_all_data(
+        filtered_core_time_series = CoreTimeSeries.objects.query_for_data(
             **query_payload
         )
         first_date: datetime.date = datetime.datetime.strptime(
@@ -124,7 +124,7 @@ class TestIngestion:
             )
         )
         data_ingester(data=second_data_with_no_functional_updates)
-        filtered_core_time_series = CoreTimeSeries.objects.query_for_all_data(
+        filtered_core_time_series = CoreTimeSeries.objects.query_for_data(
             **query_payload
         )
         assert filtered_core_time_series.count() == 2
@@ -160,7 +160,7 @@ class TestIngestion:
             )
         )
         data_ingester(data=third_data_with_retrospective_updates)
-        filtered_core_time_series = CoreTimeSeries.objects.query_for_all_data(
+        filtered_core_time_series = CoreTimeSeries.objects.query_for_data(
             **query_payload
         )
         assert filtered_core_time_series.count() == 2

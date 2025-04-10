@@ -132,7 +132,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         return self._ascending_order(queryset=queryset, field_name="date")
 
-    def query_for_all_data(
+    def query_for_data(
         self,
         *,
         topic_name: str,
@@ -146,6 +146,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        restrict_to_public: bool = True,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
@@ -185,6 +186,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            restrict_to_public: Boolean switch to restrict the query
+                to only return public records.
+                If False, then non-public records will be included.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -210,6 +214,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
+        if restrict_to_public:
+            queryset.filter(is_public=True)
+
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
         queryset = self._ascending_order(
@@ -224,36 +231,6 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             queryset = queryset.values(*fields_to_export)
 
         return self._annotate_latest_date_on_queryset(queryset=queryset)
-
-    def query_for_public_only_data(
-        self,
-        *,
-        topic_name: str,
-        metric_name: str,
-        date_from: datetime.date,
-        date_to: datetime.date | None = None,
-        fields_to_export: list[str] = None,
-        field_to_order_by: str = "date",
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
-        sex: str | None = None,
-        age: str | None = None,
-    ) -> models.QuerySet:
-        queryset = self.query_for_all_data(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            date_to=date_to,
-            date_from=date_from,
-            fields_to_export=fields_to_export,
-            field_to_order_by=field_to_order_by,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
-            sex=sex,
-            age=age,
-        )
-        return queryset.filter(is_public=True)
 
     def query_for_superseded_data(
         self,
@@ -573,7 +550,7 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
-        return self.get_queryset().query_for_all_data(
+        return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
             topic_name=topic_name,

@@ -17,7 +17,7 @@ class TestCoreHeadlineManager:
         """
         Given a `CoreHeadline` record is live
         When `query_for_data()` is called
-        Then then a queryset is returned with the correct x and y values
+        Then a queryset is returned with the correct x and y values
             and the `period_end` of the record is added to the queryset as
             `latest_date`
         """
@@ -31,7 +31,7 @@ class TestCoreHeadlineManager:
         )
 
         # When
-        retrieved_record_queryset = CoreHeadline.objects.query_for_all_data(
+        retrieved_record_queryset = CoreHeadline.objects.query_for_data(
             fields_to_export=["age", "metric_value"],
             topic_name=expected_record_headline.metric.topic.name,
             metric_name=expected_record_headline.metric.name,
