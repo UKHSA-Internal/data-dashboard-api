@@ -78,7 +78,7 @@ class APITimeSeriesRequestSerializer(Serializer):
         """
         kwargs: dict[str, str] = self.get_kwargs_from_request()
         return self.api_time_series_manager.get_distinct_column_values_with_filters(
-            lookup_field=self.lookup_field, **kwargs
+            lookup_field=self.lookup_field, restrict_to_public=True, **kwargs
         )
 
     def build_timeseries_dto_slice(self) -> list[APITimeSeriesDTO]:

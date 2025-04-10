@@ -137,6 +137,7 @@ class TestAPITimeSeriesRequestSerializer:
         # Then
         spy_get_distinct_column_values_with_filters.assert_called_once_with(
             lookup_field=fake_lookup_field,
+            restrict_to_public=True,
             **fake_request_kwargs,
         )
         assert queryset == spy_get_distinct_column_values_with_filters.return_value

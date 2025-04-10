@@ -20,12 +20,15 @@ class APITimeSeriesQuerySet(models.QuerySet):
         return ["age", "sex", "stratum", "date"]
 
     def get_distinct_column_values_with_filters(
-        self, lookup_field: str, **kwargs
+        self, *, lookup_field: str, restrict_to_public: bool, **kwargs
     ) -> "APITimeSeriesQuerySet":
         """Filters for unique values in the column denoted by `lookup_field` via the given **kwargs.
 
         Args:
             lookup_field: A column to query and retrieve unique values for.
+            restrict_to_public: Boolean switch to restrict the query
+                to only return public records.
+                If False, then non-public records will be included.
             **kwargs: The filters to apply to the query.
 
         Returns:
@@ -34,7 +37,11 @@ class APITimeSeriesQuerySet(models.QuerySet):
                 `<APITimeSeriesQuerySet ['infectious_disease']>`
 
         """
-        return self.filter(**kwargs).values_list(lookup_field, flat=True).distinct()
+        queryset = self.filter(**kwargs)
+        if restrict_to_public:
+            queryset = queryset.filter(is_public=True)
+
+        return queryset.values_list(lookup_field, flat=True).distinct()
 
     def filter_for_audit_list_view(
         self,
@@ -82,6 +89,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         geography_type_name: str,
         geography_name: str,
         metric_name: str,
+        restrict_to_public: bool,
     ) -> Self:
         """Filters by the given fields to provide a slice of the timeseries data as per the fields.
 
@@ -99,6 +107,9 @@ class APITimeSeriesQuerySet(models.QuerySet):
                 E.g. `England`
             metric_name: The name of the metric to filter for.
                 E.g. `COVID-19_deaths_ONSByDay`.
+            restrict_to_public: Boolean switch to restrict the query
+                to only return public records.
+                If False, then non-public records will be included.
 
         Returns:
             QuerySet: An ordered queryset from oldest -> newest
@@ -124,6 +135,9 @@ class APITimeSeriesQuerySet(models.QuerySet):
             geography=geography_name,
             metric=metric_name,
         )
+        if restrict_to_public:
+            queryset = queryset.filter(is_public=True)
+
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_latest_refresh_date_records(queryset=queryset)
 
@@ -251,6 +265,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool,
     ) -> Self:
         """Grabs all stale records which are not under embargo.
 
@@ -276,7 +291,8 @@ class APITimeSeriesQuerySet(models.QuerySet):
                Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                E.g. `0_4` would be used to capture the age of 0-4 years old
-
+           is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
         Returns:
            The stale records in their entirety as a queryset
 
@@ -292,6 +308,7 @@ class APITimeSeriesQuerySet(models.QuerySet):
             stratum=stratum_name,
             age=age,
             sex=sex,
+            is_public=is_public,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         queryset = self.filter_for_outdated_refresh_date_records(queryset=queryset)
@@ -311,12 +328,15 @@ class APITimeSeriesManager(models.Manager):
         return APITimeSeriesQuerySet(model=self.model, using=self.db)
 
     def get_distinct_column_values_with_filters(
-        self, lookup_field: str, **kwargs
+        self, *, lookup_field: str, restrict_to_public: bool, **kwargs
     ) -> APITimeSeriesQuerySet:
         """Filters for unique values in the column denoted by `lookup_field` via the given **kwargs.
 
         Args:
             lookup_field: A column to query and retrieve unique values for.
+            restrict_to_public: Boolean switch to restrict the query
+                to only return public records.
+                If False, then non-public records will be included.
             **kwargs: The filters to apply to the query.
 
         Returns:
@@ -326,7 +346,7 @@ class APITimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().get_distinct_column_values_with_filters(
-            lookup_field=lookup_field, **kwargs
+            lookup_field=lookup_field, restrict_to_public=restrict_to_public, **kwargs
         )
 
     def query_for_superseded_data(
@@ -342,6 +362,7 @@ class APITimeSeriesManager(models.Manager):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool,
     ) -> APITimeSeriesQuerySet:
         """Grabs all stale records which are not under embargo.
 
@@ -384,7 +405,8 @@ class APITimeSeriesManager(models.Manager):
                Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                E.g. `0_4` would be used to capture the age of 0-4 years old
-
+           is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
         Returns:
            The stale records in their entirety as a queryset
 
@@ -400,6 +422,7 @@ class APITimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+            is_public=is_public,
         )
 
     def delete_superseded_data(
@@ -415,6 +438,7 @@ class APITimeSeriesManager(models.Manager):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool,
     ) -> APITimeSeriesQuerySet:
         """Deletes all stale records which are not under embargo.
 
@@ -457,7 +481,8 @@ class APITimeSeriesManager(models.Manager):
                Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                E.g. `0_4` would be used to capture the age of 0-4 years old
-
+           is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
         Returns:
            None
 
@@ -473,5 +498,6 @@ class APITimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+            is_public=is_public,
         )
         superseded_records.delete()

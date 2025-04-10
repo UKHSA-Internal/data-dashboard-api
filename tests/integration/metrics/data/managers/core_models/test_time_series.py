@@ -202,6 +202,70 @@ class TestCoreTimeSeriesQuerySet:
             retrieved_records[0].metric_value == example_core_time_series.metric_value
         )
 
+    @pytest.mark.django_db
+    def test_query_for_data_excludes_non_public_records_when_restrict_to_public_is_true(
+        self,
+    ):
+        """
+        Given public and non-public `CoreTimeSeries` records
+        When `query_for_data()` is called
+            from an instance of the `CoreTimeSeriesQueryset`
+            with `restrict_to_public` given as True
+        Then only the public record is returned
+        """
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=1, date="2023-01-01", is_public=True
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=2, date="2023-01-02", is_public=False
+        )
+
+        # When
+        retrieved_records = CoreTimeSeries.objects.query_for_data(
+            topic_name=public_record.metric.topic.name,
+            metric_name=public_record.metric.name,
+            date_from="2020-01-01",
+            date_to="2025-12-31",
+            restrict_to_public=True,
+        )
+
+        # Then
+        assert public_record in retrieved_records
+        assert non_public_record not in retrieved_records
+
+    @pytest.mark.django_db
+    def test_query_for_data_includes_non_public_records_when_restrict_to_public_is_false(
+        self,
+    ):
+        """
+        Given public and non-public `CoreTimeSeries` records
+        When `query_for_data()` is called
+            from an instance of the `CoreTimeSeriesQueryset`
+            with `restrict_to_public` given as False
+        Then the non-public record is also returned
+        """
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=1, date="2023-01-01", is_public=True
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            metric_value=2, date="2023-01-02", is_public=False
+        )
+
+        # When
+        retrieved_records = CoreTimeSeries.objects.query_for_data(
+            topic_name=public_record.metric.topic.name,
+            metric_name=public_record.metric.name,
+            date_from="2020-01-01",
+            date_to="2025-12-31",
+            restrict_to_public=False,
+        )
+
+        # Then
+        assert public_record in retrieved_records
+        assert non_public_record in retrieved_records
+
 
 class TestCoreTimeSeriesManager:
     @pytest.mark.django_db
@@ -490,6 +554,7 @@ class TestCoreTimeSeriesManager:
             stratum_name=expected_live_fourth_round_for_first_date.stratum.name,
             age=expected_live_fourth_round_for_first_date.age.name,
             sex=expected_live_fourth_round_for_first_date.sex,
+            is_public=expected_live_fourth_round_for_first_date.is_public,
         )
         retrieved_records = CoreTimeSeries.objects.all()
 
