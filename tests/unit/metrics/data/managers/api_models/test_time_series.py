@@ -46,7 +46,6 @@ class TestAPITimeSeriesManager:
         )
 
         # Then
-
         spy_query_for_superseded_data.assert_called_with(
             theme_name=fake_theme,
             sub_theme_name=fake_sub_theme,
