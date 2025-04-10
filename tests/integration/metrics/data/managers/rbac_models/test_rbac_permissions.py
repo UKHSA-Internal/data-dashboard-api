@@ -2,7 +2,7 @@ import pytest
 
 from metrics.data.models.rbac_models import (
     RBACPermission,
-    AdminFormDuplicatePermissionError,
+    DuplicatePermissionError,
 )
 from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
@@ -82,7 +82,7 @@ class TestRBACPermissionFactory:
         )
 
         # When / Then
-        with pytest.raises(AdminFormDuplicatePermissionError):
+        with pytest.raises(DuplicatePermissionError):
             RBACPermissionFactory.create_record(
                 name="all_infectious_respiratory_data_duplicate",
                 theme_name="infectious_disease",
