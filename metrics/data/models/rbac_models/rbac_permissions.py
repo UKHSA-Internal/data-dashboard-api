@@ -58,10 +58,18 @@ class RBACPermission(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255, null=False, unique=True)
     theme = models.ForeignKey(
-        "Theme", on_delete=models.CASCADE, related_name="theme_permissions"
+        "Theme",
+        on_delete=models.CASCADE,
+        related_name="theme_permissions",
+        null=True,
+        blank=True,
     )
     sub_theme = models.ForeignKey(
-        "SubTheme", on_delete=models.CASCADE, related_name="sub_theme_permissions"
+        "SubTheme",
+        on_delete=models.CASCADE,
+        related_name="sub_theme_permissions",
+        null=True,
+        blank=True,
     )
     topic = models.ForeignKey(
         "Topic",
