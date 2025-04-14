@@ -10,7 +10,7 @@ GitPython==3.1.44
 import-linter==2.3
 isort==6.0.1
 pip-api==0.0.34
-pip_audit==2.8.0
+pip_audit==2.9.0
 pip-requirements-parser==32.0.1
 pre-commit==4.2.0
 pylint==3.3.6
@@ -19,5 +19,5 @@ pytest==8.3.5
 pytest-cov==6.1.1
 pytest-django==4.11.1
 pytest-random-order==1.1.1
-ruff==0.11.4
+ruff==0.11.5
 stevedore==5.4.1

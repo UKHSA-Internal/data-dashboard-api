@@ -37,7 +37,6 @@ class FluentPermissions:
             True if the given permission allows access to the requested dataset.
             False otherwise.
 
-        """
         fields = [
             "theme",
             "sub_theme",
