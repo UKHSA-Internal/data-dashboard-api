@@ -192,7 +192,9 @@ class ChartsView(APIView):
         request_serializer = ChartsSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        chart_request_params: ChartRequestParams = request_serializer.to_models()
+        chart_request_params: ChartRequestParams = request_serializer.to_models(
+            request=request
+        )
 
         try:
             filename: str = access.generate_chart_as_file(
@@ -337,7 +339,7 @@ class EncodedChartsView(APIView):
         request_serializer = EncodedChartsRequestSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        chart_request_params = request_serializer.to_models()
+        chart_request_params = request_serializer.to_models(request=request)
 
         try:
             response: dict[str, str] = access.generate_encoded_chart(
