@@ -12,6 +12,7 @@ class TestAppMode:
             "PUBLIC_API",
             "INGESTION",
             "FEEDBACK_API",
+            "AUDIT_API",
         ],
     )
     def test_dependent_on_db(self, expected_app_mode: str):
