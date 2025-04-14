@@ -26,7 +26,7 @@ drf-spectacular==0.27.2
 et-xmlfile==2.0.0
 exceptiongroup==1.2.2
 filelock==3.18.0
-grimp==3.7.1
+grimp==3.8
 gunicorn==23.0.0
 html5lib==1.1
 identify==2.6.9
@@ -40,7 +40,7 @@ jsonschema==4.23.0
 kaleido==0.2.1
 l18n==2021.3
 lockfile==0.12.2
-Markdown==3.7
+Markdown==3.8
 markdown-it-py==2.2.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
@@ -54,7 +54,7 @@ packageurl-python==0.16.0
 packaging==24.2
 pathspec==0.12.1
 pbr==6.1.1
-Pillow==11.1.0
+Pillow==11.2.1
 platformdirs==4.3.7
 plotly==6.0.1
 pluggy==1.5.0
@@ -81,9 +81,9 @@ telepath==0.3.1
 tenacity==9.1.2
 toml==0.10.2
 tomli==2.2.1
-typing_extensions==4.13.1
+typing_extensions==4.13.2
 uritemplate==4.1.1
-urllib3==2.3.0
+urllib3==2.4.0
 virtualenv==20.30.0
 wagtail==6.4.1
 wagtail_trash==3.1.0
