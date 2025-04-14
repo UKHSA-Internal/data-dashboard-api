@@ -2,6 +2,7 @@ import contextlib
 
 from django.db.utils import OperationalError
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts, plots
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
@@ -136,7 +137,7 @@ class ChartsSerializer(serializers.Serializer):
 
     plots = ChartPlotsListSerializer()
 
-    def to_models(self) -> ChartRequestParams:
+    def to_models(self, request: Request) -> ChartRequestParams:
         x_axis = self.data.get("x_axis") or DEFAULT_X_AXIS
         y_axis = self.data.get("y_axis") or DEFAULT_Y_AXIS
 
@@ -156,6 +157,7 @@ class ChartsSerializer(serializers.Serializer):
             y_axis_minimum_value=self.data["y_axis_minimum_value"]
             or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
             y_axis_maximum_value=self.data["y_axis_maximum_value"],
+            request=request,
         )
 
 

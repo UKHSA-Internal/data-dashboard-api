@@ -90,11 +90,11 @@ class TablesView(APIView):
         request_serializer = TablesSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
-        plots_collection = request_serializer.to_models()
+        request_params = request_serializer.to_models(request=request)
 
         try:
             tabular_data: list[dict[str, str]] = access.generate_table_for_full_plots(
-                plots_collection=plots_collection
+                request_params=request_params
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(

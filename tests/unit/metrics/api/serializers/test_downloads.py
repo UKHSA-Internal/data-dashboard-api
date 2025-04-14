@@ -32,7 +32,7 @@ class TestDownloadsSerializer:
         serializer.is_valid(raise_exception=True)
 
         # When
-        plots_collection = serializer.to_models()
+        plots_collection = serializer.to_models(request=None)
 
         # Then
         for plot in plots_collection.plots:
@@ -52,7 +52,7 @@ class TestDownloadsSerializer:
         serializer.is_valid(raise_exception=True)
 
         # When
-        plots_collection = serializer.to_models()
+        plots_collection = serializer.to_models(request=None)
 
         # Then
         for plot in plots_collection.plots:
