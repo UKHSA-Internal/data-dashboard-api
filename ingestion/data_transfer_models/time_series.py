@@ -1,11 +1,16 @@
 import datetime
+from typing import Self
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 from pydantic.fields import Field
 
 from ingestion.data_transfer_models import validation
-from ingestion.data_transfer_models.base import IncomingBaseDataModel
+from ingestion.data_transfer_models.base import (
+    IncomingBaseDataModel,
+    NonPublicDataSentToPublicIngestionError,
+)
 from ingestion.utils import type_hints
+from metrics.api.settings.auth import AUTH_ENABLED
 
 
 class InboundTimeSeriesSpecificFields(BaseModel):
@@ -37,6 +42,14 @@ class InboundTimeSeriesSpecificFields(BaseModel):
 
         """
         return validation.cast_date_to_uk_timezone(date_value=embargo)
+
+    @model_validator(mode="after")
+    def invalidate_non_public_data_for_public_ingestion(self) -> Self:
+        """Checks that if this is a public instance of the product then `is_public=False` data is invalidated."""
+        if not AUTH_ENABLED and not self.is_public:
+            raise NonPublicDataSentToPublicIngestionError
+
+        return self
 
 
 class TimeSeriesDTO(IncomingBaseDataModel):
