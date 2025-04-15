@@ -6,6 +6,7 @@ import pytest
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
 from metrics.data.models.core_models import CoreHeadline
 from metrics.domain.headlines.state import Headline
+from metrics.domain.models.headline import HeadlineParameters
 from metrics.interfaces.headlines import access
 
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
@@ -14,11 +15,11 @@ EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 @pytest.fixture
 def example_headline_args() -> dict[str, str]:
     return {
-        "topic_name": "COVID-19",
-        "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
-        "geography_name": "England",
-        "geography_type_name": "Nation",
-        "stratum_name": "default",
+        "topic": "COVID-19",
+        "metric": "COVID-19_headline_ONSdeaths_7DayChange",
+        "geography": "England",
+        "geography_type": "Nation",
+        "stratum": "default",
         "age": "all",
         "sex": "all",
     }
@@ -35,10 +36,12 @@ class TestHeadlinesInterface:
             is set on the `HeadlinesInterface` object
         """
         # Given
-        example_args = example_headline_args
+        headline_parameters = HeadlineParameters(**example_headline_args)
 
         # When
-        headlines_interface = access.HeadlinesInterface(**example_args)
+        headlines_interface = access.HeadlinesInterface(
+            headline_parameters=headline_parameters
+        )
 
         # Then
         assert headlines_interface.core_headline_manager == CoreHeadline.objects
@@ -54,7 +57,7 @@ class TestHeadlinesInterface:
             to retrieve the latest metric_value
         """
         # Given
-        expected_example_args = example_headline_args
+        headline_parameters = HeadlineParameters(**example_headline_args)
         mocked_core_headline = mock.Mock(
             metric_value=123, period_end=datetime.date(year=2024, month=2, day=29)
         )
@@ -64,7 +67,7 @@ class TestHeadlinesInterface:
         )
 
         headlines_interface = access.HeadlinesInterface(
-            **expected_example_args,
+            headline_parameters=headline_parameters,
             core_headline_manager=spy_core_headline_manager,
         )
 
@@ -78,7 +81,13 @@ class TestHeadlinesInterface:
         )
 
         spy_core_headline_manager.get_latest_headline.assert_called_once_with(
-            **expected_example_args,
+            topic_name=headline_parameters.topic_name,
+            metric_name=headline_parameters.metric_name,
+            geography_name=headline_parameters.geography_name,
+            geography_type_name=headline_parameters.geography_type_name,
+            stratum_name=headline_parameters.stratum_name,
+            age=headline_parameters.age_name,
+            sex=headline_parameters.sex_name,
         )
 
     def test_get_metric_value_raises_error_when_model_manager_raises_error_for_no_data_found(
@@ -91,12 +100,12 @@ class TestHeadlinesInterface:
         Then a `HeadlineNumberDataNotFoundError` is raised
         """
         # Given
-        expected_example_args = example_headline_args
+        headline_parameters = HeadlineParameters(**example_headline_args)
         spy_core_headline_manager = mock.Mock()
         spy_core_headline_manager.get_latest_headline.return_value = None
 
         headlines_interface = access.HeadlinesInterface(
-            **expected_example_args,
+            headline_parameters=headline_parameters,
             core_headline_manager=spy_core_headline_manager,
         )
 
@@ -119,10 +128,12 @@ class TestGenerateHeadlineNumber:
             from an instance of the `HeadlinesInterface`
         """
         # Given
-        example_args = example_headline_args
+        headline_parameters = HeadlineParameters(**example_headline_args)
 
         # When
-        metric_value = access.generate_headline_number(**example_args)
+        metric_value = access.generate_headline_number(
+            headline_parameters=headline_parameters
+        )
 
         # Then
         assert metric_value == spy_get_latest_metric_value.return_value
@@ -139,9 +150,9 @@ class TestGenerateHeadlineNumber:
         Then a `HeadlineNumberDataNotFoundError` is raised
         """
         # Given
-        example_args = example_headline_args
+        headline_parameters = HeadlineParameters(**example_headline_args)
         mocked_get_latest_headline.return_value = None
 
         # When / Then
         with pytest.raises(access.HeadlineNumberDataNotFoundError):
-            access.generate_headline_number(**example_args)
+            access.generate_headline_number(headline_parameters=headline_parameters)

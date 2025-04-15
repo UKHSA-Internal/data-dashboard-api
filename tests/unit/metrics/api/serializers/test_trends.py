@@ -7,7 +7,10 @@ from metrics.api.serializers.trends import (
     TrendsQuerySerializer,
     TrendsResponseSerializer,
 )
+from tests.fakes.factories.metrics.age_factory import FakeAgeFactory
+from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
+from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
 from tests.fakes.managers.age_manager import FakeAgeManager
 from tests.fakes.managers.geography_manager import FakeGeographyManager
 from tests.fakes.managers.geography_type_manager import FakeGeographyTypeManager
@@ -22,7 +25,15 @@ class TestTrendsQuerySerializer:
     @classmethod
     def _setup_valid_data_payload_and_model_managers(
         cls,
-    ) -> tuple[DATA_PAYLOAD_HINT, FakeMetricManager, FakeTopicManager]:
+    ) -> tuple[
+        DATA_PAYLOAD_HINT,
+        FakeMetricManager,
+        FakeTopicManager,
+        FakeGeographyManager,
+        FakeGeographyTypeManager,
+        FakeAgeManager,
+        FakeStratumManager,
+    ]:
         metric_name = "COVID-19_headline_ONSdeaths_7DayChange"
 
         fake_metric = FakeMetricFactory.build_example_metric(
@@ -34,17 +45,33 @@ class TestTrendsQuerySerializer:
             metric_name="COVID-19_headline_ONSdeaths_7DayPercentChange",
             metric_group_name="headline",
         )
+        fake_geography = FakeGeographyFactory.build_example(
+            geography_name="England",
+            geography_type_name="Nation",
+            geography_code="E92000001",
+        )
+        fake_age = FakeAgeFactory.build_example(age_name="all")
+        fake_stratum = FakeStratumFactory.build_example(stratum_name="default")
 
         data: cls.DATA_PAYLOAD_HINT = {
             "topic": fake_topic.name,
             "metric": fake_metric.name,
             "percentage_metric": fake_percentage_metric.name,
+            "stratum": fake_stratum.name,
+            "age": fake_age.name,
+            "sex": "all",
+            "geography": fake_geography.name,
+            "geography_type": fake_geography.geography_type.name,
         }
 
         return (
             data,
             FakeMetricManager([fake_metric, fake_percentage_metric]),
             FakeTopicManager([fake_topic]),
+            FakeGeographyManager([fake_geography]),
+            FakeGeographyTypeManager([fake_geography.geography_type]),
+            FakeAgeManager([fake_age]),
+            FakeStratumManager([fake_stratum]),
         )
 
     def test_can_validate_successfully(self):
@@ -58,17 +85,21 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
         serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
-                "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "topic_manager": topic_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "age_manager": age_manager,
+                "stratum_manager": stratum_manager,
             },
         )
 
@@ -93,18 +124,23 @@ class TestTrendsQuerySerializer:
             data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
+
         data_payload[field_to_be_serialized] = "invalid-value"
 
         serializer = TrendsQuerySerializer(
             data=data_payload,
             context={
-                "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "topic_manager": topic_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": age_manager,
+                "age_manager": stratum_manager,
             },
         )
 
@@ -124,18 +160,22 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
         serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
-                "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "topic_manager": topic_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": age_manager,
+                "age_manager": stratum_manager,
             },
         )
 
@@ -157,18 +197,22 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
         serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
-                "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "topic_manager": topic_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": age_manager,
+                "age_manager": stratum_manager,
             },
         )
 
@@ -193,18 +237,22 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
 
         # When
         serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
-                "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "topic_manager": topic_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": age_manager,
+                "age_manager": stratum_manager,
             },
         )
 
@@ -224,6 +272,10 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         geography_manager = FakeGeographyManager(geographies=[mock.Mock()])
 
@@ -231,12 +283,12 @@ class TestTrendsQuerySerializer:
         serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
-                "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "topic_manager": topic_manager,
                 "geography_manager": geography_manager,
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": age_manager,
+                "age_manager": stratum_manager,
             },
         )
 
@@ -256,6 +308,10 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         geography_type_manager = FakeGeographyTypeManager(geography_types=[mock.Mock()])
 
@@ -266,9 +322,9 @@ class TestTrendsQuerySerializer:
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
                 "geography_type_manager": geography_type_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "stratum_manager": FakeStratumManager([]),
-                "age_manager": FakeAgeManager([]),
+                "geography_manager": geography_type_manager,
+                "stratum_manager": age_manager,
+                "age_manager": stratum_manager,
             },
         )
 
@@ -293,6 +349,10 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         stratum_manager = FakeStratumManager(strata=[mock.Mock()])
 
@@ -303,9 +363,9 @@ class TestTrendsQuerySerializer:
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
                 "stratum_manager": stratum_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "age_manager": FakeAgeManager([]),
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "age_manager": age_manager,
             },
         )
 
@@ -325,6 +385,10 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
         age_manager = FakeAgeManager(ages=[mock.Mock()])
 
@@ -335,9 +399,9 @@ class TestTrendsQuerySerializer:
                 "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
                 "age_manager": age_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
+                "stratum_manager": stratum_manager,
             },
         )
 
@@ -356,23 +420,26 @@ class TestTrendsQuerySerializer:
             valid_data_payload,
             metric_manager,
             topic_manager,
+            geography_manager,
+            geography_type_manager,
+            age_manager,
+            stratum_manager,
         ) = self._setup_valid_data_payload_and_model_managers()
-        age_manager = FakeAgeManager(ages=[mock.Mock()])
         serializer = TrendsQuerySerializer(
             data=valid_data_payload,
             context={
-                "topic_manager": topic_manager,
                 "metric_manager": metric_manager,
+                "topic_manager": topic_manager,
+                "geography_manager": geography_manager,
+                "geography_type_manager": geography_type_manager,
                 "age_manager": age_manager,
-                "geography_manager": FakeGeographyManager([]),
-                "geography_type_manager": FakeGeographyTypeManager([]),
-                "stratum_manager": FakeStratumManager([]),
+                "stratum_manager": stratum_manager,
             },
         )
-        serializer.is_valid()
+        serializer.is_valid(raise_exception=True)
 
         # When
-        trends_parameters = serializer.to_models()
+        trends_parameters = serializer.to_models(request=None)
 
         # Then
         assert trends_parameters.topic_name == valid_data_payload["topic"]
