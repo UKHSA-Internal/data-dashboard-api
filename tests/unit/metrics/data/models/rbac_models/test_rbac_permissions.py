@@ -81,20 +81,6 @@ class TestRBACPermission:
                 "topic",
                 "geography",
                 "geography_type",
-                "age",
-            },
-            {
-                "theme",
-                "sub_theme",
-                "topic",
-                "geography",
-                "geography_type",
-            },
-            {
-                "stratum",
-            },
-            {
-                "age",
             },
         ),
     )

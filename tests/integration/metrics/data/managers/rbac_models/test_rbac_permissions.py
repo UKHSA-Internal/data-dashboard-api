@@ -16,8 +16,6 @@ class TestRBACPermissionFactory:
         "metric_name": "COVID-19_headline_positivity_latest",
         "geography_type_name": "Nation",
         "geography_name": "England",
-        "stratum_name": "default",
-        "age_name": "all",
     }
 
     @pytest.mark.django_db
@@ -40,8 +38,6 @@ class TestRBACPermissionFactory:
         assert permission.metric.name == "COVID-19_headline_positivity_latest"
         assert permission.geography.name == "England"
         assert permission.geography_type.name == "Nation"
-        assert permission.stratum.name == "default"
-        assert permission.age.name == "all"
 
     @pytest.mark.django_db
     def test_get_existing_permissions_returns_no_queryset(self):

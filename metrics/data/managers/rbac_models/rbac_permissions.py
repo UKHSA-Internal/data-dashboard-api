@@ -21,8 +21,6 @@ class RBACPermissionQuerySet(models.QuerySet):
                 metric=instance.metric,
                 geography_type=instance.geography_type,
                 geography=instance.geography,
-                age=instance.age,
-                stratum=instance.stratum,
             )
             .exclude(pk=instance.pk)
             .distinct()

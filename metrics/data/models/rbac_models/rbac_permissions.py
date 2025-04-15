@@ -31,25 +31,6 @@ class DuplicatePermissionError(ValidationError):
 
 
 class RBACPermission(models.Model):
-
-    class Meta:
-        db_table = "rbac_permissions"
-        constraints = [
-            models.UniqueConstraint(
-                fields=[
-                    "theme",
-                    "sub_theme",
-                    "topic",
-                    "metric",
-                    "geography_type",
-                    "geography",
-                    "age",
-                    "stratum",
-                ],
-                name="unique_permission_fields",
-            )
-        ]
-
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=255, null=False, unique=True)
     theme = models.ForeignKey(
@@ -94,22 +75,24 @@ class RBACPermission(models.Model):
         null=True,
         blank=True,
     )
-    age = models.ForeignKey(
-        "Age",
-        on_delete=models.CASCADE,
-        related_name="age_permissions",
-        null=True,
-        blank=True,
-    )
-    stratum = models.ForeignKey(
-        "Stratum",
-        on_delete=models.CASCADE,
-        related_name="stratum_permissions",
-        null=True,
-        blank=True,
-    )
 
     objects = RBACPermissionManager()
+
+    class Meta:
+        db_table = "rbac_permissions"
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "theme",
+                    "sub_theme",
+                    "topic",
+                    "metric",
+                    "geography_type",
+                    "geography",
+                ],
+                name="unique_permission_fields",
+            )
+        ]
 
     @property
     def model_types(self) -> list[str]:
@@ -120,8 +103,6 @@ class RBACPermission(models.Model):
             "metric",
             "geography_type",
             "geography",
-            "age",
-            "stratum",
         ]
 
     def __str__(self) -> str:

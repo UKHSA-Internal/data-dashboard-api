@@ -45,8 +45,6 @@ class FluentPermissions:
             "metric",
             "geography_type",
             "geography",
-            "age",
-            "stratum",
         ]
 
         for field in fields:
