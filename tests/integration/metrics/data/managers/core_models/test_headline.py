@@ -444,6 +444,7 @@ class TestCoreHeadlineManager:
             stratum_name=current_round_headline.stratum.name,
             age=current_round_headline.age.name,
             sex=current_round_headline.sex,
+            is_public=current_round_headline.is_public,
         )
         retrieved_records = CoreHeadline.objects.all()
 
