@@ -1,12 +1,10 @@
 import factory
 
-from tests.fakes.factories.metrics.age_factory import FakeAgeFactory
 from tests.fakes.factories.metrics.geography_factory import FakeGeographyFactory
 from tests.fakes.factories.metrics.geography_type_factory import (
     FakeGeographyTypeFactory,
 )
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
-from tests.fakes.factories.metrics.stratum_factory import FakeStratumFactory
 from tests.fakes.factories.metrics.sub_theme_factory import FakeSubThemeFactory
 from tests.fakes.factories.metrics.theme_factory import FakeThemeFactory
 from tests.fakes.factories.metrics.topic_factory import FakeTopicFactory
@@ -30,8 +28,6 @@ class FakeRBACPermissionFactory(factory.Factory):
         topic: str = "",
         geography: str = "",
         geography_type: str = "",
-        age: str = "",
-        stratum: str = "",
     ) -> FakeRBACPermission:
         if theme:
             fake_theme = FakeThemeFactory.build_example_theme(name=theme)
@@ -74,18 +70,6 @@ class FakeRBACPermissionFactory(factory.Factory):
         else:
             fake_geography = None
 
-        if stratum:
-            fake_stratum = FakeStratumFactory.build_example(
-                stratum_name=stratum,
-            )
-        else:
-            fake_stratum = None
-
-        if age:
-            fake_age = FakeAgeFactory.build_example(age_name=age)
-        else:
-            fake_age = None
-
         return cls.build(
             theme=fake_theme,
             sub_theme=fake_sub_theme,
@@ -93,6 +77,4 @@ class FakeRBACPermissionFactory(factory.Factory):
             metric=fake_metric,
             geography_type=fake_geography_type,
             geography=fake_geography,
-            stratum=fake_stratum,
-            age=fake_age,
         )

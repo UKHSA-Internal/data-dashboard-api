@@ -5,7 +5,7 @@ class RBACPermissionQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `RBACPermissionManager`."""
 
     def get_existing_permissions(
-        self, instance: "RBACPermission"
+        self, *, instance: "RBACPermission"
     ) -> "RBACPermissionQuerySet":
         """Retrieves existing permissions that match the given instance's fields, excluding itself.
         Args:
@@ -21,8 +21,6 @@ class RBACPermissionQuerySet(models.QuerySet):
                 metric=instance.metric,
                 geography_type=instance.geography_type,
                 geography=instance.geography,
-                age=instance.age,
-                stratum=instance.stratum,
             )
             .exclude(pk=instance.pk)
             .distinct()
@@ -37,7 +35,7 @@ class RBACPermissionManager(models.Manager):
         return RBACPermissionQuerySet(self.model, using=self._db)
 
     def get_existing_permissions(
-        self, instance: "RBACPermission"
+        self, *, instance: "RBACPermission"
     ) -> RBACPermissionQuerySet:
         """Proxy method to access `get_existing_permissions` from the queryset."""
-        return self.get_queryset().get_existing_permissions(instance)
+        return self.get_queryset().get_existing_permissions(instance=instance)
