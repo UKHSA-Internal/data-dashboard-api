@@ -57,7 +57,7 @@ class TestRBACPermissionFactory:
         )
         # When
         retrieved_permissions = RBACPermission.objects.get_existing_permissions(
-            permission
+            instance=permission
         )
 
         # Then

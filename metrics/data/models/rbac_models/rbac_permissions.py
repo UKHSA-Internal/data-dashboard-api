@@ -204,7 +204,7 @@ class RBACPermission(models.Model):
 
     def _get_existing_permissions(self) -> RBACPermissionQuerySet:
         """Validates that there are no duplicate permissions with the same fields."""
-        return RBACPermission.objects.get_existing_permissions(self)
+        return RBACPermission.objects.get_existing_permissions(instance=self)
 
     def _check_rbac_permissions_exist(self):
         rbac_permissions = self._get_existing_permissions()
