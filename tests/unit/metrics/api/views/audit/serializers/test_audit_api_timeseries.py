@@ -84,6 +84,26 @@ class TestAPITimeseriesSerializer:
 
         assert serialized_date == expected_date_value
 
+    def test_null_embargo_date_is_serialized_correctly(self):
+        """
+        Given a fake `APITimeSeries` model object
+        When the fake is passed to the `APITimeseriesSerializer`
+        Then the `embargo` field is returned in the expected format
+        """
+        # Given
+        fake_api_time_series = (
+            FakeAPITimeSeriesFactory.build_example_covid_time_series()
+        )
+        fake_api_time_series.embargo = None
+
+        # When
+        serializer = AuditAPITimeSeriesSerializer(instance=fake_api_time_series)
+
+        # Then
+        serialized_date: str = serializer.data["embargo"]
+
+        assert serialized_date == ""
+
     @pytest.mark.parametrize(
         "expected_field",
         [

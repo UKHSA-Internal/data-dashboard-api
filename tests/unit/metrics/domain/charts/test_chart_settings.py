@@ -82,6 +82,7 @@ class TestChartSettings:
             "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": chart_settings._get_tick_font_config(),
+            "autotickangles": [0, 90],
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
@@ -132,6 +133,7 @@ class TestChartSettings:
             "dtick": None,
             "tickformat": None,
             "tickfont": chart_settings._get_tick_font_config(),
+            "autotickangles": [0, 90],
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.x_axis_title,
@@ -381,9 +383,56 @@ class TestChartSettings:
             "dtick": "M1",
             "tick0": tick0,
             "tickformat": "%b<br>%Y",
-            "range": [min_date, max_date],
+            "range": [
+                # shift first and last date 15 days for monthly intervals
+                tick0 - datetime.timedelta(days=15),
+                max_date + datetime.timedelta(days=15),
+            ],
         }
+
         assert x_axis_date_type == expected_axis_config
+
+    @pytest.mark.parametrize(
+        "interval, number_of_days",
+        (
+            ["D7", 1],
+            ["M1", 15],
+            ["M3", 45],
+            ["M6", 90],
+            ["M12", 178],
+            [WEEK_IN_MILLISECONDS, 1],
+            [TWO_WEEKS_IN_MILLISECONDS, 1],
+        ),
+    )
+    def test_date_range_is_padding_correctly_based_on_x_axis_interval(
+        self,
+        interval: str,
+        number_of_days: int,
+        fake_plot_data: PlotGenerationData,
+    ):
+        """
+        Given a valid `dtick` (the chart x-axis interval)
+        When the `get_timeseries_margin_days()` method is called
+        Then the correct number of days to use as padding is returned.
+        """
+        # Given
+        dtick = interval
+        payload = ChartGenerationPayload(
+            chart_width=435,
+            chart_height=220,
+            plots=[fake_plot_data],
+            x_axis_title="",
+            y_axis_title="",
+        )
+        chart_settings = ChartSettings(chart_generation_payload=payload)
+
+        # When
+        expected_number_of_days = chart_settings.get_timeseries_margin_days(
+            interval=dtick
+        )
+
+        # Then
+        assert expected_number_of_days == number_of_days
 
     def test_get_x_axis_date_type_breaks_line_for_narrow_charts(
         self, fake_plot_data: PlotGenerationData
@@ -697,7 +746,7 @@ class TestChartSettings:
             "barmode": "group",
             "legend": {
                 "orientation": "h",
-                "y": -0.25,
+                "y": -0.35,
                 "x": 0,
             },
         }
@@ -723,7 +772,7 @@ class TestChartSettings:
         expected_legend_bottom_left_config = {
             "legend": {
                 "orientation": "h",
-                "y": -0.25,
+                "y": -0.35,
                 "x": 0,
             },
         }

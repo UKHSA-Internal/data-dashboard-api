@@ -406,6 +406,7 @@ class Consumer:
                 period_start=headline_data.period_start,
                 period_end=headline_data.period_end,
                 metric_value=headline_data.metric_value,
+                is_public=headline_data.is_public,
             )
             for headline_data in self.dto.data
         ]
@@ -468,6 +469,7 @@ class Consumer:
                 metric_value=time_series_data.metric_value,
                 in_reporting_delay_period=time_series_data.in_reporting_delay_period,
                 force_write=time_series_data.force_write,
+                is_public=time_series_data.is_public,
             )
             created_core_time_series.append(core_time_series)
 
@@ -500,15 +502,23 @@ class Consumer:
             None
 
         """
+        params = {
+            "topic_name": self.dto.topic,
+            "metric_name": self.dto.metric,
+            "geography_name": self.dto.geography,
+            "geography_type_name": self.dto.geography_type,
+            "geography_code": self.dto.geography_code,
+            "stratum_name": self.dto.stratum,
+            "sex": self.dto.sex,
+            "age": self.dto.age,
+        }
         self.core_headline_manager.delete_superseded_data(
-            topic_name=self.dto.topic,
-            metric_name=self.dto.metric,
-            geography_name=self.dto.geography,
-            geography_type_name=self.dto.geography_type,
-            geography_code=self.dto.geography_code,
-            stratum_name=self.dto.stratum,
-            sex=self.dto.sex,
-            age=self.dto.age,
+            **params,
+            is_public=True,
+        )
+        self.core_headline_manager.delete_superseded_data(
+            **params,
+            is_public=False,
         )
 
     def build_api_time_series(self) -> list[API_TIME_SERIES_MODEL]:
@@ -545,6 +555,7 @@ class Consumer:
                 metric_value=time_series_data.metric_value,
                 in_reporting_delay_period=time_series_data.in_reporting_delay_period,
                 force_write=time_series_data.force_write,
+                is_public=time_series_data.is_public,
             )
             created_api_time_series.append(api_time_series)
 
@@ -579,24 +590,34 @@ class Consumer:
             None
 
         """
-        self.core_timeseries_manager.delete_superseded_data(
-            metric_name=self.dto.metric,
-            geography_name=self.dto.geography,
-            geography_type_name=self.dto.geography_type,
-            geography_code=self.dto.geography_code,
-            stratum_name=self.dto.stratum,
-            sex=self.dto.sex,
-            age=self.dto.age,
-        )
-        self.api_timeseries_manager.delete_superseded_data(
-            theme_name=self.dto.parent_theme,
-            sub_theme_name=self.dto.child_theme,
-            topic_name=self.dto.topic,
-            metric_name=self.dto.metric,
-            geography_name=self.dto.geography,
-            geography_type_name=self.dto.geography_type,
-            geography_code=self.dto.geography_code,
-            stratum_name=self.dto.stratum,
-            sex=self.dto.sex,
-            age=self.dto.age,
-        )
+        self._clear_stale_core_timeseries()
+        self._clear_stale_api_timeseries()
+
+    def _clear_stale_core_timeseries(self):
+        params = {
+            "metric_name": self.dto.metric,
+            "geography_name": self.dto.geography,
+            "geography_type_name": self.dto.geography_type,
+            "geography_code": self.dto.geography_code,
+            "stratum_name": self.dto.stratum,
+            "sex": self.dto.sex,
+            "age": self.dto.age,
+        }
+        self.core_timeseries_manager.delete_superseded_data(**params, is_public=True)
+        self.core_timeseries_manager.delete_superseded_data(**params, is_public=False)
+
+    def _clear_stale_api_timeseries(self):
+        params = {
+            "theme_name": self.dto.parent_theme,
+            "sub_theme_name": self.dto.child_theme,
+            "topic_name": self.dto.topic,
+            "metric_name": self.dto.metric,
+            "geography_name": self.dto.geography,
+            "geography_type_name": self.dto.geography_type,
+            "geography_code": self.dto.geography_code,
+            "stratum_name": self.dto.stratum,
+            "sex": self.dto.sex,
+            "age": self.dto.age,
+        }
+        self.api_timeseries_manager.delete_superseded_data(**params, is_public=True)
+        self.api_timeseries_manager.delete_superseded_data(**params, is_public=False)

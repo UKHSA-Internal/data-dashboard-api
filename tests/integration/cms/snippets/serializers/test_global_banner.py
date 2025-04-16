@@ -1,7 +1,7 @@
 import pytest
 
 from cms.snippets.models.global_banner import BannerTypes, GlobalBanner
-from cms.snippets.serializers.global_banner import get_active_global_banner
+from cms.snippets.serializers.global_banner import get_active_global_banners
 from tests.factories.cms.snippets.global_banner import GlobalBannerFactory
 
 
@@ -31,14 +31,14 @@ class TestGetActiveGlobalBanner:
         GlobalBannerFactory.create(**inactive_banner_info)
 
         # When
-        active_global_banner_info: dict[str, str] = get_active_global_banner(
+        active_global_banner_info: dict[str, str] = get_active_global_banners(
             global_banner_manager=GlobalBanner.objects
         )
 
         # Then
-        assert active_global_banner_info["title"] == active_banner_info["title"]
-        assert active_global_banner_info["body"] == active_banner_info["body"]
+        assert active_global_banner_info[0]["title"] == active_banner_info["title"]
+        assert active_global_banner_info[0]["body"] == active_banner_info["body"]
         assert (
-            active_global_banner_info["banner_type"]
+            active_global_banner_info[0]["banner_type"]
             == active_banner_info["banner_type"]
         )

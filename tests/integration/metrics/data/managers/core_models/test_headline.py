@@ -17,7 +17,7 @@ class TestCoreHeadlineManager:
         """
         Given a `CoreHeadline` record is live
         When `query_for_data()` is called
-        Then then a queryset is returned with the correct x and y values
+        Then a queryset is returned with the correct x and y values
             and the `period_end` of the record is added to the queryset as
             `latest_date`
         """
@@ -112,7 +112,7 @@ class TestCoreHeadlineManager:
         """
         Given a `CoreHeadline` record which is considered to be live
         And another `CoreHeadline` record is under embargo
-        When `by_topic_metric_ordered_from_newest_to_oldest()` is called
+        When `get_all_headlines_released_from_embargo()` is called
             from an instance of the `CoreHeadlineQuerySet`
         Then the 'live' record is returned without the data under embargo
         """
@@ -134,14 +134,16 @@ class TestCoreHeadlineManager:
 
         # When
         core_headline_queryset = CoreHeadline.objects.get_queryset()
-        returned_queryset = core_headline_queryset.get_headlines_released_from_embargo(
-            topic_name=core_headline_live.metric.topic.name,
-            metric_name=core_headline_live.metric.name,
-            geography_name=core_headline_live.geography.name,
-            geography_type_name=core_headline_live.geography.geography_type.name,
-            stratum_name=core_headline_live.stratum.name,
-            sex=core_headline_live.sex,
-            age=core_headline_live.age.name,
+        returned_queryset = (
+            core_headline_queryset.get_all_headlines_released_from_embargo(
+                topic_name=core_headline_live.metric.topic.name,
+                metric_name=core_headline_live.metric.name,
+                geography_name=core_headline_live.geography.name,
+                geography_type_name=core_headline_live.geography.geography_type.name,
+                stratum_name=core_headline_live.stratum.name,
+                sex=core_headline_live.sex,
+                age=core_headline_live.age.name,
+            )
         )
 
         # Then
@@ -442,6 +444,7 @@ class TestCoreHeadlineManager:
             stratum_name=current_round_headline.stratum.name,
             age=current_round_headline.age.name,
             sex=current_round_headline.sex,
+            is_public=current_round_headline.is_public,
         )
         retrieved_records = CoreHeadline.objects.all()
 
