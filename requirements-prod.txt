@@ -1,7 +1,7 @@
 -r requirements-prod-ingestion.txt
 anyascii==0.3.2
 attrs==25.3.0
-beautifulsoup4==4.11.2
+beautifulsoup4==4.13.4
 CacheControl==0.14.2
 certifi==2025.1.31
 cfgv==3.4.0
