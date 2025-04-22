@@ -3,10 +3,11 @@ from collections import defaultdict
 from decimal import Decimal
 from typing import Any
 
-from django.db.models import QuerySet
+from django.db.models import Manager, QuerySet
 from pydantic import BaseModel
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.api.settings.auth import AUTH_ENABLED
+from metrics.data.models.core_models import CoreTimeSeries, Topic
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import (
     ChartRequestParams,
@@ -22,6 +23,7 @@ from metrics.interfaces.plots.validation import (
 from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
+DEFAULT_TOPIC_MANAGER = Topic.objects
 
 
 class DataNotFoundForPlotError(Exception):
@@ -59,9 +61,11 @@ class PlotsInterface:
         *,
         chart_request_params: ChartRequestParams,
         core_model_manager: CORE_MODEL_MANAGER_TYPE = DEFAULT_CORE_TIME_SERIES_MANAGER,
+        topic_model_manager: Manager = DEFAULT_TOPIC_MANAGER,
     ):
         self.chart_request_params = chart_request_params
         self.core_model_manager = core_model_manager
+        self.topic_model_manager = topic_model_manager
         self.validate_plot_parameters()
 
     def validate_plot_parameters(self) -> None:
@@ -117,6 +121,7 @@ class PlotsInterface:
                 b) The latest refresh date associated with the resulting data
         """
         plot_params: dict[str, str] = plot_parameters.to_dict_for_query()
+
         queryset = self.get_queryset_from_core_model_manager(plot_params=plot_params)
 
         return QuerySetResult(queryset=queryset, latest_date=queryset.latest_date)
@@ -131,13 +136,18 @@ class PlotsInterface:
             plot_params: Dictionary of plot parameters based on the metric type
 
         Returns:
-            QuerySet: Of the latest headline number including..
+            QuerySet: Of the latest headline number including:
             Examples:
                 `<CoreHeadlineSeriesQuerySet [
                     ('01-04', Decimal('8.0')),
                     ('05-10', Decimal('9.0'))
                 ]>`
         """
+        if AUTH_ENABLED:
+            topic = self.topic_model_manager.get(name=plot_params["topic_name"])
+            plot_params["theme_name"] = topic.sub_theme.theme.name
+            plot_params["sub_theme_name"] = topic.sub_theme.name
+
         return self.core_model_manager.query_for_data(
             **plot_params, rbac_permissions=self.chart_request_params.rbac_permissions
         )

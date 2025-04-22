@@ -490,6 +490,8 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        theme_name: str = "",
+        sub_theme_name: str = "",
         rbac_permissions: Iterable[RBACPermission] | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
@@ -526,6 +528,12 @@ class CoreTimeSeriesManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            theme_name: The name of the theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
+            sub_theme_name: The name of the sub theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
             rbac_permissions: The RBAC permissions available
                 to the given request. This dictates whether the given
                 request is permitted access to non-public data or not.
@@ -560,8 +568,8 @@ class CoreTimeSeriesManager(models.Manager):
         """
         rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
         has_access_to_non_public_data: bool = validate_permissions(
-            theme="",
-            sub_theme="",
+            theme=theme_name,
+            sub_theme=sub_theme_name,
             topic=topic_name,
             metric=metric_name,
             geography_type=geography_type_name,
