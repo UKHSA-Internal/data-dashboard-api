@@ -558,13 +558,11 @@ class TestPlotsInterface:
         """
         # Given
         spy_core_headline_manager = mock.Mock()
-        fake_topic = FakeMetricFactory.build_example_metric().topic
-        fake_topic_manager = FakeTopicManager(topics=[fake_topic])
+        fake_metric = FakeMetricFactory.build_example_metric()
+        fake_topic_manager = FakeTopicManager(topics=[fake_metric.topic])
 
         mocked_x_axis = mock.Mock()
         mocked_y_axis = mock.Mock()
-        mocked_topic = mock.Mock()
-        mocked_metric = mock.Mock()
         mocked_geography = mock.Mock()
         mocked_geography_type = mock.Mock()
         mocked_stratum = mock.Mock()
@@ -581,8 +579,8 @@ class TestPlotsInterface:
         # When
         plots_params = {
             "fields_to_export": [mocked_x_axis, mocked_y_axis],
-            "topic_name": mocked_topic,
-            "metric_name": mocked_metric,
+            "topic_name": fake_metric.topic.name,
+            "metric_name": fake_metric.name,
             "geography_name": mocked_geography,
             "geography_type_name": mocked_geography_type,
             "geography_code": "",
@@ -598,8 +596,8 @@ class TestPlotsInterface:
         assert headline_data == spy_core_headline_manager.query_for_data.return_value
         spy_core_headline_manager.query_for_data.assert_called_once_with(
             fields_to_export=[mocked_x_axis, mocked_y_axis],
-            topic_name=mocked_topic,
-            metric_name=mocked_metric,
+            topic_name=fake_metric.topic.name,
+            metric_name=fake_metric.name,
             geography_name=mocked_geography,
             geography_type_name=mocked_geography_type,
             geography_code="",
@@ -607,6 +605,8 @@ class TestPlotsInterface:
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
+            theme_name=fake_metric.topic.sub_theme.theme.name,
+            sub_theme_name=fake_metric.topic.sub_theme.name,
         )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
