@@ -12,7 +12,9 @@ from typing import Optional, Self
 from django.db import models
 from django.utils import timezone
 
-from metrics.api.permissions.fluent_permissions import validate_permissions_for_non_public
+from metrics.api.permissions.fluent_permissions import (
+    validate_permissions_for_non_public,
+)
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -226,7 +228,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
-        queryset.filter(is_public=True)
+        queryset = queryset.filter(is_public=True)
         return self._newest_to_oldest(queryset=queryset)
 
     def get_non_public_only_headlines_released_from_embargo(
@@ -251,7 +253,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
-        queryset.filter(is_public=False)
+        queryset = queryset.filter(is_public=False)
         return self._newest_to_oldest(queryset=queryset)
 
     @staticmethod

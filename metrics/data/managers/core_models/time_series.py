@@ -12,7 +12,9 @@ from typing import Self
 from django.db import models
 from django.utils import timezone
 
-from metrics.api.permissions.fluent_permissions import validate_permissions_for_non_public
+from metrics.api.permissions.fluent_permissions import (
+    validate_permissions_for_non_public,
+)
 from metrics.data.models import RBACPermission
 
 
