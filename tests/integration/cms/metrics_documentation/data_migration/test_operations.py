@@ -1,9 +1,7 @@
-import datetime
-
 import pytest
 from django.core.management import call_command
 
-from cms.home.models import HomePage
+from cms.home.models import UKHSARootPage
 from cms.metrics_documentation.data_migration.child_entries import (
     get_metrics_definitions,
 )
@@ -82,10 +80,10 @@ class TestRemoveMetricsDocumentationParentPage:
 class TestGetOrCreateMetricsDocumentationParentPage:
     @pytest.mark.django_db
     def test_creates_parent_page_if_not_readily_available(
-        self, dashboard_root_page: HomePage
+        self, dashboard_root_page: UKHSARootPage
     ):
         """
-        Given an existing `HomePage` record for the root page
+        Given an existing `UKHSARootPage` record for the root page
         And no pre-existing `MetricsDocumentationParentPage`
         When `get_or_create_metrics_documentation_parent_page()` is called
         Then a new `MetricsDocumentationParentPage` is created
@@ -110,7 +108,7 @@ class TestGetOrCreateMetricsDocumentationParentPage:
 
 class TestCreateMetricsDocumentationParentPageAndChildEntries:
     @pytest.mark.django_db
-    def test_creates_correct_child_entries(self, dashboard_root_page: HomePage):
+    def test_creates_correct_child_entries(self, dashboard_root_page: UKHSARootPage):
         """
         Given a number of existing `Topic` and `Metric` combinations
         When `create_metrics_documentation_parent_page_and_child_entries()` is called
@@ -160,7 +158,7 @@ class TestCreateMetricsDocumentationParentPageAndChildEntries:
 
     @pytest.mark.django_db
     def test_existing_child_entries_are_removed_correctly(
-        self, dashboard_root_page: HomePage
+        self, dashboard_root_page: UKHSARootPage
     ):
         """
         Given an existing `MetricsDocumentationParentPage`

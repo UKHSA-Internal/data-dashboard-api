@@ -8,6 +8,20 @@ INVALID_PARAMETERS = [
     ),  # Invalid metric group
     (
         "infectious_disease",
+        "respiratory",
+        "lower-respiratory-tract-infection",
+        "upper-respiratory-tract-infection_syndromic_GPInHours_rateByDay",
+        "syndromic",
+    ),  # Invalid topic <-> metric combination
+    (
+        "extreme_event",
+        "contact",
+        "mpox-clade-1b",
+        "mpox-clade-1b_cases_countByWeek",
+        "cases",
+    ),  # Invalid theme
+    (
+        "extreme_event",
         "vectors",
         "ticks",
         "ticks_counts_countByYear",
@@ -34,4 +48,11 @@ INVALID_PARAMETERS = [
         "hepatitis-c_cases_prevalenceByYearEstimate",
         "prevention",
     ),  # Invalid child Topic
+    (
+        "infectious_disease",
+        "chemical_exposure",
+        "Lead",
+        "lead_headline_percentByDeprivationLatest",
+        "headline",
+    ),  # Invalid parent theme
 ]
