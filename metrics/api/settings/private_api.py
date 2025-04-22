@@ -1,14 +1,5 @@
-import os
-
 import config
-
-
-def is_auth_enabled():
-    return os.environ.get("AUTH_ENABLED", "").lower() in {"true", "1"}
-
-
-AUTH_ENABLED = is_auth_enabled()
-
+from metrics.api.settings.auth import AUTH_ENABLED
 
 if AUTH_ENABLED:
     CACHES = {

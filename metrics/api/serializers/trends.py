@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts
 from metrics.api.serializers.headlines import HeadlinesQuerySerializer
@@ -18,8 +19,8 @@ class TrendsQuerySerializer(HeadlinesQuerySerializer):
             self.metric_manager.get_all_unique_percent_change_type_names()
         )
 
-    def to_models(self) -> TrendsParameters:
-        return TrendsParameters(**self.validated_data)
+    def to_models(self, request: Request) -> TrendsParameters:
+        return TrendsParameters(**self.validated_data, request=request)
 
 
 class TrendsResponseSerializer(serializers.Serializer):

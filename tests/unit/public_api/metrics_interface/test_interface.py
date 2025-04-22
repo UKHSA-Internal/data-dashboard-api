@@ -1,3 +1,5 @@
+from unittest import mock
+
 from metrics.data.models.api_models import APITimeSeries
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 
@@ -17,3 +19,21 @@ class TestMetricsInterface:
 
         # Then
         assert api_timeseries_model is APITimeSeries
+
+    @mock.patch("public_api.metrics_interface.interface.AUTH_ENABLED")
+    def test_is_auth_enabled_references_setting_in_metrics_app(
+        self, mocked_auth_enabled: mock.MagicMock
+    ):
+        """
+        Given the `MetricsPublicAPIInterface` class
+        When `is_auth_enabled()` is called
+        Then the `AUTH_ENABLED` setting is referenced
+        """
+        # Given
+        metrics_public_api_interface = MetricsPublicAPIInterface
+
+        # When
+        auth_enabled = metrics_public_api_interface.is_auth_enabled()
+
+        # Then
+        assert auth_enabled == mocked_auth_enabled

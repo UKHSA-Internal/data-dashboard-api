@@ -28,6 +28,7 @@ class TestAPITimeSeriesManager:
         fake_stratum = "default"
         fake_sex = "all"
         fake_age = "all"
+        fake_is_public = True
 
         # When
         APITimeSeriesManager().delete_superseded_data(
@@ -41,6 +42,7 @@ class TestAPITimeSeriesManager:
             stratum_name=fake_stratum,
             sex=fake_sex,
             age=fake_age,
+            is_public=fake_is_public,
         )
 
         # Then
@@ -55,6 +57,7 @@ class TestAPITimeSeriesManager:
             stratum_name=fake_stratum,
             sex=fake_sex,
             age=fake_age,
+            is_public=fake_is_public,
         )
 
         returned_records = spy_query_for_superseded_data.return_value

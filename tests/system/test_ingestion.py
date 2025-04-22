@@ -322,6 +322,9 @@ class TestIngestion:
             "metric": example_headline_data["metric"],
             "geography": example_headline_data["geography"],
             "geography_type": example_headline_data["geography_type"],
+            "sex": example_headline_data["sex"],
+            "age": example_headline_data["age"],
+            "stratum": example_headline_data["stratum"],
         }
 
         # Given
