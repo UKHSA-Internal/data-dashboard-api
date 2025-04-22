@@ -358,7 +358,7 @@ class CoreHeadlineManager(models.Manager):
            Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
            Eg: `85+` where age range is the headline variable of the chart and the y_axis
            is the metric value. A `latest_date` attribute is added to the queryset, which is
-           take from the `period_end` of the selected headline metric.
+           taken from the `period_end` of the selected headline metric.
            Examples:
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
