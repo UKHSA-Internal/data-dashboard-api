@@ -23,6 +23,13 @@ class WeatherHealthAlertTopics(Enum):
     COLD_ALERT = "Cold-alert"
 
 
+class WeatherHealthAlertImpactAndLikelihoodLevel(Enum):
+    VERY_LOW_LEVEL = "Very low"
+    LOW_LEVEL = "Low"
+    MEDIUM_LEVEL = "Medium"
+    HIGH_LEVEL = "High"
+
+
 class WeatherHealthAlertsMetricMapping:
     def __init__(self, *, metric_value: int, topic_name: str):
         self._metric_value = metric_value
@@ -65,6 +72,46 @@ class WeatherHealthAlertsMetricMapping:
             case WeatherHealthAlertTopics.COLD_ALERT.value:
                 return self._associated_cold_alert_text
         return ""
+
+    @property
+    def associated_impact_level(self) -> str:
+        """Fetch the impact status for the current `metric_value`
+
+        Returns:
+            A string representation of the associated `impact status`
+            Eg: `Very low`
+        """
+        match self._metric_value:
+            case 1 | 2 | 3 | 4:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
+            case 5 | 6 | 7 | 8:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value
+            case 9 | 10 | 11 | 12:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value
+            case 13 | 14 | 15 | 16:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value
+            case _:
+                return ""
+
+    @property
+    def associated_likelihood_level(self) -> str:
+        """Fetch the likelihood status for the current `metric_value`
+
+        Returns:
+            A string representation of the associated `likelihood status`
+            Eg: `Very low`
+        """
+        match self._metric_value:
+            case 1 | 5 | 9 | 13:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
+            case 2 | 6 | 10 | 14:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value
+            case 3 | 7 | 11 | 15:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value
+            case 4 | 8 | 12 | 16:
+                return WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value
+            case _:
+                return ""
 
     @property
     def _associated_cold_alert_text(self) -> str:
