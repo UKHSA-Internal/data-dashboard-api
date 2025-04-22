@@ -508,9 +508,10 @@ class TestPlotsInterface:
         mocked_stratum = mock.Mock()
         mocked_sex = mock.Mock()
         mocked_age = mock.Mock()
+        mocked_chart_request_params = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            chart_request_params=mock.MagicMock(),
+            chart_request_params=mocked_chart_request_params,
             core_model_manager=spy_core_headline_manager,
         )
 
@@ -542,6 +543,7 @@ class TestPlotsInterface:
             stratum_name=mocked_stratum,
             sex=mocked_sex,
             age=mocked_age,
+            rbac_permissions=mocked_chart_request_params.rbac_permissions,
         )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
@@ -563,9 +565,10 @@ class TestPlotsInterface:
         mocked_stratum = mock.Mock()
         mocked_sex = mock.Mock()
         mocked_age = mock.Mock()
+        mocked_chart_request_params = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            chart_request_params=mock.MagicMock(),
+            chart_request_params=mocked_chart_request_params,
             core_model_manager=spy_core_time_series_manager,
         )
 
@@ -609,6 +612,7 @@ class TestPlotsInterface:
             stratum_name=mocked_stratum,
             sex=mocked_sex,
             age=mocked_age,
+            rbac_permissions=mocked_chart_request_params.rbac_permissions,
         )
 
     @mock.patch.object(PlotsInterface, "get_queryset_from_core_model_manager")

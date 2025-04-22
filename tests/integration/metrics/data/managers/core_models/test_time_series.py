@@ -222,7 +222,7 @@ class TestCoreTimeSeriesQuerySet:
         )
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_data(
+        retrieved_records = CoreTimeSeries.objects.get_queryset().query_for_data(
             topic_name=public_record.metric.topic.name,
             metric_name=public_record.metric.name,
             date_from="2020-01-01",
@@ -254,7 +254,7 @@ class TestCoreTimeSeriesQuerySet:
         )
 
         # When
-        retrieved_records = CoreTimeSeries.objects.query_for_data(
+        retrieved_records = CoreTimeSeries.objects.get_queryset().query_for_data(
             topic_name=public_record.metric.topic.name,
             metric_name=public_record.metric.name,
             date_from="2020-01-01",

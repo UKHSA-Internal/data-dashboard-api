@@ -6,10 +6,13 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
+from collections.abc import Iterable
 from typing import Optional, Self
 
 from django.db import models
 from django.utils import timezone
+
+from metrics.api.permissions.fluent_permissions import validate_permissions
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -317,6 +320,7 @@ class CoreHeadlineManager(models.Manager):
         stratum_name: str = "",
         sex: str = "",
         age: str = "",
+        rbac_permissions: Iterable["RBACPermission"] | None = None,
     ):
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
@@ -346,6 +350,9 @@ class CoreHeadlineManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            rbac_permissions: The RBAC permissions available
+                to the given request. This dictates whether the given
+                request is permitted access to non-public data or not.
 
         Returns:
            Queryset of (x_axis, y_axis) where x_axis represents the variable on the x_axis
@@ -355,16 +362,41 @@ class CoreHeadlineManager(models.Manager):
            Examples:
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
-        queryset = self.get_queryset().get_public_only_headlines_released_from_embargo(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            geography_code=geography_code,
-            stratum_name=stratum_name,
-            age=age,
-            sex=sex,
-        )[:1]
+        rbac_permissions = rbac_permissions or []
+        has_access_to_non_public_data: bool = validate_permissions(
+            theme="",
+            sub_theme="",
+            topic=topic_name,
+            metric=metric_name,
+            geography=geography_name,
+            geography_type=geography_type_name,
+            rbac_permissions=rbac_permissions,
+        )
+
+        if has_access_to_non_public_data:
+            queryset = self.get_queryset().get_all_headlines_released_from_embargo(
+                topic_name=topic_name,
+                metric_name=metric_name,
+                geography_name=geography_name,
+                geography_type_name=geography_type_name,
+                geography_code=geography_code,
+                stratum_name=stratum_name,
+                age=age,
+                sex=sex,
+            )[:1]
+        else:
+            queryset = (
+                self.get_queryset().get_public_only_headlines_released_from_embargo(
+                    topic_name=topic_name,
+                    metric_name=metric_name,
+                    geography_name=geography_name,
+                    geography_type_name=geography_type_name,
+                    geography_code=geography_code,
+                    stratum_name=stratum_name,
+                    age=age,
+                    sex=sex,
+                )[:1]
+            )
 
         if fields_to_export:
             fields_to_export = [

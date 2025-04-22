@@ -6,10 +6,14 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
+from collections.abc import Iterable
 from typing import Self
 
 from django.db import models
 from django.utils import timezone
+
+from metrics.api.permissions.fluent_permissions import validate_permissions
+from metrics.data.models import RBACPermission
 
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
@@ -486,7 +490,7 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-        restrict_to_public: bool = True,
+        rbac_permissions: Iterable[RBACPermission] | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -522,9 +526,9 @@ class CoreTimeSeriesManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
-            restrict_to_public: Boolean switch to restrict the query
-                to only return public records.
-                If False, then non-public records will be included.
+            rbac_permissions: The RBAC permissions available
+                to the given request. This dictates whether the given
+                request is permitted access to non-public data or not.
 
         Notes:
             If we have the following input `queryset`:
@@ -554,6 +558,17 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
+        rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
+        has_access_to_non_public_data: bool = validate_permissions(
+            theme="",
+            sub_theme="",
+            topic=topic_name,
+            metric=metric_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+            rbac_permissions=rbac_permissions,
+        )
+
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
@@ -566,7 +581,7 @@ class CoreTimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
-            restrict_to_public=restrict_to_public,
+            restrict_to_public=not has_access_to_non_public_data,
         )
 
     def query_for_superseded_data(

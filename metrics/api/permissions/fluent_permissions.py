@@ -1,7 +1,43 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from metrics.api.settings.auth import AUTH_ENABLED
 from metrics.data.models.rbac_models import RBACPermission
+
+
+def validate_permissions(
+    *,
+    theme: str,
+    sub_theme: str,
+    topic: str,
+    metric: str,
+    geography: str,
+    geography_type: str,
+    rbac_permissions: Iterable[RBACPermission]
+) -> bool:
+
+    if not AUTH_ENABLED:
+        return False
+
+    requested_data_parameters = RequestedDataParameters(
+        theme=theme,
+        sub_theme=sub_theme,
+        topic=topic,
+        metric=metric,
+        geography=geography,
+        geography_type=geography_type,
+        age="",
+        sex="",
+        stratum="",
+    )
+
+    fluent_permissions = FluentPermissions(
+        requested_data_parameters=requested_data_parameters
+    )
+
+    return fluent_permissions.check_if_any_permissions_allow_access(
+        rbac_permissions=rbac_permissions
+    )
 
 
 @dataclass

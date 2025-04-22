@@ -138,7 +138,9 @@ class PlotsInterface:
                     ('05-10', Decimal('9.0'))
                 ]>`
         """
-        return self.core_model_manager.query_for_data(**plot_params)
+        return self.core_model_manager.query_for_data(
+            **plot_params, rbac_permissions=self.chart_request_params.rbac_permissions
+        )
 
     def build_plot_data_from_parameters_with_complete_queryset(
         self, *, plot_parameters: PlotParameters
@@ -160,7 +162,7 @@ class PlotsInterface:
 
         """
         queryset_result: QuerySetResult = self.get_queryset_result_for_plot_parameters(
-            plot_parameters=plot_parameters
+            plot_parameters=plot_parameters,
         )
 
         if not queryset_result.queryset.exists():
