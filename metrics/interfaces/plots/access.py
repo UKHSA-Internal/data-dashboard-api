@@ -144,7 +144,7 @@ class PlotsInterface:
                 ]>`
         """
         if AUTH_ENABLED:
-            topic = self.topic_model_manager.get(name=plot_params["topic_name"])
+            topic = self.topic_model_manager.get_by_name(name=plot_params["topic_name"])
             plot_params["theme_name"] = topic.sub_theme.theme.name
             plot_params["sub_theme_name"] = topic.sub_theme.name
 

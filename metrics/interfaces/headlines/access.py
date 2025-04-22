@@ -38,7 +38,9 @@ class HeadlinesInterface:
         params = self.headline_parameters.to_dict_for_query()
 
         if AUTH_ENABLED:
-            topic = self.topic_manager.get(name=self.headline_parameters.topic_name)
+            topic = self.topic_manager.get_by_name(
+                name=self.headline_parameters.topic_name
+            )
             params["theme_name"] = topic.sub_theme.theme.name
             params["sub_theme_name"] = topic.sub_theme.name
 
