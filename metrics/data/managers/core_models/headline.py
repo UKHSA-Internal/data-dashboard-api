@@ -12,7 +12,7 @@ from typing import Optional, Self
 from django.db import models
 from django.utils import timezone
 
-from metrics.api.permissions.fluent_permissions import validate_permissions
+from metrics.api.permissions.fluent_permissions import validate_permissions_for_non_public
 
 
 class CoreHeadlineQuerySet(models.QuerySet):
@@ -371,7 +371,7 @@ class CoreHeadlineManager(models.Manager):
                <CoreHeadlineQuerySet [{'age__name': '01-04', 'metric_value': Decimal('534.0000')}]>
         """
         rbac_permissions = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions(
+        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
             theme=theme_name,
             sub_theme=sub_theme_name,
             topic=topic_name,

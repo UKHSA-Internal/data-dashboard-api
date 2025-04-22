@@ -12,7 +12,7 @@ from typing import Self
 from django.db import models
 from django.utils import timezone
 
-from metrics.api.permissions.fluent_permissions import validate_permissions
+from metrics.api.permissions.fluent_permissions import validate_permissions_for_non_public
 from metrics.data.models import RBACPermission
 
 
@@ -567,7 +567,7 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
-        has_access_to_non_public_data: bool = validate_permissions(
+        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
             theme=theme_name,
             sub_theme=sub_theme_name,
             topic=topic_name,

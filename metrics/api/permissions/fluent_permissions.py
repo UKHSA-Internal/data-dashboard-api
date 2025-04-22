@@ -5,7 +5,7 @@ from metrics.api.settings.auth import AUTH_ENABLED
 from metrics.data.models.rbac_models import RBACPermission
 
 
-def validate_permissions(
+def validate_permissions_for_non_public(
     *,
     theme: str,
     sub_theme: str,
@@ -15,7 +15,18 @@ def validate_permissions(
     geography_type: str,
     rbac_permissions: Iterable[RBACPermission]
 ) -> bool:
+    """Compares the given data parameters to see if the `rbac_permissions` allow access to the non-public data
 
+    Notes:
+        If `AUTH_ENABLED` is set to True,
+        then this will always return False
+
+    Returns:
+        True if the permissions allow for access
+        to the non-public portion of the dataset.
+        False otherwise.
+
+    """
     if not AUTH_ENABLED:
         return False
 
