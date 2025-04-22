@@ -7,6 +7,7 @@ from django.utils import timezone
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models import get_date_n_months_ago_from_timestamp
+from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 
 FAKE_DATES = ("2023-01-01", "2023-01-02", "2023-01-03")
@@ -652,3 +653,84 @@ class TestCoreTimeSeriesManager:
 
         # Then
         assert extracted_embargo is None
+
+    @pytest.mark.django_db
+    def test_query_for_data_returns_non_public_record_with_acceptable_permissions(self):
+        """
+        Given public and non-public `CoreTimeSeries` records
+        And an `RBACPermission` which gives access to the non-public portion of the data
+        When `query_for_data()` is called from the `CoreTimeSeriesManager`
+        Then the non-public record is included
+        """
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-01", metric_value=1, is_public=True
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-02", metric_value=2, is_public=False
+        )
+
+        params = {
+            "theme_name": public_record.metric.topic.sub_theme.theme.name,
+            "sub_theme_name": public_record.metric.topic.sub_theme.name,
+            "topic_name": public_record.metric.topic.name,
+            "metric_name": public_record.metric.name,
+            "geography_name": public_record.geography.name,
+            "geography_type_name": public_record.geography.geography_type.name,
+        }
+        rbac_permission = RBACPermissionFactory.create_record(**params)
+
+        # When
+        core_time_series_queryset = CoreTimeSeries.objects.query_for_data(
+            **params,
+            date_from="2020-01-01",
+            date_to="2025-12-31",
+            fields_to_export=[],
+            rbac_permissions=[rbac_permission],
+        )
+
+        # Then
+        assert public_record in core_time_series_queryset
+        assert non_public_record in core_time_series_queryset
+
+    @pytest.mark.django_db
+    def test_query_for_data_excludes_non_public_record_without_permissions(self):
+        """
+        Given public and non-public `CoreTimeSeries` records
+        And no `RBACPermission` which allows access to the non-public portion of this dataset
+        When `query_for_data()` is called from the `CoreTimeSeriesManager`
+        Then the non-public record is excluded
+        """
+        # Given
+        public_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-01", metric_value=1, is_public=True
+        )
+        non_public_record = CoreTimeSeriesFactory.create_record(
+            date="2023-01-02", metric_value=2, is_public=False
+        )
+        rbac_permission = RBACPermissionFactory.create_record(
+            theme_name="some_other_theme",
+            sub_theme_name="",
+            topic_name="",
+            metric_name="",
+            geography_name="",
+            geography_type_name="",
+        )
+
+        # When
+        core_time_series_queryset = CoreTimeSeries.objects.query_for_data(
+            theme_name=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme_name=public_record.metric.topic.sub_theme.name,
+            topic_name=public_record.metric.topic.name,
+            metric_name=public_record.metric.name,
+            geography_name=public_record.geography.name,
+            geography_type_name=public_record.geography.geography_type.name,
+            fields_to_export=[],
+            rbac_permissions=[rbac_permission],
+            date_from="2020-01-01",
+            date_to="2025-12-31",
+        )
+
+        # Then
+        assert public_record in core_time_series_queryset
+        assert non_public_record not in core_time_series_queryset
