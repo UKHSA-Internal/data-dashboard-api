@@ -429,6 +429,9 @@ class CoreHeadlineManager(models.Manager):
         stratum_name: str = "",
         sex: str = "",
         age: str = "",
+        theme_name: str = "",
+        sub_theme_name: str = "",
+        rbac_permissions: Iterable["RBACPermission"] | None = None,
     ) -> "CoreHeadline":
         """Grabs by the latest record by the given `topic_name` and `metric_name`.
 
@@ -451,6 +454,15 @@ class CoreHeadlineManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            theme_name: The name of the theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
+            sub_theme_name: The name of the sub theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
+            rbac_permissions: The RBAC permissions available
+                to the given request. This dictates whether the given
+                request is permitted access to non-public data or not.
 
         Returns:
             The individual metric_value number and its associated `period_end` date
@@ -459,9 +471,19 @@ class CoreHeadlineManager(models.Manager):
                 `(Decimal('6276.0000'), datetime.date(2023, 11, 1))`
 
         """
-        return (
-            self.get_queryset()
-            .get_all_headlines_released_from_embargo(
+        rbac_permissions = rbac_permissions or []
+        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            metric=metric_name,
+            geography=geography_name,
+            geography_type=geography_type_name,
+            rbac_permissions=rbac_permissions,
+        )
+
+        if has_access_to_non_public_data:
+            queryset = self.get_queryset().get_all_headlines_released_from_embargo(
                 topic_name=topic_name,
                 metric_name=metric_name,
                 geography_name=geography_name,
@@ -471,8 +493,21 @@ class CoreHeadlineManager(models.Manager):
                 age=age,
                 sex=sex,
             )
-            .first()
-        )
+        else:
+            queryset = (
+                self.get_queryset().get_public_only_headlines_released_from_embargo(
+                    topic_name=topic_name,
+                    metric_name=metric_name,
+                    geography_name=geography_name,
+                    geography_type_name=geography_type_name,
+                    geography_code=geography_code,
+                    stratum_name=stratum_name,
+                    age=age,
+                    sex=sex,
+                )
+            )
+
+        return queryset.first()
 
     def query_for_superseded_data(
         self,

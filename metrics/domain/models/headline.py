@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from pydantic.main import BaseModel
 from rest_framework.request import Request
 
@@ -62,4 +64,9 @@ class HeadlineParameters(BaseModel):
             "stratum_name": self.stratum_name,
             "age": self.age_name,
             "sex": self.sex_name,
+            "rbac_permissions": self.rbac_permissions,
         }
+
+    @property
+    def rbac_permissions(self) -> Iterable["RBACPermission"]:
+        return getattr(self.request, "rbac_permissions", [])
