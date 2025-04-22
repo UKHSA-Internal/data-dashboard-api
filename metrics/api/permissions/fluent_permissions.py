@@ -1,7 +1,6 @@
 from collections.abc import Iterable
 from dataclasses import dataclass
 
-from metrics.api.settings.auth import AUTH_ENABLED
 from metrics.data.models.rbac_models import RBACPermission
 
 
@@ -17,19 +16,12 @@ def validate_permissions_for_non_public(
 ) -> bool:
     """Compares the given data parameters to see if the `rbac_permissions` allow access to the non-public data
 
-    Notes:
-        If `AUTH_ENABLED` is set to True,
-        then this will always return False
-
     Returns:
         True if the permissions allow for access
         to the non-public portion of the dataset.
         False otherwise.
 
     """
-    if not AUTH_ENABLED:
-        return False
-
     requested_data_parameters = RequestedDataParameters(
         theme=theme,
         sub_theme=sub_theme,
