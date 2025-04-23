@@ -75,7 +75,7 @@ setuptools==79.0.0
 simplejson==3.20.1
 six==1.17.0
 sortedcontainers==2.4.0
-soupsieve==2.6
+soupsieve==2.7
 sqlparams==6.2.0
 telepath==0.3.1
 tenacity==9.1.2
