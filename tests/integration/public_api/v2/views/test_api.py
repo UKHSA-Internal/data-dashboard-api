@@ -1,12 +1,15 @@
 import datetime
 import os
 from http import HTTPStatus
+from unittest import mock
 
 import pytest
 from requests.models import Response
 from rest_framework.test import RequestsClient
 
 from metrics.data.models.api_models import APITimeSeries
+from public_api.version_02.views.timeseries_viewset import APITimeSeriesViewSetV2
+from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
 
 class TestPublicAPINestedLinkViewsV2:
@@ -27,12 +30,12 @@ class TestPublicAPINestedLinkViewsV2:
         **kwargs,
     ) -> APITimeSeries:
         day = kwargs.pop("day", 1)
+        metric_value = kwargs.pop("metric_value", 123)
         return APITimeSeries.objects.create(
-            metric_value=123,
+            metric_value=metric_value,
             epiweek=1,
             year=2023,
             date=datetime.date(year=2023, month=1, day=day),
-            is_public=True,
             **kwargs,
         )
 
@@ -398,3 +401,97 @@ class TestPublicAPINestedLinkViewsV2:
         assert response.status_code == 200
         expected_response = {"links": {"themes": f"{self.api_base_path}themes/"}}
         assert response.json() == expected_response
+
+    @pytest.mark.django_db
+    @mock.patch.object(APITimeSeriesViewSetV2, "_get_rbac_permissions_from_request")
+    def test_returns_correct_non_public_data(
+        self, mocked_get_rbac_permissions_from_request: mock.MagicMock
+    ):
+        """
+        Given a set of `APITimeSeries` records
+        And a list of parameters to filter for a subset of those records
+        And a valid `RBACPermission`
+        When the final public API endpoint is hit
+        Then the response contains the correct filtered `APITimeSeries` records
+        And the non-public records are included
+        """
+        # Given
+        theme_name = "infectious_disease"
+        sub_theme_name = "respiratory"
+        topic_name = "COVID-19"
+        geography_type_name = "Nation"
+        geography_name = "England"
+        geography_code = "E92000001"
+        metric_name = "COVID-19_deaths_ONSByDay"
+        metric_group = "deaths"
+        sex = "ALL"
+        age = "ALL"
+
+        rbac_permission = RBACPermissionFactory.create_record(
+            name="wildcard permission",
+            theme_name=theme_name,
+            sub_theme_name="",
+            topic_name="",
+            metric_name="",
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+        )
+        mocked_get_rbac_permissions_from_request.return_value = [rbac_permission]
+        client = RequestsClient()
+
+        for i in range(2):
+            self._setup_api_time_series(
+                theme=theme_name,
+                sub_theme=sub_theme_name,
+                topic=topic_name,
+                geography_type=geography_type_name,
+                geography=geography_name,
+                geography_code=geography_code,
+                metric_group=metric_group,
+                metric=metric_name,
+                sex=sex,
+                age=age,
+                day=i + 1,
+                in_reporting_delay_period=False,
+                is_public=True,
+                metric_value=i + 1,
+            )
+
+        non_public_record = self._setup_api_time_series(
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+            geography_code=geography_code,
+            metric_group=metric_group,
+            metric=metric_name,
+            sex=sex,
+            age=age,
+            day=30,
+            in_reporting_delay_period=False,
+            is_public=False,
+            metric_value=3,
+        )
+
+        # When
+        target_url = (
+            f"{self.target_domain}"
+            f"{self.path}themes/"
+            f"{theme_name}/sub_themes/"
+            f"{sub_theme_name}/topics/"
+            f"{topic_name}/geography_types/"
+            f"{geography_type_name}/geographies/"
+            f"{geography_name}/metrics/"
+            f"{metric_name}"
+        )
+        response: Response = client.get(target_url)
+
+        # Then
+        # Check that the filtering has been applied correctly
+        # And that all records including the non-public records are returned
+        response_data: list[dict] = response.json()
+        assert response_data["count"] == 3
+
+        results = response_data["results"]
+        assert results[-1]["metric_value"] == non_public_record.metric_value
