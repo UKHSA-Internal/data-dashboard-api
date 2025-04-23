@@ -149,6 +149,7 @@ class TestChartSettings:
         """
         # Given
         chart_settings = fake_chart_settings
+        fake_y_axis_range = [0, max(chart_settings.plots_data[0].y_axis_values)]
 
         # When
         y_axis_config = chart_settings._get_y_axis_config()
@@ -164,6 +165,8 @@ class TestChartSettings:
             "tickson": "boundaries",
             "tickcolor": "rgba(0,0,0,0)",
             "tickfont": chart_settings._get_tick_font_config(),
+            "tick0": 0,
+            "range": fake_y_axis_range,
             "title": {
                 "font": chart_settings._get_tick_font_config(),
                 "text": chart_settings._chart_generation_payload.y_axis_title,
@@ -507,6 +510,50 @@ class TestChartSettings:
 
         assert line_with_shaded_section_chart_config == expected_chart_config
 
+    @pytest.mark.parametrize(
+        "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
+        (
+            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
+            [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
+            [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
+            [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],
+        ),
+    )
+    def test_get_line_with_shaded_section_chart_config_returns_correct_y_axis_range(
+        self,
+        fake_chart_settings: ChartSettings,
+        y_axis_min: int,
+        y_axis_max: int,
+        expected_y_axis_min: int,
+        expected_y_axis_max: int,
+        y_axis_values: list[int],
+    ):
+        """
+        Given an instance of `chart_settings`
+        When the `get_line_with_shaded_section_chart_config()` method is called
+            provided manual y-axis min and max values
+        Then the correct chart settings are returned
+        """
+        # Given
+        fake_chart_settings._chart_generation_payload.y_axis_minimum_value = y_axis_min
+        fake_chart_settings._chart_generation_payload.y_axis_maximum_value = y_axis_max
+        fake_chart_settings.plots_data[0].y_axis_values = y_axis_values
+
+        # When
+        line_with_shaded_section_chart_config = (
+            fake_chart_settings.get_line_with_shaded_section_chart_config()
+        )
+
+        # Then
+        assert line_with_shaded_section_chart_config["yaxis"]["range"] == [
+            expected_y_axis_min,
+            expected_y_axis_max,
+        ]
+        assert (
+            line_with_shaded_section_chart_config["yaxis"]["tick0"]
+            == expected_y_axis_min
+        )
+
     def test_build_line_single_simplified_y_axis_value_params_with_zero_min_value(
         self,
         fake_plot_data: PlotGenerationData,
@@ -756,6 +803,45 @@ class TestChartSettings:
         }
         assert bar_chart_config == expected_bar_chart_config
 
+    @pytest.mark.parametrize(
+        "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
+        (
+            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
+            [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
+            [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
+            [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],
+        ),
+    )
+    def test_get_bar_chart_config_returns_correct_y_axis_range(
+        self,
+        fake_chart_settings: ChartSettings,
+        y_axis_min: int,
+        y_axis_max: int,
+        expected_y_axis_min: int,
+        expected_y_axis_max: int,
+        y_axis_values: list[int],
+    ):
+        """
+        Given an instance of `chart_settings`
+        When the `get_get_bar_chart_config()` method is called provided
+            with manual y-axis min and max values
+        Then the correct chart settings are returned
+        """
+        # Given
+        fake_chart_settings._chart_generation_payload.y_axis_minimum_value = y_axis_min
+        fake_chart_settings._chart_generation_payload.y_axis_maximum_value = y_axis_max
+        fake_chart_settings.plots_data[0].y_axis_values = y_axis_values
+
+        # When
+        bar_chart_config = fake_chart_settings.get_bar_chart_config()
+
+        # Then
+        assert bar_chart_config["yaxis"]["range"] == [
+            expected_y_axis_min,
+            expected_y_axis_max,
+        ]
+        assert bar_chart_config["yaxis"]["tick0"] == expected_y_axis_min
+
     def test_get_legend_bottom_left_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
@@ -824,12 +910,6 @@ class TestChartSettings:
             **chart_settings._get_legend_top_centre_config(),
             "showlegend": True,
         }
-        expected_line_multi_coloured_chart_config["yaxis"]["tick0"] = 0
-        expected_line_multi_coloured_chart_config["yaxis"]["range"] = [
-            0,
-            max(chart_settings.plots_data[0].y_axis_values),
-        ]
-        expected_line_multi_coloured_chart_config["yaxis"]["rangemode"] = "tozero"
 
         assert (
             line_multi_coloured_chart_config
@@ -871,70 +951,11 @@ class TestChartSettings:
         )
 
         # Then
-        expected_multi_coloured_config = {
-            **fake_chart_settings._get_base_chart_config(),
-            **fake_chart_settings._get_legend_top_centre_config(),
-            "showlegend": True,
-        }
-        expected_multi_coloured_config["yaxis"]["tick0"] = expected_y_axis_min
-        expected_multi_coloured_config["yaxis"]["range"] = [
+        assert line_multi_coloured_chart_config["yaxis"]["range"] == [
             expected_y_axis_min,
             expected_y_axis_max,
         ]
-        expected_multi_coloured_config["yaxis"]["rangemode"] = "normal"
-
-        assert line_multi_coloured_chart_config == expected_multi_coloured_config
-
-    @pytest.mark.parametrize(
-        "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
-        (
-            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
-            [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
-            [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
-            [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],
-        ),
-    )
-    def test_get_line_multi_coloured_chart_config_returns_correct_y_axis_range(
-        self,
-        fake_chart_settings: ChartSettings,
-        y_axis_min: int,
-        y_axis_max: int,
-        expected_y_axis_min: int,
-        expected_y_axis_max: int,
-        y_axis_values: list[int],
-    ):
-        """
-        Given an instance of `chart_settings`
-        When the `get_line_with_shaded_section_chart_config()` method is called
-            provided manual y-axis min and max values
-        Then the correct chart settings are returned
-        """
-        # Given
-        fake_chart_settings._chart_generation_payload.y_axis_minimum_value = y_axis_min
-        fake_chart_settings._chart_generation_payload.y_axis_maximum_value = y_axis_max
-        fake_chart_settings.plots_data[0].y_axis_values = y_axis_values
-
-        # When
-        line_with_shaded_section_chart_config = (
-            fake_chart_settings.get_line_with_shaded_section_chart_config()
-        )
-
-        # Then
-        expected_line_with_shaded_section_config = {
-            **fake_chart_settings._get_base_chart_config(),
-            "showlegend": False,
-        }
-        expected_line_with_shaded_section_config["yaxis"]["tick0"] = expected_y_axis_min
-        expected_line_with_shaded_section_config["yaxis"]["range"] = [
-            expected_y_axis_min,
-            expected_y_axis_max,
-        ]
-        expected_line_with_shaded_section_config["yaxis"]["rangemode"] = "normal"
-
-        assert (
-            line_with_shaded_section_chart_config
-            == expected_line_with_shaded_section_config
-        )
+        assert line_multi_coloured_chart_config["yaxis"]["tick0"] == expected_y_axis_min
 
     @pytest.mark.parametrize(
         "chart_width, expected_date_tick_format", ([430, "%b<br>%Y"], [930, "%b %Y"])
