@@ -38,6 +38,7 @@ class HeadlinesInterface:
         params = self.headline_parameters.to_dict_for_query()
 
         if AUTH_ENABLED:
+            # Needed for the downstream permissions check
             topic = self.topic_manager.get_by_name(
                 name=self.headline_parameters.topic_name
             )
