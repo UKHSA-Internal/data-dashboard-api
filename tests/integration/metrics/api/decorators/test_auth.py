@@ -11,7 +11,7 @@ from metrics.api.decorators.auth import require_authorisation, RBAC_AUTH_X_HEADE
 from django.http import JsonResponse
 
 from tests.factories.metrics.rbac_models.rbac_group_permissions import (
-    RBACPermissionGroupFactory,
+    RBACGroupPermissionFactory,
 )
 from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
@@ -81,7 +81,7 @@ class TestAuthorisedRoute:
             theme_name="infectious_disease",
             sub_theme_name="respiratory",
         )
-        RBACPermissionGroupFactory.create_record(
+        RBACGroupPermissionFactory.create_record(
             name="medical",
             permissions=[all_respiratory_data],
             group_id=group_id,
