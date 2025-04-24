@@ -3,7 +3,7 @@ from functools import wraps
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 
-from metrics.api.settings.private_api import AUTH_ENABLED
+from metrics.api.settings.auth import AUTH_ENABLED
 from metrics.data.models.rbac_models import RBACGroupPermission
 
 RBAC_AUTH_X_HEADER = "X-GroupId"
