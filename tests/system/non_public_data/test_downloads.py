@@ -85,9 +85,7 @@ class TestNonPublicDataDownloadsAPI:
         results = response.data
         assert len(results) == 2
         assert results[0]["date"] == non_public_record.date
-        assert (
-            results[0]["metric_value"] == f"{non_public_record.metric_value:.4f}"
-        )
+        assert results[0]["metric_value"] == f"{non_public_record.metric_value:.4f}"
 
         assert results[1]["date"] == public_record.date
         assert results[1]["metric_value"] == f"{public_record.metric_value:.4f}"
