@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from metrics.api.decorators.auth import RBAC_AUTH_X_HEADER
+from metrics.api.settings import auth
 from tests.factories.metrics.rbac_models.rbac_group_permissions import (
     RBACGroupPermissionFactory,
 )
@@ -36,7 +37,7 @@ class TestNonPublicDataTablesAPI:
         }
 
     @pytest.mark.django_db
-    @mock.patch("metrics.api.decorators.auth.AUTH_ENABLED")
+    @mock.patch.object(auth, "AUTH_ENABLED")
     def test_tables_endpoint_returns_non_public_data_with_valid_permissions(
         self, mocked_auth_enabled: mock.MagicMock
     ):
@@ -90,7 +91,7 @@ class TestNonPublicDataTablesAPI:
         assert results[1]["values"][0]["value"] == f"{public_record.metric_value:.4f}"
 
     @pytest.mark.django_db
-    @mock.patch("metrics.api.decorators.auth.AUTH_ENABLED")
+    @mock.patch.object(auth, "AUTH_ENABLED")
     def test_tables_endpoint_excludes_non_public_data_without_valid_permissions(
         self, mocked_auth_enabled: mock.MagicMock
     ):
