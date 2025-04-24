@@ -15,9 +15,9 @@ MODULE_PATH = "metrics.interfaces.headlines.access"
 
 class TestHeadlinesInterface:
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled")
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
     def test_get_latest_metric_value_returns_non_public_record_for_matching_permission(
-        self, mocked_is_auth_enabled: mock.MagicMock
+        self, mocked_auth_enabled: mock.MagicMock
     ):
         """
         Given public and non-public `CoreHeadline` records
@@ -27,7 +27,7 @@ class TestHeadlinesInterface:
         Then the non-public record is returned
         """
         # Given
-        mocked_is_auth_enabled.return_value = True
+        mocked_auth_enabled.return_value = True
         public_record = CoreHeadlineFactory.create_record(
             period_end="2025-01-01", metric_value=1, is_public=True
         )
@@ -72,9 +72,9 @@ class TestHeadlinesInterface:
         )
 
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.is_auth_enabled")
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
     def test_get_latest_metric_value_excludes_non_public_record_for_no_matching_permission(
-        self, mocked_is_auth_enabled: mock.MagicMock
+        self, mocked_auth_enabled: mock.MagicMock
     ):
         """
         Given public and non-public `CoreHeadline` records
@@ -84,7 +84,7 @@ class TestHeadlinesInterface:
         Then the non-public record is excluded
         """
         # Given
-        mocked_is_auth_enabled.return_value = True
+        mocked_auth_enabled.return_value = True
         public_record = CoreHeadlineFactory.create_record(
             period_end="2025-01-01", metric_value=1, is_public=True
         )

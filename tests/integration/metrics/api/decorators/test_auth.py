@@ -45,7 +45,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", False)
     def test_request_succeeds_when_auth_is_disabled(self):
         """
         Given authentication is disabled
@@ -64,7 +64,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     def test_request_succeeds_with_valid_group_id(self):
         """
         Given authentication is enabled
@@ -99,7 +99,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     @pytest.mark.parametrize("group_id", ["invalid", "1", "", None])
     def test_request_with_invalid_group_id(self, group_id):
         """
@@ -122,7 +122,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     def test_request_succeeds_when_group_id_header_is_missing(self):
         """
         Given authentication is enabled
