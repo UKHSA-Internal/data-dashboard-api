@@ -1,9 +1,12 @@
 from django.db.models import Manager
 
-from metrics.data.models.core_models import CoreHeadline
+from metrics.api.settings import auth
+from metrics.data.models.core_models import CoreHeadline, Topic
+from metrics.domain.models.trends import TrendsParameters
 from metrics.domain.trends.state import TREND_AS_DICT, Trend
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
+DEFAULT_TOPIC_MANAGER = Topic.objects
 
 
 class TrendNumberDataNotFoundError(Exception):
@@ -16,27 +19,15 @@ class TrendsInterface:
     def __init__(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        percentage_metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
-        stratum_name: str,
-        sex: str,
-        age: str,
+        trend_parameters: TrendsParameters,
         core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
+        topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
     ):
-        self.topic_name = topic_name
-        self.metric_name = metric_name
-        self.percentage_metric_name = percentage_metric_name
-        self.geography_name = geography_name
-        self.geography_type_name = geography_type_name
-        self.stratum_name = stratum_name
-        self.sex = sex
-        self.age = age
+        self.trend_parameters = trend_parameters
         self.core_headline_manager = core_headline_manager
+        self.topic_manager = topic_manager
 
-    def get_latest_metric_value(self, *, metric_name: str) -> CoreHeadline:
+    def get_latest_metric_value(self, *, params: dict) -> CoreHeadline:
         """Gets the value for the record associated with the given `metric_name`
 
         Returns:
@@ -51,21 +42,13 @@ class TrendsInterface:
 
         """
         core_headline: CoreHeadline | None = (
-            self.core_headline_manager.get_latest_headline(
-                topic_name=self.topic_name,
-                metric_name=metric_name,
-                geography_name=self.geography_name,
-                geography_type_name=self.geography_type_name,
-                age=self.age,
-                stratum_name=self.stratum_name,
-                sex=self.sex,
-            )
+            self.core_headline_manager.get_latest_headline(**params)
         )
 
         if core_headline is None:
             raise TrendNumberDataNotFoundError(
-                topic_name={self.topic_name},
-                metric_name={metric_name},
+                topic_name=self.trend_parameters.topic_name,
+                metric_name=params["metric_name"],
             )
 
         return core_headline
@@ -83,56 +66,46 @@ class TrendsInterface:
                 `topic` / `metric` / `percentage_metric`.
 
         """
-        core_headline_metric: CoreHeadline = self.get_latest_metric_value(
-            metric_name=self.metric_name
+        main_metric_params = self.trend_parameters.to_dict_for_main_metric_query()
+        percentage_metric_params = (
+            self.trend_parameters.to_dict_for_percentage_metric_query()
         )
+
+        if auth.AUTH_ENABLED:
+            self._add_theme_info_to_params(params=main_metric_params)
+            self._add_theme_info_to_params(params=percentage_metric_params)
+
         core_headline_percentage_metric: CoreHeadline = self.get_latest_metric_value(
-            metric_name=self.percentage_metric_name
+            params=percentage_metric_params
+        )
+        core_headline_metric: CoreHeadline = self.get_latest_metric_value(
+            params=main_metric_params
         )
 
         return Trend(
-            metric_name=self.metric_name,
+            metric_name=self.trend_parameters.metric_name,
             metric_value=core_headline_metric.metric_value,
             metric_period_end=core_headline_metric.period_end,
-            percentage_metric_name=self.percentage_metric_name,
+            percentage_metric_name=self.trend_parameters.percentage_metric_name,
             percentage_metric_value=core_headline_percentage_metric.metric_value,
             percentage_metric_period_end=core_headline_percentage_metric.period_end,
         )
 
+    def _add_theme_info_to_params(self, *, params: dict) -> None:
+        topic = self.topic_manager.get_by_name(name=self.trend_parameters.topic_name)
+        params["theme_name"] = topic.sub_theme.theme.name
+        params["sub_theme_name"] = topic.sub_theme.name
+
 
 def generate_trend_numbers(
     *,
-    topic_name: str,
-    metric_name: str,
-    percentage_metric_name: str,
-    geography_name: str,
-    geography_type_name: str,
-    stratum_name: str,
-    sex: str,
-    age: str,
+    trend_parameters: TrendsParameters,
 ) -> TREND_AS_DICT:
     """Gets the trend data for the given metric names.
 
     Args:
-        topic_name: The name of the disease being queried.
-            E.g. `COVID-19`
-        metric_name: The name of the metric being queried.
-            E.g. `COVID-19_deaths_ONSByDay`
-        percentage_metric_name: The name of the corresponding
-            percentage metric being queried.
-            E.g. `new_tests_7days_change_percentage`
-        geography_name: The name of the geography being queried.
-            E.g. `England`
-        geography_type_name: The name of the geography
-            type being queried.
-            E.g. `Nation`
-        stratum_name: The value of the stratum to apply additional filtering to.
-            E.g. `default`, which would be used to capture all strata.
-        sex: The gender to apply additional filtering to.
-            E.g. `F`, would be used to capture Females.
-            Note that options are `M`, `F`, or `ALL`.
-        age: The age range to apply additional filtering to.
-            E.g. `0_4` would be used to capture the age of 0-4 years old
+        trend_parameters: An enriched `TrendsParameters` model
+            containing the requested parameters
 
     Returns:
         Dict containing the serialized trends data.
@@ -154,16 +127,7 @@ def generate_trend_numbers(
             `topic` / `metric` / `percentage_metric`
 
     """
-    interface = TrendsInterface(
-        topic_name=topic_name,
-        metric_name=metric_name,
-        percentage_metric_name=percentage_metric_name,
-        geography_name=geography_name,
-        geography_type_name=geography_type_name,
-        stratum_name=stratum_name,
-        sex=sex,
-        age=age,
-    )
+    interface = TrendsInterface(trend_parameters=trend_parameters)
 
     trend: Trend = interface.get_trend()
     data: TREND_AS_DICT = trend.model_dump()

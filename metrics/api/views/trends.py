@@ -65,18 +65,11 @@ class TrendsView(APIView):
         query_serializer = TrendsQuerySerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
-        serialized_model: TrendsParameters = query_serializer.to_models(request=request)
+        trend_parameters: TrendsParameters = query_serializer.to_models(request=request)
 
         try:
             trends_data: TREND_AS_DICT = generate_trend_numbers(
-                topic_name=serialized_model.topic_name,
-                metric_name=serialized_model.metric_name,
-                percentage_metric_name=serialized_model.percentage_metric_name,
-                geography_name=serialized_model.geography_name,
-                geography_type_name=serialized_model.geography_type_name,
-                stratum_name=serialized_model.stratum_name,
-                sex=serialized_model.sex,
-                age=serialized_model.age,
+                trend_parameters=trend_parameters,
             )
         except TrendNumberDataNotFoundError as error:
             return Response(
