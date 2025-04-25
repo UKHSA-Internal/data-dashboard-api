@@ -103,6 +103,7 @@ class TestChartsView:
         valid_payload = self._build_valid_payload_for_existing_timeseries(
             core_timeseries=core_timeseries_example[0]
         )
+        valid_payload["file_format"] = "svg"
         path = "/api/charts/v3"
 
         # When
