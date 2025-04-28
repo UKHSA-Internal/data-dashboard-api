@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 
 import pytest
 from dateutil.relativedelta import relativedelta
@@ -168,12 +169,14 @@ def example_headline_data() -> dict[str, str | list[dict[str, str | float]]]:
                 "period_end": "2023-10-22",
                 "metric_value": 12.3,
                 "embargo": "2023-11-16 17:30:00",
+                "is_public": False,
             },
             {
                 "period_start": "2023-10-23",
                 "period_end": "2023-10-30",
                 "metric_value": 10.7,
                 "embargo": "2023-11-16 17:30:00",
+                "is_public": False,
             },
         ],
         "refresh_date": "2023-11-09",
@@ -202,12 +205,14 @@ def example_time_series_data() -> dict[str, str | list[dict[str, str | float]]]:
                 "date": "2022-11-01",
                 "metric_value": 4141.43,
                 "embargo": "2023-11-16 17:30:00",
+                "is_public": True,
             },
             {
                 "epiweek": 44,
                 "date": "2022-11-02",
                 "metric_value": 3952.14,
                 "embargo": "2023-11-16 17:30:00",
+                "is_public": True,
             },
         ],
     }

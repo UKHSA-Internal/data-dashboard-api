@@ -552,7 +552,7 @@ class TestChartsSerializer:
 
         # When
         is_serializer_valid: bool = serializer.is_valid()
-        serialized_model_data: ChartRequestParams = serializer.to_models()
+        serialized_model_data: ChartRequestParams = serializer.to_models(request=None)
 
         # Then
         assert is_serializer_valid
@@ -594,7 +594,7 @@ class TestChartsSerializer:
 
         # When
         serializer.is_valid()
-        serialized_model_data: ChartRequestParams = serializer.to_models()
+        serialized_model_data: ChartRequestParams = serializer.to_models(request=None)
 
         # Then
         assert serialized_model_data.plots[0].x_axis == DEFAULT_X_AXIS
@@ -630,7 +630,9 @@ class TestChartsSerializer:
 
         # When
         serializer.is_valid()
-        chart_plots_serialized_models: ChartRequestParams = serializer.to_models()
+        chart_plots_serialized_models: ChartRequestParams = serializer.to_models(
+            request=None
+        )
 
         # Then
         chart_plot_params_model = PlotParameters(**chart_plots[0])
@@ -679,7 +681,7 @@ class TestChartsSerializer:
 
         # When
         serializer.is_valid()
-        serialized_model_data: ChartRequestParams = serializer.to_models()
+        serialized_model_data: ChartRequestParams = serializer.to_models(request=None)
 
         # Then
         assert serialized_model_data.plots[0].x_axis == x_axis

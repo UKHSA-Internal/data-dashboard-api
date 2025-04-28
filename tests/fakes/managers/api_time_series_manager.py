@@ -12,13 +12,16 @@ class FakeAPITimeSeriesManager(APITimeSeriesManager):
         super().__init__(**kwargs)
 
     def get_distinct_column_values_with_filters(
-        self, lookup_field, **kwargs
+        self, lookup_field, restrict_to_public, **kwargs
     ) -> list[str]:
         filtered_time_series = self.time_series
         for field_name, field_value in kwargs.items():
             filtered_time_series = [
                 t for t in filtered_time_series if getattr(t, field_name) == field_value
             ]
+
+        if restrict_to_public:
+            filtered_time_series = [t for t in filtered_time_series if t.is_public]
 
         lookup_values_of_timeseries: set[str] = {
             getattr(x, lookup_field) for x in filtered_time_series

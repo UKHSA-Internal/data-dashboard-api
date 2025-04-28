@@ -13,6 +13,7 @@ from metrics.data.models.core_models import (
     SubTheme,
     Theme,
     Topic,
+    MetricGroup,
 )
 from django.utils import timezone
 
@@ -33,6 +34,7 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         sub_theme_name: str = "respiratory",
         topic_name: str = "COVID-19",
         metric_name: str = "COVID-19_headline_positivity_latest",
+        metric_group: str = "headline",
         geography_name: str = "England",
         geography_type_name: str = "Nation",
         geography_code: str = "E92000001",
@@ -53,7 +55,12 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         topic, _ = Topic.objects.get_or_create(
             name=topic_name, sub_theme_id=sub_theme.id
         )
-        metric, _ = Metric.objects.get_or_create(name=metric_name, topic_id=topic.id)
+        metric_group, _ = MetricGroup.objects.get_or_create(
+            name=metric_group, topic_id=topic.id
+        )
+        metric, _ = Metric.objects.get_or_create(
+            name=metric_name, topic_id=topic.id, metric_group_id=metric_group.id
+        )
 
         geography_type, _ = GeographyType.objects.get_or_create(
             name=geography_type_name

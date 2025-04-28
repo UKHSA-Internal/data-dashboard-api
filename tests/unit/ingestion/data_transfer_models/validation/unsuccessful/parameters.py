@@ -48,4 +48,11 @@ INVALID_PARAMETERS = [
         "hepatitis-c_cases_prevalenceByYearEstimate",
         "prevention",
     ),  # Invalid child Topic
+    (
+        "infectious_disease",
+        "chemical_exposure",
+        "Lead",
+        "lead_headline_percentByDeprivationLatest",
+        "headline",
+    ),  # Invalid parent theme
 ]

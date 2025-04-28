@@ -79,6 +79,7 @@ class ChartSettings:
             "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": self._get_tick_font_config(),
+            "autotickangles": [0, 90],
         }
 
         if self._chart_generation_payload.x_axis_title:
@@ -114,6 +115,12 @@ class ChartSettings:
                 "text": self._chart_generation_payload.y_axis_title,
                 "font": tick_font,
             }
+
+        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
+
+        base_y_axis_config["tick0"] = y_min_value
+        base_y_axis_config["range"] = [y_min_value, y_max_value]
+        base_y_axis_config["rangemode"] = "tozero" if y_min_value == 0 else "normal"
 
         return base_y_axis_config
 
@@ -180,12 +187,6 @@ class ChartSettings:
 
     def get_line_with_shaded_section_chart_config(self):
         chart_config = self._get_base_chart_config()
-
-        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
-
-        chart_config["yaxis"]["tick0"] = y_min_value
-        chart_config["yaxis"]["range"] = [y_min_value, y_max_value]
-        chart_config["yaxis"]["rangemode"] = "tozero" if y_min_value == 0 else "normal"
         chart_config["showlegend"] = False
 
         return chart_config
@@ -276,17 +277,12 @@ class ChartSettings:
 
     def get_bar_chart_config(self):
         chart_config = self._get_base_chart_config()
+
         chart_config["barmode"] = "group"
         return {**chart_config, **self._get_legend_bottom_left_config()}
 
     def get_line_multi_coloured_chart_config(self):
         chart_config = self._get_base_chart_config()
-
-        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
-
-        chart_config["yaxis"]["tick0"] = y_min_value
-        chart_config["yaxis"]["range"] = [y_min_value, y_max_value]
-        chart_config["yaxis"]["rangemode"] = "tozero" if y_min_value == 0 else "normal"
 
         return {**chart_config, **self._get_legend_top_centre_config()}
 
@@ -337,6 +333,71 @@ class ChartSettings:
             return "M6"
         return "M12"
 
+    @staticmethod
+    def get_timeseries_margin_days(interval: str | int) -> int:
+        """Returns a number of days as an integer based on the provided interval.
+
+        Note:
+            This value is used to shift the start and end date on timeseries charts
+            to avoid cropping issues with Plotly by padding out the timeframe of a chart.
+
+            The interval, which is used for `dtick` attribute of a chart can be either
+            a `str` or `int` this is because while we use the D3 time interval convention
+            of `M1`, `M3`, `M12` etc. for weekly and fortnightly intervals
+            milliseconds are used due to a lack of support for these intervals in string
+            format.
+
+        Returns:
+            number of days as an integer
+        """
+        if interval == "M1":
+            return 15
+        if interval == "M3":
+            return 45
+        if interval == "M6":
+            return 90
+        if interval == "M12":
+            return 178
+        return 1
+
+    def get_x_axis_range(
+        self, min_date: int, max_date: int, interval: str | int
+    ) -> list[datetime.date]:
+        """Returns the first and last date to make up the timeseries date range.
+
+        Note:
+            Plotly can sometimes crop or partially hide the first and last data points
+            in charts. To prevent this rendering issue, we adjust the date range:
+            - Shift the first date backwards by half the current time interval
+            - Shift the last date forwards by half the current time interval
+            - If timeseries intervals are less than 1 month we shift the dates by 1 day
+
+            Eg:
+            - For 1-year interval, 178 days (just under 6 months)
+            - For 6-month interval, shift by 90 days
+            - For 1-month interval, shift by 1 day
+
+            This ensures all data points are fully visible and not cut off at the
+            chart's edges.
+
+        Returns:
+            A list containing two dates, the first in the timeseries and the last `list[datetime.date]`
+        """
+        return [
+            (
+                min_date
+                - datetime.timedelta(
+                    days=self.get_timeseries_margin_days(interval=interval)
+                )
+            ),
+            (
+                max_date
+                + datetime.timedelta(
+                    days=self.get_timeseries_margin_days(interval=interval)
+                )
+            ),
+        ]
+
     def get_x_axis_date_type(self) -> DICT_OF_STR_ONLY:
         min_date, max_date = self.get_min_and_max_x_axis_values()
 
@@ -358,7 +419,9 @@ class ChartSettings:
             "tick0": tick0,
             "dtick": dtick,
             "tickformat": self._get_date_tick_format(weekly=weekly),
-            "range": [tick0, max_date],
+            "range": self.get_x_axis_range(
+                min_date=tick0, max_date=max_date, interval=dtick
+            ),
         }
 
     @staticmethod
@@ -374,7 +437,7 @@ class ChartSettings:
         return {
             "legend": {
                 "orientation": "h",
-                "y": -0.25,
+                "y": -0.35,
                 "x": 0,
             },
         }
