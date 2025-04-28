@@ -13,6 +13,7 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
+from cms.dynamic_content.announcements import Announcement
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
@@ -58,7 +59,8 @@ class MetricsDocumentationParentPage(UKHSAPage):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
     ]
 
     # Sets which fields to expose on the API
@@ -102,56 +104,10 @@ class MetricsDocumentationParentPage(UKHSAPage):
             raise MetricsDocumentationMultipleLivePagesError
 
 
-class MetricsDocumentationParentPageAnnouncement(Orderable):
+class MetricsDocumentationParentPageAnnouncement(Announcement):
     page = ParentalKey(
         MetricsDocumentationParentPage,
         on_delete=models.SET_NULL,
         null=True,
         related_name="announcements",
     )
-    title = models.CharField(
-        max_length=255,
-        blank=False,
-        help_text=help_texts.GLOBAL_BANNER_TITLE,
-    )
-    badge = models.ForeignKey(
-        "whats_new.badge",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-    )
-    body = RichTextField(
-        max_length=255,
-        features=AVAILABLE_RICH_TEXT_FEATURES,
-        help_text=help_texts.GLOBAL_BANNER_BODY,
-    )
-    banner_type = models.CharField(
-        max_length=50,
-        choices=BannerTypes.choices,
-        default=BannerTypes.INFORMATION.value,
-        help_text=help_texts.GLOBAL_BANNER_TYPE,
-    )
-
-    is_active = models.BooleanField(
-        default=False,
-        help_text=help_texts.GLOBAL_BANNER_IS_ACTIVE,
-    )
-
-    # Sets which panels to show on the editing view
-    panels = [
-        FieldPanel("title"),
-        FieldPanel("badge"),
-        FieldPanel("body"),
-        FieldPanel("banner_type"),
-        FieldPanel("is_active"),
-    ]
-
-    # Sets which fields to expose on the API
-    api_fields = [
-        APIField("title"),
-        APIField("badge"),
-        APIField("body"),
-        APIField("banner_type"),
-        APIField("is_active"),
-    ]
