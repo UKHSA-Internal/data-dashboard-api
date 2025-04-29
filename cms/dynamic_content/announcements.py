@@ -17,13 +17,6 @@ class Announcement(Orderable):
         blank=False,
         help_text=help_texts.ANNOUNCEMENT_BANNER_TITLE,
     )
-    badge = models.ForeignKey(
-        "whats_new.badge",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-    )
     body = RichTextField(
         max_length=255,
         features=AVAILABLE_RICH_TEXT_FEATURES,
@@ -44,7 +37,6 @@ class Announcement(Orderable):
     # Sets which panels to show on the editing view
     panels = [
         FieldPanel("title"),
-        FieldPanel("badge"),
         FieldPanel("body"),
         FieldPanel("banner_type"),
         FieldPanel("is_active"),
@@ -53,7 +45,6 @@ class Announcement(Orderable):
     # Sets which fields to expose on the API
     api_fields = [
         APIField("title"),
-        APIField("badge"),
         APIField("body"),
         APIField("banner_type"),
         APIField("is_active"),
