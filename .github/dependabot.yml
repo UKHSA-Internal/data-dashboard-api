@@ -1,15 +1,15 @@
-  version: 2
-  updates:
-    - package-ecosystem: "pip"
-      directory: "/"
-      schedule:
-        interval: "daily"
-      commit-message:
-        prefix: "pip: "
-        prefix-development: "pip dev: "
-        include: "scope"
-      ignore:
-        - dependency-name: "boto3"
-          update-types: [ "version-update:semver-patch", "version-update:semver-minor" ]
-        - dependency-name: "botocore"
-          update-types: [ "version-update:semver-patch", "version-update:semver-minor" ]
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "pip: "
+      prefix-development: "pip dev: "
+      include: "scope"
+    ignore:
+      - dependency-name: "boto3"
+        update-types: [ "version-update:semver-patch", "version-update:semver-minor" ]
+      - dependency-name: "botocore"
+        update-types: [ "version-update:semver-patch", "version-update:semver-minor" ]
