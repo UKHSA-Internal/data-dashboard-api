@@ -7,6 +7,7 @@ import pytest
 from metrics.domain.weather_health_alerts.mapping import (
     WeatherHealthAlertTopics,
     WeatherHealthAlertStatusColour,
+    WeatherHealthAlertImpactAndLikelihoodLevel,
 )
 from metrics.interfaces.weather_health_alerts.access import (
     WeatherHealthAlertsInterface,
@@ -73,6 +74,15 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         assert detailed_alarm_data["period_end"] is None
         assert detailed_alarm_data["period_start"] is None
         assert detailed_alarm_data["refresh_date"] is None
+        assert detailed_alarm_data["risk_score"] == 1
+        assert (
+            detailed_alarm_data["impact"]
+            == WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
+        )
+        assert (
+            detailed_alarm_data["likelihood"]
+            == WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
+        )
 
     def test_for_alert_which_has_expired(self):
         """
@@ -140,6 +150,15 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
             detailed_alarm_data["period_start"] is fake_expired_red_alert.period_start
         )
         assert detailed_alarm_data["refresh_date"] is fake_expired_red_alert.period_end
+        assert detailed_alarm_data["risk_score"] == 1
+        assert (
+            detailed_alarm_data["impact"]
+            == WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
+        )
+        assert (
+            detailed_alarm_data["likelihood"]
+            == WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
+        )
 
     def test_for_alert_which_is_currently_live(self):
         """
@@ -203,6 +222,15 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         )
         assert (
             detailed_alarm_data["refresh_date"] is fake_expired_red_alert.refresh_date
+        )
+        assert detailed_alarm_data["risk_score"] == 16
+        assert (
+            detailed_alarm_data["impact"]
+            == WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value
+        )
+        assert (
+            detailed_alarm_data["likelihood"]
+            == WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value
         )
 
 
