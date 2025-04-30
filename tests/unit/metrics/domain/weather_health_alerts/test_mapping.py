@@ -161,3 +161,223 @@ class TestWeatherHealthAlertsMetricMapping:
 
         # Then
         assert associated_text == ""
+
+    @pytest.mark.parametrize(
+        "metric_value, expected_impact_value",
+        (
+            [
+                (
+                    1,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (
+                    2,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (
+                    3,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (
+                    4,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (5, mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value),
+                (6, mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value),
+                (7, mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value),
+                (8, mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value),
+                (
+                    9,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    10,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    11,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    12,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    13,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+                (
+                    14,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+                (
+                    15,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+                (
+                    16,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+            ]
+        ),
+    )
+    def test_associated_text_for_impact_level(
+        self,
+        metric_value: int,
+        expected_impact_value: str,
+    ):
+        """
+        Given a valid `metric_value`, an integer between 1 & 16
+        When the `associated_impact_level` property is called
+            from an instance of `WeatherHealthAlertsMetricMapping`
+        Then the correct impact level is returned
+        """
+        # Given
+        weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
+            metric_value=metric_value,
+            topic_name="Heat-alert",
+        )
+
+        # When
+        associated_impact_level = weather_health_alerts_mapping.associated_impact_level
+
+        # Then
+        assert associated_impact_level == expected_impact_value
+
+    def test_impact_level_returns_as_empty_string_with_invalid_metric_value(self):
+        """
+        Given an invalid `metric_value` an integer outside the range of 1 - 16
+        When the `associated_impact_level` property is called
+            from an instance of `WeatherHealthAlertsMetricMapping`
+        Then an empty string is returned
+        """
+        # Given
+        metric_value = 17
+        weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
+            metric_value=metric_value,
+            topic_name="Heat-alert",
+        )
+
+        # When
+        associated_impact_level = weather_health_alerts_mapping.associated_impact_level
+
+        # Then
+        assert associated_impact_level == ""
+
+    @pytest.mark.parametrize(
+        "metric_value, expected_likelihood_value",
+        (
+            [
+                (
+                    1,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (
+                    2,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value,
+                ),
+                (
+                    3,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    4,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+                (
+                    5,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (
+                    6,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value,
+                ),
+                (
+                    7,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    8,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+                (
+                    9,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (
+                    10,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value,
+                ),
+                (
+                    11,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    12,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+                (
+                    13,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                ),
+                (
+                    14,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value,
+                ),
+                (
+                    15,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                ),
+                (
+                    16,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                ),
+            ]
+        ),
+    )
+    def test_associated_text_for_likelihood_level(
+        self,
+        metric_value: int,
+        expected_likelihood_value: str,
+    ):
+        """
+        Given a valid `metric_value`, an integer between 1 & 16
+        When the `associated_likelihood_level` property is called
+            from an instance of `WeatherHealthAlertsMetricMapping`
+        Then the correct likelihood level is returned
+        """
+        # Given
+        weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
+            metric_value=metric_value,
+            topic_name="Heat-alert",
+        )
+
+        # When
+        associated_likelihood_level = (
+            weather_health_alerts_mapping.associated_likelihood_level
+        )
+
+        # Then
+        assert associated_likelihood_level == expected_likelihood_value
+
+    def test_likelihood_level_returns_as_empty_string_with_invalid_metric_value(self):
+        """
+        Given an invalid `metric_value` an integer outside the range of 1 - 16
+        When the `associated_impact_level` property is called
+            from an instance of `WeatherHealthAlertsMetricMapping`
+        Then an empty string is returned
+        """
+        # Given
+        metric_value = 17
+        weather_health_alerts_mapping = mapping.WeatherHealthAlertsMetricMapping(
+            metric_value=metric_value,
+            topic_name="Heat-alert",
+        )
+
+        # When
+        associated_likelihood_level = (
+            weather_health_alerts_mapping.associated_likelihood_level
+        )
+
+        # Then
+        assert associated_likelihood_level == ""
