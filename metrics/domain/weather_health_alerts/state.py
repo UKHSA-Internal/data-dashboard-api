@@ -18,6 +18,9 @@ class WeatherHealthAlarmState:
         return {
             "status": self.get_associated_status(),
             "text": self.get_associated_text(),
+            "risk_score": self.metric_value,
+            "impact": self.get_associated_impact_level(),
+            "likelihood": self.get_associated_likelihood_level(),
             "period_start": self.period_start,
             "period_end": self.period_end,
             "refresh_date": self.refresh_date,
@@ -43,3 +46,11 @@ class WeatherHealthAlarmState:
     def get_associated_text(self) -> str:
         mapping: WeatherHealthAlertsMetricMapping = self._build_mapping()
         return "".join(mapping.associated_text.split("\n"))
+
+    def get_associated_impact_level(self) -> str:
+        mapping: WeatherHealthAlertsMetricMapping = self._build_mapping()
+        return mapping.associated_impact_level
+
+    def get_associated_likelihood_level(self) -> str:
+        mapping: WeatherHealthAlertsMetricMapping = self._build_mapping()
+        return mapping.associated_likelihood_level

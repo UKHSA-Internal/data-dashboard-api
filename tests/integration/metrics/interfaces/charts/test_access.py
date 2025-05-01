@@ -144,8 +144,8 @@ class TestChartsOutput:
         Then a `hovertemplate` for headline charts is returned.
         """
         # Given
-        x_axis_values = [1, 2, 3]
-        y_axis_values = ["00-01", "04-15", "35+"]
+        x_axis_values = ["00-01", "04-15", "35+"]
+        y_axis_values = [1, 2, 3]
         chart_plots_data = self._setup_chart_plot_data(
             x_axis_values=x_axis_values,
             y_axis_values=y_axis_values,

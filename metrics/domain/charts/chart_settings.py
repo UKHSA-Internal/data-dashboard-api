@@ -116,6 +116,12 @@ class ChartSettings:
                 "font": tick_font,
             }
 
+        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
+
+        base_y_axis_config["tick0"] = y_min_value
+        base_y_axis_config["range"] = [y_min_value, y_max_value]
+        base_y_axis_config["rangemode"] = "tozero" if y_min_value == 0 else "normal"
+
         return base_y_axis_config
 
     def _get_base_chart_config(self):
@@ -181,12 +187,6 @@ class ChartSettings:
 
     def get_line_with_shaded_section_chart_config(self):
         chart_config = self._get_base_chart_config()
-
-        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
-
-        chart_config["yaxis"]["tick0"] = y_min_value
-        chart_config["yaxis"]["range"] = [y_min_value, y_max_value]
-        chart_config["yaxis"]["rangemode"] = "tozero" if y_min_value == 0 else "normal"
         chart_config["showlegend"] = False
 
         return chart_config
@@ -277,17 +277,12 @@ class ChartSettings:
 
     def get_bar_chart_config(self):
         chart_config = self._get_base_chart_config()
+
         chart_config["barmode"] = "group"
         return {**chart_config, **self._get_legend_bottom_left_config()}
 
     def get_line_multi_coloured_chart_config(self):
         chart_config = self._get_base_chart_config()
-
-        y_min_value, y_max_value = self._get_minimum_and_maximum_y_axis_values()
-
-        chart_config["yaxis"]["tick0"] = y_min_value
-        chart_config["yaxis"]["range"] = [y_min_value, y_max_value]
-        chart_config["yaxis"]["rangemode"] = "tozero" if y_min_value == 0 else "normal"
 
         return {**chart_config, **self._get_legend_top_centre_config()}
 
