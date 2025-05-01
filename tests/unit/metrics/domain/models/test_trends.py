@@ -43,3 +43,55 @@ class TestTrendParameters:
         # When / Then
         with pytest.raises(ValidationError):
             TrendsParameters(**input_data)
+
+    def test_to_dict_for_main_metric_query(self):
+        """
+        Given an enriched `TrendsParameters` model
+        When `to_dict_for_main_metric_query()` is called
+        Then the correct dictionary is returned
+        """
+        # Given
+        input_data = self.valid_payload.copy()
+        trend_parameters = TrendsParameters(**input_data)
+
+        # When
+        main_metric_dict = trend_parameters.to_dict_for_main_metric_query()
+
+        # Then
+        expected = {
+            "topic_name": input_data["topic"],
+            "metric_name": input_data["metric"],
+            "geography_name": input_data["geography"],
+            "geography_type_name": input_data["geography_type"],
+            "stratum_name": input_data["stratum"],
+            "sex": input_data["sex"],
+            "age": input_data["age"],
+            "rbac_permissions": [],
+        }
+        assert main_metric_dict == expected
+
+    def test_to_dict_for_percentage_metric_query(self):
+        """
+        Given an enriched `TrendsParameters` model
+        When `to_dict_for_percentage_metric_query()` is called
+        Then the correct dictionary is returned
+        """
+        # Given
+        input_data = self.valid_payload.copy()
+        trend_parameters = TrendsParameters(**input_data)
+
+        # When
+        percentage_metric_dict = trend_parameters.to_dict_for_percentage_metric_query()
+
+        # Then
+        expected = {
+            "topic_name": input_data["topic"],
+            "metric_name": input_data["percentage_metric"],
+            "geography_name": input_data["geography"],
+            "geography_type_name": input_data["geography_type"],
+            "stratum_name": input_data["stratum"],
+            "sex": input_data["sex"],
+            "age": input_data["age"],
+            "rbac_permissions": [],
+        }
+        assert percentage_metric_dict == expected
