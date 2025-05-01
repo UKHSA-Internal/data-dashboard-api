@@ -19,23 +19,23 @@ def require_authorisation(func):
         except KeyError:
             group_id = ""
 
-        _set_rbac_group_permissions(request=request, group_id=group_id)
+        _set_rbac_permissions(request=request, group_id=group_id)
         return func(self, request, *args, **kwargs)
 
     return wrap
 
 
-def _set_rbac_group_permissions(*, request: HttpRequest, group_id: str) -> None:
-    request.group_permissions = []
+def _set_rbac_permissions(*, request: HttpRequest, group_id: str) -> None:
+    request.rbac_permissions = []
     if not group_id:
         return
 
     try:
-        group_permissions: RBACGroupPermission = RBACGroupPermission.objects.get_group(
+        rbac_group: RBACGroupPermission = RBACGroupPermission.objects.get_group(
             group_id=group_id
         )
     except ValidationError:
         return
 
-    if group_permissions:
-        request.group_permissions = list(group_permissions.permissions.all())
+    if rbac_group:
+        request.rbac_permissions = list(rbac_group.permissions.all())

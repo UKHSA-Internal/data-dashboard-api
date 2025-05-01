@@ -22,6 +22,19 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True)
 
+    def get_by_name(self, name: str) -> "Topic":
+        """Gets the `Topic` record which matches the given name.
+
+        Returns:
+            The matched `Topic` record name
+
+        Raises:
+            `Topic.DoesNotExist`: If the `Topic` record
+                cannot be matched to the given `name`.
+
+        """
+        return self.get(name=name)
+
 
 class TopicManager(models.Manager):
     """Custom model manager class for the `Metric` model."""
@@ -47,3 +60,16 @@ class TopicManager(models.Manager):
             Bool: True or False based on the provided topic name existing in the db.
         """
         return self.get_all_names().filter(name=topic).exists()
+
+    def get_by_name(self, name: str) -> "Topic":
+        """Gets the `Topic` record which matches the given name.
+
+        Returns:
+            The matched `Topic` record name
+
+        Raises:
+            `Topic.DoesNotExist`: If the `Topic` record
+                cannot be matched to the given `name`.
+
+        """
+        return self.get_queryset().get_by_name(name=name)

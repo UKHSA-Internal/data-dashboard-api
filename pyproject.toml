@@ -196,6 +196,10 @@ layers = [
     "metrics.domain",
     "metrics.data",
 ]
+ignore_imports = [
+    "metrics.data.managers.core_models.time_series -> metrics.api.permissions.fluent_permissions",
+    "metrics.data.managers.core_models.headline -> metrics.api.permissions.fluent_permissions"
+]
 
 [[tool.importlinter.contracts]]
 name = "Metrics domain siblings do not depend on each other."

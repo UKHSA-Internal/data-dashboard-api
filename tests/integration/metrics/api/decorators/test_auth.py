@@ -23,7 +23,7 @@ class FakeApiView(APIView):
     @require_authorisation
     def post(self, request, *args, **kwargs):
         try:
-            permissions = request.group_permissions
+            permissions = request.rbac_permissions
         except AttributeError:
             permissions = []
         permissions_data = [p.name for p in permissions]
