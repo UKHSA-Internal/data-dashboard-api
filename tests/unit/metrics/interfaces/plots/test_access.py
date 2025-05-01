@@ -547,7 +547,7 @@ class TestPlotsInterface:
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
         )
 
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     def test_get_queryset_from_core_model_manager_passes_theme_and_topic_into_query_when_auth_enabled(
         self,
     ):

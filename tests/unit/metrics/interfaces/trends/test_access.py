@@ -3,6 +3,7 @@ from unittest import mock
 import pytest
 
 from metrics.data.models.core_models import CoreHeadline
+from metrics.domain.models.trends import TrendsParameters
 from metrics.domain.trends.state import Trend
 from metrics.interfaces.trends import access
 from metrics.interfaces.trends.access import TrendsInterface
@@ -12,17 +13,17 @@ from tests.fakes.managers.headline_manager import FakeCoreHeadlineManager
 
 class TestTrendsInterface:
     @property
-    def example_args(self) -> dict[str, str]:
-        return {
-            "topic_name": "COVID-19",
-            "metric_name": "COVID-19_headline_ONSdeaths_7DayChange",
-            "percentage_metric_name": "COVID-19_headline_ONSdeaths_7DayPercentChange",
-            "geography_name": "England",
-            "geography_type_name": "Nation",
-            "stratum_name": "default",
-            "age": "all",
-            "sex": "all",
-        }
+    def example_trend_parameters(self) -> TrendsParameters:
+        return TrendsParameters(
+            topic="COVID-19",
+            metric="COVID-19_headline_ONSdeaths_7DayChange",
+            percentage_metric="COVID-19_headline_ONSdeaths_7DayPercentChange",
+            geography="England",
+            geography_type="Nation",
+            stratum="default",
+            age="all",
+            sex="all",
+        )
 
     def test_get_value_calls_model_manager_with_correct_args(self):
         """
@@ -31,24 +32,22 @@ class TestTrendsInterface:
         Then the call is delegated to the `get_latest_metric_value()` method on the model manager
         """
         # Given
-        expected_args = self.example_args
+        trend_parameters = self.example_trend_parameters
         spy_core_headline_manager = mock.Mock()
 
         interface = TrendsInterface(
-            **expected_args,
+            trend_parameters=trend_parameters,
             core_headline_manager=spy_core_headline_manager,
         )
 
         # When
         value = interface.get_latest_metric_value(
-            metric_name=expected_args["metric_name"]
+            params=trend_parameters.to_dict_for_main_metric_query()
         )
 
         # Then
-        expected_args = self.example_args
-        expected_args.pop("percentage_metric_name")
         spy_core_headline_manager.get_latest_headline.assert_called_once_with(
-            **expected_args,
+            **trend_parameters.to_dict_for_main_metric_query(),
         )
         assert value == spy_core_headline_manager.get_latest_headline.return_value
 
@@ -59,12 +58,15 @@ class TestTrendsInterface:
         Then a `Trend` object is returned containing values retrieved by the model manager
         """
         # Given
-        example_args = self.example_args
-        metric_name = example_args["metric_name"]
-        percentage_metric_name = example_args["percentage_metric_name"]
+        trend_parameters = self.example_trend_parameters
+        metric_name = trend_parameters.metric_name
+        percentage_metric_name = trend_parameters.percentage_metric_name
+        params = trend_parameters.to_dict_for_main_metric_query()
+        params.pop("rbac_permissions")
+        params["percentage_metric_name"] = percentage_metric_name
 
         period_end = "2024-02-29"
-        params_to_build_headlines = {**example_args, "period_end": period_end}
+        params_to_build_headlines = {**params, "period_end": period_end}
         (
             main_core_headline,
             percentage_core_headline,
@@ -73,7 +75,7 @@ class TestTrendsInterface:
         )
 
         interface = TrendsInterface(
-            **example_args,
+            trend_parameters=trend_parameters,
             core_headline_manager=FakeCoreHeadlineManager(
                 headlines=[main_core_headline, percentage_core_headline]
             ),
@@ -104,18 +106,19 @@ class TestTrendsInterface:
         Then a `TrendNumberDataNotFoundError` is raised
         """
         # Given
-        example_args = self.example_args
+        trend_parameters = self.example_trend_parameters
         fake_core_headline_manager = FakeCoreHeadlineManager(headlines=[])
-        metric_name = example_args["metric_name"]
 
-        headlines_interface = access.TrendsInterface(
-            **example_args,
+        trends_interface = access.TrendsInterface(
+            trend_parameters=trend_parameters,
             core_headline_manager=fake_core_headline_manager,
         )
 
         # When / Then
         with pytest.raises(access.TrendNumberDataNotFoundError):
-            headlines_interface.get_latest_metric_value(metric_name=metric_name)
+            trends_interface.get_latest_metric_value(
+                params=trend_parameters.to_dict_for_main_metric_query()
+            )
 
     def test_initializes_with_default_core_headline_manager(self):
         """
@@ -124,10 +127,10 @@ class TestTrendsInterface:
         Then the default `CoreHeadlineManager`
             is set on the `TrendsInterface` object
         """
-        example_args = self.example_args
+        trend_parameters = self.example_trend_parameters
 
         # When
-        trends_interface = TrendsInterface(**example_args)
+        trends_interface = TrendsInterface(trend_parameters=trend_parameters)
 
         # Then
         assert trends_interface.core_headline_manager == CoreHeadline.objects
@@ -145,25 +148,11 @@ class TestGenerateTrendNumbers:
             which is subsequently used to call and return `model_dump()` from the `Trend` model
         """
         # Given
-        mocked_topic = mock.Mock()
-        mocked_metric_name = mock.Mock()
-        mocked_percentage_metric_name = mock.Mock()
-        geography_name = mock.Mock()
-        geography_type_name = mock.Mock()
-        stratum_name = mock.Mock()
-        sex = mock.Mock()
-        age = mock.Mock()
+        mocked_trend_parameters = mock.Mock()
 
         # When
         trend_data = access.generate_trend_numbers(
-            topic_name=mocked_topic,
-            metric_name=mocked_metric_name,
-            percentage_metric_name=mocked_percentage_metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
-            sex=sex,
-            age=age,
+            trend_parameters=mocked_trend_parameters
         )
 
         # Then

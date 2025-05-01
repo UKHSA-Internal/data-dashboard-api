@@ -6,7 +6,7 @@ from typing import Any
 from django.db.models import Manager, QuerySet
 from pydantic import BaseModel
 
-from metrics.api.settings.auth import AUTH_ENABLED
+from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreTimeSeries, Topic
 from metrics.domain.common.utils import ChartAxisFields
 from metrics.domain.models import (
@@ -143,7 +143,7 @@ class PlotsInterface:
                     ('05-10', Decimal('9.0'))
                 ]>`
         """
-        if AUTH_ENABLED:
+        if auth.AUTH_ENABLED:
             # Needed for the downstream permissions check
             topic = self.topic_model_manager.get_by_name(name=plot_params["topic_name"])
             plot_params["theme_name"] = topic.sub_theme.theme.name
