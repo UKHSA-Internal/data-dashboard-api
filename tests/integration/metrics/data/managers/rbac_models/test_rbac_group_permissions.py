@@ -2,7 +2,7 @@ import pytest
 
 from metrics.data.models.rbac_models import RBACGroupPermission
 from tests.factories.metrics.rbac_models.rbac_group_permissions import (
-    RBACPermissionGroupFactory,
+    RBACGroupPermissionFactory,
 )
 
 
@@ -19,7 +19,7 @@ class TestRBACGroupPermissionManager:
         Then an `RBACGroupPermission` instance is created with the correct attributes.
         """
         # Given
-        group_permission = RBACPermissionGroupFactory.create_record(
+        group_permission = RBACGroupPermissionFactory.create_record(
             **self.group_permissions
         )
 
@@ -37,7 +37,7 @@ class TestRBACGroupPermissionManager:
         Then an integrity error should be raised.
         """
         # Given
-        RBACPermissionGroupFactory.create_record(name="admin_group")
+        RBACGroupPermissionFactory.create_record(name="admin_group")
 
         # When / Then
         with pytest.raises(Exception):

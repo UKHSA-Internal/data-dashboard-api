@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.tables import TablesResponseSerializer, TablesSerializer
 from metrics.interfaces.plots.access import (
     DataNotFoundForAnyPlotError,
@@ -25,6 +26,7 @@ class TablesView(APIView):
         tags=[TABLES_API_TAG],
     )
     @cache_response()
+    @require_authorisation
     def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate chart data in tabular format.
 
