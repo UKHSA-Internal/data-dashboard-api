@@ -373,7 +373,7 @@ class TestFrontEndCrawler:
         # When
         assert response == spy_requests.get.return_value
         expected_url = f"{base_url}/sitemap.xml"
-        spy_requests.get.assert_called_once_with(url=expected_url, timeout=60)
+        spy_requests.get.assert_called_once_with(url=expected_url, timeout=600)
 
     @mock.patch.object(FrontEndCrawler, "hit_frontend_page")
     @mock.patch.object(FrontEndCrawler, "_traverse_sitemap")
