@@ -8,7 +8,7 @@ from rest_framework.test import APIClient
 from metrics.api.decorators.auth import RBAC_AUTH_X_HEADER
 from metrics.api.settings import auth
 from tests.factories.metrics.rbac_models.rbac_group_permissions import (
-    RBACPermissionGroupFactory,
+    RBACGroupPermissionFactory,
 )
 from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 from tests.factories.metrics.time_series import CoreTimeSeriesFactory
@@ -66,7 +66,7 @@ class TestNonPublicDataDownloadsAPI:
             name="valid permission",
             theme=public_record.metric.topic.sub_theme.theme,
         )
-        RBACPermissionGroupFactory.create_record(
+        RBACGroupPermissionFactory.create_record(
             name="Test group",
             group_id=group_id,
             permissions=[permission],
@@ -114,7 +114,7 @@ class TestNonPublicDataDownloadsAPI:
             metric_value=2, date="2025-01-02", is_public=False
         )
 
-        RBACPermissionGroupFactory.create_record(
+        RBACGroupPermissionFactory.create_record(
             name="Test group",
             group_id=group_id,
             permissions=[],
