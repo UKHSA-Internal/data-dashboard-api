@@ -1,6 +1,6 @@
 from django.db.models import Manager
 
-from metrics.api.settings.auth import AUTH_ENABLED
+from metrics.api.settings import auth
 from metrics.data.models.core_models import CoreHeadline, Topic
 from metrics.domain.headlines.state import Headline
 from metrics.domain.models.headline import HeadlineParameters
@@ -37,7 +37,7 @@ class HeadlinesInterface:
         """
         params = self.headline_parameters.to_dict_for_query()
 
-        if AUTH_ENABLED:
+        if auth.AUTH_ENABLED:
             # Needed for the downstream permissions check
             topic = self.topic_manager.get_by_name(
                 name=self.headline_parameters.topic_name

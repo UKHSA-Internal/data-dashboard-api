@@ -14,7 +14,7 @@ class TestChartsView:
     @staticmethod
     def _build_valid_payload_for_existing_timeseries(core_timeseries: CoreTimeSeries):
         return {
-            "file_format": "svg",
+            "file_format": "png",
             "plots": [
                 {
                     "topic": core_timeseries.metric.metric_group.topic.name,
@@ -85,8 +85,8 @@ class TestChartsView:
         # Then
         assert response.status_code == HTTPStatus.OK != HTTPStatus.UNAUTHORIZED
 
-        # Check that the headers on the response indicate an `svg` image being returned
-        assert response.headers["Content-Type"] == "image/svg+xml"
+        # Check that the headers on the response indicate a `png` image being returned
+        assert response.headers["Content-Type"] == "image/png"
 
     @pytest.mark.django_db
     def test_hitting_endpoint_without_appended_forward_slash_redirects_correctly_for_v3(
@@ -103,6 +103,7 @@ class TestChartsView:
         valid_payload = self._build_valid_payload_for_existing_timeseries(
             core_timeseries=core_timeseries_example[0]
         )
+        valid_payload["file_format"] = "svg"
         path = "/api/charts/v3"
 
         # When

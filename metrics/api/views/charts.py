@@ -1,4 +1,4 @@
-import os
+import io
 from http import HTTPStatus
 
 from django.http import FileResponse
@@ -35,6 +35,7 @@ class ChartsView(APIView):
             return [permissions.IsAuthenticated()]
         return super().get_permissions()
 
+    @classmethod
     @extend_schema(
         request=ChartsSerializer,
         responses={HTTPStatus.OK.value: ChartsResponseSerializer},
@@ -75,7 +76,7 @@ class ChartsView(APIView):
             )
         ],
     )
-    def post(self, request, *args, **kwargs):
+    def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
         Multiple plots can be added as an array of objects from the request body.
@@ -198,7 +199,7 @@ class ChartsView(APIView):
         )
 
         try:
-            filename: str = access.generate_chart_as_file(
+            chart_image: bytes = access.generate_chart_as_file(
                 chart_request_params=chart_request_params,
             )
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
@@ -206,16 +207,10 @@ class ChartsView(APIView):
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        return self._return_image(filename=filename)
-
-    @staticmethod
-    def _return_image(*, filename: str) -> FileResponse:
-        image = open(filename, "rb")
-        response = FileResponse(image)
-
-        os.remove(filename)
-
-        return response
+        return FileResponse(
+            io.BytesIO(chart_image),
+            content_type=f"image/{chart_request_params.file_format}",
+        )
 
 
 class EncodedChartsView(APIView):

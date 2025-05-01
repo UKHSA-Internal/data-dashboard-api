@@ -3,7 +3,7 @@ from functools import wraps
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 
-from metrics.api.settings.private_api import AUTH_ENABLED
+from metrics.api.settings import auth
 from metrics.data.models.rbac_models import RBACGroupPermission
 
 RBAC_AUTH_X_HEADER = "X-GroupId"
@@ -12,7 +12,7 @@ RBAC_AUTH_X_HEADER = "X-GroupId"
 def require_authorisation(func):
     @wraps(func)
     def wrap(self, request, *args, **kwargs):
-        if not AUTH_ENABLED:
+        if not auth.AUTH_ENABLED:
             return func(self, request, *args, **kwargs)
         try:
             group_id: str = request.headers[RBAC_AUTH_X_HEADER]

@@ -15,7 +15,7 @@ MODULE_PATH = "metrics.interfaces.headlines.access"
 
 class TestHeadlinesInterface:
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED")
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
     def test_get_latest_metric_value_returns_non_public_record_for_matching_permission(
         self, mocked_auth_enabled: mock.MagicMock
     ):
@@ -72,7 +72,7 @@ class TestHeadlinesInterface:
         )
 
     @pytest.mark.django_db
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED")
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED")
     def test_get_latest_metric_value_excludes_non_public_record_for_no_matching_permission(
         self, mocked_auth_enabled: mock.MagicMock
     ):
