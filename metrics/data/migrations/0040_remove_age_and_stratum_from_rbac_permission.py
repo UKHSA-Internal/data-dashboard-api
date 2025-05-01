@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("data", "0038_set_theme_and_sub_theme_as_optional_on_rbac_permission"),
+        ("data", "0039_set_theme_and_sub_theme_as_optional_on_rbac_permission"),
     ]
 
     operations = [
