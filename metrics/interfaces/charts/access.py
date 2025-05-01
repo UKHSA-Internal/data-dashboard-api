@@ -1,3 +1,4 @@
+import io
 import urllib.parse
 from dataclasses import dataclass
 from datetime import datetime
@@ -488,7 +489,7 @@ class ChartsInterface:
 
         return encoded_chart
 
-    def write_figure(self, *, figure: plotly.graph_objects.Figure) -> str:
+    def write_figure(self, *, figure: plotly.graph_objects.Figure) -> bytes:
         """
         Convert a figure to a static image and write to a file in the desired image format
 
@@ -496,17 +497,19 @@ class ChartsInterface:
             figure: The figure object or a dictionary representing a figure
 
         Returns:
-            The filename of the image
+            The image in memory
 
         """
-        filename = f"new_chart.{self.chart_request_params.file_format}"
+        file = io.BytesIO()
+
         figure.write_image(
-            file=filename,
+            file=file,
             format=self.chart_request_params.file_format,
             validate=False,
         )
 
-        return filename
+        file.seek(0)
+        return file.getvalue()
 
     @staticmethod
     def calculate_change_in_metric_value(*, values, metric_name) -> int | float:
@@ -543,27 +546,7 @@ class ChartsInterface:
         }
 
 
-def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> str:
-    """Validates and creates a chart figure based on the parameters provided within the `chart_plots` model
-
-    Args:
-        chart_request_params: The requested chart request
-            parameters encapsulated as a model
-
-    Returns:
-        The filename of the created image
-
-    Raises:
-        `InvalidPlotParametersError`: If an underlying
-            validation check has failed.
-            This could be because there is
-            an invalid topic and metric selection.
-            Or because the selected dates are not in
-            the expected chronological order.
-        `DataNotFoundForAnyPlotError`: If no plots
-            returned any data from the underlying queries
-
-    """
+def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> bytes:
     charts_interface = ChartsInterface(chart_request_params=chart_request_params)
     chart_output: ChartOutput = charts_interface.generate_chart_output()
 
