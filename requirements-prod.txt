@@ -2,7 +2,7 @@
 anyascii==0.3.2
 attrs==25.3.0
 beautifulsoup4==4.13.4
-CacheControl==0.14.2
+CacheControl==0.14.3
 certifi==2025.4.26
 cfgv==3.4.0
 charset-normalizer==3.4.1
