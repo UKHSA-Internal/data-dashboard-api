@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.trends import (
     TrendsQuerySerializer,
     TrendsResponseSerializer,
@@ -29,6 +30,7 @@ class TrendsView(APIView):
         tags=[TRENDS_API_TAG],
     )
     @cache_response()
+    @require_authorisation
     def get(cls, request, *args, **kwargs):
         """This endpoint can be used to retrieve trend-type data for a given `topic`, `metric` and `percentage_metric` combination.
 
@@ -65,18 +67,11 @@ class TrendsView(APIView):
         query_serializer = TrendsQuerySerializer(data=request.query_params)
         query_serializer.is_valid(raise_exception=True)
 
-        serialized_model: TrendsParameters = query_serializer.to_models(request=request)
+        trend_parameters: TrendsParameters = query_serializer.to_models(request=request)
 
         try:
             trends_data: TREND_AS_DICT = generate_trend_numbers(
-                topic_name=serialized_model.topic_name,
-                metric_name=serialized_model.metric_name,
-                percentage_metric_name=serialized_model.percentage_metric_name,
-                geography_name=serialized_model.geography_name,
-                geography_type_name=serialized_model.geography_type_name,
-                stratum_name=serialized_model.stratum_name,
-                sex=serialized_model.sex,
-                age=serialized_model.age,
+                trend_parameters=trend_parameters,
             )
         except TrendNumberDataNotFoundError as error:
             return Response(
