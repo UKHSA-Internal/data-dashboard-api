@@ -64,7 +64,7 @@ class TestGetLastXValueAtEndOfReportingDelayPeriod:
 
 class TestAddReportingDelayPeriod:
     @mock.patch(f"{MODULE_PATH}._get_last_x_value_at_end_of_reporting_delay_period")
-    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}._get_first_x_value_at_start_of_reporting_delay_period")
     def test_draws_vertical_filled_region(
         self,
         mockedget_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
@@ -98,7 +98,7 @@ class TestAddReportingDelayPeriod:
         )
 
     @mock.patch(f"{MODULE_PATH}._get_last_x_value_at_end_of_reporting_delay_period")
-    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}._get_first_x_value_at_start_of_reporting_delay_period")
     def test_draws_vertical_boundaries(
         self,
         mockedget_x_value_at_start_of_reporting_delay_period: mock.MagicMock,
@@ -132,7 +132,7 @@ class TestAddReportingDelayPeriod:
         mocked_figure.add_vline.assert_has_calls(calls=expected_calls, any_order=True)
 
     @mock.patch(f"{MODULE_PATH}._get_last_x_value_at_end_of_reporting_delay_period")
-    @mock.patch(f"{MODULE_PATH}.get_x_value_at_start_of_reporting_delay_period")
+    @mock.patch(f"{MODULE_PATH}._get_first_x_value_at_start_of_reporting_delay_period")
     def test_adds_trace_for_legend(
         self,
         mockedget_x_value_at_start_of_reporting_delay_period: mock.MagicMock,

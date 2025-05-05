@@ -9,8 +9,7 @@ from scour import scour
 
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts import (
-    bar,
-    line_multi_coloured,
+    common_charts,
     line_single_simplified,
     line_with_shaded_section,
 )
@@ -36,6 +35,12 @@ HEX_COLOUR_BLACK = "#0b0c0c"
 class InvalidFileFormatError(Exception):
     def __init__(self):
         message = "Invalid file format, must be `svg`"
+        super().__init__(message)
+
+
+class InvalidChartTypeCombinationError(Exception):
+    def __init__(self, invalid_chart_types: list[str]):
+        message = f"There has been an invalid combination of plots selected, Please review you plot data. {', '.join(invalid_chart_types)}"
         super().__init__(message)
 
 
@@ -141,6 +146,37 @@ class ChartsInterface:
     def is_headline_data(self) -> bool:
         return self.chart_request_params.plots[0].is_headline_data
 
+    @property
+    def _is_common_chart_type(self) -> bool:
+        """Checks to see if the requested chart_type(s) are for `common` or
+            `uncommon` charts.
+
+        Note:
+            Common chart types include `bar` and `line_multi_coloured`, which can be combined
+            into a single chart Eg: `bar_with_line`. Uncommon chart types are more specific
+            in their use case and can not be combined with other types Eg: `line_single_simplified`.
+
+            If multiple plots are requested and they include a combination of `common` and `uncommon`
+            chart_types an Exception will be raised that includes the `uncommon` chart_types provided
+            in the request.
+
+        Returns:
+            Bool: Common = True, Uncommon = False
+        """
+        all_requested_chart_types: set[str] = {
+            plot.chart_type for plot in self.chart_request_params.plots
+        }
+
+        if all_requested_chart_types.issubset(ChartTypes.common_chart_options()):
+            return True
+
+        if len(all_requested_chart_types) == 1:
+            return False
+
+        raise InvalidChartTypeCombinationError(
+            all_requested_chart_types.intersection(ChartTypes.uncommon_chart_options())
+        )
+
     def _set_core_model_manager(self) -> Manager:
         """Returns `core_model_manager` based on the `metric_group`
 
@@ -176,23 +212,21 @@ class ChartsInterface:
             plots_data=chart_generation_payload.plots
         )
 
-        match self.chart_type:
-            case ChartTypes.bar.value:
-                figure = self.generate_bar_chart(
-                    chart_generation_payload=chart_generation_payload
-                )
-            case ChartTypes.line_multi_coloured.value:
-                figure = self.generate_line_multi_coloured_chart(
-                    chart_generation_payload=chart_generation_payload
-                )
-            case ChartTypes.line_single_simplified.value:
-                figure = self.generate_line_single_simplified(
-                    chart_generation_payload=chart_generation_payload
-                )
-            case _:
-                figure = self.generate_line_with_shaded_section_chart(
-                    chart_generation_payload=chart_generation_payload
-                )
+        if self._is_common_chart_type:
+            figure = self.generate_common_chart(
+                chart_generation_payload=chart_generation_payload,
+            )
+
+        else:
+            match self.chart_type:
+                case ChartTypes.line_single_simplified.value:
+                    figure = self.generate_line_single_simplified(
+                        chart_generation_payload=chart_generation_payload
+                    )
+                case _:
+                    figure = self.generate_line_with_shaded_section_chart(
+                        chart_generation_payload=chart_generation_payload
+                    )
 
         return ChartOutput(
             figure=figure,
@@ -219,59 +253,25 @@ class ChartsInterface:
         return plots_text.construct_text()
 
     @classmethod
-    def generate_bar_chart(
+    def generate_common_chart(
         cls,
         *,
         chart_generation_payload: ChartGenerationPayload,
     ) -> plotly.graph_objects.Figure:
-        """Creates a bar chart figure for the requested chart plot
+        """Creates a `common` chart or a combination of multiple `common` charts
 
-        Notes
-            This does support **multiple** plots on the same figure
-
-        Args:
-            chart_generation_payload: An enriched `ChartGenerationPayload` model
-                which holds all the parameters like colour and plot labels
-                 along with the corresponding x and y values
-                 which are needed to be able to generate the chart in full.
+        Note:
+            Common chart types include `bar` and `line_multi_coloured`, which can be combined
+            into a single chart Eg: `bar_with_line`. Uncommon chart types are more specific
 
         Returns:
-            A plotly `Figure` object for the created bar chart
-
-        Raises:
-            `DataNotFoundForAnyPlotError`: If no plots
-                returned any data from the underlying queries
-
-        """
-        return bar.generate_chart_figure(
-            chart_generation_payload=chart_generation_payload
-        )
-
-    @classmethod
-    def generate_line_multi_coloured_chart(
-        cls,
-        *,
-        chart_generation_payload: ChartGenerationPayload,
-    ) -> plotly.graph_objects.Figure:
-        """Creates a multiple line colour-differentiated chart figure for the requested chart plots
-
-        Notes
-            This does support **multiple** plots on the same figure
-
-        Args:
-            chart_generation_payload: An enriched `ChartGenerationPayload` model
-                which holds all the parameters like colour and plot labels
-                 along with the corresponding x and y values
-                 which are needed to be able to generate the chart in full.
-
-        Returns:
-            A plotly `Figure` object for the created multi-coloured line chart
+            A plotly `Figure` object for the created `common` chart
 
         Raises:
             `DataNotFoundForAnyPlotError`: If no plots
                 returned any data from the underlying queries
         """
-        return line_multi_coloured.generate_chart_figure(
+        return common_charts.generate_chart_figure(
             chart_generation_payload=chart_generation_payload
         )
 
