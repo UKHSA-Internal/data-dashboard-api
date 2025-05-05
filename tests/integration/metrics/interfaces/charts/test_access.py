@@ -9,8 +9,8 @@ from metrics.domain.models import (
     PlotParameters,
     ChartGenerationPayload,
 )
-from metrics.domain.charts.line_multi_coloured import generation as line_generation
-from metrics.domain.charts.bar import generation as bar_generation
+
+from metrics.domain.charts.common_charts import generation as common_chart_generation
 from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.access import ChartsInterface, ChartOutput
 
@@ -101,7 +101,7 @@ class TestChartsOutput:
             y_axis_values=y_axis_values,
         )
 
-    def test_chart_output_retuns_correct_hovertemplates_for_timeseries(self):
+    def test_chart_output_returns_correct_hovertemplates_for_timeseries(self):
         """ "
         Given A valid Plotly `Figure`
         When `ChartOutput` is passed the figure and `is_headline = False`
@@ -123,7 +123,9 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = line_generation.generate_chart_figure(chart_generation_payload=payload)
+        figure = common_chart_generation.generate_chart_figure(
+            chart_generation_payload=payload
+        )
 
         # When
         chart_output = ChartOutput(
@@ -159,7 +161,9 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = bar_generation.generate_chart_figure(chart_generation_payload=payload)
+        figure = common_chart_generation.generate_chart_figure(
+            chart_generation_payload=payload
+        )
 
         # When
         chart_output = ChartOutput(
