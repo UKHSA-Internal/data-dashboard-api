@@ -11,7 +11,7 @@ from wagtail.search import index
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
     get_all_unique_metric_names,
@@ -27,7 +27,7 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
         super().__init__(message)
 
 
-class MetricsDocumentationChildEntry(UKHSAPage):
+class MetricsDocumentationChildEntry(UKHSAPage, ActiveAnnouncementMixin):
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
     topic = models.CharField(
@@ -64,7 +64,7 @@ class MetricsDocumentationChildEntry(UKHSAPage):
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),
-        APIField("announcements"),
+        APIField("active_announcements"),
     ]
 
     # Tabs to position at the top of the view.

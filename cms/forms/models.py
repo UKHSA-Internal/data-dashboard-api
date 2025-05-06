@@ -19,7 +19,7 @@ from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.forms import help_texts
 from cms.forms.managers import FormPageManager
 from cms.snippets.models.global_banner import BannerTypes
@@ -45,7 +45,7 @@ class FormField(AbstractFormField):
     )
 
 
-class FormPage(AbstractFormUKHSAPage):
+class FormPage(AbstractFormUKHSAPage, ActiveAnnouncementMixin):
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES, blank=True)
 
     confirmation_slug = TextField(
@@ -104,7 +104,7 @@ class FormPage(AbstractFormUKHSAPage):
         APIField("confirmation_panel_title"),
         APIField("confirmation_panel_text"),
         APIField("confirmation_body"),
-        APIField("announcements"),
+        APIField("active_announcements"),
     ]
 
     objects = FormPageManager()

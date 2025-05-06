@@ -13,7 +13,7 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
@@ -32,7 +32,7 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
         super().__init__(message)
 
 
-class MetricsDocumentationParentPage(UKHSAPage):
+class MetricsDocumentationParentPage(UKHSAPage, ActiveAnnouncementMixin):
     show_pagination = models.BooleanField(
         default=True,
         help_text=help_texts.SHOW_PAGINATION_FIELD,
@@ -68,7 +68,7 @@ class MetricsDocumentationParentPage(UKHSAPage):
         APIField("body"),
         APIField("last_published_at"),
         APIField("search_description"),
-        APIField("announcements"),
+        APIField("active_announcements"),
         APIField("show_pagination"),
         APIField("pagination_size"),
     ]

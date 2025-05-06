@@ -17,11 +17,11 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.snippets.models.global_banner import BannerTypes
 
 
-class CommonPage(UKHSAPage):
+class CommonPage(UKHSAPage, ActiveAnnouncementMixin):
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -53,7 +53,7 @@ class CommonPage(UKHSAPage):
     api_fields = UKHSAPage.api_fields + [
         APIField("related_links_layout"),
         APIField("related_links"),
-        APIField("announcements"),
+        APIField("active_announcements"),
         APIField("search_description"),
     ]
 

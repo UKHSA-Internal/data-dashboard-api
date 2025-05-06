@@ -18,11 +18,11 @@ from cms.dashboard.enums import (
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.snippets.models.global_banner import BannerTypes
 
 
-class CompositePage(UKHSAPage):
+class CompositePage(UKHSAPage, ActiveAnnouncementMixin):
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
     page_description = RichTextField(
         features=[],
@@ -62,11 +62,13 @@ class CompositePage(UKHSAPage):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
     ]
 
     # Sets which fields to expose on the API
@@ -76,7 +78,7 @@ class CompositePage(UKHSAPage):
         APIField("search_description"),
         APIField("related_links_layout"),
         APIField("related_links"),
-        APIField("announcements"),
+        APIField("active_announcements"),
         APIField("page_description"),
         APIField("show_pagination"),
         APIField("pagination_size"),
@@ -132,7 +134,8 @@ class CompositeRelatedLink(Orderable):
         related_name="related_links",
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL",
+                          max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[], blank=True)
 
     # Sets which panels to show on the editing view

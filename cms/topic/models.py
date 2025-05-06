@@ -19,7 +19,7 @@ from cms.dashboard.models import (
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.snippets.models.global_banner import BannerTypes
@@ -29,7 +29,7 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
-class TopicPage(UKHSAPage):
+class TopicPage(UKHSAPage, ActiveAnnouncementMixin):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -49,11 +49,13 @@ class TopicPage(UKHSAPage):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
     ]
 
     # Search index configuration
@@ -78,7 +80,7 @@ class TopicPage(UKHSAPage):
         APIField("search_description"),
         APIField("enable_area_selector"),
         APIField("selected_topics"),
-        APIField("announcements"),
+        APIField("active_announcements"),
     ]
 
     # Tabs to position at the top of the view
@@ -199,7 +201,8 @@ class TopicPageRelatedLink(Orderable):
         TopicPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL",
+                          max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view

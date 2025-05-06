@@ -8,13 +8,13 @@ from wagtail.search import index
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.snippets.models.global_banner import BannerTypes
 from cms.whats_new.managers.child import WhatsNewChildEntryManager
 from cms.whats_new.serializers import BadgeSerializer
 
 
-class WhatsNewChildEntry(UKHSAPage):
+class WhatsNewChildEntry(UKHSAPage, ActiveAnnouncementMixin):
     date_posted = models.DateField(null=False, blank=False)
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
@@ -60,7 +60,7 @@ class WhatsNewChildEntry(UKHSAPage):
         APIField("search_description"),
         APIField("additional_details"),
         APIField("badge", serializer=BadgeSerializer()),
-        APIField("announcements"),
+        APIField("active_announcements"),
     ]
 
     # Tabs to position at the top of the view

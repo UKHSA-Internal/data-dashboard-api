@@ -8,12 +8,12 @@ from wagtail.models import Orderable, Page
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_SECTION_LINK
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.home.managers import LandingPageManager
 from cms.snippets.models.global_banner import BannerTypes
 
 
-class LandingPage(UKHSAPage):
+class LandingPage(UKHSAPage, ActiveAnnouncementMixin):
     is_creatable = True
     max_count = 1
     sub_title = models.CharField(max_length=255)
@@ -33,7 +33,7 @@ class LandingPage(UKHSAPage):
         APIField("body"),
         APIField("search_description"),
         APIField("last_published_at"),
-        APIField("announcements"),
+        APIField("active_announcements"),
     ]
 
     edit_handler = TabbedInterface(
