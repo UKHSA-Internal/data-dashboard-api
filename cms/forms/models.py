@@ -16,13 +16,11 @@ from wagtail.contrib.forms.models import (
     FormMixin,
 )
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
 from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.forms import help_texts
 from cms.forms.managers import FormPageManager
-from cms.snippets.models.global_banner import BannerTypes
 
 
 class AbstractFormUKHSAPage(FormMixin, UKHSAPage):

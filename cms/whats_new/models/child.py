@@ -3,13 +3,10 @@ from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
-from wagtail.models import Orderable
 from wagtail.search import index
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
-from cms.dynamic_content import help_texts
 from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
-from cms.snippets.models.global_banner import BannerTypes
 from cms.whats_new.managers.child import WhatsNewChildEntryManager
 from cms.whats_new.serializers import BadgeSerializer
 

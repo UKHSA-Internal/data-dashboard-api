@@ -4,19 +4,15 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
-from wagtail.models import Orderable
 from wagtail.search import index
 
-from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
-from cms.dynamic_content import help_texts
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
 from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
     get_all_unique_metric_names,
 )
-from cms.snippets.models.global_banner import BannerTypes
 
 logger = logging.getLogger(__name__)
 

@@ -12,13 +12,11 @@ from cms.dashboard.enums import (
     RelatedLinksLayoutEnum,
 )
 from cms.dashboard.models import (
-    AVAILABLE_RICH_TEXT_FEATURES,
     MAXIMUM_URL_FIELD_LENGTH,
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
-from cms.snippets.models.global_banner import BannerTypes
 
 
 class CommonPage(UKHSAPage, ActiveAnnouncementMixin):

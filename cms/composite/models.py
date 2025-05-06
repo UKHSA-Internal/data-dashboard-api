@@ -15,11 +15,10 @@ from cms.dashboard.enums import (
     DEFAULT_RELATED_LINKS_LAYOUT_FIELD_LENGTH,
     RelatedLinksLayoutEnum,
 )
-from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
 from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
-from cms.snippets.models.global_banner import BannerTypes
 
 
 class CompositePage(UKHSAPage, ActiveAnnouncementMixin):

@@ -2,15 +2,12 @@ from django.db import models
 from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
-from wagtail.fields import RichTextField
-from wagtail.models import Orderable, Page
+from wagtail.models import Page
 
-from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
-from cms.dynamic_content import help_texts
+from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_SECTION_LINK
 from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.home.managers import LandingPageManager
-from cms.snippets.models.global_banner import BannerTypes
 
 
 class LandingPage(UKHSAPage, ActiveAnnouncementMixin):

@@ -22,7 +22,6 @@ from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
 from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
-from cms.snippets.models.global_banner import BannerTypes
 from cms.topic.managers import TopicPageManager
 
 DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
