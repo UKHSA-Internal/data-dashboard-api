@@ -11,6 +11,20 @@ from cms.dynamic_content import help_texts
 from cms.snippets.models.global_banner import BannerTypes
 
 
+class ActiveAnnouncementMixin:
+    """Mixin that adds active_announcements property to any page type."""
+
+    @property
+    def active_announcements(self):
+        """Returns active announcements as serializable dictionaries."""
+        # This assumes each page has an 'announcements' related name
+        if hasattr(self, 'announcements'):
+            return list(self.announcements.filter(is_active=True).order_by("-banner_type").values(
+                'id', 'title', 'body', 'banner_type'
+            ))
+        return []
+
+
 class Announcement(Orderable):
     title = models.CharField(
         max_length=255,
@@ -47,7 +61,6 @@ class Announcement(Orderable):
         APIField("title"),
         APIField("body"),
         APIField("banner_type"),
-        APIField("is_active"),
     ]
 
     class Meta:

@@ -19,10 +19,12 @@ class LandingPage(UKHSAPage):
     sub_title = models.CharField(max_length=255)
     body = ALLOWABLE_BODY_CONTENT_SECTION_LINK
 
-    content_panels = Page.content_panels + [FieldPanel("sub_title"), FieldPanel("body")]
+    content_panels = Page.content_panels + \
+        [FieldPanel("sub_title"), FieldPanel("body")]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("announcements", heading="Announcements",
+                    label="Announcement"),
     ]
 
     api_fields = UKHSAPage.api_fields + [

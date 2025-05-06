@@ -12,12 +12,12 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import Announcement
+from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
 from cms.snippets.models.global_banner import BannerTypes
 from cms.whats_new.managers.parent import WhatsNewParentPageManager
 
 
-class WhatsNewParentPage(UKHSAPage):
+class WhatsNewParentPage(UKHSAPage, ActiveAnnouncementMixin):
     date_posted = models.DateField(null=False)
     show_pagination = models.BooleanField(
         default=True,
@@ -57,7 +57,7 @@ class WhatsNewParentPage(UKHSAPage):
         APIField("search_description"),
         APIField("show_pagination"),
         APIField("pagination_size"),
-        APIField("announcements"),
+        APIField("active_announcements"),
     ]
 
     # Tabs to position at the top of the view
