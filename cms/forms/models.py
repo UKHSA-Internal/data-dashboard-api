@@ -18,7 +18,7 @@ from wagtail.contrib.forms.models import (
 from wagtail.fields import RichTextField
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
-from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
+from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.forms import help_texts
 from cms.forms.managers import FormPageManager
 
@@ -29,8 +29,7 @@ class AbstractFormUKHSAPage(FormMixin, UKHSAPage):
 
 
 class FormField(AbstractFormField):
-    page = ParentalKey("FormPage", on_delete=models.CASCADE,
-                       related_name="form_fields")
+    page = ParentalKey("FormPage", on_delete=models.CASCADE, related_name="form_fields")
 
     form_field_choices = [
         choice for choice in FORM_FIELD_CHOICES if choice[0] != "multiselect"
@@ -70,8 +69,7 @@ class FormPage(AbstractFormUKHSAPage, ActiveAnnouncementMixin):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     confirmation_panels = [

@@ -18,10 +18,12 @@ class ActiveAnnouncementMixin:
     def active_announcements(self):
         """Returns active announcements as serializable dictionaries."""
         # This assumes each page has an 'announcements' related name
-        if hasattr(self, 'announcements'):
-            return list(self.announcements.filter(is_active=True).order_by("-banner_type").values(
-                'id', 'title', 'body', 'banner_type'
-            ))
+        if hasattr(self, "announcements"):
+            return list(
+                self.announcements.filter(is_active=True)
+                .order_by("-banner_type")
+                .values("id", "title", "body", "banner_type")
+            )
         return []
 
 

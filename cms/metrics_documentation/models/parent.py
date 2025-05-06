@@ -10,7 +10,7 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
+from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
@@ -55,8 +55,7 @@ class MetricsDocumentationParentPage(UKHSAPage, ActiveAnnouncementMixin):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Sets which fields to expose on the API

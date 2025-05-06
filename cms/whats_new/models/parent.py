@@ -9,7 +9,7 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
+from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.whats_new.managers.parent import WhatsNewParentPageManager
 
 
@@ -34,8 +34,7 @@ class WhatsNewParentPage(UKHSAPage, ActiveAnnouncementMixin):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Content panels to render for editing within the CMS application

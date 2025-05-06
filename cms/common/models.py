@@ -16,7 +16,7 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
+from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 
 
 class CommonPage(UKHSAPage, ActiveAnnouncementMixin):
@@ -38,13 +38,11 @@ class CommonPage(UKHSAPage, ActiveAnnouncementMixin):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links",
-                    label="Related link"),
+        InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Sets which fields to expose on the API
@@ -78,8 +76,7 @@ class CommonPageRelatedLink(Orderable):
         CommonPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL",
-                          max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view

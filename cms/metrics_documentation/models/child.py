@@ -8,7 +8,7 @@ from wagtail.search import index
 
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
-from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
+from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
     get_all_unique_metric_names,
@@ -46,8 +46,7 @@ class MetricsDocumentationChildEntry(UKHSAPage, ActiveAnnouncementMixin):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Sets which fields to expose on the API.

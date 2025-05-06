@@ -18,7 +18,7 @@ from cms.dashboard.enums import (
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
-from cms.dynamic_content.announcements import Announcement, ActiveAnnouncementMixin
+from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 
 
 class CompositePage(UKHSAPage, ActiveAnnouncementMixin):
@@ -61,13 +61,11 @@ class CompositePage(UKHSAPage, ActiveAnnouncementMixin):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links",
-                    label="Related link"),
+        InlinePanel("related_links", heading="Related links", label="Related link"),
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     # Sets which fields to expose on the API
@@ -133,8 +131,7 @@ class CompositeRelatedLink(Orderable):
         related_name="related_links",
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL",
-                          max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[], blank=True)
 
     # Sets which panels to show on the editing view
