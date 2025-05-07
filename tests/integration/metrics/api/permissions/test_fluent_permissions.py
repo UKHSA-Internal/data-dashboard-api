@@ -6,7 +6,6 @@ from metrics.api.permissions.fluent_permissions import RequestedDataParameters
 from tests.fakes.factories.metrics.rbac_models.rbac_permission import (
     FakeRBACPermissionFactory,
 )
-from tests.fakes.models.metrics.rbac_models.rbac_permission import FakeRBACPermission
 
 
 DATA_PARAMETERS = {
@@ -46,8 +45,6 @@ class TestFluentPermissions:
                 metric=DATA_PARAMETERS["metric"],
                 geography=DATA_PARAMETERS["geography"],
                 geography_type=DATA_PARAMETERS["geography_type"],
-                age=DATA_PARAMETERS["age"],
-                stratum=DATA_PARAMETERS["stratum"],
             )
         )
 
@@ -102,15 +99,6 @@ class TestFluentPermissions:
                 "geography",
                 "geography_type",
             },
-            # Show all data for `all` ages of `COVID-19_cases_casesByDay` in `England`
-            {
-                "theme",
-                "sub_theme",
-                "topic",
-                "geography",
-                "geography_type",
-                "age",
-            },
             # Show all data for `COVID-19` in `England
             {
                 "theme",
@@ -118,10 +106,6 @@ class TestFluentPermissions:
                 "topic",
                 "geography",
                 "geography_type",
-            },
-            # Show all data for the stratum of `default`
-            {
-                "stratum",
             },
         ),
     )
@@ -200,16 +184,6 @@ class TestFluentPermissions:
                 "geography": "Wales",
                 "geography_type": DATA_PARAMETERS["geography_type"],
             },
-            # Permission for data for ages of `f` instead of `all`
-            {
-                "theme": DATA_PARAMETERS["theme"],
-                "sub_theme": DATA_PARAMETERS["sub_theme"],
-                "topic": DATA_PARAMETERS["topic"],
-                "metric": DATA_PARAMETERS["metric"],
-                "geography": DATA_PARAMETERS["geography"],
-                "geography_type": DATA_PARAMETERS["geography_type"],
-                "age": "f",
-            },
             # Permission for data a different geography but with the same topic i.e. `Wales` instead of `England`
             {
                 "theme": DATA_PARAMETERS["theme"],
@@ -217,10 +191,6 @@ class TestFluentPermissions:
                 "topic": DATA_PARAMETERS["topic"],
                 "geography": "Wales",
                 "geography_type": DATA_PARAMETERS["geography_type"],
-            },
-            # Permission for data a different stratum i.e. `some-other-value` instead of `default`
-            {
-                "stratum": "some-other-value",
             },
         ),
     )

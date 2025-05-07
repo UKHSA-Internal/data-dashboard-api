@@ -1,10 +1,12 @@
 from django.db.models import Manager
 
-from metrics.data.models.core_models import CoreHeadline
+from metrics.api.settings import auth
+from metrics.data.models.core_models import CoreHeadline, Topic
 from metrics.domain.headlines.state import Headline
 from metrics.domain.models.headline import HeadlineParameters
 
 DEFAULT_CORE_HEADLINE_MANAGER = CoreHeadline.objects
+DEFAULT_TOPIC_MANAGER = Topic.objects
 
 EXPECTED_DATE_FORMAT = "%Y-%m-%d"
 
@@ -15,9 +17,11 @@ class HeadlinesInterface:
         *,
         headline_parameters: HeadlineParameters,
         core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
+        topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
     ):
         self.headline_parameters = headline_parameters
         self.core_headline_manager = core_headline_manager
+        self.topic_manager = topic_manager
 
     def get_latest_metric_value(self) -> Headline:
         """Gets the latest metric_value for the associated headline data.
@@ -31,16 +35,18 @@ class HeadlinesInterface:
                 `HeadlineNumberDataNotFoundError`: If the query returned no records.
 
         """
-        core_headline: CoreHeadline | None = (
-            self.core_headline_manager.get_latest_headline(
-                topic_name=self.headline_parameters.topic_name,
-                metric_name=self.headline_parameters.metric_name,
-                geography_name=self.headline_parameters.geography_name,
-                geography_type_name=self.headline_parameters.geography_type_name,
-                stratum_name=self.headline_parameters.stratum_name,
-                age=self.headline_parameters.age,
-                sex=self.headline_parameters.sex,
+        params = self.headline_parameters.to_dict_for_query()
+
+        if auth.AUTH_ENABLED:
+            # Needed for the downstream permissions check
+            topic = self.topic_manager.get_by_name(
+                name=self.headline_parameters.topic_name
             )
+            params["theme_name"] = topic.sub_theme.theme.name
+            params["sub_theme_name"] = topic.sub_theme.name
+
+        core_headline: CoreHeadline | None = (
+            self.core_headline_manager.get_latest_headline(**params)
         )
 
         try:

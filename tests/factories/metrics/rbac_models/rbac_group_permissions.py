@@ -12,7 +12,7 @@ from metrics.data.models.rbac_models import (
 from django.utils import timezone
 
 
-class RBACPermissionGroupFactory(factory.django.DjangoModelFactory):
+class RBACGroupPermissionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = RBACGroupPermission

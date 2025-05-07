@@ -21,12 +21,13 @@ from metrics.interfaces.plots.access import (
     convert_type,
     get_aggregated_results,
     aggregate_results_by_age,
-    aggregate_results,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
+from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
+from tests.fakes.managers.topic_manager import FakeTopicManager
 from tests.fakes.models.metrics.core_time_series import FakeCoreTimeSeries
 from tests.fakes.models.queryset import FakeQuerySet
 
@@ -508,9 +509,10 @@ class TestPlotsInterface:
         mocked_stratum = mock.Mock()
         mocked_sex = mock.Mock()
         mocked_age = mock.Mock()
+        mocked_chart_request_params = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            chart_request_params=mock.MagicMock(),
+            chart_request_params=mocked_chart_request_params,
             core_model_manager=spy_core_headline_manager,
         )
 
@@ -542,6 +544,69 @@ class TestPlotsInterface:
             stratum_name=mocked_stratum,
             sex=mocked_sex,
             age=mocked_age,
+            rbac_permissions=mocked_chart_request_params.rbac_permissions,
+        )
+
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
+    def test_get_queryset_from_core_model_manager_passes_theme_and_topic_into_query_when_auth_enabled(
+        self,
+    ):
+        """
+        Given a `CoreHeadlineManager`
+        When `get_headline_data` is called from an instance of `PlotsInterface`
+        Then the correct method is called from `CoreHeadlineManager` to retrieve headline data.
+        """
+        # Given
+        spy_core_headline_manager = mock.Mock()
+        fake_metric = FakeMetricFactory.build_example_metric()
+        fake_topic_manager = FakeTopicManager(topics=[fake_metric.topic])
+
+        mocked_x_axis = mock.Mock()
+        mocked_y_axis = mock.Mock()
+        mocked_geography = mock.Mock()
+        mocked_geography_type = mock.Mock()
+        mocked_stratum = mock.Mock()
+        mocked_sex = mock.Mock()
+        mocked_age = mock.Mock()
+        mocked_chart_request_params = mock.MagicMock()
+
+        plots_interface = PlotsInterface(
+            chart_request_params=mocked_chart_request_params,
+            core_model_manager=spy_core_headline_manager,
+            topic_model_manager=fake_topic_manager,
+        )
+
+        # When
+        plots_params = {
+            "fields_to_export": [mocked_x_axis, mocked_y_axis],
+            "topic_name": fake_metric.topic.name,
+            "metric_name": fake_metric.name,
+            "geography_name": mocked_geography,
+            "geography_type_name": mocked_geography_type,
+            "geography_code": "",
+            "stratum_name": mocked_stratum,
+            "sex": mocked_sex,
+            "age": mocked_age,
+        }
+        headline_data = plots_interface.get_queryset_from_core_model_manager(
+            plot_params=plots_params
+        )
+
+        # Then
+        assert headline_data == spy_core_headline_manager.query_for_data.return_value
+        spy_core_headline_manager.query_for_data.assert_called_once_with(
+            fields_to_export=[mocked_x_axis, mocked_y_axis],
+            topic_name=fake_metric.topic.name,
+            metric_name=fake_metric.name,
+            geography_name=mocked_geography,
+            geography_type_name=mocked_geography_type,
+            geography_code="",
+            stratum_name=mocked_stratum,
+            sex=mocked_sex,
+            age=mocked_age,
+            rbac_permissions=mocked_chart_request_params.rbac_permissions,
+            theme_name=fake_metric.topic.sub_theme.theme.name,
+            sub_theme_name=fake_metric.topic.sub_theme.name,
         )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
@@ -563,9 +628,10 @@ class TestPlotsInterface:
         mocked_stratum = mock.Mock()
         mocked_sex = mock.Mock()
         mocked_age = mock.Mock()
+        mocked_chart_request_params = mock.MagicMock()
 
         plots_interface = PlotsInterface(
-            chart_request_params=mock.MagicMock(),
+            chart_request_params=mocked_chart_request_params,
             core_model_manager=spy_core_time_series_manager,
         )
 
@@ -609,6 +675,7 @@ class TestPlotsInterface:
             stratum_name=mocked_stratum,
             sex=mocked_sex,
             age=mocked_age,
+            rbac_permissions=mocked_chart_request_params.rbac_permissions,
         )
 
     @mock.patch.object(PlotsInterface, "get_queryset_from_core_model_manager")
