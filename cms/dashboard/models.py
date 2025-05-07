@@ -155,7 +155,7 @@ class UKHSAPage(Page):
         return self.last_published_at
 
     @property
-    def active_announcements(self):
+    def active_announcements(self) -> list[dict[str, str | int]]:
         return list(
             self.announcements.filter(is_active=True)
             .order_by("-banner_type")
