@@ -10,7 +10,6 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
@@ -28,7 +27,7 @@ class MetricsDocumentationMultipleLivePagesError(ValidationError):
         super().__init__(message)
 
 
-class MetricsDocumentationParentPage(UKHSAPage, ActiveAnnouncementMixin):
+class MetricsDocumentationParentPage(UKHSAPage):
     show_pagination = models.BooleanField(
         default=True,
         help_text=help_texts.SHOW_PAGINATION_FIELD,
@@ -54,16 +53,11 @@ class MetricsDocumentationParentPage(UKHSAPage, ActiveAnnouncementMixin):
         FieldPanel("pagination_size"),
     ]
 
-    announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
-    ]
-
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("body"),
         APIField("last_published_at"),
         APIField("search_description"),
-        APIField("active_announcements"),
         APIField("show_pagination"),
         APIField("pagination_size"),
     ]
@@ -72,7 +66,6 @@ class MetricsDocumentationParentPage(UKHSAPage, ActiveAnnouncementMixin):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -97,12 +90,3 @@ class MetricsDocumentationParentPage(UKHSAPage, ActiveAnnouncementMixin):
         live_pages = MetricsDocumentationParentPage.objects.get_live_pages()
         if live_pages.count() == 1 and self.pk != live_pages[0].id:
             raise MetricsDocumentationMultipleLivePagesError
-
-
-class MetricsDocumentationParentPageAnnouncement(Announcement):
-    page = ParentalKey(
-        MetricsDocumentationParentPage,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="announcements",
-    )

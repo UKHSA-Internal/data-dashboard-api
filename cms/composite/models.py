@@ -18,10 +18,10 @@ from cms.dashboard.enums import (
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
-from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
+from cms.dynamic_content.announcements import Announcement
 
 
-class CompositePage(UKHSAPage, ActiveAnnouncementMixin):
+class CompositePage(UKHSAPage):
     body = ALLOWABLE_BODY_CONTENT_COMPOSITE
     page_description = RichTextField(
         features=[],
@@ -61,11 +61,8 @@ class CompositePage(UKHSAPage, ActiveAnnouncementMixin):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
-    ]
-
-    announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     # Sets which fields to expose on the API
@@ -86,7 +83,8 @@ class CompositePage(UKHSAPage, ActiveAnnouncementMixin):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(announcement_content_panels, heading="Announcements"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -131,7 +129,8 @@ class CompositeRelatedLink(Orderable):
         related_name="related_links",
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL",
+                          max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[], blank=True)
 
     # Sets which panels to show on the editing view

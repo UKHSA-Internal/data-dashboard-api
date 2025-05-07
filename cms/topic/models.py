@@ -19,7 +19,6 @@ from cms.dashboard.models import (
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
-from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
@@ -28,7 +27,7 @@ DEFAULT_CORE_TIME_SERIES_MANGER = MetricsAPIInterface().core_time_series_manager
 DEFAULT_CORE_HEADLINE_MANGER = MetricsAPIInterface().core_headline_manager
 
 
-class TopicPage(UKHSAPage, ActiveAnnouncementMixin):
+class TopicPage(UKHSAPage):
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
         blank=True,
@@ -48,11 +47,8 @@ class TopicPage(UKHSAPage, ActiveAnnouncementMixin):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
-    ]
-
-    announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     # Search index configuration
@@ -77,7 +73,6 @@ class TopicPage(UKHSAPage, ActiveAnnouncementMixin):
         APIField("search_description"),
         APIField("enable_area_selector"),
         APIField("selected_topics"),
-        APIField("active_announcements"),
     ]
 
     # Tabs to position at the top of the view
@@ -85,7 +80,6 @@ class TopicPage(UKHSAPage, ActiveAnnouncementMixin):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -198,7 +192,8 @@ class TopicPageRelatedLink(Orderable):
         TopicPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL",
+                          max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view
@@ -214,9 +209,3 @@ class TopicPageRelatedLink(Orderable):
         APIField("url"),
         APIField("body"),
     ]
-
-
-class TopicPageAnnouncement(Announcement):
-    page = ParentalKey(
-        TopicPage, on_delete=models.SET_NULL, null=True, related_name="announcements"
-    )

@@ -3,28 +3,28 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable
-
-from cms.dashboard.models import (
-    AVAILABLE_RICH_TEXT_FEATURES,
-)
 from cms.dynamic_content import help_texts
-from cms.snippets.models.global_banner import BannerTypes
+
+HEADING_2: str = "h2"
+HEADING_3: str = "h3"
+HEADING_4: str = "h4"
+BOLD: str = "bold"
+BULLET_POINTS: str = "ul"
+LINKS: str = "link"
+
+AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
+    HEADING_2,
+    HEADING_3,
+    HEADING_4,
+    BOLD,
+    BULLET_POINTS,
+    LINKS,
+]
 
 
-class ActiveAnnouncementMixin:
-    """Mixin that adds active_announcements property to any page type."""
-
-    @property
-    def active_announcements(self):
-        """Returns active announcements as serializable dictionaries."""
-        # This assumes each page has an 'announcements' related name
-        if hasattr(self, "announcements"):
-            return list(
-                self.announcements.filter(is_active=True)
-                .order_by("-banner_type")
-                .values("id", "title", "body", "banner_type")
-            )
-        return []
+class BannerTypes(models.TextChoices):
+    INFORMATION = "Information"
+    WARNING = "Warning"
 
 
 class Announcement(Orderable):

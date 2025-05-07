@@ -16,10 +16,10 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
+from cms.dynamic_content.announcements import Announcement
 
 
-class CommonPage(UKHSAPage, ActiveAnnouncementMixin):
+class CommonPage(UKHSAPage, ):
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -38,18 +38,14 @@ class CommonPage(UKHSAPage, ActiveAnnouncementMixin):
 
     sidebar_content_panels = [
         FieldPanel("related_links_layout"),
-        InlinePanel("related_links", heading="Related links", label="Related link"),
-    ]
-
-    announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
+        InlinePanel("related_links", heading="Related links",
+                    label="Related link"),
     ]
 
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("related_links_layout"),
         APIField("related_links"),
-        APIField("active_announcements"),
         APIField("search_description"),
     ]
 
@@ -58,7 +54,6 @@ class CommonPage(UKHSAPage, ActiveAnnouncementMixin):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
-            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -76,7 +71,8 @@ class CommonPageRelatedLink(Orderable):
         CommonPage, on_delete=models.SET_NULL, null=True, related_name="related_links"
     )
     title = models.CharField(max_length=255)
-    url = models.URLField(verbose_name="URL", max_length=MAXIMUM_URL_FIELD_LENGTH)
+    url = models.URLField(verbose_name="URL",
+                          max_length=MAXIMUM_URL_FIELD_LENGTH)
     body = RichTextField(features=[])
 
     # Sets which panels to show on the editing view
@@ -92,9 +88,3 @@ class CommonPageRelatedLink(Orderable):
         APIField("url"),
         APIField("body"),
     ]
-
-
-class CommonPageAnnouncement(Announcement):
-    page = ParentalKey(
-        CommonPage, on_delete=models.SET_NULL, null=True, related_name="announcements"
-    )

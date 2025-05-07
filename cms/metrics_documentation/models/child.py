@@ -8,7 +8,6 @@ from wagtail.search import index
 
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_TEXT_SECTION
-from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.metrics_interface.field_choices_callables import (
     get_a_list_of_all_topic_names,
     get_all_unique_metric_names,
@@ -23,7 +22,7 @@ class InvalidTopicForChosenMetricForChildEntryError(Exception):
         super().__init__(message)
 
 
-class MetricsDocumentationChildEntry(UKHSAPage, ActiveAnnouncementMixin):
+class MetricsDocumentationChildEntry(UKHSAPage):
     page_description = models.TextField()
     metric = models.CharField(max_length=255)
     topic = models.CharField(
@@ -45,10 +44,6 @@ class MetricsDocumentationChildEntry(UKHSAPage, ActiveAnnouncementMixin):
         FieldPanel("body"),
     ]
 
-    announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
-    ]
-
     # Sets which fields to expose on the API.
     api_fields = UKHSAPage.api_fields + [
         APIField("title"),
@@ -59,14 +54,12 @@ class MetricsDocumentationChildEntry(UKHSAPage, ActiveAnnouncementMixin):
         APIField("search_description"),
         APIField("last_published_at"),
         APIField("page_description"),
-        APIField("active_announcements"),
     ]
 
     # Tabs to position at the top of the view.
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -138,12 +131,3 @@ class MetricsDocumentationChildEntry(UKHSAPage, ActiveAnnouncementMixin):
     @property
     def metric_group(self) -> str:
         return self.metric.split("_")[1]
-
-
-class MetricsDocumentationChildPageAnnouncement(Announcement):
-    page = ParentalKey(
-        MetricsDocumentationChildEntry,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="announcements",
-    )

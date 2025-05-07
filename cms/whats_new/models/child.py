@@ -6,12 +6,11 @@ from wagtail.fields import RichTextField
 from wagtail.search import index
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
-from cms.dynamic_content.announcements import ActiveAnnouncementMixin, Announcement
 from cms.whats_new.managers.child import WhatsNewChildEntryManager
 from cms.whats_new.serializers import BadgeSerializer
 
 
-class WhatsNewChildEntry(UKHSAPage, ActiveAnnouncementMixin):
+class WhatsNewChildEntry(UKHSAPage):
     date_posted = models.DateField(null=False, blank=False)
     page_description = RichTextField(
         features=AVAILABLE_RICH_TEXT_FEATURES,
@@ -44,10 +43,6 @@ class WhatsNewChildEntry(UKHSAPage, ActiveAnnouncementMixin):
         FieldPanel("badge"),
     ]
 
-    announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements", label="Announcement"),
-    ]
-
     # Sets which fields to expose on the API
     api_fields = UKHSAPage.api_fields + [
         APIField("date_posted"),
@@ -56,14 +51,12 @@ class WhatsNewChildEntry(UKHSAPage, ActiveAnnouncementMixin):
         APIField("search_description"),
         APIField("additional_details"),
         APIField("badge", serializer=BadgeSerializer()),
-        APIField("active_announcements"),
     ]
 
     # Tabs to position at the top of the view
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -71,12 +64,3 @@ class WhatsNewChildEntry(UKHSAPage, ActiveAnnouncementMixin):
     parent_page_type = ["whats_new.WhatsNewParentPage"]
 
     objects = WhatsNewChildEntryManager()
-
-
-class WhatsNewChildEntryAnnouncement(Announcement):
-    page = ParentalKey(
-        WhatsNewChildEntry,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="announcements",
-    )
