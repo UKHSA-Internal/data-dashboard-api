@@ -19,6 +19,7 @@ from cms.dashboard.models import (
 )
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT
+from cms.dynamic_content.announcements import Announcement
 from cms.dynamic_content.blocks_deconstruction import CMSBlockParser
 from cms.metrics_interface import MetricsAPIInterface
 from cms.topic.managers import TopicPageManager
@@ -80,6 +81,8 @@ class TopicPage(UKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -209,3 +212,12 @@ class TopicPageRelatedLink(Orderable):
         APIField("url"),
         APIField("body"),
     ]
+
+
+class TopicPageAnnouncement(Announcement):
+    page = ParentalKey(
+        TopicPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )

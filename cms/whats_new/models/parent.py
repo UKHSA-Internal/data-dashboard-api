@@ -9,6 +9,7 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
+from cms.dynamic_content.announcements import Announcement
 from cms.whats_new.managers.parent import WhatsNewParentPageManager
 
 
@@ -53,6 +54,8 @@ class WhatsNewParentPage(UKHSAPage):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -60,3 +63,12 @@ class WhatsNewParentPage(UKHSAPage):
     subpage_types = ["whats_new.WhatsNewChildEntry", "common.CommonPage"]
 
     objects = WhatsNewParentPageManager()
+
+
+class WhatsNewParentPageAnnouncement(Announcement):
+    page = ParentalKey(
+        WhatsNewParentPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )

@@ -18,6 +18,7 @@ from wagtail.contrib.forms.models import (
 from wagtail.fields import RichTextField
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
+from cms.dynamic_content.announcements import Announcement
 from cms.forms import help_texts
 from cms.forms.managers import FormPageManager
 
@@ -84,6 +85,8 @@ class FormPage(AbstractFormUKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(confirmation_panels, heading="Confirmation page"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -98,3 +101,12 @@ class FormPage(AbstractFormUKHSAPage):
     ]
 
     objects = FormPageManager()
+
+
+class FormPageAnnouncement(Announcement):
+    page = ParentalKey(
+        FormPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )

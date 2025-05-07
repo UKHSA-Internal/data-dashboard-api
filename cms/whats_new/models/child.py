@@ -6,6 +6,7 @@ from wagtail.fields import RichTextField
 from wagtail.search import index
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES, UKHSAPage
+from cms.dynamic_content.announcements import Announcement
 from cms.whats_new.managers.child import WhatsNewChildEntryManager
 from cms.whats_new.serializers import BadgeSerializer
 
@@ -57,6 +58,8 @@ class WhatsNewChildEntry(UKHSAPage):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -64,3 +67,12 @@ class WhatsNewChildEntry(UKHSAPage):
     parent_page_type = ["whats_new.WhatsNewParentPage"]
 
     objects = WhatsNewChildEntryManager()
+
+
+class WhatsNewChildPageAnnouncement(Announcement):
+    page = ParentalKey(
+        WhatsNewChildEntry,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )

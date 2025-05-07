@@ -10,6 +10,7 @@ from cms.dashboard.models import (
     UKHSAPage,
 )
 from cms.dynamic_content import help_texts
+from cms.dynamic_content.announcements import Announcement
 from cms.metrics_documentation.managers.parent import (
     MetricsDocumentationParentPageManager,
 )
@@ -66,6 +67,7 @@ class MetricsDocumentationParentPage(UKHSAPage):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
+            ObjectList(UKHSAPage.announcement_content_panels, "Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -90,3 +92,12 @@ class MetricsDocumentationParentPage(UKHSAPage):
         live_pages = MetricsDocumentationParentPage.objects.get_live_pages()
         if live_pages.count() == 1 and self.pk != live_pages[0].id:
             raise MetricsDocumentationMultipleLivePagesError
+
+
+class MetricsDocumentationParentPageAnnouncement(Announcement):
+    page = ParentalKey(
+        MetricsDocumentationParentPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )
