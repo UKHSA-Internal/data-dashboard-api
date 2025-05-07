@@ -12,7 +12,6 @@ from wagtail.fields import RichTextField
 from wagtail.models import Page, SiteRootPath
 
 from cms import seo
-from cms.dynamic_content.announcements import Announcement
 
 HEADING_2: str = "h2"
 HEADING_3: str = "h3"

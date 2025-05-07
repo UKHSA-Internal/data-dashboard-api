@@ -72,7 +72,6 @@ class CompositePage(UKHSAPage):
         APIField("search_description"),
         APIField("related_links_layout"),
         APIField("related_links"),
-        APIField("active_announcements"),
         APIField("page_description"),
         APIField("show_pagination"),
         APIField("pagination_size"),

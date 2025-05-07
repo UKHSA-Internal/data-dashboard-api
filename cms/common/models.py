@@ -19,7 +19,7 @@ from cms.dynamic_content import help_texts
 from cms.dynamic_content.announcements import Announcement
 
 
-class CommonPage(UKHSAPage, ):
+class CommonPage(UKHSAPage):
     related_links_layout = models.CharField(
         verbose_name="Layout",
         help_text=help_texts.RELATED_LINKS_LAYOUT_FIELD,
@@ -54,6 +54,8 @@ class CommonPage(UKHSAPage, ):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
+            ObjectList(UKHSAPage.announcement_content_panels,
+                       heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -88,3 +90,12 @@ class CommonPageRelatedLink(Orderable):
         APIField("url"),
         APIField("body"),
     ]
+
+
+class CommonPageAnnouncement(Announcement):
+    page = ParentalKey(
+        CommonPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )

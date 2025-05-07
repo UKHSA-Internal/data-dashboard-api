@@ -4,27 +4,7 @@ from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable
 from cms.dynamic_content import help_texts
-
-HEADING_2: str = "h2"
-HEADING_3: str = "h3"
-HEADING_4: str = "h4"
-BOLD: str = "bold"
-BULLET_POINTS: str = "ul"
-LINKS: str = "link"
-
-AVAILABLE_RICH_TEXT_FEATURES: list[str] = [
-    HEADING_2,
-    HEADING_3,
-    HEADING_4,
-    BOLD,
-    BULLET_POINTS,
-    LINKS,
-]
-
-
-class BannerTypes(models.TextChoices):
-    INFORMATION = "Information"
-    WARNING = "Warning"
+from cms.snippets.models.global_banner import AVAILABLE_RICH_TEXT_FEATURES, BannerTypes
 
 
 class Announcement(Orderable):
