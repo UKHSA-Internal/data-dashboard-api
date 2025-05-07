@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework.templatetags.rest_framework import render_markdown
-from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
@@ -46,8 +45,7 @@ class UKHSAPage(Page):
     body = RichTextField(features=AVAILABLE_RICH_TEXT_FEATURES)
     seo_change_frequency = models.IntegerField(
         verbose_name="SEO change frequency",
-        help_text=render_markdown(
-            markdown_text=seo.help_texts.SEO_CHANGE_FREQUENCY),
+        help_text=render_markdown(markdown_text=seo.help_texts.SEO_CHANGE_FREQUENCY),
         default=seo.ChangeFrequency.Monthly,
         choices=seo.ChangeFrequency.choices,
     )
@@ -70,7 +68,7 @@ class UKHSAPage(Page):
         APIField("seo_priority"),
         APIField("last_updated_at"),
         APIField("last_published_at"),
-        APIField("active_announcements")
+        APIField("active_announcements"),
     ]
 
     promote_panels = [
@@ -87,8 +85,7 @@ class UKHSAPage(Page):
     ]
 
     announcement_content_panels = [
-        InlinePanel("announcements", heading="Announcements",
-                    label="Announcement"),
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     class Meta:
@@ -115,8 +112,7 @@ class UKHSAPage(Page):
         self._raise_error_if_slug_not_unique()
 
         if not self.seo_title:
-            raise ValidationError(
-                message="Search engine title tag is required")
+            raise ValidationError(message="Search engine title tag is required")
 
     def get_url_parts(self, request=None) -> tuple[int, str, str]:
         """Builds the full URL for this page
@@ -160,11 +156,8 @@ class UKHSAPage(Page):
 
     @property
     def active_announcements(self):
-        """Returns active announcements as serializable dictionaries."""
-        # This assumes each page has an 'announcements' related name
-        if hasattr(self, "announcements"):
-            return list(
-                self.announcements.filter(is_active=True)
-                .order_by("-banner_type")
-                .values("id", "title", "body", "banner_type")
-            )
+        return list(
+            self.announcements.filter(is_active=True)
+            .order_by("-banner_type")
+            .values("id", "title", "body", "banner_type")
+        )

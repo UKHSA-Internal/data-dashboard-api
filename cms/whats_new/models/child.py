@@ -1,6 +1,6 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.search import index
@@ -58,8 +58,7 @@ class WhatsNewChildEntry(UKHSAPage):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(UKHSAPage.announcement_content_panels,
-                       heading="Announcements"),
+            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )

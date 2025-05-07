@@ -1,6 +1,6 @@
 from django.db import models
 from modelcluster.fields import ParentalKey
-from wagtail.admin.panels import FieldPanel, InlinePanel, ObjectList, TabbedInterface
+from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.models import Page
 
@@ -16,8 +16,7 @@ class LandingPage(UKHSAPage):
     sub_title = models.CharField(max_length=255)
     body = ALLOWABLE_BODY_CONTENT_SECTION_LINK
 
-    content_panels = Page.content_panels + \
-        [FieldPanel("sub_title"), FieldPanel("body")]
+    content_panels = Page.content_panels + [FieldPanel("sub_title"), FieldPanel("body")]
 
     api_fields = UKHSAPage.api_fields + [
         APIField("title"),
@@ -30,8 +29,7 @@ class LandingPage(UKHSAPage):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
-            ObjectList(UKHSAPage.announcement_content_panels,
-                       heading="Announcements"),
+            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )

@@ -3,6 +3,7 @@ from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Orderable
+
 from cms.dynamic_content import help_texts
 from cms.snippets.models.global_banner import AVAILABLE_RICH_TEXT_FEATURES, BannerTypes
 
