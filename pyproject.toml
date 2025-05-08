@@ -249,6 +249,7 @@ forbidden_modules = [
 ignore_imports = [
     "public_api.metrics_interface.interface -> metrics.data.models.api_models",
     "public_api.metrics_interface.interface -> metrics.api.settings.auth",
+    "public_api.views.timeseries_viewset -> metrics.api.permissions.fluent_permissions",
 ]
 
 [[tool.importlinter.contracts]]
