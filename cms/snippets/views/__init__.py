@@ -1,2 +1,2 @@
-from .global_banner import GlobalBannerView, GlobalBannerViewV1
+from .global_banner import GlobalBannerView
 from .menu import MenuView

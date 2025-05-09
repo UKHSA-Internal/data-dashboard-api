@@ -5,15 +5,31 @@ from metrics.domain.models.trends import TrendsParameters
 
 
 class TestTrendParameters:
+    valid_payload = {
+        "topic": "COVID-19",
+        "metric": "COVID-19_headline_ONSdeaths_7DayChange",
+        "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
+        "geography": "England",
+        "geography_type": "Nation",
+        "stratum": "default",
+        "sex": "all",
+        "age": "all",
+    }
+
     @pytest.mark.parametrize(
-        "mandatory_field",
+        "field",
         [
+            "stratum",
+            "geography",
+            "geography_type",
+            "sex",
+            "age",
             "topic",
             "metric",
             "percentage_metric",
         ],
     )
-    def test_mandatory_fields_are_required(self, mandatory_field: str):
+    def test_mandatory_fields_are_required(self, field: str):
         """
         Given an otherwise valid payload
         And a mandatory field which is passed as None
@@ -21,45 +37,61 @@ class TestTrendParameters:
         Then a `ValidationError` is raised
         """
         # Given
-        payload = {
-            "topic": "COVID-19",
-            "metric": "COVID-19_headline_ONSdeaths_7DayChange",
-            "percentage_metric": "COVID-19_headline_ONSdeaths_7DayPercentChange",
-        }
-        payload[mandatory_field] = None
+        input_data = self.valid_payload.copy()
+        input_data.pop(field)
 
         # When / Then
         with pytest.raises(ValidationError):
-            TrendsParameters(**payload)
+            TrendsParameters(**input_data)
 
-    @pytest.mark.parametrize(
-        "optional_field",
-        [
-            "stratum",
-            "geography",
-            "geography_type",
-            "sex",
-            "age",
-        ],
-    )
-    def test_optional_fields_default_to_empty_string(self, optional_field: str):
+    def test_to_dict_for_main_metric_query(self):
         """
-        Given a valid topic and metric
-        And an optional field which has been passed as None
-        When the `HeadlineParameters` model is initialized
-        Then an empty string is returned for the optional field
+        Given an enriched `TrendsParameters` model
+        When `to_dict_for_main_metric_query()` is called
+        Then the correct dictionary is returned
         """
         # Given
-        topic = "COVID-19"
-        metric = "COVID-19_headline_ONSdeaths_7DayChange"
-        percentage_metric = "COVID-19_headline_ONSdeaths_7DayPercentChange"
+        input_data = self.valid_payload.copy()
+        trend_parameters = TrendsParameters(**input_data)
 
         # When
-        headline_parameters = TrendsParameters(
-            topic=topic, metric=metric, percentage_metric=percentage_metric
-        )
-        setattr(headline_parameters, optional_field, None)
+        main_metric_dict = trend_parameters.to_dict_for_main_metric_query()
 
         # Then
-        property_to_get = f"{optional_field}_name"
-        assert getattr(headline_parameters, property_to_get) == ""
+        expected = {
+            "topic_name": input_data["topic"],
+            "metric_name": input_data["metric"],
+            "geography_name": input_data["geography"],
+            "geography_type_name": input_data["geography_type"],
+            "stratum_name": input_data["stratum"],
+            "sex": input_data["sex"],
+            "age": input_data["age"],
+            "rbac_permissions": [],
+        }
+        assert main_metric_dict == expected
+
+    def test_to_dict_for_percentage_metric_query(self):
+        """
+        Given an enriched `TrendsParameters` model
+        When `to_dict_for_percentage_metric_query()` is called
+        Then the correct dictionary is returned
+        """
+        # Given
+        input_data = self.valid_payload.copy()
+        trend_parameters = TrendsParameters(**input_data)
+
+        # When
+        percentage_metric_dict = trend_parameters.to_dict_for_percentage_metric_query()
+
+        # Then
+        expected = {
+            "topic_name": input_data["topic"],
+            "metric_name": input_data["percentage_metric"],
+            "geography_name": input_data["geography"],
+            "geography_type_name": input_data["geography_type"],
+            "stratum_name": input_data["stratum"],
+            "sex": input_data["sex"],
+            "age": input_data["age"],
+            "rbac_permissions": [],
+        }
+        assert percentage_metric_dict == expected

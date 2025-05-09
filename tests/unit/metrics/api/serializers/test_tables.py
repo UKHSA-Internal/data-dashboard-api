@@ -368,7 +368,9 @@ class TestTablesSerializer:
 
         # When
         serializer.is_valid()
-        table_plots_serialized_models: ChartRequestParams = serializer.to_models()
+        table_plots_serialized_models: ChartRequestParams = serializer.to_models(
+            request=None
+        )
 
         # Then
         table_plot_params_model = PlotParameters(**table_plots[0])

@@ -15,7 +15,7 @@ from caching.frontend.urls import FrontEndURLBuilder
 from caching.internal_api_client import InternalAPIClient
 from cms.topic.models import TopicPage
 
-DEFAULT_REQUEST_TIMEOUT = 60
+DEFAULT_REQUEST_TIMEOUT = 60 * 10
 PAGE_XML_LOCATOR = ".//ns:loc"
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,3 @@
-import contextlib
-import datetime
 import factory
 from metrics.data.models.rbac_models import RBACPermission
 
@@ -30,8 +28,6 @@ class RBACPermissionFactory(factory.django.DjangoModelFactory):
         metric_name: str | None = None,
         geography_name: str | None = None,
         geography_type_name: str | None = None,
-        stratum_name: str | None = None,
-        age_name: str | None = None,
         **kwargs,
     ):
         theme, _ = Theme.objects.get_or_create(name=theme_name)
@@ -74,14 +70,6 @@ class RBACPermissionFactory(factory.django.DjangoModelFactory):
                     geography_type=geography_type,
                 )
 
-        age = None
-        if age_name:
-            age, _ = Age.objects.get_or_create(name=age_name)
-
-        stratum = None
-        if stratum_name:
-            stratum, _ = Stratum.objects.get_or_create(name=stratum_name)
-
         return cls.create(
             name=name,
             theme=theme,
@@ -90,7 +78,5 @@ class RBACPermissionFactory(factory.django.DjangoModelFactory):
             metric=metric,
             geography_type=geography_type,
             geography=geography,
-            stratum=stratum,
-            age=age,
             **kwargs,
         )

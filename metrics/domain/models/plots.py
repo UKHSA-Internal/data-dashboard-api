@@ -1,9 +1,11 @@
 import datetime
+from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal, Self
 
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
+from rest_framework.request import Request
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
@@ -165,6 +167,15 @@ class ChartRequestParams(BaseModel):
     y_axis_title: str = ""
     y_axis_minimum_value: Decimal = 0
     y_axis_maximum_value: Decimal | None = None
+
+    request: Request | None = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @property
+    def rbac_permissions(self) -> Iterable["RBACPermission"]:
+        return getattr(self.request, "rbac_permissions", [])
 
 
 class NoReportingDelayPeriodFoundError(Exception): ...

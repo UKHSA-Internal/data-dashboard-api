@@ -32,6 +32,7 @@ class TestPublicAPINestedLinkViewsV2:
             epiweek=1,
             year=2023,
             date=datetime.date(year=2023, month=1, day=day),
+            is_public=True,
             **kwargs,
         )
 
@@ -343,13 +344,13 @@ class TestPublicAPINestedLinkViewsV2:
         # When
         target_url = (
             f"{self.target_domain}"
-            f"{self.path}themes/"
-            f"{theme_name}/sub_themes/"
-            f"{sub_theme_name}/topics/"
-            f"{topic_name}/geography_types/"
-            f"{geography_type_name}/geographies/"
-            f"{geography_name}/metrics/"
-            f"{metric_name}"
+            f"{self.path}"
+            f"themes/{theme_name}/"
+            f"sub_themes/{sub_theme_name}/"
+            f"topics/{topic_name}/"
+            f"geography_types/{geography_type_name}/"
+            f"geographies/{geography_name}/"
+            f"metrics/{metric_name}"
         )
         response: Response = client.get(target_url, params={"sex": sex, "age": age})
 

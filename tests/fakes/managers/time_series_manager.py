@@ -1,9 +1,10 @@
 import datetime
-from typing import Any
+from typing import Any, Iterable
 
 from django.db import models
 
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
+from tests.fakes.models.metrics.rbac_models.rbac_permission import FakeRBACPermission
 from tests.fakes.models.queryset import FakeQuerySet
 from tests.fakes.models.row import FakeRow
 
@@ -52,6 +53,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        rbac_permissions: Iterable[FakeRBACPermission] | None = None,
     ) -> FakeQuerySet:
         date_from = _convert_string_to_date(date_string=date_from)
 

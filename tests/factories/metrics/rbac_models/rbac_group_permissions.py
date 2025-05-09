@@ -1,5 +1,6 @@
 import contextlib
 import datetime
+import uuid
 
 import factory
 from metrics.data.models.rbac_models import (
@@ -11,7 +12,7 @@ from metrics.data.models.rbac_models import (
 from django.utils import timezone
 
 
-class RBACPermissionGroupFactory(factory.django.DjangoModelFactory):
+class RBACGroupPermissionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = RBACGroupPermission
@@ -20,12 +21,14 @@ class RBACPermissionGroupFactory(factory.django.DjangoModelFactory):
     def create_record(
         cls,
         name: str = "default",
+        group_id: str = "",
         permissions: list[RBACPermission] | None = None,
         **kwargs,
     ):
         permissions = permissions or []
+        group_id = group_id or uuid.uuid4()
 
-        group = cls.create(name=name, **kwargs)
+        group = cls.create(name=name, group_id=group_id, **kwargs)
         # Fetch or create permissions and add them to the group
         for permission in permissions:
             group.permissions.add(permission)

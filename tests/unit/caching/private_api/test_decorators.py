@@ -220,6 +220,46 @@ class TestRetrieveResponseFromCacheOrCalculate:
                 cache_management=mocked_cache_management,
             )
 
+    @mock.patch(f"{MODULE_PATH}._calculate_response_and_save_in_cache")
+    @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")
+    @mock.patch(f"{MODULE_PATH}.is_caching_v2_enabled")
+    def test_item_not_cached_when_caching_v2_enabled_is_set_to_true(
+        self,
+        mocked_is_caching_v2_enabled: mock.MagicMock,
+        spy_calculate_response_from_view: mock.MagicMock,
+        spy_calculate_response_and_save_in_cache: mock.MagicMock,
+    ):
+        """
+        Given a mocked request and `is_caching_v2_enabled()` returns True
+        When `_retrieve_response_from_cache_or_calculate()` is called
+        Then the response is calculated and not saved
+
+        Patches:
+            `spy_calculate_response_from_view`: For the main assertion
+            `spy_calculate_response_and_save_in_cache`: To check that
+                the response is not being saved to the cache
+
+        """
+        # Given
+        mocked_is_caching_v2_enabled.return_value = True
+        mocked_request = mock.MagicMock(method="POST")
+        mocked_view_function = mock.Mock()
+        mocked_args = mock.Mock()
+
+        # When
+        retrieved_response = _retrieve_response_from_cache_or_calculate(
+            mocked_view_function,  # view_function
+            None,  # timeout
+            mocked_args,
+            mocked_request,
+            cache_management=mock.Mock(),
+        )
+
+        # Then
+        spy_calculate_response_and_save_in_cache.assert_not_called()
+        spy_calculate_response_from_view.assert_called_once()
+        assert retrieved_response == spy_calculate_response_from_view.return_value
+
 
 class TestCalculateResponseAndSaveInCache:
     @mock.patch(f"{MODULE_PATH}._calculate_response_from_view")

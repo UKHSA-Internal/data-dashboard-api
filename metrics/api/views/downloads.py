@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers import (
     BulkDownloadsSerializer,
     CoreHeadlineSerializer,
@@ -101,6 +102,7 @@ class DownloadsView(APIView):
 
     @extend_schema(request=DownloadsSerializer, tags=[DOWNLOADS_API_TAG])
     @cache_response()
+    @require_authorisation
     def post(self, request, *args, **kwargs):
         """This endpoint will return the query output in json/csv format
 
@@ -132,7 +134,7 @@ class DownloadsView(APIView):
         request_serializer.is_valid(raise_exception=True)
 
         file_format: str = request_serializer.data["file_format"]
-        chart_plot_models = request_serializer.to_models()
+        chart_plot_models = request_serializer.to_models(request=request)
 
         try:
             queryset: CoreTimeSeriesQuerySet = access.get_downloads_data(

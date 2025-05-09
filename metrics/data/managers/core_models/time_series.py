@@ -6,10 +6,16 @@ The application should not interact directly with the `QuerySet` class.
 """
 
 import datetime
+from collections.abc import Iterable
 from typing import Self
 
 from django.db import models
 from django.utils import timezone
+
+from metrics.api.permissions.fluent_permissions import (
+    validate_permissions_for_non_public,
+)
+from metrics.data.models import RBACPermission
 
 
 class CoreTimeSeriesQuerySet(models.QuerySet):
@@ -146,6 +152,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        restrict_to_public: bool = True,
     ) -> models.QuerySet:
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
@@ -185,6 +192,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            restrict_to_public: Boolean switch to restrict the query
+                to only return public records.
+                If False, then non-public records will be included.
 
         Returns:
             QuerySet: An ordered queryset from lowest -> highest
@@ -210,6 +220,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             sex=sex,
             age=age,
         )
+        if restrict_to_public:
+            queryset = queryset.filter(is_public=True)
+
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         queryset = self.filter_for_latest_refresh_date_records(queryset=queryset)
         queryset = self._ascending_order(
@@ -235,6 +248,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool,
     ) -> Self:
         """Grabs all stale records which are not under embargo.
 
@@ -254,6 +268,8 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                E.g. `0_4` would be used to capture the age of 0-4 years old
+          is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
 
         Returns:
            The stale records in their entirety as a queryset
@@ -267,6 +283,7 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             stratum__name=stratum_name,
             age__name=age,
             sex=sex,
+            is_public=is_public,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
         return self.filter_for_outdated_refresh_date_records(queryset=queryset)
@@ -475,6 +492,9 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: str | None = None,
         sex: str | None = None,
         age: str | None = None,
+        theme_name: str = "",
+        sub_theme_name: str = "",
+        rbac_permissions: Iterable[RBACPermission] | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
 
@@ -510,6 +530,15 @@ class CoreTimeSeriesManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+            theme_name: The name of the theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
+            sub_theme_name: The name of the sub theme being queried.
+                This is only used to determine permissions for
+                the non-public portion of the requested dataset.
+            rbac_permissions: The RBAC permissions available
+                to the given request. This dictates whether the given
+                request is permitted access to non-public data or not.
 
         Notes:
             If we have the following input `queryset`:
@@ -539,6 +568,17 @@ class CoreTimeSeriesManager(models.Manager):
                     ]>`
 
         """
+        rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
+        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            metric=metric_name,
+            geography_type=geography_type_name,
+            geography=geography_name,
+            rbac_permissions=rbac_permissions,
+        )
+
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
@@ -551,6 +591,7 @@ class CoreTimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+            restrict_to_public=not has_access_to_non_public_data,
         )
 
     def query_for_superseded_data(
@@ -563,6 +604,7 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool,
     ) -> CoreTimeSeriesQuerySet:
         """Filters the given `queryset` for the stale records in each individual date
 
@@ -582,6 +624,8 @@ class CoreTimeSeriesManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+           is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
 
         Notes:
             If we have the following input `queryset`:
@@ -609,6 +653,7 @@ class CoreTimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+            is_public=is_public,
         )
 
     def get_queryset(self) -> CoreTimeSeriesQuerySet:
@@ -636,6 +681,7 @@ class CoreTimeSeriesManager(models.Manager):
         stratum_name: str,
         sex: str,
         age: str,
+        is_public: bool,
     ) -> None:
         """Deletes all stale records within each individual date
 
@@ -655,6 +701,8 @@ class CoreTimeSeriesManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
            age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
+           is_public: Boolean to decide whether to query for public data.
+                If False, then non-public data will be queried for instead.
 
         Notes:
             If we have the following input `queryset`:
@@ -681,6 +729,7 @@ class CoreTimeSeriesManager(models.Manager):
             stratum_name=stratum_name,
             sex=sex,
             age=age,
+            is_public=is_public,
         )
         superseded_records.delete()
 

@@ -6,6 +6,7 @@ from django.utils import timezone
 from metrics.data.models.core_models import CoreHeadline
 from metrics.domain.models import get_date_n_months_ago_from_timestamp
 from tests.factories.metrics.headline import CoreHeadlineFactory
+from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
 
 class TestCoreHeadlineManager:
@@ -17,7 +18,7 @@ class TestCoreHeadlineManager:
         """
         Given a `CoreHeadline` record is live
         When `query_for_data()` is called
-        Then then a queryset is returned with the correct x and y values
+        Then a queryset is returned with the correct x and y values
             and the `period_end` of the record is added to the queryset as
             `latest_date`
         """
@@ -112,7 +113,7 @@ class TestCoreHeadlineManager:
         """
         Given a `CoreHeadline` record which is considered to be live
         And another `CoreHeadline` record is under embargo
-        When `by_topic_metric_ordered_from_newest_to_oldest()` is called
+        When `get_all_headlines_released_from_embargo()` is called
             from an instance of the `CoreHeadlineQuerySet`
         Then the 'live' record is returned without the data under embargo
         """
@@ -134,14 +135,16 @@ class TestCoreHeadlineManager:
 
         # When
         core_headline_queryset = CoreHeadline.objects.get_queryset()
-        returned_queryset = core_headline_queryset.get_headlines_released_from_embargo(
-            topic_name=core_headline_live.metric.topic.name,
-            metric_name=core_headline_live.metric.name,
-            geography_name=core_headline_live.geography.name,
-            geography_type_name=core_headline_live.geography.geography_type.name,
-            stratum_name=core_headline_live.stratum.name,
-            sex=core_headline_live.sex,
-            age=core_headline_live.age.name,
+        returned_queryset = (
+            core_headline_queryset.get_all_headlines_released_from_embargo(
+                topic_name=core_headline_live.metric.topic.name,
+                metric_name=core_headline_live.metric.name,
+                geography_name=core_headline_live.geography.name,
+                geography_type_name=core_headline_live.geography.geography_type.name,
+                stratum_name=core_headline_live.stratum.name,
+                sex=core_headline_live.sex,
+                age=core_headline_live.age.name,
+            )
         )
 
         # Then
@@ -442,6 +445,7 @@ class TestCoreHeadlineManager:
             stratum_name=current_round_headline.stratum.name,
             age=current_round_headline.age.name,
             sex=current_round_headline.sex,
+            is_public=current_round_headline.is_public,
         )
         retrieved_records = CoreHeadline.objects.all()
 
@@ -522,3 +526,78 @@ class TestCoreHeadlineManager:
 
         # Then
         assert extracted_embargo is None
+
+    @pytest.mark.django_db
+    def test_query_for_data_returns_non_public_record_with_acceptable_permissions(self):
+        """
+        Given public and non-public `CoreHeadline` records
+        And an `RBACPermission` which gives access to the non-public portion of the data
+        When `query_for_data()` is called from the `CoreHeadlineManager`
+        Then the non-public record is returned
+        """
+        # Given
+        public_record = CoreHeadlineFactory.create_record(
+            period_end="2025-04-21", metric_value=1, is_public=True
+        )
+        non_public_record = CoreHeadlineFactory.create_record(
+            period_end="2025-04-22", metric_value=2, is_public=False
+        )
+
+        params = {
+            "theme_name": public_record.metric.topic.sub_theme.theme.name,
+            "sub_theme_name": public_record.metric.topic.sub_theme.name,
+            "topic_name": public_record.metric.topic.name,
+            "metric_name": public_record.metric.name,
+            "geography_name": public_record.geography.name,
+            "geography_type_name": public_record.geography.geography_type.name,
+        }
+        rbac_permission = RBACPermissionFactory.create_record(**params)
+
+        # When
+        core_headline_queryset = CoreHeadline.objects.query_for_data(
+            **params,
+            fields_to_export=[],
+            rbac_permissions=[rbac_permission],
+        )
+
+        # Then
+        assert core_headline_queryset.first() == non_public_record != public_record
+
+    @pytest.mark.django_db
+    def test_query_for_data_excludes_non_public_record_without_permissions(self):
+        """
+        Given public and non-public `CoreHeadline` records
+        And no `RBACPermission` which allows access to the non-public portion of this dataset
+        When `query_for_data()` is called from the `CoreHeadlineManager`
+        Then the public record is returned and the non-public record is excluded
+        """
+        # Given
+        public_record = CoreHeadlineFactory.create_record(
+            period_end="2025-04-21", metric_value=1, is_public=True
+        )
+        non_public_record = CoreHeadlineFactory.create_record(
+            period_end="2025-04-22", metric_value=2, is_public=False
+        )
+        rbac_permission = RBACPermissionFactory.create_record(
+            theme_name="some_other_theme",
+            sub_theme_name="",
+            topic_name="",
+            metric_name="",
+            geography_name="",
+            geography_type_name="",
+        )
+
+        # When
+        core_headline_queryset = CoreHeadline.objects.query_for_data(
+            theme_name=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme_name=public_record.metric.topic.sub_theme.name,
+            topic_name=public_record.metric.topic.name,
+            metric_name=public_record.metric.name,
+            geography_name=public_record.geography.name,
+            geography_type_name=public_record.geography.geography_type.name,
+            fields_to_export=[],
+            rbac_permissions=[rbac_permission],
+        )
+
+        # Then
+        assert core_headline_queryset.first() == public_record != non_public_record
