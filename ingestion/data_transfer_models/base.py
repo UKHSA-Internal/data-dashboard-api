@@ -15,6 +15,12 @@ from ingestion.metrics_interface.interface import MetricsAPIInterface
 from ingestion.utils import enums
 
 
+class NonPublicDataSentToPublicIngestionError(ValueError):
+    def __init__(self):
+        message = "Inbound data with `is_public=False` cannot be ingested when `AUTH_ENABLED` is false"
+        super().__init__(message)
+
+
 class MissingFieldError(Exception):
     def __init__(self, *, field: str):
         message = f"`{field}` field is missing from the inbound source data"

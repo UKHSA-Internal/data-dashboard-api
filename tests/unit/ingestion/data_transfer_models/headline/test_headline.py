@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 
 import pytest
 from pydantic_core._pydantic_core import ValidationError
@@ -10,6 +11,7 @@ from ingestion.data_transfer_models.headline import (
 from ingestion.utils.type_hints import INCOMING_DATA_TYPE
 
 VALID_DATETIME = "2023-11-20 12:00:00"
+MODULE_PATH = "ingestion.data_transfer_models.headline"
 
 SPECIFIC_FIELDS = [
     "period_start",
@@ -156,6 +158,59 @@ class TestInboundHeadlineSpecificFields:
         assert validated_embargo.hour == 0
         assert validated_embargo.minute == 0
         assert validated_embargo.second == 0
+
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
+    def test_raises_error_when_non_public_data_passed_to_public_platform(self):
+        """
+        Given a payload with `is_public` set to False
+        And `AUTH_ENABLED` is set to False
+        When the `InboundHeadlineSpecificFields` model is initialized
+        Then a `ValidationError` is raised
+        """
+        # Given
+        fake_period_start = "2023-11-20"
+        fake_period_end = "2023-11-27"
+        fake_embargo = "2023-11-30"
+
+        # When / Then
+        with pytest.raises(ValidationError):
+            InboundHeadlineSpecificFields(
+                period_start=fake_period_start,
+                period_end=fake_period_end,
+                embargo=fake_embargo,
+                metric_value=123,
+                is_public=False,
+            )
+
+    @pytest.mark.parametrize("is_public", [True, False])
+    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    def test_validates_public_or_private_data_when_auth_enabled_is_true(
+        self, is_public: bool
+    ):
+        """
+        Given a payload containing `is_public` as True or False
+        And `AUTH_ENABLED` is set to True
+        When the `InboundHeadlineSpecificFields` model is initialized
+        Then model is deemed valid
+        """
+        # Given
+        fake_period_start = "2023-11-20"
+        fake_period_end = VALID_DATETIME
+
+        # When
+        inbound_headline_specific_fields_validation = InboundHeadlineSpecificFields(
+            period_start=fake_period_start,
+            period_end=fake_period_end,
+            metric_value=123,
+            embargo=None,
+            is_public=is_public,
+        )
+
+        # Then
+        inbound_headline_specific_fields_validation.model_validate(
+            inbound_headline_specific_fields_validation,
+            strict=True,
+        )
 
 
 class TestHeadlineDTO:
