@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from metrics.domain.charts.line_multi_coloured import properties
+from metrics.domain.charts.common_charts.plots.line_multi_coloured import properties
 
 
 class TestChartLineTypes:

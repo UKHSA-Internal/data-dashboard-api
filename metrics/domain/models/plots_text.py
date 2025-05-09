@@ -5,7 +5,9 @@ from decimal import Decimal
 from typing import Any
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
-from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
+from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
+    ChartLineTypes,
+)
 from metrics.domain.charts.reporting_delay_period import (
     get_x_value_at_start_of_reporting_delay_period,
 )

@@ -1,4 +1,5 @@
 import datetime
+from copy import deepcopy
 from unittest import mock
 
 import plotly.graph_objects
@@ -18,6 +19,7 @@ from metrics.interfaces.charts.access import (
     ChartOutput,
     ChartsInterface,
     InvalidFileFormatError,
+    InvalidChartTypeCombinationError,
     generate_chart_as_file,
     generate_encoded_chart,
 )
@@ -26,6 +28,7 @@ from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
 )
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
+from tests.factories.metrics.domain.plots.plot_parameters import FakePlotParameters
 
 MODULE_PATH = "metrics.interfaces.charts.access"
 
@@ -85,48 +88,47 @@ class TestChartsInterface:
         assert generated_chart_output == chart_output
 
     @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
-    @mock.patch.object(ChartsInterface, "generate_bar_chart")
-    def test_generate_chart_figure_delegates_call_for_bar(
+    @mock.patch.object(ChartsInterface, "generate_common_chart")
+    def test_generate_chart_figure_delegates_call_for_bar_chart_common_chart(
         self,
-        spy_generate_bar_chart: mock.MagicMock,
+        spy_generate_common_chart: mock.MagicMock,
         mocked_build_chart_generation_payload: mock.MagicMock,
         fake_chart_request_params: ChartRequestParams,
     ):
         """
         Given a requirement for a `bar` chart
         When `generate_chart_figure()` is called from an instance of the `ChartsInterface`
-        Then the call is delegated to the `generate_bar_chart()` method
+        Then the call is delegated to the `generate_common_chart()` method
 
         Patches:
-            `spy_generate_bar_chart`: For the main assertion.
+            `spy_generate_common_chart`: For the main assertion.`
             `mocked_build_chart_generation_payload`: To remove the side effect
-                of having to query the database for data relating to the chart
-
+                of having to query the database for data relating to the chart.
         """
         # Given
         fake_chart_request_params.plots[0].chart_type = ChartTypes.bar.value
         charts_interface = ChartsInterface(
-            chart_request_params=fake_chart_request_params
+            chart_request_params=fake_chart_request_params,
         )
 
         # When
         generated_chart_output = charts_interface.generate_chart_output()
 
         # Then
-        spy_generate_bar_chart.assert_called_once_with(
+        spy_generate_common_chart.assert_called_once_with(
             chart_generation_payload=mocked_build_chart_generation_payload.return_value
         )
-        assert generated_chart_output.figure == spy_generate_bar_chart.return_value
+        assert generated_chart_output.figure == spy_generate_common_chart.return_value
         assert (
             generated_chart_output.description
             == charts_interface.build_chart_description(plots_data=[])
         )
 
     @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
-    @mock.patch.object(ChartsInterface, "generate_line_multi_coloured_chart")
-    def test_generate_chart_figure_delegates_call_for_line_multi_coloured(
+    @mock.patch.object(ChartsInterface, "generate_common_chart")
+    def test_generate_chart_figure_delegates_call_for_line_multi_coloured_chart_to_common_chart(
         self,
-        spy_generate_line_multi_coloured_chart_method: mock.MagicMock,
+        spy_generate_common_chart: mock.MagicMock,
         mocked_build_chart_generation_payload: mock.MagicMock,
         fake_chart_request_params: ChartRequestParams,
     ):
@@ -154,13 +156,53 @@ class TestChartsInterface:
         generated_chart_output: ChartOutput = charts_interface.generate_chart_output()
 
         # Then
-        spy_generate_line_multi_coloured_chart_method.assert_called_once_with(
+        spy_generate_common_chart.assert_called_once_with(
             chart_generation_payload=mocked_build_chart_generation_payload.return_value
         )
-        assert (
-            generated_chart_output.figure
-            == spy_generate_line_multi_coloured_chart_method.return_value
+        assert generated_chart_output.figure == spy_generate_common_chart.return_value
+
+    @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
+    @pytest.mark.parametrize(
+        "first_chart_plot, second_chart_plot",
+        [
+            ("bar", "line_with_shaded_section"),
+            ("line_multi_coloured", "line_with_shaded_section"),
+            ("line_multi_coloured", "line_single_simplified"),
+        ],
+    )
+    def test_invalid_chart_type_combinations_for_chart_generation_raises_error(
+        self,
+        mocked_build_chart_generation_payload: mock.MagicMock,
+        first_chart_plot: str,
+        second_chart_plot: str,
+        fake_chart_request_params: ChartRequestParams,
+    ):
+        """
+        Given an invalid request for a combination of chart types,
+            that includes `common` and `uncommon` charts
+        When when the `generate_chart_output()` is called
+        Then an Exception is raised.
+        """
+        # Given
+        first_chart_plot = FakePlotParameters.build_plot_parameters(
+            chart_type=first_chart_plot,
         )
+        second_chart_plot = FakePlotParameters.build_plot_parameters(
+            chart_type=second_chart_plot,
+        )
+        fake_chart_request_params.plots = [
+            first_chart_plot,
+            second_chart_plot,
+        ]
+
+        # When
+        charts_interface = ChartsInterface(
+            chart_request_params=fake_chart_request_params,
+        )
+
+        # Then
+        with pytest.raises(InvalidChartTypeCombinationError):
+            charts_interface.generate_chart_output()
 
     @mock.patch.object(ChartsInterface, "build_chart_generation_payload")
     @mock.patch.object(ChartsInterface, "generate_line_single_simplified")
@@ -198,22 +240,21 @@ class TestChartsInterface:
         assert generated_chart_output == charts_output
 
     @mock.patch.object(ChartsInterface, "_set_latest_date_from_plots_data")
-    @mock.patch(f"{MODULE_PATH}.line_multi_coloured.generate_chart_figure")
-    def test_generate_line_multi_coloured_chart(
+    @mock.patch(f"{MODULE_PATH}.common_charts.generate_chart_figure")
+    def test_generate_common_charts_generate_line_multi_coloured_chart(
         self,
-        spy_line_multi_coloured_generate_chart_figure: mock.MagicMock,
+        spy_common_chart_generate_chart_figure: mock.MagicMock,
         mocked_set_latest_date_from_plots_data: mock.MagicMock,
         valid_plot_parameters: PlotParameters,
     ):
         """
-        Given a valid `PlotParameters` for a `line_multi_coloured` chart
-        When `generate_line_multi_coloured_chart()` is called from an instance of the `ChartsInterface`
-        Then the call is delegated to the `generate_chart_figure()`
-            from the `line_multi_coloured` module with the correct args
+        Given a valid `PlotParameters` for `line_multi_coloured` chart
+        When `generate_common_chart()` is called from an instance of the `ChartsInterface`
+        Then the call is delegated to the `generate_chart_figure()` method
+            from the `common_chart` module with the correct args
 
         Patches:
-            `spy_line_multi_coloured_generate_chart_figure`: For the
-                main assertion.
+            `spy_common_chart_generate_chart_figure`: For the main assertion
             `mocked_set_latest_date_from_plots_data`: To isolate
                 date conversion logic away from the scope of the test
         """
@@ -247,17 +288,17 @@ class TestChartsInterface:
         )
 
         # When
-        line_multi_coloured_chart = charts_interface.generate_line_multi_coloured_chart(
-            chart_generation_payload=payload
+        line_multi_coloured_chart = charts_interface.generate_common_chart(
+            chart_generation_payload=payload,
         )
 
         # Then
-        spy_line_multi_coloured_generate_chart_figure.assert_called_once_with(
-            chart_generation_payload=payload
+        spy_common_chart_generate_chart_figure.assert_called_once_with(
+            chart_generation_payload=payload,
         )
         assert (
             line_multi_coloured_chart
-            == spy_line_multi_coloured_generate_chart_figure.return_value
+            == spy_common_chart_generate_chart_figure.return_value
         )
 
     @mock.patch.object(ChartsInterface, "_set_latest_date_from_plots_data")
