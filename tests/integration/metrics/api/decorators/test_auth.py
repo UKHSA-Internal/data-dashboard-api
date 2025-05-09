@@ -11,7 +11,7 @@ from metrics.api.decorators.auth import require_authorisation, RBAC_AUTH_X_HEADE
 from django.http import JsonResponse
 
 from tests.factories.metrics.rbac_models.rbac_group_permissions import (
-    RBACPermissionGroupFactory,
+    RBACGroupPermissionFactory,
 )
 from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFactory
 
@@ -23,7 +23,7 @@ class FakeApiView(APIView):
     @require_authorisation
     def post(self, request, *args, **kwargs):
         try:
-            permissions = request.group_permissions
+            permissions = request.rbac_permissions
         except AttributeError:
             permissions = []
         permissions_data = [p.name for p in permissions]
@@ -45,7 +45,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", False)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", False)
     def test_request_succeeds_when_auth_is_disabled(self):
         """
         Given authentication is disabled
@@ -64,7 +64,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     def test_request_succeeds_with_valid_group_id(self):
         """
         Given authentication is enabled
@@ -81,7 +81,7 @@ class TestAuthorisedRoute:
             theme_name="infectious_disease",
             sub_theme_name="respiratory",
         )
-        RBACPermissionGroupFactory.create_record(
+        RBACGroupPermissionFactory.create_record(
             name="medical",
             permissions=[all_respiratory_data],
             group_id=group_id,
@@ -99,7 +99,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     @pytest.mark.parametrize("group_id", ["invalid", "1", "", None])
     def test_request_with_invalid_group_id(self, group_id):
         """
@@ -122,7 +122,7 @@ class TestAuthorisedRoute:
 
     @pytest.mark.django_db
     @override_settings(ROOT_URLCONF=__name__)
-    @mock.patch(f"{MODULE_PATH}.AUTH_ENABLED", True)
+    @mock.patch(f"{MODULE_PATH}.auth.AUTH_ENABLED", True)
     def test_request_succeeds_when_group_id_header_is_missing(self):
         """
         Given authentication is enabled

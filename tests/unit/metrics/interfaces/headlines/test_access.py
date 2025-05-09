@@ -88,6 +88,7 @@ class TestHeadlinesInterface:
             stratum_name=headline_parameters.stratum_name,
             age=headline_parameters.age_name,
             sex=headline_parameters.sex_name,
+            rbac_permissions=[],
         )
 
     def test_get_metric_value_raises_error_when_model_manager_raises_error_for_no_data_found(

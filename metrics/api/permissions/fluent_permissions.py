@@ -4,6 +4,45 @@ from dataclasses import dataclass
 from metrics.data.models.rbac_models import RBACPermission
 
 
+def validate_permissions_for_non_public(
+    *,
+    theme: str,
+    sub_theme: str,
+    topic: str,
+    metric: str,
+    geography: str,
+    geography_type: str,
+    rbac_permissions: Iterable[RBACPermission]
+) -> bool:
+    """Compares the given data parameters to see if the `rbac_permissions` allow access to the non-public data
+
+    Returns:
+        True if the permissions allow for access
+        to the non-public portion of the dataset.
+        False otherwise.
+
+    """
+    requested_data_parameters = RequestedDataParameters(
+        theme=theme,
+        sub_theme=sub_theme,
+        topic=topic,
+        metric=metric,
+        geography=geography,
+        geography_type=geography_type,
+        age="",
+        sex="",
+        stratum="",
+    )
+
+    fluent_permissions = FluentPermissions(
+        requested_data_parameters=requested_data_parameters
+    )
+
+    return fluent_permissions.check_if_any_permissions_allow_access(
+        rbac_permissions=rbac_permissions
+    )
+
+
 @dataclass
 class RequestedDataParameters:
     theme: str
@@ -45,8 +84,6 @@ class FluentPermissions:
             "metric",
             "geography_type",
             "geography",
-            "age",
-            "stratum",
         ]
 
         for field in fields:
