@@ -1,3 +1,4 @@
+import os
 from functools import wraps
 
 from rest_framework.request import Request
@@ -11,6 +12,10 @@ from caching.private_api.management import CacheManagement, CacheMissError
 
 
 class CacheCheckResultedInMissError(Exception): ...
+
+
+def is_caching_v2_enabled() -> bool:
+    return os.environ.get("CACHING_V2_ENABLED", "").lower() in {"true", "1"}
 
 
 def cache_response(timeout: int | None = None):
@@ -61,6 +66,10 @@ def _retrieve_response_from_cache_or_calculate(
         then the response will be recalculated from the server
         and this will overwrite the corresponding entry in the cache
 
+        If the `CACHING_V2_ENABLED` env variable is set to "true",
+        then the response will always be recalculated from the server
+        and no caching will take place.
+
     Args:
         view_function: The view associated with the endpoint
         timeout: The number of seconds after which the response is expired
@@ -75,6 +84,10 @@ def _retrieve_response_from_cache_or_calculate(
     """
 
     request: Request = args[1]
+
+    if is_caching_v2_enabled():
+        return _calculate_response_from_view(view_function, *args, **kwargs)
+
     cache_management = kwargs.pop("cache_management", CacheManagement(in_memory=False))
 
     cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
