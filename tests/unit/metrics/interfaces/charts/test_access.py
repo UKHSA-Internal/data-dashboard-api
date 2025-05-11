@@ -181,7 +181,7 @@ class TestChartsInterface:
         Given an invalid request for a combination of chart types,
             that includes `common` and `uncommon` charts
         When when the `generate_chart_output()` is called
-        Then an Exception is raised.
+        Then an `InvalidChartTypeCombinationError` is raised.
         """
         # Given
         first_chart_plot = FakePlotParameters.build_plot_parameters(

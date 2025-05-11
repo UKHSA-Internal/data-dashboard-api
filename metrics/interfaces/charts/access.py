@@ -40,7 +40,7 @@ class InvalidFileFormatError(Exception):
 
 class InvalidChartTypeCombinationError(Exception):
     def __init__(self, invalid_chart_types: list[str]):
-        message = f"There has been an invalid combination of plots selected, Please review you plot data. {', '.join(invalid_chart_types)}"
+        message = f"There has been an invalid combination of plots selected, Please review your plot data. {', '.join(invalid_chart_types)}"
         super().__init__(message)
 
 
@@ -157,7 +157,8 @@ class ChartsInterface:
             in their use case and can not be combined with other types Eg: `line_single_simplified`.
 
             If multiple plots are requested and they include a combination of `common` and `uncommon`
-            chart_types an Exception will be raised that includes the `uncommon` chart_types provided
+            chart_types an `InvalidChartTypeCombinationError` will be raised that includes the `uncommon`
+            chart_types provided
             in the request.
 
         Returns:
@@ -212,27 +213,45 @@ class ChartsInterface:
             plots_data=chart_generation_payload.plots
         )
 
-        if self._is_common_chart_type:
-            figure = self.generate_common_chart(
-                chart_generation_payload=chart_generation_payload,
-            )
-
-        else:
-            match self.chart_type:
-                case ChartTypes.line_single_simplified.value:
-                    figure = self.generate_line_single_simplified(
-                        chart_generation_payload=chart_generation_payload
-                    )
-                case _:
-                    figure = self.generate_line_with_shaded_section_chart(
-                        chart_generation_payload=chart_generation_payload
-                    )
+        figure = self._build_chart_figure(
+            chart_generation_payload=chart_generation_payload,
+        )
 
         return ChartOutput(
             figure=figure,
             description=description,
             is_headline=self.is_headline_data,
         )
+
+    def _build_chart_figure(
+        self, chart_generation_payload: ChartGenerationPayload
+    ) -> plotly.graph_objects.Figure:
+        """Builds a Plotly chart `Figure` object based on the chart type
+
+        Args:
+            chart_generation_payload: An enriched `ChartGenerationPayload` model
+                which holds all the parameters like colour and plot labels
+                 along with the corresponding x and y values
+                 which are needed to be able to generate the chart in full.
+
+
+        Returns:
+            A plotly `Figure` object for the created chart type.
+        """
+        if self._is_common_chart_type:
+            return self.generate_common_chart(
+                chart_generation_payload=chart_generation_payload,
+            )
+
+        match self.chart_type:
+            case ChartTypes.line_single_simplified.value:
+                return self.generate_line_single_simplified(
+                    chart_generation_payload=chart_generation_payload
+                )
+            case _:
+                return self.generate_line_with_shaded_section_chart(
+                    chart_generation_payload=chart_generation_payload
+                )
 
     @classmethod
     def build_chart_description(cls, *, plots_data: list[PlotGenerationData]) -> str:
