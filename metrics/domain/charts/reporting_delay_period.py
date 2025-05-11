@@ -1,4 +1,6 @@
+import contextlib
 import logging
+from datetime import datetime
 
 import plotly
 from plotly.graph_objs import Scatter
@@ -28,24 +30,20 @@ def _get_first_x_value_at_start_of_reporting_delay_period(
     Returns:
         a string representing the date of the first x_axis_value in time series data.
     """
-    reporting_delay_index_list: list[int | float] = []
+    reporting_delay_start_date_list: list[datetime] = []
 
-    for index in range(len(chart_plots_data)):
-        try:
-            reporting_delay_index_list.append(
-                chart_plots_data[index].start_of_reporting_delay_period_index
+    for plot in chart_plots_data:
+        with contextlib.suppress(
+            NoReportingDelayPeriodFoundError, ReportingDelayNotProvidedToPlotsError
+        ):
+            reporting_delay_start_date_list.append(
+                plot.x_axis_values[plot.start_of_reporting_delay_period_index],
             )
-        except NoReportingDelayPeriodFoundError:
-            reporting_delay_index_list.append(float("inf"))
 
-    first_x_axis_values_index: int = min(reporting_delay_index_list)
+    if not reporting_delay_start_date_list:
+        raise NoReportingDelayPeriodFoundError
 
-    if first_x_axis_values_index != float("inf"):
-        return chart_plots_data[
-            reporting_delay_index_list.index(first_x_axis_values_index)
-        ].x_axis_values[first_x_axis_values_index]
-
-    raise NoReportingDelayPeriodFoundError
+    return str(min(reporting_delay_start_date_list))
 
 
 def _get_last_x_value_at_end_of_reporting_delay_period(
