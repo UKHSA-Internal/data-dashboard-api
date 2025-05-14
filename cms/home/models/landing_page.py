@@ -1,10 +1,12 @@
 from django.db import models
+from modelcluster.fields import ParentalKey
 from wagtail.admin.panels import FieldPanel, ObjectList, TabbedInterface
 from wagtail.api import APIField
 from wagtail.models import Page
 
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_SECTION_LINK
+from cms.dynamic_content.announcements import Announcement
 from cms.home.managers import LandingPageManager
 
 
@@ -27,6 +29,7 @@ class LandingPage(UKHSAPage):
     edit_handler = TabbedInterface(
         [
             ObjectList(content_panels, heading="Content"),
+            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -69,3 +72,12 @@ class LandingPage(UKHSAPage):
         site_id, root_url, page_path = super().get_url_parts(request=request)
         page_path = ""
         return site_id, root_url, page_path
+
+
+class LandingPageAnnouncement(Announcement):
+    page = ParentalKey(
+        LandingPage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )

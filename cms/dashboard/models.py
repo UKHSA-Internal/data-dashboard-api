@@ -5,8 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from rest_framework.templatetags.rest_framework import render_markdown
-from wagtail.admin.panels.field_panel import FieldPanel
-from wagtail.admin.panels.group import MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, InlinePanel, MultiFieldPanel
 from wagtail.api import APIField
 from wagtail.fields import RichTextField
 from wagtail.models import Page, SiteRootPath
@@ -69,6 +68,7 @@ class UKHSAPage(Page):
         APIField("seo_priority"),
         APIField("last_updated_at"),
         APIField("last_published_at"),
+        APIField("active_announcements"),
     ]
 
     promote_panels = [
@@ -82,6 +82,10 @@ class UKHSAPage(Page):
             ],
             heading="For search engines",
         ),
+    ]
+
+    announcement_content_panels = [
+        InlinePanel("announcements", heading="Announcements", label="Announcement"),
     ]
 
     class Meta:
@@ -151,3 +155,11 @@ class UKHSAPage(Page):
     @property
     def last_updated_at(self) -> datetime.datetime:
         return self.last_published_at
+
+    @property
+    def active_announcements(self) -> list[dict[str, str | int]]:
+        return list(
+            self.announcements.filter(is_active=True)
+            .order_by("-banner_type")
+            .values("id", "title", "body", "banner_type")
+        )
