@@ -7,6 +7,7 @@ from rest_framework import serializers
 from rest_framework.request import Request
 
 from metrics.api.serializers import help_texts
+from metrics.data.models.constants import METRIC_VALUE_DECIMAL_PLACES, METRIC_VALUE_MAX_DIGITS
 from metrics.data.models.core_models import (
     Age,
     CoreHeadline,
@@ -102,14 +103,16 @@ class HeadlinesQuerySerializer(serializers.Serializer):
 
 
 class HeadlinesResponseSerializer(serializers.Serializer):
-    value = serializers.FloatField(help_text=help_texts.HEADLINE_METRIC_VALUE_FIELD)
+    value = serializers.DecimalField(max_digits=METRIC_VALUE_MAX_DIGITS, decimal_places=METRIC_VALUE_DECIMAL_PLACES,
+                                     help_text=help_texts.HEADLINE_METRIC_VALUE_FIELD)
+    period_end = serializers.SerializerMethodField()
 
 
 class CoreHeadlineSerializer(serializers.ModelSerializer):
     """This serializer returns a set of serialized fields from the `CoreTimeSeries` and related models.
 
     The `DownloadsInterface`, processes download data. This processing includes both merging and casting
-    multiple querysets resulting in related fields (through forgein key relations) to be included
+    multiple querysets resulting in related fields (through foreign key relations) to be included
     using double underscore syntax.
 
     Eg: `metric  -> topic -> sub_theme -> theme` becomes `obj.metric__topic__sub_theme_theme__name`

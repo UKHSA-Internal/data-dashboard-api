@@ -10,6 +10,7 @@ from metrics.api.serializers.headlines import (
     HeadlinesQuerySerializer,
     HeadlinesResponseSerializer,
 )
+from metrics.api.serializers.metric_value import MetricValueSerializer
 from metrics.domain.headlines.state import Headline
 from metrics.domain.models.headline import HeadlineParameters
 from metrics.interfaces.headlines.access import (
@@ -85,12 +86,18 @@ class HeadlinesView(APIView):
             )
         except BaseInvalidHeadlinesRequestError as error:
             return Response(
-                status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
+                status=HTTPStatus.BAD_REQUEST, data={
+                    "error_message": str(error)}
             )
+
+        metric_value = MetricValueSerializer.format_to_one_decimal_place(
+            headline.metric_value)
+
+        print(f'metric_value: {metric_value}')
 
         return Response(
             data={
-                "value": headline.metric_value,
+                "value": metric_value,
                 "period_end": headline.period_end,
             },
             status=HTTPStatus.OK,
