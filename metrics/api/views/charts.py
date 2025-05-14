@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 import config
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.enums import AppMode
 from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
@@ -222,6 +223,7 @@ class EncodedChartsView(APIView):
         tags=[CHARTS_API_TAG],
     )
     @cache_response()
+    @require_authorisation
     def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 

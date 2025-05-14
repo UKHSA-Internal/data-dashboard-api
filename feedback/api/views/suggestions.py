@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from feedback.api.serializers.questions import (
-    SuggestionsV2Serializer,
+    SuggestionsSerializer,
 )
 from feedback.email_server import send_email
 
@@ -19,7 +19,7 @@ class SuggestionsV2View(APIView):
     permission_classes = []
 
     @classmethod
-    @extend_schema(tags=[SUGGESTIONS_API_TAG], request=SuggestionsV2Serializer)
+    @extend_schema(tags=[SUGGESTIONS_API_TAG], request=SuggestionsSerializer)
     def post(cls, request: Request, *args, **kwargs) -> HttpResponse:
         """This endpoint sends a feedback email to the designated UKHSA recipient account.
 
@@ -32,7 +32,7 @@ class SuggestionsV2View(APIView):
         **Hitting this endpoint in all other environments will not send any emails**
 
         """
-        serializer = SuggestionsV2Serializer(data=request.data)
+        serializer = SuggestionsSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
