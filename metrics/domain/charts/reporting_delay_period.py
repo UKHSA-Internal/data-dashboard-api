@@ -1,4 +1,6 @@
+import contextlib
 import logging
+from datetime import datetime
 
 import plotly
 from plotly.graph_objs import Scatter
@@ -13,6 +15,35 @@ CYAN = "#0090C6"
 LIGHT_BLUE = "#D2E9F1"
 
 logger = logging.getLogger(__name__)
+
+
+def _get_first_x_value_at_start_of_reporting_delay_period(
+    chart_plots_data: list[PlotGenerationData],
+) -> str:
+    """Gets the first value from the start of the reporting delay period.
+
+    Note:
+        When multiple plots are supplied that each have a reporting delay period
+        the plot with the largest window (which has the smallest index value) is
+        used for returning the `x_axis_values` item.
+
+    Returns:
+        a string representing the date of the first x_axis_value in time series data.
+    """
+    reporting_delay_start_date_list: list[datetime] = []
+
+    for plot in chart_plots_data:
+        with contextlib.suppress(
+            NoReportingDelayPeriodFoundError, ReportingDelayNotProvidedToPlotsError
+        ):
+            reporting_delay_start_date_list.append(
+                plot.x_axis_values[plot.start_of_reporting_delay_period_index],
+            )
+
+    if not reporting_delay_start_date_list:
+        raise NoReportingDelayPeriodFoundError
+
+    return str(min(reporting_delay_start_date_list))
 
 
 def _get_last_x_value_at_end_of_reporting_delay_period(
@@ -49,9 +80,9 @@ def add_reporting_delay_period(
 
     """
     try:
-        start_x_of_reporting_delay: str = (
-            get_x_value_at_start_of_reporting_delay_period(
-                chart_plots_data=chart_plots_data
+        start_x_of_reporting_delay = (
+            _get_first_x_value_at_start_of_reporting_delay_period(
+                chart_plots_data=chart_plots_data,
             )
         )
     except (ReportingDelayNotProvidedToPlotsError, NoReportingDelayPeriodFoundError):

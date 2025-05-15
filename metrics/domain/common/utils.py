@@ -70,6 +70,39 @@ class ChartTypes(Enum):
         return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
 
     @classmethod
+    def common_chart_options(cls) -> list[str]:
+        """Returns a list of `common` chart types as strings
+
+        Note:
+            Common chart types include `bar` and `line_multi_coloured`, which can be combined
+            into a single chart Eg: `bar_with_line`. Uncommon chart types are more specific
+            in their use case and can not be combined with other types Eg: `line_single_simplified`.
+
+        Returns:
+            A list of `common` chart types as strings.
+            Examples:
+                ["bar", "line_multi_coloured"]
+        """
+        selectable = (cls.bar, cls.line_multi_coloured)
+        return [chart_type.value for chart_type in selectable]
+
+    @classmethod
+    def uncommon_chart_options(cls) -> list[str]:
+        """Returns a list of `uncommon` chart types as strings
+
+        Note:
+            Uncommon chart types are more specific in their use case
+            and can not be combined with other types Eg: `line_single_simplified`.
+
+        Returns:
+            A list of `uncommon` chart types as strings.
+            Examples:
+                ["line_with_shaded_section", "line_single_simplified"]
+        """
+        selectable = (cls.line_single_simplified, cls.line_with_shaded_section)
+        return [chart_type.value for chart_type in selectable]
+
+    @classmethod
     def values(cls) -> list[str]:
         return [chart_type.value for chart_type in cls]
 

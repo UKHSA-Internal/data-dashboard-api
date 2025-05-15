@@ -4,7 +4,10 @@ from unittest import mock
 import pytest
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
-from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
+
+from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
+    ChartLineTypes,
+)
 from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.plots import (
     NoReportingDelayPeriodFoundError,
