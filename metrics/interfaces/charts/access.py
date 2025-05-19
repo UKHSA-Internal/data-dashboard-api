@@ -79,6 +79,7 @@ class ChartOutput:
     def _apply_x_axis_styling(self):
         self.figure.layout.xaxis.showline = True
         self.figure.layout.xaxis.showspikes = False
+        self.figure.layout.yaxis.tickformat = ','
 
     def _apply_autosizing(self):
         self.figure.layout.autosize = True
@@ -102,7 +103,7 @@ class ChartOutput:
             `D3-time-format` specifiers. examples can be found at:
             https://d3js.org/d3-time-format
         """
-        hover_template = "%{y} (%{x|%d %b %Y})<extra></extra>"
+        hover_template = "%{y:,} (%{x|%d %b %Y})<extra></extra>"
 
         if self.is_headline:
             hover_template = "%{y} (%{x})<extra></extra>"
@@ -394,7 +395,8 @@ class ChartsInterface:
 
         """
         try:
-            latest_date: datetime.date = max(plot.latest_date for plot in plots_data)
+            latest_date: datetime.date = max(
+                plot.latest_date for plot in plots_data)
         except (ValueError, TypeError):
             return
 
@@ -547,7 +549,8 @@ class ChartsInterface:
 
 
 def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> bytes:
-    charts_interface = ChartsInterface(chart_request_params=chart_request_params)
+    charts_interface = ChartsInterface(
+        chart_request_params=chart_request_params)
     chart_output: ChartOutput = charts_interface.generate_chart_output()
 
     return charts_interface.write_figure(figure=chart_output.figure)
@@ -579,7 +582,8 @@ def generate_encoded_chart(
             returned any data from the underlying queries
 
     """
-    charts_interface = ChartsInterface(chart_request_params=chart_request_params)
+    charts_interface = ChartsInterface(
+        chart_request_params=chart_request_params)
     chart_output: ChartOutput = charts_interface.generate_chart_output()
 
     return charts_interface.get_encoded_chart(chart_output=chart_output)
