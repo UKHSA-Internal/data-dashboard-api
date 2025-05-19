@@ -4,7 +4,7 @@ from unittest import mock
 import plotly.graph_objects
 import pytest
 
-from metrics.domain.charts.bar.generation import generate_chart_figure
+from metrics.domain.charts.common_charts.generation import generate_chart_figure
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
 from metrics.domain.models.plots import (
     ChartGenerationPayload,
@@ -80,6 +80,7 @@ class TestBarCharts:
         """
         # Given
         chart_plots_data = [fake_plot_data]
+        chart_plots_data[0].parameters.chart_type = "bar"
         fake_plot_data.additional_values = {
             "in_reporting_delay_period": [True] * len(fake_plot_data.x_axis_values)
         }
