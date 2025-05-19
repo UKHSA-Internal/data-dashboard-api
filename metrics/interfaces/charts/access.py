@@ -58,6 +58,7 @@ class ChartOutput:
         self._unset_width()
         self._apply_font_to_ticks()
         self._apply_x_axis_styling()
+        self._apply_y_axis_styling()
 
         self._apply_autosizing()
 
@@ -79,6 +80,8 @@ class ChartOutput:
     def _apply_x_axis_styling(self):
         self.figure.layout.xaxis.showline = True
         self.figure.layout.xaxis.showspikes = False
+
+    def _apply_y_axis_styling(self):
         self.figure.layout.yaxis.tickformat = ','
 
     def _apply_autosizing(self):
