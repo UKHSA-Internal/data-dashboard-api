@@ -123,8 +123,7 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = line_generation.generate_chart_figure(
-            chart_generation_payload=payload)
+        figure = line_generation.generate_chart_figure(chart_generation_payload=payload)
 
         # When
         chart_output = ChartOutput(
@@ -160,8 +159,7 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = bar_generation.generate_chart_figure(
-            chart_generation_payload=payload)
+        figure = bar_generation.generate_chart_figure(chart_generation_payload=payload)
 
         # When
         chart_output = ChartOutput(

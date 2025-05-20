@@ -109,7 +109,7 @@ class ChartOutput:
         hover_template = "%{y:,} (%{x|%d %b %Y})<extra></extra>"
 
         if self.is_headline:
-            hover_template = "%{y} (%{x})<extra></extra>"
+            hover_template = "%{y:,} (%{x})<extra></extra>"
 
         for plot in self.figure.data:
             plot.hovertemplate = hover_template
