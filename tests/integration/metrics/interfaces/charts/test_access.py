@@ -123,7 +123,8 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = line_generation.generate_chart_figure(chart_generation_payload=payload)
+        figure = line_generation.generate_chart_figure(
+            chart_generation_payload=payload)
 
         # When
         chart_output = ChartOutput(
@@ -132,7 +133,7 @@ class TestChartsOutput:
             is_headline=False,
         ).interactive_chart_figure_output
 
-        expected_hover_template = "%{y} (%{x|%d %b %Y})<extra></extra>"
+        expected_hover_template = "%{y:,} (%{x|%d %b %Y})<extra></extra>"
 
         # Then
         assert chart_output["data"][0]["hovertemplate"] == expected_hover_template
@@ -159,7 +160,8 @@ class TestChartsOutput:
             y_axis_title="",
         )
 
-        figure = bar_generation.generate_chart_figure(chart_generation_payload=payload)
+        figure = bar_generation.generate_chart_figure(
+            chart_generation_payload=payload)
 
         # When
         chart_output = ChartOutput(
@@ -168,7 +170,7 @@ class TestChartsOutput:
             is_headline=True,
         ).interactive_chart_figure_output
 
-        expected_hover_template = "%{y} (%{x})<extra></extra>"
+        expected_hover_template = "%{y:,} (%{x})<extra></extra>"
 
         # Then
         assert chart_output["data"][0]["hovertemplate"] == expected_hover_template
