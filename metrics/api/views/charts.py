@@ -202,7 +202,11 @@ class ChartsView(APIView):
             chart_image: bytes = access.generate_chart_as_file(
                 chart_request_params=chart_request_params,
             )
-        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
+        except (
+            InvalidPlotParametersError,
+            DataNotFoundForAnyPlotError,
+            access.InvalidChartTypeCombinationError,
+        ) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )

@@ -4,7 +4,8 @@ from typing import Any
 import plotly.graph_objects
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours, RGBAColours
-from metrics.domain.charts.line_multi_coloured import generation
+
+from metrics.domain.charts.common_charts import generation
 from metrics.domain.models import (
     PlotGenerationData,
     PlotParameters,

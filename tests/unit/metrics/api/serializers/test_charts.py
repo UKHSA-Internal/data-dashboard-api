@@ -8,7 +8,8 @@ from metrics.api.serializers.charts import (
     EncodedChartsRequestSerializer,
 )
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.line_multi_coloured import properties
+
+from metrics.domain.charts.common_charts.plots.line_multi_coloured import properties
 from metrics.domain.models import PlotParameters, ChartRequestParams
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,

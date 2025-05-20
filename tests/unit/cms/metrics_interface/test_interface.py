@@ -2,7 +2,10 @@ from unittest import mock
 
 from cms.metrics_interface import interface
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
-from metrics.domain.charts.line_multi_coloured.properties import ChartLineTypes
+
+from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
+    ChartLineTypes,
+)
 from metrics.domain.common.utils import ChartAxisFields, ChartTypes
 
 
