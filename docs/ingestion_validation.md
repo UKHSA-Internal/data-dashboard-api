@@ -2,12 +2,13 @@
 
 ## Introduction
 
-This document outlines the ingestion validation rules and provides a guide to updating these rules. 
+This document outlines the ingestion validation rules and provides a guide to updating these rules.
 
 ---
+
 ## Ingestion validation rules
 
-## Metric 
+## Metric
 
 The metric must be constructed in the following way.
 `<topic>_<metric_group>_<metric_detail>`
@@ -25,14 +26,14 @@ The age property can be any of the following:
 - The literal string "all"
 - An older than type band, which must be a double digit number followed by `+` Eg: 85+
 - An age range, which consists of a double digit number, separated by a `-` character, where
-the second number must be greater than the first Eg: 45-64
+  the second number must be greater than the first Eg: 45-64
 
 ## Parent Theme
 
 The `Parent theme` is validated against an enum, which can be found
 at the following location `ingestion/utils/enums/theme_and_topic_enums.py`
 
-Please see **How to add new parent theme, child theme and topics** in the guides section for details on how 
+Please see **How to add new parent theme, child theme and topics** in the guides section for details on how
 to add new parent themes.
 
 ## Child theme
@@ -76,38 +77,38 @@ See the `validate_geography_code()` function for details on the implementation o
 
 ---
 
-## Guides 
+## Guides
 
 ## How to add new parent theme, child theme and topics
 
 The `Parent theme`, `Child theme` and `Topic` properties are all validated against enums, this means that to add any
 additional properties in these categories a code change is required.
 
-There is also a requirement that each of these three fields are validated against one another. For example a `Topic` of 
-`Influenza` is only valid if the `Child theme` provided is `respiratory` and the `Parent theme` is 
+There is also a requirement that each of these three fields are validated against one another. For example a `Topic` of
+`Influenza` is only valid if the `Child theme` provided is `respiratory` and the `Parent theme` is
 `infectious_disease`.
 
-This is achieved using a collection of enums that are selected via a "parent" enum, meaning that when the `Topic` 
-property is being validated, the "topic" enum used to validate against is selected via the `Child theme` name, for example: 
-`_RespiartoryTopic` see the code example below.
+This is achieved using a collection of enums that are selected via a "parent" enum, meaning that when the `Topic`
+property is being validated, the "topic" enum used to validate against is selected via the `Child theme` name, for example:
+`_RespiratoryTopic` see the code example below.
 
 ```python
 # Top level enums - ChildTheme and Topic have enums as their value.
 class ParentTheme(Enum):
     INFECTIOUS_DISEASE = "infectious_disease"
-    
+
 class ChildTheme(Enum):
     INFECTIOUS_DISEASE = _InfectiousDiseaseChildTheme
 
 class Topic(Enum):
-    RESPIRATORY = _RespiartoryTopic
+    RESPIRATORY = _RespiratoryTopic
 
 # The supported child themes where `Infectious_disease` is the parent theme.
 class _InfectiousDiseaseChildTheme(Enum):
     RESPIRATORY = "respiratory"
 
 # The supported topics where `respiratory` is the child theme.
-class _RespiartoryTopic(Enum):
+class _RespiratoryTopic(Enum):
     COVID_19 = "COVID-19"
     INFLUENZA = "Influenza"
     RSV = "RSV"
@@ -119,8 +120,8 @@ class _RespiartoryTopic(Enum):
 ```
 
 In the example above we can see that our top level enums each match the properties we're validating, for the two "child" properties
-`Child theme` and `Topic` their values are also enums, which are named after their parent value. 
-Eg: `_InfectioiusDiseaseChildTheme` where the enum contains child theme values that are valid when the `Parent theme`
+`Child theme` and `Topic` their values are also enums, which are named after their parent value.
+Eg: `_InfectiousDiseaseChildTheme` where the enum contains child theme values that are valid when the `Parent theme`
 provided is `infectious_disease`.
 
 To illustrate this further we'll add a new topic, `Measles`. This will belong to a new child theme `vaccine_preventable` and the existing parent theme
@@ -133,7 +134,7 @@ enum we'll add a value for `vaccine_preventable`. See the example below.
 class _InfectiousDiseaseChildTheme(Enum):
     VACCINE_PREVENTABLE = "vaccine_preventable"
     RESPIRATORY = "respiratory"
-    
+
 class _VaccinePreventableTopic(Enum):
     MEASLES = "Measles"
 ```
@@ -143,7 +144,7 @@ level enum under the new `Child theme` name. See the example below.
 
 ```python
 class Topic(Enum):
-  RESPIRATORY = _RespiartoryTopic
+  RESPIRATORY = _RespiratoryTopic
   VACCINE_PREVENTABLE = _VaccinePreventableTopic
 ```
 
@@ -156,14 +157,14 @@ the `Topic`, which would be validated against the `_VaccinePreventableTopic` enu
 # Top level enums - ChildTheme and Topic have enums as their value.
 class ParentTheme(Enum):
     INFECTIOUS_DISEASE = "infectious_disease"
-    
+
 class ChildTheme(Enum):
     INFECTIOUS_DISEASE = _InfectiousDiseaseChildTheme
 
 class Topic(Enum):
-    RESPIRATORY = _RespiartoryTopic
+    RESPIRATORY = _RespiratoryTopic
     VACCINE_PREVENTABLE = _VaccinePreventableTopic
-    
+
 # The supported child themes where `Infectious_disease` is the parent theme.
 class _InfectiousDiseaseChildTheme(Enum):
     VACCINE_PREVENTABLE = "vaccine_preventable"
@@ -174,7 +175,7 @@ class _VaccinePreventableTopic(Enum):
     MEASLES = "Measles"
 
 # The supported topics where `respiratory` is the child theme.
-class _RespiartoryTopic(Enum):
+class _RespiratoryTopic(Enum):
     COVID_19 = "COVID-19"
     INFLUENZA = "Influenza"
     RSV = "RSV"
@@ -183,6 +184,5 @@ class _RespiartoryTopic(Enum):
     RHINOVIRUS = "Rhinovirus"
     ADENOVIRUS = "Adenovirus"
 ```
-
 
 **Note**: These changes need to be made to the codebase before any metrics for `Measles` could be ingested.

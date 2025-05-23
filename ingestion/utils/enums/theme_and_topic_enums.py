@@ -90,6 +90,11 @@ class _GastrointestinalTopic(Enum):
 
 class _AntimicrobialResistanceTopic(Enum):
     E_COLI = "E-coli"
+    S_PNEUMONIAE = "S-pneumoniae"
+    P_AERUGINOSA = "P-aeruginosa"
+    K_PNEUMONIAE = "K-pneumoniae"
+    E_FAECIUM = "E-faecium"
+    E_FAECALIS = "E-faecalis"
 
 
 class BaseEnum(Enum):
