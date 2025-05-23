@@ -105,7 +105,7 @@ class ChartSettings:
             "tickformatstops": [
                 {"dtickrange": [None, 999], "value": ","},
                 {"dtickrange": [1000, 99999], "value": ",.0f"},
-                {"dtickrange": [100000, None], "value": ".0s"}
+                {"dtickrange": [100000, None], "value": ".0s"},
             ],
             "showgrid": False,
             "showticklabels": True,
@@ -168,8 +168,7 @@ class ChartSettings:
             A list containing two values the minimum y-axis value
             and the maximum y-axis value
         """
-        y_axis_range = [
-            item for row in self.plots_data for item in row.y_axis_values]
+        y_axis_range = [item for row in self.plots_data for item in row.y_axis_values]
 
         if self.y_axis_minimum_value < min(y_axis_range):
             min_value = self.y_axis_minimum_value
