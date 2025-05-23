@@ -63,7 +63,6 @@ class ChartOutput:
         self._unset_width()
         self._apply_font_to_ticks()
         self._apply_x_axis_styling()
-        # self._apply_y_axis_styling()
 
         self._apply_autosizing()
 
@@ -85,9 +84,6 @@ class ChartOutput:
     def _apply_x_axis_styling(self):
         self.figure.layout.xaxis.showline = True
         self.figure.layout.xaxis.showspikes = False
-
-    # def _apply_y_axis_styling(self):
-    #     self.figure.layout.yaxis.tickformat = ","
 
     def _apply_autosizing(self):
         self.figure.layout.autosize = True
@@ -179,7 +175,8 @@ class ChartsInterface:
             return False
 
         raise InvalidChartTypeCombinationError(
-            all_requested_chart_types.intersection(ChartTypes.uncommon_chart_options())
+            all_requested_chart_types.intersection(
+                ChartTypes.uncommon_chart_options())
         )
 
     def _set_core_model_manager(self) -> Manager:
@@ -417,7 +414,8 @@ class ChartsInterface:
 
         """
         try:
-            latest_date: datetime.date = max(plot.latest_date for plot in plots_data)
+            latest_date: datetime.date = max(
+                plot.latest_date for plot in plots_data)
         except (ValueError, TypeError):
             return
 
@@ -570,7 +568,8 @@ class ChartsInterface:
 
 
 def generate_chart_as_file(*, chart_request_params: ChartRequestParams) -> bytes:
-    charts_interface = ChartsInterface(chart_request_params=chart_request_params)
+    charts_interface = ChartsInterface(
+        chart_request_params=chart_request_params)
     chart_output: ChartOutput = charts_interface.generate_chart_output()
 
     return charts_interface.write_figure(figure=chart_output.figure)
@@ -602,7 +601,8 @@ def generate_encoded_chart(
             returned any data from the underlying queries
 
     """
-    charts_interface = ChartsInterface(chart_request_params=chart_request_params)
+    charts_interface = ChartsInterface(
+        chart_request_params=chart_request_params)
     chart_output: ChartOutput = charts_interface.generate_chart_output()
 
     return charts_interface.get_encoded_chart(chart_output=chart_output)
