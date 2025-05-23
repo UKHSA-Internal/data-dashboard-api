@@ -163,6 +163,11 @@ class TestChartSettings:
             "gridcolor": "#000",
             "ticks": "outside",
             "tickson": "boundaries",
+            "tickformatstops": [
+                {"dtickrange": [None, 999], "value": ","},
+                {"dtickrange": [1000, 99999], "value": ",.0f"},
+                {"dtickrange": [100000, None], "value": ".0s"},
+            ],
             "tickcolor": "rgba(0,0,0,0)",
             "tickfont": chart_settings._get_tick_font_config(),
             "tick0": 0,
@@ -728,7 +733,8 @@ class TestChartSettings:
         fake_x_axis_tick_text = ["tick01", "tick02"]
         fake_y_axis_tick_values = [0, 10]
         fake_y_axis_tick_text = ["tick01", "tick02"]
-        fake_y_axis_range = [0, 10]  # min and max value for manual y-axis input
+        # min and max value for manual y-axis input
+        fake_y_axis_range = [0, 10]
         fake_y_axis_rangemode = "tozero"
 
         mock_build_line_single_simplified_axis_params.return_value = {
