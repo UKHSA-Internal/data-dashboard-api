@@ -477,6 +477,33 @@ class TestAWSClient:
             ExtraArgs={"StorageClass": "GLACIER_IR", "MetadataDirective": "COPY"},
         )
 
+    def test_copy_file_to_processed_archive_records_log_when_client_error_occurs(
+        self,
+        aws_client_with_mocked_boto_client: AWSClient,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a key for a file
+        And a `botocore` client which will throw a `ClientError`
+        When `_copy_file_to_processed_archive()` is called
+            from an instance of `AWSClient`
+        Then the error is swallowed and logged
+        """
+        # Given
+        key: str = FAKE_KEY
+        boto_client: mock.Mock = aws_client_with_mocked_boto_client._client
+        boto_client.copy.side_effect = botocore.client.ClientError(
+            error_response=mock.MagicMock(), operation_name=mock.MagicMock()
+        )
+
+        # When
+        aws_client_with_mocked_boto_client._copy_file_to_processed_archive(key=key)
+
+        # Then
+        _archive_bucket_name: str = aws_client_with_mocked_boto_client._archive_bucket_name
+        expected_log = f"Failed to move `{key}` to `{_archive_bucket_name}` bucket"
+        assert expected_log in caplog.text
+
     # Tests for `_delete_file_from_inbound`
 
     def test_delete_file_from_inbound_records_log_when_client_error_occurs(
