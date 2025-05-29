@@ -500,7 +500,9 @@ class TestAWSClient:
         aws_client_with_mocked_boto_client._copy_file_to_processed_archive(key=key)
 
         # Then
-        _archive_bucket_name: str = aws_client_with_mocked_boto_client._archive_bucket_name
+        _archive_bucket_name: str = (
+            aws_client_with_mocked_boto_client._archive_bucket_name
+        )
         expected_log = f"Failed to move `{key}` to `{_archive_bucket_name}` bucket"
         assert expected_log in caplog.text
 
