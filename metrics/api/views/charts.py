@@ -1,4 +1,4 @@
-import os
+import io
 from http import HTTPStatus
 
 from django.http import FileResponse
@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 import config
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.enums import AppMode
 from metrics.api.serializers import ChartsSerializer
 from metrics.api.serializers.charts import (
@@ -34,6 +35,7 @@ class ChartsView(APIView):
             return [permissions.IsAuthenticated()]
         return super().get_permissions()
 
+    @classmethod
     @extend_schema(
         request=ChartsSerializer,
         responses={HTTPStatus.OK.value: ChartsResponseSerializer},
@@ -74,7 +76,7 @@ class ChartsView(APIView):
             )
         ],
     )
-    def post(self, request, *args, **kwargs):
+    def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 
         Multiple plots can be added as an array of objects from the request body.
@@ -197,24 +199,22 @@ class ChartsView(APIView):
         )
 
         try:
-            filename: str = access.generate_chart_as_file(
+            chart_image: bytes = access.generate_chart_as_file(
                 chart_request_params=chart_request_params,
             )
-        except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
+        except (
+            InvalidPlotParametersError,
+            DataNotFoundForAnyPlotError,
+            access.InvalidChartTypeCombinationError,
+        ) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
 
-        return self._return_image(filename=filename)
-
-    @staticmethod
-    def _return_image(*, filename: str) -> FileResponse:
-        image = open(filename, "rb")
-        response = FileResponse(image)
-
-        os.remove(filename)
-
-        return response
+        return FileResponse(
+            io.BytesIO(chart_image),
+            content_type=f"image/{chart_request_params.file_format}",
+        )
 
 
 class EncodedChartsView(APIView):
@@ -227,6 +227,7 @@ class EncodedChartsView(APIView):
         tags=[CHARTS_API_TAG],
     )
     @cache_response()
+    @require_authorisation
     def post(cls, request, *args, **kwargs):
         """This endpoint can be used to generate charts conforming to the UK Gov Specification.
 

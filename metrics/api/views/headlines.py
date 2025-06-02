@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
+from metrics.api.decorators.auth import require_authorisation
 from metrics.api.serializers.headlines import (
     HeadlinesQuerySerializer,
     HeadlinesResponseSerializer,
@@ -29,6 +30,7 @@ class HeadlinesView(APIView):
         tags=[HEADLINES_API_TAG],
     )
     @cache_response()
+    @require_authorisation
     def get(cls, request, *args, **kwargs):
         """This endpoint can be used to retrieve headline-type numbers.
 

@@ -18,6 +18,7 @@ from cms.dashboard.enums import (
 from cms.dashboard.models import UKHSAPage
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.access import ALLOWABLE_BODY_CONTENT_COMPOSITE
+from cms.dynamic_content.announcements import Announcement
 
 
 class CompositePage(UKHSAPage):
@@ -80,6 +81,7 @@ class CompositePage(UKHSAPage):
         [
             ObjectList(content_panels, heading="Content"),
             ObjectList(sidebar_content_panels, heading="Related Links"),
+            ObjectList(UKHSAPage.announcement_content_panels, heading="Announcements"),
             ObjectList(UKHSAPage.promote_panels, heading="Promote"),
         ]
     )
@@ -140,3 +142,12 @@ class CompositeRelatedLink(Orderable):
         APIField("url"),
         APIField("body"),
     ]
+
+
+class CompositePageAnnouncement(Announcement):
+    page = ParentalKey(
+        CompositePage,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="announcements",
+    )

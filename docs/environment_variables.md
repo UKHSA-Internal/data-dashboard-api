@@ -8,6 +8,10 @@ This document lists and describes all the available environment variables across
 
 ### Application configuration
 
+#### `CACHING_V2_ENABLED`
+
+This configures the app to bypass the redis cache and always recalculate from the server.
+
 #### `APIENV`
 
 This configures the application to run under a set of assumptions.

@@ -135,7 +135,6 @@ source = ["caching", "cms", "feedback", "ingestion", "metrics", "public_api"]
 [tool.coverage.report]
 omit = [
     "tests/*",                          # Omit test files themselves from the report
-    "cms/search/*",                     # Boilerplate wagtail `search` app
     "metrics/api/wsgi.py",              # Boilerplate Django server entrypoint
     "metrics/api/asgi.py",              # Boilerplate Django server entrypoint
     "metrics/api/settings/*",           # Configuration paackage
@@ -179,7 +178,7 @@ modules = [
 ignore_imports = [
     "cms.metrics_interface.interface -> metrics.data.models.core_models",
     "cms.metrics_interface.interface -> metrics.domain.common.utils",
-    "cms.metrics_interface.interface -> metrics.domain.charts.line_multi_coloured.properties",
+    "cms.metrics_interface.interface -> metrics.domain.charts.common_charts.plots.line_multi_coloured.properties",
     "cms.metrics_interface.interface -> metrics.domain.charts.colour_scheme",
     "cms.metrics_documentation.data_migration.operations -> metrics.api.settings",
     "metrics.api.urls_construction -> cms.dashboard.viewsets",
@@ -292,6 +291,8 @@ ignore_imports = [
     "ingestion.metrics_interface.interface -> metrics.data.enums",
     "ingestion.metrics_interface.interface -> metrics.domain.common.utils",
     "ingestion.operations.truncated_dataset -> metrics.api.settings",
+    "ingestion.data_transfer_models.headline -> metrics.api.settings.auth",             # Allowance for `AUTH_ENABLED` setting
+    "ingestion.data_transfer_models.time_series -> metrics.api.settings.auth",          # Allowance for `AUTH_ENABLED` setting
 ]
 #------------------------------------------ Metrics Domain library contracts ------------------------------------------#
 [[tool.importlinter.contracts]]

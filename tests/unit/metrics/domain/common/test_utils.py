@@ -2,58 +2,13 @@ import datetime
 
 import pytest
 
-from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
-from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 from metrics.domain.common.utils import (
     ChartAxisFields,
     ChartTypes,
     _check_for_substring_match,
-    get_last_day_of_month,
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
-
-
-class TestGetLastDayOfMonth:
-
-    @pytest.mark.parametrize(
-        "input_date, expected_date",
-        [
-            (
-                datetime.date(year=2024, month=1, day=1),
-                datetime.date(year=2024, month=1, day=31),
-            ),
-            (
-                datetime.date(year=2024, month=2, day=1),
-                datetime.date(year=2024, month=2, day=29),
-            ),
-            (
-                datetime.date(year=2024, month=2, day=17),
-                datetime.date(year=2024, month=2, day=29),
-            ),
-            (
-                datetime.date(year=2024, month=2, day=28),
-                datetime.date(year=2024, month=2, day=29),
-            ),
-            (
-                datetime.date(year=2024, month=2, day=29),
-                datetime.date(year=2024, month=2, day=29),
-            ),
-        ],
-    )
-    def test_returns_correct_date(
-        self, input_date: datetime.date, expected_date: datetime.date
-    ):
-        """
-        Given an input date
-        When `get_last_day_of_month()` is called
-        Then the returned date is the last day of the month
-        """
-        # Given / When
-        last_day_of_month: datetime.date = get_last_day_of_month(date=input_date)
-
-        # Then
-        assert last_day_of_month == expected_date
 
 
 class TestChartAxisFields:
