@@ -102,6 +102,11 @@ class ChartSettings:
             "ticks": "outside",
             "tickson": "boundaries",
             "tickcolor": "rgba(0,0,0,0)",
+            "tickformatstops": [
+                {"dtickrange": [None, 999], "value": ","},
+                {"dtickrange": [1000, 99999], "value": ",.0f"},
+                {"dtickrange": [100000, None], "value": ".0s"},
+            ],
             "showgrid": False,
             "showticklabels": True,
             "fixedrange": True,
