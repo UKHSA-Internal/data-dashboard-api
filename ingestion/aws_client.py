@@ -278,6 +278,6 @@ class AWSClient:
 
         """
         filename: str = self._get_filename_from_key(key=key)
-        topic = filename.split("_")[0]
+        topic = filename.split("_", maxsplit=1)[0]
         current_date: str = datetime.datetime.now().strftime("%Y-%m-%d")
         return f"processed/{current_date}/{topic}/{filename}"
