@@ -1,5 +1,7 @@
 import datetime
+import logging
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from decimal import Decimal
 from typing import Any
 
@@ -24,6 +26,8 @@ from metrics.utils.type_hints import CORE_MODEL_MANAGER_TYPE
 
 DEFAULT_CORE_TIME_SERIES_MANAGER = CoreTimeSeries.objects
 DEFAULT_TOPIC_MANAGER = Topic.objects
+
+logger = logging.getLogger(__name__)
 
 
 class DataNotFoundForPlotError(Exception):
@@ -106,7 +110,7 @@ class PlotsInterface:
 
             A `latest_date` attribute is also set
             on the returned `QuerySetResult` model.
-            for headline data the `latest_date` is the lastest period end of the
+            for headline data the `latest_date` is the latest period end of the
             selected plots.
 
         Returns:
@@ -297,6 +301,52 @@ class PlotsInterface:
             raise DataNotFoundForAnyPlotError
 
         return plots_data
+
+    def build_plots_data_in_parallel(self) -> list[PlotGenerationData]:
+        """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
+
+        Notes:
+            The corresponding timeseries data is used to enrich a
+            pydantic model which also holds the corresponding params.
+            These models can then be passed into the domain libraries.
+
+            If no data is returned for a particular plot,
+            that plot is skipped and no enriched model is provided.
+
+        Returns:
+            A list of enriched `PlotGenerationData` models for
+                each of the requested plots.
+
+        """
+
+        def _build_plot_data_for_single_plot_safely(
+            plot_parameters: PlotParameters,
+        ) -> PlotGenerationData | None:
+            try:
+                return self.build_plot_data_from_parameters(
+                    plot_parameters=plot_parameters
+                )
+            except DataNotFoundForPlotError:
+                return None
+
+        plots: list[PlotParameters] = self.chart_request_params.plots
+        max_workers: int = min(len(plots), 3)
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures_sequence = {
+                executor.submit(_build_plot_data_for_single_plot_safely, plot): plot
+                for plot in plots
+            }
+
+            results: list[PlotGenerationData] = []
+            for future in as_completed(futures_sequence, timeout=60):
+                try:
+                    if result := future.result():
+                        results.append(result)
+                except Exception as error:
+                    logger.warning("Plot generation failed: %s", error)
+
+            return results
 
 
 def get_aggregated_results(

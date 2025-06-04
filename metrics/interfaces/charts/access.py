@@ -7,6 +7,7 @@ import plotly.graph_objects
 from django.db.models import Manager
 from scour import scour
 
+import config
 from metrics.data.models.core_models import CoreHeadline, CoreTimeSeries
 from metrics.domain.charts import (
     common_charts,
@@ -387,9 +388,12 @@ class ChartsInterface:
                 returned any data from the underlying queries
 
         """
-        plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data()
-        self._set_latest_date_from_plots_data(plots_data=plots_data)
+        if config.APIENV == "PROD":
+            plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data_in_parallel()
+        else:
+            plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data()
 
+        self._set_latest_date_from_plots_data(plots_data=plots_data)
         return plots_data
 
     def _set_latest_date_from_plots_data(
