@@ -341,10 +341,12 @@ class PlotsInterface:
             results: list[PlotGenerationData] = []
             for future in as_completed(futures_sequence, timeout=60):
                 try:
-                    if result := future.result():
-                        results.append(result)
+                    result = future.result()
                 except Exception as error:
                     logger.warning("Plot generation failed: %s", error)
+
+                if result:
+                    results.append(result)
 
             return results
 
