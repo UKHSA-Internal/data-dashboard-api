@@ -389,7 +389,9 @@ class ChartsInterface:
 
         """
         if config.APIENV == "PROD":
-            plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data_in_parallel()
+            plots_data: list[PlotGenerationData] = (
+                self.plots_interface.build_plots_data_with_multithreading()
+            )
         else:
             plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data()
 

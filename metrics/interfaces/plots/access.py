@@ -302,7 +302,7 @@ class PlotsInterface:
 
         return plots_data
 
-    def build_plots_data_in_parallel(self) -> list[PlotGenerationData]:
+    def build_plots_data_with_multithreading(self) -> list[PlotGenerationData]:
         """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
 
         Notes:
