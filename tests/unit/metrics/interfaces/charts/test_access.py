@@ -1,10 +1,11 @@
+import config
 import datetime
-from copy import deepcopy
 from unittest import mock
 
 import plotly.graph_objects
 import pytest
 from plotly.graph_objs import Figure
+from _pytest.monkeypatch import MonkeyPatch
 
 from metrics.data.managers.core_models.headline import CoreHeadlineManager
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesManager
@@ -469,6 +470,52 @@ class TestChartsInterface:
         spy_plots_interface.build_plots_data.assert_called_once()
         assert plots_data == spy_plots_interface.build_plots_data.return_value
         # Check that the latest_date is set on the `ChartsInterface`
+        spy_set_latest_date_from_plots_data.assert_called_once()
+
+    @mock.patch.object(ChartsInterface, "_set_latest_date_from_plots_data")
+    def test_build_chart_plots_data_calls_parallel_when_in_prod_mode(
+        self,
+        spy_set_latest_date_from_plots_data: mock.MagicMock,
+        monkeypatch: MonkeyPatch,
+        fake_chart_plot_parameters: PlotParameters,
+    ):
+        """
+        Given an enriched `ChartRequestParams` model
+        And the `APIENV` is set to `PROD`
+        When `_build_chart_plots_data()` is called
+            from an instance of the `ChartsInterface`
+        Then the call is delegated
+            to the `build_plots_data_with_multithreading()`
+            method on the `PlotsInterface`
+        """
+        # Given
+        spy_plots_interface = mock.MagicMock()
+        fake_chart_plots = ChartRequestParams(
+            plots=[fake_chart_plot_parameters],
+            file_format="png",
+            chart_width=123,
+            chart_height=456,
+            x_axis="date",
+            y_axis="metric",
+        )
+        charts_interface = ChartsInterface(
+            chart_request_params=fake_chart_plots,
+            plots_interface=spy_plots_interface,
+        )
+
+        # When
+        with monkeypatch.context() as m:
+            m.setattr(target=config, name="APIENV", value="PROD")
+            plots_data = charts_interface._build_chart_plots_data()
+
+        # Then
+        spy_plots_interface.build_plots_data.assert_not_called()
+        spy_plots_interface.build_plots_data_with_multithreading.assert_called_once()
+
+        assert (
+            plots_data
+            == spy_plots_interface.build_plots_data_with_multithreading.return_value
+        )
         spy_set_latest_date_from_plots_data.assert_called_once()
 
     def test_set_latest_date_from_plots_data_fails_silently_when_latest_date_not_provided(
