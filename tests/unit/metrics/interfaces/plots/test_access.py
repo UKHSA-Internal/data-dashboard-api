@@ -3,6 +3,7 @@ from decimal import Decimal
 from unittest import mock
 
 import pytest
+from _pytest.logging import LogCaptureFixture
 
 from metrics.domain.models import (
     PlotGenerationData,
@@ -306,6 +307,43 @@ class TestPlotsInterface:
         # When / Then
         with pytest.raises(DataNotFoundForAnyPlotError):
             plots_interface.build_plots_data_with_multithreading()
+
+    @mock.patch.object(PlotsInterface, "build_plot_data_from_parameters")
+    def test_build_plots_data_with_multithreading_delegates_call_for_each_plot(
+        self,
+        spy_build_plot_data_from_parameters: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+        caplog: LogCaptureFixture,
+    ):
+        """
+        Given a `ChartRequestParams` model
+            which will not result in any data for any of its plots
+        When `build_plots_data_with_multithreading()` is called
+            from an instance of the `PlotsInterface`
+        Then a log statement is recorded for the failure
+        """
+        # Given
+        fake_chart_request_params = ChartRequestParams(
+            plots=[fake_chart_plot_parameters],
+            file_format="png",
+            chart_width=123,
+            chart_height=456,
+            x_axis="date",
+            y_axis="metric",
+        )
+
+        plots_interface = PlotsInterface(
+            chart_request_params=fake_chart_request_params,
+            core_model_manager=mock.Mock(),
+        )
+        spy_build_plot_data_from_parameters.side_effect = DataNotFoundForPlotError
+
+        # When
+        with pytest.raises(DataNotFoundForAnyPlotError):
+            plots_interface.build_plots_data_with_multithreading()
+
+        # Then
+        assert "Plot generation failed" in caplog.text
 
     @mock.patch.object(
         PlotsInterface, "build_plot_data_from_parameters_with_complete_queryset"
