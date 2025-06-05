@@ -303,7 +303,7 @@ class PlotsInterface:
         return plots_data
 
     def build_plots_data_with_multithreading(self) -> list[PlotGenerationData]:
-        """Creates a list of `PlotData` models which hold the params and corresponding data for the requested plots
+        """Creates a list of `PlotGenerationData` models which hold the params and data for the requested plots
 
         Notes:
             The corresponding timeseries data is used to enrich a
@@ -318,23 +318,12 @@ class PlotsInterface:
                 each of the requested plots.
 
         """
-
-        def _build_plot_data_for_single_plot_safely(
-            plot_parameters: PlotParameters,
-        ) -> PlotGenerationData | None:
-            try:
-                return self.build_plot_data_from_parameters(
-                    plot_parameters=plot_parameters
-                )
-            except DataNotFoundForPlotError:
-                return None
-
         plots: list[PlotParameters] = self.chart_request_params.plots
         max_workers: int = min(len(plots), 3)
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures_sequence = {
-                executor.submit(_build_plot_data_for_single_plot_safely, plot): plot
+                executor.submit(self.build_plot_data_from_parameters, plot): plot
                 for plot in plots
             }
 
@@ -344,14 +333,15 @@ class PlotsInterface:
                     result = future.result()
                 except Exception as error:
                     logger.warning("Plot generation failed: %s", error)
+                    continue
 
                 if result:
                     results.append(result)
 
-            if not results:
-                raise DataNotFoundForAnyPlotError
+        if not results:
+            raise DataNotFoundForAnyPlotError
 
-            return results
+        return results
 
 
 def get_aggregated_results(
