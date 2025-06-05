@@ -348,6 +348,9 @@ class PlotsInterface:
                 if result:
                     results.append(result)
 
+            if not results:
+                raise DataNotFoundForAnyPlotError
+
             return results
 
 
