@@ -175,6 +175,138 @@ class TestPlotsInterface:
         with pytest.raises(DataNotFoundForAnyPlotError):
             plots_interface.build_plots_data()
 
+    @mock.patch.object(PlotsInterface, "build_plot_data_from_parameters")
+    def test_build_plots_data_with_multithreading_delegates_call_for_each_plot(
+        self,
+        spy_build_plot_data_from_parameters: mock.MagicMock,
+        fake_chart_plot_parameters: PlotParameters,
+        fake_chart_plot_parameters_covid_cases: PlotParameters,
+    ):
+        """
+        Given a `ChartRequestParams` model
+            which contains `PlotParameters` for 2 separate plots
+        When `build_plots_data_with_multithreading()` is called
+            from an instance of the `PlotsInterface`
+        Then the calls are delegated to the `build_plot_data_from_parameters()` method
+            for each `PlotParameters` model
+        """
+        # Given
+        fake_chart_request_params = ChartRequestParams(
+            plots=[fake_chart_plot_parameters, fake_chart_plot_parameters_covid_cases],
+            file_format="png",
+            chart_width=123,
+            chart_height=456,
+            x_axis="date",
+            y_axis="metric",
+        )
+
+        plots_interface = PlotsInterface(
+            chart_request_params=fake_chart_request_params,
+            core_model_manager=mock.Mock(),
+        )
+
+        # When
+        plots_data = plots_interface.build_plots_data_with_multithreading()
+
+        # Then
+        # Check that `build_plot_data_from_parameters()` method
+        # is called for each of the provided `PlotParameters` models
+        expected_calls = [
+            mock.call(plot_parameters=fake_chart_plot_parameters),
+            mock.call(plot_parameters=fake_chart_plot_parameters_covid_cases),
+        ]
+        spy_build_plot_data_from_parameters.assert_has_calls(
+            calls=expected_calls,
+            any_order=True,
+        )
+
+        expected_plots_data = [spy_build_plot_data_from_parameters.return_value] * 2
+        assert plots_data == expected_plots_data
+
+    def test_build_plots_data_with_multithreading_passes_for_plot_parameters_with_no_supporting_data(
+        self, valid_plot_parameters: PlotParameters
+    ):
+        """
+        Given a request for a plot with no supporting data
+            and another which has supporting data
+        When `build_plots_data_with_multithreading()` is called
+            from an instance of the `PlotsInterface`
+        Then only 1 enriched `PlotGenerationData` model is returned
+            for the `PlotParameters` which requested timeseries data that existed
+        """
+        # Given
+        plot_parameters_with_no_supporting_data = PlotParameters(
+            metric="non_cases_topic_cases_abc",
+            topic="non_cases_topic",
+            chart_type="line",
+            date_from="2023-01-01",
+            date_to="2023-12-31",
+        )
+        chart_request_params = ChartRequestParams(
+            plots=[valid_plot_parameters, plot_parameters_with_no_supporting_data],
+            file_format="svg",
+            chart_width=123,
+            chart_height=456,
+            x_axis="date",
+            y_axis="metric",
+        )
+        fake_core_time_series_records: list[FakeCoreTimeSeries] = (
+            self._setup_fake_time_series_for_plot(plot_parameters=valid_plot_parameters)
+        )
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(
+            time_series=fake_core_time_series_records
+        )
+
+        plots_interface = PlotsInterface(
+            chart_request_params=chart_request_params,
+            core_model_manager=fake_core_time_series_manager,
+        )
+
+        # When
+        plots_data: list[PlotGenerationData] = (
+            plots_interface.build_plots_data_with_multithreading()
+        )
+
+        # Then
+        # Check that only 1 enriched `PlotData` model is returned
+        assert len(plots_data) == 1
+
+        # Check that the `PlotData` model was enriched
+        # for the plot parameters which requested timeseries data that existed
+        expected_plots_data_for_valid_params = PlotGenerationData(
+            parameters=valid_plot_parameters,
+            x_axis_values=[x.date for x in fake_core_time_series_records],
+            y_axis_values=[x.metric_value for x in fake_core_time_series_records],
+            additional_values={
+                "in_reporting_delay_period": [
+                    x.in_reporting_delay_period for x in fake_core_time_series_records
+                ]
+            },
+            latest_date=str(max(x.date for x in fake_core_time_series_records)),
+        )
+        assert plots_data == [expected_plots_data_for_valid_params]
+
+    def test_build_plots_data_with_multithreading_raises_error_when_all_plots_return_no_data(
+        self, fake_chart_request_params: ChartRequestParams
+    ):
+        """
+        Given a request with a `PlotsCollection` model
+            which will return no data for any of its plots
+        When `build_plots_data_with_multithreading()` is called from
+            an instance of the `PlotsInterface`
+        Then a `DataNotFoundForAnyPlotError` is raised
+        """
+        # Given
+        fake_core_time_series_manager = FakeCoreTimeSeriesManager(time_series=[])
+        plots_interface = PlotsInterface(
+            chart_request_params=fake_chart_request_params,
+            core_model_manager=fake_core_time_series_manager,
+        )
+
+        # When / Then
+        with pytest.raises(DataNotFoundForAnyPlotError):
+            plots_interface.build_plots_data_with_multithreading()
+
     @mock.patch.object(
         PlotsInterface, "build_plot_data_from_parameters_with_complete_queryset"
     )
