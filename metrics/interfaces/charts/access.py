@@ -393,7 +393,9 @@ class ChartsInterface:
                 self.plots_interface.build_plots_data_with_multithreading()
             )
         else:
-            plots_data: list[PlotGenerationData] = self.plots_interface.build_plots_data()
+            plots_data: list[PlotGenerationData] = (
+                self.plots_interface.build_plots_data()
+            )
 
         self._set_latest_date_from_plots_data(plots_data=plots_data)
         return plots_data
