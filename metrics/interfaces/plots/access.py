@@ -323,7 +323,9 @@ class PlotsInterface:
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures_sequence = {
-                executor.submit(self.build_plot_data_from_parameters, plot): plot
+                executor.submit(
+                    self.build_plot_data_from_parameters, plot_parameters=plot
+                ): plot
                 for plot in plots
             }
 
