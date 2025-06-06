@@ -82,7 +82,7 @@ tenacity==9.1.2
 toml==0.10.2
 tomli==2.2.1
 typing_extensions==4.13.2
-uritemplate==4.1.1
+uritemplate==4.2.0
 urllib3==2.4.0
 virtualenv==20.31.2
 wagtail==6.4.1

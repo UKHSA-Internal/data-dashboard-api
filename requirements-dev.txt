@@ -4,6 +4,7 @@ coverage==7.8.2
 cyclonedx-python-lib==8.9.0
 django-factory-boy==1.0.0
 factory-boy==3.3.3
+freezegun==1.5.2
 Faker==37.3.0
 gitdb==4.0.12
 GitPython==3.1.44
@@ -15,7 +16,7 @@ pip-requirements-parser==32.0.1
 pre-commit==4.2.0
 pylint==3.3.7
 pylint-django==2.6.1
-pytest==8.3.5
+pytest==8.4.0
 pytest-cov==6.1.1
 pytest-django==4.11.1
 pytest-random-order==1.1.1
