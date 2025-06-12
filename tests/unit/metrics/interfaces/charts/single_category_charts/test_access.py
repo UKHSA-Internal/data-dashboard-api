@@ -1,5 +1,4 @@
 import datetime
-from copy import deepcopy
 from unittest import mock
 
 import plotly.graph_objects
@@ -15,7 +14,7 @@ from metrics.domain.models import (
     ChartGenerationPayload,
 )
 from metrics.domain.common.utils import ChartTypes
-from metrics.interfaces.charts.access import (
+from metrics.interfaces.charts.single_category_charts.access import (
     ChartOutput,
     ChartsInterface,
     InvalidFileFormatError,
