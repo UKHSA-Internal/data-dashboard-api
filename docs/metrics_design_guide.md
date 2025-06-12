@@ -32,7 +32,7 @@ both the **Core models** and **API models** are populated
 ## Chart generation
 
 Currently, the chart generation functionality is bespoke to this codebase.
-The chart generation code can be found at `metrics/domain/charts/generation.py`.
+The chart generation code can be found at `metrics/domain/charts/`.
 
 The [coronavirus-dashboard-pipeline-etl](https://github.com/publichealthengland/coronavirus-dashboard-pipeline-etl)
 contains a number of functions which are being used to generate charts of various types 
