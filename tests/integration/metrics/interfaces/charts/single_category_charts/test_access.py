@@ -12,7 +12,10 @@ from metrics.domain.models import (
 
 from metrics.domain.charts.common_charts import generation as common_chart_generation
 from metrics.domain.common.utils import ChartTypes
-from metrics.interfaces.charts.single_category_charts.access import ChartsInterface, ChartOutput
+from metrics.interfaces.charts.single_category_charts.access import (
+    ChartsInterface,
+    ChartOutput,
+)
 
 
 class TestChartsInterface:
