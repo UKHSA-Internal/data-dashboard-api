@@ -7,7 +7,7 @@ from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties im
     ChartLineTypes,
 )
 from metrics.domain.common.utils import ChartAxisFields
-from metrics.interfaces.charts.access import ChartTypes
+from metrics.interfaces.charts.single_category_charts.access import ChartTypes
 from tests.fakes.models.queryset import FakeQuerySet
 
 

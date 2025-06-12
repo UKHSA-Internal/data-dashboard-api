@@ -29,7 +29,7 @@ from tests.fakes.factories.metrics.core_time_series_factory import (
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.factories.metrics.domain.plots.plot_parameters import FakePlotParameters
 
-MODULE_PATH = "metrics.interfaces.charts.access"
+MODULE_PATH = "metrics.interfaces.charts.single_category_charts.access"
 
 
 class TestChartsInterface:
