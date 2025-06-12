@@ -58,4 +58,4 @@ As of Oct 2024, the following charts can be generated from this project:
 ### Chart API
 
 Currently multiple plots can be applied for either bar charts or line charts.
-Multiple type of different plots cannot be applied on the same chart.
+Bar and line plots can be used on the same chart.
