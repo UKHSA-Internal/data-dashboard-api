@@ -1,6 +1,6 @@
 import pytest
 
-from metrics.interfaces.charts import calculations
+from metrics.interfaces.charts.single_category_charts import calculations
 
 
 class TestSplitListInHalf:

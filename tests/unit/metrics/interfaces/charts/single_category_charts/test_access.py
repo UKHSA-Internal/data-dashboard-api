@@ -1,5 +1,4 @@
 import datetime
-from copy import deepcopy
 from unittest import mock
 
 import plotly.graph_objects
@@ -15,7 +14,7 @@ from metrics.domain.models import (
     ChartGenerationPayload,
 )
 from metrics.domain.common.utils import ChartTypes
-from metrics.interfaces.charts.access import (
+from metrics.interfaces.charts.single_category_charts.access import (
     ChartOutput,
     ChartsInterface,
     InvalidFileFormatError,
@@ -30,7 +29,7 @@ from tests.fakes.factories.metrics.core_time_series_factory import (
 from tests.fakes.managers.time_series_manager import FakeCoreTimeSeriesManager
 from tests.factories.metrics.domain.plots.plot_parameters import FakePlotParameters
 
-MODULE_PATH = "metrics.interfaces.charts.access"
+MODULE_PATH = "metrics.interfaces.charts.single_category_charts.access"
 
 
 class TestChartsInterface:

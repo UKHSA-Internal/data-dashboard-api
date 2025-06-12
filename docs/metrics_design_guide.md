@@ -32,7 +32,7 @@ both the **Core models** and **API models** are populated
 ## Chart generation
 
 Currently, the chart generation functionality is bespoke to this codebase.
-The chart generation code can be found at `metrics/domain/charts/generation.py`.
+The chart generation code can be found at `metrics/domain/charts/`.
 
 The [coronavirus-dashboard-pipeline-etl](https://github.com/publichealthengland/coronavirus-dashboard-pipeline-etl)
 contains a number of functions which are being used to generate charts of various types 
@@ -58,4 +58,4 @@ As of Oct 2024, the following charts can be generated from this project:
 ### Chart API
 
 Currently multiple plots can be applied for either bar charts or line charts.
-Multiple type of different plots cannot be applied on the same chart.
+Bar and line plots can be used on the same chart.
