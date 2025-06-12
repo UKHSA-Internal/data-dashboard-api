@@ -5,7 +5,7 @@ cyclonedx-python-lib==8.9.0
 django-factory-boy==1.0.0
 factory-boy==3.3.3
 freezegun==1.5.2
-Faker==37.3.0
+Faker==37.4.0
 gitdb==4.0.12
 GitPython==3.1.44
 import-linter==2.3
