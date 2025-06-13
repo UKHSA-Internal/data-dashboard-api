@@ -1,1 +1,2 @@
 from .single_category_charts import ChartsView, EncodedChartsView
+from .dual_category_charts import DualCategoryChartsView
