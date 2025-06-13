@@ -21,7 +21,7 @@ class TestDualCategoryChartSegmentSerializer:
             "primary_field_values": ["m", "f"],
             "secondary_field_value": "00-04",
             "color": colour_scheme.RGBAChartLineColours.COLOUR_9_DEEP_PLUM.name,
-            "label": "Test Segment Label",
+            "label": "0 to 4 years",
         }
 
         serializer = DualCategoryChartSegmentSerializer(data=valid_data_payload)
@@ -44,7 +44,7 @@ class TestDualCategoryChartSegmentSerializer:
             "primary_field_values": ["m"],
             "secondary_field_value": "00-04",
             "color": colour_scheme.RGBAChartLineColours.COLOUR_10_PINK.name,
-            "label": "Single Value Segment",
+            "label": "0 to 4 years",
         }
 
         serializer = DualCategoryChartSegmentSerializer(data=valid_data_payload)
@@ -73,7 +73,7 @@ class TestDualCategoryChartSegmentSerializer:
             "primary_field_values": ["m"],
             "secondary_field_value": "00-04",
             "color": color_value,
-            "label": f"Segment with {color_value} color",
+            "label": "0 to 4 years",
         }
 
         serializer = DualCategoryChartSegmentSerializer(data=valid_data_payload)
@@ -139,7 +139,7 @@ class TestDualCategoryChartSegmentSerializer:
             "primary_field_values": ["m", "f"],
             "secondary_field_value": "00-04",
             "color": colour_scheme.RGBAChartLineColours.COLOUR_12_BLUE.name,
-            "label": "Test Label",
+            "label": "0 to 4 years",
         }
         incomplete_payload = {
             k: v for k, v in complete_payload.items() if k != missing_field
@@ -207,7 +207,7 @@ class TestDualCategoryChartSegmentSerializer:
             "primary_field_values": [],
             "secondary_field_value": "00-04",
             "color": colour_scheme.RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
-            "label": "Empty Primary Values Segment",
+            "label": "",
         }
 
         serializer = DualCategoryChartSegmentSerializer(data=valid_data_payload)
