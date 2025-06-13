@@ -21,7 +21,11 @@ class CoreHeadlineQuerySet(models.QuerySet):
     """Custom queryset which can be used by the `CoreHeadlineManager`"""
 
     @staticmethod
-    def _newest_to_oldest(*, queryset: models.QuerySet) -> models.QuerySet:
+    def _newest_to_oldest(
+        *, queryset: models.QuerySet, apply_refresh_date_only: bool
+    ) -> models.QuerySet:
+        if apply_refresh_date_only:
+            return queryset.order_by("-refresh_date")
         return queryset.order_by("-period_end", "-refresh_date")
 
     @staticmethod
@@ -144,7 +148,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
             age=age,
             sex=sex,
         )
-        return self._newest_to_oldest(queryset=queryset)
+        return self._newest_to_oldest(queryset=queryset, apply_refresh_date_only=False)
 
     def get_all_headlines_released_from_embargo(
         self,
@@ -204,7 +208,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
             sex=sex,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
-        return self._newest_to_oldest(queryset=queryset)
+        apply_refresh_date_only: bool = "alert" in topic_name
+        return self._newest_to_oldest(
+            queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
+        )
 
     def get_public_only_headlines_released_from_embargo(
         self,
@@ -229,7 +236,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
             age=age,
         )
         queryset = queryset.filter(is_public=True)
-        return self._newest_to_oldest(queryset=queryset)
+        apply_refresh_date_only: bool = "alert" in topic_name
+        return self._newest_to_oldest(
+            queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
+        )
 
     def get_non_public_only_headlines_released_from_embargo(
         self,
@@ -254,7 +264,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
             age=age,
         )
         queryset = queryset.filter(is_public=False)
-        return self._newest_to_oldest(queryset=queryset)
+        apply_refresh_date_only: bool = "alert" in topic_name
+        return self._newest_to_oldest(
+            queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
+        )
 
     @staticmethod
     def _exclude_data_under_embargo(*, queryset: models.QuerySet) -> models.QuerySet:
