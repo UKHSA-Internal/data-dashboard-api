@@ -30,6 +30,7 @@ from metrics.api.views import (
     TablesView,
     TrendsView,
 )
+from metrics.api.views.charts import DualCategoryChartsView
 from metrics.api.views.geographies import GeographiesView
 from metrics.api.views.health import InternalHealthView
 from public_api import construct_url_patterns_for_public_api
@@ -167,6 +168,7 @@ audit_api_urlpatterns = [
         name="audit-core-headline",
     ),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/dual-category/v1", DualCategoryChartsView.as_view()),
 ]
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
