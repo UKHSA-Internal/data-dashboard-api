@@ -44,7 +44,7 @@ Markdown==3.8
 markdown-it-py==2.2.0
 MarkupSafe==3.0.2
 mdurl==0.1.2
-msgpack==1.1.0
+msgpack==1.1.1
 mypy-extensions==1.1.0
 nodeenv==1.9.1
 openapi-codec==1.3.2
