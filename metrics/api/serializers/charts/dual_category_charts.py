@@ -13,9 +13,7 @@ from metrics.domain.common.utils import (
     ChartTypes,
     DEFAULT_Y_AXIS_MINIMUM_VAlUE,
 )
-from metrics.domain.models.charts.dual_category_charts import (
-    DualCategoryChartRequestParams,
-)
+from metrics.domain.models.charts import DualCategoryChartRequestParams
 
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
