@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from metrics.api.views.charts.common import BaseChartRequestParams
+from metrics.domain.models.charts.common import BaseChartRequestParams
 from metrics.domain.models.charts.segments import SegmentParameters
 
 
