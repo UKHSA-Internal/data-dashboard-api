@@ -50,13 +50,13 @@ EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
         {
             "primary_field_values": ["m", "f"],
             "secondary_field_value": "00-04",
-            "color": RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
+            "colour": RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
             "label": "0 to 4 years",
         },
         {
             "primary_field_values": ["m", "f"],
             "secondary_field_value": "05-11",
-            "color": RGBAChartLineColours.COLOUR_3_DARK_PINK.name,
+            "colour": RGBAChartLineColours.COLOUR_3_DARK_PINK.name,
             "label": "5 to 11 years",
         },
     ],

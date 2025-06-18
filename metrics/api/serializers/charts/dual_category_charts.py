@@ -20,7 +20,7 @@ class DualCategoryChartSegmentSerializer(serializers.Serializer):
         help_text="Secondary field value for this segment",
         required=True,
     )
-    color = serializers.ChoiceField(
+    colour = serializers.ChoiceField(
         choices=RGBAChartLineColours.choices(),
         help_text="Color for this segment",
         required=True,
