@@ -92,4 +92,7 @@ class DualCategoryChartsView(APIView):
 
         logger.info("This endpoint is not yet complete")
 
-        return Response(200)
+        temporary_dict_representation = chart_request_params.model_dump()
+        temporary_dict_representation.pop("request")
+
+        return Response(data=temporary_dict_representation)
