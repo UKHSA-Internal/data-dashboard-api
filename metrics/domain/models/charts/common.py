@@ -11,9 +11,9 @@ class BaseChartRequestParams(BaseModel):
     chart_width: int
     chart_height: int
     x_axis: str
-    x_axis_title: str
+    x_axis_title: str = ""
     y_axis: str
-    y_axis_title: str
+    y_axis_title: str = ""
     y_axis_minimum_value: Decimal | int = 0
     y_axis_maximum_value: Decimal | int | None = None
     request: Request | None = None

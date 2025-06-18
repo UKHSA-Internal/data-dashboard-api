@@ -1,11 +1,9 @@
 import datetime
-from collections.abc import Iterable
 from decimal import Decimal
-from typing import Literal, Self
+from typing import Self
 
 from dateutil.relativedelta import relativedelta
 from pydantic.main import Any, BaseModel
-from rest_framework.request import Request
 
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.common.utils import (
@@ -14,6 +12,7 @@ from metrics.domain.common.utils import (
     DataSourceFileType,
     extract_metric_group_from_metric,
 )
+from metrics.domain.models.charts.common import BaseChartRequestParams
 
 
 class PlotParameters(BaseModel):
@@ -153,29 +152,11 @@ class PlotParameters(BaseModel):
         return RGBAChartLineColours.BLACK
 
 
-class ChartRequestParams(BaseModel):
+class ChartRequestParams(BaseChartRequestParams):
     """Holds all the request information / params for a chart in its entirety."""
 
     metric_group: str | None = None
     plots: list[PlotParameters]
-    file_format: Literal["png", "svg", "jpg", "jpeg"]
-    chart_width: int
-    chart_height: int
-    x_axis: str
-    x_axis_title: str = ""
-    y_axis: str
-    y_axis_title: str = ""
-    y_axis_minimum_value: Decimal = 0
-    y_axis_maximum_value: Decimal | None = None
-
-    request: Request | None = None
-
-    class Config:
-        arbitrary_types_allowed = True
-
-    @property
-    def rbac_permissions(self) -> Iterable["RBACPermission"]:
-        return getattr(self.request, "rbac_permissions", [])
 
 
 class NoReportingDelayPeriodFoundError(Exception): ...
