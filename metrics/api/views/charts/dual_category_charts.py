@@ -88,6 +88,8 @@ class DualCategoryChartsView(APIView):
         request_serializer = DualCategoryChartSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
+        chart_request_params = request_serializer.to_models(request=request)
+
         logger.info("This endpoint is not yet complete")
 
         return Response(200)
