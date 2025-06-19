@@ -54,7 +54,7 @@ There may also be impacts on younger age groups</li>
 <li>internal temperatures in care settings (hospitals and care homes) may exceed recommended threshold 
 for clinical risk assessment</li>
 <li>the heat affecting the ability of the workforce to deliver services</li>
-<li>indoor environments overheating incrasing the risk to vulnerable people living independently in community and care settings</li>
+<li>indoor environments overheating increasing the risk to vulnerable people living independently in community and care settings</li>
 <li>issues managing medicines</li>
 <li>staffing issues due to external factors (for example, affecting transport)</li>
 <li>increased demand for power exceeding capacity</li>
