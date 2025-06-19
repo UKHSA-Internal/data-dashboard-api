@@ -139,8 +139,6 @@ class TestChartTypes:
 
         # Then
         _choices = (
-            "simple_line",
-            "waffle",
             "line_with_shaded_section",
             "bar",
             "line_multi_coloured",
@@ -228,8 +226,6 @@ class TestChartTypes:
 
         # Then
         expected_values = [
-            "simple_line",
-            "waffle",
             "line_with_shaded_section",
             "bar",
             "line_multi_coloured",

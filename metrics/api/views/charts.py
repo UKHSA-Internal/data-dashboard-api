@@ -265,17 +265,6 @@ class EncodedChartsView(APIView):
 
         ---
 
-        ## Incompatible timeseries type metrics with waffle charts
-
-        In these cases, this endpoint will return an HTTP 400 BAD REQUEST.
-        For example, if a timeseries type metric like `COVID-19_deaths_ONSByDay`
-        is being asked for with a `waffle` chart.
-
-        Then an HTTP 400 BAD REQUEST is returned with the following error message:
-            `COVID-19_deaths_ONSByDay` is not compatible with `waffle` chart types
-
-        ---
-
         ## Selected metric not available for topic
 
         In these cases, this endpoint will return an HTTP 400 BAD REQUEST.

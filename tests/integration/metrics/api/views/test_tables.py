@@ -35,7 +35,7 @@ class TestTablesView:
                 {
                     "topic": topic_name,
                     "metric": metric_name,
-                    "chart_type": "waffle",
+                    "chart_type": "bar",
                     "chart_height": 220,
                     "chart_width": 435,
                     "date_from": "2000-01-01",
@@ -75,7 +75,7 @@ class TestTablesView:
                 {
                     "topic": topic_name,
                     "metric": metric_name,
-                    "chart_type": "waffle",
+                    "chart_type": "bar",
                     "chart_height": 220,
                     "chart_width": 435,
                     "date_from": "2000-01-01",
@@ -117,7 +117,7 @@ class TestTablesView:
                 {
                     "topic": topic_name,
                     "metric": metric_name,
-                    "chart_type": "waffle",
+                    "chart_type": "bar",
                     "chart_height": 220,
                     "chart_width": 435,
                     "date_from": "2000-01-01",
@@ -180,14 +180,14 @@ class TestTablesView:
                 {
                     "topic": topic_name,
                     "metric": metric_name,
-                    "chart_type": "waffle",
+                    "chart_type": "bar",
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
                 },
                 {
                     "topic": topic_name,
                     "metric": metric_name,
-                    "chart_type": "waffle",
+                    "chart_type": "bar",
                     "label": "plot_label",
                     "date_from": "2000-01-01",
                     "date_to": datetime.date.today(),
