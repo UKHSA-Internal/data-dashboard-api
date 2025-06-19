@@ -143,6 +143,8 @@ class TestChartTypes:
             "bar",
             "line_multi_coloured",
             "line_single_simplified",
+            "stacked_bar",
+            "pyramid",
         )
         assert choices == tuple((choice, choice) for choice in _choices)
 
@@ -214,6 +216,8 @@ class TestChartTypes:
             "bar",
             "line_multi_coloured",
             "line_single_simplified",
+            "stacked_bar",
+            "pyramid",
         ]
         assert values == expected_values
 
