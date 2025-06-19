@@ -15,10 +15,15 @@ def _check_for_substring_match(
 
 
 class ChartTypes(Enum):
+    # Single category charts
     line_with_shaded_section = "line_with_shaded_section"
     bar = "bar"
     line_multi_coloured = "line_multi_coloured"
     line_single_simplified = "line_single_simplified"
+
+    # Dual category charts
+    stacked_bar = "stacked_bar"
+    pyramid = "pyramid"
 
     @classmethod
     def choices(cls) -> tuple[tuple[str, str], ...]:
