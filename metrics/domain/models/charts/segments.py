@@ -4,7 +4,6 @@ from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
 
 class SegmentParameters(BaseModel):
-    primary_field_values: list[str]
     secondary_field_value: str
     colour: str | None
     label: str | None
