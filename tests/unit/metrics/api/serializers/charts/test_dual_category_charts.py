@@ -18,7 +18,6 @@ class TestDualCategoryChartSegmentSerializer:
         """
         # Given
         valid_data_payload = {
-            "primary_field_values": ["m", "f"],
             "secondary_field_value": "00-04",
             "colour": colour_scheme.RGBAChartLineColours.COLOUR_9_DEEP_PLUM.name,
             "label": "0 to 4 years",
@@ -41,7 +40,6 @@ class TestDualCategoryChartSegmentSerializer:
         """
         # Given
         valid_data_payload = {
-            "primary_field_values": ["m"],
             "secondary_field_value": "00-04",
             "colour": colour_scheme.RGBAChartLineColours.COLOUR_10_PINK.name,
             "label": "0 to 4 years",
@@ -70,7 +68,6 @@ class TestDualCategoryChartSegmentSerializer:
         # Given
         colour_value: str = valid_colour_choice[0]
         valid_data_payload = {
-            "primary_field_values": ["m"],
             "secondary_field_value": "00-04",
             "colour": colour_value,
             "label": "0 to 4 years",
@@ -98,7 +95,6 @@ class TestDualCategoryChartSegmentSerializer:
         label = "0 to 4 years"
 
         valid_data_payload = {
-            "primary_field_values": primary_values,
             "secondary_field_value": secondary_field_value,
             "colour": colour,
             "label": label,
@@ -111,7 +107,6 @@ class TestDualCategoryChartSegmentSerializer:
 
         # Then
         assert is_serializer_valid
-        assert serializer.validated_data["primary_field_values"] == primary_values
         assert (
             serializer.validated_data["secondary_field_value"] == secondary_field_value
         )
@@ -122,7 +117,6 @@ class TestDualCategoryChartSegmentSerializer:
     @pytest.mark.parametrize(
         "missing_field",
         [
-            "primary_field_values",
             "secondary_field_value",
             "colour",
         ],
@@ -136,7 +130,6 @@ class TestDualCategoryChartSegmentSerializer:
         """
         # Given
         complete_payload = {
-            "primary_field_values": ["m", "f"],
             "secondary_field_value": "00-04",
             "colour": colour_scheme.RGBAChartLineColours.COLOUR_12_BLUE.name,
             "label": "0 to 4 years",
@@ -160,7 +153,6 @@ class TestDualCategoryChartSegmentSerializer:
         """
         # Given
         invalid_data_payload = {
-            "primary_field_values": ["m", "f"],
             "secondary_field_value": "",
             "colour": colour_scheme.RGBAChartLineColours.COLOUR_11_KHAKI.name,
             "label": "Test Label",
@@ -181,7 +173,6 @@ class TestDualCategoryChartSegmentSerializer:
         """
         # Given
         invalid_data_payload = {
-            "primary_field_values": ["m", "f"],
             "secondary_field_value": "00-04",
             "colour": colour_scheme.RGBAChartLineColours.COLOUR_3_DARK_PINK.name,
             "label": "",
@@ -194,26 +185,3 @@ class TestDualCategoryChartSegmentSerializer:
 
         # Then
         assert is_serializer_valid
-
-    def test_invalidates_with_empty_primary_field_values_list(self):
-        """
-        Given a payload containing an empty list for primary field values
-            passed to a `DualCategoryChartSegmentSerializer` object
-        When `is_valid()` is called from the serializer
-        Then False is returned
-        """
-        # Given
-        valid_data_payload = {
-            "primary_field_values": [],
-            "secondary_field_value": "00-04",
-            "colour": colour_scheme.RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
-            "label": "",
-        }
-
-        serializer = DualCategoryChartSegmentSerializer(data=valid_data_payload)
-
-        # When
-        is_serializer_valid: bool = serializer.is_valid()
-
-        # Then
-        assert not is_serializer_valid

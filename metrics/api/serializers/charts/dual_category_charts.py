@@ -17,12 +17,6 @@ from metrics.domain.models.charts import DualCategoryChartRequestParams
 
 
 class DualCategoryChartSegmentSerializer(serializers.Serializer):
-    primary_field_values = serializers.ListField(
-        child=serializers.CharField(),
-        help_text="List of primary field values for this segment",
-        required=True,
-        allow_empty=False,
-    )
     secondary_field_value = serializers.CharField(
         help_text="Secondary field value for this segment",
         required=True,
@@ -58,6 +52,12 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
         choices=ChartTypes.selectable_choices(),
         required=True,
     )
+    primary_field_values = serializers.ListField(
+        child=serializers.CharField(),
+        help_text="List of primary field values for this segment",
+        required=True,
+        allow_empty=False,
+    )
 
     secondary_category = serializers.CharField(
         help_text="Secondary category field for the chart",
@@ -82,6 +82,7 @@ class DualCategoryChartSerializer(BaseChartsSerializer):
 
         return DualCategoryChartRequestParams(
             chart_type=self.data["chart_type"],
+            primary_field_values=self.data["primary_field_values"],
             secondary_category=self.data["secondary_category"],
             static_fields=self.data["static_fields"],
             segments=self.data["segments"],

@@ -14,7 +14,7 @@ from tests.factories.metrics.time_series import CoreTimeSeriesFactory
 class TestChartsView:
     @property
     def path(self) -> str:
-        return "/api/dual-category-charts/v1"
+        return "/api/charts/dual-category/v1"
 
     @pytest.mark.django_db
     def test_returns_correct_response_for_age_based_chart(
@@ -23,7 +23,7 @@ class TestChartsView:
     ):
         """
         Given a valid payload to create a chart
-        When the `POST /api/dual-category-charts/v1/` endpoint is hit
+        When the `POST /api/charts/dual-category/v1/` endpoint is hit
         Then an HTTP 200 OK response is returned
         """
         # Given
