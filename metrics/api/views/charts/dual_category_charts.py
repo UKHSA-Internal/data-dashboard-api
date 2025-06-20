@@ -34,6 +34,8 @@ EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
     "chart_type": "bar",
     "secondary_category": "age",
     "static_fields": {
+        "theme": "infectious_disease",
+        "sub_theme": "respiratory",
         "topic": "COVID-19",
         "metric": "COVID-19_cases_rateRollingMean",
         "stratum": "default",
@@ -48,13 +50,13 @@ EXAMPLE_DUAL_CATEGORY_CHART_REQUEST_PAYLOAD = {
         {
             "primary_field_values": ["m", "f"],
             "secondary_field_value": "00-04",
-            "color": RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
+            "colour": RGBAChartLineColours.COLOUR_1_DARK_BLUE.name,
             "label": "0 to 4 years",
         },
         {
             "primary_field_values": ["m", "f"],
             "secondary_field_value": "05-11",
-            "color": RGBAChartLineColours.COLOUR_3_DARK_PINK.name,
+            "colour": RGBAChartLineColours.COLOUR_3_DARK_PINK.name,
             "label": "5 to 11 years",
         },
     ],
@@ -86,6 +88,11 @@ class DualCategoryChartsView(APIView):
         request_serializer = DualCategoryChartSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
 
+        chart_request_params = request_serializer.to_models(request=request)
+
         logger.info("This endpoint is not yet complete")
 
-        return Response(200)
+        temporary_dict_representation = chart_request_params.model_dump()
+        temporary_dict_representation.pop("request")
+
+        return Response(data=temporary_dict_representation)
