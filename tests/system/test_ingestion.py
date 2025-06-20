@@ -45,7 +45,7 @@ class TestIngestion:
                     "topic": example_time_series_data["topic"],
                     "metric": example_time_series_data["metric"],
                     "date_from": "2020-01-01",
-                    "chart_type": "waffle",
+                    "chart_type": "bar",
                 }
             ],
         }
