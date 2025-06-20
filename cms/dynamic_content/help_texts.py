@@ -127,7 +127,7 @@ e.g. "COVID-19_headline_ONSdeaths_7daypercentchange".
 Note that only 'percent' type metrics are available for selection for this field type.
 """
 CHART_TYPE_FIELD: str = """
-The name of the type of chart which you want to create e.g. waffle
+The name of the type of chart which you want to create e.g. bar
 """
 DATE_FROM_FIELD: str = """
 The date from which to begin the supporting plot data. 
