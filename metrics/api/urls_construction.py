@@ -168,7 +168,7 @@ audit_api_urlpatterns = [
         name="audit-core-headline",
     ),
     re_path(f"^{API_PREFIX}charts/v2", ChartsView.as_view()),
-    re_path(f"^{API_PREFIX}dual-category-charts/v1", DualCategoryChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/dual-category/v1", DualCategoryChartsView.as_view()),
 ]
 
 feedback_urlpatterns = construct_urlpatterns_for_feedback(prefix=API_PREFIX)
