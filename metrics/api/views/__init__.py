@@ -1,5 +1,5 @@
 from .alerts import HeatAlertViewSet, ColdAlertViewSet
-from .charts import ChartsView, EncodedChartsView
+from .charts import ChartsView, EncodedChartsView, DualCategoryChartsView
 from .headlines import HeadlinesView
 from .downloads import DownloadsView, BulkDownloadsView
 from .health import HealthView
