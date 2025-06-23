@@ -21,8 +21,6 @@ def core_headline_example() -> CoreHeadline:
     )
     return CoreHeadlineFactory.create_record(
         metric_value=123.0000,
-        metric_name="COVID-19_headline_tests_7DayTotals",
-        topic_name="COVID-19",
         metric="COVID-19_headline_tests_7DayTotals",
         topic="COVID-19",
         geography_code="E92000001",

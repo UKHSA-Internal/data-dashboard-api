@@ -253,8 +253,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # Record which is not expired but has been superseded
@@ -264,8 +264,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=valid_but_superseded_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # Record which is currently valid
@@ -275,8 +275,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # When
@@ -326,8 +326,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=first_geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Record which is currently valid for 1st geography
         currently_valid_period_end = current_time + datetime.timedelta(days=7)
@@ -336,8 +336,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=first_geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Expired record for 2nd geography
         second_geography_code = "E92000002"
@@ -345,24 +345,24 @@ class TestCoreHeadlineManager:
         expired_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
             metric_value=111,
             embargo=None,
-            geography_name="West Midlands",
-            geography_type_name="",
+            geography="West Midlands",
+            geography_type="",
             geography_code=second_geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Record which is currently valid for 2nd geography
         currently_valid_period_end = current_time + datetime.timedelta(days=5)
         current_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
             metric_value=222,
             embargo=None,
-            geography_name="West Midlands",
-            geography_type_name="",
+            geography="West Midlands",
+            geography_type="",
             geography_code=second_geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
 
         # When
