@@ -64,19 +64,21 @@ class CoreHeadlineQuerySet(models.QuerySet):
         self,
         *,
         queryset: Self,
-        geography: str,
-        geography_type: str,
+        geography_name: str,
+        geography_type_name: str,
         geography_code: str,
-        stratum: str,
+        stratum_name: str,
         sex: str,
         age: str,
     ) -> Self:
-        if geography:
-            queryset = self._filter_by_geography(queryset=queryset, geography=geography)
+        if geography_name:
+            queryset = self._filter_by_geography(
+                queryset=queryset, geography_name=geography_name
+            )
 
-        if geography_type:
+        if geography_type_name:
             queryset = self._filter_by_geography_type(
-                queryset=queryset, geography_type=geography_type
+                queryset=queryset, geography_type_name=geography_type_name
             )
 
         if geography_code:
@@ -84,8 +86,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
                 queryset=queryset, geography_code=geography_code
             )
 
-        if stratum:
-            queryset = self._filter_by_stratum(queryset=queryset, stratum=stratum)
+        if stratum_name:
+            queryset = self._filter_by_stratum(
+                queryset=queryset, stratum_name=stratum_name
+            )
 
         if sex:
             queryset = self._filter_by_sex(queryset=queryset, sex=sex)

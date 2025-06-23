@@ -57,22 +57,26 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         self,
         *,
         queryset: models.QuerySet,
-        geography: str,
-        geography_type: str,
-        stratum: str,
+        geography_name: str,
+        geography_type_name: str,
+        stratum_name: str,
         sex: str,
         age: str,
     ) -> models.QuerySet:
-        if geography:
-            queryset = self._filter_by_geography(queryset=queryset, geography=geography)
-
-        if geography_type:
-            queryset = self._filter_by_geography_type(
-                queryset=queryset, geography_type=geography_type
+        if geography_name:
+            queryset = self._filter_by_geography(
+                queryset=queryset, geography_name=geography_name
             )
 
-        if stratum:
-            queryset = self._filter_by_stratum(queryset=queryset, stratum=stratum)
+        if geography_type_name:
+            queryset = self._filter_by_geography_type(
+                queryset=queryset, geography_type_name=geography_type_name
+            )
+
+        if stratum_name:
+            queryset = self._filter_by_stratum(
+                queryset=queryset, stratum_name=stratum_name
+            )
 
         if sex:
             queryset = self._filter_by_sex(queryset=queryset, sex=sex)
