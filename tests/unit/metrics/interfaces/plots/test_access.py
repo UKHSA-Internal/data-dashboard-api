@@ -579,12 +579,12 @@ class TestPlotsInterface:
         # When
         plots_params = {
             "fields_to_export": [mocked_x_axis, mocked_y_axis],
-            "topic": fake_metric.topic.name,
-            "metric": fake_metric.name,
-            "geography": mocked_geography,
-            "geography_type": mocked_geography_type,
+            "topic_name": fake_metric.topic.name,
+            "metric_name": fake_metric.name,
+            "geography_name": mocked_geography,
+            "geography_type_name": mocked_geography_type,
             "geography_code": "",
-            "stratum": mocked_stratum,
+            "stratum_name": mocked_stratum,
             "sex": mocked_sex,
             "age": mocked_age,
         }
@@ -596,17 +596,17 @@ class TestPlotsInterface:
         assert headline_data == spy_core_headline_manager.query_for_data.return_value
         spy_core_headline_manager.query_for_data.assert_called_once_with(
             fields_to_export=[mocked_x_axis, mocked_y_axis],
-            topic=fake_metric.topic.name,
-            metric=fake_metric.name,
-            geography=mocked_geography,
-            geography_type=mocked_geography_type,
+            topic_name=fake_metric.topic.name,
+            metric_name=fake_metric.name,
+            geography_name=mocked_geography,
+            geography_type_name=mocked_geography_type,
             geography_code="",
-            stratum=mocked_stratum,
+            stratum_name=mocked_stratum,
             sex=mocked_sex,
             age=mocked_age,
             rbac_permissions=mocked_chart_request_params.rbac_permissions,
-            theme=fake_metric.topic.sub_theme.theme.name,
-            sub_theme=fake_metric.topic.sub_theme.name,
+            theme_name=fake_metric.topic.sub_theme.theme.name,
+            sub_theme_name=fake_metric.topic.sub_theme.name,
         )
 
     def test_get_timeseries_calls_core_time_series_manager_with_correct_args(self):
