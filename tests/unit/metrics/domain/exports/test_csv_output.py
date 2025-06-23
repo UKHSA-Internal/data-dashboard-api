@@ -49,8 +49,8 @@ class TestWriteDataToCSV:
             FakeCoreTimeSeriesFactory.build_time_series(
                 date=datetime.datetime(year=2023, month=3, day=8),
                 metric_value=expected_metric_value,
-                topic_name=expected_topic,
-                metric_name=expected_metric,
+                topic=expected_topic,
+                metric=expected_metric,
                 age_name=expected_age,
                 sex=expected_sex,
                 in_reporting_delay_period=expected_in_reporting_delay_period,

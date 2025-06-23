@@ -479,13 +479,13 @@ class TestCoreHeadlineManager:
         )
 
         CoreHeadlineFactory.create_record(
-            metric_name=covid_metric, embargo=latest_released_embargo
+            metric=covid_metric, embargo=latest_released_embargo
         )
         CoreHeadlineFactory.create_record(
-            metric_name=covid_metric_for_outdated_embargo, embargo=superseded_embargo
+            metric=covid_metric_for_outdated_embargo, embargo=superseded_embargo
         )
         CoreHeadlineFactory.create_record(
-            metric_name="adenovirus_headline_positivityLatest",
+            metric="adenovirus_headline_positivityLatest",
             embargo=last_unreleased_embargo,
         )
 
@@ -579,12 +579,12 @@ class TestCoreHeadlineManager:
             period_end="2025-04-22", metric_value=2, is_public=False
         )
         rbac_permission = RBACPermissionFactory.create_record(
-            theme_name="some_other_theme",
-            sub_theme_name="",
-            topic_name="",
-            metric_name="",
-            geography_name="",
-            geography_type_name="",
+            theme="some_other_theme",
+            sub_theme=None,
+            topic=None,
+            metric=None,
+            geography=None,
+            geography_type=None,
         )
 
         # When

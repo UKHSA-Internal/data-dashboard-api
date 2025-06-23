@@ -52,8 +52,8 @@ class TestRBACPermissionFactory:
 
         RBACPermissionFactory.create_record(
             name="permission_2",
-            theme_name="extreme_event",
-            sub_theme_name="weather_alert",
+            theme="extreme_event",
+            sub_theme="weather_alert",
         )
         # When
         retrieved_permissions = RBACPermission.objects.get_existing_permissions(
@@ -73,14 +73,14 @@ class TestRBACPermissionFactory:
         # Given
         RBACPermissionFactory.create_record(
             name="all_infectious_respiratory_data",
-            theme_name="infectious_disease",
-            sub_theme_name="respiratory",
+            theme="infectious_disease",
+            sub_theme="respiratory",
         )
 
         # When / Then
         with pytest.raises(DuplicatePermissionError):
             RBACPermissionFactory.create_record(
                 name="all_infectious_respiratory_data_duplicate",
-                theme_name="infectious_disease",
-                sub_theme_name="respiratory",
+                theme="infectious_disease",
+                sub_theme="respiratory",
             )

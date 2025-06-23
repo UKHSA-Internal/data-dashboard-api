@@ -709,12 +709,12 @@ class TestCoreTimeSeriesManager:
             date="2023-01-02", metric_value=2, is_public=False
         )
         rbac_permission = RBACPermissionFactory.create_record(
-            theme_name="some_other_theme",
-            sub_theme_name="",
-            topic_name="",
-            metric_name="",
-            geography_name="",
-            geography_type_name="",
+            theme="some_other_theme",
+            sub_theme=None,
+            topic=None,
+            metric=None,
+            geography=None,
+            geography_type=None,
         )
 
         # When
