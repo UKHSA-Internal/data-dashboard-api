@@ -670,7 +670,7 @@ class TestCoreTimeSeriesManager:
             date="2023-01-02", metric_value=2, is_public=False
         )
 
-        params = {
+        params_for_query = {
             "theme_name": public_record.metric.topic.sub_theme.theme.name,
             "sub_theme_name": public_record.metric.topic.sub_theme.name,
             "topic_name": public_record.metric.topic.name,
@@ -678,11 +678,12 @@ class TestCoreTimeSeriesManager:
             "geography_name": public_record.geography.name,
             "geography_type_name": public_record.geography.geography_type.name,
         }
+        params = {k.split("_name")[0]: v for k, v in params_for_query.items()}
         rbac_permission = RBACPermissionFactory.create_record(**params)
 
         # When
         core_time_series_queryset = CoreTimeSeries.objects.query_for_data(
-            **params,
+            **params_for_query,
             date_from="2020-01-01",
             date_to="2025-12-31",
             fields_to_export=[],

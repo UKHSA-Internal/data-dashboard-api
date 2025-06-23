@@ -543,7 +543,7 @@ class TestCoreHeadlineManager:
             period_end="2025-04-22", metric_value=2, is_public=False
         )
 
-        params = {
+        params_for_query = {
             "theme_name": public_record.metric.topic.sub_theme.theme.name,
             "sub_theme_name": public_record.metric.topic.sub_theme.name,
             "topic_name": public_record.metric.topic.name,
@@ -551,11 +551,12 @@ class TestCoreHeadlineManager:
             "geography_name": public_record.geography.name,
             "geography_type_name": public_record.geography.geography_type.name,
         }
+        params = {k.split("_name")[0]: v for k, v in params_for_query.items()}
         rbac_permission = RBACPermissionFactory.create_record(**params)
 
         # When
         core_headline_queryset = CoreHeadline.objects.query_for_data(
-            **params,
+            **params_for_query,
             fields_to_export=[],
             rbac_permissions=[rbac_permission],
         )
