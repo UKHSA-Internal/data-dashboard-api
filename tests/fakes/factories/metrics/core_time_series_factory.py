@@ -24,13 +24,13 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
     def build_time_series(
         cls,
         date: datetime.date,
-        metric_name: str,
-        topic_name: str,
+        metric: str,
+        topic: str,
         geography_name: str = "England",
         geography_type_name: str = "Nation",
         age_name: str = "all",
         sex: str = "all",
-        stratum_name: str = "default",
+        stratum: str = "default",
         metric_value: float = 1,
         epiweek: int = 1,
         in_reporting_delay_period: bool = False,
@@ -38,8 +38,8 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         embargo: datetime.datetime = datetime.datetime(2024, 4, 10),
     ) -> FakeCoreTimeSeries:
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
-            metric_name=metric_name,
-            topic_name=topic_name,
+            metric_name=metric,
+            topic_name=topic,
         )
 
         geography = FakeGeographyFactory.build_example(
@@ -47,7 +47,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         )
 
         stratum: FakeStratum = FakeStratumFactory.build_example(
-            stratum_name=stratum_name,
+            stratum_name=stratum,
         )
 
         age = FakeAge(name=age_name)

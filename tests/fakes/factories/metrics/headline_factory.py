@@ -34,13 +34,13 @@ class FakeCoreHeadlineFactory(factory.Factory):
     @classmethod
     def build_record(
         cls,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         metric_value: int = None,
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
+        geography: str | None = None,
+        geography_type: str | None = None,
         geography_code: str | None = None,
-        stratum_name: str | None = None,
+        stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
         period_end: str | datetime.date | None = None,
@@ -49,20 +49,18 @@ class FakeCoreHeadlineFactory(factory.Factory):
         embargo: str | datetime.date | None = None,
     ) -> list[FakeCoreHeadline]:
         geography: FakeGeography = FakeGeographyFactory.build_example(
-            geography_type_name=geography_type_name,
-            geography_name=geography_name,
+            geography_type_name=geography_type,
+            geography_name=geography,
             geography_code=geography_code,
         )
 
-        stratum: FakeStratum = FakeStratumFactory.build_example(
-            stratum_name=stratum_name
-        )
+        stratum: FakeStratum = FakeStratumFactory.build_example(stratum_name=stratum)
         age: FakeAge = FakeAgeFactory.build_example(age_name=age)
 
         metric: FakeMetric = FakeMetricFactory.build_example_metric(
-            metric_name=metric_name,
+            metric_name=metric,
             metric_group_name="headline",
-            topic_name=topic_name,
+            topic_name=topic,
         )
         metric_value: int = metric_value or cls._pick_random_positive_metric_value()
 
@@ -82,33 +80,33 @@ class FakeCoreHeadlineFactory(factory.Factory):
     @classmethod
     def build_example_trend_type_records(
         cls,
-        topic_name: str,
-        metric_name: str,
-        percentage_metric_name: str,
+        topic: str,
+        metric: str,
+        percentage_metric: str,
         period_end: str | datetime.date,
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
+        geography: str | None = None,
+        geography_type: str | None = None,
+        stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
     ) -> list[FakeCoreHeadline]:
         main_metric_headline = cls.build_record(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
             period_end=period_end,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
+            geography=geography,
+            geography_type=geography_type,
+            stratum=stratum,
             sex=sex,
             age=age,
         )
         percentage_metric_headline = cls.build_record(
-            topic_name=topic_name,
-            metric_name=percentage_metric_name,
+            topic=topic,
+            metric=percentage_metric,
             period_end=period_end,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
+            geography=geography,
+            geography_type=geography_type,
+            stratum=stratum,
             sex=sex,
             age=age,
         )

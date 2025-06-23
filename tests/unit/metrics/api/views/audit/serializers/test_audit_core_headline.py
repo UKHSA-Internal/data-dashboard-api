@@ -15,8 +15,8 @@ class TestCoreHeadlineSerializer:
     @staticmethod
     def _setup_fake_headline_record():
         return FakeCoreHeadlineFactory.build_record(
-            topic_name="COVID-19",
-            metric_name="COVID-19_headline_tests_7DayChange",
+            topic="COVID-19",
+            metric="COVID-19_headline_tests_7DayChange",
             period_start=datetime.datetime(day=1, month=1, year=2024),
             period_end=datetime.datetime(day=2, month=2, year=2024),
             refresh_date=datetime.datetime(day=1, month=1, year=2024),

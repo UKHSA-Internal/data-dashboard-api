@@ -2,11 +2,9 @@ import factory
 from metrics.data.models.rbac_models import RBACPermission
 
 from metrics.data.models.core_models import (
-    Age,
     Geography,
     GeographyType,
     Metric,
-    Stratum,
     SubTheme,
     Theme,
     Topic,
@@ -22,53 +20,35 @@ class RBACPermissionFactory(factory.django.DjangoModelFactory):
     def create_record(
         cls,
         name: str = "all_infectious_respiratory_data",
-        theme_name: str = "infectious_disease",
-        sub_theme_name: str = "respiratory",
-        topic_name: str | None = None,
-        metric_name: str | None = None,
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
+        theme: str = "infectious_disease",
+        sub_theme: str = "respiratory",
+        topic: str | None = None,
+        metric: str | None = None,
+        geography: str | None = None,
+        geography_type: str | None = None,
+        geography_code: str = "E92000001",
         **kwargs,
     ):
-        theme, _ = Theme.objects.get_or_create(name=theme_name)
+        theme, _ = Theme.objects.get_or_create(name=theme)
 
-        sub_theme = SubTheme.objects.filter(name=sub_theme_name, theme=theme).first()
-        if not sub_theme and sub_theme_name:
-            sub_theme, _ = SubTheme.objects.get_or_create(
-                name=sub_theme_name, theme=theme
+        if sub_theme:
+            sub_theme, _ = SubTheme.objects.get_or_create(name=sub_theme, theme=theme)
+
+        if topic:
+            topic, _ = Topic.objects.get_or_create(name=topic, sub_theme=sub_theme)
+
+        if metric:
+            metric, _ = Metric.objects.get_or_create(name=metric, topic=topic)
+
+        if geography_type:
+            geography_type, _ = GeographyType.objects.get_or_create(name=geography_type)
+
+        if geography:
+            geography, _ = Geography.objects.get_or_create(
+                name=geography,
+                geography_code=geography_code,
+                geography_type=geography_type,
             )
-
-        topic = None
-        if topic_name:
-            topic = Topic.objects.filter(name=topic_name, sub_theme=sub_theme).first()
-            if not topic and topic_name:
-                topic, _ = Topic.objects.get_or_create(
-                    name=topic_name, sub_theme=sub_theme
-                )
-
-        metric = None
-        if metric_name:
-            metric = Metric.objects.filter(name=metric_name, topic=topic).first()
-            if not metric and metric_name:
-                metric, _ = Metric.objects.get_or_create(name=metric_name, topic=topic)
-
-        geography_type = None
-        if geography_type_name:
-            geography_type, _ = GeographyType.objects.get_or_create(
-                name=geography_type_name
-            )
-
-        geography = None
-        if geography_name:
-            geography = Geography.objects.filter(
-                name=geography_name, geography_type=geography_type
-            ).first()
-            if not geography and geography_name:
-                geography, _ = Geography.objects.get_or_create(
-                    name=geography_name,
-                    geography_code="E92000001",
-                    geography_type=geography_type,
-                )
 
         return cls.create(
             name=name,

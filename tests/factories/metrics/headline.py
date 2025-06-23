@@ -30,16 +30,16 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
     def create_record(
         cls,
         metric_value: float = 123.456,
-        theme_name: str = "infectious_disease",
-        sub_theme_name: str = "respiratory",
-        topic_name: str = "COVID-19",
-        metric_name: str = "COVID-19_headline_positivity_latest",
+        theme: str = "infectious_disease",
+        sub_theme: str = "respiratory",
+        topic: str = "COVID-19",
+        metric: str = "COVID-19_headline_positivity_latest",
         metric_group: str = "headline",
-        geography_name: str = "England",
-        geography_type_name: str = "Nation",
+        geography: str = "England",
+        geography_type: str = "Nation",
         geography_code: str = "E92000001",
-        stratum_name: str = "default",
-        age_name: str = "all",
+        stratum: str = "default",
+        age: str = "all",
         sex: str = "all",
         refresh_date: str | datetime.datetime = datetime.datetime(2023, 10, 1),
         period_start: str | datetime.date = "2023-01-01",
@@ -48,30 +48,24 @@ class CoreHeadlineFactory(factory.django.DjangoModelFactory):
         is_public: bool = True,
         **kwargs
     ):
-        theme, _ = Theme.objects.get_or_create(name=theme_name)
-        sub_theme, _ = SubTheme.objects.get_or_create(
-            name=sub_theme_name, theme_id=theme.id
-        )
-        topic, _ = Topic.objects.get_or_create(
-            name=topic_name, sub_theme_id=sub_theme.id
-        )
+        theme, _ = Theme.objects.get_or_create(name=theme)
+        sub_theme, _ = SubTheme.objects.get_or_create(name=sub_theme, theme_id=theme.id)
+        topic, _ = Topic.objects.get_or_create(name=topic, sub_theme_id=sub_theme.id)
         metric_group, _ = MetricGroup.objects.get_or_create(
             name=metric_group, topic_id=topic.id
         )
         metric, _ = Metric.objects.get_or_create(
-            name=metric_name, topic_id=topic.id, metric_group_id=metric_group.id
+            name=metric, topic_id=topic.id, metric_group_id=metric_group.id
         )
 
-        geography_type, _ = GeographyType.objects.get_or_create(
-            name=geography_type_name
-        )
+        geography_type, _ = GeographyType.objects.get_or_create(name=geography_type)
         geography, _ = Geography.objects.get_or_create(
-            name=geography_name,
+            name=geography,
             geography_code=geography_code,
             geography_type_id=geography_type.id,
         )
-        age, _ = Age.objects.get_or_create(name=age_name)
-        stratum, _ = Stratum.objects.get_or_create(name=stratum_name)
+        age, _ = Age.objects.get_or_create(name=age)
+        stratum, _ = Stratum.objects.get_or_create(name=stratum)
         refresh_date: datetime.datetime = cls._make_datetime_timezone_aware(
             datetime_obj=refresh_date
         )

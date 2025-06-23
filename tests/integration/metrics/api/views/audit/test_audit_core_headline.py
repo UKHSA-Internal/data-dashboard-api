@@ -36,14 +36,12 @@ class TestAuditCoreHeadline:
         age = "all"
         metric_value = 3
 
-        core_headline_records = [
-            CoreHeadlineFactory.create_record(metric_value=1),
-            CoreHeadlineFactory.create_record(metric_value=2),
-            CoreHeadlineFactory.create_record(
-                metric_name=metric,
-                metric_value=3,
-            ),
-        ]
+        CoreHeadlineFactory.create_record(metric_value=1)
+        CoreHeadlineFactory.create_record(metric_value=2)
+        CoreHeadlineFactory.create_record(
+            metric=metric,
+            metric_value=3,
+        )
 
         # When
         path = (

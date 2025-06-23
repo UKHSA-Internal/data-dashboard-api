@@ -10,12 +10,12 @@ from tests.factories.metrics.rbac_models.rbac_permission import RBACPermissionFa
 class TestRBACPermissionFactory:
 
     permissions = {
-        "theme_name": "infectious_disease",
-        "sub_theme_name": "respiratory",
-        "topic_name": "COVID-19",
-        "metric_name": "COVID-19_headline_positivity_latest",
-        "geography_type_name": "Nation",
-        "geography_name": "England",
+        "theme": "infectious_disease",
+        "sub_theme": "respiratory",
+        "topic": "COVID-19",
+        "metric": "COVID-19_headline_positivity_latest",
+        "geography_type": "Nation",
+        "geography": "England",
     }
 
     @pytest.mark.django_db
@@ -52,8 +52,8 @@ class TestRBACPermissionFactory:
 
         RBACPermissionFactory.create_record(
             name="permission_2",
-            theme_name="extreme_event",
-            sub_theme_name="weather_alert",
+            theme="extreme_event",
+            sub_theme="weather_alert",
         )
         # When
         retrieved_permissions = RBACPermission.objects.get_existing_permissions(
@@ -73,14 +73,14 @@ class TestRBACPermissionFactory:
         # Given
         RBACPermissionFactory.create_record(
             name="all_infectious_respiratory_data",
-            theme_name="infectious_disease",
-            sub_theme_name="respiratory",
+            theme="infectious_disease",
+            sub_theme="respiratory",
         )
 
         # When / Then
         with pytest.raises(DuplicatePermissionError):
             RBACPermissionFactory.create_record(
                 name="all_infectious_respiratory_data_duplicate",
-                theme_name="infectious_disease",
-                sub_theme_name="respiratory",
+                theme="infectious_disease",
+                sub_theme="respiratory",
             )

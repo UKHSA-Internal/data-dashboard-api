@@ -241,8 +241,8 @@ class TestCoreHeadlineManager:
         Then the record with the `period_end` which is in the future is returned
         """
         # Given
-        topic_name = "COVID-19"
-        metric_name = "COVID-19_headline_7DayAdmissions"
+        topic = "COVID-19"
+        metric = "COVID-19_headline_7DayAdmissions"
         geography_code = "E92000001"
         current_time = timezone.now()
 
@@ -253,8 +253,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # Record which is not expired but has been superseded
@@ -264,8 +264,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=valid_but_superseded_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # Record which is currently valid
@@ -275,14 +275,14 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # When
         result = CoreHeadline.objects.get_latest_headline(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic_name=topic,
+            metric_name=metric,
             geography_code=geography_code,
         )
 
@@ -326,8 +326,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=first_geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Record which is currently valid for 1st geography
         currently_valid_period_end = current_time + datetime.timedelta(days=7)
@@ -336,8 +336,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=first_geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Expired record for 2nd geography
         second_geography_code = "E92000002"
@@ -345,24 +345,24 @@ class TestCoreHeadlineManager:
         expired_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
             metric_value=111,
             embargo=None,
-            geography_name="West Midlands",
-            geography_type_name="",
+            geography="West Midlands",
+            geography_type="",
             geography_code=second_geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Record which is currently valid for 2nd geography
         currently_valid_period_end = current_time + datetime.timedelta(days=5)
         current_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
             metric_value=222,
             embargo=None,
-            geography_name="West Midlands",
-            geography_type_name="",
+            geography="West Midlands",
+            geography_type="",
             geography_code=second_geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
 
         # When
@@ -479,13 +479,13 @@ class TestCoreHeadlineManager:
         )
 
         CoreHeadlineFactory.create_record(
-            metric_name=covid_metric, embargo=latest_released_embargo
+            metric=covid_metric, embargo=latest_released_embargo
         )
         CoreHeadlineFactory.create_record(
-            metric_name=covid_metric_for_outdated_embargo, embargo=superseded_embargo
+            metric=covid_metric_for_outdated_embargo, embargo=superseded_embargo
         )
         CoreHeadlineFactory.create_record(
-            metric_name="adenovirus_headline_positivityLatest",
+            metric="adenovirus_headline_positivityLatest",
             embargo=last_unreleased_embargo,
         )
 
@@ -543,7 +543,7 @@ class TestCoreHeadlineManager:
             period_end="2025-04-22", metric_value=2, is_public=False
         )
 
-        params = {
+        params_for_query = {
             "theme_name": public_record.metric.topic.sub_theme.theme.name,
             "sub_theme_name": public_record.metric.topic.sub_theme.name,
             "topic_name": public_record.metric.topic.name,
@@ -551,11 +551,12 @@ class TestCoreHeadlineManager:
             "geography_name": public_record.geography.name,
             "geography_type_name": public_record.geography.geography_type.name,
         }
+        params = {k.split("_name")[0]: v for k, v in params_for_query.items()}
         rbac_permission = RBACPermissionFactory.create_record(**params)
 
         # When
         core_headline_queryset = CoreHeadline.objects.query_for_data(
-            **params,
+            **params_for_query,
             fields_to_export=[],
             rbac_permissions=[rbac_permission],
         )
@@ -579,12 +580,12 @@ class TestCoreHeadlineManager:
             period_end="2025-04-22", metric_value=2, is_public=False
         )
         rbac_permission = RBACPermissionFactory.create_record(
-            theme_name="some_other_theme",
-            sub_theme_name="",
-            topic_name="",
-            metric_name="",
-            geography_name="",
-            geography_type_name="",
+            theme="some_other_theme",
+            sub_theme=None,
+            topic=None,
+            metric=None,
+            geography=None,
+            geography_type=None,
         )
 
         # When

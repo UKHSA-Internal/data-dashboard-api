@@ -35,12 +35,12 @@ class TestHeadlinesInterface:
             period_end="2025-01-02", metric_value=2, is_public=False
         )
         rbac_permission = RBACPermissionFactory.create_record(
-            theme_name=public_record.metric.topic.sub_theme.theme.name,
-            sub_theme_name=public_record.metric.topic.sub_theme.name,
-            topic_name=public_record.metric.topic.name,
-            metric_name=public_record.metric.name,
-            geography_name=public_record.geography.name,
-            geography_type_name=public_record.geography.geography_type.name,
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
+            geography=public_record.geography.name,
+            geography_type=public_record.geography.geography_type.name,
         )
 
         request_factory = RequestFactory()

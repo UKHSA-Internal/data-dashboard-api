@@ -110,12 +110,12 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         one_week_ago = timezone.now() - datetime.timedelta(days=7)
         red_alert_metric_value = 16
         fake_expired_red_alert: FakeCoreHeadline = FakeCoreHeadlineFactory.build_record(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
             metric_value=red_alert_metric_value,
             geography_code=geography_code,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            geography=geography_name,
+            geography_type=geography_type_name,
             period_end=one_week_ago,
             refresh_date=two_weeks_ago,
         )
@@ -183,12 +183,12 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         one_week_ago = timezone.now() - datetime.timedelta(days=7)
         red_alert_metric_value = 16
         fake_expired_red_alert: FakeCoreHeadline = FakeCoreHeadlineFactory.build_record(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
             metric_value=red_alert_metric_value,
             geography_code=geography_code,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            geography=geography_name,
+            geography_type=geography_type_name,
             period_end=two_weeks_from_now,
             refresh_date=one_week_ago,
         )
@@ -321,8 +321,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
         red_alert_metric_value = 16
         fake_expired_red_alert_for_first_geography: FakeCoreHeadline = (
             FakeCoreHeadlineFactory.build_record(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 metric_value=red_alert_metric_value,
                 geography_code=first_geography_code,
                 period_end=one_week_ago,
@@ -331,8 +331,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
         )
         fake_expired_red_alert_for_second_geography: FakeCoreHeadline = (
             FakeCoreHeadlineFactory.build_record(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 metric_value=red_alert_metric_value,
                 geography_code=second_geography_code,
                 period_end=one_week_ago,
@@ -408,8 +408,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
         red_alert_metric_value = 16
         fake_expired_red_alert_for_first_geography: FakeCoreHeadline = (
             FakeCoreHeadlineFactory.build_record(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 metric_value=red_alert_metric_value,
                 geography_code=first_geography_code,
                 period_end=two_weeks_from_now,
@@ -420,8 +420,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
         amber_alert_metric_value = 14
         fake_expired_red_alert_for_second_geography: FakeCoreHeadline = (
             FakeCoreHeadlineFactory.build_record(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 metric_value=amber_alert_metric_value,
                 geography_code=second_geography_code,
                 period_end=two_weeks_from_now,
