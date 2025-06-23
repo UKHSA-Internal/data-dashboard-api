@@ -102,24 +102,24 @@ class CoreHeadlineQuerySet(models.QuerySet):
     def filter_headlines_for_audit_list(
         self,
         *,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
-        stratum_name: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
+        stratum: str,
         sex: str,
         age: str,
     ) -> Self:
         """Filters for a given metric and includes records still under embargo for auditing.
 
         Args:
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography being queried.
+            geography: The name of the geography being queried.
                 E.g. `England`
-            geography_type_name: The name of the geography
+            geography_type: The name of the geography
                 type being queried.
                 E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
@@ -137,14 +137,14 @@ class CoreHeadlineQuerySet(models.QuerySet):
                         ]>`
         """
         queryset = self.filter(
-            metric__name=metric_name,
+            metric__name=metric,
         )
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography_type_name=geography_type_name,
-            geography_name=geography_name,
+            geography_type=geography_type,
+            geography=geography,
             geography_code=None,
-            stratum_name=stratum_name,
+            stratum=stratum,
             age=age,
             sex=sex,
         )
