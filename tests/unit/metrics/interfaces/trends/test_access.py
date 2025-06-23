@@ -76,7 +76,7 @@ class TestTrendsInterface:
             "age": self.example_trend_parameters.age,
             "sex": self.example_trend_parameters.sex,
             "percentage_metric": self.example_trend_parameters.percentage_metric,
-            "period_end": period_end
+            "period_end": period_end,
         }
 
         (
