@@ -89,24 +89,24 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def filter_for_audit_list_view(
         self,
         *,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
-        stratum_name: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
+        stratum: str,
         sex: str,
         age: str,
     ) -> models.QuerySet:
-        """Filters for all records based on the provided arguments including `metric`, `geography_name` etc.
+        """Filters for all records based on the provided arguments including `metric`, `geography` etc.
             returns all records including those under `embargo` or `stale/duplicated` records.
 
         Args:
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
@@ -124,14 +124,14 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__name=metric_name,
+            metric__name=metric,
         )
 
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
+            geography=geography,
+            geography_type=geography_type,
+            stratum=stratum,
             sex=sex,
             age=age,
         )
