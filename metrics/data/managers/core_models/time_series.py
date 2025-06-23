@@ -129,9 +129,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography=geography,
-            geography_type=geography_type,
-            stratum=stratum,
+            geography_name=geography,
+            geography_type_name=geography_type,
+            stratum_name=stratum,
             sex=sex,
             age=age,
         )
