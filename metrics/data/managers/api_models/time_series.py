@@ -83,29 +83,31 @@ class APITimeSeriesQuerySet(models.QuerySet):
     def filter_for_list_view(
         self,
         *,
-        theme_name: str,
-        sub_theme_name: str,
-        topic_name: str,
-        geography_type_name: str,
-        geography_name: str,
-        metric_name: str,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        geography_type: str,
+        geography: str,
+        metric: str,
         restrict_to_public: bool,
     ) -> Self:
         """Filters by the given fields to provide a slice of the timeseries data as per the fields.
 
         Args:
-            theme_name: The name of the root theme being queried for.
+            theme: The name of the root theme being queried for.
                 E.g. `infectious_disease`
-            sub_theme_name: The name of the child/ sub theme being queried for.
+            sub_theme: The name of the child/ sub theme being queried for.
                 E.g. `respiratory`.
                 Which would filter for `respiratory` under the `theme_name` entity.
             topic_name: The name of the disease being queried.
+                Which would filter for `respiratory` under the `theme` entity.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            metric_name: The name of the metric to filter for.
+            metric: The name of the metric to filter for.
                 E.g. `COVID-19_deaths_ONSByDay`.
             restrict_to_public: Boolean switch to restrict the query
                 to only return public records.
@@ -128,12 +130,12 @@ class APITimeSeriesQuerySet(models.QuerySet):
         """
 
         queryset = self.filter(
-            theme=theme_name,
-            sub_theme=sub_theme_name,
-            topic=topic_name,
-            geography_type=geography_type_name,
-            geography=geography_name,
-            metric=metric_name,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            geography_type=geography_type,
+            geography=geography,
+            metric=metric,
         )
         if restrict_to_public:
             queryset = queryset.filter(is_public=True)
