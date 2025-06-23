@@ -200,10 +200,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
         )
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography_type_name=geography_type,
-            geography_name=geography,
+            geography_type_name=geography_type_name,
+            geography_name=geography_name,
             geography_code=geography_code,
-            stratum_name=stratum,
+            stratum_name=stratum_name,
             age=age,
             sex=sex,
         )
