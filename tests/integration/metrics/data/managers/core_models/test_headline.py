@@ -241,8 +241,8 @@ class TestCoreHeadlineManager:
         Then the record with the `period_end` which is in the future is returned
         """
         # Given
-        topic_name = "COVID-19"
-        metric_name = "COVID-19_headline_7DayAdmissions"
+        topic = "COVID-19"
+        metric = "COVID-19_headline_7DayAdmissions"
         geography_code = "E92000001"
         current_time = timezone.now()
 
@@ -281,8 +281,8 @@ class TestCoreHeadlineManager:
 
         # When
         result = CoreHeadline.objects.get_latest_headline(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic_name=topic,
+            metric_name=metric,
             geography_code=geography_code,
         )
 
