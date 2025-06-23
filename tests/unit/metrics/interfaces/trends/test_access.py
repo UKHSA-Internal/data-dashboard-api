@@ -66,7 +66,19 @@ class TestTrendsInterface:
         params["percentage_metric"] = percentage_metric_name
 
         period_end = "2024-02-29"
-        params_to_build_headlines = {**params, "period_end": period_end}
+        # params_to_build_headlines = {**params, "period_end": period_end}
+        params_to_build_headlines = {
+            "topic": self.example_trend_parameters.topic,
+            "metric": self.example_trend_parameters.metric,
+            "geography": self.example_trend_parameters.geography,
+            "geography_type": self.example_trend_parameters.geography_type,
+            "stratum": self.example_trend_parameters.stratum,
+            "age": self.example_trend_parameters.age,
+            "sex": self.example_trend_parameters.sex,
+            "percentage_metric": self.example_trend_parameters.percentage_metric,
+            "period_end": period_end
+        }
+
         (
             main_core_headline,
             percentage_core_headline,
