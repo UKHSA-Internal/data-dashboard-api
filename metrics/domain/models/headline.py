@@ -57,11 +57,11 @@ class HeadlineParameters(BaseModel):
 
         """
         return {
-            "topic_name": self.topic_name,
-            "metric_name": self.metric_name,
-            "geography_name": self.geography_name,
-            "geography_type_name": self.geography_type_name,
-            "stratum_name": self.stratum_name,
+            "topic": self.topic_name,
+            "metric": self.metric_name,
+            "geography": self.geography_name,
+            "geography_type": self.geography_type_name,
+            "stratum": self.stratum_name,
             "age": self.age_name,
             "sex": self.sex_name,
             "rbac_permissions": self.rbac_permissions,

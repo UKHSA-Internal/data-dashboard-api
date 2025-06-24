@@ -59,11 +59,11 @@ class TestTrendParameters:
 
         # Then
         expected = {
-            "topic_name": input_data["topic"],
-            "metric_name": input_data["metric"],
-            "geography_name": input_data["geography"],
-            "geography_type_name": input_data["geography_type"],
-            "stratum_name": input_data["stratum"],
+            "topic": input_data["topic"],
+            "metric": input_data["metric"],
+            "geography": input_data["geography"],
+            "geography_type": input_data["geography_type"],
+            "stratum": input_data["stratum"],
             "sex": input_data["sex"],
             "age": input_data["age"],
             "rbac_permissions": [],
@@ -85,11 +85,11 @@ class TestTrendParameters:
 
         # Then
         expected = {
-            "topic_name": input_data["topic"],
-            "metric_name": input_data["percentage_metric"],
-            "geography_name": input_data["geography"],
-            "geography_type_name": input_data["geography_type"],
-            "stratum_name": input_data["stratum"],
+            "topic": input_data["topic"],
+            "metric": input_data["percentage_metric"],
+            "geography": input_data["geography"],
+            "geography_type": input_data["geography_type"],
+            "stratum": input_data["stratum"],
             "sex": input_data["sex"],
             "age": input_data["age"],
             "rbac_permissions": [],

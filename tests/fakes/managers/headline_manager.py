@@ -17,12 +17,12 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
     def get_latest_headline(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
+        topic: str,
+        metric: str,
+        geography: str | None = None,
+        geography_type: str | None = None,
         geography_code: str | None = None,
-        stratum_name: str | None = None,
+        stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
         rbac_permissions: list[FakeRBACPermission] = None
@@ -30,13 +30,13 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
         filtered_headlines = [
             core_headline
             for core_headline in self.headlines
-            if core_headline.metric.metric_group.topic.name == topic_name
-            if core_headline.metric.name == metric_name
+            if core_headline.metric.metric_group.topic.name == topic
+            if core_headline.metric.name == metric
         ]
 
-        if geography_name:
+        if geography:
             filtered_headlines = [
-                x for x in filtered_headlines if x.geography.name == geography_name
+                x for x in filtered_headlines if x.geography.name == geography
             ]
 
         if geography_code:
@@ -46,16 +46,16 @@ class FakeCoreHeadlineManager(CoreHeadlineManager):
                 if x.geography.geography_code == geography_code
             ]
 
-        if geography_type_name:
+        if geography_type:
             filtered_headlines = [
                 x
                 for x in filtered_headlines
-                if x.geography.geography_type.name == geography_type_name
+                if x.geography.geography_type.name == geography_type
             ]
 
-        if stratum_name:
+        if stratum:
             filtered_headlines = [
-                x for x in filtered_headlines if x.stratum.name == stratum_name
+                x for x in filtered_headlines if x.stratum.name == stratum
             ]
 
         if sex:

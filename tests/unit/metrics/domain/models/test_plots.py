@@ -123,13 +123,13 @@ class TestPlotParameters:
             "field_to_order_by": ChartAxisFields[
                 fake_chart_plot_parameters.x_axis
             ].value,
-            "topic_name": fake_chart_plot_parameters.topic_name,
-            "metric_name": fake_chart_plot_parameters.metric_name,
-            "stratum_name": fake_chart_plot_parameters.stratum_name,
-            "geography_name": fake_chart_plot_parameters.geography_name,
-            "geography_type_name": fake_chart_plot_parameters.geography_type_name,
+            "topic": fake_chart_plot_parameters.topic,
+            "metric": fake_chart_plot_parameters.metric,
+            "stratum": fake_chart_plot_parameters.stratum,
+            "geography": fake_chart_plot_parameters.geography,
+            "geography_type": fake_chart_plot_parameters.geography_type,
             "sex": fake_chart_plot_parameters.sex,
-            "age": fake_chart_plot_parameters.age_name,
+            "age": fake_chart_plot_parameters.age,
             "date_from": fake_chart_plot_parameters.date_from_value,
             "date_to": fake_chart_plot_parameters.date_to_value,
         }
@@ -174,13 +174,13 @@ class TestPlotParameters:
                 ChartAxisFields[fake_chart_plot_parameters.x_axis].value,
                 ChartAxisFields[fake_chart_plot_parameters.y_axis].value,
             ],
-            "topic_name": fake_chart_plot_parameters.topic_name,
-            "metric_name": fake_chart_plot_parameters.metric_name,
-            "stratum_name": fake_chart_plot_parameters.stratum_name,
-            "geography_name": fake_chart_plot_parameters.geography_name,
-            "geography_type_name": fake_chart_plot_parameters.geography_type_name,
+            "topic": fake_chart_plot_parameters.topic,
+            "metric": fake_chart_plot_parameters.metric,
+            "stratum": fake_chart_plot_parameters.stratum,
+            "geography": fake_chart_plot_parameters.geography,
+            "geography_type": fake_chart_plot_parameters.geography_type,
             "sex": fake_chart_plot_parameters.sex,
-            "age": fake_chart_plot_parameters.age_name,
+            "age": fake_chart_plot_parameters.age,
         }
         # `chart_type`, `label`, `line_colour`, and `line_type` are omitted
         assert dict_used_for_query == expected_dict_used_for_query
