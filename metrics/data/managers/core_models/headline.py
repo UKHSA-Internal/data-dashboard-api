@@ -695,12 +695,12 @@ class CoreHeadlineManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            topic_name=topic,
-            metric_name=metric,
-            geography_name=geography,
-            geography_type_name=geography_type,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum,
+            stratum=stratum,
             age=age,
             sex=sex,
             is_public=is_public,
