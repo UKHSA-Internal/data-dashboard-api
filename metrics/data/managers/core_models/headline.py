@@ -644,12 +644,12 @@ class CoreHeadlineManager(models.Manager):
         """
         return {
             geography_code: self.get_latest_headline(
-                topic_name=topic_name,
-                metric_name=metric_name,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                topic_name=topic,
+                metric_name=metric,
+                geography_name=geography,
+                geography_type_name=geography_type,
                 geography_code=geography_code,
-                stratum_name=stratum_name,
+                stratum_name=stratum,
                 sex=sex,
                 age=age,
             )
