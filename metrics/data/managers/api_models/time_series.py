@@ -430,14 +430,14 @@ class APITimeSeriesManager(models.Manager):
     def delete_superseded_data(
         self,
         *,
-        theme_name: str,
-        sub_theme_name: str,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -462,21 +462,21 @@ class APITimeSeriesManager(models.Manager):
             the latest `refresh_date` from each window
 
         Args:
-           theme_name: The name of the parent theme being queried.
+           theme: The name of the parent theme being queried.
                E.g. `infectious_disease`
-           sub_theme_name: The name of the child theme being queried.
+           sub_theme: The name of the child theme being queried.
                E.g. `respiratory`
-           topic_name: The name of the threat being queried.
+           topic: The name of the threat being queried.
                E.g. `COVID-19`
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-COVID-19_cases_countRollingMean`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.

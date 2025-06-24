@@ -657,12 +657,12 @@ class CoreHeadlineManager(models.Manager):
     def delete_superseded_data(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool = True,
@@ -670,17 +670,17 @@ class CoreHeadlineManager(models.Manager):
         """Deletes all stale records which are not under embargo.
 
         Args:
-           topic_name: The name of the threat being queried.
+           topic: The name of the threat being queried.
                 E.g. `COVID-19`
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-19_headline_7DayAdmissions`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -695,12 +695,12 @@ class CoreHeadlineManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            topic_name=topic,
+            metric_name=metric,
+            geography_name=geography,
+            geography_type_name=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum_name=stratum,
             age=age,
             sex=sex,
             is_public=is_public,

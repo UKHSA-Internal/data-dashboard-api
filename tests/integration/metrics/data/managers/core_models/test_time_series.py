@@ -548,11 +548,11 @@ class TestCoreTimeSeriesManager:
 
         # When
         CoreTimeSeries.objects.delete_superseded_data(
-            metric_name=expected_live_fourth_round_for_first_date.metric.name,
-            geography_name=expected_live_fourth_round_for_first_date.geography.name,
+            metric=expected_live_fourth_round_for_first_date.metric.name,
+            geography=expected_live_fourth_round_for_first_date.geography.name,
             geography_code=expected_live_fourth_round_for_first_date.geography.geography_code,
-            geography_type_name=expected_live_fourth_round_for_first_date.geography.geography_type.name,
-            stratum_name=expected_live_fourth_round_for_first_date.stratum.name,
+            geography_type=expected_live_fourth_round_for_first_date.geography.geography_type.name,
+            stratum=expected_live_fourth_round_for_first_date.stratum.name,
             age=expected_live_fourth_round_for_first_date.age.name,
             sex=expected_live_fourth_round_for_first_date.sex,
             is_public=expected_live_fourth_round_for_first_date.is_public,

@@ -29,11 +29,11 @@ class TestCoreTimeSeriesManager:
 
         # When
         CoreTimeSeriesManager().delete_superseded_data(
-            metric_name=fake_metric,
-            geography_name=fake_geography,
-            geography_type_name=fake_geography_type,
+            metric=fake_metric,
+            geography=fake_geography,
+            geography_type=fake_geography_type,
             geography_code=fake_geography_code,
-            stratum_name=fake_stratum,
+            stratum=fake_stratum,
             sex=fake_sex,
             age=fake_age,
             is_public=fake_is_public,
