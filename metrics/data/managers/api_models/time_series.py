@@ -490,14 +490,14 @@ class APITimeSeriesManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            theme_name=theme_name,
-            sub_theme_name=sub_theme_name,
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            theme_name=theme,
+            sub_theme_name=sub_theme,
+            topic_name=topic,
+            metric_name=metric,
+            geography_name=geography,
+            geography_type_name=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum_name=stratum,
             sex=sex,
             age=age,
             is_public=is_public,
