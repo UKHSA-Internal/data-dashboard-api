@@ -367,8 +367,8 @@ class TestCoreHeadlineManager:
 
         # When
         result = CoreHeadline.objects.get_latest_headlines_for_geography_codes(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
             geography_codes=[first_geography_code, second_geography_code],
         )
 
