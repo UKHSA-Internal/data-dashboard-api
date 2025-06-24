@@ -1,7 +1,12 @@
+from collections.abc import Iterable
+
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import pagination, viewsets
 
+from metrics.api.permissions.fluent_permissions import (
+    validate_permissions_for_non_public,
+)
 from public_api.metrics_interface.interface import MetricsPublicAPIInterface
 from public_api.serializers.timeseries_serializers import APITimeSeriesListSerializer
 from public_api.views.base import PUBLIC_API_TAG
@@ -87,15 +92,37 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         "in_reporting_delay_period",
     ]
 
+    def _get_rbac_permissions_from_request(self) -> Iterable["RBACPermission"]:
+        return getattr(self.request, "rbac_permissions", [])
+
     def get_queryset(self):
         queryset = super().get_queryset()
 
+        rbac_permissions = self._get_rbac_permissions_from_request()
+
+        theme_name: str = self.kwargs.get("theme")
+        sub_theme_name: str = self.kwargs.get("sub_theme")
+        topic_name: str = self.kwargs.get("topic")
+        geography_type_name: str = self.kwargs["geography_type"]
+        geography_name: str = self.kwargs["geography"]
+        metric_name: str = self.kwargs["metric"]
+
+        has_access_to_non_public_data: bool = validate_permissions_for_non_public(
+            theme=theme_name,
+            sub_theme=sub_theme_name,
+            topic=topic_name,
+            metric=metric_name,
+            geography=geography_name,
+            geography_type=geography_type_name,
+            rbac_permissions=rbac_permissions,
+        )
+
         return queryset.filter_for_list_view(
-            theme_name=self.kwargs["theme"],
-            sub_theme_name=self.kwargs["sub_theme"],
-            topic_name=self.kwargs["topic"],
-            geography_type_name=self.kwargs["geography_type"],
-            geography_name=self.kwargs["geography"],
-            metric_name=self.kwargs["metric"],
-            restrict_to_public=True,
+            theme_name=theme_name,
+            sub_theme_name=sub_theme_name,
+            topic_name=topic_name,
+            geography_type_name=geography_type_name,
+            geography_name=geography_name,
+            metric_name=metric_name,
+            restrict_to_public=not has_access_to_non_public_data,
         )
