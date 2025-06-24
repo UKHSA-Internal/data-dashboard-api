@@ -239,11 +239,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def query_for_superseded_data(
         self,
         *,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -251,15 +251,15 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         """Grabs all stale records which are not under embargo.
 
         Args:
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-COVID-19_cases_countRollingMean`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -274,11 +274,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__name=metric_name,
-            geography__name=geography_name,
+            metric__name=metric,
+            geography__name=geography,
             geography__geography_code=geography_code,
-            geography__geography_type__name=geography_type_name,
-            stratum__name=stratum_name,
+            geography__geography_type__name=geography_type,
+            stratum__name=stratum,
             age__name=age,
             sex=sex,
             is_public=is_public,
@@ -595,11 +595,11 @@ class CoreTimeSeriesManager(models.Manager):
     def query_for_superseded_data(
         self,
         *,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -607,15 +607,15 @@ class CoreTimeSeriesManager(models.Manager):
         """Filters the given `queryset` for the stale records in each individual date
 
         Args:
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
            sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
@@ -644,11 +644,11 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().query_for_superseded_data(
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum=stratum,
             sex=sex,
             age=age,
             is_public=is_public,
@@ -720,11 +720,11 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            metric_name=metric,
-            geography_name=geography,
-            geography_type_name=geography_type,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum,
+            stratum=stratum,
             sex=sex,
             age=age,
             is_public=is_public,
