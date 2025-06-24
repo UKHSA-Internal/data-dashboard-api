@@ -73,12 +73,12 @@ class CoreHeadlineQuerySet(models.QuerySet):
     ) -> Self:
         if geography_name:
             queryset = self._filter_by_geography(
-                queryset=queryset, geography_name=geography_name
+                queryset=queryset, geography=geography_name
             )
 
         if geography_type_name:
             queryset = self._filter_by_geography_type(
-                queryset=queryset, geography_type_name=geography_type_name
+                queryset=queryset, geography_type=geography_type_name
             )
 
         if geography_code:
@@ -88,7 +88,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
         if stratum_name:
             queryset = self._filter_by_stratum(
-                queryset=queryset, stratum_name=stratum_name
+                queryset=queryset, stratum=stratum_name
             )
 
         if sex:
