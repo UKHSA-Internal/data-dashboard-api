@@ -111,16 +111,16 @@ class PlotParameters(BaseModel):
                 Where the keys are the names of the fields
                 and the values are the values of those fields.
                 E.g.
-                    >>> {"topic_name": "COVID-19", ...}
+                    >>> {"topic": "COVID-19", ...}
 
         """
         params = {
             "fields_to_export": [self.x_axis_value, self.y_axis_value],
-            "metric_name": self.metric_name or "",
-            "topic_name": self.topic_name or "",
-            "stratum_name": self.stratum_name or "",
-            "geography_name": self.geography_name or "",
-            "geography_type_name": self.geography_type_name or "",
+            "metric": self.metric or "",
+            "topic": self.topic or "",
+            "stratum": self.stratum or "",
+            "geography": self.geography or "",
+            "geography_type": self.geography_type or "",
             "sex": self.sex or "",
             "age": self.age or "",
         }
