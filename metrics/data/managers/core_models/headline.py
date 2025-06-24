@@ -30,15 +30,15 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
     @staticmethod
     def _filter_by_geography(
-        *, queryset: models.QuerySet, geography_name: str
+        *, queryset: models.QuerySet, geography: str
     ) -> models.QuerySet:
-        return queryset.filter(geography__name=geography_name)
+        return queryset.filter(geography__name=geography)
 
     @staticmethod
     def _filter_by_geography_type(
-        *, queryset: models.QuerySet, geography_type_name: str
+        *, queryset: models.QuerySet, geography_type: str
     ) -> models.QuerySet:
-        return queryset.filter(geography__geography_type__name=geography_type_name)
+        return queryset.filter(geography__geography_type__name=geography_type)
 
     @staticmethod
     def _filter_by_geography_code(
@@ -48,9 +48,9 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
     @staticmethod
     def _filter_by_stratum(
-        *, queryset: models.QuerySet, stratum_name: str
+        *, queryset: models.QuerySet, stratum: str
     ) -> models.QuerySet:
-        return queryset.filter(stratum__name=stratum_name)
+        return queryset.filter(stratum__name=stratum)
 
     @staticmethod
     def _filter_by_sex(*, queryset: models.QuerySet, sex: str) -> models.QuerySet:
