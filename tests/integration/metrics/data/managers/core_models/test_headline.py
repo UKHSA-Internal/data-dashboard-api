@@ -437,12 +437,12 @@ class TestCoreHeadlineManager:
 
         # When
         CoreHeadline.objects.delete_superseded_data(
-            topic_name=current_round_headline.metric.topic.name,
-            metric_name=current_round_headline.metric.name,
-            geography_name=current_round_headline.geography.name,
+            topic=current_round_headline.metric.topic.name,
+            metric=current_round_headline.metric.name,
+            geography=current_round_headline.geography.name,
             geography_code=current_round_headline.geography.geography_code,
-            geography_type_name=current_round_headline.geography.geography_type.name,
-            stratum_name=current_round_headline.stratum.name,
+            geography_type=current_round_headline.geography.geography_type.name,
+            stratum=current_round_headline.stratum.name,
             age=current_round_headline.age.name,
             sex=current_round_headline.sex,
             is_public=current_round_headline.is_public,

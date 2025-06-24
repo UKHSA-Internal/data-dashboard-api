@@ -503,12 +503,12 @@ class Consumer:
 
         """
         params = {
-            "topic_name": self.dto.topic,
-            "metric_name": self.dto.metric,
-            "geography_name": self.dto.geography,
-            "geography_type_name": self.dto.geography_type,
+            "topic": self.dto.topic,
+            "metric": self.dto.metric,
+            "geography": self.dto.geography,
+            "geography_type": self.dto.geography_type,
             "geography_code": self.dto.geography_code,
-            "stratum_name": self.dto.stratum,
+            "stratum": self.dto.stratum,
             "sex": self.dto.sex,
             "age": self.dto.age,
         }
@@ -595,11 +595,11 @@ class Consumer:
 
     def _clear_stale_core_timeseries(self):
         params = {
-            "metric_name": self.dto.metric,
-            "geography_name": self.dto.geography,
-            "geography_type_name": self.dto.geography_type,
+            "metric": self.dto.metric,
+            "geography": self.dto.geography,
+            "geography_type": self.dto.geography_type,
             "geography_code": self.dto.geography_code,
-            "stratum_name": self.dto.stratum,
+            "stratum": self.dto.stratum,
             "sex": self.dto.sex,
             "age": self.dto.age,
         }
@@ -608,14 +608,14 @@ class Consumer:
 
     def _clear_stale_api_timeseries(self):
         params = {
-            "theme_name": self.dto.parent_theme,
-            "sub_theme_name": self.dto.child_theme,
-            "topic_name": self.dto.topic,
-            "metric_name": self.dto.metric,
-            "geography_name": self.dto.geography,
-            "geography_type_name": self.dto.geography_type,
+            "theme": self.dto.parent_theme,
+            "sub_theme": self.dto.child_theme,
+            "topic": self.dto.topic,
+            "metric": self.dto.metric,
+            "geography": self.dto.geography,
+            "geography_type": self.dto.geography_type,
             "geography_code": self.dto.geography_code,
-            "stratum_name": self.dto.stratum,
+            "stratum": self.dto.stratum,
             "sex": self.dto.sex,
             "age": self.dto.age,
         }

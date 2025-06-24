@@ -523,14 +523,14 @@ class TestAPITimeSeriesManager:
 
         # When
         APITimeSeries.objects.delete_superseded_data(
-            theme_name=fifth_embargoed_round_for_first_date.theme,
-            sub_theme_name=fifth_embargoed_round_for_first_date.sub_theme,
-            topic_name=fifth_embargoed_round_for_first_date.topic,
-            metric_name=fifth_embargoed_round_for_first_date.metric,
-            geography_name=fifth_embargoed_round_for_first_date.geography,
-            geography_type_name=fifth_embargoed_round_for_first_date.geography_type,
+            theme=fifth_embargoed_round_for_first_date.theme,
+            sub_theme=fifth_embargoed_round_for_first_date.sub_theme,
+            topic=fifth_embargoed_round_for_first_date.topic,
+            metric=fifth_embargoed_round_for_first_date.metric,
+            geography=fifth_embargoed_round_for_first_date.geography,
+            geography_type=fifth_embargoed_round_for_first_date.geography_type,
             geography_code=fifth_embargoed_round_for_first_date.geography_code,
-            stratum_name=fifth_embargoed_round_for_first_date.stratum,
+            stratum=fifth_embargoed_round_for_first_date.stratum,
             sex=fifth_embargoed_round_for_first_date.sex,
             age=fifth_embargoed_round_for_first_date.age,
             is_public=fifth_embargoed_round_for_first_date.is_public,
