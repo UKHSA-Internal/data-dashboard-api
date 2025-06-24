@@ -720,11 +720,11 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            metric_name=metric,
+            geography_name=geography,
+            geography_type_name=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum_name=stratum,
             sex=sex,
             age=age,
             is_public=is_public,
