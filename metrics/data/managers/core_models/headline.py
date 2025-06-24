@@ -603,30 +603,30 @@ class CoreHeadlineManager(models.Manager):
     def get_latest_headlines_for_geography_codes(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         geography_codes: list[str],
-        geography_name: str = "",
-        geography_type_name: str = "",
-        stratum_name: str = "",
+        geography: str = "",
+        geography_type: str = "",
+        stratum: str = "",
         sex: str = "",
         age: str = "",
     ) -> dict[str, Optional["CoreHeadline"]]:
-        """Grabs by the latest records by the given `topic_name` and `metric_name` with a current `period_end`
+        """Grabs by the latest records by the given `topic` and `metric` with a current `period_end`
 
         Args:
-            topic_name: The name of the disease being queried.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography being queried.
+            geography: The name of the geography being queried.
                 E.g. `England`
-            geography_type_name: The name of the geography
+            geography_type: The name of the geography
                 type being queried.
                 E.g. `Nation`
             geography_codes: Codes associated with the geographies being queried.
                 E.g. ["E45000010", "E45000020"]
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
