@@ -672,11 +672,11 @@ class CoreTimeSeriesManager(models.Manager):
     def delete_superseded_data(
         self,
         *,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -684,15 +684,15 @@ class CoreTimeSeriesManager(models.Manager):
         """Deletes all stale records within each individual date
 
         Args:
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
            sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
