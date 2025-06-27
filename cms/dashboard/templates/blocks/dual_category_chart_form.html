@@ -1,0 +1,27 @@
+{% load wagtailadmin_tags  %}
+
+{{ block.super }}
+
+<script type="application/json" id="{{ prefix }}-subcategory-data">
+    {{ subcategory_data|safe }}
+</script>
+
+<script type="application/json" id={{ prefix }}-current-values">
+    {{ current_values|safe }}
+</script>
+
+<div class="dual-category-chart-card">
+    {% if help_text %}
+        <div class="help">
+            {% icon name="help" classname="default" %}
+            {{ help_text }}
+        </div>
+    {% endif %}
+
+    {% for child in children.values %}
+        {% if child.block.label %}
+            <label class="w-field__label" {% if child.id_for_label %}for="{{ child.id_for_label }}"{% endif %}>{{ child.block.label }}{% if child.block.required %}<span class="w-required-mark">*</span>{% endif %}</label>
+        {% endif %}
+        {{ child.render_form }}
+    {% endfor %}
+</div>

@@ -106,6 +106,21 @@ class ChartTypes(Enum):
         return [chart_type.value for chart_type in selectable]
 
     @classmethod
+    def dual_category_chart_options(cls) -> list[str]:
+        """Returns a list of `dual` chart types as strings
+        Note:
+            Dual category chart types include charts like `stacked-bar` and `pyramid` chart,
+            which are charts that include two categorical variables.
+
+        Returns:
+            A list of `dual` chart types as strings.
+            Examples:
+                ["stacked-bar", "pyramid"]
+        """
+        selectable = (cls.stacked_bar, cls.pyramid)
+        return tuple((chart_type.value, chart_type.value) for chart_type in selectable)
+
+    @classmethod
     def values(cls) -> list[str]:
         return [chart_type.value for chart_type in cls]
 

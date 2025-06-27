@@ -1,6 +1,9 @@
 from unittest import mock
 
 from cms.metrics_interface import field_choices_callables, interface
+from cms.metrics_interface.field_choices_callables import (
+    DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST,
+)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
@@ -198,6 +201,60 @@ class TestGetChartAxis:
 
         # Then
         assert chart_axis_choices == retrieved_chart_axis_choices
+
+
+class TestGetDualChartCategoryChoices:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_chart_axis_choices")
+    def test_delegates_call_correctly(
+        self, mocked_get_dual_chart_category_choices: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns dual chart category choices
+        When `get_dual_chart_category_choices()` is called
+        Then the dual chart category choices are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_dual_chart_category_choices = [
+            (choice, choice)
+            for choice, choice in ChartAxisFields.choices()
+            if choice not in DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST
+        ]
+        mocked_get_dual_chart_category_choices.return_value = (
+            retrieved_dual_chart_category_choices
+        )
+
+        # When
+        dual_category_chart_choices = (
+            field_choices_callables.get_dual_chart_secondary_category_choices()
+        )
+
+        # Then
+        assert dual_category_chart_choices == retrieved_dual_chart_category_choices
+
+
+class TestGetDualCategoryChartTypes:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_dual_category_chart_types")
+    def test_delegates_call_correctly(
+        self, mocked_get_dual_category_chart_types: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns dual category chart types
+        When `get_dual_category_chart_types()` is called
+        Then the dual category chart types are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_dual_category_chart_types = ChartTypes.dual_category_chart_options()
+        mocked_get_dual_category_chart_types.return_value = (
+            retrieved_dual_category_chart_types
+        )
+
+        # When
+        dual_category_chart_types = (
+            field_choices_callables.get_dual_category_chart_types()
+        )
+
+        # Then
+        assert dual_category_chart_types == retrieved_dual_category_chart_types
 
 
 class TestGetChartLineTypes:
@@ -433,3 +490,135 @@ class TestSimplifiedChartTypes:
 
         # Then
         assert simplified_chart_types == retrieved_chart_types
+
+
+class TestGetAllSubcategoryChoices:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_age_names")
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_stratum_names")
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_geography_names")
+    def test_delegates_call_correctly(
+        self,
+        mocked_get_all_age_names: mock.MagicMock,
+        mocked_get_all_stratum_names: mock.MagicMock,
+        mocked_get_all_geography_names: mock.MagicMock,
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns subcategory choices
+        When `get_all_subcategory_choices()` is called
+        Then the subcategory choices are returned as a list of 2-item tuples
+        """
+        # Given
+        mocked_get_all_sex_names = ["all", "f", "m"]
+        mocked_get_all_age_names.return_value = ["00-04", "05-11"]
+        mocked_get_all_stratum_names.return_value = ["default"]
+        mocked_get_all_geography_names.return_value = ["London", "Yorkshire and Humber"]
+
+        # When
+        retrieved_subcategory_choices = (
+            field_choices_callables.get_all_subcategory_choices()
+        )
+        expected_subcategory_choices = [
+            (field, field)
+            for field in [
+                *mocked_get_all_geography_names.return_value,
+                *mocked_get_all_sex_names,
+                *mocked_get_all_stratum_names.return_value,
+                *mocked_get_all_age_names.return_value,
+            ]
+        ]
+
+        # Then
+        assert retrieved_subcategory_choices == expected_subcategory_choices
+
+
+class TestGetAllGeographiesByType:
+    @mock.patch(
+        "cms.metrics_interface.field_choices_callables.get_all_geography_type_names"
+    )
+    @mock.patch.object(
+        interface.MetricsAPIInterface, "get_all_geography_names_by_geography_type"
+    )
+    def test_delegates_call_correctly(
+        self,
+        mocked_get_all_geography_names_by_geography_type: mock.MagicMock,
+        mocked_get_all_geography_type_names: mock.MagicMock,
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns geography names by type
+        When `get_all_geography_names_by_geography_type` is called
+        Then the geography names are returned as a dictionary where the geography type key
+            has a list of 2-item tuples for its value.
+        """
+        # Given
+        mocked_get_all_geography_type_names.return_value = [
+            ("FakeGeographyTypeOne", "FakeGeographyTypeOne"),
+            ("FakeGeographyTypeTwo", "FakeGeographyTypeTwo"),
+        ]
+        mocked_get_all_geography_names_by_geography_type.side_effect = [
+            ["FakeGeography1", "FakeGeography2"],
+            ["FakeGeography3", "FakeGeography4"],
+        ]
+
+        # When
+        retrieved_geography_choices_grouped_by_type = (
+            field_choices_callables.get_all_geography_choices_grouped_by_type()
+        )
+        expected_geography_choices_grouped_by_type = {
+            "FakeGeographyTypeOne": [
+                ("FakeGeography1", "FakeGeography1"),
+                ("FakeGeography2", "FakeGeography2"),
+            ],
+            "FakeGeographyTypeTwo": [
+                ("FakeGeography3", "FakeGeography3"),
+                ("FakeGeography4", "FakeGeography4"),
+            ],
+        }
+
+        # Then
+        assert (
+            retrieved_geography_choices_grouped_by_type
+            == expected_geography_choices_grouped_by_type
+        )
+
+
+class TestGetAllSubcategoryChoicesGroupedByCategories:
+    @mock.patch(
+        "cms.metrics_interface.field_choices_callables.get_all_geography_choices_grouped_by_type"
+    )
+    @mock.patch("cms.metrics_interface.field_choices_callables.get_all_stratum_names")
+    @mock.patch("cms.metrics_interface.field_choices_callables.get_all_sex_names")
+    @mock.patch("cms.metrics_interface.field_choices_callables.get_all_age_names")
+    def test_receives_subcategory_choices_grouped_by_category(
+        self,
+        mocked_get_all_age_names: mock.MagicMock,
+        mocked_get_all_sex_names: mock.MagicMock,
+        mocked_get_all_stratum_names: mock.MagicMock,
+        mocked_all_geography_choices_grouped_by_type: mock.MagicMock,
+    ):
+        """f
+        Given an instance of the `MetricsAPIInterface` which returns subcategory choices
+        When `get_all_subcategory_choices_grouped_by_categories` is called
+        Then a dictionary is returned containing the subcategory choices grouped by category
+        """
+        # Given
+        mocked_get_all_age_names.return_value = [("00-04", "00-04"), ("05-11", "05-11")]
+        mocked_get_all_sex_names.return_value = [("all", "all"), ("m", "m"), ("f", "f")]
+        mocked_get_all_stratum_names.return_value = [("default", "default")]
+        mocked_all_geography_choices_grouped_by_type.return_value = [
+            ("London", "London"),
+            ("Leeds", "Leeds"),
+        ]
+
+        # When
+        received_categories = (
+            field_choices_callables.get_all_subcategory_choices_grouped_by_categories()
+        )
+        expected_subcategory_choices = {
+            "age": mocked_get_all_age_names(),
+            "sex": mocked_get_all_sex_names(),
+            "stratum": mocked_get_all_stratum_names(),
+            "geography": mocked_all_geography_choices_grouped_by_type(),
+        }
+
+        # Then
+        assert received_categories == expected_subcategory_choices
