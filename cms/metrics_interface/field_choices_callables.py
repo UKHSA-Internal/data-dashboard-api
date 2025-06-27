@@ -13,7 +13,9 @@ And allowing the CMS to provide the content creator with access to the `latest` 
 from cms.metrics_interface import MetricsAPIInterface
 
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
+DICT_OF_CHART_AXIS_AND_SUB_CATEGORIES = dict[str, list[str]]
 GEOGRAPHY_TYPE_NAME_FOR_ALERTS = "Government Office Region"
+DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST = ["metric", "date"]
 
 
 def _build_two_item_tuple_choices(
@@ -40,6 +42,30 @@ def get_possible_axis_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     return MetricsAPIInterface.get_chart_axis_choices()
+
+
+def get_dual_chart_secondary_category_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `dual chart secondary category` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        when a new choice is added to these choices.
+        Instead, the 1-off migration is pointed at this callable.
+        So wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of chart_secondary_category_choices.
+        Examples:
+            [("age", "age"), ...]
+    """
+    result = MetricsAPIInterface.get_chart_axis_choices()
+    return [
+        (choice, choice)
+        for choice, choice in result
+        if choice not in DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST
+    ]
 
 
 def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -171,6 +197,26 @@ def get_simplified_chart_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     return MetricsAPIInterface.get_simplified_chart_types()
+
+
+def get_dual_category_chart_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `chart_type` fields of the CMS blocks
+    for dual category chart types.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of chart_types.
+        Examples:
+            [("stacked_bar", "stacked_bar"), ...]
+    """
+    return MetricsAPIInterface.get_dual_category_chart_types()
 
 
 def get_chart_line_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:

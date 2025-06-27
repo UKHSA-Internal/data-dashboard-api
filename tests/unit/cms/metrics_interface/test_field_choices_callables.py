@@ -1,6 +1,9 @@
 from unittest import mock
 
 from cms.metrics_interface import field_choices_callables, interface
+from cms.metrics_interface.field_choices_callables import (
+    DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST,
+)
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
@@ -198,6 +201,60 @@ class TestGetChartAxis:
 
         # Then
         assert chart_axis_choices == retrieved_chart_axis_choices
+
+
+class TestGetDualChartCategoryChoices:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_chart_axis_choices")
+    def test_delegates_call_correctly(
+        self, mocked_get_dual_chart_category_choices: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns dual chart category choices
+        When `get_dual_chart_category_choices()` is called
+        Then the dual chart category choices are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_dual_chart_category_choices = [
+            (choice, choice)
+            for choice, choice in ChartAxisFields.choices()
+            if choice not in DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST
+        ]
+        mocked_get_dual_chart_category_choices.return_value = (
+            retrieved_dual_chart_category_choices
+        )
+
+        # When
+        dual_category_chart_choices = (
+            field_choices_callables.get_dual_chart_secondary_category_choices()
+        )
+
+        # Then
+        assert dual_category_chart_choices == retrieved_dual_chart_category_choices
+
+
+class TestGetDualCategoryChartTypes:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_dual_category_chart_types")
+    def test_delegates_call_correctly(
+        self, mocked_get_dual_category_chart_types: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns dual category chart types
+        When `get_dual_category_chart_types()` is called
+        Then the dual category chart types are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_dual_category_chart_types = ChartTypes.dual_category_chart_options()
+        mocked_get_dual_category_chart_types.return_value = (
+            retrieved_dual_category_chart_types
+        )
+
+        # When
+        dual_category_chart_types = (
+            field_choices_callables.get_dual_category_chart_types()
+        )
+
+        # Then
+        assert dual_category_chart_types == retrieved_dual_category_chart_types
 
 
 class TestGetChartLineTypes:

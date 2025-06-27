@@ -14,6 +14,7 @@ from cms.dynamic_content.components import (
     HeadlineChartComponent,
     SimplifiedChartComponent,
 )
+from cms.dynamic_content.dynamic_cards import DualCategoryChartCard
 from cms.metrics_interface.field_choices_callables import get_possible_axis_choices
 
 MINIMUM_HEADLINE_COLUMNS_COUNT: int = 1
@@ -306,6 +307,7 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     headline_chart_card = HeadlineChartCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
     simplified_chart_with_link = SimplifiedChartWithLink()
+    dual_category_chart_card = DualCategoryChartCard()
 
 
 class ChartRowCard(blocks.StructBlock):
