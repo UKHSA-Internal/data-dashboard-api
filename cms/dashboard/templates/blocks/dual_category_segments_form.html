@@ -1,0 +1,28 @@
+{% load wagtailadmin_tags %}
+
+{{ block.super }}
+
+<div class="dual-category-chart-card__segments">
+    {% if help_text %}
+        <div class="helps">
+            {% icon name="help" classname="default" %}
+            {{ help_text }}
+        </div>
+    {% endif %}
+
+    {% for child in children.values %}
+        {% if child.block.label %}
+            <label class="w-field__label"
+                   {% if child.id_for_label %}
+                       for="{{ child.id_for_label }}"
+                   {% endif %}
+            >
+                {{ child.block.label }}
+                {% if child.block.required %}
+                    <span class="w-required-mark">*</span>
+                {% endif %}
+            </label>
+        {% endif %}
+        {{ child.render_form }}
+    {% endfor %}
+</div>

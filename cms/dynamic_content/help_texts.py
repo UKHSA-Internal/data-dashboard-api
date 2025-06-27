@@ -363,3 +363,18 @@ Note that multiple page banners can be active on one page. Consider
 carefully if you need multiple announcements to be active at once as
 this can have an impact on user experience of the dashboard page.
 """
+
+SECONDARY_CATEGORY: str = """
+This is for selecting the Second categorical variable type for Dual category charts.
+For example when building a `Stacked bar chart` where the x-axis may be of type `Sex` and
+display `Male` and `Female` along the x-axis. If our stacked by then breaks each bar up into
+age groups, then our `Secondary Category` type is `Age`.
+"""
+
+PRIMARY_FIELD_VALUES: str = """
+testing testing 123
+"""
+
+SECONDARY_FIELD_VALUES: str = """
+testing testing 123
+"""
