@@ -1,5 +1,10 @@
+import json
+
+from django import forms
 from django.db import models
 from wagtail import blocks
+from wagtail.blocks.struct_block import StructBlockAdapter
+from wagtail.telepath import register
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
@@ -11,10 +16,22 @@ from cms.dynamic_content.blocks import (
 )
 from cms.dynamic_content.components import (
     ChartComponent,
+    DualCategoryChartSegmentComponent,
+    DualCategoryChartStaticFieldComponent,
     HeadlineChartComponent,
     SimplifiedChartComponent,
 )
-from cms.metrics_interface.field_choices_callables import get_possible_axis_choices
+from cms.metrics_interface.field_choices_callables import (
+    get_all_age_names,
+    get_all_geography_choices_grouped_by_type,
+    get_all_geography_names,
+    get_all_sex_names,
+    get_all_stratum_names,
+    get_all_subcategory_choices,
+    get_dual_category_chart_types,
+    get_dual_chart_secondary_category_choices,
+    get_possible_axis_choices,
+)
 
 MINIMUM_HEADLINE_COLUMNS_COUNT: int = 1
 MAXIMUM_HEADLINE_COLUMNS_COUNT: int = 5
@@ -33,6 +50,13 @@ DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
 
 CHART_CARD_DATE_PREFIX_DEFAULT_TEXT = "Up to and including"
+
+SUBCATEGORY_CHOICES_DB = {
+    "age": get_all_age_names(),
+    "sex": get_all_sex_names(),
+    "stratum": get_all_stratum_names(),
+    "geography": get_all_geography_names(),
+}
 
 
 class TextCard(blocks.StructBlock):
@@ -301,11 +325,120 @@ class HeadlineChartCard(ChartCard):
         icon = "standalone_chart"
 
 
+class DualCategoryChartCard(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    body = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    about = blocks.TextBlock(
+        required=False, default="", help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
+    )
+    related_links = RelatedLinkBlock(
+        required=False, help_text=help_texts.OPTIONAL_RELATED_LINK
+    )
+    tag_manager_event_id = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
+        label="Tag manager event ID",
+    )
+    x_axis = blocks.ChoiceBlock(
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_X_AXIS,
+    )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
+    primary_field_values = blocks.MultipleChoiceBlock(
+        choices=get_all_subcategory_choices,
+        required=False,
+        help_text=help_texts.PRIMARY_FIELD_VALUES,
+    )
+    y_axis = blocks.ChoiceBlock(
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_Y_AXIS,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
+    )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
+    chart_type = blocks.ChoiceBlock(
+        required=False,
+        choices=get_dual_category_chart_types,
+        help_text=help_texts.CHART_TYPE_FIELD,
+    )
+
+    static_fields = DualCategoryChartStaticFieldComponent()
+
+    second_category = blocks.ChoiceBlock(
+        choices=get_dual_chart_secondary_category_choices,
+        help_text=help_texts.SECONDARY_CATEGORY,
+    )
+
+    segments = blocks.ListBlock(
+        DualCategoryChartSegmentComponent(),
+        min_num=1,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def get_form_context(self, value, prefix="", errors=None):
+        context = super().get_form_context(value=value, prefix=prefix, errors=errors)
+        SUBCATEGORY_CHOICES_DB["geography"] = (
+            get_all_geography_choices_grouped_by_type()
+        )
+        context["subcategory_data"] = json.dumps(SUBCATEGORY_CHOICES_DB)
+
+        return context
+
+    class Meta:
+        form_classname = "dual-category-chart-form"
+        form_template = "blocks/dual_category_chart_form.html"
+        label = "Dual Category Chart"
+        icon = "standalone_chart"
+
+
+class DualCategoryChartCardAdapter(StructBlockAdapter):
+    """A telepath adaptor for `DualCategoryChartCard` this...
+
+    Note:
+         This adaptor attaches our customer JavaScript implementation
+         `cms/dashboard/static/js/dual_category_chart_form.js`
+    """
+
+    js_constructor = "cms.dynamic_content.cards.DualCategoryChartCard"
+
+    @property
+    def media(self):
+        structblock_media = super().media
+        return forms.Media(
+            js=structblock_media._js  # noqa: SLF001
+            + ["js/dual_category_chart_form.js"],
+            css=structblock_media._css,  # noqa: SLF001
+        )
+
+
+register(DualCategoryChartCardAdapter(), DualCategoryChartCard)
+
+
 class ChartRowBlockTypes(blocks.StreamBlock):
     chart_card = ChartCard()
     headline_chart_card = HeadlineChartCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
     simplified_chart_with_link = SimplifiedChartWithLink()
+    dual_category_chart_card = DualCategoryChartCard()
 
 
 class ChartRowCard(blocks.StructBlock):
