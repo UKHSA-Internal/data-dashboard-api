@@ -1,18 +1,11 @@
 import datetime
-from unittest import mock
 from http import HTTPStatus
-from django.test import RequestFactory
 
 import pytest
 
 from rest_framework.response import Response
-from django.urls import reverse
 from rest_framework.test import APIClient
 
-from metrics.api.views.audit.serializers import AuditAPITimeSeriesSerializer
-from metrics.api.views.audit import AuditAPITimeSeriesViewSet
-
-from metrics.data.models.api_models import APITimeSeries
 from tests.factories.metrics.api_models.time_series import APITimeSeriesFactory
 
 

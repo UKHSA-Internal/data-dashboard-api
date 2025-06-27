@@ -204,12 +204,12 @@ class TestAPITimeSeriesQuerySet:
         input_queryset = APITimeSeries.objects.get_queryset()
         api_time_series = live_api_time_series_records[0]
         retrieved_records = input_queryset.filter_for_list_view(
-            theme_name=api_time_series.theme,
-            sub_theme_name=api_time_series.sub_theme,
-            topic_name=api_time_series.topic,
-            geography_type_name=api_time_series.geography_type,
-            geography_name=api_time_series.geography,
-            metric_name=api_time_series.metric,
+            theme=api_time_series.theme,
+            sub_theme=api_time_series.sub_theme,
+            topic=api_time_series.topic,
+            geography_type=api_time_series.geography_type,
+            geography=api_time_series.geography,
+            metric=api_time_series.metric,
             restrict_to_public=True,
         )
 
@@ -265,12 +265,12 @@ class TestAPITimeSeriesQuerySet:
         api_time_series = live_api_time_series_records[0]
         input_queryset = APITimeSeries.objects.get_queryset()
         retrieved_records = input_queryset.filter_for_list_view(
-            theme_name=api_time_series.theme,
-            sub_theme_name=api_time_series.sub_theme,
-            topic_name=api_time_series.topic,
-            geography_type_name=api_time_series.geography_type,
-            geography_name=api_time_series.geography,
-            metric_name=api_time_series.metric,
+            theme=api_time_series.theme,
+            sub_theme=api_time_series.sub_theme,
+            topic=api_time_series.topic,
+            geography_type=api_time_series.geography_type,
+            geography=api_time_series.geography,
+            metric=api_time_series.metric,
             restrict_to_public=True,
         )
 
@@ -324,12 +324,12 @@ class TestAPITimeSeriesQuerySet:
 
         # When
         retrieved_records = APITimeSeries.objects.get_queryset().filter_for_list_view(
-            theme_name=expected_current_records[0].theme,
-            sub_theme_name=expected_current_records[0].sub_theme,
-            topic_name=expected_current_records[0].topic,
-            geography_type_name=expected_current_records[0].geography_type,
-            geography_name=expected_current_records[0].geography,
-            metric_name=metric,
+            theme=expected_current_records[0].theme,
+            sub_theme=expected_current_records[0].sub_theme,
+            topic=expected_current_records[0].topic,
+            geography_type=expected_current_records[0].geography_type,
+            geography=expected_current_records[0].geography,
+            metric=metric,
             restrict_to_public=True,
         )
 

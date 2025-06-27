@@ -91,11 +91,11 @@ class APITimeSeriesViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = super().get_queryset()
 
         return queryset.filter_for_list_view(
-            theme_name=self.kwargs["theme"],
-            sub_theme_name=self.kwargs["sub_theme"],
-            topic_name=self.kwargs["topic"],
-            geography_type_name=self.kwargs["geography_type"],
-            geography_name=self.kwargs["geography"],
-            metric_name=self.kwargs["metric"],
+            theme=self.kwargs["theme"],
+            sub_theme=self.kwargs["sub_theme"],
+            topic=self.kwargs["topic"],
+            geography_type=self.kwargs["geography_type"],
+            geography=self.kwargs["geography"],
+            metric=self.kwargs["metric"],
             restrict_to_public=True,
         )

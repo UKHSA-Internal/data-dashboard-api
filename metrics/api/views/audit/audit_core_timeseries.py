@@ -130,10 +130,10 @@ class AuditCoreTimeseriesViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
         return queryset.filter_for_audit_list_view(
-            metric_name=self.kwargs["metric"],
-            geography_type_name=self.kwargs["geography_type"],
-            geography_name=self.kwargs["geography"],
-            stratum_name=self.kwargs["stratum"],
+            metric=self.kwargs["metric"],
+            geography_type=self.kwargs["geography_type"],
+            geography=self.kwargs["geography"],
+            stratum=self.kwargs["stratum"],
             sex=self.kwargs["sex"],
             age=self.kwargs["age"],
         )
