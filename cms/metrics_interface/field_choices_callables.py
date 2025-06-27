@@ -13,7 +13,9 @@ And allowing the CMS to provide the content creator with access to the `latest` 
 from cms.metrics_interface import MetricsAPIInterface
 
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
+DICT_OF_CHART_AXIS_AND_SUB_CATEGORIES = dict[str, list[str]]
 GEOGRAPHY_TYPE_NAME_FOR_ALERTS = "Government Office Region"
+DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST = ["metric", "date"]
 
 
 def _build_two_item_tuple_choices(
@@ -40,6 +42,30 @@ def get_possible_axis_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     return MetricsAPIInterface.get_chart_axis_choices()
+
+
+def get_dual_chart_secondary_category_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `dual chart secondary category` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        when a new choice is added to these choices.
+        Instead, the 1-off migration is pointed at this callable.
+        So wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of chart_secondary_category_choices.
+        Examples:
+            [("age", "age"), ...]
+    """
+    result = MetricsAPIInterface.get_chart_axis_choices()
+    return [
+        (choice, choice)
+        for choice, choice in result
+        if choice not in DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST
+    ]
 
 
 def get_all_unique_metric_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -171,6 +197,26 @@ def get_simplified_chart_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
 
     """
     return MetricsAPIInterface.get_simplified_chart_types()
+
+
+def get_dual_category_chart_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `chart_type` fields of the CMS blocks
+    for dual category chart types.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of chart_types.
+        Examples:
+            [("stacked_bar", "stacked_bar"), ...]
+    """
+    return MetricsAPIInterface.get_dual_category_chart_types()
 
 
 def get_chart_line_types() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
@@ -409,3 +455,80 @@ def get_all_age_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """
     metrics_interface = MetricsAPIInterface()
     return _build_two_item_tuple_choices(choices=metrics_interface.get_all_age_names())
+
+
+def get_all_subcategory_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable to return all category choices for initial load of dynamic CMS blocks.
+
+    Notes:
+        This callable returns a list combining the results of multiple callables
+        that can be used for category choices in wagtail forms.
+        For dynamic lists using javascript to update the form choices require that
+        all possible choices are first loaded into the field `choices` when loading
+        the form so that validation can work.
+
+    Returns:
+        A list of 2-item tuples for multiple attribute types
+        Examples:
+            [("40-44", "40-44"), ("45-54", "45-54"), ("m", "m"), ("f", "f"), ...]
+    """
+    return [
+        *get_all_age_names(),
+        *get_all_sex_names(),
+        *get_all_stratum_names(),
+        *get_all_geography_names(),
+    ]
+
+
+def get_all_geography_choices_grouped_by_type() -> (
+    dict[str, LIST_OF_TWO_STRING_ITEM_TUPLES]
+):
+    """Callable to return all `geography` choices grouped by `geography_type`
+
+    Notes:
+        This callable returns a dict mapping each geography type to a list of 2-item tuples of
+        associated geographies. That can be used for category choices in wagtail forms.
+
+    Returns:
+        A dict mapping each geography type to a list of 2-item tuples of of associated geographies.
+        Examples:
+            { "Nation": ["England", "England"], ... }
+    """
+    metrics_interface = MetricsAPIInterface()
+    geography_types = [key for key, value in get_all_geography_type_names()]
+
+    result = {}
+    for geography_type in geography_types:
+        result[geography_type] = _build_two_item_tuple_choices(
+            choices=metrics_interface.get_all_geography_names_by_geography_type(
+                geography_type_name=geography_type
+            )
+        )
+
+    return result
+
+
+def get_all_subcategory_choices_grouped_by_categories() -> (
+    dict[
+        str, LIST_OF_TWO_STRING_ITEM_TUPLES | dict[str, LIST_OF_TWO_STRING_ITEM_TUPLES]
+    ]
+):
+    """Callable to return all subcategory choices groups by categories.
+
+    Notes:
+        This callable returns a list combining the results of multiple callables
+        that can be used for subcategory choices in wagtail forms.
+        This object is injected into the wagtail form via a `script` tag that can
+        be consumed by JavaScript to update the options list based on a condition.
+
+    Returns:
+        A dictionary with values that contain a list of 2-item tuples for multiple attribute types
+        Examples:
+            { "age": ["40-44", "40-44"], "sex": ["m", "m"] ... }
+    """
+    return {
+        "age": get_all_age_names(),
+        "sex": get_all_sex_names(),
+        "stratum": get_all_stratum_names(),
+        "geography": get_all_geography_choices_grouped_by_type(),
+    }

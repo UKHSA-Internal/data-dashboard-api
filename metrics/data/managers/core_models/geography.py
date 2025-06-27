@@ -41,6 +41,23 @@ class GeographyQuerySet(models.QuerySet):
             .order_by("geography_code")
         )
 
+    def get_all_geography_names_by_geography_type(
+        self,
+        geography_type_name: str,
+    ) -> Self:
+        """Gets all available geography names for the given `geography_type_name`.
+        Returns:
+            QuerySet: A queryset of the individual geography names
+            which are related to the given geography_type:
+            Examples:
+                `<GeographyQuerySet ['England', 'London']>`
+        """
+        return (
+            self.filter(geography_type__name=geography_type_name)
+            .values_list("name", flat=True)
+            .order_by("name")
+        )
+
     def get_geography_codes_and_names_by_geography_type(
         self,
         geography_type_name: str,
@@ -96,6 +113,22 @@ class GeographyManager(models.Manager):
 
         """
         return self.get_queryset().get_all_geography_codes_by_geography_type(
+            geography_type_name=geography_type_name
+        )
+
+    def get_all_geography_names_by_geography_type(self, geography_type_name: str):
+        """Gets all available geography names for the given `geography_type_name`.
+
+        Args:
+            geography_type_name: string representation of `geography_type_name`
+
+        Returns:
+            QuerySet: A queryset of the individual geography names
+            which are related to the given geography_type:
+            Examples:
+                `<GeographyQuerySet ['England', 'London']>`
+        """
+        return self.get_queryset().get_all_geography_names_by_geography_type(
             geography_type_name=geography_type_name
         )
 

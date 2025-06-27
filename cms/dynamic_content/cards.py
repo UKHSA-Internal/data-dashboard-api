@@ -1,5 +1,10 @@
+import json
+
+from django import forms
 from django.db import models
 from wagtail import blocks
+from wagtail.blocks.struct_block import StructBlockAdapter
+from wagtail.telepath import register
 
 from cms.dashboard.models import AVAILABLE_RICH_TEXT_FEATURES
 from cms.dynamic_content import help_texts
@@ -11,10 +16,18 @@ from cms.dynamic_content.blocks import (
 )
 from cms.dynamic_content.components import (
     ChartComponent,
+    DualCategoryChartSegmentComponent,
+    DualCategoryChartStaticFieldComponent,
     HeadlineChartComponent,
     SimplifiedChartComponent,
 )
-from cms.metrics_interface.field_choices_callables import get_possible_axis_choices
+from cms.metrics_interface.field_choices_callables import (
+    get_all_subcategory_choices,
+    get_all_subcategory_choices_grouped_by_categories,
+    get_dual_category_chart_types,
+    get_dual_chart_secondary_category_choices,
+    get_possible_axis_choices,
+)
 
 MINIMUM_HEADLINE_COLUMNS_COUNT: int = 1
 MAXIMUM_HEADLINE_COLUMNS_COUNT: int = 5
@@ -28,6 +41,8 @@ MAXIMUM_COLUMNS_CHART_THREE_COLUMNS_COUNT: int = 3
 
 MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
+
+MINIMUM_SEGMENTS_COUNT: int = 1
 
 DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
@@ -299,6 +314,112 @@ class HeadlineChartCard(ChartCard):
 
     class Meta:
         icon = "standalone_chart"
+
+
+class DualCategoryChartCard(blocks.StructBlock):
+    title = blocks.TextBlock(required=True, help_text=help_texts.TITLE_FIELD)
+    body = blocks.TextBlock(
+        required=False, help_text=help_texts.OPTIONAL_BODY_FIELD, label="Subtitle"
+    )
+    about = blocks.TextBlock(
+        required=False, default="", help_text=help_texts.OPTIONAL_CHART_ABOUT_FIELD
+    )
+    related_links = RelatedLinkBlock(
+        required=False, help_text=help_texts.OPTIONAL_RELATED_LINK
+    )
+    tag_manager_event_id = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.TAG_MANAGER_EVENT_ID_FIELD,
+        label="Tag manager event ID",
+    )
+    x_axis = blocks.ChoiceBlock(
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_X_AXIS,
+    )
+    x_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_X_AXIS_TITLE,
+    )
+    primary_field_values = blocks.MultipleChoiceBlock(
+        choices=get_all_subcategory_choices,
+        required=False,
+        help_text=help_texts.PRIMARY_FIELD_VALUES,
+    )
+    y_axis = blocks.ChoiceBlock(
+        choices=get_possible_axis_choices,
+        help_text=help_texts.CHART_Y_AXIS,
+    )
+    y_axis_title = blocks.CharBlock(
+        required=False,
+        default="",
+        help_text=help_texts.CHART_Y_AXIS_TITLE,
+    )
+    y_axis_minimum_value = blocks.DecimalBlock(
+        required=False,
+        default=0,
+        help_text=help_texts.CHART_Y_AXIS_MINIMUM_VALUE,
+    )
+    y_axis_maximum_value = blocks.DecimalBlock(
+        required=False,
+        help_text=help_texts.CHART_Y_AXIS_MAXIMUM_VALUE,
+    )
+    chart_type = blocks.ChoiceBlock(
+        required=False,
+        choices=get_dual_category_chart_types,
+        help_text=help_texts.CHART_TYPE_FIELD,
+    )
+
+    static_fields = DualCategoryChartStaticFieldComponent()
+
+    second_category = blocks.ChoiceBlock(
+        choices=get_dual_chart_secondary_category_choices,
+        help_text=help_texts.SECONDARY_CATEGORY,
+    )
+
+    segments = blocks.ListBlock(
+        DualCategoryChartSegmentComponent(),
+        min_num=MINIMUM_SEGMENTS_COUNT,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def get_form_context(self, value, prefix="", errors=None):
+        context = super().get_form_context(value=value, prefix=prefix, errors=errors)
+        context["subcategory_data"] = json.dumps(
+            get_all_subcategory_choices_grouped_by_categories()
+        )
+
+        return context
+
+    class Meta:
+        form_classname = "dual-category-chart-form"
+        form_template = "blocks/dual_category_chart_form.html"
+        label = "Dual Category Chart"
+        icon = "standalone_chart"
+
+
+class DualCategoryChartCardAdapter(StructBlockAdapter):
+    """A telepath adaptor for `DualCategoryChartCard`
+
+    Note:
+         This adaptor attaches our custom JavaScript implementation
+         `cms/dashboard/static/js/dual_category_chart_form.js`
+    """
+
+    js_constructor = "cms.dynamic_content.cards.DualCategoryChartCard"
+
+    @property
+    def media(self):
+        structblock_media = super().media
+        return forms.Media(
+            js=structblock_media._js + ["js/dual_category_chart_form.js"],
+            css=structblock_media._css,
+        )
+
+
+register(DualCategoryChartCardAdapter(), DualCategoryChartCard)
 
 
 class ChartRowBlockTypes(blocks.StreamBlock):
