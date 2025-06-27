@@ -44,7 +44,7 @@ class TestMetricsAPIInterface:
             selectable_headline_chart_types == ChartTypes.selectable_headline_choices()
         )
 
-    def test_get_simpliied_chart_type_delegates_calls_correctly(self):
+    def test_get_simplified_chart_type_delegates_calls_correctly(self):
         """
         Given an instance of the `MetricsAPIInterface`
         When `get_simplified_chart_types()` is called from that object
@@ -62,6 +62,26 @@ class TestMetricsAPIInterface:
         assert (
             selectable_simplified_chart_types
             == ChartTypes.selectable_simplified_chart_choices()
+        )
+
+    def test_get_dual_category_chart_types_delegates_call_correctly(self):
+        """
+        Given an instance of `MetricsAPIInterface`
+        When `get_dual_category_chart_types()` is called from that object
+        Then the call is delegated to the correct method on the `ChartTypes` enum
+        """
+        # Given
+        metrics_api_interface = interface.MetricsAPIInterface()
+
+        # When
+        selectable_dual_category_chart_types = (
+            metrics_api_interface.get_dual_category_chart_types()
+        )
+
+        # Then
+        assert (
+            selectable_dual_category_chart_types
+            == ChartTypes.dual_category_chart_options()
         )
 
     def test_get_chart_axis_choices_delegates_call_correctly(self):
@@ -314,6 +334,33 @@ class TestMetricsAPIInterface:
         assert (
             geography_names_and_codes
             == spy_geography_manager.get_geography_codes_and_names_by_geography_type.return_value
+        )
+
+    def test_get_all_geography_names_by_geography_type_delegates_calls_correctly(
+        self,
+    ):
+        """
+        Given a `GeographyManager` from the metrics API app
+        When `get_all_geography_names_by_geography_type()` is called from an instance of the
+        Then the call is delegated to teh correct method on the `GeographyManager`
+        """
+        # Given
+        spy_geography_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            geography_manager=spy_geography_manager,
+        )
+
+        # When
+        geography_names_by_geography_type = (
+            metrics_api_interface.get_all_geography_names_by_geography_type(
+                geography_type_name="fake_geography_type_name",
+            )
+        )
+
+        # Then
+        assert (
+            geography_names_by_geography_type
+            == spy_geography_manager.get_all_geography_names_by_geography_type.return_value
         )
 
     def test_get_all_geography_type_names_delegates_call_correctly(

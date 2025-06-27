@@ -363,3 +363,23 @@ Note that multiple page banners can be active on one page. Consider
 carefully if you need multiple announcements to be active at once as
 this can have an impact on user experience of the dashboard page.
 """
+
+SECONDARY_CATEGORY: str = """
+This is for selecting the Second categorical variable type for Dual category charts.
+For example when building a `Stacked bar chart` where the x-axis may be of type `Sex` and
+display `Male` and `Female` along the x-axis. If our stacked bar chart then breaks each bar up into
+age groups, then our `Secondary Category` type is `Age`.
+"""
+
+PRIMARY_FIELD_VALUES: str = """
+Select a list of primary field values for the chart, these will be you're x-axis.
+For example if we're creating a stacked bar chart that has a metric value in y and geographies along
+the x-axis. The `primary field values` should be the list of geographies to include in the chart.
+"""
+
+SECONDARY_FIELD_VALUES: str = """
+Select the secondary field for a `Segments` this is the second categorical variable used to create segments
+of a `stacked bar` chart. For example if we're creating a stacked bar chart that has a metric in the y-axis
+and geographies along the x-axis. If each bar is broken into segments by `age group` this field
+should be the age group for this segment.
+"""

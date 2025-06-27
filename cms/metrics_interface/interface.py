@@ -103,7 +103,7 @@ class MetricsAPIInterface:
     @staticmethod
     def get_simplified_chart_types() -> tuple[tuple[str, str], ...]:
         """Gets all available chart type choices for headline charts as a nested tuple of 2-item tuples.
-        Note this is achived by delegating the call to the `ChartTypes` enum from the metrics API
+        Note this is achieved by delegating the call to the `ChartTypes` enum from the metrics API
 
         Returns:
             Nested tuples of 2 item tuples as expected by the form blocks.
@@ -111,6 +111,18 @@ class MetricsAPIInterface:
                 (("line_single_simplified", "line_single_simplified"), ...)
         """
         return ChartTypes.selectable_simplified_chart_choices()
+
+    @staticmethod
+    def get_dual_category_chart_types() -> tuple[tuple[str, str], ...]:
+        """Gets all available chart type choices for dual category charts as a nested tuple of 2-item tuples.
+        Note this is achieved by delegating the calle to the `ChartTypes` enum from the Metrics API
+
+        Returns:
+            Nested tuples of 2 item tuples as expected by the form blocks.
+            Examples:
+                (("stacked_bar", "stacked_bar"), ...)
+        """
+        return ChartTypes.dual_category_chart_options()
 
     @staticmethod
     def get_chart_axis_choices() -> list[tuple[str, str]]:
@@ -267,6 +279,24 @@ class MetricsAPIInterface:
         """
         return self.geography_manager.get_geography_codes_and_names_by_geography_type(
             geography_type_name=geography_type,
+        )
+
+    def get_all_geography_names_by_geography_type(
+        self,
+        geography_type_name: str,
+    ):
+        """Gets all geography names for a particular geography type, for example `Nation` or
+            `Government Office Region`.
+
+        Note: this is achieved by delegating the call to the `GeographyManager` from Metrics API
+
+        Returns:
+            QuerySet: A queryset of the geography_names fields as a list of tuples.
+                Example:
+                    `<GeographyQuerySet ['North East', 'North West']>`
+        """
+        return self.geography_manager.get_all_geography_names_by_geography_type(
+            geography_type_name=geography_type_name,
         )
 
     def get_all_geography_type_names(self) -> QuerySet:
