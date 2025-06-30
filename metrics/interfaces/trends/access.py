@@ -48,7 +48,7 @@ class TrendsInterface:
         if core_headline is None:
             raise TrendNumberDataNotFoundError(
                 topic_name=self.trend_parameters.topic_name,
-                metric_name=params["metric_name"],
+                metric_name=params["metric"],
             )
 
         return core_headline
@@ -93,8 +93,8 @@ class TrendsInterface:
 
     def _add_theme_info_to_params(self, *, params: dict) -> None:
         topic = self.topic_manager.get_by_name(name=self.trend_parameters.topic_name)
-        params["theme_name"] = topic.sub_theme.theme.name
-        params["sub_theme_name"] = topic.sub_theme.name
+        params["theme"] = topic.sub_theme.theme.name
+        params["sub_theme"] = topic.sub_theme.name
 
 
 def generate_trend_numbers(

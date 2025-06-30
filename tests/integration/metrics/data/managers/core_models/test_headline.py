@@ -34,9 +34,9 @@ class TestCoreHeadlineManager:
         # When
         retrieved_record_queryset = CoreHeadline.objects.query_for_data(
             fields_to_export=["age", "metric_value"],
-            topic_name=expected_record_headline.metric.topic.name,
-            metric_name=expected_record_headline.metric.name,
-            geography_name=expected_record_headline.geography.name,
+            topic=expected_record_headline.metric.topic.name,
+            metric=expected_record_headline.metric.name,
+            geography=expected_record_headline.geography.name,
         )
 
         retrieved_record_values = retrieved_record_queryset.values(
@@ -94,10 +94,10 @@ class TestCoreHeadlineManager:
 
         # When
         retrieved_record = CoreHeadline.objects.get_latest_headline(
-            topic_name=expected_round_headline.metric.topic.name,
-            metric_name=expected_round_headline.metric.name,
-            geography_name=expected_round_headline.geography.name,
-            geography_type_name=expected_round_headline.geography.geography_type.name,
+            topic=expected_round_headline.metric.topic.name,
+            metric=expected_round_headline.metric.name,
+            geography=expected_round_headline.geography.name,
+            geography_type=expected_round_headline.geography.geography_type.name,
         )
 
         # Then
@@ -137,11 +137,11 @@ class TestCoreHeadlineManager:
         core_headline_queryset = CoreHeadline.objects.get_queryset()
         returned_queryset = (
             core_headline_queryset.get_all_headlines_released_from_embargo(
-                topic_name=core_headline_live.metric.topic.name,
-                metric_name=core_headline_live.metric.name,
-                geography_name=core_headline_live.geography.name,
-                geography_type_name=core_headline_live.geography.geography_type.name,
-                stratum_name=core_headline_live.stratum.name,
+                topic=core_headline_live.metric.topic.name,
+                metric=core_headline_live.metric.name,
+                geography=core_headline_live.geography.name,
+                geography_type=core_headline_live.geography.geography_type.name,
+                stratum=core_headline_live.stratum.name,
                 sex=core_headline_live.sex,
                 age=core_headline_live.age.name,
             )
@@ -183,11 +183,11 @@ class TestCoreHeadlineManager:
 
         # When
         core_headline = CoreHeadline.objects.get_latest_headline(
-            topic_name=core_headline_live.metric.topic.name,
-            metric_name=core_headline_live.metric.name,
-            geography_name=core_headline_live.geography.name,
-            geography_type_name=core_headline_live.geography.geography_type.name,
-            stratum_name=core_headline_live.stratum.name,
+            topic=core_headline_live.metric.topic.name,
+            metric=core_headline_live.metric.name,
+            geography=core_headline_live.geography.name,
+            geography_type=core_headline_live.geography.geography_type.name,
+            stratum=core_headline_live.stratum.name,
             sex=core_headline_live.sex,
             age=core_headline_live.age.name,
         )
@@ -367,8 +367,8 @@ class TestCoreHeadlineManager:
 
         # When
         result = CoreHeadline.objects.get_latest_headlines_for_geography_codes(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
             geography_codes=[first_geography_code, second_geography_code],
         )
 
@@ -437,12 +437,12 @@ class TestCoreHeadlineManager:
 
         # When
         CoreHeadline.objects.delete_superseded_data(
-            topic_name=current_round_headline.metric.topic.name,
-            metric_name=current_round_headline.metric.name,
-            geography_name=current_round_headline.geography.name,
+            topic=current_round_headline.metric.topic.name,
+            metric=current_round_headline.metric.name,
+            geography=current_round_headline.geography.name,
             geography_code=current_round_headline.geography.geography_code,
-            geography_type_name=current_round_headline.geography.geography_type.name,
-            stratum_name=current_round_headline.stratum.name,
+            geography_type=current_round_headline.geography.geography_type.name,
+            stratum=current_round_headline.stratum.name,
             age=current_round_headline.age.name,
             sex=current_round_headline.sex,
             is_public=current_round_headline.is_public,
@@ -590,12 +590,12 @@ class TestCoreHeadlineManager:
 
         # When
         core_headline_queryset = CoreHeadline.objects.query_for_data(
-            theme_name=public_record.metric.topic.sub_theme.theme.name,
-            sub_theme_name=public_record.metric.topic.sub_theme.name,
-            topic_name=public_record.metric.topic.name,
-            metric_name=public_record.metric.name,
-            geography_name=public_record.geography.name,
-            geography_type_name=public_record.geography.geography_type.name,
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
+            geography=public_record.geography.name,
+            geography_type=public_record.geography.geography_type.name,
             fields_to_export=[],
             rbac_permissions=[rbac_permission],
         )

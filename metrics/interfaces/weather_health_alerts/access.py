@@ -38,8 +38,8 @@ class WeatherHealthAlertsInterface:
         """
         headlines_mapping = (
             self._core_headline_manager.get_latest_headlines_for_geography_codes(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_codes=[
                     geography_code for geography_code, geography_name in geography_data
                 ],
@@ -121,11 +121,11 @@ class WeatherHealthAlertsInterface:
     ) -> WeatherHealthAlarmState:
         core_headline: CoreHeadline | None = (
             self._core_headline_manager.get_latest_headline(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_code=geography_code,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                geography=geography_name,
+                geography_type=geography_type_name,
             )
         )
 
