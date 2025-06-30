@@ -86,9 +86,9 @@ class WeatherHealthAlertsMetricMapping:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
             case 5 | 6 | 7 | 8:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value
-            case 9 | 10 | 11 | 12:
+            case 9 | 10 | 12 | 13:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value
-            case 13 | 14 | 15 | 16:
+            case 11 | 14 | 15 | 16:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value
             case _:
                 return ""
@@ -102,13 +102,13 @@ class WeatherHealthAlertsMetricMapping:
             Eg: `Very low`
         """
         match self._metric_value:
-            case 1 | 5 | 9 | 13:
+            case 1 | 5 | 9 | 11:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
             case 2 | 6 | 10 | 14:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.LOW_LEVEL.value
-            case 3 | 7 | 11 | 15:
+            case 3 | 7 | 12 | 15:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value
-            case 4 | 8 | 12 | 16:
+            case 4 | 8 | 13 | 16:
                 return WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value
             case _:
                 return ""

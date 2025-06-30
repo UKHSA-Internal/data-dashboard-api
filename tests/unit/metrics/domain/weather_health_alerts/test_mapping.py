@@ -196,7 +196,7 @@ class TestWeatherHealthAlertsMetricMapping:
                 ),
                 (
                     11,
-                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
                 ),
                 (
                     12,
@@ -204,7 +204,7 @@ class TestWeatherHealthAlertsMetricMapping:
                 ),
                 (
                     13,
-                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
                 ),
                 (
                     14,
@@ -310,15 +310,15 @@ class TestWeatherHealthAlertsMetricMapping:
                 ),
                 (
                     11,
-                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
                 ),
                 (
                     12,
-                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.MEDIUM_LEVEL.value,
                 ),
                 (
                     13,
-                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value,
+                    mapping.WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value,
                 ),
                 (
                     14,
