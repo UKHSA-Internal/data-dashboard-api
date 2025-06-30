@@ -32,8 +32,8 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
         geography_data = serializer.data()
         summary_data: list[dict[str, str]] = get_summary_data_for_alerts(
             geography_data=geography_data,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
 
         return Response(data=summary_data)
@@ -54,10 +54,10 @@ class BaseAlertViewSet(viewsets.ReadOnlyModelViewSet):
 
         summary_data: dict[str, str] = get_detailed_data_for_alert(
             geography_code=geography_code,
-            geography_name=geography_data[geography_code],
-            geography_type_name=Alerts.ALERT_GEOGRAPHY_TYPE_NAME.value,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            geography=geography_data[geography_code],
+            geography_type=Alerts.ALERT_GEOGRAPHY_TYPE_NAME.value,
+            topic=topic_name,
+            metric=metric_name,
         )
 
         return Response(data=summary_data)

@@ -56,11 +56,11 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         # When
         detailed_alarm_data: WEATHER_HEALTH_ALERT_DETAILED_DATA = (
             weather_health_alerts_interface.build_detailed_data_for_alert(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_code=geography_code,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                geography=geography_name,
+                geography_type=geography_type_name,
             )
         )
 
@@ -130,11 +130,11 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         # When
         detailed_alarm_data: WEATHER_HEALTH_ALERT_DETAILED_DATA = (
             weather_health_alerts_interface.build_detailed_data_for_alert(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_code=geography_code,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                geography=geography_name,
+                geography_type=geography_type_name,
             )
         )
 
@@ -203,11 +203,11 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         # When
         detailed_alarm_data: WEATHER_HEALTH_ALERT_DETAILED_DATA = (
             weather_health_alerts_interface.build_detailed_data_for_alert(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_code=geography_code,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                geography=geography_name,
+                geography_type=geography_type_name,
             )
         )
 
@@ -270,8 +270,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
         # When
         summary_alarm_data: WEATHER_HEALTH_ALERT_DETAILED_DATA = (
             weather_health_alerts_interface.build_summary_data_for_alerts(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_data=geography_data,
             )
         )
@@ -353,8 +353,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
         # When
         summary_alarm_data: WEATHER_HEALTH_ALERT_DETAILED_DATA = (
             weather_health_alerts_interface.build_summary_data_for_alerts(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_data=geography_data,
             )
         )
@@ -442,8 +442,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
         # When
         detailed_alarm_data: WEATHER_HEALTH_ALERT_DETAILED_DATA = (
             weather_health_alerts_interface.build_summary_data_for_alerts(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic_name,
+                metric=metric_name,
                 geography_data=geography_data,
             )
         )
@@ -500,8 +500,8 @@ class TestAccessGetSummaryDataForAlerts:
         # When
         get_summary_data_for_alerts(
             geography_data=fake_geography_data,
-            topic_name=fake_topic,
-            metric_name=fake_metric,
+            topic=fake_topic,
+            metric=fake_metric,
         )
 
         # Then
@@ -546,10 +546,10 @@ class TestAccessGetDetailedDataForAlerts:
         # When
         get_detailed_data_for_alert(
             geography_code=fake_geography_code,
-            geography_name=fake_geography_name,
-            geography_type_name=fake_geography_type_name,
-            topic_name=fake_topic,
-            metric_name=fake_metric,
+            geography=fake_geography_name,
+            geography_type=fake_geography_type_name,
+            topic=fake_topic,
+            metric=fake_metric,
         )
 
         # Then
