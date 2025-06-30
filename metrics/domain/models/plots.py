@@ -58,14 +58,6 @@ class PlotParameters(BaseModel):
         return self.geography_type
 
     @property
-    def stratum_name(self) -> str | None:
-        return self.stratum
-
-    @property
-    def age_name(self) -> str | None:
-        return self.age
-
-    @property
     def date_from_value(self) -> datetime.date:
         """Parses the `date_from` into a date object.
         Defaults to 1 year ago from the current date.
