@@ -151,11 +151,11 @@ class CoreHeadlineQuerySet(models.QuerySet):
     def get_all_headlines_released_from_embargo(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
-        stratum_name: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
+        stratum: str,
         sex: str,
         age: str,
         geography_code: str = "",
@@ -163,18 +163,18 @@ class CoreHeadlineQuerySet(models.QuerySet):
         """Filters by the given parameters, inlcludes public and non-public data
 
         Args:
-            topic_name: The name of the disease being queried.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography being queried.
+            geography: The name of the geography being queried.
                 E.g. `England`
-            geography_type_name: The name of the geography
+            geography_type: The name of the geography
                 type being queried.
                 E.g. `Nation`
             geography_code: The code associated with the geography being queried.
                 E.g. `E92000001`
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
@@ -193,20 +193,20 @@ class CoreHeadlineQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__topic__name=topic_name,
-            metric__name=metric_name,
+            metric__topic__name=topic,
+            metric__name=metric,
         )
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography_type_name=geography_type_name,
-            geography_name=geography_name,
+            geography_type_name=geography_type,
+            geography_name=geography,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum_name=stratum,
             age=age,
             sex=sex,
         )
         queryset = self._exclude_data_under_embargo(queryset=queryset)
-        apply_refresh_date_only: bool = "alert" in topic_name
+        apply_refresh_date_only: bool = "alert" in topic
         return self._newest_to_oldest(
             queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
         )
@@ -214,27 +214,27 @@ class CoreHeadlineQuerySet(models.QuerySet):
     def get_public_only_headlines_released_from_embargo(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
-        stratum_name: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
+        stratum: str,
         sex: str,
         age: str,
         geography_code: str = "",
     ) -> Self:
         queryset = self.get_all_headlines_released_from_embargo(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_type_name=geography_type_name,
-            geography_name=geography_name,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum=stratum,
             sex=sex,
             age=age,
         )
         queryset = queryset.filter(is_public=True)
-        apply_refresh_date_only: bool = "alert" in topic_name
+        apply_refresh_date_only: bool = "alert" in topic
         return self._newest_to_oldest(
             queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
         )
@@ -242,27 +242,27 @@ class CoreHeadlineQuerySet(models.QuerySet):
     def get_non_public_only_headlines_released_from_embargo(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
-        stratum_name: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
+        stratum: str,
         sex: str,
         age: str,
         geography_code: str = "",
     ) -> Self:
         queryset = self.get_all_headlines_released_from_embargo(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_type_name=geography_type_name,
-            geography_name=geography_name,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum=stratum,
             sex=sex,
             age=age,
         )
         queryset = queryset.filter(is_public=False)
-        apply_refresh_date_only: bool = "alert" in topic_name
+        apply_refresh_date_only: bool = "alert" in topic
         return self._newest_to_oldest(
             queryset=queryset, apply_refresh_date_only=apply_refresh_date_only
         )
@@ -324,25 +324,25 @@ class CoreHeadlineManager(models.Manager):
     def query_for_data(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         fields_to_export: list[str],
-        geography_name: str = "England",
-        geography_type_name: str = "Nation",
+        geography: str = "England",
+        geography_type: str = "Nation",
         geography_code: str = "",
-        stratum_name: str = "",
+        stratum: str = "",
         sex: str = "",
         age: str = "",
-        theme_name: str = "",
-        sub_theme_name: str = "",
+        theme: str = "",
+        sub_theme: str = "",
         rbac_permissions: Iterable["RBACPermission"] | None = None,
     ):
         """Filters for a N-item list of dicts by the given params if `fields_to_export` is used.
 
         Args:
-            topic_name: The name of the disease being queried.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
             fields_to_export: List of fields to be exported
                 as part of the underlying `values()` call.
@@ -351,24 +351,24 @@ class CoreHeadlineManager(models.Manager):
                 In the case where we wanted to display
                 the date along the x-axis and metric value across the y-axis:
                 >>> ["date", "metric_value"]
-            geography_name: The name of the geography being queried.
+            geography: The name of the geography being queried.
                 E.g. `England`
-            geography_type_name: The name of the geography
+            geography_type: The name of the geography
                 type being queried.
                 E.g. `Nation`
             geography_code: Code associated with the geography being queried.
                 E.g. "E45000010"
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
-            theme_name: The name of the theme being queried.
+            theme: The name of the theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
-            sub_theme_name: The name of the sub theme being queried.
+            sub_theme: The name of the sub theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
             rbac_permissions: The RBAC permissions available
@@ -385,35 +385,35 @@ class CoreHeadlineManager(models.Manager):
         """
         rbac_permissions = rbac_permissions or []
         has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme_name,
-            sub_theme=sub_theme_name,
-            topic=topic_name,
-            metric=metric_name,
-            geography=geography_name,
-            geography_type=geography_type_name,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             rbac_permissions=rbac_permissions,
         )
 
         if has_access_to_non_public_data:
             queryset = self.get_queryset().get_all_headlines_released_from_embargo(
-                topic_name=topic_name,
-                metric_name=metric_name,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                topic=topic,
+                metric=metric,
+                geography=geography,
+                geography_type=geography_type,
                 geography_code=geography_code,
-                stratum_name=stratum_name,
+                stratum=stratum,
                 age=age,
                 sex=sex,
             )[:1]
         else:
             queryset = (
                 self.get_queryset().get_public_only_headlines_released_from_embargo(
-                    topic_name=topic_name,
-                    metric_name=metric_name,
-                    geography_name=geography_name,
-                    geography_type_name=geography_type_name,
+                    topic=topic,
+                    metric=metric,
+                    geography=geography,
+                    geography_type=geography_type,
                     geography_code=geography_code,
-                    stratum_name=stratum_name,
+                    stratum=stratum,
                     age=age,
                     sex=sex,
                 )[:1]
@@ -432,33 +432,33 @@ class CoreHeadlineManager(models.Manager):
     def get_latest_headline(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str = "England",
-        geography_type_name: str = "Nation",
+        topic: str,
+        metric: str,
+        geography: str = "England",
+        geography_type: str = "Nation",
         geography_code: str = "",
-        stratum_name: str = "",
+        stratum: str = "",
         sex: str = "",
         age: str = "",
         theme_name: str = "",
         sub_theme_name: str = "",
         rbac_permissions: Iterable["RBACPermission"] | None = None,
     ) -> "CoreHeadline":
-        """Grabs by the latest record by the given `topic_name` and `metric_name`.
+        """Grabs by the latest record by the given `topic` and `metric`.
 
         Args:
-            topic_name: The name of the disease being queried.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_headline_7DayAdmissions`
-            geography_name: The name of the geography being queried.
+            geography: The name of the geography being queried.
                 E.g. `England`
-            geography_type_name: The name of the geography
+            geography_type: The name of the geography
                 type being queried.
                 E.g. `Nation`
             geography_code: Code associated with the geography being queried.
                 E.g. "E45000010"
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
@@ -486,33 +486,33 @@ class CoreHeadlineManager(models.Manager):
         has_access_to_non_public_data: bool = validate_permissions_for_non_public(
             theme=theme_name,
             sub_theme=sub_theme_name,
-            topic=topic_name,
-            metric=metric_name,
-            geography=geography_name,
-            geography_type=geography_type_name,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             rbac_permissions=rbac_permissions,
         )
 
         if has_access_to_non_public_data:
             queryset = self.get_queryset().get_all_headlines_released_from_embargo(
-                topic_name=topic_name,
-                metric_name=metric_name,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                topic=topic,
+                metric=metric,
+                geography=geography,
+                geography_type=geography_type,
                 geography_code=geography_code,
-                stratum_name=stratum_name,
+                stratum=stratum,
                 age=age,
                 sex=sex,
             )
         else:
             queryset = (
                 self.get_queryset().get_public_only_headlines_released_from_embargo(
-                    topic_name=topic_name,
-                    metric_name=metric_name,
-                    geography_name=geography_name,
-                    geography_type_name=geography_type_name,
+                    topic=topic,
+                    metric=metric,
+                    geography=geography,
+                    geography_type=geography_type,
                     geography_code=geography_code,
-                    stratum_name=stratum_name,
+                    stratum=stratum,
                     age=age,
                     sex=sex,
                 )
@@ -523,12 +523,12 @@ class CoreHeadlineManager(models.Manager):
     def query_for_superseded_data(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool = True,
@@ -536,17 +536,17 @@ class CoreHeadlineManager(models.Manager):
         """Grabs all stale records which are not under embargo.
 
         Args:
-           topic_name: The name of the threat being queried.
+           topic: The name of the threat being queried.
                 E.g. `COVID-19`
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-19_headline_7DayAdmissions`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -563,11 +563,11 @@ class CoreHeadlineManager(models.Manager):
         if is_public:
             queryset = (
                 self.get_queryset().get_public_only_headlines_released_from_embargo(
-                    topic_name=topic_name,
-                    metric_name=metric_name,
-                    geography_name=geography_name,
-                    geography_type_name=geography_type_name,
-                    stratum_name=stratum_name,
+                    topic_name=topic,
+                    metric_name=metric,
+                    geography_name=geography,
+                    geography_type_name=geography_type,
+                    stratum_name=stratum,
                     age=age,
                     sex=sex,
                 )
@@ -575,11 +575,11 @@ class CoreHeadlineManager(models.Manager):
         else:
             queryset = (
                 self.get_queryset().get_non_public_only_headlines_released_from_embargo(
-                    topic_name=topic_name,
-                    metric_name=metric_name,
-                    geography_name=geography_name,
-                    geography_type_name=geography_type_name,
-                    stratum_name=stratum_name,
+                    topic_name=topic,
+                    metric_name=metric,
+                    geography_name=geography,
+                    geography_type_name=geography_type,
+                    stratum_name=stratum,
                     age=age,
                     sex=sex,
                 )
@@ -657,12 +657,12 @@ class CoreHeadlineManager(models.Manager):
     def delete_superseded_data(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool = True,
@@ -670,17 +670,17 @@ class CoreHeadlineManager(models.Manager):
         """Deletes all stale records which are not under embargo.
 
         Args:
-           topic_name: The name of the threat being queried.
+           topic: The name of the threat being queried.
                 E.g. `COVID-19`
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-19_headline_7DayAdmissions`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -695,12 +695,12 @@ class CoreHeadlineManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum=stratum,
             age=age,
             sex=sex,
             is_public=is_public,
