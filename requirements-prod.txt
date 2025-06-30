@@ -1,5 +1,5 @@
 -r requirements-prod-ingestion.txt
-anyascii==0.3.2
+anyascii==0.3.3
 attrs==25.3.0
 beautifulsoup4==4.13.4
 CacheControl==0.14.3
