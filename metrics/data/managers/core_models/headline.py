@@ -64,21 +64,21 @@ class CoreHeadlineQuerySet(models.QuerySet):
         self,
         *,
         queryset: Self,
-        geography_name: str,
-        geography_type_name: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
     ) -> Self:
-        if geography_name:
+        if geography:
             queryset = self._filter_by_geography(
-                queryset=queryset, geography=geography_name
+                queryset=queryset, geography=geography
             )
 
-        if geography_type_name:
+        if geography_type:
             queryset = self._filter_by_geography_type(
-                queryset=queryset, geography_type=geography_type_name
+                queryset=queryset, geography_type=geography_type
             )
 
         if geography_code:
@@ -86,8 +86,8 @@ class CoreHeadlineQuerySet(models.QuerySet):
                 queryset=queryset, geography_code=geography_code
             )
 
-        if stratum_name:
-            queryset = self._filter_by_stratum(queryset=queryset, stratum=stratum_name)
+        if stratum:
+            queryset = self._filter_by_stratum(queryset=queryset, stratum=stratum)
 
         if sex:
             queryset = self._filter_by_sex(queryset=queryset, sex=sex)
@@ -139,10 +139,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
         )
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography_type_name=geography_type,
-            geography_name=geography,
+            geography_type=geography_type,
+            geography=geography,
             geography_code=None,
-            stratum_name=stratum,
+            stratum=stratum,
             age=age,
             sex=sex,
         )
@@ -198,10 +198,10 @@ class CoreHeadlineQuerySet(models.QuerySet):
         )
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography_type_name=geography_type,
-            geography_name=geography,
+            geography_type=geography_type,
+            geography=geography,
             geography_code=geography_code,
-            stratum_name=stratum,
+            stratum=stratum,
             age=age,
             sex=sex,
         )
@@ -440,8 +440,8 @@ class CoreHeadlineManager(models.Manager):
         stratum: str = "",
         sex: str = "",
         age: str = "",
-        theme_name: str = "",
-        sub_theme_name: str = "",
+        theme: str = "",
+        sub_theme: str = "",
         rbac_permissions: Iterable["RBACPermission"] | None = None,
     ) -> "CoreHeadline":
         """Grabs by the latest record by the given `topic` and `metric`.
@@ -465,10 +465,10 @@ class CoreHeadlineManager(models.Manager):
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
-            theme_name: The name of the theme being queried.
+            theme: The name of the theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
-            sub_theme_name: The name of the sub theme being queried.
+            sub_theme: The name of the sub theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
             rbac_permissions: The RBAC permissions available
@@ -484,8 +484,8 @@ class CoreHeadlineManager(models.Manager):
         """
         rbac_permissions = rbac_permissions or []
         has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme_name,
-            sub_theme=sub_theme_name,
+            theme=theme,
+            sub_theme=sub_theme,
             topic=topic,
             metric=metric,
             geography=geography,
@@ -563,11 +563,11 @@ class CoreHeadlineManager(models.Manager):
         if is_public:
             queryset = (
                 self.get_queryset().get_public_only_headlines_released_from_embargo(
-                    topic_name=topic,
-                    metric_name=metric,
-                    geography_name=geography,
-                    geography_type_name=geography_type,
-                    stratum_name=stratum,
+                    topic=topic,
+                    metric=metric,
+                    geography=geography,
+                    geography_type=geography_type,
+                    stratum=stratum,
                     age=age,
                     sex=sex,
                 )
@@ -575,11 +575,11 @@ class CoreHeadlineManager(models.Manager):
         else:
             queryset = (
                 self.get_queryset().get_non_public_only_headlines_released_from_embargo(
-                    topic_name=topic,
-                    metric_name=metric,
-                    geography_name=geography,
-                    geography_type_name=geography_type,
-                    stratum_name=stratum,
+                    topic=topic,
+                    metric=metric,
+                    geography=geography,
+                    geography_type=geography_type,
+                    stratum=stratum,
                     age=age,
                     sex=sex,
                 )
@@ -642,12 +642,12 @@ class CoreHeadlineManager(models.Manager):
         """
         return {
             geography_code: self.get_latest_headline(
-                topic_name=topic,
-                metric_name=metric,
-                geography_name=geography,
-                geography_type_name=geography_type,
+                topic=topic,
+                metric=metric,
+                geography=geography,
+                geography_type=geography_type,
                 geography_code=geography_code,
-                stratum_name=stratum,
+                stratum=stratum,
                 sex=sex,
                 age=age,
             )

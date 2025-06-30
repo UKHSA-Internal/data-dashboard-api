@@ -119,7 +119,7 @@ class CMSBlockParser:
         """
         chart_block_with_geography = copy.deepcopy(chart_block)
         for plot in chart_block_with_geography["chart"]:
-            plot["value"]["geography_type"] = geography_data.geography_type_name
+            plot["value"]["geography_type"] = geography_data.geography_type
             plot["value"]["geography"] = geography_data.name
 
         return chart_block_with_geography
