@@ -79,7 +79,7 @@ class ChartSettings:
             "dtick": "M1",
             "tickformat": "%b %Y",
             "tickfont": self._get_tick_font_config(),
-            "autotickangles": [0, 90],
+            "autotickangles": [0],
         }
 
         if self._chart_generation_payload.x_axis_title:

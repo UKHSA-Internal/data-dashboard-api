@@ -28,7 +28,7 @@ def create_bar_plot(
     legend: str = plot_data.parameters.label
 
     bar = plotly.graph_objects.Bar(
-        x=plot_data.x_axis_values,
+        x=[legend],
         y=plot_data.y_axis_values,
         marker={
             "color": bar_colour,
@@ -38,7 +38,7 @@ def create_bar_plot(
             },
         },
         name=legend,
-        showlegend=bool(legend),
+        showlegend=False,
     )
 
     return convert_graph_object_to_dict(graph_object=bar)
