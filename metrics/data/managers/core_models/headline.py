@@ -72,9 +72,7 @@ class CoreHeadlineQuerySet(models.QuerySet):
         age: str,
     ) -> Self:
         if geography:
-            queryset = self._filter_by_geography(
-                queryset=queryset, geography=geography
-            )
+            queryset = self._filter_by_geography(queryset=queryset, geography=geography)
 
         if geography_type:
             queryset = self._filter_by_geography_type(

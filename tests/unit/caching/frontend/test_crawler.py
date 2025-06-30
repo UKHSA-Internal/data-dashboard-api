@@ -146,9 +146,7 @@ class TestFrontEndCrawler:
         """
         # Given
         geography_combinations = [
-            GeographyData(
-                name="London", geography_type="Lower Tier Local Authority"
-            ),
+            GeographyData(name="London", geography_type="Lower Tier Local Authority"),
             GeographyData(name="England", geography_type="Nation"),
         ]
         mocked_page = mock.Mock()

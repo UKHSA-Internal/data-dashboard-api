@@ -35,9 +35,7 @@ class TestCMSBlockParserExtractionOfCharts:
     @pytest.mark.parametrize(
         "geography_data",
         [
-            GeographyData(
-                name="Reading", geography_type="Lower Tier Local Authority"
-            ),
+            GeographyData(name="Reading", geography_type="Lower Tier Local Authority"),
             GeographyData(name="Wales", geography_type="Nation"),
         ],
     )
@@ -117,9 +115,7 @@ class TestCMSBlockParserExtractionOfCharts:
     @pytest.mark.parametrize(
         "geography_data",
         [
-            GeographyData(
-                name="Reading", geography_type="Lower Tier Local Authority"
-            ),
+            GeographyData(name="Reading", geography_type="Lower Tier Local Authority"),
             GeographyData(name="Wales", geography_type="Nation"),
         ],
     )

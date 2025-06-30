@@ -15,10 +15,7 @@ class GeographyData:
     geography_type: str
 
     def __eq__(self, other: "GeographyData") -> bool:
-        return (
-                self.name == other.name
-                and self.geography_type == other.geography_type
-        )
+        return self.name == other.name and self.geography_type == other.geography_type
 
 
 @dataclass

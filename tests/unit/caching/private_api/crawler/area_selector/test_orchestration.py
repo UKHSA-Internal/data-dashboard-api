@@ -82,9 +82,7 @@ class TestAreaSelectorOrchestrator:
         """
         # Given
         geography_data_combinations = [
-            GeographyData(
-                name="Croydon", geography_type="Lower Tier Local Authority"
-            ),
+            GeographyData(name="Croydon", geography_type="Lower Tier Local Authority"),
             GeographyData(name="England", geography_type="Nation"),
         ]
         page_id = 123
