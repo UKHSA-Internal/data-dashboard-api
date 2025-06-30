@@ -57,11 +57,11 @@ class TestHeadlineParameters:
 
         # Then
         expected_params = {
-            "topic_name": self.valid_payload["topic"],
-            "metric_name": self.valid_payload["metric"],
-            "geography_name": self.valid_payload["geography"],
-            "geography_type_name": self.valid_payload["geography_type"],
-            "stratum_name": self.valid_payload["stratum"],
+            "topic": self.valid_payload["topic"],
+            "metric": self.valid_payload["metric"],
+            "geography": self.valid_payload["geography"],
+            "geography_type": self.valid_payload["geography_type"],
+            "stratum": self.valid_payload["stratum"],
             "age": self.valid_payload["age"],
             "sex": self.valid_payload["sex"],
             "rbac_permissions": [],

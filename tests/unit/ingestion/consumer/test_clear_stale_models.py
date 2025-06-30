@@ -27,12 +27,12 @@ class TestConsumerClearStaleModels:
 
         # Then
         expected_params = {
-            "topic_name": example_headline_data["topic"],
-            "metric_name": example_headline_data["metric"],
-            "geography_name": example_headline_data["geography"],
-            "geography_type_name": example_headline_data["geography_type"],
+            "topic": example_headline_data["topic"],
+            "metric": example_headline_data["metric"],
+            "geography": example_headline_data["geography"],
+            "geography_type": example_headline_data["geography_type"],
             "geography_code": example_headline_data["geography_code"],
-            "stratum_name": example_headline_data["stratum"],
+            "stratum": example_headline_data["stratum"],
             "sex": example_headline_data["sex"],
             "age": example_headline_data["age"],
         }
@@ -67,11 +67,11 @@ class TestConsumerClearStaleModels:
 
         # Then
         expected_core_headline_params = {
-            "metric_name": example_time_series_data["metric"],
-            "geography_name": example_time_series_data["geography"],
-            "geography_type_name": example_time_series_data["geography_type"],
+            "metric": example_time_series_data["metric"],
+            "geography": example_time_series_data["geography"],
+            "geography_type": example_time_series_data["geography_type"],
             "geography_code": example_time_series_data["geography_code"],
-            "stratum_name": example_time_series_data["stratum"],
+            "stratum": example_time_series_data["stratum"],
             "sex": example_time_series_data["sex"],
             "age": example_time_series_data["age"],
         }
@@ -85,14 +85,14 @@ class TestConsumerClearStaleModels:
         )
 
         expected_api_headline_params = {
-            "theme_name": example_time_series_data["parent_theme"],
-            "sub_theme_name": example_time_series_data["child_theme"],
-            "topic_name": example_time_series_data["topic"],
-            "metric_name": example_time_series_data["metric"],
-            "geography_name": example_time_series_data["geography"],
-            "geography_type_name": example_time_series_data["geography_type"],
+            "theme": example_time_series_data["parent_theme"],
+            "sub_theme": example_time_series_data["child_theme"],
+            "topic": example_time_series_data["topic"],
+            "metric": example_time_series_data["metric"],
+            "geography": example_time_series_data["geography"],
+            "geography_type": example_time_series_data["geography_type"],
             "geography_code": example_time_series_data["geography_code"],
-            "stratum_name": example_time_series_data["stratum"],
+            "stratum": example_time_series_data["stratum"],
             "sex": example_time_series_data["sex"],
             "age": example_time_series_data["age"],
         }
