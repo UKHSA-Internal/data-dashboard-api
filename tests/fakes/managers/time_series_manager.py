@@ -23,8 +23,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         self,
         x_axis: str,
         y_axis: str,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         date_from: datetime.datetime | str,
         date_to: datetime.datetime | str,
     ) -> int:
@@ -33,8 +33,8 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         filtered_for_metric_topic_and_date = [
             x
             for x in self.time_series
-            if x.metric.metric_group.topic.name == topic_name
-            if x.metric.name == metric_name
+            if x.metric.metric_group.topic.name == topic
+            if x.metric.name == metric
             if x.date >= date_from
             if x.date <= date_to
         ]
@@ -42,15 +42,15 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
 
     def query_for_data(
         self,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         date_from: datetime.date,
         fields_to_export: list[str] | None = None,
         date_to: datetime.date | None = None,
         field_to_order_by: str = "date",
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
+        geography: str | None = None,
+        geography_type: str | None = None,
+        stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
         rbac_permissions: Iterable[FakeRBACPermission] | None = None,
@@ -60,27 +60,27 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
         filtered_time_series = [
             time_series
             for time_series in self.time_series
-            if time_series.metric.metric_group.topic.name == topic_name
-            if time_series.metric.name == metric_name
+            if time_series.metric.metric_group.topic.name == topic
+            if time_series.metric.name == metric
             if time_series.date > date_from
             if time_series.date < date_to
         ]
 
-        if geography_name:
+        if geography:
             filtered_time_series = [
-                x for x in filtered_time_series if x.geography.name == geography_name
+                x for x in filtered_time_series if x.geography.name == geography
             ]
 
-        if geography_type_name:
+        if geography_type:
             filtered_time_series = [
                 x
                 for x in filtered_time_series
-                if x.geography.geography_type.name == geography_name
+                if x.geography.geography_type.name == geography
             ]
 
-        if stratum_name:
+        if stratum:
             filtered_time_series = [
-                x for x in filtered_time_series if x.stratum.name == stratum_name
+                x for x in filtered_time_series if x.stratum.name == stratum
             ]
 
         if sex:

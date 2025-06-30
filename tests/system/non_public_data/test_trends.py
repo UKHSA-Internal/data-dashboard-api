@@ -56,26 +56,26 @@ class TestNonPublicDataTrendsAPI:
         group_id = uuid.uuid4()
 
         main_metric_public_record = CoreHeadlineFactory.create_record(
-            metric_name="COVID-19_headline_cases_7DayChange",
+            metric="COVID-19_headline_cases_7DayChange",
             metric_value=1,
             period_end="2025-01-01",
             is_public=True,
         )
         percentage_metric_public_record = CoreHeadlineFactory.create_record(
-            metric_name="COVID-19_headline_cases_7DayPercentChange",
+            metric="COVID-19_headline_cases_7DayPercentChange",
             metric_value=2,
             period_end="2025-01-01",
             is_public=True,
         )
 
         main_metric_non_public_record = CoreHeadlineFactory.create_record(
-            metric_name="COVID-19_headline_cases_7DayChange",
+            metric="COVID-19_headline_cases_7DayChange",
             metric_value=3,
             period_end="2025-01-02",
             is_public=False,
         )
         percentage_metric_non_public_record = CoreHeadlineFactory.create_record(
-            metric_name="COVID-19_headline_cases_7DayPercentChange",
+            metric="COVID-19_headline_cases_7DayPercentChange",
             metric_value=4,
             period_end="2025-01-02",
             is_public=False,

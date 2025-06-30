@@ -34,9 +34,9 @@ class TestCoreHeadlineManager:
         # When
         retrieved_record_queryset = CoreHeadline.objects.query_for_data(
             fields_to_export=["age", "metric_value"],
-            topic_name=expected_record_headline.metric.topic.name,
-            metric_name=expected_record_headline.metric.name,
-            geography_name=expected_record_headline.geography.name,
+            topic=expected_record_headline.metric.topic.name,
+            metric=expected_record_headline.metric.name,
+            geography=expected_record_headline.geography.name,
         )
 
         retrieved_record_values = retrieved_record_queryset.values(
@@ -94,10 +94,10 @@ class TestCoreHeadlineManager:
 
         # When
         retrieved_record = CoreHeadline.objects.get_latest_headline(
-            topic_name=expected_round_headline.metric.topic.name,
-            metric_name=expected_round_headline.metric.name,
-            geography_name=expected_round_headline.geography.name,
-            geography_type_name=expected_round_headline.geography.geography_type.name,
+            topic=expected_round_headline.metric.topic.name,
+            metric=expected_round_headline.metric.name,
+            geography=expected_round_headline.geography.name,
+            geography_type=expected_round_headline.geography.geography_type.name,
         )
 
         # Then
@@ -137,11 +137,11 @@ class TestCoreHeadlineManager:
         core_headline_queryset = CoreHeadline.objects.get_queryset()
         returned_queryset = (
             core_headline_queryset.get_all_headlines_released_from_embargo(
-                topic_name=core_headline_live.metric.topic.name,
-                metric_name=core_headline_live.metric.name,
-                geography_name=core_headline_live.geography.name,
-                geography_type_name=core_headline_live.geography.geography_type.name,
-                stratum_name=core_headline_live.stratum.name,
+                topic=core_headline_live.metric.topic.name,
+                metric=core_headline_live.metric.name,
+                geography=core_headline_live.geography.name,
+                geography_type=core_headline_live.geography.geography_type.name,
+                stratum=core_headline_live.stratum.name,
                 sex=core_headline_live.sex,
                 age=core_headline_live.age.name,
             )
@@ -183,11 +183,11 @@ class TestCoreHeadlineManager:
 
         # When
         core_headline = CoreHeadline.objects.get_latest_headline(
-            topic_name=core_headline_live.metric.topic.name,
-            metric_name=core_headline_live.metric.name,
-            geography_name=core_headline_live.geography.name,
-            geography_type_name=core_headline_live.geography.geography_type.name,
-            stratum_name=core_headline_live.stratum.name,
+            topic=core_headline_live.metric.topic.name,
+            metric=core_headline_live.metric.name,
+            geography=core_headline_live.geography.name,
+            geography_type=core_headline_live.geography.geography_type.name,
+            stratum=core_headline_live.stratum.name,
             sex=core_headline_live.sex,
             age=core_headline_live.age.name,
         )
@@ -241,8 +241,8 @@ class TestCoreHeadlineManager:
         Then the record with the `period_end` which is in the future is returned
         """
         # Given
-        topic_name = "COVID-19"
-        metric_name = "COVID-19_headline_7DayAdmissions"
+        topic = "COVID-19"
+        metric = "COVID-19_headline_7DayAdmissions"
         geography_code = "E92000001"
         current_time = timezone.now()
 
@@ -253,8 +253,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # Record which is not expired but has been superseded
@@ -264,8 +264,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=valid_but_superseded_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # Record which is currently valid
@@ -275,14 +275,14 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
         )
 
         # When
         result = CoreHeadline.objects.get_latest_headline(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic_name=topic,
+            metric_name=metric,
             geography_code=geography_code,
         )
 
@@ -326,8 +326,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=first_geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Record which is currently valid for 1st geography
         currently_valid_period_end = current_time + datetime.timedelta(days=7)
@@ -336,8 +336,8 @@ class TestCoreHeadlineManager:
             embargo=None,
             geography_code=first_geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Expired record for 2nd geography
         second_geography_code = "E92000002"
@@ -345,30 +345,30 @@ class TestCoreHeadlineManager:
         expired_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
             metric_value=111,
             embargo=None,
-            geography_name="West Midlands",
-            geography_type_name="",
+            geography="West Midlands",
+            geography_type="",
             geography_code=second_geography_code,
             period_end=expired_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
         # Record which is currently valid for 2nd geography
         currently_valid_period_end = current_time + datetime.timedelta(days=5)
         current_core_headline_for_second_geography = CoreHeadlineFactory.create_record(
             metric_value=222,
             embargo=None,
-            geography_name="West Midlands",
-            geography_type_name="",
+            geography="West Midlands",
+            geography_type="",
             geography_code=second_geography_code,
             period_end=currently_valid_period_end,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
         )
 
         # When
         result = CoreHeadline.objects.get_latest_headlines_for_geography_codes(
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic_name,
+            metric=metric_name,
             geography_codes=[first_geography_code, second_geography_code],
         )
 
@@ -437,12 +437,12 @@ class TestCoreHeadlineManager:
 
         # When
         CoreHeadline.objects.delete_superseded_data(
-            topic_name=current_round_headline.metric.topic.name,
-            metric_name=current_round_headline.metric.name,
-            geography_name=current_round_headline.geography.name,
+            topic=current_round_headline.metric.topic.name,
+            metric=current_round_headline.metric.name,
+            geography=current_round_headline.geography.name,
             geography_code=current_round_headline.geography.geography_code,
-            geography_type_name=current_round_headline.geography.geography_type.name,
-            stratum_name=current_round_headline.stratum.name,
+            geography_type=current_round_headline.geography.geography_type.name,
+            stratum=current_round_headline.stratum.name,
             age=current_round_headline.age.name,
             sex=current_round_headline.sex,
             is_public=current_round_headline.is_public,
@@ -479,13 +479,13 @@ class TestCoreHeadlineManager:
         )
 
         CoreHeadlineFactory.create_record(
-            metric_name=covid_metric, embargo=latest_released_embargo
+            metric=covid_metric, embargo=latest_released_embargo
         )
         CoreHeadlineFactory.create_record(
-            metric_name=covid_metric_for_outdated_embargo, embargo=superseded_embargo
+            metric=covid_metric_for_outdated_embargo, embargo=superseded_embargo
         )
         CoreHeadlineFactory.create_record(
-            metric_name="adenovirus_headline_positivityLatest",
+            metric="adenovirus_headline_positivityLatest",
             embargo=last_unreleased_embargo,
         )
 
@@ -543,7 +543,7 @@ class TestCoreHeadlineManager:
             period_end="2025-04-22", metric_value=2, is_public=False
         )
 
-        params = {
+        params_for_query = {
             "theme_name": public_record.metric.topic.sub_theme.theme.name,
             "sub_theme_name": public_record.metric.topic.sub_theme.name,
             "topic_name": public_record.metric.topic.name,
@@ -551,11 +551,12 @@ class TestCoreHeadlineManager:
             "geography_name": public_record.geography.name,
             "geography_type_name": public_record.geography.geography_type.name,
         }
+        params = {k.split("_name")[0]: v for k, v in params_for_query.items()}
         rbac_permission = RBACPermissionFactory.create_record(**params)
 
         # When
         core_headline_queryset = CoreHeadline.objects.query_for_data(
-            **params,
+            **params_for_query,
             fields_to_export=[],
             rbac_permissions=[rbac_permission],
         )
@@ -579,22 +580,22 @@ class TestCoreHeadlineManager:
             period_end="2025-04-22", metric_value=2, is_public=False
         )
         rbac_permission = RBACPermissionFactory.create_record(
-            theme_name="some_other_theme",
-            sub_theme_name="",
-            topic_name="",
-            metric_name="",
-            geography_name="",
-            geography_type_name="",
+            theme="some_other_theme",
+            sub_theme=None,
+            topic=None,
+            metric=None,
+            geography=None,
+            geography_type=None,
         )
 
         # When
         core_headline_queryset = CoreHeadline.objects.query_for_data(
-            theme_name=public_record.metric.topic.sub_theme.theme.name,
-            sub_theme_name=public_record.metric.topic.sub_theme.name,
-            topic_name=public_record.metric.topic.name,
-            metric_name=public_record.metric.name,
-            geography_name=public_record.geography.name,
-            geography_type_name=public_record.geography.geography_type.name,
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
+            geography=public_record.geography.name,
+            geography_type=public_record.geography.geography_type.name,
             fields_to_export=[],
             rbac_permissions=[rbac_permission],
         )

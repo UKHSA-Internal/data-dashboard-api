@@ -1,10 +1,7 @@
 import datetime
-from decimal import Decimal
-from unittest import mock
 
 import pytest
 
-from metrics.data.models.core_models import CoreTimeSeries
 from metrics.api.views.audit.serializers import AuditCoreTimeseriesSerializer
 
 from tests.fakes.factories.metrics.core_time_series_factory import (
@@ -17,8 +14,8 @@ class TestCoreTimeSeriesSerializer:
     @staticmethod
     def _setup_fake_times_series():
         return FakeCoreTimeSeriesFactory.build_time_series(
-            metric_name="COVID-19_cases_casesByDay",
-            topic_name="COVID-19",
+            metric="COVID-19_cases_casesByDay",
+            topic="COVID-19",
             metric_value=2,
             date=datetime.date(day=1, month=1, year=2024),
             refresh_date=datetime.datetime(day=1, month=1, year=2024),

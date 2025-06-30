@@ -78,8 +78,8 @@ class TestAuthorisedRoute:
         headers = {f"HTTP_{RBAC_AUTH_X_HEADER}": group_id}
         all_respiratory_data = RBACPermissionFactory.create_record(
             name="all_infectious_respiratory_data",
-            theme_name="infectious_disease",
-            sub_theme_name="respiratory",
+            theme="infectious_disease",
+            sub_theme="respiratory",
         )
         RBACGroupPermissionFactory.create_record(
             name="medical",

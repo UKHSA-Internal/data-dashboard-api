@@ -81,11 +81,11 @@ class TestHeadlinesInterface:
         )
 
         spy_core_headline_manager.get_latest_headline.assert_called_once_with(
-            topic_name=headline_parameters.topic_name,
-            metric_name=headline_parameters.metric_name,
-            geography_name=headline_parameters.geography_name,
-            geography_type_name=headline_parameters.geography_type_name,
-            stratum_name=headline_parameters.stratum_name,
+            topic=headline_parameters.topic,
+            metric=headline_parameters.metric,
+            geography=headline_parameters.geography,
+            geography_type=headline_parameters.geography_type,
+            stratum=headline_parameters.stratum,
             age=headline_parameters.age_name,
             sex=headline_parameters.sex_name,
             rbac_permissions=[],
