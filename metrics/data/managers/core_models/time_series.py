@@ -139,15 +139,15 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def query_for_data(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         date_from: datetime.date,
         date_to: datetime.date | None = None,
         fields_to_export: list[str] = None,
         field_to_order_by: str = "date",
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
+        geography: str | None = None,
+        geography_type: str | None = None,
+        stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
         restrict_to_public: bool = True,
@@ -166,9 +166,9 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
                 In the case where we wanted to display
                 the date along the x-axis and metric value across the y-axis:
                 >>> ["date", "metric_value"]
-            topic_name: The name of the disease being queried.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
@@ -179,11 +179,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
             field_to_order_by: The name of the field to order
                 the resulting queryset in ascending order by.
                 Defaults to `date`.
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
@@ -205,16 +205,16 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__topic__name=topic_name,
-            metric__name=metric_name,
+            metric__topic__name=topic,
+            metric__name=metric,
             date__gte=date_from,
             date__lte=date_to,
         )
         queryset = self._filter_for_any_optional_fields(
             queryset=queryset,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
+            geography_name=geography,
+            geography_type_name=geography_type,
+            stratum_name=stratum,
             sex=sex,
             age=age,
         )
@@ -239,11 +239,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
     def query_for_superseded_data(
         self,
         *,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -251,15 +251,15 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         """Grabs all stale records which are not under embargo.
 
         Args:
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-COVID-19_cases_countRollingMean`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -274,11 +274,11 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            metric__name=metric_name,
-            geography__name=geography_name,
+            metric__name=metric,
+            geography__name=geography,
             geography__geography_code=geography_code,
-            geography__geography_type__name=geography_type_name,
-            stratum__name=stratum_name,
+            geography__geography_type__name=geography_type,
+            stratum__name=stratum,
             age__name=age,
             sex=sex,
             is_public=is_public,
@@ -479,19 +479,19 @@ class CoreTimeSeriesManager(models.Manager):
     def query_for_data(
         self,
         *,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         date_from: datetime.date,
         fields_to_export: list[str] | None = None,
         date_to: datetime.date | None = None,
         field_to_order_by: str = "date",
-        geography_name: str | None = None,
-        geography_type_name: str | None = None,
-        stratum_name: str | None = None,
+        geography: str | None = None,
+        geography_type: str | None = None,
+        stratum: str | None = None,
         sex: str | None = None,
         age: str | None = None,
-        theme_name: str = "",
-        sub_theme_name: str = "",
+        theme: str = "",
+        sub_theme: str = "",
         rbac_permissions: Iterable[RBACPermission] | None = None,
     ) -> CoreTimeSeriesQuerySet:
         """Filters for a 2-item object by the given params. Slices all values older than the `date_from`.
@@ -504,9 +504,9 @@ class CoreTimeSeriesManager(models.Manager):
                 In the case where we wanted to display
                 the date along the x-axis and metric value across the y-axis:
                 >>> ["date", "metric_value"]
-            topic_name: The name of the disease being queried.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
             date_from: The datetime object to begin the query from.
                 E.g. datetime.datetime(2023, 3, 27, 0, 0, 0, 0)
@@ -517,21 +517,21 @@ class CoreTimeSeriesManager(models.Manager):
             field_to_order_by: The name of the field to order
                 the resulting queryset in ascending order by.
                 Defaults to `date`.
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
-            stratum_name: The value of the stratum to apply additional filtering to.
+            stratum: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
             sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
                 Note that options are `M`, `F`, or `ALL`.
             age: The age range to apply additional filtering to.
                 E.g. `0_4` would be used to capture the age of 0-4 years old
-            theme_name: The name of the theme being queried.
+            theme: The name of the theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
-            sub_theme_name: The name of the sub theme being queried.
+            sub_theme: The name of the sub theme being queried.
                 This is only used to determine permissions for
                 the non-public portion of the requested dataset.
             rbac_permissions: The RBAC permissions available
@@ -568,25 +568,25 @@ class CoreTimeSeriesManager(models.Manager):
         """
         rbac_permissions: Iterable[RBACPermission] = rbac_permissions or []
         has_access_to_non_public_data: bool = validate_permissions_for_non_public(
-            theme=theme_name,
-            sub_theme=sub_theme_name,
-            topic=topic_name,
-            metric=metric_name,
-            geography_type=geography_type_name,
-            geography=geography_name,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography,
             rbac_permissions=rbac_permissions,
         )
 
         return self.get_queryset().query_for_data(
             fields_to_export=fields_to_export,
             field_to_order_by=field_to_order_by,
-            topic_name=topic_name,
-            metric_name=metric_name,
+            topic=topic,
+            metric=metric,
             date_from=date_from,
             date_to=date_to,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
-            stratum_name=stratum_name,
+            geography=geography,
+            geography_type=geography_type,
+            stratum=stratum,
             sex=sex,
             age=age,
             restrict_to_public=not has_access_to_non_public_data,
@@ -595,11 +595,11 @@ class CoreTimeSeriesManager(models.Manager):
     def query_for_superseded_data(
         self,
         *,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -607,15 +607,15 @@ class CoreTimeSeriesManager(models.Manager):
         """Filters the given `queryset` for the stale records in each individual date
 
         Args:
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                 E.g. `0_4`, which would be used to capture the age group 0 to 4 years old.
            sex: The gender to apply additional filtering to.
                 E.g. `F`, would be used to capture Females.
@@ -644,11 +644,11 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().query_for_superseded_data(
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum=stratum,
             sex=sex,
             age=age,
             is_public=is_public,
@@ -720,11 +720,11 @@ class CoreTimeSeriesManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            metric_name=metric,
-            geography_name=geography,
-            geography_type_name=geography_type,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum,
+            stratum=stratum,
             sex=sex,
             age=age,
             is_public=is_public,
