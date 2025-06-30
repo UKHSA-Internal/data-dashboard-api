@@ -36,9 +36,9 @@ class TestCMSBlockParserExtractionOfCharts:
         "geography_data",
         [
             GeographyData(
-                name="Reading", geography_type_name="Lower Tier Local Authority"
+                name="Reading", geography_type="Lower Tier Local Authority"
             ),
-            GeographyData(name="Wales", geography_type_name="Nation"),
+            GeographyData(name="Wales", geography_type="Nation"),
         ],
     )
     def test_get_all_chart_blocks_from_section_for_geography_when_geography_data_is_provided(
@@ -67,12 +67,12 @@ class TestCMSBlockParserExtractionOfCharts:
         assert chart_blocks[0]["chart"][0]["value"]["geography"] == geography_data.name
         assert (
             chart_blocks[0]["chart"][0]["value"]["geography_type"]
-            == geography_data.geography_type_name
+            == geography_data.geography_type
         )
         assert chart_blocks[1]["chart"][0]["value"]["geography"] == geography_data.name
         assert (
             chart_blocks[1]["chart"][0]["value"]["geography_type"]
-            == geography_data.geography_type_name
+            == geography_data.geography_type
         )
 
     def test_get_all_chart_blocks_from_section_for_geography_when_geography_data_not_provided(
@@ -118,9 +118,9 @@ class TestCMSBlockParserExtractionOfCharts:
         "geography_data",
         [
             GeographyData(
-                name="Reading", geography_type_name="Lower Tier Local Authority"
+                name="Reading", geography_type="Lower Tier Local Authority"
             ),
-            GeographyData(name="Wales", geography_type_name="Nation"),
+            GeographyData(name="Wales", geography_type="Nation"),
         ],
     )
     def test_rebuild_chart_block_for_geography(
@@ -149,7 +149,7 @@ class TestCMSBlockParserExtractionOfCharts:
         )
         assert (
             rebuilt_chart_block["chart"][0]["value"]["geography_type"]
-            == geography_data.geography_type_name
+            == geography_data.geography_type
         )
 
     def test_get_chart_blocks_from_chart_row_cards(self, example_chart_row_cards):

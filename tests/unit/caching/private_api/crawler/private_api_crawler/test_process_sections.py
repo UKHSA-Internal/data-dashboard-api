@@ -57,7 +57,7 @@ class TestPrivateAPICrawlerProcessSections:
         """
         # Given
         fake_topic_page = FakeTopicPageFactory._build_page(page_name="covid_19")
-        geography_data = GeographyData(name="England", geography_type_name="Nation")
+        geography_data = GeographyData(name="England", geography_type="Nation")
 
         # When
         private_api_crawler_with_mocked_internal_api_client.process_all_sections_in_page(

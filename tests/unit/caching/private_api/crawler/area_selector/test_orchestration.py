@@ -37,9 +37,9 @@ class TestAreaSelectorOrchestrator:
         # Given
         mocked_pages = [mock.Mock()] * 3
         geography_combinations = [
-            GeographyData(name="England", geography_type_name="Nation"),
+            GeographyData(name="England", geography_type="Nation"),
             GeographyData(
-                name="City of London", geography_type_name="Lower Tier Local Authority"
+                name="City of London", geography_type="Lower Tier Local Authority"
             ),
         ]
         mocked_geographies_api_crawler = mock.Mock()
@@ -83,9 +83,9 @@ class TestAreaSelectorOrchestrator:
         # Given
         geography_data_combinations = [
             GeographyData(
-                name="Croydon", geography_type_name="Lower Tier Local Authority"
+                name="Croydon", geography_type="Lower Tier Local Authority"
             ),
-            GeographyData(name="England", geography_type_name="Nation"),
+            GeographyData(name="England", geography_type="Nation"),
         ]
         page_id = 123
         mocked_page = mock.Mock(id=page_id)
@@ -132,7 +132,7 @@ class TestAreaSelectorOrchestrator:
         # Given
         page_id = 1
         geography_data = GeographyData(
-            name="Croydon", geography_type_name="Lower Tier Local Authority"
+            name="Croydon", geography_type="Lower Tier Local Authority"
         )
 
         # When

@@ -22,7 +22,7 @@ class TestGeographyTypeData:
         geography_names = ["England", "Wales"]
         geography_type_data = GeographyTypeData(
             name=geography_type_name,
-            geography_names=geography_names,
+            geographies=geography_names,
         )
 
         # When
@@ -32,7 +32,7 @@ class TestGeographyTypeData:
 
         # Then
         expected_geography_combinations = [
-            GeographyData(name=x, geography_type_name=geography_type_name)
+            GeographyData(name=x, geography_type=geography_type_name)
             for x in geography_names
         ]
         assert all_geography_combinations == expected_geography_combinations
@@ -75,7 +75,7 @@ class TestGeographiesAPICrawler:
         # Then
         geography_type_data_model = geography_type_data_models[0]
         assert geography_type_data_model.name == fake_response_data[0]["geography_type"]
-        assert geography_type_data_model.geography_names == fake_geography_names
+        assert geography_type_data_model.geographies == fake_geography_names
 
     def test_logs_are_recorded_for_completion_of_geographies_api(
         self, caplog: LogCaptureFixture
@@ -121,7 +121,7 @@ class TestGeographiesAPICrawler:
         ltha = "Lower Tier Local Authority"
         geography_type_data_models = [
             GeographyTypeData(
-                name=ltha, geography_names=["Bexley", "Hackney", "Tower Hamlets"]
+                name=ltha, geographies=["Bexley", "Hackney", "Tower Hamlets"]
             )
         ]
         spy_hit_list_endpoint_for_topic.return_value = geography_type_data_models
@@ -144,11 +144,11 @@ class TestGeographiesAPICrawler:
 
         # Check the returned `GeographyData` models are correct
         assert len(geography_combinations) == 3
-        assert geography_combinations[0].geography_type_name
+        assert geography_combinations[0].geography_type
         assert geography_combinations[0].name == "Bexley"
 
-        assert geography_combinations[1].geography_type_name
+        assert geography_combinations[1].geography_type
         assert geography_combinations[1].name == "Hackney"
 
-        assert geography_combinations[2].geography_type_name
+        assert geography_combinations[2].geography_type
         assert geography_combinations[2].name == "Tower Hamlets"

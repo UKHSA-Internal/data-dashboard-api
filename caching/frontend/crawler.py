@@ -142,7 +142,7 @@ class FrontEndCrawler:
         url: str = page.full_url
         params: dict[str, str] = (
             self._url_builder.build_query_params_for_area_selector_page(
-                geography_type_name=geography_data.geography_type_name,
+                geography_type_name=geography_data.geography_type,
                 geography_name=geography_data.name,
             )
         )

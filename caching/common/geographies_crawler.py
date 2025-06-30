@@ -12,24 +12,24 @@ logger = logging.getLogger(__name__)
 @dataclass
 class GeographyData:
     name: str
-    geography_type_name: str
+    geography_type: str
 
     def __eq__(self, other: "GeographyData") -> bool:
         return (
-            self.name == other.name
-            and self.geography_type_name == other.geography_type_name
+                self.name == other.name
+                and self.geography_type == other.geography_type
         )
 
 
 @dataclass
 class GeographyTypeData:
     name: str
-    geography_names: list[str]
+    geographies: list[str]
 
     def export_all_geography_combinations(self) -> list[GeographyData]:
         return [
-            GeographyData(name=geography_name, geography_type_name=self.name)
-            for geography_name in self.geography_names
+            GeographyData(name=geography_name, geography_type=self.name)
+            for geography_name in self.geographies
         ]
 
 
@@ -79,7 +79,7 @@ class GeographiesAPICrawler:
 
             geography_type = GeographyTypeData(
                 name=geography_type_name,
-                geography_names=[geography["name"] for geography in geographies],
+                geographies=[geography["name"] for geography in geographies],
             )
 
             geography_type_data_models.append(geography_type)
