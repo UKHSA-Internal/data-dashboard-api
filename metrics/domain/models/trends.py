@@ -13,5 +13,5 @@ class TrendsParameters(HeadlineParameters):
 
     def to_dict_for_percentage_metric_query(self):
         params = super().to_dict_for_query()
-        params["metric_name"] = self.percentage_metric
+        params["metric"] = self.percentage_metric
         return params
