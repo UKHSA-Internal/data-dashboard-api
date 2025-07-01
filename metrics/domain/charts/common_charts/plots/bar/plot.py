@@ -5,6 +5,19 @@ from metrics.domain.charts.serialization import convert_graph_object_to_dict
 from metrics.domain.models import PlotGenerationData
 
 
+def replace_spaces_with_br(text):
+    """
+    Replace only space characters with <br> tags.
+
+    Args:
+        text (str): The input string
+
+    Returns:
+        str: String with spaces replaced by <br> tags
+    """
+    return text.replace(' ', '<br>')
+
+
 def create_bar_plot(
     *,
     plot_data: PlotGenerationData,
@@ -26,6 +39,8 @@ def create_bar_plot(
     )
     bar_colour: str = selected_color.stringified
     legend: str = plot_data.parameters.label
+
+    legend = replace_spaces_with_br(legend)
 
     bar = plotly.graph_objects.Bar(
         x=[legend],
