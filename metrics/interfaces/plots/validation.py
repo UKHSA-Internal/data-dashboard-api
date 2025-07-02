@@ -96,8 +96,8 @@ class PlotValidation:
             return
 
         raise MetricDoesNotSupportTopicError(
-            topic_name=self.plot_parameters.topic_name,
-            metric_name=self.plot_parameters.metric_name,
+            topic_name=self.plot_parameters.topic,
+            metric_name=self.plot_parameters.metric,
         )
 
     def _metric_is_compatible_with_topic(self) -> bool:
@@ -108,7 +108,4 @@ class PlotValidation:
                 False otherwise
 
         """
-        return (
-            self.plot_parameters.topic_name.lower()
-            in self.plot_parameters.metric_name.lower()
-        )
+        return self.plot_parameters.topic.lower() in self.plot_parameters.metric.lower()

@@ -78,8 +78,8 @@ class TestIngestion:
         first_sample_data = example_time_series_data.copy()
         query_payload = {
             "fields_to_export": ["date", "metric_value"],
-            "topic_name": first_sample_data["topic"],
-            "metric_name": first_sample_data["metric"],
+            "topic": first_sample_data["topic"],
+            "metric": first_sample_data["metric"],
             "date_from": "2020-01-01",
             "date_to": "2023-10-31",
         }

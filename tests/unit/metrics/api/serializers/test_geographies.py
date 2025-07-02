@@ -27,29 +27,29 @@ class TestGeographiesSerializer:
         date_stamp = datetime.datetime(year=2024, month=1, day=1)
 
         bexley = FakeCoreTimeSeriesFactory.build_time_series(
-            metric_name="COVID-19_cases_countRollingMean",
-            topic_name="COVID-19",
+            metric="COVID-19_cases_countRollingMean",
+            topic="COVID-19",
             date=date_stamp,
             geography_type_name=ltla,
             geography_name="Bexley",
         )
         hackney = FakeCoreTimeSeriesFactory.build_time_series(
-            metric_name="COVID-19_cases_countRollingMean",
-            topic_name="COVID-19",
+            metric="COVID-19_cases_countRollingMean",
+            topic="COVID-19",
             date=date_stamp,
             geography_type_name=ltla,
             geography_name="Hackney",
         )
         england = FakeCoreTimeSeriesFactory.build_time_series(
-            metric_name="COVID-19_cases_countRollingMean",
-            topic_name="COVID-19",
+            metric="COVID-19_cases_countRollingMean",
+            topic="COVID-19",
             date=date_stamp,
             geography_type_name=nation,
             geography_name="England",
         )
         irrelavant_leeds_geography = FakeCoreTimeSeriesFactory.build_time_series(
-            metric_name="influenza_healthcare_ICUHDUadmissionRateByWeek",
-            topic_name="Influenza",
+            metric="influenza_healthcare_ICUHDUadmissionRateByWeek",
+            topic="Influenza",
             date=date_stamp,
             geography_type_name=ltla,
             geography_name="Leeds",

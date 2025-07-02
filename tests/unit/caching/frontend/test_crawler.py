@@ -108,7 +108,7 @@ class TestFrontEndCrawler:
         mocked_page = mock.Mock(full_url=full_url)
 
         geography_data = GeographyData(
-            name="London", geography_type_name="Lower Tier Local Authority"
+            name="London", geography_type="Lower Tier Local Authority"
         )
 
         # When
@@ -146,10 +146,8 @@ class TestFrontEndCrawler:
         """
         # Given
         geography_combinations = [
-            GeographyData(
-                name="London", geography_type_name="Lower Tier Local Authority"
-            ),
-            GeographyData(name="England", geography_type_name="Nation"),
+            GeographyData(name="London", geography_type="Lower Tier Local Authority"),
+            GeographyData(name="England", geography_type="Nation"),
         ]
         mocked_page = mock.Mock()
         mocked_geographies_api_crawler = mock.Mock()
@@ -201,7 +199,7 @@ class TestFrontEndCrawler:
         # Given
         full_url = f"{frontend_crawler_with_mocked_internal_api_client._frontend_base_url}/topics/covid-19"
         mocked_page = mock.Mock(full_url=full_url)
-        geography_data = GeographyData(name="London", geography_type_name="Nation")
+        geography_data = GeographyData(name="London", geography_type="Nation")
         mocked_hit_frontend_page.side_effect = ChunkedEncodingError
 
         # When

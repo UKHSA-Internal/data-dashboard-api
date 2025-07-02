@@ -57,8 +57,8 @@ class TestAccessGetSummaryDataForAlerts:
         # When
         summary_data = get_summary_data_for_alerts(
             geography_data=fake_geography_data,
-            topic_name=fake_topic,
-            metric_name=fake_metric,
+            topic=fake_topic,
+            metric=fake_metric,
         )
 
         # then

@@ -187,8 +187,8 @@ class TestCoreTimeSeriesQuerySet:
         # When
         retrieved_records = CoreTimeSeries.objects.query_for_data(
             fields_to_export=[],
-            topic_name=core_time_series[0].metric.topic.name,
-            metric_name=core_time_series[0].metric.name,
+            topic=core_time_series[0].metric.topic.name,
+            metric=core_time_series[0].metric.name,
             date_from=dates[0],
             date_to=dates[-1],
         )
@@ -224,8 +224,8 @@ class TestCoreTimeSeriesQuerySet:
 
         # When
         retrieved_records = CoreTimeSeries.objects.get_queryset().query_for_data(
-            topic_name=public_record.metric.topic.name,
-            metric_name=public_record.metric.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
             date_from="2020-01-01",
             date_to="2025-12-31",
             restrict_to_public=True,
@@ -256,8 +256,8 @@ class TestCoreTimeSeriesQuerySet:
 
         # When
         retrieved_records = CoreTimeSeries.objects.get_queryset().query_for_data(
-            topic_name=public_record.metric.topic.name,
-            metric_name=public_record.metric.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
             date_from="2020-01-01",
             date_to="2025-12-31",
             restrict_to_public=False,
@@ -325,8 +325,8 @@ class TestCoreTimeSeriesManager:
         # When
         retrieved_records = CoreTimeSeries.objects.query_for_data(
             fields_to_export=["date", "metric_value"],
-            topic_name=expected_fourth_round_for_first_date.metric.topic.name,
-            metric_name=expected_fourth_round_for_first_date.metric.name,
+            topic=expected_fourth_round_for_first_date.metric.topic.name,
+            metric=expected_fourth_round_for_first_date.metric.name,
             date_from=dates[0],
             date_to=last_date,
         )
@@ -407,8 +407,8 @@ class TestCoreTimeSeriesManager:
         # When
         retrieved_records = CoreTimeSeries.objects.query_for_data(
             fields_to_export=["date", "metric_value"],
-            topic_name=live_core_time_series_records[0].metric.topic.name,
-            metric_name=live_core_time_series_records[0].metric.name,
+            topic=live_core_time_series_records[0].metric.topic.name,
+            metric=live_core_time_series_records[0].metric.name,
             date_from=dates[0],
             date_to=dates[-1],
         )
@@ -548,11 +548,11 @@ class TestCoreTimeSeriesManager:
 
         # When
         CoreTimeSeries.objects.delete_superseded_data(
-            metric_name=expected_live_fourth_round_for_first_date.metric.name,
-            geography_name=expected_live_fourth_round_for_first_date.geography.name,
+            metric=expected_live_fourth_round_for_first_date.metric.name,
+            geography=expected_live_fourth_round_for_first_date.geography.name,
             geography_code=expected_live_fourth_round_for_first_date.geography.geography_code,
-            geography_type_name=expected_live_fourth_round_for_first_date.geography.geography_type.name,
-            stratum_name=expected_live_fourth_round_for_first_date.stratum.name,
+            geography_type=expected_live_fourth_round_for_first_date.geography.geography_type.name,
+            stratum=expected_live_fourth_round_for_first_date.stratum.name,
             age=expected_live_fourth_round_for_first_date.age.name,
             sex=expected_live_fourth_round_for_first_date.sex,
             is_public=expected_live_fourth_round_for_first_date.is_public,
@@ -671,12 +671,12 @@ class TestCoreTimeSeriesManager:
         )
 
         params = {
-            "theme_name": public_record.metric.topic.sub_theme.theme.name,
-            "sub_theme_name": public_record.metric.topic.sub_theme.name,
-            "topic_name": public_record.metric.topic.name,
-            "metric_name": public_record.metric.name,
-            "geography_name": public_record.geography.name,
-            "geography_type_name": public_record.geography.geography_type.name,
+            "theme": public_record.metric.topic.sub_theme.theme.name,
+            "sub_theme": public_record.metric.topic.sub_theme.name,
+            "topic": public_record.metric.topic.name,
+            "metric": public_record.metric.name,
+            "geography": public_record.geography.name,
+            "geography_type": public_record.geography.geography_type.name,
         }
         rbac_permission = RBACPermissionFactory.create_record(**params)
 
@@ -709,22 +709,22 @@ class TestCoreTimeSeriesManager:
             date="2023-01-02", metric_value=2, is_public=False
         )
         rbac_permission = RBACPermissionFactory.create_record(
-            theme_name="some_other_theme",
-            sub_theme_name="",
-            topic_name="",
-            metric_name="",
-            geography_name="",
-            geography_type_name="",
+            theme="some_other_theme",
+            sub_theme=None,
+            topic=None,
+            metric=None,
+            geography=None,
+            geography_type=None,
         )
 
         # When
         core_time_series_queryset = CoreTimeSeries.objects.query_for_data(
-            theme_name=public_record.metric.topic.sub_theme.theme.name,
-            sub_theme_name=public_record.metric.topic.sub_theme.name,
-            topic_name=public_record.metric.topic.name,
-            metric_name=public_record.metric.name,
-            geography_name=public_record.geography.name,
-            geography_type_name=public_record.geography.geography_type.name,
+            theme=public_record.metric.topic.sub_theme.theme.name,
+            sub_theme=public_record.metric.topic.sub_theme.name,
+            topic=public_record.metric.topic.name,
+            metric=public_record.metric.name,
+            geography=public_record.geography.name,
+            geography_type=public_record.geography.geography_type.name,
             fields_to_export=[],
             rbac_permissions=[rbac_permission],
             date_from="2020-01-01",

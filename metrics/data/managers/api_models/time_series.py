@@ -46,22 +46,22 @@ class APITimeSeriesQuerySet(models.QuerySet):
     def filter_for_audit_list_view(
         self,
         *,
-        metric_name: str,
-        geography_type_name: str,
-        geography_name: str,
+        metric: str,
+        geography_type: str,
+        geography: str,
         stratum: str,
         sex: str,
         age: str,
     ) -> "APITimeSeriesQuerySet":
-        """Filters for all records based on the provided arguments including `metric`, `geography_name` etc.
+        """Filters for all records based on the provided arguments including `metric`, `geography` etc.
             returns all records including those under `embargo` or `stale/duplicated` records.
 
         Args:
-            metric_name: The name of the metric being queried.
+            metric: The name of the metric being queried.
                 E.g. `COVID-19_deaths_ONSByDay`
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
             stratum: The value of the stratum to apply additional filtering to.
                 E.g. `default`, which would be used to capture all strata.
@@ -72,9 +72,9 @@ class APITimeSeriesQuerySet(models.QuerySet):
                 E.g. `0_4` would be used to capture the age of 0-4 years old
         """
         return self.filter(
-            metric=metric_name,
-            geography_type=geography_type_name,
-            geography=geography_name,
+            metric=metric,
+            geography_type=geography_type,
+            geography=geography,
             stratum=stratum,
             sex=sex,
             age=age,
@@ -83,29 +83,29 @@ class APITimeSeriesQuerySet(models.QuerySet):
     def filter_for_list_view(
         self,
         *,
-        theme_name: str,
-        sub_theme_name: str,
-        topic_name: str,
-        geography_type_name: str,
-        geography_name: str,
-        metric_name: str,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        geography_type: str,
+        geography: str,
+        metric: str,
         restrict_to_public: bool,
     ) -> Self:
         """Filters by the given fields to provide a slice of the timeseries data as per the fields.
 
         Args:
-            theme_name: The name of the root theme being queried for.
+            theme: The name of the root theme being queried for.
                 E.g. `infectious_disease`
-            sub_theme_name: The name of the child/ sub theme being queried for.
+            sub_theme: The name of the child/ sub theme being queried for.
                 E.g. `respiratory`.
-                Which would filter for `respiratory` under the `theme_name` entity.
-            topic_name: The name of the disease being queried.
+                Which would filter for `respiratory` under the `sub_theme` entity.
+            topic: The name of the disease being queried.
                 E.g. `COVID-19`
-            geography_type_name: The name of the type of geography to apply additional filtering.
+            geography_type: The name of the type of geography to apply additional filtering.
                 E.g. `Nation`
-            geography_name: The name of the geography to apply additional filtering to.
+            geography: The name of the geography to apply additional filtering to.
                 E.g. `England`
-            metric_name: The name of the metric to filter for.
+            metric: The name of the metric to filter for.
                 E.g. `COVID-19_deaths_ONSByDay`.
             restrict_to_public: Boolean switch to restrict the query
                 to only return public records.
@@ -128,12 +128,12 @@ class APITimeSeriesQuerySet(models.QuerySet):
         """
 
         queryset = self.filter(
-            theme=theme_name,
-            sub_theme=sub_theme_name,
-            topic=topic_name,
-            geography_type=geography_type_name,
-            geography=geography_name,
-            metric=metric_name,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            geography_type=geography_type,
+            geography=geography,
+            metric=metric,
         )
         if restrict_to_public:
             queryset = queryset.filter(is_public=True)
@@ -255,14 +255,14 @@ class APITimeSeriesQuerySet(models.QuerySet):
     def query_for_superseded_data(
         self,
         *,
-        theme_name: str,
-        sub_theme_name: str,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -270,21 +270,21 @@ class APITimeSeriesQuerySet(models.QuerySet):
         """Grabs all stale records which are not under embargo.
 
         Args:
-           theme_name: The name of the parent theme being queried.
+           theme: The name of the parent theme being queried.
                E.g. `infectious_disease`
-           sub_theme_name: The name of the child theme being queried.
+           sub_theme: The name of the child theme being queried.
                E.g. `respiratory`
-           topic_name: The name of the threat being queried.
+           topic: The name of the threat being queried.
                E.g. `COVID-19`
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-COVID-19_cases_countRollingMean`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -298,14 +298,14 @@ class APITimeSeriesQuerySet(models.QuerySet):
 
         """
         queryset = self.filter(
-            theme=theme_name,
-            sub_theme=sub_theme_name,
-            topic=topic_name,
-            metric=metric_name,
-            geography=geography_name,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography=geography,
             geography_code=geography_code,
-            geography_type=geography_type_name,
-            stratum=stratum_name,
+            geography_type=geography_type,
+            stratum=stratum,
             age=age,
             sex=sex,
             is_public=is_public,
@@ -352,14 +352,14 @@ class APITimeSeriesManager(models.Manager):
     def query_for_superseded_data(
         self,
         *,
-        theme_name: str,
-        sub_theme_name: str,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -384,21 +384,21 @@ class APITimeSeriesManager(models.Manager):
             the latest `refresh_date` from each window
 
         Args:
-           theme_name: The name of the parent theme being queried.
+           theme: The name of the parent theme being queried.
                E.g. `infectious_disease`
-           sub_theme_name: The name of the child theme being queried.
+           sub_theme: The name of the child theme being queried.
                E.g. `respiratory`
-           topic_name: The name of the threat being queried.
+           topic: The name of the threat being queried.
                E.g. `COVID-19`
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-COVID-19_cases_countRollingMean`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -412,14 +412,14 @@ class APITimeSeriesManager(models.Manager):
 
         """
         return self.get_queryset().query_for_superseded_data(
-            theme_name=theme_name,
-            sub_theme_name=sub_theme_name,
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum=stratum,
             sex=sex,
             age=age,
             is_public=is_public,
@@ -428,14 +428,14 @@ class APITimeSeriesManager(models.Manager):
     def delete_superseded_data(
         self,
         *,
-        theme_name: str,
-        sub_theme_name: str,
-        topic_name: str,
-        metric_name: str,
-        geography_name: str,
-        geography_type_name: str,
+        theme: str,
+        sub_theme: str,
+        topic: str,
+        metric: str,
+        geography: str,
+        geography_type: str,
         geography_code: str,
-        stratum_name: str,
+        stratum: str,
         sex: str,
         age: str,
         is_public: bool,
@@ -460,21 +460,21 @@ class APITimeSeriesManager(models.Manager):
             the latest `refresh_date` from each window
 
         Args:
-           theme_name: The name of the parent theme being queried.
+           theme: The name of the parent theme being queried.
                E.g. `infectious_disease`
-           sub_theme_name: The name of the child theme being queried.
+           sub_theme: The name of the child theme being queried.
                E.g. `respiratory`
-           topic_name: The name of the threat being queried.
+           topic: The name of the threat being queried.
                E.g. `COVID-19`
-           metric_name: The name of the metric being queried.
+           metric: The name of the metric being queried.
                E.g. `COVID-COVID-19_cases_countRollingMean`
-           geography_name: The name of the geography being queried.
+           geography: The name of the geography being queried.
                E.g. `England`
-           geography_type_name: The name of the geography type being queried.
+           geography_type: The name of the geography type being queried.
                E.g. `Nation`
            geography_code: Code associated with the geography being queried.
                E.g. "E45000010"
-           stratum_name: The value of the stratum to apply additional filtering to.
+           stratum: The value of the stratum to apply additional filtering to.
                E.g. `default`, which would be used to capture all strata.
            sex: The gender to apply additional filtering to.
                E.g. `F`, would be used to capture Females.
@@ -488,14 +488,14 @@ class APITimeSeriesManager(models.Manager):
 
         """
         superseded_records = self.query_for_superseded_data(
-            theme_name=theme_name,
-            sub_theme_name=sub_theme_name,
-            topic_name=topic_name,
-            metric_name=metric_name,
-            geography_name=geography_name,
-            geography_type_name=geography_type_name,
+            theme=theme,
+            sub_theme=sub_theme,
+            topic=topic,
+            metric=metric,
+            geography=geography,
+            geography_type=geography_type,
             geography_code=geography_code,
-            stratum_name=stratum_name,
+            stratum=stratum,
             sex=sex,
             age=age,
             is_public=is_public,

@@ -145,9 +145,9 @@ class PlotsInterface:
         """
         if auth.AUTH_ENABLED:
             # Needed for the downstream permissions check
-            topic = self.topic_model_manager.get_by_name(name=plot_params["topic_name"])
-            plot_params["theme_name"] = topic.sub_theme.theme.name
-            plot_params["sub_theme_name"] = topic.sub_theme.name
+            topic = self.topic_model_manager.get_by_name(name=plot_params["topic"])
+            plot_params["theme"] = topic.sub_theme.theme.name
+            plot_params["sub_theme"] = topic.sub_theme.name
 
         return self.core_model_manager.query_for_data(
             **plot_params, rbac_permissions=self.chart_request_params.rbac_permissions

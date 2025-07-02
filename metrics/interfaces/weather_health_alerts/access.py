@@ -18,14 +18,14 @@ class WeatherHealthAlertsInterface:
         self._core_headline_manager = core_headline_manager
 
     def build_summary_data_for_alerts(
-        self, geography_data: list[str], topic_name: str, metric_name: str
-    ) -> dict[str, WEATHER_HEALTH_ALERT_DETAILED_DATA]:
+        self, geography_data: list[str], topic: str, metric: str
+    ) -> list[dict[str, WEATHER_HEALTH_ALERT_DETAILED_DATA]]:
         """Builds the exported summary data required for each current alert state associated with each `geography_code`
 
         Args:
-            topic_name: The name of the topic
+            topic: The name of the topic
                 associated with the alert
-            metric_name: The name of the metric
+            metric: The name of the metric
                 associated with the alert
             geography_data: List of tuples containing the codes for
                 each of the geographies being queried.
@@ -38,8 +38,8 @@ class WeatherHealthAlertsInterface:
         """
         headlines_mapping = (
             self._core_headline_manager.get_latest_headlines_for_geography_codes(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic,
+                metric=metric,
                 geography_codes=[
                     geography_code for geography_code, geography_name in geography_data
                 ],
@@ -48,7 +48,7 @@ class WeatherHealthAlertsInterface:
 
         weather_health_alarm_states = {
             geography_code: self._parse_core_headline_as_alarm_state(
-                topic_name=topic_name, core_headline=core_headline
+                topic=topic, core_headline=core_headline
             )
             for geography_code, core_headline, in headlines_mapping.items()
         }
@@ -69,24 +69,24 @@ class WeatherHealthAlertsInterface:
 
     def build_detailed_data_for_alert(
         self,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         geography_code: str,
-        geography_name: str,
-        geography_type_name: str,
+        geography: str,
+        geography_type: str,
     ) -> WEATHER_HEALTH_ALERT_DETAILED_DATA:
         """Builds the exported data required for the alert associated with the given `core_headline`
 
         Args:
-            topic_name: The name of the topic
+            topic: The name of the topic
                 associated with the alert
-            metric_name: The name of the metric
+            metric: The name of the metric
                 associated with the alert
             geography_code: The code of the geography
                 associated with the individual alert
-            geography_name: The name of the geography
+            geography: The name of the geography
                 associated with the individual alert
-            geography_type_name: The name of the geography type
+            geography_type: The name of the geography type
                 associated with the individual alert
 
         Returns:
@@ -97,45 +97,45 @@ class WeatherHealthAlertsInterface:
         """
         weather_health_alarm_state: WeatherHealthAlarmState = (
             self._build_current_headline_state(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic,
+                metric=metric,
                 geography_code=geography_code,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                geography=geography,
+                geography_type=geography_type,
             )
         )
 
         return {
-            "geography_name": geography_name,
+            "geography": geography,
             "geography_code": geography_code,
             **weather_health_alarm_state.detailed_data,
         }
 
     def _build_current_headline_state(
         self,
-        topic_name: str,
-        metric_name: str,
+        topic: str,
+        metric: str,
         geography_code: str,
-        geography_name: str,
-        geography_type_name: str,
+        geography: str,
+        geography_type: str,
     ) -> WeatherHealthAlarmState:
         core_headline: CoreHeadline | None = (
             self._core_headline_manager.get_latest_headline(
-                topic_name=topic_name,
-                metric_name=metric_name,
+                topic=topic,
+                metric=metric,
                 geography_code=geography_code,
-                geography_name=geography_name,
-                geography_type_name=geography_type_name,
+                geography=geography,
+                geography_type=geography_type,
             )
         )
 
         return self._parse_core_headline_as_alarm_state(
-            topic_name=topic_name, core_headline=core_headline
+            topic=topic, core_headline=core_headline
         )
 
     @classmethod
     def _parse_core_headline_as_alarm_state(
-        cls, topic_name: str, core_headline: CoreHeadline | None
+        cls, topic: str, core_headline: CoreHeadline | None
     ) -> WeatherHealthAlarmState:
         if core_headline is None:
             # In this case, there has never been an alert for this
@@ -143,7 +143,7 @@ class WeatherHealthAlertsInterface:
             # So we will default to green/normal with null for the timestamps
             return WeatherHealthAlarmState(
                 metric_value=1,
-                topic_name=topic_name,
+                topic=topic,
                 period_start=None,
                 period_end=None,
                 refresh_date=None,
@@ -155,7 +155,7 @@ class WeatherHealthAlertsInterface:
             refresh_date = core_headline.period_end
             return WeatherHealthAlarmState(
                 metric_value=1,
-                topic_name=topic_name,
+                topic=topic,
                 period_start=core_headline.period_start,
                 period_end=core_headline.period_end,
                 refresh_date=refresh_date,
@@ -165,7 +165,7 @@ class WeatherHealthAlertsInterface:
         # so we can safely use everything we get from the db record
         return WeatherHealthAlarmState(
             metric_value=core_headline.metric_value,
-            topic_name=topic_name,
+            topic=topic,
             period_start=core_headline.period_start,
             period_end=core_headline.period_end,
             refresh_date=core_headline.refresh_date,
@@ -174,29 +174,29 @@ class WeatherHealthAlertsInterface:
 
 def get_summary_data_for_alerts(
     geography_data: Iterable[str],
-    topic_name: str,
-    metric_name: str,
+    topic: str,
+    metric: str,
 ):
     weather_health_alerts_interface = WeatherHealthAlertsInterface()
     return weather_health_alerts_interface.build_summary_data_for_alerts(
         geography_data=geography_data,
-        topic_name=topic_name,
-        metric_name=metric_name,
+        topic=topic,
+        metric=metric,
     )
 
 
 def get_detailed_data_for_alert(
     geography_code: str,
-    geography_name: str,
-    geography_type_name: str,
-    topic_name: str,
-    metric_name: str,
+    geography: str,
+    geography_type: str,
+    topic: str,
+    metric: str,
 ):
     weather_health_alerts_interface = WeatherHealthAlertsInterface()
     return weather_health_alerts_interface.build_detailed_data_for_alert(
         geography_code=geography_code,
-        geography_name=geography_name,
-        geography_type_name=geography_type_name,
-        topic_name=topic_name,
-        metric_name=metric_name,
+        geography=geography,
+        geography_type=geography_type,
+        topic=topic,
+        metric=metric,
     )

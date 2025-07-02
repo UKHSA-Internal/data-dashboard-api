@@ -8,7 +8,7 @@ from metrics.domain.weather_health_alerts.mapping import (
 @dataclass
 class WeatherHealthAlarmState:
     metric_value: int
-    topic_name: str
+    topic: str
     period_start: str | None
     period_end: str | None
     refresh_date: str | None
@@ -36,7 +36,7 @@ class WeatherHealthAlarmState:
     def _build_mapping(self) -> WeatherHealthAlertsMetricMapping:
         return WeatherHealthAlertsMetricMapping(
             metric_value=self.metric_value,
-            topic_name=self.topic_name,
+            topic_name=self.topic,
         )
 
     def get_associated_status(self) -> str:

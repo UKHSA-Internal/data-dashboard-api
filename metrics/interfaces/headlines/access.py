@@ -42,8 +42,8 @@ class HeadlinesInterface:
             topic = self.topic_manager.get_by_name(
                 name=self.headline_parameters.topic_name
             )
-            params["theme_name"] = topic.sub_theme.theme.name
-            params["sub_theme_name"] = topic.sub_theme.name
+            params["theme"] = topic.sub_theme.theme.name
+            params["sub_theme"] = topic.sub_theme.name
 
         core_headline: CoreHeadline | None = (
             self.core_headline_manager.get_latest_headline(**params)

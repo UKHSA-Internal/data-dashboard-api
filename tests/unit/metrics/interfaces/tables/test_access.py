@@ -23,9 +23,9 @@ class TestTablesInterface:
         return [
             FakeCoreTimeSeriesFactory.build_time_series(
                 date=datetime.date(year=2023, month=2, day=i + 1),
-                metric_name=chart_plot_parameters.metric_name,
-                topic_name=chart_plot_parameters.topic_name,
-                stratum_name=chart_plot_parameters.stratum_name,
+                metric=chart_plot_parameters.metric,
+                topic=chart_plot_parameters.topic,
+                stratum=chart_plot_parameters.stratum,
             )
             for i in range(10)
         ]
