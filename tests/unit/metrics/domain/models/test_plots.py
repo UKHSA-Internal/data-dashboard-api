@@ -210,10 +210,10 @@ class TestPlotParameters:
         )
 
         # Then
-        assert chart_plot_parameters.topic_name == topic_name
-        assert chart_plot_parameters.metric_name == metric_name
-        assert chart_plot_parameters.geography_name == geography_name
-        assert chart_plot_parameters.geography_type_name == geography_type_name
+        assert chart_plot_parameters.topic == topic_name
+        assert chart_plot_parameters.metric == metric_name
+        assert chart_plot_parameters.geography == geography_name
+        assert chart_plot_parameters.geography_type == geography_type_name
 
     @mock.patch(f"{MODULE_PATH}.make_date_from_string")
     def test_date_from_value_property_delegates_call(

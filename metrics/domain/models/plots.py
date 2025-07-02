@@ -38,24 +38,8 @@ class PlotParameters(BaseModel):
     use_markers: bool = False
 
     @property
-    def topic_name(self) -> str:
-        return self.topic
-
-    @property
-    def metric_name(self) -> str:
-        return self.metric
-
-    @property
     def metric_group(self) -> str:
         return extract_metric_group_from_metric(self.metric)
-
-    @property
-    def geography_name(self) -> str | None:
-        return self.geography
-
-    @property
-    def geography_type_name(self) -> str | None:
-        return self.geography_type
 
     @property
     def date_from_value(self) -> datetime.date:

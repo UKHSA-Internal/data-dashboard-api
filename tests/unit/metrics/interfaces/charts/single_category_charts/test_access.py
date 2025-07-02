@@ -560,7 +560,7 @@ class TestChartsInterface:
         )
 
         # When
-        metric: str = fake_plot_data.parameters.metric_name
+        metric: str = fake_plot_data.parameters.metric
         expected_constructed_params = {
             "plots_data": [fake_plot_data],
             "chart_width": width,
