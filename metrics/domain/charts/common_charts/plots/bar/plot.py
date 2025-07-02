@@ -15,7 +15,7 @@ def replace_spaces_with_br(text):
     Returns:
         str: String with spaces replaced by <br> tags
     """
-    return text.replace(' ', '<br>')
+    return text.replace(' (', '<br>(')
 
 
 def create_bar_plot(
