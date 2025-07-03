@@ -69,4 +69,11 @@ VALID_PARAMETERS = [
         "lead_headline_percentByDeprivationLatest",
         "headline",
     ),
+    (
+        "climate_and_environment",
+        "seasonal_environmental",
+        "heat-or-sunburn",
+        "heat-or-sunburn_syndromic_emergencyDepartment_averageRolling7Day",
+        "syndromic",
+    ),
 ]

@@ -24,6 +24,7 @@ class _NonCommunicableChildTheme(Enum):
 class _ClimateAndEnvironmentChildTheme(Enum):
     VECTORS = "vectors"
     CHEMICAL_EXPOSURE = "chemical_exposure"
+    SEASONAL_ENVIRONMENTAL = "seasonal_environmental"
 
 
 class _VectorsTopic(Enum):
@@ -32,6 +33,11 @@ class _VectorsTopic(Enum):
 
 class _ChemicalExposureTopic(Enum):
     LEAD = "Lead"
+
+
+class _SeasonalEnvironmentalTopic(Enum):
+    HEAT_OR_SUNSTROKE = "heat-or-sunstroke"
+    HEAT_OR_SUNBURN = "heat-or-sunburn"
 
 
 class _VaccinePreventableTopic(Enum):
@@ -130,3 +136,4 @@ class Topic(BaseEnum):
     INVASIVE_BACTERIAL_INFECTIONS = _InvasiveBacterialInfectionsTopic
     CHILDHOOD_ILLNESS = _ChildhoodIllnessTopic
     CHEMICAL_EXPOSURE = _ChemicalExposureTopic
+    SEASONAL_ENVIRONMENTAL = _SeasonalEnvironmentalTopic

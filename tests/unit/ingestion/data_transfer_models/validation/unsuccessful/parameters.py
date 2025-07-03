@@ -55,4 +55,11 @@ INVALID_PARAMETERS = [
         "lead_headline_percentByDeprivationLatest",
         "headline",
     ),  # Invalid parent theme
+    (
+        "climate_and_environment",
+        "seasonal_environmental",
+        "heat-or-sunstroke",
+        "heat-or-sunburn_syndromic_emergencyDepartment_averageRolling7Day",
+        "syndromic",
+    ),  # Invalid topic name
 ]
