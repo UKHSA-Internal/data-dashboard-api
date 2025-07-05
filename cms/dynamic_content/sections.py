@@ -6,12 +6,16 @@ from wagtail.blocks import (
 )
 
 from cms.dynamic_content import blocks, cards, help_texts
+from cms.dynamic_content.global_filter.card import GlobalFilterCard
 
 
 class ContentCards(StreamBlock):
     text_card = cards.TextCard()
     chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
+    global_filter_component = GlobalFilterCard(
+        help_text=help_texts.GLOBAL_FILTER_COMPONENT,
+    )
 
 
 class ContentCardsSectionWithLink(StreamBlock):

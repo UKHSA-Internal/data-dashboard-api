@@ -22,3 +22,7 @@
 .codeblock_monospace {
   font-family: monospace;
 }
+
+.global_filter_card_form div label.w-field__label {
+  margin: 10px 0 15px 0;
+}
