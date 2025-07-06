@@ -6,6 +6,8 @@ from metrics.data.managers.core_models.geography import GeographyManager
 from metrics.data.managers.core_models.geography_type import GeographyTypeManager
 from metrics.data.managers.core_models.metric import MetricManager
 from metrics.data.managers.core_models.stratum import StratumManager
+from metrics.data.managers.core_models.theme import ThemeManager
+from metrics.data.managers.core_models.sub_theme import SubThemeManager
 from metrics.data.managers.core_models.topic import TopicManager
 from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
@@ -17,6 +19,8 @@ from metrics.data.models.constants import (
 class Theme(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     created_dt = models.DateTimeField(default=timezone.now)
+
+    objects = ThemeManager()
 
     class Meta:
         constraints = [
@@ -33,6 +37,8 @@ class SubTheme(models.Model):
     name = models.CharField(max_length=CHAR_COLUMN_MAX_CONSTRAINT)
     theme = models.ForeignKey(to=Theme, on_delete=models.SET_NULL, null=True)
     created_dt = models.DateTimeField(default=timezone.now)
+
+    objects = SubThemeManager()
 
     class Meta:
         constraints = [
