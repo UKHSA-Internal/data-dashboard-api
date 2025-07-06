@@ -34,7 +34,7 @@ class TimeRangeBlock(blocks.StructBlock):
     title = blocks.CharBlock(required=True)
     time_periods = blocks.ListBlock(
         child_block=TimeRangeElement(),
-        help_text=help_texts.GLOBAL_FILTER_TIME_RANGE_TIME_PERIOD,
+        help_text=help_texts.GLOBAL_FILTER_TIME_RANGE
     )
 
 

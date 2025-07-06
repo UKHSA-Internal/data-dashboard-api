@@ -1,5 +1,6 @@
 from django.db.models import Manager, QuerySet
 
+from ingestion.consumer import DEFAULT_SUB_THEME_MANAGER
 from metrics.data.models import core_models
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
@@ -7,6 +8,8 @@ from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties im
 )
 from metrics.domain.common.utils import ChartAxisFields, ChartTypes
 
+DEFAULT_THEME_MANAGER = core_models.Theme.objects
+DEFAULT_SUB_THEME_MANAGER = core_models.SubTheme.objects
 DEFAULT_TOPIC_MANAGER = core_models.Topic.objects
 DEFAULT_METRIC_MANAGER = core_models.Metric.objects
 DEFAULT_STRATUM_MANAGER = core_models.Stratum.objects
@@ -26,6 +29,12 @@ class MetricsAPIInterface:
 
     Parameters:
     -----------
+    theme_manager : `ThemeManager`
+        The model manager for the `Theme` model belonging to the Metrics API
+        Defaults to the concrete `ThemeManager` via `Theme.objects`
+    sub_theme_manager : `SubThemeManager`
+        The model manager for the `SubTheme` model belonging to the Metrics API
+        Defaults to the concrete `SubThemeManager` via `SubTheme.objects`
     topic_manager : `TopicManager`
         The model manager for the `Topic` model belonging to the Metrics API
         Defaults to the concrete `TopicManager` via `Topic.objects`
@@ -56,6 +65,8 @@ class MetricsAPIInterface:
     def __init__(
         self,
         *,
+        theme_manager: Manager = DEFAULT_THEME_MANAGER,
+        sub_theme_manager: Manager = DEFAULT_SUB_THEME_MANAGER,
         topic_manager: Manager = DEFAULT_TOPIC_MANAGER,
         metric_manager: Manager = DEFAULT_METRIC_MANAGER,
         stratum_manager: Manager = DEFAULT_STRATUM_MANAGER,
@@ -65,6 +76,8 @@ class MetricsAPIInterface:
         core_time_series_manager: Manager = DEFAULT_CORE_TIME_SERIES_MANAGER,
         core_headline_manager: Manager = DEFAULT_CORE_HEADLINE_MANAGER,
     ):
+        self.theme_manager = theme_manager
+        self.sub_theme_manager = sub_theme_manager
         self.topic_manager = topic_manager
         self.metric_manager = metric_manager
         self.stratum_manager = stratum_manager
@@ -162,6 +175,28 @@ class MetricsAPIInterface:
 
         """
         return RGBAChartLineColours.selectable_choices()
+
+    def get_all_theme_names(self) -> QuerySet:
+        """Gets all available theme names as a flat list queryset.
+        Note this is achieved by delegating the call to the `ThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual theme names.
+                Examples:
+                    `<ThemeQuerySet ['infectious_disease', ...]>`.
+        """
+        return self.theme_manager.get_all_names()
+
+    def get_all_sub_theme_names(self) -> QuerySet:
+        """Gets all available sub_theme names as a flat list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual sub_theme names.
+                Examples:
+                    `<SubThemeQuerySet ['respiratory', ...]>
+        """
+        return self.sub_theme_manager.get_all_names()
 
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.

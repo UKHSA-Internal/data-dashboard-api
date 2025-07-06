@@ -98,6 +98,7 @@ target-version = "py312"
                                                                  "S101",           # Ignore use of `assert` statement in tests
                                                                  "SLF001"          # Ignore access of private methods/attributes in tests
                                                                 ]
+"cms/metrics_interface/interface.py"                          = ["PLR0904"]        # Ignore maximum number of public methods
 "metrics/api/views/*"                                         = ["E501"]           # Ignore line length in API views.
                                                                                         # This infringement is due to
                                                                                         # swagger-facing docstrings/documentation

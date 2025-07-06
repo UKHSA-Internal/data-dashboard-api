@@ -15,6 +15,9 @@ from cms.metrics_interface import MetricsAPIInterface
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 DICT_OF_CHART_AXIS_AND_SUB_CATEGORIES = dict[str, list[str]]
 GEOGRAPHY_TYPE_NAME_FOR_ALERTS = "Government Office Region"
+GEOGRAPHY_TYPE_NAME_FOR_NATION = "Nation"
+GEOGRAPHY_TYPE_NAME_FOR_UKHSA_REION = "UKHSA Region"
+GEOGRAPHY_TYPE_NAME_FOR_LTLA = "Lower Tier Local Authority"
 DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST = ["metric", "date"]
 
 
@@ -259,6 +262,49 @@ def get_colours() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     return MetricsAPIInterface.get_colours()
 
 
+def get_all_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `theme` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of theme names.
+        Examples:
+            [("Infectious_disease", "Infectious_disease"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_theme_names(),
+    )
+
+def get_all_sub_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable for the `choices` on the `sub_theme` fields of the CMS blocks.
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new chart type is added.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of sub_theme names.
+        Examples:
+            [("respiratory", "respiratory"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_sub_theme_names(),
+    )
+
+
 def get_all_topic_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `topic` fields of the CMS blocks.
 
@@ -478,6 +524,81 @@ def get_all_subcategory_choices() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         *get_all_stratum_names(),
         *get_all_geography_names(),
     ]
+
+
+def get_all_geography_names_for_nation() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable to return all geography names for initial load of dynamic CMS blocks that
+        belong to geography_type `Nation`
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Geography` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of sex names.
+        Examples:
+            [("Nation", "Nation"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_geography_names_by_geography_type(
+            geography_type_name=GEOGRAPHY_TYPE_NAME_FOR_NATION,
+        ),
+    )
+
+
+def get_all_geography_names_for_ukhsa_region() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable to return all geography names for initial load of dynamic CMS blocks that
+        belong to geography_type `UKHSA Region`
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Geography` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of geo names.
+        Examples:
+            [("North west", "North west"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_geography_names_by_geography_type(
+            geography_type_name=GEOGRAPHY_TYPE_NAME_FOR_UKHSA_REION,
+        )
+    )
+
+
+def get_all_geography_names_for_ltla() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
+    """Callable to return all geography names for initial load of dynamic CMS blocks that
+    belong to geography_type `Lower Tier Local Authority`
+
+    Notes:
+        This callable wraps the `MetricsAPIInterface`
+        and is passed to a migration for the CMS blocks.
+        This means that we don't need to create a new migration
+        whenever a new `Geography` is added to that table.
+        Instead, the 1-off migration is pointed at this callable.
+        So Wagtail will pull the choices by invoking this function.
+
+    Returns:
+        A list of 2-item tuples of geo names.
+        Examples:
+            [("Leeds", "Leeds"), ...]
+    """
+    metrics_interface = MetricsAPIInterface()
+    return _build_two_item_tuple_choices(
+        choices=metrics_interface.get_all_geography_names_by_geography_type(
+            geography_type_name=GEOGRAPHY_TYPE_NAME_FOR_LTLA,
+        ),
+    )
 
 
 def get_all_geography_choices_grouped_by_type() -> (
