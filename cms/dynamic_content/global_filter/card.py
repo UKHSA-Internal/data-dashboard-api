@@ -39,5 +39,5 @@ class GlobalFilterCard(blocks.StructBlock):
     )
 
     class Meta:
-        icon = "text"
+        icon = "globe"
         form_classname = "global_filter_card_form"
