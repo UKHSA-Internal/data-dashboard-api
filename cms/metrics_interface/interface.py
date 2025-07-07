@@ -1,6 +1,5 @@
 from django.db.models import Manager, QuerySet
 
-from ingestion.consumer import DEFAULT_SUB_THEME_MANAGER
 from metrics.data.models import core_models
 from metrics.domain.charts.colour_scheme import RGBAChartLineColours
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.properties import (
