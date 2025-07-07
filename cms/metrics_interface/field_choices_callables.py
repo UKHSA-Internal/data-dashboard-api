@@ -283,6 +283,7 @@ def get_all_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
         choices=metrics_interface.get_all_theme_names(),
     )
 
+
 def get_all_sub_theme_names() -> LIST_OF_TWO_STRING_ITEM_TUPLES:
     """Callable for the `choices` on the `sub_theme` fields of the CMS blocks.
 

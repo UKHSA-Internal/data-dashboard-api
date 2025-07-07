@@ -6,8 +6,8 @@ from metrics.data.managers.core_models.geography import GeographyManager
 from metrics.data.managers.core_models.geography_type import GeographyTypeManager
 from metrics.data.managers.core_models.metric import MetricManager
 from metrics.data.managers.core_models.stratum import StratumManager
-from metrics.data.managers.core_models.theme import ThemeManager
 from metrics.data.managers.core_models.sub_theme import SubThemeManager
+from metrics.data.managers.core_models.theme import ThemeManager
 from metrics.data.managers.core_models.topic import TopicManager
 from metrics.data.models.constants import (
     CHAR_COLUMN_MAX_CONSTRAINT,
