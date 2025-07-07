@@ -1,9 +1,12 @@
 from wagtail import blocks, fields
 
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.global_filter.filter_types.thresholds import ThresholdsFilter
-from cms.dynamic_content.global_filter.filter_types.time_range import TimeRangeBlock
-from cms.dynamic_content.global_filter.filters import GEOGRAPHY_TYPE_FIELDS, DataFilter
+from cms.dynamic_content.global_filter.filter_types import (
+    DataFilter,
+    ThresholdsFilter,
+    TimeRangeBlock,
+)
+from cms.dynamic_content.global_filter.filters import GEOGRAPHY_TYPE_FIELDS
 
 MINIMUM_FILTER_ROWS_COUNT = 1
 
