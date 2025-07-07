@@ -191,18 +191,6 @@ class ThresholdsFilter(blocks.StructBlock):
 
     @classmethod
     def _validate_thresholds_are_in_sequence(cls, *, value: blocks.StructBlock) -> None:
-        """
-        Validate that thresholds are in proper sequence order.
-
-        Each threshold's minimum value should match the previous threshold's maximum value,
-        creating a continuous sequence without gaps or overlaps.
-
-        Args:
-            value: The StructBlock value containing the thresholds
-
-        Raises:
-            StructBlockValidationError: If thresholds are not in proper sequence
-        """
         thresholds = value["thresholds"]
 
         error_list = ErrorList()
