@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.forms.utils import ErrorList
 from wagtail import blocks
 
 from cms.dynamic_content import help_texts
@@ -177,9 +178,57 @@ class ThresholdFilterElement(blocks.StructBlock):
             raise blocks.StructBlockValidationError(block_errors=block_errors)
 
 
-class ThresholdFilter(blocks.StructBlock):
-    threshold = blocks.ListBlock(
+class ThresholdsFilter(blocks.StructBlock):
+    thresholds = blocks.ListBlock(
         child_block=ThresholdFilterElement(),
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_FILTER,
     )
+
+    def clean(self, value):
+        self._validate_thresholds_are_in_sequence(value=value)
+        return super().clean(value=value)
+
+    @classmethod
+    def _validate_thresholds_are_in_sequence(cls, *, value: blocks.StructBlock) -> None:
+        """
+        Validate that thresholds are in proper sequence order.
+
+        Each threshold's minimum value should match the previous threshold's maximum value,
+        creating a continuous sequence without gaps or overlaps.
+
+        Args:
+            value: The StructBlock value containing the thresholds
+
+        Raises:
+            StructBlockValidationError: If thresholds are not in proper sequence
+        """
+        thresholds = value["thresholds"]
+
+        error_list = ErrorList()
+
+        for current_threshold_index, current_threshold in enumerate(thresholds):
+            try:
+                next_threshold = thresholds[current_threshold_index + 1]
+            except IndexError:
+                break
+
+            current_boundary_maximum_value = float(
+                current_threshold["boundary_maximum_value"]
+            )
+            next_boundary_minimum_value = float(
+                next_threshold["boundary_minimum_value"]
+            )
+
+            if current_boundary_maximum_value != next_boundary_minimum_value:
+                error_list.append(
+                    ValidationError(
+                        f"Threshold No. {current_threshold_index + 1}'s maximum value ({current_boundary_maximum_value}) must equal "
+                        f"threshold No. {current_threshold_index + 2}'s minimum value ({next_boundary_minimum_value}) to maintain sequence order"
+                    )
+                )
+
+        if error_list:
+            raise blocks.StructBlockValidationError(
+                block_errors={"thresholds": error_list}
+            )
