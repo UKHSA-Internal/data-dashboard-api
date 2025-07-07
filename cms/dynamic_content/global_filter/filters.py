@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from wagtail import blocks
 
 from cms.dynamic_content import help_texts
@@ -8,8 +9,8 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_geography_names_for_ukhsa_region,
     get_all_sex_names,
     get_all_stratum_names,
-    get_all_theme_names,
     get_all_sub_theme_names,
+    get_all_theme_names,
     get_all_topic_names,
     get_all_unique_metric_names,
     get_colours,
@@ -146,18 +147,34 @@ class ThresholdFilterElement(blocks.StructBlock):
     label = blocks.CharBlock(required=False)
     boundary_minimum_value = blocks.DecimalBlock(
         required=True,
-        min_value=0.00,
-        max_value=1.00,
-        max_digits=3,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE,
     )
     boundary_maximum_value = blocks.DecimalBlock(
         required=True,
-        min_value=0.00,
-        max_value=1.00,
-        max_digits=3,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE,
     )
+
+    def clean(self, value):
+        self._validate_boundary_minimum_value_is_lower_than_maximum_value(value=value)
+        return super().clean(value=value)
+
+    @classmethod
+    def _validate_boundary_minimum_value_is_lower_than_maximum_value(
+        cls, *, value: blocks.StructBlock
+    ) -> None:
+        minimum_value = float(value["boundary_minimum_value"])
+        maximum_value = float(value["boundary_maximum_value"])
+
+        if minimum_value >= maximum_value:
+            block_errors = {
+                "boundary_minimum_value": ValidationError(
+                    "The `boundary_minimum_value` must be less than the `boundary_maximum_value`"
+                ),
+                "boundary_maximum_value": ValidationError(
+                    "The `boundary_maximum_value` must be greater than the `boundary_minimum_value`"
+                ),
+            }
+            raise blocks.StructBlockValidationError(block_errors=block_errors)
 
 
 class ThresholdFilter(blocks.StructBlock):
