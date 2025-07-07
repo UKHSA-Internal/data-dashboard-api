@@ -1,4 +1,4 @@
-bandit==1.8.5
+bandit==1.8.6
 black==25.1.0
 coverage==7.9.2
 cyclonedx-python-lib==8.9.0
