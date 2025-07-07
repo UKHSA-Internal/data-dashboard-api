@@ -4,7 +4,10 @@ from unittest import mock
 import pytest
 from wagtail.blocks import StructBlockValidationError, StructBlock
 
-from cms.dynamic_content.global_filter.filters.time_range import TimeRangeElement, TimeRangeBlock
+from cms.dynamic_content.global_filter.filter_types.time_range import (
+    TimeRangeElement,
+    TimeRangeBlock,
+)
 
 
 class TestTimeRangeElement:
