@@ -124,8 +124,15 @@ class TestThresholdsFilter:
         assert thresholds[0]["boundary_minimum_value"] == Decimal("0.00")
         assert thresholds[0]["boundary_maximum_value"] == Decimal("1.00")
 
+    @pytest.mark.parametrize(
+        "boundary_minimum_value, boundary_maximum_value",
+        (
+            ["0.5", "2.0"],
+            ["1.0", "2.0"],
+        ),
+    )
     def test_clean_raises_validation_error_with_incorrect_boundary_values_across_thresholds(
-        self,
+        self, boundary_minimum_value: str, boundary_maximum_value: str
     ):
         """
         Given a `ThresholdsFilter` with an otherwise valid payload
@@ -139,8 +146,8 @@ class TestThresholdsFilter:
             {
                 "colour": RGBAChartLineColours.COLOUR_4_ORANGE.name,
                 "label": "Level of coverage:",
-                "boundary_minimum_value": "0.50",
-                "boundary_maximum_value": "2.00",
+                "boundary_minimum_value": boundary_minimum_value,
+                "boundary_maximum_value": boundary_maximum_value,
             }
         )
         thresholds_filter = ThresholdsFilter(**invalid_payload)
@@ -152,7 +159,7 @@ class TestThresholdsFilter:
         block_errors = exc_info.value.block_errors
         assert (
             block_errors["thresholds"].message
-            == "Threshold No. 1's maximum value (1.0) must equal threshold No. 2's minimum value (0.5) to maintain sequence order"
+            == f"Threshold No. 1's maximum value ({1.0}) must be less than threshold No. 2's minimum value ({boundary_minimum_value}) to maintain sequence order"
         )
 
     @mock.patch.object(StructBlock, "clean")

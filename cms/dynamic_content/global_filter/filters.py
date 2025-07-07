@@ -220,10 +220,10 @@ class ThresholdsFilter(blocks.StructBlock):
                 next_threshold["boundary_minimum_value"]
             )
 
-            if current_boundary_maximum_value != next_boundary_minimum_value:
+            if next_boundary_minimum_value <= current_boundary_maximum_value:
                 error_list.append(
                     ValidationError(
-                        f"Threshold No. {current_threshold_index + 1}'s maximum value ({current_boundary_maximum_value}) must equal "
+                        f"Threshold No. {current_threshold_index + 1}'s maximum value ({current_boundary_maximum_value}) must be less than "
                         f"threshold No. {current_threshold_index + 2}'s minimum value ({next_boundary_minimum_value}) to maintain sequence order"
                     )
                 )
