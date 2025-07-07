@@ -114,7 +114,7 @@ DATA_PARAMETER_FIELDS = [
 
 class AccompanyingPoints(blocks.StructBlock):
     label_prefix = blocks.CharBlock(required=True)
-    label_suffix = blocks.CharBlock(required=True)
+    label_suffix = blocks.CharBlock(required=False)
 
     parameters = blocks.StreamBlock(DATA_PARAMETER_FIELDS)
 
