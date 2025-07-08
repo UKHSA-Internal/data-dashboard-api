@@ -1,21 +1,17 @@
-from wagtail import blocks, fields
+from wagtail import blocks
 
 from cms.dynamic_content import help_texts
+from cms.dynamic_content.global_filter.constants import MINIMUM_ROWS_COUNT
 from cms.dynamic_content.global_filter.filter_types import (
     DataFilter,
+    GeographyFilter,
     ThresholdsFilter,
     TimeRangeBlock,
 )
-from cms.dynamic_content.global_filter.filters import GEOGRAPHY_TYPE_FIELDS
-
-MINIMUM_FILTER_ROWS_COUNT = 1
 
 
 class GlobalFilterRowFilters(blocks.StreamBlock):
-    geography_filters = fields.StreamBlock(
-        GEOGRAPHY_TYPE_FIELDS,
-        min_num=MINIMUM_FILTER_ROWS_COUNT,
-    )
+    geography_filters = GeographyFilter()
     threshold_filters = ThresholdsFilter()
     data_filters = DataFilter()
 
@@ -35,7 +31,7 @@ class GlobalFilterCard(blocks.StructBlock):
         child_block=GlobalFilterRowBlock(),
         required=True,
         help_text=help_texts.GLOBAL_FILTER_ROWS,
-        min_num=MINIMUM_FILTER_ROWS_COUNT,
+        min_num=MINIMUM_ROWS_COUNT,
     )
 
     class Meta:
