@@ -71,6 +71,8 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
         assert detailed_alarm_data["text"] == "".join(
             HEAT_ALERT_TEXT_LOOKUP[1].split("\n")
         )
+        assert detailed_alarm_data["geography_name"] == geography_name
+        assert detailed_alarm_data["geography_code"] == geography_code
         assert detailed_alarm_data["period_end"] is None
         assert detailed_alarm_data["period_start"] is None
         assert detailed_alarm_data["refresh_date"] is None
@@ -159,6 +161,8 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
             detailed_alarm_data["likelihood"]
             == WeatherHealthAlertImpactAndLikelihoodLevel.VERY_LOW_LEVEL.value
         )
+        assert detailed_alarm_data["geography_name"] == geography_name
+        assert detailed_alarm_data["geography_code"] == geography_code
 
     def test_for_alert_which_is_currently_live(self):
         """
@@ -232,6 +236,8 @@ class TestWeatherHealthAlertsInterfaceBuildDetailedDataForAlert:
             detailed_alarm_data["likelihood"]
             == WeatherHealthAlertImpactAndLikelihoodLevel.HIGH_LEVEL.value
         )
+        assert detailed_alarm_data["geography_name"] == geography_name
+        assert detailed_alarm_data["geography_code"] == geography_code
 
 
 class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
@@ -377,6 +383,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
             summary_alarm_data[1]["refresh_date"]
             == fake_expired_red_alert_for_second_geography.period_end
         )
+        assert summary_alarm_data[1]["geography_name"] == second_geography_name
+        assert summary_alarm_data[1]["geography_code"] == second_geography_code
 
     def test_for_alert_which_is_currently_live(self):
         """
@@ -466,6 +474,8 @@ class TestWeatherHealthAlertsInterfaceBuildSummaryDataForAlerts:
             detailed_alarm_data[1]["refresh_date"]
             == fake_expired_red_alert_for_first_geography.refresh_date
         )
+        assert detailed_alarm_data[1]["geography_code"] == second_geography_code
+        assert detailed_alarm_data[1]["geography_name"] == second_geography_name
 
 
 class TestAccessGetSummaryDataForAlerts:
