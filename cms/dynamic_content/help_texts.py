@@ -454,3 +454,17 @@ GLOBAL_FILTERS_THRESHOLD_COLOR: str = """
 This colour option is used to represent the threshold across other filter linked components.
 Eg: The colour used for the legend on filter linked map component.
 """
+
+DATA_FILTERS_CATEGORIES_TO_GROUP_BY: str = """
+Select the categories for the dropdown options to be grouped by.
+E.g. To build the following:
+<pre>
+|- stratum one
+    |- topic one
+    |- topic two
+| stratum two
+    |- topic one
+    |- topic two
+</pre>
+The selections for this should be `stratum` and then `topic`.
+"""
