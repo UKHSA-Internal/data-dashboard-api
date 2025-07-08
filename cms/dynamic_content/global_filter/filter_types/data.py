@@ -13,6 +13,8 @@ from cms.metrics_interface.field_choices_callables import (
     get_colours,
 )
 
+MAXIMUM_DATA_CATEGORIES = 2
+
 
 def make_parameter_field_element(label, choices, help_text):
     return blocks.StructBlock(
@@ -23,6 +25,8 @@ def make_parameter_field_element(label, choices, help_text):
         help_text=help_text,
     )
 
+
+DATA_CATEGORIES = ("theme", "sub_theme", "topic", "metric", "sex", "age", "stratum")
 
 DATA_PARAMETER_FIELDS = [
     (
@@ -90,9 +94,21 @@ class DataFilterElement(blocks.StructBlock):
     accompanying_points = AccompanyingPoints()
 
 
+class DataCategorySelectionElement(blocks.StructBlock):
+    data_category = blocks.ChoiceBlock(
+        choices=[(category, category) for category in DATA_CATEGORIES],
+    )
+
+
 class DataFilter(blocks.StructBlock):
     data_filter = blocks.ListBlock(
         child_block=DataFilterElement(),
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER,
+    )
+    categories_to_group_by = blocks.ListBlock(
+        child_block=DataCategorySelectionElement(),
+        min_num=MINIMUM_ROWS_COUNT,
+        max_num=MAXIMUM_DATA_CATEGORIES,
+        help_text=help_texts.DATA_FILTERS_CATEGORIES_TO_GROUP_BY,
     )
