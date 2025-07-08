@@ -106,7 +106,7 @@ class WeatherHealthAlertsInterface:
         )
 
         return {
-            "geography": geography,
+            "geography_name": geography,
             "geography_code": geography_code,
             **weather_health_alarm_state.detailed_data,
         }
