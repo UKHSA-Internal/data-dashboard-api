@@ -87,7 +87,7 @@ class DataFilterElement(blocks.StructBlock):
         help_text="",
     )
     parameters = blocks.StructBlock(DATA_PARAMETER_FIELDS)
-    override_parameters = AccompanyingPoints()
+    accompanying_points = AccompanyingPoints()
 
 
 class DataFilter(blocks.StructBlock):
