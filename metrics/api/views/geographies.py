@@ -18,13 +18,14 @@ GEOGRAPHIES_API_TAG = "geographies"
 @extend_schema(
     tags=[GEOGRAPHIES_API_TAG],
 )
-class GeographiesView(APIView):
+class GeographiesViewDeprecated(APIView):
     permission_classes = []
 
     @cache_response()
     @extend_schema(
         request=GeographiesRequestSerializer,
         responses={HTTPStatus.OK.value: GeographiesResponseSerializer},
+        deprecated=True,
     )
     def get(self, request, *args, **kwargs) -> Response:
         """This endpoint returns a list of geography types based on a `Topic` name along with an aggregated
