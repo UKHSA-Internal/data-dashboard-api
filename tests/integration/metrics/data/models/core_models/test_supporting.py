@@ -14,6 +14,42 @@ from metrics.data.models.core_models import (
 )
 
 
+class TestSupportingCoreModelsQuerySets:
+    @pytest.mark.django_db
+    def test_theme_queryset_returns_all_names(self):
+        """
+        Given an instance of the ThemeModel's `ThemeQuerySet`
+        When `get_all_names()` is called
+        Then it should return all available names.
+        """
+        # Given
+        fake_theme_name_one = "infectious_disease"
+        fake_theme_name_two = "extreme_event"
+        Theme.objects.create(name=fake_theme_name_one)
+        Theme.objects.create(name=fake_theme_name_two)
+
+        # When / Then
+        assert Theme.objects.all().count() == Theme.objects.get_all_names().count()
+
+    @pytest.mark.django_db
+    def test_sub_theme_queryset_returns_all_names(self):
+        """
+        Given an instance of the SubThemeModel's `SubThemeQuerySet`
+        When `get_all_names()` is called
+        Then it should return all available names.
+        """
+        # Given
+        fake_sub_theme_name_one = "respiratory"
+        fake_sub_theme_name_two = "weather_alert"
+        SubTheme.objects.create(name=fake_sub_theme_name_one)
+        SubTheme.objects.create(name=fake_sub_theme_name_two)
+
+        # When / Then
+        assert (
+            SubTheme.objects.all().count() == SubTheme.objects.get_all_names().count()
+        )
+
+
 class TestSupportingCoreModels:
     @pytest.mark.django_db
     def test_theme_models_remain_unique(self):
