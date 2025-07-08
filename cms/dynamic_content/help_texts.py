@@ -420,12 +420,19 @@ They can be used to group filters around a context Eg: data filter with threshol
 
 GLOBAL_FILTERS_COLOUR_FIELD: str = """
 Filter colour selections are used to represent the colours of a filter across filter linked
-
+components Eg. a colour chosen for a given georgaphy type such as `UKHSA Region` will be used
+to highlight that region on filter linked charts
 """
 
 GLOBAL_FILTERS_GEOGRAPHY_FILTER: str = """
 This geography filter can be used to setup selectable geography lists based on geography types
-such as `UKHSA Region` or `Local Authority`.
+such as `UKHSA Region` or `Lower Tier Local Authority`.
+"""
+
+GLOBAL_FILTERS_GEOGRAPHY_TYPE_FIELD: str = """
+This generates a list of selectable geographies on the dashboard based on the geography type selected
+here. Eg. A selection of `Lower Tier Local Authority` here will result in all LTLA's being displayed
+in the filter drop down on the dashboard for a user to select from.
 """
 
 GLOBAL_FILTERS_DATA_FILTER: str = """
