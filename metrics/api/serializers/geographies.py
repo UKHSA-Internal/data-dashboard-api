@@ -5,13 +5,14 @@ from rest_framework import serializers
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import (
     CoreTimeSeries,
+    Geography,
     Topic,
 )
 
 GEOGRAPHY_TYPE_RESULT = dict[str, list[dict[str, str]]]
 
 
-class GeographiesSerializer(serializers.Serializer):
+class GeographiesForTopicSerializer(serializers.Serializer):
     topic = serializers.CharField()
 
     def validate_topic(self, value):
@@ -109,7 +110,37 @@ def _serialize_queryset(
     ]
 
 
-class GeographiesRequestSerializer(serializers.Serializer):
+class GeographiesForGeographyTypeSerializer(serializers.Serializer):
+    geography_type = serializers.CharField()
+
+    @property
+    def geography_manager(self):
+        return self.context.get("geography_manager", Geography.objects)
+
+    def data(self) -> list[GEOGRAPHY_TYPE_RESULT]:
+        """Finds available geographies for the given geography_type
+
+        Examples:
+          >>>> [
+                {
+                    "geography_type": "Lower Tier Local Authority",
+                    "geographies": [{"name": "Birmingham"}, {"name": "Leeds"}],
+                },
+            ]
+
+        Returns:
+            List of dicts representing the given geography_type with
+            aggregated geographies
+
+        """
+        geography_type: str = self.validated_data["geography_type"]
+        geographies = self.geography_manager.get_geographies_by_geography_type(
+            geography_type_name=geography_type,
+        )
+        return [{"geography_type": geography_type, "geographies": geographies}]
+
+
+class GeographiesRequestSerializerDeprecated(serializers.Serializer):
     topic = serializers.CharField()
 
 
@@ -128,3 +159,27 @@ class GeographiesResponseListSerializer(serializers.Serializer):
 
 class GeographiesResponseSerializer(serializers.ListSerializer):
     child = GeographiesResponseListSerializer()
+
+
+MISSING_FIELD_ERROR_MESSAGE = "Either 'topic' or 'geography_type' must be provided."
+SINGLE_FIELD_ONLY_ERROR_MESSAGE = (
+    "Only one of 'topic' or 'geography_type' should be provided, not both."
+)
+
+
+class GeographiesRequestSerializer(serializers.Serializer):
+    topic = serializers.CharField(required=False)
+    geography_type = serializers.CharField(required=False)
+
+    @classmethod
+    def validate(cls, attrs: dict[str, str]) -> dict[str, str]:
+        topic: str = attrs.get("topic")
+        geography_type: str = attrs.get("geography_type")
+
+        if not topic and not geography_type:
+            raise serializers.ValidationError(MISSING_FIELD_ERROR_MESSAGE)
+
+        if topic and geography_type:
+            raise serializers.ValidationError(SINGLE_FIELD_ONLY_ERROR_MESSAGE)
+
+        return attrs

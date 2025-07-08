@@ -80,6 +80,16 @@ class GeographyQuerySet(models.QuerySet):
             .order_by("geography_code")
         )
 
+    def get_geographies_by_geography_type(
+        self,
+        geography_type_name: str,
+    ):
+        return (
+            self.filter(geography_type__name=geography_type_name)
+            .values("name", "geography_code")
+            .order_by("name")
+        )
+
 
 class GeographyManager(models.Manager):
     """Custom model manager class for the `Geography` model."""
@@ -149,6 +159,26 @@ class GeographyManager(models.Manager):
 
         """
         return self.get_queryset().get_geography_codes_and_names_by_geography_type(
+            geography_type_name=geography_type_name
+        )
+
+    def get_geographies_by_geography_type(
+        self,
+        geography_type_name: str,
+    ):
+        """Gets all available geographies for a given `geography_type`
+
+        Args:
+            geography_type_name: The name of the selected geography type
+
+        Returns:
+            QuerySet: A queryset of the individual geographies
+                which are related to the given geography_type:
+                Examples:
+                    `<GeographyQuerySet [{"geography_code": "E06000001", "name": "North East"}, ...]>`
+
+        """
+        return self.get_queryset().get_geographies_by_geography_type(
             geography_type_name=geography_type_name
         )
 

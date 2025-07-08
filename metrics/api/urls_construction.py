@@ -31,7 +31,7 @@ from metrics.api.views import (
     TrendsView,
 )
 from metrics.api.views.charts import DualCategoryChartsView
-from metrics.api.views.geographies import GeographiesViewDeprecated
+from metrics.api.views.geographies import GeographiesView, GeographiesViewDeprecated
 from metrics.api.views.health import InternalHealthView
 from public_api import construct_url_patterns_for_public_api
 
@@ -140,7 +140,11 @@ private_api_urlpatterns = [
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
-    re_path(f"^{API_PREFIX}geographies/v2/(?P<topic>[^/]+)", GeographiesViewDeprecated.as_view()),
+    re_path(
+        f"^{API_PREFIX}geographies/v2/(?P<topic>[^/]+)",
+        GeographiesViewDeprecated.as_view(),
+    ),
+    re_path(f"^{API_PREFIX}geographies/v3", GeographiesView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesView.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsView.as_view()),

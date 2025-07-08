@@ -2,7 +2,7 @@ import datetime
 from unittest import mock
 
 from metrics.api.serializers.geographies import (
-    GeographiesSerializer,
+    GeographiesForTopicSerializer,
     _serialize_queryset,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
@@ -63,7 +63,7 @@ class TestGeographiesSerializer:
                 FakeTopic(name="Influenza"),
             ]
         )
-        serializer = GeographiesSerializer(
+        serializer = GeographiesForTopicSerializer(
             context={
                 "core_time_series_manager": fake_core_time_series_manager,
                 "topic_manager": fake_topic_manager,
@@ -106,7 +106,7 @@ class TestGeographiesSerializer:
         )
 
         # When
-        serializer = GeographiesSerializer(
+        serializer = GeographiesForTopicSerializer(
             context={
                 "topic_manager": fake_topic_manager,
             },
@@ -131,7 +131,7 @@ class TestGeographiesSerializer:
         )
 
         # When
-        serializer = GeographiesSerializer(
+        serializer = GeographiesForTopicSerializer(
             context={
                 "topic_manager": fake_topic_manager,
             },

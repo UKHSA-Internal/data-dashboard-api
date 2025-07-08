@@ -7,9 +7,11 @@ from rest_framework.views import APIView
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.geographies import (
     GEOGRAPHY_TYPE_RESULT,
+    GeographiesForGeographyTypeSerializer,
+    GeographiesForTopicSerializer,
     GeographiesRequestSerializer,
+    GeographiesRequestSerializerDeprecated,
     GeographiesResponseSerializer,
-    GeographiesSerializer,
 )
 
 GEOGRAPHIES_API_TAG = "geographies"
@@ -23,7 +25,7 @@ class GeographiesViewDeprecated(APIView):
 
     @cache_response()
     @extend_schema(
-        request=GeographiesRequestSerializer,
+        request=GeographiesRequestSerializerDeprecated,
         responses={HTTPStatus.OK.value: GeographiesResponseSerializer},
         deprecated=True,
     )
@@ -40,9 +42,66 @@ class GeographiesViewDeprecated(APIView):
 
         """
         payload = {"topic": self.kwargs["topic"]}
-        serializer = GeographiesSerializer(data=payload)
+        serializer = GeographiesForTopicSerializer(data=payload)
         serializer.is_valid(raise_exception=True)
 
         data: list[GEOGRAPHY_TYPE_RESULT] = serializer.data()
 
         return Response(data)
+
+
+@extend_schema(
+    tags=[GEOGRAPHIES_API_TAG],
+)
+class GeographiesView(APIView):
+    permission_classes = []
+
+    @cache_response()
+    @extend_schema(
+        request=GeographiesRequestSerializer,
+        parameters=[GeographiesRequestSerializer],
+        responses={HTTPStatus.OK.value: GeographiesResponseSerializer},
+    )
+    def get(self, request, *args, **kwargs) -> Response:
+        """This endpoint returns a list of geography types based on a `Topic` name along with an aggregated
+        list of their geographies.
+
+        ---
+
+        # Main errors
+
+        This endpoint requires a valid topic name to be provided and will return a `Bad Request` 400
+        if one is not provided.
+
+        """
+        request_serializer = GeographiesRequestSerializer(data=request.query_params)
+        request_serializer.is_valid(raise_exception=True)
+
+        payload = request_serializer.data
+
+        if "topic" in payload:
+            data: list[GEOGRAPHY_TYPE_RESULT] = self._handle_geographies_by_topic(
+                payload=payload
+            )
+        else:
+            data: list[GEOGRAPHY_TYPE_RESULT] = (
+                self._handle_geographies_by_geography_type(payload=payload)
+            )
+
+        return Response(data)
+
+    @classmethod
+    def _handle_geographies_by_topic(
+        cls, *, payload: dict
+    ) -> list[GEOGRAPHY_TYPE_RESULT]:
+        serializer = GeographiesForTopicSerializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        return serializer.data()
+
+    @classmethod
+    def _handle_geographies_by_geography_type(
+        cls, *, payload: dict
+    ) -> list[GEOGRAPHY_TYPE_RESULT]:
+        serializer = GeographiesForGeographyTypeSerializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        return serializer.data()
