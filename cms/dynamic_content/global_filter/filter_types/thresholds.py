@@ -12,7 +12,7 @@ class ThresholdFilterElement(blocks.StructBlock):
         choices=get_colours,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_COLOR,
     )
-    label = blocks.CharBlock(required=False)
+    label = blocks.CharBlock(required=True)
     boundary_minimum_value = blocks.DecimalBlock(
         required=True,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE,
