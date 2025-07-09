@@ -102,6 +102,9 @@ class DataCategorySelectionElement(blocks.StructBlock):
         choices=[(category, category) for category in DATA_CATEGORIES],
     )
 
+    class Meta:
+        icon = "form"
+
 
 class DataFilter(blocks.StructBlock):
     data_filter = blocks.ListBlock(
