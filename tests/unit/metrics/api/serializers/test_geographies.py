@@ -1,9 +1,13 @@
 import datetime
 from unittest import mock
+import pytest
+
+from rest_framework.exceptions import ValidationError
 
 from metrics.api.serializers.geographies import (
     GeographiesForTopicSerializer,
     _serialize_queryset,
+    GeographiesRequestSerializer,
 )
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,
@@ -213,3 +217,45 @@ class TestSerializeQuerySet:
             },
         ]
         assert serialized_results == expected_results
+
+
+class TestGeographiesRequestSerializer:
+    def test_raises_error_when_no_field_provided(self):
+        """
+        Given a payload which does not contain
+            a `topic` or a `geography_type`
+        When `is_valid()` is called from a `GeographiesRequestSerializer`
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = {}
+        serializer = GeographiesRequestSerializer(data=payload)
+
+        # When / Then
+        with pytest.raises(ValidationError) as error:
+            serializer.is_valid(raise_exception=True)
+
+        assert (
+            error.value.detail["non_field_errors"][0]
+            == "Either 'topic' or 'geography_type' must be provided."
+        )
+
+    def test_raises_error_when_multiple_fields_are_provided(self):
+        """
+        Given a payload which contains
+            both a `topic` and a `geography_type`
+        When `is_valid()` is called from a `GeographiesRequestSerializer`
+        Then a `ValidationError` is raised
+        """
+        # Given
+        payload = {"topic": "COVID-19", "geography_type": "Nation"}
+        serializer = GeographiesRequestSerializer(data=payload)
+
+        # When / Then
+        with pytest.raises(ValidationError) as error:
+            serializer.is_valid(raise_exception=True)
+
+        assert (
+            error.value.detail["non_field_errors"][0]
+            == "Only one of 'topic' or 'geography_type' should be provided, not both."
+        )
