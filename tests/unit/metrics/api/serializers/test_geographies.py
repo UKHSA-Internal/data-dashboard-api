@@ -32,6 +32,7 @@ class TestGeographiesSerializer:
             date=date_stamp,
             geography_type_name=ltla,
             geography_name="Bexley",
+            geography_code="E09000004",
         )
         hackney = FakeCoreTimeSeriesFactory.build_time_series(
             metric="COVID-19_cases_countRollingMean",
@@ -39,6 +40,7 @@ class TestGeographiesSerializer:
             date=date_stamp,
             geography_type_name=ltla,
             geography_name="Hackney",
+            geography_code="E09000012",
         )
         england = FakeCoreTimeSeriesFactory.build_time_series(
             metric="COVID-19_cases_countRollingMean",
@@ -46,16 +48,18 @@ class TestGeographiesSerializer:
             date=date_stamp,
             geography_type_name=nation,
             geography_name="England",
+            geography_code="E92000001",
         )
-        irrelavant_leeds_geography = FakeCoreTimeSeriesFactory.build_time_series(
+        irrelevant_leeds_geography = FakeCoreTimeSeriesFactory.build_time_series(
             metric="influenza_healthcare_ICUHDUadmissionRateByWeek",
             topic="Influenza",
             date=date_stamp,
             geography_type_name=ltla,
             geography_name="Leeds",
+            geography_code="E08000035",
         )
         fake_core_time_series_manager = FakeCoreTimeSeriesManager(
-            time_series=[bexley, hackney, england, irrelavant_leeds_geography]
+            time_series=[bexley, hackney, england, irrelevant_leeds_geography]
         )
         fake_topic_manager = FakeTopicManager(
             topics=[
@@ -80,13 +84,24 @@ class TestGeographiesSerializer:
             {
                 "geography_type": ltla,
                 "geographies": [
-                    {"name": bexley.geography.name},
-                    {"name": hackney.geography.name},
+                    {
+                        "name": bexley.geography.name,
+                        "geography_code": bexley.geography.geography_code,
+                    },
+                    {
+                        "name": hackney.geography.name,
+                        "geography_code": hackney.geography.geography_code,
+                    },
                 ],
             },
             {
                 "geography_type": nation,
-                "geographies": [{"name": england.geography.name}],
+                "geographies": [
+                    {
+                        "name": england.geography.name,
+                        "geography_code": england.geography.geography_code,
+                    }
+                ],
             },
         ]
         assert results == expected_results
@@ -153,13 +168,19 @@ class TestSerializeQuerySet:
         ltla = "Lower Tier Local Authority"
         nation = "Nation"
         hackney = mock.Mock(
-            geography__name="Hackney", geography__geography_type__name=ltla
+            geography__name="Hackney",
+            geography__geography_type__name=ltla,
+            geography__geography_code="E09000012",
         )
         bexley = mock.Mock(
-            geography__name="Bexley", geography__geography_type__name=ltla
+            geography__name="Bexley",
+            geography__geography_type__name=ltla,
+            geography__geography_code="E09000004",
         )
         england = mock.Mock(
-            geography__name="England", geography__geography_type__name=nation
+            geography__name="England",
+            geography__geography_type__name=nation,
+            geography__geography_code="E92000001",
         )
         fake_queryset = [bexley, hackney, england]
 
@@ -171,13 +192,24 @@ class TestSerializeQuerySet:
             {
                 "geography_type": ltla,
                 "geographies": [
-                    {"name": bexley.geography__name},
-                    {"name": hackney.geography__name},
+                    {
+                        "name": bexley.geography__name,
+                        "geography_code": bexley.geography__geography_code,
+                    },
+                    {
+                        "name": hackney.geography__name,
+                        "geography_code": hackney.geography__geography_code,
+                    },
                 ],
             },
             {
                 "geography_type": nation,
-                "geographies": [{"name": england.geography__name}],
+                "geographies": [
+                    {
+                        "name": england.geography__name,
+                        "geography_code": england.geography__geography_code,
+                    }
+                ],
             },
         ]
         assert serialized_results == expected_results

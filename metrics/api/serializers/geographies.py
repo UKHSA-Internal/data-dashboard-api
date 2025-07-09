@@ -102,7 +102,11 @@ def _serialize_queryset(
     for geography_combination in queryset:
         geography: str = geography_combination.geography__name
         geography_type: str = geography_combination.geography__geography_type__name
-        merged_geographies[geography_type].append({"name": geography})
+        geography_code: str = geography_combination.geography__geography_code
+
+        merged_geographies[geography_type].append(
+            {"name": geography, "geography_code": geography_code}
+        )
 
     return [
         {"geography_type": geography_type, "geographies": geographies}

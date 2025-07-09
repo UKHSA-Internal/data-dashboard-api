@@ -1,6 +1,5 @@
 import json
 from django import forms
-import unittest
 from unittest import mock
 from wagtail.blocks.struct_block import StructBlockAdapter
 
@@ -10,10 +9,7 @@ from cms.dynamic_content.cards import (
     DualCategoryChartCard,
     DualCategoryChartCardAdapter,
 )
-from cms.metrics_interface import interface, field_choices_callables
-from cms.metrics_interface.field_choices_callables import (
-    get_all_geography_choices_grouped_by_type,
-)
+from cms.metrics_interface import field_choices_callables
 
 
 class TestDualCategoryChartCard:
