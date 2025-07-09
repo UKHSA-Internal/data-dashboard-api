@@ -20,6 +20,9 @@ class GlobalFilterRowBlock(blocks.StructBlock):
     title = blocks.CharBlock(required=True)
     filters = GlobalFilterRowFilters()
 
+    class Meta:
+        icon = "thumbtack-crossed"
+
 
 class GlobalFilterCard(blocks.StructBlock):
     time_range = TimeRangeBlock(
