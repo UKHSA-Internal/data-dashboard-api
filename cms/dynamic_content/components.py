@@ -49,7 +49,7 @@ class DualCategoryChartSegmentComponent(blocks.StructBlock):
         choices=get_all_subcategory_choices,
         help_text=help_texts.SECONDARY_FIELD_VALUES,
     )
-    color = blocks.ChoiceBlock(
+    colour = blocks.ChoiceBlock(
         required=True,
         choices=get_colours,
         default=get_colours()[0],

@@ -3,7 +3,7 @@ anyascii==0.3.3
 attrs==25.3.0
 beautifulsoup4==4.13.4
 CacheControl==0.14.3
-certifi==2025.6.15
+certifi==2025.7.9
 cfgv==3.4.0
 charset-normalizer==3.4.2
 click==8.2.1
@@ -81,7 +81,7 @@ telepath==0.3.1
 tenacity==9.1.2
 toml==0.10.2
 tomli==2.2.1
-typing_extensions==4.14.0
+typing_extensions==4.14.1
 uritemplate==4.2.0
 urllib3==2.5.0
 virtualenv==20.31.2

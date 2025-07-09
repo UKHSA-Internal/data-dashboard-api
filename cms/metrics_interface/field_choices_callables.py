@@ -495,7 +495,7 @@ def get_all_geography_choices_grouped_by_type() -> (
             { "Nation": ["England", "England"], ... }
     """
     metrics_interface = MetricsAPIInterface()
-    geography_types = [key for key, value in get_all_geography_type_names()] or []
+    geography_types = [key for key, value in get_all_geography_type_names()]
 
     result = {}
     for geography_type in geography_types:

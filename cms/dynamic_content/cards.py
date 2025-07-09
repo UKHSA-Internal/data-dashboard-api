@@ -401,10 +401,10 @@ class DualCategoryChartCard(blocks.StructBlock):
 
 
 class DualCategoryChartCardAdapter(StructBlockAdapter):
-    """A telepath adaptor for `DualCategoryChartCard` this...
+    """A telepath adaptor for `DualCategoryChartCard`
 
     Note:
-         This adaptor attaches our customer JavaScript implementation
+         This adaptor attaches our custom JavaScript implementation
          `cms/dashboard/static/js/dual_category_chart_form.js`
     """
 
