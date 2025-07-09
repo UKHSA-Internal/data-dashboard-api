@@ -63,15 +63,14 @@ class GeographiesView(APIView):
         responses={HTTPStatus.OK.value: GeographiesResponseSerializer},
     )
     def get(self, request, *args, **kwargs) -> Response:
-        """This endpoint returns a list of geography types based on a `Topic` name along with an aggregated
-        list of their geographies.
+        """This endpoint returns a list of geography types along with an aggregated list of their geographies.
 
         ---
 
         # Main errors
 
-        This endpoint requires a valid topic name to be provided and will return a `Bad Request` 400
-        if one is not provided.
+        A query parameter of either `topic` or `geography_type` must be provided.
+        If neither are provided **or** both are provided, then a 400 `Bad Request` 400 will be returned.
 
         """
         request_serializer = GeographiesRequestSerializer(data=request.query_params)
