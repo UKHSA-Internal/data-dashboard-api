@@ -150,6 +150,7 @@ class GeographiesRequestSerializerDeprecated(serializers.Serializer):
 
 class GeographiesResponseGeographiesSerializer(serializers.Serializer):
     name = serializers.CharField()
+    geography_code = serializers.CharField()
 
 
 class GeographiesResponseGeographiesListSerializer(serializers.ListSerializer):
