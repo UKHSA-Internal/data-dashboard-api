@@ -394,14 +394,26 @@ should be the age group for this segment.
 
 GLOBAL_FILTER_COMPONENT: str = """
 The global filter component enables a user of the dashboard to create a variable number of filters
-which can be applied across multi components on a dashboard page. The CMS component can be used to configure 
+which can be applied across multi components on a dashboard page. This CMS component can be used to configure 
 those options.
 """
 
 GLOBAL_FILTER_TIME_RANGE: str = """
-This mandatory time range is used to set the time range that a user can move between
-when interacting with a filter linked chart or map card. Eg: Year selection would include
-a range of years that can be shown and navigated between.
+This mandatory time range is used to set the time range that a user can navigate through when
+interacting with a filter linked chart or map card. Eg. Yeah selection can include a range of
+years as dates that can be displayed and navigated between.
+When entering multiple dates in the time filter each proceeding `date_from` must be 1 day after the date that came
+before it to maintain sequence order.
+"""
+
+GLOBAL_FILTER_TIME_RANGE_DATE_FROM_FIELD: str = """
+This field is used to provide  a start date for the current time range option. Its date
+must be earlier than the date provided for the Date from field. 
+"""
+
+GLOBAL_FILTER_TIME_RANGE_DATE_TO_FIELD: str = """
+This field is used to provide an end date for the current time range option. Its date
+must be later than the date provided in the Date to field.
 """
 
 GLOBAL_FILTER_TIME_RANGE_TIME_PERIOD: str = """
@@ -434,6 +446,18 @@ in the filter drop down on the dashboard for a user to select from.
 GLOBAL_FILTERS_DATA_FILTER: str = """
 The data filter is used to create filter options based on metrics and combined attributes. Eg:
 metric and stratum.
+"""
+
+GLOBAL_FILTERS_DATA_FILTER_STRATUM: str = """
+The smallest subgroup a piece of data can be broken down into.
+For example, this could be broken down by ethnicity or testing pillar.
+"""
+
+GLOBAL_FILTERS_DATA_FILTER_ACCOMPANYING_POINTS: str = """
+These additional points configure alternative requests to compare against or supplement the current data filter. For example,
+selecting a `metric` field here could provide a percentage change metric that complements the main data filter selection.
+The label prefix appears before the metric value in map tooltips, while the suffix appears after.
+For a percentage change metric, using prefix `change` and suffix `%` would display as "change <value>%" in tooltips.
 """
 
 GLOBAL_FILTERS_THRESHOLD_FILTER: str = """

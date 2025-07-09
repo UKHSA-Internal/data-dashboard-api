@@ -5,12 +5,19 @@ from django.forms.utils import ErrorList
 from wagtail import blocks
 
 from cms.dynamic_content import help_texts
+from cms.dynamic_content.global_filter.constants import MINIMUM_ROWS_COUNT
 
 
 class TimeRangeElement(blocks.StructBlock):
-    label = blocks.CharBlock(required=True)
-    date_from = blocks.DateBlock(required=True, help_text=help_texts.DATE_FROM_FIELD)
-    date_to = blocks.DateBlock(required=True, help_text=help_texts.DATE_TO_FIELD)
+    label = blocks.CharBlock(required=False)
+    date_from = blocks.DateBlock(
+        required=False,
+        help_text=help_texts.GLOBAL_FILTER_TIME_RANGE_DATE_FROM_FIELD,
+    )
+    date_to = blocks.DateBlock(
+        required=False,
+        help_text=help_texts.GLOBAL_FILTER_TIME_RANGE_DATE_TO_FIELD,
+    )
 
     class Meta:
         icon = "time"
@@ -38,7 +45,9 @@ class TimeRangeElement(blocks.StructBlock):
 class TimeRangeBlock(blocks.StructBlock):
     title = blocks.CharBlock(required=True)
     time_periods = blocks.ListBlock(
-        child_block=TimeRangeElement(), help_text=help_texts.GLOBAL_FILTER_TIME_RANGE
+        child_block=TimeRangeElement(),
+        help_text=help_texts.GLOBAL_FILTER_TIME_RANGE,
+        min_num=MINIMUM_ROWS_COUNT,
     )
 
     def clean(self, value):

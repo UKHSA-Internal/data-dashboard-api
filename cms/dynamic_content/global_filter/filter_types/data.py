@@ -6,10 +6,10 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_age_names,
     get_all_sex_names,
     get_all_stratum_names,
-    get_all_sub_theme_names,
     get_all_theme_names,
     get_all_topic_names,
     get_all_unique_metric_names,
+    get_all_unique_sub_theme_names,
     get_colours,
 )
 
@@ -38,7 +38,9 @@ DATA_PARAMETER_FIELDS = [
     (
         "sub_theme",
         make_parameter_field_element(
-            "sub_theme", get_all_sub_theme_names, help_text=help_texts.SUB_THEME_FIELD
+            "sub_theme",
+            get_all_unique_sub_theme_names,
+            help_text=help_texts.SUB_THEME_FIELD,
         ),
     ),
     (
@@ -50,7 +52,9 @@ DATA_PARAMETER_FIELDS = [
     (
         "stratum",
         make_parameter_field_element(
-            "stratum", get_all_stratum_names, help_text=help_texts.STRATUM_FIELD
+            "stratum",
+            get_all_stratum_names,
+            help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER_STRATUM,
         ),
     ),
     (
@@ -94,7 +98,9 @@ class DataFilterElement(blocks.StructBlock):
         help_text="",
     )
     parameters = blocks.StructBlock(DATA_PARAMETER_FIELDS)
-    accompanying_points = AccompanyingPoints(required=False)
+    accompanying_points = AccompanyingPoints(
+        help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER_ACCOMPANYING_POINTS,
+    )
 
 
 class DataCategorySelectionElement(blocks.StructBlock):

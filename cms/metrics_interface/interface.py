@@ -197,6 +197,18 @@ class MetricsAPIInterface:
         """
         return self.sub_theme_manager.get_all_names()
 
+    def get_all_unique_sub_theme_names(self) -> QuerySet:
+        """Get all unique sub_theme names as a flat list queryset.
+        Note this is achieved by delegating the call to the `SubThemeManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual sub_theme names.
+                Examples:
+                    `<SubThemeQuerySet ['respiratory', ...]>
+
+        """
+        return self.sub_theme_manager.get_all_unique_names()
+
     def get_all_topic_names(self) -> QuerySet:
         """Gets all available topic names as a flat list queryset.
         Note this is achieved by delegating the call to the `TopicManager` from the Metrics API
@@ -208,6 +220,17 @@ class MetricsAPIInterface:
 
         """
         return self.topic_manager.get_all_names()
+
+    def get_all_unique_topic_names(self) -> QuerySet:
+        """Get all unique topic names as a flat list queryset.
+        Note this is achieved by delegating the call to the `TopicManager` from the Metrics API
+
+        Returns:
+            QuerySet: A queryset of the individual topic names:
+                Examples:
+                    `<TopicQuerySet ['COVID-19', 'Influenza']>`
+        """
+        return self.topic_manager.get_all_unique_names()
 
     def get_all_unique_metric_names(self) -> QuerySet:
         """Gets all unique metric names as a flat list queryset.

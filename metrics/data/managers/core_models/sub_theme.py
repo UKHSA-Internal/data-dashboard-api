@@ -22,6 +22,17 @@ class SubThemeQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True)
 
+    def get_all_unique_names(self) -> models.QuerySet:
+        """Gets all available unique sub_theme names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual unique sub_theme names:
+            ordered in descending order from A -> Z:
+            Examples:
+                `<SubThemeQuerySet ['respiratory', ...]>`
+        """
+        return self.all().values_list("name", flat=True).distinct().order_by("name")
+
 
 class SubThemeManager(models.Manager):
     """Custom model manager class for the `SubTheme` model."""
@@ -39,3 +50,14 @@ class SubThemeManager(models.Manager):
 
         """
         return self.get_queryset().get_all_names()
+
+    def get_all_unique_names(self) -> SubThemeQuerySet:
+        """Gets all available unique sub_theme names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual unique sub_theme names:
+            ordered in descending order from A -> Z:
+            Examples:
+                `<SubThemeQuerySet ['respiratory', ...]>`
+        """
+        return self.get_queryset().get_all_unique_names()
