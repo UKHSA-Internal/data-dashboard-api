@@ -12,6 +12,9 @@ class TimeRangeElement(blocks.StructBlock):
     date_from = blocks.DateBlock(required=True, help_text=help_texts.DATE_FROM_FIELD)
     date_to = blocks.DateBlock(required=True, help_text=help_texts.DATE_TO_FIELD)
 
+    class Meta:
+        icon = "time"
+
     def clean(self, value):
         self._validate_dates_are_in_chronological_order(value=value)
         return super().clean(value=value)

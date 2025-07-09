@@ -118,3 +118,6 @@ class DataFilter(blocks.StructBlock):
         max_num=MAXIMUM_DATA_CATEGORIES,
         help_text=help_texts.DATA_FILTERS_CATEGORIES_TO_GROUP_BY,
     )
+
+    class Meta:
+        icon = "sliders"
