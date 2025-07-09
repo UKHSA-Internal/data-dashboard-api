@@ -394,12 +394,8 @@ should be the age group for this segment.
 
 GLOBAL_FILTER_COMPONENT: str = """
 The global filter component enables a user of the dashboard to create a variable number of filters
-which can be applied across multi components on a dashboard page. The CMS component can be used to set
-the which options should be available to a user.
-"""
-
-GLOBAL_FILTER_COMPONENT_LABEL: str = """
-A unique label for this filter. This will not be shown on the dashboard.
+which can be applied across multi components on a dashboard page. The CMS component can be used to configure 
+those options.
 """
 
 GLOBAL_FILTER_TIME_RANGE: str = """
@@ -420,7 +416,7 @@ They can be used to group filters around a context Eg: data filter with threshol
 
 GLOBAL_FILTERS_COLOUR_FIELD: str = """
 Filter colour selections are used to represent the colours of a filter across filter linked
-components Eg. a colour chosen for a given georgaphy type such as `UKHSA Region` will be used
+components Eg. a colour chosen for a given geography type such as `UKHSA Region` will be used
 to highlight that region on filter linked charts
 """
 
@@ -436,17 +432,17 @@ in the filter drop down on the dashboard for a user to select from.
 """
 
 GLOBAL_FILTERS_DATA_FILTER: str = """
-The data filter is used to created filter options around metrics and combined attributes. Eg:
+The data filter is used to create filter options based on metrics and combined attributes. Eg:
 metric and stratum.
 """
 
 GLOBAL_FILTERS_THRESHOLD_FILTER: str = """
-The threshold filter is used to configure thresholds that can be selected as filters on the dashboard.
+The threshold filter is used to configure threshold boundaries that can be used to filter data on the dashboard.
 Eg. over 95% boundary 0.95 -> 1.00
 """
 
 GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE: str = """
-The minimum and maximum boundary values are used to the set the range for the threshold as a float between
+The minimum and maximum boundary values are used to set the range for the threshold as a float between
 0.00 and 1.00 Eg. a threshold of over 95% will have a minimum value of 0.95 and a maximum value of 1.0
 """
 

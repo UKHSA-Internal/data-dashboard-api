@@ -22,6 +22,9 @@ class GeographyFilterElement(blocks.StructBlock):
         help_text=help_texts.GLOBAL_FILTERS_GEOGRAPHY_TYPE_FIELD,
     )
 
+    class Meta:
+        icon = "site"
+
 
 class GeographyFilter(blocks.StructBlock):
     geography_types = blocks.ListBlock(
@@ -29,6 +32,9 @@ class GeographyFilter(blocks.StructBlock):
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_GEOGRAPHY_FILTER,
     )
+
+    class Meta:
+        icon = "site"
 
     def clean(self, value):
         list_name = "geography_types"

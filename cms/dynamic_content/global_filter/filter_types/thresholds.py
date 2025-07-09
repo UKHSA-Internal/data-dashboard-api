@@ -52,6 +52,9 @@ class ThresholdsFilter(blocks.StructBlock):
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_FILTER,
     )
 
+    class Meta:
+        icon = "list-ol"
+
     def clean(self, value):
         self._validate_thresholds_are_in_sequence(value=value)
         return super().clean(value=value)

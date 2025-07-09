@@ -74,11 +74,14 @@ DATA_PARAMETER_FIELDS = [
 ]
 
 
-class AccompanyingPoints(blocks.StructBlock):
+class AccompanyingPoint(blocks.StructBlock):
     label_prefix = blocks.CharBlock(required=True)
     label_suffix = blocks.CharBlock(required=False)
-
     parameters = blocks.StreamBlock(DATA_PARAMETER_FIELDS)
+
+
+class AccompanyingPoints(blocks.StreamBlock):
+    accompanying_point = AccompanyingPoint()
 
 
 class DataFilterElement(blocks.StructBlock):
@@ -91,13 +94,16 @@ class DataFilterElement(blocks.StructBlock):
         help_text="",
     )
     parameters = blocks.StructBlock(DATA_PARAMETER_FIELDS)
-    accompanying_points = AccompanyingPoints()
+    accompanying_points = AccompanyingPoints(required=False)
 
 
 class DataCategorySelectionElement(blocks.StructBlock):
     data_category = blocks.ChoiceBlock(
         choices=[(category, category) for category in DATA_CATEGORIES],
     )
+
+    class Meta:
+        icon = "form"
 
 
 class DataFilter(blocks.StructBlock):
@@ -112,3 +118,6 @@ class DataFilter(blocks.StructBlock):
         max_num=MAXIMUM_DATA_CATEGORIES,
         help_text=help_texts.DATA_FILTERS_CATEGORIES_TO_GROUP_BY,
     )
+
+    class Meta:
+        icon = "sliders"

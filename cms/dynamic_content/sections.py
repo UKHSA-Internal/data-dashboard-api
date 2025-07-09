@@ -13,7 +13,7 @@ class ContentCards(StreamBlock):
     text_card = cards.TextCard()
     chart_row_card = cards.ChartRowCard()
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
-    global_filter_component = GlobalFilterCard(
+    global_filter_card = GlobalFilterCard(
         help_text=help_texts.GLOBAL_FILTER_COMPONENT,
     )
 
