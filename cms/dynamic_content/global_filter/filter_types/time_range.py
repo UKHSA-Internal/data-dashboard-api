@@ -8,9 +8,9 @@ from cms.dynamic_content import help_texts
 
 
 class TimeRangeElement(blocks.StructBlock):
-    label = blocks.CharBlock(required=False)
-    date_from = blocks.DateBlock(required=False, help_text=help_texts.DATE_FROM_FIELD)
-    date_to = blocks.DateBlock(required=False, help_text=help_texts.DATE_TO_FIELD)
+    label = blocks.CharBlock(required=True)
+    date_from = blocks.DateBlock(required=True, help_text=help_texts.DATE_FROM_FIELD)
+    date_to = blocks.DateBlock(required=True, help_text=help_texts.DATE_TO_FIELD)
 
     def clean(self, value):
         self._validate_dates_are_in_chronological_order(value=value)
