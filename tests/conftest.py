@@ -21,6 +21,19 @@ DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
 
 
 @pytest.fixture
+def fake_subcategory_choices_grouped_by_categories() -> dict[str, list[str]]:
+    return {
+        "age": ["00-04", "05-11"],
+        "sex": ["m", "f"],
+        "stratum": ["default", "unknown"],
+        "geography": {
+            "Nation": ["England", "England"],
+            "Region": ["RegionOne", "RegionOne"],
+        },
+    }
+
+
+@pytest.fixture
 def fake_chart_plot_parameters() -> PlotParameters:
     return PlotParameters(
         chart_type="line_multi_coloured",
