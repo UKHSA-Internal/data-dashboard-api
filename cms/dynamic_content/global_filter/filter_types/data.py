@@ -74,11 +74,14 @@ DATA_PARAMETER_FIELDS = [
 ]
 
 
-class AccompanyingPoints(blocks.StructBlock):
+class AccompanyingPoint(blocks.StructBlock):
     label_prefix = blocks.CharBlock(required=True)
     label_suffix = blocks.CharBlock(required=False)
-
     parameters = blocks.StreamBlock(DATA_PARAMETER_FIELDS)
+
+
+class AccompanyingPoints(blocks.StreamBlock):
+    accompanying_point = AccompanyingPoint()
 
 
 class DataFilterElement(blocks.StructBlock):
@@ -91,7 +94,7 @@ class DataFilterElement(blocks.StructBlock):
         help_text="",
     )
     parameters = blocks.StructBlock(DATA_PARAMETER_FIELDS)
-    accompanying_points = AccompanyingPoints()
+    accompanying_points = AccompanyingPoints(required=False)
 
 
 class DataCategorySelectionElement(blocks.StructBlock):
