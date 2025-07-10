@@ -3,7 +3,7 @@ from wagtail import blocks
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.global_filter.constants import MINIMUM_ROWS_COUNT
 from cms.dynamic_content.global_filter.filter_types import (
-    DataFilter,
+    DataFilters,
     GeographyFilter,
     ThresholdsFilter,
     TimeRangeBlock,
@@ -13,7 +13,7 @@ from cms.dynamic_content.global_filter.filter_types import (
 class GlobalFilterRowFilters(blocks.StreamBlock):
     geography_filters = GeographyFilter()
     threshold_filters = ThresholdsFilter()
-    data_filters = DataFilter()
+    data_filters = DataFilters()
 
 
 class GlobalFilterRowBlock(blocks.StructBlock):

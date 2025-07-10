@@ -123,8 +123,8 @@ class DataCategorySelectionElement(blocks.StructBlock):
         icon = "form"
 
 
-class DataFilter(blocks.StructBlock):
-    data_filter = blocks.ListBlock(
+class DataFilters(blocks.StructBlock):
+    data_filters = blocks.ListBlock(
         child_block=DataFilterElement(),
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER,
