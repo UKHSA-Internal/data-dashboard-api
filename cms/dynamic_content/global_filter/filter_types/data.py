@@ -3,6 +3,7 @@ from wagtail import blocks
 from cms.dynamic_content import help_texts
 from cms.dynamic_content.global_filter.constants import MINIMUM_ROWS_COUNT
 from cms.metrics_interface.field_choices_callables import (
+    LIST_OF_TWO_STRING_ITEM_TUPLES,
     get_all_age_names,
     get_all_sex_names,
     get_all_stratum_names,
@@ -16,10 +17,12 @@ from cms.metrics_interface.field_choices_callables import (
 MAXIMUM_DATA_CATEGORIES = 2
 
 
-def make_parameter_field_element(label, choices, help_text):
+def make_parameter_field_element(
+    choices: LIST_OF_TWO_STRING_ITEM_TUPLES, help_text: str
+) -> blocks.StructBlock:
     return blocks.StructBlock(
         [
-            ("label", blocks.CharBlock(default=label)),
+            ("label", blocks.CharBlock(required=True)),
             ("value", blocks.ChoiceBlock(choices=choices, required=True)),
         ],
         help_text=help_text,
@@ -32,47 +35,50 @@ DATA_PARAMETER_FIELDS = [
     (
         "theme",
         make_parameter_field_element(
-            label="theme", choices=get_all_theme_names, help_text=help_texts.THEME_FIELD
+            choices=get_all_theme_names,
+            help_text=help_texts.THEME_FIELD,
         ),
     ),
     (
         "sub_theme",
         make_parameter_field_element(
-            "sub_theme",
-            get_all_unique_sub_theme_names,
+            choices=get_all_unique_sub_theme_names,
             help_text=help_texts.SUB_THEME_FIELD,
         ),
     ),
     (
         "topic",
         make_parameter_field_element(
-            "topic", get_all_topic_names, help_text=help_texts.TOPIC_FIELD
+            choices=get_all_topic_names,
+            help_text=help_texts.TOPIC_FIELD,
         ),
     ),
     (
         "stratum",
         make_parameter_field_element(
-            "stratum",
-            get_all_stratum_names,
+            choices=get_all_stratum_names,
             help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER_STRATUM,
         ),
     ),
     (
         "metric",
         make_parameter_field_element(
-            "metric", get_all_unique_metric_names, help_text=help_texts.METRIC_FIELD
+            choices=get_all_unique_metric_names,
+            help_text=help_texts.METRIC_FIELD,
         ),
     ),
     (
         "age",
         make_parameter_field_element(
-            "age", get_all_age_names, help_text=help_texts.AGE_FIELD
+            choices=get_all_age_names,
+            help_text=help_texts.AGE_FIELD,
         ),
     ),
     (
         "sex",
         make_parameter_field_element(
-            "sex", get_all_sex_names, help_text=help_texts.SEX_FIELD
+            choices=get_all_sex_names,
+            help_text=help_texts.SEX_FIELD,
         ),
     ),
 ]
