@@ -408,12 +408,12 @@ that came before it to maintain sequence order.
 
 GLOBAL_FILTER_TIME_RANGE_DATE_FROM_FIELD: str = """
 This field is used to provide a start date for the current time range option. Its date
-must be earlier than the date provided for the Date from field. 
+must be earlier than the date provided for the corresponding `date_to`field. 
 """
 
 GLOBAL_FILTER_TIME_RANGE_DATE_TO_FIELD: str = """
 This field is used to provide an end date for the current time range option. Its date
-must be later than the date provided in the Date to field.
+must be later than the date provided in the corresponding `date_from` field.
 """
 
 GLOBAL_FILTER_TIME_RANGE_TIME_PERIOD: str = """
