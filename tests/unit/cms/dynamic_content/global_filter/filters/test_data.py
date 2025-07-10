@@ -8,7 +8,7 @@ from cms.dynamic_content.global_filter.filter_types import DataFilters
 
 class TestDataFilters:
     @property
-    def valid_payload(self) -> dict[str, str]:
+    def valid_payload(self) -> dict[str, list[dict[str, str]]]:
         return {
             "data_filters": [],
             "categories_to_group_by": [
