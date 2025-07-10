@@ -103,7 +103,7 @@ class DataFilterElement(blocks.StructBlock):
         required=True,
         help_text="",
     )
-    color = blocks.ChoiceBlock(
+    colour = blocks.ChoiceBlock(
         choices=get_colours,
         help_text="",
     )
