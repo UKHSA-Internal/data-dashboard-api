@@ -54,7 +54,7 @@ class TestDataFilters:
             data_filters.clean(invalid_payload)
 
         expected_error_message = (
-            "The category `topic` has been selected multiple times."
+            "The category of `topic` has been selected multiple times."
         )
         assert (
             error.value.block_errors["categories_to_group_by"].message
