@@ -15,9 +15,6 @@ from cms.metrics_interface import MetricsAPIInterface
 LIST_OF_TWO_STRING_ITEM_TUPLES = list[tuple[str, str]]
 DICT_OF_CHART_AXIS_AND_SUB_CATEGORIES = dict[str, list[str]]
 GEOGRAPHY_TYPE_NAME_FOR_ALERTS = "Government Office Region"
-GEOGRAPHY_TYPE_NAME_FOR_NATION = "Nation"
-GEOGRAPHY_TYPE_NAME_FOR_UKHSA_REION = "UKHSA Region"
-GEOGRAPHY_TYPE_NAME_FOR_LTLA = "Lower Tier Local Authority"
 DUAL_CHART_SECONDARY_CATEGORY_FILTER_LIST = ["metric", "date"]
 
 
@@ -564,7 +561,7 @@ def get_all_geography_choices_grouped_by_type() -> (
             { "Nation": ["England", "England"], ... }
     """
     metrics_interface = MetricsAPIInterface()
-    geography_types = [key for key, value in get_all_geography_type_names()] or []
+    geography_types = [key for key, value in get_all_geography_type_names()]
 
     result = {}
     for geography_type in geography_types:

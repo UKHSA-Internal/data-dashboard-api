@@ -22,12 +22,8 @@ from cms.dynamic_content.components import (
     SimplifiedChartComponent,
 )
 from cms.metrics_interface.field_choices_callables import (
-    get_all_age_names,
-    get_all_geography_choices_grouped_by_type,
-    get_all_geography_names,
-    get_all_sex_names,
-    get_all_stratum_names,
     get_all_subcategory_choices,
+    get_all_subcategory_choices_grouped_by_categories,
     get_dual_category_chart_types,
     get_dual_chart_secondary_category_choices,
     get_possible_axis_choices,
@@ -45,6 +41,8 @@ MAXIMUM_COLUMNS_CHART_THREE_COLUMNS_COUNT: int = 3
 
 MAXIMUM_TOPIC_TREND_CARD_CHARTS: int = 1
 MAXIMUM_TREND_NUMBER: int = 1
+
+MINIMUM_SEGMENTS_COUNT: int = 1
 
 DEFAULT_SIMPLE_CHART_X_AXIS = "date"
 DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
@@ -388,7 +386,7 @@ class DualCategoryChartCard(blocks.StructBlock):
 
     segments = blocks.ListBlock(
         DualCategoryChartSegmentComponent(),
-        min_num=1,
+        min_num=MINIMUM_SEGMENTS_COUNT,
     )
 
     def __init__(self, *args, **kwargs):
@@ -396,10 +394,9 @@ class DualCategoryChartCard(blocks.StructBlock):
 
     def get_form_context(self, value, prefix="", errors=None):
         context = super().get_form_context(value=value, prefix=prefix, errors=errors)
-        SUBCATEGORY_CHOICES_DB["geography"] = (
-            get_all_geography_choices_grouped_by_type()
+        context["subcategory_data"] = json.dumps(
+            get_all_subcategory_choices_grouped_by_categories()
         )
-        context["subcategory_data"] = json.dumps(SUBCATEGORY_CHOICES_DB)
 
         return context
 
@@ -411,10 +408,10 @@ class DualCategoryChartCard(blocks.StructBlock):
 
 
 class DualCategoryChartCardAdapter(StructBlockAdapter):
-    """A telepath adaptor for `DualCategoryChartCard` this...
+    """A telepath adaptor for `DualCategoryChartCard`
 
     Note:
-         This adaptor attaches our customer JavaScript implementation
+         This adaptor attaches our custom JavaScript implementation
          `cms/dashboard/static/js/dual_category_chart_form.js`
     """
 
@@ -424,9 +421,8 @@ class DualCategoryChartCardAdapter(StructBlockAdapter):
     def media(self):
         structblock_media = super().media
         return forms.Media(
-            js=structblock_media._js  # noqa: SLF001
-            + ["js/dual_category_chart_form.js"],
-            css=structblock_media._css,  # noqa: SLF001
+            js=structblock_media._js + ["js/dual_category_chart_form.js"],
+            css=structblock_media._css,
         )
 
 

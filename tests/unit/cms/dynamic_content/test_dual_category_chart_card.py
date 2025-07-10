@@ -15,16 +15,6 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_geography_choices_grouped_by_type,
 )
 
-MOCK_SUBCATEGORY_CHOICES_DB = {
-    "age": ["00-04", "05-11"],
-    "sex": ["m", "f"],
-    "stratum": ["default", "unknown"],
-    "geography": {
-        "Nation": ["England", "England"],
-        "Region": ["RegionOne", "RegionOne"],
-    },
-}
-
 
 class TestDualCategoryChartCard:
     @mock.patch.object(
@@ -52,6 +42,7 @@ class TestDualCategoryChartCard:
         self,
         mocked_get_all_geography_choices_grouped_by_type: mock.MagicMock,
         expected_dual_chart_card_field_name: str,
+        fake_subcategory_choices_grouped_by_categories: dict[str, list[str]],
     ):
         """
         Given an instance of `DualCategoryChartCard`
@@ -60,7 +51,7 @@ class TestDualCategoryChartCard:
         """
         # Given
         mocked_get_all_geography_choices_grouped_by_type.return_value = (
-            MOCK_SUBCATEGORY_CHOICES_DB["geography"]
+            fake_subcategory_choices_grouped_by_categories["geography"]
         )
         dual_category_chart_card = DualCategoryChartCard()
 
@@ -72,14 +63,13 @@ class TestDualCategoryChartCard:
         # Then
         assert selected_field is not None
 
-    @mock.patch("cms.dynamic_content.cards.get_all_geography_choices_grouped_by_type")
     @mock.patch(
-        "cms.dynamic_content.cards.SUBCATEGORY_CHOICES_DB",
-        MOCK_SUBCATEGORY_CHOICES_DB,
+        "cms.dynamic_content.cards.get_all_subcategory_choices_grouped_by_categories"
     )
     def test_get_form_context_with_default_parameters(
         self,
-        mocked_get_all_geography_choices_grouped_by_type: mock.MagicMock,
+        mocked_get_subcategory_choices_grouped_by_categories: mock.MagicMock,
+        fake_subcategory_choices_grouped_by_categories: dict[str, list[str]],
     ):
         """
         Given an instance of `DualCategoryChartCard`
@@ -89,11 +79,12 @@ class TestDualCategoryChartCard:
         # Given
         mock_value = {}
         mock_prefix = "mock-prefix"
-        mocked_get_all_geography_choices_grouped_by_type.return_value = (
-            MOCK_SUBCATEGORY_CHOICES_DB["geography"]
+        fake_subcategory_choices = fake_subcategory_choices_grouped_by_categories
+        mocked_get_subcategory_choices_grouped_by_categories.return_value = (
+            fake_subcategory_choices
         )
         dual_category_chart_card = DualCategoryChartCard()
-        expected_context_subcategory_data = json.dumps(MOCK_SUBCATEGORY_CHOICES_DB)
+        expected_context_subcategory_data = json.dumps(fake_subcategory_choices)
 
         # When
         context = dual_category_chart_card.get_form_context(
