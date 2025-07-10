@@ -1,7 +1,10 @@
 from wagtail import blocks
 
 from cms.dynamic_content import help_texts
-from cms.dynamic_content.global_filter.constants import MINIMUM_ROWS_COUNT
+from cms.dynamic_content.global_filter.constants import (
+    MAXIMUM_DATA_CATEGORIES,
+    MINIMUM_ROWS_COUNT,
+)
 from cms.metrics_interface.field_choices_callables import (
     LIST_OF_TWO_STRING_ITEM_TUPLES,
     get_all_age_names,
@@ -13,8 +16,6 @@ from cms.metrics_interface.field_choices_callables import (
     get_all_unique_sub_theme_names,
     get_colours,
 )
-
-MAXIMUM_DATA_CATEGORIES = 2
 
 
 def make_parameter_field_element(
