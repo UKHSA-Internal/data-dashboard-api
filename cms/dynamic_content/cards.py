@@ -49,13 +49,6 @@ DEFAULT_SIMPLE_CHART_Y_AXIS = "metric"
 
 CHART_CARD_DATE_PREFIX_DEFAULT_TEXT = "Up to and including"
 
-SUBCATEGORY_CHOICES_DB = {
-    "age": get_all_age_names(),
-    "sex": get_all_sex_names(),
-    "stratum": get_all_stratum_names(),
-    "geography": get_all_geography_names(),
-}
-
 
 class TextCard(blocks.StructBlock):
     body = blocks.RichTextBlock(
