@@ -109,6 +109,7 @@ class DataFilterElement(blocks.StructBlock):
     parameters = blocks.StructBlock(DATA_PARAMETER_FIELDS)
     accompanying_points = AccompanyingPoints(
         help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER_ACCOMPANYING_POINTS,
+        required=False,
     )
 
 
