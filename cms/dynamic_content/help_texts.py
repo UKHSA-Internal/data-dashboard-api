@@ -400,14 +400,14 @@ those options.
 
 GLOBAL_FILTER_TIME_RANGE: str = """
 This mandatory time range is used to set the time range that a user can navigate through when
-interacting with a filter linked chart or map card. Eg. Yeah selection can include a range of
+interacting with a filter linked chart or map card. Eg. Year selection can include a range of
 years as dates that can be displayed and navigated between.
-When entering multiple dates in the time filter each proceeding `date_from` must be 1 day after the date that came
-before it to maintain sequence order.
+When entering multiple periods in the time filter each proceeding `date_from` must be 1 day after the `date_to` 
+that came before it to maintain sequence order.
 """
 
 GLOBAL_FILTER_TIME_RANGE_DATE_FROM_FIELD: str = """
-This field is used to provide  a start date for the current time range option. Its date
+This field is used to provide a start date for the current time range option. Its date
 must be earlier than the date provided for the Date from field. 
 """
 
