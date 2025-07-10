@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from wagtail import blocks
 
 from cms.dynamic_content import help_texts
@@ -138,3 +139,24 @@ class DataFilters(blocks.StructBlock):
 
     class Meta:
         icon = "sliders"
+
+    def clean(self, value):
+        self._validate_selected_categories_are_unique(value=value)
+        return super().clean(value=value)
+
+    @classmethod
+    def _validate_selected_categories_are_unique(cls, *, value: dict) -> None:
+        selected_categories: list[blocks.StructValue] = value["categories_to_group_by"]
+        seen_categories: set[str] = set()
+
+        for category in selected_categories:
+            category_name: str = category["data_category"]
+
+            if category_name in seen_categories:
+                block_errors = {
+                    "categories_to_group_by": ValidationError(
+                        f"The category of `{category_name}` has been selected multiple times."
+                    ),
+                }
+                raise blocks.StructBlockValidationError(block_errors=block_errors)
+            seen_categories.add(category_name)
