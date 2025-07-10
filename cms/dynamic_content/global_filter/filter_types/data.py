@@ -85,7 +85,10 @@ class AccompanyingPoint(blocks.StructBlock):
 
 
 class AccompanyingPoints(blocks.StreamBlock):
-    accompanying_point = AccompanyingPoint()
+    accompanying_point = AccompanyingPoint(
+        required=False,
+        help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER_ACCOMPANYING_POINTS,
+    )
 
 
 class DataFilterElement(blocks.StructBlock):

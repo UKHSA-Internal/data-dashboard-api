@@ -9,13 +9,13 @@ from cms.dynamic_content.global_filter.constants import MINIMUM_ROWS_COUNT
 
 
 class TimeRangeElement(blocks.StructBlock):
-    label = blocks.CharBlock(required=False)
+    label = blocks.CharBlock(required=True)
     date_from = blocks.DateBlock(
-        required=False,
+        required=True,
         help_text=help_texts.GLOBAL_FILTER_TIME_RANGE_DATE_FROM_FIELD,
     )
     date_to = blocks.DateBlock(
-        required=False,
+        required=True,
         help_text=help_texts.GLOBAL_FILTER_TIME_RANGE_DATE_TO_FIELD,
     )
 
