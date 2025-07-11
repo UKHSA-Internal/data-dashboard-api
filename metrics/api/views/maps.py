@@ -5,9 +5,7 @@ from rest_framework.views import APIView
 MAPS_API_TAG = "maps"
 
 
-@extend_schema(
-    tags=[MAPS_API_TAG],
-)
+@extend_schema(tags=[MAPS_API_TAG])
 class MapsView(APIView):
     permission_classes = []
 
