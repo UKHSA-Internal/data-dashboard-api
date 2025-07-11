@@ -33,6 +33,7 @@ from metrics.api.views import (
 from metrics.api.views.charts import DualCategoryChartsView
 from metrics.api.views.geographies import GeographiesView, GeographiesViewDeprecated
 from metrics.api.views.health import InternalHealthView
+from metrics.api.views.maps import MapsView
 from public_api import construct_url_patterns_for_public_api
 
 router = routers.DefaultRouter()
@@ -146,6 +147,7 @@ private_api_urlpatterns = [
     ),
     re_path(f"^{API_PREFIX}geographies/v3", GeographiesView.as_view()),
     re_path(f"^{API_PREFIX}headlines/v3", HeadlinesView.as_view()),
+    re_path(f"^{API_PREFIX}maps/v1", MapsView.as_view()),
     re_path(f"^{API_PREFIX}tables/v4", TablesView.as_view()),
     re_path(f"^{API_PREFIX}trends/v3", TrendsView.as_view()),
 ]
