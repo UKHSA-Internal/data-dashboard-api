@@ -11,5 +11,6 @@ MAPS_API_TAG = "maps"
 class MapsView(APIView):
     permission_classes = []
 
-    def post(self, request):
+    @classmethod
+    def post(cls, request):
         return Response()
