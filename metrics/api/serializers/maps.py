@@ -1,4 +1,7 @@
 from rest_framework import serializers
+from rest_framework.request import Request
+
+from metrics.domain.models.map import MapsParameters
 
 
 class MapMainParametersSerializer(serializers.Serializer):
@@ -25,10 +28,14 @@ class OptionalParametersSerializer(serializers.Serializer):
     geography = serializers.CharField(required=False)
 
 
-class MapAccompanyingPointsSerializer(serializers.Serializer):
+class MapAccompanyingPointSerializer(serializers.Serializer):
     label_prefix = serializers.CharField(required=True)
     label_suffix = serializers.CharField(required=False)
-    parameters = OptionalParametersSerializer()
+    parameters = OptionalParametersSerializer(required=True)
+
+
+class MapAccompanyingPointsSerializer(serializers.ListSerializer):
+    child = MapAccompanyingPointSerializer()
 
 
 class MapsRequestSerializer(serializers.Serializer):
@@ -36,4 +43,7 @@ class MapsRequestSerializer(serializers.Serializer):
     date_to = serializers.DateField(required=True)
 
     parameters = MapMainParametersSerializer(required=True)
-    accompanying_points = MapAccompanyingPointsSerializer(many=True, required=False)
+    accompanying_points = MapAccompanyingPointsSerializer(required=False)
+
+    def to_models(self, request: Request) -> MapsParameters:
+        return MapsParameters(**self.validated_data, request=request)

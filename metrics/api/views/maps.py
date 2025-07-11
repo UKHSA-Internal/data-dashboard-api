@@ -12,6 +12,17 @@ class MapsView(APIView):
     permission_classes = []
 
     @classmethod
-    @extend_schema(responses=MapsRequestSerializer, parameters=[MapsRequestSerializer])
+    @extend_schema(request=MapsRequestSerializer)
     def post(cls, request):
-        return Response()
+
+        serializer = MapsRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        maps_parameters = serializer.to_models(request=request)
+
+        # Temporary block to return serialized request
+        # whilst interface is being built
+        output = maps_parameters.model_dump(mode="python")
+        output.pop("request")
+
+        return Response(data=output)
