@@ -121,6 +121,7 @@ class FakeCoreTimeSeriesManager(CoreTimeSeriesManager):
             FakeRow(
                 geography__name=obj.geography.name,
                 geography__geography_type__name=obj.geography.geography_type.name,
+                geography__geography_code=obj.geography.geography_code,
             )
             for obj in self.time_series
             if obj.metric.topic.name == topic

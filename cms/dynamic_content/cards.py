@@ -427,6 +427,7 @@ class ChartRowBlockTypes(blocks.StreamBlock):
     headline_chart_card = HeadlineChartCard()
     chart_with_headline_and_trend_card = ChartWithHeadlineAndTrendCard()
     simplified_chart_with_link = SimplifiedChartWithLink()
+    dual_category_chart_card = DualCategoryChartCard()
 
 
 class ChartRowCard(blocks.StructBlock):

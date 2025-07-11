@@ -439,7 +439,10 @@ class CoreTimeSeriesQuerySet(models.QuerySet):
         return (
             self.filter(metric__topic__name=topic)
             .values_list(
-                "geography__name", "geography__geography_type__name", named=True
+                "geography__name",
+                "geography__geography_type__name",
+                "geography__geography_code",
+                named=True,
             )
             .order_by("geography__geography_type__name", "geography__name")
             .distinct()
