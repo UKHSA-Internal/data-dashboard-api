@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from metrics.api.serializers.maps import MapsRequestSerializer
+from metrics.interfaces.maps.access import get_maps_data
 
 MAPS_API_TAG = "maps"
 
@@ -23,12 +24,8 @@ class MapsView(APIView):
         serializer.is_valid(raise_exception=True)
 
         maps_parameters = serializer.to_models(request=request)
-
-        # Temporary block to return serialized request
-        # whilst interface is being built
-        output = maps_parameters.model_dump(mode="python")
-        output.pop("request")
+        maps_data = get_maps_data(maps_parameters=maps_parameters)
 
         logger.info("This endpoint is incomplete")
 
-        return Response(data=output)
+        return Response(data=maps_data)
