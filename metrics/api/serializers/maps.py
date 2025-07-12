@@ -44,6 +44,10 @@ class MapAccompanyingPointsSerializer(serializers.ListSerializer):
     child = MapAccompanyingPointSerializer()
 
 
+ACCOMPANYING_POINT_PAYLOAD_TYPE = dict[str, str | dict[str, str]]
+MAIN_PARAMETERS_PAYLOAD_TYPE = dict[str, str | list[str]]
+
+
 class MapsRequestSerializer(serializers.Serializer):
     date_from = serializers.DateField(required=True)
     date_to = serializers.DateField(required=True)
@@ -52,4 +56,24 @@ class MapsRequestSerializer(serializers.Serializer):
     accompanying_points = MapAccompanyingPointsSerializer(required=False)
 
     def to_models(self, request: Request) -> MapsParameters:
-        return MapsParameters(**self.validated_data, request=request)
+        accompanying_points: list[ACCOMPANYING_POINT_PAYLOAD_TYPE] = (
+            self.validated_data.pop("accompanying_points")
+        )
+        main_parameters: MAIN_PARAMETERS_PAYLOAD_TYPE = self.validated_data[
+            "parameters"
+        ]
+
+        for accompanying_point in accompanying_points:
+            accompanying_point["parameters"].update(
+                {
+                    key: value
+                    for key, value in main_parameters.items()
+                    if key not in accompanying_point["parameters"]
+                }
+            )
+
+        return MapsParameters(
+            **self.validated_data,
+            accompanying_points=accompanying_points,
+            request=request
+        )
