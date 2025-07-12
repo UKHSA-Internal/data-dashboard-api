@@ -17,21 +17,27 @@ class MapMainParametersSerializer(serializers.Serializer):
 
 
 class OptionalParametersSerializer(serializers.Serializer):
-    theme = serializers.CharField(required=False)
-    sub_theme = serializers.CharField(required=False)
-    topic = serializers.CharField(required=False)
-    metric = serializers.CharField(required=False)
-    stratum = serializers.CharField(required=False)
-    age = serializers.CharField(required=False)
-    sex = serializers.CharField(required=False)
-    geography_type = serializers.CharField(required=False)
-    geography = serializers.CharField(required=False)
+    theme = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    sub_theme = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    topic = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    metric = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    stratum = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    age = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    sex = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    geography_type = serializers.CharField(
+        required=False, allow_null=True, allow_blank=True
+    )
+    geography = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
 
 class MapAccompanyingPointSerializer(serializers.Serializer):
-    label_prefix = serializers.CharField(required=True)
-    label_suffix = serializers.CharField(required=False)
-    parameters = OptionalParametersSerializer(required=True)
+    label_prefix = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+    label_suffix = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+    parameters = OptionalParametersSerializer(required=False)
 
 
 class MapAccompanyingPointsSerializer(serializers.ListSerializer):
