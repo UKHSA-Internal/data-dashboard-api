@@ -1,5 +1,5 @@
 import datetime
-from typing import Iterable
+from collections.abc import Iterable
 
 from pydantic.main import BaseModel
 from rest_framework.request import Request
