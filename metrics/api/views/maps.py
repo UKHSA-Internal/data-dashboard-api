@@ -17,7 +17,41 @@ class MapsView(APIView):
     permission_classes = []
 
     @classmethod
-    @extend_schema(request=MapsRequestSerializer)
+    @extend_schema(
+        request=MapsRequestSerializer,
+        examples=[
+            OpenApiExample(
+                "COVID-19 weekly deaths example",
+                value={
+                    "date_from": "2023-10-30",
+                    "date_to": "2023-10-31",
+                    "parameters": {
+                        "theme": "infectious_disease",
+                        "sub_theme": "respiratory",
+                        "topic": "COVID-19",
+                        "metric": "COVID-19_deaths_ONSByWeek",
+                        "stratum": "default",
+                        "age": "all",
+                        "sex": "all",
+                        "geography_type": "Lower Tier Local Authority",
+                        "geographies": [],
+                    },
+                    "accompanying_points": [
+                        {
+                            "label_prefix": "Some constant",
+                            "label_suffix": "",
+                            "parameters": {
+                                "metric": "COVID-19_cases_rateRollingMean",
+                                "geography_type": "Nation",
+                                "geography": "England",
+                            },
+                        }
+                    ],
+                },
+                request_only=True,
+            )
+        ],
+    )
     def post(cls, request):
 
         serializer = MapsRequestSerializer(data=request.data)
