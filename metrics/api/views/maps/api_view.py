@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from metrics.api.serializers.maps import MapsRequestSerializer
-from metrics.interfaces.maps.access import get_maps_data
+from metrics.interfaces.maps.access import get_maps_output
 
 from .request_example import REQUEST_PAYLOAD_EXAMPLE
 
@@ -34,8 +34,8 @@ class MapsView(APIView):
         serializer.is_valid(raise_exception=True)
 
         maps_parameters = serializer.to_models(request=request)
-        maps_data = get_maps_data(maps_parameters=maps_parameters)
+        maps_output = get_maps_output(maps_parameters=maps_parameters)
 
         logger.info("This endpoint is incomplete")
 
-        return Response(data=maps_data)
+        return Response(data=maps_output.output())

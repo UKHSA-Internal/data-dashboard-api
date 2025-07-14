@@ -1,10 +1,26 @@
+from dataclasses import dataclass
+
 from django.db.models.manager import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
 from metrics.domain.models.map import MapsParameters
 
+INDIVIDUAL_GEOGRAPHY_DATA_TYPE = dict[str, str | float | list[dict[str, str | float]]]
 
-def get_maps_data(*, maps_parameters: MapsParameters):
+
+@dataclass
+class MapOutput:
+    data: list[INDIVIDUAL_GEOGRAPHY_DATA_TYPE]
+    latest_date: str = ""
+
+    def output(self) -> dict:
+        return {
+            "data": self.data,
+            "latest_date": self.latest_date,
+        }
+
+
+def get_maps_output(*, maps_parameters: MapsParameters) -> MapOutput:
     maps_interface = MapsInterface(maps_parameters=maps_parameters)
     return maps_interface.get_maps_data()
 
@@ -20,6 +36,12 @@ class MapsInterface:
         self.core_time_series_manager = core_time_series_manager
 
     def get_maps_data(self):
+        return MapOutput(
+            data=self.build_maps_data(),
+            latest_date="2025-01-01",
+        )
+
+    def build_maps_data(self) -> list[INDIVIDUAL_GEOGRAPHY_DATA_TYPE]:
         main_params = self.maps_parameters.parameters
         results: list[dict] = []
 
