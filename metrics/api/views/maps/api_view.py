@@ -36,6 +36,4 @@ class MapsView(APIView):
         maps_parameters = serializer.to_models(request=request)
         maps_output = get_maps_output(maps_parameters=maps_parameters)
 
-        logger.info("This endpoint is incomplete")
-
         return Response(data=maps_output.output())
