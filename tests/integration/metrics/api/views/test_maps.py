@@ -1,3 +1,4 @@
+import datetime
 from decimal import Decimal
 
 from rest_framework.response import Response
@@ -34,6 +35,8 @@ class TestMapsView:
         """
         # Given
         client = APIClient()
+        earlier_date = datetime.date(year=2025, month=1, day=1)
+        latest_date = datetime.date(year=2025, month=12, day=31)
 
         bexley = CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -42,6 +45,7 @@ class TestMapsView:
             geography_name="Bexley",
             geography_code="E09000004",
             metric_value=1,
+            date=latest_date,
         )
         arun = CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -50,6 +54,7 @@ class TestMapsView:
             geography_name="Arun",
             geography_code="E07000224",
             metric_value=2,
+            date=earlier_date,
         )
         hackney = CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -58,6 +63,7 @@ class TestMapsView:
             geography_name="Hackney",
             geography_code="E09000012",
             metric_value=3,
+            date=earlier_date,
         )
         CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -66,6 +72,7 @@ class TestMapsView:
             geography_name="England",
             geography_code="E92000001",
             metric_value=4,
+            date=datetime.date(year=2025, month=1, day=1),
         )
         # An unrelated record which should not be returned
         CoreTimeSeriesFactory.create_record(
@@ -157,7 +164,7 @@ class TestMapsView:
 
         assert response.data == {
             "data": expected_data,
-            "latest_date": "2025-01-01",
+            "latest_date": latest_date,
         }
 
     @pytest.mark.django_db
@@ -171,6 +178,7 @@ class TestMapsView:
         """
         # Given
         client = APIClient()
+        date_stamp = datetime.date(year=2020, month=1, day=1)
 
         CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -179,6 +187,7 @@ class TestMapsView:
             geography_name="Bexley",
             geography_code="E09000004",
             metric_value=1,
+            date=date_stamp,
         )
         CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -187,6 +196,7 @@ class TestMapsView:
             geography_name="Arun",
             geography_code="E07000224",
             metric_value=2,
+            date=date_stamp,
         )
         hackney = CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -195,6 +205,7 @@ class TestMapsView:
             geography_name="Hackney",
             geography_code="E09000012",
             metric_value=3,
+            date=date_stamp,
         )
         CoreTimeSeriesFactory.create_record(
             metric_name=self.covid_19_cases_metric,
@@ -203,6 +214,7 @@ class TestMapsView:
             geography_name="England",
             geography_code="E92000001",
             metric_value=4,
+            date=date_stamp,
         )
         CoreTimeSeriesFactory.create_record(
             metric_name="influenza_healthcare_ICUHDUadmissionRateByWeek",
@@ -266,5 +278,5 @@ class TestMapsView:
 
         assert response.data == {
             "data": expected_data,
-            "latest_date": "2025-01-01",
+            "latest_date": date_stamp,
         }
