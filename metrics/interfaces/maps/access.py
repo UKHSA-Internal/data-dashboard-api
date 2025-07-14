@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from django.db.models.manager import Manager
 
-from metrics.data.models.core_models import CoreTimeSeries
+from metrics.data.models.core_models import CoreTimeSeries, Geography
 from metrics.domain.models.map import MapsParameters
 
 INDIVIDUAL_GEOGRAPHY_DATA_TYPE = dict[str, str | float | list[dict[str, str | float]]]
@@ -31,9 +31,11 @@ class MapsInterface:
         *,
         maps_parameters: MapsParameters,
         core_time_series_manager: type[Manager] = CoreTimeSeries.objects,
+        geography_manager: type[Manager] = Geography.objects,
     ):
         self.maps_parameters = maps_parameters
         self.core_time_series_manager = core_time_series_manager
+        self.geography_manager = geography_manager
 
     def get_maps_data(self):
         return MapOutput(
@@ -41,9 +43,19 @@ class MapsInterface:
             latest_date="2025-01-01",
         )
 
+    def _inject_all_geographies_for_geography_type_if_not_provided(self):
+        if not self.maps_parameters.parameters.geographies:
+            self.maps_parameters.parameters.geographies = (
+                self.geography_manager.get_all_geography_names_by_geography_type(
+                    geography_type_name=self.maps_parameters.parameters.geography_type,
+                )
+            )
+
     def build_maps_data(self) -> list[INDIVIDUAL_GEOGRAPHY_DATA_TYPE]:
         main_params = self.maps_parameters.parameters
         results: list[dict] = []
+
+        self._inject_all_geographies_for_geography_type_if_not_provided()
 
         for geography in self.maps_parameters.parameters.geographies:
             main_result = self.core_time_series_manager.query_for_data(
