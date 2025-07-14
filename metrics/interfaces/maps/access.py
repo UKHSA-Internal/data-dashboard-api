@@ -59,6 +59,7 @@ class MapsInterface:
                 date_from=self.maps_parameters.date_from,
                 date_to=self.maps_parameters.date_to,
                 field_to_order_by="-date",
+                rbac_permissions=self.maps_parameters.rbac_permissions,
             ).first()
 
             accompanying_points_results = []
@@ -80,6 +81,7 @@ class MapsInterface:
                         date_from=self.maps_parameters.date_from,
                         date_to=self.maps_parameters.date_to,
                         field_to_order_by="-date",
+                        rbac_permissions=self.maps_parameters.rbac_permissions,
                     ).first()
                 )
 
