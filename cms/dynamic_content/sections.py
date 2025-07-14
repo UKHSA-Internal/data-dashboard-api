@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from wagtail.blocks import (
     RichTextBlock,
     StreamBlock,
@@ -7,6 +8,7 @@ from wagtail.blocks import (
 
 from cms.dynamic_content import blocks, cards, help_texts
 from cms.dynamic_content.global_filter.card import GlobalFilterCard
+from cms.dynamic_content.global_filter.components.map import FilterLinkedMap
 
 
 class ContentCards(StreamBlock):
@@ -16,6 +18,27 @@ class ContentCards(StreamBlock):
     global_filter_card = GlobalFilterCard(
         help_text=help_texts.GLOBAL_FILTER_COMPONENT,
     )
+    filter_linked_map = FilterLinkedMap(
+        required=False,
+        help_text=help_texts.FILTER_LINKED_MAP_COMPONENT,
+    )
+
+    def clean(self, value):
+        self._validate_dependant_blocks(value=value)
+        return super().clean(value)
+
+    @classmethod
+    def _validate_dependant_blocks(cls, *, value) -> None:
+        has_global_filter = any(
+            block.block_type == "global_filter_card" for block in value
+        )
+        has_filter_linked_map = any(
+            block.block_type == "filter_linked_map" for block in value
+        )
+
+        if has_filter_linked_map and not has_global_filter:
+            message = "The 'Filter linked map' is only available when using 'global filter card'."
+            raise ValidationError(message)
 
 
 class ContentCardsSectionWithLink(StreamBlock):

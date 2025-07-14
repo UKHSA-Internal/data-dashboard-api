@@ -488,3 +488,13 @@ E.g. To build the following:
 </pre>
 The selections for this should be `stratum` and then `topic`.
 """
+
+FILTER_LINKED_MAP_COMPONENT: str = """
+This filter linked map can be used to display metric data configured through a data filter
+in the global filter component to represent this data geographically.
+"""
+
+FILTER_LINKED_MAP_LEGEND_TITLE: str = """
+This legend title will be used to title the maps legend. Eg. the thresholds from global filter
+are used for the content of this legend so the title for the cover page could be "Level of coverage"
+"""
