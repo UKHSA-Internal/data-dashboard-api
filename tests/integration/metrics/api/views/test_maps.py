@@ -79,8 +79,8 @@ class TestMapsView:
             metric_name="influenza_healthcare_ICUHDUadmissionRateByWeek",
             topic_name="Influenza",
             geography_type_name=self.ltla,
-            geography_name="Leeds",
-            geography_code="E08000035",
+            geography_name="Bexley",
+            geography_code="E09000004",
             metric_value=5,
         )
 
@@ -96,11 +96,10 @@ class TestMapsView:
                 "age": "all",
                 "sex": "all",
                 "geography_type": self.ltla,
-                "geographies": [
-                    bexley.geography.name,
-                    arun.geography.name,
-                    hackney.geography.name,
-                ],
+                "geographies": [],
+                # When no `geographies` are specified,
+                # Then all geographies under the given `geography_type`
+                # should be returned
             },
             "accompanying_points": [
                 {
@@ -122,10 +121,10 @@ class TestMapsView:
         assert response.status_code == 200
         expected_data = [
             {
-                "geography_code": bexley.geography.geography_code,
+                "geography_code": arun.geography.geography_code,
                 "geography_type": self.ltla,
-                "geography": bexley.geography.name,
-                "metric_value": Decimal("1.0000"),
+                "geography": arun.geography.name,
+                "metric_value": Decimal("2.0000"),
                 "accompanying_points": [
                     {
                         "label_prefix": "Rate of cases in England:",
@@ -135,10 +134,10 @@ class TestMapsView:
                 ],
             },
             {
-                "geography_code": arun.geography.geography_code,
+                "geography_code": bexley.geography.geography_code,
                 "geography_type": self.ltla,
-                "geography": arun.geography.name,
-                "metric_value": Decimal("2.0000"),
+                "geography": bexley.geography.name,
+                "metric_value": Decimal("1.0000"),
                 "accompanying_points": [
                     {
                         "label_prefix": "Rate of cases in England:",
