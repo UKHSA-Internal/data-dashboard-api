@@ -797,6 +797,10 @@ class TestChartSettings:
         # Then
         expected_legend_top_centre_config = {
             "legend": {
+                "font": {
+                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                    "family": "Arial",
+                },
                 "orientation": "h",
                 "y": 1.0,
                 "x": 0.5,
