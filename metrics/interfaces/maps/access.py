@@ -12,7 +12,7 @@ INDIVIDUAL_GEOGRAPHY_DATA_TYPE = dict[str, str | float | list[dict[str, str | fl
 @dataclass
 class MapOutput:
     data: list[INDIVIDUAL_GEOGRAPHY_DATA_TYPE]
-    latest_date: str
+    latest_date: str | None
 
     def output(self) -> dict:
         return {
@@ -40,7 +40,7 @@ class MapsInterface:
 
     def get_maps_data(self) -> MapOutput:
         results, associated_dates = self.build_maps_data()
-        latest_date = max(associated_dates)
+        latest_date = max(associated_dates, default=None)
         return MapOutput(
             data=results,
             latest_date=latest_date,
@@ -53,6 +53,18 @@ class MapsInterface:
                     geography_type_name=self.maps_parameters.parameters.geography_type,
                 )
             )
+
+    def _build_null_case_for_geography_with_no_data(
+        self, geography: str
+    ) -> dict[str, str | None]:
+        geography_code = self.geography_manager.get(name=geography).geography_code
+        return {
+            "geography_type": self.maps_parameters.parameters.geography_type,
+            "geography": geography,
+            "geography_code": geography_code,
+            "metric_value": None,
+            "accompanying_points": None,
+        }
 
     def build_maps_data(
         self,
@@ -80,6 +92,16 @@ class MapsInterface:
                 field_to_order_by="-date",
                 rbac_permissions=self.maps_parameters.rbac_permissions,
             ).first()
+
+            if main_result is None:
+                null_case: dict[str, str | None] = (
+                    self._build_null_case_for_geography_with_no_data(
+                        geography=geography
+                    )
+                )
+                results.append(null_case)
+                continue
+
             associated_dates.add(main_result.date)
 
             accompanying_points_results = []

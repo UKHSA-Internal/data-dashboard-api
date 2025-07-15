@@ -74,13 +74,13 @@ class TestMapsView:
             metric_value=4,
             date=datetime.date(year=2025, month=1, day=1),
         )
-        # An unrelated record which should not be returned
-        CoreTimeSeriesFactory.create_record(
+        # An unrelated record which will be returned as a null case
+        missing_geography_record = CoreTimeSeriesFactory.create_record(
             metric_name="influenza_healthcare_ICUHDUadmissionRateByWeek",
             topic_name="Influenza",
             geography_type_name=self.ltla,
-            geography_name="Bexley",
-            geography_code="E09000004",
+            geography_name="Reigate and Banstead",
+            geography_code="E07000211",
             metric_value=5,
         )
 
@@ -158,6 +158,13 @@ class TestMapsView:
                         "metric_value": Decimal("4.0000"),
                     }
                 ],
+            },
+            {
+                "geography_code": missing_geography_record.geography.geography_code,
+                "geography_type": self.ltla,
+                "geography": missing_geography_record.geography.name,
+                "metric_value": None,
+                "accompanying_points": None,
             },
         ]
 
