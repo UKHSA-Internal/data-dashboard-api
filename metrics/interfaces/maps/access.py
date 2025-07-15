@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass
 
 from django.db.models.manager import Manager
@@ -11,7 +12,7 @@ INDIVIDUAL_GEOGRAPHY_DATA_TYPE = dict[str, str | float | list[dict[str, str | fl
 @dataclass
 class MapOutput:
     data: list[INDIVIDUAL_GEOGRAPHY_DATA_TYPE]
-    latest_date: str = ""
+    latest_date: str
 
     def output(self) -> dict:
         return {
@@ -37,10 +38,12 @@ class MapsInterface:
         self.core_time_series_manager = core_time_series_manager
         self.geography_manager = geography_manager
 
-    def get_maps_data(self):
+    def get_maps_data(self) -> MapOutput:
+        results, associated_dates = self.build_maps_data()
+        latest_date = max(associated_dates)
         return MapOutput(
-            data=self.build_maps_data(),
-            latest_date="2025-01-01",
+            data=results,
+            latest_date=latest_date,
         )
 
     def _inject_all_geographies_for_geography_type_if_not_provided(self):
@@ -51,11 +54,15 @@ class MapsInterface:
                 )
             )
 
-    def build_maps_data(self) -> list[INDIVIDUAL_GEOGRAPHY_DATA_TYPE]:
+    def build_maps_data(
+        self,
+    ) -> tuple[list[INDIVIDUAL_GEOGRAPHY_DATA_TYPE], set[datetime.date]]:
         main_params = self.maps_parameters.parameters
         results: list[dict] = []
 
         self._inject_all_geographies_for_geography_type_if_not_provided()
+
+        associated_dates = set()
 
         for geography in self.maps_parameters.parameters.geographies:
             main_result = self.core_time_series_manager.query_for_data(
@@ -73,6 +80,7 @@ class MapsInterface:
                 field_to_order_by="-date",
                 rbac_permissions=self.maps_parameters.rbac_permissions,
             ).first()
+            associated_dates.add(main_result.date)
 
             accompanying_points_results = []
 
@@ -115,4 +123,4 @@ class MapsInterface:
                 }
             )
 
-        return results
+        return results, associated_dates

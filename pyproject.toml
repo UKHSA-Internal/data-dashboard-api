@@ -139,8 +139,6 @@ omit = [
     "metrics/api/wsgi.py",              # Boilerplate Django server entrypoint
     "metrics/api/asgi.py",              # Boilerplate Django server entrypoint
     "metrics/api/settings/*",           # Configuration paackage
-    "metrics/api/views/maps.py",        # Temporary bypass whilst API is being built
-    "metrics/api/serializers/maps.py",  # Temporary bypass whilst API is being built
     "config.py",                        # Configuration file
     "manage.py",                        # Application server entrypoint
     "*/migrations/*"                    # Database migrations
