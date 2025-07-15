@@ -22,6 +22,16 @@ class TopicQuerySet(models.QuerySet):
         """
         return self.all().values_list("name", flat=True)
 
+    def get_all_unique_names(self) -> models.QuerySet:
+        """Gets all available unique topic names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual topic names:
+                Examples:
+                    `<TopicQuerySet ['COVID-19', 'Influenza']>`
+        """
+        return self.all().values_list("name", flat=True).distinct().order_by("name")
+
     def get_by_name(self, name: str) -> "Topic":
         """Gets the `Topic` record which matches the given name.
 
@@ -52,6 +62,16 @@ class TopicManager(models.Manager):
 
         """
         return self.get_queryset().get_all_names()
+
+    def get_all_unique_names(self) -> TopicQuerySet:
+        """Gets unique topic names as a flat list queryset.
+
+        Returns:
+            QuerySet: A queryset of the individual topic names:
+                Examples:
+                    `<TopicQuerySet ['COVID-19', 'Influenza']>`
+        """
+        return self.get_queryset().get_all_unique_names()
 
     def does_topic_exist(self, *, topic: str) -> bool:
         """Given a topic name, checks this against the existing topic names.

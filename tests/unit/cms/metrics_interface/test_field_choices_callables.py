@@ -471,6 +471,82 @@ class TestGetAllAgeNames:
         assert all_age_names == [(x, x) for x in retrieved_age_names]
 
 
+class TestGetAllThemeNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_theme_names")
+    def test_delegates_call_correctly(self, mocked_get_all_theme_names: mock.MagicMock):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns theme names
+        When `get_all_theme_names()` is called
+        Then the theme names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_theme_names = [
+            "infectious_disease",
+            "extreme-event",
+        ]
+        mocked_get_all_theme_names.return_value = retrieved_theme_names
+
+        # When
+        all_theme_names = field_choices_callables.get_all_theme_names()
+
+        # Then
+        assert all_theme_names == [(x, x) for x in retrieved_theme_names]
+
+
+class TestGetAllSubThemeNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_sub_theme_names")
+    def test_delegates_call_correctly(
+        self, mocked_get_all_sub_theme_names: mock.MagicMock
+    ):
+        """
+        Given an instance of the `MetricsAPIInterface` which returns sub theme names
+        When `get_all_sub_theme_names()` is called
+        Then the sub theme names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_sub_theme_names = [
+            "respiratory",
+            "weather_alert",
+        ]
+        mocked_get_all_sub_theme_names.return_value = retrieved_sub_theme_names
+
+        # When
+        all_sub_theme_names = field_choices_callables.get_all_sub_theme_names()
+
+        # Then
+        assert all_sub_theme_names == [(x, x) for x in retrieved_sub_theme_names]
+
+
+class TestGetAllUniqueSubThemeNames:
+    @mock.patch.object(interface.MetricsAPIInterface, "get_all_unique_sub_theme_names")
+    def test_delegates_call_correctly(
+        self, mocked_get_all_unique_sub_theme_names: mock.MagicMock
+    ):
+        """f
+        Given an instance of the `MetricsAPIInterface` which returns unique sub theme names
+        When `get_all_unique_sub_theme_names()` is called
+        Then the unique sub theme names are returned as a list of 2-item tuples
+        """
+        # Given
+        retrieved_unique_sub_theme_names = [
+            "respiratory",
+            "weather_alert",
+        ]
+        mocked_get_all_unique_sub_theme_names.return_value = (
+            retrieved_unique_sub_theme_names
+        )
+
+        # When
+        all_unique_sub_theme_names = (
+            field_choices_callables.get_all_unique_sub_theme_names()
+        )
+
+        # Then
+        assert all_unique_sub_theme_names == [
+            (x, x) for x in retrieved_unique_sub_theme_names
+        ]
+
+
 class TestSimplifiedChartTypes:
     @mock.patch.object(interface.MetricsAPIInterface, "get_simplified_chart_types")
     def test_delegates_call_correctly(
