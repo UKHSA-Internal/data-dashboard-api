@@ -810,6 +810,40 @@ class TestChartSettings:
         }
         assert legend_top_centre_config == expected_legend_top_centre_config
 
+    def test_get_legend_top_centre_config_includes_legend_title_when_provided(
+        self, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+            which includes a legend title
+        When `_get_legend_top_centre_config()` is called
+        Then the correct configuration for the legend is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+        legend_title = "Level of coverage (%)"
+        chart_settings._chart_generation_payload.legend_title = legend_title
+
+        # When
+        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+
+        # Then
+        expected_legend_top_centre_config = {
+            "legend": {
+                "title": f"<b>{legend_title}</b>",
+                "font": {
+                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                    "family": "Arial",
+                },
+                "orientation": "h",
+                "y": 1.0,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "bottom",
+            },
+        }
+        assert legend_top_centre_config == expected_legend_top_centre_config
+
     def test_get_line_multi_coloured_chart_config(
         self, fake_chart_settings: ChartSettings
     ):
