@@ -246,7 +246,6 @@ class ChartSettings:
         }
 
     def get_line_single_simplified_chart_config(self):
-
         axis_params = self.build_line_single_simplified_axis_params()
 
         # Chart Config
@@ -279,12 +278,6 @@ class ChartSettings:
         chart_config["yaxis"]["rangemode"] = axis_params["rangemode"]
 
         return chart_config
-
-    def get_bar_chart_config(self):
-        chart_config = self._get_base_chart_config()
-
-        chart_config["barmode"] = "group"
-        return {**chart_config, **self._get_legend_bottom_left_config()}
 
     def get_line_multi_coloured_chart_config(self):
         chart_config = self._get_base_chart_config()
@@ -443,26 +436,21 @@ class ChartSettings:
             "tickformat": None,
         }
 
-    @staticmethod
-    def _get_legend_bottom_left_config():
-        return {
-            "legend": {
-                "orientation": "h",
-                "y": -0.35,
-                "x": 0,
-            },
+    def _get_legend_top_centre_config(self):
+        legend_config = {
+            "font": self._get_tick_font_config(),
+            "orientation": "h",
+            "y": 1.0,
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "bottom",
         }
 
-    @staticmethod
-    def _get_legend_top_centre_config():
+        if legend_title := self._chart_generation_payload.legend_title:
+            legend_config["title"] = f"<b>{legend_title}</b>"
+
         return {
-            "legend": {
-                "orientation": "h",
-                "y": 1.0,
-                "x": 0.5,
-                "xanchor": "center",
-                "yanchor": "bottom",
-            },
+            "legend": legend_config,
         }
 
 
