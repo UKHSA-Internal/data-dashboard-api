@@ -28,6 +28,7 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         topic: str,
         geography_name: str = "England",
         geography_type_name: str = "Nation",
+        geography_code: str = "E92000001",
         age_name: str = "all",
         sex: str = "all",
         stratum: str = "default",
@@ -43,7 +44,9 @@ class FakeCoreTimeSeriesFactory(factory.Factory):
         )
 
         geography = FakeGeographyFactory.build_example(
-            geography_name=geography_name, geography_type_name=geography_type_name
+            geography_name=geography_name,
+            geography_type_name=geography_type_name,
+            geography_code=geography_code,
         )
 
         stratum: FakeStratum = FakeStratumFactory.build_example(
