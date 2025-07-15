@@ -129,6 +129,67 @@ class TestMetricsAPIInterface:
         # Then
         assert all_chart_types == RGBAChartLineColours.selectable_choices()
 
+    def test_get_all_theme_names_delegates_call_correctly(self):
+        """
+        Given a `ThemeManager` from the Metrics API app
+        When `get_all_theme_names()` is called from that object
+        Then the call is delegated to the correct method on the `ThemeManager`
+        """
+        # Given
+        spy_theme_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            theme_manager=spy_theme_manager,
+            metric_manager=mock.MagicMock(),
+        )
+
+        # When
+        all_theme_names = metrics_api_interface.get_all_theme_names()
+
+        # Then
+        assert all_theme_names == spy_theme_manager.get_all_names()
+
+    def test_get_all_sub_theme_names_delegates_call_correctly(self):
+        """
+        Given a `ThemeManager` from the Metrics API app
+        When `get_all_theme_names()` is called from that object
+        Then the call is delegated to the correct method on the `ThemeManager`
+        """
+        # Given
+        spy_sub_theme_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            sub_theme_manager=spy_sub_theme_manager,
+            metric_manager=mock.MagicMock(),
+        )
+
+        # When
+        all_sub_theme_names = metrics_api_interface.get_all_sub_theme_names()
+
+        # Then
+        assert all_sub_theme_names == spy_sub_theme_manager.get_all_names()
+
+    def test_get_all_unique_sub_theme_names_delegates_call_correctly(self):
+        """f
+        Given a `ThemeManager` from the Metrics API app
+        When `get_all_unique_theme_names()` is called from that object
+        Then the call is delegated to the correct method on the `ThemeManager`
+        """
+        # Given
+        spy_sub_theme_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            sub_theme_manager=spy_sub_theme_manager,
+            metric_manager=mock.MagicMock(),
+        )
+
+        # When
+        all_unique_sub_theme_names = (
+            metrics_api_interface.get_all_unique_sub_theme_names()
+        )
+
+        # Then
+        assert (
+            all_unique_sub_theme_names == spy_sub_theme_manager.get_all_unique_names()
+        )
+
     def test_get_all_topic_names_delegates_call_correctly(self):
         """
         Given a `TopicManager` from the Metrics API app
@@ -147,6 +208,28 @@ class TestMetricsAPIInterface:
 
         # Then
         assert all_topic_names == spy_topic_manager.get_all_names.return_value
+
+    def test_get_all_unique_topic_names_delegates_call_correctly(self):
+        """
+        Given a `TopicManager` from the Metrics API app
+        When `get_all_unique_topic_names()` is called from an instance of the `MetricsAPIInterface`
+        Then the call is delegated to the correct method on the `TopicManager`
+        """
+        # Given
+        spy_topic_manager = mock.Mock()
+        metrics_api_interface = interface.MetricsAPIInterface(
+            topic_manager=spy_topic_manager,
+            metric_manager=mock.Mock(),
+        )
+
+        # When
+        all_unique_topic_names = metrics_api_interface.get_all_unique_topic_names()
+
+        # Then
+        assert (
+            all_unique_topic_names
+            == spy_topic_manager.get_all_unique_names.return_value
+        )
 
     def test_get_all_unique_metric_names_delegates_call_correctly(self):
         """

@@ -34,6 +34,14 @@ Within each plot, you will be required to add a set of fields which will be used
 for that plot.
 """
 
+THEME_FIELD: str = """
+The related theme for the metric. Eg: infectious disease
+"""
+
+SUB_THEME_FIELD: str = """
+The related sub theme for the metric. Eg: respiratory
+"""
+
 TOPIC_PAGE_FIELD: str = """
 The related topic page you want to link to. Eg: `COVID-19`
 """
@@ -382,4 +390,101 @@ Select the secondary field for a `Segments` this is the second categorical varia
 of a `stacked bar` chart. For example if we're creating a stacked bar chart that has a metric in the y-axis
 and geographies along the x-axis. If each bar is broken into segments by `age group` this field
 should be the age group for this segment.
+"""
+
+GLOBAL_FILTER_COMPONENT: str = """
+The global filter component enables a user of the dashboard to create a variable number of filters
+which can be applied across multi components on a dashboard page. This CMS component can be used to configure 
+those options.
+"""
+
+GLOBAL_FILTER_TIME_RANGE: str = """
+This mandatory time range is used to set the time range that a user can navigate through when
+interacting with a filter linked chart or map card. Eg. Year selection can include a range of
+years as dates that can be displayed and navigated between.
+When entering multiple periods in the time filter each proceeding `date_from` must be 1 day after the `date_to` 
+that came before it to maintain sequence order.
+"""
+
+GLOBAL_FILTER_TIME_RANGE_DATE_FROM_FIELD: str = """
+This field is used to provide a start date for the current time range option. Its date
+must be earlier than the date provided for the corresponding `date_to`field. 
+"""
+
+GLOBAL_FILTER_TIME_RANGE_DATE_TO_FIELD: str = """
+This field is used to provide an end date for the current time range option. Its date
+must be later than the date provided in the corresponding `date_from` field.
+"""
+
+GLOBAL_FILTER_TIME_RANGE_TIME_PERIOD: str = """
+This represents a single time period for a selection. The label is used as the time period's
+display name on the dashboard. Eg 2018 - 2019
+"""
+
+GLOBAL_FILTER_ROWS: str = """
+A filter row can contain one or more filters for the global filter component.
+They can be used to group filters around a context Eg: data filter with threshold filter.
+"""
+
+GLOBAL_FILTERS_COLOUR_FIELD: str = """
+Filter colour selections are used to represent the colours of a filter across filter linked
+components Eg. a colour chosen for a given geography type such as `UKHSA Region` will be used
+to highlight that region on filter linked charts
+"""
+
+GLOBAL_FILTERS_GEOGRAPHY_FILTER: str = """
+This geography filter can be used to setup selectable geography lists based on geography types
+such as `UKHSA Region` or `Lower Tier Local Authority`.
+"""
+
+GLOBAL_FILTERS_GEOGRAPHY_TYPE_FIELD: str = """
+This generates a list of selectable geographies on the dashboard based on the geography type selected
+here. Eg. A selection of `Lower Tier Local Authority` here will result in all LTLA's being displayed
+in the filter drop down on the dashboard for a user to select from.
+"""
+
+GLOBAL_FILTERS_DATA_FILTER: str = """
+The data filter is used to create filter options based on metrics and combined attributes. Eg:
+metric and stratum.
+"""
+
+GLOBAL_FILTERS_DATA_FILTER_STRATUM: str = """
+The smallest subgroup a piece of data can be broken down into.
+For example, this could be broken down by ethnicity or testing pillar.
+"""
+
+GLOBAL_FILTERS_DATA_FILTER_ACCOMPANYING_POINTS: str = """
+These additional points configure alternative requests to compare against or supplement the current data filter. For example,
+selecting a `metric` field here could provide a percentage change metric that complements the main data filter selection.
+The label prefix appears before the metric value in map tooltips, while the suffix appears after.
+For a percentage change metric, using prefix `change` and suffix `%` would display as "change <value>%" in tooltips.
+"""
+
+GLOBAL_FILTERS_THRESHOLD_FILTER: str = """
+The threshold filter is used to configure threshold boundaries that can be used to filter data on the dashboard.
+Eg. over 95% boundary 0.95 -> 1.00
+"""
+
+GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE: str = """
+The minimum and maximum boundary values are used to set the range for the threshold as a float between
+0.00 and 1.00 Eg. a threshold of over 95% will have a minimum value of 0.95 and a maximum value of 1.0
+"""
+
+GLOBAL_FILTERS_THRESHOLD_COLOR: str = """
+This colour option is used to represent the threshold across other filter linked components.
+Eg: The colour used for the legend on filter linked map component.
+"""
+
+DATA_FILTERS_CATEGORIES_TO_GROUP_BY: str = """
+Select the categories for the dropdown options to be grouped by.
+E.g. To build the following:
+<pre>
+|- stratum one
+    |- topic one
+    |- topic two
+| stratum two
+    |- topic one
+    |- topic two
+</pre>
+The selections for this should be `stratum` and then `topic`.
 """
