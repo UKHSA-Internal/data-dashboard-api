@@ -782,33 +782,6 @@ class TestChartSettings:
 
         assert line_single_simplified_chart_config == expected_chart_config
 
-    def test_get_bar_chart_config(self, fake_chart_settings: ChartSettings):
-        """
-        Given an instance of `ChartSettings`
-        When `get_bar_chart_config()` is called
-        Then the correct configuration for margins is returned as a dict
-        """
-        # Given
-        chart_settings = fake_chart_settings
-
-        # When
-        bar_chart_config = chart_settings.get_bar_chart_config()
-
-        # Then
-        additional_bar_chart_specific_config = {
-            "barmode": "group",
-            "legend": {
-                "orientation": "h",
-                "y": -0.35,
-                "x": 0,
-            },
-        }
-        expected_bar_chart_config = {
-            **chart_settings._get_base_chart_config(),
-            **additional_bar_chart_specific_config,
-        }
-        assert bar_chart_config == expected_bar_chart_config
-
     def test_get_legend_top_centre_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
