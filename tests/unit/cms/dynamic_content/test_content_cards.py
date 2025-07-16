@@ -37,7 +37,17 @@ class TestContentCards:
         # Then
         mocked_validate_dependant_blocks.assert_called_once()
 
-    def test_context_card_raise_validation_error(self):
+    @pytest.mark.parametrize(
+        "filter_linked_block_type",
+        (
+            "filter_linked_map",
+            "filter_linked_sub_plot_chart_template",
+            "filter_linked_time_series_chart_template",
+        ),
+    )
+    def test_raises_validation_error_when_filter_linked_component_used_without_global_filter(
+        self, filter_linked_block_type: str
+    ):
         """
         Given an instance of `ContentCards`
         When `_validate_dependant_blocks` is called, with an invalid combination of blocks
@@ -47,14 +57,15 @@ class TestContentCards:
         content_cards = ContentCards()
         mocked_blocks = [
             mock.MagicMock(block_type="text_card"),
-            mock.MagicMock(block_type="filter_linked_map"),
+            mock.MagicMock(block_type=filter_linked_block_type),
         ]
 
         # When / Then
         with pytest.raises(ValidationError) as validation_error:
             content_cards._validate_dependant_blocks(value=mocked_blocks)
 
+        readable_name = filter_linked_block_type.replace("_", " ")
         assert (
-            "The 'Filter linked map' is only available when using 'global filter card'."
+            f"The '{readable_name}' is only available when using 'global filter card'."
             in str(validation_error.value)
         )
