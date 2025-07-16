@@ -10,6 +10,10 @@ class FilterLinkedSubPlotChartTemplate(FilterLinkedComponent):
         required=True,
         help_text=help_texts.FILTER_LINKED_SUB_PLOT_CHART_LEGEND_TITLE,
     )
+    target_threshold = blocks.FloatBlock(
+        required=False,
+        help_text=help_texts.FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD,
+    )
 
     class Meta:
         icon = "standalone_chart"
