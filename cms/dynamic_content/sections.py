@@ -39,7 +39,7 @@ class ContentCards(StreamBlock):
         self._validate_dependant_blocks(value=value)
         return super().clean(value)
 
-    def _validate_dependant_blocks(self, *, value):
+    def _validate_dependant_blocks(self, *, value) -> None:
         """Validate that filter-linked blocks have a global filter card.
 
         Raises:
