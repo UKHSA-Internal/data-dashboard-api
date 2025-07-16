@@ -3,3 +3,4 @@ from .external_button import ExternalButton, ExternalButtonTypes, ExternalButton
 from .wha_button import WeatherAlertButton, WeatherAlertButtonTypes
 from .global_banner import GlobalBanner
 from .menu_builder.menu import Menu
+from .accreditation_badge import AccreditationBadge
