@@ -4,6 +4,7 @@ from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from caching.private_api.decorators import cache_response
 from metrics.api.serializers.maps import MapsRequestSerializer
 from metrics.interfaces.maps.access import get_maps_output
 
@@ -29,6 +30,7 @@ class MapsView(APIView):
             )
         ],
     )
+    @cache_response()
     def post(cls, request):
         serializer = MapsRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
