@@ -531,3 +531,7 @@ The full title will be structured as follows:
 [this prefix] between [the selected time period label] ([the selected region], [the selected lower geography type value]).
 </pre>
 """
+
+FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD: str = """
+An optional value to draw a target threshold for.
+"""
