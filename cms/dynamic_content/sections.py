@@ -56,10 +56,14 @@ class ContentCards(StreamBlock):
 
         for block in value:
             if block.block_type in self._global_filter_dependent_cards:
-                readable_block_name = block.block_type.replace("_", " ")
                 raise ValidationError(
-                    f"The '{readable_block_name}' is only available when using 'global filter card'."
+                    message=self._build_filter_linked_block_error_message(block=block)
                 )
+
+    @classmethod
+    def _build_filter_linked_block_error_message(cls, *, block) -> str:
+        readable_block_name = block.block_type.replace("_", " ")
+        return f"The '{readable_block_name}' is only available when using 'global filter card'."
 
     @property
     def _global_filter_dependent_cards(self) -> list[str]:
