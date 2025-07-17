@@ -95,6 +95,7 @@ class ChartsSerializer(BaseChartsSerializer):
             y_axis_minimum_value=self.data["y_axis_minimum_value"]
             or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
             y_axis_maximum_value=self.data["y_axis_maximum_value"],
+            legend_title=self.data.get("legend_title", ""),
             request=request,
         )
 

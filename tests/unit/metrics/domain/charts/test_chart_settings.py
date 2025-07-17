@@ -782,94 +782,6 @@ class TestChartSettings:
 
         assert line_single_simplified_chart_config == expected_chart_config
 
-    def test_get_bar_chart_config(self, fake_chart_settings: ChartSettings):
-        """
-        Given an instance of `ChartSettings`
-        When `get_bar_chart_config()` is called
-        Then the correct configuration for margins is returned as a dict
-        """
-        # Given
-        chart_settings = fake_chart_settings
-
-        # When
-        bar_chart_config = chart_settings.get_bar_chart_config()
-
-        # Then
-        additional_bar_chart_specific_config = {
-            "barmode": "group",
-            "legend": {
-                "orientation": "h",
-                "y": -0.35,
-                "x": 0,
-            },
-        }
-        expected_bar_chart_config = {
-            **chart_settings._get_base_chart_config(),
-            **additional_bar_chart_specific_config,
-        }
-        assert bar_chart_config == expected_bar_chart_config
-
-    @pytest.mark.parametrize(
-        "y_axis_min, y_axis_max, expected_y_axis_min, expected_y_axis_max, y_axis_values",
-        (
-            [10, None, 10, 40000, [10000, 20000, 30000, 40000]],
-            [200, 10000, 100, 10000, [100, 200, 300, 400, 500]],
-            [100, 10000, 100, 10000, [500, 1000, 1500, 2000]],
-            [100, 1000, 100, 2000, [500, 1000, 1500, 2000]],
-        ),
-    )
-    def test_get_bar_chart_config_returns_correct_y_axis_range(
-        self,
-        fake_chart_settings: ChartSettings,
-        y_axis_min: int,
-        y_axis_max: int,
-        expected_y_axis_min: int,
-        expected_y_axis_max: int,
-        y_axis_values: list[int],
-    ):
-        """
-        Given an instance of `chart_settings`
-        When the `get_get_bar_chart_config()` method is called provided
-            with manual y-axis min and max values
-        Then the correct chart settings are returned
-        """
-        # Given
-        fake_chart_settings._chart_generation_payload.y_axis_minimum_value = y_axis_min
-        fake_chart_settings._chart_generation_payload.y_axis_maximum_value = y_axis_max
-        fake_chart_settings.plots_data[0].y_axis_values = y_axis_values
-
-        # When
-        bar_chart_config = fake_chart_settings.get_bar_chart_config()
-
-        # Then
-        assert bar_chart_config["yaxis"]["range"] == [
-            expected_y_axis_min,
-            expected_y_axis_max,
-        ]
-        assert bar_chart_config["yaxis"]["tick0"] == expected_y_axis_min
-
-    def test_get_legend_bottom_left_config(self, fake_chart_settings: ChartSettings):
-        """
-        Given an instance of `ChartSettings`
-        When `_get_legend_bottom_left_config()` is called
-        Then the correct configuration for the legend is returned as a dict
-        """
-        # Given
-        chart_settings = fake_chart_settings
-
-        # When
-        legend_bottom_left_config = chart_settings._get_legend_bottom_left_config()
-
-        # Then
-        expected_legend_bottom_left_config = {
-            "legend": {
-                "orientation": "h",
-                "y": -0.35,
-                "x": 0,
-            },
-        }
-        assert legend_bottom_left_config == expected_legend_bottom_left_config
-
     def test_get_legend_top_centre_config(self, fake_chart_settings: ChartSettings):
         """
         Given an instance of `ChartSettings`
@@ -885,6 +797,44 @@ class TestChartSettings:
         # Then
         expected_legend_top_centre_config = {
             "legend": {
+                "font": {
+                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                    "family": "Arial",
+                },
+                "orientation": "h",
+                "y": 1.0,
+                "x": 0.5,
+                "xanchor": "center",
+                "yanchor": "bottom",
+            },
+        }
+        assert legend_top_centre_config == expected_legend_top_centre_config
+
+    def test_get_legend_top_centre_config_includes_legend_title_when_provided(
+        self, fake_chart_settings: ChartSettings
+    ):
+        """
+        Given an instance of `ChartSettings`
+            which includes a legend title
+        When `_get_legend_top_centre_config()` is called
+        Then the correct configuration for the legend is returned as a dict
+        """
+        # Given
+        chart_settings = fake_chart_settings
+        legend_title = "Level of coverage (%)"
+        chart_settings._chart_generation_payload.legend_title = legend_title
+
+        # When
+        legend_top_centre_config = chart_settings._get_legend_top_centre_config()
+
+        # Then
+        expected_legend_top_centre_config = {
+            "legend": {
+                "title": f"<b>{legend_title}</b>",
+                "font": {
+                    "color": colour_scheme.RGBAColours.DARK_BLUE_GREY.stringified,
+                    "family": "Arial",
+                },
                 "orientation": "h",
                 "y": 1.0,
                 "x": 0.5,

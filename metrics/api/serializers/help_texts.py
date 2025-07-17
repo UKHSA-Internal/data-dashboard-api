@@ -104,6 +104,9 @@ CHART_Y_AXIS_MAXIMUM_VALUE: str = """
 The value used as the chart's highest y_axis value Eg: providing a higher value than appears in the data will
 rescale the chart to that value 
 """
+CHART_LEGEND_TITLE: str = """
+An optional title to display for the legend.
+"""
 ENCODED_CHARTS_RESPONSE: str = """
 The specified chart in the requested format as a URI encoded string (default format = svg)
 """

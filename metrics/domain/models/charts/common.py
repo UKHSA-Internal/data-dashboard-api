@@ -16,6 +16,7 @@ class BaseChartRequestParams(BaseModel):
     y_axis_title: str = ""
     y_axis_minimum_value: Decimal | int = 0
     y_axis_maximum_value: Decimal | int | None = None
+    legend_title: str | None = ""
     request: Request | None = None
 
     class Config:
