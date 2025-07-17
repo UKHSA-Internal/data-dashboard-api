@@ -31,6 +31,7 @@ from metrics.api.views import (
     TrendsView,
 )
 from metrics.api.views.charts import DualCategoryChartsView
+from metrics.api.views.charts.subplot_charts import SubplotChartsView
 from metrics.api.views.geographies import GeographiesView, GeographiesViewDeprecated
 from metrics.api.views.health import InternalHealthView
 from metrics.api.views.maps import MapsView
@@ -139,6 +140,7 @@ private_api_urlpatterns = [
     ),
     # Metrics/private content endpoints
     re_path(f"^{API_PREFIX}charts/v3", EncodedChartsView.as_view()),
+    re_path(f"^{API_PREFIX}charts/subplot/v1", SubplotChartsView.as_view()),
     re_path(f"^{API_PREFIX}downloads/v2", DownloadsView.as_view()),
     re_path(f"^{API_PREFIX}bulkdownloads/v1", BulkDownloadsView.as_view()),
     re_path(
