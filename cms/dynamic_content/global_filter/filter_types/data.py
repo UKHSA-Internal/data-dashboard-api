@@ -124,14 +124,20 @@ class DataCategorySelectionElement(blocks.StructBlock):
         icon = "form"
 
 
+class DataFilterElements(blocks.StreamBlock):
+    data_filter = DataFilterElement()
+
+
+class CategoryFilters(blocks.StreamBlock):
+    category = DataCategorySelectionElement()
+
+
 class DataFilters(blocks.StructBlock):
-    data_filters = blocks.ListBlock(
-        child_block=DataFilterElement(),
+    data_filters = DataFilterElements(
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER,
     )
-    categories_to_group_by = blocks.ListBlock(
-        child_block=DataCategorySelectionElement(),
+    categories_to_group_by = CategoryFilters(
         min_num=MINIMUM_ROWS_COUNT,
         max_num=MAXIMUM_DATA_CATEGORIES,
         help_text=help_texts.DATA_FILTERS_CATEGORIES_TO_GROUP_BY,

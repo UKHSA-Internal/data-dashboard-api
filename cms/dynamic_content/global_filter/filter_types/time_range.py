@@ -42,10 +42,13 @@ class TimeRangeElement(blocks.StructBlock):
             raise blocks.StructBlockValidationError(block_errors=block_errors)
 
 
+class TimePeriods(blocks.StreamBlock):
+    time_period = TimeRangeElement()
+
+
 class TimeRangeBlock(blocks.StructBlock):
     title = blocks.CharBlock(required=True)
-    time_periods = blocks.ListBlock(
-        child_block=TimeRangeElement(),
+    time_periods = TimePeriods(
         help_text=help_texts.GLOBAL_FILTER_TIME_RANGE,
         min_num=MINIMUM_ROWS_COUNT,
     )
@@ -55,10 +58,18 @@ class TimeRangeBlock(blocks.StructBlock):
         return super().clean(value=value)
 
     @classmethod
+    def _convert_to_date_if_needed(
+        cls, *, date_stamp: str | datetime.date
+    ) -> datetime.date:
+        try:
+            return datetime.date.fromisoformat(date_stamp)
+        except TypeError:
+            return date_stamp
+
     def _validate_dates_are_in_chronological_order(
-        cls, *, value: blocks.StructBlock
+        self, *, value: blocks.StructValue
     ) -> None:
-        time_periods = value["time_periods"]
+        time_periods: blocks.StreamValue = value["time_periods"]
         error_list = ErrorList()
 
         for current_time_period_index, current_time_period in enumerate(time_periods):
@@ -67,11 +78,11 @@ class TimeRangeBlock(blocks.StructBlock):
             except IndexError:
                 break
 
-            current_time_period_date_to = datetime.date.fromisoformat(
-                current_time_period["date_to"]
+            current_time_period_date_to = self._convert_to_date_if_needed(
+                date_stamp=current_time_period.value["date_to"],
             )
-            next_time_period_date_from = datetime.date.fromisoformat(
-                next_time_period["date_from"]
+            next_time_period_date_from = self._convert_to_date_if_needed(
+                date_stamp=next_time_period.value["date_from"],
             )
 
             if (

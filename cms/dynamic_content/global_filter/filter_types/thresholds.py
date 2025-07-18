@@ -8,11 +8,11 @@ from cms.metrics_interface.field_choices_callables import get_colours
 
 
 class ThresholdFilterElement(blocks.StructBlock):
+    label = blocks.CharBlock(required=True)
     colour = blocks.ChoiceBlock(
         choices=get_colours,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_COLOR,
     )
-    label = blocks.CharBlock(required=True)
     boundary_minimum_value = blocks.DecimalBlock(
         required=True,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE,
@@ -45,9 +45,12 @@ class ThresholdFilterElement(blocks.StructBlock):
             raise blocks.StructBlockValidationError(block_errors=block_errors)
 
 
+class Thresholds(blocks.StreamBlock):
+    threshold = ThresholdFilterElement()
+
+
 class ThresholdsFilter(blocks.StructBlock):
-    thresholds = blocks.ListBlock(
-        child_block=ThresholdFilterElement(),
+    thresholds = Thresholds(
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_FILTER,
     )
@@ -72,10 +75,10 @@ class ThresholdsFilter(blocks.StructBlock):
                 break
 
             current_boundary_maximum_value = float(
-                current_threshold["boundary_maximum_value"]
+                current_threshold.value["boundary_maximum_value"]
             )
             next_boundary_minimum_value = float(
-                next_threshold["boundary_minimum_value"]
+                next_threshold.value["boundary_minimum_value"]
             )
 
             if next_boundary_minimum_value <= current_boundary_maximum_value:
