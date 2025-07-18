@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from wagtail.blocks import (
     RichTextBlock,
     StreamBlock,
@@ -34,44 +33,6 @@ class ContentCards(StreamBlock):
         required=False,
         help_text=help_texts.FILTER_LINKED_TIME_SERIES_CHART_TEMPLATE,
     )
-
-    def clean(self, value):
-        self._validate_dependant_blocks(value=value)
-        return super().clean(value)
-
-    def _validate_dependant_blocks(self, *, value) -> None:
-        """Validate that filter-linked blocks have a global filter card.
-
-        Raises:
-            `ValidationError` - If any filter linked component blocks
-                have been used without a global filter card being present.
-
-        """
-        has_global_filter = any(
-            block.block_type == "global_filter_card" for block in value
-        )
-
-        if has_global_filter:
-            return
-
-        for block in value:
-            if block.block_type in self._global_filter_dependent_cards:
-                raise ValidationError(
-                    message=self._build_filter_linked_block_error_message(block=block)
-                )
-
-    @classmethod
-    def _build_filter_linked_block_error_message(cls, *, block) -> str:
-        readable_block_name = block.block_type.replace("_", " ")
-        return f"The '{readable_block_name}' is only available when using 'global filter card'."
-
-    @property
-    def _global_filter_dependent_cards(self) -> list[str]:
-        return [
-            "filter_linked_map",
-            "filter_linked_sub_plot_chart_template",
-            "filter_linked_time_series_chart_template",
-        ]
 
 
 class ContentCardsSectionWithLink(StreamBlock):
