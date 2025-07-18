@@ -24,7 +24,7 @@ def make_parameter_field_element(
 ) -> blocks.StructBlock:
     return blocks.StructBlock(
         [
-            ("label", blocks.CharBlock(required=True)),
+            ("label", blocks.CharBlock(required=False)),
             ("value", blocks.ChoiceBlock(choices=choices, required=True)),
         ],
         help_text=help_text,
@@ -133,6 +133,7 @@ class CategoryFilters(blocks.StreamBlock):
 
 
 class DataFilters(blocks.StructBlock):
+    label = blocks.CharBlock(required=True)
     data_filters = DataFilterElements(
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER,
@@ -152,11 +153,11 @@ class DataFilters(blocks.StructBlock):
 
     @classmethod
     def _validate_selected_categories_are_unique(cls, *, value: dict) -> None:
-        selected_categories: list[blocks.StructValue] = value["categories_to_group_by"]
+        selected_categories: blocks.StreamValue = value["categories_to_group_by"]
         seen_categories: set[str] = set()
 
         for category in selected_categories:
-            category_name: str = category["data_category"]
+            category_name: str = category.value["data_category"]
 
             if category_name in seen_categories:
                 block_errors = {
