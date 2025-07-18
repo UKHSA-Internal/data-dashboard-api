@@ -173,7 +173,7 @@ class TestThresholdsFilter:
         block_errors = exc_info.value.block_errors
         assert (
             block_errors["thresholds"].message
-            == f"Threshold No. 1's maximum value ({1.0}) must be less than threshold No. 2's minimum value ({boundary_minimum_value}) to maintain sequence order"
+            == f"Threshold No. 1's maximum value (1.0) must be less than threshold No. 2's minimum value ({boundary_minimum_value}) to maintain sequence order"
         )
 
     @mock.patch.object(StructBlock, "clean")

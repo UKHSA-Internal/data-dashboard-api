@@ -57,17 +57,22 @@ class GeographyFilter(blocks.StructBlock):
             colour_selection: str = geography_type_value["colour"]
             geography_type_selection: str = geography_type_value["geography_type"]
 
+            block_errors = {}
+
             if label_selection in selected_labels:
                 message = f"The label of `{label_selection}` has been used multiple times. This must be unique, please review your selection. "
-                raise ValidationError(message)
+                block_errors["label"] = ValidationError(message)
 
             if colour_selection in selected_colours:
                 message = f"The colour of `{colour_selection}` has been used multiple times. This must be unique, please review your selection. "
-                raise ValidationError(message)
+                block_errors["colour"] = ValidationError(message)
 
-            if geography_type in selected_colours:
-                message = f"The geography type of `{geography_type}` has been used multiple times. This must be unique, please review your selection. "
-                raise ValidationError(message)
+            if geography_type_selection in selected_geography_types:
+                message = f"The geography_type of `{geography_type_selection}` has been used multiple times. This must be unique, please review your selection. "
+                block_errors["geography_type"] = ValidationError(message)
+
+            if block_errors:
+                raise blocks.StructBlockValidationError(block_errors=block_errors)
 
             selected_labels.add(label_selection)
             selected_colours.add(colour_selection)
