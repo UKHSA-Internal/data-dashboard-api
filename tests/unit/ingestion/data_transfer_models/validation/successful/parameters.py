@@ -76,4 +76,11 @@ VALID_PARAMETERS = [
         "heat-or-sunburn_syndromic_emergencyDepartment_averageRolling7Day",
         "syndromic",
     ),
+    (
+        "immunisations",
+        "childhood-vaccines",
+        "MMR1",
+        "MMR1_coverage_coverageByYear",
+        "coverage",
+    ),
 ]
