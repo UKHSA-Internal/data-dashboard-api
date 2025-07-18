@@ -22,7 +22,7 @@ class TimeRangeElement(blocks.StructBlock):
     class Meta:
         icon = "time"
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue):
         self._validate_dates_are_in_chronological_order(value=value)
         return super().clean(value=value)
 
@@ -53,7 +53,7 @@ class TimeRangeBlock(blocks.StructBlock):
         min_num=MINIMUM_ROWS_COUNT,
     )
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue):
         self._validate_dates_are_in_chronological_order(value=value)
         return super().clean(value=value)
 

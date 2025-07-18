@@ -22,7 +22,7 @@ class ThresholdFilterElement(blocks.StructBlock):
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_BOUNDARY_VALUE,
     )
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue):
         self._validate_boundary_minimum_value_is_lower_than_maximum_value(value=value)
         return super().clean(value=value)
 

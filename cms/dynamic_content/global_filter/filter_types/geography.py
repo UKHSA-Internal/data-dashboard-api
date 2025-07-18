@@ -39,7 +39,7 @@ class GeographyFilter(blocks.StructBlock):
     class Meta:
         icon = "site"
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue):
         self._validate_choices_are_unique(value=value)
         return super().clean(value=value)
 
