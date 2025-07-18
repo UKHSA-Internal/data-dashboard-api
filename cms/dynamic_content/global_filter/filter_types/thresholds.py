@@ -28,7 +28,7 @@ class ThresholdFilterElement(blocks.StructBlock):
 
     @classmethod
     def _validate_boundary_minimum_value_is_lower_than_maximum_value(
-        cls, *, value: blocks.StructBlock
+        cls, *, value: blocks.StructValue
     ) -> None:
         minimum_value = float(value["boundary_minimum_value"])
         maximum_value = float(value["boundary_maximum_value"])
