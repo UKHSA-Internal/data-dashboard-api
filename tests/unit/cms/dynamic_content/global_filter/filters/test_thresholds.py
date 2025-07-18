@@ -2,7 +2,12 @@ from unittest import mock
 
 import pytest
 from decimal import Decimal
-from wagtail.blocks import StructBlockValidationError, StructBlock
+from wagtail.blocks import (
+    StructBlockValidationError,
+    StructBlock,
+    StructValue,
+    StreamValue,
+)
 
 from cms.dynamic_content.global_filter.filter_types.thresholds import (
     ThresholdFilterElement,
@@ -97,10 +102,13 @@ class TestThresholdsFilter:
         return {
             "thresholds": [
                 {
-                    "colour": RGBAChartLineColours.COLOUR_4_ORANGE.name,
-                    "label": "Level of coverage:",
-                    "boundary_minimum_value": "0.00",
-                    "boundary_maximum_value": "1.00",
+                    "type": "threshold",
+                    "value": {
+                        "colour": RGBAChartLineColours.COLOUR_4_ORANGE.name,
+                        "label": "Level of coverage:",
+                        "boundary_minimum_value": "0.00",
+                        "boundary_maximum_value": "1.00",
+                    },
                 }
             ]
         }
@@ -112,17 +120,19 @@ class TestThresholdsFilter:
         Then no error should be raised
         """
         # Given
-        thresholds_filter = ThresholdsFilter(**self.valid_payload)
+        thresholds_filter = ThresholdsFilter()
+        value: StructValue = thresholds_filter.to_python(value=self.valid_payload)
 
         # When
-        result = thresholds_filter.clean(self.valid_payload)
+        result: StructValue = thresholds_filter.clean(value=value)
 
         # Then
-        thresholds = result["thresholds"]
-        assert thresholds[0]["colour"] == RGBAChartLineColours.COLOUR_4_ORANGE.name
-        assert thresholds[0]["label"] == "Level of coverage:"
-        assert thresholds[0]["boundary_minimum_value"] == Decimal("0.00")
-        assert thresholds[0]["boundary_maximum_value"] == Decimal("1.00")
+        thresholds: StreamValue = result["thresholds"]
+        first_threshold: StructValue = thresholds[0].value
+        assert first_threshold["colour"] == RGBAChartLineColours.COLOUR_4_ORANGE.name
+        assert first_threshold["label"] == "Level of coverage:"
+        assert first_threshold["boundary_minimum_value"] == Decimal("0.00")
+        assert first_threshold["boundary_maximum_value"] == Decimal("1.00")
 
     @pytest.mark.parametrize(
         "boundary_minimum_value, boundary_maximum_value",
@@ -144,22 +154,26 @@ class TestThresholdsFilter:
         invalid_payload = self.valid_payload.copy()
         invalid_payload["thresholds"].append(
             {
-                "colour": RGBAChartLineColours.COLOUR_4_ORANGE.name,
-                "label": "Level of coverage:",
-                "boundary_minimum_value": boundary_minimum_value,
-                "boundary_maximum_value": boundary_maximum_value,
+                "type": "threshold",
+                "value": {
+                    "colour": RGBAChartLineColours.COLOUR_4_ORANGE.name,
+                    "label": "Level of coverage:",
+                    "boundary_minimum_value": boundary_minimum_value,
+                    "boundary_maximum_value": boundary_maximum_value,
+                },
             }
         )
-        thresholds_filter = ThresholdsFilter(**invalid_payload)
+        thresholds_filter = ThresholdsFilter()
+        value: StructValue = thresholds_filter.to_python(value=invalid_payload)
 
         # When / Then
         with pytest.raises(StructBlockValidationError) as exc_info:
-            thresholds_filter.clean(invalid_payload)
+            thresholds_filter.clean(value=value)
 
         block_errors = exc_info.value.block_errors
         assert (
             block_errors["thresholds"].message
-            == f"Threshold No. 1's maximum value ({1.0}) must be less than threshold No. 2's minimum value ({boundary_minimum_value}) to maintain sequence order"
+            == f"Threshold No. 1's maximum value (1.0) must be less than threshold No. 2's minimum value ({boundary_minimum_value}) to maintain sequence order"
         )
 
     @mock.patch.object(StructBlock, "clean")
@@ -170,10 +184,11 @@ class TestThresholdsFilter:
         Then the parent `clean()` method should be called
         """
         # Given
-        thresholds_filter = ThresholdsFilter(**self.valid_payload)
+        thresholds_filter = ThresholdsFilter()
+        value: StructValue = thresholds_filter.to_python(value=self.valid_payload)
 
         # When
-        thresholds_filter.clean(self.valid_payload)
+        thresholds_filter.clean(value=value)
 
         # Then
-        mocked_super_clean.assert_called_once_with(value=self.valid_payload)
+        mocked_super_clean.assert_called_once_with(value=value)

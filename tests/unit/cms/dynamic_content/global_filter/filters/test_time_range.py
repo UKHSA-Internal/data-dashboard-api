@@ -2,7 +2,12 @@ import datetime
 from unittest import mock
 
 import pytest
-from wagtail.blocks import StructBlockValidationError, StructBlock
+from wagtail.blocks import (
+    StructBlockValidationError,
+    StructBlock,
+    StructValue,
+    StreamValue,
+)
 
 from cms.dynamic_content.global_filter.filter_types.time_range import (
     TimeRangeElement,
@@ -84,9 +89,12 @@ class TestTimeRangeBlock:
             "title": "Time selection",
             "time_periods": [
                 {
-                    "label": "10th Jan - 13th Jan",
-                    "date_from": "2025-01-10",
-                    "date_to": "2025-01-13",
+                    "type": "time_period",
+                    "value": {
+                        "label": "10th Jan - 13th Jan",
+                        "date_from": "2025-01-10",
+                        "date_to": "2025-01-13",
+                    },
                 }
             ],
         }
@@ -98,31 +106,40 @@ class TestTimeRangeBlock:
         Then no error should be raised
         """
         # Given
-        valid_payload = self.valid_payload
-        time_range_block = TimeRangeBlock(**valid_payload)
+        time_range_block = TimeRangeBlock()
+        value: StructValue = time_range_block.to_python(value=self.valid_payload)
 
         # When
-        result = time_range_block.clean(valid_payload)
+        result: StructValue = time_range_block.clean(value=value)
 
         # Then
-        time_periods = result["time_periods"]
-        assert time_periods[0]["label"] == "10th Jan - 13th Jan"
-        assert time_periods[0]["date_from"] == datetime.date.fromisoformat(
-            valid_payload["time_periods"][0]["date_from"]
+        time_periods: StreamValue = result["time_periods"]
+        first_time_period: StructValue = time_periods[0].value
+        assert first_time_period["label"] == "10th Jan - 13th Jan"
+        assert first_time_period["date_from"] == datetime.date.fromisoformat(
+            self.valid_payload["time_periods"][0]["value"]["date_from"]
         )
-        assert time_periods[0]["date_to"] == datetime.date.fromisoformat(
-            valid_payload["time_periods"][0]["date_to"]
+        assert first_time_period["date_to"] == datetime.date.fromisoformat(
+            self.valid_payload["time_periods"][0]["value"]["date_to"]
         )
 
     @pytest.mark.parametrize(
         "date_from, date_to",
         (
             ["2025-01-12", "2025-01-20"],
+            [
+                datetime.date(year=2025, month=1, day=12),
+                datetime.date(year=2025, month=1, day=20),
+            ],
             ["2025-01-13", "2025-01-20"],
+            [
+                datetime.date(year=2025, month=1, day=12),
+                datetime.date(year=2025, month=1, day=20),
+            ],
         ),
     )
     def test_clean_raises_validation_error_with_dates_across_time_periods(
-        self, date_from: datetime.date, date_to: datetime.date
+        self, date_from: str | datetime.date, date_to: str | datetime.date
     ):
         """
         Given a `TimeRangeBlock` with an otherwise valid payload
@@ -135,16 +152,20 @@ class TestTimeRangeBlock:
         invalid_payload = self.valid_payload.copy()
         invalid_payload["time_periods"].append(
             {
-                "label": "Incorrect date range",
-                "date_from": date_from,
-                "date_to": date_to,
+                "type": "time_period",
+                "value": {
+                    "label": "Incorrect date range",
+                    "date_from": date_from,
+                    "date_to": date_to,
+                },
             }
         )
-        time_range_block = TimeRangeBlock(**invalid_payload)
+        time_range_block = TimeRangeBlock()
+        value: StructValue = time_range_block.to_python(value=invalid_payload)
 
         # When / Then
         with pytest.raises(StructBlockValidationError) as exc_info:
-            time_range_block.clean(invalid_payload)
+            time_range_block.clean(value=value)
 
         block_errors = exc_info.value.block_errors
         assert (
@@ -160,11 +181,11 @@ class TestTimeRangeBlock:
         Then the parent `clean()` method should be called
         """
         # Given
-        valid_payload = self.valid_payload
-        time_range_block = TimeRangeBlock(**valid_payload)
+        time_range_block = TimeRangeBlock()
+        value: StructValue = time_range_block.to_python(value=self.valid_payload)
 
         # When
-        time_range_block.clean(valid_payload)
+        time_range_block.clean(value=value)
 
         # Then
-        mocked_super_clean.assert_called_once_with(value=valid_payload)
+        mocked_super_clean.assert_called_once_with(value=value)

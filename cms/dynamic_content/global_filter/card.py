@@ -24,14 +24,20 @@ class GlobalFilterRowBlock(blocks.StructBlock):
         icon = "thumbtack-crossed"
 
 
+class GlobalFilterRows(blocks.StreamBlock):
+    row = GlobalFilterRowBlock()
+
+    class Meta:
+        icon = "thumbtack-crossed"
+
+
 class GlobalFilterCard(blocks.StructBlock):
     time_range = TimeRangeBlock(
         required=True,
         help_text=help_texts.GLOBAL_FILTER_TIME_RANGE,
     )
 
-    rows = blocks.ListBlock(
-        child_block=GlobalFilterRowBlock(),
+    rows = GlobalFilterRows(
         required=True,
         help_text=help_texts.GLOBAL_FILTER_ROWS,
         min_num=MINIMUM_ROWS_COUNT,

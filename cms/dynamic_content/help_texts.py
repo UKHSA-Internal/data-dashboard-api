@@ -494,11 +494,6 @@ This filter linked map can be used to display metric data configured through a d
 in the global filter component to represent this data geographically.
 """
 
-FILTER_LINKED_MAP_LEGEND_TITLE: str = """
-This legend title will be used to title the maps legend. Eg. the thresholds from global filter
-are used for the content of this legend so the title for the cover page could be "Level of coverage"
-"""
-
 FILTER_LINKED_SUB_PLOT_CHART_TEMPLATE: str = """
 This filter linked sub plot chart can be used to display metric data configured through a data filter
 in the global filter component. 

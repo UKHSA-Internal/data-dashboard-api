@@ -66,6 +66,10 @@ class DualCategoryChartSegmentComponent(blocks.StructBlock):
         label = "Dual charts segments"
 
 
+class DualCategoryChartSegmentComponents(blocks.StreamBlock):
+    segment = DualCategoryChartSegmentComponent()
+
+
 class HeadlineNumberComponent(elements.BaseMetricsElement):
     body = blocks.TextBlock(required=False, help_text=help_texts.OPTIONAL_BODY_FIELD)
 
