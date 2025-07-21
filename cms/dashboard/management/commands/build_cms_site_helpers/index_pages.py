@@ -42,3 +42,23 @@ def create_respiratory_viruses_index_page_body() -> list[dict]:
             ],
         }
     ]
+
+
+def create_cover_index_page_body() -> list[dict]:
+    childhood_vaccinations_page = TopicPage.objects.get(slug="childhood-vaccinations")
+    return [
+        {
+            "type": "internal_page_links",
+            "value": [
+                {
+                    "type": "page_link",
+                    "value": {
+                        "title": "Childhood vaccinations",
+                        "sub_title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+                        "page": childhood_vaccinations_page.id,
+                    },
+                    "id": "c36d19c1-3a5e-4fcf-b696-91468c609369",
+                },
+            ],
+        }
+    ]

@@ -65,7 +65,8 @@ class Command(BaseCommand):
         create_metrics_documentation_parent_page_and_child_entries()
 
         self._build_weather_health_alerts_section(root_page=root_page)
-        self._respiratory_viruses_section(root_page=root_page)
+        self._build_respiratory_viruses_section(root_page=root_page)
+        self._build_cover_section(root_page=root_page)
 
         build_cms_site_helpers.create_landing_page(parent_page=root_page)
 
@@ -114,7 +115,7 @@ class Command(BaseCommand):
         )
 
     @classmethod
-    def _respiratory_viruses_section(cls, root_page: UKHSARootPage) -> None:
+    def _build_respiratory_viruses_section(cls, root_page: UKHSARootPage) -> None:
         covid_19_page = build_cms_site_helpers.create_topic_page(
             name="covid_19", parent_page=root_page
         )
@@ -127,8 +128,10 @@ class Command(BaseCommand):
         # Because the index page links to these pages
         # they need to be created first, referenced and then moved under the index page
 
-        respiratory_viruses_index_page = build_cms_site_helpers.create_index_page(
-            name="respiratory-viruses", parent_page=root_page
+        respiratory_viruses_index_page = (
+            build_cms_site_helpers.create_respiratory_viruses_index_page(
+                name="respiratory-viruses", parent_page=root_page
+            )
         )
 
         other_respiratory_viruses_page.move(
@@ -136,6 +139,20 @@ class Command(BaseCommand):
         )
         influenza_page.move(target=respiratory_viruses_index_page, pos="last-child")
         covid_19_page.move(target=respiratory_viruses_index_page, pos="last-child")
+
+    @classmethod
+    def _build_cover_section(cls, root_page: UKHSARootPage) -> None:
+        childhood_vaccinations_page = build_cms_site_helpers.create_topic_page(
+            name="childhood_vaccinations", parent_page=root_page
+        )
+
+        # Because the index page links to these pages
+        # they need to be created first, referenced and then moved under the index page
+        cover_index_page = build_cms_site_helpers.create_cover_index_page(
+            name="cover", parent_page=root_page
+        )
+
+        childhood_vaccinations_page.move(target=cover_index_page, pos="last-child")
 
     @classmethod
     def _build_common_pages(cls, root_page: UKHSARootPage) -> None:
