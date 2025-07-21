@@ -9,6 +9,8 @@ from cms.dynamic_content.global_filter.constants import (
 from cms.metrics_interface.field_choices_callables import (
     LIST_OF_TWO_STRING_ITEM_TUPLES,
     get_all_age_names,
+    get_all_geography_names,
+    get_all_geography_type_names,
     get_all_sex_names,
     get_all_stratum_names,
     get_all_theme_names,
@@ -85,11 +87,30 @@ DATA_PARAMETER_FIELDS = [
     ),
 ]
 
+GEOGRAPHY_PARAMETER_FIELDS = [
+    (
+        "geography",
+        make_parameter_field_element(
+            choices=get_all_geography_names,
+            help_text="",
+        ),
+    ),
+    (
+        "geography_type",
+        make_parameter_field_element(
+            choices=get_all_geography_type_names,
+            help_text="",
+        ),
+    ),
+]
+
+ACCOMPANYING_POINT_PARAMETER_FIELDS = DATA_PARAMETER_FIELDS + GEOGRAPHY_PARAMETER_FIELDS
+
 
 class AccompanyingPoint(blocks.StructBlock):
     label_prefix = blocks.CharBlock(required=True)
     label_suffix = blocks.CharBlock(required=False)
-    parameters = blocks.StreamBlock(DATA_PARAMETER_FIELDS)
+    parameters = blocks.StreamBlock(ACCOMPANYING_POINT_PARAMETER_FIELDS)
 
 
 class AccompanyingPoints(blocks.StreamBlock):
