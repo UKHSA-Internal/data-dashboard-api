@@ -244,8 +244,8 @@
                               "value": {
                                 "label": "Under 80%",
                                 "colour": "COLOUR_1_DARK_BLUE",
-                                "boundary_minimum_value": 0,
-                                "boundary_maximum_value": 0.8
+                                "boundary_minimum_value": "0",
+                                "boundary_maximum_value": "0.8"
                               },
                               "id": "9019a648-901c-4801-9d3e-d3b95242a58e"
                             },
@@ -254,8 +254,8 @@
                               "value": {
                                 "label": "80-85%",
                                 "colour": "COLOUR_2_TURQUOISE",
-                                "boundary_minimum_value": 0.81,
-                                "boundary_maximum_value": 0.85
+                                "boundary_minimum_value": "0.81",
+                                "boundary_maximum_value": "0.85"
                               },
                               "id": "9137b412-ef3a-4d39-8662-1096ba1c3b99"
                             },
@@ -264,8 +264,8 @@
                               "value": {
                                 "label": "85-90%",
                                 "colour": "COLOUR_3_DARK_PINK",
-                                "boundary_minimum_value": 0.86,
-                                "boundary_maximum_value": 0.9
+                                "boundary_minimum_value": "0.86",
+                                "boundary_maximum_value": "0.9"
                               },
                               "id": "38cd3f76-46ed-41d9-a7a2-9a41510c0b2d"
                             },
@@ -274,8 +274,8 @@
                               "value": {
                                 "label": "90-95%",
                                 "colour": "COLOUR_4_ORANGE",
-                                "boundary_minimum_value": 0.91,
-                                "boundary_maximum_value": 0.95
+                                "boundary_minimum_value": "0.91",
+                                "boundary_maximum_value": "0.95"
                               },
                               "id": "3584882d-ce37-4d57-abcb-ac0d71133dc5"
                             },
@@ -284,8 +284,8 @@
                               "value": {
                                 "label": "Over 95%",
                                 "colour": "COLOUR_5_DARK_GREY",
-                                "boundary_minimum_value": 0.96,
-                                "boundary_maximum_value": 1
+                                "boundary_minimum_value": "0.96",
+                                "boundary_maximum_value": "1.00"
                               },
                               "id": "d8583ba3-259f-49f0-be86-eaa670198c25"
                             }
