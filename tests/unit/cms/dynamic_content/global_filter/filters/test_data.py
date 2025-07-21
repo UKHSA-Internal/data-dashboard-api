@@ -1,19 +1,19 @@
 from unittest import mock
 
 import pytest
-from wagtail.blocks import StructBlock, StructBlockValidationError
+from wagtail.blocks import StructBlock, StructBlockValidationError, StructValue
 
 from cms.dynamic_content.global_filter.filter_types import DataFilters
 
 
 class TestDataFilters:
     @property
-    def valid_payload(self) -> dict[str, list[dict[str, str]]]:
+    def valid_payload(self) -> dict:
         return {
             "data_filters": [],
             "categories_to_group_by": [
-                {"data_category": "stratum"},
-                {"data_category": "topic"},
+                {"type": "category", "value": {"data_category": "stratum"}},
+                {"type": "category", "value": {"data_category": "topic"}},
             ],
         }
 
@@ -28,13 +28,14 @@ class TestDataFilters:
         Then no error should be raised
         """
         # Given
-        data_filters = DataFilters(**self.valid_payload)
+        data_filters = DataFilters()
+        value: StructValue = data_filters.to_python(value=self.valid_payload)
 
         # When
-        data_filters.clean(self.valid_payload)
+        data_filters.clean(value=value)
 
         # Then
-        mocked_super_clean.assert_called_once_with(value=self.valid_payload)
+        mocked_super_clean.assert_called_once_with(value=value)
 
     def test_clean_raises_error_with_duplicate_selected_categories(self):
         """
@@ -45,13 +46,14 @@ class TestDataFilters:
         """
         # Given
         invalid_payload = {**self.valid_payload}
-        invalid_payload["categories_to_group_by"][0]["data_category"] = "topic"
-        invalid_payload["categories_to_group_by"][1]["data_category"] = "topic"
-        data_filters = DataFilters(**invalid_payload)
+        invalid_payload["categories_to_group_by"][0]["value"]["data_category"] = "topic"
+        invalid_payload["categories_to_group_by"][1]["value"]["data_category"] = "topic"
+        data_filters = DataFilters()
+        value: StructValue = data_filters.to_python(value=invalid_payload)
 
         # When / Then
         with pytest.raises(StructBlockValidationError) as error:
-            data_filters.clean(invalid_payload)
+            data_filters.clean(value=value)
 
         expected_error_message = (
             "The category of `topic` has been selected multiple times."
