@@ -59,7 +59,7 @@ class TestBuildCMSSite:
             "Influenza",
             "Other respiratory viruses",
             "COVER",
-            "Child vaccinations",
+            "Childhood vaccinations",
             "Access our data",
             "Weather health alerts",
             "Metrics Documentation",
