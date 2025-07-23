@@ -110,6 +110,8 @@ def create_cover_index_page(*, name: str, parent_page: Page) -> CompositePage:
         page=page,
     )
 
+    return page
+
 
 def create_topic_page(*, name: str, parent_page: Page) -> TopicPage:
     data = open_example_page_response(page_name=name)
