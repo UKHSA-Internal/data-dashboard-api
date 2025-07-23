@@ -111,7 +111,7 @@ class TestThresholdsFilter:
                         "boundary_maximum_value": "1.00",
                     },
                 }
-            ]
+            ],
         }
 
     def test_clean_passes_with_valid_payload(self):
