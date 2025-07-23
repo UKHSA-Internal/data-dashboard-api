@@ -74,3 +74,9 @@ class BaseChartsSerializer(serializers.Serializer):
         max_digits=10,
         decimal_places=1,
     )
+    legend_title = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text=help_texts.CHART_LEGEND_TITLE,
+    )
