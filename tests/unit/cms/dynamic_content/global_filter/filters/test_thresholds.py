@@ -100,6 +100,7 @@ class TestThresholdsFilter:
     @property
     def valid_payload(self) -> dict[str, list[dict[str, str]]]:
         return {
+            "label": "Select level of coverage (%)",
             "thresholds": [
                 {
                     "type": "threshold",
@@ -110,7 +111,7 @@ class TestThresholdsFilter:
                         "boundary_maximum_value": "1.00",
                     },
                 }
-            ]
+            ],
         }
 
     def test_clean_passes_with_valid_payload(self):
