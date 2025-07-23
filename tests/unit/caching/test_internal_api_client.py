@@ -23,7 +23,8 @@ class TestInternalAPIClient:
                 ("charts_endpoint_path", "/api/charts/v3/"),
                 ("tables_endpoint_path", "/api/tables/v4/"),
                 ("downloads_endpoint_path", "/api/downloads/v2/"),
-                ("geographies_endpoint_path", "/api/geographies/v2/"),
+                ("geographies_endpoint_path_deprecated", "/api/geographies/v2/"),
+                ("geographies_endpoint_path", "/api/geographies/v3/"),
                 ("global_banners_endpoint_path", "/api/global-banners/v1"),
                 ("menus_endpoint_path", "/api/menus/v1"),
             ]
