@@ -26,9 +26,12 @@ class GeographyFilterElement(blocks.StructBlock):
         icon = "site"
 
 
+class GeographyFilterElements(blocks.StreamBlock):
+    geography_filter = GeographyFilterElement()
+
+
 class GeographyFilter(blocks.StructBlock):
-    geography_types = blocks.ListBlock(
-        child_block=GeographyFilterElement(),
+    geography_types = GeographyFilterElements(
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_GEOGRAPHY_FILTER,
     )
@@ -36,21 +39,41 @@ class GeographyFilter(blocks.StructBlock):
     class Meta:
         icon = "site"
 
-    def clean(self, value):
-        list_name = "geography_types"
-        field_names = ["colour", "geography_type"]
-        for field_name in field_names:
-            self._validate_choices_are_unique(
-                field_name=field_name, choices=value[list_name]
-            )
-
+    def clean(self, value: blocks.StructValue):
+        self._validate_choices_are_unique(value=value)
         return super().clean(value=value)
 
     @classmethod
-    def _validate_choices_are_unique(cls, *, field_name, choices) -> None:
-        choices = [item.get(field_name) for item in choices]
-        if len(set(choices)) != len(choices):
-            message = (
-                f"{field_name} field must be unique, please review your selections."
-            )
-            raise ValidationError(message)
+    def _validate_choices_are_unique(cls, *, value: blocks.StructValue) -> None:
+        selected_labels = set()
+        selected_colours = set()
+        selected_geography_types = set()
+
+        geography_types: blocks.StreamValue = value["geography_types"]
+
+        for geography_type in geography_types:
+            geography_type_value: blocks.StructValue = geography_type.value
+            label_selection: str = geography_type_value["label"]
+            colour_selection: str = geography_type_value["colour"]
+            geography_type_selection: str = geography_type_value["geography_type"]
+
+            block_errors = {}
+
+            if label_selection in selected_labels:
+                message = f"The label of `{label_selection}` has been used multiple times. This must be unique, please review your selection. "
+                block_errors["label"] = ValidationError(message)
+
+            if colour_selection in selected_colours:
+                message = f"The colour of `{colour_selection}` has been used multiple times. This must be unique, please review your selection. "
+                block_errors["colour"] = ValidationError(message)
+
+            if geography_type_selection in selected_geography_types:
+                message = f"The geography_type of `{geography_type_selection}` has been used multiple times. This must be unique, please review your selection. "
+                block_errors["geography_type"] = ValidationError(message)
+
+            if block_errors:
+                raise blocks.StructBlockValidationError(block_errors=block_errors)
+
+            selected_labels.add(label_selection)
+            selected_colours.add(colour_selection)
+            selected_geography_types.add(geography_type_selection)

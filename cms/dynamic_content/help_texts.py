@@ -488,3 +488,45 @@ E.g. To build the following:
 </pre>
 The selections for this should be `stratum` and then `topic`.
 """
+
+FILTER_LINKED_MAP_COMPONENT: str = """
+This filter linked map can be used to display metric data configured through a data filter
+in the global filter component to represent this data geographically.
+"""
+
+FILTER_LINKED_SUB_PLOT_CHART_TEMPLATE: str = """
+This filter linked sub plot chart can be used to display metric data configured through a data filter
+in the global filter component. 
+This template will render a new chart for each geography selected by the user 
+for the selected entities according to the data filter.
+"""
+
+FILTER_LINKED_SUB_PLOT_CHART_LEGEND_TITLE: str = """
+This legend title will be used for the title of the sub plot chart legends. 
+Eg. the colours associated with the geographies from global filter.
+"""
+
+FILTER_LINKED_TIME_SERIES_CHART_TEMPLATE: str = """
+This filter linked time series chart can be used to display metric data configured through a data filter
+in the global filter component. 
+This template will render a new chart for each geography selected by the user 
+for the selected entities according to the data filter.
+"""
+
+FILTER_LINKED_TIME_SERIES_CHART_LEGEND_TITLE: str = """
+This legend title will be used for the title of the time series chart legends. 
+Eg. the colours associated with the selected data entities from global filter.
+"""
+
+FILTER_LINKED_COMPONENT_TITLE_PREFIX: str = """
+This will form the prefix of the title which will be associated with the filter linked component.
+The full title will be structured as follows:
+
+<pre>
+[this prefix] between [the selected time period label] ([the selected region], [the selected lower geography type value]).
+</pre>
+"""
+
+FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD: str = """
+An optional value to draw a target threshold for.
+"""

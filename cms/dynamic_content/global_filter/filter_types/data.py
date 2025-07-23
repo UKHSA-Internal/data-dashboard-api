@@ -24,7 +24,7 @@ def make_parameter_field_element(
 ) -> blocks.StructBlock:
     return blocks.StructBlock(
         [
-            ("label", blocks.CharBlock(required=True)),
+            ("label", blocks.CharBlock(required=False)),
             ("value", blocks.ChoiceBlock(choices=choices, required=True)),
         ],
         help_text=help_text,
@@ -124,14 +124,21 @@ class DataCategorySelectionElement(blocks.StructBlock):
         icon = "form"
 
 
+class DataFilterElements(blocks.StreamBlock):
+    data_filter = DataFilterElement()
+
+
+class CategoryFilters(blocks.StreamBlock):
+    category = DataCategorySelectionElement()
+
+
 class DataFilters(blocks.StructBlock):
-    data_filters = blocks.ListBlock(
-        child_block=DataFilterElement(),
+    label = blocks.CharBlock(required=True)
+    data_filters = DataFilterElements(
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_DATA_FILTER,
     )
-    categories_to_group_by = blocks.ListBlock(
-        child_block=DataCategorySelectionElement(),
+    categories_to_group_by = CategoryFilters(
         min_num=MINIMUM_ROWS_COUNT,
         max_num=MAXIMUM_DATA_CATEGORIES,
         help_text=help_texts.DATA_FILTERS_CATEGORIES_TO_GROUP_BY,
@@ -140,17 +147,19 @@ class DataFilters(blocks.StructBlock):
     class Meta:
         icon = "sliders"
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue):
         self._validate_selected_categories_are_unique(value=value)
         return super().clean(value=value)
 
     @classmethod
-    def _validate_selected_categories_are_unique(cls, *, value: dict) -> None:
-        selected_categories: list[blocks.StructValue] = value["categories_to_group_by"]
+    def _validate_selected_categories_are_unique(
+        cls, *, value: blocks.StructValue
+    ) -> None:
+        selected_categories: blocks.StreamValue = value["categories_to_group_by"]
         seen_categories: set[str] = set()
 
         for category in selected_categories:
-            category_name: str = category["data_category"]
+            category_name: str = category.value["data_category"]
 
             if category_name in seen_categories:
                 block_errors = {

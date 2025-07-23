@@ -7,6 +7,11 @@ from wagtail.blocks import (
 
 from cms.dynamic_content import blocks, cards, help_texts
 from cms.dynamic_content.global_filter.card import GlobalFilterCard
+from cms.dynamic_content.global_filter.components import (
+    FilterLinkedMap,
+    FilterLinkedSubPlotChartTemplate,
+    FilterLinkedTimeSeriesChartTemplate,
+)
 
 
 class ContentCards(StreamBlock):
@@ -15,6 +20,18 @@ class ContentCards(StreamBlock):
     headline_numbers_row_card = cards.HeadlineNumbersRowCard()
     global_filter_card = GlobalFilterCard(
         help_text=help_texts.GLOBAL_FILTER_COMPONENT,
+    )
+    filter_linked_map = FilterLinkedMap(
+        required=False,
+        help_text=help_texts.FILTER_LINKED_MAP_COMPONENT,
+    )
+    filter_linked_sub_plot_chart_template = FilterLinkedSubPlotChartTemplate(
+        required=False,
+        help_text=help_texts.FILTER_LINKED_SUB_PLOT_CHART_TEMPLATE,
+    )
+    filter_linked_time_series_chart_template = FilterLinkedTimeSeriesChartTemplate(
+        required=False,
+        help_text=help_texts.FILTER_LINKED_TIME_SERIES_CHART_TEMPLATE,
     )
 
 
