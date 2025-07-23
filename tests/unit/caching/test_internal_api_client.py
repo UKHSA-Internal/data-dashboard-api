@@ -327,12 +327,22 @@ class TestInternalAPIClient:
 
         # Then
         assert response == internal_api_client._client.get.return_value
-        expected_path = f"{internal_api_client.geographies_endpoint_path}{topic}"
-
-        mocked_client.get.assert_called_once_with(
-            path=expected_path,
-            headers=internal_api_client.build_headers(),
+        expected_path = internal_api_client.geographies_endpoint_path
+        headers = internal_api_client.build_headers()
+        deprecated_api_call = mock.call(
+            path=f"{internal_api_client.geographies_endpoint_path_deprecated}{topic}",
+            headers=headers,
             format="json",
+        )
+        live_api_call = mock.call(
+            path=expected_path,
+            query_params={"topic": topic},
+            headers=headers,
+            format="json",
+        )
+
+        mocked_client.get.assert_has_calls(
+            calls=[deprecated_api_call, live_api_call], any_order=False
         )
 
     def test_hit_pages_list_endpoint_delegates_call_correctly(self):
