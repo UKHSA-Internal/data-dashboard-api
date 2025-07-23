@@ -16,7 +16,7 @@ from cms.dynamic_content.blocks import (
 )
 from cms.dynamic_content.components import (
     ChartComponent,
-    DualCategoryChartSegmentComponent,
+    DualCategoryChartSegmentComponents,
     DualCategoryChartStaticFieldComponent,
     HeadlineChartComponent,
     SimplifiedChartComponent,
@@ -377,8 +377,7 @@ class DualCategoryChartCard(blocks.StructBlock):
         help_text=help_texts.SECONDARY_CATEGORY,
     )
 
-    segments = blocks.ListBlock(
-        DualCategoryChartSegmentComponent(),
+    segments = DualCategoryChartSegmentComponents(
         min_num=MINIMUM_SEGMENTS_COUNT,
     )
 
