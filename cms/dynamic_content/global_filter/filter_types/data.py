@@ -168,12 +168,14 @@ class DataFilters(blocks.StructBlock):
     class Meta:
         icon = "sliders"
 
-    def clean(self, value):
+    def clean(self, value: blocks.StructValue):
         self._validate_selected_categories_are_unique(value=value)
         return super().clean(value=value)
 
     @classmethod
-    def _validate_selected_categories_are_unique(cls, *, value: dict) -> None:
+    def _validate_selected_categories_are_unique(
+        cls, *, value: blocks.StructValue
+    ) -> None:
         selected_categories: blocks.StreamValue = value["categories_to_group_by"]
         seen_categories: set[str] = set()
 
