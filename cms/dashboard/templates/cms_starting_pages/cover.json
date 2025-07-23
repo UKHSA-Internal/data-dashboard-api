@@ -1,51 +1,94 @@
 {
-  "id": 82,
-  "meta": {
-    "seo_title": "COVER | UKHSA data dashboard",
-    "search_description": "",
-    "type": "composite.CompositePage",
-    "detail_url": "https://localhost/api/pages/82/",
-    "html_url": "https://localhost/cover/",
-    "slug": "cover",
-    "show_in_menus": false,
-    "first_published_at": "2025-07-21T11:18:55.961834+01:00",
-    "alias_of": null,
-    "parent": {
-      "id": 3,
-      "meta": {
-        "type": "home.UKHSARootPage",
-        "detail_url": "https://localhost/api/pages/3/",
-        "html_url": null
-      },
-      "title": "UKHSA Dashboard Root"
-    }
-  },
-  "title": "COVER",
-  "body": [
-    {
-      "type": "internal_page_links",
-      "value": [
-        {
-          "type": "page_link",
-          "value": {
-            "title": "Childhood vaccinations",
-            "sub_title": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "page": "https://localhost/cover/childhood-vaccinations/"
-          },
-          "id": "397b13be-8155-4d5b-9673-d939c9d436d1"
+    "id": 80,
+    "meta": {
+        "seo_title": "COVER | UKHSA data dashboard",
+        "search_description": "",
+        "type": "composite.CompositePage",
+        "detail_url": "https://localhost/api/pages/80/",
+        "html_url": "https://localhost/cover/",
+        "slug": "cover",
+        "show_in_menus": false,
+        "first_published_at": "2025-07-23T11:22:56.440867+01:00",
+        "alias_of": null,
+        "parent": {
+            "id": 3,
+            "meta": {
+                "type": "home.UKHSARootPage",
+                "detail_url": "https://localhost/api/pages/3/",
+                "html_url": null
+            },
+            "title": "UKHSA Dashboard Root"
         }
-      ],
-      "id": "29a9c28a-d009-46a0-a61e-8b2aef048ee0"
-    }
-  ],
-  "seo_change_frequency": 5,
-  "seo_priority": "0.5",
-  "last_updated_at": "2025-07-21T11:30:44.744755+01:00",
-  "last_published_at": "2025-07-21T11:29:37.500965+01:00",
-  "active_announcements": [],
-  "related_links": [],
-  "related_links_layout": "Sidebar",
-  "page_description": "",
-  "show_pagination": true,
-  "pagination_size": 10
+    },
+    "title": "COVER",
+    "body": [
+        {
+            "type": "text",
+            "value": "<h2 data-block-key=\"4o3cw\">Vaccination and coverage</h2><p data-block-key=\"ejgqr\">Vaccination uptake is reported for the following age groups and vaccines:</p><h3 data-block-key=\"13qrp\">12 months</h3><ul><li data-block-key=\"7da2p\">6-in-1 (DTaP-IPV-Hib-(HepB)) </li><li data-block-key=\"aa580\">PCV (Pneumococcal conjugate vaccine) </li><li data-block-key=\"8oi3q\">Rota (Rotavirus vaccine) </li><li data-block-key=\"fa822\">MenB (Meningococcal group B) </li></ul><h3 data-block-key=\"183io\">24 months</h3><ul><li data-block-key=\"3f8pk\">6-in-1 booster (DTaP-IPV-Hib)  </li><li data-block-key=\"2cvhe\">4-in-1 booster (DTaP-IPV booster)  </li><li data-block-key=\"fpjk4\">MMR1 (Measles, mumps and rubella first dose)  </li><li data-block-key=\"5o8a9\">MMR2 (Measles, mumps and rubella second dose)  </li><li data-block-key=\"5k8dm\">Hib/MenC (Hib/Meningitis C booster) </li></ul><h3 data-block-key=\"f4vhg\">5 years</h3><ul><li data-block-key=\"6t1j4\">6-in-1 booster (DTaP-IPV-Hib)  </li><li data-block-key=\"a80iv\">4-in-1 booster (DTaP-IPV booster)  </li><li data-block-key=\"7i7ub\">MMR1 (Measles, mumps and rubella first dose)  </li><li data-block-key=\"f68pp\">MMR2 (Measles, mumps and rubella second dose)  </li><li data-block-key=\"kkdc\">Hib/MenC (Hib/Meningitis C booster) </li></ul>",
+            "id": "b3fd4f2e-1ccf-4e0b-ba7e-1748dce84869"
+        },
+        {
+            "type": "text",
+            "value": "<h2 data-block-key=\"4o3cw\">Geographic coverage and data availability</h2><h3 data-block-key=\"1o0fe\">Countries of the UK</h3><p data-block-key=\"csink\">The United Kingdom (UK) is composed of four countries: England, Scotland, Wales and Northern Ireland. Data is available from 2009-10 onwards.</p><h3 data-block-key=\"28rtn\">Regions in England</h3><p data-block-key=\"c0eap\">England is divided into nine regions for statistical purposes. These regions are: London, North East, North West, Yorkshire and The Humber, East Midlands, West Midlands, East of England, South East and South West. Data is available from 2009-10 onwards.</p><h3 data-block-key=\"2envu\">Upper Tier Local Authorities</h3><p data-block-key=\"9q1h0\">There are 152 upper-tier local authorities in England. These include unitary authorities, metropolitan districts, London boroughs, and counties. Data is available from 2013 - 14 onwards.</p>",
+            "id": "6f976d03-0bc9-42c1-96c4-d8a34121fb1c"
+        },
+        {
+            "type": "text",
+            "value": "<h2 data-block-key=\"4o3cw\">About the statistics</h2><p data-block-key=\"9pi3h\">These are National Statistics which means they meet the highest standards of trustworthiness, quality and public value as assessed by Code of Practice for Statistics.</p>",
+            "id": "92aa5e34-a874-4998-8578-c48e22aed95a"
+        },
+        {
+            "type": "internal_page_links",
+            "value": [
+                {
+                    "type": "page_link",
+                    "value": {
+                        "title": "Childhood vaccinations",
+                        "sub_title": "Data about annual childhood vaccination statistics for England up to 2022-2023 and relates to routine vaccinations offered to all children up to the age of 5 years.",
+                        "page": "https://localhost/cover/childhood-vaccinations/"
+                    },
+                    "id": "c36d19c1-3a5e-4fcf-b696-91468c609369"
+                }
+            ],
+            "id": "41948072-024e-4566-85b5-b02706838b97"
+        }
+    ],
+    "seo_change_frequency": 5,
+    "seo_priority": "0.5",
+    "last_updated_at": "2025-07-23T11:31:53.167636+01:00",
+    "last_published_at": "2025-07-23T11:31:53.167636+01:00",
+    "active_announcements": [],
+    "related_links": [
+        {
+            "id": 10,
+            "meta": {
+                "type": "composite.CompositeRelatedLink"
+            },
+            "title": "Cover of vaccination evaluated rapidly (COVER) programme: annual data",
+            "url": "https://www.gov.uk/government/publications/cover-of-vaccination-evaluated-rapidly-cover-programme-annual-data",
+            "body": ""
+        },
+        {
+            "id": 11,
+            "meta": {
+                "type": "composite.CompositeRelatedLink"
+            },
+            "title": "Childhood Vaccination Coverage Statistics, England, 2023-24",
+            "url": "https://digital.nhs.uk/data-and-information/publications/statistical/nhs-immunisation-statistics/england-2023-24",
+            "body": ""
+        },
+        {
+            "id": 12,
+            "meta": {
+                "type": "composite.CompositeRelatedLink"
+            },
+            "title": "Code of Practice for Official Statistics",
+            "url": "https://code.statisticsauthority.gov.uk/",
+            "body": ""
+        }
+    ],
+    "related_links_layout": "Sidebar",
+    "page_description": "<p data-block-key=\"ab6i7\">Childhood vaccinations include data collected through the Cover of Vaccination Evaluation Rapidly (COVER) programme. The data allows the comparison of vaccination uptake across time and geography.<br/></p><p data-block-key=\"ff20v\">This includes statistics collected for routine vaccinations offered between the ages of 12 months and 5 years for England up to the years 2022-23.<br/></p><p data-block-key=\"dt76j\">The data show the number of children vaccinated as a proportion of the eligible population (coverage) and are derived from information collected by the UK Health Security Agency (UKHSA) through the COVER programme.</p>",
+    "show_pagination": true,
+    "pagination_size": 10
 }
