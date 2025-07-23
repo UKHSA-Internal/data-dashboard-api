@@ -45,7 +45,7 @@ def create_respiratory_viruses_index_page_body() -> list[dict]:
 
 
 def create_cover_index_page_body() -> list[dict]:
-    childhood_vaccinations_page = TopicPage.objects.get(slug="childhood-vaccinations")
+    childhood_vaccinations_topic_page = TopicPage.objects.get(slug="childhood-vaccinations")
     return [
         {
             "type": "text",
@@ -75,7 +75,7 @@ def create_cover_index_page_body() -> list[dict]:
                     "value": {
                         "title": "Childhood vaccinations",
                         "sub_title": "Data about annual childhood vaccination statistics for England up to 2022-2023 and relates to routine vaccinations offered to all children up to the age of 5 years.",
-                        "page": childhood_vaccinations_page.id,
+                        "page": childhood_vaccinations_topic_page.id,
                     },
                     "id": "c36d19c1-3a5e-4fcf-b696-91468c609369",
                 }

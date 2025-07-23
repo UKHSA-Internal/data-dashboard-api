@@ -149,7 +149,7 @@ class Command(BaseCommand):
         # Because the index page links to these pages
         # they need to be created first, referenced and then moved under the index page
         cover_index_page = build_cms_site_helpers.create_cover_index_page(
-            name="cover", parent_page=root_page
+            name="childhood_vaccinations_index", parent_page=root_page
         )
 
         childhood_vaccinations_page.move(target=cover_index_page, pos="last-child")
