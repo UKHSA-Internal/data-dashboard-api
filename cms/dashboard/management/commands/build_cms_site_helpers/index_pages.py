@@ -45,7 +45,9 @@ def create_respiratory_viruses_index_page_body() -> list[dict]:
 
 
 def create_cover_index_page_body() -> list[dict]:
-    childhood_vaccinations_topic_page = TopicPage.objects.get(slug="childhood-vaccinations")
+    childhood_vaccinations_topic_page = TopicPage.objects.get(
+        slug="childhood-vaccinations"
+    )
     return [
         {
             "type": "text",
