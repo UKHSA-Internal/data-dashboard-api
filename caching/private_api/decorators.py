@@ -18,7 +18,7 @@ def is_caching_v2_enabled() -> bool:
     return os.environ.get("CACHING_V2_ENABLED", "").lower() in {"true", "1"}
 
 
-def cache_response(timeout: int | None = None, ns2: bool = False):
+def cache_response(timeout: int | None = None, is_reserved_namespace: bool = False):
     """Decorator to wrap API views to use a previously cached response. Otherwise, calculate and save on the way out.
 
     Notes:
@@ -36,6 +36,9 @@ def cache_response(timeout: int | None = None, ns2: bool = False):
     Args:
         timeout: The number of seconds after which the response is expired
             and evicted from the cache
+        is_reserved_namespace: Boolean switch to store the data
+            in the reserved / long-lived namespace within the cache.
+            Defaults to `False`.
 
     Returns:
         The response containing the results of the request.
@@ -48,7 +51,7 @@ def cache_response(timeout: int | None = None, ns2: bool = False):
         @wraps(view_function)
         def wrapped_view(*args, **kwargs) -> Response:
             return _retrieve_response_from_cache_or_calculate(
-                view_function, timeout, ns2, *args, **kwargs
+                view_function, timeout, is_reserved_namespace, *args, **kwargs
             )
 
         return wrapped_view
@@ -57,7 +60,7 @@ def cache_response(timeout: int | None = None, ns2: bool = False):
 
 
 def _retrieve_response_from_cache_or_calculate(
-    view_function, timeout, ns2, *args, **kwargs
+    view_function, timeout, is_reserved_namespace, *args, **kwargs
 ) -> Response:
     """Gets the response from the cache, otherwise recalculates from the view
 
@@ -74,6 +77,9 @@ def _retrieve_response_from_cache_or_calculate(
         view_function: The view associated with the endpoint
         timeout: The number of seconds after which the response is expired
             and evicted from the cache
+        is_reserved_namespace: Boolean switch to store the data
+            in the reserved / long-lived namespace within the cache.
+            Defaults to `False`.
         *args: args provided by the rest framework middleware
         **kwargs: kwargs provided by the rest framework middleware
             Note that `cache_management` can be injected in through the kwargs
@@ -94,7 +100,7 @@ def _retrieve_response_from_cache_or_calculate(
         request=request
     )
 
-    if ns2:
+    if is_reserved_namespace:
         cache_entry_key = f"ns2-{cache_entry_key}"
 
     if request.headers.get(CACHE_FORCE_REFRESH_HEADER_KEY, False):

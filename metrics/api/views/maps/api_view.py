@@ -30,7 +30,7 @@ class MapsView(APIView):
             )
         ],
     )
-    @cache_response(ns2=True)
+    @cache_response(is_reserved_namespace=True)
     def post(cls, request):
         serializer = MapsRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
