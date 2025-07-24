@@ -11,6 +11,9 @@ from caching.private_api.client import CacheClient, InMemoryCacheClient
 class CacheMissError(Exception): ...
 
 
+RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
+
+
 class CacheManagement:
     """This is the abstraction used to save and retrieve items in the cache
 
@@ -20,8 +23,15 @@ class CacheManagement:
 
     """
 
-    def __init__(self, *, in_memory: bool, client: CacheClient | None = None):
+    def __init__(
+        self,
+        *,
+        in_memory: bool,
+        client: CacheClient | None = None,
+        reserved_namespace_key_prefix: str = RESERVED_NAMESPACE_KEY_PREFIX,
+    ):
         self._client = client or self._create_cache_client(in_memory=in_memory)
+        self._reserved_namespace_key_prefix = reserved_namespace_key_prefix
 
     @staticmethod
     def _create_cache_client(*, in_memory: bool) -> CacheClient:
@@ -111,7 +121,9 @@ class CacheManagement:
             None
 
         """
-        self._client.clear_non_ns2_keys()
+        self._client.clear_non_reserved_keys(
+            reserved_namespace_key_prefix=self._reserved_namespace_key_prefix
+        )
 
     def _render_response(self, *, response: Response) -> Response:
         if response.headers["Content-Type"] == "text/csv":
