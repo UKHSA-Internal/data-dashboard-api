@@ -127,6 +127,50 @@ class CacheManagement:
         response.render()
         return response
 
+    # Cache key construction
+
+    def build_cache_entry_key_for_request(
+        self, *, request: Request, is_reserved_namespace: bool
+    ) -> str:
+        """Builds a hashed cache entry key for a request
+
+        Args:
+            request: The incoming request which is to be hashed
+            is_reserved_namespace: Boolean switch to store the data
+                in the reserved / long-lived namespace within the cache.
+                Defaults to `False`.
+
+        Returns:
+            A hashed string representation
+            of the given request taking its path
+            and request body or query parameters into account
+            depending on if it is a POST or GET request
+            as well as whether the data sits
+            in the reserved namespace or not.
+
+        Raises:
+            `ValueError`: If the request is not an HTTP GET or POST request
+
+        """
+        cache_key: str = self._build_standalone_key_for_request(request=request)
+        if is_reserved_namespace:
+            cache_key = f"{RESERVED_NAMESPACE_KEY_PREFIX}-{cache_key}"
+
+        return cache_key
+
+    def _build_standalone_key_for_request(self, *, request: Request) -> str:
+        match request.method:
+            case "POST":
+                data = request.data
+            case "GET":
+                data = request.query_params.dict()
+            case _:
+                raise ValueError
+
+        return self.build_cache_entry_key_for_data(
+            endpoint_path=request.path, data=data
+        )
+
     def build_cache_entry_key_for_data(
         self, *, endpoint_path: str, data: dict[str, str]
     ) -> str:
@@ -150,34 +194,6 @@ class CacheManagement:
         data = dict(sorted(data.items()))
         data["endpoint_path"] = endpoint_path
         return data
-
-    def build_cache_entry_key_for_request(self, *, request: Request) -> str:
-        """Builds a hashed cache entry key for a request
-
-        Args:
-            request: The incoming request which is to be hashed
-
-        Returns:
-            A hashed string representation
-            of the given request taking its path
-            and request body or query parameters into account
-            depending on if it is a POST or GET request.
-
-        Raises:
-            `ValueError`: If the request is not an HTTP GET or POST request
-
-        """
-        match request.method:
-            case "POST":
-                data = request.data
-            case "GET":
-                data = request.query_params.dict()
-            case _:
-                raise ValueError
-
-        return self.build_cache_entry_key_for_data(
-            endpoint_path=request.path, data=data
-        )
 
     @staticmethod
     def create_hash_for_data(*, data: dict) -> str:
