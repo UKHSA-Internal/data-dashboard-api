@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from caching.internal_api_client import (
     CACHE_CHECK_HEADER_KEY,
-    CACHE_FORCE_REFRESH_HEADER_KEY, CACHE_NS2_KEY,
+    CACHE_FORCE_REFRESH_HEADER_KEY,
 )
 from caching.private_api.management import CacheManagement, CacheMissError
 
