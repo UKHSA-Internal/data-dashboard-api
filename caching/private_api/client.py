@@ -45,8 +45,14 @@ class CacheClient:
         """
         self._cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
-    def clear_non_ns2_keys(self) -> None:
-        """Deletes all keys in the cache which do not contain the `ns2` keyword
+    def clear_non_reserved_keys(self, reserved_namespace_key_prefix: str) -> None:
+        """Deletes all keys in the cache which are not within the reserved namespace
+
+        Args:
+            reserved_namespace_key_prefix: The prefix associated
+                with reserved namespace entries in the cache.
+                Any keys prefixed with this will not be cleared.
+                All others will be cleared by this method invocation.
 
         Notes:
             This allows us to keep hold of
@@ -59,8 +65,12 @@ class CacheClient:
             None
 
         """
-        low_grade_keys = [key for key in self._cache.scan_iter() if "ns2" not in key]
-        self._cache.delete_many(low_grade_keys)
+        non_reserved_keys = [
+            key
+            for key in self._cache.scan_iter()
+            if reserved_namespace_key_prefix not in key
+        ]
+        self._cache.delete_many(keys=non_reserved_keys)
 
     def clear(self) -> None:
         """Deletes all keys in the cache
@@ -126,8 +136,14 @@ class InMemoryCacheClient(CacheClient):
         """
         self._cache.clear()
 
-    def clear_non_ns2_keys(self):
-        """Deletes all keys in the cache which do not contain the `ns2` keyword
+    def clear_non_reserved_keys(self, reserved_namespace_key_prefix: str):
+        """Deletes all keys in the cache which are not within the reserved namespace
+
+        Args:
+            reserved_namespace_key_prefix: The prefix associated
+                with reserved namespace entries in the cache.
+                Any keys prefixed with this will not be cleared.
+                All others will be cleared by this method invocation.
 
         Notes:
             This allows us to keep hold of
@@ -140,6 +156,6 @@ class InMemoryCacheClient(CacheClient):
             None
 
         """
-        for key in self._cache.keys():
-            if "ns2" not in key:
+        for key in self._cache:
+            if reserved_namespace_key_prefix not in key:
                 self._cache.pop(key)
