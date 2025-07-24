@@ -528,7 +528,8 @@ class TestCacheManagement:
 
         # When
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-            request=mocked_request
+            request=mocked_request,
+            is_reserved_namespace=False,
         )
 
         # Then
@@ -555,7 +556,8 @@ class TestCacheManagement:
 
         # When
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-            request=mocked_request
+            request=mocked_request,
+            is_reserved_namespace=False,
         )
 
         # Then
@@ -590,7 +592,8 @@ class TestCacheManagement:
         # When / Then
         with pytest.raises(ValueError):
             cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-                request=mocked_request
+                request=mocked_request,
+                is_reserved_namespace=False,
             )
 
     def test_clear(self):
