@@ -97,11 +97,8 @@ def _retrieve_response_from_cache_or_calculate(
     cache_management = kwargs.pop("cache_management", CacheManagement(in_memory=False))
 
     cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
-        request=request
+        request=request, is_reserved_namespace=is_reserved_namespace
     )
-
-    if is_reserved_namespace:
-        cache_entry_key = f"ns2-{cache_entry_key}"
 
     if request.headers.get(CACHE_FORCE_REFRESH_HEADER_KEY, False):
         # If the `Cache-Force-Refresh` is True
