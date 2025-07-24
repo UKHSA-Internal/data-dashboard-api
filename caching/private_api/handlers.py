@@ -98,7 +98,7 @@ def force_cache_refresh_for_all_pages() -> None:
 
     """
     cache_management = CacheManagement(in_memory=False)
-    cache_management.clear_non_ns2_keys()
+    cache_management.clear_non_reserved_keys()
 
     private_api_crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
     area_selector_orchestrator = AreaSelectorOrchestrator(
