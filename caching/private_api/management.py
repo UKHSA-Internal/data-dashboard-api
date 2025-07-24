@@ -97,6 +97,22 @@ class CacheManagement:
         """
         self._client.clear()
 
+    def clear_non_ns2_keys(self):
+        """Deletes all keys in the cache which do not contain the `ns2` keyword
+
+        Notes:
+            This allows us to keep hold of
+            expensive, infrequently changing data in the cache
+            like maps data, whilst still allowing the
+            cheaper more frequently changing data types like
+            tables and charts to be cleared.
+
+        Returns:
+            None
+
+        """
+        self._client.clear_non_ns2_keys()
+
     def _render_response(self, *, response: Response) -> Response:
         if response.headers["Content-Type"] == "text/csv":
             return response

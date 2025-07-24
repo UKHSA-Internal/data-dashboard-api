@@ -30,8 +30,9 @@ class MapsView(APIView):
             )
         ],
     )
-    @cache_response()
+    @cache_response(ns2=True)
     def post(cls, request):
+        print('hitting endpoint')
         serializer = MapsRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

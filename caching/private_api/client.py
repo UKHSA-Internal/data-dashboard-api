@@ -45,6 +45,23 @@ class CacheClient:
         """
         self._cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
+    def clear_non_ns2_keys(self) -> None:
+        """Deletes all keys in the cache which do not contain the `ns2` keyword
+
+        Notes:
+            This allows us to keep hold of
+            expensive, infrequently changing data in the cache
+            like maps data, whilst still allowing the
+            cheaper more frequently changing data types like
+            tables and charts to be cleared.
+
+        Returns:
+            None
+
+        """
+        low_grade_keys = [key for key in self._cache.scan_iter() if "ns2" not in key]
+        self._cache.delete_many(low_grade_keys)
+
     def clear(self) -> None:
         """Deletes all keys in the cache
 
@@ -108,3 +125,21 @@ class InMemoryCacheClient(CacheClient):
 
         """
         self._cache.clear()
+
+    def clear_non_ns2_keys(self):
+        """Deletes all keys in the cache which do not contain the `ns2` keyword
+
+        Notes:
+            This allows us to keep hold of
+            expensive, infrequently changing data in the cache
+            like maps data, whilst still allowing the
+            cheaper more frequently changing data types like
+            tables and charts to be cleared.
+
+        Returns:
+            None
+
+        """
+        for key in self._cache.keys():
+            if "ns2" not in key:
+                self._cache.pop(key)
