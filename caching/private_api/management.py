@@ -107,8 +107,8 @@ class CacheManagement:
         """
         self._client.clear()
 
-    def clear_non_ns2_keys(self):
-        """Deletes all keys in the cache which do not contain the `ns2` keyword
+    def clear_non_reserved_keys(self):
+        """Deletes all keys in the cache which are not within the reserved namespace
 
         Notes:
             This allows us to keep hold of
