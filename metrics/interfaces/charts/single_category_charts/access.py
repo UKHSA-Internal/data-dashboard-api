@@ -322,7 +322,7 @@ class ChartsInterface:
         params = self.param_builder_for_line_with_shaded_section(
             plots_data=chart_generation_payload.plots
         )
-        breakpoint()
+        # breakpoint()
         return line_with_shaded_section.generate_chart_figure(**params)
 
     @classmethod
@@ -368,7 +368,7 @@ class ChartsInterface:
             y_axis_maximum_value=self.chart_request_params.y_axis_maximum_value,
             legend_title=self.chart_request_params.legend_title,
         )
-        breakpoint()
+        # breakpoint()
         return result
 
     def _build_chart_plots_data(self) -> list[PlotGenerationData]:

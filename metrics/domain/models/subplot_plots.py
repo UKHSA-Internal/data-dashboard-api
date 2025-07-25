@@ -1,27 +1,21 @@
 from decimal import Decimal
+from typing import AnyStr
 
 from pydantic import BaseModel
 
 
 class PlotGenerationData(BaseModel):
-    label: str
-    color: str
-    theme: str
-    sub_theme: str
-    topic: str
-    date_from: str
-    date_to: str
-    age: str
-    sex: str
-    stratum: str
-    geography_type: str
-    geograpy: str
+    parameters: SubplotPlotParameters
+    x_axis_values: Any
+    y_axis_values: Any
+    latest_date: Any = None
 
 
 
 class SubplotChartSubplotData(BaseModel):
     """Holds all the information needed to draw an individual chart / subplot"""
     subplot_title: str
+    subplot_parameters: dict[str, str]
     plots: list[PlotGenerationData]
 
 

@@ -14,6 +14,20 @@ class SubplotsInterface:
         self.chart_request_params = chart_request_params
         self.time_series_manager = core_time_series_manager
 
-    def _build_chart_subplots_data(self) -> list[str]:
-        """Creates a list of `SubplotData`"""
-        pass
+    @staticmethod
+    def build__subplots_data(self) -> list[str]:
+        """Creates a list of `SubplotData` models which hold the params and corresponding data for the requested subplots.
+
+        Notes:
+            Pydantic model...
+
+        Returns:
+            List[SubplotData]: A list of `SubplotData` models. for
+                each of the requested subplots.
+
+        """
+        subplot_data = []
+
+        # process and build subplot data objects...
+
+        return subplot_data

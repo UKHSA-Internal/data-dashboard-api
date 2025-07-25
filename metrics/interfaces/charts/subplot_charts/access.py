@@ -1,7 +1,11 @@
 from django.db.models.manager import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
+from metrics.domain.models.charts.subplot_charts import (
+    SubplotChartRequestParameters,
+)
+
+from metrics.interfaces.subplots.access import SubplotsInterface
 
 DEFAULT_SUBPLOT_CHART_TYPE = "bar"
 
@@ -18,7 +22,9 @@ class ChartsInterface:
         """
         self.chart_request_params = chart_request_params
         self.chart_type = DEFAULT_SUBPLOT_CHART_TYPE
-        # self.subplot_interface = SubplotsInterface
+        self.subplot_interface = SubplotsInterface(
+            chart_request_params=chart_request_params,
+        )
 
     def build_chart_generation_payload(self):
 
@@ -28,6 +34,10 @@ class ChartsInterface:
         # - SubplotChart will have a list of plots for each subplot (subplot = chart)
 
         # Implement methods to build subplot generation data and chart data
+        # subplot_data: list[] = []
+        subplot_data = self.subplot_interface.build_chart_subplots_data()
+
+        breakpoint()
 
         # subplot_data: list[SubplotGenerationData] self._build_chart_subplot_data()
         # return SubplotChartGenerationPayload(**properties)
