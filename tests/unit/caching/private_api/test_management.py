@@ -6,7 +6,11 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from caching.private_api.client import CacheClient, InMemoryCacheClient
-from caching.private_api.management import CacheManagement, CacheMissError
+from caching.private_api.management import (
+    CacheManagement,
+    CacheMissError,
+    RESERVED_NAMESPACE_KEY_PREFIX,
+)
 
 
 @pytest.fixture
@@ -32,6 +36,30 @@ class TestCacheManagement:
 
         # Then
         assert cache_management._client == mocked_cache_client
+
+    def test_reserved_namespace_key_prefix_can_be_provided_to_init(self):
+        """
+        Given a reserved namespace key prefix
+        When the `CacheManagement` class is initialized
+        Then the `_reserved_namespace_key_prefix` attribute
+            is set with the provided client
+        """
+        # Given
+        reserved_namespace_key_prefix = "abc-123"
+        mocked_cache_client = mock.Mock()
+
+        # When
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=mocked_cache_client,
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix,
+        )
+
+        # Then
+        assert (
+            cache_management._reserved_namespace_key_prefix
+            == reserved_namespace_key_prefix
+        )
 
     @pytest.mark.parametrize("in_memory", [True, False])
     @mock.patch.object(CacheManagement, "_create_cache_client")
@@ -528,7 +556,8 @@ class TestCacheManagement:
 
         # When
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-            request=mocked_request
+            request=mocked_request,
+            is_reserved_namespace=False,
         )
 
         # Then
@@ -555,13 +584,41 @@ class TestCacheManagement:
 
         # When
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-            request=mocked_request
+            request=mocked_request,
+            is_reserved_namespace=False,
         )
 
         # Then
         spy_build_cache_entry_key_for_data.assert_called_once_with(
             endpoint_path=mocked_request.path, data=mocked_request.query_params.dict()
         )
+
+    @mock.patch.object(CacheManagement, "_build_standalone_key_for_request")
+    def test_build_cache_entry_key_for_reserved_namespace_entry(
+        self,
+        mocked_build_standalone_key_for_request: mock.MagicMock,
+        cache_management_with_in_memory_cache: CacheManagement,
+    ):
+        """
+        Given a mocked POST request in the reserved namespace
+        When `build_cache_entry_key_for_request()` is called
+            from an instance of `CacheManagement`
+        Then cache key is returned with the reserved namespace prefix
+        """
+        # Given
+        mocked_build_standalone_key_for_request.return_value = "some-key"
+        mocked_request = mock.Mock(method="POST")
+
+        # When
+        cache_key: str = (
+            cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
+                request=mocked_request,
+                is_reserved_namespace=True,
+            )
+        )
+
+        # Then
+        assert cache_key == f"{RESERVED_NAMESPACE_KEY_PREFIX}-some-key"
 
     @pytest.mark.parametrize(
         "invalid_http_method",
@@ -590,7 +647,8 @@ class TestCacheManagement:
         # When / Then
         with pytest.raises(ValueError):
             cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
-                request=mocked_request
+                request=mocked_request,
+                is_reserved_namespace=False,
             )
 
     def test_clear(self):
@@ -608,3 +666,26 @@ class TestCacheManagement:
 
         # Then
         spy_client.clear.assert_called_once()
+
+    def test_clear_non_reserved_keys(self):
+        """
+        Given an instance of `CacheManagement`
+        When `clear_non_reserved_keys()` is called from the object
+        Then the call is delegated to the underlying client
+        """
+        # Given
+        reserved_namespace_key_prefix = "abc-123456-"
+        spy_client = mock.Mock()
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=spy_client,
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix,
+        )
+
+        # When
+        cache_management.clear_non_reserved_keys()
+
+        # Then
+        spy_client.clear_non_reserved_keys.assert_called_once_with(
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix
+        )

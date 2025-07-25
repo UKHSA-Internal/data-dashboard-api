@@ -35,6 +35,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         retrieved_response = _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
             None,  # timeout
+            False,  # is_reserved_namespace
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -68,6 +69,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
             None,  # timeout
+            False,  # is_reserved_namespace
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -103,7 +105,11 @@ class TestRetrieveResponseFromCacheOrCalculate:
 
         # When
         retrieved_response = _retrieve_response_from_cache_or_calculate(
-            mocked_view_function, None, *mocked_args, **mocked_kwargs
+            mocked_view_function,  # view_function
+            None,  # timeout
+            False,  # is_reserved_namespace
+            *mocked_args,
+            **mocked_kwargs,
         )
 
         # Then
@@ -148,6 +154,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         retrieved_response = _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
             None,  # timeout
+            False,  # is_reserved_namespace
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -184,6 +191,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         retrieved_response = _retrieve_response_from_cache_or_calculate(
             mock.Mock(),  # view_function
             None,  # timeout
+            False,  # is_reserved_namespace
             mock.Mock(),
             mocked_request,
             cache_management=mocked_cache_management,
@@ -215,6 +223,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
             _retrieve_response_from_cache_or_calculate(
                 mock.Mock(),  # view_function
                 None,  # timeout
+                False,  # is_reserved_namespace
                 mock.Mock(),
                 mocked_request,
                 cache_management=mocked_cache_management,
@@ -250,6 +259,7 @@ class TestRetrieveResponseFromCacheOrCalculate:
         retrieved_response = _retrieve_response_from_cache_or_calculate(
             mocked_view_function,  # view_function
             None,  # timeout
+            False,  # is_reserved_namespace
             mocked_args,
             mocked_request,
             cache_management=mock.Mock(),
