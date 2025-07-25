@@ -18,7 +18,7 @@ def is_caching_v2_enabled() -> bool:
     return os.environ.get("CACHING_V2_ENABLED", "").lower() in {"true", "1"}
 
 
-def cache_response(timeout: int | None = None, is_reserved_namespace: bool = False):
+def cache_response(*, timeout: int | None = None, is_reserved_namespace: bool = False):
     """Decorator to wrap API views to use a previously cached response. Otherwise, calculate and save on the way out.
 
     Notes:
