@@ -37,6 +37,30 @@ class TestCacheManagement:
         # Then
         assert cache_management._client == mocked_cache_client
 
+    def test_reserved_namespace_key_prefix_can_be_provided_to_init(self):
+        """
+        Given a reserved namespace key prefix
+        When the `CacheManagement` class is initialized
+        Then the `_reserved_namespace_key_prefix` attribute
+            is set with the provided client
+        """
+        # Given
+        reserved_namespace_key_prefix = "abc-123"
+        mocked_cache_client = mock.Mock()
+
+        # When
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=mocked_cache_client,
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix,
+        )
+
+        # Then
+        assert (
+            cache_management._reserved_namespace_key_prefix
+            == reserved_namespace_key_prefix
+        )
+
     @pytest.mark.parametrize("in_memory", [True, False])
     @mock.patch.object(CacheManagement, "_create_cache_client")
     def test_create_cache_client_is_delegated_to_during_init_when_client_not_provided(
@@ -642,3 +666,26 @@ class TestCacheManagement:
 
         # Then
         spy_client.clear.assert_called_once()
+
+    def test_clear_non_reserved_keys(self):
+        """
+        Given an instance of `CacheManagement`
+        When `clear_non_reserved_keys()` is called from the object
+        Then the call is delegated to the underlying client
+        """
+        # Given
+        reserved_namespace_key_prefix = "abc-123456-"
+        spy_client = mock.Mock()
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=spy_client,
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix,
+        )
+
+        # When
+        cache_management.clear_non_reserved_keys()
+
+        # Then
+        spy_client.clear_non_reserved_keys.assert_called_once_with(
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix
+        )
