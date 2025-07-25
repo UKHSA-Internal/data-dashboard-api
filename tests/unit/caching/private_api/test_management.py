@@ -6,7 +6,11 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from caching.private_api.client import CacheClient, InMemoryCacheClient
-from caching.private_api.management import CacheManagement, CacheMissError
+from caching.private_api.management import (
+    CacheManagement,
+    CacheMissError,
+    RESERVED_NAMESPACE_KEY_PREFIX,
+)
 
 
 @pytest.fixture
@@ -564,6 +568,33 @@ class TestCacheManagement:
         spy_build_cache_entry_key_for_data.assert_called_once_with(
             endpoint_path=mocked_request.path, data=mocked_request.query_params.dict()
         )
+
+    @mock.patch.object(CacheManagement, "_build_standalone_key_for_request")
+    def test_build_cache_entry_key_for_reserved_namespace_entry(
+        self,
+        mocked_build_standalone_key_for_request: mock.MagicMock,
+        cache_management_with_in_memory_cache: CacheManagement,
+    ):
+        """
+        Given a mocked POST request in the reserved namespace
+        When `build_cache_entry_key_for_request()` is called
+            from an instance of `CacheManagement`
+        Then cache key is returned with the reserved namespace prefix
+        """
+        # Given
+        mocked_build_standalone_key_for_request.return_value = "some-key"
+        mocked_request = mock.Mock(method="POST")
+
+        # When
+        cache_key: str = (
+            cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
+                request=mocked_request,
+                is_reserved_namespace=True,
+            )
+        )
+
+        # Then
+        assert cache_key == f"{RESERVED_NAMESPACE_KEY_PREFIX}-some-key"
 
     @pytest.mark.parametrize(
         "invalid_http_method",
