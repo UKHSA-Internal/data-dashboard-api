@@ -80,8 +80,22 @@ def check_cache_for_all_pages() -> None:
     )
 
 
-def force_cache_refresh_for_all_pages() -> None:
+def force_cache_refresh_for_all_pages(
+    *,
+    cache_management: CacheManagement | None = None,
+    private_api_crawler: PrivateAPICrawler | None = None,
+) -> None:
     """Forcibly refresh the cache for all pages
+
+    Args:
+        `cache_management`: A `CacheManagement` object
+            which will be used to clear the cache
+            prior to filling the cache again.
+            Defaults to a concrete `CacheManagement` object
+        `private_api_crawler`: A `PrivateAPICrawler` object
+            which will be used to process the pages.
+            Defaults to an object with an `InternalAPIClient`
+            set to force cache refreshes.
 
     Notes:
         Currently "all pages" means the following:
@@ -97,10 +111,13 @@ def force_cache_refresh_for_all_pages() -> None:
         None
 
     """
-    cache_management = CacheManagement(in_memory=False)
+    cache_management = cache_management or CacheManagement(in_memory=False)
     cache_management.clear_non_reserved_keys()
 
-    private_api_crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
+    private_api_crawler = (
+        private_api_crawler
+        or PrivateAPICrawler.create_crawler_for_force_cache_refresh()
+    )
     area_selector_orchestrator = AreaSelectorOrchestrator(
         geographies_api_crawler=private_api_crawler.geography_api_crawler
     )
