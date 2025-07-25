@@ -136,7 +136,7 @@ class InMemoryCacheClient(CacheClient):
         """
         self._cache.clear()
 
-    def clear_non_reserved_keys(self, reserved_namespace_key_prefix: str):
+    def clear_non_reserved_keys(self, reserved_namespace_key_prefix: str) -> None:
         """Deletes all keys in the cache which are not within the reserved namespace
 
         Args:
@@ -156,6 +156,8 @@ class InMemoryCacheClient(CacheClient):
             None
 
         """
-        for key in self._cache:
-            if reserved_namespace_key_prefix not in key:
-                self._cache.pop(key)
+        non_reserved_keys = [
+            key for key in self._cache if reserved_namespace_key_prefix not in key
+        ]
+        for key in non_reserved_keys:
+            self._cache.pop(key)
