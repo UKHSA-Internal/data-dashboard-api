@@ -79,6 +79,30 @@ class TestCacheClient:
         # Then
         spy_cache.clear.assert_called_once()
 
+    @mock.patch(f"{MODULE_PATH}.cache")
+    def test_clear_non_reserved_keys_delegates_call(self, spy_cache: mock.MagicMock):
+        """
+        Given an instance of the `CacheClient`
+        When `clear_non_reserved_keys()` is called from the client
+        Then the call is delegated to the underlying cache
+        """
+        # Given
+        reserved_namespace_key_prefix = "reserved-ns"
+        cache_client = CacheClient()
+
+        # When
+        cache_client.clear_non_reserved_keys(
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix
+        )
+
+        # Then
+        all_cache_keys = spy_cache.scan_iter.return_value
+        filtered_non_reserved_keys = [
+            key for key in all_cache_keys if reserved_namespace_key_prefix not in key
+        ]
+
+        spy_cache.delete_many.assert_called_once_with(keys=filtered_non_reserved_keys)
+
 
 class TestInMemoryCacheClient:
     def test_put_stores_given_value(self):
@@ -161,3 +185,30 @@ class TestInMemoryCacheClient:
 
         # Then
         assert fake_cache_entry_key not in in_memory_cache_client._cache
+
+    def test_clear_non_reserved_keys_flushes_all_items(self):
+        """
+        Given a number of cache keys
+        When `clear_non_reserved_keys()` is called
+            from an instance of the `InMemoryCacheClient`
+        Then only the non-reserved keys are deleted
+        """
+        # Given
+        reserved_namespace_key_prefix = "reserved-ns"
+        non_reserved_cache_key = "abc"
+        reserved_cache_key = f"{reserved_namespace_key_prefix}-abc"
+
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {
+            reserved_cache_key: mock.Mock(),
+            non_reserved_cache_key: mock.Mock(),
+        }
+
+        # When
+        in_memory_cache_client.clear_non_reserved_keys(
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix
+        )
+
+        # Then
+        assert non_reserved_cache_key not in in_memory_cache_client._cache
+        assert reserved_cache_key in in_memory_cache_client._cache
