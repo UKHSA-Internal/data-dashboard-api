@@ -45,32 +45,32 @@ class CacheClient:
         """
         self._cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
-    def clear_non_reserved_keys(self, reserved_namespace_key_prefix: str) -> None:
-        """Deletes all keys in the cache which are not within the reserved namespace
-
-        Args:
-            reserved_namespace_key_prefix: The prefix associated
-                with reserved namespace entries in the cache.
-                Any keys prefixed with this will not be cleared.
-                All others will be cleared by this method invocation.
+    def list_keys(self) -> list[bytes]:
+        """Lists all the application-level keys in the cache
 
         Notes:
-            This allows us to keep hold of
-            expensive, infrequently changing data in the cache
-            like maps data, whilst still allowing the
-            cheaper more frequently changing data types like
-            tables and charts to be cleared.
+            This is the Django cache <-> Redis implementation
+            for listing all the keys in the cache.
+
+        Returns:
+            List of bytes where each byte represents a single key
+
+        """
+        low_level_client = self._cache._cache.get_client()
+        return low_level_client.keys("*ukhsa*")
+
+    def delete_many(self, keys: list) -> None:
+        """Deletes all the provided keys in the cache
+
+        Args:
+            keys: The cache keys to delete
+                within a bulk delete operation
 
         Returns:
             None
 
         """
-        non_reserved_keys = [
-            key
-            for key in self._cache.scan_iter()
-            if reserved_namespace_key_prefix not in key
-        ]
-        self._cache.delete_many(keys=non_reserved_keys)
+        self._cache.delete_many(keys=keys)
 
     def clear(self) -> None:
         """Deletes all keys in the cache
