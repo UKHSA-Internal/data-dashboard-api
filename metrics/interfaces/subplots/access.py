@@ -1,3 +1,10 @@
+from math import expm1
+from typing import Any
+from django.db.models.manager import Manager
+
+from metrics.data.models.core_models.timeseries import CoreTimeSeries
+
+from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 from metrics.domain.models.subplot_plots import SubplotChartRequestParams
 
 
@@ -5,17 +12,14 @@ class SubplotsInterface:
     def __init__(
         self,
         *,
-        chart_request_params: SubplotChartRequestParams,
+        chart_request_params: SubplotChartRequestParameters,
         core_time_series_manager: type[Manager] = CoreTimeSeries.objects,
     ):
-        """
-        WIP: ...
-        """
         self.chart_request_params = chart_request_params
         self.time_series_manager = core_time_series_manager
 
-    @staticmethod
-    def build__subplots_data(self) -> list[str]:
+
+    def build_subplots_data(self) -> list[str]:
         """Creates a list of `SubplotData` models which hold the params and corresponding data for the requested subplots.
 
         Notes:
@@ -26,8 +30,14 @@ class SubplotsInterface:
                 each of the requested subplots.
 
         """
-        subplot_data = []
+        subplots_data: list[Any] = []
 
-        # process and build subplot data objects...
+        for subplot in self.chart_request_params.subplots:
+            try:
+                subplot_data = []
+            except Exception:
+                continue
 
-        return subplot_data
+            subplots_data.append(subplot_data)
+
+        return subplots_data

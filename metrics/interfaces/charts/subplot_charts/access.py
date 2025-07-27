@@ -1,13 +1,28 @@
+from typing import Any
+from dataclasses import dataclass
+
+import plotly.graph_objects
+
 from django.db.models.manager import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
+from metrics.domain.models import ChartGenerationPayload
 from metrics.domain.models.charts.subplot_charts import (
     SubplotChartRequestParameters,
 )
-
+from metrics.domain.models.subplot_plots import (
+    SubplotChartRequestParams,
+    SubplotChartSubplotData
+)
 from metrics.interfaces.subplots.access import SubplotsInterface
 
 DEFAULT_SUBPLOT_CHART_TYPE = "bar"
+
+@dataclass
+class ChartOutput:
+    figure: plotly.graph_objects.Figure
+    description: str
+
 
 class ChartsInterface:
     def __init__(
@@ -26,43 +41,54 @@ class ChartsInterface:
             chart_request_params=chart_request_params,
         )
 
-    def build_chart_generation_payload(self):
-
-        # Build plots_data `GenerationData`
-        # What does this look like for subplot charts?
-        # - ChartsGenerationPayload.subplots = list[SubplotChart]
-        # - SubplotChart will have a list of plots for each subplot (subplot = chart)
-
-        # Implement methods to build subplot generation data and chart data
-        # subplot_data: list[] = []
-        subplot_data = self.subplot_interface.build_chart_subplots_data()
-
-        breakpoint()
-
-        # subplot_data: list[SubplotGenerationData] self._build_chart_subplot_data()
-        # return SubplotChartGenerationPayload(**properties)
-        pass
-
-    def generate_chart_output(self):
-        """Generate chart output..."""
-
-        # 1. build chart generation payload
-        chart_generation_payload = (
-            self.build_chart_generation_payload()
+    def _build_chart_generation_payload(self) -> SubplotChartRequestParams:
+        subplot_data: list[SubplotChartSubplotData] = (
+            self.subplot_interface.build_subplots_data()
+        )
+        return SubplotChartRequestParams(
+            subplot_data=subplot_data,
+            chart_width=self.chart_request_params.chart_width,
+            chart_height=self.chart_request_params.chart_height,
+            x_axis_title=self.chart_request_params.x_axis_title,
+            y_axis_title=self.chart_request_params.y_axis_title,
+            y_axis_minimum_value=self.chart_request_params.y_axis_minimum_value,
+            y_axis_maximum_value=self.chart_request_params.y_axis_maximum_value,
         )
 
-        # 2. build chart description
-        #    not required to generate the chart image leave to the end
+    @staticmethod
+    def _build_chart_figure(
+        chart_generation_payload: SubplotChartRequestParams
+    ) -> plotly.graph_objects.Figure:
+        return {}
 
-        # 3. build chart figure
-        #    updates the chart response for SVG with hover template details...
+    def generate_chart_output(self):
+        """Generates a `plotly` chart figure and a corresponding description
 
-        pass
+        Returns:
+            An enriched `ChartOutput` model containing:
+            figure of the created chart and description to summarise
+            the produced chart
+        """
+        chart_generation_payload: SubplotChartRequestParams = (
+            self._build_chart_generation_payload()
+        )
 
+        figure = self._build_chart_figure(
+            chart_generation_payload=chart_generation_payload,
+        )
 
-def generate_chart_file(*, chart_request_params: SubplotChartRequestParameters) -> bytes:
+        # Temporary chart description - following ticket to implement
+        chart_description = "Subplot chart comparing multiple metrics"
+
+        return ChartOutput(
+            figure=figure,
+            description=chart_description,
+        )
+
+def generate_chart_file(
+    *, chart_request_params: SubplotChartRequestParameters
+) -> bytes:
     charts_interface = ChartsInterface(chart_request_params=chart_request_params)
-    #chart_output: ChartOutput = charts_interface.generate_chart_output()
+    chart_output = charts_interface.generate_chart_output()
 
-    #return charts_interface.write_figure()
-    pass
+    # return charts_interface.write_figure()

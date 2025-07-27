@@ -5,6 +5,7 @@ from metrics.api.serializers import help_texts
 from metrics.domain.common.utils import (
     DEFAULT_CHART_HEIGHT,
     DEFAULT_CHART_WIDTH,
+    DEFAULT_Y_AXIS_MINIMUM_VAlUE,
 )
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 
@@ -43,6 +44,8 @@ class SubplotsSerializer(serializers.ListSerializer):
 
 
 class ChartParametersSerializer(serializers.Serializer):
+    x_axis = serializers.CharField(required=True)
+    y_axis = serializers.CharField(required=True)
     theme = serializers.CharField(required=True)
     sub_theme = serializers.CharField(required=True)
     date_from = serializers.DateField(required=True)
@@ -108,4 +111,27 @@ class SubplotChartRequestSerializer(serializers.Serializer):
     subplots = SubplotsSerializer()
 
     def to_models(self, request: Request):
-        return SubplotChartRequestParameters(**self.validated_data, request=request)
+        """
+        chart_parameters is used to reduce the duplication of data entry for content editors
+        for the chart request its really a part of the `subplot_parameters`. Its the combination
+        of these two objects that when addewd to the `plot` fields make the request.
+        """
+
+        for subplot in self.validated_data["subplots"]:
+            subplot["subplot_parameters"] = {
+                **self.validated_data["chart_parameters"],
+                **subplot["subplot_parameters"],
+            }
+
+        return SubplotChartRequestParameters(
+            file_format=self.validated_data["file_format"],
+            chart_height=self.validated_data["chart_height"] or DEFAULT_CHART_HEIGHT,
+            chart_width=self.validated_data["chart_width"] or DEFAULT_CHART_WIDTH,
+            x_axis_title=self.validated_data["x_axis_title"],
+            y_axis_title=self.validated_data["y_axis_title"],
+            y_axis_minimum_value=self.validated_data["y_axis_minimum_value"]
+            or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
+            y_axis_maximum_value=self.validated_data["y_axis_maximum_value"],
+            subplots=self.validated_data["subplots"],
+            request=request,
+        )
