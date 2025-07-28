@@ -96,6 +96,26 @@ class TestCacheClient:
         # Then
         spy_cache.delete_many.assert_called_once_with(keys=mocked_keys)
 
+    @mock.patch(f"{MODULE_PATH}.cache")
+    def test_list_keys(self, spy_cache: mock.MagicMock):
+        """
+        Given a `CacheClient`
+        When `list_keys()` is called from the client
+        Then the call is delegated
+            to the underlying low level redis client
+        """
+        # Given
+        cache_client = CacheClient()
+        prefix = "ukhsa"
+
+        # When
+        all_keys = cache_client.list_keys()
+
+        # Then
+        low_level_client = spy_cache._cache.get_client.return_value
+        low_level_client.keys.assert_called_once_with(f"*{prefix}*")
+        assert all_keys == low_level_client.keys.return_value
+
 
 class TestInMemoryCacheClient:
     def test_put_stores_given_value(self):
