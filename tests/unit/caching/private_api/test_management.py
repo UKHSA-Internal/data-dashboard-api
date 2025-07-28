@@ -668,6 +668,40 @@ class TestCacheManagement:
         # Then
         spy_client.clear.assert_called_once()
 
+    def test_clear_non_reserved_keys(self):
+        """
+        Given an instance of `CacheManagement`
+        When `clear_non_reserved_keys()` is called from the object
+        Then the call is delegated to the underlying client
+        """
+        # Given
+        reserved_namespace_key_prefix = "ns2"
+        non_reserved_complete_keys = [
+            "ukhsa:1:abc123",
+            "ukhsa:1:def456",
+            "ukhsa:1:abc123456",
+        ]
+        reserved_complete_keys = [
+            f"ukhsa:1:{reserved_namespace_key_prefix}-abc123",
+            f"ukhsa:1:{reserved_namespace_key_prefix}-qwerty",
+        ]
+        all_keys = non_reserved_complete_keys + reserved_complete_keys
+        spy_client = mock.Mock()
+        spy_client.list_keys.return_value = all_keys
+
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=spy_client,
+            reserved_namespace_key_prefix=reserved_namespace_key_prefix,
+        )
+
+        # When
+        cache_management.clear_non_reserved_keys()
+
+        # Then
+        non_reserved_keys = [key.split(":")[-1] for key in non_reserved_complete_keys]
+        spy_client.delete_many.assert_called_once_with(keys=non_reserved_keys)
+
     @mock.patch.object(CacheManagement, "_get_non_reserved_keys")
     def test_clear_non_reserved_keys(
         self, mocked_get_non_reserved_keys: mock.MagicMock
