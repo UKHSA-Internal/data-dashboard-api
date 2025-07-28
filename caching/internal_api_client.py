@@ -16,6 +16,8 @@ MENUS_ENDPOINT_PATH = f"{API_PREFIX}menus/v1"
 
 
 CACHE_FORCE_REFRESH_HEADER_KEY = "Cache-Force-Refresh"
+CACHE_RESERVED_NAMESPACE_HEADER_KEY = "Cache-Reserved-Namespace"
+
 
 PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS = (
     "common.CommonPage",
@@ -38,6 +40,7 @@ class InternalAPIClient:
         *,
         client: APIClient | None = None,
         force_refresh: bool = False,
+        reserved_namespace: bool = False,
     ):
         self._client = client or self.create_api_client()
 
@@ -54,6 +57,7 @@ class InternalAPIClient:
 
         # Header configurations
         self.force_refresh = force_refresh
+        self.reserved_namespace = reserved_namespace
 
     # API client
 
@@ -72,6 +76,7 @@ class InternalAPIClient:
     def build_headers(self) -> dict[str, bool]:
         return {
             CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh,
+            CACHE_RESERVED_NAMESPACE_HEADER_KEY: self.reserved_namespace,
         }
 
     # Query parameters
