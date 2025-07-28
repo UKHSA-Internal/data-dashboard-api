@@ -58,8 +58,10 @@ class CacheClient:
             List of bytes where each byte represents a single key
 
         """
+        key_prefix: str = settings.CACHES["default"]["KEY_PREFIX"]
         low_level_client = self._cache._cache.get_client()
-        return low_level_client.keys("*ukhsa*")
+        pattern = f"*{key_prefix}*"
+        return low_level_client.keys(pattern)
 
     def delete_many(self, keys: list[str]) -> None:
         """Deletes all the provided keys in the cache
