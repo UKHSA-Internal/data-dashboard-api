@@ -39,7 +39,6 @@ class InternalAPIClient:
         *,
         client: APIClient | None = None,
         force_refresh: bool = False,
-        cache_check_only: bool = False,
     ):
         self._client = client or self.create_api_client()
 
@@ -56,7 +55,6 @@ class InternalAPIClient:
 
         # Header configurations
         self.force_refresh = force_refresh
-        self.cache_check_only = cache_check_only
 
     # API client
 
@@ -75,7 +73,6 @@ class InternalAPIClient:
     def build_headers(self) -> dict[str, bool]:
         return {
             CACHE_FORCE_REFRESH_HEADER_KEY: self.force_refresh,
-            CACHE_CHECK_HEADER_KEY: self.cache_check_only,
         }
 
     # Query parameters

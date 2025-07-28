@@ -53,33 +53,6 @@ def crawl_all_pages(
     logger.info("Finished refreshing of cache in %s seconds", round(duration, 2))
 
 
-def check_cache_for_all_pages() -> None:
-    """Checks the cache for all pages but does not calculate responses
-
-    Notes:
-        Currently "all pages" means the following:
-        - The home page with the slug of "dashboard"
-        - All live/published topic pages
-
-    Returns:
-        None
-
-    Raises:
-        `CacheCheckResultedInMissError`: If any cache misses occur.
-            Note that this will error at the 1st cache miss.
-
-    """
-    private_api_crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
-    area_selector_orchestrator = AreaSelectorOrchestrator(
-        geographies_api_crawler=private_api_crawler.geography_api_crawler
-    )
-
-    crawl_all_pages(
-        private_api_crawler=private_api_crawler,
-        area_selector_orchestrator=area_selector_orchestrator,
-    )
-
-
 def force_cache_refresh_for_all_pages(
     *,
     cache_management: CacheManagement | None = None,
