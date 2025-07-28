@@ -106,7 +106,7 @@ class AreaSelectorOrchestrator:
             None
 
         """
-        private_api_crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
+        private_api_crawler = PrivateAPICrawler.create_crawler_to_force_write_in_non_reserved_namespace()
 
         # Since the payload to this method is intended to be serializable
         # via pickle -> multiprocessing or a message broker of some sort

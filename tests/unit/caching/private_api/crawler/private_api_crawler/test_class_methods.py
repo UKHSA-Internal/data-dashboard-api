@@ -4,15 +4,15 @@ from caching.private_api.crawler import PrivateAPICrawler
 class TestPrivateAPICrawlerCreate:
     # Tests for the create class methods
 
-    def test_create_crawler_for_force_cache_refresh(self):
+    def test_create_crawler_to_force_write_in_non_reserved_namespace(self):
         """
         Given no pre-existing `InternalAPIClient`
-        When the `create_crawler_for_force_cache_refresh` class method
-            is called from the `PrivateAPICrawler` class
+        When the `create_crawler_to_force_write_in_non_reserved_namespace`
+            class method is called from the `PrivateAPICrawler` class
         Then the correct object is returned
         """
         # Given / When
-        crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
+        crawler = PrivateAPICrawler.create_crawler_to_force_write_in_non_reserved_namespace()
 
         # Then
         assert crawler._internal_api_client.force_refresh
