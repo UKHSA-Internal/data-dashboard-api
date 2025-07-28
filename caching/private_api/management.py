@@ -146,18 +146,18 @@ class CacheManagement:
             None
 
         """
-        non_reserved_keys: list[CacheKey] = self._get_non_reserved_keys()
+        non_reserved_keys: list[str] = self._get_non_reserved_keys()
         self._client.delete_many(keys=non_reserved_keys)
 
-    def _get_non_reserved_keys(self) -> list[CacheKey]:
-        all_keys = self._get_keys()
+    def _get_non_reserved_keys(self) -> list[str]:
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
         return [
             str(cache_key)
-            for cache_key in all_keys
+            for cache_key in all_cache_keys
             if not cache_key.is_reserved_namespace
         ]
 
-    def _get_keys(self) -> list[CacheKey]:
+    def _get_all_cache_keys(self) -> list[CacheKey]:
         all_raw_keys: list[bytes] = self._client.list_keys()
         return [CacheKey.create(raw_key=raw_key) for raw_key in all_raw_keys]
 
