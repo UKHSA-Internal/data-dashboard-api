@@ -1,5 +1,6 @@
 import hashlib
 import json
+from typing import Self
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.request import Request
@@ -12,6 +13,30 @@ class CacheMissError(Exception): ...
 
 
 RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
+
+
+class CacheKey:
+    def __init__(self, prefix: str, version: int, key: str):
+        self._key = key
+        self._prefix = prefix
+        self._version = version
+
+    def __repr__(self) -> str:
+        return f"{self._prefix}:{self._version}:{self._key}"
+
+    def __str__(self) -> str:
+        return self._key
+
+    @classmethod
+    def create(cls, raw_key: bytes | str) -> Self:
+        raw_key = str(raw_key)
+        raw_key = raw_key.strip("b'\"")
+        prefix, version, key = raw_key.split(":")
+        return cls(prefix=prefix, version=version, key=key)
+
+    @property
+    def is_reserved_namespace(self) -> bool:
+        return self._key.startswith(RESERVED_NAMESPACE_KEY_PREFIX)
 
 
 class CacheManagement:
@@ -121,9 +146,20 @@ class CacheManagement:
             None
 
         """
-        self._client.clear_non_reserved_keys(
-            reserved_namespace_key_prefix=self._reserved_namespace_key_prefix
-        )
+        non_reserved_keys: list[str] = self._get_non_reserved_keys()
+        self._client.delete_many(keys=non_reserved_keys)
+
+    def _get_non_reserved_keys(self) -> list[str]:
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        return [
+            str(cache_key)
+            for cache_key in all_cache_keys
+            if not cache_key.is_reserved_namespace
+        ]
+
+    def _get_all_cache_keys(self) -> list[CacheKey]:
+        all_raw_keys: list[bytes] = self._client.list_keys()
+        return [CacheKey.create(raw_key=raw_key) for raw_key in all_raw_keys]
 
     def _render_response(self, *, response: Response) -> Response:
         if response.headers["Content-Type"] == "text/csv":
