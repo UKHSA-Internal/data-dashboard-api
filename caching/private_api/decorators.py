@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from caching.internal_api_client import (
     CACHE_FORCE_REFRESH_HEADER_KEY,
+    CACHE_RESERVED_NAMESPACE_HEADER_KEY,
 )
 from caching.private_api.management import CacheManagement, CacheMissError
 
@@ -67,6 +68,12 @@ def _retrieve_response_from_cache_or_calculate(
         If the "Cache-Force-Refresh" header is set to True,
         then the response will be recalculated from the server
         and this will overwrite the corresponding entry in the cache
+        To target the reserved namespace, the `is_reserved_namespace`
+        arg must be given as True and the `Cache-Reserved-Namespace`
+        header must be included.
+        To target the non-reserved namespace, the `is_reserved_namespace`
+        arg should be given as false and the `Cache-Reserved-Namespace`
+        header should be omitted from the request.
 
         If the `CACHING_V2_ENABLED` env variable is set to "true",
         then the response will always be recalculated from the server
@@ -87,7 +94,6 @@ def _retrieve_response_from_cache_or_calculate(
         The response associated with the request
 
     """
-
     request: Request = args[1]
 
     if is_caching_v2_enabled():
@@ -99,21 +105,37 @@ def _retrieve_response_from_cache_or_calculate(
         request=request, is_reserved_namespace=is_reserved_namespace
     )
 
-    if request.headers.get(CACHE_FORCE_REFRESH_HEADER_KEY, False):
-        # If the `Cache-Force-Refresh` is True
-        # recalculate & save regardless of whether the item exists in the cache
-        return _calculate_response_and_save_in_cache(
-            view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
-        )
+    should_force_refresh: bool = _check_should_force_write_happen_for_target_namespace(
+        request=request, is_reserved_namespace=is_reserved_namespace
+    )
 
-    try:
-        return cache_management.retrieve_item_from_cache(
-            cache_entry_key=cache_entry_key
-        )
-    except CacheMissError:
-        return _calculate_response_and_save_in_cache(
-            view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
-        )
+    if not should_force_refresh:
+        try:
+            return cache_management.retrieve_item_from_cache(
+                cache_entry_key=cache_entry_key
+            )
+        except CacheMissError:
+            pass
+
+    return _calculate_response_and_save_in_cache(
+        view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
+    )
+
+
+def _check_should_force_write_happen_for_target_namespace(
+    *, request: Request, is_reserved_namespace: bool
+) -> bool:
+    force_refresh_has_been_asked_for: bool = request.headers.get(
+        CACHE_FORCE_REFRESH_HEADER_KEY, False
+    )
+    if not force_refresh_has_been_asked_for:
+        return False
+
+    is_header_targeting_reserved_namespace: bool = request.headers.get(
+        CACHE_RESERVED_NAMESPACE_HEADER_KEY, False
+    )
+
+    return is_header_targeting_reserved_namespace == is_reserved_namespace
 
 
 def _calculate_response_and_save_in_cache(

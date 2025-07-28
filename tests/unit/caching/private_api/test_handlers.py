@@ -124,10 +124,12 @@ class TestCrawlAllPages:
 class TestForceCacheRefreshForAllPages:
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
+    @mock.patch.object(
+        PrivateAPICrawler, "create_crawler_to_force_write_in_non_reserved_namespace"
+    )
     def test_delegates_calls_successfully(
         self,
-        spy_create_crawler_for_force_cache_refresh: mock.MagicMock,
+        spy_create_crawler_to_force_write_in_non_reserved_namespace: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
         spy_area_selector_orchestrator_class: mock.MagicMock,
     ):
@@ -137,8 +139,8 @@ class TestForceCacheRefreshForAllPages:
         Then the correct crawler is passed to `crawl_all_pages()`
 
         Patches:
-            `spy_create_crawler_for_force_cache_refresh`: To assert that
-                the correct crawler is initialized i.e. the one
+            `spy_create_crawler_to_force_write_in_non_reserved_namespace`: To assert
+                that the correct crawler is initialized i.e. the one
                 which can be used to forcibly refresh the cache
             `spy_crawl_all_pages`: For the main assertion
             `spy_area_selector_orchestrator_class`: To check the
@@ -152,14 +154,18 @@ class TestForceCacheRefreshForAllPages:
         force_cache_refresh_for_all_pages(cache_management=mocked_cache_management)
 
         # Then
-        spy_create_crawler_for_force_cache_refresh.assert_called_once()
-        expected_crawler = spy_create_crawler_for_force_cache_refresh.return_value
+        spy_create_crawler_to_force_write_in_non_reserved_namespace.assert_called_once()
+        expected_crawler = (
+            spy_create_crawler_to_force_write_in_non_reserved_namespace.return_value
+        )
         spy_crawl_all_pages.assert_called_once_with(
             private_api_crawler=expected_crawler,
             area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
         )
 
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_force_cache_refresh")
+    @mock.patch.object(
+        PrivateAPICrawler, "create_crawler_to_force_write_in_non_reserved_namespace"
+    )
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch.object(CacheManagement, "clear_non_reserved_keys")
@@ -168,7 +174,7 @@ class TestForceCacheRefreshForAllPages:
         spy_cache_management_clear_non_reserved_keys: mock.MagicMock,
         spy_area_selector_orchestrator_class: mock.MagicMock,
         spy_crawl_all_pages: mock.MagicMock,
-        mocked_created_private_api_crawler: mock.MagicMock,
+        mocked_create_crawler_to_force_write_in_non_reserved_namespace: mock.MagicMock,
     ):
         """
         Given no input
@@ -195,7 +201,7 @@ class TestForceCacheRefreshForAllPages:
         expected_calls = [
             mock.call.cache_management_clear_non_reserved_keys(),
             mock.call.crawl_all_pages(
-                private_api_crawler=mocked_created_private_api_crawler.return_value,
+                private_api_crawler=mocked_create_crawler_to_force_write_in_non_reserved_namespace.return_value,
                 area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
             ),
         ]

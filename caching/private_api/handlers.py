@@ -89,7 +89,7 @@ def force_cache_refresh_for_all_pages(
 
     private_api_crawler = (
         private_api_crawler
-        or PrivateAPICrawler.create_crawler_for_force_cache_refresh()
+        or PrivateAPICrawler.create_crawler_to_force_write_in_non_reserved_namespace()
     )
     area_selector_orchestrator = AreaSelectorOrchestrator(
         geographies_api_crawler=private_api_crawler.geography_api_crawler
