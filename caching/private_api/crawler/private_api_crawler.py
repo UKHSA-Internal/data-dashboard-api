@@ -72,12 +72,16 @@ class PrivateAPICrawler:
 
     @classmethod
     def create_crawler_to_force_write_in_non_reserved_namespace(cls) -> Self:
-        internal_api_client = InternalAPIClient(force_refresh=True, reserved_namespace=False)
+        internal_api_client = InternalAPIClient(
+            force_refresh=True, reserved_namespace=False
+        )
         return cls(internal_api_client=internal_api_client)
 
     @classmethod
     def create_crawler_to_force_write_in_reserved_namespace(cls) -> Self:
-        internal_api_client = InternalAPIClient(force_refresh=True, reserved_namespace=True)
+        internal_api_client = InternalAPIClient(
+            force_refresh=True, reserved_namespace=True
+        )
         return cls(internal_api_client=internal_api_client)
 
     @classmethod

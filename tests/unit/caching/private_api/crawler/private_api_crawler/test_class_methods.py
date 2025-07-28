@@ -12,7 +12,9 @@ class TestPrivateAPICrawlerCreate:
         Then the correct object is returned
         """
         # Given / When
-        crawler = PrivateAPICrawler.create_crawler_to_force_write_in_non_reserved_namespace()
+        crawler = (
+            PrivateAPICrawler.create_crawler_to_force_write_in_non_reserved_namespace()
+        )
 
         # Then
         assert crawler._internal_api_client.force_refresh
@@ -26,7 +28,9 @@ class TestPrivateAPICrawlerCreate:
         Then the correct object is returned
         """
         # Given / When
-        crawler = PrivateAPICrawler.create_crawler_to_force_write_in_reserved_namespace()
+        crawler = (
+            PrivateAPICrawler.create_crawler_to_force_write_in_reserved_namespace()
+        )
 
         # Then
         assert crawler._internal_api_client.force_refresh
