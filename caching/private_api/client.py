@@ -59,7 +59,7 @@ class CacheClient:
         low_level_client = self._cache._cache.get_client()
         return low_level_client.keys("*ukhsa*")
 
-    def delete_many(self, keys: list) -> None:
+    def delete_many(self, keys: list[str]) -> None:
         """Deletes all the provided keys in the cache
 
         Args:
