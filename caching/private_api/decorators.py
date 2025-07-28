@@ -5,7 +5,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from caching.internal_api_client import (
-    CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
 )
 from caching.private_api.management import CacheManagement, CacheMissError
@@ -111,12 +110,7 @@ def _retrieve_response_from_cache_or_calculate(
         return cache_management.retrieve_item_from_cache(
             cache_entry_key=cache_entry_key
         )
-    except CacheMissError as error:
-        # If the `Cache-Check` header is True
-        # and there has been 1 cache miss, then error out early
-        if request.headers.get(CACHE_CHECK_HEADER_KEY, False):
-            raise CacheCheckResultedInMissError from error
-
+    except CacheMissError:
         return _calculate_response_and_save_in_cache(
             view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
         )

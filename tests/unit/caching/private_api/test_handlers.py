@@ -4,7 +4,6 @@ from _pytest.logging import LogCaptureFixture
 
 from caching.private_api.crawler import PrivateAPICrawler
 from caching.private_api.handlers import (
-    check_cache_for_all_pages,
     crawl_all_pages,
     force_cache_refresh_for_all_pages,
     get_all_downloads,
@@ -122,52 +121,6 @@ class TestCrawlAllPages:
         assert "Finished refreshing of cache" in caplog.text
 
 
-class TestCheckCacheForAllPages:
-    @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
-    @mock.patch.object(PrivateAPICrawler, "create_crawler_for_cache_checking_only")
-    @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
-    def test_delegates_calls_successfully(
-        self,
-        spy_area_selector_orchestrator_class: mock.MagicMock,
-        spy_create_crawler_for_cache_checking_only: mock.MagicMock,
-        spy_crawl_all_pages: mock.MagicMock,
-    ):
-        """
-        Given no input
-        When `check_cache_for_all_pages()` is called
-        Then the correct crawler is passed to `crawl_all_pages()`
-
-        Patches:
-            `spy_create_crawler_for_cache_checking_only`: To assert that
-                the correct crawler is initialized i.e. the one
-                which can be used purely for checking purposes
-            `spy_crawl_all_pages`: For the main assertion
-            `spy_area_selector_orchestrator_class`: To check the
-                area selector orchestrator is passed to the
-                `crawl_all_pages()` function
-        """
-        # Given / When
-        check_cache_for_all_pages()
-
-        # Then
-        # Check the `PrivateAPICrawler` is initialized via the correct class constructor method
-        spy_create_crawler_for_cache_checking_only.assert_called_once()
-        expected_private_crawler = (
-            spy_create_crawler_for_cache_checking_only.return_value
-        )
-
-        # Check the `AreaSelectorOrchestrator` object is initialized
-        spy_area_selector_orchestrator_class.assert_called_once_with(
-            geographies_api_crawler=expected_private_crawler.geography_api_crawler
-        )
-        # Check both the `PrivateAPICrawler` and the `AreaSelectorOrchestrator`
-        # are passed to the `crawl_all_pages()` call
-        spy_crawl_all_pages.assert_called_once_with(
-            private_api_crawler=expected_private_crawler,
-            area_selector_orchestrator=spy_area_selector_orchestrator_class.return_value,
-        )
-
-
 class TestForceCacheRefreshForAllPages:
     @mock.patch(f"{MODULE_PATH}.AreaSelectorOrchestrator")
     @mock.patch(f"{MODULE_PATH}.crawl_all_pages")
@@ -219,7 +172,7 @@ class TestForceCacheRefreshForAllPages:
     ):
         """
         Given no input
-        When `check_cache_for_all_pages()` is called
+        When `force_cache_refresh_for_all_pages()` is called
         Then `clear_non_reserved_keys()` is called from a `CacheManagement` object
             before the call is made to `crawl_all_pages()`
         """
