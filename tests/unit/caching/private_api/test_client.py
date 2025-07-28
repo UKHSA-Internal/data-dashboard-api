@@ -96,6 +96,15 @@ class TestCacheClient:
         # Then
         spy_cache.delete_many.assert_called_once_with(keys=mocked_keys)
 
+    @mock.patch.dict(
+        in_dict="django.conf.settings.CACHES",
+        values={
+            "default": {
+                "KEY_PREFIX": "some-other-prefix",
+                "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            }
+        },
+    )
     @mock.patch(f"{MODULE_PATH}.cache")
     def test_list_keys(self, spy_cache: mock.MagicMock):
         """
@@ -106,7 +115,7 @@ class TestCacheClient:
         """
         # Given
         cache_client = CacheClient()
-        prefix = "ukhsa"
+        prefix = "some-other-prefix"
 
         # When
         all_keys = cache_client.list_keys()

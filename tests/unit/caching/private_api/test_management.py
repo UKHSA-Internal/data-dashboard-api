@@ -668,6 +668,15 @@ class TestCacheManagement:
         # Then
         spy_client.clear.assert_called_once()
 
+    @mock.patch.dict(
+        in_dict="django.conf.settings.CACHES",
+        values={
+            "default": {
+                "KEY_PREFIX": "app",
+                "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            }
+        },
+    )
     def test_clear_non_reserved_keys(self):
         """
         Given an instance of `CacheManagement`
@@ -675,15 +684,16 @@ class TestCacheManagement:
         Then the call is delegated to the underlying client
         """
         # Given
+        cache_prefix = "app"
         reserved_namespace_key_prefix = "ns2"
         non_reserved_complete_keys = [
-            "ukhsa:1:abc123",
-            "ukhsa:1:def456",
-            "ukhsa:1:abc123456",
+            f"{cache_prefix}:1:abc123",
+            f"{cache_prefix}:1:def456",
+            f"{cache_prefix}:1:abc123456",
         ]
         reserved_complete_keys = [
-            f"ukhsa:1:{reserved_namespace_key_prefix}-abc123",
-            f"ukhsa:1:{reserved_namespace_key_prefix}-qwerty",
+            f"{cache_prefix}:1:{reserved_namespace_key_prefix}-abc123",
+            f"{cache_prefix}:1:{reserved_namespace_key_prefix}-qwerty",
         ]
         all_keys = non_reserved_complete_keys + reserved_complete_keys
         spy_client = mock.Mock()

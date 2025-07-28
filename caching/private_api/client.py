@@ -2,6 +2,8 @@ from typing import Any
 
 from django.core.cache import cache
 
+from metrics.api import settings
+
 
 class CacheClient:
     """The client abstraction used to interact with the cache as set by the main Django application
