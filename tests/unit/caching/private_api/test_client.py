@@ -80,28 +80,21 @@ class TestCacheClient:
         spy_cache.clear.assert_called_once()
 
     @mock.patch(f"{MODULE_PATH}.cache")
-    def test_clear_non_reserved_keys_delegates_call(self, spy_cache: mock.MagicMock):
+    def test_delete_many_delegates_call(self, spy_cache: mock.MagicMock):
         """
         Given an instance of the `CacheClient`
-        When `clear_non_reserved_keys()` is called from the client
+        When `delete_many()` is called from the client
         Then the call is delegated to the underlying cache
         """
         # Given
-        reserved_namespace_key_prefix = "reserved-ns"
         cache_client = CacheClient()
+        mocked_keys = [mock.Mock()] * 3
 
         # When
-        cache_client.clear_non_reserved_keys(
-            reserved_namespace_key_prefix=reserved_namespace_key_prefix
-        )
+        cache_client.delete_many(keys=mocked_keys)
 
         # Then
-        all_cache_keys = spy_cache.scan_iter.return_value
-        filtered_non_reserved_keys = [
-            key for key in all_cache_keys if reserved_namespace_key_prefix not in key
-        ]
-
-        spy_cache.delete_many.assert_called_once_with(keys=filtered_non_reserved_keys)
+        spy_cache.delete_many.assert_called_once_with(keys=mocked_keys)
 
 
 class TestInMemoryCacheClient:
@@ -186,12 +179,12 @@ class TestInMemoryCacheClient:
         # Then
         assert fake_cache_entry_key not in in_memory_cache_client._cache
 
-    def test_clear_non_reserved_keys_flushes_all_items(self):
+    def test_delete_many_clears_select_keys_only(self):
         """
         Given a number of cache keys
-        When `clear_non_reserved_keys()` is called
+        When `delete_many()` is called
             from an instance of the `InMemoryCacheClient`
-        Then only the non-reserved keys are deleted
+        Then only the given keys are deleted
         """
         # Given
         reserved_namespace_key_prefix = "reserved-ns"
@@ -205,8 +198,8 @@ class TestInMemoryCacheClient:
         }
 
         # When
-        in_memory_cache_client.clear_non_reserved_keys(
-            reserved_namespace_key_prefix=reserved_namespace_key_prefix
+        in_memory_cache_client.delete_many(
+            keys=[non_reserved_cache_key],
         )
 
         # Then

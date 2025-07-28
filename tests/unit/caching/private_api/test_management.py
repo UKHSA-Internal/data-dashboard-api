@@ -667,13 +667,18 @@ class TestCacheManagement:
         # Then
         spy_client.clear.assert_called_once()
 
-    def test_clear_non_reserved_keys(self):
+    @mock.patch.object(CacheManagement, "_get_non_reserved_keys")
+    def test_clear_non_reserved_keys(
+        self, mocked_get_non_reserved_keys: mock.MagicMock
+    ):
         """
         Given an instance of `CacheManagement`
         When `clear_non_reserved_keys()` is called from the object
         Then the call is delegated to the underlying client
         """
         # Given
+        non_reserved_keys = [mock.Mock(), mock.Mock()]
+        mocked_get_non_reserved_keys.return_value = non_reserved_keys
         reserved_namespace_key_prefix = "abc-123456-"
         spy_client = mock.Mock()
         cache_management = CacheManagement(
@@ -686,6 +691,4 @@ class TestCacheManagement:
         cache_management.clear_non_reserved_keys()
 
         # Then
-        spy_client.clear_non_reserved_keys.assert_called_once_with(
-            reserved_namespace_key_prefix=reserved_namespace_key_prefix
-        )
+        spy_client.delete_many.assert_called_once_with(keys=non_reserved_keys)
