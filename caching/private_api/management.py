@@ -11,6 +11,9 @@ from caching.private_api.client import CacheClient, InMemoryCacheClient
 class CacheMissError(Exception): ...
 
 
+RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
+
+
 class CacheManagement:
     """This is the abstraction used to save and retrieve items in the cache
 
@@ -20,8 +23,15 @@ class CacheManagement:
 
     """
 
-    def __init__(self, *, in_memory: bool, client: CacheClient | None = None):
+    def __init__(
+        self,
+        *,
+        in_memory: bool,
+        client: CacheClient | None = None,
+        reserved_namespace_key_prefix: str = RESERVED_NAMESPACE_KEY_PREFIX,
+    ):
         self._client = client or self._create_cache_client(in_memory=in_memory)
+        self._reserved_namespace_key_prefix = reserved_namespace_key_prefix
 
     @staticmethod
     def _create_cache_client(*, in_memory: bool) -> CacheClient:
@@ -97,6 +107,24 @@ class CacheManagement:
         """
         self._client.clear()
 
+    def clear_non_reserved_keys(self):
+        """Deletes all keys in the cache which are not within the reserved namespace
+
+        Notes:
+            This allows us to keep hold of
+            expensive, infrequently changing data in the cache
+            like maps data, whilst still allowing the
+            cheaper more frequently changing data types like
+            tables and charts to be cleared.
+
+        Returns:
+            None
+
+        """
+        self._client.clear_non_reserved_keys(
+            reserved_namespace_key_prefix=self._reserved_namespace_key_prefix
+        )
+
     def _render_response(self, *, response: Response) -> Response:
         if response.headers["Content-Type"] == "text/csv":
             return response
@@ -110,6 +138,50 @@ class CacheManagement:
         response.renderer_context = {}
         response.render()
         return response
+
+    # Cache key construction
+
+    def build_cache_entry_key_for_request(
+        self, *, request: Request, is_reserved_namespace: bool
+    ) -> str:
+        """Builds a hashed cache entry key for a request
+
+        Args:
+            request: The incoming request which is to be hashed
+            is_reserved_namespace: Boolean switch to store the data
+                in the reserved / long-lived namespace within the cache.
+                Defaults to `False`.
+
+        Returns:
+            A hashed string representation
+            of the given request taking its path
+            and request body or query parameters into account
+            depending on if it is a POST or GET request
+            as well as whether the data sits
+            in the reserved namespace or not.
+
+        Raises:
+            `ValueError`: If the request is not an HTTP GET or POST request
+
+        """
+        cache_key: str = self._build_standalone_key_for_request(request=request)
+        if is_reserved_namespace:
+            cache_key = f"{RESERVED_NAMESPACE_KEY_PREFIX}-{cache_key}"
+
+        return cache_key
+
+    def _build_standalone_key_for_request(self, *, request: Request) -> str:
+        match request.method:
+            case "POST":
+                data = request.data
+            case "GET":
+                data = request.query_params.dict()
+            case _:
+                raise ValueError
+
+        return self.build_cache_entry_key_for_data(
+            endpoint_path=request.path, data=data
+        )
 
     def build_cache_entry_key_for_data(
         self, *, endpoint_path: str, data: dict[str, str]
@@ -134,34 +206,6 @@ class CacheManagement:
         data = dict(sorted(data.items()))
         data["endpoint_path"] = endpoint_path
         return data
-
-    def build_cache_entry_key_for_request(self, *, request: Request) -> str:
-        """Builds a hashed cache entry key for a request
-
-        Args:
-            request: The incoming request which is to be hashed
-
-        Returns:
-            A hashed string representation
-            of the given request taking its path
-            and request body or query parameters into account
-            depending on if it is a POST or GET request.
-
-        Raises:
-            `ValueError`: If the request is not an HTTP GET or POST request
-
-        """
-        match request.method:
-            case "POST":
-                data = request.data
-            case "GET":
-                data = request.query_params.dict()
-            case _:
-                raise ValueError
-
-        return self.build_cache_entry_key_for_data(
-            endpoint_path=request.path, data=data
-        )
 
     @staticmethod
     def create_hash_for_data(*, data: dict) -> str:

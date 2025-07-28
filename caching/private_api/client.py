@@ -45,6 +45,33 @@ class CacheClient:
         """
         self._cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
+    def clear_non_reserved_keys(self, reserved_namespace_key_prefix: str) -> None:
+        """Deletes all keys in the cache which are not within the reserved namespace
+
+        Args:
+            reserved_namespace_key_prefix: The prefix associated
+                with reserved namespace entries in the cache.
+                Any keys prefixed with this will not be cleared.
+                All others will be cleared by this method invocation.
+
+        Notes:
+            This allows us to keep hold of
+            expensive, infrequently changing data in the cache
+            like maps data, whilst still allowing the
+            cheaper more frequently changing data types like
+            tables and charts to be cleared.
+
+        Returns:
+            None
+
+        """
+        non_reserved_keys = [
+            key
+            for key in self._cache.scan_iter()
+            if reserved_namespace_key_prefix not in key
+        ]
+        self._cache.delete_many(keys=non_reserved_keys)
+
     def clear(self) -> None:
         """Deletes all keys in the cache
 
@@ -108,3 +135,29 @@ class InMemoryCacheClient(CacheClient):
 
         """
         self._cache.clear()
+
+    def clear_non_reserved_keys(self, *, reserved_namespace_key_prefix: str) -> None:
+        """Deletes all keys in the cache which are not within the reserved namespace
+
+        Args:
+            reserved_namespace_key_prefix: The prefix associated
+                with reserved namespace entries in the cache.
+                Any keys prefixed with this will not be cleared.
+                All others will be cleared by this method invocation.
+
+        Notes:
+            This allows us to keep hold of
+            expensive, infrequently changing data in the cache
+            like maps data, whilst still allowing the
+            cheaper more frequently changing data types like
+            tables and charts to be cleared.
+
+        Returns:
+            None
+
+        """
+        non_reserved_keys = [
+            key for key in self._cache if reserved_namespace_key_prefix not in key
+        ]
+        for key in non_reserved_keys:
+            self._cache.pop(key)
