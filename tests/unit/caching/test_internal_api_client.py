@@ -4,7 +4,6 @@ import pytest
 from rest_framework.test import APIClient
 
 from caching.internal_api_client import (
-    CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
     PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS,
     InternalAPIClient,
