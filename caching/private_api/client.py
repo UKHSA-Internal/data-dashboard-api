@@ -79,8 +79,12 @@ class CacheClient:
         """
         self._cache.delete_many(keys=keys)
 
-    def copy(self, source_key: str, destination_key: str) -> None:
+    def copy(self, source: str, destination: str) -> None:
         """Copies the value stored at the `source_key` to the `destination_key`
+
+        Args:
+            source: The source key to the value copy from
+            destination: The destination key to the value copy to
 
         Notes:
             This will overwrite any value pre-existing at the `destination_key`
@@ -92,9 +96,7 @@ class CacheClient:
 
         """
         low_level_client = self._get_low_level_client()
-        low_level_client.copy(
-            source=source_key, destination=destination_key, replace=True
-        )
+        low_level_client.copy(source=source, destination=destination, replace=True)
 
 
 class InMemoryCacheClient(CacheClient):
