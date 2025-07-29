@@ -1,4 +1,3 @@
-from http import HTTPMethod
 from unittest import mock
 
 import pytest
