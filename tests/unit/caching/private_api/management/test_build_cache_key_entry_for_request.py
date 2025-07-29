@@ -87,6 +87,7 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
             request=mocked_request,
             is_reserved_namespace=False,
+            is_reserved_staging_namespace=False,
         )
 
         # Then
@@ -115,6 +116,7 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
         cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
             request=mocked_request,
             is_reserved_namespace=False,
+            is_reserved_staging_namespace=False,
         )
 
         # Then
@@ -143,6 +145,7 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
             cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
                 request=mocked_request,
                 is_reserved_namespace=True,
+                is_reserved_staging_namespace=False,
             )
         )
 
@@ -178,4 +181,5 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
             cache_management_with_in_memory_cache.build_cache_entry_key_for_request(
                 request=mocked_request,
                 is_reserved_namespace=False,
+                is_reserved_staging_namespace=False,
             )
