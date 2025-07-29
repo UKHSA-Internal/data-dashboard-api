@@ -412,3 +412,46 @@ class TestCacheManagementCRUDOperations:
         assert len(reserved_staging_keys) == 1
         assert reserved_staging_keys[0].is_reserved_staging_namespace
         assert reserved_staging_keys[0].full_key == reserved_staging_key
+
+    def test_move_all_reserved_staging_keys_into_reserved_namespace_for_cache_client(
+        self,
+    ):
+        """
+        Given a number of keys in the non-reserved namespace
+        And a key in the reserved staging namespace
+        When `move_all_reserved_staging_keys_into_reserved_namespace()`
+            is called from an instance of `CacheManagement`
+        Then the `copy()` and `delete_many()` methods
+            are called from the underlying client
+            to move the key from the reserved staging namespace
+            into the reserved namespace
+        """
+        # Given
+        spy_cache_client = mock.Mock()
+        reserved_staging_standalone_key = (
+            f"{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-test-key"
+        )
+        reserved_staging_raw_key = f"ukhsa:1:{reserved_staging_standalone_key}"
+
+        all_keys = [
+            b"ukhsa:1:abc",
+            b"ukhsa:1:def456",
+            bytes(reserved_staging_raw_key, "utf-8"),
+        ]
+        spy_cache_client.list_keys.return_value = all_keys
+        cache_management = CacheManagement(
+            in_memory=False,
+            client=spy_cache_client,
+        )
+
+        # When
+        cache_management.move_all_reserved_staging_keys_into_reserved_namespace()
+
+        # Then
+        spy_cache_client.copy.assert_called_once_with(
+            source=reserved_staging_raw_key,
+            destination=f"ukhsa:1:{RESERVED_NAMESPACE_KEY_PREFIX}-test-key",
+        )
+        spy_cache_client.delete_many.assert_called_once_with(
+            keys=[reserved_staging_standalone_key]
+        )
