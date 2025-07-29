@@ -79,7 +79,7 @@ class CacheClient:
         """
         self._cache.delete_many(keys=keys)
 
-    def copy(self, source: str, destination: str) -> None:
+    def copy(self, *, source: str, destination: str) -> None:
         """Copies the value stored at the `source_key` to the `destination_key`
 
         Args:
@@ -162,6 +162,6 @@ class InMemoryCacheClient(CacheClient):
         """Lists all the keys in the cache as bytes"""
         return [bytes(key, encoding="utf-8") for key in self._cache]
 
-    def copy(self, source: str, destination: str) -> None:
+    def copy(self, *, source: str, destination: str) -> None:
         source_value = self.get(cache_entry_key=source)
         self._cache[destination] = source_value
