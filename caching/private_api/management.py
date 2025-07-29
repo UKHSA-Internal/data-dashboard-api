@@ -218,15 +218,20 @@ class CacheManagement:
     # Cache key construction
 
     def build_cache_entry_key_for_request(
-        self, *, request: Request, is_reserved_namespace: bool
+        self,
+        *,
+        request: Request,
+        is_reserved_staging_namespace: bool,
+        is_reserved_namespace: bool,
     ) -> str:
         """Builds a hashed cache entry key for a request
 
         Args:
             request: The incoming request which is to be hashed
+            is_reserved_staging_namespace: Boolean switch to store the data
+                in the reserved / long-lived staging namespace within the cache.
             is_reserved_namespace: Boolean switch to store the data
-                in the reserved / long-lived namespace within the cache.
-                Defaults to `False`.
+                directly in the reserved / long-lived namespace within the cache.
 
         Returns:
             A hashed string representation
@@ -241,8 +246,11 @@ class CacheManagement:
 
         """
         cache_key: str = self._build_standalone_key_for_request(request=request)
+        if is_reserved_staging_namespace:
+            return f"{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-{cache_key}"
+
         if is_reserved_namespace:
-            cache_key = f"{RESERVED_NAMESPACE_KEY_PREFIX}-{cache_key}"
+            return f"{RESERVED_NAMESPACE_KEY_PREFIX}-{cache_key}"
 
         return cache_key
 
