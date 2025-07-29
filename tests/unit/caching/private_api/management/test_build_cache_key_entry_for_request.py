@@ -47,7 +47,7 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
     ):
         """
         Given an endpoint path and input data
-        When `build_cache_entry_key_for_data()` is called
+        When `_build_cache_entry_key_for_data()` is called
             from an instance of `CacheManagement`
         Then the call is delegated to the `create_hash_for_data()` method
         """
@@ -57,7 +57,7 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
 
         # When
         created_hash = (
-            cache_management_with_in_memory_cache.build_cache_entry_key_for_data(
+            cache_management_with_in_memory_cache._build_cache_entry_key_for_data(
                 endpoint_path=endpoint,
                 data=input_data,
             )

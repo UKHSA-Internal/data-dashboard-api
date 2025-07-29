@@ -254,11 +254,11 @@ class CacheManagement:
             case _:
                 raise ValueError
 
-        return self.build_cache_entry_key_for_data(
+        return self._build_cache_entry_key_for_data(
             endpoint_path=request.path, data=data
         )
 
-    def build_cache_entry_key_for_data(
+    def _build_cache_entry_key_for_data(
         self, *, endpoint_path: str, data: dict[str, str]
     ) -> str:
         """Builds a hashed cache entry key for the given `endpoint_path` and `data`
