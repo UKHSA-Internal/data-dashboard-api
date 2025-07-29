@@ -67,7 +67,7 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
         spy_create_hash_for_data.assert_called_once_with(data=expected_data)
         assert created_hash == spy_create_hash_for_data.return_value
 
-    @mock.patch.object(CacheManagement, "build_cache_entry_key_for_data")
+    @mock.patch.object(CacheManagement, "_build_cache_entry_key_for_data")
     def test_build_cache_entry_key_for_request_post(
         self,
         spy_build_cache_entry_key_for_data: mock.MagicMock,
@@ -94,7 +94,7 @@ class TestCacheManagementBuildCacheKeyEntryForRequest:
             endpoint_path=mocked_request.path, data=mocked_request.data
         )
 
-    @mock.patch.object(CacheManagement, "build_cache_entry_key_for_data")
+    @mock.patch.object(CacheManagement, "_build_cache_entry_key_for_data")
     def test_build_cache_entry_key_for_request_get(
         self,
         spy_build_cache_entry_key_for_data: mock.MagicMock,
