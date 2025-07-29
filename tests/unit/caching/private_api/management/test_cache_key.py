@@ -1,4 +1,8 @@
-from caching.private_api.management import CacheKey, RESERVED_NAMESPACE_KEY_PREFIX
+from caching.private_api.management import (
+    CacheKey,
+    RESERVED_NAMESPACE_KEY_PREFIX,
+    RESERVED_NAMESPACE_STAGING_KEY_PREFIX,
+)
 
 
 class TestCacheKey:
@@ -69,7 +73,7 @@ class TestCacheKey:
         """
         Given a raw cache key in bytes format
             which is set within the reserved namespace
-        When the `is_reserved_namespace()` property is called
+        When the `is_reserved_namespace` property is called
             from the `CacheKey` class
         Then True is returned
         """
@@ -79,18 +83,17 @@ class TestCacheKey:
         version = "1"
         raw_key = f"{prefix}:{version}:{RESERVED_NAMESPACE_KEY_PREFIX}-{key}"
         raw_key = bytes(raw_key, "utf-8")
-
-        # When
         cache_key = CacheKey.create(raw_key=raw_key)
 
-        # Then
+        # When / Then
         assert cache_key.is_reserved_namespace
+        assert not cache_key.is_reserved_staging_namespace
 
     def test_is_reserved_namespace_returns_false_for_non_reserved_key(self):
         """
         Given a raw cache key in bytes format
             which is not set within the reserved namespace
-        When the `is_reserved_namespace()` property is called
+        When the `is_reserved_namespace` property is called
             from the `CacheKey` class
         Then False is returned
         """
@@ -100,9 +103,55 @@ class TestCacheKey:
         version = "1"
         raw_key = f"{prefix}:{version}:{key}"
         raw_key = bytes(raw_key, "utf-8")
-
-        # When
         cache_key = CacheKey.create(raw_key=raw_key)
 
-        # Then
+        # When / Then
         assert not cache_key.is_reserved_namespace
+        assert not cache_key.is_reserved_staging_namespace
+
+    def test_is_reserved_staging_namespace_returns_true_for_reserved_staging_key(self):
+        """
+        Given a raw cache key in bytes format
+            which is set within the reserved staging namespace
+        When the `is_reserved_staging_namespace` property is called
+            from the `CacheKey` class
+        Then True is returned
+        """
+        # Given
+        key = "abc123"
+        prefix = "ukhsa"
+        version = "1"
+        raw_key = f"{prefix}:{version}:{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-{key}"
+        raw_key = bytes(raw_key, "utf-8")
+        cache_key = CacheKey.create(raw_key=raw_key)
+
+        # When / Then
+        assert not cache_key.is_reserved_namespace
+        assert cache_key.is_reserved_staging_namespace
+
+    def test_output_to_reserved_namespace(self):
+        """
+        Given a raw cache key in bytes format
+            which is set within the reserved staging namespace
+        When the `output_to_reserved_namespace()` method is called
+            from the `CacheKey` class
+        Then the correct key is returned
+        """
+        # Given
+        key = "abc123"
+        prefix = "ukhsa"
+        version = "1"
+        raw_key = f"{prefix}:{version}:{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-{key}"
+        raw_key = bytes(raw_key, "utf-8")
+        cache_key = CacheKey.create(raw_key=raw_key)
+
+        # When
+        transformed_key = cache_key.output_to_reserved_namespace()
+
+        # Then
+        assert not transformed_key.is_reserved_staging_namespace
+        assert transformed_key.is_reserved_namespace
+        assert (
+            transformed_key.full_key
+            == f"{prefix}:{version}:{RESERVED_NAMESPACE_KEY_PREFIX}-{key}"
+        )

@@ -46,6 +46,19 @@ class CacheKey:
     def is_reserved_namespace(self) -> bool:
         return self._key.startswith(RESERVED_NAMESPACE_KEY_PREFIX)
 
+    @property
+    def is_reserved_staging_namespace(self):
+        return self._key.startswith(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+
+    def output_to_reserved_namespace(self) -> Self:
+        key = self._key
+        _, main_key = key.split(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+        return CacheKey(
+            key=f"{RESERVED_NAMESPACE_KEY_PREFIX}{main_key}",
+            prefix=self._prefix,
+            version=self._version,
+        )
+
 
 class CacheManagement:
     """This is the abstraction used to save and retrieve items in the cache
