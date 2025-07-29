@@ -391,7 +391,7 @@ class TestCacheManagementCRUDOperations:
         """
         # Given
         in_memory_cache_client = InMemoryCacheClient()
-        reserved_staging_key = f"ukhsa:1:{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}"
+        reserved_staging_key = f"ukhsa:1:{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-789"
         in_memory_cache_client._cache = {
             "ukhsa:1:abc": mock.Mock(),
             "ukhsa:1:def456": mock.Mock(),
