@@ -13,6 +13,7 @@ class CacheMissError(Exception): ...
 
 
 RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
+RESERVED_NAMESPACE_STAGING_KEY_PREFIX = "ns3"
 
 
 class CacheKey:
