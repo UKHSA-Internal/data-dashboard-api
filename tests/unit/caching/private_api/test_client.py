@@ -224,3 +224,28 @@ class TestInMemoryCacheClient:
         # Then
         assert non_reserved_cache_key not in in_memory_cache_client._cache
         assert reserved_cache_key in in_memory_cache_client._cache
+
+    def test_copy(self):
+        """
+        Given a source and a destination key
+        When `copy()` is called
+            from an instance of the `InMemoryCacheClient`
+        Then the data in the source key is
+            copied across to the destination key
+        """
+        # Given
+        value = mock.Mock()
+        source = "ukhsa:1:ns3-abc123"
+        destination = "ukhsa:1:ns2-abc123"
+
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {source: value}
+
+        # When
+        in_memory_cache_client.copy(
+            source=source,
+            destination=destination,
+        )
+
+        # Then
+        assert in_memory_cache_client.get(cache_entry_key=destination) == value
