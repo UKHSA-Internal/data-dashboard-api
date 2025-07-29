@@ -76,15 +76,6 @@ class CacheClient:
         """
         self._cache.delete_many(keys=keys)
 
-    def clear(self) -> None:
-        """Deletes all keys in the cache
-
-        Returns:
-            None
-
-        """
-        self._cache.clear()
-
 
 class InMemoryCacheClient(CacheClient):
     """The client abstraction used to interact with an in-memory version the cache.
@@ -130,15 +121,6 @@ class InMemoryCacheClient(CacheClient):
 
         """
         self._cache[cache_entry_key] = value
-
-    def clear(self) -> None:
-        """Deletes all keys in the cache
-
-        Returns:
-            None
-
-        """
-        self._cache.clear()
 
     def delete_many(self, *, keys: list) -> None:
         """Deletes all keys in the cache which are not within the reserved namespace

@@ -123,15 +123,6 @@ class CacheManagement:
         self._client.put(cache_entry_key=cache_entry_key, value=item, timeout=timeout)
         return item
 
-    def clear(self) -> None:
-        """Deletes all keys in the cache
-
-        Returns:
-            None
-
-        """
-        self._client.clear()
-
     def clear_non_reserved_keys(self):
         """Deletes all keys in the cache which are not within the reserved namespace
 

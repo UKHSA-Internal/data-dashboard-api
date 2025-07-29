@@ -652,22 +652,6 @@ class TestCacheManagement:
                 is_reserved_namespace=False,
             )
 
-    def test_clear(self):
-        """
-        Given an instance of `CacheManagement`
-        When `clear()` is called from the object
-        Then the call is delegated to the underlying client
-        """
-        # Given
-        spy_client = mock.Mock()
-        cache_management = CacheManagement(in_memory=True, client=spy_client)
-
-        # When
-        cache_management.clear()
-
-        # Then
-        spy_client.clear.assert_called_once()
-
     @mock.patch.dict(
         in_dict="django.conf.settings.CACHES",
         values={
