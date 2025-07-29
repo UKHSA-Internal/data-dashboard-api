@@ -10,6 +10,8 @@ from caching.private_api.management import (
     CacheManagement,
     CacheMissError,
     RESERVED_NAMESPACE_KEY_PREFIX,
+    RESERVED_NAMESPACE_STAGING_KEY_PREFIX,
+    CacheKey,
 )
 
 
@@ -379,3 +381,35 @@ class TestCacheManagementCRUDOperations:
         assert "abc" in non_reserved_keys
         assert "def456" in non_reserved_keys
         assert "ns2-test-key" not in non_reserved_keys
+
+    def test_get_reserved_staging_keys(self):
+        """
+        Given an `InMemoryCacheClient`
+        When `get_reserved_staging_keys()` is called
+            from the `CacheManagement` object
+        Then all the reserved staging namespace cache keys
+            are returned as strings
+        """
+        # Given
+        in_memory_cache_client = InMemoryCacheClient()
+        reserved_staging_key = f"ukhsa:1:{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}"
+        in_memory_cache_client._cache = {
+            "ukhsa:1:abc": mock.Mock(),
+            "ukhsa:1:def456": mock.Mock(),
+            f"ukhsa:1:{RESERVED_NAMESPACE_KEY_PREFIX}-test-key": mock.Mock(),
+            reserved_staging_key: mock.Mock(),
+        }
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=in_memory_cache_client,
+        )
+
+        # When
+        reserved_staging_keys: list[CacheKey] = (
+            cache_management.get_reserved_staging_keys()
+        )
+
+        # Then
+        assert len(reserved_staging_keys) == 1
+        assert reserved_staging_keys[0].is_reserved_staging_namespace
+        assert reserved_staging_keys[0].full_key == reserved_staging_key
