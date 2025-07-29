@@ -13,6 +13,7 @@ class CacheMissError(Exception): ...
 
 
 RESERVED_NAMESPACE_KEY_PREFIX = "ns2"
+RESERVED_NAMESPACE_STAGING_KEY_PREFIX = "ns3"
 
 
 class CacheKey:
@@ -22,10 +23,10 @@ class CacheKey:
         self._version = version
 
     def __repr__(self) -> str:
-        return f"{self._prefix}:{self._version}:{self._key}"
+        return self.full_key
 
     def __str__(self) -> str:
-        return self._key
+        return self.standalone_key
 
     @classmethod
     def create(cls, raw_key: bytes | str) -> Self:
@@ -35,8 +36,29 @@ class CacheKey:
         return cls(prefix=prefix, version=version, key=key)
 
     @property
+    def full_key(self) -> str:
+        return f"{self._prefix}:{self._version}:{self._key}"
+
+    @property
+    def standalone_key(self) -> str:
+        return self._key
+
+    @property
     def is_reserved_namespace(self) -> bool:
         return self._key.startswith(RESERVED_NAMESPACE_KEY_PREFIX)
+
+    @property
+    def is_reserved_staging_namespace(self):
+        return self._key.startswith(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+
+    def output_to_reserved_namespace(self) -> Self:
+        key = self._key
+        _, main_key = key.split(RESERVED_NAMESPACE_STAGING_KEY_PREFIX)
+        return CacheKey(
+            key=f"{RESERVED_NAMESPACE_KEY_PREFIX}{main_key}",
+            prefix=self._prefix,
+            version=self._version,
+        )
 
 
 class CacheManagement:
@@ -123,15 +145,6 @@ class CacheManagement:
         self._client.put(cache_entry_key=cache_entry_key, value=item, timeout=timeout)
         return item
 
-    def clear(self) -> None:
-        """Deletes all keys in the cache
-
-        Returns:
-            None
-
-        """
-        self._client.clear()
-
     def clear_non_reserved_keys(self):
         """Deletes all keys in the cache which are not within the reserved namespace
 
@@ -149,10 +162,37 @@ class CacheManagement:
         non_reserved_keys: list[str] = self._get_non_reserved_keys()
         self._client.delete_many(keys=non_reserved_keys)
 
+    def delete_many(self, keys: list[str]) -> None:
+        """Deletes the given `keys` from the cache within 1 trip to the cache
+
+        Returns:
+            None
+
+        """
+        self._client.delete_many(keys=keys)
+
+    def get_reserved_keys(self) -> list[str]:
+        """Fetches all the keys in the reserved namespace of the cache
+
+        Returns:
+            List of reserved keys as strings.
+            Note that only the key part is included in the string.
+            This excludes the prefix and the version:
+            full key representation = "ukhsa:1:ns2-abc123"
+            returned key representation = "ns2-abc123"
+
+        """
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        return [
+            cache_key.standalone_key
+            for cache_key in all_cache_keys
+            if cache_key.is_reserved_namespace
+        ]
+
     def _get_non_reserved_keys(self) -> list[str]:
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
         return [
-            str(cache_key)
+            cache_key.standalone_key
             for cache_key in all_cache_keys
             if not cache_key.is_reserved_namespace
         ]
@@ -178,15 +218,20 @@ class CacheManagement:
     # Cache key construction
 
     def build_cache_entry_key_for_request(
-        self, *, request: Request, is_reserved_namespace: bool
+        self,
+        *,
+        request: Request,
+        is_reserved_staging_namespace: bool,
+        is_reserved_namespace: bool,
     ) -> str:
         """Builds a hashed cache entry key for a request
 
         Args:
             request: The incoming request which is to be hashed
+            is_reserved_staging_namespace: Boolean switch to store the data
+                in the reserved / long-lived staging namespace within the cache.
             is_reserved_namespace: Boolean switch to store the data
-                in the reserved / long-lived namespace within the cache.
-                Defaults to `False`.
+                directly in the reserved / long-lived namespace within the cache.
 
         Returns:
             A hashed string representation
@@ -201,8 +246,11 @@ class CacheManagement:
 
         """
         cache_key: str = self._build_standalone_key_for_request(request=request)
+        if is_reserved_staging_namespace:
+            return f"{RESERVED_NAMESPACE_STAGING_KEY_PREFIX}-{cache_key}"
+
         if is_reserved_namespace:
-            cache_key = f"{RESERVED_NAMESPACE_KEY_PREFIX}-{cache_key}"
+            return f"{RESERVED_NAMESPACE_KEY_PREFIX}-{cache_key}"
 
         return cache_key
 
@@ -215,11 +263,11 @@ class CacheManagement:
             case _:
                 raise ValueError
 
-        return self.build_cache_entry_key_for_data(
+        return self._build_cache_entry_key_for_data(
             endpoint_path=request.path, data=data
         )
 
-    def build_cache_entry_key_for_data(
+    def _build_cache_entry_key_for_data(
         self, *, endpoint_path: str, data: dict[str, str]
     ) -> str:
         """Builds a hashed cache entry key for the given `endpoint_path` and `data`
