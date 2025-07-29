@@ -79,6 +79,23 @@ class CacheClient:
         """
         self._cache.delete_many(keys=keys)
 
+    def copy(self, source_key: str, destination_key: str) -> None:
+        """Copies the value stored at the `source_key` to the `destination_key`
+
+        Notes:
+            This will overwrite any value pre-existing at the `destination_key`
+            The keys are also expected in their entirety:
+                i.e: `ukhsa:1:abc123` is correct
+
+        Returns:
+              None
+
+        """
+        low_level_client = self._get_low_level_client()
+        low_level_client.copy(
+            source=source_key, destination=destination_key, replace=True
+        )
+
 
 class InMemoryCacheClient(CacheClient):
     """The client abstraction used to interact with an in-memory version the cache.
@@ -142,3 +159,7 @@ class InMemoryCacheClient(CacheClient):
     def list_keys(self) -> list[bytes]:
         """Lists all the keys in the cache as bytes"""
         return [bytes(key, encoding="utf-8") for key in self._cache]
+
+    def copy(self, source: str, destination: str) -> None:
+        source_value = self.get(cache_entry_key=source)
+        self._cache[destination] = source_value
