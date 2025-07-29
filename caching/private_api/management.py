@@ -140,6 +140,33 @@ class CacheManagement:
         non_reserved_keys: list[str] = self._get_non_reserved_keys()
         self._client.delete_many(keys=non_reserved_keys)
 
+    def delete_many(self, keys: list[str]) -> None:
+        """Deletes the given `keys` from the cache within 1 trip to the cache
+
+        Returns:
+            None
+
+        """
+        self._client.delete_many(keys=keys)
+
+    def get_reserved_keys(self) -> list[str]:
+        """Fetches all the keys in the reserved namespace of the cache
+
+        Returns:
+            List of reserved keys as strings.
+            Note that only the key part is included in the string.
+            This excludes the prefix and the version:
+            full key representation = "ukhsa:1:ns2-abc123"
+            returned key representation = "ns2-abc123"
+
+        """
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        return [
+            str(cache_key)
+            for cache_key in all_cache_keys
+            if cache_key.is_reserved_namespace
+        ]
+
     def _get_non_reserved_keys(self) -> list[str]:
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
         return [

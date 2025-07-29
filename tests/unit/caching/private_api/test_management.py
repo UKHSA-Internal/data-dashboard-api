@@ -696,6 +696,110 @@ class TestCacheManagement:
         non_reserved_keys = [key.split(":")[-1] for key in non_reserved_complete_keys]
         spy_client.delete_many.assert_called_once_with(keys=non_reserved_keys)
 
+    def test_delete_many(self):
+        """
+        Given a list of keys
+        When `delete_many()` is called from
+            a `CacheManagement` instance
+        Then the call is delegated to the underlying client
+        """
+        # Given
+        spy_client = mock.Mock()
+        cache_management = CacheManagement(in_memory=True, client=spy_client)
+        keys = ["abc", "123", "456"]
+
+        # When
+        cache_management.delete_many(keys=keys)
+
+        # Then
+        spy_client.delete_many.assert_called_once_with(keys=keys)
+
+    def test_get_all_cache_keys(self):
+        """
+        Given an `InMemoryCacheClient`
+        When `_get_all_cache_keys()` is called
+            from the `CacheManagement` object
+        Then all the cached keys are returned
+            as `CacheKey` objects
+        """
+        # Given
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {
+            "ukhsa:1:abc": mock.Mock(),
+            "ukhsa:1:def456": mock.Mock(),
+            "ukhsa:1:ns2-test-key": mock.Mock(),
+        }
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=in_memory_cache_client,
+        )
+
+        # When
+        all_cache_keys: list[str] = cache_management._get_all_cache_keys()
+
+        # Then
+        keys: list[str] = [cache_key._key for cache_key in all_cache_keys]
+
+        assert "abc" in keys
+        assert "def456" in keys
+        assert "ns2-test-key" in keys
+
+    def test_get_reserved_keys(self):
+        """
+        Given an `InMemoryCacheClient`
+        When `get_reserved_keys()` is called
+            from the `CacheManagement` object
+        Then all the reserved namespace cache keys
+            are returned as strings
+        """
+        # Given
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {
+            "ukhsa:1:abc": mock.Mock(),
+            "ukhsa:1:def456": mock.Mock(),
+            "ukhsa:1:ns2-test-key": mock.Mock(),
+        }
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=in_memory_cache_client,
+        )
+
+        # When
+        reserved_keys: list[str] = cache_management.get_reserved_keys()
+
+        # Then
+        assert "abc" not in reserved_keys
+        assert "def456" not in reserved_keys
+        assert "ns2-test-key" in reserved_keys
+
+    def test_get_non_reserved_keys(self):
+        """
+        Given an `InMemoryCacheClient`
+        When `_get_non_reserved_keys()` is called
+            from the `CacheManagement` object
+        Then all the non-reserved namespace cache keys
+            are returned as strings
+        """
+        # Given
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {
+            "ukhsa:1:abc": mock.Mock(),
+            "ukhsa:1:def456": mock.Mock(),
+            "ukhsa:1:ns2-test-key": mock.Mock(),
+        }
+        cache_management = CacheManagement(
+            in_memory=True,
+            client=in_memory_cache_client,
+        )
+
+        # When
+        non_reserved_keys: list[str] = cache_management._get_non_reserved_keys()
+
+        # Then
+        assert "abc" in non_reserved_keys
+        assert "def456" in non_reserved_keys
+        assert "ns2-test-key" not in non_reserved_keys
+
 
 class TestCacheKey:
     def test_create(self):

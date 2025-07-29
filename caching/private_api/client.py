@@ -135,3 +135,7 @@ class InMemoryCacheClient(CacheClient):
         """
         for key in keys:
             self._cache.pop(key)
+
+    def list_keys(self) -> list[bytes]:
+        """Lists all the keys in the cache as bytes"""
+        return [bytes(key, encoding="utf-8") for key in self._cache]
