@@ -22,10 +22,10 @@ class CacheKey:
         self._version = version
 
     def __repr__(self) -> str:
-        return f"{self._prefix}:{self._version}:{self._key}"
+        return self.full_key
 
     def __str__(self) -> str:
-        return self._key
+        return self.standalone_key
 
     @classmethod
     def create(cls, raw_key: bytes | str) -> Self:
@@ -33,6 +33,14 @@ class CacheKey:
         raw_key = raw_key.strip("b'\"")
         prefix, version, key = raw_key.split(":")
         return cls(prefix=prefix, version=version, key=key)
+
+    @property
+    def full_key(self) -> str:
+        return f"{self._prefix}:{self._version}:{self._key}"
+
+    @property
+    def standalone_key(self) -> str:
+        return self._key
 
     @property
     def is_reserved_namespace(self) -> bool:
@@ -162,7 +170,7 @@ class CacheManagement:
         """
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
         return [
-            str(cache_key)
+            cache_key.standalone_key
             for cache_key in all_cache_keys
             if cache_key.is_reserved_namespace
         ]
@@ -170,7 +178,7 @@ class CacheManagement:
     def _get_non_reserved_keys(self) -> list[str]:
         all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
         return [
-            str(cache_key)
+            cache_key.standalone_key
             for cache_key in all_cache_keys
             if not cache_key.is_reserved_namespace
         ]

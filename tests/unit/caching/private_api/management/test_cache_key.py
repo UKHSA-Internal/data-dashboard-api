@@ -25,6 +25,46 @@ class TestCacheKey:
         assert cache_key._prefix == prefix
         assert cache_key._version == version
 
+    def test_standalone_key(self):
+        """
+        Given a `CacheKey` object
+        When the `standalone_key` property is called
+        Then the standalone key part is returned as a string
+        """
+        # Given
+        key = "abc123"
+        prefix = "ukhsa"
+        version = "1"
+        raw_key = f"{prefix}:{version}:{key}"
+        raw_key = bytes(raw_key, encoding="utf-8")
+        cache_key = CacheKey.create(raw_key=raw_key)
+
+        # When
+        standalone_key: str = cache_key.standalone_key
+
+        # Then
+        assert standalone_key == key
+
+    def test_full_key(self):
+        """
+        Given a `CacheKey` object
+        When the `full_key` property is called
+        Then the entirety of the key is returned as a string
+        """
+        # Given
+        key = "abc123"
+        prefix = "ukhsa"
+        version = "1"
+        raw_key = f"{prefix}:{version}:{key}"
+        raw_key = bytes(raw_key, encoding="utf-8")
+        cache_key = CacheKey.create(raw_key=raw_key)
+
+        # When
+        full_key: str = cache_key.full_key
+
+        # Then
+        assert full_key == raw_key.decode("utf-8")
+
     def test_is_reserved_namespace_returns_true_for_reserved_key(self):
         """
         Given a raw cache key in bytes format
