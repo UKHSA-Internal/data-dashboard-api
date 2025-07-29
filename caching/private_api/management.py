@@ -171,6 +171,20 @@ class CacheManagement:
         """
         self._client.delete_many(keys=keys)
 
+    def get_reserved_staging_keys(self) -> list[CacheKey]:
+        """Fetches all the keys in the reserved staging namespace of the cache
+
+        Returns:
+            List of reserved staging keys objects
+
+        """
+        all_cache_keys: list[CacheKey] = self._get_all_cache_keys()
+        return [
+            cache_key
+            for cache_key in all_cache_keys
+            if cache_key.is_reserved_staging_namespace
+        ]
+
     def get_reserved_keys(self) -> list[str]:
         """Fetches all the keys in the reserved namespace of the cache
 
