@@ -50,6 +50,7 @@ class Thresholds(blocks.StreamBlock):
 
 
 class ThresholdsFilter(blocks.StructBlock):
+    label = blocks.CharBlock(required=True)
     thresholds = Thresholds(
         min_num=MINIMUM_ROWS_COUNT,
         help_text=help_texts.GLOBAL_FILTERS_THRESHOLD_FILTER,
