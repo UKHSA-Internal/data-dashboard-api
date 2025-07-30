@@ -22,6 +22,7 @@ def _create_menu_data() -> list[dict]:
     other_respiratory_viruses_page = TopicPage.objects.get(
         slug="other-respiratory-viruses"
     )
+    childhood_vaccinations_index_page = CompositePage.objects.get(slug="cover")
 
     weather_health_alerts_page = CompositePage.objects.get(slug="weather-health-alerts")
     about_page = CommonPage.objects.get(slug="about")
@@ -66,6 +67,16 @@ def _create_menu_data() -> list[dict]:
                                             "html_url": other_respiratory_viruses_page.full_url,
                                         },
                                         "id": "acd7c46f-b871-48ae-943f-9e95656bde6e",
+                                    },
+                                    {
+                                        "type": "secondary_link",
+                                        "value": {
+                                            "title": "Childhood vaccinations",
+                                            "body": '<p data-block-key="ap3f6">Cover of vaccination enhanced rapidly</p>',
+                                            "page": childhood_vaccinations_index_page.id,
+                                            "html_url": childhood_vaccinations_index_page.full_url,
+                                        },
+                                        "id": "9764fedd-4543-41fd-969f-c38a1ca2e559",
                                     },
                                 ],
                             },
