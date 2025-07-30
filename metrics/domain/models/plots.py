@@ -215,6 +215,7 @@ class ChartGenerationPayload(BaseModel):
     y_axis_title: str
     y_axis_minimum_value: Decimal = 0
     y_axis_maximum_value: Decimal | None = None
+    legend_title: str | None = ""
 
 
 class CompletePlotData(BaseModel):

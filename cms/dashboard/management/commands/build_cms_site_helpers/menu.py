@@ -22,7 +22,7 @@ def _create_menu_data() -> list[dict]:
     other_respiratory_viruses_page = TopicPage.objects.get(
         slug="other-respiratory-viruses"
     )
-    cover_page = CompositePage.objects.get(slug="cover")
+    childhood_vaccinations_index_page = CompositePage.objects.get(slug="cover")
 
     weather_health_alerts_page = CompositePage.objects.get(slug="weather-health-alerts")
     about_page = CommonPage.objects.get(slug="about")
@@ -71,10 +71,10 @@ def _create_menu_data() -> list[dict]:
                                     {
                                         "type": "secondary_link",
                                         "value": {
-                                            "title": "COVER",
+                                            "title": "Childhood vaccinations",
                                             "body": '<p data-block-key="ap3f6">Cover of vaccination enhanced rapidly</p>',
-                                            "page": cover_page.id,
-                                            "html_url": cover_page.full_url,
+                                            "page": childhood_vaccinations_index_page.id,
+                                            "html_url": childhood_vaccinations_index_page.full_url,
                                         },
                                         "id": "9764fedd-4543-41fd-969f-c38a1ca2e559",
                                     },

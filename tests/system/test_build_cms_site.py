@@ -58,7 +58,6 @@ class TestBuildCMSSite:
             "COVID-19",
             "Influenza",
             "Other respiratory viruses",
-            "COVER",
             "Childhood vaccinations",
             "Access our data",
             "Weather health alerts",
