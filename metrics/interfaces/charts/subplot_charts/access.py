@@ -5,9 +5,9 @@ import plotly.graph_objects
 from django.db.models.manager import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.charts.subplot_charts.generation import (
-    generate_chart_figure as subplot_chart_generation,
-)
+
+from metrics.domain.charts.subplots.generation import generate_chart_figure
+
 from metrics.domain.models.charts.subplot_charts import (
     SubplotChartRequestParameters,
 )

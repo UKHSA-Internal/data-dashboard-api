@@ -13,11 +13,35 @@ from metrics.domain.models import (
     ChartRequestParams,
 )
 from metrics.domain.common.utils import ChartTypes
+from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters, SubplotChartSubplots
 from tests.fakes.factories.metrics.metric_factory import FakeMetricFactory
 from tests.fakes.managers.metric_manager import FakeMetricManager
 from tests.fakes.managers.topic_manager import FakeTopicManager
 
 DATA_PAYLOAD_HINT = dict[str, str | datetime.date]
+
+@pytest.fixture
+def fake_subplot_subplot_data():
+    return SubplotChartSubplots(
+        subplot_title="Subplot 1",
+        x_axis="Geography",
+        y_axis="Metric",
+        plots=[],
+    )
+
+
+@pytest.fixture
+def fake_subplot_chart_request_params():
+    return SubplotChartRequestParameters(
+        file_format="svg",
+        chart_width=930,
+        chart_height=220,
+        x_axis_title="x axis title",
+        y_axis_title="y axis title",
+        y_axis_minimum_value=0,
+        y_axis_maximum_value=None,
+        subplots={},
+    )
 
 
 @pytest.fixture

@@ -4,14 +4,11 @@ from plotly.subplots import make_subplots
 from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
-# import subplot chart generation model
-
 
 def generate_chart_figure(
     *,
     chart_generation_payload: SubplotChartGenerationPayload,
 ) -> plotly.graph_objects.Figure:
-    """some details here.."""
     subplot_data: PlotGenerationData = chart_generation_payload.subplot_data
 
     figure = make_subplots(
@@ -34,6 +31,6 @@ def generate_chart_figure(
                 col=plot_index,
             )
             if plot_index > 1:
-                figure.update_yaxes(showticklabels=False, row=1, col=plot_index)
+                figure.update_yaxes(showticklabels=True, row=1, col=plot_index)
 
     return figure
