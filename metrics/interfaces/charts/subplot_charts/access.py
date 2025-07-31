@@ -1,22 +1,24 @@
-from typing import Any
+import io
 from dataclasses import dataclass
 
 import plotly.graph_objects
-
 from django.db.models.manager import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.models import ChartGenerationPayload
+from metrics.domain.charts.subplot_charts.generation import (
+    generate_chart_figure as subplot_chart_generation,
+)
 from metrics.domain.models.charts.subplot_charts import (
     SubplotChartRequestParameters,
 )
 from metrics.domain.models.subplot_plots import (
-    SubplotChartRequestParams,
-    SubplotChartSubplotData
+    SubplotChartGenerationPayload,
+    SubplotGenerationData,
 )
-from metrics.interfaces.subplots.access import SubplotsInterface
+from metrics.interfaces.plots.access import PlotGenerationData, PlotsInterface
 
 DEFAULT_SUBPLOT_CHART_TYPE = "bar"
+
 
 @dataclass
 class ChartOutput:
@@ -31,22 +33,43 @@ class ChartsInterface:
         chart_request_params: SubplotChartRequestParameters,
         core_time_series_manager: type[Manager] = CoreTimeSeries.objects,
     ):
-        """
-        WIP: for now we'll integrate with time_series model_manager only
-             as we'll assume bar chart for the type (this is for cover).
-        """
         self.chart_request_params = chart_request_params
         self.chart_type = DEFAULT_SUBPLOT_CHART_TYPE
-        self.subplot_interface = SubplotsInterface(
-            chart_request_params=chart_request_params,
-        )
+        self.core_time_series_manager = core_time_series_manager
 
-    def _build_chart_generation_payload(self) -> SubplotChartRequestParams:
-        subplot_data: list[SubplotChartSubplotData] = (
-            self.subplot_interface.build_subplots_data()
-        )
-        return SubplotChartRequestParams(
-            subplot_data=subplot_data,
+    def _build_plots_data_data(self) -> list[PlotGenerationData]:
+        """Creates a list of `Subplot` models which hold the params and corresponding data for the
+            requested subplots and each subplot's `PlotGenerationData`.
+
+        Notes:
+            The corresponding timeseries data is used to enrich a pydantic
+            model which also holds the corresponding params.
+            These models can then be passed into the domain libraries.
+
+        Returns:
+            A list of `SubplotGenerationData` models for each of the requested `Subplots`
+            and their individual `Plots`.
+
+        """
+        subplots_data: SubplotGenerationData = []
+
+        for subplot in self.chart_request_params.subplots:
+            plots_interface = PlotsInterface(chart_request_params=subplot)
+            subplot_data: PlotGenerationData = plots_interface.build_plots_data()
+            subplots_data.append(
+                {
+                    "subplot_title": subplot.subplot_title,
+                    "subplot_data": subplot_data,
+                }
+            )
+
+        return subplots_data
+
+    def _build_chart_generation_payload(self) -> SubplotChartGenerationPayload:
+        """Creates a `SubplotChartGenerationPayload` model for chart generation"""
+        subplots_data: SubplotGenerationData = self._build_plots_data_data()
+        return SubplotChartGenerationPayload(
+            subplot_data=subplots_data,
             chart_width=self.chart_request_params.chart_width,
             chart_height=self.chart_request_params.chart_height,
             x_axis_title=self.chart_request_params.x_axis_title,
@@ -57,19 +80,31 @@ class ChartsInterface:
 
     @staticmethod
     def _build_chart_figure(
-        chart_generation_payload: SubplotChartRequestParams
+        chart_generation_payload: SubplotChartGenerationPayload,
     ) -> plotly.graph_objects.Figure:
-        return {}
+        """Build a plotly chart `Figure` object for a `Subplot` chart.
+
+        Args:
+            chart_generation_payload: An enriched `ChartGenerationPayload` model
+            which holds all the parameters required to generate the chart.
+            These include x and y values, colour information and label text.
+
+        Returns:
+            A plotly `Figure` object for the created subplot chart.
+        """
+        return subplot_chart_generation(
+            chart_generation_payload=chart_generation_payload,
+        )
 
     def generate_chart_output(self):
         """Generates a `plotly` chart figure and a corresponding description
 
         Returns:
             An enriched `ChartOutput` model containing:
-            figure of the created chart and description to summarise
-            the produced chart
+            A plotly `Figure` of the created chart and its description which
+            summarises the produced chart.
         """
-        chart_generation_payload: SubplotChartRequestParams = (
+        chart_generation_payload: SubplotChartGenerationPayload = (
             self._build_chart_generation_payload()
         )
 
@@ -77,7 +112,7 @@ class ChartsInterface:
             chart_generation_payload=chart_generation_payload,
         )
 
-        # Temporary chart description - following ticket to implement
+        # Temporary chart description - there is a follow on ticket to implement
         chart_description = "Subplot chart comparing multiple metrics"
 
         return ChartOutput(
@@ -85,10 +120,33 @@ class ChartsInterface:
             description=chart_description,
         )
 
+    def write_figure(self, *, figure: plotly.graph_objects.Figure) -> bytes:
+        """
+        Convert a figure to a static image and write to a file in the desired image format
+
+        Args:
+            figure: The figure object or a dictionary representing a figure
+
+        Returns:
+            The image in memory
+
+        """
+        file = io.BytesIO()
+
+        figure.write_image(
+            file=file,
+            format=self.chart_request_params.file_format,
+            validate=False,
+        )
+
+        file.seek(0)
+        return file.getvalue()
+
+
 def generate_chart_file(
     *, chart_request_params: SubplotChartRequestParameters
 ) -> bytes:
     charts_interface = ChartsInterface(chart_request_params=chart_request_params)
-    chart_output = charts_interface.generate_chart_output()
+    chart_output: ChartOutput = charts_interface.generate_chart_output()
 
-    # return charts_interface.write_figure()
+    return charts_interface.write_figure(figure=chart_output.figure)

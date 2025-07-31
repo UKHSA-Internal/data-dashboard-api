@@ -1,9 +1,12 @@
 import datetime
+from collections.abc import Iterable
 from decimal import Decimal
 from typing import Literal
 
 from pydantic.main import BaseModel
 from rest_framework.request import Request
+
+from metrics.domain.models.plots import PlotParameters
 
 OPTIONAL_STRING = str | None
 
@@ -37,8 +40,22 @@ class SubplotChartParameters(BaseModel):
 
 class SubplotChartSubplots(BaseModel):
     subplot_title: str
-    subplot_parameters: SubplotChartParameters
-    plots: list[SubplotChartSubplotsPlotsParameters]
+    x_axis: str
+    y_axis: str
+    plots: list[PlotParameters]
+    request: Request | None = None
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @property
+    def rbac_permissions(self) -> Iterable["RBACPermission"]:
+        return getattr(self.request, "rbac_permissions", [])
+
+
+"""
+This collection of models are the model definitions for a `Request` for a subplot chart.
+"""
 
 
 class SubplotChartRequestParameters(BaseModel):
@@ -49,10 +66,9 @@ class SubplotChartRequestParameters(BaseModel):
     y_axis_title: OPTIONAL_STRING = ""
     y_axis_minimum_value: Decimal | int | None = 0
     y_axis_maximum_value: Decimal | int | None = None
+    request: Request | None = None
 
     subplots: list[SubplotChartSubplots]
-
-    request: Request | None = None
 
     class Config:
         arbitrary_types_allowed = True

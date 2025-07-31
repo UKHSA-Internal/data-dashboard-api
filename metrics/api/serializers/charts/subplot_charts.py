@@ -60,6 +60,10 @@ class ChartParametersSerializer(serializers.Serializer):
     geography = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
 
+SUBPLOT_CHART_PARAMETER_PAYLOAD_TYPE = dict[str, str]
+SUBPLOT_PARAMETERS = dict[str, str]
+
+
 class SubplotChartRequestSerializer(serializers.Serializer):
     file_format = serializers.ChoiceField(
         choices=FILE_FORMAT_CHOICES,
@@ -116,12 +120,28 @@ class SubplotChartRequestSerializer(serializers.Serializer):
         for the chart request its really a part of the `subplot_parameters`. Its the combination
         of these two objects that when addewd to the `plot` fields make the request.
         """
+        chart_parameters: SUBPLOT_CHART_PARAMETER_PAYLOAD_TYPE = (
+            self.validated_data.pop("chart_parameters")
+        )
+
+        if chart_parameters["date_from"]:
+            chart_parameters["date_from"] = chart_parameters["date_from"].isoformat()
+
+        if chart_parameters["date_to"]:
+            chart_parameters["date_to"] = chart_parameters["date_to"].isoformat()
 
         for subplot in self.validated_data["subplots"]:
-            subplot["subplot_parameters"] = {
-                **self.validated_data["chart_parameters"],
-                **subplot["subplot_parameters"],
-            }
+            subplot_parameters = subplot.pop("subplot_parameters")
+            subplot["x_axis"] = chart_parameters["x_axis"]
+            subplot["y_axis"] = chart_parameters["y_axis"]
+
+            for plot in subplot["plots"]:
+                plot.update(
+                    {
+                        **chart_parameters,
+                        **subplot_parameters,
+                    }
+                )
 
         return SubplotChartRequestParameters(
             file_format=self.validated_data["file_format"],
