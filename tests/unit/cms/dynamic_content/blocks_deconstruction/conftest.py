@@ -516,7 +516,7 @@ def example_section_with_global_filter() -> CMS_COMPONENT_BLOCK_TYPE:
                                                             "parameters": {
                                                                 "theme": {
                                                                     "label": "",
-                                                                    "value": "immunisations",
+                                                                    "value": "immunisation",
                                                                 },
                                                                 "sub_theme": {
                                                                     "label": "",
@@ -565,7 +565,7 @@ def example_section_with_global_filter() -> CMS_COMPONENT_BLOCK_TYPE:
                                                             "parameters": {
                                                                 "theme": {
                                                                     "label": "",
-                                                                    "value": "immunisations",
+                                                                    "value": "immunisation",
                                                                 },
                                                                 "sub_theme": {
                                                                     "label": "",
