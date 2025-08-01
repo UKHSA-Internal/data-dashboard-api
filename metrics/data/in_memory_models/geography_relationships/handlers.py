@@ -51,7 +51,7 @@ def get_relevant_region(*, geography_code: str) -> dict[str, str]:
         region_geography_code = None
 
     return {
-        "geography_type": GeographyType.REGION.value,
+        "geography_type": "Region",
         "name": region_geography_name,
         "geography_code": region_geography_code,
     }
