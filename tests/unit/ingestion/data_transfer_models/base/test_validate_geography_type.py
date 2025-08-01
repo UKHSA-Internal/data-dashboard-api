@@ -13,6 +13,7 @@ VALID_NHS_TRUST_CODE = "RY6"
 VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE = "E10000024"
 VALID_UKHSA_REGION_CODE = "E45000017"
 VALID_GOVERNMENT_OFFICE_REGION_CODE = "E12000003"
+VALID_REGION_CODE = "E12000007"
 
 
 class TestIncomingBaseValidationForGeographyType:
@@ -26,6 +27,7 @@ class TestIncomingBaseValidationForGeographyType:
             ("Upper Tier Local Authority", VALID_UPPER_TIER_LOCAL_AUTHORITY_CODE),
             ("UKHSA Region", VALID_UKHSA_REGION_CODE),
             ("Government Office Region", VALID_GOVERNMENT_OFFICE_REGION_CODE),
+            ("Region", VALID_REGION_CODE),
         ),
     )
     def test_valid_geography_type_value_is_deemed_valid(
@@ -77,6 +79,9 @@ class TestIncomingBaseValidationForGeographyType:
             ("UKHSA Regions", VALID_UKHSA_REGION_CODE),
             ("government office region", VALID_GOVERNMENT_OFFICE_REGION_CODE),
             ("Government Office Regions", VALID_GOVERNMENT_OFFICE_REGION_CODE),
+            ("region", VALID_REGION_CODE),
+            ("regions", VALID_REGION_CODE),
+            ("Regions", VALID_REGION_CODE),
         ),
     )
     def test_invalid_geography_type_value_throws_error(

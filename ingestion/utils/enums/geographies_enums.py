@@ -13,3 +13,4 @@ class GeographyType(Enum):
     GOVERNMENT_OFFICE_REGION = "Government Office Region"
     INTEGRATED_CARE_BOARD = "Integrated Care Board"
     SUB_INTEGRATED_CARE_BOARD = "Sub-Integrated Care Board"
+    REGION = "Region"

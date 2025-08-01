@@ -12,7 +12,7 @@ LOWER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09"
 UPPER_TIER_LOCAL_AUTHORITY_GEOGRAPHY_CODE_PREFIXES = ("E06", "E07", "E08", "E09", "E10")
 NHS_REGION_GEOGRAPHY_CODE_PREFIX = "E40"
 UKHSA_REGION_GEOGRAPHY_CODE_PREFIX = "E45"
-GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX = "E12"
+REGION_GEOGRAPHY_CODE_PREFIX = "E12"
 UKHSA_SUPER_REGION_PREFIX = "X2500"
 
 
@@ -54,9 +54,9 @@ def validate_geography_code(
         case enums.GeographyType.NHS_REGION.value:
             return _validate_nhs_region_geography_code(geography_code=geography_code)
         case enums.GeographyType.GOVERNMENT_OFFICE_REGION.value:
-            return _validate_government_office_region_geography_code(
-                geography_code=geography_code
-            )
+            return _validate_region_geography_code(geography_code=geography_code)
+        case enums.GeographyType.REGION.value:
+            return _validate_region_geography_code(geography_code=geography_code)
         case enums.GeographyType.NHS_TRUST.value:
             return _validate_nhs_trust_geography_code(geography_code=geography_code)
         case enums.GeographyType.INTEGRATED_CARE_BOARD.value:
@@ -123,8 +123,8 @@ def _validate_nhs_region_geography_code(*, geography_code: str) -> str:
     raise ValueError
 
 
-def _validate_government_office_region_geography_code(*, geography_code: str) -> str:
-    if geography_code.startswith(GOVERNMENT_OFFICE_REGION_GEOGRAPHY_CODE_PREFIX):
+def _validate_region_geography_code(*, geography_code: str) -> str:
+    if geography_code.startswith(REGION_GEOGRAPHY_CODE_PREFIX):
         return geography_code
     raise ValueError
 
