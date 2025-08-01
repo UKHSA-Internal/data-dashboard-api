@@ -76,7 +76,7 @@ def get_upstream_relationships_for_geography(
     if geography_type == GeographyType.NATION.value:
         return [get_united_kingdom()]
 
-    if geography_type == GeographyType.REGION.value:
+    if geography_type == "Region":
         return _get_upstream_relationships_for_region(geography_code=geography_code)
 
     if geography_type == GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value:
