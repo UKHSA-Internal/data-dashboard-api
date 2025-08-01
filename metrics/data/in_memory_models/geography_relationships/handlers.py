@@ -82,4 +82,4 @@ def get_upstream_relationships_for_geography(
     if geography_type == GeographyType.UPPER_TIER_LOCAL_AUTHORITY.value:
         return _get_upstream_relationships_for_utla(geography_code=geography_code)
 
-    raise RelationshipsForGeographyTypeNotSupportedError
+    return None
