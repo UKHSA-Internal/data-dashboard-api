@@ -22,7 +22,7 @@ class RelationshipsForGeographyTypeNotSupportedError(Exception): ...
 GEOGRAPHY_RELATIONSHIP_TYPE = dict[str, str | None]
 
 
-def get_united_kingdom():
+def _get_united_kingdom_relationship():
     return {
         "geography_type": GeographyType.UNITED_KINGDOM.value,
         "name": GeographyType.UNITED_KINGDOM.value,
@@ -30,7 +30,9 @@ def get_united_kingdom():
     }
 
 
-def get_relevant_nation(*, geography_code: str) -> GEOGRAPHY_RELATIONSHIP_TYPE:
+def _get_relevant_nation_relationship(
+    *, geography_code: str
+) -> GEOGRAPHY_RELATIONSHIP_TYPE:
     try:
         nation_geography_name = REGION_TO_NATION_LOOKUP[geography_code]
         nation_geography_code = NATION_LOOKUP[nation_geography_name]
@@ -45,7 +47,9 @@ def get_relevant_nation(*, geography_code: str) -> GEOGRAPHY_RELATIONSHIP_TYPE:
     }
 
 
-def get_relevant_region(*, geography_code: str) -> GEOGRAPHY_RELATIONSHIP_TYPE:
+def _get_relevant_region_relationship(
+    *, geography_code: str
+) -> GEOGRAPHY_RELATIONSHIP_TYPE:
     try:
         region_geography_name = UTLA_TO_REGION_LOOKUP[geography_code]
         region_geography_code = REGION_LOOKUP[region_geography_name]
@@ -63,17 +67,22 @@ def get_relevant_region(*, geography_code: str) -> GEOGRAPHY_RELATIONSHIP_TYPE:
 def _get_upstream_relationships_for_region(
     *, geography_code: str
 ) -> list[GEOGRAPHY_RELATIONSHIP_TYPE]:
-    return [get_united_kingdom(), get_relevant_nation(geography_code=geography_code)]
+    return [
+        _get_united_kingdom_relationship(),
+        _get_relevant_nation_relationship(geography_code=geography_code),
+    ]
 
 
 def _get_upstream_relationships_for_utla(
     *, geography_code: str
 ) -> list[GEOGRAPHY_RELATIONSHIP_TYPE]:
-    relevant_region: dict[str, str] = get_relevant_region(geography_code=geography_code)
-    relevant_nation: dict[str, str] = get_relevant_nation(
+    relevant_region: dict[str, str] = _get_relevant_region_relationship(
+        geography_code=geography_code
+    )
+    relevant_nation: dict[str, str] = _get_relevant_nation_relationship(
         geography_code=relevant_region["geography_code"]
     )
-    return [get_united_kingdom(), relevant_region, relevant_nation]
+    return [_get_united_kingdom_relationship(), relevant_region, relevant_nation]
 
 
 def get_upstream_relationships_for_geography(
@@ -102,7 +111,7 @@ def get_upstream_relationships_for_geography(
     """
 
     if geography_type == GeographyType.NATION.value:
-        return [get_united_kingdom()]
+        return [_get_united_kingdom_relationship()]
 
     if geography_type == "Region":
         return _get_upstream_relationships_for_region(geography_code=geography_code)
