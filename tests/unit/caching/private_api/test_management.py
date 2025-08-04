@@ -10,6 +10,7 @@ from caching.private_api.management import (
     CacheManagement,
     CacheMissError,
     RESERVED_NAMESPACE_KEY_PREFIX,
+    CacheKey,
 )
 
 
@@ -674,8 +675,20 @@ class TestCacheManagement:
         Then the call is delegated to the underlying client
         """
         # Given
-        reserved_namespace_key_prefix = "abc-123456-"
+        reserved_namespace_key_prefix = "ns2"
+        non_reserved_complete_keys = [
+            "ukhsa:1:abc123",
+            "ukhsa:1:def456",
+            "ukhsa:1:abc123456",
+        ]
+        reserved_complete_keys = [
+            f"ukhsa:1:{reserved_namespace_key_prefix}-abc123",
+            f"ukhsa:1:{reserved_namespace_key_prefix}-qwerty",
+        ]
+        all_keys = non_reserved_complete_keys + reserved_complete_keys
         spy_client = mock.Mock()
+        spy_client.list_keys.return_value = all_keys
+
         cache_management = CacheManagement(
             in_memory=True,
             client=spy_client,
@@ -686,6 +699,72 @@ class TestCacheManagement:
         cache_management.clear_non_reserved_keys()
 
         # Then
-        spy_client.clear_non_reserved_keys.assert_called_once_with(
-            reserved_namespace_key_prefix=reserved_namespace_key_prefix
-        )
+        non_reserved_keys = [key.split(":")[-1] for key in non_reserved_complete_keys]
+        spy_client.delete_many.assert_called_once_with(keys=non_reserved_keys)
+
+
+class TestCacheKey:
+    def test_create(self):
+        """
+        Given a raw cache key in bytes format
+        When the `create()` method is called
+            from the `CacheKey` class
+        Then the returned object holds
+            reference to the deconstructed key parts
+        """
+        # Given
+        key = "abc123"
+        prefix = "ukhsa"
+        version = "1"
+        raw_key = f"{prefix}:{version}:{key}"
+        raw_key = bytes(raw_key, encoding="utf-8")
+
+        # When
+        cache_key = CacheKey.create(raw_key=raw_key)
+
+        # Then
+        assert cache_key._key == key
+        assert cache_key._prefix == prefix
+        assert cache_key._version == version
+
+    def test_is_reserved_namespace_returns_true_for_reserved_key(self):
+        """
+        Given a raw cache key in bytes format
+            which is set within the reserved namespace
+        When the `is_reserved_namespace()` property is called
+            from the `CacheKey` class
+        Then True is returned
+        """
+        # Given
+        key = "abc123"
+        prefix = "ukhsa"
+        version = "1"
+        raw_key = f"{prefix}:{version}:{RESERVED_NAMESPACE_KEY_PREFIX}-{key}"
+        raw_key = bytes(raw_key, "utf-8")
+
+        # When
+        cache_key = CacheKey.create(raw_key=raw_key)
+
+        # Then
+        assert cache_key.is_reserved_namespace
+
+    def test_is_reserved_namespace_returns_false_for_non_reserved_key(self):
+        """
+        Given a raw cache key in bytes format
+            which is not set within the reserved namespace
+        When the `is_reserved_namespace()` property is called
+            from the `CacheKey` class
+        Then False is returned
+        """
+        # Given
+        key = "abc123"
+        prefix = "ukhsa"
+        version = "1"
+        raw_key = f"{prefix}:{version}:{key}"
+        raw_key = bytes(raw_key, "utf-8")
+
+        # When
+        cache_key = CacheKey.create(raw_key=raw_key)
+
+        # Then
+        assert not cache_key.is_reserved_namespace
