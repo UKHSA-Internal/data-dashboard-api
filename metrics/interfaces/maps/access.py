@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 from django.db.models.manager import Manager
 
+from metrics.data.in_memory_models.geography_relationships.handlers import get_upstream_relationships_for_geography
 from metrics.data.models.core_models import CoreTimeSeries, Geography
 from metrics.domain.models.map import MapsParameters
 
@@ -53,6 +54,38 @@ class MapsInterface:
                     geography_type_name=self.maps_parameters.parameters.geography_type,
                 )
             )
+
+    def _get_related_geography_if_required(self, accompanying_point, geography: str):
+        params = accompanying_point.parameters
+        selected_geography = params.geography
+        selected_geography_type = params.geography_type
+
+        main_geography_type: str = self.maps_parameters.parameters.geography_type
+
+        if not selected_geography and selected_geography_type != main_geography_type:
+            selected_geography: str | None = self._fetch_related_geography_for_selected_geography_type(
+                geography=geography,
+                main_geography_type=main_geography_type,
+                selected_geography_type=selected_geography_type,
+            )
+
+        return selected_geography
+
+    def _fetch_related_geography_for_selected_geography_type(self, geography, main_geography_type, selected_geography_type):
+        geography_code: str = self.geography_manager.get_geography_code_for_geography(
+            geography=geography,
+            geography_type=main_geography_type,
+        )
+
+        upstream_relationships: list[dict] = get_upstream_relationships_for_geography(
+            geography_code=geography_code,
+            geography_type=main_geography_type,
+        )
+
+        for upstream_relationship in upstream_relationships:
+            if selected_geography_type == upstream_relationship["geography_type"]:
+                return upstream_relationship["name"]
+        return None
 
     def _build_null_case_for_geography_with_no_data(
         self, geography: str
@@ -109,13 +142,17 @@ class MapsInterface:
             for accompanying_point in self.maps_parameters.accompanying_points:
                 accompanying_point_params = accompanying_point.parameters
 
+                selected_geography: str = self._get_related_geography_if_required(
+                    accompanying_point=accompanying_point,
+                    geography=geography,
+                )
                 accompanying_point_record = (
                     self.core_time_series_manager.query_for_data(
                         theme=accompanying_point_params.theme,
                         sub_theme=accompanying_point_params.sub_theme,
                         topic=accompanying_point_params.topic,
                         metric=accompanying_point_params.metric,
-                        geography=accompanying_point_params.geography,
+                        geography=selected_geography,
                         geography_type=accompanying_point_params.geography_type,
                         stratum=accompanying_point_params.stratum,
                         sex=accompanying_point_params.sex,
