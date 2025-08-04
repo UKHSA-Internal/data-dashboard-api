@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from caching.private_api.decorators import cache_response
 from metrics.api.serializers.maps import MapsRequestSerializer
-from metrics.interfaces.maps.access import get_maps_output
+from metrics.interfaces.maps.access import MapOutput, get_maps_output
 
 from .request_example import REQUEST_PAYLOAD_EXAMPLE
 
@@ -36,6 +36,6 @@ class MapsView(APIView):
         serializer.is_valid(raise_exception=True)
 
         maps_parameters = serializer.to_models(request=request)
-        maps_output = get_maps_output(maps_parameters=maps_parameters)
+        maps_output: MapOutput = get_maps_output(maps_parameters=maps_parameters)
 
         return Response(data=maps_output.output())
