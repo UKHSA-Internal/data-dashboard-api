@@ -101,28 +101,45 @@ def _retrieve_response_from_cache_or_calculate(
 
     cache_management = kwargs.pop("cache_management", CacheManagement(in_memory=False))
 
+    should_force_write: bool = _check_force_write_should_happen_for_target_namespace(
+        request=request, is_reserved_namespace=is_reserved_namespace
+    )
+
+    if should_force_write:
+        # In this case if we are writing to the reserved namespace
+        # then we actually want to write to the reserved staging namespace
+        # So that we can copy all the staging keys into the reserved namespace
+        # when all the keys are ready
+        cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
+            request=request,
+            is_reserved_staging_namespace=is_reserved_namespace,
+            is_reserved_namespace=False,
+        )
+        return _calculate_response_and_save_in_cache(
+            view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
+        )
+
+    # In this case, we have a lazy-load request.
+    # So we want to fetch the key associated with the non-reserved or reserved namespaces only.
     cache_entry_key: str = cache_management.build_cache_entry_key_for_request(
-        request=request, is_reserved_namespace=is_reserved_namespace
+        request=request,
+        is_reserved_staging_namespace=False,
+        is_reserved_namespace=is_reserved_namespace,
     )
 
-    should_force_refresh: bool = _check_should_force_write_happen_for_target_namespace(
-        request=request, is_reserved_namespace=is_reserved_namespace
-    )
-
-    if not should_force_refresh:
-        try:
-            return cache_management.retrieve_item_from_cache(
-                cache_entry_key=cache_entry_key
-            )
-        except CacheMissError:
-            pass
-
-    return _calculate_response_and_save_in_cache(
-        view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
-    )
+    try:
+        return cache_management.retrieve_item_from_cache(
+            cache_entry_key=cache_entry_key
+        )
+    except CacheMissError:
+        # If it is not in the cache then we'll write it
+        # on the way out after calculating the response
+        return _calculate_response_and_save_in_cache(
+            view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
+        )
 
 
-def _check_should_force_write_happen_for_target_namespace(
+def _check_force_write_should_happen_for_target_namespace(
     *, request: Request, is_reserved_namespace: bool
 ) -> bool:
     force_refresh_has_been_asked_for: bool = request.headers.get(

@@ -64,22 +64,6 @@ class TestCacheClient:
         )
 
     @mock.patch(f"{MODULE_PATH}.cache")
-    def test_clear_delegates_call(self, spy_cache: mock.MagicMock):
-        """
-        Given an instance of the `CacheClient`
-        When `clear()` is called from the client
-        Then the call is delegated to the underlying cache
-        """
-        # Given
-        cache_client = CacheClient()
-
-        # When
-        cache_client.clear()
-
-        # Then
-        spy_cache.clear.assert_called_once()
-
-    @mock.patch(f"{MODULE_PATH}.cache")
     def test_delete_many_delegates_call(self, spy_cache: mock.MagicMock):
         """
         Given an instance of the `CacheClient`
@@ -124,6 +108,30 @@ class TestCacheClient:
         low_level_client = spy_cache._cache.get_client.return_value
         low_level_client.keys.assert_called_once_with(f"*{prefix}*")
         assert all_keys == low_level_client.keys.return_value
+
+    @mock.patch(f"{MODULE_PATH}.cache")
+    def test_copy(self, spy_cache: mock.MagicMock):
+        """
+        Given a `CacheClient`
+        When `copy()` is called from the client
+        Then the call is delegated
+            to the underlying low level redis client
+        """
+        # Given
+        cache_client = CacheClient()
+        source = "ukhsa:1:ns3-abc123"
+        destination = "ukhsa:1:ns2-abc123"
+
+        # When
+        all_keys = cache_client.copy(source=source, destination=destination)
+
+        # Then
+        low_level_client = spy_cache._cache.get_client.return_value
+        low_level_client.copy.assert_called_once_with(
+            source=source,
+            destination=destination,
+            replace=True,
+        )
 
 
 class TestInMemoryCacheClient:
@@ -190,24 +198,6 @@ class TestInMemoryCacheClient:
         # Then
         assert retrieved_value == mocked_value
 
-    def test_clear_flushes_all_items(self):
-        """
-        Given a cache entry key and a value
-        When `clear()` is called from an instance of the `InMemoryCacheClient`
-        Then the cache is flushed
-        """
-        # Given
-        mocked_value = mock.Mock()
-        fake_cache_entry_key = "abc"
-        in_memory_cache_client = InMemoryCacheClient()
-        in_memory_cache_client._cache = {fake_cache_entry_key: mocked_value}
-
-        # When
-        in_memory_cache_client.clear()
-
-        # Then
-        assert fake_cache_entry_key not in in_memory_cache_client._cache
-
     def test_delete_many_clears_select_keys_only(self):
         """
         Given a number of cache keys
@@ -234,3 +224,28 @@ class TestInMemoryCacheClient:
         # Then
         assert non_reserved_cache_key not in in_memory_cache_client._cache
         assert reserved_cache_key in in_memory_cache_client._cache
+
+    def test_copy(self):
+        """
+        Given a source and a destination key
+        When `copy()` is called
+            from an instance of the `InMemoryCacheClient`
+        Then the data in the source key is
+            copied across to the destination key
+        """
+        # Given
+        value = mock.Mock()
+        source = "ukhsa:1:ns3-abc123"
+        destination = "ukhsa:1:ns2-abc123"
+
+        in_memory_cache_client = InMemoryCacheClient()
+        in_memory_cache_client._cache = {source: value}
+
+        # When
+        in_memory_cache_client.copy(
+            source=source,
+            destination=destination,
+        )
+
+        # Then
+        assert in_memory_cache_client.get(cache_entry_key=destination) == value
