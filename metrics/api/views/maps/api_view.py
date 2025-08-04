@@ -24,7 +24,7 @@ class MapsView(APIView):
         request=MapsRequestSerializer,
         examples=[
             OpenApiExample(
-                "COVID-19 weekly deaths example",
+                name="6-in-1 (1 year) 2023 coverage",
                 value=REQUEST_PAYLOAD_EXAMPLE,
                 request_only=True,
             )
