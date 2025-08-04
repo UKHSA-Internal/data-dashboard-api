@@ -69,8 +69,7 @@ class MapsInterface:
             latest_date=latest_date,
         )
 
-    def _ensure_geographies_are_populated(self) -> None:
-        """Inject all geographies for geography type if none are provided."""
+    def _ensure_geographies_are_populated_for_main_parameters(self) -> None:
         if not self.maps_parameters.parameters.geographies:
             self.maps_parameters.parameters.geographies = (
                 self.geography_manager.get_all_geography_names_by_geography_type(
@@ -268,7 +267,7 @@ class MapsInterface:
         Returns:
             Tuple of (geography data list, set of associated dates)
         """
-        self._ensure_geographies_are_populated()
+        self._ensure_geographies_are_populated_for_main_parameters()
 
         results: list[MapGeographyResult] = []
         associated_dates: set[datetime.date] = set()
