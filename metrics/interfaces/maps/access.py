@@ -8,7 +8,7 @@ from metrics.data.in_memory_models.geography_relationships.handlers import (
     get_upstream_relationships_for_geography,
 )
 from metrics.data.models.core_models import CoreTimeSeries, Geography
-from metrics.domain.models.map import MapsParameters
+from metrics.domain.models.map import MapMainParameters, MapsParameters
 
 
 @dataclass
@@ -36,8 +36,7 @@ class MapOutput:
         return asdict(self)
 
 
-class GeographyNotFoundForAccompanyingPointError(Exception):
-    ...
+class GeographyNotFoundForAccompanyingPointError(Exception): ...
 
 
 class MapsInterface:
@@ -244,7 +243,7 @@ class MapsInterface:
         Returns:
             Query result or None if no data found
         """
-        params = self.maps_parameters.parameters
+        params: MapMainParameters = self.maps_parameters.parameters
 
         return self.core_time_series_manager.query_for_data(
             theme=params.theme,
