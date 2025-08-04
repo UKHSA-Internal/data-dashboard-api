@@ -69,6 +69,46 @@ class MapsInterface:
             latest_date=latest_date,
         )
 
+    def build_maps_data(self) -> tuple[list[MapGeographyResult], set[datetime.date]]:
+        """
+        Build complete maps data for all geographies.
+
+        Returns:
+            Tuple of (geography data list, set of associated dates)
+        """
+        self._ensure_geographies_are_populated_for_main_parameters()
+
+        results: list[MapGeographyResult] = []
+        associated_dates: set[datetime.date] = set()
+
+        for geography in self.maps_parameters.parameters.geographies:
+            main_result = self._query_for_main_data_geography(geography=geography)
+
+            if main_result is None:
+                null_data: MapGeographyResult = self._create_null_geography_data(
+                    geography=geography
+                )
+                results.append(null_data)
+                continue
+
+            associated_dates.add(main_result.date)
+
+            accompanying_points: list[AccompanyingPointResult] = (
+                self._process_accompanying_points(geography=geography)
+            )
+
+            geography_data = MapGeographyResult(
+                geography_code=main_result.geography.geography_code,
+                geography_type=self.maps_parameters.parameters.geography_type,
+                geography=geography,
+                metric_value=main_result.metric_value,
+                accompanying_points=accompanying_points,
+            )
+
+            results.append(geography_data)
+
+        return results, associated_dates
+
     def _ensure_geographies_are_populated_for_main_parameters(self) -> None:
         if not self.maps_parameters.parameters.geographies:
             self.maps_parameters.parameters.geographies = (
@@ -78,7 +118,7 @@ class MapsInterface:
             )
 
     def _get_related_geography_for_accompanying_point(
-        self, accompanying_point, main_geography: str
+        self, *, accompanying_point, main_geography: str
     ) -> str | None:
         """
         Get related geography if required for the accompanying point.
@@ -108,7 +148,7 @@ class MapsInterface:
         )
 
     def _fetch_related_geography_by_type(
-        self, geography: str, main_geography_type: str, target_geography_type: str
+        self, *, geography: str, main_geography_type: str, target_geography_type: str
     ) -> str:
         """
         Fetch related geography for the specified geography type.
@@ -146,7 +186,7 @@ class MapsInterface:
 
         return related_geography["name"]
 
-    def _create_null_geography_data(self, geography: str) -> MapGeographyResult:
+    def _create_null_geography_data(self, *, geography: str) -> MapGeographyResult:
         """
         Create null case data for geography with no available data.
 
@@ -174,7 +214,7 @@ class MapsInterface:
         )
 
     def _process_accompanying_points(
-        self, geography: str
+        self, *, geography: str
     ) -> list[AccompanyingPointResult]:
         """
         Process all accompanying points for a given geography.
@@ -186,53 +226,64 @@ class MapsInterface:
             List of processed accompanying point results
 
         """
-        results = []
+        results: list[AccompanyingPointResult] = []
 
         for accompanying_point in self.maps_parameters.accompanying_points:
-            params = accompanying_point.parameters
-
-            try:
-                selected_geography: str = (
-                    self._get_related_geography_for_accompanying_point(
-                        accompanying_point=accompanying_point,
-                        main_geography=geography,
-                    )
-                )
-            except GeographyNotFoundForAccompanyingPointError:
-                continue
-
-            accompanying_point_record = self.core_time_series_manager.query_for_data(
-                theme=params.theme,
-                sub_theme=params.sub_theme,
-                topic=params.topic,
-                metric=params.metric,
-                geography=selected_geography,
-                geography_type=params.geography_type,
-                stratum=params.stratum,
-                sex=params.sex,
-                age=params.age,
-                date_from=self.maps_parameters.date_from,
-                date_to=self.maps_parameters.date_to,
-                field_to_order_by="-date",
-                rbac_permissions=self.maps_parameters.rbac_permissions,
-            ).first()
-
-            try:
-                metric_value = accompanying_point_record.metric_value
-            except AttributeError:
-                metric_value = None
-
-            results.append(
-                AccompanyingPointResult(
-                    label_prefix=accompanying_point.label_prefix,
-                    label_suffix=accompanying_point.label_suffix,
-                    metric_value=metric_value,
+            accompanying_point_result: AccompanyingPointResult | None = (
+                self._process_accompanying_point(
+                    accompanying_point=accompanying_point,
+                    geography=geography,
                 )
             )
 
+            if accompanying_point_result:
+                results.append(accompanying_point_result)
+
         return results
 
-    def _query_main_data_for_geography(self, geography: str):
+    def _process_accompanying_point(
+        self, *, accompanying_point, geography: str
+    ) -> AccompanyingPointResult | None:
+        params = accompanying_point.parameters
+
+        try:
+            selected_geography: str = (
+                self._get_related_geography_for_accompanying_point(
+                    accompanying_point=accompanying_point,
+                    main_geography=geography,
+                )
+            )
+        except GeographyNotFoundForAccompanyingPointError:
+            return None
+
+        accompanying_point_record = self.core_time_series_manager.query_for_data(
+            theme=params.theme,
+            sub_theme=params.sub_theme,
+            topic=params.topic,
+            metric=params.metric,
+            geography=selected_geography,
+            geography_type=params.geography_type,
+            stratum=params.stratum,
+            sex=params.sex,
+            age=params.age,
+            date_from=self.maps_parameters.date_from,
+            date_to=self.maps_parameters.date_to,
+            field_to_order_by="-date",
+            rbac_permissions=self.maps_parameters.rbac_permissions,
+        ).first()
+
+        try:
+            metric_value = accompanying_point_record.metric_value
+        except AttributeError:
+            metric_value = None
+
+        return AccompanyingPointResult(
+            label_prefix=accompanying_point.label_prefix,
+            label_suffix=accompanying_point.label_suffix,
+            metric_value=metric_value,
+        )
+
+    def _query_for_main_data_geography(self, *, geography: str):
         """
         Query main time series data for a specific geography.
 
@@ -241,6 +292,7 @@ class MapsInterface:
 
         Returns:
             Query result or None if no data found
+
         """
         params: MapMainParameters = self.maps_parameters.parameters
 
@@ -259,44 +311,6 @@ class MapsInterface:
             field_to_order_by="-date",
             rbac_permissions=self.maps_parameters.rbac_permissions,
         ).first()
-
-    def build_maps_data(self) -> tuple[list[MapGeographyResult], set[datetime.date]]:
-        """
-        Build complete maps data for all geographies.
-
-        Returns:
-            Tuple of (geography data list, set of associated dates)
-        """
-        self._ensure_geographies_are_populated_for_main_parameters()
-
-        results: list[MapGeographyResult] = []
-        associated_dates: set[datetime.date] = set()
-
-        for geography in self.maps_parameters.parameters.geographies:
-            main_result = self._query_main_data_for_geography(geography)
-
-            if main_result is None:
-                null_data = self._create_null_geography_data(geography)
-                results.append(null_data)
-                continue
-
-            associated_dates.add(main_result.date)
-
-            accompanying_points: list[AccompanyingPointResult] = (
-                self._process_accompanying_points(geography)
-            )
-
-            geography_data = MapGeographyResult(
-                geography_code=main_result.geography.geography_code,
-                geography_type=self.maps_parameters.parameters.geography_type,
-                geography=geography,
-                metric_value=main_result.metric_value,
-                accompanying_points=accompanying_points,
-            )
-
-            results.append(geography_data)
-
-        return results, associated_dates
 
 
 def get_maps_output(*, maps_parameters: MapsParameters) -> MapOutput:
