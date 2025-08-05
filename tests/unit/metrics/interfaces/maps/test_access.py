@@ -1,10 +1,18 @@
+from unittest import mock
+
+import pytest
+
+from metrics.data.models.core_models import Geography
 from metrics.domain.models.map import (
     MapAccompanyingPoint,
     MapAccompanyingPointOptionalParameters,
     MapsParameters,
     MapMainParameters,
 )
-from metrics.interfaces.maps.access import MapsInterface
+from metrics.interfaces.maps.access import (
+    MapsInterface,
+    GeographyNotFoundForAccompanyingPointError,
+)
 
 
 class TestMapsInterface:
@@ -64,3 +72,31 @@ class TestMapsInterface:
 
         # Then
         assert related_geography == main_geography
+
+    def test_fetch_related_geography_by_type_raises_error(self):
+        """
+        Given a payload for a geography which cannot be found
+        When `_fetch_related_geography_by_type()` is called
+            from an instance of the `MapsInterface`
+        Then a `GeographyNotFoundForAccompanyingPointError` is raised
+        """
+        # Given
+        geography = "Leeds"
+        main_geography_type = "Upper Tier Local Authority"
+        target_geography_type = "Government Office Region"
+        mocked_geography_manager = mock.Mock()
+        mocked_geography_manager.get_geography_code_for_geography.side_effect = [
+            Geography.DoesNotExist
+        ]
+        maps_interface = MapsInterface(
+            maps_parameters=mock.Mock(),
+            geography_manager=mocked_geography_manager,
+        )
+
+        # When / Then
+        with pytest.raises(GeographyNotFoundForAccompanyingPointError):
+            maps_interface._fetch_related_geography_by_type(
+                geography=geography,
+                main_geography_type=main_geography_type,
+                target_geography_type=target_geography_type,
+            )
