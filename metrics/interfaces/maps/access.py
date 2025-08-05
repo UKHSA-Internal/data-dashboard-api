@@ -135,14 +135,17 @@ class MapsInterface:
             The related geography name for the given accompanying point.
 
         """
-        selected_geography: str = accompanying_point.parameters.geography
-        selected_geography_type: str = accompanying_point.parameters.geography_type
+        selected_geography: str | None = accompanying_point.parameters.geography
+        selected_geography_type: str | None = accompanying_point.parameters.geography_type
         main_geography_type: str = self.maps_parameters.parameters.geography_type
 
         # If the geography has been explicitly defined
-        # or if the types are the same, we fall back to the selected geography
+        # or the geography type has not been given,
+        # then we fall back to the selected geography
         # for this accompanying point
-        if selected_geography or selected_geography_type == main_geography_type:
+        if not selected_geography_type:
+            return main_geography
+        if selected_geography:
             return selected_geography
 
         return self._fetch_related_geography_by_type(
