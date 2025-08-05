@@ -74,6 +74,24 @@ class MapsRequestSerializer(serializers.Serializer):
     def _complete_accompanying_point_payload(
         self, accompanying_point: ACCOMPANYING_POINT_PAYLOAD_TYPE
     ) -> ACCOMPANYING_POINT_PAYLOAD_TYPE:
+        """Completes the `accompanying_point` dict with the main parameters and assumed `geography`
+
+        Notes:
+            For any fields which have not been defined on the
+            `accompanying_point`, but which are available on the
+            main parameters will be copied across.
+            Consider the main parameters as the parent,
+            with the `accompanying_point` overriding its fields.
+
+            The exception being the `geography` field.
+            If the `geography` field was omitted
+            from the `accompanying_point`, then
+            this is set as None
+
+        Returns:
+            None
+
+        """
         main_parameters: MAIN_PARAMETERS_PAYLOAD_TYPE = self.validated_data[
             "parameters"
         ]
