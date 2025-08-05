@@ -136,7 +136,9 @@ class MapsInterface:
 
         """
         selected_geography: str | None = accompanying_point.parameters.geography
-        selected_geography_type: str | None = accompanying_point.parameters.geography_type
+        selected_geography_type: str | None = (
+            accompanying_point.parameters.geography_type
+        )
         main_geography_type: str = self.maps_parameters.parameters.geography_type
 
         # If the geography has been explicitly defined
