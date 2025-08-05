@@ -77,7 +77,7 @@ VALID_PARAMETERS = [
         "syndromic",
     ),
     (
-        "immunisations",
+        "immunisation",
         "childhood-vaccines",
         "MMR1",
         "MMR1_coverage_coverageByYear",
