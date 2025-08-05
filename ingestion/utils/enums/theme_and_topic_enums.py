@@ -67,6 +67,14 @@ class _WeatherAlertTopic(Enum):
 
 class _ChildhoodVaccinesTopic(Enum):
     MMR1 = "MMR1"
+    MMR2 = "MMR2"
+    FOUR_IN_ONE = "4-in-1"
+    SIX_IN_ONE = "6-in-1"
+    HIB_MEN_C = "Hib-MenC"
+    MEN_B = "MenB"
+    MEN_B_BOOSTER = "MenB-booster"
+    PNEUMOCOCCAL = "pneumococcal"
+    ROTAVIRUS = "rotavirus"
 
 
 class _RespiratoryTopic(Enum):
