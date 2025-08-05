@@ -59,17 +59,10 @@ class MapsRequestSerializer(serializers.Serializer):
         accompanying_points: list[ACCOMPANYING_POINT_PAYLOAD_TYPE] = (
             self.validated_data.pop("accompanying_points")
         )
-        main_parameters: MAIN_PARAMETERS_PAYLOAD_TYPE = self.validated_data[
-            "parameters"
-        ]
 
         for accompanying_point in accompanying_points:
-            accompanying_point["parameters"].update(
-                {
-                    key: value
-                    for key, value in main_parameters.items()
-                    if key not in accompanying_point["parameters"]
-                }
+            self._complete_accompanying_point_payload(
+                accompanying_point=accompanying_point
             )
 
         return MapsParameters(
@@ -77,3 +70,21 @@ class MapsRequestSerializer(serializers.Serializer):
             accompanying_points=accompanying_points,
             request=request
         )
+
+    def _complete_accompanying_point_payload(
+        self, accompanying_point: ACCOMPANYING_POINT_PAYLOAD_TYPE
+    ) -> ACCOMPANYING_POINT_PAYLOAD_TYPE:
+        main_parameters: MAIN_PARAMETERS_PAYLOAD_TYPE = self.validated_data[
+            "parameters"
+        ]
+
+        accompanying_point["parameters"].update(
+            {
+                key: value
+                for key, value in main_parameters.items()
+                if key not in accompanying_point["parameters"]
+            }
+        )
+
+        if "geography" not in accompanying_point["parameters"]:
+            accompanying_point["parameters"]["geography"] = None

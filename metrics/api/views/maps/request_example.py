@@ -23,7 +23,6 @@ REQUEST_PAYLOAD_EXAMPLE = {
                 # This configuration will extend the `parameters`
                 # object and inject the corresponding related `Nation`
                 # associated with each UTLA given above
-                "geography": None,
             },
         },
         {
@@ -34,7 +33,6 @@ REQUEST_PAYLOAD_EXAMPLE = {
                 # This configuration will extend the `parameters`
                 # object and inject the corresponding related `Region`
                 # associated with each UTLA given above
-                "geography": None,
             },
         },
     ],
