@@ -2,6 +2,8 @@ from typing import Any
 
 from django.core.cache import cache
 
+from metrics.api import settings
+
 
 class CacheClient:
     """The client abstraction used to interact with the cache as set by the main Django application
@@ -14,6 +16,9 @@ class CacheClient:
 
     def __init__(self):
         self._cache = cache
+
+    def _get_low_level_client(self):
+        return self._cache._cache.get_client()
 
     def get(self, *, cache_entry_key: str) -> Any | None:
         """Retrieves the cache entry associated with the given `cache_entry_key`
@@ -45,14 +50,53 @@ class CacheClient:
         """
         self._cache.set(key=cache_entry_key, value=value, timeout=timeout)
 
-    def clear(self) -> None:
-        """Deletes all keys in the cache
+    def list_keys(self) -> list[bytes]:
+        """Lists all the application-level keys in the cache
+
+        Notes:
+            This is the Django cache <-> Redis implementation
+            for listing all the keys in the cache.
+
+        Returns:
+            List of bytes where each byte represents a single key
+
+        """
+        key_prefix: str = settings.CACHES["default"]["KEY_PREFIX"]
+        low_level_client = self._get_low_level_client()
+        pattern = f"*{key_prefix}*"
+        return low_level_client.keys(pattern)
+
+    def delete_many(self, keys: list[str]) -> None:
+        """Deletes all the provided keys in the cache
+
+        Args:
+            keys: The cache keys to delete
+                within a bulk delete operation
 
         Returns:
             None
 
         """
-        self._cache.clear()
+        self._cache.delete_many(keys=keys)
+
+    def copy(self, *, source: str, destination: str) -> None:
+        """Copies the value stored at the `source_key` to the `destination_key`
+
+        Args:
+            source: The source key to the value copy from
+            destination: The destination key to the value copy to
+
+        Notes:
+            This will overwrite any value pre-existing at the `destination_key`
+            The keys are also expected in their entirety:
+                i.e: `ukhsa:1:abc123` is correct
+
+        Returns:
+              None
+
+        """
+        low_level_client = self._get_low_level_client()
+        low_level_client.copy(source=source, destination=destination, replace=True)
 
 
 class InMemoryCacheClient(CacheClient):
@@ -100,11 +144,24 @@ class InMemoryCacheClient(CacheClient):
         """
         self._cache[cache_entry_key] = value
 
-    def clear(self) -> None:
-        """Deletes all keys in the cache
+    def delete_many(self, *, keys: list) -> None:
+        """Deletes all keys in the cache which are not within the reserved namespace
+
+        Args:
+            keys: The cache keys to delete
+                within a bulk delete operation
 
         Returns:
             None
 
         """
-        self._cache.clear()
+        for key in keys:
+            self._cache.pop(key)
+
+    def list_keys(self) -> list[bytes]:
+        """Lists all the keys in the cache as bytes"""
+        return [bytes(key, encoding="utf-8") for key in self._cache]
+
+    def copy(self, *, source: str, destination: str) -> None:
+        source_value = self.get(cache_entry_key=source)
+        self._cache[destination] = source_value

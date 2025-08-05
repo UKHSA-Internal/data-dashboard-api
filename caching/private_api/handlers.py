@@ -53,35 +53,22 @@ def crawl_all_pages(
     logger.info("Finished refreshing of cache in %s seconds", round(duration, 2))
 
 
-def check_cache_for_all_pages() -> None:
-    """Checks the cache for all pages but does not calculate responses
-
-    Notes:
-        Currently "all pages" means the following:
-        - The home page with the slug of "dashboard"
-        - All live/published topic pages
-
-    Returns:
-        None
-
-    Raises:
-        `CacheCheckResultedInMissError`: If any cache misses occur.
-            Note that this will error at the 1st cache miss.
-
-    """
-    private_api_crawler = PrivateAPICrawler.create_crawler_for_cache_checking_only()
-    area_selector_orchestrator = AreaSelectorOrchestrator(
-        geographies_api_crawler=private_api_crawler.geography_api_crawler
-    )
-
-    crawl_all_pages(
-        private_api_crawler=private_api_crawler,
-        area_selector_orchestrator=area_selector_orchestrator,
-    )
-
-
-def force_cache_refresh_for_all_pages() -> None:
+def force_cache_refresh_for_all_pages(
+    *,
+    cache_management: CacheManagement | None = None,
+    private_api_crawler: PrivateAPICrawler | None = None,
+) -> None:
     """Forcibly refresh the cache for all pages
+
+    Args:
+        `cache_management`: A `CacheManagement` object
+            which will be used to clear the cache
+            prior to filling the cache again.
+            Defaults to a concrete `CacheManagement` object
+        `private_api_crawler`: A `PrivateAPICrawler` object
+            which will be used to process the pages.
+            Defaults to an object with an `InternalAPIClient`
+            set to force cache refreshes.
 
     Notes:
         Currently "all pages" means the following:
@@ -97,10 +84,13 @@ def force_cache_refresh_for_all_pages() -> None:
         None
 
     """
-    cache_management = CacheManagement(in_memory=False)
-    cache_management.clear()
+    cache_management = cache_management or CacheManagement(in_memory=False)
+    cache_management.clear_non_reserved_keys()
 
-    private_api_crawler = PrivateAPICrawler.create_crawler_for_force_cache_refresh()
+    private_api_crawler = (
+        private_api_crawler
+        or PrivateAPICrawler.create_crawler_to_force_write_in_non_reserved_namespace()
+    )
     area_selector_orchestrator = AreaSelectorOrchestrator(
         geographies_api_crawler=private_api_crawler.geography_api_crawler
     )
@@ -108,6 +98,56 @@ def force_cache_refresh_for_all_pages() -> None:
         private_api_crawler=private_api_crawler,
         area_selector_orchestrator=area_selector_orchestrator,
     )
+
+
+def force_cache_refresh_for_reserved_namespace(
+    *,
+    cache_management: CacheManagement | None = None,
+    private_api_crawler: PrivateAPICrawler | None = None,
+) -> None:
+    """Forcibly refresh the cache for the reserved namespace only.
+
+    Args:
+        `cache_management`: A `CacheManagement` object
+            which will be used to clear the cache
+            prior to filling the cache again.
+            Defaults to a concrete `CacheManagement` object
+        `private_api_crawler`: A `PrivateAPICrawler` object
+            which will be used to process the pages.
+            Defaults to an object with an `InternalAPIClient`
+            set to force cache refreshes.
+
+    Notes:
+        Currently "all pages" means the following:
+        - The home page with the slug of "dashboard"
+        - All live/published topic pages
+
+        This will write to the cache 1 by 1,
+        and will only target the reserved namespace.
+
+        All new keys are first written to the staging namespace,
+        and then moved into the reserved namespace when ready.
+
+    Returns:
+        None
+
+    """
+    cache_management = cache_management or CacheManagement(in_memory=False)
+    private_api_crawler = (
+        private_api_crawler
+        or PrivateAPICrawler.create_crawler_to_force_write_in_reserved_staging_namespace()
+    )
+    area_selector_orchestrator = AreaSelectorOrchestrator(
+        geographies_api_crawler=private_api_crawler.geography_api_crawler
+    )
+
+    original_reserved_keys: list[str] = cache_management.get_reserved_keys()
+    crawl_all_pages(
+        private_api_crawler=private_api_crawler,
+        area_selector_orchestrator=area_selector_orchestrator,
+    )
+    cache_management.delete_many(keys=original_reserved_keys)
+    cache_management.move_all_reserved_staging_keys_into_reserved_namespace()
 
 
 def get_all_downloads(*, file_format: str = "csv") -> list[dict[str, str]]:

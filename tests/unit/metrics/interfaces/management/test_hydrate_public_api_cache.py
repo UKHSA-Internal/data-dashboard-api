@@ -5,7 +5,7 @@ from django.core.management import call_command
 MODULE_PATH = "metrics.interfaces.management.commands.hydrate_public_api_cache"
 
 
-class TestGenerateAPITimeSeries:
+class TestHydratePublicApiCacheCommand:
     @mock.patch(f"{MODULE_PATH}.crawl_public_api")
     def test_delegates_call_successfully(self, spy_crawl_public_api: mock.MagicMock):
         """
