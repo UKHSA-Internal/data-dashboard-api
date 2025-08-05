@@ -54,11 +54,12 @@ class MapsInterface:
         self.geography_manager = geography_manager or Geography.objects
 
     def get_maps_data(self) -> MapOutput:
-        """
-        Get complete maps data with associated dates.
+        """Gets the complete maps data output along with the latest date associated with the data.
 
         Returns:
-            MapOutput containing processed data and latest date.
+            A `MapOutput` object containing
+            all the processed data and
+            the latest associated date.
 
         """
         results, associated_dates = self.build_maps_data()
@@ -70,11 +71,16 @@ class MapsInterface:
         )
 
     def build_maps_data(self) -> tuple[list[MapGeographyResult], set[datetime.date]]:
-        """
-        Build complete maps data for all geographies.
+        """Gets the results for all the requested geographies across the map as well as the associated dates.
+
+        Notes:
+            If a specific geography cannot be found,
+            then the result will be returned with None
+            in place for the requisite fields.
 
         Returns:
-            Tuple of (geography data list, set of associated dates)
+            Tuple of (list of enriched `MapGeographyResult`, and a set of associated dates)
+
         """
         self._ensure_geographies_are_populated_for_main_parameters()
 
@@ -85,10 +91,10 @@ class MapsInterface:
             main_result = self._query_for_main_data_geography(geography=geography)
 
             if main_result is None:
-                null_data: MapGeographyResult = self._create_null_geography_data(
-                    geography=geography
+                null_result_for_geography: MapGeographyResult = (
+                    self._create_null_geography_result(geography=geography)
                 )
-                results.append(null_data)
+                results.append(null_result_for_geography)
                 continue
 
             associated_dates.add(main_result.date)
@@ -96,8 +102,7 @@ class MapsInterface:
             accompanying_points: list[AccompanyingPointResult] = (
                 self._process_accompanying_points(geography=geography)
             )
-
-            geography_data = MapGeographyResult(
+            result_for_geography = MapGeographyResult(
                 geography_code=main_result.geography.geography_code,
                 geography_type=self.maps_parameters.parameters.geography_type,
                 geography=geography,
@@ -105,7 +110,7 @@ class MapsInterface:
                 accompanying_points=accompanying_points,
             )
 
-            results.append(geography_data)
+            results.append(result_for_geography)
 
         return results, associated_dates
 
@@ -120,15 +125,14 @@ class MapsInterface:
     def _get_related_geography_for_accompanying_point(
         self, *, accompanying_point, main_geography: str
     ) -> str | None:
-        """
-        Get related geography if required for the accompanying point.
+        """Gets the related geography for the accompanying point if required.
 
         Args:
             accompanying_point: The accompanying point configuration
             main_geography: The main geography being processed
 
         Returns:
-            Related geography name or None if not found/required
+            The related geography name for the given accompanying point.
 
         """
         selected_geography: str = accompanying_point.parameters.geography
@@ -161,11 +165,21 @@ class MapsInterface:
         Returns:
             Related geography name or None if not found
 
+        Raises:
+            `GeographyNotFoundForAccompanyingPointError`: If
+                a given geography cannot be found
+                for the accompanying point
+
         """
-        geography_code: str = self.geography_manager.get_geography_code_for_geography(
-            geography=geography,
-            geography_type=main_geography_type,
-        )
+        try:
+            geography_code: str = (
+                self.geography_manager.get_geography_code_for_geography(
+                    geography=geography,
+                    geography_type=main_geography_type,
+                )
+            )
+        except Geography.DoesNotExist as error:
+            raise GeographyNotFoundForAccompanyingPointError from error
 
         upstream_relationships: OPTIONAL_UPSTREAM_RELATIONSHIPS = (
             get_upstream_relationships_for_geography(
@@ -186,15 +200,15 @@ class MapsInterface:
 
         return related_geography["name"]
 
-    def _create_null_geography_data(self, *, geography: str) -> MapGeographyResult:
-        """
-        Create null case data for geography with no available data.
+    def _create_null_geography_result(self, *, geography: str) -> MapGeographyResult:
+        """Creates a `MapGeographyResult` object for the given geography to act as the null case for that data point.
 
         Args:
-            geography: Geography name
+            geography: The name of the geography being processed
 
         Returns:
-            MapsGeographyResult with null metric value
+            A `MapsGeographyResult` object with None
+            in place for the requisite fields
 
         """
         try:
@@ -216,11 +230,14 @@ class MapsInterface:
     def _process_accompanying_points(
         self, *, geography: str
     ) -> list[AccompanyingPointResult]:
-        """
-        Process all accompanying points for a given geography.
+        """Process all accompanying points for a given geography.
+
+        Notes:
+            If an accompanying point cannot be handled
+            for the geography, it will be skipped.
 
         Args:
-            geography: The main geography being processed
+            geography: The name of the geography being processed
 
         Returns:
             List of processed accompanying point results
@@ -244,6 +261,25 @@ class MapsInterface:
     def _process_accompanying_point(
         self, *, accompanying_point, geography: str
     ) -> AccompanyingPointResult | None:
+        """Build the resul for a given accompanying_point / geography combination.
+
+        Notes:
+            If the selected geography cannot be found,
+            either as an explicit selection or via
+            relationships then None will be returned.
+
+            If an accompanying point cannot be handled
+            for the geography, None will be returned
+            for the `metric_value` field
+
+        Args:
+            geography: The name of the geography being processed
+
+        Returns:
+            An individual `AccompanyingPointResult` object
+            containing the associated labels and the `metric_value`
+
+        """
         params = accompanying_point.parameters
 
         try:
@@ -284,16 +320,6 @@ class MapsInterface:
         )
 
     def _query_for_main_data_geography(self, *, geography: str):
-        """
-        Query main time series data for a specific geography.
-
-        Args:
-            geography: Geography name to query
-
-        Returns:
-            Query result or None if no data found
-
-        """
         params: MapMainParameters = self.maps_parameters.parameters
 
         return self.core_time_series_manager.query_for_data(
