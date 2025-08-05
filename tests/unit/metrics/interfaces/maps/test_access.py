@@ -166,3 +166,33 @@ class TestMapsInterface:
         assert map_geography_result.geography_code == ""
         assert map_geography_result.metric_value is None
         assert map_geography_result.accompanying_points is None
+
+    @mock.patch.object(MapsInterface, "_get_related_geography_for_accompanying_point")
+    def test_process_accompanying_point_returns_none_when_geography_not_found(
+        self, mocked_get_related_geography_for_accompanying_point: mock.Mock
+    ):
+        """
+        Given a geography which cannot be found
+        When `_process_accompanying_point() is called
+            from an instance of the `MapsInterface`
+        Then None is returned
+        """
+        # Given
+        mocked_get_related_geography_for_accompanying_point.side_effect = [
+            GeographyNotFoundForAccompanyingPointError
+        ]
+        geography = "Invalid geography"
+        mocked_accompanying_point = mock.Mock()
+        maps_interface = MapsInterface(maps_parameters=mock.Mock())
+
+        # When
+        accompanying_point = maps_interface._process_accompanying_point(
+            accompanying_point=mocked_accompanying_point, geography=geography
+        )
+
+        # Then
+        mocked_get_related_geography_for_accompanying_point.assert_called_once_with(
+            accompanying_point=mocked_accompanying_point,
+            main_geography=geography,
+        )
+        assert accompanying_point is None
