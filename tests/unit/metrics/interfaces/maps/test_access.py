@@ -12,6 +12,7 @@ from metrics.domain.models.map import (
 from metrics.interfaces.maps.access import (
     MapsInterface,
     GeographyNotFoundForAccompanyingPointError,
+    MapGeographyResult,
 )
 
 
@@ -101,7 +102,9 @@ class TestMapsInterface:
                 target_geography_type=target_geography_type,
             )
 
-    def test_fetch_related_geography_by_type_raises_error_for_unsupported_geography_type(self):
+    def test_fetch_related_geography_by_type_raises_error_for_unsupported_geography_type(
+        self,
+    ):
         """
         Given a payload for a geography which can be found
             but an unsupported geography_type
@@ -114,7 +117,9 @@ class TestMapsInterface:
         main_geography_type = "Upper Tier Local Authority"
         target_geography_type = "UKHSA Super-Region"
         mocked_geography_manager = mock.Mock()
-        mocked_geography_manager.get_geography_code_for_geography.return_value = "E08000035"
+        mocked_geography_manager.get_geography_code_for_geography.return_value = (
+            "E08000035"
+        )
         maps_interface = MapsInterface(
             maps_parameters=mock.Mock(),
             geography_manager=mocked_geography_manager,
@@ -127,3 +132,37 @@ class TestMapsInterface:
                 main_geography_type=main_geography_type,
                 target_geography_type=target_geography_type,
             )
+
+    def test_create_null_geography_result(self):
+        """
+        Given a geography which cannot be found
+        When `_create_null_geography_result()` is called
+            from an instance of the `MapsInterface`
+        Then the returned `MapGeographyResult`
+            sets the `geography_code` to an empty string
+        """
+        # Given
+        geography = "Invalid geography"
+        mocked_geography_manager = mock.Mock()
+        mocked_geography_manager.get_geography_code_for_geography.side_effect = [
+            Geography.DoesNotExist
+        ]
+        maps_interface = MapsInterface(
+            maps_parameters=mock.Mock(),
+            geography_manager=mocked_geography_manager,
+        )
+
+        # When
+        map_geography_result: MapGeographyResult = (
+            maps_interface._create_null_geography_result(geography=geography)
+        )
+
+        # Then
+        assert map_geography_result.geography == geography
+        assert (
+            map_geography_result.geography_type
+            == maps_interface.maps_parameters.parameters.geography_type
+        )
+        assert map_geography_result.geography_code == ""
+        assert map_geography_result.metric_value is None
+        assert map_geography_result.accompanying_points is None
