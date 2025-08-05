@@ -100,3 +100,30 @@ class TestMapsInterface:
                 main_geography_type=main_geography_type,
                 target_geography_type=target_geography_type,
             )
+
+    def test_fetch_related_geography_by_type_raises_error_for_unsupported_geography_type(self):
+        """
+        Given a payload for a geography which can be found
+            but an unsupported geography_type
+        When `_fetch_related_geography_by_type()` is called
+            from an instance of the `MapsInterface`
+        Then a `GeographyNotFoundForAccompanyingPointError` is raised
+        """
+        # Given
+        geography = "Leeds"
+        main_geography_type = "Upper Tier Local Authority"
+        target_geography_type = "UKHSA Super-Region"
+        mocked_geography_manager = mock.Mock()
+        mocked_geography_manager.get_geography_code_for_geography.return_value = "E08000035"
+        maps_interface = MapsInterface(
+            maps_parameters=mock.Mock(),
+            geography_manager=mocked_geography_manager,
+        )
+
+        # When / Then
+        with pytest.raises(GeographyNotFoundForAccompanyingPointError):
+            maps_interface._fetch_related_geography_by_type(
+                geography=geography,
+                main_geography_type=main_geography_type,
+                target_geography_type=target_geography_type,
+            )
