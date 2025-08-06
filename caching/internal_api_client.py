@@ -10,7 +10,8 @@ TRENDS_ENDPOINT_PATH = f"{API_PREFIX}trends/v3/"
 CHARTS_ENDPOINT_PATH = f"{API_PREFIX}charts/v3/"
 TABLES_ENDPOINT_PATH = f"{API_PREFIX}tables/v4/"
 DOWNLOADS_ENDPOINT_PATH = f"{API_PREFIX}downloads/v2/"
-GEOGRAPHIES_ENDPOINT_PATH = f"{API_PREFIX}geographies/v2/"
+GEOGRAPHIES_ENDPOINT_PATH_DEPRECATED = f"{API_PREFIX}geographies/v2/"
+GEOGRAPHIES_ENDPOINT_PATH = f"{API_PREFIX}geographies/v3/"
 GLOBAL_BANNERS_ENDPOINT_PATH = f"{API_PREFIX}global-banners/v1"
 MENUS_ENDPOINT_PATH = f"{API_PREFIX}menus/v1"
 
@@ -51,6 +52,7 @@ class InternalAPIClient:
         self.charts_endpoint_path = CHARTS_ENDPOINT_PATH
         self.tables_endpoint_path = TABLES_ENDPOINT_PATH
         self.downloads_endpoint_path = DOWNLOADS_ENDPOINT_PATH
+        self.geographies_endpoint_path_deprecated = GEOGRAPHIES_ENDPOINT_PATH_DEPRECATED
         self.geographies_endpoint_path = GEOGRAPHIES_ENDPOINT_PATH
         self.global_banners_endpoint_path = GLOBAL_BANNERS_ENDPOINT_PATH
         self.menus_endpoint_path = MENUS_ENDPOINT_PATH
@@ -161,16 +163,33 @@ class InternalAPIClient:
         headers = self.build_headers()
         return self._client.post(path=path, data=data, headers=headers, format="json")
 
-    def hit_geographies_list_endpoint(self, *, topic: str) -> Response:
-        """Sends a `GET` request to the list `geographies/` endpoint
+    def hit_geographies_list_endpoint_deprecated(self, *, topic: str) -> Response:
+        """Sends a `GET` request to the list `geographies/v2` endpoint
 
         Returns:
             `Response` from the `geographies/` endpoint
 
         """
-        path: str = urljoin(base=self.geographies_endpoint_path, url=topic)
+        path: str = urljoin(base=self.geographies_endpoint_path_deprecated, url=topic)
         headers: dict[str, bool] = self.build_headers()
         return self._client.get(path=path, headers=headers, format="json")
+
+    def hit_geographies_list_endpoint(self, *, topic: str) -> Response:
+        """Sends a `GET` request to the `geographies/v3` endpoint
+
+        Returns:
+            `Response` from the `geographies/` endpoint
+
+        """
+        self.hit_geographies_list_endpoint_deprecated(topic=topic)
+        headers: dict[str, bool] = self.build_headers()
+        query_params = {"topic": topic}
+        return self._client.get(
+            path=self.geographies_endpoint_path,
+            headers=headers,
+            format="json",
+            query_params=query_params,
+        )
 
     def hit_pages_list_endpoint(self) -> Response:
         """Sends a `GET` request to the list `pages/` endpoint.

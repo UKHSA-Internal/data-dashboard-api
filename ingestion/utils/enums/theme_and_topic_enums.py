@@ -17,7 +17,7 @@ class _ExtremeEventChildTheme(Enum):
     WEATHER_ALERT = "weather_alert"
 
 
-class _ImmunisationsChildTheme(Enum):
+class _ImmunisationChildTheme(Enum):
     CHILDHOOD_VACCINES = "childhood-vaccines"
 
 
@@ -67,6 +67,14 @@ class _WeatherAlertTopic(Enum):
 
 class _ChildhoodVaccinesTopic(Enum):
     MMR1 = "MMR1"
+    MMR2 = "MMR2"
+    FOUR_IN_ONE = "4-in-1"
+    SIX_IN_ONE = "6-in-1"
+    HIB_MEN_C = "Hib-MenC"
+    MEN_B = "MenB"
+    MEN_B_BOOSTER = "MenB-booster"
+    PNEUMOCOCCAL = "pneumococcal"
+    ROTAVIRUS = "rotavirus"
 
 
 class _RespiratoryTopic(Enum):
@@ -121,7 +129,7 @@ class ParentTheme(Enum):
     EXTREME_EVENT = "extreme_event"
     NON_COMMUNICABLE = "non-communicable"
     CLIMATE_AND_ENVIRONMENT = "climate_and_environment"
-    IMMUNISATIONS = "immunisations"
+    IMMUNISATION = "immunisation"
 
 
 class ChildTheme(BaseEnum):
@@ -130,7 +138,7 @@ class ChildTheme(BaseEnum):
     NON_COMMUNICABLE = _NonCommunicableChildTheme
     CLIMATE_AND_ENVIRONMENT = _ClimateAndEnvironmentChildTheme
     CHILDHOOD_ILLNESS = _ChildhoodIllnessTopic
-    IMMUNISATIONS = _ImmunisationsChildTheme
+    IMMUNISATION = _ImmunisationChildTheme
 
 
 class Topic(BaseEnum):
