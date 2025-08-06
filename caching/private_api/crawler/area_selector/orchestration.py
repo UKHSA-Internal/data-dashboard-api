@@ -5,10 +5,8 @@ from caching.common.geographies_crawler import (
     GeographiesAPICrawler,
     GeographyData,
 )
+from caching.common.multi_threading import call_with_star_map_multithreading
 from caching.private_api.crawler import PrivateAPICrawler
-from caching.private_api.crawler.area_selector.concurrency import (
-    call_with_star_map_multiprocessing,
-)
 from cms.topic.models import TopicPage
 
 logger = logging.getLogger(__name__)
@@ -67,9 +65,10 @@ class AreaSelectorOrchestrator:
         start_time = time.time()
 
         args = [(geography_data, page.id) for geography_data in geography_combinations]
-        call_with_star_map_multiprocessing(
+        call_with_star_map_multithreading(
             func=cls.process_geography_page_combination,
             items=args,
+            thread_count=10,
         )
 
         end_time = time.time()
