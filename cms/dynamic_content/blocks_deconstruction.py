@@ -290,6 +290,47 @@ class CMSBlockParser:
         except KeyError:
             return []
 
+    @classmethod
+    def get_global_filter_cards_from_content_cards(
+        cls,
+        *,
+        content_cards: list[CMS_COMPONENT_BLOCK_TYPE],
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Filters for a list of global filters from the given `content_cards`
+
+        Args:
+            content_cards: The list of content card dicts
+                from the CMS
+
+        Returns:
+            A list of global filter row dicts which can be processed
+
+        """
+        return [
+            content_card
+            for content_card in content_cards
+            if content_card["type"] == "global_filter_card"
+        ]
+
+    @classmethod
+    def get_global_filter_cards_from_page_section(
+        cls,
+        *,
+        section: dict[list[CMS_COMPONENT_BLOCK_TYPE]],
+    ) -> list[CMS_COMPONENT_BLOCK_TYPE]:
+        """Get all global filter cards from page section.
+
+        Args:
+            section: a page section to be processed for chart card data
+
+        Returns:
+            A list of dictionaries containing global filter cards from page section,
+        """
+        content_cards = cls.get_content_cards_from_section(section=section)
+        return cls.get_global_filter_cards_from_content_cards(
+            content_cards=content_cards
+        )
+
     # Extraction of selected topics
 
     @classmethod
@@ -317,7 +358,7 @@ class CMSBlockParser:
             )
         )
         return selected_topics_from_chart_blocks.union(
-            selected_topics_from_headline_blocks
+            selected_topics_from_headline_blocks,
         )
 
     @classmethod
@@ -432,8 +473,14 @@ class CMSBlockParser:
                 sections=sections
             )
         )
+        selected_metrics_from_global_filters: set[str] = (
+            cls._get_all_selected_metrics_in_global_filters_from_sections(
+                sections=sections
+            )
+        )
         return selected_metrics_from_chart_blocks.union(
-            selected_metrics_from_headline_blocks
+            selected_metrics_from_headline_blocks,
+            selected_metrics_from_global_filters,
         )
 
     @classmethod
@@ -521,3 +568,66 @@ class CMSBlockParser:
 
         """
         return {block["value"]["metric"] for block in headline_blocks}
+
+    @classmethod
+    def _get_all_selected_metrics_in_global_filters_from_sections(
+        cls, *, sections: list[dict[list[CMS_COMPONENT_BLOCK_TYPE]]]
+    ) -> set[str]:
+        """Extracts a set of topics from all global filters in the given `sections`
+
+        Args:
+            sections: List of all CMS section components
+                from the target page
+
+        Returns:
+            Set of strings where each string represents
+            a topic which has been selected at least
+            once in the list of given `sections`
+
+        """
+        global_filters = []
+        for section in sections:
+            global_filters += cls.get_global_filter_cards_from_page_section(
+                section=section
+            )
+
+        return cls.get_all_selected_metrics_from_global_filters(
+            global_filters=global_filters
+        )
+
+    @classmethod
+    def get_all_selected_metrics_from_global_filters(
+        cls, *, global_filters: list[CMS_COMPONENT_BLOCK_TYPE]
+    ) -> set[str]:
+        """Extracts a set of metrics from the given `chart_blocks`
+
+        Args:
+            global_filters: List of global filter blocks
+                from which to extract the unique
+                selected metrics
+
+        Returns:
+            Set of strings where each string represents
+            a metrics which has been selected at least
+            once in the list of given `global_filters`
+
+        """
+        selected_topics: set[str] = set()
+        for global_filter in global_filters:
+            data_filters = cls._extract_data_filters_from_global_filters(
+                global_filter=global_filter
+            )
+            for data_filter in data_filters:
+                individual_filter = data_filter["value"]
+                selected_topics.add(individual_filter["parameters"]["metric"]["value"])
+
+        return selected_topics
+
+    @classmethod
+    def _extract_data_filters_from_global_filters(cls, *, global_filter):
+        data_filters = []
+        for row in global_filter["value"]["rows"]:
+            for filter_block in row["value"]["filters"]:
+                if filter_block["type"] == "data_filters":
+                    data_filters.extend(filter_block["value"]["data_filters"])
+        return data_filters

@@ -1,11 +1,13 @@
 import json
 import logging
+from collections.abc import Callable
 
 from wagtail.models import Page
 
 from cms.common.models import CommonPage, CommonPageRelatedLink
 from cms.composite.models import CompositePage, CompositeRelatedLink
 from cms.dashboard.management.commands.build_cms_site_helpers.index_pages import (
+    create_cover_index_page_body,
     create_respiratory_viruses_index_page_body,
 )
 from cms.dashboard.management.commands.build_cms_site_helpers.landing_page import (
@@ -65,19 +67,48 @@ def create_landing_page(*, parent_page: Page) -> LandingPage:
     return page
 
 
-def create_index_page(*, name: str, parent_page: Page) -> CompositePage:
-    data = open_example_page_response(page_name=name)
-
-    index_page_body: list[dict] = create_respiratory_viruses_index_page_body()
+def _create_index_page(
+    *, page_data: dict, parent_page: Page, create_index_page_body_func: Callable
+) -> CompositePage:
+    index_page_body: list[dict] = create_index_page_body_func()
 
     page = CompositePage(
-        title=data["title"],
+        title=page_data["title"],
+        page_description=page_data["page_description"],
         body=index_page_body,
-        slug=data["meta"]["slug"],
-        seo_title=data["meta"]["seo_title"],
-        search_description=data["meta"]["search_description"],
+        slug=page_data["meta"]["slug"],
+        seo_title=page_data["meta"]["seo_title"],
+        search_description=page_data["meta"]["search_description"],
     )
     _add_page_to_parent(page=page, parent_page=parent_page)
+
+    return page
+
+
+def create_respiratory_viruses_index_page(*, name: str, parent_page: Page):
+    page_data = open_example_page_response(page_name=name)
+
+    return _create_index_page(
+        page_data=page_data,
+        parent_page=parent_page,
+        create_index_page_body_func=create_respiratory_viruses_index_page_body,
+    )
+
+
+def create_cover_index_page(*, name: str, parent_page: Page) -> CompositePage:
+    page_data = open_example_page_response(page_name=name)
+
+    page = _create_index_page(
+        page_data=page_data,
+        parent_page=parent_page,
+        create_index_page_body_func=create_cover_index_page_body,
+    )
+
+    _create_related_links(
+        related_link_class=CompositeRelatedLink,
+        response_data=page_data,
+        page=page,
+    )
 
     return page
 
