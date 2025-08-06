@@ -100,7 +100,7 @@ class TestAreaSelectorOrchestrator:
         spy_call_with_star_map_multithreading.assert_called_once_with(
             func=AreaSelectorOrchestrator.process_geography_page_combination,
             items=zipped_args,
-            thread_count=10
+            thread_count=10,
         )
 
     @mock.patch.object(TopicPage, "objects")
