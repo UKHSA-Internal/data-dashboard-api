@@ -62,21 +62,21 @@ class TestAreaSelectorOrchestrator:
             calls=expected_calls, any_order=True
         )
 
-    @mock.patch(f"{MODULE_PATH}.call_with_star_map_multiprocessing")
+    @mock.patch(f"{MODULE_PATH}.call_with_star_map_multithreading")
     def test_parallel_process_all_geography_combinations_for_page_delegates_call(
-        self, spy_call_with_star_map_multiprocessing: mock.MagicMock
+        self, spy_call_with_star_map_multithreading: mock.MagicMock
     ):
         """
         Given an iterable of enriched `GeographyData` models
         And a mocked `Page` model of a specific ID
         When `parallel_process_all_geography_combinations_for_page()` is called
             from the `AreaSelectorOrchestrator` class
-        Then the call is delegated to `call_with_star_map_multiprocessing()`
+        Then the call is delegated to `call_with_star_map_multithreading()`
             with the correct arguments
 
         Patches:
-            `spy_call_with_star_map_multiprocessing`: For the main assertion
-                of checking the parallel processing is kicked off
+            `spy_ccall_with_star_map_multithreading`: For the main assertion
+                of checking the concurrent processing is kicked off
                 for the geography/page combinations
 
         """
@@ -97,9 +97,10 @@ class TestAreaSelectorOrchestrator:
         zipped_args = [
             (geography_data, page_id) for geography_data in geography_data_combinations
         ]
-        spy_call_with_star_map_multiprocessing.assert_called_once_with(
+        spy_call_with_star_map_multithreading.assert_called_once_with(
             func=AreaSelectorOrchestrator.process_geography_page_combination,
             items=zipped_args,
+            thread_count=10
         )
 
     @mock.patch.object(TopicPage, "objects")
