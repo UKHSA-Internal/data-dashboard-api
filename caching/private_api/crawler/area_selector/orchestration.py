@@ -93,7 +93,7 @@ class AreaSelectorOrchestrator:
 
             The `page_id` parameter is provided as an ID and not the `Page` object itself
             so that it can be either:
-                a) picklable by the multiprocessing library
+                a) picklable by the multithreading library
                 b) serializable as a message to a queue
 
         Args:
