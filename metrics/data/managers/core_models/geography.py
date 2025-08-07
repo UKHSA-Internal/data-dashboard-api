@@ -90,6 +90,12 @@ class GeographyQuerySet(models.QuerySet):
             .order_by("name")
         )
 
+    def get_geography_code_for_geography(
+        self, geography: str, geography_type: str
+    ) -> str:
+        model = self.get(name=geography, geography_type__name=geography_type)
+        return model.geography_code
+
 
 class GeographyManager(models.Manager):
     """Custom model manager class for the `Geography` model."""
@@ -198,4 +204,11 @@ class GeographyManager(models.Manager):
             )
             .filter(geography_code=geography_code)
             .exists()
+        )
+
+    def get_geography_code_for_geography(
+        self, geography: str, geography_type: str
+    ) -> str:
+        return self.get_queryset().get_geography_code_for_geography(
+            geography=geography, geography_type=geography_type
         )

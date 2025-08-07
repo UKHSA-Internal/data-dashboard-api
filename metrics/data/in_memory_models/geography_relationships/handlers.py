@@ -20,6 +20,7 @@ class RelationshipsForGeographyTypeNotSupportedError(Exception): ...
 
 
 GEOGRAPHY_RELATIONSHIP_TYPE = dict[str, str | None]
+OPTIONAL_UPSTREAM_RELATIONSHIPS = list[GEOGRAPHY_RELATIONSHIP_TYPE] | None
 
 
 def _get_united_kingdom_relationship():
@@ -87,7 +88,7 @@ def _get_upstream_relationships_for_utla(
 
 def get_upstream_relationships_for_geography(
     *, geography_code: str, geography_type: str
-) -> list[GEOGRAPHY_RELATIONSHIP_TYPE] | None:
+) -> OPTIONAL_UPSTREAM_RELATIONSHIPS:
     """Gets the upstream/parent geographies which are related to the given geography
 
     Notes:
