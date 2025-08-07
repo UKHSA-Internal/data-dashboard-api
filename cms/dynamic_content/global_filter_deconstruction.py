@@ -207,9 +207,6 @@ class GlobalFilterCMSBlockParser:
 
         parameters = point_value.get("parameters", [])
         for parameter_block in parameters:
-            if not isinstance(parameter_block, dict):
-                continue
-
             field_type = parameter_block.get("type")
             param_value = parameter_block.get("value", {})
 
