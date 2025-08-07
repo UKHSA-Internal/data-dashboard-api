@@ -182,10 +182,23 @@ class PrivateAPICrawler:
                 section=section, geography_data=geography_data
             )
         )
-
         # Process each of the chart blocks which were gathered
         self._dynamic_content_block_crawler.process_all_chart_blocks(
             chart_blocks=chart_blocks
+        )
+
+        # Gather all global filters in this page section.
+        # Generally there should only be 1 on the whole page.
+        # This is for forwards compatibility
+        global_filters = (
+            self._cms_block_parser.get_global_filter_cards_from_page_section(
+                section=section
+            )
+        )
+        # Process the global filters thus processing the various
+        # filter-linked map permutations driven by the global filter
+        self._dynamic_content_block_crawler.process_all_global_filters(
+            global_filters=global_filters
         )
 
     # process downloads
