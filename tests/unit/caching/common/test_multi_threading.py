@@ -1,8 +1,8 @@
 from unittest import mock
 
-from caching.frontend.multi_threading import call_with_star_map_multithreading
+from caching.common.multi_threading import call_with_star_map_multithreading
 
-MODULE_PATH = "caching.frontend.multi_threading"
+MODULE_PATH = "caching.common.multi_threading"
 
 
 class TestCallWithStarMapMultiThreading:
