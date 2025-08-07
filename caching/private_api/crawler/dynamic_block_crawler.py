@@ -116,6 +116,23 @@ class DynamicContentBlockCrawler:
         self._process_table_for_chart_block(chart_block=chart_block)
         self._process_chart_for_both_possible_widths(chart_block=chart_block)
 
+    def process_all_global_filters(self, *, global_filters: list) -> None:
+        """Makes the relevant requests for each of the given `global_filters`
+
+        Notes:
+            This will handle the requests for the maps API
+            which are dictated by these `global_filters`.
+
+        Args:
+            global_filters: The global filter CMS blocks.
+
+        Returns:
+            None
+
+        """
+        for global_filter in global_filters:
+            self.process_global_filter(global_filter=global_filter)
+
     def process_global_filter(self, *, global_filter: CMS_COMPONENT_BLOCK_TYPE) -> None:
         """Makes the relevant requests for the given single `global_filter`
 
@@ -124,7 +141,7 @@ class DynamicContentBlockCrawler:
             which are dictated by this `global_filter`.
 
         Args:
-            global_filter: The global filter CMS information.
+            global_filter: The global filter CMS block.
 
         Returns:
             None
