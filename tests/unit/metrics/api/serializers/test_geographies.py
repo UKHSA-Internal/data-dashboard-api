@@ -4,6 +4,9 @@ import pytest
 
 from rest_framework.exceptions import ValidationError
 
+from ingestion.data_transfer_models.validation.geography_code import (
+    UNITED_KINGDOM_GEOGRAPHY_CODE,
+)
 from metrics.api.serializers.geographies import (
     GeographiesForTopicSerializer,
     _serialize_queryset,
@@ -91,10 +94,12 @@ class TestGeographiesSerializer:
                     {
                         "name": bexley.geography.name,
                         "geography_code": bexley.geography.geography_code,
+                        "relationships": None,
                     },
                     {
                         "name": hackney.geography.name,
                         "geography_code": hackney.geography.geography_code,
+                        "relationships": None,
                     },
                 ],
             },
@@ -104,6 +109,13 @@ class TestGeographiesSerializer:
                     {
                         "name": england.geography.name,
                         "geography_code": england.geography.geography_code,
+                        "relationships": [
+                            {
+                                "geography_type": "United Kingdom",
+                                "geography_code": UNITED_KINGDOM_GEOGRAPHY_CODE,
+                                "name": "United Kingdom",
+                            }
+                        ],
                     }
                 ],
             },
@@ -199,10 +211,12 @@ class TestSerializeQuerySet:
                     {
                         "name": bexley.geography__name,
                         "geography_code": bexley.geography__geography_code,
+                        "relationships": None,
                     },
                     {
                         "name": hackney.geography__name,
                         "geography_code": hackney.geography__geography_code,
+                        "relationships": None,
                     },
                 ],
             },
@@ -212,6 +226,13 @@ class TestSerializeQuerySet:
                     {
                         "name": england.geography__name,
                         "geography_code": england.geography__geography_code,
+                        "relationships": [
+                            {
+                                "geography_type": "United Kingdom",
+                                "geography_code": UNITED_KINGDOM_GEOGRAPHY_CODE,
+                                "name": "United Kingdom",
+                            }
+                        ],
                     }
                 ],
             },
