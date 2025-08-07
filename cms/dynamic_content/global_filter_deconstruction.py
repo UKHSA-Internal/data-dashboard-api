@@ -1,8 +1,3 @@
-import logging
-
-logger = logging.getLogger(__name__)
-
-
 class GlobalFilterCMSBlockParser:
     DEFAULT_GEOGRAPHY_TYPE = "Upper Tier Local Authority"
 
@@ -210,7 +205,6 @@ class GlobalFilterCMSBlockParser:
             field_type = parameter_block.get("type")
             param_value = parameter_block.get("value", {})
 
-            if field_type and isinstance(param_value, dict) and "value" in param_value:
-                payload["parameters"][field_type] = param_value["value"]
+            payload["parameters"][field_type] = param_value["value"]
 
         return payload
