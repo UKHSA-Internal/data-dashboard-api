@@ -18,7 +18,7 @@ from metrics.domain.models.charts.common import BaseChartRequestParams
 class PlotParameters(BaseModel):
     """Holds all the request information / parameters for an individual plot on a chart."""
 
-    chart_type: str
+    chart_type: str = ""
     topic: str
     metric: str
     stratum: str | None = ""
