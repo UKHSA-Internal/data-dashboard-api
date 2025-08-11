@@ -2,6 +2,9 @@ from collections import defaultdict
 
 from rest_framework import serializers
 
+from metrics.data.in_memory_models.geography_relationships.handlers import (
+    get_upstream_relationships_for_geography,
+)
 from metrics.data.managers.core_models.time_series import CoreTimeSeriesQuerySet
 from metrics.data.models.core_models import (
     CoreTimeSeries,
@@ -88,7 +91,7 @@ def _serialize_queryset(
                 {"geography_type": "Nation", "geographies": [{"name": "England"}]},
                 {
                     "geography_type": "Lower Tier Local Authority",
-                    "geographies": [{"name": "Birmingham"}, {"name": "Leeds"}],
+                    "geographies": [{"name": "Birmingham"}, {"name": "Leeds"} {"relationships": [...]],
                 },
             ]
 
@@ -104,8 +107,17 @@ def _serialize_queryset(
         geography_type: str = geography_combination.geography__geography_type__name
         geography_code: str = geography_combination.geography__geography_code
 
+        relationships = get_upstream_relationships_for_geography(
+            geography_type=geography_type,
+            geography_code=geography_code,
+        )
+
         merged_geographies[geography_type].append(
-            {"name": geography, "geography_code": geography_code}
+            {
+                "name": geography,
+                "geography_code": geography_code,
+                "relationships": relationships,
+            }
         )
 
     return [
@@ -128,7 +140,7 @@ class GeographiesForGeographyTypeSerializer(serializers.Serializer):
           >>>> [
                 {
                     "geography_type": "Lower Tier Local Authority",
-                    "geographies": [{"name": "Birmingham"}, {"name": "Leeds"}],
+                    "geographies": [{"name": "Birmingham", "relationships: [...]}, {"name": "Leeds"}],
                 },
             ]
 
@@ -141,6 +153,14 @@ class GeographiesForGeographyTypeSerializer(serializers.Serializer):
         geographies = self.geography_manager.get_geographies_by_geography_type(
             geography_type_name=geography_type,
         )
+
+        for geography in geographies:
+            relationships = get_upstream_relationships_for_geography(
+                geography_type=geography_type,
+                geography_code=geography["geography_code"],
+            )
+            geography["relationships"] = relationships
+
         return [{"geography_type": geography_type, "geographies": geographies}]
 
 
