@@ -145,3 +145,38 @@ class TestPrivateAPICrawlerProcessSections:
         spy_dynamic_content_block_crawler.process_all_chart_blocks.assert_called_once_with(
             chart_blocks=expected_chart_blocks
         )
+
+    def test_process_section_delegates_calls_for_global_filters(self):
+        """
+        Given a mocked section and no explicit `GeographyData`
+        When `process_all_sections_in_page()` is called
+            from an instance of `PrivateAPICrawler`
+        Then `get_global_filter_cards_from_page_section()`
+            is called from the `CMSBlockParser`
+        And these blocks are passed to
+            `process_all_global_filters()` from the
+            `DynamicContentBlockCrawler`
+        """
+        # Given
+        mocked_section = mock.Mock()
+        spy_cms_block_parser = mock.Mock()
+        spy_dynamic_content_block_crawler = mock.Mock()
+        private_api_crawler = PrivateAPICrawler(
+            internal_api_client=mock.Mock(),
+            cms_block_parser=spy_cms_block_parser,
+            dynamic_content_block_crawler=spy_dynamic_content_block_crawler,
+        )
+
+        # When
+        private_api_crawler.process_section(section=mocked_section)
+
+        # Then
+        spy_cms_block_parser.get_global_filter_cards_from_page_section.assert_called_once_with(
+            section=mocked_section
+        )
+        expected_global_filters = (
+            spy_cms_block_parser.get_global_filter_cards_from_page_section.return_value
+        )
+        spy_dynamic_content_block_crawler.process_all_global_filters.assert_called_once_with(
+            global_filters=expected_global_filters
+        )
