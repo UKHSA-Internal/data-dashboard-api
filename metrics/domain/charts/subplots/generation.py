@@ -1,6 +1,9 @@
 import plotly.graph_objects
 from plotly.subplots import make_subplots
 
+from metrics.domain.charts.chart_settings.subplot_chart_settings import (
+    SubplotChartSettings,
+)
 from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
@@ -10,6 +13,9 @@ def generate_chart_figure(
     chart_generation_payload: SubplotChartGenerationPayload,
 ) -> plotly.graph_objects.Figure:
     subplot_data: PlotGenerationData = chart_generation_payload.subplot_data
+    settings = SubplotChartSettings(
+        chart_generation_payload=chart_generation_payload,
+    )
 
     figure = make_subplots(
         rows=1,
@@ -33,4 +39,6 @@ def generate_chart_figure(
             if plot_index > 1:
                 figure.update_yaxes(showticklabels=False, row=1, col=plot_index)
 
+    layout_args = settings.get_subplot_chart_config()
+    figure.update_layout(**layout_args)
     return figure
