@@ -4,10 +4,10 @@ import pytest
 from rest_framework.test import APIClient
 
 from caching.internal_api_client import (
-    CACHE_CHECK_HEADER_KEY,
     CACHE_FORCE_REFRESH_HEADER_KEY,
     PAGE_TYPES_WITH_NO_ADDITIONAL_QUERY_PARAMS,
     InternalAPIClient,
+    CACHE_RESERVED_NAMESPACE_HEADER_KEY,
 )
 
 
@@ -95,21 +95,6 @@ class TestInternalAPIClient:
         # Then
         assert not internal_api_client.force_refresh
 
-    def test_cache_check_only_attribute_defaults_to_false(self):
-        """
-        Given no provided argument for `cache_check_only`
-        When the `InternalAPIClient` class is initialized
-        Then the `cache_check_only` attribute is set to False
-        """
-        # Given
-        mocked_client = mock.Mock()
-
-        # When
-        internal_api_client = InternalAPIClient(client=mocked_client)
-
-        # Then
-        assert not internal_api_client.cache_check_only
-
     # API key manager & API client tests
 
     def test_create_api_client_returns_api_client(self):
@@ -131,17 +116,17 @@ class TestInternalAPIClient:
     # Header construction tests
 
     @pytest.mark.parametrize(
-        "force_refresh, cache_check_only",
+        "force_refresh, reserved_namespace",
         (
             [True, True],
-            [True, False],
+            [True, True],
             [False, True],
-            [False, False],
+            [False, True],
         ),
     )
-    def test_build_headers(self, force_refresh: bool, cache_check_only: bool):
+    def test_build_headers(self, force_refresh: bool, reserved_namespace: bool):
         """
-        Given provided `force_refresh` and `cache_check_only` values
+        Given provided `force_refresh` & `reserved_namespace` values
         When `build_headers()` is called
             from an instance of `InternalAPIClient`
         Then the correct dict representing the headers is returned
@@ -151,7 +136,7 @@ class TestInternalAPIClient:
         internal_api_client = InternalAPIClient(
             client=mocked_client,
             force_refresh=force_refresh,
-            cache_check_only=cache_check_only,
+            reserved_namespace=reserved_namespace,
         )
 
         # When
@@ -160,7 +145,7 @@ class TestInternalAPIClient:
         # Then
         expected_headers = {
             CACHE_FORCE_REFRESH_HEADER_KEY: force_refresh,
-            CACHE_CHECK_HEADER_KEY: cache_check_only,
+            CACHE_RESERVED_NAMESPACE_HEADER_KEY: reserved_namespace,
         }
         assert headers == expected_headers
 
