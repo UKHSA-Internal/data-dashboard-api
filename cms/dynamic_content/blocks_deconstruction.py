@@ -585,15 +585,19 @@ class CMSBlockParser:
             once in the list of given `sections`
 
         """
+        global_filters = cls._get_all_global_filter_cards_in_sections(sections=sections)
+        return cls.get_all_selected_metrics_from_global_filters(
+            global_filters=global_filters
+        )
+
+    @classmethod
+    def _get_all_global_filter_cards_in_sections(cls, sections: list) -> list[dict]:
         global_filters = []
         for section in sections:
             global_filters += cls.get_global_filter_cards_from_page_section(
                 section=section
             )
-
-        return cls.get_all_selected_metrics_from_global_filters(
-            global_filters=global_filters
-        )
+        return global_filters
 
     @classmethod
     def get_all_selected_metrics_from_global_filters(

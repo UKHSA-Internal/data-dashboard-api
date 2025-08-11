@@ -100,6 +100,7 @@ target-version = "py312"
                                                                 ]
 "cms/metrics_interface/interface.py"                          = ["PLR0904"]        # Ignore maximum number of public methods
 "cms/dynamic_content/cards.py"                                = ["SLF001"]         # Ignore access to protected member
+"cms/dynamic_content/global_filter_deconstruction.py"         = ["PERF401"]        # Ignore list comprehension which would reduce readibility
 "metrics/api/views/*"                                         = ["E501"]           # Ignore line length in API views.
                                                                                         # This infringement is due to
                                                                                         # swagger-facing docstrings/documentation

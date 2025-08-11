@@ -349,3 +349,323 @@ def example_trend_number_block() -> dict[str, str]:
 @pytest.fixture
 def timestamp_2_months_from_now() -> datetime.datetime:
     return datetime.datetime.now() + relativedelta(months=2)
+
+
+@pytest.fixture
+def example_global_filter():
+    return {
+        "type": "global_filter_card",
+        "value": {
+            "time_range": {
+                "title": "Year selection",
+                "time_periods": [
+                    {
+                        "type": "time_period",
+                        "value": {
+                            "label": "2023-2024",
+                            "date_from": "2023-04-01",
+                            "date_to": "2024-03-31",
+                        },
+                        "id": "cbfb7958-bcb1-4036-881e-0a2fbec79db5",
+                    },
+                    {
+                        "type": "time_period",
+                        "value": {
+                            "label": "2024-2025",
+                            "date_from": "2024-04-01",
+                            "date_to": "2025-03-31",
+                        },
+                        "id": "72ab2c6a-5116-42b9-9f15-25aacd12c467",
+                    },
+                ],
+            },
+            "rows": [
+                {
+                    "type": "row",
+                    "value": {
+                        "title": "Area",
+                        "filters": [
+                            {
+                                "type": "geography_filters",
+                                "value": {
+                                    "geography_types": [
+                                        {
+                                            "type": "geography_filter",
+                                            "value": {
+                                                "label": "Country",
+                                                "colour": "COLOUR_1_DARK_BLUE",
+                                                "geography_type": "Nation",
+                                            },
+                                            "id": "5ed27d55-ffaa-4a8d-8b93-8f20d186265d",
+                                        },
+                                        {
+                                            "type": "geography_filter",
+                                            "value": {
+                                                "label": "Region",
+                                                "colour": "COLOUR_2_TURQUOISE",
+                                                "geography_type": "Region",
+                                            },
+                                            "id": "87c30c92-c9bd-46cd-89eb-6468e46e7b5b",
+                                        },
+                                        {
+                                            "type": "geography_filter",
+                                            "value": {
+                                                "label": "Local Authority",
+                                                "colour": "COLOUR_3_DARK_PINK",
+                                                "geography_type": "Upper Tier Local Authority",
+                                            },
+                                            "id": "b531fee6-149d-429d-8de6-90bf27f4f9e6",
+                                        },
+                                    ]
+                                },
+                                "id": "2cb36d1b-6f38-4a92-bc8d-d54fa22fbdf2",
+                            }
+                        ],
+                    },
+                    "id": "64c0fc3f-f2db-48a5-b8cf-9ee43c31b11e",
+                },
+                {
+                    "type": "row",
+                    "value": {
+                        "title": "Vaccination and coverage",
+                        "filters": [
+                            {
+                                "type": "data_filters",
+                                "value": {
+                                    "label": "Select vaccination",
+                                    "data_filters": [
+                                        {
+                                            "type": "data_filter",
+                                            "value": {
+                                                "label": "6-in-1 (1 year)",
+                                                "colour": "COLOUR_1_DARK_BLUE",
+                                                "parameters": {
+                                                    "theme": {
+                                                        "label": "",
+                                                        "value": "immunisation",
+                                                    },
+                                                    "sub_theme": {
+                                                        "label": "",
+                                                        "value": "childhood-vaccines",
+                                                    },
+                                                    "topic": {
+                                                        "label": "",
+                                                        "value": "6-in-1",
+                                                    },
+                                                    "stratum": {
+                                                        "label": "1 year",
+                                                        "value": "12m",
+                                                    },
+                                                    "metric": {
+                                                        "label": "",
+                                                        "value": "6-in-1_coverage_coverageByYear",
+                                                    },
+                                                    "age": {
+                                                        "label": "",
+                                                        "value": "all",
+                                                    },
+                                                    "sex": {
+                                                        "label": "",
+                                                        "value": "all",
+                                                    },
+                                                },
+                                                "accompanying_points": [
+                                                    {
+                                                        "type": "accompanying_point",
+                                                        "value": {
+                                                            "label_prefix": "Country level of coverage",
+                                                            "label_suffix": "%",
+                                                            "parameters": [
+                                                                {
+                                                                    "type": "geography_type",
+                                                                    "value": {
+                                                                        "label": "",
+                                                                        "value": "Nation",
+                                                                    },
+                                                                    "id": "7d2d3eaa-e339-44fd-bff5-2dcf0d083d67",
+                                                                }
+                                                            ],
+                                                        },
+                                                        "id": "ab8e4f2f-d62b-411c-adff-8a9bb0aa8ac7",
+                                                    },
+                                                    {
+                                                        "type": "accompanying_point",
+                                                        "value": {
+                                                            "label_prefix": "Region level of coverage",
+                                                            "label_suffix": "%",
+                                                            "parameters": [
+                                                                {
+                                                                    "type": "geography_type",
+                                                                    "value": {
+                                                                        "label": "",
+                                                                        "value": "Region",
+                                                                    },
+                                                                    "id": "d1c05efe-665d-4f19-9ef9-c72eb91187e6",
+                                                                }
+                                                            ],
+                                                        },
+                                                        "id": "173d85f8-a865-4d31-b17f-6f95eda1d432",
+                                                    },
+                                                ],
+                                            },
+                                            "id": "119e270f-2759-44a0-969a-1651407a109a",
+                                        },
+                                        {
+                                            "type": "data_filter",
+                                            "value": {
+                                                "label": "MMR1 (1 year)",
+                                                "colour": "COLOUR_4_ORANGE",
+                                                "parameters": {
+                                                    "theme": {
+                                                        "label": "",
+                                                        "value": "immunisation",
+                                                    },
+                                                    "sub_theme": {
+                                                        "label": "",
+                                                        "value": "childhood-vaccines",
+                                                    },
+                                                    "topic": {
+                                                        "label": "",
+                                                        "value": "MMR1",
+                                                    },
+                                                    "stratum": {
+                                                        "label": "1 year",
+                                                        "value": "12m",
+                                                    },
+                                                    "metric": {
+                                                        "label": "",
+                                                        "value": "MMR1_coverage_coverageByYear",
+                                                    },
+                                                    "age": {
+                                                        "label": "",
+                                                        "value": "all",
+                                                    },
+                                                    "sex": {
+                                                        "label": "",
+                                                        "value": "all",
+                                                    },
+                                                },
+                                                "accompanying_points": [
+                                                    {
+                                                        "type": "accompanying_point",
+                                                        "value": {
+                                                            "label_prefix": "Country level of coverage",
+                                                            "label_suffix": "%",
+                                                            "parameters": [
+                                                                {
+                                                                    "type": "geography_type",
+                                                                    "value": {
+                                                                        "label": "",
+                                                                        "value": "Nation",
+                                                                    },
+                                                                    "id": "69ceb950-4880-43f3-b7b0-ee8a1b1b057f",
+                                                                }
+                                                            ],
+                                                        },
+                                                        "id": "3b65850e-10f3-48eb-95ed-979c04bcc770",
+                                                    },
+                                                    {
+                                                        "type": "accompanying_point",
+                                                        "value": {
+                                                            "label_prefix": "Region level of coverage",
+                                                            "label_suffix": "%",
+                                                            "parameters": [
+                                                                {
+                                                                    "type": "geography_type",
+                                                                    "value": {
+                                                                        "label": "",
+                                                                        "value": "Region",
+                                                                    },
+                                                                    "id": "b98498f6-f881-4e1c-8c19-457247200790",
+                                                                }
+                                                            ],
+                                                        },
+                                                        "id": "82b5edee-7df8-4ba9-8101-44662331a672",
+                                                    },
+                                                ],
+                                            },
+                                            "id": "4645cfe1-e5f7-4bd6-918b-568da9dce48d",
+                                        },
+                                    ],
+                                    "categories_to_group_by": [
+                                        {
+                                            "type": "category",
+                                            "value": {"data_category": "stratum"},
+                                            "id": "85acdaf0-540c-49e2-9210-7e6370c574eb",
+                                        },
+                                        {
+                                            "type": "category",
+                                            "value": {"data_category": "topic"},
+                                            "id": "76fcdb38-db17-4580-8bf0-48bca2881b4a",
+                                        },
+                                    ],
+                                },
+                                "id": "8c0e75e3-4399-45f8-b9f2-944ce631960e",
+                            },
+                            {
+                                "type": "threshold_filters",
+                                "value": {
+                                    "label": "Select level of coverage (%)",
+                                    "thresholds": [
+                                        {
+                                            "type": "threshold",
+                                            "value": {
+                                                "label": "Under 80%",
+                                                "colour": "COLOUR_1_DARK_BLUE",
+                                                "boundary_minimum_value": "0",
+                                                "boundary_maximum_value": "0.8",
+                                            },
+                                            "id": "9019a648-901c-4801-9d3e-d3b95242a58e",
+                                        },
+                                        {
+                                            "type": "threshold",
+                                            "value": {
+                                                "label": "80-85%",
+                                                "colour": "COLOUR_2_TURQUOISE",
+                                                "boundary_minimum_value": "0.81",
+                                                "boundary_maximum_value": "0.85",
+                                            },
+                                            "id": "9137b412-ef3a-4d39-8662-1096ba1c3b99",
+                                        },
+                                        {
+                                            "type": "threshold",
+                                            "value": {
+                                                "label": "85-90%",
+                                                "colour": "COLOUR_3_DARK_PINK",
+                                                "boundary_minimum_value": "0.86",
+                                                "boundary_maximum_value": "0.9",
+                                            },
+                                            "id": "38cd3f76-46ed-41d9-a7a2-9a41510c0b2d",
+                                        },
+                                        {
+                                            "type": "threshold",
+                                            "value": {
+                                                "label": "90-95%",
+                                                "colour": "COLOUR_4_ORANGE",
+                                                "boundary_minimum_value": "0.91",
+                                                "boundary_maximum_value": "0.95",
+                                            },
+                                            "id": "3584882d-ce37-4d57-abcb-ac0d71133dc5",
+                                        },
+                                        {
+                                            "type": "threshold",
+                                            "value": {
+                                                "label": "Over 95%",
+                                                "colour": "COLOUR_5_DARK_GREY",
+                                                "boundary_minimum_value": "0.96",
+                                                "boundary_maximum_value": "1.00",
+                                            },
+                                            "id": "d8583ba3-259f-49f0-be86-eaa670198c25",
+                                        },
+                                    ],
+                                },
+                                "id": "b029909f-588d-4a13-90db-7e08e7e20f3d",
+                            },
+                        ],
+                    },
+                    "id": "854569f8-0cd0-4fbf-bf21-b8eadeb613cb",
+                },
+            ],
+        },
+        "id": "da1c5477-4e98-4686-8fa2-2af05d50a701",
+    }
