@@ -44,7 +44,7 @@ class TestGenerateEncodedChart:
             spy_interface_class.return_value.generate_chart_output.return_value
         )
         assert chart_result.last_updated == spy_interface_class.last_updated
-        assert chart_result.alt_text == chart_output.alt_text
+        assert chart_result.alt_text == chart_output.description
         assert chart_result.figure == chart_output.interactive_chart_figure_output
         assert chart_result.chart == mocked_create_optimized_svg.return_value
 

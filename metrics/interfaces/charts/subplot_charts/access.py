@@ -121,6 +121,7 @@ class SubplotChartsInterface:
         return ChartOutput(
             figure=figure,
             description=chart_description,
+            is_headline=False,
         )
 
     def write_figure(self, *, figure: plotly.graph_objects.Figure) -> bytes:
