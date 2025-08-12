@@ -172,3 +172,29 @@ class TestChartResult:
         assert output["chart"] == chart
         assert output["alt_text"] == alt_text
         assert output["figure"] == figure
+
+
+class TestCreateOptimizedSVG:
+    @mock.patch(f"{MODULE_PATH}.scour.scourString")
+    def test_delegates_calls_successfully(self, spy_scour_string: mock.Mock):
+        """
+        Given a mocked plotly figure and `file_format` of svg
+        When `_create_optimized_svg()` is called
+        Then the figure is created
+            and passed to the `scourString()` call
+        """
+        # Given
+        spy_figure = mock.Mock()
+        file_format = "svg"
+
+        # When
+        optimized_svg: str = generation._create_optimized_svg(
+            figure=spy_figure, file_format=file_format
+        )
+
+        # Then
+        spy_figure.to_image.assert_called_once_with(format=file_format, validate=False)
+        svg_image = spy_figure.to_image.return_value
+        spy_scour_string.assert_called_once_with(in_string=svg_image)
+
+        assert optimized_svg == spy_scour_string.return_value
