@@ -121,7 +121,7 @@ class AccompanyingPoints(blocks.StreamBlock):
 
 
 class DataFilterElement(blocks.StructBlock):
-    label = blocks.CharBlock(
+    label = blocks.RichTextBlock(
         required=True,
         help_text="",
     )
