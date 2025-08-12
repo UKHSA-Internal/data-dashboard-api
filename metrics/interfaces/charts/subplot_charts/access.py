@@ -1,3 +1,4 @@
+import datetime
 import io
 
 import plotly.graph_objects
@@ -19,8 +20,6 @@ DEFAULT_SUBPLOT_CHART_TYPE = "bar"
 
 
 class SubplotChartsInterface:
-    last_updated = "2025-01-01"
-
     def __init__(
         self,
         *,
@@ -30,6 +29,7 @@ class SubplotChartsInterface:
         self.chart_request_params = chart_request_params
         self.chart_type = DEFAULT_SUBPLOT_CHART_TYPE
         self.core_time_series_manager = core_time_series_manager
+        self.last_updated = ""
 
     def _build_plots_data(self) -> list[dict[str, PlotGenerationData | str]]:
         """Creates a list of `Subplot` models which hold the params and corresponding data for the
@@ -46,16 +46,24 @@ class SubplotChartsInterface:
 
         """
         subplots_data: list[dict[str, PlotGenerationData | str]] = []
+        latest_dates: list[datetime.date] = []
 
         for subplot in self.chart_request_params.subplots:
             plots_interface = PlotsInterface(chart_request_params=subplot)
-            subplot_data: PlotGenerationData = plots_interface.build_plots_data()
+            subplot_data: list[PlotGenerationData] = plots_interface.build_plots_data()
             subplots_data.append(
                 {
                     "subplot_title": subplot.subplot_title,
                     "subplot_data": subplot_data,
                 }
             )
+
+            latest_dates += [
+                individual_subplot_data.latest_date
+                for individual_subplot_data in subplot_data
+            ]
+
+        self.last_updated = str(max(latest_dates))
 
         return subplots_data
 

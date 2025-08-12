@@ -93,7 +93,7 @@ class TestSubplotChartsView:
         """
         # Given
         client = APIClient()
-        core_time_series: list[CoreTimeSeries] = self._create_example_core_timeseries()
+        self._create_example_core_timeseries()
         valid_payload = REQUEST_PAYLOAD_EXAMPLE.copy()
 
         # When
@@ -106,6 +106,8 @@ class TestSubplotChartsView:
         # Then
         # Check that the headers on the response indicate a json response is being returned
         assert response.headers["Content-Type"] == "application/json"
+        response_data = response.data
+        assert response_data["last_updated"] == "2021-08-01"
 
     @pytest.mark.django_db
     @pytest.mark.parametrize("preview", [True, False])
