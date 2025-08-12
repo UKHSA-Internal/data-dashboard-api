@@ -141,3 +141,34 @@ class TestGenerateChartAsFile:
         )
 
         assert generated_chart == spy_write_figure.return_value
+
+
+class TestChartResult:
+    def test_output(self):
+        """
+        Given an enriched `ChartResult` model
+        When `output() is called
+        Then a dict representation of
+            the `ChartResult` is returned
+        """
+        # Given
+        last_updated = "2025-01-01"
+        chart = "abc"
+        alt_text = "def"
+        figure = {"figure": "hij"}
+
+        chart_result = generation.ChartResult(
+            last_updated=last_updated,
+            chart=chart,
+            alt_text=alt_text,
+            figure=figure,
+        )
+
+        # When
+        output: dict = chart_result.output()
+
+        # Then
+        assert output["last_updated"] == last_updated
+        assert output["chart"] == chart
+        assert output["alt_text"] == alt_text
+        assert output["figure"] == figure
