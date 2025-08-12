@@ -198,3 +198,32 @@ class TestCreateOptimizedSVG:
         spy_scour_string.assert_called_once_with(in_string=svg_image)
 
         assert optimized_svg == spy_scour_string.return_value
+
+
+class TestWriteFigure:
+    @mock.patch(f"{MODULE_PATH}.io.BytesIO")
+    def test_creates_image(self, spy_bytes_io_class: mock.MagicMock):
+        """
+        Given a mocked plotly figure and `file_format` of png
+        When `_write_figure()` is called
+        Then `write_image()` is called from the figure object
+        And returned in a bytes IO stream
+        """
+        # Given
+        mocked_figure = mock.Mock()
+        file_format = "png"
+
+        # When
+        written_figure = generation._write_figure(
+            figure=mocked_figure, file_format=file_format
+        )
+
+        # Then
+        mocked_figure.write_image.assert_called_once_with(
+            file=spy_bytes_io_class.return_value,
+            format=file_format,
+            validate=False,
+        )
+        bytes_io = spy_bytes_io_class.return_value
+        bytes_io.seek.assert_called_once_with(0)
+        assert written_figure == bytes_io.getvalue.return_value
