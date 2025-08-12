@@ -474,7 +474,7 @@ class TestPlotsText:
         fake_plot_data.x_axis_values = ["London"]
 
         second_plot_data = fake_plot_data.model_copy(deep=True)
-        second_plot_data.y_axis_values = [Decimal("456.0000")]
+        second_plot_data.y_axis_values = [Decimal("456.0100")]
         second_plot_data.x_axis_values = ["Leeds"]
         plots_text = PlotsText(plots_data=[fake_plot_data, second_plot_data])
 
@@ -483,4 +483,4 @@ class TestPlotsText:
 
         # Then
         assert "This plot has a value of '123'" in text
-        assert "This plot has a value of '456'" in text
+        assert "This plot has a value of '456.01'" in text
