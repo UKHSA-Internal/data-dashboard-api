@@ -173,7 +173,7 @@ class PlotsText:
             Describing its parameters and its data if valid.
 
         """
-        plot_parameters = plot_data.parameters
+        plot_parameters: PlotParameters = plot_data.parameters
         description = f"This is plot number {index} on this chart. "
         description += self._describe_plot_type(plot_parameters=plot_parameters)
 
