@@ -63,7 +63,7 @@ class SubplotChartsInterface:
                 for individual_subplot_data in subplot_data
             ]
 
-        self.last_updated = str(max(latest_dates))
+        self.last_updated = str(max(latest_dates, default=None))
 
         return subplots_data
 
