@@ -288,6 +288,7 @@ class PlotsInterface:
                 plot_data: PlotGenerationData = self.build_plot_data_from_parameters(
                     plot_parameters=plot_parameters
                 )
+
             except DataNotFoundForPlotError:
                 continue
 
