@@ -5,7 +5,8 @@ from metrics.domain.models import SubplotChartGenerationPayload
 from metrics.interfaces.charts.subplot_charts.access import (
     ChartOutput,
     SubplotChartsInterface,
-    generate_sub_plot_chart_image, generate_encoded_sub_plot_chart_figure,
+    generate_sub_plot_chart_image,
+    generate_encoded_sub_plot_chart_figure,
 )
 from metrics.interfaces.plots.access import PlotsInterface
 
