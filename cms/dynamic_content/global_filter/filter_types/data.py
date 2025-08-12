@@ -120,10 +120,14 @@ class AccompanyingPoints(blocks.StreamBlock):
     )
 
 
+ALLOWABLE_LABEL_RICH_TEXT_FEATURES = ["bold"]
+
+
 class DataFilterElement(blocks.StructBlock):
     label = blocks.RichTextBlock(
         required=True,
         help_text="",
+        features=ALLOWABLE_LABEL_RICH_TEXT_FEATURES,
     )
     colour = blocks.ChoiceBlock(
         choices=get_colours,
