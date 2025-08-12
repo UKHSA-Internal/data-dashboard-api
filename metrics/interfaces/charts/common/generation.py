@@ -1,3 +1,4 @@
+import io
 import urllib
 from dataclasses import asdict, dataclass
 
