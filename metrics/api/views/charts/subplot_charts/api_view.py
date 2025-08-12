@@ -11,7 +11,7 @@ from metrics.api.serializers.charts import (
     EncodedChartResponseSerializer,
 )
 from metrics.api.serializers.charts.subplot_charts import (
-    ChartQueryParamsSerializer,
+    ChartPreviewQueryParamsSerializer,
     SubplotChartRequestSerializer,
 )
 from metrics.api.views.charts.subplot_charts.request_example import (
@@ -37,7 +37,7 @@ class SubplotChartsView(APIView):
     @classmethod
     @extend_schema(
         request=SubplotChartRequestSerializer,
-        parameters=[ChartQueryParamsSerializer],
+        parameters=[ChartPreviewQueryParamsSerializer],
         examples=[
             OpenApiExample(
                 name="MMR1 (2 years)", value=REQUEST_PAYLOAD_EXAMPLE, request_only=True
@@ -52,7 +52,9 @@ class SubplotChartsView(APIView):
             request=request
         )
 
-        chart_preview_serializer = ChartQueryParamsSerializer(data=request.query_params)
+        chart_preview_serializer = ChartPreviewQueryParamsSerializer(
+            data=request.query_params
+        )
         chart_preview_serializer.is_valid(raise_exception=True)
         payload = chart_preview_serializer.validated_data
 

@@ -8,6 +8,11 @@ from metrics.domain.charts.subplots import generate_chart_figure
 from metrics.domain.models import SubplotChartGenerationPayload, SubplotGenerationData
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 from metrics.interfaces.charts.common.chart_output import ChartOutput
+from metrics.interfaces.charts.common.generation import (
+    ChartResult,
+    generate_chart_as_file,
+    generate_encoded_chart,
+)
 from metrics.interfaces.plots.access import PlotGenerationData, PlotsInterface
 
 DEFAULT_SUBPLOT_CHART_TYPE = "bar"
@@ -138,10 +143,19 @@ class SubplotChartsInterface:
         return file.getvalue()
 
 
-def generate_chart_file(
+def generate_sub_plot_chart_image(
     *, chart_request_params: SubplotChartRequestParameters
 ) -> bytes:
-    charts_interface = SubplotChartsInterface(chart_request_params=chart_request_params)
-    chart_output: ChartOutput = charts_interface.generate_chart_output()
+    return generate_chart_as_file(
+        interface=SubplotChartsInterface,
+        chart_request_params=chart_request_params,
+    )
 
-    return charts_interface.write_figure(figure=chart_output.figure)
+
+def generate_encoded_sub_plot_chart_figure(
+    *, chart_request_params: SubplotChartRequestParameters
+) -> ChartResult:
+    return generate_encoded_chart(
+        interface=SubplotChartsInterface,
+        chart_request_params=chart_request_params,
+    )
