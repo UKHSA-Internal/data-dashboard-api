@@ -484,3 +484,25 @@ class TestPlotsText:
         # Then
         assert "This plot has a value of '123'" in text
         assert "This plot has a value of '456.01'" in text
+
+    def test_describe_singular_metric_value_returns_empty_string_for_timeseries_plots_with_no_data(
+        self, fake_plot_data: PlotGenerationData
+    ):
+        """
+        Given an enriched `PlotData` model
+            which represents multiple time series
+        When `_describe_singular_metric_value()` is called
+            from an instance of `PlotsText`
+        Then an empty string is returned
+        """
+        # Given
+        fake_plot_data.y_axis_values = [Decimal("123.0000"), Decimal("456.0100")]
+        fake_plot_data.x_axis_values = ["London", "London"]
+
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+
+        # When
+        text: str = plots_text._describe_singular_metric_value(plot_data=fake_plot_data)
+
+        # Then
+        assert text == ""
