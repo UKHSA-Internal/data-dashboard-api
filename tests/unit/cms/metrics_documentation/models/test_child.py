@@ -131,8 +131,8 @@ class TestMetricsDocumentationChildEntry:
     )
     def test_metric_group_returns_expected_string(
         self,
-        mock_get_all_unique_metric_names: mock.MagicMock(),
-        mock_get_all_topic_names: mock.MagicMock(),
+        mock_get_all_unique_metric_names: mock.MagicMock,
+        mock_get_all_topic_names: mock.MagicMock,
         metric_name: str,
         metric_group: str,
     ):
