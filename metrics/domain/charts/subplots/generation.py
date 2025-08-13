@@ -36,16 +36,20 @@ def generate_chart_figure(
                 figure.update_yaxes(showticklabels=False, row=1, col=plot_index)
 
     if chart_generation_payload.target_threshold:
-        add_threshold_bar(figure, y_bottom=chart_generation_payload.target_threshold)
+        add_target_threshold(
+            figure=figure,
+            y_bottom=chart_generation_payload.target_threshold,
+            target_threshold_label=chart_generation_payload.target_threshold_label,
+        )
 
     return figure
 
 
-def add_threshold_bar(
+def add_target_threshold(
     figure: plotly.graph_objs.Figure,
     y_bottom: float,
+    target_threshold_label: str | None,
     fill_colour: str = "rgba(135, 206, 235, 0.3)",
-    label: str = "95% target",
 ):
     """Add a blue bar with solid top line and dashed bottom line to a Plotly figure.
 
@@ -58,7 +62,8 @@ def add_threshold_bar(
         y_bottom: Y-coordinate for the bottom of the bar
             i.e. the threshold value
         fill_colour: Colour for the filled bar area (with transparency)
-        label : Label for the threshold indicator (appears in legend)
+        target_threshold_label: Label for the threshold indicator
+            (appears in legend)
 
     Returns:
         The modified plotly figure object
@@ -101,7 +106,7 @@ def add_threshold_bar(
             y=[None],
             mode="lines",
             line={"color": fill_colour, "width": 8},
-            name=label,
+            name=target_threshold_label,
             showlegend=True,
         )
     )

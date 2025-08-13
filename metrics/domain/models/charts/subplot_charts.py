@@ -39,6 +39,7 @@ class SubplotChartRequestParameters(BaseModel):
     y_axis_minimum_value: Decimal | int | None = 0
     y_axis_maximum_value: Decimal | int | None = None
     target_threshold: float | None = None
+    target_threshold_label: str | None = ""
     request: Request | None = None
 
     subplots: list[Subplots]

@@ -25,6 +25,7 @@ class TestSubplotGeneration:
             y_axis_maximum_value=None,
             y_axis_minimum_value=0,
             target_threshold=95,
+            target_threshold_label="95% target",
         )
 
     def test_chart_figure_returns_correctly_with_threshold(
