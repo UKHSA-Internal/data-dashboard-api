@@ -1,15 +1,17 @@
 import plotly.graph_objects
 from plotly.subplots import make_subplots
 
-from metrics.domain.models import PlotGenerationData
-from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
+from metrics.domain.models.subplot_plots import (
+    SubplotChartGenerationPayload,
+    SubplotGenerationData,
+)
 
 
 def generate_chart_figure(
     *,
     chart_generation_payload: SubplotChartGenerationPayload,
 ) -> plotly.graph_objects.Figure:
-    subplot_data: PlotGenerationData = chart_generation_payload.subplot_data
+    subplot_data: list[SubplotGenerationData] = chart_generation_payload.subplot_data
 
     figure = make_subplots(
         rows=1,
