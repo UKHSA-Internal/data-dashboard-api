@@ -62,8 +62,7 @@ def add_target_threshold(
         y_bottom: Y-coordinate for the bottom of the bar
             i.e. the threshold value
         fill_colour: Colour for the filled bar area (with transparency)
-        target_threshold_label: Label for the threshold indicator
-            (appears in legend)
+        target_threshold_label: Optional label for the threshold indicator
 
     Returns:
         The modified plotly figure object
