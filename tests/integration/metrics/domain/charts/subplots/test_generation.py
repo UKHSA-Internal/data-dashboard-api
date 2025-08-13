@@ -24,6 +24,7 @@ class TestSubplotGeneration:
             x_axis_title="x-axis-title",
             y_axis_maximum_value=None,
             y_axis_minimum_value=0,
+            target_threshold=0.95,
         )
 
     def test_chart_figure_returns_correctly(

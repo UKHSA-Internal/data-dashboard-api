@@ -38,6 +38,7 @@ class SubplotChartRequestParameters(BaseModel):
     y_axis_title: OPTIONAL_STRING = ""
     y_axis_minimum_value: Decimal | int | None = 0
     y_axis_maximum_value: Decimal | int | None = None
+    target_threshold: float | None = None
     request: Request | None = None
 
     subplots: list[Subplots]
