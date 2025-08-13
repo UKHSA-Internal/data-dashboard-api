@@ -286,3 +286,133 @@ class TestMapsView:
             "data": expected_data,
             "latest_date": date_stamp,
         }
+
+    @pytest.mark.django_db
+    def test_returns_correct_data_for_related_geography_linked_accompanying_points(
+        self,
+    ):
+        """
+        Given a number of `CoreTimeSeries` records
+        When a POST request is made to the `api/maps/v1` endpoint
+        And the `accompanying_points` reference a related geography
+        Then the correct data is returned
+            for each of the requested geographies
+        """
+        # Given
+        client = APIClient()
+        utla = "Upper Tier Local Authority"
+        date_stamp = datetime.date(year=2020, month=1, day=1)
+
+        CoreTimeSeriesFactory.create_record(
+            metric_name=self.covid_19_cases_metric,
+            topic_name=self.covid_19,
+            geography_type_name=utla,
+            geography_name="Hackney",
+            geography_code="E09000012",
+            metric_value=3,
+            date=date_stamp,
+        )
+        CoreTimeSeriesFactory.create_record(
+            metric_name=self.covid_19_cases_metric,
+            topic_name=self.covid_19,
+            geography_type_name="Region",
+            geography_name="London",
+            geography_code="E12000007",
+            metric_value=7,
+            date=date_stamp,
+        )
+        CoreTimeSeriesFactory.create_record(
+            metric_name=self.covid_19_cases_metric,
+            topic_name=self.covid_19,
+            geography_type_name="Nation",
+            geography_name="England",
+            geography_code="E92000001",
+            metric_value=4,
+            date=date_stamp,
+        )
+        CoreTimeSeriesFactory.create_record(
+            metric_name=self.covid_19_cases_metric,
+            topic_name=self.covid_19,
+            geography_type_name=utla,
+            geography_name="Leeds",
+            geography_code="E08000035",
+            metric_value=9,
+            date=date_stamp,
+        )
+        CoreTimeSeriesFactory.create_record(
+            metric_name="influenza_healthcare_ICUHDUadmissionRateByWeek",
+            topic_name="Influenza",
+            geography_type_name=utla,
+            geography_name="Leeds",
+            geography_code="E08000035",
+            metric_value=5,
+        )
+
+        payload = {
+            "date_from": "2020-01-01",
+            "date_to": "2025-12-31",
+            "parameters": {
+                "theme": "infectious_disease",
+                "sub_theme": "respiratory",
+                "topic": self.covid_19,
+                "metric": self.covid_19_cases_metric,
+                "stratum": "default",
+                "age": "all",
+                "sex": "all",
+                "geography_type": utla,
+                "geographies": [],
+            },
+            "accompanying_points": [
+                {
+                    "label_prefix": "Region rate of cases: ",
+                    "label_suffix": "",
+                    "parameters": {
+                        "geography_type": "Region",
+                    },
+                }
+            ],
+        }
+
+        # When
+        response: Response = client.post(path=self.path, data=payload, format="json")
+
+        # Then
+        assert response.status_code == 200
+        expected_data = [
+            {
+                "geography": "Hackney",
+                "geography_code": "E09000012",
+                "geography_type": "Upper Tier Local Authority",
+                "metric_value": Decimal("3.0000"),
+                "accompanying_points": [
+                    {
+                        "label_prefix": "Region rate of cases:",
+                        "label_suffix": "",
+                        "metric_value": Decimal("7.0000"),
+                    }
+                    # For the geography of `Hackney` the corresponding
+                    # `Region` of `London` has data that we should get back
+                ],
+            },
+            {
+                "accompanying_points": [
+                    {
+                        "label_prefix": "Region rate of cases:",
+                        "label_suffix": "",
+                        "metric_value": None,
+                    }
+                ],
+                # For the geography of `Leeds` the corresponding
+                # `Region` of `Yorkshire and The Humber` doesn't have any data
+                # so it should return None
+                "geography": "Leeds",
+                "geography_code": "E08000035",
+                "geography_type": "Upper Tier Local Authority",
+                "metric_value": Decimal("9.0000"),
+            },
+        ]
+
+        assert response.data == {
+            "data": expected_data,
+            "latest_date": date_stamp,
+        }
