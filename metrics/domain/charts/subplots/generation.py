@@ -66,6 +66,10 @@ def add_threshold_bar(
 
     """
     line_color = "blue"
+
+    # In cases where we let plotly figure out scaling
+    # we have to compute the figure and pull the y-axis range from there
+    # to tell us what the `y_top` value will be
     computed_figure = figure.full_figure_for_development()
     y_top: float = computed_figure.layout.yaxis.range[1]
 
@@ -90,7 +94,7 @@ def add_threshold_bar(
         layer="below",
     )
 
-    # Add invisible trace for legend entry
+    # Add invisible trace for temporary legend entry
     figure.add_trace(
         plotly.graph_objs.Scatter(
             x=[None],
