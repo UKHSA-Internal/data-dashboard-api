@@ -15,13 +15,13 @@ from metrics.domain.models import (
 )
 from metrics.domain.common.utils import ChartTypes
 from metrics.interfaces.charts.single_category_charts.access import (
-    ChartOutput,
     ChartsInterface,
     InvalidFileFormatError,
     InvalidChartTypeCombinationError,
     generate_chart_as_file,
     generate_encoded_chart,
 )
+from metrics.interfaces.charts.common.chart_output import ChartOutput
 from metrics.interfaces.plots.access import InvalidPlotParametersError
 from tests.fakes.factories.metrics.core_time_series_factory import (
     FakeCoreTimeSeriesFactory,

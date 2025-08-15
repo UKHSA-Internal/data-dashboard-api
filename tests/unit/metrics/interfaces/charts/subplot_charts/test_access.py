@@ -1,14 +1,12 @@
-import datetime
 import plotly.graph_objects
 from unittest import mock
 
 from metrics.domain.models import SubplotChartGenerationPayload
-from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
-from metrics.domain.charts.subplots.generation import generate_chart_figure
 from metrics.interfaces.charts.subplot_charts.access import (
     ChartOutput,
     SubplotChartsInterface,
-    generate_chart_file,
+    generate_sub_plot_chart_image,
+    generate_encoded_sub_plot_chart_figure,
 )
 from metrics.interfaces.plots.access import PlotsInterface
 
@@ -136,28 +134,53 @@ class TestChartsInterface:
         assert type(chart_bytes) == bytes
 
 
-class TestGenerateChartAsFile:
-    @mock.patch.object(SubplotChartsInterface, "generate_chart_output")
-    @mock.patch.object(SubplotChartsInterface, "write_figure")
-    def test_delegates_call_for_writing_chart(
-        self,
-        spy_write_figure: mock.MagicMock,
-        spy_generate_chart_output: mock.MagicMock,
-        fake_subplot_chart_request_params: SubplotChartGenerationPayload,
+class TestGenerateSubPlotChartImage:
+    @mock.patch(f"{MODULE_PATH}.generate_chart_as_file")
+    def test_delegates_call_successfully(
+        self, spy_generate_chart_as_file: mock.MagicMock
     ):
         """
-        Given a mock in place of a `SubplotChartGenerationPayload` model
-        When `generate_chart_as_file` is called
-        Then `write_figure` is called from an instance of the `ChartsInterface`
+        Given a mocked `SubplotChartRequestParameters`
+        When `generate_sub_plot_chart_image()` is called
+        Then the call is delegated to `generate_chart_as_file()`
         """
         # Given
-        mocked_subplot_collection = mock.Mock()
-        mocked_subplot_collection.subplots_data = fake_subplot_chart_request_params
+        mocked_chart_request_params = mock.Mock()
 
         # When
-        generate_chart_file(chart_request_params=mocked_subplot_collection)
+        generated_image = generate_sub_plot_chart_image(
+            chart_request_params=mocked_chart_request_params
+        )
 
         # Then
-        spy_write_figure.assert_called_once_with(
-            figure=spy_generate_chart_output.return_value.figure,
+        spy_generate_chart_as_file.assert_called_once_with(
+            interface=SubplotChartsInterface,
+            chart_request_params=mocked_chart_request_params,
         )
+        assert generated_image == spy_generate_chart_as_file.return_value
+
+
+class TestGenerateEncodedSubPlotChartFigure:
+    @mock.patch(f"{MODULE_PATH}.generate_encoded_chart")
+    def test_delegates_call_successfully(
+        self, spy_generate_encoded_chart: mock.MagicMock
+    ):
+        """
+        Given a mocked `SubplotChartRequestParameters`
+        When `generate_encoded_sub_plot_chart_figure()` is called
+        Then the call is delegated to `generate_encoded_chart()`
+        """
+        # Given
+        mocked_chart_request_params = mock.MagicMock()
+
+        # When
+        chart_result = generate_encoded_sub_plot_chart_figure(
+            chart_request_params=mocked_chart_request_params
+        )
+
+        # Then
+        spy_generate_encoded_chart.assert_called_once_with(
+            interface=SubplotChartsInterface,
+            chart_request_params=mocked_chart_request_params,
+        )
+        assert chart_result == spy_generate_encoded_chart.return_value

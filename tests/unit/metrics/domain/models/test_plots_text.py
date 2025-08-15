@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from unittest import mock
 
 import pytest
@@ -456,3 +457,52 @@ class TestPlotsText:
             f"And `{second_plot_data.y_axis_values[0]}` along the Y-axis. "
         )
         assert expected_text_for_plot_one in text
+
+    def test_can_describe_singular_timeseries_plots(
+        self, fake_plot_data: PlotGenerationData
+    ):
+        """
+        Given a list of 2 enriched `PlotData` models
+            which represents singular time series
+        When `construct_text()` is called
+            from an instance of `PlotsText`
+        Then the returned text provides commentary
+            about the singular metric values
+        """
+        # Given
+        fake_plot_data.y_axis_values = [Decimal("123.0000")]
+        fake_plot_data.x_axis_values = ["London"]
+
+        second_plot_data = fake_plot_data.model_copy(deep=True)
+        second_plot_data.y_axis_values = [Decimal("456.0100")]
+        second_plot_data.x_axis_values = ["Leeds"]
+        plots_text = PlotsText(plots_data=[fake_plot_data, second_plot_data])
+
+        # When
+        text: str = plots_text.construct_text()
+
+        # Then
+        assert "This plot has a value of '123'" in text
+        assert "This plot has a value of '456.01'" in text
+
+    def test_describe_singular_metric_value_returns_empty_string_for_timeseries_plots_with_no_data(
+        self, fake_plot_data: PlotGenerationData
+    ):
+        """
+        Given an enriched `PlotData` model
+            which represents multiple time series
+        When `_describe_singular_metric_value()` is called
+            from an instance of `PlotsText`
+        Then an empty string is returned
+        """
+        # Given
+        fake_plot_data.y_axis_values = [Decimal("123.0000"), Decimal("456.0100")]
+        fake_plot_data.x_axis_values = ["London", "London"]
+
+        plots_text = PlotsText(plots_data=[fake_plot_data])
+
+        # When
+        text: str = plots_text._describe_singular_metric_value(plot_data=fake_plot_data)
+
+        # Then
+        assert text == ""
