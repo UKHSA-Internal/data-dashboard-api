@@ -120,7 +120,7 @@
                                                         {
                                                             "type": "data_filter",
                                                             "value": {
-                                                                "label": "6-in-1 (1 year)",
+                                                                "label": "<p data-block-key=\"p4bz3\"><b>6-in-1</b></p><p data-block-key=\"9v7u9\">(1 year)</p>",
                                                                 "colour": "COLOUR_1_DARK_BLUE",
                                                                 "parameters": {
                                                                     "theme": {
@@ -196,7 +196,7 @@
                                                         {
                                                             "type": "data_filter",
                                                             "value": {
-                                                                "label": "6-in-1 (2 years)",
+                                                                "label": "<p data-block-key=\"owtwy\"><b>6-in-1</b></p><p data-block-key=\"6br5f\">(2 years)</p>",
                                                                 "colour": "COLOUR_2_TURQUOISE",
                                                                 "parameters": {
                                                                     "theme": {
@@ -272,7 +272,7 @@
                                                         {
                                                             "type": "data_filter",
                                                             "value": {
-                                                                "label": "6-in-1 (5 years)",
+                                                                "label": "<p data-block-key=\"cxbnk\"><b>6-in-1</b></p><p data-block-key=\"1i4fq\">(5 years)</p>",
                                                                 "colour": "COLOUR_3_DARK_PINK",
                                                                 "parameters": {
                                                                     "theme": {
@@ -348,7 +348,7 @@
                                                         {
                                                             "type": "data_filter",
                                                             "value": {
-                                                                "label": "MMR1 (1 year)",
+                                                                "label": "<p data-block-key=\"tvrxh\"><b>MMR1</b></p><p data-block-key=\"785r9\">(1 year)</p>",
                                                                 "colour": "COLOUR_4_ORANGE",
                                                                 "parameters": {
                                                                     "theme": {
@@ -424,7 +424,7 @@
                                                         {
                                                             "type": "data_filter",
                                                             "value": {
-                                                                "label": "MMR1 (2 years)",
+                                                                "label": "<p data-block-key=\"1qk0z\"><b>MMR1</b></p><p data-block-key=\"1n6vp\">(2 years)</p>",
                                                                 "colour": "COLOUR_5_DARK_GREY",
                                                                 "parameters": {
                                                                     "theme": {
@@ -500,7 +500,7 @@
                                                         {
                                                             "type": "data_filter",
                                                             "value": {
-                                                                "label": "MMR1 (5 years)",
+                                                                "label": "<p data-block-key=\"qj3xu\"><b>MMR1</b></p><p data-block-key=\"a1e97\">(5 years)</p>",
                                                                 "colour": "COLOUR_6_LIGHT_PURPLE",
                                                                 "parameters": {
                                                                     "theme": {
@@ -718,8 +718,8 @@
     ],
     "seo_change_frequency": 5,
     "seo_priority": "0.5",
-    "last_updated_at": "2025-08-05T16:25:12.020128+01:00",
-    "last_published_at": "2025-08-05T16:25:12.020128+01:00",
+    "last_updated_at": "2025-08-12T21:32:04.601190+01:00",
+    "last_published_at": "2025-08-12T21:32:04.601190+01:00",
     "active_announcements": [],
     "page_description": "<p data-block-key=\"opqpf\">This resource is intended to enable the user to selectively compare routine childhood vaccination coverage statistics over the available time periods for the following geographies: Local authorities (LA) in England, Regions in England and countries of the United Kingdom.<br/></p><p data-block-key=\"389gq\">This interactive resource reports annual childhood vaccination as a proportion of the eligible population (coverage), and are derived from information collected by UK Health Security Agency (UKHSA) through the Cover of Vaccinations Evaluation Rapidly (COVER) programme.</p>",
     "related_links_layout": "Footer",
