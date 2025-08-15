@@ -1,6 +1,6 @@
 import plotly.graph_objects
 
-from metrics.domain.charts import chart_settings
+from metrics.domain.charts.chart_settings import single_category
 from metrics.domain.charts.common_charts.plots.bar.plot import create_bar_plot
 from metrics.domain.charts.common_charts.plots.line_multi_coloured.plot import (
     create_line_plot,
@@ -28,7 +28,7 @@ def generate_chart_figure(
         Plotly Figure object.
     """
     figure = plotly.graph_objects.Figure()
-    settings = chart_settings.ChartSettings(
+    settings = single_category.SingleCategoryChartSettings(
         chart_generation_payload=chart_generation_payload,
     )
 

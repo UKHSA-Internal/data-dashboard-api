@@ -53,6 +53,15 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("93.4")],
                 },
+                {
+                    "parameters": {
+                        "metric": "fake-metric",
+                        "topic": "fake-topic",
+                        "geography": "Stockton-on-Tees",
+                    },
+                    "x_axis_values": ["Stockton-on-Tees"],
+                    "y_axis_values": [Decimal("95.4")],
+                },
             ],
         },
         {
@@ -75,6 +84,15 @@ def example_subplot_chart_generation_payload() -> list[dict[str, str | Decimal]]
                     },
                     "x_axis_values": ["Hartlepool"],
                     "y_axis_values": [Decimal("91.4")],
+                },
+                {
+                    "parameters": {
+                        "metric": "fake-metric",
+                        "topic": "fake-topic",
+                        "geography": "Stockton-on-Tees",
+                    },
+                    "x_axis_values": ["Stockton-on-Tees"],
+                    "y_axis_values": [Decimal("95.4")],
                 },
             ],
         },

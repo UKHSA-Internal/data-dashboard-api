@@ -5,18 +5,22 @@ from _pytest.logging import LogCaptureFixture
 import pytest
 
 from metrics.domain.charts import colour_scheme
-from metrics.domain.charts.chart_settings import (
-    ChartSettings,
+from metrics.domain.charts.chart_settings.base import ChartSettings
+from metrics.domain.charts.chart_settings.single_category import (
+    SingleCategoryChartSettings,
     WEEK_IN_MILLISECONDS,
     TWO_WEEKS_IN_MILLISECONDS,
 )
 from metrics.domain.models import PlotGenerationData, ChartGenerationPayload
+from tests.conftest import fake_plot_data
 
-MODULE_PATH: str = "metrics.domain.charts.chart_settings"
+MODULE_PATH: str = "metrics.domain.charts.charts.chart_settings.single_category"
 
 
 @pytest.fixture()
-def fake_chart_settings(fake_plot_data: PlotGenerationData) -> ChartSettings:
+def fake_chart_settings(
+    fake_plot_data: PlotGenerationData,
+) -> SingleCategoryChartSettings:
     payload = ChartGenerationPayload(
         chart_width=930,
         chart_height=220,
@@ -24,15 +28,17 @@ def fake_chart_settings(fake_plot_data: PlotGenerationData) -> ChartSettings:
         x_axis_title="Date",
         y_axis_title="Cases",
     )
-    return ChartSettings(chart_generation_payload=payload)
+    return SingleCategoryChartSettings(chart_generation_payload=payload)
 
 
-class TestChartSettings:
-    def test_get_tick_font_setting(self, fake_chart_settings: ChartSettings):
+class TestSingleCategoryChartSettings:
+    def test_get_tick_font_setting(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_tick_font_config()` is called
-        Then the correct tick font configuration is returned as a dict
+        Then the correct tick font configuration is returned as a dict.
         """
         # Given
         chart_settings = fake_chart_settings
@@ -48,13 +54,13 @@ class TestChartSettings:
         assert tick_font_config == expected_tick_font_config
 
     def test_get_x_axes_setting_for_date_based_x_axis(
-        self, fake_chart_settings: ChartSettings
+        self, fake_chart_settings: SingleCategoryChartSettings
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
             with date-based x axes values
         When `get_x_axis_config()` is called
-        Then the correct X axis configuration is returned as a dict
+        Then the correct X axis configuration is return as a dict
         """
         # Given
         chart_settings = fake_chart_settings
@@ -95,13 +101,13 @@ class TestChartSettings:
         assert x_axis_config == expected_x_axis_config
 
     def test_get_x_axes_setting_for_text_based_x_axis(
-        self, fake_chart_settings: ChartSettings
+        self, fake_chart_settings: SingleCategoryChartSettings
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
             with text-based x axes values
         When `get_x_axis_config()` is called
-        Then the correct X axis configuration is returned as a dict
+        Then the correct X axis configuration is return as a dict
         """
         # Given
         chart_settings = fake_chart_settings
@@ -141,9 +147,9 @@ class TestChartSettings:
         }
         assert x_axis_config == expected_x_axis_config
 
-    def test_get_y_axes_setting(self, fake_chart_settings: ChartSettings):
+    def test_get_y_axes_setting(self, fake_chart_settings: SingleCategoryChartSettings):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_y_axis_config()` is called
         Then the correct Y axis configuration is returned as a dict
         """
@@ -179,16 +185,16 @@ class TestChartSettings:
         }
         assert y_axis_config == expected_y_axis_config
 
-    @mock.patch.object(ChartSettings, "_get_y_axis_config")
-    @mock.patch.object(ChartSettings, "_get_x_axis_config")
+    @mock.patch.object(SingleCategoryChartSettings, "_get_y_axis_config")
+    @mock.patch.object(SingleCategoryChartSettings, "_get_x_axis_config")
     def test_get_base_chart_config(
         self,
         mocked_get_x_axis_config: mock.MagicMock,
         mocked_get_y_axis_config: mock.MagicMock,
-        fake_chart_settings: ChartSettings,
+        fake_chart_settings: SingleCategoryChartSettings,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_base_chart_config()` is called
         Then the correct base chart configuration is returned as a dict
         """
@@ -219,13 +225,12 @@ class TestChartSettings:
             "height": chart_settings.height,
             "showlegend": True,
         }
-
         assert base_chart_config == expected_base_chart_config
 
     def test_chart_settings_width(self, fake_plot_data: PlotGenerationData):
         """
         Given a `width` integer
-        When the `width` property is called from an instance of `ChartSettings`
+        When the `width` property is called from an instance of `SingleCategoryChartSettings`
         Then the correct number is returned
         """
         # Given
@@ -237,7 +242,7 @@ class TestChartSettings:
             x_axis_title="",
             y_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         chart_width: int = chart_settings.width
@@ -247,8 +252,8 @@ class TestChartSettings:
 
     def test_chart_settings_height(self, fake_plot_data: PlotGenerationData):
         """
-        Given a `width` integer
-        When the `width` property is called from an instance of `ChartSettings`
+        Given a `height` integer
+        When the `height` property is called from an instance of `SingleCategoryChartSettings`
         Then the correct number is returned
         """
         # Given
@@ -260,7 +265,7 @@ class TestChartSettings:
             x_axis_title="",
             y_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         chart_height: int = chart_settings.height
@@ -268,15 +273,13 @@ class TestChartSettings:
         # Then
         assert chart_height == height
 
-    def test_get_x_axis_date_type(self, fake_chart_settings: ChartSettings):
+    def test_get_x_axis_date_type(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
-
-        Patches:
-            `mocked_get_x_axis_range`: To remove the need
-                 to supply a valid plotly figure object to the test
         """
         # Given
         chart_settings = fake_chart_settings
@@ -344,7 +347,7 @@ class TestChartSettings:
         self,
         x_axis_values: list[datetime],
         dtick: str,
-        fake_chart_settings,
+        fake_chart_settings: SingleCategoryChartSettings,
     ):
         """
         Given a valid date range in `x_axis_values`
@@ -356,18 +359,18 @@ class TestChartSettings:
         fake_chart_settings.plots_data[0].x_axis_values = x_axis_values
 
         # When
-        x_axis_data_type = fake_chart_settings.get_x_axis_date_type()
+        x_axis_date_type = fake_chart_settings.get_x_axis_date_type()
 
         # Then
-        assert x_axis_data_type["dtick"] == dtick
+        assert x_axis_date_type["dtick"] == dtick
 
-    def test_get_x_axis_date_type_calls_get_x_axis_range(
+    def test_get_x_axis_date_type_calls_get_x_axis_rane(
         self, fake_plot_data: PlotGenerationData
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_x_axis_date_type()` is called
-        Then the correct config is returned
+        Then the corrent config is returned
         """
         # Given
         payload = ChartGenerationPayload(
@@ -377,13 +380,13 @@ class TestChartSettings:
             x_axis_title="",
             y_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         x_axis_date_type = chart_settings.get_x_axis_date_type()
 
         # Then
-        min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
+        min_date, max_date = chart_settings._get_min_and_max_x_axis_values()
         tick0 = min_date.replace(day=1)
 
         expected_axis_config = {
@@ -421,7 +424,7 @@ class TestChartSettings:
         """
         Given a valid `dtick` (the chart x-axis interval)
         When the `get_timeseries_margin_days()` method is called
-        Then the correct number of days to use as padding is returned.
+        Then the correct number of days to use a padding is returned
         """
         # Given
         dtick = interval
@@ -432,7 +435,7 @@ class TestChartSettings:
             x_axis_title="",
             y_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         expected_number_of_days = chart_settings.get_timeseries_margin_days(
@@ -446,7 +449,7 @@ class TestChartSettings:
         self, fake_plot_data: PlotGenerationData
     ):
         """
-        Given an instance of `ChartSettings` with a narrow `width`
+        Given an instance of `SingleCategoryChartSettings` with a narrow `width`
         When `get_x_axis_date_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
         """
@@ -458,7 +461,7 @@ class TestChartSettings:
             x_axis_title="",
             y_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         x_axis_date_type = chart_settings.get_x_axis_date_type()
@@ -466,9 +469,11 @@ class TestChartSettings:
         # Then
         assert x_axis_date_type["tickformat"] == "%b<br>%Y"
 
-    def test_get_x_axis_text_type(self, fake_chart_settings: ChartSettings):
+    def test_get_x_axis_text_type(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_x_axis_text_type()` is called
         Then the correct configuration for the x-axis is returned as a dict
         """
@@ -487,10 +492,10 @@ class TestChartSettings:
         assert x_axis_text_type == expected_axis_config
 
     def test_get_line_with_shaded_section_chart_config(
-        self, fake_chart_settings: ChartSettings
+        self, fake_chart_settings: SingleCategoryChartSettings
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_line_with_shaded_section_chart_config()` is called
         Then the correct configuration for
             `line_with_shaded_section` charts is returned as a dict
@@ -534,7 +539,7 @@ class TestChartSettings:
         y_axis_values: list[int],
     ):
         """
-        Given an instance of `chart_settings`
+        Given an instance of `SingleCategoryChartSettings`
         When the `get_line_with_shaded_section_chart_config()` method is called
             provided manual y-axis min and max values
         Then the correct chart settings are returned
@@ -559,12 +564,12 @@ class TestChartSettings:
             == expected_y_axis_min
         )
 
-    def test_build_line_single_simplified_y_axis_value_params_with_zero_min_value(
+    def test_build_line_single_simplified_y_axis_vaue_params_with_zero_min_value(
         self,
         fake_plot_data: PlotGenerationData,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `build_line_single_simplified_y_axis_value_params` is called with
             a valid payload where the `y_axis_minimum_value` is omitted
         Then a dictionary is returned with the expected values including `tick_values`
@@ -580,11 +585,11 @@ class TestChartSettings:
             y_axis_title="",
             x_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         returned_y_axis_params = (
-            chart_settings.build_line_single_simplified_y_axis_value_params()
+            chart_settings._build_line_single_simplified_y_axis_value_params()
         )
         expected_y_axis_params = {
             "y_axis_tick_values": [0, 7000],
@@ -600,7 +605,7 @@ class TestChartSettings:
         fake_plot_data: PlotGenerationData,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `build_line_single_simplified_y_axis_value_params` is called with
             a valid payload including a `min` and `max` value to override the `y_axis_values`
         Then a dictionary is returned with the expected values including `tick_values`
@@ -617,11 +622,11 @@ class TestChartSettings:
             y_axis_title="",
             x_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         returned_y_axis_params = (
-            chart_settings.build_line_single_simplified_y_axis_value_params()
+            chart_settings._build_line_single_simplified_y_axis_value_params()
         )
         expected_y_axis_params = {
             "y_axis_tick_values": [1000, 7000],
@@ -638,7 +643,7 @@ class TestChartSettings:
         caplog: LogCaptureFixture,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `build_line_single_simplified_y_axis_value_params` is called with
             an invalid `y_axis_minimum_value` meaning that the value provided is larger
             than the minimum value found in the data
@@ -656,11 +661,11 @@ class TestChartSettings:
             y_axis_title="",
             x_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         returned_y_axis_params = (
-            chart_settings.build_line_single_simplified_y_axis_value_params()
+            chart_settings._build_line_single_simplified_y_axis_value_params()
         )
         expected_y_axis_params = {
             "y_axis_tick_values": [2000, 7000],
@@ -679,7 +684,7 @@ class TestChartSettings:
         caplog: LogCaptureFixture,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `build_line_single_simplified_y_axis_value_params` is called with
             an invalid `y_axis_maximum_value` meaning that the value provided is lower
             than the maximum value found in the data
@@ -697,11 +702,11 @@ class TestChartSettings:
             y_axis_title="",
             x_axis_title="",
         )
-        chart_settings = ChartSettings(chart_generation_payload=payload)
+        chart_settings = SingleCategoryChartSettings(chart_generation_payload=payload)
 
         # When
         returned_y_axis_params = (
-            chart_settings.build_line_single_simplified_y_axis_value_params()
+            chart_settings._build_line_single_simplified_y_axis_value_params()
         )
         expected_y_axis_params = {
             "y_axis_tick_values": [1000, 6000],
@@ -714,14 +719,16 @@ class TestChartSettings:
         assert expected_y_axis_params == returned_y_axis_params
         assert expected_log in caplog.text
 
-    @mock.patch.object(ChartSettings, "build_line_single_simplified_axis_params")
+    @mock.patch.object(
+        SingleCategoryChartSettings, "_build_line_single_simplified_axis_params"
+    )
     def test_get_line_single_simplified_chart_config(
         self,
         mock_build_line_single_simplified_axis_params: mock.MagicMock,
-        fake_chart_settings: ChartSettings,
+        fake_chart_settings: SingleCategoryChartSettings,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_line_single_simplified_chart_config()` is called
         Then the correct configuration for
             `line_single_simplified` charts is returned as a dict
@@ -782,9 +789,11 @@ class TestChartSettings:
 
         assert line_single_simplified_chart_config == expected_chart_config
 
-    def test_get_legend_top_centre_config(self, fake_chart_settings: ChartSettings):
+    def test_get_legend_top_centre_config(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `_get_legend_top_centre_config()` is called
         Then the correct configuration for the legend is returned as a dict
         """
@@ -814,7 +823,7 @@ class TestChartSettings:
         self, fake_chart_settings: ChartSettings
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
             which includes a legend title
         When `_get_legend_top_centre_config()` is called
         Then the correct configuration for the legend is returned as a dict
@@ -845,10 +854,11 @@ class TestChartSettings:
         assert legend_top_centre_config == expected_legend_top_centre_config
 
     def test_get_line_multi_coloured_chart_config(
-        self, fake_chart_settings: ChartSettings
+        self,
+        fake_chart_settings: SingleCategoryChartSettings,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_line_multi_coloured_chart_config()` is called
         Then the correct configuration for margins is returned as a dict
         """
@@ -883,7 +893,7 @@ class TestChartSettings:
     )
     def test_get_line_multi_coloured_chart_config_returns_correct_y_axis_range(
         self,
-        fake_chart_settings: ChartSettings,
+        fake_chart_settings: SingleCategoryChartSettings,
         y_axis_min: int,
         y_axis_max: int | None,
         expected_y_axis_min: int,
@@ -891,7 +901,7 @@ class TestChartSettings:
         y_axis_values: list[int],
     ):
         """
-        Given an instance of `chart_settings`
+        Given an instance of `SingleCategoryChartSettings`
         When the `get_line_multi_coloured_chart_config()` method is called
             provided manual y-axis min and max values
         Then the correct chart settings are returned
@@ -920,10 +930,10 @@ class TestChartSettings:
         self,
         chart_width: int,
         expected_date_tick_format: str,
-        fake_chart_settings: ChartSettings,
+        fake_chart_settings: SingleCategoryChartSettings,
     ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `_get_date_tick_format()` is called
         Then the correct string is returned
         """
@@ -936,9 +946,11 @@ class TestChartSettings:
         # Then
         assert returned_date_tick_format == expected_date_tick_format
 
-    def test_get_min_and_max_x_axis_values(self, fake_chart_settings: ChartSettings):
+    def test_get_min_and_max_x_axis_values(
+        self, fake_chart_settings: SingleCategoryChartSettings
+    ):
         """
-        Given an instance of `ChartSettings`
+        Given an instance of `SingleCategoryChartSettings`
         When `get_min_and_max_x_axis_values()` is called
         Then the correct dates are returned
         """
@@ -946,7 +958,7 @@ class TestChartSettings:
         chart_settings = fake_chart_settings
 
         # When
-        min_date, max_date = chart_settings.get_min_and_max_x_axis_values()
+        min_date, max_date = chart_settings._get_min_and_max_x_axis_values()
 
         # Then
         assert min_date == chart_settings.plots_data[0].x_axis_values[0]
