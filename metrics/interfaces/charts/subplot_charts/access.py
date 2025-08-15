@@ -1,3 +1,4 @@
+import datetime
 import io
 
 import plotly.graph_objects
@@ -8,14 +9,17 @@ from metrics.domain.charts.subplots import generate_chart_figure
 from metrics.domain.models import SubplotChartGenerationPayload, SubplotGenerationData
 from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
 from metrics.interfaces.charts.common.chart_output import ChartOutput
+from metrics.interfaces.charts.common.generation import (
+    ChartResult,
+    generate_chart_as_file,
+    generate_encoded_chart,
+)
 from metrics.interfaces.plots.access import PlotGenerationData, PlotsInterface
 
 DEFAULT_SUBPLOT_CHART_TYPE = "bar"
 
 
 class SubplotChartsInterface:
-    last_updated = "2025-01-01"
-
     def __init__(
         self,
         *,
@@ -25,6 +29,7 @@ class SubplotChartsInterface:
         self.chart_request_params = chart_request_params
         self.chart_type = DEFAULT_SUBPLOT_CHART_TYPE
         self.core_time_series_manager = core_time_series_manager
+        self.last_updated = ""
 
     def _build_plots_data(self) -> list[dict[str, PlotGenerationData | str]]:
         """Creates a list of `Subplot` models which hold the params and corresponding data for the
@@ -41,16 +46,24 @@ class SubplotChartsInterface:
 
         """
         subplots_data: list[dict[str, PlotGenerationData | str]] = []
+        latest_dates: list[datetime.date] = []
 
         for subplot in self.chart_request_params.subplots:
             plots_interface = PlotsInterface(chart_request_params=subplot)
-            subplot_data: PlotGenerationData = plots_interface.build_plots_data()
+            subplot_data: list[PlotGenerationData] = plots_interface.build_plots_data()
             subplots_data.append(
                 {
                     "subplot_title": subplot.subplot_title,
                     "subplot_data": subplot_data,
                 }
             )
+
+            latest_dates += [
+                individual_subplot_data.latest_date
+                for individual_subplot_data in subplot_data
+            ]
+
+        self.last_updated = str(max(latest_dates, default=None))
 
         return subplots_data
 
@@ -138,10 +151,19 @@ class SubplotChartsInterface:
         return file.getvalue()
 
 
-def generate_chart_file(
+def generate_sub_plot_chart_image(
     *, chart_request_params: SubplotChartRequestParameters
 ) -> bytes:
-    charts_interface = SubplotChartsInterface(chart_request_params=chart_request_params)
-    chart_output: ChartOutput = charts_interface.generate_chart_output()
+    return generate_chart_as_file(
+        interface=SubplotChartsInterface,
+        chart_request_params=chart_request_params,
+    )
 
-    return charts_interface.write_figure(figure=chart_output.figure)
+
+def generate_encoded_sub_plot_chart_figure(
+    *, chart_request_params: SubplotChartRequestParameters
+) -> ChartResult:
+    return generate_encoded_chart(
+        interface=SubplotChartsInterface,
+        chart_request_params=chart_request_params,
+    )

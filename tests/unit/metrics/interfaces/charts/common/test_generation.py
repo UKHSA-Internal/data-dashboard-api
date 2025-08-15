@@ -39,11 +39,12 @@ class TestGenerateEncodedChart:
         spy_interface_class.assert_called_once_with(
             chart_request_params=spy_chart_request_params
         )
+        spy_interface_object = spy_interface_class.return_value
 
         chart_output = (
-            spy_interface_class.return_value.generate_chart_output.return_value
+            spy_interface_object.generate_chart_output.return_value
         )
-        assert chart_result.last_updated == spy_interface_class.last_updated
+        assert chart_result.last_updated == spy_interface_object.last_updated
         assert chart_result.alt_text == chart_output.description
         assert chart_result.figure == chart_output.interactive_chart_figure_output
         assert chart_result.chart == mocked_create_optimized_svg.return_value

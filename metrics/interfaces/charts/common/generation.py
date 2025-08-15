@@ -1,3 +1,4 @@
+import datetime
 import io
 import urllib
 from dataclasses import asdict, dataclass
@@ -8,7 +9,7 @@ from scour import scour
 
 @dataclass
 class ChartResult:
-    last_updated: str
+    last_updated: str | datetime.date
     chart: str
     alt_text: str
     figure: dict
@@ -51,7 +52,7 @@ def generate_encoded_chart(
     chart_output: ChartOutput = charts_interface.generate_chart_output()
 
     return ChartResult(
-        last_updated=interface.last_updated,
+        last_updated=charts_interface.last_updated,
         chart=_encode_figure(
             figure=chart_output.figure, file_format=chart_request_params.file_format
         ),
