@@ -234,7 +234,7 @@ class TestSingleCategoryChartSettings:
         Then the correct number is returned
         """
         # Given
-        width = 90
+        width = 930
         payload = ChartGenerationPayload(
             chart_width=width,
             chart_height=220,
@@ -259,7 +259,7 @@ class TestSingleCategoryChartSettings:
         # Given
         height = 220
         payload = ChartGenerationPayload(
-            chart_width=920,
+            chart_width=930,
             chart_height=height,
             plots=[fake_plot_data],
             x_axis_title="",

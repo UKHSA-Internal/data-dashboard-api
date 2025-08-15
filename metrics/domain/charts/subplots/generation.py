@@ -1,11 +1,28 @@
+import math
+
 import plotly.graph_objects
 from plotly.subplots import make_subplots
 
+from metrics.domain.charts import colour_scheme
 from metrics.domain.charts.chart_settings.subplot_chart_settings import (
     SubplotChartSettings,
 )
 from metrics.domain.models import PlotGenerationData
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
+
+
+def format_legend_names(
+    figure: plotly.graph_objects.Figure,
+) -> plotly.graph_objects.Figure:
+    plot_labels = set()
+
+    for plot in figure.data:
+        name = plot.name
+        plot.legendgroup = name
+        plot.showlegend = name not in plot_labels
+        plot_labels.add(name)
+
+    return figure
 
 
 def generate_chart_figure(
@@ -18,11 +35,7 @@ def generate_chart_figure(
     )
 
     figure = make_subplots(
-        rows=1,
-        cols=len(subplot_data),
-        shared_xaxes=True,
-        horizontal_spacing=0,
-        subplot_titles=[subplot.subplot_title for subplot in subplot_data],
+        cols=len(subplot_data), **settings.get_make_subplots_config()
     )
 
     for plot_index, plot_data in enumerate(subplot_data, start=1):
@@ -31,14 +44,34 @@ def generate_chart_figure(
                 plotly.graph_objects.Bar(
                     x=data.x_axis_values,
                     y=data.y_axis_values,
-                    name=getattr(data.parameters, "geography", None),
+                    name=getattr(
+                        data.parameters,
+                        data.parameters.x_axis,
+                        None,
+                    ),
+                    marker={
+                        "color": (
+                            colour_scheme.RGBAChartLineColours.get_colour(
+                                colour=data.parameters.line_colour,
+                            ).stringified,
+                        )
+                    },
                 ),
                 row=1,
                 col=plot_index,
             )
-            if plot_index > 1:
-                figure.update_yaxes(showticklabels=False, row=1, col=plot_index)
 
-    layout_args = settings.get_subplot_chart_config()
-    figure.update_layout(**layout_args)
-    return figure
+        figure.update_xaxes(
+            col=plot_index,
+            ticktext=[plot_data.subplot_title],
+            tickvals=[math.ceil(len(plot_data.subplot_data) / 2) - 1],
+        )
+
+    figure.update_layout(**settings.get_subplot_chart_config())
+    figure.update_yaxes(**settings.get_subplot_yaxis_config())
+    figure.update_xaxes(**settings.get_subplot_xaxis_config())
+
+    # Update primary y-axis settings (first subplot)
+    figure.update_yaxes(**settings.get_primary_subplot_yaxis_config())
+
+    return format_legend_names(figure=figure)
