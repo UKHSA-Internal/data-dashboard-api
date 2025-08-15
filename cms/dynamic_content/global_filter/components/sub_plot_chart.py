@@ -14,6 +14,10 @@ class FilterLinkedSubPlotChartTemplate(FilterLinkedComponent):
         required=False,
         help_text=help_texts.FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD,
     )
+    target_threshold_label = blocks.CharBlock(
+        required=False,
+        help_text=help_texts.FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD_LABEL,
+    )
 
     class Meta:
         icon = "standalone_chart"
