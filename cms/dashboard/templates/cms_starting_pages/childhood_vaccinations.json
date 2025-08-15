@@ -690,7 +690,8 @@
                         "value": {
                             "title_prefix": "Vaccination coverage statistics",
                             "legend_title": "Coverage (%)",
-                            "target_threshold": 0.95
+                            "target_threshold": 0.95,
+                            "target_threshold_label": "95% target"
                         },
                         "id": "ef3a544a-f335-44a8-9259-ee323b60e0fa"
                     }

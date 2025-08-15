@@ -116,6 +116,11 @@ class SubplotChartRequestSerializer(serializers.Serializer):
         max_digits=10,
         decimal_places=2,
     )
+    target_threshold_label = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+    )
 
     chart_parameters = ChartParametersSerializer()
     subplots = SubplotsSerializer()
@@ -159,6 +164,7 @@ class SubplotChartRequestSerializer(serializers.Serializer):
             or DEFAULT_Y_AXIS_MINIMUM_VAlUE,
             y_axis_maximum_value=self.validated_data["y_axis_maximum_value"],
             target_threshold=self.validated_data["target_threshold"],
+            target_threshold_label=self.validated_data["target_threshold_label"],
             subplots=self.validated_data["subplots"],
             request=request,
         )
