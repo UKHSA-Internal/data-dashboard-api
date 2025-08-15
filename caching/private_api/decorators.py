@@ -35,7 +35,10 @@ def cache_response(timeout: int | None = None):
 
     Args:
         timeout: The number of seconds after which the response is expired
-            and evicted from the cache
+            and evicted from the cache.
+            If set to `0` the response will not be cached at all.
+            If set to `None`, the response will be indefinitely cached,
+            until the cache is flushed intentionally.
 
     Returns:
         The response containing the results of the request.
@@ -120,6 +123,9 @@ def _calculate_response_and_save_in_cache(
     view_function, timeout, cache_management, cache_entry_key, *args, **kwargs
 ) -> Response:
     response: Response = _calculate_response_from_view(view_function, *args, **kwargs)
+    if timeout == 0:
+        return response
+
     cache_management.save_item_in_cache(
         cache_entry_key=cache_entry_key, item=response, timeout=timeout
     )

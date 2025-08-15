@@ -7,6 +7,7 @@ from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from caching.private_api.decorators import cache_response
 from metrics.api.serializers.charts import (
     EncodedChartResponseSerializer,
 )
@@ -34,7 +35,6 @@ logger = logging.getLogger(__name__)
 class SubplotChartsView(APIView):
     permission_classes = []
 
-    @classmethod
     @extend_schema(
         request=SubplotChartRequestSerializer,
         parameters=[ChartPreviewQueryParamsSerializer],
@@ -44,7 +44,30 @@ class SubplotChartsView(APIView):
             )
         ],
     )
-    def post(cls, request):
+    def post(self, request, *args, **kwargs):
+        chart_preview_serializer = ChartPreviewQueryParamsSerializer(
+            data=request.query_params
+        )
+        chart_preview_serializer.is_valid(raise_exception=True)
+        payload = chart_preview_serializer.validated_data
+
+        if payload.get("preview", False):
+            return self._process_post_request_as_preview(request, *args, **kwargs)
+        return self._process_post_request_as_encoded_svg(request, *args, **kwargs)
+
+    @cache_response(timeout=0)
+    def _process_post_request_as_preview(self, request, *args, **kwargs):
+        """Handles the inbound request as `preview=true` in this case we don't use the cache
+
+        Notes:
+            - With a timeout of `0`, the response is never
+            actually put into the cache
+
+        Returns:
+            `Response` containing the JSON data for the
+                chart and all of its associated deliverables
+
+        """
         serializer = SubplotChartRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -52,17 +75,25 @@ class SubplotChartsView(APIView):
             request=request
         )
 
-        chart_preview_serializer = ChartPreviewQueryParamsSerializer(
-            data=request.query_params
+        return self._handle_chart_as_file(
+            subplot_chart_parameters=subplot_chart_parameters
         )
-        chart_preview_serializer.is_valid(raise_exception=True)
-        payload = chart_preview_serializer.validated_data
 
-        if payload["preview"]:
-            return cls._handle_chart_as_file(
-                subplot_chart_parameters=subplot_chart_parameters
-            )
-        return cls._handle_encoded_svg(
+    @cache_response()
+    def _process_post_request_as_encoded_svg(self, request, *args, **kwargs):
+        """Handles the inbound request as `preview=false` in this case we use the cache
+
+        Returns:
+            `FileResponse` containing the chart image
+
+        """
+        serializer = SubplotChartRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        subplot_chart_parameters: SubplotChartRequestParameters = serializer.to_models(
+            request=request
+        )
+        return self._handle_encoded_svg(
             subplot_chart_parameters=subplot_chart_parameters
         )
 
@@ -75,13 +106,13 @@ class SubplotChartsView(APIView):
                 chart_request_params=subplot_chart_parameters,
             )
 
-            serializer = EncodedChartResponseSerializer(data=chart_result.output())
-            serializer.is_valid(raise_exception=True)
-
         except (InvalidPlotParametersError, DataNotFoundForAnyPlotError) as error:
             return Response(
                 status=HTTPStatus.BAD_REQUEST, data={"error_message": str(error)}
             )
+
+        serializer = EncodedChartResponseSerializer(data=chart_result.output())
+        serializer.is_valid(raise_exception=True)
 
         return Response(data=serializer.data)
 
