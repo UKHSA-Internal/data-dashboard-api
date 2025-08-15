@@ -41,9 +41,7 @@ class TestGenerateEncodedChart:
         )
         spy_interface_object = spy_interface_class.return_value
 
-        chart_output = (
-            spy_interface_object.generate_chart_output.return_value
-        )
+        chart_output = spy_interface_object.generate_chart_output.return_value
         assert chart_result.last_updated == spy_interface_object.last_updated
         assert chart_result.alt_text == chart_output.description
         assert chart_result.figure == chart_output.interactive_chart_figure_output
