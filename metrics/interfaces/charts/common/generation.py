@@ -55,7 +55,7 @@ def generate_encoded_chart(
         chart=_encode_figure(
             figure=chart_output.figure, file_format=chart_request_params.file_format
         ),
-        alt_text=chart_output.alt_text,
+        alt_text=chart_output.description,
         figure=chart_output.interactive_chart_figure_output,
     )
 

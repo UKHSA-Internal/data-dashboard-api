@@ -1,30 +1,21 @@
 import io
-from dataclasses import dataclass
 
 import plotly.graph_objects
 from django.db.models.manager import Manager
 
 from metrics.data.models.core_models import CoreTimeSeries
-from metrics.domain.charts.subplots.generation import generate_chart_figure
-from metrics.domain.models.charts.subplot_charts import (
-    SubplotChartRequestParameters,
-)
-from metrics.domain.models.subplot_plots import (
-    SubplotChartGenerationPayload,
-    SubplotGenerationData,
-)
+from metrics.domain.charts.subplots import generate_chart_figure
+from metrics.domain.models import SubplotChartGenerationPayload, SubplotGenerationData
+from metrics.domain.models.charts.subplot_charts import SubplotChartRequestParameters
+from metrics.interfaces.charts.common.chart_output import ChartOutput
 from metrics.interfaces.plots.access import PlotGenerationData, PlotsInterface
 
 DEFAULT_SUBPLOT_CHART_TYPE = "bar"
 
 
-@dataclass
-class ChartOutput:
-    figure: plotly.graph_objects.Figure
-    description: str
-
-
 class SubplotChartsInterface:
+    last_updated = "2025-01-01"
+
     def __init__(
         self,
         *,
@@ -121,6 +112,7 @@ class SubplotChartsInterface:
         return ChartOutput(
             figure=figure,
             description=chart_description,
+            is_headline=False,
         )
 
     def write_figure(self, *, figure: plotly.graph_objects.Figure) -> bytes:
