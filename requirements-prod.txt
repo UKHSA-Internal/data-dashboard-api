@@ -53,7 +53,7 @@ orjson==3.11.2
 packageurl-python==0.17.5
 packaging==25.0
 pathspec==0.12.1
-pbr==6.1.1
+pbr==7.0.0
 Pillow==11.3.0
 platformdirs==4.3.8
 plotly==6.2.0
