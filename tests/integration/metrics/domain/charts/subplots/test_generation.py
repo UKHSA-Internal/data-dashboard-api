@@ -1,13 +1,8 @@
 from decimal import Decimal
-import datetime
-from typing import Any
-from unittest import mock
 
 import plotly.graph_objects
-from plotly.subplots import make_subplots
 
 from metrics.domain.charts.subplots.generation import generate_chart_figure
-from metrics.domain.models import PlotGenerationData, PlotParameters
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
 
@@ -50,14 +45,11 @@ class TestSubplotGeneration:
         )
 
         # Then
-        assert len(figure.data) == 5
+        assert len(figure.data) == 4
         assert "Darlington" in figure.data[0].x
         assert "Hartlepool" in figure.data[1].x
         assert "Darlington" in figure.data[2].x
         assert "Hartlepool" in figure.data[3].x
-
-        threshold_bar = figure.data[4]
-        assert threshold_bar.name == "95% target"
 
     def test_chart_figure_renders_correctly_without_threshold(
         self,

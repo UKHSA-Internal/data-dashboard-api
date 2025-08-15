@@ -62,8 +62,7 @@ def add_target_threshold(
         y_bottom: Y-coordinate for the bottom of the bar
             i.e. the threshold value
         fill_colour: Colour for the filled bar area (with transparency)
-        target_threshold_label: Label for the threshold indicator
-            (appears in legend)
+        target_threshold_label: Optional label for the threshold indicator
 
     Returns:
         The modified plotly figure object
@@ -77,6 +76,7 @@ def add_target_threshold(
     # to tell us what the `y_top` value will be
     computed_figure = figure.full_figure_for_development()
     y_top: float = computed_figure.layout.yaxis.range[1]
+    y_bottom = float(y_bottom)
 
     y_top = _round_to_significant_figure(number=y_top, significant_digits=3)
 
@@ -99,18 +99,54 @@ def add_target_threshold(
         layer="below",
     )
 
-    # Add invisible trace for temporary legend entry
-    figure.add_trace(
-        plotly.graph_objs.Scatter(
-            x=[None],
-            y=[None],
-            mode="lines",
-            line={"color": fill_colour, "width": 8},
-            name=target_threshold_label,
-            showlegend=True,
+    if target_threshold_label:
+        figure = _add_threshold_indicator(
+            figure=figure,
+            y_top=y_top,
+            y_bottom=y_bottom,
+            target_threshold_label=target_threshold_label,
         )
+
+    return figure
+
+
+def _add_threshold_indicator(
+    *,
+    figure: plotly.graph_objects.Figure,
+    y_top: float,
+    y_bottom: float,
+    target_threshold_label: str,
+):
+    triangle_half_depth = 0.02
+    triangle_half_height = y_top * triangle_half_depth
+    triangle_x = 1
+
+    figure.add_shape(
+        type="path",
+        path=(
+            f"M {triangle_x} {y_bottom} "
+            f"L {triangle_x + triangle_half_depth} {y_bottom + triangle_half_height} "
+            f"L {triangle_x + triangle_half_depth} {y_bottom - triangle_half_height} Z"
+        ),
+        xref="paper",
+        yref="y",
+        fillcolor="black",
+        line={"color": "black"},
+        layer="above",
     )
 
+    label_offset = 0.01
+    figure.add_annotation(
+        xref="paper",
+        x=triangle_x + triangle_half_depth + label_offset,
+        yref="y",
+        y=y_bottom,
+        text=target_threshold_label,
+        showarrow=False,
+        font={"size": 10},
+        xanchor="left",
+        align="left",
+    )
     return figure
 
 
