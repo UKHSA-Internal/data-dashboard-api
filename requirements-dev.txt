@@ -1,10 +1,10 @@
 bandit==1.8.6
 black==25.1.0
-coverage==7.10.2
+coverage==7.10.3
 cyclonedx-python-lib==8.9.0
 django-factory-boy==1.0.0
 factory-boy==3.3.3
-freezegun==1.5.4
+freezegun==1.5.5
 Faker==37.5.3
 gitdb==4.0.12
 GitPython==3.1.45
@@ -20,5 +20,5 @@ pytest==8.4.1
 pytest-cov==6.2.1
 pytest-django==4.11.1
 pytest-random-order==1.2.0
-ruff==0.12.8
+ruff==0.12.9
 stevedore==5.4.1
