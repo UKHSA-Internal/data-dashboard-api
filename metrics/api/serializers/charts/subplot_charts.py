@@ -168,3 +168,7 @@ class SubplotChartRequestSerializer(serializers.Serializer):
             subplots=self.validated_data["subplots"],
             request=request,
         )
+
+
+class ChartPreviewQueryParamsSerializer(serializers.Serializer):
+    preview = serializers.BooleanField(required=False)
