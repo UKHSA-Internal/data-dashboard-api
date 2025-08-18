@@ -65,8 +65,6 @@ class SubplotChartSettings(ChartSettings):
             "b": 3,
             "t": 3,
         }
-        chart_config["yaxis"] = self._get_y_axis_config()
-        chart_config["xaxis"] = self._get_x_axis_config()
 
         return chart_config
 
