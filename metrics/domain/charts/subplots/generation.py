@@ -83,9 +83,7 @@ def generate_chart_figure(
             target_threshold_label=chart_generation_payload.target_threshold_label,
         )
 
-    figure = format_legend_names(figure=figure)
-
-    return figure
+    return format_legend_names(figure=figure)
 
 
 def add_target_threshold(
@@ -93,7 +91,7 @@ def add_target_threshold(
     y_bottom: float,
     target_threshold_label: str | None,
     fill_colour: str = "rgba(135, 206, 235, 0.3)",
-):
+) -> plotly.graph_objs.Figure:
     """Add a blue bar with solid top line and dashed bottom line to a Plotly figure.
 
     Notes:
