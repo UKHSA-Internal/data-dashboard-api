@@ -62,7 +62,6 @@ class SubplotChartSettings(ChartSettings):
         chart_config["autosize"] = True
         chart_config["margin"] = {
             "l": 3,
-            "r": 3,
             "b": 3,
             "t": 3,
         }
