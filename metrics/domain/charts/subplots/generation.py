@@ -95,47 +95,64 @@ def add_target_threshold(
     """Add a blue bar with solid top line and dashed bottom line to a Plotly figure.
 
     Notes:
-        The bar automatically spans the full width of the chart
-        and extends to the top.
+        The bar automatically spans the full width of the chart and extends to the top.
+        For subplots, we draw a single continuous shape across the full figure width
+        (xref="paper") so there are no gaps between subplots
 
     Args:
         figure: The Plotly figure object to add the threshold bar to
-        y_bottom: Y-coordinate for the bottom of the bar
-            i.e. the threshold value
+        y_bottom: Y-coordinate for the bottom of the bar (threshold value)
         fill_colour: Colour for the filled bar area (with transparency)
         target_threshold_label: Optional label for the threshold indicator
 
     Returns:
-        The modified plotly figure object
-        with the threshold bar added
+        The modified plotly figure object with the threshold bar added
 
     """
     line_color = "blue"
 
-    # In cases where we let plotly figure out scaling
-    # we have to compute the figure and pull the y-axis range from there
-    # to tell us what the `y_top` value will be
+    # In cases where we let plotly figure out scaling, we have to compute the figure
+    # and pull the y-axis range to tell us what the `y_top` value will be.
     computed_figure = figure.full_figure_for_development(warn=False)
     y_top: float = computed_figure.layout.yaxis.range[1]
     y_bottom = float(y_bottom)
 
     y_top = _round_to_significant_figure(number=y_top, significant_digits=3)
 
-    figure.add_hline(
-        y=y_top,
+    # Solid top line
+    figure.add_shape(
+        type="line",
+        xref="paper",
+        x0=0,
+        x1=1,
+        yref="y",
+        y0=y_top,
+        y1=y_top,
         line={"color": line_color, "width": 2, "dash": "solid"},
         layer="below",
     )
-    figure.add_hrect(
+    # Draw a single continuous rectangle across the full figure
+    # using paper coords regardless of any breaks between subplots
+    figure.add_shape(
         type="rect",
+        xref="paper",
+        x0=0,
+        x1=1,
+        yref="y",
         y0=y_bottom,
         y1=y_top,
         fillcolor=fill_colour,
         line={"width": 0},
         layer="below",
     )
-    figure.add_hline(
-        y=y_bottom,
+    figure.add_shape(
+        type="line",
+        xref="paper",
+        x0=0,
+        x1=1,
+        yref="y",
+        y0=y_bottom,
+        y1=y_bottom,
         line={"color": line_color, "width": 2, "dash": "dash"},
         layer="below",
     )
