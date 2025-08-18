@@ -69,21 +69,21 @@ class SubplotChartSettings(ChartSettings):
         chart_config["yaxis"] = self._get_y_axis_config()
         chart_config["xaxis"] = self._get_x_axis_config()
 
-        return {**chart_config}
+        return chart_config
 
     def get_subplot_xaxis_config(self) -> CHART_ARGS:
         yaxis_config = self._get_x_axis_config()
 
         yaxis_config["row"] = 1
 
-        return {**yaxis_config}
+        return yaxis_config
 
     def get_subplot_yaxis_config(self) -> CHART_ARGS:
         yaxis_config = self._get_y_axis_config()
 
         yaxis_config["row"] = 1
 
-        return {**yaxis_config}
+        return yaxis_config
 
     def get_primary_subplot_yaxis_config(self) -> CHART_ARGS:
         primary_yaxis_config = self._get_y_axis_config()
@@ -93,4 +93,4 @@ class SubplotChartSettings(ChartSettings):
         primary_yaxis_config["showticklabels"] = True
         primary_yaxis_config["ticklen"] = 5
 
-        return {**primary_yaxis_config}
+        return primary_yaxis_config
