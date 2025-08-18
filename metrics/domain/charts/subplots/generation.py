@@ -1,15 +1,17 @@
 import plotly.graph_objects
 from plotly.subplots import make_subplots
 
-from metrics.domain.models import PlotGenerationData
-from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
+from metrics.domain.models.subplot_plots import (
+    SubplotChartGenerationPayload,
+    SubplotGenerationData,
+)
 
 
 def generate_chart_figure(
     *,
     chart_generation_payload: SubplotChartGenerationPayload,
 ) -> plotly.graph_objects.Figure:
-    subplot_data: PlotGenerationData = chart_generation_payload.subplot_data
+    subplot_data: list[SubplotGenerationData] = chart_generation_payload.subplot_data
 
     figure = make_subplots(
         rows=1,
@@ -33,4 +35,120 @@ def generate_chart_figure(
             if plot_index > 1:
                 figure.update_yaxes(showticklabels=False, row=1, col=plot_index)
 
+    if chart_generation_payload.target_threshold:
+        add_target_threshold(
+            figure=figure,
+            y_bottom=chart_generation_payload.target_threshold,
+            target_threshold_label=chart_generation_payload.target_threshold_label,
+        )
+
     return figure
+
+
+def add_target_threshold(
+    figure: plotly.graph_objs.Figure,
+    y_bottom: float,
+    target_threshold_label: str | None,
+    fill_colour: str = "rgba(135, 206, 235, 0.3)",
+):
+    """Add a blue bar with solid top line and dashed bottom line to a Plotly figure.
+
+    Notes:
+        The bar automatically spans the full width of the chart
+        and extends to the top.
+
+    Args:
+        figure: The Plotly figure object to add the threshold bar to
+        y_bottom: Y-coordinate for the bottom of the bar
+            i.e. the threshold value
+        fill_colour: Colour for the filled bar area (with transparency)
+        target_threshold_label: Optional label for the threshold indicator
+
+    Returns:
+        The modified plotly figure object
+        with the threshold bar added
+
+    """
+    line_color = "blue"
+
+    # In cases where we let plotly figure out scaling
+    # we have to compute the figure and pull the y-axis range from there
+    # to tell us what the `y_top` value will be
+    computed_figure = figure.full_figure_for_development()
+    y_top: float = computed_figure.layout.yaxis.range[1]
+    y_bottom = float(y_bottom)
+
+    y_top = _round_to_significant_figure(number=y_top, significant_digits=3)
+
+    figure.add_hline(
+        y=y_top,
+        line={"color": line_color, "width": 2, "dash": "solid"},
+        layer="below",
+    )
+    figure.add_hrect(
+        type="rect",
+        y0=y_bottom,
+        y1=y_top,
+        fillcolor=fill_colour,
+        line={"width": 0},
+        layer="below",
+    )
+    figure.add_hline(
+        y=y_bottom,
+        line={"color": line_color, "width": 2, "dash": "dash"},
+        layer="below",
+    )
+
+    if target_threshold_label:
+        figure = _add_threshold_indicator(
+            figure=figure,
+            y_top=y_top,
+            y_bottom=y_bottom,
+            target_threshold_label=target_threshold_label,
+        )
+
+    return figure
+
+
+def _add_threshold_indicator(
+    *,
+    figure: plotly.graph_objects.Figure,
+    y_top: float,
+    y_bottom: float,
+    target_threshold_label: str,
+):
+    triangle_half_depth = 0.02
+    triangle_half_height = y_top * triangle_half_depth
+    triangle_x = 1
+
+    figure.add_shape(
+        type="path",
+        path=(
+            f"M {triangle_x} {y_bottom} "
+            f"L {triangle_x + triangle_half_depth} {y_bottom + triangle_half_height} "
+            f"L {triangle_x + triangle_half_depth} {y_bottom - triangle_half_height} Z"
+        ),
+        xref="paper",
+        yref="y",
+        fillcolor="black",
+        line={"color": "black"},
+        layer="above",
+    )
+
+    label_offset = 0.01
+    figure.add_annotation(
+        xref="paper",
+        x=triangle_x + triangle_half_depth + label_offset,
+        yref="y",
+        y=y_bottom,
+        text=target_threshold_label,
+        showarrow=False,
+        font={"size": 10},
+        xanchor="left",
+        align="left",
+    )
+    return figure
+
+
+def _round_to_significant_figure(*, number: float, significant_digits: int) -> float:
+    return float(format(number, f".{significant_digits}g"))

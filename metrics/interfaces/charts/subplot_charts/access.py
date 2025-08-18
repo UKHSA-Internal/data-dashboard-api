@@ -84,6 +84,8 @@ class SubplotChartsInterface:
             y_axis_title=self.chart_request_params.y_axis_title,
             y_axis_minimum_value=self.chart_request_params.y_axis_minimum_value,
             y_axis_maximum_value=self.chart_request_params.y_axis_maximum_value,
+            target_threshold=self.chart_request_params.target_threshold,
+            target_threshold_label=self.chart_request_params.target_threshold_label,
         )
 
     @staticmethod
