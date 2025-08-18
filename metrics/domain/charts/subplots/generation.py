@@ -176,7 +176,7 @@ def _add_threshold_indicator(
         layer="above",
     )
 
-    label_offset = 0.01
+    label_offset = 0.005
     figure.add_annotation(
         xref="paper",
         x=triangle_x + triangle_half_depth + label_offset,
