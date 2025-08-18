@@ -1,6 +1,6 @@
 bandit==1.8.6
 black==25.1.0
-coverage==7.10.3
+coverage==7.10.4
 cyclonedx-python-lib==8.9.0
 django-factory-boy==1.0.0
 factory-boy==3.3.3
@@ -8,7 +8,7 @@ freezegun==1.5.5
 Faker==37.5.3
 gitdb==4.0.12
 GitPython==3.1.45
-import-linter==2.3
+import-linter==2.4
 isort==6.0.1
 pip-api==0.0.34
 pip_audit==2.9.0

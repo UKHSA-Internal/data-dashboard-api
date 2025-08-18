@@ -173,7 +173,7 @@ class PlotsText:
             Describing its parameters and its data if valid.
 
         """
-        plot_parameters = plot_data.parameters
+        plot_parameters: PlotParameters = plot_data.parameters
         description = f"This is plot number {index} on this chart. "
         description += self._describe_plot_type(plot_parameters=plot_parameters)
 
@@ -190,9 +190,20 @@ class PlotsText:
             with contextlib.suppress(Exception):
                 description += self._describe_date_based_plot_data(plot_data=plot_data)
 
+        else:
+            description += self._describe_singular_metric_value(plot_data=plot_data)
+
         return description
 
     # Data description
+
+    @classmethod
+    def _describe_singular_metric_value(cls, plot_data: PlotGenerationData) -> str:
+        if len(plot_data.y_axis_values) == 1:
+            return (
+                f"This plot has a value of '{plot_data.y_axis_values[0].normalize()}'. "
+            )
+        return ""
 
     @classmethod
     def _describe_headline_plot_data(cls, *, plot_data: PlotGenerationData) -> str:
@@ -327,7 +338,7 @@ class PlotsText:
     # Utilities
 
     @classmethod
-    def _stringify_chart_type(cls, *, plot_parameters: PlotGenerationData) -> str:
+    def _stringify_chart_type(cls, *, plot_parameters: PlotParameters) -> str:
         chart_type: str = plot_parameters.chart_type
         match chart_type:
             case ChartTypes.bar.value:

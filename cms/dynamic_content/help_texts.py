@@ -530,3 +530,7 @@ The full title will be structured as follows:
 FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD: str = """
 An optional value to draw a target threshold for.
 """
+
+FILTER_LINKED_SUB_PLOT_CHART_TARGET_THRESHOLD_LABEL: str = """
+An optional label to add as for the target threshold indicator on the charts.
+"""

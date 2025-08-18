@@ -1,15 +1,10 @@
 import math
 
 from decimal import Decimal
-import datetime
-from typing import Any
-from unittest import mock
 
 import plotly.graph_objects
-from plotly.subplots import make_subplots
 
 from metrics.domain.charts.subplots.generation import generate_chart_figure
-from metrics.domain.models import PlotGenerationData, PlotParameters
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
 
@@ -26,33 +21,39 @@ class TestSubplotGeneration:
             x_axis_title="x-axis-title",
             y_axis_maximum_value=None,
             y_axis_minimum_value=0,
+            target_threshold=95,
+            target_threshold_label="95% target",
         )
 
-    def test_chart_figure_returns_correctly(
+    def test_chart_figure_returns_correctly_with_threshold(
         self,
         example_subplot_chart_generation_payload: list[dict[str, str | Decimal]],
     ):
         """
         Given a valid payload for a `Subplot Chart`
+            which does specify a `target_threshold`
         When the `generate_chart_figure` method is called
-        Then a valid plotly `Figure` object is returned.
+        Then a valid plotly `Figure` object is returned
+            with the threshold bar rendered
         """
         # Given
-        valid_payload = self._setup_chart_plot_data(
+        valid_payload: SubplotChartGenerationPayload = self._setup_chart_plot_data(
             example_subplot_chart_generation_payload=example_subplot_chart_generation_payload,
         )
 
         # When
-        chart_image = generate_chart_figure(chart_generation_payload=valid_payload)
+        figure: plotly.graph_objects.Figure = generate_chart_figure(
+            chart_generation_payload=valid_payload
+        )
 
         # Then
-        assert len(chart_image.data) == 6
-        assert "Darlington" in chart_image.data[0].x
-        assert "Hartlepool" in chart_image.data[1].x
-        assert "Stockton-on-Tees" in chart_image.data[2].x
-        assert "Darlington" in chart_image.data[3].x
-        assert "Hartlepool" in chart_image.data[4].x
-        assert "Stockton-on-Tees" in chart_image.data[5].x
+        assert len(figure.data) == 6
+        assert "Darlington" in figure.data[0].x
+        assert "Hartlepool" in figure.data[1].x
+        assert "Stockton-on-Tees" in figure.data[2].x
+        assert "Darlington" in figure.data[3].x
+        assert "Hartlepool" in figure.data[4].x
+        assert "Stockton-on-Tees" in figure.data[5].x
 
     def test_chart_figure_includes_one_tick_text_for_each_subplot(
         self,
@@ -61,7 +62,8 @@ class TestSubplotGeneration:
         """
         Given a valid payload for a `Subplot Chart`
         When the `generate_chart_figure` method is called
-        Then: The generated Figure contains ticktext that matches the subplot_title
+        Then the generated Figure contains
+            ticktext that matches the subplot_title
         """
         # Given
         valid_payload = self._setup_chart_plot_data(
