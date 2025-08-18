@@ -1,4 +1,5 @@
 import logging
+import math
 
 from metrics.domain.charts.chart_settings.base import ChartSettings
 from metrics.domain.charts.type_hints import CHART_ARGS
@@ -6,6 +7,8 @@ from metrics.domain.models import SubplotGenerationData
 from metrics.domain.models.subplot_plots import SubplotChartGenerationPayload
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_LEGEND_FONT_SIZE = 14
 
 
 class SubplotChartSettings(ChartSettings):
@@ -45,20 +48,25 @@ class SubplotChartSettings(ChartSettings):
             "horizontal_spacing": 0.03,
         }
 
-    def get_legend_bottom_centre_config(self):
+    def get_legend_bottom_centre_config(self, number_of_legend_items: int):
+        y_base = 0.2
+        y_multiplier = math.ceil(number_of_legend_items / 4)
+
         return {
-            "font": {**self._get_tick_font_config()},
+            "font": {**self._get_tick_font_config(), "size": DEFAULT_LEGEND_FONT_SIZE},
             "orientation": "h",
-            "y": -0.3,
+            "y": -(y_base * y_multiplier),
             "x": 0.5,
             "xanchor": "center",
             "yanchor": "bottom",
         }
 
-    def get_subplot_chart_config(self) -> CHART_ARGS:
+    def get_subplot_chart_config(self, number_of_legend_items: int) -> CHART_ARGS:
         chart_config = self._get_base_chart_config()
 
-        chart_config["legend"] = self.get_legend_bottom_centre_config()
+        chart_config["legend"] = self.get_legend_bottom_centre_config(
+            number_of_legend_items=number_of_legend_items
+        )
         chart_config["autosize"] = True
         chart_config["margin"] = {
             "l": 3,

@@ -1,3 +1,4 @@
+import pytest
 import math
 
 from decimal import Decimal
@@ -74,14 +75,40 @@ class TestSubplotGeneration:
         chart_image = generate_chart_figure(chart_generation_payload=valid_payload)
 
         # Then
-        assert (
-            valid_payload.subplot_data[0].subplot_title
-            in chart_image.layout.xaxis.ticktext
+        assert len(chart_image.layout.xaxis.ticktext) == 1
+        assert len(chart_image.layout.xaxis2.ticktext) == 1
+
+    @pytest.mark.parametrize(
+        "subplot_title, formatted_subplot_title",
+        (
+            ("6-in-1", "<b>6-in-1</b>"),
+            ("6-in-1 (24m)", "<b>6-in-1</b><br>(24m)"),
+            ("MVC Boost (24m)", "<b>MVC Boost</b><br>(24m)"),
+        ),
+    )
+    def test_chart_figure_formats_tick_text_correctly(
+        self,
+        example_subplot_chart_generation_payload: list[dict[str, str | Decimal]],
+        subplot_title: str,
+        formatted_subplot_title: str,
+    ):
+        """
+        Given a valid payload for a `Subplot Chart`
+        When the `generate_chart_figure` method is called
+        Then each subplot's ticktext will include correct formatting.
+        """
+        # Given
+        valid_payload = self._setup_chart_plot_data(
+            example_subplot_chart_generation_payload=example_subplot_chart_generation_payload,
         )
-        assert (
-            valid_payload.subplot_data[1].subplot_title
-            in chart_image.layout.xaxis2.ticktext
-        )
+        valid_payload.subplot_data[0].subplot_title = subplot_title
+
+        # When
+        chart_image = generate_chart_figure(chart_generation_payload=valid_payload)
+        expected_subplot_title = formatted_subplot_title
+
+        # Then
+        assert expected_subplot_title in chart_image.layout.xaxis.ticktext
 
     def test_chart_figure_x_axis_tick_value_in_correct_play(
         self,
