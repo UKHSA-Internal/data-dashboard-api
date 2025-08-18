@@ -115,7 +115,7 @@ def add_target_threshold(
     # In cases where we let plotly figure out scaling
     # we have to compute the figure and pull the y-axis range from there
     # to tell us what the `y_top` value will be
-    computed_figure = figure.full_figure_for_development()
+    computed_figure = figure.full_figure_for_development(warn=False)
     y_top: float = computed_figure.layout.yaxis.range[1]
     y_bottom = float(y_bottom)
 
